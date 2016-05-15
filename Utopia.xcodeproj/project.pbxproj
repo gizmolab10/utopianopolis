@@ -1,0 +1,674 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0C19F1FF1CE7EB7B00ED447B /* URelationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C19F1FE1CE7EB7B00ED447B /* URelationship.swift */; };
+		0C19F2011CE7EEA200ED447B /* UViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C19F2001CE7EEA200ED447B /* UViewController.swift */; };
+		0C1DF5EB1CE650E4003AB462 /* service.php in Resources */ = {isa = PBXBuildFile; fileRef = 0C1DF5EA1CE650E4003AB462 /* service.php */; };
+		0C1DF5ED1CE69771003AB462 /* tryout.py in Resources */ = {isa = PBXBuildFile; fileRef = 0C1DF5EC1CE69771003AB462 /* tryout.py */; };
+		0C41CFA61CE7E2330002E48F /* URealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C41CFA51CE7E2330002E48F /* URealmManager.swift */; };
+		0C41CFA71CE7E2330002E48F /* URealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C41CFA51CE7E2330002E48F /* URealmManager.swift */; };
+		0C41CFAF1CE7E3E60002E48F /* UAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C41CFAA1CE7E3E60002E48F /* UAppDelegate.swift */; };
+		0C41CFB11CE7E3E60002E48F /* Utopia.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0C41CFAD1CE7E3E60002E48F /* Utopia.xcdatamodeld */; };
+		0C41CFB41CE7E47A0002E48F /* UUtopian.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C41CFB31CE7E47A0002E48F /* UUtopian.swift */; };
+		0CEFF55B1CE522390029509C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CEFF5591CE522390029509C /* Main.storyboard */; };
+		0CEFF5601CE522390029509C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0CEFF55F1CE522390029509C /* Assets.xcassets */; };
+		0CEFF5631CE522390029509C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CEFF5611CE522390029509C /* LaunchScreen.storyboard */; };
+		0CEFF56E1CE522390029509C /* UtopiaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CEFF56D1CE522390029509C /* UtopiaTests.swift */; };
+		0CEFF5791CE522390029509C /* UtopiaUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CEFF5781CE522390029509C /* UtopiaUITests.swift */; };
+		0CEFF58A1CE5270A0029509C /* USessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CEFF5881CE525040029509C /* USessionManager.swift */; };
+		EA545F1B6D012ACD4068E992 /* Pods_Utopia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4396DDE8F544EC6E98F40EA /* Pods_Utopia.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0CEFF56A1CE522390029509C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0CEFF54A1CE522390029509C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0CEFF5511CE522390029509C;
+			remoteInfo = Utopia;
+		};
+		0CEFF5751CE522390029509C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0CEFF54A1CE522390029509C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0CEFF5511CE522390029509C;
+			remoteInfo = Utopia;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0C19F1FE1CE7EB7B00ED447B /* URelationship.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URelationship.swift; sourceTree = "<group>"; };
+		0C19F2001CE7EEA200ED447B /* UViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UViewController.swift; sourceTree = "<group>"; };
+		0C1DF5EA1CE650E4003AB462 /* service.php */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.php; path = service.php; sourceTree = "<group>"; };
+		0C1DF5EC1CE69771003AB462 /* tryout.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = tryout.py; sourceTree = "<group>"; };
+		0C41CFA51CE7E2330002E48F /* URealmManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URealmManager.swift; sourceTree = "<group>"; };
+		0C41CFAA1CE7E3E60002E48F /* UAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UAppDelegate.swift; sourceTree = "<group>"; };
+		0C41CFAE1CE7E3E60002E48F /* Utopia.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Utopia.xcdatamodel; sourceTree = "<group>"; };
+		0C41CFB31CE7E47A0002E48F /* UUtopian.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UUtopian.swift; sourceTree = "<group>"; };
+		0C41CFB51CE7E7D70002E48F /* UNeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UNeed.swift; sourceTree = "<group>"; };
+		0CEFF5521CE522390029509C /* Utopia.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Utopia.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CEFF55A1CE522390029509C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		0CEFF55F1CE522390029509C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0CEFF5621CE522390029509C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		0CEFF5641CE522390029509C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
+		0CEFF5691CE522390029509C /* UtopiaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UtopiaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CEFF56D1CE522390029509C /* UtopiaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtopiaTests.swift; sourceTree = "<group>"; };
+		0CEFF56F1CE522390029509C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0CEFF5741CE522390029509C /* UtopiaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UtopiaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CEFF5781CE522390029509C /* UtopiaUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtopiaUITests.swift; sourceTree = "<group>"; };
+		0CEFF57A1CE522390029509C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0CEFF5871CE525040029509C /* SessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionManager.h; sourceTree = "<group>"; };
+		0CEFF5881CE525040029509C /* USessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = USessionManager.swift; sourceTree = "<group>"; };
+		53CAAB57C9A9063D5FCAEE2F /* Pods-Utopia.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Utopia.release.xcconfig"; path = "Pods/Target Support Files/Pods-Utopia/Pods-Utopia.release.xcconfig"; sourceTree = "<group>"; };
+		A4396DDE8F544EC6E98F40EA /* Pods_Utopia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Utopia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF331B464EADE097EB55A47B /* Pods-Utopia.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Utopia.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Utopia/Pods-Utopia.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0CEFF54F1CE522390029509C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EA545F1B6D012ACD4068E992 /* Pods_Utopia.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CEFF5661CE522390029509C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CEFF5711CE522390029509C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0C41CFA81CE7E3E60002E48F /* controllers */ = {
+			isa = PBXGroup;
+			children = (
+				0C19F2001CE7EEA200ED447B /* UViewController.swift */,
+			);
+			path = controllers;
+			sourceTree = "<group>";
+		};
+		0C41CFA91CE7E3E60002E48F /* main */ = {
+			isa = PBXGroup;
+			children = (
+				0CEFF5641CE522390029509C /* Info.plist */,
+				0C41CFAA1CE7E3E60002E48F /* UAppDelegate.swift */,
+			);
+			path = main;
+			sourceTree = "<group>";
+		};
+		0C41CFAC1CE7E3E60002E48F /* models */ = {
+			isa = PBXGroup;
+			children = (
+				0C41CFAD1CE7E3E60002E48F /* Utopia.xcdatamodeld */,
+				0C41CFB51CE7E7D70002E48F /* UNeed.swift */,
+				0C19F1FE1CE7EB7B00ED447B /* URelationship.swift */,
+				0C41CFB31CE7E47A0002E48F /* UUtopian.swift */,
+			);
+			path = models;
+			sourceTree = "<group>";
+		};
+		0C41CFB21CE7E3FD0002E48F /* interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				0CEFF5591CE522390029509C /* Main.storyboard */,
+				0CEFF55F1CE522390029509C /* Assets.xcassets */,
+				0CEFF5611CE522390029509C /* LaunchScreen.storyboard */,
+			);
+			name = interfaces;
+			sourceTree = "<group>";
+		};
+		0CEFF5491CE522390029509C = {
+			isa = PBXGroup;
+			children = (
+				0C1DF5EA1CE650E4003AB462 /* service.php */,
+				0C1DF5EC1CE69771003AB462 /* tryout.py */,
+				0CEFF5541CE522390029509C /* Utopia */,
+				0CEFF56C1CE522390029509C /* UtopiaTests */,
+				0CEFF5771CE522390029509C /* UtopiaUITests */,
+				0CEFF5531CE522390029509C /* Products */,
+				EED960CEAEC1B7DC5AFC0B87 /* Pods */,
+				82B5FDBCB4C53BBCF9433386 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		0CEFF5531CE522390029509C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0CEFF5521CE522390029509C /* Utopia.app */,
+				0CEFF5691CE522390029509C /* UtopiaTests.xctest */,
+				0CEFF5741CE522390029509C /* UtopiaUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0CEFF5541CE522390029509C /* Utopia */ = {
+			isa = PBXGroup;
+			children = (
+				0C41CFA81CE7E3E60002E48F /* controllers */,
+				0C41CFB21CE7E3FD0002E48F /* interfaces */,
+				0C41CFA91CE7E3E60002E48F /* main */,
+				0CEFF5861CE525040029509C /* managers */,
+				0C41CFAC1CE7E3E60002E48F /* models */,
+			);
+			path = Utopia;
+			sourceTree = "<group>";
+		};
+		0CEFF56C1CE522390029509C /* UtopiaTests */ = {
+			isa = PBXGroup;
+			children = (
+				0CEFF56D1CE522390029509C /* UtopiaTests.swift */,
+				0CEFF56F1CE522390029509C /* Info.plist */,
+			);
+			path = UtopiaTests;
+			sourceTree = "<group>";
+		};
+		0CEFF5771CE522390029509C /* UtopiaUITests */ = {
+			isa = PBXGroup;
+			children = (
+				0CEFF5781CE522390029509C /* UtopiaUITests.swift */,
+				0CEFF57A1CE522390029509C /* Info.plist */,
+			);
+			path = UtopiaUITests;
+			sourceTree = "<group>";
+		};
+		0CEFF5861CE525040029509C /* managers */ = {
+			isa = PBXGroup;
+			children = (
+				0CEFF5871CE525040029509C /* SessionManager.h */,
+				0CEFF5881CE525040029509C /* USessionManager.swift */,
+				0C41CFA51CE7E2330002E48F /* URealmManager.swift */,
+			);
+			path = managers;
+			sourceTree = "<group>";
+		};
+		82B5FDBCB4C53BBCF9433386 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A4396DDE8F544EC6E98F40EA /* Pods_Utopia.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EED960CEAEC1B7DC5AFC0B87 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				DF331B464EADE097EB55A47B /* Pods-Utopia.debug.xcconfig */,
+				53CAAB57C9A9063D5FCAEE2F /* Pods-Utopia.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0CEFF5511CE522390029509C /* Utopia */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0CEFF57D1CE522390029509C /* Build configuration list for PBXNativeTarget "Utopia" */;
+			buildPhases = (
+				F57DC8D9175ECC34DE2A2823 /* 📦 Check Pods Manifest.lock */,
+				0CEFF54E1CE522390029509C /* Sources */,
+				0CEFF54F1CE522390029509C /* Frameworks */,
+				0CEFF5501CE522390029509C /* Resources */,
+				834F241CA1BF84B2E31B7B15 /* 📦 Embed Pods Frameworks */,
+				24E316B72322DF89D04D687E /* 📦 Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Utopia;
+			productName = Utopia;
+			productReference = 0CEFF5521CE522390029509C /* Utopia.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0CEFF5681CE522390029509C /* UtopiaTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0CEFF5801CE522390029509C /* Build configuration list for PBXNativeTarget "UtopiaTests" */;
+			buildPhases = (
+				0CEFF5651CE522390029509C /* Sources */,
+				0CEFF5661CE522390029509C /* Frameworks */,
+				0CEFF5671CE522390029509C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0CEFF56B1CE522390029509C /* PBXTargetDependency */,
+			);
+			name = UtopiaTests;
+			productName = UtopiaTests;
+			productReference = 0CEFF5691CE522390029509C /* UtopiaTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		0CEFF5731CE522390029509C /* UtopiaUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0CEFF5831CE522390029509C /* Build configuration list for PBXNativeTarget "UtopiaUITests" */;
+			buildPhases = (
+				0CEFF5701CE522390029509C /* Sources */,
+				0CEFF5711CE522390029509C /* Frameworks */,
+				0CEFF5721CE522390029509C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0CEFF5761CE522390029509C /* PBXTargetDependency */,
+			);
+			name = UtopiaUITests;
+			productName = UtopiaUITests;
+			productReference = 0CEFF5741CE522390029509C /* UtopiaUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0CEFF54A1CE522390029509C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Jonathan Sand";
+				TargetAttributes = {
+					0CEFF5511CE522390029509C = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+					0CEFF5681CE522390029509C = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = 0CEFF5511CE522390029509C;
+					};
+					0CEFF5731CE522390029509C = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = 0CEFF5511CE522390029509C;
+					};
+				};
+			};
+			buildConfigurationList = 0CEFF54D1CE522390029509C /* Build configuration list for PBXProject "Utopia" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0CEFF5491CE522390029509C;
+			productRefGroup = 0CEFF5531CE522390029509C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0CEFF5511CE522390029509C /* Utopia */,
+				0CEFF5681CE522390029509C /* UtopiaTests */,
+				0CEFF5731CE522390029509C /* UtopiaUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0CEFF5501CE522390029509C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CEFF5631CE522390029509C /* LaunchScreen.storyboard in Resources */,
+				0C1DF5ED1CE69771003AB462 /* tryout.py in Resources */,
+				0CEFF5601CE522390029509C /* Assets.xcassets in Resources */,
+				0C1DF5EB1CE650E4003AB462 /* service.php in Resources */,
+				0CEFF55B1CE522390029509C /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CEFF5671CE522390029509C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CEFF5721CE522390029509C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		24E316B72322DF89D04D687E /* 📦 Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Utopia/Pods-Utopia-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		834F241CA1BF84B2E31B7B15 /* 📦 Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Utopia/Pods-Utopia-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F57DC8D9175ECC34DE2A2823 /* 📦 Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0CEFF54E1CE522390029509C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C41CFA61CE7E2330002E48F /* URealmManager.swift in Sources */,
+				0CEFF58A1CE5270A0029509C /* USessionManager.swift in Sources */,
+				0C41CFAF1CE7E3E60002E48F /* UAppDelegate.swift in Sources */,
+				0C19F2011CE7EEA200ED447B /* UViewController.swift in Sources */,
+				0C41CFB41CE7E47A0002E48F /* UUtopian.swift in Sources */,
+				0C19F1FF1CE7EB7B00ED447B /* URelationship.swift in Sources */,
+				0C41CFB11CE7E3E60002E48F /* Utopia.xcdatamodeld in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CEFF5651CE522390029509C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CEFF56E1CE522390029509C /* UtopiaTests.swift in Sources */,
+				0C41CFA71CE7E2330002E48F /* URealmManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CEFF5701CE522390029509C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CEFF5791CE522390029509C /* UtopiaUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0CEFF56B1CE522390029509C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0CEFF5511CE522390029509C /* Utopia */;
+			targetProxy = 0CEFF56A1CE522390029509C /* PBXContainerItemProxy */;
+		};
+		0CEFF5761CE522390029509C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0CEFF5511CE522390029509C /* Utopia */;
+			targetProxy = 0CEFF5751CE522390029509C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		0CEFF5591CE522390029509C /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0CEFF55A1CE522390029509C /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		0CEFF5611CE522390029509C /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0CEFF5621CE522390029509C /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		0CEFF57B1CE522390029509C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0CEFF57C1CE522390029509C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0CEFF57E1CE522390029509C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DF331B464EADE097EB55A47B /* Pods-Utopia.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = Utopia/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gizmolab.Utopia;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		0CEFF57F1CE522390029509C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 53CAAB57C9A9063D5FCAEE2F /* Pods-Utopia.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = Utopia/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gizmolab.Utopia;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		0CEFF5811CE522390029509C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = UtopiaTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gizmolab.UtopiaTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Utopia.app/Utopia";
+			};
+			name = Debug;
+		};
+		0CEFF5821CE522390029509C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = UtopiaTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gizmolab.UtopiaTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Utopia.app/Utopia";
+			};
+			name = Release;
+		};
+		0CEFF5841CE522390029509C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = UtopiaUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gizmolab.UtopiaUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = Utopia;
+			};
+			name = Debug;
+		};
+		0CEFF5851CE522390029509C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = UtopiaUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gizmolab.UtopiaUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = Utopia;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0CEFF54D1CE522390029509C /* Build configuration list for PBXProject "Utopia" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CEFF57B1CE522390029509C /* Debug */,
+				0CEFF57C1CE522390029509C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0CEFF57D1CE522390029509C /* Build configuration list for PBXNativeTarget "Utopia" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CEFF57E1CE522390029509C /* Debug */,
+				0CEFF57F1CE522390029509C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0CEFF5801CE522390029509C /* Build configuration list for PBXNativeTarget "UtopiaTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CEFF5811CE522390029509C /* Debug */,
+				0CEFF5821CE522390029509C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0CEFF5831CE522390029509C /* Build configuration list for PBXNativeTarget "UtopiaUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CEFF5841CE522390029509C /* Debug */,
+				0CEFF5851CE522390029509C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		0C41CFAD1CE7E3E60002E48F /* Utopia.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				0C41CFAE1CE7E3E60002E48F /* Utopia.xcdatamodel */,
+			);
+			currentVersion = 0C41CFAE1CE7E3E60002E48F /* Utopia.xcdatamodel */;
+			path = Utopia.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 0CEFF54A1CE522390029509C /* Project object */;
+}
