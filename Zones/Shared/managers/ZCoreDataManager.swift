@@ -13,9 +13,6 @@ import CoreData
 class ZCoreDataManager: NSObject {
 
 
-    static let sharedCoreDataManager = ZCoreDataManager()
-
-
     // MARK: - Core Data stack
     // MARK: -
 

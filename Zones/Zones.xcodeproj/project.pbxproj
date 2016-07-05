@@ -24,12 +24,12 @@
 		0C3D5D791D2B1CC2001053B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C3D5D771D2B1CC2001053B8 /* LaunchScreen.storyboard */; };
 		0C3D5D841D2B1CC2001053B8 /* PadZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D831D2B1CC2001053B8 /* PadZonesTests.swift */; };
 		0C3D5D8F1D2B1CC2001053B8 /* PadZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D8E1D2B1CC2001053B8 /* PadZonesUITests.swift */; };
-		0C3D5D9D1D2B1D9F001053B8 /* ZCoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D9C1D2B1D9F001053B8 /* ZCoreDataManager.swift */; };
-		0C3D5D9E1D2B1D9F001053B8 /* ZCoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D9C1D2B1D9F001053B8 /* ZCoreDataManager.swift */; };
-		0C3D5DA01D2C05AE001053B8 /* ZAbstractionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D9F1D2C05AE001053B8 /* ZAbstractionLayer.swift */; };
-		0C3D5DA11D2C05AE001053B8 /* ZAbstractionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D9F1D2C05AE001053B8 /* ZAbstractionLayer.swift */; };
-		0C3D5DA31D2C0FEF001053B8 /* ZSingletons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5DA21D2C0FEF001053B8 /* ZSingletons.swift */; };
-		0C3D5DA41D2C0FEF001053B8 /* ZSingletons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5DA21D2C0FEF001053B8 /* ZSingletons.swift */; };
+		0C3D5DB51D2C1758001053B8 /* ZAbstractionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5DB11D2C1758001053B8 /* ZAbstractionLayer.swift */; };
+		0C3D5DB61D2C1758001053B8 /* ZAbstractionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5DB11D2C1758001053B8 /* ZAbstractionLayer.swift */; };
+		0C3D5DB71D2C1758001053B8 /* ZSingletons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5DB21D2C1758001053B8 /* ZSingletons.swift */; };
+		0C3D5DB81D2C1758001053B8 /* ZSingletons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5DB21D2C1758001053B8 /* ZSingletons.swift */; };
+		0C3D5DB91D2C1758001053B8 /* ZCoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5DB41D2C1758001053B8 /* ZCoreDataManager.swift */; };
+		0C3D5DBA1D2C1758001053B8 /* ZCoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5DB41D2C1758001053B8 /* ZCoreDataManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,9 +94,9 @@
 		0C3D5D8E1D2B1CC2001053B8 /* PadZonesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PadZonesUITests.swift; sourceTree = "<group>"; };
 		0C3D5D901D2B1CC2001053B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0C3D5D9A1D2B1CEB001053B8 /* PadZones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PadZones.entitlements; sourceTree = "<group>"; };
-		0C3D5D9C1D2B1D9F001053B8 /* ZCoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZCoreDataManager.swift; sourceTree = "<group>"; };
-		0C3D5D9F1D2C05AE001053B8 /* ZAbstractionLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAbstractionLayer.swift; sourceTree = "<group>"; };
-		0C3D5DA21D2C0FEF001053B8 /* ZSingletons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSingletons.swift; sourceTree = "<group>"; };
+		0C3D5DB11D2C1758001053B8 /* ZAbstractionLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAbstractionLayer.swift; sourceTree = "<group>"; };
+		0C3D5DB21D2C1758001053B8 /* ZSingletons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSingletons.swift; sourceTree = "<group>"; };
+		0C3D5DB41D2C1758001053B8 /* ZCoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZCoreDataManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,8 +148,7 @@
 		0C3D5D0B1D29B768001053B8 = {
 			isa = PBXGroup;
 			children = (
-				0C3D5DA21D2C0FEF001053B8 /* ZSingletons.swift */,
-				0C3D5D9B1D2B1D70001053B8 /* Shared */,
+				0C3D5DAF1D2C1758001053B8 /* Shared */,
 				0C3D5D161D29B768001053B8 /* Zones */,
 				0C3D5D2B1D29B769001053B8 /* ZonesTests */,
 				0C3D5D361D29B769001053B8 /* ZonesUITests */,
@@ -271,13 +270,30 @@
 			path = PadZonesUITests;
 			sourceTree = "<group>";
 		};
-		0C3D5D9B1D2B1D70001053B8 /* Shared */ = {
+		0C3D5DAF1D2C1758001053B8 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				0C3D5D9C1D2B1D9F001053B8 /* ZCoreDataManager.swift */,
-				0C3D5D9F1D2C05AE001053B8 /* ZAbstractionLayer.swift */,
+				0C3D5DB01D2C1758001053B8 /* main */,
+				0C3D5DB31D2C1758001053B8 /* managers */,
 			);
-			name = Shared;
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		0C3D5DB01D2C1758001053B8 /* main */ = {
+			isa = PBXGroup;
+			children = (
+				0C3D5DB11D2C1758001053B8 /* ZAbstractionLayer.swift */,
+				0C3D5DB21D2C1758001053B8 /* ZSingletons.swift */,
+			);
+			path = main;
+			sourceTree = "<group>";
+		};
+		0C3D5DB31D2C1758001053B8 /* managers */ = {
+			isa = PBXGroup;
+			children = (
+				0C3D5DB41D2C1758001053B8 /* ZCoreDataManager.swift */,
+			);
+			path = managers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -520,12 +536,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C3D5DB71D2C1758001053B8 /* ZSingletons.swift in Sources */,
 				0C3D5D501D29B81C001053B8 /* ZMainViewController.swift in Sources */,
+				0C3D5DB91D2C1758001053B8 /* ZCoreDataManager.swift in Sources */,
+				0C3D5DB51D2C1758001053B8 /* ZAbstractionLayer.swift in Sources */,
 				0C3D5D5F1D29FDE0001053B8 /* Zones.xcdatamodeld in Sources */,
-				0C3D5DA01D2C05AE001053B8 /* ZAbstractionLayer.swift in Sources */,
 				0C3D5D531D29B81C001053B8 /* ZAppDelegate.swift in Sources */,
-				0C3D5D9D1D2B1D9F001053B8 /* ZCoreDataManager.swift in Sources */,
-				0C3D5DA31D2C0FEF001053B8 /* ZSingletons.swift in Sources */,
 				0C3D5D641D29FE44001053B8 /* ZIdea.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -550,11 +566,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C3D5DBA1D2C1758001053B8 /* ZCoreDataManager.swift in Sources */,
 				0C3D5D741D2B1CC2001053B8 /* PadZones.xcdatamodeld in Sources */,
-				0C3D5D9E1D2B1D9F001053B8 /* ZCoreDataManager.swift in Sources */,
-				0C3D5DA41D2C0FEF001053B8 /* ZSingletons.swift in Sources */,
-				0C3D5DA11D2C05AE001053B8 /* ZAbstractionLayer.swift in Sources */,
 				0C3D5D6E1D2B1CC2001053B8 /* ViewController.swift in Sources */,
+				0C3D5DB81D2C1758001053B8 /* ZSingletons.swift in Sources */,
+				0C3D5DB61D2C1758001053B8 /* ZAbstractionLayer.swift in Sources */,
 				0C3D5D6C1D2B1CC2001053B8 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
