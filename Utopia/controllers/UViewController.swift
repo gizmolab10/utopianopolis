@@ -3,7 +3,7 @@
 //  Utopia
 //
 //  Created by Jonathan Sand on 5/12/16.
-//  Copyright © 2016 Gizmolab. All rights reserved.
+//  Copyright © 2016 Zoned. All rights reserved.
 //
 
 import UIKit

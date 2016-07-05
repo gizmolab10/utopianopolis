@@ -1,4 +1,6 @@
 target 'Utopia' do
-  use_frameworks!
-  pod 'RealmSwift'
+    pod 'Firebase'
+    pod 'Firebase/Database'
+    use_frameworks!
+    pod 'RealmSwift'
 end

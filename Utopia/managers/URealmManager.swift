@@ -8,11 +8,20 @@
 
 
 import RealmSwift
+import Foundation
+import UIKit
 import os
 
 
 public class URealmManager {
     public static let sharedRealmManager = URealmManager();
+    func setup() -> Void {
+        var config = Realm.Configuration()
+
+        config.fileURL = NSURL.fileURLWithPath("")
+
+        Realm.Configuration.defaultConfiguration = config
+    }
     // Use them like regular Swift objects
     func fire() -> Void {
         let me = UUtopian()
