@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>PadZones.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>Zones.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>0CA04B131D2ECF1A001892E5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0CA04B271D2ECF1B001892E5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0CA04B321D2ECF1B001892E5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0CA04B481D2ECF41001892E5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0CA04B5D1D2ECF41001892E5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0CA04B681D2ECF41001892E5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>
