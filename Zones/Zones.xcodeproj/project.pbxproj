@@ -7,305 +7,320 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0C3D5D2D1D29B769001053B8 /* ZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D2C1D29B769001053B8 /* ZonesTests.swift */; };
-		0C3D5D381D29B769001053B8 /* ZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D371D29B769001053B8 /* ZonesUITests.swift */; };
-		0C3D5D501D29B81C001053B8 /* ZMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D461D29B81C001053B8 /* ZMainViewController.swift */; };
-		0C3D5D511D29B81C001053B8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C3D5D481D29B81C001053B8 /* Assets.xcassets */; };
-		0C3D5D531D29B81C001053B8 /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D4B1D29B81C001053B8 /* ZAppDelegate.swift */; };
-		0C3D5D541D29B81C001053B8 /* Zones.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 0C3D5D4C1D29B81C001053B8 /* Zones.entitlements */; };
-		0C3D5D5C1D29B8EE001053B8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C3D5D5A1D29B8EE001053B8 /* Main.storyboard */; };
-		0C3D5D5F1D29FDE0001053B8 /* Zones.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D5D1D29FDE0001053B8 /* Zones.xcdatamodeld */; };
-		0C3D5D641D29FE44001053B8 /* ZIdea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D631D29FE44001053B8 /* ZIdea.swift */; };
-		0C3D5D6C1D2B1CC2001053B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D6B1D2B1CC2001053B8 /* AppDelegate.swift */; };
-		0C3D5D6E1D2B1CC2001053B8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D6D1D2B1CC2001053B8 /* ViewController.swift */; };
-		0C3D5D711D2B1CC2001053B8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C3D5D6F1D2B1CC2001053B8 /* Main.storyboard */; };
-		0C3D5D741D2B1CC2001053B8 /* PadZones.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D721D2B1CC2001053B8 /* PadZones.xcdatamodeld */; };
-		0C3D5D761D2B1CC2001053B8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C3D5D751D2B1CC2001053B8 /* Assets.xcassets */; };
-		0C3D5D791D2B1CC2001053B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C3D5D771D2B1CC2001053B8 /* LaunchScreen.storyboard */; };
-		0C3D5D841D2B1CC2001053B8 /* PadZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D831D2B1CC2001053B8 /* PadZonesTests.swift */; };
-		0C3D5D8F1D2B1CC2001053B8 /* PadZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5D8E1D2B1CC2001053B8 /* PadZonesUITests.swift */; };
-		0C3D5DB51D2C1758001053B8 /* ZAbstractionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5DB11D2C1758001053B8 /* ZAbstractionLayer.swift */; };
-		0C3D5DB61D2C1758001053B8 /* ZAbstractionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5DB11D2C1758001053B8 /* ZAbstractionLayer.swift */; };
-		0C3D5DB71D2C1758001053B8 /* ZSingletons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5DB21D2C1758001053B8 /* ZSingletons.swift */; };
-		0C3D5DB81D2C1758001053B8 /* ZSingletons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5DB21D2C1758001053B8 /* ZSingletons.swift */; };
-		0C3D5DB91D2C1758001053B8 /* ZCoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5DB41D2C1758001053B8 /* ZCoreDataManager.swift */; };
-		0C3D5DBA1D2C1758001053B8 /* ZCoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3D5DB41D2C1758001053B8 /* ZCoreDataManager.swift */; };
+		0CA04B221D2ECF1B001892E5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B201D2ECF1B001892E5 /* Main.storyboard */; };
+		0CA04B2D1D2ECF1B001892E5 /* ZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */; };
+		0CA04B381D2ECF1B001892E5 /* ZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B371D2ECF1B001892E5 /* ZonesUITests.swift */; };
+		0CA04B4C1D2ECF41001892E5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B4B1D2ECF41001892E5 /* AppDelegate.swift */; };
+		0CA04B4E1D2ECF41001892E5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B4D1D2ECF41001892E5 /* ViewController.swift */; };
+		0CA04B511D2ECF41001892E5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B4F1D2ECF41001892E5 /* Main.storyboard */; };
+		0CA04B531D2ECF41001892E5 /* PadZones.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B521D2ECF41001892E5 /* PadZones.xcdatamodeld */; };
+		0CA04B551D2ECF41001892E5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B541D2ECF41001892E5 /* Assets.xcassets */; };
+		0CA04B581D2ECF41001892E5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B561D2ECF41001892E5 /* LaunchScreen.storyboard */; };
+		0CA04B631D2ECF41001892E5 /* PadZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */; };
+		0CA04B6E1D2ECF41001892E5 /* PadZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */; };
+		0CA04B7A1D2ECF6A001892E5 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CA04B791D2ECF6A001892E5 /* CoreData.framework */; };
+		0CA04B7C1D2ECF88001892E5 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CA04B791D2ECF6A001892E5 /* CoreData.framework */; };
+		0CA04B7D1D2ECF8C001892E5 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CA04B791D2ECF6A001892E5 /* CoreData.framework */; };
+		0CA04B881D2ECFFD001892E5 /* ZAbstractionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B801D2ECFFD001892E5 /* ZAbstractionLayer.swift */; };
+		0CA04B891D2ECFFD001892E5 /* ZAbstractionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B801D2ECFFD001892E5 /* ZAbstractionLayer.swift */; };
+		0CA04B8A1D2ECFFD001892E5 /* ZSingletons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B811D2ECFFD001892E5 /* ZSingletons.swift */; };
+		0CA04B8B1D2ECFFD001892E5 /* ZSingletons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B811D2ECFFD001892E5 /* ZSingletons.swift */; };
+		0CA04B8C1D2ECFFD001892E5 /* ZCoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B831D2ECFFD001892E5 /* ZCoreDataManager.swift */; };
+		0CA04B8D1D2ECFFD001892E5 /* ZCoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B831D2ECFFD001892E5 /* ZCoreDataManager.swift */; };
+		0CA04B8E1D2ECFFD001892E5 /* ZIdea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B851D2ECFFD001892E5 /* ZIdea.swift */; };
+		0CA04B8F1D2ECFFD001892E5 /* ZIdea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B851D2ECFFD001892E5 /* ZIdea.swift */; };
+		0CA04B901D2ECFFD001892E5 /* Zones.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B861D2ECFFD001892E5 /* Zones.xcdatamodeld */; };
+		0CA04B911D2ECFFD001892E5 /* Zones.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B861D2ECFFD001892E5 /* Zones.xcdatamodeld */; };
+		0CA04B9B1D2ED079001892E5 /* ZMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B941D2ED079001892E5 /* ZMainViewController.swift */; };
+		0CA04B9C1D2ED079001892E5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B961D2ED079001892E5 /* Assets.xcassets */; };
+		0CA04B9E1D2ED079001892E5 /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B991D2ED079001892E5 /* ZAppDelegate.swift */; };
+		0CA04B9F1D2ED079001892E5 /* Zones.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B9A1D2ED079001892E5 /* Zones.entitlements */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		0C3D5D291D29B769001053B8 /* PBXContainerItemProxy */ = {
+		0CA04B291D2ECF1B001892E5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 0C3D5D0C1D29B768001053B8 /* Project object */;
+			containerPortal = 0CA04B0C1D2ECF1A001892E5 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 0C3D5D131D29B768001053B8;
+			remoteGlobalIDString = 0CA04B131D2ECF1A001892E5;
 			remoteInfo = Zones;
 		};
-		0C3D5D341D29B769001053B8 /* PBXContainerItemProxy */ = {
+		0CA04B341D2ECF1B001892E5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 0C3D5D0C1D29B768001053B8 /* Project object */;
+			containerPortal = 0CA04B0C1D2ECF1A001892E5 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 0C3D5D131D29B768001053B8;
+			remoteGlobalIDString = 0CA04B131D2ECF1A001892E5;
 			remoteInfo = Zones;
 		};
-		0C3D5D801D2B1CC2001053B8 /* PBXContainerItemProxy */ = {
+		0CA04B5F1D2ECF41001892E5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 0C3D5D0C1D29B768001053B8 /* Project object */;
+			containerPortal = 0CA04B0C1D2ECF1A001892E5 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 0C3D5D681D2B1CC2001053B8;
+			remoteGlobalIDString = 0CA04B481D2ECF41001892E5;
 			remoteInfo = PadZones;
 		};
-		0C3D5D8B1D2B1CC2001053B8 /* PBXContainerItemProxy */ = {
+		0CA04B6A1D2ECF41001892E5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 0C3D5D0C1D29B768001053B8 /* Project object */;
+			containerPortal = 0CA04B0C1D2ECF1A001892E5 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 0C3D5D681D2B1CC2001053B8;
+			remoteGlobalIDString = 0CA04B481D2ECF41001892E5;
 			remoteInfo = PadZones;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0C3D5D141D29B768001053B8 /* Zones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zones.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C3D5D281D29B769001053B8 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C3D5D2C1D29B769001053B8 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
-		0C3D5D2E1D29B769001053B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0C3D5D331D29B769001053B8 /* ZonesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C3D5D371D29B769001053B8 /* ZonesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesUITests.swift; sourceTree = "<group>"; };
-		0C3D5D391D29B769001053B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0C3D5D461D29B81C001053B8 /* ZMainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMainViewController.swift; sourceTree = "<group>"; };
-		0C3D5D481D29B81C001053B8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		0C3D5D4A1D29B81C001053B8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0C3D5D4B1D29B81C001053B8 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
-		0C3D5D4C1D29B81C001053B8 /* Zones.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Zones.entitlements; sourceTree = "<group>"; };
-		0C3D5D5B1D29B8EE001053B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		0C3D5D5E1D29FDE0001053B8 /* Zones.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Zones.xcdatamodel; sourceTree = "<group>"; };
-		0C3D5D631D29FE44001053B8 /* ZIdea.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZIdea.swift; sourceTree = "<group>"; };
-		0C3D5D691D2B1CC2001053B8 /* PadZones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PadZones.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C3D5D6B1D2B1CC2001053B8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		0C3D5D6D1D2B1CC2001053B8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		0C3D5D701D2B1CC2001053B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		0C3D5D731D2B1CC2001053B8 /* PadZones.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = PadZones.xcdatamodel; sourceTree = "<group>"; };
-		0C3D5D751D2B1CC2001053B8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		0C3D5D781D2B1CC2001053B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		0C3D5D7A1D2B1CC2001053B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0C3D5D7F1D2B1CC2001053B8 /* PadZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PadZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C3D5D831D2B1CC2001053B8 /* PadZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PadZonesTests.swift; sourceTree = "<group>"; };
-		0C3D5D851D2B1CC2001053B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0C3D5D8A1D2B1CC2001053B8 /* PadZonesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PadZonesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C3D5D8E1D2B1CC2001053B8 /* PadZonesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PadZonesUITests.swift; sourceTree = "<group>"; };
-		0C3D5D901D2B1CC2001053B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0C3D5D9A1D2B1CEB001053B8 /* PadZones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PadZones.entitlements; sourceTree = "<group>"; };
-		0C3D5DB11D2C1758001053B8 /* ZAbstractionLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAbstractionLayer.swift; sourceTree = "<group>"; };
-		0C3D5DB21D2C1758001053B8 /* ZSingletons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSingletons.swift; sourceTree = "<group>"; };
-		0C3D5DB41D2C1758001053B8 /* ZCoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZCoreDataManager.swift; sourceTree = "<group>"; };
+		0CA04B141D2ECF1A001892E5 /* Zones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zones.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CA04B211D2ECF1B001892E5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
+		0CA04B2E1D2ECF1B001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0CA04B331D2ECF1B001892E5 /* ZonesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CA04B371D2ECF1B001892E5 /* ZonesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesUITests.swift; sourceTree = "<group>"; };
+		0CA04B391D2ECF1B001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0CA04B491D2ECF41001892E5 /* PadZones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PadZones.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CA04B4B1D2ECF41001892E5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		0CA04B4D1D2ECF41001892E5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		0CA04B501D2ECF41001892E5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		0CA04B541D2ECF41001892E5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0CA04B571D2ECF41001892E5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		0CA04B591D2ECF41001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0CA04B5E1D2ECF41001892E5 /* PadZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PadZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PadZonesTests.swift; sourceTree = "<group>"; };
+		0CA04B641D2ECF41001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0CA04B691D2ECF41001892E5 /* PadZonesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PadZonesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PadZonesUITests.swift; sourceTree = "<group>"; };
+		0CA04B6F1D2ECF41001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0CA04B791D2ECF6A001892E5 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
+		0CA04B801D2ECFFD001892E5 /* ZAbstractionLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAbstractionLayer.swift; sourceTree = "<group>"; };
+		0CA04B811D2ECFFD001892E5 /* ZSingletons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSingletons.swift; sourceTree = "<group>"; };
+		0CA04B831D2ECFFD001892E5 /* ZCoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZCoreDataManager.swift; sourceTree = "<group>"; };
+		0CA04B851D2ECFFD001892E5 /* ZIdea.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZIdea.swift; sourceTree = "<group>"; };
+		0CA04B871D2ECFFD001892E5 /* Zones.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Zones.xcdatamodel; sourceTree = "<group>"; };
+		0CA04B941D2ED079001892E5 /* ZMainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMainViewController.swift; sourceTree = "<group>"; };
+		0CA04B961D2ED079001892E5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0CA04B981D2ED079001892E5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0CA04B991D2ED079001892E5 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
+		0CA04B9A1D2ED079001892E5 /* Zones.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Zones.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		0C3D5D111D29B768001053B8 /* Frameworks */ = {
+		0CA04B111D2ECF1A001892E5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CA04B7D1D2ECF8C001892E5 /* CoreData.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CA04B251D2ECF1B001892E5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C3D5D251D29B769001053B8 /* Frameworks */ = {
+		0CA04B301D2ECF1B001892E5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C3D5D301D29B769001053B8 /* Frameworks */ = {
+		0CA04B461D2ECF41001892E5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CA04B7C1D2ECF88001892E5 /* CoreData.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CA04B5B1D2ECF41001892E5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C3D5D661D2B1CC2001053B8 /* Frameworks */ = {
+		0CA04B661D2ECF41001892E5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0C3D5D7C1D2B1CC2001053B8 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0C3D5D871D2B1CC2001053B8 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				0CA04B7A1D2ECF6A001892E5 /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0C3D5D0B1D29B768001053B8 = {
+		0CA04B0B1D2ECF1A001892E5 = {
 			isa = PBXGroup;
 			children = (
-				0C3D5DAF1D2C1758001053B8 /* Shared */,
-				0C3D5D161D29B768001053B8 /* Zones */,
-				0C3D5D2B1D29B769001053B8 /* ZonesTests */,
-				0C3D5D361D29B769001053B8 /* ZonesUITests */,
-				0C3D5D6A1D2B1CC2001053B8 /* PadZones */,
-				0C3D5D821D2B1CC2001053B8 /* PadZonesTests */,
-				0C3D5D8D1D2B1CC2001053B8 /* PadZonesUITests */,
-				0C3D5D151D29B768001053B8 /* Products */,
+				0CA04B7B1D2ECF6F001892E5 /* Frameworks */,
+				0CA04B4A1D2ECF41001892E5 /* PadZones */,
+				0CA04B611D2ECF41001892E5 /* PadZonesTests */,
+				0CA04B6C1D2ECF41001892E5 /* PadZonesUITests */,
+				0CA04B151D2ECF1A001892E5 /* Products */,
+				0CA04B7E1D2ECFFD001892E5 /* Shared */,
+				0CA04B161D2ECF1A001892E5 /* Zones */,
+				0CA04B2B1D2ECF1B001892E5 /* ZonesTests */,
+				0CA04B361D2ECF1B001892E5 /* ZonesUITests */,
 			);
 			sourceTree = "<group>";
 		};
-		0C3D5D151D29B768001053B8 /* Products */ = {
+		0CA04B151D2ECF1A001892E5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0C3D5D141D29B768001053B8 /* Zones.app */,
-				0C3D5D281D29B769001053B8 /* ZonesTests.xctest */,
-				0C3D5D331D29B769001053B8 /* ZonesUITests.xctest */,
-				0C3D5D691D2B1CC2001053B8 /* PadZones.app */,
-				0C3D5D7F1D2B1CC2001053B8 /* PadZonesTests.xctest */,
-				0C3D5D8A1D2B1CC2001053B8 /* PadZonesUITests.xctest */,
+				0CA04B141D2ECF1A001892E5 /* Zones.app */,
+				0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */,
+				0CA04B331D2ECF1B001892E5 /* ZonesUITests.xctest */,
+				0CA04B491D2ECF41001892E5 /* PadZones.app */,
+				0CA04B5E1D2ECF41001892E5 /* PadZonesTests.xctest */,
+				0CA04B691D2ECF41001892E5 /* PadZonesUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		0C3D5D161D29B768001053B8 /* Zones */ = {
+		0CA04B161D2ECF1A001892E5 /* Zones */ = {
 			isa = PBXGroup;
 			children = (
-				0C3D5D451D29B81C001053B8 /* controllers */,
-				0C3D5D471D29B81C001053B8 /* interfaces */,
-				0C3D5D491D29B81C001053B8 /* main */,
-				0C3D5D4D1D29B81C001053B8 /* models */,
+				0CA04B931D2ED079001892E5 /* controllers */,
+				0CA04B951D2ED079001892E5 /* interfaces */,
+				0CA04B971D2ED079001892E5 /* main */,
 			);
 			path = Zones;
 			sourceTree = "<group>";
 		};
-		0C3D5D2B1D29B769001053B8 /* ZonesTests */ = {
+		0CA04B2B1D2ECF1B001892E5 /* ZonesTests */ = {
 			isa = PBXGroup;
 			children = (
-				0C3D5D2C1D29B769001053B8 /* ZonesTests.swift */,
-				0C3D5D2E1D29B769001053B8 /* Info.plist */,
+				0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */,
+				0CA04B2E1D2ECF1B001892E5 /* Info.plist */,
 			);
 			path = ZonesTests;
 			sourceTree = "<group>";
 		};
-		0C3D5D361D29B769001053B8 /* ZonesUITests */ = {
+		0CA04B361D2ECF1B001892E5 /* ZonesUITests */ = {
 			isa = PBXGroup;
 			children = (
-				0C3D5D371D29B769001053B8 /* ZonesUITests.swift */,
-				0C3D5D391D29B769001053B8 /* Info.plist */,
+				0CA04B371D2ECF1B001892E5 /* ZonesUITests.swift */,
+				0CA04B391D2ECF1B001892E5 /* Info.plist */,
 			);
 			path = ZonesUITests;
 			sourceTree = "<group>";
 		};
-		0C3D5D451D29B81C001053B8 /* controllers */ = {
+		0CA04B4A1D2ECF41001892E5 /* PadZones */ = {
 			isa = PBXGroup;
 			children = (
-				0C3D5D461D29B81C001053B8 /* ZMainViewController.swift */,
-			);
-			path = controllers;
-			sourceTree = "<group>";
-		};
-		0C3D5D471D29B81C001053B8 /* interfaces */ = {
-			isa = PBXGroup;
-			children = (
-				0C3D5D5A1D29B8EE001053B8 /* Main.storyboard */,
-				0C3D5D481D29B81C001053B8 /* Assets.xcassets */,
-			);
-			path = interfaces;
-			sourceTree = "<group>";
-		};
-		0C3D5D491D29B81C001053B8 /* main */ = {
-			isa = PBXGroup;
-			children = (
-				0C3D5D4A1D29B81C001053B8 /* Info.plist */,
-				0C3D5D4B1D29B81C001053B8 /* ZAppDelegate.swift */,
-				0C3D5D4C1D29B81C001053B8 /* Zones.entitlements */,
-			);
-			path = main;
-			sourceTree = "<group>";
-		};
-		0C3D5D4D1D29B81C001053B8 /* models */ = {
-			isa = PBXGroup;
-			children = (
-				0C3D5D5D1D29FDE0001053B8 /* Zones.xcdatamodeld */,
-				0C3D5D631D29FE44001053B8 /* ZIdea.swift */,
-			);
-			path = models;
-			sourceTree = "<group>";
-		};
-		0C3D5D6A1D2B1CC2001053B8 /* PadZones */ = {
-			isa = PBXGroup;
-			children = (
-				0C3D5D9A1D2B1CEB001053B8 /* PadZones.entitlements */,
-				0C3D5D6B1D2B1CC2001053B8 /* AppDelegate.swift */,
-				0C3D5D6D1D2B1CC2001053B8 /* ViewController.swift */,
-				0C3D5D6F1D2B1CC2001053B8 /* Main.storyboard */,
-				0C3D5D751D2B1CC2001053B8 /* Assets.xcassets */,
-				0C3D5D771D2B1CC2001053B8 /* LaunchScreen.storyboard */,
-				0C3D5D7A1D2B1CC2001053B8 /* Info.plist */,
-				0C3D5D721D2B1CC2001053B8 /* PadZones.xcdatamodeld */,
+				0CA04B4B1D2ECF41001892E5 /* AppDelegate.swift */,
+				0CA04B4D1D2ECF41001892E5 /* ViewController.swift */,
+				0CA04B4F1D2ECF41001892E5 /* Main.storyboard */,
+				0CA04B541D2ECF41001892E5 /* Assets.xcassets */,
+				0CA04B561D2ECF41001892E5 /* LaunchScreen.storyboard */,
+				0CA04B591D2ECF41001892E5 /* Info.plist */,
+				0CA04B521D2ECF41001892E5 /* PadZones.xcdatamodeld */,
 			);
 			path = PadZones;
 			sourceTree = "<group>";
 		};
-		0C3D5D821D2B1CC2001053B8 /* PadZonesTests */ = {
+		0CA04B611D2ECF41001892E5 /* PadZonesTests */ = {
 			isa = PBXGroup;
 			children = (
-				0C3D5D831D2B1CC2001053B8 /* PadZonesTests.swift */,
-				0C3D5D851D2B1CC2001053B8 /* Info.plist */,
+				0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */,
+				0CA04B641D2ECF41001892E5 /* Info.plist */,
 			);
 			path = PadZonesTests;
 			sourceTree = "<group>";
 		};
-		0C3D5D8D1D2B1CC2001053B8 /* PadZonesUITests */ = {
+		0CA04B6C1D2ECF41001892E5 /* PadZonesUITests */ = {
 			isa = PBXGroup;
 			children = (
-				0C3D5D8E1D2B1CC2001053B8 /* PadZonesUITests.swift */,
-				0C3D5D901D2B1CC2001053B8 /* Info.plist */,
+				0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */,
+				0CA04B6F1D2ECF41001892E5 /* Info.plist */,
 			);
 			path = PadZonesUITests;
 			sourceTree = "<group>";
 		};
-		0C3D5DAF1D2C1758001053B8 /* Shared */ = {
+		0CA04B7B1D2ECF6F001892E5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0C3D5DB01D2C1758001053B8 /* main */,
-				0C3D5DB31D2C1758001053B8 /* managers */,
+				0CA04B791D2ECF6A001892E5 /* CoreData.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		0CA04B7E1D2ECFFD001892E5 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				0CA04B7F1D2ECFFD001892E5 /* main */,
+				0CA04B821D2ECFFD001892E5 /* managers */,
+				0CA04B841D2ECFFD001892E5 /* models */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
 		};
-		0C3D5DB01D2C1758001053B8 /* main */ = {
+		0CA04B7F1D2ECFFD001892E5 /* main */ = {
 			isa = PBXGroup;
 			children = (
-				0C3D5DB11D2C1758001053B8 /* ZAbstractionLayer.swift */,
-				0C3D5DB21D2C1758001053B8 /* ZSingletons.swift */,
+				0CA04B801D2ECFFD001892E5 /* ZAbstractionLayer.swift */,
+				0CA04B811D2ECFFD001892E5 /* ZSingletons.swift */,
 			);
 			path = main;
 			sourceTree = "<group>";
 		};
-		0C3D5DB31D2C1758001053B8 /* managers */ = {
+		0CA04B821D2ECFFD001892E5 /* managers */ = {
 			isa = PBXGroup;
 			children = (
-				0C3D5DB41D2C1758001053B8 /* ZCoreDataManager.swift */,
+				0CA04B831D2ECFFD001892E5 /* ZCoreDataManager.swift */,
 			);
 			path = managers;
+			sourceTree = "<group>";
+		};
+		0CA04B841D2ECFFD001892E5 /* models */ = {
+			isa = PBXGroup;
+			children = (
+				0CA04B851D2ECFFD001892E5 /* ZIdea.swift */,
+				0CA04B861D2ECFFD001892E5 /* Zones.xcdatamodeld */,
+			);
+			path = models;
+			sourceTree = "<group>";
+		};
+		0CA04B931D2ED079001892E5 /* controllers */ = {
+			isa = PBXGroup;
+			children = (
+				0CA04B941D2ED079001892E5 /* ZMainViewController.swift */,
+			);
+			path = controllers;
+			sourceTree = "<group>";
+		};
+		0CA04B951D2ED079001892E5 /* interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				0CA04B201D2ECF1B001892E5 /* Main.storyboard */,
+				0CA04B961D2ED079001892E5 /* Assets.xcassets */,
+			);
+			path = interfaces;
+			sourceTree = "<group>";
+		};
+		0CA04B971D2ED079001892E5 /* main */ = {
+			isa = PBXGroup;
+			children = (
+				0CA04B981D2ED079001892E5 /* Info.plist */,
+				0CA04B991D2ED079001892E5 /* ZAppDelegate.swift */,
+				0CA04B9A1D2ED079001892E5 /* Zones.entitlements */,
+			);
+			path = main;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0C3D5D131D29B768001053B8 /* Zones */ = {
+		0CA04B131D2ECF1A001892E5 /* Zones */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0C3D5D3C1D29B769001053B8 /* Build configuration list for PBXNativeTarget "Zones" */;
+			buildConfigurationList = 0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Zones" */;
 			buildPhases = (
-				0C3D5D101D29B768001053B8 /* Sources */,
-				0C3D5D111D29B768001053B8 /* Frameworks */,
-				0C3D5D121D29B768001053B8 /* Resources */,
+				0CA04B101D2ECF1A001892E5 /* Sources */,
+				0CA04B111D2ECF1A001892E5 /* Frameworks */,
+				0CA04B121D2ECF1A001892E5 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -313,52 +328,52 @@
 			);
 			name = Zones;
 			productName = Zones;
-			productReference = 0C3D5D141D29B768001053B8 /* Zones.app */;
+			productReference = 0CA04B141D2ECF1A001892E5 /* Zones.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0C3D5D271D29B769001053B8 /* ZonesTests */ = {
+		0CA04B271D2ECF1B001892E5 /* ZonesTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0C3D5D3F1D29B769001053B8 /* Build configuration list for PBXNativeTarget "ZonesTests" */;
+			buildConfigurationList = 0CA04B3F1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "ZonesTests" */;
 			buildPhases = (
-				0C3D5D241D29B769001053B8 /* Sources */,
-				0C3D5D251D29B769001053B8 /* Frameworks */,
-				0C3D5D261D29B769001053B8 /* Resources */,
+				0CA04B241D2ECF1B001892E5 /* Sources */,
+				0CA04B251D2ECF1B001892E5 /* Frameworks */,
+				0CA04B261D2ECF1B001892E5 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				0C3D5D2A1D29B769001053B8 /* PBXTargetDependency */,
+				0CA04B2A1D2ECF1B001892E5 /* PBXTargetDependency */,
 			);
 			name = ZonesTests;
 			productName = ZonesTests;
-			productReference = 0C3D5D281D29B769001053B8 /* ZonesTests.xctest */;
+			productReference = 0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		0C3D5D321D29B769001053B8 /* ZonesUITests */ = {
+		0CA04B321D2ECF1B001892E5 /* ZonesUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0C3D5D421D29B769001053B8 /* Build configuration list for PBXNativeTarget "ZonesUITests" */;
+			buildConfigurationList = 0CA04B421D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "ZonesUITests" */;
 			buildPhases = (
-				0C3D5D2F1D29B769001053B8 /* Sources */,
-				0C3D5D301D29B769001053B8 /* Frameworks */,
-				0C3D5D311D29B769001053B8 /* Resources */,
+				0CA04B2F1D2ECF1B001892E5 /* Sources */,
+				0CA04B301D2ECF1B001892E5 /* Frameworks */,
+				0CA04B311D2ECF1B001892E5 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				0C3D5D351D29B769001053B8 /* PBXTargetDependency */,
+				0CA04B351D2ECF1B001892E5 /* PBXTargetDependency */,
 			);
 			name = ZonesUITests;
 			productName = ZonesUITests;
-			productReference = 0C3D5D331D29B769001053B8 /* ZonesUITests.xctest */;
+			productReference = 0CA04B331D2ECF1B001892E5 /* ZonesUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		0C3D5D681D2B1CC2001053B8 /* PadZones */ = {
+		0CA04B481D2ECF41001892E5 /* PadZones */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0C3D5D911D2B1CC2001053B8 /* Build configuration list for PBXNativeTarget "PadZones" */;
+			buildConfigurationList = 0CA04B701D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadZones" */;
 			buildPhases = (
-				0C3D5D651D2B1CC2001053B8 /* Sources */,
-				0C3D5D661D2B1CC2001053B8 /* Frameworks */,
-				0C3D5D671D2B1CC2001053B8 /* Resources */,
+				0CA04B451D2ECF41001892E5 /* Sources */,
+				0CA04B461D2ECF41001892E5 /* Frameworks */,
+				0CA04B471D2ECF41001892E5 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -366,98 +381,81 @@
 			);
 			name = PadZones;
 			productName = PadZones;
-			productReference = 0C3D5D691D2B1CC2001053B8 /* PadZones.app */;
+			productReference = 0CA04B491D2ECF41001892E5 /* PadZones.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0C3D5D7E1D2B1CC2001053B8 /* PadZonesTests */ = {
+		0CA04B5D1D2ECF41001892E5 /* PadZonesTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0C3D5D941D2B1CC2001053B8 /* Build configuration list for PBXNativeTarget "PadZonesTests" */;
+			buildConfigurationList = 0CA04B731D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadZonesTests" */;
 			buildPhases = (
-				0C3D5D7B1D2B1CC2001053B8 /* Sources */,
-				0C3D5D7C1D2B1CC2001053B8 /* Frameworks */,
-				0C3D5D7D1D2B1CC2001053B8 /* Resources */,
+				0CA04B5A1D2ECF41001892E5 /* Sources */,
+				0CA04B5B1D2ECF41001892E5 /* Frameworks */,
+				0CA04B5C1D2ECF41001892E5 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				0C3D5D811D2B1CC2001053B8 /* PBXTargetDependency */,
+				0CA04B601D2ECF41001892E5 /* PBXTargetDependency */,
 			);
 			name = PadZonesTests;
 			productName = PadZonesTests;
-			productReference = 0C3D5D7F1D2B1CC2001053B8 /* PadZonesTests.xctest */;
+			productReference = 0CA04B5E1D2ECF41001892E5 /* PadZonesTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		0C3D5D891D2B1CC2001053B8 /* PadZonesUITests */ = {
+		0CA04B681D2ECF41001892E5 /* PadZonesUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0C3D5D971D2B1CC2001053B8 /* Build configuration list for PBXNativeTarget "PadZonesUITests" */;
+			buildConfigurationList = 0CA04B761D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadZonesUITests" */;
 			buildPhases = (
-				0C3D5D861D2B1CC2001053B8 /* Sources */,
-				0C3D5D871D2B1CC2001053B8 /* Frameworks */,
-				0C3D5D881D2B1CC2001053B8 /* Resources */,
+				0CA04B651D2ECF41001892E5 /* Sources */,
+				0CA04B661D2ECF41001892E5 /* Frameworks */,
+				0CA04B671D2ECF41001892E5 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				0C3D5D8C1D2B1CC2001053B8 /* PBXTargetDependency */,
+				0CA04B6B1D2ECF41001892E5 /* PBXTargetDependency */,
 			);
 			name = PadZonesUITests;
 			productName = PadZonesUITests;
-			productReference = 0C3D5D8A1D2B1CC2001053B8 /* PadZonesUITests.xctest */;
+			productReference = 0CA04B691D2ECF41001892E5 /* PadZonesUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		0C3D5D0C1D29B768001053B8 /* Project object */ = {
+		0CA04B0C1D2ECF1A001892E5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = Zones;
 				TargetAttributes = {
-					0C3D5D131D29B768001053B8 = {
+					0CA04B131D2ECF1A001892E5 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = F8M94NY2TV;
-						SystemCapabilities = {
-							com.apple.Push = {
-								enabled = 1;
-							};
-							com.apple.iCloud = {
-								enabled = 1;
-							};
-						};
 					};
-					0C3D5D271D29B769001053B8 = {
+					0CA04B271D2ECF1B001892E5 = {
 						CreatedOnToolsVersion = 7.3.1;
-						TestTargetID = 0C3D5D131D29B768001053B8;
+						TestTargetID = 0CA04B131D2ECF1A001892E5;
 					};
-					0C3D5D321D29B769001053B8 = {
+					0CA04B321D2ECF1B001892E5 = {
 						CreatedOnToolsVersion = 7.3.1;
-						TestTargetID = 0C3D5D131D29B768001053B8;
+						TestTargetID = 0CA04B131D2ECF1A001892E5;
 					};
-					0C3D5D681D2B1CC2001053B8 = {
+					0CA04B481D2ECF41001892E5 = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = F8M94NY2TV;
-						SystemCapabilities = {
-							com.apple.Push = {
-								enabled = 1;
-							};
-							com.apple.iCloud = {
-								enabled = 1;
-							};
-						};
 					};
-					0C3D5D7E1D2B1CC2001053B8 = {
+					0CA04B5D1D2ECF41001892E5 = {
 						CreatedOnToolsVersion = 7.3.1;
-						TestTargetID = 0C3D5D681D2B1CC2001053B8;
+						TestTargetID = 0CA04B481D2ECF41001892E5;
 					};
-					0C3D5D891D2B1CC2001053B8 = {
+					0CA04B681D2ECF41001892E5 = {
 						CreatedOnToolsVersion = 7.3.1;
-						TestTargetID = 0C3D5D681D2B1CC2001053B8;
+						TestTargetID = 0CA04B481D2ECF41001892E5;
 					};
 				};
 			};
-			buildConfigurationList = 0C3D5D0F1D29B768001053B8 /* Build configuration list for PBXProject "Zones" */;
+			buildConfigurationList = 0CA04B0F1D2ECF1A001892E5 /* Build configuration list for PBXProject "Zones" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -465,64 +463,64 @@
 				en,
 				Base,
 			);
-			mainGroup = 0C3D5D0B1D29B768001053B8;
-			productRefGroup = 0C3D5D151D29B768001053B8 /* Products */;
+			mainGroup = 0CA04B0B1D2ECF1A001892E5;
+			productRefGroup = 0CA04B151D2ECF1A001892E5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0C3D5D131D29B768001053B8 /* Zones */,
-				0C3D5D271D29B769001053B8 /* ZonesTests */,
-				0C3D5D321D29B769001053B8 /* ZonesUITests */,
-				0C3D5D681D2B1CC2001053B8 /* PadZones */,
-				0C3D5D7E1D2B1CC2001053B8 /* PadZonesTests */,
-				0C3D5D891D2B1CC2001053B8 /* PadZonesUITests */,
+				0CA04B131D2ECF1A001892E5 /* Zones */,
+				0CA04B271D2ECF1B001892E5 /* ZonesTests */,
+				0CA04B321D2ECF1B001892E5 /* ZonesUITests */,
+				0CA04B481D2ECF41001892E5 /* PadZones */,
+				0CA04B5D1D2ECF41001892E5 /* PadZonesTests */,
+				0CA04B681D2ECF41001892E5 /* PadZonesUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0C3D5D121D29B768001053B8 /* Resources */ = {
+		0CA04B121D2ECF1A001892E5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C3D5D5C1D29B8EE001053B8 /* Main.storyboard in Resources */,
-				0C3D5D541D29B81C001053B8 /* Zones.entitlements in Resources */,
-				0C3D5D511D29B81C001053B8 /* Assets.xcassets in Resources */,
+				0CA04B9F1D2ED079001892E5 /* Zones.entitlements in Resources */,
+				0CA04B9C1D2ED079001892E5 /* Assets.xcassets in Resources */,
+				0CA04B221D2ECF1B001892E5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C3D5D261D29B769001053B8 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0C3D5D311D29B769001053B8 /* Resources */ = {
+		0CA04B261D2ECF1B001892E5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C3D5D671D2B1CC2001053B8 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0C3D5D791D2B1CC2001053B8 /* LaunchScreen.storyboard in Resources */,
-				0C3D5D761D2B1CC2001053B8 /* Assets.xcassets in Resources */,
-				0C3D5D711D2B1CC2001053B8 /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0C3D5D7D1D2B1CC2001053B8 /* Resources */ = {
+		0CA04B311D2ECF1B001892E5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C3D5D881D2B1CC2001053B8 /* Resources */ = {
+		0CA04B471D2ECF41001892E5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CA04B581D2ECF41001892E5 /* LaunchScreen.storyboard in Resources */,
+				0CA04B551D2ECF41001892E5 /* Assets.xcassets in Resources */,
+				0CA04B511D2ECF41001892E5 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CA04B5C1D2ECF41001892E5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CA04B671D2ECF41001892E5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -532,112 +530,114 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		0C3D5D101D29B768001053B8 /* Sources */ = {
+		0CA04B101D2ECF1A001892E5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C3D5DB71D2C1758001053B8 /* ZSingletons.swift in Sources */,
-				0C3D5D501D29B81C001053B8 /* ZMainViewController.swift in Sources */,
-				0C3D5DB91D2C1758001053B8 /* ZCoreDataManager.swift in Sources */,
-				0C3D5DB51D2C1758001053B8 /* ZAbstractionLayer.swift in Sources */,
-				0C3D5D5F1D29FDE0001053B8 /* Zones.xcdatamodeld in Sources */,
-				0C3D5D531D29B81C001053B8 /* ZAppDelegate.swift in Sources */,
-				0C3D5D641D29FE44001053B8 /* ZIdea.swift in Sources */,
+				0CA04B901D2ECFFD001892E5 /* Zones.xcdatamodeld in Sources */,
+				0CA04B9E1D2ED079001892E5 /* ZAppDelegate.swift in Sources */,
+				0CA04B8A1D2ECFFD001892E5 /* ZSingletons.swift in Sources */,
+				0CA04B8E1D2ECFFD001892E5 /* ZIdea.swift in Sources */,
+				0CA04B8C1D2ECFFD001892E5 /* ZCoreDataManager.swift in Sources */,
+				0CA04B9B1D2ED079001892E5 /* ZMainViewController.swift in Sources */,
+				0CA04B881D2ECFFD001892E5 /* ZAbstractionLayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C3D5D241D29B769001053B8 /* Sources */ = {
+		0CA04B241D2ECF1B001892E5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C3D5D2D1D29B769001053B8 /* ZonesTests.swift in Sources */,
+				0CA04B2D1D2ECF1B001892E5 /* ZonesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C3D5D2F1D29B769001053B8 /* Sources */ = {
+		0CA04B2F1D2ECF1B001892E5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C3D5D381D29B769001053B8 /* ZonesUITests.swift in Sources */,
+				0CA04B381D2ECF1B001892E5 /* ZonesUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C3D5D651D2B1CC2001053B8 /* Sources */ = {
+		0CA04B451D2ECF41001892E5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C3D5DBA1D2C1758001053B8 /* ZCoreDataManager.swift in Sources */,
-				0C3D5D741D2B1CC2001053B8 /* PadZones.xcdatamodeld in Sources */,
-				0C3D5D6E1D2B1CC2001053B8 /* ViewController.swift in Sources */,
-				0C3D5DB81D2C1758001053B8 /* ZSingletons.swift in Sources */,
-				0C3D5DB61D2C1758001053B8 /* ZAbstractionLayer.swift in Sources */,
-				0C3D5D6C1D2B1CC2001053B8 /* AppDelegate.swift in Sources */,
+				0CA04B531D2ECF41001892E5 /* PadZones.xcdatamodeld in Sources */,
+				0CA04B911D2ECFFD001892E5 /* Zones.xcdatamodeld in Sources */,
+				0CA04B4E1D2ECF41001892E5 /* ViewController.swift in Sources */,
+				0CA04B8B1D2ECFFD001892E5 /* ZSingletons.swift in Sources */,
+				0CA04B8F1D2ECFFD001892E5 /* ZIdea.swift in Sources */,
+				0CA04B8D1D2ECFFD001892E5 /* ZCoreDataManager.swift in Sources */,
+				0CA04B4C1D2ECF41001892E5 /* AppDelegate.swift in Sources */,
+				0CA04B891D2ECFFD001892E5 /* ZAbstractionLayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C3D5D7B1D2B1CC2001053B8 /* Sources */ = {
+		0CA04B5A1D2ECF41001892E5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C3D5D841D2B1CC2001053B8 /* PadZonesTests.swift in Sources */,
+				0CA04B631D2ECF41001892E5 /* PadZonesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C3D5D861D2B1CC2001053B8 /* Sources */ = {
+		0CA04B651D2ECF41001892E5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C3D5D8F1D2B1CC2001053B8 /* PadZonesUITests.swift in Sources */,
+				0CA04B6E1D2ECF41001892E5 /* PadZonesUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0C3D5D2A1D29B769001053B8 /* PBXTargetDependency */ = {
+		0CA04B2A1D2ECF1B001892E5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0C3D5D131D29B768001053B8 /* Zones */;
-			targetProxy = 0C3D5D291D29B769001053B8 /* PBXContainerItemProxy */;
+			target = 0CA04B131D2ECF1A001892E5 /* Zones */;
+			targetProxy = 0CA04B291D2ECF1B001892E5 /* PBXContainerItemProxy */;
 		};
-		0C3D5D351D29B769001053B8 /* PBXTargetDependency */ = {
+		0CA04B351D2ECF1B001892E5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0C3D5D131D29B768001053B8 /* Zones */;
-			targetProxy = 0C3D5D341D29B769001053B8 /* PBXContainerItemProxy */;
+			target = 0CA04B131D2ECF1A001892E5 /* Zones */;
+			targetProxy = 0CA04B341D2ECF1B001892E5 /* PBXContainerItemProxy */;
 		};
-		0C3D5D811D2B1CC2001053B8 /* PBXTargetDependency */ = {
+		0CA04B601D2ECF41001892E5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0C3D5D681D2B1CC2001053B8 /* PadZones */;
-			targetProxy = 0C3D5D801D2B1CC2001053B8 /* PBXContainerItemProxy */;
+			target = 0CA04B481D2ECF41001892E5 /* PadZones */;
+			targetProxy = 0CA04B5F1D2ECF41001892E5 /* PBXContainerItemProxy */;
 		};
-		0C3D5D8C1D2B1CC2001053B8 /* PBXTargetDependency */ = {
+		0CA04B6B1D2ECF41001892E5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0C3D5D681D2B1CC2001053B8 /* PadZones */;
-			targetProxy = 0C3D5D8B1D2B1CC2001053B8 /* PBXContainerItemProxy */;
+			target = 0CA04B481D2ECF41001892E5 /* PadZones */;
+			targetProxy = 0CA04B6A1D2ECF41001892E5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		0C3D5D5A1D29B8EE001053B8 /* Main.storyboard */ = {
+		0CA04B201D2ECF1B001892E5 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				0C3D5D5B1D29B8EE001053B8 /* Base */,
+				0CA04B211D2ECF1B001892E5 /* Base */,
 			);
 			name = Main.storyboard;
 			path = ..;
 			sourceTree = "<group>";
 		};
-		0C3D5D6F1D2B1CC2001053B8 /* Main.storyboard */ = {
+		0CA04B4F1D2ECF41001892E5 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				0C3D5D701D2B1CC2001053B8 /* Base */,
+				0CA04B501D2ECF41001892E5 /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
-		0C3D5D771D2B1CC2001053B8 /* LaunchScreen.storyboard */ = {
+		0CA04B561D2ECF41001892E5 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				0C3D5D781D2B1CC2001053B8 /* Base */,
+				0CA04B571D2ECF41001892E5 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -645,7 +645,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		0C3D5D3A1D29B769001053B8 /* Debug */ = {
+		0CA04B3A1D2ECF1B001892E5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -690,7 +690,7 @@
 			};
 			name = Debug;
 		};
-		0C3D5D3B1D29B769001053B8 /* Release */ = {
+		0CA04B3B1D2ECF1B001892E5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -727,44 +727,37 @@
 			};
 			name = Release;
 		};
-		0C3D5D3D1D29B769001053B8 /* Debug */ = {
+		0CA04B3D1D2ECF1B001892E5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Zones/main/Zones.entitlements;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				CODE_SIGN_IDENTITY = "Mac Developer: Jonathan Sand (CGZR7G3EU6)";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Zones/main/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.Zones;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				PROVISIONING_PROFILE = "4d72c689-6d2f-4da8-ae52-54b00b3f4aa2";
 			};
 			name = Debug;
 		};
-		0C3D5D3E1D29B769001053B8 /* Release */ = {
+		0CA04B3E1D2ECF1B001892E5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Zones/main/Zones.entitlements;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				CODE_SIGN_IDENTITY = "Mac Developer: Jonathan Sand (CGZR7G3EU6)";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Zones/main/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.Zones;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "4d72c689-6d2f-4da8-ae52-54b00b3f4aa2";
 			};
 			name = Release;
 		};
-		0C3D5D401D29B769001053B8 /* Debug */ = {
+		0CA04B401D2ECF1B001892E5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -777,7 +770,7 @@
 			};
 			name = Debug;
 		};
-		0C3D5D411D29B769001053B8 /* Release */ = {
+		0CA04B411D2ECF1B001892E5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -790,7 +783,7 @@
 			};
 			name = Release;
 		};
-		0C3D5D431D29B769001053B8 /* Debug */ = {
+		0CA04B431D2ECF1B001892E5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -802,7 +795,7 @@
 			};
 			name = Debug;
 		};
-		0C3D5D441D29B769001053B8 /* Release */ = {
+		0CA04B441D2ECF1B001892E5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -814,12 +807,10 @@
 			};
 			name = Release;
 		};
-		0C3D5D921D2B1CC2001053B8 /* Debug */ = {
+		0CA04B711D2ECF41001892E5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = PadZones/PadZones.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = PadZones/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
@@ -831,12 +822,10 @@
 			};
 			name = Debug;
 		};
-		0C3D5D931D2B1CC2001053B8 /* Release */ = {
+		0CA04B721D2ECF41001892E5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = PadZones/PadZones.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = PadZones/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
@@ -849,7 +838,7 @@
 			};
 			name = Release;
 		};
-		0C3D5D951D2B1CC2001053B8 /* Debug */ = {
+		0CA04B741D2ECF41001892E5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -864,7 +853,7 @@
 			};
 			name = Debug;
 		};
-		0C3D5D961D2B1CC2001053B8 /* Release */ = {
+		0CA04B751D2ECF41001892E5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -880,7 +869,7 @@
 			};
 			name = Release;
 		};
-		0C3D5D981D2B1CC2001053B8 /* Debug */ = {
+		0CA04B771D2ECF41001892E5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -894,7 +883,7 @@
 			};
 			name = Debug;
 		};
-		0C3D5D991D2B1CC2001053B8 /* Release */ = {
+		0CA04B781D2ECF41001892E5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -912,90 +901,85 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0C3D5D0F1D29B768001053B8 /* Build configuration list for PBXProject "Zones" */ = {
+		0CA04B0F1D2ECF1A001892E5 /* Build configuration list for PBXProject "Zones" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0C3D5D3A1D29B769001053B8 /* Debug */,
-				0C3D5D3B1D29B769001053B8 /* Release */,
+				0CA04B3A1D2ECF1B001892E5 /* Debug */,
+				0CA04B3B1D2ECF1B001892E5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0C3D5D3C1D29B769001053B8 /* Build configuration list for PBXNativeTarget "Zones" */ = {
+		0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Zones" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0C3D5D3D1D29B769001053B8 /* Debug */,
-				0C3D5D3E1D29B769001053B8 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0C3D5D3F1D29B769001053B8 /* Build configuration list for PBXNativeTarget "ZonesTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0C3D5D401D29B769001053B8 /* Debug */,
-				0C3D5D411D29B769001053B8 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0C3D5D421D29B769001053B8 /* Build configuration list for PBXNativeTarget "ZonesUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0C3D5D431D29B769001053B8 /* Debug */,
-				0C3D5D441D29B769001053B8 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0C3D5D911D2B1CC2001053B8 /* Build configuration list for PBXNativeTarget "PadZones" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0C3D5D921D2B1CC2001053B8 /* Debug */,
-				0C3D5D931D2B1CC2001053B8 /* Release */,
+				0CA04B3D1D2ECF1B001892E5 /* Debug */,
+				0CA04B3E1D2ECF1B001892E5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
-		0C3D5D941D2B1CC2001053B8 /* Build configuration list for PBXNativeTarget "PadZonesTests" */ = {
+		0CA04B3F1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "ZonesTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0C3D5D951D2B1CC2001053B8 /* Debug */,
-				0C3D5D961D2B1CC2001053B8 /* Release */,
+				0CA04B401D2ECF1B001892E5 /* Debug */,
+				0CA04B411D2ECF1B001892E5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
-		0C3D5D971D2B1CC2001053B8 /* Build configuration list for PBXNativeTarget "PadZonesUITests" */ = {
+		0CA04B421D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "ZonesUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0C3D5D981D2B1CC2001053B8 /* Debug */,
-				0C3D5D991D2B1CC2001053B8 /* Release */,
+				0CA04B431D2ECF1B001892E5 /* Debug */,
+				0CA04B441D2ECF1B001892E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		0CA04B701D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadZones" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CA04B711D2ECF41001892E5 /* Debug */,
+				0CA04B721D2ECF41001892E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		0CA04B731D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadZonesTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CA04B741D2ECF41001892E5 /* Debug */,
+				0CA04B751D2ECF41001892E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		0CA04B761D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadZonesUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CA04B771D2ECF41001892E5 /* Debug */,
+				0CA04B781D2ECF41001892E5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		0C3D5D5D1D29FDE0001053B8 /* Zones.xcdatamodeld */ = {
+		0CA04B521D2ECF41001892E5 /* PadZones.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				0C3D5D5E1D29FDE0001053B8 /* Zones.xcdatamodel */,
 			);
-			currentVersion = 0C3D5D5E1D29FDE0001053B8 /* Zones.xcdatamodel */;
-			path = Zones.xcdatamodeld;
+			path = PadZones.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
-		0C3D5D721D2B1CC2001053B8 /* PadZones.xcdatamodeld */ = {
+		0CA04B861D2ECFFD001892E5 /* Zones.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				0C3D5D731D2B1CC2001053B8 /* PadZones.xcdatamodel */,
+				0CA04B871D2ECFFD001892E5 /* Zones.xcdatamodel */,
 			);
-			currentVersion = 0C3D5D731D2B1CC2001053B8 /* PadZones.xcdatamodel */;
-			path = PadZones.xcdatamodeld;
+			currentVersion = 0CA04B871D2ECFFD001892E5 /* Zones.xcdatamodel */;
+			path = Zones.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
 /* End XCVersionGroup section */
 	};
-	rootObject = 0C3D5D0C1D29B768001053B8 /* Project object */;
+	rootObject = 0CA04B0C1D2ECF1A001892E5 /* Project object */;
 }

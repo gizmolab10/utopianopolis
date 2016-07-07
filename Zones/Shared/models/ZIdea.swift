@@ -13,8 +13,8 @@ import CoreData
 class ZIdea : NSManagedObject {
 
 
-    @NSManaged var text: String
-    @NSManaged var parent: ZIdea
+    @NSManaged var text: String?
+    @NSManaged var parent: ZIdea?
     @NSManaged var subordinates: [ZIdea]
 
 

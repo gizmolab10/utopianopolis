@@ -1,14 +1,14 @@
 //
-//  ZonesUITests.swift
-//  ZonesUITests
+//  PadZonesUITests.swift
+//  PadZonesUITests
 //
-//  Created by Jonathan Sand on 7/7/16.
+//  Created by Jonathan Sand on 7/4/16.
 //  Copyright © 2016 Zones. All rights reserved.
 //
 
 import XCTest
 
-class ZonesUITests: XCTestCase {
+class PadZonesUITests: XCTestCase {
         
     override func setUp() {
         super.setUp()
