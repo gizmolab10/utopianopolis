@@ -23,6 +23,14 @@
     public typealias ZOutlineViewDataSource = NSOutlineViewDataSource
 
 
+    public let ideasController: NSArrayController = {
+        let  controller: NSArrayController = NSArrayController();
+        controller.managedObjectContext = managedObjectContext;
+
+        return controller
+    }()
+
+
 #elseif os(iOS)
 
 
@@ -52,6 +60,14 @@
             return true
         }
     }
+
+
+    public let ideasController: NSFetchedResultsController = {
+        var request:       NSFetchRequest = NSFetchRequest(entityName: "ZIdea")
+        let f: NSFetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil);
+
+        return f
+    }()
 
 
 #endif

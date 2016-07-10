@@ -10,7 +10,7 @@
 import CoreData
 
 
-class ZCoreDataManager: NSObject {
+public class ZCoreDataManager: NSObject {
 
 
     // MARK: - Core Data stack

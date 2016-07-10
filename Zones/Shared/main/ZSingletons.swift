@@ -10,7 +10,7 @@
 import Foundation
 
 
-let sharedCoreDataManager = ZCoreDataManager()
-let     sharedApplication = ZApplication.sharedApplication()
-let  managedObjectContext = sharedCoreDataManager.managedObjectContext
+public let sharedCoreDataManager = ZCoreDataManager()
+public let     sharedApplication = ZApplication.sharedApplication()
+public let  managedObjectContext = sharedCoreDataManager.managedObjectContext
 

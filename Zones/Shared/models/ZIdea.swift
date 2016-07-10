@@ -10,7 +10,7 @@
 import CoreData
 
 
-class ZIdea : NSManagedObject {
+public class ZIdea : NSManagedObject {
 
 
     @NSManaged var text: String?

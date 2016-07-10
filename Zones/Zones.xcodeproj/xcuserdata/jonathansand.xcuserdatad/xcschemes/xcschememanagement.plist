@@ -14,9 +14,29 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>ZonesFramework.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>ZonesFrameworkPad.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>0C401E571D2F6341000B9864</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0C401E691D2F635A000B9864</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>0CA04B131D2ECF1A001892E5</key>
 		<dict>
 			<key>primary</key>
