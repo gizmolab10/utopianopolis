@@ -14,10 +14,17 @@ import Cocoa
 class ZMainViewController: ZViewController, ZOutlineViewDataSource {
 
 
-    @IBOutlet weak var outlineView: ZOutlineView?
+    @IBOutlet weak var treeController: NSTreeController?
+    @IBOutlet weak var outlineView: NSOutlineView?
 
 
-    func outlineView(outlineView: NSOutlineView, numberOfChildrenOfItem item: AnyObject?) -> Int { return ideasController.arrangedObjects.count }
+    func outlineView(outlineView: NSOutlineView, numberOfChildrenOfItem item: AnyObject?) -> Int {
+        if let t = treeController {
+            return t.arrangedObjects.count
+        }
+
+        return 0
+    }
 
 
 }
