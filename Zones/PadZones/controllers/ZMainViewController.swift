@@ -7,20 +7,22 @@
 //
 
 
-import ZonesFramework
 import UIKit
 
 
-class ZMainViewController: ZViewController {
+public class ZMainViewController: ZViewController {
 
-//
-//    public let zonesController: NSFetchedResultsController = {
-//        var request:       NSFetchRequest = NSFetchRequest(entityName: "Zone")
-//        let f: NSFetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil);
-//
-//        return f
-//    }()
 
+    var root: Zone = zonesManager.root()
+
+
+    @IBOutlet weak var label: UILabel!;
+
+
+    public override func viewWillAppear(animated: Bool) -> Void {
+        super.viewWillAppear(animated)
+        label.text = root.value
+    }
 
 }
 

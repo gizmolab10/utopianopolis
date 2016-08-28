@@ -11,5 +11,5 @@ import CoreData
 
 
 public class ZAction: NSManagedObject {
-    @NSManaged var owner: Zone?
+    @NSManaged public var owner: Zone
 }

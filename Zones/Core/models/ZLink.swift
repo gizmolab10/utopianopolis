@@ -11,7 +11,7 @@ import CoreData
 
 
 public class ZLink: NSManagedObject {
-    var            type: String?
-    @NSManaged var from: Zone?
-    @NSManaged var   to: Zone?
+    public var            type: String?
+    @NSManaged public var from: Zone
+    @NSManaged public var   to: Zone
 }

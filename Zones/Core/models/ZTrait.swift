@@ -11,8 +11,8 @@ import CoreData
 
 
 public class ZTrait: NSManagedObject {
-    var              key: String?
-    var             type: String?
-    var            value: NSData?
-    @NSManaged var owner: Zone?
+    public var              key: String?
+    public var             type: String?
+    public var            value: NSData?
+    @NSManaged public var owner: Zone!
 }
