@@ -2,18 +2,16 @@
 //  Zone.swift
 //  Zones
 //
-//  Created by Jonathan Sand on 7/24/16.
+//  Created by Jonathan Sand on 8/28/16.
 //  Copyright © 2016 Zones. All rights reserved.
 //
 
-
+import Foundation
 import CoreData
 
 
-public class Zone: NSManagedObject {
-    public var                value: String?
-    @NSManaged public var    traits: NSSet?
-    @NSManaged public var   actions: NSSet?
-    @NSManaged public var backlinks: NSSet?
-    @NSManaged public var     links: NSSet?
+class Zone: NSManagedObject {
+
+// Insert code here to add functionality to your managed object subclass
+
 }

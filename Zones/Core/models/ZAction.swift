@@ -2,14 +2,16 @@
 //  ZAction.swift
 //  Zones
 //
-//  Created by Jonathan Sand on 7/24/16.
+//  Created by Jonathan Sand on 8/28/16.
 //  Copyright © 2016 Zones. All rights reserved.
 //
 
-
+import Foundation
 import CoreData
 
 
-public class ZAction: NSManagedObject {
-    @NSManaged public var owner: Zone
+class ZAction: NSManagedObject {
+
+// Insert code here to add functionality to your managed object subclass
+
 }
