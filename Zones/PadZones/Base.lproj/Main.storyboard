@@ -27,7 +27,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
-                        <outlet property="label" destination="BcW-vw-YWj" id="eaN-xc-KXr"/>
+                        <outlet property="label" destination="BcW-vw-YWj" id="205-Ui-BDm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

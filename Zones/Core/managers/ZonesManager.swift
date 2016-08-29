@@ -24,7 +24,7 @@ public class ZonesManager: NSObject {
             }
         } catch {}
 
-        let root = newZone("root")
+        let root = newZone("rootbeer")
 
         do {
             try managedObjectContext.save()

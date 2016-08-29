@@ -12,6 +12,7 @@ import UIKit
 
 public class ZMainViewController: ZViewController {
 
+    @IBOutlet weak var label: NSTextField!
 
     var root: Zone = zonesManager.root()
 

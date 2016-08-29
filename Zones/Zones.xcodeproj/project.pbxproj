@@ -8,14 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		0C401E831D2F661A000B9864 /* ZMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C401E821D2F661A000B9864 /* ZMainViewController.swift */; };
-		0C4A880B1D552E8D005CDD76 /* ZTreeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4A880A1D552E8D005CDD76 /* ZTreeController.swift */; };
-		0C4A88151D5800E1005CDD76 /* ZonesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4A88141D5800E1005CDD76 /* ZonesManager.swift */; };
 		0C58C37B1D45805400CAB387 /* ZMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C58C36D1D45805400CAB387 /* ZMainViewController.swift */; };
 		0C58C37C1D45805400CAB387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C58C36F1D45805400CAB387 /* Assets.xcassets */; };
 		0C58C37D1D45805400CAB387 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C58C3711D45805400CAB387 /* AppDelegate.swift */; };
 		0C58C3821D45815A00CAB387 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B561D2ECF41001892E5 /* LaunchScreen.storyboard */; };
 		0C58C3831D45815A00CAB387 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B4F1D2ECF41001892E5 /* Main.storyboard */; };
-		0CA04B221D2ECF1B001892E5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B201D2ECF1B001892E5 /* Main.storyboard */; };
 		0CA04B2D1D2ECF1B001892E5 /* ZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */; };
 		0CA04B381D2ECF1B001892E5 /* ZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B371D2ECF1B001892E5 /* ZonesUITests.swift */; };
 		0CA04B631D2ECF41001892E5 /* PadZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */; };
@@ -49,6 +46,7 @@
 		0CB1A7DE1D73F87B00283F7B /* ZTrait+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB1A7CF1D73F87B00283F7B /* ZTrait+CoreDataProperties.swift */; };
 		0CB1A7DF1D73F87B00283F7B /* ZTrait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB1A7D01D73F87B00283F7B /* ZTrait.swift */; };
 		0CB1A7E01D73F87B00283F7B /* ZTrait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB1A7D01D73F87B00283F7B /* ZTrait.swift */; };
+		0CB1A7FF1D740EC500283F7B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CB1A7FE1D740EC500283F7B /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,8 +105,6 @@
 
 /* Begin PBXFileReference section */
 		0C401E821D2F661A000B9864 /* ZMainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMainViewController.swift; sourceTree = "<group>"; };
-		0C4A880A1D552E8D005CDD76 /* ZTreeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTreeController.swift; sourceTree = "<group>"; };
-		0C4A88141D5800E1005CDD76 /* ZonesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZonesManager.swift; sourceTree = "<group>"; };
 		0C58C36D1D45805400CAB387 /* ZMainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMainViewController.swift; sourceTree = "<group>"; };
 		0C58C36F1D45805400CAB387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C58C3711D45805400CAB387 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -119,7 +115,6 @@
 		0C5B91251D610AEC000CFB6F /* ZonesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZonesManager.swift; sourceTree = "<group>"; };
 		0C5B912B1D610AEC000CFB6F /* Zones.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Zones.xcdatamodel; sourceTree = "<group>"; };
 		0CA04B141D2ECF1A001892E5 /* Zones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zones.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		0CA04B211D2ECF1B001892E5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
 		0CA04B2E1D2ECF1B001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -147,6 +142,7 @@
 		0CB1A7CE1D73F87B00283F7B /* ZAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAction.swift; sourceTree = "<group>"; };
 		0CB1A7CF1D73F87B00283F7B /* ZTrait+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZTrait+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0CB1A7D01D73F87B00283F7B /* ZTrait.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTrait.swift; sourceTree = "<group>"; };
+		0CB1A7FE1D740EC500283F7B /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -204,14 +200,6 @@
 				0CA04B361D2ECF1B001892E5 /* ZonesUITests */,
 			);
 			name = Tests;
-			sourceTree = "<group>";
-		};
-		0C4A88131D5800E1005CDD76 /* managers */ = {
-			isa = PBXGroup;
-			children = (
-				0C4A88141D5800E1005CDD76 /* ZonesManager.swift */,
-			);
-			path = managers;
 			sourceTree = "<group>";
 		};
 		0C58C36B1D45805400CAB387 /* controllers */ = {
@@ -315,7 +303,6 @@
 				0CA04B931D2ED079001892E5 /* controllers */,
 				0CA04B951D2ED079001892E5 /* interfaces */,
 				0CA04B971D2ED079001892E5 /* main */,
-				0C4A88131D5800E1005CDD76 /* managers */,
 			);
 			path = Zones;
 			sourceTree = "<group>";
@@ -370,7 +357,6 @@
 			isa = PBXGroup;
 			children = (
 				0C401E821D2F661A000B9864 /* ZMainViewController.swift */,
-				0C4A880A1D552E8D005CDD76 /* ZTreeController.swift */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -378,8 +364,8 @@
 		0CA04B951D2ED079001892E5 /* interfaces */ = {
 			isa = PBXGroup;
 			children = (
-				0CA04B201D2ECF1B001892E5 /* Main.storyboard */,
 				0CA04B961D2ED079001892E5 /* Assets.xcassets */,
+				0CB1A7FE1D740EC500283F7B /* Main.storyboard */,
 			);
 			path = interfaces;
 			sourceTree = "<group>";
@@ -569,9 +555,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0CB1A7FF1D740EC500283F7B /* Main.storyboard in Resources */,
 				0CA04B9F1D2ED079001892E5 /* Zones.entitlements in Resources */,
 				0CA04B9C1D2ED079001892E5 /* Assets.xcassets in Resources */,
-				0CA04B221D2ECF1B001892E5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -631,11 +617,9 @@
 				0CB1A7E01D73F87B00283F7B /* ZTrait.swift in Sources */,
 				0CB1A7DA1D73F87B00283F7B /* ZAction+CoreDataProperties.swift in Sources */,
 				0C401E831D2F661A000B9864 /* ZMainViewController.swift in Sources */,
-				0C4A880B1D552E8D005CDD76 /* ZTreeController.swift in Sources */,
 				0CB1A7D41D73F87B00283F7B /* Zone.swift in Sources */,
 				0CA04B9E1D2ED079001892E5 /* ZAppDelegate.swift in Sources */,
 				0CB1A7491D726DCF00283F7B /* ZAbstractionLayer.swift in Sources */,
-				0C4A88151D5800E1005CDD76 /* ZonesManager.swift in Sources */,
 				0CB1A74F1D726DE500283F7B /* ZonesManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -720,15 +704,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		0CA04B201D2ECF1B001892E5 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				0CA04B211D2ECF1B001892E5 /* Base */,
-			);
-			name = Main.storyboard;
-			path = ..;
-			sourceTree = "<group>";
-		};
 		0CA04B4F1D2ECF41001892E5 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

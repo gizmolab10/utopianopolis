@@ -10,21 +10,17 @@
 import Cocoa
 
 
-class ZMainViewController: ZViewController, ZOutlineViewDataSource {
+class ZMainViewController: ZViewController {
+
+    @IBOutlet weak var label: NSTextField!
+
+    var root: Zone = zonesManager.root()
 
 
-    @IBOutlet weak var treeController: NSTreeController?
-    @IBOutlet weak var outlineView: NSOutlineView?
-
-
-    func outlineView(outlineView: NSOutlineView, numberOfChildrenOfItem item: AnyObject?) -> Int {
-        if let t = treeController {
-            return t.arrangedObjects.count
-        }
-
-        return 0
+    override func viewWillAppear() -> Void {
+        super.viewWillAppear()
+        label.stringValue = root.zoneName!
     }
-
-
+    
 }
 
