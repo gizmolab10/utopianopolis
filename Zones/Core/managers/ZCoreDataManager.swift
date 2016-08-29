@@ -64,7 +64,7 @@ public class ZCoreDataManager: NSObject {
             coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
             let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("CocoaAppCD.storedata")
             do {
-                try coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: [NSPersistentStoreUbiquitousContentNameKey : "ZonesCloudStore"])
+                try coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: [NSPersistentStoreUbiquitousContentNameKey : "ZonesCloudStore", NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true])
             } catch {
                 failError = error as NSError
             }

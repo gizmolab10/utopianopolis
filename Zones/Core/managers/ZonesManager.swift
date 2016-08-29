@@ -13,7 +13,7 @@ import CoreData
 public class ZonesManager: NSObject {
 
 
-    public func root() -> Zone {
+    func root() -> Zone {
         let request: NSFetchRequest = NSFetchRequest(entityName: "Zone")
 
         do {
@@ -24,7 +24,7 @@ public class ZonesManager: NSObject {
             }
         } catch {}
 
-        let zone = newZone("root")
+        let root = newZone("root")
 
         do {
             try managedObjectContext.save()
@@ -32,15 +32,15 @@ public class ZonesManager: NSObject {
             fatalError("Failure to save context: \(error)")
         }
 
-        return zone;
+        return root;
     }
 
 
-    public func newZone(value: String) -> Zone {
-        let    zone = NSEntityDescription.insertNewObjectForEntityForName("Zone", inManagedObjectContext: managedObjectContext) as! Zone
-        let   trait = newTrait()
-        trait.owner = zone
-        zone.value  = value
+    func newZone(value: String) -> Zone {
+        let      zone = NSEntityDescription.insertNewObjectForEntityForName("Zone", inManagedObjectContext: managedObjectContext) as! Zone
+        let     trait = newTrait()
+        zone.zoneName = value
+        trait.owner   = zone
 
         zone.mutableSetValueForKey("traits").addObject(trait)
 
@@ -48,7 +48,7 @@ public class ZonesManager: NSObject {
     }
 
 
-    public func newTrait() -> ZTrait {
+    func newTrait() -> ZTrait {
         let trait = NSEntityDescription.insertNewObjectForEntityForName("ZTrait", inManagedObjectContext: managedObjectContext) as! ZTrait
 
         return trait

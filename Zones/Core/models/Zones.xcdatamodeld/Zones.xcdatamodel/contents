@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10174" systemVersion="15G31" minimumToolsVersion="Automatic">
     <entity name="ZAction" representedClassName=".ZAction" syncable="YES">
-        <attribute name="value" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="zoneName" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Zone" inverseName="actions" inverseEntity="Zone" syncable="YES"/>
     </entity>
     <entity name="ZLink" representedClassName=".ZLink" syncable="YES">
@@ -10,6 +10,7 @@
         <relationship name="to" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Zone" inverseName="links" inverseEntity="Zone" syncable="YES"/>
     </entity>
     <entity name="Zone" representedClassName=".Zone" syncable="YES">
+        <attribute name="zoneName" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="actions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ZAction" inverseName="owner" inverseEntity="ZAction" syncable="YES"/>
         <relationship name="backlinks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ZLink" inverseName="from" inverseEntity="ZLink" syncable="YES"/>
         <relationship name="links" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ZLink" inverseName="to" inverseEntity="ZLink" syncable="YES"/>
@@ -22,9 +23,9 @@
         <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Zone" inverseName="traits" inverseEntity="Zone" syncable="YES"/>
     </entity>
     <elements>
-        <element name="ZAction" positionX="151" positionY="-0" width="128" height="73"/>
-        <element name="ZLink" positionX="-299" positionY="-0" width="128" height="90"/>
-        <element name="Zone" positionX="-72" positionY="-15" width="128" height="103"/>
-        <element name="ZTrait" positionX="333" positionY="0" width="128" height="103"/>
+        <element name="ZAction" positionX="151" positionY="-30" width="128" height="73"/>
+        <element name="ZLink" positionX="-299" positionY="-15" width="128" height="90"/>
+        <element name="Zone" positionX="-72" positionY="-15" width="128" height="118"/>
+        <element name="ZTrait" positionX="333" positionY="-15" width="128" height="103"/>
     </elements>
 </model>

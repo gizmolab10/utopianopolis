@@ -21,7 +21,7 @@ public class ZMainViewController: ZViewController {
 
     public override func viewWillAppear(animated: Bool) -> Void {
         super.viewWillAppear(animated)
-        label.text = root.value
+        label.text = root.zoneName
     }
 
 }
