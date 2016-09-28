@@ -6,12 +6,16 @@
 //  Copyright © 2016 Zones. All rights reserved.
 //
 
+
 import Foundation
-import CoreData
+import CloudKit
 
 
-class ZTrait: NSManagedObject {
+class ZTrait: ZBase {
 
-// Insert code here to add functionality to your managed object subclass
+    var   key: String?
+    var  type: String?
+    var value: Data?
+    var owner: Zone?
 
 }

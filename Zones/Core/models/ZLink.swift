@@ -6,12 +6,15 @@
 //  Copyright © 2016 Zones. All rights reserved.
 //
 
+
 import Foundation
-import CoreData
+import CloudKit
 
 
-class ZLink: NSManagedObject {
+class ZLink: ZBase {
 
-// Insert code here to add functionality to your managed object subclass
+    var type: String?
+    var from: Zone?
+    var to:   Zone?
 
 }

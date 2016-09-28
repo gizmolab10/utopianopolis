@@ -1,6 +1,9 @@
-target 'Utopia' do
-    pod 'Firebase'
-    pod 'Firebase/Database'
+project './Zones/Zones.xcodeproj'
+target 'Zones' do
+    pod 'Firebase', '= 2.5.1'
     use_frameworks!
-    pod 'RealmSwift'
+end
+target 'PadZones' do
+    pod 'Firebase', '= 2.5.1'
+    use_frameworks!
 end

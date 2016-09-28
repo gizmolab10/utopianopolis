@@ -670,13 +670,13 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ZMainViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                        <rect key="frame" x="0.0" y="0.0" width="330" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zba-2T-Mbd">
-                                <rect key="frame" x="190" y="124" width="100" height="22"/>
+                                <rect key="frame" x="0.0" y="124" width="330" height="22"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="100" id="yBF-c8-kPW"/>
+                                    <constraint firstAttribute="width" constant="330" id="XoP-Zi-00H"/>
                                 </constraints>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" usesSingleLineMode="YES" bezelStyle="round" id="JHU-At-69S">
                                     <font key="font" metaFont="system"/>
@@ -687,7 +687,7 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="zba-2T-Mbd" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="CyL-rR-hsa"/>
-                            <constraint firstItem="zba-2T-Mbd" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="xsO-TJ-KJC"/>
+                            <constraint firstItem="zba-2T-Mbd" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="MpD-LE-zXj"/>
                         </constraints>
                     </view>
                     <connections>

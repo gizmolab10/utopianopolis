@@ -10,17 +10,14 @@
 import UIKit
 
 
-public class ZMainViewController: ZViewController {
+open class ZMainViewController: ZViewController {
 
-    @IBOutlet weak var label: NSTextField!
+    @IBOutlet weak var label: UILabel!
 
-    var root: Zone = zonesManager.root()
+    var root: Zone!
 
-
-    @IBOutlet weak var label: UILabel!;
-
-
-    public override func viewWillAppear(animated: Bool) -> Void {
+    
+    open override func viewWillAppear(_ animated: Bool) -> Void {
         super.viewWillAppear(animated)
         label.text = root.zoneName
     }

@@ -12,9 +12,10 @@ import Cocoa
 
 class ZMainViewController: ZViewController {
 
+
     @IBOutlet weak var label: NSTextField!
 
-    var root: Zone = zonesManager.root()
+    var root: Zone!
 
 
     override func viewWillAppear() -> Void {
