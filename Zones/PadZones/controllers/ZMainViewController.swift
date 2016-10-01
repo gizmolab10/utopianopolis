@@ -14,12 +14,16 @@ open class ZMainViewController: ZViewController {
 
     @IBOutlet weak var label: UILabel!
 
-    var root: Zone!
-
     
-    open override func viewWillAppear(_ animated: Bool) -> Void {
-        super.viewWillAppear(animated)
-        label.text = root.zoneName
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        modelManager.register { (kind) -> (Void) in
+            if kind == UpdateKind.data {
+                if let name: String = modelManager.currentZone.zoneName {
+                    self.label.text = name
+                }
+            }
+        }
     }
 
 }

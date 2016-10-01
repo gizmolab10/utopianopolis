@@ -15,12 +15,16 @@ class ZMainViewController: ZViewController {
 
     @IBOutlet weak var label: NSTextField!
 
-    var root: Zone!
 
-
-    override func viewWillAppear() -> Void {
-        super.viewWillAppear()
-        label.stringValue = root.zoneName!
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        modelManager.register { (kind) -> (Void) in
+            if kind == UpdateKind.data {
+                if let name: String = modelManager.root.zoneName {
+                    self.label.stringValue = name
+                }
+            }
+        }
     }
     
 }

@@ -11,7 +11,7 @@ import Foundation
 import CloudKit
 
 
-public class ZonesManager: NSObject {
+public class ZonesManager {
 
 
     func root() -> Zone {
