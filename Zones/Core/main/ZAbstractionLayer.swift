@@ -20,6 +20,7 @@
     public typealias ZOutlineView           = NSOutlineView
     public typealias ZApplication           = NSApplication
     public typealias ZViewController        = NSViewController
+    public typealias ZApplicationDelegate   = NSApplicationDelegate
     public typealias ZOutlineViewDataSource = NSOutlineViewDataSource
 
 
@@ -37,6 +38,7 @@
     public typealias ZOutlineView           = UITableView
     public typealias ZApplication           = UIApplication
     public typealias ZViewController        = UIViewController
+    public typealias ZApplicationDelegate   = UIApplicationDelegate
     public typealias ZOutlineViewDataSource = UITableViewDataSource
 
 

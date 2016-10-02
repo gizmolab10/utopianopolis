@@ -13,7 +13,7 @@ import Cocoa
 @NSApplicationMain
 
 
-class ZAppDelegate: NSApplicationDelegate {
+class ZAppDelegate: NSResponder, ZApplicationDelegate {
 
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {

@@ -52,17 +52,17 @@ public class ZModelManager {
     func setupRoot() {
         let currentZoneID: CKRecordID = CKRecordID.init(recordName: "root")
 
-        publicDB.fetch(withRecordID: currentZoneID) { (fetched: CKRecord?, fetchError: Error?) in
+        privateDB.fetch(withRecordID: currentZoneID) { (fetched: CKRecord?, fetchError: Error?) in
             if (fetchError == nil) {
-                self.currentZone = Zone(record: fetched!, database: self.publicDB)
+                self.currentZone = Zone(record: fetched!, database: self.privateDB)
                 self.update(with: UpdateKind.data)
             } else {
                 let created: CKRecord = CKRecord.init(recordType: "Zone", recordID: currentZoneID)
                 created["zoneName"] = "root" as CKRecordValue?
 
-                self.publicDB.save(created, completionHandler: { (saved: CKRecord?, saveError: Error?) in
+                self.privateDB.save(created, completionHandler: { (saved: CKRecord?, saveError: Error?) in
                     if (saveError == nil) {
-                        self.currentZone = Zone(record: saved!, database: self.publicDB)
+                        self.currentZone = Zone(record: saved!, database: self.privateDB)
                         self.update(with: UpdateKind.data)
                     }
                 })
@@ -90,52 +90,37 @@ public class ZModelManager {
     }
 
 
-    func set(object:AnyObject, propertyName:NSString, withValue:NSObject) {
+    func set(intoObject: ZBase, itsPropertyName: String, withValue: AnyObject) {
+        intoObject.record[itsPropertyName] = (withValue as! CKRecordValue)
 
+        self.privateDB.save(intoObject.record, completionHandler: { (saved: CKRecord?, saveError: Error?) in
+            if saveError != nil {
+                self.update(with: UpdateKind.error)
+            } else {
+                intoObject.record = saved
+                self.update(with: UpdateKind.data)
+            }
+        })
     }
 
 
-    func get(object:AnyObject, propertyName:NSString) -> NSObject? {
-//        let predicate = NSPredicate(format: "")
-//        let type : String = className(of: object);
-//        let query : CKQuery = CKQuery(recordType: type, predicate: predicate)
-//
-//        self.publicDB.performQuery(query, inZoneWithID: nil) { [unowned self] results, error in
-//
-//        }
-        return nil
+    func get(fromObject: ZBase, valueForPropertyName: String) {
+        let      predicate = NSPredicate(format: "")
+        let  type: String  = className(of: fromObject);
+        let query: CKQuery = CKQuery(recordType: type, predicate: predicate)
+
+        self.privateDB.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, iError: Error?) in
+            if iError != nil {
+                self.update(with: UpdateKind.error)
+            } else {
+                let        record: CKRecord = (iResults?[0])!
+                fromObject.record[valueForPropertyName] = (record as! CKRecordValue)
+
+                self.update(with: UpdateKind.data)
+            }
+        }
     }
 
-
-//    func fetchEstablishments(location:CLLocation, radiusInMeters:CLLocationDistance) {
-//        // 1
-//        let radiusInKilometers = radiusInMeters / 1000.0
-//        // 2
-//        let predicate = NSPredicate(format: "distanceToLocation:fromLocation:(%K,%@) &lt; %f", "Location", location, radiusInKilometers)
-//        // 3
-//        let query = CKQuery(recordType: "Zone", predicate: predicate)
-//        // 4
-//        self.publicDB.performQuery(query, inZoneWithID: nil) { [unowned self] results, error in
-////            if let error = error {
-////                dispatch_async(dispatch_get_main_queue()) {
-////                    self.delegate?.errorUpdating(error)
-////                    print("Cloud Query Error - Fetch Establishments: \(error)")
-////                }
-//                return
-//            }
-//
-//            self.items.removeAll(keepCapacity: true)
-//            results?.forEach({ (record: CKRecord) in
-//                self.items.append(Establishment(record: record,
-//                                                database: self.publicDB))
-//            })
-//
-//            dispatch_async(dispatch_get_main_queue()) {
-//                self.delegate?.modelUpdated()
-//            }
-//        }
-//    }
-    
 
 }
 

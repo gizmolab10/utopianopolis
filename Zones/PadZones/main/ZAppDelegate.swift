@@ -1,5 +1,5 @@
 //
-//  AppDelegate.swift
+//  ZAppDelegate.swift
 //  PadZones
 //
 //  Created by Jonathan Sand on 7/7/16.
@@ -14,7 +14,7 @@ import CoreData
 @UIApplicationMain
 
 
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class ZAppDelegate: UIResponder, ZApplicationDelegate {
 
 
     var window: UIWindow?

@@ -13,14 +13,24 @@ import CloudKit
 
 class ZBase {
     
-    
-    func set(propertyName:NSString, withValue:NSObject) {
-        modelManager.set(object: self, propertyName: propertyName, withValue: withValue)
+
+    var        record: CKRecord!
+    weak var database: CKDatabase!
+
+
+    init(record: CKRecord, database: CKDatabase) {
+        self.database = database
+        self.record   = record
     }
 
 
-    func get(propertyName:NSString) -> NSObject? {
-        return modelManager.get(object: self, propertyName: propertyName)
+    func set(propertyName:String, withValue: AnyObject) {
+        modelManager.set(intoObject: self, itsPropertyName: propertyName, withValue: withValue)
+    }
+
+
+    func get(propertyName: String) {
+        modelManager.get(fromObject: self, valueForPropertyName: propertyName)
     }
 
 

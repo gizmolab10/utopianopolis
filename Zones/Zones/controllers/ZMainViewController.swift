@@ -10,7 +10,7 @@
 import Cocoa
 
 
-class ZMainViewController: ZViewController {
+class ZMainViewController: ZViewController, NSTextFieldDelegate {
 
 
     @IBOutlet weak var label: NSTextField!
@@ -18,14 +18,24 @@ class ZMainViewController: ZViewController {
 
     override open func viewDidLoad() {
         super.viewDidLoad()
+
+        self.label.delegate = self
+
         modelManager.register { (kind) -> (Void) in
             if kind == UpdateKind.data {
-                if let name: String = modelManager.root.zoneName {
+                if let name: String = modelManager.currentZone.zoneName {
                     self.label.stringValue = name
                 }
             }
         }
     }
     
+
+    func control(_ control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
+        modelManager.currentZone.set(propertyName: "zoneName", withValue: label.stringValue as AnyObject)
+
+        return true
+    }
+
 }
 
