@@ -32,7 +32,7 @@ class ZMainViewController: ZViewController, NSTextFieldDelegate {
     
 
     func control(_ control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
-        modelManager.currentZone.set(propertyName: "zoneName", withValue: label.stringValue as AnyObject)
+        modelManager.currentZone.zoneName = label.stringValue;
 
         return true
     }

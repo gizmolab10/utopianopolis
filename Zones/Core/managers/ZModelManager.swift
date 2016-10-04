@@ -45,7 +45,26 @@ public class ZModelManager {
         privateDB = container.privateCloudDatabase
         publicDB  = container.publicCloudDatabase
 
+        setupSubscriptions()
         setupRoot()
+    }
+
+
+    func setupSubscriptions() {
+        let classNames = ["Zone", "ZTrait", "ZLink", "ZAction"]
+
+        for className: String in classNames {
+            let    predicate:    NSPredicate = NSPredicate()
+            let subscription: CKSubscription = CKSubscription(recordType: className, predicate: predicate, options: [.firesOnRecordUpdate])
+            let notification: CKNotificationInfo = CKNotificationInfo()
+
+            notification.shouldBadge      = true
+            subscription.notificationInfo = notification
+
+            privateDB.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iError: Error?) in
+                
+            })
+        }
     }
 
 
@@ -90,37 +109,39 @@ public class ZModelManager {
     }
 
 
-    func set(intoObject: ZBase, itsPropertyName: String, withValue: AnyObject) {
-        intoObject.record[itsPropertyName] = (withValue as! CKRecordValue)
+    func set(intoObject: ZBase, itsPropertyName: String, withValue: NSObject) {
+        if intoObject.record != nil {
+            let                          value = withValue as! CKRecordValue
+            intoObject.record[itsPropertyName] = value
 
-        self.privateDB.save(intoObject.record, completionHandler: { (saved: CKRecord?, saveError: Error?) in
-            if saveError != nil {
-                self.update(with: UpdateKind.error)
-            } else {
-                intoObject.record = saved
-                self.update(with: UpdateKind.data)
-            }
-        })
-    }
-
-
-    func get(fromObject: ZBase, valueForPropertyName: String) {
-        let      predicate = NSPredicate(format: "")
-        let  type: String  = className(of: fromObject);
-        let query: CKQuery = CKQuery(recordType: type, predicate: predicate)
-
-        self.privateDB.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, iError: Error?) in
-            if iError != nil {
-                self.update(with: UpdateKind.error)
-            } else {
-                let        record: CKRecord = (iResults?[0])!
-                fromObject.record[valueForPropertyName] = (record as! CKRecordValue)
-
-                self.update(with: UpdateKind.data)
-            }
+            self.privateDB.save(intoObject.record, completionHandler: { (saved: CKRecord?, saveError: Error?) in
+                if saveError != nil {
+                    self.update(with: UpdateKind.error)
+                } else {
+                    self.update(with: UpdateKind.data)
+                }
+            })
         }
     }
 
 
+    func get(fromObject: ZBase, valueForPropertyName: String) {
+        if fromObject.record != nil {
+            let      predicate = NSPredicate(format: "")
+            let  type: String  = className(of: fromObject);
+            let query: CKQuery = CKQuery(recordType: type, predicate: predicate)
+
+            self.privateDB.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, iError: Error?) in
+                if iError != nil {
+                    self.update(with: UpdateKind.error)
+                } else {
+                    let        record: CKRecord = (iResults?[0])!
+                    fromObject.record[valueForPropertyName] = (record as! CKRecordValue)
+
+                    self.update(with: UpdateKind.data)
+                }
+            }
+        }
+    }
 }
 

@@ -17,4 +17,8 @@ class ZLink: ZBase {
     var from: Zone?
     var to:   Zone?
 
+
+    override func propertyKeyPaths() -> [String] {
+        return super.propertyKeyPaths() + [#keyPath(type), #keyPath(from), #keyPath(to)]
+    }
 }

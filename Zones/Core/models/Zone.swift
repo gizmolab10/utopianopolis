@@ -13,11 +13,11 @@ import CloudKit
 
 class Zone : ZBase {
 
-    var zoneName: String?
-    var actions: NSSet?
-    var backlinks: NSSet?
-    var links: NSSet?
-    var traits: NSSet?
+    dynamic var zoneName: String?
+    dynamic var actions: NSSet?
+    dynamic var backlinks: NSSet?
+    dynamic var links: NSSet?
+    dynamic var traits: NSSet?
 
 
     override init(record: CKRecord, database: CKDatabase) {
@@ -26,4 +26,7 @@ class Zone : ZBase {
     }
 
 
+    override func propertyKeyPaths() -> [String] {
+        return super.propertyKeyPaths() + [#keyPath(zoneName), #keyPath(actions), #keyPath(backlinks), #keyPath(links), #keyPath(traits)]
+    }
 }

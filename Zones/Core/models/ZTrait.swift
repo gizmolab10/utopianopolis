@@ -18,4 +18,8 @@ class ZTrait: ZBase {
     var value: Data?
     var owner: Zone?
 
+
+    override func propertyKeyPaths() -> [String] {
+        return super.propertyKeyPaths() + [#keyPath(key), #keyPath(type), #keyPath(value), #keyPath(owner)]
+    }
 }
