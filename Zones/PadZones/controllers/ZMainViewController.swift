@@ -17,7 +17,7 @@ open class ZMainViewController: ZViewController {
     
     override open func viewDidLoad() {
         super.viewDidLoad()
-        modelManager.register { (kind) -> (Void) in
+        modelManager.registerClosure { (kind) -> (Void) in
             if kind == UpdateKind.data {
                 if let name: String = modelManager.currentZone.zoneName {
                     self.label.text = name

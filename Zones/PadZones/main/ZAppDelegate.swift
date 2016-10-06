@@ -8,6 +8,7 @@
 
 
 import UIKit
+import CloudKit
 
 
 @UIApplicationMain
@@ -19,10 +20,40 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
     var window: UIWindow?
 
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        let     type = UIUserNotificationType.badge
+        let settings = UIUserNotificationSettings(types: type, categories: nil)
+
+        application.registerUserNotificationSettings(settings)
+        application.registerForRemoteNotifications()
+
         return true
     }
 
 
+    public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
+        let note: CKQueryNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! [String : NSObject]) as! CKQueryNotification
+
+        if note.notificationType == .query {
+            let identifier = note.recordID!
+
+            modelManager.receivedUpdateFor(identifier)
+        }
+    }
+
+
+    public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        // print(deviceToken)
+    }
+
+
+    public func application(_ application: UIApplication, didRegister notificationSettings: UIUserNotificationSettings) {
+        // print(notificationSettings)
+    }
+
+
+    public func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("notification registration error: \(error)")
+    }
 }
 

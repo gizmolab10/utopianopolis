@@ -8,10 +8,12 @@
 
 
 import Foundation;
+import CloudKit
 
 
 public typealias Closure                 = ()         -> (Void)
 public typealias ObjectClosure           = (NSObject) -> (Void)
+public typealias RecordClosure           = (CKRecord) -> (Void)
 public typealias BooleanClosure          = (ObjCBool) -> (Void)
 public typealias TimerClosure            = (Timer)    -> (ObjCBool)
 public typealias ClosureClosure          = (Closure)  -> (Void)

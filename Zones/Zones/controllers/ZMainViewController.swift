@@ -21,7 +21,7 @@ class ZMainViewController: ZViewController, NSTextFieldDelegate {
 
         self.label.delegate = self
 
-        modelManager.register { (kind) -> (Void) in
+        modelManager.registerClosure { (kind) -> (Void) in
             if kind == UpdateKind.data {
                 if let name: String = modelManager.currentZone.zoneName {
                     self.label.stringValue = name

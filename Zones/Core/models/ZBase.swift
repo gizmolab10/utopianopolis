@@ -15,17 +15,33 @@ class ZBase: NSObject {
     
 
     var            kvoContext: UInt8 = 1
-    dynamic var        record: CKRecord!
     weak dynamic var database: CKDatabase!
+    var _record: CKRecord?
+    var record: CKRecord! {
+        get {
+            return _record
+        }
+
+        set {
+            _record = newValue
+
+            updateProperties()
+        }
+    }
 
 
     init(record: CKRecord, database: CKDatabase) {
+        super.init()
+
         self.database = database
         self.record   = record
 
-        super.init()
         self.setupKVO();
+        modelManager.registerObject(self)
     }
+
+
+    func updateProperties() {}
 
 
     func set(propertyName:String, withValue: NSObject) {
