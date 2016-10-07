@@ -98,9 +98,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0C401E821D2F661A000B9864 /* ZEditorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEditorViewController.swift; sourceTree = "<group>"; };
 		0C4A3FA71DA47B2000491E87 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
-		0C58C36D1D45805400CAB387 /* ZEditorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEditorViewController.swift; sourceTree = "<group>"; };
 		0C58C36F1D45805400CAB387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C58C3711D45805400CAB387 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
 		0C58C3761D45805400CAB387 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -199,14 +197,6 @@
 			name = Tests;
 			sourceTree = "<group>";
 		};
-		0C58C36B1D45805400CAB387 /* controllers */ = {
-			isa = PBXGroup;
-			children = (
-				0C58C36D1D45805400CAB387 /* ZEditorViewController.swift */,
-			);
-			path = controllers;
-			sourceTree = "<group>";
-		};
 		0C58C36E1D45805400CAB387 /* interfaces */ = {
 			isa = PBXGroup;
 			children = (
@@ -297,7 +287,6 @@
 		0CA04B161D2ECF1A001892E5 /* Zones */ = {
 			isa = PBXGroup;
 			children = (
-				0CA04B931D2ED079001892E5 /* controllers */,
 				0CA04B951D2ED079001892E5 /* interfaces */,
 				0CA04B971D2ED079001892E5 /* main */,
 			);
@@ -325,7 +314,6 @@
 		0CA04B4A1D2ECF41001892E5 /* PadZones */ = {
 			isa = PBXGroup;
 			children = (
-				0C58C36B1D45805400CAB387 /* controllers */,
 				0C58C36E1D45805400CAB387 /* interfaces */,
 				0C58C3701D45805400CAB387 /* main */,
 			);
@@ -348,14 +336,6 @@
 				0CA04B6F1D2ECF41001892E5 /* Info.plist */,
 			);
 			path = PadZonesUITests;
-			sourceTree = "<group>";
-		};
-		0CA04B931D2ED079001892E5 /* controllers */ = {
-			isa = PBXGroup;
-			children = (
-				0C401E821D2F661A000B9864 /* ZEditorViewController.swift */,
-			);
-			path = controllers;
 			sourceTree = "<group>";
 		};
 		0CA04B951D2ED079001892E5 /* interfaces */ = {
