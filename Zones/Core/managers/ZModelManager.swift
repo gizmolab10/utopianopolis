@@ -40,7 +40,6 @@ public class ZModelManager {
     var     records: [CKRecordID : ZBase]  = [:]
 
 
-
     init() {
         container = CKContainer(identifier: "iCloud.com.zones.Zones")
         currentDB = container.privateCloudDatabase
@@ -48,6 +47,80 @@ public class ZModelManager {
         registerForCloudKitNotifications()
         setupRootZone()
     }
+
+
+    // MARK:- closures
+    // MARK:-
+
+
+    func registerUpdateClosure(_ closure: @escaping UpdateClosure) {
+        closures.append(UpdateClosureObject(iClosure: closure))
+    }
+
+
+    func updateClosures(with: UpdateKind) {
+        DispatchQueue.main.async(execute: {
+            for object: UpdateClosureObject in self.closures {
+                object.closure(with)
+            }
+        })
+    }
+
+
+    // MARK:- records
+    // MARK:-
+
+
+    func registerObject(_ object: ZBase) {
+        records[object.record.recordID] = object
+    }
+
+
+    func setupRootZone() {
+        let currentZoneID: CKRecordID = CKRecordID.init(recordName: "root")
+
+        updateReccord(currentZoneID, onCompletion: { (record: CKRecord?) -> (Void) in
+            self.currentZone = Zone(record: record!, database: self.currentDB)
+            self.updateClosures(with: UpdateKind.data)
+        })
+    }
+
+
+    public func receivedUpdateFor(_ recordID: CKRecordID) {
+        updateReccord(recordID, onCompletion: { (record: CKRecord) -> (Void) in
+            let    object = self.records[record.recordID]! as ZBase
+            object.record = record
+
+            self.updateClosures(with: UpdateKind.data)
+        })
+    }
+
+
+    func updateReccord(_ recordID: CKRecordID, onCompletion: @escaping RecordClosure) {
+        currentDB.fetch(withRecordID: recordID) { (fetched: CKRecord?, fetchError: Error?) in
+            if (fetchError == nil) {
+                onCompletion(fetched!)
+            } else {
+                let created: CKRecord = CKRecord.init(recordType: "Zone", recordID: recordID)
+                created["zoneName"] = "root" as CKRecordValue?
+
+                self.currentDB.save(created, completionHandler: { (saved: CKRecord?, saveError: Error?) in
+                    if (saveError == nil) {
+                        onCompletion(saved!)
+                    }
+                })
+            }
+        }
+    }
+
+
+    func className(of:AnyObject) -> String {
+        return NSStringFromClass(type(of: of)) as String
+    }
+
+
+    // MARK:- persistence
+    // MARK:-
 
 
     func registerForCloudKitNotifications() {
@@ -91,6 +164,8 @@ public class ZModelManager {
 
             self.currentDB.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iError: Error?) in
                 if iError != nil {
+                    self.updateClosures(with: UpdateKind.error)
+
                     print(iError)
                 }
             })
@@ -98,86 +173,34 @@ public class ZModelManager {
     }
 
 
-    func registerObject(_ object: ZBase) {
-        records[object.record.recordID] = object
-    }
-
-
-    public func receivedUpdateFor(_ recordID: CKRecordID) {
-        updateReccord(recordID, onCompletion: { (record: CKRecord) -> (Void) in
-            let    object = self.records[record.recordID]! as ZBase
-            object.record = record
-            
-            self.update(with: UpdateKind.data)
-        })
-    }
-
-
-    func setupRootZone() {
-        let currentZoneID: CKRecordID = CKRecordID.init(recordName: "root")
-
-        updateReccord(currentZoneID, onCompletion: { (record: CKRecord?) -> (Void) in
-            self.currentZone = Zone(record: record!, database: self.currentDB)
-            self.update(with: UpdateKind.data)
-        })
-    }
-
-
-    func updateReccord(_ recordID: CKRecordID, onCompletion: @escaping RecordClosure) {
-        currentDB.fetch(withRecordID: recordID) { (fetched: CKRecord?, fetchError: Error?) in
-            if (fetchError == nil) {
-                onCompletion(fetched!)
-            } else {
-                let created: CKRecord = CKRecord.init(recordType: "Zone", recordID: recordID)
-                created["zoneName"] = "root" as CKRecordValue?
-
-                self.currentDB.save(created, completionHandler: { (saved: CKRecord?, saveError: Error?) in
-                    if (saveError == nil) {
-                        onCompletion(saved!)
-                    }
-                })
-            }
-        }
-    }
-
-
-    func registerClosure(_ closure: @escaping UpdateClosure) {
-        closures.append(UpdateClosureObject(iClosure: closure))
-    }
-
-
-    func update(with: UpdateKind) {
-        DispatchQueue.main.async(execute: {
-            for object: UpdateClosureObject in self.closures {
-                object.closure(with)
-            }
-        })
-    }
-
-
-    func className(of:AnyObject) -> String {
-        return NSStringFromClass(type(of: of)) as String
-    }
-
-
     func set(intoObject: ZBase, itsPropertyName: String, withValue: NSObject) {
-        let identifier:    CKRecordID! = intoObject.record.recordID
-        let   oldValue: CKRecordValue! = intoObject.record[itsPropertyName]
+        let     record:       CKRecord = intoObject.record
+        let identifier:    CKRecordID! = record.recordID
+        let   oldValue: CKRecordValue! = record[itsPropertyName]
         let   newValue: CKRecordValue! = (withValue as! CKRecordValue)
         let  hasChange:           Bool = (oldValue as! NSObject != newValue as! NSObject)
 
         if (identifier != nil) && hasChange {
             currentDB.fetch(withRecordID: identifier) { (fetched: CKRecord?, fetchError: Error?) in
-                fetched![itsPropertyName] = newValue
-                intoObject.record         = fetched!
+                if fetchError != nil {
+                    record[itsPropertyName]   = newValue
+                    intoObject.unsaved        = true
 
-                self.currentDB.save(fetched!, completionHandler: { (saved: CKRecord?, saveError: Error?) in
-                    if saveError != nil {
-                        self.update(with: UpdateKind.error)
-                    } else {
-                        self.update(with: UpdateKind.data)
-                    }
-                })
+                    intoObject.updateProperties()
+                    self.updateClosures(with: UpdateKind.data)
+                } else {
+                    fetched![itsPropertyName] = newValue
+                    intoObject.unsaved        = false
+                    intoObject.record         = fetched!
+
+                    self.currentDB.save(fetched!, completionHandler: { (saved: CKRecord?, saveError: Error?) in
+                        if saveError != nil {
+                            self.updateClosures(with: UpdateKind.error)
+                        } else {
+                            self.updateClosures(with: UpdateKind.data)
+                        }
+                    })
+                }
             }
         }
     }
@@ -189,14 +212,14 @@ public class ZModelManager {
             let  type: String  = className(of: fromObject);
             let query: CKQuery = CKQuery(recordType: type, predicate: predicate)
 
-            self.currentDB.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, iError: Error?) in
-                if iError != nil {
-                    self.update(with: UpdateKind.error)
+            self.currentDB.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, performanceError: Error?) in
+                if performanceError != nil {
+                    self.updateClosures(with: UpdateKind.error)
                 } else {
                     let        record: CKRecord = (iResults?[0])!
                     fromObject.record[valueForPropertyName] = (record as! CKRecordValue)
 
-                    self.update(with: UpdateKind.data)
+                    self.updateClosures(with: UpdateKind.data)
                 }
             }
         }

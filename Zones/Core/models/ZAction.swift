@@ -13,11 +13,11 @@ import CloudKit
 
 class ZAction: ZBase {
 
-    var zoneName: String?
-    var    owner: Zone?
+    var action: NSDictionary?
+    var  owner: Zone?
 
 
     override func propertyKeyPaths() -> [String] {
-        return super.propertyKeyPaths() + [#keyPath(zoneName), #keyPath(owner)]
+        return super.propertyKeyPaths() + [#keyPath(action), #keyPath(owner)]
     }
 }

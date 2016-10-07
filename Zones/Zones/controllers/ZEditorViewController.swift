@@ -1,5 +1,5 @@
 //
-//  ZMainViewController.swift
+//  ZEditorViewController.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 7/2/16.
@@ -10,10 +10,10 @@
 import Cocoa
 
 
-class ZMainViewController: ZViewController, NSTextFieldDelegate {
+class ZEditorViewController: ZViewController, ZoneWidgetDelegate {
 
 
-    @IBOutlet weak var label: NSTextField!
+    @IBOutlet weak var label: ZoneWidget!
 
 
     override open func viewDidLoad() {
@@ -21,7 +21,7 @@ class ZMainViewController: ZViewController, NSTextFieldDelegate {
 
         self.label.delegate = self
 
-        modelManager.registerClosure { (kind) -> (Void) in
+        modelManager.registerUpdateClosure { (kind) -> (Void) in
             if kind == UpdateKind.data {
                 if let name: String = modelManager.currentZone.zoneName {
                     self.label.stringValue = name
@@ -36,6 +36,5 @@ class ZMainViewController: ZViewController, NSTextFieldDelegate {
 
         return true
     }
-
 }
 

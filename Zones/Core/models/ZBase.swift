@@ -14,10 +14,11 @@ import CloudKit
 class ZBase: NSObject {
     
 
+    var               unsaved: Bool  = false
     var            kvoContext: UInt8 = 1
     weak dynamic var database: CKDatabase!
-    var _record: CKRecord?
-    var record: CKRecord! {
+    var               _record: CKRecord?
+    var                record: CKRecord! {
         get {
             return _record
         }
