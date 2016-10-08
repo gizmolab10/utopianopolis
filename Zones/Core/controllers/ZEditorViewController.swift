@@ -16,21 +16,22 @@ import Foundation
 #endif
 
 
-class ZEditorViewController: ZViewController, ZoneWidgetDelegate {
+class ZEditorViewController: ZViewController, ZoneTextFieldDelegate {
 
     
-    @IBOutlet weak var label: ZoneWidget!
+    @IBOutlet weak var widget: ZoneWidget!
 
     
     override open func viewDidLoad() {
         super.viewDidLoad()
 
-        self.label.delegate = self
+        self.widget.delegate = self
 
         modelManager.registerUpdateClosure { (kind) -> (Void) in
             if kind == UpdateKind.data {
                 if let name: String = modelManager.selectedZone.zoneName {
-                    self.label.text = name
+                    self.widget.widgetZone = modelManager.selectedZone
+                    self.widget.layoutWithText(name)
                 }
             }
         }
@@ -40,7 +41,7 @@ class ZEditorViewController: ZViewController, ZoneWidgetDelegate {
 #if os(OSX)
 
     func control(_ control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
-        modelManager.selectedZone.zoneName = label.text;
+        widget.submit()
 
         return true
     }
@@ -48,7 +49,7 @@ class ZEditorViewController: ZViewController, ZoneWidgetDelegate {
 #elseif os(iOS)
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        modelManager.selectedZone.zoneName = label.text;
+        widget.submit()
 
         return true
     }

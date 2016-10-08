@@ -672,7 +672,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="552" height="448"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zba-2T-Mbd">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zba-2T-Mbd" customClass="ZoneWidget" customModule="Zones" customModuleProvider="target">
                                 <rect key="frame" x="111" y="213" width="330" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="330" id="XoP-Zi-00H"/>
@@ -682,6 +682,9 @@
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
+                                <connections>
+                                    <outlet property="width" destination="XoP-Zi-00H" id="Vr9-pT-d1h"/>
+                                </connections>
                             </textField>
                         </subviews>
                         <constraints>
@@ -690,7 +693,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="label" destination="zba-2T-Mbd" id="Boa-LV-q2F"/>
+                        <outlet property="widget" destination="zba-2T-Mbd" id="qA8-NT-PEu"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

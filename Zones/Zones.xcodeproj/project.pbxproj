@@ -41,6 +41,10 @@
 		0CEAAB511DA19B1C00EBF88A /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B991D2ED079001892E5 /* ZAppDelegate.swift */; };
 		0CF97D571DA785AB00FEAA41 /* ZEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D561DA785AB00FEAA41 /* ZEditorViewController.swift */; };
 		0CF97D581DA785AB00FEAA41 /* ZEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D561DA785AB00FEAA41 /* ZEditorViewController.swift */; };
+		0CF97D621DA880B000FEAA41 /* ZoneWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D611DA880B000FEAA41 /* ZoneWidget.swift */; };
+		0CF97D631DA880B000FEAA41 /* ZoneWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D611DA880B000FEAA41 /* ZoneWidget.swift */; };
+		0CF97D651DA97AD600FEAA41 /* ZExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D641DA97AD600FEAA41 /* ZExtensions.swift */; };
+		0CF97D661DA97AD600FEAA41 /* ZExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D641DA97AD600FEAA41 /* ZExtensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -136,6 +140,8 @@
 		0CD921811D90C65E00F80964 /* ZBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZBase.swift; sourceTree = "<group>"; };
 		0CEAAB4E1D9F2A8D00EBF88A /* ZGCD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGCD.swift; sourceTree = "<group>"; };
 		0CF97D561DA785AB00FEAA41 /* ZEditorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEditorViewController.swift; sourceTree = "<group>"; };
+		0CF97D611DA880B000FEAA41 /* ZoneWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZoneWidget.swift; path = views/ZoneWidget.swift; sourceTree = "<group>"; };
+		0CF97D641DA97AD600FEAA41 /* ZExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -225,6 +231,7 @@
 				0C5B91201D610AEC000CFB6F /* main */,
 				0C5B91231D610AEC000CFB6F /* managers */,
 				0C5B91261D610AEC000CFB6F /* models */,
+				0CF97D601DA8807400FEAA41 /* views */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -370,6 +377,7 @@
 			isa = PBXGroup;
 			children = (
 				0CEAAB4E1D9F2A8D00EBF88A /* ZGCD.swift */,
+				0CF97D641DA97AD600FEAA41 /* ZExtensions.swift */,
 			);
 			path = extensions;
 			sourceTree = "<group>";
@@ -380,6 +388,14 @@
 				0CF97D561DA785AB00FEAA41 /* ZEditorViewController.swift */,
 			);
 			path = controllers;
+			sourceTree = "<group>";
+		};
+		0CF97D601DA8807400FEAA41 /* views */ = {
+			isa = PBXGroup;
+			children = (
+				0CF97D611DA880B000FEAA41 /* ZoneWidget.swift */,
+			);
+			name = views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -640,12 +656,14 @@
 				0CF97D581DA785AB00FEAA41 /* ZEditorViewController.swift in Sources */,
 				0CB1A74B1D726DD700283F7B /* ZSingletons.swift in Sources */,
 				0CB1A7E01D73F87B00283F7B /* ZTrait.swift in Sources */,
+				0CF97D661DA97AD600FEAA41 /* ZExtensions.swift in Sources */,
 				0CEAAB501D9F2A8D00EBF88A /* ZGCD.swift in Sources */,
 				0CEAAB511DA19B1C00EBF88A /* ZAppDelegate.swift in Sources */,
 				0CB1A7D41D73F87B00283F7B /* Zone.swift in Sources */,
 				0CD921831D90C65E00F80964 /* ZBase.swift in Sources */,
 				0CBD002D1D9DBC4200797F21 /* ZClosures.swift in Sources */,
 				0CB1A7491D726DCF00283F7B /* ZAbstractionLayer.swift in Sources */,
+				0CF97D631DA880B000FEAA41 /* ZoneWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -674,12 +692,14 @@
 				0CF97D571DA785AB00FEAA41 /* ZEditorViewController.swift in Sources */,
 				0CB1A74A1D726DD100283F7B /* ZAbstractionLayer.swift in Sources */,
 				0CD9217F1D8F7A7800F80964 /* ZModelManager.swift in Sources */,
+				0CF97D651DA97AD600FEAA41 /* ZExtensions.swift in Sources */,
 				0CB1A7DB1D73F87B00283F7B /* ZAction.swift in Sources */,
 				0CEAAB4F1D9F2A8D00EBF88A /* ZGCD.swift in Sources */,
 				0CB1A7DF1D73F87B00283F7B /* ZTrait.swift in Sources */,
 				0CB1A7D31D73F87B00283F7B /* Zone.swift in Sources */,
 				0CD921821D90C65E00F80964 /* ZBase.swift in Sources */,
 				0CBD002C1D9DBC4200797F21 /* ZClosures.swift in Sources */,
+				0CF97D621DA880B000FEAA41 /* ZoneWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
