@@ -8,6 +8,7 @@
 
 
 import Cocoa
+import CloudKit
 
 
 @NSApplicationMain
@@ -17,9 +18,34 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
 
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        // Insert code here to initialize your application
     }
 
+
+    func applicationDidBecomeActive(_ notification: Notification) {
+        ZApplication.shared().clearBadge()
+        ZApplication.shared().registerForRemoteNotifications(matching: .badge)
+    }
+
+
+    func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
+        let note: CKQueryNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! [String : NSObject]) as! CKQueryNotification
+
+        if note.notificationType == .query {
+            modelManager.receivedUpdateFor(note.recordID!)
+            application.clearBadge()
+        }
+    }
+
+
+    func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print(deviceToken)
+    }
+
+
+    func application(_ application: NSApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print(error)
+    }
+    
 
     func applicationWillTerminate(aNotification: NSNotification) {
         // Insert code here to tear down your application
@@ -29,7 +55,5 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplicationTerminateReply {
         return .terminateNow
     }
-
-
 }
 

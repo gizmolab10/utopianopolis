@@ -23,16 +23,15 @@
     public typealias ZViewController        = NSViewController
     public typealias ZoneTextFieldDelegate  = NSTextFieldDelegate
     public typealias ZApplicationDelegate   = NSApplicationDelegate
-    public typealias ZOutlineViewDataSource = NSOutlineViewDataSource
+    public typealias ZOutlineViewDataSource = NSOutlineViewDataSource    
 
 
-    extension ZoneWidget {
+    extension ZoneTextField {
         var text: String? {
             get { return self.stringValue }
             set { self.stringValue = newValue! }
         }
     }
-    
 
 
 #elseif os(iOS)

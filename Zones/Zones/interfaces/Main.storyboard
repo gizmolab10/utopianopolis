@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -657,7 +658,7 @@
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
                     </window>
                     <connections>
-                        <segue destination="XfG-lQ-9wD" kind="relationship" relationship="window.shadowedContentViewController" id="cq2-FE-JQM"/>
+                        <segue destination="MXk-17-6Dz" kind="relationship" relationship="window.shadowedContentViewController" id="ABc-7c-Gf5"/>
                     </connections>
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -683,7 +684,7 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <outlet property="width" destination="XoP-Zi-00H" id="Vr9-pT-d1h"/>
+                                    <outlet property="widthConstraint" destination="XoP-Zi-00H" id="7rQ-zO-mvN"/>
                                 </connections>
                             </textField>
                         </subviews>
@@ -698,7 +699,64 @@
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="194" y="878"/>
+            <point key="canvasLocation" x="-107" y="1417"/>
+        </scene>
+        <!--Main View Controller-->
+        <scene sceneID="Mui-kI-Ybx">
+            <objects>
+                <viewController id="MXk-17-6Dz" customClass="ZMainViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="eh7-uz-OG5">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
+                                <rect key="frame" x="0.0" y="0.0" width="299" height="300"/>
+                                <connections>
+                                    <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
+                                </connections>
+                            </containerView>
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha">
+                                <rect key="frame" x="300" y="0.0" width="150" height="300"/>
+                                <connections>
+                                    <segue destination="UmS-w1-ZE0" kind="embed" id="uXE-2y-wQ0"/>
+                                </connections>
+                            </containerView>
+                            <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="oY0-De-wof">
+                                <rect key="frame" x="297" y="0.0" width="5" height="300"/>
+                            </box>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="oY0-De-wof" firstAttribute="leading" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="39s-nH-nE5"/>
+                            <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="BoX-oY-Iyy"/>
+                            <constraint firstAttribute="trailing" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="IqF-jM-a7V"/>
+                            <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="LZy-1K-VbF"/>
+                            <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="QAD-MU-KFH"/>
+                            <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="Swz-Ny-sRM"/>
+                            <constraint firstItem="oY0-De-wof" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="YwV-zC-dv4"/>
+                            <constraint firstAttribute="bottom" secondItem="oY0-De-wof" secondAttribute="bottom" id="gea-Tv-a7Q"/>
+                            <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="guk-KU-ynl"/>
+                            <constraint firstItem="HK5-4i-dSB" firstAttribute="width" secondItem="E8R-Lg-1Ha" secondAttribute="width" multiplier="2" id="p30-UG-Rwf"/>
+                            <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="HK5-4i-dSB" secondAttribute="trailing" constant="1" id="p7C-8X-HsI"/>
+                            <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="oY0-De-wof" secondAttribute="trailing" id="rk1-kh-wll"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="GDK-b2-17b" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="194" y="757"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="ftm-F7-hvs">
+            <objects>
+                <viewController id="UmS-w1-ZE0" sceneMemberID="viewController">
+                    <view key="view" id="1fa-p3-5eT">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="AaD-MV-r0h" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="508" y="1343"/>
         </scene>
     </scenes>
 </document>

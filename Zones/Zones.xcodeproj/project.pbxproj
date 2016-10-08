@@ -45,6 +45,8 @@
 		0CF97D631DA880B000FEAA41 /* ZoneWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D611DA880B000FEAA41 /* ZoneWidget.swift */; };
 		0CF97D651DA97AD600FEAA41 /* ZExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D641DA97AD600FEAA41 /* ZExtensions.swift */; };
 		0CF97D661DA97AD600FEAA41 /* ZExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D641DA97AD600FEAA41 /* ZExtensions.swift */; };
+		0CF97D681DA986AB00FEAA41 /* ZMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D671DA986AB00FEAA41 /* ZMainViewController.swift */; };
+		0CF97D691DA986AB00FEAA41 /* ZMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D671DA986AB00FEAA41 /* ZMainViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -142,6 +144,7 @@
 		0CF97D561DA785AB00FEAA41 /* ZEditorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEditorViewController.swift; sourceTree = "<group>"; };
 		0CF97D611DA880B000FEAA41 /* ZoneWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZoneWidget.swift; path = views/ZoneWidget.swift; sourceTree = "<group>"; };
 		0CF97D641DA97AD600FEAA41 /* ZExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZExtensions.swift; sourceTree = "<group>"; };
+		0CF97D671DA986AB00FEAA41 /* ZMainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMainViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -386,6 +389,7 @@
 			isa = PBXGroup;
 			children = (
 				0CF97D561DA785AB00FEAA41 /* ZEditorViewController.swift */,
+				0CF97D671DA986AB00FEAA41 /* ZMainViewController.swift */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -655,6 +659,7 @@
 				0CD921801D8F7A7800F80964 /* ZModelManager.swift in Sources */,
 				0CF97D581DA785AB00FEAA41 /* ZEditorViewController.swift in Sources */,
 				0CB1A74B1D726DD700283F7B /* ZSingletons.swift in Sources */,
+				0CF97D691DA986AB00FEAA41 /* ZMainViewController.swift in Sources */,
 				0CB1A7E01D73F87B00283F7B /* ZTrait.swift in Sources */,
 				0CF97D661DA97AD600FEAA41 /* ZExtensions.swift in Sources */,
 				0CEAAB501D9F2A8D00EBF88A /* ZGCD.swift in Sources */,
@@ -691,6 +696,7 @@
 				0C58C37D1D45805400CAB387 /* ZAppDelegate.swift in Sources */,
 				0CF97D571DA785AB00FEAA41 /* ZEditorViewController.swift in Sources */,
 				0CB1A74A1D726DD100283F7B /* ZAbstractionLayer.swift in Sources */,
+				0CF97D681DA986AB00FEAA41 /* ZMainViewController.swift in Sources */,
 				0CD9217F1D8F7A7800F80964 /* ZModelManager.swift in Sources */,
 				0CF97D651DA97AD600FEAA41 /* ZExtensions.swift in Sources */,
 				0CB1A7DB1D73F87B00283F7B /* ZAction.swift in Sources */,

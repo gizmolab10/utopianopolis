@@ -9,25 +9,46 @@
 
 import Foundation
 
-#if os(OSX)
-    import Cocoa
-#elseif os(iOS)
+#if os(iOS)
     import UIKit
+#elseif os(OSX)
+    import Cocoa
+
+    extension String {
+        func size(attributes attrs: [String : Any]? = nil) -> NSSize {
+            return size(withAttributes:attrs)
+        }
+    }
 #endif
 
 
-extension String {
-    func heightForFont(_ font: ZFont) -> CGFloat {
-        let boundingBox = self.size(withAttributes: [NSFontAttributeName: font])
+extension ZApplication {
 
-        return boundingBox.height
+    func clearBadge() {
+#if os(iOS)
+            self.applicationIconBadgeNumber += 1
+            self.applicationIconBadgeNumber  = 0
+
+            self.cancelAllLocalNotifications()
+#endif
+    }
+}
+
+
+extension String {
+
+    func sizeWithFont(_ font: ZFont) -> CGSize {
+        return self.size(attributes: [NSFontAttributeName: font])
+    }
+
+
+    func heightForFont(_ font: ZFont) -> CGFloat {
+        return sizeWithFont(font).height
     }
 
 
     func widthForFont(_ font: ZFont) -> CGFloat {
-        let boundingBox = self.size(withAttributes: [NSFontAttributeName: font])
-
-        return boundingBox.width
+        return sizeWithFont(font).width
     }
 }
 

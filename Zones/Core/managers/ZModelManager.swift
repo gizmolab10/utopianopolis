@@ -181,22 +181,23 @@ public class ZModelManager {
         let  hasChange:           Bool = (oldValue as! NSObject != newValue as! NSObject)
 
         if (identifier != nil) && hasChange {
+            intoObject.unsaved = true
+
             currentDB.fetch(withRecordID: identifier) { (fetched: CKRecord?, fetchError: Error?) in
                 if fetchError != nil {
                     record[itsPropertyName]   = newValue
-                    intoObject.unsaved        = true
 
                     intoObject.updateProperties()
                     self.updateClosures(with: UpdateKind.data)
                 } else {
                     fetched![itsPropertyName] = newValue
-                    intoObject.unsaved        = false
-                    intoObject.record         = fetched!
 
                     self.currentDB.save(fetched!, completionHandler: { (saved: CKRecord?, saveError: Error?) in
                         if saveError != nil {
                             self.updateClosures(with: UpdateKind.error)
                         } else {
+                            intoObject.record  = saved!
+                            intoObject.unsaved = false
                             self.updateClosures(with: UpdateKind.data)
                         }
                     })

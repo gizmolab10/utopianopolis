@@ -26,6 +26,7 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
 
         application.registerUserNotificationSettings(settings)
         application.registerForRemoteNotifications()
+        application.clearBadge()
 
         return true
     }
@@ -35,9 +36,8 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
         let note: CKQueryNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! [String : NSObject]) as! CKQueryNotification
 
         if note.notificationType == .query {
-            let identifier = note.recordID!
-
-            modelManager.receivedUpdateFor(identifier)
+            modelManager.receivedUpdateFor(note.recordID!)
+            application.clearBadge()
         }
     }
 

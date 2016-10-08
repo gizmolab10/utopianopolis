@@ -15,21 +15,22 @@ import Foundation
 #endif
 
 
-class ZoneWidget: ZoneTextField {
+class ZoneWidget: ZoneTextField, ZoneTextFieldDelegate {
 
-    var            widgetZone: Zone!
-    @IBOutlet weak var  width: NSLayoutConstraint!
+    var                      widgetZone: Zone!
+    @IBOutlet weak var  widthConstraint: NSLayoutConstraint!
 
 
     func layoutWithText(_ value: String) {
-        self.text = value
+        self.text     = value
+        self.delegate = self
 
         updateLayout()
     }
 
 
     func updateLayout() {
-        self.width.constant = self.text!.widthForFont(self.font! as ZFont) + 25.0
+        self.widthConstraint.constant = self.text!.widthForFont(self.font! as ZFont) + 25.0
     }
 
 
@@ -38,4 +39,35 @@ class ZoneWidget: ZoneTextField {
 
         widgetZone.zoneName = self.text!
     }
+
+
+#if os(OSX)
+
+    func control(_ control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
+        submit()
+
+        return true
+    }
+
+
+    override func controlTextDidChange(_ obj: Notification) {
+        updateLayout()
+    }
+
+#elseif os(iOS)
+
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        submit()
+
+        return true
+    }
+
+
+//    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+//        updateLayout()
+//
+//        return true
+//    }
+
+#endif
 }

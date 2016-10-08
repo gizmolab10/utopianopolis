@@ -16,7 +16,7 @@ import Foundation
 #endif
 
 
-class ZEditorViewController: ZViewController, ZoneTextFieldDelegate {
+class ZEditorViewController: ZViewController {
 
     
     @IBOutlet weak var widget: ZoneWidget!
@@ -24,8 +24,6 @@ class ZEditorViewController: ZViewController, ZoneTextFieldDelegate {
     
     override open func viewDidLoad() {
         super.viewDidLoad()
-
-        self.widget.delegate = self
 
         modelManager.registerUpdateClosure { (kind) -> (Void) in
             if kind == UpdateKind.data {
@@ -36,24 +34,4 @@ class ZEditorViewController: ZViewController, ZoneTextFieldDelegate {
             }
         }
     }
-
-
-#if os(OSX)
-
-    func control(_ control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
-        widget.submit()
-
-        return true
-    }
-
-#elseif os(iOS)
-
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        widget.submit()
-
-        return true
-    }
-
-#endif
-
 }
