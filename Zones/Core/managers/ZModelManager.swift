@@ -35,7 +35,7 @@ public let modelManager = ZModelManager()
 public class ZModelManager {
     let   container: CKContainer!
     let   currentDB: CKDatabase!
-    var currentZone: Zone!
+    var selectedZone: Zone!
     var    closures: [UpdateClosureObject] = [UpdateClosureObject]()
     var     records: [CKRecordID : ZBase]  = [:]
 
@@ -77,10 +77,10 @@ public class ZModelManager {
 
 
     func setupRootZone() {
-        let currentZoneID: CKRecordID = CKRecordID.init(recordName: "root")
+        let selectedZoneID: CKRecordID = CKRecordID.init(recordName: "root")
 
-        updateReccord(currentZoneID, onCompletion: { (record: CKRecord?) -> (Void) in
-            self.currentZone = Zone(record: record!, database: self.currentDB)
+        updateReccord(selectedZoneID, onCompletion: { (record: CKRecord?) -> (Void) in
+            self.selectedZone = Zone(record: record!, database: self.currentDB)
             self.updateClosures(with: UpdateKind.data)
         })
     }

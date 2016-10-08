@@ -15,13 +15,13 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="0Gn-x4-k65" customClass="ZoneWidget">
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="ZOn-0b-NmK"/>
-                                    <constraint firstAttribute="width" constant="97" id="lCa-B3-TVN"/>
+                                    <constraint firstAttribute="width" constant="200" id="lCa-B3-TVN"/>
                                 </constraints>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -34,6 +34,8 @@
                             <constraint firstItem="0Gn-x4-k65" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="tIC-3r-tul"/>
                         </constraints>
                     </view>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="1024" height="768"/>
                     <connections>
                         <outlet property="label" destination="0Gn-x4-k65" id="UEy-sH-W2k"/>
                     </connections>

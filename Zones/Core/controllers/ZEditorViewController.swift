@@ -9,6 +9,12 @@
 
 import Foundation
 
+#if os(OSX)
+    import Cocoa
+#elseif os(iOS)
+    import UIKit
+#endif
+
 
 class ZEditorViewController: ZViewController, ZoneWidgetDelegate {
 
@@ -23,38 +29,30 @@ class ZEditorViewController: ZViewController, ZoneWidgetDelegate {
 
         modelManager.registerUpdateClosure { (kind) -> (Void) in
             if kind == UpdateKind.data {
-                if let name: String = modelManager.currentZone.zoneName {
+                if let name: String = modelManager.selectedZone.zoneName {
                     self.label.text = name
                 }
             }
         }
     }
-}
 
 
 #if os(OSX)
 
-    import Cocoa
+    func control(_ control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
+        modelManager.selectedZone.zoneName = label.text;
 
-    extension ZEditorViewController {
-        private func control(_ control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
-            modelManager.currentZone.zoneName = label.stringValue;
-
-            return true
-        }
+        return true
     }
 
 #elseif os(iOS)
 
-    import UIKit
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        modelManager.selectedZone.zoneName = label.text;
 
-    extension ZEditorViewController {
-        func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-            modelManager.currentZone.zoneName = textField.text;
-
-            return true
-        }
+        return true
     }
 
 #endif
 
+}
