@@ -26,6 +26,9 @@
     public typealias ZOutlineViewDataSource = NSOutlineViewDataSource    
 
 
+    let zapplication = ZApplication.shared()
+
+
     extension ZoneTextField {
         var text: String? {
             get { return self.stringValue }
@@ -52,6 +55,9 @@
     public typealias ZoneTextFieldDelegate  = UITextFieldDelegate
     public typealias ZApplicationDelegate   = UIApplicationDelegate
     public typealias ZOutlineViewDataSource = UITableViewDataSource
+
+
+    let zapplication = ZApplication.shared
 
 
     extension ZApplication {

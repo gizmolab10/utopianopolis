@@ -25,12 +25,14 @@ import Foundation
 extension ZApplication {
 
     func clearBadge() {
-#if os(iOS)
+        #if os(OSX)
+            self.dockTile.badgeLabel = ""
+        #else
             self.applicationIconBadgeNumber += 1
             self.applicationIconBadgeNumber  = 0
 
             self.cancelAllLocalNotifications()
-#endif
+        #endif
     }
 }
 

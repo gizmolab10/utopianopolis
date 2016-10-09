@@ -22,23 +22,24 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
 
 
     func applicationDidBecomeActive(_ notification: Notification) {
-        ZApplication.shared().clearBadge()
-        ZApplication.shared().registerForRemoteNotifications(matching: .badge)
+        zapplication.clearBadge()
+        zapplication.registerForRemoteNotifications(matching: .badge)
     }
 
 
     func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
+        application.clearBadge()
+        
         let note: CKQueryNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! [String : NSObject]) as! CKQueryNotification
 
         if note.notificationType == .query {
             modelManager.receivedUpdateFor(note.recordID!)
-            application.clearBadge()
         }
     }
 
 
     func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        print(deviceToken)
+        // print(deviceToken)
     }
 
 
@@ -48,6 +49,8 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
     
 
     func applicationWillTerminate(aNotification: NSNotification) {
+        persistenceManager.save()
+        
         // Insert code here to tear down your application
     }
 

@@ -55,7 +55,7 @@ class ZLocalPersistenceManager: NSObject {
 
 
     func pathToCurrentZoneFile() -> (String) {
-        return pathForZoneNamed(modelManager.selectedZone.zoneName!);
+        return pathForZoneNamed(modelManager.selectedZone.record.recordID.recordName);
     }
 
 

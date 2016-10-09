@@ -20,8 +20,6 @@
 		0CA04B9F1D2ED079001892E5 /* Zones.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B9A1D2ED079001892E5 /* Zones.entitlements */; };
 		0CB1A7491D726DCF00283F7B /* ZAbstractionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5B91211D610AEC000CFB6F /* ZAbstractionLayer.swift */; };
 		0CB1A74A1D726DD100283F7B /* ZAbstractionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5B91211D610AEC000CFB6F /* ZAbstractionLayer.swift */; };
-		0CB1A74B1D726DD700283F7B /* ZSingletons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5B91221D610AEC000CFB6F /* ZSingletons.swift */; };
-		0CB1A74C1D726DD800283F7B /* ZSingletons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5B91221D610AEC000CFB6F /* ZSingletons.swift */; };
 		0CB1A7D31D73F87B00283F7B /* Zone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB1A7CA1D73F87B00283F7B /* Zone.swift */; };
 		0CB1A7D41D73F87B00283F7B /* Zone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB1A7CA1D73F87B00283F7B /* Zone.swift */; };
 		0CB1A7DB1D73F87B00283F7B /* ZAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB1A7CE1D73F87B00283F7B /* ZAction.swift */; };
@@ -111,7 +109,6 @@
 		0C58C3711D45805400CAB387 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
 		0C58C3761D45805400CAB387 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0C5B91211D610AEC000CFB6F /* ZAbstractionLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAbstractionLayer.swift; sourceTree = "<group>"; };
-		0C5B91221D610AEC000CFB6F /* ZSingletons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSingletons.swift; sourceTree = "<group>"; };
 		0CA04B141D2ECF1A001892E5 /* Zones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zones.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
@@ -246,7 +243,6 @@
 			children = (
 				0C5B91211D610AEC000CFB6F /* ZAbstractionLayer.swift */,
 				0CBD002B1D9DBC4200797F21 /* ZClosures.swift */,
-				0C5B91221D610AEC000CFB6F /* ZSingletons.swift */,
 			);
 			path = main;
 			sourceTree = "<group>";
@@ -660,7 +656,6 @@
 				0CB1A7DC1D73F87B00283F7B /* ZAction.swift in Sources */,
 				0CD921801D8F7A7800F80964 /* ZModelManager.swift in Sources */,
 				0CF97D581DA785AB00FEAA41 /* ZEditorViewController.swift in Sources */,
-				0CB1A74B1D726DD700283F7B /* ZSingletons.swift in Sources */,
 				0CF97D691DA986AB00FEAA41 /* ZMainViewController.swift in Sources */,
 				0CB1A7E01D73F87B00283F7B /* ZTrait.swift in Sources */,
 				0CF97D661DA97AD600FEAA41 /* ZExtensions.swift in Sources */,
@@ -695,7 +690,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0CB1A74C1D726DD800283F7B /* ZSingletons.swift in Sources */,
 				0C58C37D1D45805400CAB387 /* ZAppDelegate.swift in Sources */,
 				0CF97D571DA785AB00FEAA41 /* ZEditorViewController.swift in Sources */,
 				0CB1A74A1D726DD100283F7B /* ZAbstractionLayer.swift in Sources */,

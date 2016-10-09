@@ -18,7 +18,9 @@ class ZBase: NSObject {
     var            kvoContext: UInt8 = 1
     weak dynamic var database: CKDatabase!
     var               _record: CKRecord?
-    var                record: CKRecord! {
+
+
+    var record: CKRecord! {
         get {
             return _record
         }
@@ -29,6 +31,8 @@ class ZBase: NSObject {
             updateProperties()
         }
     }
+
+
     var storageDict: [String : NSObject] {
         get {
             return storageDictionary()!
@@ -40,6 +44,7 @@ class ZBase: NSObject {
             }
         }
     }
+
 
     init(record: CKRecord, database: CKDatabase) {
         super.init()

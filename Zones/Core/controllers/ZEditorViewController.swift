@@ -29,9 +29,16 @@ class ZEditorViewController: ZViewController {
             if kind == UpdateKind.data {
                 if let name: String = modelManager.selectedZone.zoneName {
                     self.widget.widgetZone = modelManager.selectedZone
+
                     self.widget.layoutWithText(name)
+                    zapplication.clearBadge()
                 }
             }
         }
+    }
+
+
+    @IBAction func tapped(_ sender: AnyObject) {
+        widget.submit()
     }
 }
