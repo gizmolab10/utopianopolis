@@ -11,13 +11,13 @@ import Foundation
 import CloudKit
 
 
-public enum UpdateKind: UInt {
+enum UpdateKind: UInt {
     case data
     case error
 }
 
 
-public typealias UpdateClosure = (UpdateKind) -> (Void)
+typealias UpdateClosure = (UpdateKind) -> (Void)
 
 
 class UpdateClosureObject {
@@ -29,10 +29,10 @@ class UpdateClosureObject {
 }
 
 
-public let modelManager = ZModelManager()
+let modelManager = ZModelManager()
 
 
-public class ZModelManager {
+class ZModelManager {
     let   container: CKContainer!
     let   currentDB: CKDatabase!
     var selectedZone: Zone!
@@ -77,16 +77,19 @@ public class ZModelManager {
 
 
     func setupRootZone() {
-        let selectedZoneID: CKRecordID = CKRecordID.init(recordName: "root")
+        DispatchQueue.main.async(execute: {
+            let selectedZoneID: CKRecordID = CKRecordID.init(recordName: "root")
 
-        updateReccord(selectedZoneID, onCompletion: { (record: CKRecord?) -> (Void) in
-            self.selectedZone = Zone(record: record!, database: self.currentDB)
-            self.updateClosures(with: UpdateKind.data)
+            self.updateReccord(selectedZoneID, onCompletion: { (record: CKRecord?) -> (Void) in
+                self.selectedZone = Zone(record: record!, database: self.currentDB)
+                self.updateClosures(with: UpdateKind.data)
+                persistenceManager.restore()
+            })
         })
     }
 
 
-    public func receivedUpdateFor(_ recordID: CKRecordID) {
+    func receivedUpdateFor(_ recordID: CKRecordID) {
         updateReccord(recordID, onCompletion: { (record: CKRecord) -> (Void) in
             let    object = self.records[record.recordID]! as ZBase
             object.record = record
@@ -106,6 +109,7 @@ public class ZModelManager {
 
                 self.currentDB.save(created, completionHandler: { (saved: CKRecord?, saveError: Error?) in
                     if (saveError == nil) {
+                        persistenceManager.save()
                         onCompletion(saved!)
                     }
                 })
@@ -199,6 +203,7 @@ public class ZModelManager {
                             intoObject.record  = saved!
                             intoObject.unsaved = false
                             self.updateClosures(with: UpdateKind.data)
+                            persistenceManager.save()
                         }
                     })
                 }

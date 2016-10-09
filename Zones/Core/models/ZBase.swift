@@ -29,7 +29,17 @@ class ZBase: NSObject {
             updateProperties()
         }
     }
+    var storageDict: [String : NSObject] {
+        get {
+            return storageDictionary()!
+        }
 
+        set {
+            if newValue.count > 0 {
+                setStorageDictionary(newValue)
+            }
+        }
+    }
 
     init(record: CKRecord, database: CKDatabase) {
         super.init()
@@ -42,7 +52,28 @@ class ZBase: NSObject {
     }
 
 
+    // MARK:- overrides
+    // MARK:-
+
+
     func updateProperties() {}
+
+
+    func setStorageDictionary(_ dict: [String : NSObject]) {}
+
+
+    func storageDictionary() -> [String : NSObject]? {
+        return nil
+    }
+
+
+    func propertyKeyPaths() -> [String] {
+        return []
+    }
+
+
+    // MARK:- accessors and KVO
+    // MARK:-
 
 
     func set(propertyName:String, withValue: NSObject) {
@@ -52,11 +83,6 @@ class ZBase: NSObject {
 
     func get(propertyName: String) {
         modelManager.get(fromObject: self, valueForPropertyName: propertyName)
-    }
-
-
-    func propertyKeyPaths() -> [String] {
-        return []
     }
 
 

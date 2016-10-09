@@ -47,6 +47,8 @@
 		0CF97D661DA97AD600FEAA41 /* ZExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D641DA97AD600FEAA41 /* ZExtensions.swift */; };
 		0CF97D681DA986AB00FEAA41 /* ZMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D671DA986AB00FEAA41 /* ZMainViewController.swift */; };
 		0CF97D691DA986AB00FEAA41 /* ZMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D671DA986AB00FEAA41 /* ZMainViewController.swift */; };
+		0CF97D6B1DA9C1B500FEAA41 /* ZLocalPersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D6A1DA9C1B500FEAA41 /* ZLocalPersistenceManager.swift */; };
+		0CF97D6C1DA9C1B500FEAA41 /* ZLocalPersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D6A1DA9C1B500FEAA41 /* ZLocalPersistenceManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,7 +112,6 @@
 		0C58C3761D45805400CAB387 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0C5B91211D610AEC000CFB6F /* ZAbstractionLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAbstractionLayer.swift; sourceTree = "<group>"; };
 		0C5B91221D610AEC000CFB6F /* ZSingletons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSingletons.swift; sourceTree = "<group>"; };
-		0C5B91251D610AEC000CFB6F /* ZonesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZonesManager.swift; sourceTree = "<group>"; };
 		0CA04B141D2ECF1A001892E5 /* Zones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zones.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
@@ -145,6 +146,7 @@
 		0CF97D611DA880B000FEAA41 /* ZoneWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZoneWidget.swift; path = views/ZoneWidget.swift; sourceTree = "<group>"; };
 		0CF97D641DA97AD600FEAA41 /* ZExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZExtensions.swift; sourceTree = "<group>"; };
 		0CF97D671DA986AB00FEAA41 /* ZMainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMainViewController.swift; sourceTree = "<group>"; };
+		0CF97D6A1DA9C1B500FEAA41 /* ZLocalPersistenceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZLocalPersistenceManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -253,7 +255,7 @@
 			isa = PBXGroup;
 			children = (
 				0CD9217E1D8F7A7800F80964 /* ZModelManager.swift */,
-				0C5B91251D610AEC000CFB6F /* ZonesManager.swift */,
+				0CF97D6A1DA9C1B500FEAA41 /* ZLocalPersistenceManager.swift */,
 			);
 			path = managers;
 			sourceTree = "<group>";
@@ -665,6 +667,7 @@
 				0CEAAB501D9F2A8D00EBF88A /* ZGCD.swift in Sources */,
 				0CEAAB511DA19B1C00EBF88A /* ZAppDelegate.swift in Sources */,
 				0CB1A7D41D73F87B00283F7B /* Zone.swift in Sources */,
+				0CF97D6C1DA9C1B500FEAA41 /* ZLocalPersistenceManager.swift in Sources */,
 				0CD921831D90C65E00F80964 /* ZBase.swift in Sources */,
 				0CBD002D1D9DBC4200797F21 /* ZClosures.swift in Sources */,
 				0CB1A7491D726DCF00283F7B /* ZAbstractionLayer.swift in Sources */,
@@ -702,6 +705,7 @@
 				0CB1A7DB1D73F87B00283F7B /* ZAction.swift in Sources */,
 				0CEAAB4F1D9F2A8D00EBF88A /* ZGCD.swift in Sources */,
 				0CB1A7DF1D73F87B00283F7B /* ZTrait.swift in Sources */,
+				0CF97D6B1DA9C1B500FEAA41 /* ZLocalPersistenceManager.swift in Sources */,
 				0CB1A7D31D73F87B00283F7B /* Zone.swift in Sources */,
 				0CD921821D90C65E00F80964 /* ZBase.swift in Sources */,
 				0CBD002C1D9DBC4200797F21 /* ZClosures.swift in Sources */,
