@@ -31,7 +31,7 @@ class ZEditorViewController: ZViewController {
                     self.widget.widgetZone = modelManager.selectedZone
 
                     self.widget.layoutWithText(name)
-                    zapplication.clearBadge()
+                    modelManager.resetBadgeCounter()
                 }
             }
         }

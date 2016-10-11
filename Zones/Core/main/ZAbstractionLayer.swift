@@ -21,6 +21,7 @@
     public typealias ZOutlineView           = NSOutlineView
     public typealias ZApplication           = NSApplication
     public typealias ZViewController        = NSViewController
+    public typealias ZSegmentedControl      = NSSegmentedControl
     public typealias ZoneTextFieldDelegate  = NSTextFieldDelegate
     public typealias ZApplicationDelegate   = NSApplicationDelegate
     public typealias ZOutlineViewDataSource = NSOutlineViewDataSource    
@@ -34,6 +35,15 @@
             get { return self.stringValue }
             set { self.stringValue = newValue! }
         }
+    }
+
+
+    extension ZSegmentedControl {
+        var selectedSegmentIndex: Int {
+            get { return selectedSegment }
+            set { selectedSegment = newValue }
+        }
+
     }
 
 
@@ -52,6 +62,7 @@
     public typealias ZoneTextField          = UITextField
     public typealias ZApplication           = UIApplication
     public typealias ZViewController        = UIViewController
+    public typealias ZSegmentedControl      = UISegmentedControl
     public typealias ZoneTextFieldDelegate  = UITextFieldDelegate
     public typealias ZApplicationDelegate   = UIApplicationDelegate
     public typealias ZOutlineViewDataSource = UITableViewDataSource

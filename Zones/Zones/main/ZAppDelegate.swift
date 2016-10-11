@@ -22,18 +22,18 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
 
 
     func applicationDidBecomeActive(_ notification: Notification) {
-        zapplication.clearBadge()
+        modelManager.resetBadgeCounter()
         zapplication.registerForRemoteNotifications(matching: .badge)
     }
 
 
     func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
-        application.clearBadge()
-        
-        let note: CKQueryNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! [String : NSObject]) as! CKQueryNotification
+        let note: CKNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! [String : NSObject])
 
         if note.notificationType == .query {
-            modelManager.receivedUpdateFor(note.recordID!)
+            let queryNote: CKQueryNotification = note as! CKQueryNotification
+
+            modelManager.receivedUpdateFor(queryNote.recordID!)
         }
     }
 

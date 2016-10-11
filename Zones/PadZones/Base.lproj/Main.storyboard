@@ -106,10 +106,10 @@
             </objects>
             <point key="canvasLocation" x="92" y="462"/>
         </scene>
-        <!--View Controller-->
+        <!--Tools View Controller-->
         <scene sceneID="EFi-vN-wHw">
             <objects>
-                <viewController id="hg4-4k-bWE" sceneMemberID="viewController">
+                <viewController id="hg4-4k-bWE" customClass="ZToolsViewController" customModule="PadZones" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="qCp-aW-Kfa"/>
                         <viewControllerLayoutGuide type="bottom" id="RLc-mT-izr"/>
@@ -117,12 +117,35 @@
                     <view key="view" contentMode="scaleToFill" id="CzG-ST-OXx">
                         <rect key="frame" x="0.0" y="0.0" width="341" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="f3b-Bn-qpd" customClass="ZSegmentedControl" customModule="PadZones" customModuleProvider="target">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="eg7-Oj-Vjn"/>
+                                </constraints>
+                                <segments>
+                                    <segment title="Edit"/>
+                                    <segment title="Travel"/>
+                                    <segment title="Layout"/>
+                                </segments>
+                                <connections>
+                                    <action selector="choiceAction:" destination="hg4-4k-bWE" eventType="valueChanged" id="eAR-zt-yjO"/>
+                                </connections>
+                            </segmentedControl>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="f3b-Bn-qpd" firstAttribute="top" secondItem="qCp-aW-Kfa" secondAttribute="bottom" id="c3Y-iq-CcU"/>
+                            <constraint firstItem="f3b-Bn-qpd" firstAttribute="leading" secondItem="CzG-ST-OXx" secondAttribute="leading" id="gT3-yh-DJZ"/>
+                            <constraint firstAttribute="trailing" secondItem="f3b-Bn-qpd" secondAttribute="trailing" id="tnw-1H-ecj"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="toolsChoiceControl" destination="f3b-Bn-qpd" id="qiS-5E-iSi"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Wuy-fy-J2b" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="683" y="462"/>
+            <point key="canvasLocation" x="682.421875" y="461.71874999999994"/>
         </scene>
     </scenes>
 </document>

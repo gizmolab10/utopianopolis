@@ -90,6 +90,7 @@ class ZModelManager {
 
 
     func receivedUpdateFor(_ recordID: CKRecordID) {
+        resetBadgeCounter()
         updateReccord(recordID, onCompletion: { (record: CKRecord) -> (Void) in
             let    object = self.records[record.recordID]! as ZBase
             object.record = record
@@ -123,8 +124,23 @@ class ZModelManager {
     }
 
 
-    // MARK:- persistence
+    // MARK:- remote persistence
     // MARK:-
+
+
+    func resetBadgeCounter() {
+        let badgeResetOperation = CKModifyBadgeOperation(badgeValue: 0)
+
+        badgeResetOperation.modifyBadgeCompletionBlock = { (error) -> Void in
+            if error != nil {
+                print("Error resetting badge: \(error)")
+            } else {
+                zapplication.clearBadge()
+            }
+        }
+
+        container.add(badgeResetOperation)
+    }
 
 
     func registerForCloudKitNotifications() {
