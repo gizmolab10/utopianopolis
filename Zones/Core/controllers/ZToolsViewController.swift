@@ -16,7 +16,7 @@ import Foundation
 #endif
 
 
-class ZToolsViewController: ZViewController {
+class ZToolsViewController: ZBaseViewController {
 
 
     @IBOutlet weak var toolsChoiceControl: ZSegmentedControl!
@@ -27,21 +27,7 @@ class ZToolsViewController: ZViewController {
     }
 
 
-
-    #if os(OSX)
-    override func viewWillAppear() {
-        super.viewWillAppear()
-        update()
-    }
-    #elseif os(iOS)
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        update()
-    }
-    #endif
-
-
-    func update() {
+    override func update() {
         toolsChoiceControl.selectedSegmentIndex = state.toolState.rawValue
     }
 }

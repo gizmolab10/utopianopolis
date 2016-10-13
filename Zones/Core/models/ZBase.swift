@@ -46,7 +46,7 @@ class ZBase: NSObject {
     }
 
 
-    init(record: CKRecord, database: CKDatabase) {
+    init(record: CKRecord?, database: CKDatabase) {
         super.init()
 
         self.database = database
@@ -61,19 +61,37 @@ class ZBase: NSObject {
     // MARK:-
 
 
-    func updateProperties() {}
-
-
-    func setStorageDictionary(_ dict: [String : NSObject]) {}
-
-
-    func storageDictionary() -> [String : NSObject]? {
-        return nil
+    func propertyKeyPaths() -> [String] {
+        return []
     }
 
 
-    func propertyKeyPaths() -> [String] {
-        return []
+    func updateProperties() {}
+
+
+    func setStorageDictionary(_ dict: [String : NSObject]) {
+        var type: String? = nil
+        var name: String? = nil
+
+        for (key, value) in dict {
+            switch key {
+            case "recordType": type = value as? String; break
+            case "recordName": name = value as? String; break
+            default:                                    break
+            }
+        }
+
+        if type != nil && name != nil {
+            record = CKRecord(recordType: type!, recordID: CKRecordID(recordName: name!))
+
+            // any subsequent changes into any of this object's propertyKeyPaths will fetch / save this record from / to iCloud
+        }
+    }
+
+
+    func storageDictionary() -> [String : NSObject]? {
+        return ["recordName" : record.recordID.recordName as NSObject,
+                "recordType" : record.recordType          as NSObject]
     }
 
 

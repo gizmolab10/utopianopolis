@@ -32,8 +32,8 @@
 
     extension ZoneTextField {
         var text: String? {
-            get { return self.stringValue }
-            set { self.stringValue = newValue! }
+            get { return stringValue }
+            set { stringValue = newValue! }
         }
     }
 

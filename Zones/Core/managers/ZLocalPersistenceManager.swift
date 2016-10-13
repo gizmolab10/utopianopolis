@@ -66,8 +66,10 @@ class ZLocalPersistenceManager: NSObject {
 
         if !FileManager.default.fileExists(atPath: path) {
             do {
-                try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: false, attributes: nil)
-            } catch {}
+                try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print(error)
+            }
         }
 
         return path;

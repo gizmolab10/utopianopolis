@@ -30,7 +30,7 @@ class ZoneWidget: ZoneTextField, ZoneTextFieldDelegate {
 
 
     func updateLayout() {
-        self.widthConstraint.constant = self.text!.widthForFont(self.font! as ZFont) + 25.0
+        self.widthConstraint.constant = self.text!.widthForFont(self.font! as ZFont) + 35.0
     }
 
 

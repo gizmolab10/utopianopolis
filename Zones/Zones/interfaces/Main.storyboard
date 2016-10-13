@@ -750,20 +750,17 @@
             <objects>
                 <viewController id="UmS-w1-ZE0" customClass="ZToolsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="1fa-p3-5eT">
-                        <rect key="frame" x="0.0" y="0.0" width="200" height="300"/>
+                        <rect key="frame" x="0.0" y="0.0" width="203" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <segmentedControl horizontalHuggingPriority="750" verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GBC-KB-wux" customClass="ZSegmentedControl">
-                                <rect key="frame" x="0.0" y="254" width="200" height="47"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="Apc-bk-eFg"/>
-                                </constraints>
-                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="separated" trackingMode="selectOne" id="DrU-WM-BCF">
-                                    <font key="font" metaFont="system" size="17"/>
+                            <segmentedControl horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GBC-KB-wux">
+                                <rect key="frame" x="0.0" y="278" width="203" height="23"/>
+                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="selectOne" id="DrU-WM-BCF">
+                                    <font key="font" metaFont="system" size="14"/>
                                     <segments>
-                                        <segment label="Edit" width="51"/>
-                                        <segment label="Travel" width="70" selected="YES" tag="1"/>
-                                        <segment label="Layout" width="75"/>
+                                        <segment label="Edit" width="51" selected="YES"/>
+                                        <segment label="Travel" width="70" tag="1"/>
+                                        <segment label="Settings" width="78"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>
@@ -771,7 +768,7 @@
                                 </connections>
                             </segmentedControl>
                             <containerView horizontalHuggingPriority="999" translatesAutoresizingMaskIntoConstraints="NO" id="zA2-uY-m7F">
-                                <rect key="frame" x="0.0" y="0.0" width="200" height="256"/>
+                                <rect key="frame" x="0.0" y="0.0" width="203" height="279"/>
                                 <connections>
                                     <segue destination="OO6-jf-jKa" kind="embed" id="KUx-LL-3cz"/>
                                 </connections>
@@ -793,16 +790,38 @@
                 </viewController>
                 <customObject id="AaD-MV-r0h" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="545.5" y="1343"/>
+            <point key="canvasLocation" x="509" y="1343"/>
         </scene>
-        <!--View Controller-->
+        <!--Editing Tools View Controller-->
         <scene sceneID="G9K-8b-AJJ">
             <objects>
-                <viewController id="OO6-jf-jKa" sceneMemberID="viewController">
+                <viewController id="OO6-jf-jKa" customClass="ZEditingToolsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="HgE-gu-5IU">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Agf-qa-s1Q">
+                                <rect key="frame" x="14" y="252" width="92" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="80" id="ned-lF-6dD"/>
+                                </constraints>
+                                <buttonCell key="cell" type="push" title="New Zone" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OBW-ha-Pxr">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="newZoneButtonAction:" target="OO6-jf-jKa" id="v1z-nc-5qa"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="Agf-qa-s1Q" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="P6f-Hx-joO"/>
+                            <constraint firstItem="Agf-qa-s1Q" firstAttribute="top" secondItem="HgE-gu-5IU" secondAttribute="top" constant="20" id="Xm0-wF-msA"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="newZoneButton" destination="Agf-qa-s1Q" id="nhm-vD-m1V"/>
+                    </connections>
                 </viewController>
                 <customObject id="kir-YC-buw" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

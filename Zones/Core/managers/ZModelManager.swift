@@ -76,11 +76,26 @@ class ZModelManager {
     }
 
 
+    func addNewZone() {
+        let record = CKRecord(recordType: "Zone")
+
+        self.currentDB.save(record) { (iRecord: CKRecord?, iError: Error?) in
+            if iError != nil {
+                print(iError)
+            } else {
+                let zone = Zone(record: iRecord, database: self.currentDB)
+
+                self.selectedZone.children.append(zone)
+            }
+        }
+    }
+
+
     func setupRootZone() {
         DispatchQueue.main.async(execute: {
-            let selectedZoneID: CKRecordID = CKRecordID.init(recordName: "root")
+            let selectedZoneRecordID: CKRecordID = CKRecordID(recordName: "root")
 
-            self.updateReccord(selectedZoneID, onCompletion: { (record: CKRecord?) -> (Void) in
+            self.updateReccord(selectedZoneRecordID, onCompletion: { (record: CKRecord?) -> (Void) in
                 self.selectedZone = Zone(record: record!, database: self.currentDB)
                 self.updateClosures(with: UpdateKind.data)
                 persistenceManager.restore()
@@ -145,25 +160,29 @@ class ZModelManager {
 
     func registerForCloudKitNotifications() {
         currentDB.fetchAllSubscriptions { (iSubscriptions: [CKSubscription]?, iError: Error?) in
-            var count: Int = iSubscriptions!.count
-
-            if count == 0 {
-                DispatchQueue.main.asyncAfter(deadline: DispatchTime(uptimeNanoseconds: 1 * NSEC_PER_SEC), execute: {
-                    self.subscribe()
-                })
+            if iError != nil {
+                print(iError)
             } else {
-                for subscription: CKSubscription in iSubscriptions! {
-                    self.currentDB.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (iSubscription: String?, iError: Error?) in
-                        if iError != nil {
-                            print(iError)
-                        } else {
-                            count -= 1
+                var count: Int = iSubscriptions!.count
 
-                            if count == 0 {
-                                self.subscribe()
-                            }
-                        }
+                if count == 0 {
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime(uptimeNanoseconds: 1 * NSEC_PER_SEC), execute: {
+                        self.subscribe()
                     })
+                } else {
+                    for subscription: CKSubscription in iSubscriptions! {
+                        self.currentDB.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (iSubscription: String?, iDeleteError: Error?) in
+                            if iDeleteError != nil {
+                                print(iDeleteError)
+                            } else {
+                                count -= 1
+
+                                if count == 0 {
+                                    self.subscribe()
+                                }
+                            }
+                        })
+                    }
                 }
             }
         }
@@ -171,7 +190,7 @@ class ZModelManager {
 
 
     func subscribe() {
-        let classNames = ["Zone"] //, "ZTrait", "ZLink", "ZAction"]
+        let classNames = ["Zone"] //, "ZTrait", "ZAction"]
 
         for className: String in classNames {
             let    predicate:          NSPredicate = NSPredicate(value: true)

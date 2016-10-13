@@ -21,5 +21,5 @@ let state: ZState = ZState()
 
 
 class ZState: NSObject {
-    var toolState: ZToolState = .travel
+    var toolState: ZToolState = .edit
 }

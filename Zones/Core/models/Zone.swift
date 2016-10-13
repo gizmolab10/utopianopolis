@@ -13,12 +13,15 @@ import CloudKit
 
 class Zone : ZBase {
 
+    
     dynamic var zoneName: String?
     dynamic var    zones: [String : NSObject] = [:]
+    var         children: [Zone] = []
+
 
 
     override func propertyKeyPaths() -> [String] {
-        return super.propertyKeyPaths() + [#keyPath(zoneName), #keyPath(zones)]
+        return super.propertyKeyPaths() + [#keyPath(zoneName), #keyPath(children)]
     }
 
 
@@ -28,30 +31,15 @@ class Zone : ZBase {
 
 
     override func setStorageDictionary(_ dict: [String : NSObject]) {
-        for key: String in dict.keys {
-            switch key {
-            case "zoneName":
-                self.zoneName = dict[key] as! String?
-                break
-            default:
-                break
-            }
-        }
+        self.zoneName = dict["zoneName"] as? String
+
+        super.setStorageDictionary(dict) // do last so above "change" is not pushed into iCloud
     }
 
 
     override func storageDictionary() -> [String : NSObject]? {
-        var dict: [String : NSObject] = [:]
-
-        for path in propertyKeyPaths() {
-            switch path {
-            case "zoneName":
-                dict[path] = self.zoneName as NSObject?
-                break
-            default:
-                break
-            }
-        }
+        var dict: [String : NSObject] = super.storageDictionary()!
+        dict["zoneName"]              = self.zoneName as NSObject?
 
         return dict
     }

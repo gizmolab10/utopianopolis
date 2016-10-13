@@ -125,17 +125,26 @@
                                 <segments>
                                     <segment title="Edit"/>
                                     <segment title="Travel"/>
-                                    <segment title="Layout"/>
+                                    <segment title="Settings"/>
                                 </segments>
                                 <connections>
                                     <action selector="choiceAction:" destination="hg4-4k-bWE" eventType="valueChanged" id="eAR-zt-yjO"/>
                                 </connections>
                             </segmentedControl>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lUU-SV-vxx">
+                                <connections>
+                                    <segue destination="Oce-Up-u0Z" kind="embed" id="jjg-1w-2dR"/>
+                                </connections>
+                            </containerView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="RLc-mT-izr" firstAttribute="top" secondItem="lUU-SV-vxx" secondAttribute="bottom" id="EDM-6Z-Jau"/>
+                            <constraint firstAttribute="trailing" secondItem="lUU-SV-vxx" secondAttribute="trailing" id="Meh-jP-SMV"/>
                             <constraint firstItem="f3b-Bn-qpd" firstAttribute="top" secondItem="qCp-aW-Kfa" secondAttribute="bottom" id="c3Y-iq-CcU"/>
                             <constraint firstItem="f3b-Bn-qpd" firstAttribute="leading" secondItem="CzG-ST-OXx" secondAttribute="leading" id="gT3-yh-DJZ"/>
+                            <constraint firstItem="lUU-SV-vxx" firstAttribute="leading" secondItem="CzG-ST-OXx" secondAttribute="leading" id="swP-la-3wd"/>
+                            <constraint firstItem="lUU-SV-vxx" firstAttribute="top" secondItem="f3b-Bn-qpd" secondAttribute="bottom" id="tYZ-wa-CXh"/>
                             <constraint firstAttribute="trailing" secondItem="f3b-Bn-qpd" secondAttribute="trailing" id="tnw-1H-ecj"/>
                         </constraints>
                     </view>
@@ -145,7 +154,38 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Wuy-fy-J2b" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="682.421875" y="461.71874999999994"/>
+            <point key="canvasLocation" x="683" y="462"/>
+        </scene>
+        <!--Editing Tools View Controller-->
+        <scene sceneID="7D6-c3-2dg">
+            <objects>
+                <viewController id="Oce-Up-u0Z" customClass="ZEditingToolsViewController" customModule="PadZones" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="g58-MG-wGT"/>
+                        <viewControllerLayoutGuide type="bottom" id="khj-L7-oGL"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="E9Z-nV-dg7">
+                        <rect key="frame" x="0.0" y="0.0" width="341" height="724"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xlK-N9-ONC" customClass="s">
+                                <frame key="frameInset" minX="16" minY="20" width="109" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="New Zone"/>
+                                <connections>
+                                    <action selector="newZoneButtonAction:" destination="Oce-Up-u0Z" eventType="touchUpInside" id="EfR-Et-QsH"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="newZoneButton" destination="xlK-N9-ONC" id="MVJ-gH-q9d"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1mc-bd-Z9S" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1289" y="517"/>
         </scene>
     </scenes>
 </document>
