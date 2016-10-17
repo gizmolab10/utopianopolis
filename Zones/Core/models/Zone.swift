@@ -26,20 +26,22 @@ class Zone : ZBase {
 
 
     override func updateProperties() {
-        self.zoneName = self.record["zoneName"] as? String
+        if record != nil {
+            zoneName = record["zoneName"] as? String
+        }
     }
 
 
     override func setStorageDictionary(_ dict: [String : NSObject]) {
-        self.zoneName = dict["zoneName"] as? String
+        zoneName = dict["zoneName"] as? String
 
-        super.setStorageDictionary(dict) // do last so above "change" is not pushed into iCloud
+        super.setStorageDictionary(dict) // do this step last so the assignment above is NOT pushed into iCloud
     }
 
 
     override func storageDictionary() -> [String : NSObject]? {
         var dict: [String : NSObject] = super.storageDictionary()!
-        dict["zoneName"]              = self.zoneName as NSObject?
+        dict["zoneName"]              = zoneName as NSObject?
 
         return dict
     }

@@ -116,12 +116,16 @@ class ZBase: NSObject {
     }
 
 
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    override func observeValue(forKeyPath keyPath: String?, of iObject: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if context == &kvoContext {
-            let observed = object as! NSObject
-            let    value = observed.value(forKey: keyPath!) as! NSObject
+            let observed = iObject as! NSObject
+            let   object = observed.value(forKey: keyPath!)
 
-            self.set(propertyName: keyPath!, withValue: value)
+            if object != nil {
+                let value = object as! NSObject
+
+                self.set(propertyName: keyPath!, withValue: value)
+            }
         }
     }
 }

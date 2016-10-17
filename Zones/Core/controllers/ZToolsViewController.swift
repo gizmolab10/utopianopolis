@@ -23,11 +23,11 @@ class ZToolsViewController: ZBaseViewController {
 
 
     @IBAction func choiceAction(_ control: ZSegmentedControl) {
-        state.toolState = ZToolState(rawValue: control.selectedSegmentIndex)!
+        stateManager.toolState = ZToolState(rawValue: control.selectedSegmentIndex)!
     }
 
 
     override func update() {
-        toolsChoiceControl.selectedSegmentIndex = state.toolState.rawValue
+        toolsChoiceControl.selectedSegmentIndex = stateManager.toolState.rawValue
     }
 }

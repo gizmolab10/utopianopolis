@@ -11,8 +11,6 @@
 		0C1AD4521DADA1C4004E69C3 /* ZBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1AD4501DADA1C4004E69C3 /* ZBaseViewController.swift */; };
 		0C2DBB9C1DAC4EA300C83FF2 /* ZToolsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2DBB9B1DAC4EA300C83FF2 /* ZToolsViewController.swift */; };
 		0C2DBB9D1DAC4EA300C83FF2 /* ZToolsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2DBB9B1DAC4EA300C83FF2 /* ZToolsViewController.swift */; };
-		0C2DBB9F1DAC652B00C83FF2 /* ZState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2DBB9E1DAC652B00C83FF2 /* ZState.swift */; };
-		0C2DBBA01DAC652B00C83FF2 /* ZState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2DBB9E1DAC652B00C83FF2 /* ZState.swift */; };
 		0C4A3FA81DA47B2000491E87 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C4A3FA71DA47B2000491E87 /* CloudKit.framework */; };
 		0C58C37C1D45805400CAB387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C58C36F1D45805400CAB387 /* Assets.xcassets */; };
 		0C58C37D1D45805400CAB387 /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C58C3711D45805400CAB387 /* ZAppDelegate.swift */; };
@@ -35,6 +33,8 @@
 		0CB1A7DF1D73F87B00283F7B /* ZTrait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB1A7D01D73F87B00283F7B /* ZTrait.swift */; };
 		0CB1A7E01D73F87B00283F7B /* ZTrait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB1A7D01D73F87B00283F7B /* ZTrait.swift */; };
 		0CB1A7FF1D740EC500283F7B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CB1A7FE1D740EC500283F7B /* Main.storyboard */; };
+		0CB4E9D71DB1CC3A0058807D /* ZStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB4E9D61DB1CC3A0058807D /* ZStateManager.swift */; };
+		0CB4E9D81DB1CC3A0058807D /* ZStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB4E9D61DB1CC3A0058807D /* ZStateManager.swift */; };
 		0CBD002C1D9DBC4200797F21 /* ZClosures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBD002B1D9DBC4200797F21 /* ZClosures.swift */; };
 		0CBD002D1D9DBC4200797F21 /* ZClosures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBD002B1D9DBC4200797F21 /* ZClosures.swift */; };
 		0CD9217A1D8F4C3200F80964 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CD921791D8F4C3200F80964 /* CloudKit.framework */; };
@@ -114,7 +114,6 @@
 /* Begin PBXFileReference section */
 		0C1AD4501DADA1C4004E69C3 /* ZBaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZBaseViewController.swift; sourceTree = "<group>"; };
 		0C2DBB9B1DAC4EA300C83FF2 /* ZToolsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZToolsViewController.swift; sourceTree = "<group>"; };
-		0C2DBB9E1DAC652B00C83FF2 /* ZState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZState.swift; sourceTree = "<group>"; };
 		0C4A3FA71DA47B2000491E87 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
 		0C58C36F1D45805400CAB387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C58C3711D45805400CAB387 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
@@ -145,6 +144,7 @@
 		0CB1A7CE1D73F87B00283F7B /* ZAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAction.swift; sourceTree = "<group>"; };
 		0CB1A7D01D73F87B00283F7B /* ZTrait.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTrait.swift; sourceTree = "<group>"; };
 		0CB1A7FE1D740EC500283F7B /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		0CB4E9D61DB1CC3A0058807D /* ZStateManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZStateManager.swift; sourceTree = "<group>"; };
 		0CBD002B1D9DBC4200797F21 /* ZClosures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZClosures.swift; sourceTree = "<group>"; };
 		0CD921751D8F4C0B00F80964 /* PadZones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PadZones.entitlements; path = ../PadZones.entitlements; sourceTree = "<group>"; };
 		0CD921791D8F4C3200F80964 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
@@ -255,7 +255,6 @@
 			children = (
 				0C5B91211D610AEC000CFB6F /* ZAbstractionLayer.swift */,
 				0CBD002B1D9DBC4200797F21 /* ZClosures.swift */,
-				0C2DBB9E1DAC652B00C83FF2 /* ZState.swift */,
 			);
 			path = main;
 			sourceTree = "<group>";
@@ -263,8 +262,9 @@
 		0C5B91231D610AEC000CFB6F /* managers */ = {
 			isa = PBXGroup;
 			children = (
-				0CD9217E1D8F7A7800F80964 /* ZModelManager.swift */,
 				0CF97D6A1DA9C1B500FEAA41 /* ZLocalPersistenceManager.swift */,
+				0CD9217E1D8F7A7800F80964 /* ZModelManager.swift */,
+				0CB4E9D61DB1CC3A0058807D /* ZStateManager.swift */,
 			);
 			path = managers;
 			sourceTree = "<group>";
@@ -671,11 +671,11 @@
 			files = (
 				0CB1A7DC1D73F87B00283F7B /* ZAction.swift in Sources */,
 				0CD921801D8F7A7800F80964 /* ZModelManager.swift in Sources */,
-				0C2DBBA01DAC652B00C83FF2 /* ZState.swift in Sources */,
 				0CF97D581DA785AB00FEAA41 /* ZEditorViewController.swift in Sources */,
 				0C2DBB9D1DAC4EA300C83FF2 /* ZToolsViewController.swift in Sources */,
 				0CF97D691DA986AB00FEAA41 /* ZMainViewController.swift in Sources */,
 				0C1AD4521DADA1C4004E69C3 /* ZBaseViewController.swift in Sources */,
+				0CB4E9D81DB1CC3A0058807D /* ZStateManager.swift in Sources */,
 				0CB1A7E01D73F87B00283F7B /* ZTrait.swift in Sources */,
 				0C5FEA1C1DADBB3600CAF4B5 /* ZEditingToolsViewController.swift in Sources */,
 				0CF97D661DA97AD600FEAA41 /* ZExtensions.swift in Sources */,
@@ -712,11 +712,11 @@
 			files = (
 				0C58C37D1D45805400CAB387 /* ZAppDelegate.swift in Sources */,
 				0CF97D571DA785AB00FEAA41 /* ZEditorViewController.swift in Sources */,
-				0C2DBB9F1DAC652B00C83FF2 /* ZState.swift in Sources */,
 				0CB1A74A1D726DD100283F7B /* ZAbstractionLayer.swift in Sources */,
 				0C2DBB9C1DAC4EA300C83FF2 /* ZToolsViewController.swift in Sources */,
 				0CF97D681DA986AB00FEAA41 /* ZMainViewController.swift in Sources */,
 				0C1AD4511DADA1C4004E69C3 /* ZBaseViewController.swift in Sources */,
+				0CB4E9D71DB1CC3A0058807D /* ZStateManager.swift in Sources */,
 				0CD9217F1D8F7A7800F80964 /* ZModelManager.swift in Sources */,
 				0C5FEA1D1DADBB5600CAF4B5 /* ZEditingToolsViewController.swift in Sources */,
 				0CF97D651DA97AD600FEAA41 /* ZExtensions.swift in Sources */,

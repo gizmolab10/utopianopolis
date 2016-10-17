@@ -28,19 +28,21 @@ class ZLocalPersistenceManager: NSObject {
 
 
     func save() {
+        currentZoneFileName    = modelManager.selectedZone.record.recordID.recordName
         let dict: NSDictionary = modelManager.selectedZone.storageDict as NSDictionary
-        let  url:          URL = URL(fileURLWithPath: pathToCurrentZoneFile())
+        let  url:          URL = pathToCurrentZoneFile()
 
-        dict.write(to:url, atomically: false)
+        dict.write(to: url, atomically: true)
     }
 
 
     func restore() {
-        let url: URL = URL(fileURLWithPath: pathToCurrentZoneFile())
-        let     dict = NSDictionary(contentsOf: url)
+        let url: URL = pathToCurrentZoneFile()
+        let      raw = NSDictionary(contentsOf: url)
 
-        if dict != nil {
-            modelManager.selectedZone.storageDict = dict as! [String : NSObject]
+        if raw != nil {
+            let                              dict = raw as! [String : NSObject]
+            modelManager.selectedZone.storageDict = dict
         }
     }
 
@@ -49,20 +51,40 @@ class ZLocalPersistenceManager: NSObject {
     // MARK:-
 
 
-    func pathForZoneNamed(_ iName: String) -> (String) {
+    let key: String = "current zone file name"
+
+
+    var currentZoneFileName: String {
+        set { UserDefaults.standard.set(newValue, forKey:key) }
+        get {
+            var name: String? = UserDefaults.standard.value(forKey:key) as? String
+
+            if name == nil {
+                name = "root"
+
+                UserDefaults.standard.set(name, forKey:key)
+            }
+
+            return name!
+        }
+    }
+
+
+    func pathToCurrentZoneFile() -> URL {
+        return pathForZoneNamed(currentZoneFileName);
+    }
+
+
+    func pathForZoneNamed(_ iName: String) -> URL {
         return createFolderNamed("zones/\(iName)");
     }
 
 
-    func pathToCurrentZoneFile() -> (String) {
-        return pathForZoneNamed(modelManager.selectedZone.record.recordID.recordName);
-    }
-
-
-    func createFolderNamed(_ iName: String) -> (String) {
+    func createFolderNamed(_ iName: String) -> URL {
         let  paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, false)
-        let folder = paths[0]; // Get documents folder
-        let   path = "\(folder)/\(iName)";
+        let folder = URL(fileURLWithPath:paths[0], isDirectory:true).resolvingSymlinksInPath(); // Get documents folder
+        let    url = folder.appendingPathComponent(iName, isDirectory: false)
+        let   path = url.deletingLastPathComponent().absoluteString;
 
         if !FileManager.default.fileExists(atPath: path) {
             do {
@@ -72,6 +94,6 @@ class ZLocalPersistenceManager: NSObject {
             }
         }
 
-        return path;
+        return url;
     }
 }
