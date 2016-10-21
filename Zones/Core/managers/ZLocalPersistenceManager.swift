@@ -23,16 +23,24 @@ let persistenceManager = ZLocalPersistenceManager()
 class ZLocalPersistenceManager: NSObject {
 
 
+    var isSaving: Bool = false
+
+
     // MARK:- API
     // MARK:-
 
 
     func save() {
-        currentZoneFileName    = modelManager.selectedZone.record.recordID.recordName
-        let dict: NSDictionary = modelManager.selectedZone.storageDict as NSDictionary
-        let  url:          URL = pathToCurrentZoneFile()
+        if !isSaving && stateManager.isReady {
+            isSaving               = true
+            currentZoneFileName    = modelManager.selectedZone.record.recordID.recordName
+            let dict: NSDictionary = modelManager.selectedZone.storageDict as NSDictionary
+            let  url:          URL = pathToCurrentZoneFile()
 
-        dict.write(to: url, atomically: true)
+            dict.write(to: url, atomically: false)
+
+            isSaving               = false
+        }
     }
 
 
@@ -81,17 +89,14 @@ class ZLocalPersistenceManager: NSObject {
 
 
     func createFolderNamed(_ iName: String) -> URL {
-        let  paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, false)
-        let folder = URL(fileURLWithPath:paths[0], isDirectory:true).resolvingSymlinksInPath(); // Get documents folder
-        let    url = folder.appendingPathComponent(iName, isDirectory: false)
-        let   path = url.deletingLastPathComponent().absoluteString;
+        let folder = Bundle.main.resourceURL!
+        let    url = folder.appendingPathComponent(iName, isDirectory: false).standardizedFileURL
+        let   path = url.deletingLastPathComponent().path;
 
-        if !FileManager.default.fileExists(atPath: path) {
-            do {
-                try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
-            } catch {
-                print(error)
-            }
+        do {
+            try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            print(error)
         }
 
         return url;

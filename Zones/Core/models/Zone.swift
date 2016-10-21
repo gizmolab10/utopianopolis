@@ -15,13 +15,13 @@ class Zone : ZBase {
 
     
     dynamic var zoneName: String?
-    dynamic var    zones: [String : NSObject] = [:]
+    var            links: [String : [Zone]] = [:]
     var         children: [Zone] = []
 
 
 
-    override func propertyKeyPaths() -> [String] {
-        return super.propertyKeyPaths() + [#keyPath(zoneName), #keyPath(children)]
+    override func cloudProperties() -> [String] {
+        return super.cloudProperties() + [#keyPath(zoneName), #keyPath(links)]
     }
 
 

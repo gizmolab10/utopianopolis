@@ -33,18 +33,35 @@ let modelManager = ZModelManager()
 
 
 class ZModelManager {
-    let    container: CKContainer!
-    let    currentDB: CKDatabase!
-    var selectedZone: Zone!
-    var     closures: [UpdateClosureObject] = [UpdateClosureObject]()
-    var      records: [CKRecordID : ZBase]  = [:]
+    var _selectedZone: Zone!
+    var      closures: [UpdateClosureObject] = [UpdateClosureObject]()
+    var       records: [CKRecordID : ZBase]  = [:]
+    let     container: CKContainer!
+    let     currentDB: CKDatabase!
+    let    parentsKey = "parents"
+    let   zoneNameKey = "zoneName"
+    let   rootNameKey = "root"
+    let   zoneTypeKey = "Zone"
+    let       cloudID = "iCloud.com.zones.Zones"
 
 
     init() {
-        container = CKContainer(identifier: "iCloud.com.zones.Zones")
+        container = CKContainer(identifier: cloudID)
         currentDB = container.privateCloudDatabase
 
         stateManager.setupAndRun()
+    }
+
+
+    var selectedZone: Zone! {
+        set { _selectedZone = newValue}
+        get {
+            if  _selectedZone == nil {
+                _selectedZone = Zone(record: nil, database: self.currentDB)
+            }
+
+            return _selectedZone
+        }
     }
 
 
@@ -78,29 +95,31 @@ class ZModelManager {
 
 
     func addNewZone() {
-        let record = CKRecord(recordType: "Zone")
+        let record = CKRecord(recordType: zoneTypeKey)
 
         currentDB.save(record) { (iRecord: CKRecord?, iError: Error?) in
             if iError != nil {
                 print(iError)
             } else {
-                let zone = Zone(record: iRecord, database: self.currentDB)
+                let                    zone = Zone(record: iRecord, database: self.currentDB)
+                zone.links[self.parentsKey] = [self.selectedZone]
 
                 self.selectedZone.children.append(zone)
+                persistenceManager.save()
             }
         }
     }
 
 
     func setupRootZone() {
-        let identifier: CKRecordID = CKRecordID(recordName: "root")
+        let recordID: CKRecordID = CKRecordID(recordName: rootNameKey)
 
-        self.updateReccord(identifier, onCompletion: { (record: CKRecord?) -> (Void) in
+        self.assureRecordExists(withRecordID: recordID, onCompletion: { (record: CKRecord?) -> (Void) in
             if self.selectedZone != nil {
                 self.selectedZone.record = record
             } else {
-                record!["zoneName"] = "root" as CKRecordValue?
-                self.selectedZone   = Zone(record: record!, database: self.currentDB)
+                record![self.zoneNameKey] = self.rootNameKey as CKRecordValue?
+                self.selectedZone         = Zone(record: record!, database: self.currentDB)
             }
 
 
@@ -111,23 +130,24 @@ class ZModelManager {
 
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
-        updateReccord(recordID, onCompletion: { (record: CKRecord) -> (Void) in
+        assureRecordExists(withRecordID: recordID, onCompletion: { (iRecord: CKRecord) -> (Void) in
             DispatchQueue.main.async(execute: {
-                let    object = self.records[record.recordID]! as ZBase
-                object.record = record
+                if let     object = self.records[iRecord.recordID] as ZBase? {
+                    object.record = iRecord
 
-                self.updateClosures(with: UpdateKind.data)
+                    self.updateClosures(with: .data)
+                }
             })
         })
     }
 
 
-    func updateReccord(_ recordID: CKRecordID, onCompletion: @escaping RecordClosure) {
+    func assureRecordExists(withRecordID recordID: CKRecordID, onCompletion: @escaping RecordClosure) {
         currentDB.fetch(withRecordID: recordID) { (fetched: CKRecord?, fetchError: Error?) in
             if (fetchError == nil) {
                 onCompletion(fetched!)
             } else {
-                let created: CKRecord = CKRecord(recordType: "Zone", recordID: recordID)
+                let created: CKRecord = CKRecord(recordType: self.zoneTypeKey, recordID: recordID)
 
                 self.currentDB.save(created, completionHandler: { (saved: CKRecord?, saveError: Error?) in
                     if (saveError == nil) {
@@ -164,24 +184,7 @@ class ZModelManager {
     }
 
 
-    func setupWith(operation: ZBlockOperation) {
-        if  selectedZone == nil {
-            let record = CKRecord(recordType: "Zone")
-
-            currentDB.save(record) { (iRecord: CKRecord?, iError: Error?) in
-                if iError != nil {
-                    print(iError)
-                } else {
-                    self.selectedZone = Zone(record: iRecord, database: self.currentDB)
-                }
-
-                operation.done()
-            }
-        }
-    }
-
-
-    func registerWith(operation: ZBlockOperation) {
+    func unsubscribeWith(operation: BlockOperation) {
         currentDB.fetchAllSubscriptions { (iSubscriptions: [CKSubscription]?, iError: Error?) in
             if iError != nil {
                 print(iError)
@@ -189,18 +192,18 @@ class ZModelManager {
                 var count: Int = iSubscriptions!.count
 
                 if count == 0 {
-                    operation.done()
+                    operation.finish()
                 } else {
                     for subscription: CKSubscription in iSubscriptions! {
                         self.currentDB.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (iSubscription: String?, iDeleteError: Error?) in
                             if iDeleteError != nil {
                                 print(iDeleteError)
-                            } else {
-                                count -= 1
+                            }
 
-                                if count == 0 {
-                                    operation.done()
-                                }
+                            count -= 1
+
+                            if count == 0 {
+                                operation.finish()
                             }
                         })
                     }
@@ -210,8 +213,10 @@ class ZModelManager {
     }
 
 
-    func subscribeWith(operation: ZBlockOperation) {
-        let classNames = ["Zone"] //, "ZTrait", "ZAction"]
+    func subscribeWith(operation: BlockOperation) {
+        let classNames = [zoneTypeKey] //, "ZTrait", "ZAction"]
+        var count = classNames.count
+
 
         for className: String in classNames {
             let    predicate:          NSPredicate = NSPredicate(value: true)
@@ -222,14 +227,18 @@ class ZModelManager {
             information.shouldSendContentAvailable = true
             subscription.notificationInfo          = information
 
-            self.currentDB.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iError: Error?) in
-                if iError != nil {
+            self.currentDB.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iSaveError: Error?) in
+                if iSaveError != nil {
                     self.updateClosures(with: UpdateKind.error)
 
-                    print(iError)
+                    print(iSaveError)
                 }
 
-                operation.done()
+                count -= 1
+
+                if count == 0 {
+                    operation.finish()
+                }
             })
         }
     }

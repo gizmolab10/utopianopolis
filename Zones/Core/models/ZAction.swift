@@ -17,7 +17,7 @@ class ZAction: ZBase {
     var  owner: Zone?
 
 
-    override func propertyKeyPaths() -> [String] {
-        return super.propertyKeyPaths() + [#keyPath(action), #keyPath(owner)]
+    override func cloudProperties() -> [String] {
+        return super.cloudProperties() + [#keyPath(action), #keyPath(owner)]
     }
 }

@@ -61,7 +61,7 @@ class ZBase: NSObject {
     // MARK:-
 
 
-    func propertyKeyPaths() -> [String] {
+    func cloudProperties() -> [String] {
         return []
     }
 
@@ -84,7 +84,7 @@ class ZBase: NSObject {
         if type != nil && name != nil {
             record = CKRecord(recordType: type!, recordID: CKRecordID(recordName: name!))
 
-            // any subsequent changes into any of this object's propertyKeyPaths will fetch / save this record from / to iCloud
+            // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
         }
     }
 
@@ -100,7 +100,9 @@ class ZBase: NSObject {
 
 
     func set(propertyName:String, withValue: NSObject) {
-        modelManager.set(intoObject: self, itsPropertyName: propertyName, withValue: withValue)
+        if record != nil {
+            modelManager.set(intoObject: self, itsPropertyName: propertyName, withValue: withValue)
+        }
     }
 
 
@@ -110,7 +112,7 @@ class ZBase: NSObject {
 
 
     func setupKVO() {
-        for keyPath: String in propertyKeyPaths() {
+        for keyPath: String in cloudProperties() {
             self.addObserver(self, forKeyPath: keyPath, options: [.new, .old], context: &kvoContext)
         }
     }

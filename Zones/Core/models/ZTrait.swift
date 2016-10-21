@@ -13,13 +13,12 @@ import CloudKit
 
 class ZTrait: ZBase {
 
-    var   key: String?
     var  type: String?
     var value: Data?
     var owner: Zone?
 
 
-    override func propertyKeyPaths() -> [String] {
-        return super.propertyKeyPaths() + [#keyPath(key), #keyPath(type), #keyPath(value), #keyPath(owner)]
+    override func cloudProperties() -> [String] {
+        return super.cloudProperties() + [#keyPath(type), #keyPath(value), #keyPath(owner)]
     }
 }
