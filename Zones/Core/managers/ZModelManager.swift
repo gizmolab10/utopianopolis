@@ -245,34 +245,41 @@ class ZModelManager {
 
 
     func set(intoObject: ZBase, itsPropertyName: String, withValue: NSObject) {
-        let     record:       CKRecord = intoObject.record
-        let identifier:    CKRecordID! = record.recordID
-        let   oldValue: CKRecordValue! = record[itsPropertyName]
-        let   newValue: CKRecordValue! = (withValue as! CKRecordValue)
-        let  hasChange:           Bool = oldValue == nil || (oldValue as! NSObject != newValue as! NSObject)
+        if  let     record:       CKRecord = intoObject.record {
+            let identifier:    CKRecordID! = record.recordID
+            let   oldValue: CKRecordValue! = record[itsPropertyName]
+            let   newValue: CKRecordValue! = (withValue as! CKRecordValue)
+            let  hasChange:           Bool = oldValue == nil || (oldValue as! NSObject != newValue as! NSObject)
 
-        if (identifier != nil) && hasChange {
-            intoObject.unsaved = true
 
-            currentDB.fetch(withRecordID: identifier) { (fetched: CKRecord?, fetchError: Error?) in
-                if fetchError != nil {
-                    record[itsPropertyName]   = newValue
+            if hasChange {
+                intoObject.unsaved = true
 
-                    intoObject.updateProperties()
+                if !stateManager.isReady {
                     self.updateClosures(with: UpdateKind.data)
-                } else {
-                    fetched![itsPropertyName] = newValue
+                } else if (identifier != nil) {
 
-                    self.currentDB.save(fetched!, completionHandler: { (saved: CKRecord?, saveError: Error?) in
-                        if saveError != nil {
-                            self.updateClosures(with: UpdateKind.error)
-                        } else {
-                            intoObject.record  = saved!
-                            intoObject.unsaved = false
+                    currentDB.fetch(withRecordID: identifier) { (fetched: CKRecord?, fetchError: Error?) in
+                        if fetchError != nil {
+                            record[itsPropertyName]   = newValue
+
+                            intoObject.updateProperties()
                             self.updateClosures(with: UpdateKind.data)
-                            persistenceManager.save()
+                        } else {
+                            fetched![itsPropertyName] = newValue
+
+                            self.currentDB.save(fetched!, completionHandler: { (saved: CKRecord?, saveError: Error?) in
+                                if saveError != nil {
+                                    self.updateClosures(with: UpdateKind.error)
+                                } else {
+                                    intoObject.record  = saved!
+                                    intoObject.unsaved = false
+                                    self.updateClosures(with: UpdateKind.data)
+                                    persistenceManager.save()
+                                }
+                            })
                         }
-                    })
+                    }
                 }
             }
         }
@@ -280,7 +287,7 @@ class ZModelManager {
 
 
     func get(fromObject: ZBase, valueForPropertyName: String) {
-        if fromObject.record != nil {
+        if fromObject.record != nil && stateManager.isReady {
             let      predicate = NSPredicate(format: "")
             let  type: String  = className(of: fromObject);
             let query: CKQuery = CKQuery(recordType: type, predicate: predicate)

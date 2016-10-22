@@ -100,9 +100,7 @@ class ZBase: NSObject {
 
 
     func set(propertyName:String, withValue: NSObject) {
-        if record != nil {
-            modelManager.set(intoObject: self, itsPropertyName: propertyName, withValue: withValue)
-        }
+        modelManager.set(intoObject: self, itsPropertyName: propertyName, withValue: withValue)
     }
 
 
