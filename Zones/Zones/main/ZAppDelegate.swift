@@ -28,7 +28,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
 
 
     func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
-        let note: CKNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! [String : NSObject])
+        let note: CKNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! ZStorageDict)
 
         if note.notificationType == .query {
             let queryNote: CKQueryNotification = note as! CKQueryNotification

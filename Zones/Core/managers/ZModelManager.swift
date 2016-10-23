@@ -96,16 +96,17 @@ class ZModelManager {
 
     func addNewZone() {
         let record = CKRecord(recordType: zoneTypeKey)
+        let   zone = Zone(record: record, database: self.currentDB)
+        zone.links[self.parentsKey] = [self.selectedZone]
+
+        self.selectedZone.children.append(zone)
+        persistenceManager.save()
 
         currentDB.save(record) { (iRecord: CKRecord?, iError: Error?) in
             if iError != nil {
                 print(iError)
             } else {
-                let                    zone = Zone(record: iRecord, database: self.currentDB)
-                zone.links[self.parentsKey] = [self.selectedZone]
-
-                self.selectedZone.children.append(zone)
-                persistenceManager.save()
+                zone.record = iRecord
             }
         }
     }

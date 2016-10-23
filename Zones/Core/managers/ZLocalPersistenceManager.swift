@@ -45,12 +45,8 @@ class ZLocalPersistenceManager: NSObject {
 
 
     func restore() {
-        let url: URL = pathToCurrentZoneFile()
-        let      raw = NSDictionary(contentsOf: url)
-
-        if raw != nil {
-            let                              dict = raw as! [String : NSObject]
-            modelManager.selectedZone.storageDict = dict
+        if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
+            modelManager.selectedZone.storageDict = raw as! ZStorageDict
         }
     }
 

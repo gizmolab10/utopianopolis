@@ -9,32 +9,63 @@
 
 import Foundation
 
+
 #if os(iOS)
     import UIKit
+
+
+    extension ZApplication {
+        func presentError(_ error: NSError) -> Void {
+
+        }
+
+        
+        func clearBadge() {
+            self.applicationIconBadgeNumber += 1
+            self.applicationIconBadgeNumber  = 0
+
+            self.cancelAllLocalNotifications()
+        }
+    }
+
 #elseif os(OSX)
     import Cocoa
+
+
+    extension ZoneTextField {
+        var text: String? {
+            get { return stringValue }
+            set { stringValue = newValue! }
+        }
+    }
+
+
+    extension ZSegmentedControl {
+        var selectedSegmentIndex: Int {
+            get { return selectedSegment }
+            set { selectedSegment = newValue }
+        }
+
+    }
+
 
     extension String {
         func size(attributes attrs: [String : Any]? = nil) -> NSSize {
             return size(withAttributes:attrs)
         }
     }
+
+
+    extension ZApplication {
+        func clearBadge() {
+            self.dockTile.badgeLabel = ""
+        }
+    }
+
 #endif
 
 
-extension ZApplication {
-
-    func clearBadge() {
-        #if os(OSX)
-            self.dockTile.badgeLabel = ""
-        #else
-            self.applicationIconBadgeNumber += 1
-            self.applicationIconBadgeNumber  = 0
-
-            self.cancelAllLocalNotifications()
-        #endif
-    }
-}
+typealias ZStorageDict = [String : NSObject]
 
 
 extension String {

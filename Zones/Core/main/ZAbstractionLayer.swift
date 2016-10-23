@@ -30,23 +30,6 @@
     let zapplication = ZApplication.shared()
 
 
-    extension ZoneTextField {
-        var text: String? {
-            get { return stringValue }
-            set { stringValue = newValue! }
-        }
-    }
-
-
-    extension ZSegmentedControl {
-        var selectedSegmentIndex: Int {
-            get { return selectedSegment }
-            set { selectedSegment = newValue }
-        }
-
-    }
-
-
 #elseif os(iOS)
 
 
@@ -69,13 +52,6 @@
 
 
     let zapplication = ZApplication.shared
-
-
-    extension ZApplication {
-        func presentError(_ error: NSError) -> Void {
-
-        }
-    }
 
 
 #endif

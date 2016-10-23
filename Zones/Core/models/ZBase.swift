@@ -33,7 +33,7 @@ class ZBase: NSObject {
     }
 
 
-    var storageDict: [String : NSObject] {
+    var storageDict: ZStorageDict {
         get {
             return storageDictionary()!
         }
@@ -69,7 +69,7 @@ class ZBase: NSObject {
     func updateProperties() {}
 
 
-    func setStorageDictionary(_ dict: [String : NSObject]) {
+    func setStorageDictionary(_ dict: ZStorageDict) {
         var type: String? = nil
         var name: String? = nil
 
@@ -89,7 +89,7 @@ class ZBase: NSObject {
     }
 
 
-    func storageDictionary() -> [String : NSObject]? {
+    func storageDictionary() -> ZStorageDict? {
         return ["recordName" : record.recordID.recordName as NSObject,
                 "recordType" : record.recordType          as NSObject]
     }
