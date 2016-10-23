@@ -10,12 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/Core/managers/ZModelManager.swift"
-            timestampString = "498881825.717079"
+            timestampString = "498949053.506476"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "196"
-            endingLineNumber = "196"
-            landmarkName = "unsubscribeWith(operation:)"
+            startingLineNumber = "263"
+            endingLineNumber = "263"
+            landmarkName = "set(intoObject:itsPropertyName:withValue:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,13 +25,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/Core/managers/ZModelManager.swift"
-            timestampString = "498881825.717079"
+            filePath = "Zones/Core/models/Zone.swift"
+            timestampString = "498951352.084373"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "260"
-            endingLineNumber = "260"
-            landmarkName = "set(intoObject:itsPropertyName:withValue:)"
+            startingLineNumber = "69"
+            endingLineNumber = "69"
+            landmarkName = "storageDictionary()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Zones/Core/views/ZoneWidget.swift"
+            timestampString = "498951452.665606"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "66"
+            endingLineNumber = "66"
+            landmarkName = "captureText()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

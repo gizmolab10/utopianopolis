@@ -50,7 +50,7 @@ struct HealthCondition: OperationCondition {
         return HealthPermissionOperation(shareTypes: shareTypes, readTypes: readTypes)
     }
     
-    func evaluateForOperation(_ operation: Operation, completion: (OperationConditionResult) -> Void) {
+    func evaluateForOperation(_ operation: Operation, completion: @escaping (OperationConditionResult) -> Void) {
         guard HKHealthStore.isHealthDataAvailable() else {
             failed(shareTypes, completion: completion)
             return

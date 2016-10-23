@@ -9,6 +9,12 @@
 
 import Foundation
 
+#if os(OSX)
+    import Cocoa
+#elseif os(iOS)
+    import UIKit
+#endif
+
 
 enum ZToolState: Int {
     case edit
@@ -32,10 +38,12 @@ let stateManager: ZStateManager = ZStateManager()
 class ZStateManager: NSObject {
 
 
-    var    isReady:                                   Bool = false
-    var  toolState:                             ZToolState = .edit
-    var operations: [ZSynchronizationState:BlockOperation] = [:]
-    let      queue:                         OperationQueue = OperationQueue()
+    var       isReady:                                   Bool = false
+    var     toolState:                             ZToolState = .edit
+    var    operations: [ZSynchronizationState:BlockOperation] = [:]
+    let         queue:                         OperationQueue = OperationQueue()
+    let genericOffset:                                 CGSize = CGSize(width: 40.0, height: 20.0)
+
 
 
     func setupAndRun() {
@@ -73,11 +81,11 @@ class ZStateManager: NSObject {
         print(state)
 
         switch(state) {
-        case .restore:     persistenceManager.restore();   operation.finish(); break
-        case .root:        modelManager.setupRootZone();   operation.finish(); break
-        case .unsubscribe: modelManager.unsubscribeWith (operation:operation); break
-        case .subscribe:   modelManager.subscribeWith   (operation:operation); break
-        case .ready:       isReady = true;                 operation.finish(); break
+        case .restore:     persistenceManager.restore();    operation.finish(); break
+        case .root:        modelManager.setupRootZoneWith(operation:operation); break
+        case .unsubscribe: modelManager.unsubscribeWith  (operation:operation); break
+        case .subscribe:   modelManager.subscribeWith    (operation:operation); break
+        case .ready:       isReady = true;                  operation.finish(); break
         }
     }
 }

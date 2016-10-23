@@ -22,7 +22,7 @@ struct PhotosCondition: OperationCondition {
         return PhotosPermissionOperation()
     }
     
-    func evaluateForOperation(_ operation: Operation, completion: (OperationConditionResult) -> Void) {
+    func evaluateForOperation(_ operation: Operation, completion: @escaping (OperationConditionResult) -> Void) {
         switch PHPhotoLibrary.authorizationStatus() {
             case .authorized:
                 completion(.satisfied)

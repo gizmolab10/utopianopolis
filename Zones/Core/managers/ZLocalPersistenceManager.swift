@@ -46,7 +46,7 @@ class ZLocalPersistenceManager: NSObject {
 
     func restore() {
         if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
-            modelManager.selectedZone.storageDict = raw as! ZStorageDict
+            modelManager.selectedZone = Zone(dict: raw as! ZStorageDict)
         }
     }
 

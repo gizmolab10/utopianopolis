@@ -58,7 +58,7 @@ struct UserNotificationCondition: OperationCondition {
         return UserNotificationPermissionOperation(settings: settings, application: application, behavior: behavior)
     }
     
-    func evaluateForOperation(_ operation: Operation, completion: (OperationConditionResult) -> Void) {
+    func evaluateForOperation(_ operation: Operation, completion: @escaping (OperationConditionResult) -> Void) {
         let result: OperationConditionResult
         
         let current = application.currentUserNotificationSettings

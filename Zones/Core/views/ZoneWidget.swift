@@ -17,15 +17,41 @@ import Foundation
 
 class ZoneWidget: ZoneTextField, ZoneTextFieldDelegate {
 
-    var                      widgetZone: Zone!
     @IBOutlet weak var  widthConstraint: NSLayoutConstraint!
+    var widgetZone: Zone!
 
 
-    func layoutWithText(_ value: String) {
-        self.text     = value
-        self.delegate = self
+    func updateInView(_ inView: ZView) -> CGRect {
+        if !inView.subviews.contains(self) {
+            inView.addSubview(self)
+        }
 
-        updateLayout()
+        delegate = self
+
+        layoutWithText(widgetZone.zoneName)
+
+        return self.frame
+    }
+
+
+    func updateInView(_ inView: ZView, atOffset: CGPoint) {
+        var rect: CGRect = updateInView(inView)
+        rect.origin      = atOffset
+
+        if rect.size.width == 0.0 {
+            rect.size    = CGSize(width: 20.0, height: 20.0)
+        }
+
+        self.frame       = rect
+    }
+    
+
+    func layoutWithText(_ value: String?) {
+        if value != nil {
+            text = value
+
+            updateLayout()
+        }
     }
 
 
@@ -34,17 +60,21 @@ class ZoneWidget: ZoneTextField, ZoneTextFieldDelegate {
     }
 
 
-    func submit() {
+    func captureText() {
         updateLayout()
 
         widgetZone.zoneName = self.text!
     }
 
 
+    // MARK:- delegates
+    // MARK:-
+
+
 #if os(OSX)
 
     func control(_ control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
-        submit()
+        captureText()
 
         return true
     }
@@ -57,7 +87,7 @@ class ZoneWidget: ZoneTextField, ZoneTextFieldDelegate {
 #elseif os(iOS)
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        submit()
+        captureText()
 
         return true
     }

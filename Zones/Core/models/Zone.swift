@@ -48,6 +48,10 @@ class Zone : ZBase {
     override func setStorageDictionary(_ dict: ZStorageDict) {
         zoneName = dict[zoneNameKey] as? String
 
+        if zoneName == nil {
+            zoneName = "empty"
+        }
+
         if let childrenStore: [ZStorageDict] = dict[childrenKey] as! [ZStorageDict]? {
             for child: ZStorageDict in childrenStore {
                 let zone = Zone.init(dict: child)

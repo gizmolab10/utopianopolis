@@ -11,7 +11,6 @@
 		0C1AD4521DADA1C4004E69C3 /* ZBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1AD4501DADA1C4004E69C3 /* ZBaseViewController.swift */; };
 		0C2DBB9C1DAC4EA300C83FF2 /* ZToolsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2DBB9B1DAC4EA300C83FF2 /* ZToolsViewController.swift */; };
 		0C2DBB9D1DAC4EA300C83FF2 /* ZToolsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2DBB9B1DAC4EA300C83FF2 /* ZToolsViewController.swift */; };
-		0C4A3FA81DA47B2000491E87 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C4A3FA71DA47B2000491E87 /* CloudKit.framework */; };
 		0C58C37C1D45805400CAB387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C58C36F1D45805400CAB387 /* Assets.xcassets */; };
 		0C58C37D1D45805400CAB387 /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C58C3711D45805400CAB387 /* ZAppDelegate.swift */; };
 		0C58C3821D45815A00CAB387 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B561D2ECF41001892E5 /* LaunchScreen.storyboard */; };
@@ -176,7 +175,6 @@
 /* Begin PBXFileReference section */
 		0C1AD4501DADA1C4004E69C3 /* ZBaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZBaseViewController.swift; sourceTree = "<group>"; };
 		0C2DBB9B1DAC4EA300C83FF2 /* ZToolsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZToolsViewController.swift; sourceTree = "<group>"; };
-		0C4A3FA71DA47B2000491E87 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
 		0C58C36F1D45805400CAB387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C58C3711D45805400CAB387 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
 		0C58C3761D45805400CAB387 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -278,7 +276,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C4A3FA81DA47B2000491E87 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -553,7 +550,6 @@
 		0CD921761D8F4C2500F80964 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0C4A3FA71DA47B2000491E87 /* CloudKit.framework */,
 				0CD921791D8F4C3200F80964 /* CloudKit.framework */,
 			);
 			name = Frameworks;
