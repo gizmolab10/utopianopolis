@@ -1,0 +1,42 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+provides-nominal:
+provides-member:
+- ["C7SnapKit21ConstraintLayoutGuide", ""]
+- ["C7SnapKit21ConstraintLayoutGuide", "snp"]
+provides-dynamic-lookup:
+depends-top-level:
+- "ConstraintLayoutGuideDSL"
+- "ConstraintLayoutGuide"
+depends-member:
+- !private ["Ps9AnyObject", "ConstraintLayoutGuideDSL"]
+- !private ["P7SnapKit23ConstraintAttributesDSL", "init"]
+- !private ["P7SnapKit13ConstraintDSL", "init"]
+- ["C7SnapKit21ConstraintLayoutGuide", "ConstraintLayoutGuideDSL"]
+- ["C7SnapKit21ConstraintLayoutGuide", "deinit"]
+- ["C7SnapKit21ConstraintLayoutGuide", "snp"]
+- ["V7SnapKit24ConstraintLayoutGuideDSL", "deinit"]
+- !private ["V7SnapKit24ConstraintLayoutGuideDSL", "init"]
+depends-nominal:
+- !private "Ps9AnyObject"
+- !private "P7SnapKit23ConstraintAttributesDSL"
+- !private "P7SnapKit13ConstraintDSL"
+- "C7SnapKit21ConstraintLayoutGuide"
+- "V7SnapKit24ConstraintLayoutGuideDSL"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Swift.swiftmodule"
+- "/Users/jonathansand/GitHub/zones/Pods/Target Support Files/SnapKit-OSX/SnapKit-OSX-umbrella.h"
+- "/Users/jonathansand/GitHub/zones/build/Pods.build/Debug/SnapKit-OSX.build/unextended-module.modulemap"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Foundation.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Darwin.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/IOKit.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/AppKit.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreData.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/XPC.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreImage.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/SwiftOnoneSupport.swiftmodule"
+interface-hash: "456aeb3fe59033dee7e3920063ec0923"

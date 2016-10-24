@@ -1,0 +1,13 @@
+{
+  'version': 0,
+  'case-sensitive': 'false',
+  'roots': [{
+    'type': 'directory',
+    'name': '/Users/jonathansand/GitHub/zones/build/Debug/SnapKit-OSX/SnapKit.framework/Modules'
+    'contents': [{
+      'type': 'file',
+      'name': 'module.modulemap',
+      'external-contents': '/Users/jonathansand/GitHub/zones/build/Pods.build/Debug/SnapKit-OSX.build/unextended-module.modulemap',
+    }]
+  }]
+}

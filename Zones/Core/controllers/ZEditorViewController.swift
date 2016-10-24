@@ -8,6 +8,8 @@
 
 
 import Foundation
+import SnapKit
+
 
 #if os(OSX)
     import Cocoa
@@ -34,31 +36,11 @@ class ZEditorViewController: ZViewController {
     }
 
 
-    func offsetAtIndex(_ index: CGFloat, inRect: CGRect, height: CGFloat) -> CGPoint {
-        var offset: CGPoint = inRect.origin
-        offset.y -= inRect.size.height
-        offset.y += height + index * (height + stateManager.genericOffset.height)
-
-        return offset
-    }
-
-
-    func rectForCount(_ count: CGFloat, fromRect: CGRect) -> CGRect {
-        var rect: CGRect = fromRect
-        rect.size.height = (rect.size.height * count) + (stateManager.genericOffset.height * (count - 1.0))
-        rect.origin.x   += rect.size.width            +  stateManager.genericOffset.width
-        rect.origin.y   += rect.size.height / 2.0
-
-        return rect
-    }
-
-
     func update() {
         let          zone = modelManager.selectedZone!
         var         count = zone.children.count
         widget.widgetZone = zone
         let  rect: CGRect = widget.updateInView(view)
-        let wRect: CGRect = rectForCount(CGFloat(count), fromRect: rect)
 
         while childrenWidgets.count != count {
             childrenWidgets.append(ZoneWidget())
@@ -68,9 +50,8 @@ class ZEditorViewController: ZViewController {
             count                      -= 1
             let childWidget: ZoneWidget = childrenWidgets[count]
             childWidget.widgetZone      = zone.children  [count]
-            let offset:         CGPoint = offsetAtIndex(CGFloat(count), inRect: wRect, height: rect.size.height)
 
-            childWidget.updateInView(view, atOffset: offset)
+            //   childWidget.updateInView(view, atOffset: offset)
         }
     }
 

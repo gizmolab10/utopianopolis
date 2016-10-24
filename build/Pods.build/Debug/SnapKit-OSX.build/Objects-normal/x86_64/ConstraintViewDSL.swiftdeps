@@ -1,0 +1,365 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "ConstraintViewDSL"
+provides-nominal:
+- "V7SnapKit17ConstraintViewDSL"
+provides-member:
+- ["V7SnapKit17ConstraintViewDSL", ""]
+provides-dynamic-lookup:
+depends-top-level:
+- "AnyObject"
+- "ConstraintMaker"
+- "Float"
+- !private "objc_getAssociatedObject"
+- "NSHashTable"
+- "ConstraintAttributesDSL"
+- "AssignmentPrecedence"
+- !private "objc_setAssociatedObject"
+- !private "CastingPrecedence"
+- "Constraint"
+- "ConstraintViewDSL"
+- "UInt8"
+- !private "constraintsKey"
+- "Void"
+- "ConstraintView"
+depends-member:
+- !private ["Ps9AnyObject", "add"]
+- !private ["Ps9AnyObject", "allObjects"]
+- !private ["Ps9AnyObject", "contentCompressionResistancePriority"]
+- !private ["Ps9AnyObject", "contentHuggingPriority"]
+- !private ["Ps9AnyObject", "init"]
+- !private ["Ps9AnyObject", "makeConstraints"]
+- !private ["Ps9AnyObject", "prepareConstraints"]
+- !private ["Ps9AnyObject", "remakeConstraints"]
+- !private ["Ps9AnyObject", "remove"]
+- !private ["Ps9AnyObject", "removeConstraints"]
+- !private ["Ps9AnyObject", "setContentCompressionResistancePriority"]
+- !private ["Ps9AnyObject", "setContentHuggingPriority"]
+- !private ["Ps9AnyObject", "updateConstraints"]
+- !private ["Sa", "Iterator"]
+- !private ["Sa", "_Element"]
+- ["Sa", "deinit"]
+- !private ["Ps23BidirectionalCollection", "Iterator"]
+- !private ["Ps23BidirectionalCollection", "_Element"]
+- !private ["Ps22BidirectionalIndexable", "Iterator"]
+- !private ["Ps22BidirectionalIndexable", "_Element"]
+- !private ["Ps7CVarArg", "Iterator"]
+- !private ["Ps7CVarArg", "_Element"]
+- !private ["Ps7CVarArg", "add"]
+- !private ["Ps7CVarArg", "allObjects"]
+- !private ["Ps7CVarArg", "contentCompressionResistancePriority"]
+- !private ["Ps7CVarArg", "contentHuggingPriority"]
+- !private ["Ps7CVarArg", "init"]
+- !private ["Ps7CVarArg", "remove"]
+- !private ["Ps7CVarArg", "setContentCompressionResistancePriority"]
+- !private ["Ps7CVarArg", "setContentHuggingPriority"]
+- !private ["Ps10Collection", "Iterator"]
+- !private ["Ps10Collection", "_Element"]
+- ["C7SnapKit10Constraint", "deinit"]
+- !private ["P7SnapKit23ConstraintAttributesDSL", "ConstraintMaker"]
+- !private ["P7SnapKit23ConstraintAttributesDSL", "NSHashTable"]
+- !private ["P7SnapKit23ConstraintAttributesDSL", "constraintsHashTable"]
+- !private ["P7SnapKit23ConstraintAttributesDSL", "constraintsKey"]
+- ["P7SnapKit23ConstraintAttributesDSL", "label"]
+- !private ["P7SnapKit23ConstraintAttributesDSL", "objc_getAssociatedObject"]
+- !private ["P7SnapKit23ConstraintAttributesDSL", "objc_setAssociatedObject"]
+- ["P7SnapKit23ConstraintAttributesDSL", "setLabel"]
+- ["P7SnapKit23ConstraintAttributesDSL", "target"]
+- !private ["P7SnapKit23ConstraintAttributesDSL", "view"]
+- ["P7SnapKit23ConstraintAttributesDSL", ""]
+- !private ["P7SnapKit13ConstraintDSL", "ConstraintMaker"]
+- !private ["P7SnapKit13ConstraintDSL", "NSHashTable"]
+- !private ["P7SnapKit13ConstraintDSL", "constraintsHashTable"]
+- !private ["P7SnapKit13ConstraintDSL", "constraintsKey"]
+- ["P7SnapKit13ConstraintDSL", "label"]
+- !private ["P7SnapKit13ConstraintDSL", "objc_getAssociatedObject"]
+- !private ["P7SnapKit13ConstraintDSL", "objc_setAssociatedObject"]
+- ["P7SnapKit13ConstraintDSL", "setLabel"]
+- ["P7SnapKit13ConstraintDSL", "target"]
+- !private ["P7SnapKit13ConstraintDSL", "view"]
+- ["P7SnapKit13ConstraintDSL", ""]
+- !private ["C7SnapKit15ConstraintMaker", "makeConstraints"]
+- !private ["C7SnapKit15ConstraintMaker", "prepareConstraints"]
+- !private ["C7SnapKit15ConstraintMaker", "remakeConstraints"]
+- !private ["C7SnapKit15ConstraintMaker", "removeConstraints"]
+- !private ["C7SnapKit15ConstraintMaker", "updateConstraints"]
+- !private ["P7SnapKit25ConstraintRelatableTarget", "contentCompressionResistancePriority"]
+- !private ["P7SnapKit25ConstraintRelatableTarget", "contentHuggingPriority"]
+- !private ["P7SnapKit25ConstraintRelatableTarget", "setContentCompressionResistancePriority"]
+- !private ["P7SnapKit25ConstraintRelatableTarget", "setContentHuggingPriority"]
+- ["V7SnapKit17ConstraintViewDSL", "AnyObject"]
+- ["V7SnapKit17ConstraintViewDSL", "Constraint"]
+- ["V7SnapKit17ConstraintViewDSL", "ConstraintMaker"]
+- ["V7SnapKit17ConstraintViewDSL", "ConstraintView"]
+- ["V7SnapKit17ConstraintViewDSL", "Float"]
+- ["V7SnapKit17ConstraintViewDSL", "NSHashTable"]
+- ["V7SnapKit17ConstraintViewDSL", "Void"]
+- ["V7SnapKit17ConstraintViewDSL", "add"]
+- ["V7SnapKit17ConstraintViewDSL", "constraints"]
+- !private ["V7SnapKit17ConstraintViewDSL", "constraintsHashTable"]
+- !private ["V7SnapKit17ConstraintViewDSL", "constraintsKey"]
+- ["V7SnapKit17ConstraintViewDSL", "contentCompressionResistanceHorizontalPriority"]
+- ["V7SnapKit17ConstraintViewDSL", "contentCompressionResistanceVerticalPriority"]
+- ["V7SnapKit17ConstraintViewDSL", "contentHuggingHorizontalPriority"]
+- ["V7SnapKit17ConstraintViewDSL", "contentHuggingVerticalPriority"]
+- ["V7SnapKit17ConstraintViewDSL", "deinit"]
+- ["V7SnapKit17ConstraintViewDSL", "init"]
+- ["V7SnapKit17ConstraintViewDSL", "label"]
+- ["V7SnapKit17ConstraintViewDSL", "makeConstraints"]
+- !private ["V7SnapKit17ConstraintViewDSL", "objc_getAssociatedObject"]
+- !private ["V7SnapKit17ConstraintViewDSL", "objc_setAssociatedObject"]
+- ["V7SnapKit17ConstraintViewDSL", "prepareConstraints"]
+- ["V7SnapKit17ConstraintViewDSL", "remakeConstraints"]
+- ["V7SnapKit17ConstraintViewDSL", "remove"]
+- ["V7SnapKit17ConstraintViewDSL", "removeConstraints"]
+- ["V7SnapKit17ConstraintViewDSL", "setLabel"]
+- ["V7SnapKit17ConstraintViewDSL", "target"]
+- ["V7SnapKit17ConstraintViewDSL", "updateConstraints"]
+- ["V7SnapKit17ConstraintViewDSL", "view"]
+- !private ["Ps28CustomDebugStringConvertible", "Iterator"]
+- !private ["Ps28CustomDebugStringConvertible", "_Element"]
+- !private ["Ps28CustomDebugStringConvertible", "add"]
+- !private ["Ps28CustomDebugStringConvertible", "allObjects"]
+- !private ["Ps28CustomDebugStringConvertible", "contentCompressionResistancePriority"]
+- !private ["Ps28CustomDebugStringConvertible", "contentHuggingPriority"]
+- !private ["Ps28CustomDebugStringConvertible", "init"]
+- !private ["Ps28CustomDebugStringConvertible", "remove"]
+- !private ["Ps28CustomDebugStringConvertible", "setContentCompressionResistancePriority"]
+- !private ["Ps28CustomDebugStringConvertible", "setContentHuggingPriority"]
+- !private ["Ps28CustomDebugStringConvertible", "some"]
+- !private ["Ps17CustomReflectable", "Iterator"]
+- !private ["Ps17CustomReflectable", "_Element"]
+- !private ["Ps17CustomReflectable", "some"]
+- !private ["Ps23CustomStringConvertible", "Iterator"]
+- !private ["Ps23CustomStringConvertible", "_Element"]
+- !private ["Ps23CustomStringConvertible", "add"]
+- !private ["Ps23CustomStringConvertible", "allObjects"]
+- !private ["Ps23CustomStringConvertible", "contentCompressionResistancePriority"]
+- !private ["Ps23CustomStringConvertible", "contentHuggingPriority"]
+- !private ["Ps23CustomStringConvertible", "init"]
+- !private ["Ps23CustomStringConvertible", "remove"]
+- !private ["Ps23CustomStringConvertible", "setContentCompressionResistancePriority"]
+- !private ["Ps23CustomStringConvertible", "setContentHuggingPriority"]
+- !private ["Ps9Equatable", "OBJC_ASSOCIATION_RETAIN_NONATOMIC"]
+- !private ["Ps9Equatable", "add"]
+- !private ["Ps9Equatable", "allObjects"]
+- !private ["Ps9Equatable", "contentCompressionResistancePriority"]
+- !private ["Ps9Equatable", "contentHuggingPriority"]
+- !private ["Ps9Equatable", "horizontal"]
+- !private ["Ps9Equatable", "init"]
+- !private ["Ps9Equatable", "remove"]
+- !private ["Ps9Equatable", "setContentCompressionResistancePriority"]
+- !private ["Ps9Equatable", "setContentHuggingPriority"]
+- !private ["Ps9Equatable", "vertical"]
+- !private ["Ps25ExpressibleByArrayLiteral", "Iterator"]
+- !private ["Ps25ExpressibleByArrayLiteral", "_Element"]
+- !private ["Ps23ExpressibleByNilLiteral", "some"]
+- ["Sf", "deinit"]
+- !private ["Ps8Hashable", "OBJC_ASSOCIATION_RETAIN_NONATOMIC"]
+- !private ["Ps8Hashable", "add"]
+- !private ["Ps8Hashable", "allObjects"]
+- !private ["Ps8Hashable", "contentCompressionResistancePriority"]
+- !private ["Ps8Hashable", "contentHuggingPriority"]
+- !private ["Ps8Hashable", "horizontal"]
+- !private ["Ps8Hashable", "init"]
+- !private ["Ps8Hashable", "remove"]
+- !private ["Ps8Hashable", "setContentCompressionResistancePriority"]
+- !private ["Ps8Hashable", "setContentHuggingPriority"]
+- !private ["Ps8Hashable", "vertical"]
+- !private ["SQ", "deinit"]
+- !private ["Ps9Indexable", "Iterator"]
+- !private ["Ps9Indexable", "_Element"]
+- !private ["Ps13IndexableBase", "Iterator"]
+- !private ["Ps13IndexableBase", "_Element"]
+- !private ["Vs16IndexingIterator", "Element"]
+- !private ["Ps16IteratorProtocol", "Element"]
+- !private ["Ps17MutableCollection", "Iterator"]
+- !private ["Ps17MutableCollection", "_Element"]
+- !private ["Ps16MutableIndexable", "Iterator"]
+- !private ["Ps16MutableIndexable", "_Element"]
+- !private ["PSo15NSAccessibility", "contentCompressionResistancePriority"]
+- !private ["PSo15NSAccessibility", "contentHuggingPriority"]
+- !private ["PSo15NSAccessibility", "setContentCompressionResistancePriority"]
+- !private ["PSo15NSAccessibility", "setContentHuggingPriority"]
+- !private ["PSo30NSAccessibilityElementProtocol", "contentCompressionResistancePriority"]
+- !private ["PSo30NSAccessibilityElementProtocol", "contentHuggingPriority"]
+- !private ["PSo30NSAccessibilityElementProtocol", "setContentCompressionResistancePriority"]
+- !private ["PSo30NSAccessibilityElementProtocol", "setContentHuggingPriority"]
+- !private ["PSo29NSAnimatablePropertyContainer", "contentCompressionResistancePriority"]
+- !private ["PSo29NSAnimatablePropertyContainer", "contentHuggingPriority"]
+- !private ["PSo29NSAnimatablePropertyContainer", "setContentCompressionResistancePriority"]
+- !private ["PSo29NSAnimatablePropertyContainer", "setContentHuggingPriority"]
+- !private ["PSo25NSAppearanceCustomization", "contentCompressionResistancePriority"]
+- !private ["PSo25NSAppearanceCustomization", "contentHuggingPriority"]
+- !private ["PSo25NSAppearanceCustomization", "setContentCompressionResistancePriority"]
+- !private ["PSo25NSAppearanceCustomization", "setContentHuggingPriority"]
+- !private ["PSo8NSCoding", "add"]
+- !private ["PSo8NSCoding", "allObjects"]
+- !private ["PSo8NSCoding", "contentCompressionResistancePriority"]
+- !private ["PSo8NSCoding", "contentHuggingPriority"]
+- !private ["PSo8NSCoding", "init"]
+- !private ["PSo8NSCoding", "remove"]
+- !private ["PSo8NSCoding", "setContentCompressionResistancePriority"]
+- !private ["PSo8NSCoding", "setContentHuggingPriority"]
+- !private ["PSo9NSCopying", "add"]
+- !private ["PSo9NSCopying", "allObjects"]
+- !private ["PSo9NSCopying", "init"]
+- !private ["PSo9NSCopying", "remove"]
+- !private ["PSo21NSDraggingDestination", "contentCompressionResistancePriority"]
+- !private ["PSo21NSDraggingDestination", "contentHuggingPriority"]
+- !private ["PSo21NSDraggingDestination", "setContentCompressionResistancePriority"]
+- !private ["PSo21NSDraggingDestination", "setContentHuggingPriority"]
+- !private ["PSo17NSFastEnumeration", "add"]
+- !private ["PSo17NSFastEnumeration", "allObjects"]
+- !private ["PSo17NSFastEnumeration", "init"]
+- !private ["PSo17NSFastEnumeration", "remove"]
+- !private ["CSo11NSHashTable", "add"]
+- !private ["CSo11NSHashTable", "allObjects"]
+- ["CSo11NSHashTable", "deinit"]
+- !private ["CSo11NSHashTable", "init"]
+- !private ["CSo11NSHashTable", "remove"]
+- ["OSC29NSLayoutConstraintOrientation", "deinit"]
+- !private ["OSC29NSLayoutConstraintOrientation", "horizontal"]
+- !private ["OSC29NSLayoutConstraintOrientation", "vertical"]
+- !private ["CSo8NSObject", "add"]
+- !private ["CSo8NSObject", "allObjects"]
+- !private ["CSo8NSObject", "contentCompressionResistancePriority"]
+- !private ["CSo8NSObject", "contentHuggingPriority"]
+- !private ["CSo8NSObject", "remove"]
+- !private ["CSo8NSObject", "setContentCompressionResistancePriority"]
+- !private ["CSo8NSObject", "setContentHuggingPriority"]
+- !private ["PSo16NSObjectProtocol", "add"]
+- !private ["PSo16NSObjectProtocol", "allObjects"]
+- !private ["PSo16NSObjectProtocol", "contentCompressionResistancePriority"]
+- !private ["PSo16NSObjectProtocol", "contentHuggingPriority"]
+- !private ["PSo16NSObjectProtocol", "init"]
+- !private ["PSo16NSObjectProtocol", "remove"]
+- !private ["PSo16NSObjectProtocol", "setContentCompressionResistancePriority"]
+- !private ["PSo16NSObjectProtocol", "setContentHuggingPriority"]
+- !private ["CSo11NSResponder", "contentCompressionResistancePriority"]
+- !private ["CSo11NSResponder", "contentHuggingPriority"]
+- !private ["CSo11NSResponder", "setContentCompressionResistancePriority"]
+- !private ["CSo11NSResponder", "setContentHuggingPriority"]
+- !private ["PSo33NSUserInterfaceItemIdentification", "contentCompressionResistancePriority"]
+- !private ["PSo33NSUserInterfaceItemIdentification", "contentHuggingPriority"]
+- !private ["PSo33NSUserInterfaceItemIdentification", "setContentCompressionResistancePriority"]
+- !private ["PSo33NSUserInterfaceItemIdentification", "setContentHuggingPriority"]
+- !private ["CSo6NSView", "contentCompressionResistancePriority"]
+- !private ["CSo6NSView", "contentHuggingPriority"]
+- ["CSo6NSView", "deinit"]
+- !private ["CSo6NSView", "setContentCompressionResistancePriority"]
+- !private ["CSo6NSView", "setContentHuggingPriority"]
+- !private ["Sq", "deinit"]
+- !private ["Sq", "some"]
+- !private ["Ps22RandomAccessCollection", "Iterator"]
+- !private ["Ps22RandomAccessCollection", "_Element"]
+- !private ["Ps21RandomAccessIndexable", "Iterator"]
+- !private ["Ps21RandomAccessIndexable", "_Element"]
+- !private ["Ps26RangeReplaceableCollection", "Iterator"]
+- !private ["Ps26RangeReplaceableCollection", "_Element"]
+- !private ["Ps25RangeReplaceableIndexable", "Iterator"]
+- !private ["Ps25RangeReplaceableIndexable", "_Element"]
+- !private ["Ps16RawRepresentable", "OBJC_ASSOCIATION_RETAIN_NONATOMIC"]
+- !private ["Ps16RawRepresentable", "horizontal"]
+- !private ["Ps16RawRepresentable", "vertical"]
+- !private ["Ps8Sequence", "Element"]
+- !private ["Ps8Sequence", "Iterator"]
+- !private ["Ps8Sequence", "_Element"]
+- ["Vs5UInt8", "deinit"]
+- !private ["Ps14_ArrayProtocol", "Iterator"]
+- !private ["Ps14_ArrayProtocol", "_Element"]
+- !private ["Ps37_DefaultCustomPlaygroundQuickLookable", "contentCompressionResistancePriority"]
+- !private ["Ps37_DefaultCustomPlaygroundQuickLookable", "contentHuggingPriority"]
+- !private ["Ps37_DefaultCustomPlaygroundQuickLookable", "setContentCompressionResistancePriority"]
+- !private ["Ps37_DefaultCustomPlaygroundQuickLookable", "setContentHuggingPriority"]
+- !private ["Ps24_DestructorSafeContainer", "Iterator"]
+- !private ["Ps24_DestructorSafeContainer", "_Element"]
+- !private ["Ps9_Hashable", "OBJC_ASSOCIATION_RETAIN_NONATOMIC"]
+- !private ["Ps9_Hashable", "add"]
+- !private ["Ps9_Hashable", "allObjects"]
+- !private ["Ps9_Hashable", "contentCompressionResistancePriority"]
+- !private ["Ps9_Hashable", "contentHuggingPriority"]
+- !private ["Ps9_Hashable", "horizontal"]
+- !private ["Ps9_Hashable", "init"]
+- !private ["Ps9_Hashable", "remove"]
+- !private ["Ps9_Hashable", "setContentCompressionResistancePriority"]
+- !private ["Ps9_Hashable", "setContentHuggingPriority"]
+- !private ["Ps9_Hashable", "vertical"]
+- !private ["Ps21_ObjectiveCBridgeable", "Iterator"]
+- !private ["Ps21_ObjectiveCBridgeable", "_Element"]
+- !private ["OSC22objc_AssociationPolicy", "OBJC_ASSOCIATION_RETAIN_NONATOMIC"]
+- !private ["OSC22objc_AssociationPolicy", "deinit"]
+depends-nominal:
+- !private "Ps9AnyObject"
+- "Sa"
+- !private "Ps23BidirectionalCollection"
+- !private "Ps22BidirectionalIndexable"
+- !private "Ps7CVarArg"
+- !private "Ps10Collection"
+- "C7SnapKit10Constraint"
+- "P7SnapKit23ConstraintAttributesDSL"
+- "P7SnapKit13ConstraintDSL"
+- !private "C7SnapKit15ConstraintMaker"
+- !private "P7SnapKit25ConstraintRelatableTarget"
+- "V7SnapKit17ConstraintViewDSL"
+- !private "Ps28CustomDebugStringConvertible"
+- !private "Ps17CustomReflectable"
+- !private "Ps23CustomStringConvertible"
+- !private "Ps9Equatable"
+- !private "Ps25ExpressibleByArrayLiteral"
+- !private "Ps23ExpressibleByNilLiteral"
+- "Sf"
+- !private "Ps8Hashable"
+- !private "SQ"
+- !private "Ps9Indexable"
+- !private "Ps13IndexableBase"
+- !private "Vs16IndexingIterator"
+- !private "Ps16IteratorProtocol"
+- !private "Ps17MutableCollection"
+- !private "Ps16MutableIndexable"
+- !private "PSo15NSAccessibility"
+- !private "PSo30NSAccessibilityElementProtocol"
+- !private "PSo29NSAnimatablePropertyContainer"
+- !private "PSo25NSAppearanceCustomization"
+- !private "PSo8NSCoding"
+- !private "PSo9NSCopying"
+- !private "PSo21NSDraggingDestination"
+- !private "PSo17NSFastEnumeration"
+- "CSo11NSHashTable"
+- "OSC29NSLayoutConstraintOrientation"
+- !private "CSo8NSObject"
+- !private "PSo16NSObjectProtocol"
+- !private "CSo11NSResponder"
+- !private "PSo33NSUserInterfaceItemIdentification"
+- "CSo6NSView"
+- !private "Sq"
+- !private "Ps22RandomAccessCollection"
+- !private "Ps21RandomAccessIndexable"
+- !private "Ps26RangeReplaceableCollection"
+- !private "Ps25RangeReplaceableIndexable"
+- !private "Ps16RawRepresentable"
+- !private "Ps8Sequence"
+- "Vs5UInt8"
+- !private "Ps14_ArrayProtocol"
+- !private "Ps37_DefaultCustomPlaygroundQuickLookable"
+- !private "Ps24_DestructorSafeContainer"
+- !private "Ps9_Hashable"
+- !private "Ps21_ObjectiveCBridgeable"
+- !private "OSC22objc_AssociationPolicy"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Swift.swiftmodule"
+- "/Users/jonathansand/GitHub/zones/Pods/Target Support Files/SnapKit-OSX/SnapKit-OSX-umbrella.h"
+- "/Users/jonathansand/GitHub/zones/build/Pods.build/Debug/SnapKit-OSX.build/unextended-module.modulemap"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Foundation.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Darwin.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/IOKit.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/AppKit.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreData.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/XPC.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreImage.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/SwiftOnoneSupport.swiftmodule"
+interface-hash: "c351ff2d9617f963e60b755ad735ab4c"

@@ -1,0 +1,97 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "ConstraintItem"
+- "=="
+provides-nominal:
+- "C7SnapKit14ConstraintItem"
+provides-member:
+- ["C7SnapKit14ConstraintItem", ""]
+provides-dynamic-lookup:
+depends-top-level:
+- !private "!=="
+- !private "BooleanLiteralType"
+- !private "&&"
+- "Equatable"
+- !private "==="
+- "=="
+- "ConstraintAttributes"
+- "AssignmentPrecedence"
+- "ConstraintView"
+- "ConstraintItem"
+- "CastingPrecedence"
+- "Bool"
+- "AnyObject"
+depends-member:
+- !private ["Ps9AnyObject", "attributes"]
+- ["Ps9AnyObject", "deinit"]
+- !private ["Ps9AnyObject", "target"]
+- ["Ps9AnyObject", ""]
+- !private ["Sb", "_getBuiltinLogicValue"]
+- ["Sb", "deinit"]
+- ["V7SnapKit20ConstraintAttributes", "deinit"]
+- ["C7SnapKit14ConstraintItem", "AnyObject"]
+- ["C7SnapKit14ConstraintItem", "ConstraintAttributes"]
+- ["C7SnapKit14ConstraintItem", "ConstraintView"]
+- ["C7SnapKit14ConstraintItem", "attributes"]
+- ["C7SnapKit14ConstraintItem", "deinit"]
+- ["C7SnapKit14ConstraintItem", "init"]
+- ["C7SnapKit14ConstraintItem", "target"]
+- ["C7SnapKit14ConstraintItem", "view"]
+- !private ["P7SnapKit25ConstraintRelatableTarget", "attributes"]
+- !private ["P7SnapKit25ConstraintRelatableTarget", "target"]
+- ["Ps28CustomDebugStringConvertible", "some"]
+- !private ["Ps29CustomPlaygroundQuickLookable", "_getBuiltinLogicValue"]
+- !private ["Ps17CustomReflectable", "_getBuiltinLogicValue"]
+- ["Ps17CustomReflectable", "some"]
+- !private ["Ps23CustomStringConvertible", "_getBuiltinLogicValue"]
+- !private ["Ps9Equatable", "_getBuiltinLogicValue"]
+- !private ["Ps9Equatable", "attributes"]
+- !private ["Ps9Equatable", "target"]
+- ["Ps9Equatable", ""]
+- !private ["Ps27ExpressibleByBooleanLiteral", "_getBuiltinLogicValue"]
+- ["Ps23ExpressibleByNilLiteral", "some"]
+- !private ["Ps8Hashable", "_getBuiltinLogicValue"]
+- !private ["Ps25LosslessStringConvertible", "_getBuiltinLogicValue"]
+- ["CSo6NSView", "deinit"]
+- ["Sq", "deinit"]
+- ["Sq", "some"]
+- !private ["Ps35_ExpressibleByBuiltinBooleanLiteral", "_getBuiltinLogicValue"]
+- !private ["Ps9_Hashable", "_getBuiltinLogicValue"]
+- !private ["Ps21_ObjectiveCBridgeable", "_getBuiltinLogicValue"]
+depends-nominal:
+- "Ps9AnyObject"
+- "Sb"
+- "V7SnapKit20ConstraintAttributes"
+- "C7SnapKit14ConstraintItem"
+- !private "P7SnapKit25ConstraintRelatableTarget"
+- "Ps28CustomDebugStringConvertible"
+- !private "Ps29CustomPlaygroundQuickLookable"
+- "Ps17CustomReflectable"
+- !private "Ps23CustomStringConvertible"
+- "Ps9Equatable"
+- !private "Ps27ExpressibleByBooleanLiteral"
+- "Ps23ExpressibleByNilLiteral"
+- !private "Ps8Hashable"
+- !private "Ps25LosslessStringConvertible"
+- "CSo6NSView"
+- "Sq"
+- !private "Ps35_ExpressibleByBuiltinBooleanLiteral"
+- !private "Ps9_Hashable"
+- !private "Ps21_ObjectiveCBridgeable"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Swift.swiftmodule"
+- "/Users/jonathansand/GitHub/zones/Pods/Target Support Files/SnapKit-OSX/SnapKit-OSX-umbrella.h"
+- "/Users/jonathansand/GitHub/zones/build/Pods.build/Debug/SnapKit-OSX.build/unextended-module.modulemap"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Foundation.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Darwin.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/IOKit.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/AppKit.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreData.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/XPC.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreImage.swiftmodule"
+- "/Applications/Utilities/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/SwiftOnoneSupport.swiftmodule"
+interface-hash: "b77bdb86ad8ee6d27a455f2f984c83af"
