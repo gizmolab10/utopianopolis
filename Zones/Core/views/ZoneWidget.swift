@@ -6,7 +6,8 @@
 //  Copyright © 2016 Zones. All rights reserved.
 //
 
-import Foundation
+
+import SnapKit
 
 #if os(OSX)
     import Cocoa
@@ -15,40 +16,88 @@ import Foundation
 #endif
 
 
-class ZoneWidget: ZoneTextField, ZoneTextFieldDelegate {
+class ZoneWidget: ZView, ZoneTextFieldDelegate {
 
-    @IBOutlet weak var  widthConstraint: NSLayoutConstraint!
-    var widgetZone: Zone!
+
+    @IBOutlet weak var wConstraint: NSLayoutConstraint?
+    @IBOutlet weak var hConstraint: NSLayoutConstraint?
+    private var         _textField: ZoneTextField!
+    var                 widgetZone: Zone!
+    private var      _childrenView: ZView!
+    let                       font: ZFont = ZFont.userFont(ofSize: 17.0)!
+
+
+    var textField: ZoneTextField {
+        get {
+            if _textField == nil {
+                _textField                      = ZoneTextField()
+                _textField.font                 = font
+                _textField.delegate             = self
+                _textField.alignment            = .center
+                _textField.isBordered           = false
+                _textField.backgroundColor      = NSColor(cgColor: CGColor.clear)
+                _textField.maximumNumberOfLines = 1
+
+                addSubview(_textField)
+
+                _textField.snp.makeConstraints { (make) -> Void in
+                    make.width.equalTo(200.0).labeled("text size")
+                }
+
+                snp.updateConstraints { (make) -> Void in
+                    make.center.size.equalTo(_textField).labeled("text center and size")
+                }
+            }
+
+            return _textField
+        }
+    }
+
+
+    var childrenView: ZView {
+        get {
+            if _childrenView == nil {
+                _childrenView = ZView()
+
+                addSubview(_childrenView)
+            }
+
+            return _childrenView
+        }
+    }
+
+
+    func captureText() {
+        widgetZone.zoneName = textField.text!
+    }
 
 
     func updateInView(_ inView: ZView) -> CGRect {
         if !inView.subviews.contains(self) {
             inView.addSubview(self)
+
+            snp.remakeConstraints { (make) -> Void in
+                make.center.equalTo(inView).labeled("view center")
+            }
         }
 
-        delegate = self
+        if hConstraint != nil {
+            removeConstraint(hConstraint!)
+        }
+
+        if wConstraint != nil {
+            removeConstraint(wConstraint!)
+        }
 
         layoutWithText(widgetZone.zoneName)
 
-        return self.frame
+        return frame
     }
 
-
-    func updateInView(_ inView: ZView, atOffset: CGPoint) {
-        var rect: CGRect = updateInView(inView)
-        rect.origin      = atOffset
-
-        if rect.size.width == 0.0 {
-            rect.size    = CGSize(width: 20.0, height: 20.0)
-        }
-
-        self.frame       = rect
-    }
-    
 
     func layoutWithText(_ value: String?) {
         if value != nil {
-            text = value
+            textField.text = value
 
             updateLayout()
         }
@@ -56,16 +105,16 @@ class ZoneWidget: ZoneTextField, ZoneTextFieldDelegate {
 
 
     func updateLayout() {
-        self.widthConstraint.constant = self.text!.widthForFont(self.font! as ZFont) + 35.0
+        textField.snp.removeConstraints()
+        textField.snp.remakeConstraints { (make) -> Void in
+            let width = textField.text!.widthForFont(font) + 35.0
+
+            make.width.equalTo(width).labeled("text width")
+        }
+
+        updateConstraints()
+        textField.addBorder(thickness: 5.0, fractionalRadius: 0.5, color: CGColor.black)
     }
-
-
-    func captureText() {
-        updateLayout()
-
-        widgetZone.zoneName = self.text!
-    }
-
 
     // MARK:- delegates
     // MARK:-

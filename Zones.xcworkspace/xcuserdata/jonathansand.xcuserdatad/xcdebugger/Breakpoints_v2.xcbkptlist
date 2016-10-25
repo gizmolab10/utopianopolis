@@ -25,30 +25,46 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/Core/models/Zone.swift"
-            timestampString = "498951352.084373"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "69"
-            endingLineNumber = "69"
-            landmarkName = "storageDictionary()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "Zones/Core/views/ZoneWidget.swift"
-            timestampString = "498951452.665606"
+            timestampString = "499078595.9862"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "66"
-            endingLineNumber = "66"
-            landmarkName = "captureText()"
+            startingLineNumber = "79"
+            endingLineNumber = "79"
+            landmarkName = "updateInView(_:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Zones.ZoneWidget.updateInView (__ObjC.NSView) -&gt; __C.CGRect"
+                  moduleName = "Zones"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/views/ZoneWidget.swift"
+                  timestampString = "499078597.602768"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "79"
+                  endingLineNumber = "79"
+                  offsetFromSymbolStart = "321">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Zones.ZoneWidget.(updateInView (__ObjC.NSView) -&gt; __C.CGRect).(closure #1)"
+                  moduleName = "Zones"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/views/ZoneWidget.swift"
+                  timestampString = "499078597.604754"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "80"
+                  endingLineNumber = "80"
+                  offsetFromSymbolStart = "19">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -7,7 +7,6 @@
 //
 
 
-import Foundation
 import SnapKit
 
 
@@ -41,6 +40,8 @@ class ZEditorViewController: ZViewController {
         var         count = zone.children.count
         widget.widgetZone = zone
         let  rect: CGRect = widget.updateInView(view)
+
+        print(rect)
 
         while childrenWidgets.count != count {
             childrenWidgets.append(ZoneWidget())

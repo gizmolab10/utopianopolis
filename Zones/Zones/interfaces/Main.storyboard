@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
     </dependencies>
     <scenes>
@@ -672,28 +673,25 @@
                         <rect key="frame" x="0.0" y="0.0" width="552" height="448"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zba-2T-Mbd" customClass="ZoneWidget" customModule="Zones" customModuleProvider="target">
-                                <rect key="frame" x="111" y="213" width="330" height="22"/>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="tgw-3r-eBv" customClass="ZoneWidget" customModule="Zones" customModuleProvider="target">
+                                <rect key="frame" x="195" y="214" width="163" height="21"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="330" id="XoP-Zi-00H"/>
+                                    <constraint firstAttribute="height" constant="21" id="rsk-JV-B7J"/>
+                                    <constraint firstAttribute="width" constant="163" id="yAw-GM-XEF"/>
                                 </constraints>
-                                <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" usesSingleLineMode="YES" bezelStyle="round" id="JHU-At-69S">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
                                 <connections>
-                                    <outlet property="widthConstraint" destination="XoP-Zi-00H" id="7rQ-zO-mvN"/>
+                                    <outlet property="hConstraint" destination="rsk-JV-B7J" id="Gpn-ad-vL9"/>
+                                    <outlet property="wConstraint" destination="yAw-GM-XEF" id="ux8-lP-loY"/>
                                 </connections>
-                            </textField>
+                            </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="zba-2T-Mbd" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="CyL-rR-hsa"/>
-                            <constraint firstItem="zba-2T-Mbd" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="MpD-LE-zXj"/>
+                            <constraint firstItem="tgw-3r-eBv" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="xtM-eJ-mya"/>
+                            <constraint firstItem="tgw-3r-eBv" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="zSe-sc-6uu"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="widget" destination="zba-2T-Mbd" id="qA8-NT-PEu"/>
+                        <outlet property="widget" destination="tgw-3r-eBv" id="6m9-w5-v2U"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

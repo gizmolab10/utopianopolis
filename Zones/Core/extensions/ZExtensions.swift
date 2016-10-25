@@ -101,3 +101,18 @@ extension String {
 //        return boundingBox.width
 //    }
 //}
+
+
+extension ZView {
+
+    
+    func addBorder(thickness: CGFloat, fractionalRadius: CGFloat, color: CGColor) {
+        if layer == nil {
+            layer = CALayer()
+        }
+
+        layer!.borderColor  = color
+        layer!.borderWidth  = thickness
+        layer!.cornerRadius = bounds.size.height * fractionalRadius
+    }
+}
