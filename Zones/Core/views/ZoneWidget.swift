@@ -27,6 +27,12 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
     let                       font: ZFont = ZFont.userFont(ofSize: 17.0)!
 
 
+    var hasChildren: Bool {
+        get { return widgetZone.children.count > 0 }
+    }
+
+
+
     var textField: ZoneTextField {
         get {
             if _textField == nil {
@@ -42,10 +48,7 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
 
                 _textField.snp.makeConstraints { (make) -> Void in
                     make.width.equalTo(200.0).labeled("text size")
-                }
-
-                snp.updateConstraints { (make) -> Void in
-                    make.center.size.equalTo(_textField).labeled("text center and size")
+                    make.centerY.left.equalTo(self).labeled("text center and size")
                 }
             }
 
@@ -56,10 +59,18 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
 
     var childrenView: ZView {
         get {
-            if _childrenView == nil {
+            if _childrenView == nil && hasChildren {
                 _childrenView = ZView()
 
                 addSubview(_childrenView)
+
+                _childrenView.snp.makeConstraints { (make) -> Void in
+                    make.height.equalTo(400.0).labeled("children height")
+                }
+
+                snp.makeConstraints { (make) -> Void in
+                    make.centerY.height.right.equalTo(_childrenView).labeled("children centerY height right")
+                }
             }
 
             return _childrenView
@@ -106,14 +117,20 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
 
     func updateLayout() {
         textField.snp.removeConstraints()
-        textField.snp.remakeConstraints { (make) -> Void in
-            let width = textField.text!.widthForFont(font) + 35.0
+        textField.snp.makeConstraints { (make) -> Void in
+            let width = textField.text!.widthForFont(font) + 10.0
 
             make.width.equalTo(width).labeled("text width")
+            make.centerY.left.equalTo(self).labeled("text center and size")
+
+            if hasChildren {
+                make.right.equalTo(childrenView.snp.left).offset(-stateManager.genericOffset.width)
+            }
         }
 
         updateConstraints()
         textField.addBorder(thickness: 5.0, fractionalRadius: 0.5, color: CGColor.black)
+        childrenView.addBorder(thickness: 1.0, fractionalRadius: 0.5, color: CGColor.black)
     }
 
     // MARK:- delegates

@@ -14,6 +14,11 @@ import Foundation
     import UIKit
 
 
+    func ZEdgeInsetsMake(top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) -> EdgeInsets {
+        return UIEdgeInsetsMake(top, left, bottom, right)
+    }
+
+
     extension ZApplication {
         func presentError(_ error: NSError) -> Void {
 
@@ -30,6 +35,11 @@ import Foundation
 
 #elseif os(OSX)
     import Cocoa
+
+
+    func ZEdgeInsetsMake(top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) -> EdgeInsets {
+        return NSEdgeInsetsMake(top, left, bottom, right)
+    }
 
 
     extension ZoneTextField {
