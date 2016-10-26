@@ -20,8 +20,7 @@ import SnapKit
 class ZEditorViewController: ZViewController {
 
     
-    @IBOutlet weak var widget: ZoneWidget!
-    var childrenWidgets: [ZoneWidget] = []
+    let widget: ZoneWidget! = ZoneWidget()
 
 
     override open func viewDidLoad() {
@@ -36,24 +35,9 @@ class ZEditorViewController: ZViewController {
 
 
     func update() {
-        let          zone = modelManager.selectedZone!
-        var         count = zone.children.count
-        widget.widgetZone = zone
-        let  rect: CGRect = widget.updateInView(view)
+        widget.widgetZone = modelManager.selectedZone!
 
-        print(rect)
-
-        while childrenWidgets.count != count {
-            childrenWidgets.append(ZoneWidget())
-        }
-
-        while count > 0 {
-            count                      -= 1
-            let childWidget: ZoneWidget = childrenWidgets[count]
-            childWidget.widgetZone      = zone.children  [count]
-
-            //   childWidget.updateInView(view, atOffset: offset)
-        }
+        widget.updateInView(view, atIndex: -1)
     }
 
 

@@ -121,8 +121,9 @@ extension ZView {
             layer = CALayer()
         }
 
-        layer!.borderColor  = color
-        layer!.borderWidth  = thickness
-        layer!.cornerRadius = bounds.size.height * fractionalRadius
+        layer!.borderColor     = color
+        layer!.borderWidth     = thickness
+        layer!.cornerRadius    = bounds.size.height * fractionalRadius
+        layer!.backgroundColor = CGColor.white
     }
 }

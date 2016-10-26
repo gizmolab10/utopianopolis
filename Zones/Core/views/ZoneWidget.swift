@@ -16,15 +16,16 @@ import SnapKit
 #endif
 
 
+private let widgetFont: ZFont = ZFont.userFont(ofSize: 17.0)!
+
+
 class ZoneWidget: ZView, ZoneTextFieldDelegate {
 
 
-    @IBOutlet weak var wConstraint: NSLayoutConstraint?
-    @IBOutlet weak var hConstraint: NSLayoutConstraint?
-    private var         _textField: ZoneTextField!
-    var                 widgetZone: Zone!
-    private var      _childrenView: ZView!
-    let                       font: ZFont = ZFont.userFont(ofSize: 17.0)!
+    private var    _textField: ZoneTextField!
+    var            widgetZone: Zone!
+    private var _childrenView: ZView!
+    var       childrenWidgets: [ZoneWidget] = []
 
 
     var hasChildren: Bool {
@@ -32,23 +33,27 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
     }
 
 
-
     var textField: ZoneTextField {
         get {
             if _textField == nil {
                 _textField                      = ZoneTextField()
-                _textField.font                 = font
+                _textField.font                 = widgetFont
                 _textField.delegate             = self
                 _textField.alignment            = .center
+                _textField.bezelStyle           = .roundedBezel
                 _textField.isBordered           = false
-                _textField.backgroundColor      = NSColor(cgColor: CGColor.clear)
+                _textField.backgroundColor      = NSColor(cgColor: CGColor.white)
                 _textField.maximumNumberOfLines = 1
 
                 addSubview(_textField)
 
                 _textField.snp.makeConstraints { (make) -> Void in
-                    make.width.equalTo(200.0).labeled("text size")
-                    make.centerY.left.equalTo(self).labeled("text center and size")
+                    make.width.equalTo(200.0).labeled("text width")
+                }
+
+                snp.makeConstraints { (make) -> Void in
+                    make.centerY.left.equalTo(_textField).labeled("text centerY and left")
+                    make.size.greaterThanOrEqualTo(_textField)
                 }
             }
 
@@ -59,17 +64,13 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
 
     var childrenView: ZView {
         get {
-            if _childrenView == nil && hasChildren {
+            if _childrenView == nil {
                 _childrenView = ZView()
 
                 addSubview(_childrenView)
 
                 _childrenView.snp.makeConstraints { (make) -> Void in
-                    make.height.equalTo(400.0).labeled("children height")
-                }
-
-                snp.makeConstraints { (make) -> Void in
-                    make.centerY.height.right.equalTo(_childrenView).labeled("children centerY height right")
+                    make.top.bottom.right.equalTo(self).labeled("children top bottom right")
                 }
             }
 
@@ -83,45 +84,69 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
     }
 
 
-    func updateInView(_ inView: ZView) -> CGRect {
+    func updateInView(_ inView: ZView, atIndex: Int) {
+        var                 index = widgetZone.children.count
+        var previous: ZoneWidget? = nil
+
         if !inView.subviews.contains(self) {
             inView.addSubview(self)
 
-            snp.remakeConstraints { (make) -> Void in
-                make.center.equalTo(inView).labeled("view center")
+            if atIndex == -1 {
+                snp.remakeConstraints { (make) -> Void in
+                    make.center.equalTo(inView).labeled("view center")
+                }
             }
         }
 
-        if hConstraint != nil {
-            removeConstraint(hConstraint!)
+        while childrenWidgets.count != index {
+            childrenWidgets.append(ZoneWidget())
         }
 
-        if wConstraint != nil {
-            removeConstraint(wConstraint!)
+        while index > 0 {
+            index                 -= 1
+            let        childWidget = childrenWidgets    [index]
+            childWidget.widgetZone = widgetZone.children[index]
+
+            childWidget.updateInView(childrenView, atIndex: index)
+
+            childWidget.snp.makeConstraints({ (make) in
+                if index == 0 {
+                    make.top.equalTo(childrenView)
+                }
+
+                if previous == nil {
+                    make.bottom.equalTo(childrenView)
+                } else {
+                    make.bottom.equalTo((previous?.snp.top)!).offset(stateManager.genericOffset.height)
+                }
+
+                make.left.equalTo(childrenView)
+                make.right.height.lessThanOrEqualTo(childrenView)
+            })
+
+            childWidget.layoutForText()
+
+            previous = childWidget
         }
 
-        layoutWithText(widgetZone.zoneName)
-
-        return frame
+        layoutForText()
     }
 
 
-    func layoutWithText(_ value: String?) {
-        if value != nil {
-            textField.text = value
+    func layoutForText() {
+        textField.text = widgetZone.zoneName ?? "empty"
 
-            updateLayout()
-        }
+        updateLayout()
     }
 
 
     func updateLayout() {
         textField.snp.removeConstraints()
         textField.snp.makeConstraints { (make) -> Void in
-            let width = textField.text!.widthForFont(font) + 10.0
+            let width = textField.text!.widthForFont(widgetFont) + 10.0
 
             make.width.equalTo(width).labeled("text width")
-            make.centerY.left.equalTo(self).labeled("text center and size")
+            make.centerY.left.equalTo(self).labeled("text centerY and left")
 
             if hasChildren {
                 make.right.equalTo(childrenView.snp.left).offset(-stateManager.genericOffset.width)
@@ -129,9 +154,10 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
         }
 
         updateConstraints()
-        textField.addBorder(thickness: 5.0, fractionalRadius: 0.5, color: CGColor.black)
+        textField   .addBorder(thickness: 5.0, fractionalRadius: 0.5, color: CGColor.black)
         childrenView.addBorder(thickness: 1.0, fractionalRadius: 0.5, color: CGColor.black)
     }
+
 
     // MARK:- delegates
     // MARK:-

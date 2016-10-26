@@ -672,27 +672,7 @@
                     <view key="view" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="552" height="448"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="tgw-3r-eBv" customClass="ZoneWidget" customModule="Zones" customModuleProvider="target">
-                                <rect key="frame" x="195" y="214" width="163" height="21"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="21" id="rsk-JV-B7J"/>
-                                    <constraint firstAttribute="width" constant="163" id="yAw-GM-XEF"/>
-                                </constraints>
-                                <connections>
-                                    <outlet property="hConstraint" destination="rsk-JV-B7J" id="Gpn-ad-vL9"/>
-                                    <outlet property="wConstraint" destination="yAw-GM-XEF" id="ux8-lP-loY"/>
-                                </connections>
-                            </customView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="tgw-3r-eBv" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="xtM-eJ-mya"/>
-                            <constraint firstItem="tgw-3r-eBv" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="zSe-sc-6uu"/>
-                        </constraints>
                     </view>
-                    <connections>
-                        <outlet property="widget" destination="tgw-3r-eBv" id="6m9-w5-v2U"/>
-                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
