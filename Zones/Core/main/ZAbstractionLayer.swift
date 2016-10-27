@@ -15,14 +15,15 @@
 
     public typealias ZFont                  = NSFont
     public typealias ZView                  = NSView
+    public typealias ZEvent                 = NSEvent
     public typealias ZColor                 = NSColor
     public typealias ZButton                = NSButton
-    public typealias ZoneTextField          = NSTextField
-    public typealias ZOutlineView           = NSOutlineView
+    public typealias ZTextField             = NSTextField
+    public typealias ZEdgeInsets            = EdgeInsets
     public typealias ZApplication           = NSApplication
     public typealias ZViewController        = NSViewController
     public typealias ZSegmentedControl      = NSSegmentedControl
-    public typealias ZoneTextFieldDelegate  = NSTextFieldDelegate
+    public typealias ZTextFieldDelegate     = NSTextFieldDelegate
     public typealias ZApplicationDelegate   = NSApplicationDelegate
     public typealias ZOutlineViewDataSource = NSOutlineViewDataSource    
 
@@ -39,14 +40,15 @@
 
     public typealias ZFont                  = UIFont
     public typealias ZView                  = UIView
+    public typealias ZEvent                 = UIEvent
     public typealias ZColor                 = UIColor
     public typealias ZButton                = UIButton
-    public typealias ZOutlineView           = UITableView
-    public typealias ZoneTextField          = UITextField
+    public typealias ZTextField             = UITextField
+    public typealias ZEdgeInsets            = UIEdgeInsets
     public typealias ZApplication           = UIApplication
     public typealias ZViewController        = UIViewController
     public typealias ZSegmentedControl      = UISegmentedControl
-    public typealias ZoneTextFieldDelegate  = UITextFieldDelegate
+    public typealias ZTextFieldDelegate     = UITextFieldDelegate
     public typealias ZApplicationDelegate   = UIApplicationDelegate
     public typealias ZOutlineViewDataSource = UITableViewDataSource
 

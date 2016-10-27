@@ -19,7 +19,7 @@ import SnapKit
 private let widgetFont: ZFont = ZFont.userFont(ofSize: 17.0)!
 
 
-class ZoneWidget: ZView, ZoneTextFieldDelegate {
+class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
 
     private var    _textField: ZoneTextField!
@@ -42,17 +42,18 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
                 _textField.alignment            = .center
                 _textField.bezelStyle           = .roundedBezel
                 _textField.isBordered           = false
+                _textField.zoneDelegate         = self
                 _textField.backgroundColor      = NSColor(cgColor: CGColor.white)
                 _textField.maximumNumberOfLines = 1
 
                 addSubview(_textField)
 
                 _textField.snp.makeConstraints { (make) -> Void in
-                    make.width.equalTo(200.0).labeled("text width")
+                    make.width.equalTo(200.0)
                 }
 
                 snp.makeConstraints { (make) -> Void in
-                    make.centerY.left.equalTo(_textField).labeled("text centerY and left")
+                    make.centerY.left.equalTo(_textField)
                     make.size.greaterThanOrEqualTo(_textField)
                 }
             }
@@ -70,17 +71,12 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
                 addSubview(_childrenView)
 
                 _childrenView.snp.makeConstraints { (make) -> Void in
-                    make.top.bottom.right.equalTo(self).labeled("children top bottom right")
+                    make.top.bottom.right.equalTo(self)
                 }
             }
 
             return _childrenView
         }
-    }
-
-
-    func captureText() {
-        widgetZone.zoneName = textField.text!
     }
 
 
@@ -136,7 +132,7 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
 
             if atIndex == -1 {
                 snp.remakeConstraints { (make) -> Void in
-                    make.center.equalTo(inView).labeled("view center")
+                    make.center.equalTo(inView)
                 }
             }
         }
@@ -158,8 +154,8 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
         textField.snp.makeConstraints { (make) -> Void in
             let width = textField.text!.widthForFont(widgetFont) + 10.0
 
-            make.width.equalTo(width).labeled("text width")
-            make.centerY.left.equalTo(self).labeled("text centerY and left")
+            make.width.equalTo(width)
+            make.centerY.left.equalTo(self)
 
             if hasChildren {
                 make.right.equalTo(childrenView.snp.left).offset(-stateManager.genericOffset.width)
@@ -172,8 +168,19 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
     }
 
 
+    func captureText() {
+        modelManager.selectedZone = nil
+        widgetZone.zoneName       = textField.text!
+    }
+
+
     // MARK:- delegates
     // MARK:-
+
+
+    func select() {
+        modelManager.selectedZone = widgetZone
+    }
 
 
 #if os(OSX)
@@ -183,10 +190,11 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
 
         return true
     }
-
+    
 
     override func controlTextDidChange(_ obj: Notification) {
         updateLayout()
+        select()
     }
 
 #elseif os(iOS)
@@ -200,6 +208,7 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
 
 //    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 //        updateLayout()
+//        select()
 //
 //        return true
 //    }

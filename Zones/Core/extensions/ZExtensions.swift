@@ -42,7 +42,7 @@ import Foundation
     }
 
 
-    extension ZoneTextField {
+    extension ZTextField {
         var text: String? {
             get { return stringValue }
             set { stringValue = newValue! }

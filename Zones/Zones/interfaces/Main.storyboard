@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16B2555" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
@@ -788,12 +788,27 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="newZoneButtonAction:" target="OO6-jf-jKa" id="v1z-nc-5qa"/>
+                                    <action selector="genericButtonAction:" target="OO6-jf-jKa" id="v1z-nc-5qa"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="OZx-FX-n1W">
+                                <rect key="frame" x="14" y="219" width="102" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="90" id="YA5-co-uwL"/>
+                                </constraints>
+                                <buttonCell key="cell" type="push" title="Delete Zone" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4eQ-cC-WkT">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="genericButtonAction:" target="OO6-jf-jKa" id="fW5-G5-lEZ"/>
                                 </connections>
                             </button>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="OZx-FX-n1W" firstAttribute="top" secondItem="Agf-qa-s1Q" secondAttribute="bottom" constant="12" id="C9e-ds-rnJ"/>
                             <constraint firstItem="Agf-qa-s1Q" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="P6f-Hx-joO"/>
+                            <constraint firstItem="OZx-FX-n1W" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="S0F-c2-HVu"/>
                             <constraint firstItem="Agf-qa-s1Q" firstAttribute="top" secondItem="HgE-gu-5IU" secondAttribute="top" constant="20" id="Xm0-wF-msA"/>
                         </constraints>
                     </view>

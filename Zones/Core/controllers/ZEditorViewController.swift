@@ -27,7 +27,7 @@ class ZEditorViewController: ZViewController {
         super.viewDidLoad()
 
         modelManager.registerUpdateClosure { (kind, object) -> (Void) in
-            if kind == UpdateKind.data {
+            if kind != .error {
                 self.update()
             }
         }
@@ -35,7 +35,7 @@ class ZEditorViewController: ZViewController {
 
 
     func update() {
-        widget.widgetZone = modelManager.selectedZone!
+        widget.widgetZone = modelManager.rootZone!
 
         widget.updateInView(view, atIndex: -1)
     }

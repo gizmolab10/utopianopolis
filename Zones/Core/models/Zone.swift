@@ -11,14 +11,16 @@ import Foundation
 import CloudKit
 
 
+let zoneNameKey = "zoneName"
+let childrenKey = "children"
+
+
 class Zone : ZBase {
 
     
     dynamic var zoneName: String?
     var            links: [String : [Zone]] = [:]
     var         children: [Zone] = []
-    let              zoneNameKey = "zoneName"
-    let              childrenKey = "children"
 
 
     convenience init(dict: ZStorageDict) {
@@ -40,17 +42,15 @@ class Zone : ZBase {
 
     override func updateProperties() {
         if record != nil {
-            zoneName = record[zoneNameKey] as? String
+            if record[zoneNameKey] != nil {
+                zoneName = record[zoneNameKey] as? String
+            }
         }
     }
 
 
     override func setStorageDictionary(_ dict: ZStorageDict) {
         zoneName = dict[zoneNameKey] as? String
-
-        if zoneName == nil {
-            zoneName = "empty"
-        }
 
         if let childrenStore: [ZStorageDict] = dict[childrenKey] as! [ZStorageDict]? {
             for child: ZStorageDict in childrenStore {

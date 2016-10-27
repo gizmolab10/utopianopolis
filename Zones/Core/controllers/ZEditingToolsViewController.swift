@@ -19,10 +19,16 @@ import Foundation
 class ZEditingToolsViewController: ZViewController {
 
 
-    @IBOutlet weak var newZoneButton: ZButton!
+    @IBOutlet weak var    newZoneButton: ZButton!
+    @IBOutlet weak var deleteZoneButton: ZButton!
 
 
-    @IBAction func newZoneButtonAction(_ button: ZButton) {
-        modelManager.addNewZone()
+    @IBAction func genericButtonAction(_ button: ZButton) {
+        switch button.tag {
+        case 0:
+            modelManager.addNewZone()
+        default:
+            modelManager.deleteSelectedZone()
+        }
     }
 }

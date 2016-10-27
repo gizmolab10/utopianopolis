@@ -11,6 +11,10 @@ import Foundation
 import CloudKit
 
 
+let recordNameKey = "recordName"
+let recordTypeKey = "recordType"
+
+
 class ZBase: NSObject {
     
 
@@ -75,8 +79,8 @@ class ZBase: NSObject {
 
         for (key, value) in dict {
             switch key {
-            case "recordType": type = value as? String; break
-            case "recordName": name = value as? String; break
+            case recordTypeKey: type = value as? String; break
+            case recordNameKey: name = value as? String; break
             default:                                    break
             }
         }
@@ -90,8 +94,8 @@ class ZBase: NSObject {
 
 
     func storageDictionary() -> ZStorageDict? {
-        return ["recordName" : record.recordID.recordName as NSObject,
-                "recordType" : record.recordType          as NSObject]
+        return [recordNameKey : record.recordID.recordName as NSObject,
+                recordTypeKey : record.recordType          as NSObject]
     }
 
 
@@ -99,13 +103,13 @@ class ZBase: NSObject {
     // MARK:-
 
 
-    func set(propertyName:String, withValue: NSObject) {
-        modelManager.set(intoObject: self, itsPropertyName: propertyName, withValue: withValue)
+    func setValue(_ value: NSObject, forPropertyName: String) {
+        modelManager.setIntoObject(self, value: value, forPropertyName: forPropertyName)
     }
 
 
     func get(propertyName: String) {
-        modelManager.get(fromObject: self, valueForPropertyName: propertyName)
+        modelManager.getFromObject(self, valueForPropertyName: propertyName)
     }
 
 
@@ -119,12 +123,9 @@ class ZBase: NSObject {
     override func observeValue(forKeyPath keyPath: String?, of iObject: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if context == &kvoContext {
             let observed = iObject as! NSObject
-            let   object = observed.value(forKey: keyPath!)
 
-            if object != nil {
-                let value = object as! NSObject
-
-                self.set(propertyName: keyPath!, withValue: value)
+            if let value: NSString = observed.value(forKey: keyPath!) as? NSString {
+                self.setValue(value, forPropertyName: keyPath!)
             }
         }
     }
