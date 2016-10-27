@@ -98,11 +98,13 @@ class ZModelManager {
 
 
     func addNewZone() {
+        let               root = selectedZone ?? rootZone
         let             record = CKRecord(recordType: zoneTypeKey)
         let               zone = Zone(record: record, database: currentDB)
         zone.links[parentsKey] = [rootZone]
+        selectedZone           = zone
 
-        rootZone.children.append(zone)
+        root?.children.append(zone)
         updateToClosures(with: UpdateKind.data, object: nil)
         persistenceManager.save()
 

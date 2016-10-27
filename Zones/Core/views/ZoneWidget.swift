@@ -124,7 +124,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             previous = childWidget
         }
 
-        if modelManager.selectedZone != nil && modelManager.selectedZone == widgetZone {
+        if modelManager.selectedZone == widgetZone {
             textField.becomeFirstResponder()
         }
     }
