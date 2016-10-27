@@ -84,10 +84,53 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
     }
 
 
-    func updateInView(_ inView: ZView, atIndex: Int) {
+    func updateChildrensView() {
         var                 index = widgetZone.children.count
         var previous: ZoneWidget? = nil
 
+        for view in childrenView.subviews {
+            view.removeFromSuperview()
+        }
+
+        childrenView.removeFromSuperview()
+
+        _childrenView = nil
+
+        childrenWidgets.removeAll()
+
+        while childrenWidgets.count != index {
+            childrenWidgets.append(ZoneWidget())
+        }
+
+        while index > 0 {
+            index                 -= 1
+            let childWidget        = childrenWidgets[index]
+            childWidget.widgetZone = widgetZone.children[index]
+
+            childWidget.updateInView(childrenView, atIndex: index)
+            childWidget.snp.makeConstraints({ (make) in
+                if let widget = previous {
+                    make.bottom.equalTo(widget.snp.top).offset(-stateManager.genericOffset.height)
+                } else {
+                    make.bottom.equalTo(childrenView)
+                }
+
+                if index == 0 {
+                    make.top.equalTo(childrenView)
+                }
+
+                make.left.equalTo(childrenView)
+                make.right.height.lessThanOrEqualTo(childrenView)
+            })
+
+            childWidget.layoutForText()
+            
+            previous = childWidget
+        }
+    }
+
+
+    func updateInView(_ inView: ZView, atIndex: Int) {
         if !inView.subviews.contains(self) {
             inView.addSubview(self)
 
@@ -98,37 +141,7 @@ class ZoneWidget: ZView, ZoneTextFieldDelegate {
             }
         }
 
-        while childrenWidgets.count != index {
-            childrenWidgets.append(ZoneWidget())
-        }
-
-        while index > 0 {
-            index                 -= 1
-            let        childWidget = childrenWidgets    [index]
-            childWidget.widgetZone = widgetZone.children[index]
-
-            childWidget.updateInView(childrenView, atIndex: index)
-
-            childWidget.snp.makeConstraints({ (make) in
-                if index == 0 {
-                    make.top.equalTo(childrenView)
-                }
-
-                if previous == nil {
-                    make.bottom.equalTo(childrenView)
-                } else {
-                    make.bottom.equalTo((previous?.snp.top)!).offset(stateManager.genericOffset.height)
-                }
-
-                make.left.equalTo(childrenView)
-                make.right.height.lessThanOrEqualTo(childrenView)
-            })
-
-            childWidget.layoutForText()
-
-            previous = childWidget
-        }
-
+        updateChildrensView()
         layoutForText()
     }
 
