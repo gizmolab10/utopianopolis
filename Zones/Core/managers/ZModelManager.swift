@@ -129,6 +129,22 @@ class ZModelManager {
         }
     }
 
+
+    func moveSelectedZoneUp(_ moveUp: Bool) {
+        if let zone: Zone = selectedZone {
+            let index = rootZone.children.index(of: zone)
+            let newIndex = index! + (moveUp ? -1 : 1)
+
+            if newIndex >= 0 && newIndex < rootZone.children.count {
+                rootZone.children.remove(at: index!)
+                rootZone.children.insert(zone, at:newIndex)
+                persistenceManager.save()
+                self.updateToClosures(with: .data, object: nil)
+            }
+        }
+    }
+
+
     func setupRootZoneWith(operation: BlockOperation) {
         let recordID: CKRecordID = CKRecordID(recordName: rootNameKey)
 

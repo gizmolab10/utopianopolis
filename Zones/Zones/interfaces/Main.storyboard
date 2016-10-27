@@ -804,12 +804,42 @@
                                     <action selector="genericButtonAction:" target="OO6-jf-jKa" id="fW5-G5-lEZ"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="acM-gT-2KT">
+                                <rect key="frame" x="14" y="186" width="129" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="117" id="SJI-0H-Mfu"/>
+                                </constraints>
+                                <buttonCell key="cell" type="push" title="Move Zone Up" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bBz-a0-4S3">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="genericButtonAction:" target="OO6-jf-jKa" id="boM-eG-9Se"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="OZl-Ph-Yx4">
+                                <rect key="frame" x="14" y="153" width="145" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="133" id="D86-Uy-YsQ"/>
+                                </constraints>
+                                <buttonCell key="cell" type="push" title="Move Zone Down" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gXJ-pP-ikm">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="genericButtonAction:" target="OO6-jf-jKa" id="ffw-r2-z7E"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="OZl-Ph-Yx4" firstAttribute="top" secondItem="acM-gT-2KT" secondAttribute="bottom" constant="12" id="7oD-xq-i0Z"/>
                             <constraint firstItem="OZx-FX-n1W" firstAttribute="top" secondItem="Agf-qa-s1Q" secondAttribute="bottom" constant="12" id="C9e-ds-rnJ"/>
                             <constraint firstItem="Agf-qa-s1Q" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="P6f-Hx-joO"/>
                             <constraint firstItem="OZx-FX-n1W" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="S0F-c2-HVu"/>
                             <constraint firstItem="Agf-qa-s1Q" firstAttribute="top" secondItem="HgE-gu-5IU" secondAttribute="top" constant="20" id="Xm0-wF-msA"/>
+                            <constraint firstItem="OZl-Ph-Yx4" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="eA1-6A-zND"/>
+                            <constraint firstItem="acM-gT-2KT" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="osH-Qr-Rk5"/>
+                            <constraint firstItem="acM-gT-2KT" firstAttribute="top" secondItem="OZx-FX-n1W" secondAttribute="bottom" constant="12" id="vdl-c7-DSE"/>
                         </constraints>
                     </view>
                     <connections>
