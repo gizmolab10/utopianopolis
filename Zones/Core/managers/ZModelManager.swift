@@ -11,20 +11,18 @@ import Foundation
 import CloudKit
 
 
-
-
-class UpdateClosureObject {
-    let closure: UpdateClosure!
-
-    init(iClosure: @escaping UpdateClosure) {
-        closure = iClosure
-    }
-}
-
-
-
-
 class ZModelManager {
+
+
+    class UpdateClosureObject {
+        let closure: UpdateClosure!
+
+        init(iClosure: @escaping UpdateClosure) {
+            closure = iClosure
+        }
+    }
+
+
     var     _rootZone: Zone!
     var _selectedZone: Zone?
     var      closures: [UpdateClosureObject] = []
@@ -85,11 +83,11 @@ class ZModelManager {
 
     func editAction(_ kind: ZActionKind) {
         switch kind {
-        case .add:              addNewZone();              break
-        case .delete:           deleteSelectedZone();      break
-        case .moveUp:           moveSelectedZoneUp(true);  break
-        case .moveDown:         moveSelectedZoneUp(false); break
-        case .toggleVisibility: toggleVisibility();        break
+        case .add:             addNewZone();                  break
+        case .delete:          deleteSelectedZone();          break
+        case .moveUp:          moveSelectedZoneUp(true);      break
+        case .moveDown:        moveSelectedZoneUp(false);     break
+        case .toggleExpansion: toggleExpansion(selectedZone); break
         }
     }
 
@@ -116,9 +114,10 @@ class ZModelManager {
 
 
     func deleteSelectedZone() {
-        if let zone: Zone = selectedZone {
-            if let parent = zone.parent {
-                let index = parent.children.index(of: zone)
+        if let    zone: Zone = selectedZone {
+            if let    parent = zone.parent {
+                let    index = parent.children.index(of: zone)
+                selectedZone = nil
 
                 parent.children.remove(at: index!)
                 persistenceManager.save()
@@ -149,9 +148,9 @@ class ZModelManager {
     }
 
 
-    func toggleVisibility() {
-        if let zone: Zone = selectedZone {
-            zone.showChildren = !zone.showChildren
+    func toggleExpansion(_ ofZone: Zone?) {
+        if ofZone != nil {
+            ofZone?.showChildren = !(ofZone?.showChildren)!
             
             updateToClosures(with: .data, object: nil)
         }

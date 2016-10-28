@@ -23,20 +23,12 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     var            widgetZone: Zone!
     private var _childrenView: ZView!
     var       childrenWidgets: [ZoneWidget] = []
+    var    childVisibilityDot: ZoneDot = ZoneDot()
 
 
     var hasChildren: Bool {
         get { return widgetZone.children.count > 0 }
     }
-
-
-//    func gestureRecognizerShouldBegin(_ gestureRecognizer: NSGestureRecognizer) -> Bool {
-//        if self == gestureRecognizer.view {
-//            return false
-//        }
-//
-//        return true
-//    }
 
 
     var textField: ZoneTextField {
@@ -134,6 +126,20 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     }
 
 
+    func updateDecorations() {
+
+        if !self.subviews.contains(childVisibilityDot) {
+            self.addSubview(childVisibilityDot)
+            childVisibilityDot.setUp()
+
+            childVisibilityDot.snp.makeConstraints({ (make) in
+                make.left.equalTo(textField.snp.right).offset(6.0)
+                make.centerY.equalTo(textField)
+            })
+        }
+    }
+
+
     func updateInView(_ inView: ZView, atIndex: Int) {
         if !inView.subviews.contains(self) {
             inView.addSubview(self)
@@ -150,6 +156,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
         }
 
         updateChildrensView()
+        updateDecorations()
         layoutForText()
     }
 

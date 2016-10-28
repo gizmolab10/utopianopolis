@@ -21,7 +21,7 @@ enum ZActionKind: UInt {
     case delete
     case moveUp
     case moveDown
-    case toggleVisibility
+    case toggleExpansion
 }
 
 

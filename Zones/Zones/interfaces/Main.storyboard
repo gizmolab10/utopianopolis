@@ -830,35 +830,19 @@
                                     <action selector="genericButtonAction:" target="OO6-jf-jKa" id="ffw-r2-z7E"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="yiM-lY-LCO">
-                                <rect key="frame" x="14" y="120" width="120" height="32"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="g5V-xR-vdx"/>
-                                </constraints>
-                                <buttonCell key="cell" type="push" title="Expand Zone" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MBZ-uO-q3a">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="genericButtonAction:" target="OO6-jf-jKa" id="krK-9H-Mt8"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="OZl-Ph-Yx4" firstAttribute="top" secondItem="acM-gT-2KT" secondAttribute="bottom" constant="12" id="7oD-xq-i0Z"/>
                             <constraint firstItem="OZx-FX-n1W" firstAttribute="top" secondItem="Agf-qa-s1Q" secondAttribute="bottom" constant="12" id="C9e-ds-rnJ"/>
                             <constraint firstItem="Agf-qa-s1Q" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="P6f-Hx-joO"/>
-                            <constraint firstItem="yiM-lY-LCO" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="R2g-lE-xZP"/>
                             <constraint firstItem="OZx-FX-n1W" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="S0F-c2-HVu"/>
                             <constraint firstItem="Agf-qa-s1Q" firstAttribute="top" secondItem="HgE-gu-5IU" secondAttribute="top" constant="20" id="Xm0-wF-msA"/>
                             <constraint firstItem="OZl-Ph-Yx4" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="eA1-6A-zND"/>
                             <constraint firstItem="acM-gT-2KT" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="osH-Qr-Rk5"/>
-                            <constraint firstItem="yiM-lY-LCO" firstAttribute="top" secondItem="OZl-Ph-Yx4" secondAttribute="bottom" constant="12" id="vGb-s6-hmo"/>
                             <constraint firstItem="acM-gT-2KT" firstAttribute="top" secondItem="OZx-FX-n1W" secondAttribute="bottom" constant="12" id="vdl-c7-DSE"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="childrenVisibilityButton" destination="yiM-lY-LCO" id="553-eL-P6O"/>
                         <outlet property="deleteZoneButton" destination="OZx-FX-n1W" id="5cH-X7-knN"/>
                         <outlet property="moveZoneDownButton" destination="OZl-Ph-Yx4" id="x7u-eH-A7L"/>
                         <outlet property="moveZoneUpButton" destination="acM-gT-2KT" id="N4V-SZ-kVn"/>

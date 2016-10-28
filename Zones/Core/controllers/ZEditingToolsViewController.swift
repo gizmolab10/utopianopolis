@@ -23,7 +23,6 @@ class ZEditingToolsViewController: ZBaseViewController {
     @IBOutlet weak var         deleteZoneButton: ZButton!
     @IBOutlet weak var         moveZoneUpButton: ZButton!
     @IBOutlet weak var       moveZoneDownButton: ZButton!
-    @IBOutlet weak var childrenVisibilityButton: ZButton!
 
 
     @IBAction func genericButtonAction(_ button: ZButton) {
@@ -41,14 +40,8 @@ class ZEditingToolsViewController: ZBaseViewController {
         let        atTop = (children?.first == zone)
         let     atBottom = (children?.last  == zone)
 
-        deleteZoneButton         .isHidden = !hasSelection || isRoot
-        moveZoneUpButton         .isHidden = !hasSelection || !hasSiblings || atTop
-        moveZoneDownButton       .isHidden = !hasSelection || !hasSiblings || atBottom
-        childrenVisibilityButton .isHidden = !hasSelection || zone?.children.count == 0
-
-        if hasSelection {
-            let               showChildren = zone?.showChildren
-            childrenVisibilityButton.title = showChildren! ? "Collapse" : "Expand"
-        }
+        deleteZoneButton  .isHidden = !hasSelection || isRoot
+        moveZoneUpButton  .isHidden = !hasSelection || !hasSiblings || atTop
+        moveZoneDownButton.isHidden = !hasSelection || !hasSiblings || atBottom
     }
 }
