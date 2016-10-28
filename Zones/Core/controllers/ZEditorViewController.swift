@@ -35,6 +35,22 @@ class ZEditorViewController: ZBaseViewController {
     }
 
 
+    override func mouseDown(with event: NSEvent) {
+        modelManager.selectedZone = nil
+
+        update()
+    }
+
+
+//
+//
+//    override func hitTest(_ point: NSPoint) -> NSView? {
+//        modelManager.selectedZone = nil
+//
+//        return self
+//    }
+
+
     @IBAction func tapped(_ sender: AnyObject) {
         widget.captureText()
     }

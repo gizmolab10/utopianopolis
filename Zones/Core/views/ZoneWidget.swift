@@ -30,6 +30,15 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     }
 
 
+//    func gestureRecognizerShouldBegin(_ gestureRecognizer: NSGestureRecognizer) -> Bool {
+//        if self == gestureRecognizer.view {
+//            return false
+//        }
+//
+//        return true
+//    }
+
+
     var textField: ZoneTextField {
         get {
             if _textField == nil {
@@ -125,13 +134,6 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     }
 
 
-//    override func hitTest(_ point: NSPoint) -> NSView? {
-//        modelManager.selectedZone = nil
-//
-//        return self
-//    }
-
-
     func updateInView(_ inView: ZView, atIndex: Int) {
         if !inView.subviews.contains(self) {
             inView.addSubview(self)
@@ -204,7 +206,6 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
     override func controlTextDidChange(_ obj: Notification) {
         updateLayout()
-        select()
     }
 
 #elseif os(iOS)
