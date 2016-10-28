@@ -19,14 +19,14 @@ import Foundation
 class ZEditingToolsViewController: ZBaseViewController {
 
 
-    @IBOutlet weak var            newZoneButton: ZButton!
-    @IBOutlet weak var         deleteZoneButton: ZButton!
-    @IBOutlet weak var         moveZoneUpButton: ZButton!
-    @IBOutlet weak var       moveZoneDownButton: ZButton!
+    @IBOutlet weak var      newZoneButton: ZButton!
+    @IBOutlet weak var   deleteZoneButton: ZButton!
+    @IBOutlet weak var   moveZoneUpButton: ZButton!
+    @IBOutlet weak var moveZoneDownButton: ZButton!
 
 
     @IBAction func genericButtonAction(_ button: ZButton) {
-        modelManager.editAction(ZActionKind(rawValue: UInt(button.tag))!)
+        modelManager.editAction(ZEditAction(rawValue: UInt(button.tag))!)
     }
 
 

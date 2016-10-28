@@ -81,13 +81,12 @@ class ZModelManager {
     // MARK:-
 
 
-    func editAction(_ kind: ZActionKind) {
-        switch kind {
-        case .add:             addNewZone();                  break
-        case .delete:          deleteSelectedZone();          break
-        case .moveUp:          moveSelectedZoneUp(true);      break
-        case .moveDown:        moveSelectedZoneUp(false);     break
-        case .toggleExpansion: toggleExpansion(selectedZone); break
+    func editAction(_ action: ZEditAction) {
+        switch action {
+        case .add:      addNewZone();              break
+        case .delete:   deleteSelectedZone();      break
+        case .moveUp:   moveSelectedZoneUp(true);  break
+        case .moveDown: moveSelectedZoneUp(false); break
         }
     }
 

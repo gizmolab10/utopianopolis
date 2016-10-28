@@ -23,7 +23,7 @@ class ZToolsViewController: ZBaseViewController {
 
 
     @IBAction func choiceAction(_ control: ZSegmentedControl) {
-        stateManager.toolState = ZToolState(rawValue: control.selectedSegmentIndex)!
+        stateManager.toolState = ZToolMode(rawValue: control.selectedSegmentIndex)!
     }
 
 

@@ -20,10 +20,10 @@ class ZStateManager: NSObject {
 
 
     var       isReady:                                   Bool = false
-    var     toolState:                             ZToolState = .edit
+    var     toolState:                             ZToolMode = .edit
     var    operations: [ZSynchronizationState:BlockOperation] = [:]
     let         queue:                         OperationQueue = OperationQueue()
-    let genericOffset:                                 CGSize = CGSize(width: 20.0, height: 6.0)
+    let genericOffset:                                 CGSize = CGSize(width: 6.0, height: 6.0)
 
 
 

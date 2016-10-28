@@ -19,23 +19,23 @@ import SnapKit
 class ZoneDot: ZButton {
 
 
-    func setUp() {
-        isHidden       = widget.widgetZone.children.count == 0
+    var toggle: Bool!
 
-        if !isHidden {
-            title      = ""
-            target     = self
-            action     = #selector(hitAction(_:))
-            bezelStyle = .circular
 
-            setButtonType(.momentaryLight)
+    func setUp(asToggle: Bool) {
+        title      = ""
+        toggle     = asToggle
+        target     = self
+        action     = #selector(hitAction(_:))
+        bezelStyle = asToggle ? .circular : .rounded
 
-            snp.makeConstraints { (make) in
-                make.size.equalTo(CGSize(width: 8, height: 8))
-            }
-            
-            updateConstraints()
+        setButtonType(.momentaryLight)
+
+        snp.makeConstraints { (make) in
+            make.size.equalTo(CGSize(width: 8, height: 8))
         }
+
+        updateConstraints()
     }
 
 
@@ -48,6 +48,8 @@ class ZoneDot: ZButton {
     @objc func hitAction(_ sender: AnyObject) {
         let zone = widget.widgetZone
 
-        modelManager.toggleExpansion(zone)
+        if toggle == true {
+            modelManager.toggleExpansion(zone)
+        }
     }
 }

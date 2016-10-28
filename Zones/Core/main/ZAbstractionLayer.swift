@@ -25,7 +25,10 @@
     public typealias ZSegmentedControl      = NSSegmentedControl
     public typealias ZTextFieldDelegate     = NSTextFieldDelegate
     public typealias ZApplicationDelegate   = NSApplicationDelegate
-    public typealias ZOutlineViewDataSource = NSOutlineViewDataSource    
+    public typealias ZOutlineViewDataSource = NSOutlineViewDataSource
+
+
+    let zapplication = ZApplication.shared()
 
 
 #elseif os(iOS)
@@ -49,4 +52,7 @@
     public typealias ZOutlineViewDataSource = UITableViewDataSource
 
 
+    let zapplication = ZApplication.shared
+    
+    
 #endif

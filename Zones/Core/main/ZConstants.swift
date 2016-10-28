@@ -16,12 +16,12 @@ import Foundation
 #endif
 
 
-enum ZActionKind: UInt {
-    case add
-    case delete
-    case moveUp
-    case moveDown
-    case toggleExpansion
+enum ZSynchronizationState: Int {
+    case restore
+    case root
+    case unsubscribe
+    case subscribe
+    case ready
 }
 
 
@@ -32,19 +32,18 @@ enum ZUpdateKind: UInt {
 }
 
 
-enum ZToolState: Int {
+enum ZToolMode: Int {
     case edit
     case travel
     case layout
 }
 
 
-enum ZSynchronizationState: Int {
-    case restore
-    case root
-    case unsubscribe
-    case subscribe
-    case ready
+enum ZEditAction: UInt {
+    case add
+    case delete
+    case moveUp
+    case moveDown
 }
 
 
@@ -62,14 +61,3 @@ let        zoneTypeKey = "Zone"
 let        rootNameKey = "root"
 let         parentsKey = "parents"
 let           linksKey = "links"
-
-
-#if os(OSX)
-
-let zapplication = ZApplication.shared()
-
-#elseif os(iOS)
-
-let zapplication = ZApplication.shared
-
-#endif
