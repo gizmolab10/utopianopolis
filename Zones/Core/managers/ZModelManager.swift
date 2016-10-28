@@ -32,10 +32,6 @@ class ZModelManager {
     let     container: CKContainer!
     let     currentDB: CKDatabase!
 
-    var selectedZone: Zone? {
-        get { return _selectedZone }
-        set { _selectedZone = newValue; updateToClosures(with: .data, object: nil) }
-    }
 
     init() {
         container = CKContainer(identifier: cloudID)
@@ -46,7 +42,7 @@ class ZModelManager {
 
 
     var rootZone: Zone! {
-        set { _rootZone = newValue}
+        set { _rootZone = newValue }
         get {
             if  _rootZone == nil {
                 _rootZone = Zone(record: nil, database: currentDB)
@@ -54,6 +50,12 @@ class ZModelManager {
 
             return _rootZone
         }
+    }
+
+
+    var selectedZone: Zone? {
+        get { return _selectedZone }
+        set { _selectedZone = newValue; updateToClosures(with: .data, object: nil) }
     }
 
 
@@ -68,7 +70,7 @@ class ZModelManager {
 
     func updateToClosures(with: ZUpdateKind, object: NSObject?) {
         DispatchQueue.main.async(execute: {
-            self.resetBadgeCounter()
+            //self.resetBadgeCounter()
 
             for closureObject: UpdateClosureObject in self.closures {
                 closureObject.closure(with, object)
@@ -226,17 +228,21 @@ class ZModelManager {
 
 
     func resetBadgeCounter() {
-        let badgeResetOperation = CKModifyBadgeOperation(badgeValue: 0)
+        container.accountStatus { (iStatus, iError) in
+            if iStatus == .available {
+                let badgeResetOperation = CKModifyBadgeOperation(badgeValue: 0)
 
-        badgeResetOperation.modifyBadgeCompletionBlock = { (error) -> Void in
-            if error != nil {
-                print("Error resetting badge: \(error)")
-            } else {
-                zapplication.clearBadge()
+                badgeResetOperation.modifyBadgeCompletionBlock = { (error) -> Void in
+                    if error == nil {
+//                        print("Error resetting badge: \(error)")
+//                    } else {
+                        zapplication.clearBadge()
+                    }
+                }
+
+                self.container.add(badgeResetOperation)
             }
         }
-
-        container.add(badgeResetOperation)
     }
 
 

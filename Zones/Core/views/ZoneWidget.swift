@@ -125,6 +125,13 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     }
 
 
+//    override func hitTest(_ point: NSPoint) -> NSView? {
+//        modelManager.selectedZone = nil
+//
+//        return self
+//    }
+
+
     func updateInView(_ inView: ZView, atIndex: Int) {
         if !inView.subviews.contains(self) {
             inView.addSubview(self)
