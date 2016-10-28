@@ -16,9 +16,6 @@ import Foundation
 #endif
 
 
-let stateManager: ZStateManager = ZStateManager()
-
-
 class ZStateManager: NSObject {
 
 

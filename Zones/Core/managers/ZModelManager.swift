@@ -107,14 +107,16 @@ class ZModelManager {
 
     func deleteSelectedZone() {
         if let zone: Zone = selectedZone {
-            let index = rootZone.children.index(of: zone)
+            if let parent = zone.parent {
+                let index = parent.children.index(of: zone)
 
-            rootZone.children.remove(at: index!)
-            persistenceManager.save()
+                parent.children.remove(at: index!)
+                persistenceManager.save()
 
-            currentDB.delete(withRecordID: zone.record.recordID, completionHandler: { (deleted, error) in
-                self.updateToClosures(with: .delete, object: zone)
-            })
+                currentDB.delete(withRecordID: zone.record.recordID, completionHandler: { (deleted, error) in
+                    self.updateToClosures(with: .delete, object: zone)
+                })
+            }
         }
     }
 

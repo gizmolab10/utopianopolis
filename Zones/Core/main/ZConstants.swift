@@ -47,6 +47,7 @@ enum ZSynchronizationState: Int {
 }
 
 
+let       stateManager = ZStateManager()
 let       modelManager = ZModelManager()
 let persistenceManager = ZLocalPersistenceManager()
 let  widgetFont: ZFont = ZFont.userFont(ofSize: 17.0)!
@@ -58,6 +59,7 @@ let   zoneTypeKey = "Zone"
 let   rootNameKey = "root"
 let   childrenKey = "children"
 let    parentsKey = "parents"
+let      linksKey = "links"
 let       cloudID = "iCloud.com.zones.Zones"
 
 

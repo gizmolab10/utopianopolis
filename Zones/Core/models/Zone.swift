@@ -15,15 +15,20 @@ class Zone : ZBase {
 
     
     dynamic var zoneName: String?
-    var            links: [String : [Zone]] = [:]
     var         children: [Zone] = []
+    var            links: [String : [Zone]] = [:]
 
 
     var parent: Zone? {
         get {
-            let parents: [Zone] = record[parentsKey]
+            if record != nil {
+                if let parents: [Zone] = links[parentsKey] {
 
-            return parents[0]
+                    return parents[0]
+                }
+            }
+
+            return nil
         }
     }
 
@@ -59,7 +64,8 @@ class Zone : ZBase {
 
         if let childrenStore: [ZStorageDict] = dict[childrenKey] as! [ZStorageDict]? {
             for child: ZStorageDict in childrenStore {
-                let zone = Zone.init(dict: child)
+                let               zone = Zone.init(dict: child)
+                zone.links[parentsKey] = [self]
 
                 children.append(zone)
             }
