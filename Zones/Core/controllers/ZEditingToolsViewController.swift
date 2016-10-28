@@ -32,15 +32,22 @@ class ZEditingToolsViewController: ZBaseViewController {
 
 
     override func update() {
-        let hasSelection = modelManager.selectedZone != nil
+        let         zone = modelManager.selectedZone
+        let       isRoot = zone == modelManager.rootZone
+        let hasSelection = zone != nil
+        let       parent = zone?.parent
+        let     children = parent?.children
+        let  hasSiblings = parent != nil && (children?.count)! > 1
+        let        atTop = (children?.first == zone)
+        let     atBottom = (children?.last  == zone)
 
-        deleteZoneButton         .isHidden = !hasSelection
-        moveZoneUpButton         .isHidden = !hasSelection
-        moveZoneDownButton       .isHidden = !hasSelection
-        childrenVisibilityButton .isHidden = !hasSelection || modelManager.selectedZone?.children.count == 0
+        deleteZoneButton         .isHidden = !hasSelection || isRoot
+        moveZoneUpButton         .isHidden = !hasSelection || !hasSiblings || atTop
+        moveZoneDownButton       .isHidden = !hasSelection || !hasSiblings || atBottom
+        childrenVisibilityButton .isHidden = !hasSelection || zone?.children.count == 0
 
         if hasSelection {
-            let               showChildren = modelManager.selectedZone?.showChildren
+            let               showChildren = zone?.showChildren
             childrenVisibilityButton.title = showChildren! ? "Collapse" : "Expand"
         }
     }
