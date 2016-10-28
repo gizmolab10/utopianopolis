@@ -16,19 +16,32 @@ import Foundation
 #endif
 
 
-class ZEditingToolsViewController: ZViewController {
+class ZEditingToolsViewController: ZBaseViewController {
 
 
-    @IBOutlet weak var    newZoneButton: ZButton!
-    @IBOutlet weak var deleteZoneButton: ZButton!
+    @IBOutlet weak var            newZoneButton: ZButton!
+    @IBOutlet weak var         deleteZoneButton: ZButton!
+    @IBOutlet weak var         moveZoneUpButton: ZButton!
+    @IBOutlet weak var       moveZoneDownButton: ZButton!
+    @IBOutlet weak var childrenVisibilityButton: ZButton!
 
 
     @IBAction func genericButtonAction(_ button: ZButton) {
-        switch ZActionKind(rawValue: UInt(button.tag))! {
-        case .add:      modelManager.addNewZone();              break
-        case .delete:   modelManager.deleteSelectedZone();      break
-        case .moveUp:   modelManager.moveSelectedZoneUp(true);  break
-        case .moveDown: modelManager.moveSelectedZoneUp(false); break
+        modelManager.editAction(ZActionKind(rawValue: UInt(button.tag))!)
+    }
+
+
+    override func update() {
+        let hasSelection = modelManager.selectedZone != nil
+
+        deleteZoneButton         .isHidden = !hasSelection
+        moveZoneUpButton         .isHidden = !hasSelection
+        moveZoneDownButton       .isHidden = !hasSelection
+        childrenVisibilityButton .isHidden = !hasSelection || modelManager.selectedZone?.children.count == 0
+
+        if hasSelection {
+            let               showChildren = modelManager.selectedZone?.showChildren
+            childrenVisibilityButton.title = showChildren! ? "Collapse" : "Expand"
         }
     }
 }

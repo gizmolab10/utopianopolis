@@ -17,24 +17,18 @@ import SnapKit
 #endif
 
 
-class ZEditorViewController: ZViewController {
+class ZEditorViewController: ZBaseViewController {
 
     
-    let widget: ZoneWidget! = ZoneWidget()
+    var widget: ZoneWidget!
 
 
-    override open func viewDidLoad() {
-        super.viewDidLoad()
-
-        modelManager.registerUpdateClosure { (kind, object) -> (Void) in
-            if kind != .error {
-                self.update()
-            }
+    override func update() {
+        if widget != nil {
+            widget.removeFromSuperview()
         }
-    }
 
-
-    func update() {
+        widget            = ZoneWidget()
         widget.widgetZone = modelManager.rootZone!
 
         widget.updateInView(view, atIndex: -1)

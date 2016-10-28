@@ -17,6 +17,8 @@ class Zone : ZBase {
     dynamic var zoneName: String?
     var         children: [Zone] = []
     var            links: [String : [Zone]] = [:]
+    var     showChildren: Bool = true
+
 
 
     var parent: Zone? {
@@ -60,7 +62,8 @@ class Zone : ZBase {
 
 
     override func setStorageDictionary(_ dict: ZStorageDict) {
-        zoneName = dict[zoneNameKey] as? String
+        if let string = dict[    zoneNameKey] as!   String? { zoneName     = string }
+        if let number = dict[showChildrenKey] as! NSNumber? { showChildren = number.boolValue }
 
         if let childrenStore: [ZStorageDict] = dict[childrenKey] as! [ZStorageDict]? {
             for child: ZStorageDict in childrenStore {
@@ -78,6 +81,7 @@ class Zone : ZBase {
     override func storageDictionary() -> ZStorageDict? {
         var dict: ZStorageDict = super.storageDictionary()!
         dict[zoneNameKey]      = zoneName as NSObject?
+        dict[showChildrenKey]  = NSNumber(booleanLiteral: showChildren)
 
         var childrenStore: [ZStorageDict] = []
 

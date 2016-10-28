@@ -21,6 +21,7 @@ enum ZActionKind: UInt {
     case delete
     case moveUp
     case moveDown
+    case toggleVisibility
 }
 
 
@@ -51,16 +52,16 @@ let       stateManager = ZStateManager()
 let       modelManager = ZModelManager()
 let persistenceManager = ZLocalPersistenceManager()
 let  widgetFont: ZFont = ZFont.userFont(ofSize: 17.0)!
-
-let recordNameKey = "recordName"
-let recordTypeKey = "recordType"
-let   zoneNameKey = "zoneName"
-let   zoneTypeKey = "Zone"
-let   rootNameKey = "root"
-let   childrenKey = "children"
-let    parentsKey = "parents"
-let      linksKey = "links"
-let       cloudID = "iCloud.com.zones.Zones"
+let            cloudID = "iCloud.com.zones.Zones"
+let    showChildrenKey = "showChildren"
+let      recordNameKey = "recordName"
+let      recordTypeKey = "recordType"
+let        childrenKey = "children"
+let        zoneNameKey = "zoneName"
+let        zoneTypeKey = "Zone"
+let        rootNameKey = "root"
+let         parentsKey = "parents"
+let           linksKey = "links"
 
 
 #if os(OSX)

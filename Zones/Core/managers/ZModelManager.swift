@@ -25,13 +25,17 @@ class UpdateClosureObject {
 
 
 class ZModelManager {
-    var    _rootZone: Zone!
-    var selectedZone: Zone?
-    var     closures: [UpdateClosureObject] = []
-    var      records: [CKRecordID : ZBase]  = [:]
-    let    container: CKContainer!
-    let    currentDB: CKDatabase!
+    var     _rootZone: Zone!
+    var _selectedZone: Zone?
+    var      closures: [UpdateClosureObject] = []
+    var       records: [CKRecordID : ZBase]  = [:]
+    let     container: CKContainer!
+    let     currentDB: CKDatabase!
 
+    var selectedZone: Zone? {
+        get { return _selectedZone }
+        set { _selectedZone = newValue; updateToClosures(with: .data, object: nil) }
+    }
 
     init() {
         container = CKContainer(identifier: cloudID)
@@ -73,13 +77,17 @@ class ZModelManager {
     }
 
 
-    // MARK:- records
+    // MARK:- editing
     // MARK:-
 
 
-    func registerObject(_ object: ZBase) {
-        if object.record != nil {
-            records[object.record.recordID] = object
+    func editAction(_ kind: ZActionKind) {
+        switch kind {
+        case .add:              addNewZone();              break
+        case .delete:           deleteSelectedZone();      break
+        case .moveUp:           moveSelectedZoneUp(true);  break
+        case .moveDown:         moveSelectedZoneUp(false); break
+        case .toggleVisibility: toggleVisibility();        break
         }
     }
 
@@ -131,10 +139,30 @@ class ZModelManager {
                         parent.children.remove(at: index)
                         parent.children.insert(zone, at:newIndex)
                         persistenceManager.save()
-                        self.updateToClosures(with: .data, object: nil)
+                        updateToClosures(with: .data, object: nil)
                     }
                 }
             }
+        }
+    }
+
+
+    func toggleVisibility() {
+        if let zone: Zone = selectedZone {
+            zone.showChildren = !zone.showChildren
+            
+            updateToClosures(with: .data, object: nil)
+        }
+    }
+
+
+    // MARK:- records
+    // MARK:-
+
+
+    func registerObject(_ object: ZBase) {
+        if object.record != nil {
+            records[object.record.recordID] = object
         }
     }
 

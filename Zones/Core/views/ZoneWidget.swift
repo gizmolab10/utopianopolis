@@ -91,7 +91,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
         childrenWidgets.removeAll()
 
-        if index > 0 {
+        if index > 0 && widgetZone.showChildren {
             while childrenWidgets.count != index {
                 childrenWidgets.append(ZoneWidget())
             }

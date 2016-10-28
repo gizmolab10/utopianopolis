@@ -23,18 +23,27 @@ class ZBaseViewController: ZViewController {
 
     override func viewWillAppear() {
         super.viewWillAppear()
-        update()
+        setup()
     }
 
 #elseif os(iOS)
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        update()
+        setup()
     }
 
 #endif
 
+
+    func setup() {
+        update()
+        modelManager.registerUpdateClosure { (kind, object) -> (Void) in
+            if kind != .error {
+                self.update()
+            }
+        }
+    }
 
     func update() {}
 }
