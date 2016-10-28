@@ -29,7 +29,7 @@ class ZoneDot: ZButton {
         action     = #selector(hitAction(_:))
         bezelStyle = asToggle ? .circular : .rounded
 
-        setButtonType(.momentaryLight)
+        setButtonType(.onOff)
 
         snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 8, height: 8))

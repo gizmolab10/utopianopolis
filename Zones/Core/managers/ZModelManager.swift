@@ -23,17 +23,17 @@ class ZModelManager {
     }
 
 
-    var     _rootZone: Zone!
-    var _selectedZone: Zone?
-    var      closures: [UpdateClosureObject] = []
-    var       records: [CKRecordID : ZBase]  = [:]
-    let     container: CKContainer!
-    let     currentDB: CKDatabase!
+    var             _rootZone: Zone!
+    var _currentlyEditingZone: Zone?
+    var              closures: [UpdateClosureObject] = []
+    var               records: [CKRecordID : ZBase]  = [:]
+    let             container: CKContainer!
+    let             currentDB: CKDatabase!
 
 
     init() {
         container = CKContainer(identifier: cloudID)
-        currentDB = container.privateCloudDatabase
+        currentDB = container.publicCloudDatabase
 
         stateManager.setupAndRun()
     }
@@ -51,9 +51,9 @@ class ZModelManager {
     }
 
 
-    var selectedZone: Zone? {
-        get { return _selectedZone }
-        set { _selectedZone = newValue; updateToClosures(with: .data, object: nil) }
+    var currentlyEditingZone: Zone? {
+        get { return _currentlyEditingZone }
+        set { _currentlyEditingZone = newValue; updateToClosures(with: .data, object: nil) }
     }
 
 
@@ -84,19 +84,19 @@ class ZModelManager {
     func editAction(_ action: ZEditAction) {
         switch action {
         case .add:      addNewZone();              break
-        case .delete:   deleteSelectedZone();      break
-        case .moveUp:   moveSelectedZoneUp(true);  break
-        case .moveDown: moveSelectedZoneUp(false); break
+        case .delete:   deletecurrentlyEditingZone();      break
+        case .moveUp:   movecurrentlyEditingZoneUp(true);  break
+        case .moveDown: movecurrentlyEditingZoneUp(false); break
         }
     }
 
 
     func addNewZone() {
-        let               root = (selectedZone ?? rootZone)!
+        let               root = (currentlyEditingZone ?? rootZone)!
         let             record = CKRecord(recordType: zoneTypeKey)
         let               zone = Zone(record: record, database: currentDB)
         zone.links[parentsKey] = [root]
-        selectedZone           = zone
+        currentlyEditingZone           = zone
 
         root.children.append(zone)
         updateToClosures(with: .data, object: nil)
@@ -112,11 +112,11 @@ class ZModelManager {
     }
 
 
-    func deleteSelectedZone() {
-        if let    zone: Zone = selectedZone {
+    func deletecurrentlyEditingZone() {
+        if let    zone: Zone = currentlyEditingZone {
             if let    parent = zone.parent {
                 let    index = parent.children.index(of: zone)
-                selectedZone = nil
+                currentlyEditingZone = nil
 
                 parent.children.remove(at: index!)
                 persistenceManager.save()
@@ -129,8 +129,8 @@ class ZModelManager {
     }
 
 
-    func moveSelectedZoneUp(_ moveUp: Bool) {
-        if let zone: Zone = selectedZone {
+    func movecurrentlyEditingZoneUp(_ moveUp: Bool) {
+        if let zone: Zone = currentlyEditingZone {
             if let parent = zone.parent {
                 if let index = parent.children.index(of: zone) {
                     let newIndex = index + (moveUp ? -1 : 1)

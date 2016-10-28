@@ -19,12 +19,13 @@ import SnapKit
 class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
 
-    private var    _textField: ZoneTextField!
-    var            widgetZone: Zone!
-    private var _childrenView: ZView!
-    var       childrenWidgets: [ZoneWidget] = []
-    var    childVisibilityDot: ZoneDot = ZoneDot()
-    var               dragDot: ZoneDot = ZoneDot()
+    private var         _textField: ZoneTextField!
+    var                 widgetZone: Zone!
+    private var      _childrenView: ZView!
+    private var    connectLineView: ZView!       = ZView()
+    private var    childrenWidgets: [ZoneWidget] = []
+    private var childVisibilityDot: ZoneDot      = ZoneDot()
+    private var            dragDot: ZoneDot      = ZoneDot()
 
 
     var hasChildren: Bool {
@@ -82,6 +83,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     func updateChildrensView() {
         var                 index = widgetZone.children.count
         var previous: ZoneWidget? = nil
+        let       hasSiblingLines = index > 1
 
         for view in childrenView.subviews {
             view.removeFromSuperview()
@@ -98,6 +100,20 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 childrenWidgets.append(ZoneWidget())
             }
 
+            if index > 0 {
+                childrenView.addSubview(connectLineView)
+
+                connectLineView.wantsLayer = true
+                connectLineView.layer?.backgroundColor = NSColor.black.cgColor
+
+                connectLineView.snp.makeConstraints({ (make) in
+                    make.height.equalTo(1.0)
+                    make.centerY.equalTo(textField).offset(1.0)
+                    make.left.equalTo(childrenView).offset(10.0)
+                    make.width.equalTo(stateManager.genericOffset.width + 9.0)
+                })
+            }
+
             while index > 0 {
                 index                 -= 1
                 let childWidget        = childrenWidgets[index]
@@ -105,8 +121,8 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
                 childWidget.updateInView(childrenView, atIndex: index)
                 childWidget.snp.makeConstraints({ (make) in
-                    if let widget = previous {
-                        make.bottom.equalTo(widget.snp.top).offset(-stateManager.genericOffset.height)
+                    if previous != nil {
+                        make.bottom.equalTo((previous?.snp.top)!).offset(-stateManager.genericOffset.height)
                     } else {
                         make.bottom.equalTo(childrenView)
                     }
@@ -116,10 +132,25 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                     }
 
                     make.left.equalTo(childrenView).offset(20.0)
-                    make.right.height.lessThanOrEqualTo(childrenView)
+                    make.right.lessThanOrEqualTo(childrenView).offset(-10.0)
+                    make.height.lessThanOrEqualTo(childrenView)
                 })
 
-                childWidget.layoutForText()
+                if hasSiblingLines && previous != nil {
+                    let lineView = ZView()
+                    lineView.wantsLayer = true
+                    lineView.layer?.backgroundColor = NSColor.black.cgColor
+                    childrenView.addSubview(lineView)
+
+                    lineView.snp.makeConstraints({ (make) in
+                        make.width.equalTo(1.0)
+                        make.centerX.equalTo(childWidget.dragDot)
+                        make.bottom.equalTo((previous?.dragDot.snp.top)!).offset(-5.0)
+                        make.top.equalTo(childWidget.dragDot.snp.bottom).offset(5.0)
+                    })
+                }
+
+                childWidget.updateText()
                 
                 previous = childWidget
             }
@@ -135,6 +166,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             childVisibilityDot.snp.makeConstraints({ (make) in
                 make.left.equalTo(textField.snp.right).offset(6.0)
                 make.centerY.equalTo(textField).offset(-1.0)
+                make.right.lessThanOrEqualToSuperview().offset(-3.0)
             })
         }
 
@@ -143,7 +175,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             dragDot.setUp(asToggle: false)
 
             dragDot.snp.makeConstraints({ (make) in
-                make.right.equalTo(textField.snp.left).offset(-2.0)
+                make.right.equalTo(textField.snp.left).offset(-3.0)
                 make.centerY.equalTo(textField).offset(1.0)
             })
         }
@@ -161,31 +193,32 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             }
         }
 
-        if modelManager.selectedZone == widgetZone {
+        if modelManager.currentlyEditingZone == widgetZone {
             textField.becomeFirstResponder()
         }
 
         updateChildrensView()
         updateDecorations()
-        layoutForText()
+        updateText()
     }
 
 
-    func layoutForText() {
+    func updateText() {
         textField.text = widgetZone.zoneName ?? "empty"
 
-        updateLayout()
+        updateTextFieldLayout()
     }
 
 
-    func updateLayout() {
+    func updateTextFieldLayout() {
         textField.snp.removeConstraints()
         textField.snp.makeConstraints { (make) -> Void in
-            let width = textField.text!.widthForFont(widgetFont) + 10.0
+            let width = textField.text!.widthForFont(widgetFont) + 5.0
 
             make.width.equalTo(width)
             make.centerY.equalTo(self)
             make.left.equalTo(self).offset(12.0)
+            make.right.lessThanOrEqualToSuperview()
 
             if hasChildren {
                 make.right.equalTo(childrenView.snp.left).offset(-stateManager.genericOffset.width)
@@ -193,13 +226,13 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
         }
 
         updateConstraints()
-        textField   .addBorder(thickness: 5.0, fractionalRadius: 0.5, color: CGColor.black)
-        childrenView.addBorder(thickness: 1.0, fractionalRadius: 0.5, color: CGColor.black)
+        // textField   .addBorder(thickness: 5.0, fractionalRadius: 0.5, color: CGColor.black)
+        // childrenView.addBorder(thickness: 1.0, fractionalRadius: 0.5, color: NSColor.blue.cgColor)
     }
 
 
     func captureText() {
-        modelManager.selectedZone = nil
+        modelManager.currentlyEditingZone = nil
         widgetZone.zoneName       = textField.text!
     }
 
@@ -209,7 +242,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
 
     func select() {
-        modelManager.selectedZone = widgetZone
+        modelManager.currentlyEditingZone = widgetZone
     }
 
 
@@ -223,7 +256,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     
 
     override func controlTextDidChange(_ obj: Notification) {
-        updateLayout()
+        updateTextFieldLayout()
     }
 
 #elseif os(iOS)

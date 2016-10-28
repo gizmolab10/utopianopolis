@@ -31,7 +31,7 @@ class ZEditingToolsViewController: ZBaseViewController {
 
 
     override func update() {
-        let         zone = modelManager.selectedZone
+        let         zone = modelManager.currentlyEditingZone
         let       isRoot = zone == modelManager.rootZone
         let hasSelection = zone != nil
         let       parent = zone?.parent
