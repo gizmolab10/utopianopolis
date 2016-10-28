@@ -28,14 +28,10 @@
     public typealias ZOutlineViewDataSource = NSOutlineViewDataSource    
 
 
-    let zapplication = ZApplication.shared()
-
-
 #elseif os(iOS)
 
 
     import UIKit
-    import CoreData
 
 
     public typealias ZFont                  = UIFont
@@ -51,9 +47,6 @@
     public typealias ZTextFieldDelegate     = UITextFieldDelegate
     public typealias ZApplicationDelegate   = UIApplicationDelegate
     public typealias ZOutlineViewDataSource = UITableViewDataSource
-
-
-    let zapplication = ZApplication.shared
 
 
 #endif

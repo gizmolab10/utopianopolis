@@ -11,10 +11,6 @@ import Foundation
 import CloudKit
 
 
-let recordNameKey = "recordName"
-let recordTypeKey = "recordType"
-
-
 class ZBase: NSObject {
     
 

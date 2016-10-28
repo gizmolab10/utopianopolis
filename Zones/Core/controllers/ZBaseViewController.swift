@@ -19,17 +19,21 @@ import Foundation
 class ZBaseViewController: ZViewController {
 
 
-    #if os(OSX)
+#if os(OSX)
+
     override func viewWillAppear() {
         super.viewWillAppear()
         update()
     }
-    #elseif os(iOS)
+
+#elseif os(iOS)
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         update()
     }
-    #endif
+
+#endif
 
 
     func update() {}

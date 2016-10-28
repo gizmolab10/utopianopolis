@@ -17,9 +17,6 @@ import CoreFoundation
 #endif
 
 
-let persistenceManager = ZLocalPersistenceManager()
-
-
 class ZLocalPersistenceManager: NSObject {
 
 

@@ -16,14 +16,6 @@ import Foundation
 #endif
 
 
-enum ActionKind: UInt {
-    case add
-    case delete
-    case moveUp
-    case moveDown
-}
-
-
 class ZEditingToolsViewController: ZViewController {
 
 
@@ -32,7 +24,7 @@ class ZEditingToolsViewController: ZViewController {
 
 
     @IBAction func genericButtonAction(_ button: ZButton) {
-        switch ActionKind(rawValue: UInt(button.tag))! {
+        switch ZActionKind(rawValue: UInt(button.tag))! {
         case .add:      modelManager.addNewZone();              break
         case .delete:   modelManager.deleteSelectedZone();      break
         case .moveUp:   modelManager.moveSelectedZoneUp(true);  break

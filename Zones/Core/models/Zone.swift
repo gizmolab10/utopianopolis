@@ -11,16 +11,21 @@ import Foundation
 import CloudKit
 
 
-let zoneNameKey = "zoneName"
-let childrenKey = "children"
-
-
 class Zone : ZBase {
 
     
     dynamic var zoneName: String?
     var            links: [String : [Zone]] = [:]
     var         children: [Zone] = []
+
+
+    var parent: Zone? {
+        get {
+            let parents: [Zone] = record[parentsKey]
+
+            return parents[0]
+        }
+    }
 
 
     convenience init(dict: ZStorageDict) {

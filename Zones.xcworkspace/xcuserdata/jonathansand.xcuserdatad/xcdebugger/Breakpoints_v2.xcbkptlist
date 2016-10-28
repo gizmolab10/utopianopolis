@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/Core/managers/ZModelManager.swift"
-            timestampString = "499304783.686849"
+            timestampString = "499305684.600677"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "326"
-            endingLineNumber = "326"
+            startingLineNumber = "327"
+            endingLineNumber = "327"
             landmarkName = "getFromObject(_:valueForPropertyName:)"
             landmarkType = "7">
          </BreakpointContent>

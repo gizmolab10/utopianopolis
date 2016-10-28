@@ -16,9 +16,6 @@ import SnapKit
 #endif
 
 
-private let widgetFont: ZFont = ZFont.userFont(ofSize: 17.0)!
-
-
 class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
 
@@ -94,38 +91,36 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
         childrenWidgets.removeAll()
 
-        while childrenWidgets.count != index {
-            childrenWidgets.append(ZoneWidget())
-        }
+        if index > 0 {
+            while childrenWidgets.count != index {
+                childrenWidgets.append(ZoneWidget())
+            }
 
-        while index > 0 {
-            index                 -= 1
-            let childWidget        = childrenWidgets[index]
-            childWidget.widgetZone = widgetZone.children[index]
+            while index > 0 {
+                index                 -= 1
+                let childWidget        = childrenWidgets[index]
+                childWidget.widgetZone = widgetZone.children[index]
 
-            childWidget.updateInView(childrenView, atIndex: index)
-            childWidget.snp.makeConstraints({ (make) in
-                if let widget = previous {
-                    make.bottom.equalTo(widget.snp.top).offset(-stateManager.genericOffset.height)
-                } else {
-                    make.bottom.equalTo(childrenView)
-                }
+                childWidget.updateInView(childrenView, atIndex: index)
+                childWidget.snp.makeConstraints({ (make) in
+                    if let widget = previous {
+                        make.bottom.equalTo(widget.snp.top).offset(-stateManager.genericOffset.height)
+                    } else {
+                        make.bottom.equalTo(childrenView)
+                    }
 
-                if index == 0 {
-                    make.top.equalTo(childrenView)
-                }
+                    if index == 0 {
+                        make.top.equalTo(childrenView)
+                    }
 
-                make.left.equalTo(childrenView)
-                make.right.height.lessThanOrEqualTo(childrenView)
-            })
+                    make.left.equalTo(childrenView).offset(5.0)
+                    make.right.height.lessThanOrEqualTo(childrenView)
+                })
 
-            childWidget.layoutForText()
-            
-            previous = childWidget
-        }
-
-        if modelManager.selectedZone == widgetZone {
-            textField.becomeFirstResponder()
+                childWidget.layoutForText()
+                
+                previous = childWidget
+            }
         }
     }
 
@@ -139,6 +134,10 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                     make.center.equalTo(inView)
                 }
             }
+        }
+
+        if modelManager.selectedZone == widgetZone {
+            textField.becomeFirstResponder()
         }
 
         updateChildrensView()

@@ -16,22 +16,6 @@ import Foundation
 #endif
 
 
-enum ZToolState: Int {
-    case edit
-    case travel
-    case layout
-}
-
-
-enum ZSynchronizationState: Int {
-    case restore
-    case root
-    case unsubscribe
-    case subscribe
-    case ready
-}
-
-
 let stateManager: ZStateManager = ZStateManager()
 
 
@@ -42,7 +26,7 @@ class ZStateManager: NSObject {
     var     toolState:                             ZToolState = .edit
     var    operations: [ZSynchronizationState:BlockOperation] = [:]
     let         queue:                         OperationQueue = OperationQueue()
-    let genericOffset:                                 CGSize = CGSize(width: 40.0, height: 20.0)
+    let genericOffset:                                 CGSize = CGSize(width: 20.0, height: 6.0)
 
 
 
