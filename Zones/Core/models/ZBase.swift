@@ -53,7 +53,7 @@ class ZBase: NSObject {
         self.record   = record
 
         self.setupKVO();
-        modelManager.registerObject(self)
+        cloudManager.registerObject(self)
     }
 
 
@@ -100,12 +100,12 @@ class ZBase: NSObject {
 
 
     func setValue(_ value: NSObject, forPropertyName: String) {
-        modelManager.setIntoObject(self, value: value, forPropertyName: forPropertyName)
+        cloudManager.setIntoObject(self, value: value, forPropertyName: forPropertyName)
     }
 
 
     func get(propertyName: String) {
-        modelManager.getFromObject(self, valueForPropertyName: propertyName)
+        cloudManager.getFromObject(self, valueForPropertyName: propertyName)
     }
 
 

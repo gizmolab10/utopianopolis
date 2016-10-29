@@ -16,7 +16,7 @@ import Foundation
 #endif
 
 
-class ZToolsViewController: ZBaseViewController {
+class ZToolsViewController: ZGenericViewController {
 
 
     @IBOutlet weak var toolsChoiceControl: ZSegmentedControl!

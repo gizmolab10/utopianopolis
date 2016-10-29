@@ -48,7 +48,8 @@ enum ZEditAction: UInt {
 
 
 let       stateManager = ZStateManager()
-let       modelManager = ZModelManager()
+let       cloudManager = ZCloudManager()
+let       zonesManager = ZonesManager()
 let persistenceManager = ZLocalPersistenceManager()
 let  widgetFont: ZFont = ZFont.systemFont(ofSize: 17.0)
 let            cloudID = "iCloud.com.zones.Zones"

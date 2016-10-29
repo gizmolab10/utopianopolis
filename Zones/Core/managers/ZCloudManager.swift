@@ -1,5 +1,5 @@
 //
-//  ZModelManager.swift
+//  ZCloudManager.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 9/18/16.
@@ -11,24 +11,10 @@ import Foundation
 import CloudKit
 
 
-class ZModelManager {
-
-
-    class UpdateClosureObject {
-        let closure: UpdateClosure!
-
-        init(iClosure: @escaping UpdateClosure) {
-            closure = iClosure
-        }
-    }
-
-
-    var             _rootZone: Zone!
-    var _currentlyEditingZone: Zone?
-    var              closures: [UpdateClosureObject] = []
-    var               records: [CKRecordID : ZBase]  = [:]
-    let             container: CKContainer!
-    let             currentDB: CKDatabase!
+class ZCloudManager {
+    var   records: [CKRecordID : ZBase]  = [:]
+    let container: CKContainer!
+    let currentDB: CKDatabase!
 
 
     init() {
@@ -36,123 +22,6 @@ class ZModelManager {
         currentDB = container.publicCloudDatabase
 
         stateManager.setupAndRun()
-    }
-
-
-    var rootZone: Zone! {
-        set { _rootZone = newValue }
-        get {
-            if  _rootZone == nil {
-                _rootZone = Zone(record: nil, database: currentDB)
-            }
-
-            return _rootZone
-        }
-    }
-
-
-    var currentlyEditingZone: Zone? {
-        get { return _currentlyEditingZone }
-        set { _currentlyEditingZone = newValue; updateToClosures(with: .data, object: nil) }
-    }
-
-
-    // MARK:- closures
-    // MARK:-
-
-
-    func registerUpdateClosure(_ closure: @escaping UpdateClosure) {
-        closures.append(UpdateClosureObject(iClosure: closure))
-    }
-
-
-    func updateToClosures(with: ZUpdateKind, object: NSObject?) {
-        DispatchQueue.main.async(execute: {
-            //self.resetBadgeCounter()
-
-            for closureObject: UpdateClosureObject in self.closures {
-                closureObject.closure(with, object)
-            }
-        })
-    }
-
-
-    // MARK:- editing
-    // MARK:-
-
-
-    func editAction(_ action: ZEditAction) {
-        switch action {
-        case .add:      addNewZone();              break
-        case .delete:   deletecurrentlyEditingZone();      break
-        case .moveUp:   movecurrentlyEditingZoneUp(true);  break
-        case .moveDown: movecurrentlyEditingZoneUp(false); break
-        }
-    }
-
-
-    func addNewZone() {
-        let               root = (currentlyEditingZone ?? rootZone)!
-        let             record = CKRecord(recordType: zoneTypeKey)
-        let               zone = Zone(record: record, database: currentDB)
-        zone.links[parentsKey] = [root]
-        currentlyEditingZone           = zone
-
-        root.children.append(zone)
-        updateToClosures(with: .data, object: nil)
-        persistenceManager.save()
-
-        currentDB.save(record) { (iRecord: CKRecord?, iError: Error?) in
-            if iError != nil {
-                print(iError)
-            } else {
-                zone.record = iRecord
-            }
-        }
-    }
-
-
-    func deletecurrentlyEditingZone() {
-        if let    zone: Zone = currentlyEditingZone {
-            if let    parent = zone.parent {
-                let    index = parent.children.index(of: zone)
-                currentlyEditingZone = nil
-
-                parent.children.remove(at: index!)
-                persistenceManager.save()
-
-                currentDB.delete(withRecordID: zone.record.recordID, completionHandler: { (deleted, error) in
-                    self.updateToClosures(with: .delete, object: zone)
-                })
-            }
-        }
-    }
-
-
-    func movecurrentlyEditingZoneUp(_ moveUp: Bool) {
-        if let zone: Zone = currentlyEditingZone {
-            if let parent = zone.parent {
-                if let index = parent.children.index(of: zone) {
-                    let newIndex = index + (moveUp ? -1 : 1)
-
-                    if newIndex >= 0 && newIndex < parent.children.count {
-                        parent.children.remove(at: index)
-                        parent.children.insert(zone, at:newIndex)
-                        persistenceManager.save()
-                        updateToClosures(with: .data, object: nil)
-                    }
-                }
-            }
-        }
-    }
-
-
-    func toggleExpansion(_ ofZone: Zone?) {
-        if ofZone != nil {
-            ofZone?.showChildren = !(ofZone?.showChildren)!
-            
-            updateToClosures(with: .data, object: nil)
-        }
     }
 
 
@@ -171,14 +40,14 @@ class ZModelManager {
         let recordID: CKRecordID = CKRecordID(recordName: rootNameKey)
 
         assureRecordExists(withRecordID: recordID, onCompletion: { (record: CKRecord?) -> (Void) in
-            if self.rootZone != nil {
-                self.rootZone.record = record
+            if  zonesManager.rootZone != nil {
+                zonesManager.rootZone.record = record
             } else {
-                record![zoneNameKey] = rootNameKey as CKRecordValue?
-                self.rootZone        = Zone(record: record!, database: self.currentDB)
+                record![zoneNameKey]  = rootNameKey as CKRecordValue?
+                zonesManager.rootZone = Zone(record: record!, database: self.currentDB)
             }
 
-            self.updateToClosures(with: .data, object: nil)
+            zonesManager.updateToClosures(nil, regarding: .data)
             operation.finish()
         })
     }
@@ -191,7 +60,7 @@ class ZModelManager {
                 if let     object = self.records[iRecord.recordID] as ZBase? {
                     object.record = iRecord
 
-                    self.updateToClosures(with: .data, object: nil)
+                    zonesManager.updateToClosures(nil, regarding: .data)
                 }
             })
         })
@@ -289,7 +158,7 @@ class ZModelManager {
 
             currentDB.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iSaveError: Error?) in
                 if iSaveError != nil {
-                    self.updateToClosures(with: .error, object: iSaveError as NSObject?)
+                    zonesManager.updateToClosures(iSaveError as NSObject?, regarding: .error)
 
                     print(iSaveError)
                 }
@@ -325,17 +194,17 @@ class ZModelManager {
                         record?[forPropertyName]  = newValue
 
                         object.updateProperties()
-                        self.updateToClosures(with: .data, object: nil)
+                        zonesManager.updateToClosures(nil, regarding: .data)
                     } else {
                         fetched![forPropertyName] = newValue
 
                         self.currentDB.save(fetched!, completionHandler: { (saved: CKRecord?, saveError: Error?) in
                             if saveError != nil {
-                                self.updateToClosures(with: .error, object: saveError as NSObject?)
+                                zonesManager.updateToClosures(saveError as NSObject?, regarding: .error)
                             } else {
                                 object.record  = saved!
                                 object.unsaved = false
-                                self.updateToClosures(with: .data, object: nil)
+                                zonesManager.updateToClosures(nil, regarding: .data)
                                 persistenceManager.save()
                             }
                         })
@@ -354,12 +223,12 @@ class ZModelManager {
 
             currentDB.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, performanceError: Error?) in
                 if performanceError != nil {
-                    self.updateToClosures(with: .error, object: performanceError as NSObject?)
+                    zonesManager.updateToClosures(performanceError as NSObject?, regarding: .error)
                 } else {
                     let        record: CKRecord = (iResults?[0])!
                     object.record[valueForPropertyName] = (record as! CKRecordValue)
 
-                    self.updateToClosures(with: .data, object: nil)
+                    zonesManager.updateToClosures(nil, regarding: .data)
                 }
             }
         }

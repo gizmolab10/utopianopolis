@@ -17,7 +17,7 @@ import SnapKit
 #endif
 
 
-class ZEditorViewController: ZBaseViewController {
+class ZEditorViewController: ZGenericViewController {
 
     
     var widget: ZoneWidget!
@@ -29,14 +29,14 @@ class ZEditorViewController: ZBaseViewController {
         }
 
         widget            = ZoneWidget()
-        widget.widgetZone = modelManager.rootZone!
+        widget.widgetZone = zonesManager.rootZone!
 
-        widget.layoutView(view, atIndex: -1)
+        widget.layoutInView(view, atIndex: -1)
     }
 
 
     func unselect() {
-        modelManager.currentlyEditingZone = nil
+        zonesManager.currentlyEditingZone = nil
 
         update()
     }

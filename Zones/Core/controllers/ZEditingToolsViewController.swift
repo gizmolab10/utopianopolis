@@ -16,7 +16,7 @@ import Foundation
 #endif
 
 
-class ZEditingToolsViewController: ZBaseViewController {
+class ZEditingToolsViewController: ZGenericViewController {
 
 
     @IBOutlet weak var      newZoneButton: ZButton!
@@ -26,13 +26,19 @@ class ZEditingToolsViewController: ZBaseViewController {
 
 
     @IBAction func genericButtonAction(_ button: ZButton) {
-        modelManager.editAction(ZEditAction(rawValue: UInt(button.tag))!)
+        let action = ZEditAction(rawValue: UInt(button.tag))!
+
+        switch action {
+        case .add:      zonesManager.add();         break
+        case .delete:   zonesManager.delete();      break
+        case .moveUp:   zonesManager.moveUp(true);  break
+        case .moveDown: zonesManager.moveUp(false); break
+        }
     }
 
 
     override func update() {
-        let         zone = modelManager.currentlyEditingZone
-        let       isRoot = zone == modelManager.rootZone
+        let         zone = zonesManager.currentlyMovableZone
         let hasSelection = zone != nil
         let       parent = zone?.parent
         let     children = parent?.children
@@ -40,7 +46,7 @@ class ZEditingToolsViewController: ZBaseViewController {
         let        atTop = (children?.first == zone)
         let     atBottom = (children?.last  == zone)
 
-        deleteZoneButton  .isHidden = !hasSelection || isRoot
+        deleteZoneButton  .isHidden = !hasSelection || !zonesManager.canDelete
         moveZoneUpButton  .isHidden = !hasSelection || !hasSiblings || atTop
         moveZoneDownButton.isHidden = !hasSelection || !hasSiblings || atBottom
     }

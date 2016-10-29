@@ -26,7 +26,7 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
 
         application.registerUserNotificationSettings(settings)
         application.registerForRemoteNotifications()
-        modelManager.resetBadgeCounter()
+        cloudManager.resetBadgeCounter()
 
         return true
     }
@@ -38,7 +38,7 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
         if note.notificationType == .query {
             let queryNote: CKQueryNotification = note as! CKQueryNotification
 
-            modelManager.receivedUpdateFor(queryNote.recordID!)
+            cloudManager.receivedUpdateFor(queryNote.recordID!)
         }
     }
 

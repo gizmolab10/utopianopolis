@@ -30,8 +30,8 @@ class ZLocalPersistenceManager: NSObject {
     func save() {
         if !isSaving && stateManager.isReady {
             isSaving               = true
-            currentZoneFileName    = modelManager.rootZone.record.recordID.recordName
-            let dict: NSDictionary = modelManager.rootZone.storageDict as NSDictionary
+            currentZoneFileName    = zonesManager.rootZone.record.recordID.recordName
+            let dict: NSDictionary = zonesManager.rootZone.storageDict as NSDictionary
             let  url:          URL = pathToCurrentZoneFile()
 
             dict.write(to: url, atomically: false)
@@ -43,7 +43,7 @@ class ZLocalPersistenceManager: NSObject {
 
     func restore() {
         if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
-            modelManager.rootZone = Zone(dict: raw as! ZStorageDict)
+            zonesManager.rootZone = Zone(dict: raw as! ZStorageDict)
         }
     }
 

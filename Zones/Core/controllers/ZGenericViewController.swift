@@ -1,5 +1,5 @@
 //
-//  ZBaseViewController.swift
+//  ZGenericViewController.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 10/10/16.
@@ -16,7 +16,7 @@ import Foundation
 #endif
 
 
-class ZBaseViewController: ZViewController {
+class ZGenericViewController: ZViewController {
 
 
 #if os(OSX)
@@ -38,7 +38,7 @@ class ZBaseViewController: ZViewController {
 
     func setup() {
         update()
-        modelManager.registerUpdateClosure { (kind, object) -> (Void) in
+        zonesManager.registerUpdateClosure { (object, kind) -> (Void) in
             if kind != .error {
                 self.update()
             }

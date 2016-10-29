@@ -83,7 +83,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     // MARK:-
 
 
-    func layoutView(_ inView: ZView, atIndex: Int) {
+    func layoutInView(_ inView: ZView, atIndex: Int) {
         if !inView.subviews.contains(self) {
             inView.addSubview(self)
 
@@ -94,12 +94,12 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             }
         }
 
-        if modelManager.currentlyEditingZone == widgetZone {
+        if zonesManager.currentlyEditingZone == widgetZone {
             textField.becomeFirstResponder()
         }
 
-        layoutChildrensView()
-        layoutDecorations()
+        layoutChildren()
+        layoutDots()
         layoutText()
     }
 
@@ -132,7 +132,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     }
 
 
-    func layoutChildrensView() {
+    func layoutChildren() {
         var                 index = widgetZone.children.count
         var previous: ZoneWidget? = nil
         let       hasSiblingLines = index > 1
@@ -171,7 +171,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone = widgetZone.children[index]
 
-                childWidget.layoutView(childrenView, atIndex: index)
+                childWidget.layoutInView(childrenView, atIndex: index)
                 childWidget.snp.makeConstraints({ (make) in
                     if previous != nil {
                         make.bottom.equalTo((previous?.snp.top)!).offset(-stateManager.genericOffset.height)
@@ -210,8 +210,8 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     }
 
 
-    func layoutDecorations() {
-        if widgetZone.children.count != 0 && !subviews.contains(childVisibilityDot) {
+    func layoutDots() {
+        if !subviews.contains(childVisibilityDot) && widgetZone.children.count != 0 {
             addSubview(childVisibilityDot)
             childVisibilityDot.setUp(asToggle: true)
 
@@ -222,9 +222,13 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             })
         }
 
-        if widgetZone != modelManager.rootZone && !subviews.contains(dragDot) {
+        if !subviews.contains(dragDot) && widgetZone != zonesManager.rootZone {
             addSubview(dragDot)
             dragDot.setUp(asToggle: false)
+
+            if zonesManager.isGrabbed(zone: widgetZone) {
+                dragDot.highlight(true)
+            }
 
             dragDot.snp.makeConstraints({ (make) in
                 make.right.equalTo(textField.snp.left).offset(-3.0)
@@ -239,13 +243,13 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
 
     func captureText() {
-        modelManager.currentlyEditingZone = nil
+        zonesManager.currentlyEditingZone = nil
         widgetZone.zoneName               = textField.text!
     }
 
 
     func selectForEditing() {
-        modelManager.currentlyEditingZone = widgetZone
+        zonesManager.currentlyEditingZone = widgetZone
     }
 
 

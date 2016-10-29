@@ -19,8 +19,6 @@ class Zone : ZBase {
     var            links: [String : [Zone]] = [:]
     var     showChildren: Bool = true
 
-
-
     var parent: Zone? {
         get {
             if record != nil {
@@ -36,7 +34,7 @@ class Zone : ZBase {
 
 
     convenience init(dict: ZStorageDict) {
-        self.init(record: nil, database: modelManager.currentDB)
+        self.init(record: nil, database: cloudManager.currentDB)
 
         storageDict = dict
     }
