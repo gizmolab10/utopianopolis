@@ -41,7 +41,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 _textField.delegate             = self
                 _textField.isBordered           = false
                 _textField.textAlignment        = .center
-                _textField.backgroundColor      = ZColor.white
+                _textField.backgroundColor      = ZColor.clear
                 _textField.zoneWidgetDelegate   = self
                 // _textField.maximumNumberOfLines = 1
 
@@ -156,10 +156,10 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 childrenView.addSubview(connectLineView)
 
                 connectLineView.wantsLayer = true
-                connectLineView.layer.backgroundColor = ZColor.black.cgColor
+                connectLineView.zlayer.backgroundColor = stateManager.lineColor
 
                 connectLineView.snp.makeConstraints({ (make) in
-                    make.height.equalTo(1.0)
+                    make.height.equalTo(stateManager.lineThicknes)
                     make.centerY.equalTo(textField).offset(1.0)
                     make.left.equalTo(childrenView).offset(10.0)
                     make.width.equalTo(stateManager.genericOffset.width + 9.0)
@@ -191,11 +191,11 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 if hasSiblingLines && previous != nil {
                     let lineView = ZView()
                     lineView.wantsLayer = true
-                    lineView.zlayer.backgroundColor = ZColor.black.cgColor
+                    lineView.zlayer.backgroundColor = stateManager.lineColor
                     childrenView.addSubview(lineView)
 
                     lineView.snp.makeConstraints({ (make) in
-                        make.width.equalTo(1.0)
+                        make.width.equalTo(stateManager.lineThicknes)
                         make.centerX.equalTo(childWidget.dragDot)
                         make.bottom.equalTo((previous?.dragDot.snp.top)!).offset(-5.0)
                         make.top.equalTo(childWidget.dragDot.snp.bottom).offset(5.0)

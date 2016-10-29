@@ -28,7 +28,7 @@ class ZoneDot: ZButton {
         toggle     = asToggle
         isCircular = asToggle
 
-        // setButtonType(.onOff)
+        setButtonType(.onOff)
 
         snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 8, height: 8))
@@ -44,9 +44,9 @@ class ZoneDot: ZButton {
 
 
     @objc func hitAction(_ sender: AnyObject) {
-        let zone = widget.widgetZone
-
         if toggle == true {
+            let zone = widget.widgetZone
+            
             modelManager.toggleExpansion(zone)
         }
     }

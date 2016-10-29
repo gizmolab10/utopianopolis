@@ -24,17 +24,18 @@ class ZStateManager: NSObject {
     var    operations: [ZSynchronizationState:BlockOperation] = [:]
     let         queue:                         OperationQueue = OperationQueue()
     let genericOffset:                                 CGSize = CGSize(width: 6.0, height: 6.0)
-
+    let  lineThicknes:                                CGFloat = 4.0
+    let     lineColor:                                CGColor = ZColor(hue: 0.6, saturation: 0.6, brightness: 1.0, alpha: 1).cgColor
 
 
     func setupAndRun() {
-        setup()
+        synchronize()
 
         queue.isSuspended = false
     }
 
 
-    func setup() {
+    func synchronize() {
         queue.isSuspended = true
         queue.maxConcurrentOperationCount = 1
         queue.qualityOfService = .background

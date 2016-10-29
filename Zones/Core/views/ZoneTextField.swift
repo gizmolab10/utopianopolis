@@ -29,7 +29,7 @@ class ZoneTextField: ZTextField {
 
     #if os(OSX)
 
-    var textAlignment : Bool { get { return alignment } set { alignment = newValue } }
+    var textAlignment : NSTextAlignment { get { return alignment } set { alignment = newValue } }
 
 
     override func mouseDown(with event: ZEvent) {

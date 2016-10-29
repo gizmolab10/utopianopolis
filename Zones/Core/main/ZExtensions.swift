@@ -35,23 +35,6 @@ import Foundation
     let zapplication = ZApplication.shared()
 
 
-    extension String {
-        func heightForFont(_ font: ZFont) -> CGFloat {
-            return sizeWithFont(font).height
-        }
-
-
-        func widthForFont(_ font: ZFont) -> CGFloat {
-            return sizeWithFont(font).width
-        }
-
-
-        func sizeWithFont(_ font: ZFont) -> CGSize {
-            return size(withAttributes: [NSFontAttributeName: font])
-        }
-    }
-
-
     extension ZApplication {
         func clearBadge() {
             dockTile.badgeLabel = ""
@@ -59,14 +42,15 @@ import Foundation
     }
 
 
-    extension ZView {
+    extension NSView {
         var zlayer: CALayer { get { return layer! } set { layer = newValue } }
+
+
         func addBorder(thickness: CGFloat, fractionalRadius: CGFloat, color: CGColor) {
             wantsLayer             = true
-            layer!.borderColor     = color
-            layer!.borderWidth     = thickness
-            layer!.cornerRadius    = bounds.size.height * fractionalRadius
-            // layer!.backgroundColor = CGColor.white
+            zlayer.borderColor     = color
+            zlayer.borderWidth     = thickness
+            zlayer.cornerRadius    = bounds.size.height * fractionalRadius
         }
     }
 
@@ -76,6 +60,10 @@ import Foundation
             get { return true }
             set { bezelStyle = newValue ? .circular : .rounded }
         }
+
+        var onHit: Selector? {
+            get { return action }
+            set { action = newValue; target = self } }
     }
 
 
@@ -120,20 +108,6 @@ import Foundation
     let zapplication = ZApplication.shared
 
 
-    extension String {
-        func heightForFont(_ font: ZFont) -> CGFloat {
-            return font.lineHeight
-        }
-
-
-        func widthForFont(_ font: ZFont) -> CGFloat {
-            let constraintRect = CGSize(width: 1000000, height: 1000000)
-            let    boundingBox = self.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil)
-            return boundingBox.size.width
-        }
-    }
-
-
     extension ZApplication {
         func presentError(_ error: NSError) -> Void {
 
@@ -149,13 +123,13 @@ import Foundation
     }
 
 
-    extension ZView {
+    extension UIView {
         var wantsLayer: Bool { get { return true } set { } }
         var zlayer: CALayer { get { return layer } }
     }
 
 
-    extension ZButton {
+    extension UIButton {
         @objc func nuttin() {}
 
 
@@ -178,6 +152,26 @@ import Foundation
 
 
 typealias ZStorageDict = [String : NSObject]
+
+
+extension String {
+    func heightForFont(_ font: ZFont) -> CGFloat {
+        return sizeWithFont(font).height
+    }
+
+
+    func widthForFont(_ font: ZFont) -> CGFloat {
+        return sizeWithFont(font).width + 4.0
+    }
+
+
+    func sizeWithFont(_ font: ZFont) -> CGSize {
+        let   rect = CGSize(width: 1000000, height: 1000000)
+        let bounds = self.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil)
+
+        return bounds.size
+    }
+}
 
 
 //extension NSAttributedString {
