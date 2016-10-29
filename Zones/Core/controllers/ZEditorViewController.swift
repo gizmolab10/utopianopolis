@@ -35,14 +35,24 @@ class ZEditorViewController: ZBaseViewController {
     }
 
 
-    override func mouseDown(with event: NSEvent) {
-        modelManager.currentlyEditingZone = nil
+    @IBAction func tapped(_ sender: AnyObject) {
+        widget.captureText()
+    }
+
+
+    #if os(OSX)
+
+    override func mouseDown(with event: ZEvent) {
+        super.mouseDown(with:event)
 
         update()
     }
 
+    #elseif os(iOS)
 
-    @IBAction func tapped(_ sender: AnyObject) {
-        widget.captureText()
+    func mouseDown(with event: ZEvent) {
+        update()
     }
+    
+    #endif
 }

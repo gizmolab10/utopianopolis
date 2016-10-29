@@ -17,19 +17,35 @@ import Foundation
 
 
 protocol ZoneTextFieldDelegate {
-    func select()
+    func selectForEditing()
 }
 
 
 class ZoneTextField: ZTextField {
 
 
-    var zoneDelegate: ZoneTextFieldDelegate?
+    var zoneWidgetDelegate: ZoneTextFieldDelegate?
 
-    override func mouseDown(with event: NSEvent) {
+
+    #if os(OSX)
+
+    var textAlignment : Bool { get { return alignment } set { alignment = newValue } }
+
+
+    override func mouseDown(with event: ZEvent) {
         super.mouseDown(with:event)
 
-        zoneDelegate!.select()
+        zoneWidgetDelegate!.selectForEditing()
     }
 
+    #elseif os(iOS)
+
+    var isBordered : Bool { get { return borderStyle != .none } set { borderStyle = (newValue ? .line : .none) } }
+
+
+    func mouseDown(with event: ZEvent) {
+        zoneWidgetDelegate!.selectForEditing()
+    }
+
+    #endif
 }

@@ -24,12 +24,11 @@ class ZoneDot: ZButton {
 
     func setUp(asToggle: Bool) {
         title      = ""
+        onHit      = #selector(hitAction(_:))
         toggle     = asToggle
-        target     = self
-        action     = #selector(hitAction(_:))
-        bezelStyle = asToggle ? .circular : .rounded
+        isCircular = asToggle
 
-        setButtonType(.onOff)
+        // setButtonType(.onOff)
 
         snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 8, height: 8))
@@ -42,7 +41,6 @@ class ZoneDot: ZButton {
     var widget: ZoneWidget {
         get { return superview as! ZoneWidget }
     }
-
 
 
     @objc func hitAction(_ sender: AnyObject) {

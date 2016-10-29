@@ -50,7 +50,7 @@ enum ZEditAction: UInt {
 let       stateManager = ZStateManager()
 let       modelManager = ZModelManager()
 let persistenceManager = ZLocalPersistenceManager()
-let  widgetFont: ZFont = ZFont.userFont(ofSize: 17.0)!
+let  widgetFont: ZFont = ZFont.systemFont(ofSize: 17.0)
 let            cloudID = "iCloud.com.zones.Zones"
 let    showChildrenKey = "showChildren"
 let      recordNameKey = "recordName"

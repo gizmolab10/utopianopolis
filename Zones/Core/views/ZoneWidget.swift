@@ -39,12 +39,11 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 _textField                      = ZoneTextField()
                 _textField.font                 = widgetFont
                 _textField.delegate             = self
-                _textField.alignment            = .center
-                _textField.bezelStyle           = .roundedBezel
                 _textField.isBordered           = false
-                _textField.zoneDelegate         = self
-                _textField.backgroundColor      = NSColor(cgColor: CGColor.white)
-                _textField.maximumNumberOfLines = 1
+                _textField.textAlignment        = .center
+                _textField.backgroundColor      = ZColor.white
+                _textField.zoneWidgetDelegate   = self
+                // _textField.maximumNumberOfLines = 1
 
                 addSubview(_textField)
 
@@ -157,7 +156,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 childrenView.addSubview(connectLineView)
 
                 connectLineView.wantsLayer = true
-                connectLineView.layer?.backgroundColor = NSColor.black.cgColor
+                connectLineView.layer.backgroundColor = ZColor.black.cgColor
 
                 connectLineView.snp.makeConstraints({ (make) in
                     make.height.equalTo(1.0)
@@ -192,7 +191,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 if hasSiblingLines && previous != nil {
                     let lineView = ZView()
                     lineView.wantsLayer = true
-                    lineView.layer?.backgroundColor = NSColor.black.cgColor
+                    lineView.zlayer.backgroundColor = ZColor.black.cgColor
                     childrenView.addSubview(lineView)
 
                     lineView.snp.makeConstraints({ (make) in
@@ -245,7 +244,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     }
 
 
-    func select() {
+    func selectForEditing() {
         modelManager.currentlyEditingZone = widgetZone
     }
 
@@ -274,7 +273,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
 //    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 //        updateLayout()
-//        select()
+//        selectForEditing()
 //
 //        return true
 //    }
