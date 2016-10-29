@@ -31,7 +31,7 @@ class ZEditorViewController: ZBaseViewController {
         widget            = ZoneWidget()
         widget.widgetZone = modelManager.rootZone!
 
-        widget.updateInView(view, atIndex: -1)
+        widget.layoutView(view, atIndex: -1)
     }
 
 

@@ -80,7 +80,60 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     }
 
 
-    func updateChildrensView() {
+    // MARK:- layout
+    // MARK:-
+
+
+    func layoutView(_ inView: ZView, atIndex: Int) {
+        if !inView.subviews.contains(self) {
+            inView.addSubview(self)
+
+            if atIndex == -1 {
+                snp.remakeConstraints { (make) -> Void in
+                    make.center.equalTo(inView)
+                }
+            }
+        }
+
+        if modelManager.currentlyEditingZone == widgetZone {
+            textField.becomeFirstResponder()
+        }
+
+        layoutChildrensView()
+        layoutDecorations()
+        layoutText()
+    }
+
+
+    func layoutText() {
+        textField.text = widgetZone.zoneName ?? "empty"
+
+        layoutTextField()
+    }
+
+
+    func layoutTextField() {
+        textField.snp.removeConstraints()
+        textField.snp.makeConstraints { (make) -> Void in
+            let width = textField.text!.widthForFont(widgetFont) + 5.0
+
+            make.width.equalTo(width)
+            make.centerY.equalTo(self)
+            make.left.equalTo(self).offset(12.0)
+            make.right.lessThanOrEqualToSuperview()
+
+            if hasChildren {
+                make.right.equalTo(childrenView.snp.left).offset(-stateManager.genericOffset.width)
+            }
+        }
+
+        updateConstraints()
+        // textField   .addBorder(thickness: 5.0, fractionalRadius: 0.5, color: CGColor.black)
+        // childrenView.addBorder(thickness: 1.0, fractionalRadius: 0.5, color: NSColor.blue.cgColor)
+    }
+
+
+    func layoutChildrensView() {
         var                 index = widgetZone.children.count
         var previous: ZoneWidget? = nil
         let       hasSiblingLines = index > 1
@@ -119,7 +172,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone = widgetZone.children[index]
 
-                childWidget.updateInView(childrenView, atIndex: index)
+                childWidget.layoutView(childrenView, atIndex: index)
                 childWidget.snp.makeConstraints({ (make) in
                     if previous != nil {
                         make.bottom.equalTo((previous?.snp.top)!).offset(-stateManager.genericOffset.height)
@@ -150,7 +203,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                     })
                 }
 
-                childWidget.updateText()
+                childWidget.layoutText()
                 
                 previous = childWidget
             }
@@ -158,7 +211,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     }
 
 
-    func updateDecorations() {
+    func layoutDecorations() {
         if widgetZone.children.count != 0 && !subviews.contains(childVisibilityDot) {
             addSubview(childVisibilityDot)
             childVisibilityDot.setUp(asToggle: true)
@@ -182,63 +235,14 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     }
 
 
-    func updateInView(_ inView: ZView, atIndex: Int) {
-        if !inView.subviews.contains(self) {
-            inView.addSubview(self)
-
-            if atIndex == -1 {
-                snp.remakeConstraints { (make) -> Void in
-                    make.center.equalTo(inView)
-                }
-            }
-        }
-
-        if modelManager.currentlyEditingZone == widgetZone {
-            textField.becomeFirstResponder()
-        }
-
-        updateChildrensView()
-        updateDecorations()
-        updateText()
-    }
-
-
-    func updateText() {
-        textField.text = widgetZone.zoneName ?? "empty"
-
-        updateTextFieldLayout()
-    }
-
-
-    func updateTextFieldLayout() {
-        textField.snp.removeConstraints()
-        textField.snp.makeConstraints { (make) -> Void in
-            let width = textField.text!.widthForFont(widgetFont) + 5.0
-
-            make.width.equalTo(width)
-            make.centerY.equalTo(self)
-            make.left.equalTo(self).offset(12.0)
-            make.right.lessThanOrEqualToSuperview()
-
-            if hasChildren {
-                make.right.equalTo(childrenView.snp.left).offset(-stateManager.genericOffset.width)
-            }
-        }
-
-        updateConstraints()
-        // textField   .addBorder(thickness: 5.0, fractionalRadius: 0.5, color: CGColor.black)
-        // childrenView.addBorder(thickness: 1.0, fractionalRadius: 0.5, color: NSColor.blue.cgColor)
-    }
+    // MARK:- delegates
+    // MARK:-
 
 
     func captureText() {
         modelManager.currentlyEditingZone = nil
-        widgetZone.zoneName       = textField.text!
+        widgetZone.zoneName               = textField.text!
     }
-
-
-    // MARK:- delegates
-    // MARK:-
 
 
     func select() {
@@ -256,7 +260,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     
 
     override func controlTextDidChange(_ obj: Notification) {
-        updateTextFieldLayout()
+        layoutTextField()
     }
 
 #elseif os(iOS)
