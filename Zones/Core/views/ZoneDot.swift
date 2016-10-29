@@ -46,7 +46,7 @@ class ZoneDot: ZButton {
     @objc func hitAction(_ sender: AnyObject) {
         if let zone = widget.widgetZone {
             if toggle == true {
-                zonesManager.toggleExpansion(zone)
+                zonesManager.toggleChildrenVisibility(zone)
             } else {
                 zonesManager.currentlyGrabbedZones = [zone]
             }

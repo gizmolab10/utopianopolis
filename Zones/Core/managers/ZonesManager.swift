@@ -77,7 +77,7 @@ class ZonesManager: NSObject {
     }
 
     
-    // MARK:- editing
+    // MARK:- editing and moving
     // MARK:-
 
 
@@ -100,17 +100,28 @@ class ZonesManager: NSObject {
 
     var canDelete: Bool {
         get {
-            return currentlyEditingZone != nil || currentlyGrabbedZones.count > 0
+            return (currentlyEditingZone != nil && currentlyEditingZone != rootZone) ||
+                (currentlyGrabbedZones.count > 0 && !currentlyGrabbedZones.contains(rootZone))
+        }
+    }
+
+
+    func takeAction(_ action: ZEditAction) {
+        switch action {
+        case .add:      add();         break
+        case .delete:   delete();      break
+        case .moveUp:   moveUp(true);  break
+        case .moveDown: moveUp(false); break
         }
     }
 
 
     func add() {
-        addZoneTo(parent: currentlyMovableZone)
+        addZoneTo(currentlyMovableZone)
     }
 
 
-    func addZoneTo(parent: Zone?) {
+    func addZoneTo(_ parent: Zone?) {
         if parent != nil {
             let             record = CKRecord(recordType: zoneTypeKey)
             let               zone = Zone(record: record, database: cloudManager.currentDB)
@@ -164,7 +175,7 @@ class ZonesManager: NSObject {
 
 
     func moveUp(_ moveUp: Bool) {
-        if let zone: Zone = currentlyEditingZone {
+        if let zone: Zone = currentlyMovableZone {
             if let parent = zone.parent {
                 if let index = parent.children.index(of: zone) {
                     let newIndex = index + (moveUp ? -1 : 1)
@@ -181,7 +192,7 @@ class ZonesManager: NSObject {
     }
 
 
-    func toggleExpansion(_ ofZone: Zone?) {
+    func toggleChildrenVisibility(_ ofZone: Zone?) {
         if ofZone != nil {
             ofZone?.showChildren = !(ofZone?.showChildren)!
             
