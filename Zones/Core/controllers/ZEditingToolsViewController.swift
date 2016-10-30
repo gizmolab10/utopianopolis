@@ -33,7 +33,7 @@ class ZEditingToolsViewController: ZGenericViewController {
     override func update() {
         let         zone = zonesManager.currentlyMovableZone
         let hasSelection = zone != nil
-        let       parentZone = zone?.parentZone
+        let   parentZone = zone?.parentZone
         let     children = parentZone?.children
         let  hasSiblings = parentZone != nil && (children?.count)! > 1
         let        atTop = (children?.first == zone)

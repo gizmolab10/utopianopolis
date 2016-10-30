@@ -29,6 +29,24 @@ class ZCloudManager {
     // MARK:-
 
 
+    func flush() {
+        var recordsToSave: [CKRecord] = []
+        let                 operation = CKModifyRecordsOperation()
+        operation.container           = container
+        operation.qualityOfService    = .background
+
+        for base: ZBase in records.values {
+            if base.unsaved {
+                recordsToSave.append(base.record)
+            }
+        }
+
+        operation.recordsToSave = recordsToSave
+
+        operation.start()
+    }
+
+
     func registerObject(_ object: ZBase) {
         if object.record != nil {
             records[object.record.recordID] = object

@@ -84,7 +84,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="-406" y="827"/>
+            <point key="canvasLocation" x="-272" y="801"/>
         </scene>
         <!--Tools View Controller-->
         <scene sceneID="EFi-vN-wHw">
@@ -98,14 +98,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="341" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="f3b-Bn-qpd">
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="f3b-Bn-qpd">
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="eg7-Oj-Vjn"/>
                                 </constraints>
                                 <segments>
+                                    <segment title="Settings" enabled="NO"/>
                                     <segment title="Edit"/>
-                                    <segment title="Travel"/>
-                                    <segment title="Settings"/>
+                                    <segment title="Settings" enabled="NO"/>
                                 </segments>
                                 <connections>
                                     <action selector="choiceAction:" destination="hg4-4k-bWE" eventType="valueChanged" id="eAR-zt-yjO"/>
@@ -134,7 +134,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Wuy-fy-J2b" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="940" y="805"/>
+            <point key="canvasLocation" x="1071" y="802"/>
         </scene>
         <!--Editing Tools View Controller-->
         <scene sceneID="7D6-c3-2dg">
@@ -210,7 +210,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1mc-bd-Z9S" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1742" y="804"/>
+            <point key="canvasLocation" x="1071" y="1676"/>
         </scene>
     </scenes>
 </document>

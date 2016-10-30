@@ -31,6 +31,11 @@ class Zone : ZBase {
             }
         }
         get {
+            if parent == nil && _parentZone?.record != nil {
+                parent  = CKReference(record: (_parentZone?.record)!, action: .none)
+                unsaved = true
+            }
+
             if parent != nil {
                 return cloudManager.objectForRecordID((parent?.recordID)!) as? Zone
             }

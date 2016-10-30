@@ -23,20 +23,23 @@ class ZoneDot: ZButton {
 
 
     func setUp(_ widgetZone: Zone, asToggle: Bool) {
-        title               = ""
-        onHit               = #selector(hitAction(_:))
-        toggle              = asToggle
-        isCircular          = asToggle
-        let shouldHighlight = asToggle ? widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
-
-        setButtonType(.onOff) // fix for ios
+        title      = ""
+        onHit      = #selector(hitAction(_:))
+        toggle     = asToggle
+        isCircular = asToggle
 
         snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 9, height: 9))
         }
 
-        updateConstraints()
+#if os(OSX)
+        let shouldHighlight = asToggle ? widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
+
+        setButtonType(.onOff) // fix for ios
         highlight(shouldHighlight)
+#endif
+
+        updateConstraints()
     }
 
 

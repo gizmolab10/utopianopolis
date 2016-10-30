@@ -9,7 +9,20 @@
 
 import Foundation
 
+#if os(OSX)
+    import Cocoa
+#elseif os(iOS)
+    import UIKit
+#endif
+
 
 class ZSettingsViewController: ZGenericViewController {
 
+
+    @IBOutlet weak var flushButton: ZButton!
+
+
+    @IBAction func genericButtonAction(_ button: ZButton) {
+        cloudManager.flush()
+    }
 }

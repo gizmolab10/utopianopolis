@@ -33,9 +33,9 @@ enum ZUpdateKind: UInt {
 
 
 enum ZToolMode: Int {
+    case settings
     case edit
     case travel
-    case settings
 }
 
 

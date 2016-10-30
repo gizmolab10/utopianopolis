@@ -736,9 +736,9 @@
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="selectOne" id="DrU-WM-BCF">
                                     <font key="font" metaFont="system" size="14"/>
                                     <segments>
-                                        <segment label="Edit" width="51" selected="YES"/>
-                                        <segment label="Travel" width="70" tag="1"/>
                                         <segment label="Settings" width="78"/>
+                                        <segment label="Edit" width="51" selected="YES" tag="1"/>
+                                        <segment label="Travel" width="70" enabled="NO"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>
@@ -748,7 +748,7 @@
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="qYZ-nw-Vzw">
                                 <rect key="frame" x="0.0" y="0.0" width="203" height="279"/>
                                 <subviews>
-                                    <containerView identifier="Settings" translatesAutoresizingMaskIntoConstraints="NO" id="V5K-yz-U7U" userLabel="Settings">
+                                    <containerView identifier="Settings" hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V5K-yz-U7U" userLabel="Settings">
                                         <rect key="frame" x="0.0" y="0.0" width="203" height="279"/>
                                         <connections>
                                             <segue destination="YaQ-0g-PCb" kind="embed" id="jRo-n0-VYp"/>
@@ -884,7 +884,23 @@
                     <view key="view" id="3tA-Ue-bZS">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i7P-tX-Rsd">
+                                <rect key="frame" x="20" y="261" width="94" height="19"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="roundRect" title="Push to Cloud" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="12V-Xi-SE0">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="cellTitle"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="genericButtonAction:" target="YaQ-0g-PCb" id="WW5-kp-CJc"/>
+                                </connections>
+                            </button>
+                        </subviews>
                     </view>
+                    <connections>
+                        <outlet property="flushButton" destination="i7P-tX-Rsd" id="vwm-Qg-AOL"/>
+                    </connections>
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
