@@ -13,6 +13,8 @@
 		0C2DBB9D1DAC4EA300C83FF2 /* ZToolsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2DBB9B1DAC4EA300C83FF2 /* ZToolsViewController.swift */; };
 		0C33128B1DC48E6F002DDB39 /* ZonesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C33128A1DC48E6F002DDB39 /* ZonesManager.swift */; };
 		0C33128C1DC48E6F002DDB39 /* ZonesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C33128A1DC48E6F002DDB39 /* ZonesManager.swift */; };
+		0C33128E1DC5A94D002DDB39 /* ZSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C33128D1DC5A94D002DDB39 /* ZSettingsViewController.swift */; };
+		0C33128F1DC5A94D002DDB39 /* ZSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C33128D1DC5A94D002DDB39 /* ZSettingsViewController.swift */; };
 		0C36E7FE1DC31834005C5059 /* ZoneDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C36E7FD1DC31834005C5059 /* ZoneDot.swift */; };
 		0C36E7FF1DC31834005C5059 /* ZoneDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C36E7FD1DC31834005C5059 /* ZoneDot.swift */; };
 		0C58C37C1D45805400CAB387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C58C36F1D45805400CAB387 /* Assets.xcassets */; };
@@ -188,6 +190,7 @@
 		0C1AD4501DADA1C4004E69C3 /* ZGenericViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGenericViewController.swift; sourceTree = "<group>"; };
 		0C2DBB9B1DAC4EA300C83FF2 /* ZToolsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZToolsViewController.swift; sourceTree = "<group>"; };
 		0C33128A1DC48E6F002DDB39 /* ZonesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZonesManager.swift; sourceTree = "<group>"; };
+		0C33128D1DC5A94D002DDB39 /* ZSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSettingsViewController.swift; sourceTree = "<group>"; };
 		0C36E7FD1DC31834005C5059 /* ZoneDot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZoneDot.swift; path = views/ZoneDot.swift; sourceTree = "<group>"; };
 		0C58C36F1D45805400CAB387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C58C3711D45805400CAB387 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
@@ -601,6 +604,7 @@
 				0CF97D561DA785AB00FEAA41 /* ZEditorViewController.swift */,
 				0C1AD4501DADA1C4004E69C3 /* ZGenericViewController.swift */,
 				0CF97D671DA986AB00FEAA41 /* ZMainViewController.swift */,
+				0C33128D1DC5A94D002DDB39 /* ZSettingsViewController.swift */,
 				0C2DBB9B1DAC4EA300C83FF2 /* ZToolsViewController.swift */,
 			);
 			path = controllers;
@@ -877,6 +881,7 @@
 				0CF97D581DA785AB00FEAA41 /* ZEditorViewController.swift in Sources */,
 				0CD1EB001DB725A800A096E4 /* ExclusivityController.swift in Sources */,
 				0CC8F84E1DC2963300E25985 /* ZoneTextField.swift in Sources */,
+				0C33128F1DC5A94D002DDB39 /* ZSettingsViewController.swift in Sources */,
 				0C2DBB9D1DAC4EA300C83FF2 /* ZToolsViewController.swift in Sources */,
 				0CD1EAF21DB725A800A096E4 /* TimeoutObserver.swift in Sources */,
 				0CF97D691DA986AB00FEAA41 /* ZMainViewController.swift in Sources */,
@@ -952,6 +957,7 @@
 				0CD1EAFF1DB725A800A096E4 /* ExclusivityController.swift in Sources */,
 				0CC8F84D1DC2963300E25985 /* ZoneTextField.swift in Sources */,
 				0C2DBB9C1DAC4EA300C83FF2 /* ZToolsViewController.swift in Sources */,
+				0C33128E1DC5A94D002DDB39 /* ZSettingsViewController.swift in Sources */,
 				0CD1EAF11DB725A800A096E4 /* TimeoutObserver.swift in Sources */,
 				0CF97D681DA986AB00FEAA41 /* ZMainViewController.swift in Sources */,
 				0CD1EAC91DB725A800A096E4 /* HealthCondition.swift in Sources */,

@@ -43,14 +43,13 @@ import Foundation
 
 
     extension NSView {
-        var zlayer: CALayer { get { return layer! } set { layer = newValue } }
+        var zlayer: CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
 
 
         func addBorder(thickness: CGFloat, fractionalRadius: CGFloat, color: CGColor) {
-            wantsLayer             = true
-            zlayer.borderColor     = color
-            zlayer.borderWidth     = thickness
-            zlayer.cornerRadius    = bounds.size.height * fractionalRadius
+            zlayer.cornerRadius = bounds.size.height * fractionalRadius
+            zlayer.borderWidth  = thickness
+            zlayer.borderColor  = color
         }
     }
 
@@ -124,7 +123,6 @@ import Foundation
 
 
     extension UIView {
-        var wantsLayer: Bool { get { return true } set { } }
         var zlayer: CALayer { get { return layer } }
     }
 

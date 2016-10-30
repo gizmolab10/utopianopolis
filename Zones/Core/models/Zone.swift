@@ -15,6 +15,7 @@ class Zone : ZBase {
 
     
     dynamic var zoneName: String?
+    var  _parentZone:         Zone?
     var       parent:  CKReference?
     var        links: [CKReference] = []
     var     children:        [Zone] = []
@@ -23,14 +24,18 @@ class Zone : ZBase {
 
     var parentZone: Zone? {
         set {
-            parent = CKReference(record: (newValue?.record)!, action: .none)
+            _parentZone  = newValue
+
+            if let cloud = newValue?.record {
+                parent   = CKReference(record: cloud, action: .none)
+            }
         }
         get {
             if parent != nil {
                 return cloudManager.objectForRecordID((parent?.recordID)!) as? Zone
             }
 
-            return nil
+            return _parentZone
         }
     }
     
@@ -83,7 +88,8 @@ class Zone : ZBase {
 
         if let childrenStore: [ZStorageDict] = dict[childrenKey] as! [ZStorageDict]? {
             for child: ZStorageDict in childrenStore {
-                let    zone = Zone.init(dict: child)
+                let        zone = Zone(dict: child)
+                zone.parentZone = self
 
                 children.append(zone)
             }

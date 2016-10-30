@@ -745,30 +745,54 @@
                                     <action selector="choiceAction:" target="UmS-w1-ZE0" id="VPo-cI-oRn"/>
                                 </connections>
                             </segmentedControl>
-                            <containerView horizontalHuggingPriority="999" translatesAutoresizingMaskIntoConstraints="NO" id="zA2-uY-m7F">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="qYZ-nw-Vzw">
                                 <rect key="frame" x="0.0" y="0.0" width="203" height="279"/>
-                                <connections>
-                                    <segue destination="OO6-jf-jKa" kind="embed" id="KUx-LL-3cz"/>
-                                </connections>
-                            </containerView>
+                                <subviews>
+                                    <containerView identifier="Settings" translatesAutoresizingMaskIntoConstraints="NO" id="V5K-yz-U7U" userLabel="Settings">
+                                        <rect key="frame" x="0.0" y="0.0" width="203" height="279"/>
+                                        <connections>
+                                            <segue destination="YaQ-0g-PCb" kind="embed" id="jRo-n0-VYp"/>
+                                        </connections>
+                                    </containerView>
+                                    <containerView identifier="Editing Tools" horizontalHuggingPriority="999" translatesAutoresizingMaskIntoConstraints="NO" id="zA2-uY-m7F" userLabel="Editing">
+                                        <rect key="frame" x="0.0" y="0.0" width="203" height="279"/>
+                                        <connections>
+                                            <segue destination="OO6-jf-jKa" kind="embed" id="KUx-LL-3cz"/>
+                                        </connections>
+                                    </containerView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="V5K-yz-U7U" firstAttribute="leading" secondItem="qYZ-nw-Vzw" secondAttribute="leading" id="171-ga-wGv"/>
+                                    <constraint firstAttribute="trailing" secondItem="zA2-uY-m7F" secondAttribute="trailing" id="3Wb-Ut-veo"/>
+                                    <constraint firstAttribute="bottom" secondItem="zA2-uY-m7F" secondAttribute="bottom" id="HSq-Ou-dxR"/>
+                                    <constraint firstItem="V5K-yz-U7U" firstAttribute="top" secondItem="qYZ-nw-Vzw" secondAttribute="top" id="PAV-bt-9vr"/>
+                                    <constraint firstAttribute="bottom" secondItem="V5K-yz-U7U" secondAttribute="bottom" id="PmG-9I-ylU"/>
+                                    <constraint firstAttribute="trailing" secondItem="V5K-yz-U7U" secondAttribute="trailing" id="SW8-88-GmV"/>
+                                    <constraint firstItem="zA2-uY-m7F" firstAttribute="top" secondItem="qYZ-nw-Vzw" secondAttribute="top" id="k8c-PN-kxz"/>
+                                    <constraint firstItem="zA2-uY-m7F" firstAttribute="leading" secondItem="qYZ-nw-Vzw" secondAttribute="leading" id="sGy-FY-U9D"/>
+                                </constraints>
+                            </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="zA2-uY-m7F" firstAttribute="leading" secondItem="1fa-p3-5eT" secondAttribute="leading" id="4TE-GE-2bc"/>
                             <constraint firstAttribute="trailing" secondItem="GBC-KB-wux" secondAttribute="trailing" id="BPP-yS-JXx"/>
+                            <constraint firstAttribute="trailing" secondItem="qYZ-nw-Vzw" secondAttribute="trailing" id="JZs-kk-r2J"/>
+                            <constraint firstAttribute="bottom" secondItem="qYZ-nw-Vzw" secondAttribute="bottom" id="O4P-T1-up8"/>
                             <constraint firstItem="GBC-KB-wux" firstAttribute="leading" secondItem="1fa-p3-5eT" secondAttribute="leading" id="VPb-XL-MmC"/>
-                            <constraint firstAttribute="trailing" secondItem="zA2-uY-m7F" secondAttribute="trailing" id="aFR-gI-7hJ"/>
+                            <constraint firstItem="qYZ-nw-Vzw" firstAttribute="top" secondItem="GBC-KB-wux" secondAttribute="bottom" id="e4b-NN-mNZ"/>
                             <constraint firstItem="GBC-KB-wux" firstAttribute="top" secondItem="1fa-p3-5eT" secondAttribute="top" id="fvc-lj-U27"/>
-                            <constraint firstAttribute="bottom" secondItem="zA2-uY-m7F" secondAttribute="bottom" id="iGr-rV-LJE"/>
-                            <constraint firstItem="zA2-uY-m7F" firstAttribute="top" secondItem="GBC-KB-wux" secondAttribute="bottom" id="zVa-ou-TWs"/>
+                            <constraint firstItem="qYZ-nw-Vzw" firstAttribute="leading" secondItem="1fa-p3-5eT" secondAttribute="leading" id="vvd-8M-Var"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="containersView" destination="qYZ-nw-Vzw" id="OjL-sX-nte"/>
+                        <outlet property="editingToolsContainerView" destination="zA2-uY-m7F" id="vAO-jp-MXT"/>
+                        <outlet property="settingsContainerView" destination="V5K-yz-U7U" id="vUZ-FD-kJ3"/>
                         <outlet property="toolsChoiceControl" destination="GBC-KB-wux" id="Xdf-tf-KM6"/>
                     </connections>
                 </viewController>
                 <customObject id="AaD-MV-r0h" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="509" y="1343"/>
+            <point key="canvasLocation" x="508.5" y="1343"/>
         </scene>
         <!--Editing Tools View Controller-->
         <scene sceneID="G9K-8b-AJJ">
@@ -851,7 +875,20 @@
                 </viewController>
                 <customObject id="kir-YC-buw" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="340" y="1904"/>
+            <point key="canvasLocation" x="276" y="1952"/>
+        </scene>
+        <!--Settings View Controller-->
+        <scene sceneID="Tae-az-4mZ">
+            <objects>
+                <viewController id="YaQ-0g-PCb" customClass="ZSettingsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="3tA-Ue-bZS">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="765" y="1952"/>
         </scene>
     </scenes>
 </document>

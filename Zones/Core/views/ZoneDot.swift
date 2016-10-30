@@ -27,16 +27,16 @@ class ZoneDot: ZButton {
         onHit               = #selector(hitAction(_:))
         toggle              = asToggle
         isCircular          = asToggle
-//        let shouldHighlight = asToggle ? widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
+        let shouldHighlight = asToggle ? widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
 
-//        setButtonType(.onOff) // fix for ios
+        setButtonType(.onOff) // fix for ios
 
         snp.makeConstraints { (make) in
             make.size.equalTo(CGSize(width: 9, height: 9))
         }
 
         updateConstraints()
-//        highlight(shouldHighlight)
+        highlight(shouldHighlight)
     }
 
 

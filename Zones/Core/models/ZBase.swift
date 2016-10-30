@@ -26,9 +26,15 @@ class ZBase: NSObject {
         }
 
         set {
-            _record = newValue
+            if _record != newValue {
+                _record = newValue
 
-            updateProperties()
+                if _record != nil {
+                    cloudManager.registerObject(self)
+                }
+
+                updateProperties()
+            }
         }
     }
 
@@ -53,7 +59,6 @@ class ZBase: NSObject {
         self.record   = record
 
         self.setupKVO();
-        cloudManager.registerObject(self)
     }
 
 

@@ -159,7 +159,6 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             if index > 0 {
                 childrenView.addSubview(connectLineView)
 
-                connectLineView.wantsLayer = true
                 connectLineView.zlayer.backgroundColor = stateManager.lineColor
 
                 connectLineView.snp.makeConstraints({ (make) in
@@ -194,7 +193,6 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
                 if hasSiblingLines && previous != nil {
                     let lineView = ZView()
-                    lineView.wantsLayer = true
                     lineView.zlayer.backgroundColor = stateManager.lineColor
                     childrenView.addSubview(lineView)
 

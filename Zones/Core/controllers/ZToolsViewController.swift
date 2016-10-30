@@ -7,7 +7,7 @@
 //
 
 
-import Foundation
+import SnapKit
 
 #if os(OSX)
     import Cocoa
@@ -19,15 +19,35 @@ import Foundation
 class ZToolsViewController: ZGenericViewController {
 
 
-    @IBOutlet weak var toolsChoiceControl: ZSegmentedControl!
+    @IBOutlet weak var        toolsChoiceControl: ZSegmentedControl!
+    @IBOutlet weak var editingToolsContainerView: ZView!
+    @IBOutlet weak var     settingsContainerView: ZView!
+    @IBOutlet weak var            containersView: ZView!
+    var                       frontContainerView: ZView?
 
 
     @IBAction func choiceAction(_ control: ZSegmentedControl) {
-        stateManager.toolState = ZToolMode(rawValue: control.selectedSegmentIndex)!
+        let mode = ZToolMode(rawValue: control.selectedSegmentIndex)!
+        stateManager.toolState = mode
+
+        switch mode {
+        case .edit: frontContainerView = editingToolsContainerView; break
+        case .travel:                                               break
+        case .settings: frontContainerView = settingsContainerView; break
+        }
+
+        update()
     }
 
 
     override func update() {
-        toolsChoiceControl.selectedSegmentIndex = stateManager.toolState.rawValue
+        let mode = stateManager.toolState
+        toolsChoiceControl.selectedSegmentIndex = mode.rawValue
+
+        if frontContainerView != nil {
+            for subView in containersView.subviews {
+                subView.isHidden = subView != frontContainerView
+            }
+        }
     }
 }
