@@ -11,7 +11,7 @@ import Foundation
 import CloudKit
 
 
-class ZTrait: ZBase {
+class ZTrait: ZRecord {
 
     var  type: String?
     var value: Data?

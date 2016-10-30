@@ -32,6 +32,13 @@ enum ZUpdateKind: UInt {
 }
 
 
+enum RecordState: Int {
+    case needsFetch
+    case needsSave
+    case ready
+}
+
+
 enum ZToolMode: Int {
     case settings
     case edit

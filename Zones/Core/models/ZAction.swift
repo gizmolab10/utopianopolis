@@ -11,7 +11,7 @@ import Foundation
 import CloudKit
 
 
-class ZAction: ZBase {
+class ZAction: ZRecord {
 
     var action: NSDictionary?
     var  owner: Zone?

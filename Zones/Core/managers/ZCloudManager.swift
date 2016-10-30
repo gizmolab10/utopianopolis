@@ -12,7 +12,7 @@ import CloudKit
 
 
 class ZCloudManager {
-    var   records: [CKRecordID : ZBase]  = [:]
+    var   records: [CKRecordID : ZRecord]  = [:]
     let container: CKContainer!
     let currentDB: CKDatabase!
 
@@ -35,8 +35,10 @@ class ZCloudManager {
         operation.container           = container
         operation.qualityOfService    = .background
 
-        for base: ZBase in records.values {
-            if base.unsaved {
+        zonesManager.rootZone.resolveParents()
+
+        for base: ZRecord in records.values {
+            if base.recordState == .needsSave {
                 recordsToSave.append(base.record)
             }
         }
@@ -47,20 +49,20 @@ class ZCloudManager {
     }
 
 
-    func registerObject(_ object: ZBase) {
+    func registerObject(_ object: ZRecord) {
         if object.record != nil {
             records[object.record.recordID] = object
         }
     }
 
 
-    func objectForRecordID(_ recordID: CKRecordID) -> ZBase? {
+    func objectForRecordID(_ recordID: CKRecordID) -> ZRecord? {
         return records[recordID]
     }
 
 
-    func fetchReferencesTo(_ base: ZBase) {
-        let reference: CKReference = CKReference(recordID: base.record.recordID, action: .none)
+    func fetchReferencesTo(_ parent: Zone) {
+        let reference: CKReference = CKReference(recordID: parent.record.recordID, action: .none)
         let predicate: NSPredicate = NSPredicate(format: "parent == %@", reference)
         let     query:     CKQuery = CKQuery(recordType: zoneTypeKey, predicate: predicate)
 
@@ -71,7 +73,15 @@ class ZCloudManager {
 
             if records != nil && (records?.count)! > 0 {
                 for record: CKRecord in records! {
-                    print(record)
+                    var zone: Zone? = self.objectForRecordID(record.recordID) as! Zone?
+
+                    if zone == nil {
+                        zone = Zone(record: record, database: self.currentDB)
+                        
+                        self.registerObject(zone!)
+                        parent.children.append(zone!)
+                        self.fetchReferencesTo(zone!)
+                    }
                 }
 
                 zonesManager.updateToClosures(nil, regarding: .data)
@@ -107,10 +117,10 @@ class ZCloudManager {
         resetBadgeCounter()
         assureRecordExists(withRecordID: recordID, onCompletion: { (iRecord: CKRecord) -> (Void) in
             DispatchQueue.main.async(execute: {
-                if  let    base = self.records[iRecord.recordID] as ZBase? {
-                    base.record = iRecord
+                if  let    generic = self.objectForRecordID(iRecord.recordID) {
+                    generic.record = iRecord
 
-                    base.fetchChildren()
+                    generic.fetchChildren()
 
                     zonesManager.updateToClosures(nil, regarding: .data)
                 }
@@ -225,7 +235,7 @@ class ZCloudManager {
     }
 
 
-    func setIntoObject(_ object: ZBase, value: NSObject, forPropertyName: String) {
+    func setIntoObject(_ object: ZRecord, value: NSObject, forPropertyName: String) {
         var                  hasChange = true
         var identifier:    CKRecordID?
         let   newValue: CKRecordValue! = (value as! CKRecordValue)
@@ -238,7 +248,7 @@ class ZCloudManager {
         }
 
         if hasChange {
-            object.unsaved = true
+            object.recordState = .needsSave
 
             if (identifier != nil) {
                 currentDB.fetch(withRecordID: identifier!) { (fetched: CKRecord?, fetchError: Error?) in
@@ -255,8 +265,9 @@ class ZCloudManager {
                             if saveError != nil {
                                 zonesManager.updateToClosures(saveError as NSObject?, regarding: .error)
                             } else {
-                                object.record  = saved!
-                                object.unsaved = false
+                                object.record      = saved!
+                                object.recordState = .ready
+
                                 zonesManager.updateToClosures(nil, regarding: .data)
                                 persistenceManager.save()
                             }
@@ -268,7 +279,7 @@ class ZCloudManager {
     }
 
 
-    func getFromObject(_ object: ZBase, valueForPropertyName: String) {
+    func getFromObject(_ object: ZRecord, valueForPropertyName: String) {
         if object.record != nil && stateManager.isReady {
             let      predicate = NSPredicate(format: "")
             let  type: String  = className(of: object);

@@ -11,29 +11,43 @@ import Foundation
 import CloudKit
 
 
-class Zone : ZBase {
+class Zone : ZRecord {
 
     
-    dynamic var zoneName: String?
-    var  _parentZone:         Zone?
-    var       parent:  CKReference?
-    var        links: [CKReference] = []
-    var     children:        [Zone] = []
-    var showChildren:          Bool = true
+    dynamic var zoneName:       String?
+    dynamic var   parent:  CKReference?
+    dynamic var    links: [CKReference] = []
+    var      _parentZone:         Zone?
+    var         children:        [Zone] = []
+    var     showChildren:          Bool = true
+
+
+    override func cloudProperties() -> [String] {
+        return super.cloudProperties() + [#keyPath(zoneName), #keyPath(links), #keyPath(parent)]
+    }
+
+
+    func resolveParents() {
+        print(parentZone)
+
+        for child: Zone in children {
+            child.resolveParents()
+        }
+    }
 
 
     var parentZone: Zone? {
         set {
             _parentZone  = newValue
 
-            if let cloud = newValue?.record {
-                parent   = CKReference(record: cloud, action: .none)
+            if let parentRecord = newValue?.record {
+                parent          = CKReference(record: parentRecord, action: .none)
             }
         }
         get {
             if parent == nil && _parentZone?.record != nil {
-                parent  = CKReference(record: (_parentZone?.record)!, action: .none)
-                unsaved = true
+                recordState     = .needsSave
+                parent          = CKReference(record: (_parentZone?.record)!, action: .none)
             }
 
             if parent != nil {
@@ -49,16 +63,6 @@ class Zone : ZBase {
         self.init(record: nil, database: cloudManager.currentDB)
 
         storageDict = dict
-    }
-
-
-    override init(record: CKRecord?, database: CKDatabase) {
-        super.init(record: record, database: database)
-    }
-
-
-    override func cloudProperties() -> [String] {
-        return super.cloudProperties() + [#keyPath(zoneName), #keyPath(links), #keyPath(parent)]
     }
 
 

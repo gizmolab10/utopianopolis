@@ -1,5 +1,5 @@
 //
-//  ZBase.swift
+//  ZRecord.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 9/19/16.
@@ -11,13 +11,13 @@ import Foundation
 import CloudKit
 
 
-class ZBase: NSObject {
+class ZRecord: NSObject {
     
 
-    var               unsaved: Bool  = false
-    var            kvoContext: UInt8 = 1
-    weak dynamic var database: CKDatabase!
-    var               _record: CKRecord?
+    var recordState: RecordState = .needsFetch
+    var  kvoContext: UInt8       = 1
+    var    database: CKDatabase!
+    var     _record: CKRecord?
 
 
     var record: CKRecord! {
@@ -120,10 +120,14 @@ class ZBase: NSObject {
 
 
     override func observeValue(forKeyPath keyPath: String?, of iObject: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if context == &kvoContext {
-            let observed = iObject as! NSObject
+        if keyPath == "parent" {
+            print("!")
+        }
 
-            if let value: NSString = observed.value(forKey: keyPath!) as? NSString {
+        if context == &kvoContext {
+            let observer = iObject as! NSObject
+
+            if let value: NSObject = observer.value(forKey: keyPath!) as! NSObject? {
                 self.setValue(value, forPropertyName: keyPath!)
             }
         }
