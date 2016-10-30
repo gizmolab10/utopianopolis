@@ -63,11 +63,11 @@ class ZStateManager: NSObject {
         print(state)
 
         switch(state) {
-        case .restore:     persistenceManager.restore();    operation.finish(); break
-        case .root:        cloudManager.setupRootZoneWith(operation:operation); break
-        case .unsubscribe: cloudManager.unsubscribeWith  (operation:operation); break
-        case .subscribe:   cloudManager.subscribeWith    (operation:operation); break
-        case .ready:       isReady = true;                  operation.finish(); break
+        case .restore:     persistenceManager.restore();   operation.finish(); break
+        case .root:        cloudManager.setupRootWith   (operation:operation); break
+        case .unsubscribe: cloudManager.unsubscribeWith (operation:operation); break
+        case .subscribe:   cloudManager.subscribeWith   (operation:operation); break
+        case .ready:       isReady = true;                 operation.finish(); break
         }
     }
 }

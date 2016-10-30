@@ -61,12 +61,10 @@ class ZBase: NSObject {
     // MARK:-
 
 
-    func cloudProperties() -> [String] {
-        return []
-    }
-
-
+    func saveToCloud() {}
+    func fetchChildren() {}
     func updateProperties() {}
+    func cloudProperties() -> [String] { return [] }
 
 
     func setStorageDictionary(_ dict: ZStorageDict) {

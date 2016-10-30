@@ -31,12 +31,16 @@ class ZEditorViewController: ZGenericViewController {
         widget            = ZoneWidget()
         widget.widgetZone = zonesManager.rootZone!
 
+        zonesManager.clearWidgets()
         widget.layoutInView(view, atIndex: -1)
+
+        ZoneWidget.capturing = false
     }
 
 
-    func unselect() {
+    func deselect() {
         zonesManager.currentlyEditingZone = nil
+        zonesManager.currentlyGrabbedZones = []
 
         update()
     }
@@ -52,13 +56,13 @@ class ZEditorViewController: ZGenericViewController {
     override func mouseDown(with event: ZEvent) {
         super.mouseDown(with:event)
 
-        unselect()
+        deselect()
     }
 
     #elseif os(iOS)
 
     func mouseDown(with event: ZEvent) {
-        unselect()
+        deselect()
     }
     
     #endif

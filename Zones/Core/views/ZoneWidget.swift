@@ -16,16 +16,19 @@ import SnapKit
 #endif
 
 
+
+
 class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
 
-    private var         _textField: ZoneTextField!
-    var                 widgetZone: Zone!
-    private var      _childrenView: ZView!
-    private var    connectLineView: ZView!       = ZView()
-    private var    childrenWidgets: [ZoneWidget] = []
-    private var childVisibilityDot: ZoneDot      = ZoneDot()
-    private var            dragDot: ZoneDot      = ZoneDot()
+    private var      _textField: ZoneTextField!
+    var              widgetZone: Zone!
+    private var   _childrenView: ZView!
+    private var connectLineView: ZView!       = ZView()
+    private var childrenWidgets: [ZoneWidget] = []
+    private var       toggleDot: ZoneDot      = ZoneDot()
+    private var         dragDot: ZoneDot      = ZoneDot()
+    static  var       capturing: Bool         = false
 
 
     var hasChildren: Bool {
@@ -98,6 +101,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             textField.becomeFirstResponder()
         }
 
+        zonesManager.registerWidget(self)
         layoutChildren()
         layoutDots()
         layoutText()
@@ -211,24 +215,20 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
 
     func layoutDots() {
-        if !subviews.contains(childVisibilityDot) && widgetZone.children.count != 0 {
-            addSubview(childVisibilityDot)
-            childVisibilityDot.setUp(asToggle: true)
+        if !subviews.contains(toggleDot) && widgetZone.children.count != 0 {
+            addSubview(toggleDot)
+            toggleDot.setUp(widgetZone, asToggle: true)
 
-            childVisibilityDot.snp.makeConstraints({ (make) in
+            toggleDot.snp.makeConstraints({ (make) in
                 make.left.equalTo(textField.snp.right).offset(6.0)
                 make.centerY.equalTo(textField).offset(-1.0)
                 make.right.lessThanOrEqualToSuperview().offset(-3.0)
             })
         }
 
-        if !subviews.contains(dragDot) && widgetZone != zonesManager.rootZone {
+        if !subviews.contains(dragDot) {
             addSubview(dragDot)
-            dragDot.setUp(asToggle: false)
-
-            if zonesManager.isGrabbed(zone: widgetZone) {
-                dragDot.highlight(true)
-            }
+            dragDot.setUp(widgetZone, asToggle: false)
 
             dragDot.snp.makeConstraints({ (make) in
                 make.right.equalTo(textField.snp.left).offset(-3.0)
@@ -243,8 +243,11 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
 
     func captureText() {
-        zonesManager.currentlyEditingZone = nil
-        widgetZone.zoneName               = textField.text!
+        if  ZoneWidget.capturing             == false {
+            ZoneWidget.capturing              = true
+            widgetZone.zoneName               = textField.text!
+            zonesManager.currentlyEditingZone = nil
+        }
     }
 
 
@@ -260,7 +263,16 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
         return true
     }
-    
+
+
+    @discardableResult func stopEditing() -> Bool {
+        if let editor = textField.currentEditor() {
+            return control(textField, textShouldEndEditing: editor)
+        }
+
+        return true
+    }
+
 
     override func controlTextDidChange(_ obj: Notification) {
         layoutTextField()
@@ -272,6 +284,11 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
         captureText()
 
         return true
+    }
+
+
+    @discardableResult func stopEditing() -> Bool {
+        return textFieldShouldEndEditing(textField)
     }
 
 

@@ -36,17 +36,49 @@ class ZCloudManager {
     }
 
 
-    func setupRootZoneWith(operation: BlockOperation) {
+    func objectForRecordID(_ recordID: CKRecordID) -> ZBase? {
+        return records[recordID]
+    }
+
+
+    func fetchReferencesTo(_ base: ZBase) {
+        let reference: CKReference = CKReference(recordID: base.record.recordID, action: .none)
+        let predicate: NSPredicate = NSPredicate(format: "parent == %@", reference)
+        let     query:     CKQuery = CKQuery(recordType: zoneTypeKey, predicate: predicate)
+
+        currentDB.perform(query, inZoneWith: nil) { (records, error) in
+            if error != nil {
+                print(error)
+            }
+
+            if records != nil && (records?.count)! > 0 {
+                for record: CKRecord in records! {
+                    print(record)
+                }
+
+                zonesManager.updateToClosures(nil, regarding: .data)
+            }
+        }
+    }
+
+
+    func setupRootWith(operation: BlockOperation) {
         let recordID: CKRecordID = CKRecordID(recordName: rootNameKey)
 
         assureRecordExists(withRecordID: recordID, onCompletion: { (record: CKRecord?) -> (Void) in
-            if  zonesManager.rootZone != nil {
-                zonesManager.rootZone.record = record
+            var root: Zone? = zonesManager.rootZone
+
+            if root != nil {
+                root?.record = record
             } else {
                 record![zoneNameKey]  = rootNameKey as CKRecordValue?
-                zonesManager.rootZone = Zone(record: record!, database: self.currentDB)
+                root                  = Zone(record: record!, database: self.currentDB)
+                zonesManager.rootZone = root
+
+                root?.saveToCloud()
             }
 
+            root?.fetchChildren()
             zonesManager.updateToClosures(nil, regarding: .data)
             operation.finish()
         })
@@ -57,8 +89,10 @@ class ZCloudManager {
         resetBadgeCounter()
         assureRecordExists(withRecordID: recordID, onCompletion: { (iRecord: CKRecord) -> (Void) in
             DispatchQueue.main.async(execute: {
-                if let     object = self.records[iRecord.recordID] as ZBase? {
-                    object.record = iRecord
+                if  let    base = self.records[iRecord.recordID] as ZBase? {
+                    base.record = iRecord
+
+                    base.fetchChildren()
 
                     zonesManager.updateToClosures(nil, regarding: .data)
                 }
@@ -195,6 +229,7 @@ class ZCloudManager {
 
                         object.updateProperties()
                         zonesManager.updateToClosures(nil, regarding: .data)
+                        object.saveToCloud()
                     } else {
                         fetched![forPropertyName] = newValue
 

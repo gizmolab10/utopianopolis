@@ -22,10 +22,11 @@ class ZonesManager: NSObject {
     }
 
 
-    var                closures: [UpdateClosureObject] = []
+    var                widgets: [Zone : ZoneWidget]   = [:]
+    var               closures: [UpdateClosureObject] = []
     var              _rootZone: Zone!
     var  _currentlyEditingZone: Zone?
-    var _currentlyGrabbedZones: [Zone] = []
+    var _currentlyGrabbedZones: [Zone]                = []
 
 
     var rootZone: Zone! {
@@ -57,6 +58,50 @@ class ZonesManager: NSObject {
     }
 
 
+    var currentlyMovableZone: Zone? {
+        get {
+            var movable = currentlyEditingZone
+
+            if movable == nil {
+                if currentlyGrabbedZones.count > 0 {
+                    movable = currentlyGrabbedZones[0]
+                } else {
+                    movable = rootZone
+                }
+            }
+
+            return movable!
+        }
+    }
+
+
+    var canDelete: Bool {
+        get {
+            return (currentlyEditingZone != nil     &&  currentlyEditingZone != rootZone) ||
+                (   currentlyGrabbedZones.count > 0 && !currentlyGrabbedZones.contains(rootZone))
+        }
+    }
+
+
+    // MARK:- widgets
+    // MARK:-
+
+
+    func clearWidgets() {
+        widgets.removeAll()
+    }
+
+
+    func registerWidget(_ widget: ZoneWidget) {
+        widgets[widget.widgetZone] = widget
+    }
+
+
+    func widgetForZone(_ zone: Zone) -> ZoneWidget? {
+        return widgets[zone]
+    }
+
+
     // MARK:- closures
     // MARK:-
 
@@ -81,31 +126,6 @@ class ZonesManager: NSObject {
     // MARK:-
 
 
-    var currentlyMovableZone: Zone? {
-        get {
-            var movable = currentlyEditingZone
-
-            if movable == nil {
-                if currentlyGrabbedZones.count > 0 {
-                    movable = currentlyGrabbedZones[0]
-                } else {
-                    movable = rootZone
-                }
-            }
-
-            return movable!
-        }
-    }
-
-
-    var canDelete: Bool {
-        get {
-            return (currentlyEditingZone != nil && currentlyEditingZone != rootZone) ||
-                (currentlyGrabbedZones.count > 0 && !currentlyGrabbedZones.contains(rootZone))
-        }
-    }
-
-
     func takeAction(_ action: ZEditAction) {
         switch action {
         case .add:      add();         break
@@ -121,24 +141,21 @@ class ZonesManager: NSObject {
     }
 
 
-    func addZoneTo(_ parent: Zone?) {
-        if parent != nil {
+    func addZoneTo(_ parentZone: Zone?) {
+        if parentZone != nil {
             let             record = CKRecord(recordType: zoneTypeKey)
             let               zone = Zone(record: record, database: cloudManager.currentDB)
-            zone.links[parentsKey] = [parent!]
+            zone.parentZone            = parentZone
+            parentZone?.showChildren   = true
+
+            widgetForZone(parentZone!)?.stopEditing()
+            parentZone?.children.append(zone)
+
             currentlyEditingZone   = zone
 
-            parent?.children.append(zone)
             updateToClosures(nil, regarding: .data)
             persistenceManager.save()
-
-            cloudManager.currentDB.save(record) { (iRecord: CKRecord?, iError: Error?) in
-                if iError != nil {
-                    print(iError)
-                } else {
-                    zone.record = iRecord
-                }
-            }
+            zone.saveToCloud()
         }
     }
 
@@ -160,15 +177,16 @@ class ZonesManager: NSObject {
 
 
     func deleteZone(_ zone: Zone) {
-        if let parent = zone.parent {
-            let index = parent.children.index(of: zone)
+        if let parentZone = zone.parentZone {
+            let index = parentZone.children.index(of: zone)
             currentlyEditingZone = nil
 
-            parent.children.remove(at: index!)
+            parentZone.children.remove(at: index!)
             persistenceManager.save()
 
             cloudManager.currentDB.delete(withRecordID: zone.record.recordID, completionHandler: { (deleted, error) in
                 self.updateToClosures(zone, regarding: .delete)
+                parentZone.saveToCloud()
             })
         }
     }
@@ -176,13 +194,13 @@ class ZonesManager: NSObject {
 
     func moveUp(_ moveUp: Bool) {
         if let zone: Zone = currentlyMovableZone {
-            if let parent = zone.parent {
-                if let index = parent.children.index(of: zone) {
+            if let parentZone = zone.parentZone {
+                if let index = parentZone.children.index(of: zone) {
                     let newIndex = index + (moveUp ? -1 : 1)
 
-                    if newIndex >= 0 && newIndex < parent.children.count {
-                        parent.children.remove(at: index)
-                        parent.children.insert(zone, at:newIndex)
+                    if newIndex >= 0 && newIndex < parentZone.children.count {
+                        parentZone.children.remove(at: index)
+                        parentZone.children.insert(zone, at:newIndex)
                         persistenceManager.save()
                         updateToClosures(nil, regarding: .data)
                     }

@@ -22,19 +22,21 @@ class ZoneDot: ZButton {
     var toggle: Bool!
 
 
-    func setUp(asToggle: Bool) {
-        title      = ""
-        onHit      = #selector(hitAction(_:))
-        toggle     = asToggle
-        isCircular = asToggle
+    func setUp(_ widgetZone: Zone, asToggle: Bool) {
+        title               = ""
+        onHit               = #selector(hitAction(_:))
+        toggle              = asToggle
+        isCircular          = asToggle
+//        let shouldHighlight = asToggle ? widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
 
-        setButtonType(.onOff) // fix for ios
+//        setButtonType(.onOff) // fix for ios
 
         snp.makeConstraints { (make) in
-            make.size.equalTo(CGSize(width: 8, height: 8))
+            make.size.equalTo(CGSize(width: 9, height: 9))
         }
 
         updateConstraints()
+//        highlight(shouldHighlight)
     }
 
 

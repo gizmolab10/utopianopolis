@@ -15,23 +15,25 @@ class Zone : ZBase {
 
     
     dynamic var zoneName: String?
-    var         children: [Zone] = []
-    var            links: [String : [Zone]] = [:]
-    var     showChildren: Bool = true
+    var       parent:  CKReference?
+    var        links: [CKReference] = []
+    var     children:        [Zone] = []
+    var showChildren:          Bool = true
 
-    var parent: Zone? {
+
+    var parentZone: Zone? {
+        set {
+            parent = CKReference(record: (newValue?.record)!, action: .none)
+        }
         get {
-            if record != nil {
-                if let parents: [Zone] = links[parentsKey] {
-
-                    return parents[0]
-                }
+            if parent != nil {
+                return cloudManager.objectForRecordID((parent?.recordID)!) as? Zone
             }
 
             return nil
         }
     }
-
+    
 
     convenience init(dict: ZStorageDict) {
         self.init(record: nil, database: cloudManager.currentDB)
@@ -46,16 +48,32 @@ class Zone : ZBase {
 
 
     override func cloudProperties() -> [String] {
-        return super.cloudProperties() + [#keyPath(zoneName), #keyPath(links)]
+        return super.cloudProperties() + [#keyPath(zoneName), #keyPath(links), #keyPath(parent)]
+    }
+
+
+    override func saveToCloud() {
+        cloudManager.currentDB.save(record) { (iRecord: CKRecord?, iError: Error?) in
+            if iError != nil {
+                print(iError)
+            } else {
+                self.record = iRecord
+            }
+        }
     }
 
 
     override func updateProperties() {
         if record != nil {
-            if record[zoneNameKey] != nil {
-                zoneName = record[zoneNameKey] as? String
+            if let name = record[zoneNameKey] {
+                zoneName = name as? String
             }
         }
+    }
+
+
+    override func fetchChildren() {
+        cloudManager.fetchReferencesTo(self)
     }
 
 
@@ -65,8 +83,7 @@ class Zone : ZBase {
 
         if let childrenStore: [ZStorageDict] = dict[childrenKey] as! [ZStorageDict]? {
             for child: ZStorageDict in childrenStore {
-                let               zone = Zone.init(dict: child)
-                zone.links[parentsKey] = [self]
+                let    zone = Zone.init(dict: child)
 
                 children.append(zone)
             }
