@@ -106,8 +106,8 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
 
     func layoutDecorations() {
-        self        .addBorderRelative(thickness: 1.0, radius: 0.5, color: NSColor.green.cgColor)
-        childrenView.addBorderRelative(thickness: 1.0, radius: 0.5, color: NSColor.orange.cgColor)
+        self        .addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.green.cgColor)
+        childrenView.addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.orange.cgColor)
         // textField.addBorder(thickness: 5.0, radius: 0.5, color: CGColor.black)
     }
 

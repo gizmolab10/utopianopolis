@@ -16,9 +16,6 @@ import SnapKit
 #endif
 
 
-let goodUserLength: CGFloat = 33.0
-
-
 class ZoneDot: ZView {
 
 
@@ -36,13 +33,13 @@ class ZoneDot: ZView {
             innerDot                 = ZoneDot()
             innerDot?.isOuterDot     = false
             isUserInteractionEnabled = true
-            // let radius:      CGFloat = goodUserLength / 2.0
+            // let radius:      CGFloat = userTouchLength / 2.0
 
             self.addSubview(innerDot!)
 
             innerDot?.setupForZone(widgetZone, asToggle: asToggle)
             snp.makeConstraints { (make) in
-                make.size.equalTo(CGSize(width: goodUserLength, height: goodUserLength))
+                make.size.equalTo(CGSize(width: userTouchLength, height: userTouchLength))
                 make.center.equalTo(innerDot!)
             }
 

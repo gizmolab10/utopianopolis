@@ -11,12 +11,8 @@ import Foundation
 
 #if os(OSX)
     import Cocoa
-
-let    unselectBrightness: CGFloat = 0.93
 #elseif os(iOS)
     import UIKit
-
-let    unselectBrightness: CGFloat = 0.98
 #endif
 
 

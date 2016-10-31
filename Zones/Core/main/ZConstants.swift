@@ -12,11 +12,13 @@ import Foundation
 #if os(OSX)
     import Cocoa
 
-    let fontSize: CGFloat = 17.0
+    let fontSize:           CGFloat = 17.0
+    let unselectBrightness: CGFloat = 0.93
 #elseif os(iOS)
     import UIKit
 
-    let fontSize: CGFloat = 14.0
+    let fontSize:           CGFloat = 14.0
+    let unselectBrightness: CGFloat = 0.98
 #endif
 
 
@@ -57,6 +59,8 @@ enum ZEditAction: UInt {
     case moveDown
 }
 
+
+let userTouchLength: CGFloat = 33.0
 
 let       stateManager = ZStateManager()
 let       cloudManager = ZCloudManager()
