@@ -196,8 +196,8 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                     lineView.snp.makeConstraints({ (make) in
                         make.width.equalTo(stateManager.lineThicknes)
                         make.centerX.equalTo(childWidget.dragDot)
-                        make.bottom.equalTo((previous?.dragDot.snp.top)!)//.offset(-5.0)
-                        make.top.equalTo(childWidget.dragDot.snp.bottom)//.offset(5.0)
+                        make.bottom.equalTo((previous?.dragDot.snp.top)!)
+                        make.top.equalTo(childWidget.dragDot.snp.bottom)
                     })
                 }
 
@@ -217,7 +217,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             toggleDot.snp.makeConstraints({ (make) in
                 make.left.equalTo(textField.snp.right).offset(6.0)
                 make.centerY.equalTo(textField).offset(1.0)
-                make.right.lessThanOrEqualToSuperview().offset(-3.0)
+                make.right.lessThanOrEqualToSuperview().offset(-1.0)
             })
         }
 

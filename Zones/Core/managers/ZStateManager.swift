@@ -19,13 +19,15 @@ import Foundation
 class ZStateManager: NSObject {
 
 
-    var       isReady:                                   Bool = false
-    var     toolState:                             ZToolMode = .edit
-    var    operations: [ZSynchronizationState:BlockOperation] = [:]
-    let         queue:                         OperationQueue = OperationQueue()
-    let genericOffset:                                 CGSize = CGSize(width: 6.0, height: 6.0)
-    let  lineThicknes:                                CGFloat = 4.0
-    let     lineColor:                                 ZColor = ZColor(hue: 0.6, saturation: 0.6, brightness: 1.0, alpha: 1)
+    var         isReady:                                   Bool = false
+    var       toolState:                              ZToolMode = .edit
+    var      operations: [ZSynchronizationState:BlockOperation] = [:]
+    let           queue:                         OperationQueue = OperationQueue()
+    let   genericOffset:                                 CGSize = CGSize(width: 6.0, height: 6.0)
+    let       lineColor:                                 ZColor = ZColor(hue: 0.6, saturation: 0.6, brightness: 1.0,  alpha: 1)
+    let unselectedColor:                                 ZColor = ZColor(hue: 0.6, saturation: 0.0, brightness: 0.97, alpha: 1)
+    let    lineThicknes:                                CGFloat = 3
+    let     dotThicknes:                                CGFloat = 0.5
 
 
     func setupAndRun() {

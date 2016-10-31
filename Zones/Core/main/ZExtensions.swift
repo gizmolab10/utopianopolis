@@ -168,7 +168,8 @@ extension String {
 extension ZView {
 
     func addBorder(thickness: CGFloat, fractionalRadius: CGFloat, color: CGColor) {
-        zlayer.cornerRadius = bounds.size.height * fractionalRadius
+        let        shortest = min(bounds.size.width, bounds.size.height)
+        zlayer.cornerRadius = shortest * fractionalRadius
         zlayer.borderWidth  = thickness
         zlayer.borderColor  = color
     }

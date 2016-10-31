@@ -26,17 +26,17 @@ class ZoneDot: ZView {
     func setUp(_ widgetZone: Zone, asToggle: Bool) {
         toggle                 = asToggle
         shouldHighlight        = asToggle ? !widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
-        zlayer.backgroundColor = (shouldHighlight ? stateManager.lineColor : ZColor.white).cgColor
+        zlayer.backgroundColor = (shouldHighlight ? stateManager.lineColor : stateManager.unselectedColor).cgColor
 
         snp.makeConstraints { (make) in
             let  width = asToggle ? 12 : 8
-            let height = asToggle ? 12 : 16
+            let height = asToggle ? 12 : 12
 
             make.size.equalTo(CGSize(width: width, height: height))
         }
 
         updateConstraints()
-        addBorder(thickness: 1.0, fractionalRadius: 0.3, color: stateManager.lineColor.cgColor)
+        addBorder(thickness: stateManager.dotThicknes, fractionalRadius: 0.3, color: stateManager.lineColor.cgColor)
     }
 
 
