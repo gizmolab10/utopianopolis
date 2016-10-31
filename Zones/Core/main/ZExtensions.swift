@@ -44,7 +44,6 @@ import Foundation
 
     extension NSView {
         var zlayer: CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
-        var isUserInteractionEnabled: Bool { get { return true } set {} }
     }
 
 

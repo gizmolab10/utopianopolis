@@ -43,7 +43,13 @@ class ZonesManager: NSObject {
 
     var currentlyEditingZone: Zone? {
         get { return _currentlyEditingZone }
-        set { _currentlyEditingZone = newValue; updateToClosures(nil, regarding: .data) }
+        set {
+            _currentlyEditingZone = newValue;
+
+            if _currentlyEditingZone != nil {
+                updateToClosures(nil, regarding: .data)
+            }
+        }
     }
 
 

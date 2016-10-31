@@ -26,40 +26,36 @@ class ZoneDot: ZView {
 
 
     func setupForZone(_ widgetZone: Zone, asToggle: Bool) {
-        toggle                       = asToggle
+        toggle                     = asToggle
 
         if isOuterDot {
-            zlayer.backgroundColor   = ZColor.clear.cgColor
-            innerDot                 = ZoneDot()
-            innerDot?.isOuterDot     = false
-            isUserInteractionEnabled = true
-            // let radius:      CGFloat = userTouchLength / 2.0
+            zlayer.backgroundColor = ZColor.clear.cgColor
+            innerDot               = ZoneDot()
+            innerDot?.isOuterDot   = false
+            // let radius:    CGFloat = userTouchLength / 2.0
 
             self.addSubview(innerDot!)
-
             innerDot?.setupForZone(widgetZone, asToggle: asToggle)
+            // addBorder(thickness: stateManager.dotThicknes, radius: radius, color: ZColor.red.cgColor)
             snp.makeConstraints { (make) in
                 make.size.equalTo(CGSize(width: userTouchLength, height: userTouchLength))
                 make.center.equalTo(innerDot!)
             }
-
-            // addBorder(thickness: stateManager.dotThicknes, radius: radius, color: ZColor.red.cgColor)
         } else {
-            let radius:      CGFloat = stateManager.dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
-            shouldHighlight          = asToggle ? !widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
-            zlayer.backgroundColor   = (shouldHighlight ? stateManager.lineColor : stateManager.unselectedColor).cgColor
-            isUserInteractionEnabled = false
+            let radius:    CGFloat = stateManager.dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
+            shouldHighlight        = asToggle ? !widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
+            zlayer.backgroundColor = (shouldHighlight ? stateManager.lineColor : stateManager.unselectedColor).cgColor
 
+            addBorder(thickness: stateManager.dotThicknes, radius: radius, color: stateManager.lineColor.cgColor)
             snp.makeConstraints { (make) in
                 let width: CGFloat = asToggle ? stateManager.dotLength : stateManager.dotLength * 0.65
 
                 make.size.equalTo(CGSize(width: width, height: stateManager.dotLength))
             }
-
-            addBorder(thickness: stateManager.dotThicknes, radius: radius, color: stateManager.lineColor.cgColor)
         }
 
         updateConstraints()
+        setupUserInteraction(isOuterDot)
     }
 
 
@@ -86,11 +82,27 @@ class ZoneDot: ZView {
         hitAction(self)
     }
 
+
+    func setupUserInteraction(_ enable: Bool) {}
+
     #elseif os(iOS)
 
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        hitAction(self)
+    func handleTap(_ sender: UITapGestureRecognizer) {
+        if sender.state == .ended {
+            hitAction(self)
+        }
     }
-    
+
+
+    func setupUserInteraction(_ enable: Bool) {
+        isUserInteractionEnabled = enable
+
+        if enable {
+            let gesture = UITapGestureRecognizer(target: self, action: #selector(ZoneDot.handleTap))
+
+            self.addGestureRecognizer(gesture)
+        }
+    }
+
     #endif
 }

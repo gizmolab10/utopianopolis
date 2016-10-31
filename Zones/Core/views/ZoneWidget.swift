@@ -44,13 +44,11 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 _textField.textAlignment        = .center
                 _textField.backgroundColor      = ZColor.clear
                 _textField.zoneWidgetDelegate   = self
-                // _textField.maximumNumberOfLines = 1
 
                 addSubview(_textField)
 
                 _textField.snp.makeConstraints { (make) -> Void in
                     make.width.equalTo(200.0)
-                    // make.height.lessThanOrEqualTo(self).offset(stateManager.genericOffset.height)
                 }
 
                 snp.makeConstraints { (make) -> Void in
@@ -98,16 +96,16 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
         zonesManager.registerWidget(self)
         layoutChildren()
-        layoutDots()
         layoutText()
+        layoutDots()
         updateConstraints()
-        // layoutDecorations()
+        layoutDecorations()
     }
 
 
     func layoutDecorations() {
-        self        .addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.green.cgColor)
-        childrenView.addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.orange.cgColor)
+        // self        .addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.green.cgColor)
+        // childrenView.addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.orange.cgColor)
         // textField.addBorder(thickness: 5.0, radius: 0.5, color: CGColor.black)
     }
 
@@ -163,7 +161,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
             if index > 0 {
                 childrenView.addSubview(connectLineView)
-                connectLineView.setup()
+                connectLineView.setupAsCurved(false)
 
                 connectLineView.snp.makeConstraints({ (make) in
                     make.height.equalTo(stateManager.lineThicknes)
@@ -197,7 +195,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
                 if hasSiblingLines && previous != nil {
                     let siblingLineView = ZoneLine()
-                    siblingLineView.setup()
+                    siblingLineView.setupAsCurved(false)
                     childrenView.addSubview(siblingLineView)
 
                     siblingLineView.snp.makeConstraints({ (make) in

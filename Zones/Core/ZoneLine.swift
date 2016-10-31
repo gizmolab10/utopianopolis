@@ -19,8 +19,16 @@ import Foundation
 class ZoneLine: ZView {
 
 
-    func setup() {
-        zlayer.backgroundColor = stateManager.lineColor.cgColor
+    func setupAsCurved(_ curved: Bool) {
+        if curved == false {
+            zlayer.backgroundColor = stateManager.lineColor.cgColor
+        } else {
+            zlayer.delegate        = self
+        }
+    }
 
+
+    override func draw(_ layer: CALayer, in ctx: CGContext) {
+        super.draw(layer, in: ctx)
     }
 }

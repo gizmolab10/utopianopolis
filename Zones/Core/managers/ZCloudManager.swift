@@ -77,11 +77,13 @@ class ZCloudManager {
 
                     if zone == nil {
                         zone = Zone(record: record, database: self.currentDB)
-                        
+
                         self.registerObject(zone!)
                         parent.children.append(zone!)
                         self.fetchReferencesTo(zone!)
                     }
+
+                    zone?.parentZone = parent
                 }
 
                 zonesManager.updateToClosures(nil, regarding: .data)
