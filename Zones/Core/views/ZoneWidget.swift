@@ -16,15 +16,13 @@ import SnapKit
 #endif
 
 
-
-
 class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
 
     private var      _textField: ZoneTextField!
     var              widgetZone: Zone!
     private var   _childrenView: ZView!
-    private var connectLineView: ZView!       = ZView()
+    private var connectLineView: ZoneLine!    = ZoneLine()
     private var childrenWidgets: [ZoneWidget] = []
     private var       toggleDot: ZoneDot      = ZoneDot()
     private var         dragDot: ZoneDot      = ZoneDot()
@@ -158,8 +156,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
             if index > 0 {
                 childrenView.addSubview(connectLineView)
-
-                connectLineView.zlayer.backgroundColor = stateManager.lineColor
+                connectLineView.setup()
 
                 connectLineView.snp.makeConstraints({ (make) in
                     make.height.equalTo(stateManager.lineThicknes)
@@ -192,15 +189,15 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 })
 
                 if hasSiblingLines && previous != nil {
-                    let lineView = ZView()
-                    lineView.zlayer.backgroundColor = stateManager.lineColor
+                    let lineView = ZoneLine()
+                    lineView.setup()
                     childrenView.addSubview(lineView)
 
                     lineView.snp.makeConstraints({ (make) in
                         make.width.equalTo(stateManager.lineThicknes)
                         make.centerX.equalTo(childWidget.dragDot)
-                        make.bottom.equalTo((previous?.dragDot.snp.top)!).offset(-5.0)
-                        make.top.equalTo(childWidget.dragDot.snp.bottom).offset(5.0)
+                        make.bottom.equalTo((previous?.dragDot.snp.top)!)//.offset(-5.0)
+                        make.top.equalTo(childWidget.dragDot.snp.bottom)//.offset(5.0)
                     })
                 }
 
@@ -219,7 +216,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
             toggleDot.snp.makeConstraints({ (make) in
                 make.left.equalTo(textField.snp.right).offset(6.0)
-                make.centerY.equalTo(textField).offset(-1.0)
+                make.centerY.equalTo(textField).offset(1.0)
                 make.right.lessThanOrEqualToSuperview().offset(-3.0)
             })
         }

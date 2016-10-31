@@ -25,7 +25,7 @@ class ZStateManager: NSObject {
     let         queue:                         OperationQueue = OperationQueue()
     let genericOffset:                                 CGSize = CGSize(width: 6.0, height: 6.0)
     let  lineThicknes:                                CGFloat = 4.0
-    let     lineColor:                                CGColor = ZColor(hue: 0.6, saturation: 0.6, brightness: 1.0, alpha: 1).cgColor
+    let     lineColor:                                 ZColor = ZColor(hue: 0.6, saturation: 0.6, brightness: 1.0, alpha: 1)
 
 
     func setupAndRun() {

@@ -16,30 +16,27 @@ import SnapKit
 #endif
 
 
-class ZoneDot: ZButton {
+class ZoneDot: ZView {
 
 
     var toggle: Bool!
+    var shouldHighlight: Bool = false
 
 
     func setUp(_ widgetZone: Zone, asToggle: Bool) {
-        title      = ""
-        onHit      = #selector(hitAction(_:))
-        toggle     = asToggle
-        isCircular = asToggle
+        toggle                 = asToggle
+        shouldHighlight        = asToggle ? !widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
+        zlayer.backgroundColor = (shouldHighlight ? stateManager.lineColor : ZColor.white).cgColor
 
         snp.makeConstraints { (make) in
-            make.size.equalTo(CGSize(width: 9, height: 9))
+            let  width = asToggle ? 12 : 8
+            let height = asToggle ? 12 : 16
+
+            make.size.equalTo(CGSize(width: width, height: height))
         }
 
-#if os(OSX)
-        let shouldHighlight = asToggle ? widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
-
-        setButtonType(.onOff) // fix for ios
-        highlight(shouldHighlight)
-#endif
-
         updateConstraints()
+        addBorder(thickness: 1.0, fractionalRadius: 0.3, color: stateManager.lineColor.cgColor)
     }
 
 
@@ -57,4 +54,21 @@ class ZoneDot: ZButton {
             }
         }
     }
+
+
+    #if os(OSX)
+
+    override func mouseDown(with event: ZEvent) {
+        super.mouseDown(with:event)
+
+        hitAction(self)
+    }
+
+    #elseif os(iOS)
+
+    func mouseDown(with event: ZEvent) {
+        hitAction(self)
+    }
+    
+    #endif
 }

@@ -11,8 +11,12 @@ import Foundation
 
 #if os(OSX)
     import Cocoa
+
+    let fontSize: CGFloat = 17.0
 #elseif os(iOS)
     import UIKit
+
+    let fontSize: CGFloat = 14.0
 #endif
 
 
@@ -58,7 +62,7 @@ let       stateManager = ZStateManager()
 let       cloudManager = ZCloudManager()
 let       zonesManager = ZonesManager()
 let persistenceManager = ZLocalPersistenceManager()
-let  widgetFont: ZFont = ZFont.systemFont(ofSize: 17.0)
+let  widgetFont: ZFont = ZFont.systemFont(ofSize: fontSize)
 let            cloudID = "iCloud.com.zones.Zones"
 let    showChildrenKey = "showChildren"
 let      recordNameKey = "recordName"

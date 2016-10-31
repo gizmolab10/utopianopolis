@@ -44,13 +44,6 @@ import Foundation
 
     extension NSView {
         var zlayer: CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
-
-
-        func addBorder(thickness: CGFloat, fractionalRadius: CGFloat, color: CGColor) {
-            zlayer.cornerRadius = bounds.size.height * fractionalRadius
-            zlayer.borderWidth  = thickness
-            zlayer.borderColor  = color
-        }
     }
 
 
@@ -168,6 +161,16 @@ extension String {
         let bounds = self.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil)
 
         return bounds.size
+    }
+}
+
+
+extension ZView {
+
+    func addBorder(thickness: CGFloat, fractionalRadius: CGFloat, color: CGColor) {
+        zlayer.cornerRadius = bounds.size.height * fractionalRadius
+        zlayer.borderWidth  = thickness
+        zlayer.borderColor  = color
     }
 }
 
