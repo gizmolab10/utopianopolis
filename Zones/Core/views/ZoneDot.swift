@@ -16,42 +16,66 @@ import SnapKit
 #endif
 
 
+let goodUserLength: CGFloat = 33.0
+
+
 class ZoneDot: ZView {
 
 
     var          toggle: Bool!
+    var        innerDot: ZoneDot?
+    var      isOuterDot: Bool = true
     var shouldHighlight: Bool = false
 
 
-    func setUp(_ widgetZone: Zone, asToggle: Bool) {
-        toggle                   = asToggle
-        let     radius : CGFloat = stateManager.dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
-        shouldHighlight          = asToggle ? !widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
-        zlayer.backgroundColor   = (shouldHighlight ? stateManager.lineColor : stateManager.unselectedColor).cgColor
-        isUserInteractionEnabled = true
+    func setupForZone(_ widgetZone: Zone, asToggle: Bool) {
+        toggle                       = asToggle
 
-        snp.makeConstraints { (make) in
-            let width: CGFloat = asToggle ? stateManager.dotLength : stateManager.dotLength * 0.65
+        if isOuterDot {
+            zlayer.backgroundColor   = ZColor.clear.cgColor
+            innerDot                 = ZoneDot()
+            innerDot?.isOuterDot     = false
+            isUserInteractionEnabled = true
+            // let radius:      CGFloat = goodUserLength / 2.0
 
-            make.size.equalTo(CGSize(width: width, height: stateManager.dotLength))
+            self.addSubview(innerDot!)
+
+            innerDot?.setupForZone(widgetZone, asToggle: asToggle)
+            snp.makeConstraints { (make) in
+                make.size.equalTo(CGSize(width: goodUserLength, height: goodUserLength))
+                make.center.equalTo(innerDot!)
+            }
+
+            // addBorder(thickness: stateManager.dotThicknes, radius: radius, color: ZColor.red.cgColor)
+        } else {
+            let radius:      CGFloat = stateManager.dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
+            shouldHighlight          = asToggle ? !widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
+            zlayer.backgroundColor   = (shouldHighlight ? stateManager.lineColor : stateManager.unselectedColor).cgColor
+            isUserInteractionEnabled = false
+
+            snp.makeConstraints { (make) in
+                let width: CGFloat = asToggle ? stateManager.dotLength : stateManager.dotLength * 0.65
+
+                make.size.equalTo(CGSize(width: width, height: stateManager.dotLength))
+            }
+
+            addBorder(thickness: stateManager.dotThicknes, radius: radius, color: stateManager.lineColor.cgColor)
         }
 
         updateConstraints()
-        addBorder(thickness: stateManager.dotThicknes, radius: radius, color: stateManager.lineColor.cgColor)
-    }
-
-
-    var widget: ZoneWidget {
-        get { return superview as! ZoneWidget }
     }
 
 
     func hitAction(_ sender: AnyObject) {
-        if let zone = widget.widgetZone {
-            if toggle == true {
-                zonesManager.toggleChildrenVisibility(zone)
-            } else {
-                zonesManager.currentlyGrabbedZones = [zone]
+        if isOuterDot {
+            let widget: ZoneWidget = superview as! ZoneWidget
+
+            if let zone = widget.widgetZone {
+                if toggle == true {
+                    zonesManager.toggleChildrenVisibility(zone)
+                } else {
+                    zonesManager.currentlyGrabbedZones = [zone]
+                }
             }
         }
     }

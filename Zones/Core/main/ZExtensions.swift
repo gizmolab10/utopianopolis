@@ -173,6 +173,14 @@ extension ZView {
         zlayer.borderWidth  = thickness
         zlayer.borderColor  = color
     }
+
+
+    func addBorderRelative(thickness: CGFloat, radius: CGFloat, color: CGColor) {
+        let size = self.bounds.size
+        let radius = min(size.width, size.height)
+
+        self.addBorder(thickness: thickness, radius: radius, color: color)
+    }
 }
 
 

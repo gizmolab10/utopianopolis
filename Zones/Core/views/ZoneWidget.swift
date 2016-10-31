@@ -50,6 +50,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
                 _textField.snp.makeConstraints { (make) -> Void in
                     make.width.equalTo(200.0)
+                    // make.height.lessThanOrEqualTo(self).offset(stateManager.genericOffset.height)
                 }
 
                 snp.makeConstraints { (make) -> Void in
@@ -95,14 +96,19 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             }
         }
 
-        if zonesManager.currentlyEditingZone == widgetZone {
-            textField.becomeFirstResponder()
-        }
-
         zonesManager.registerWidget(self)
         layoutChildren()
         layoutDots()
         layoutText()
+        updateConstraints()
+        // layoutDecorations()
+    }
+
+
+    func layoutDecorations() {
+        self        .addBorderRelative(thickness: 1.0, radius: 0.5, color: NSColor.green.cgColor)
+        childrenView.addBorderRelative(thickness: 1.0, radius: 0.5, color: NSColor.orange.cgColor)
+        // textField.addBorder(thickness: 5.0, radius: 0.5, color: CGColor.black)
     }
 
 
@@ -110,6 +116,10 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
         textField.text = widgetZone.zoneName ?? "empty"
 
         layoutTextField()
+
+        if zonesManager.currentlyEditingZone == widgetZone {
+            textField.becomeFirstResponder()
+        }
     }
 
 
@@ -120,17 +130,14 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
             make.width.equalTo(width)
             make.centerY.equalTo(self)
-            make.left.equalTo(self).offset(12.0)
-            make.right.lessThanOrEqualToSuperview()
+            make.right.lessThanOrEqualTo(self).offset(-29.0)
+            make.left.equalTo(self).offset(12.0 + stateManager.genericOffset.width)
+            make.height.lessThanOrEqualTo(self).offset(-stateManager.genericOffset.height)
 
             if hasChildren {
-                make.right.equalTo(childrenView.snp.left).offset(-stateManager.genericOffset.width)
+                make.right.equalTo(childrenView.snp.left)//.offset(-stateManager.genericOffset.width)
             }
         }
-
-        updateConstraints()
-        // textField   .addBorder(thickness: 5.0, radius: 0.5, color: CGColor.black)
-        // childrenView.addBorder(thickness: 1.0, radius: 0.5, color: NSColor.blue.cgColor)
     }
 
 
@@ -162,7 +169,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                     make.height.equalTo(stateManager.lineThicknes)
                     make.centerY.equalTo(textField).offset(1.0)
                     make.left.equalTo(childrenView).offset(10.0)
-                    make.width.equalTo(stateManager.genericOffset.width + 7.0)
+                    make.width.equalTo(stateManager.genericOffset.width + 15.0)
                 })
             }
 
@@ -174,7 +181,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 childWidget.layoutInView(childrenView, atIndex: index)
                 childWidget.snp.makeConstraints({ (make) in
                     if previous != nil {
-                        make.bottom.equalTo((previous?.snp.top)!).offset(-stateManager.genericOffset.height)
+                        make.bottom.equalTo((previous?.snp.top)!)//.offset(-stateManager.genericOffset.height)
                     } else {
                         make.bottom.equalTo(childrenView)
                     }
@@ -184,20 +191,20 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                     }
 
                     make.left.equalTo(childrenView).offset(20.0)
-                    make.right.lessThanOrEqualTo(childrenView).offset(-10.0)
+                    make.right.lessThanOrEqualTo(childrenView)//.offset(-10.0)
                     make.height.lessThanOrEqualTo(childrenView)
                 })
 
                 if hasSiblingLines && previous != nil {
-                    let lineView = ZoneLine()
-                    lineView.setup()
-                    childrenView.addSubview(lineView)
+                    let siblingLineView = ZoneLine()
+                    siblingLineView.setup()
+                    childrenView.addSubview(siblingLineView)
 
-                    lineView.snp.makeConstraints({ (make) in
+                    siblingLineView.snp.makeConstraints({ (make) in
                         make.width.equalTo(stateManager.lineThicknes)
-                        make.centerX.equalTo(childWidget.dragDot).offset(-0.25)
-                        make.bottom.equalTo((previous?.dragDot.snp.top)!)
-                        make.top.equalTo(childWidget.dragDot.snp.bottom)
+                        make.centerX.equalTo(childWidget.dragDot.innerDot!).offset(-0.25)
+                        make.bottom.equalTo((previous?.dragDot.innerDot?.snp.top)!)
+                        make.top.equalTo((childWidget.dragDot.innerDot?.snp.bottom)!)
                     })
                 }
 
@@ -212,9 +219,8 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     func layoutDots() {
         if !subviews.contains(toggleDot) && widgetZone.children.count != 0 {
             addSubview(toggleDot)
-            toggleDot.setUp(widgetZone, asToggle: true)
-
-            toggleDot.snp.makeConstraints({ (make) in
+            toggleDot.setupForZone(widgetZone, asToggle: true)
+            toggleDot.innerDot?.snp.makeConstraints({ (make) in
                 make.left.equalTo(textField.snp.right).offset(6.0)
                 make.centerY.equalTo(textField).offset(1.0)
                 make.right.lessThanOrEqualToSuperview().offset(-1.0)
@@ -223,9 +229,8 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
         if !subviews.contains(dragDot) {
             addSubview(dragDot)
-            dragDot.setUp(widgetZone, asToggle: false)
-
-            dragDot.snp.makeConstraints({ (make) in
+            dragDot.setupForZone(widgetZone, asToggle: false)
+            dragDot.innerDot?.snp.makeConstraints({ (make) in
                 make.right.equalTo(textField.snp.left).offset(-3.0)
                 make.centerY.equalTo(textField).offset(1.0)
             })
