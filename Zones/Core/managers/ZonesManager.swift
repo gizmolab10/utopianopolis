@@ -213,7 +213,8 @@ class ZonesManager: NSObject {
     func toggleChildrenVisibility(_ ofZone: Zone?) {
         if ofZone != nil {
             ofZone?.showChildren = !(ofZone?.showChildren)!
-            
+
+            persistenceManager.save()
             updateToClosures(nil, regarding: .data)
         }
     }

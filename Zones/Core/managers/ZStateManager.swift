@@ -11,8 +11,14 @@ import Foundation
 
 #if os(OSX)
     import Cocoa
+
+let    unselectBrightness: CGFloat = 0.93
+let userInteractionLength: CGFloat = 12.0
 #elseif os(iOS)
     import UIKit
+
+let    unselectBrightness: CGFloat = 0.98
+let userInteractionLength: CGFloat = 20.0
 #endif
 
 
@@ -23,11 +29,12 @@ class ZStateManager: NSObject {
     var       toolState:                              ZToolMode = .edit
     var      operations: [ZSynchronizationState:BlockOperation] = [:]
     let           queue:                         OperationQueue = OperationQueue()
-    let   genericOffset:                                 CGSize = CGSize(width: 6.0, height: 6.0)
-    let       lineColor:                                 ZColor = ZColor(hue: 0.6, saturation: 0.6, brightness: 1.0,  alpha: 1)
-    let unselectedColor:                                 ZColor = ZColor(hue: 0.6, saturation: 0.0, brightness: 0.97, alpha: 1)
-    let    lineThicknes:                                CGFloat = 3
+    let   genericOffset:                                 CGSize = CGSize(width: 8.0, height: 6.0)
+    let       lineColor:                                 ZColor = ZColor(hue: 0.6, saturation: 0.6, brightness: 1.0,                alpha: 1)
+    let unselectedColor:                                 ZColor = ZColor(hue: 0.6, saturation: 0.0, brightness: unselectBrightness, alpha: 1)
+    let    lineThicknes:                                CGFloat = userInteractionLength / 6.0
     let     dotThicknes:                                CGFloat = 0.5
+    let       dotLength:                                CGFloat = userInteractionLength
 
 
     func setupAndRun() {

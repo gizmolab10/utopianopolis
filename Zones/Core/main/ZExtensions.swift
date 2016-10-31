@@ -44,6 +44,7 @@ import Foundation
 
     extension NSView {
         var zlayer: CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
+        var isUserInteractionEnabled: Bool { get { return true } set {} }
     }
 
 
@@ -167,9 +168,8 @@ extension String {
 
 extension ZView {
 
-    func addBorder(thickness: CGFloat, fractionalRadius: CGFloat, color: CGColor) {
-        let        shortest = min(bounds.size.width, bounds.size.height)
-        zlayer.cornerRadius = shortest * fractionalRadius
+    func addBorder(thickness: CGFloat, radius: CGFloat, color: CGColor) {
+        zlayer.cornerRadius = radius
         zlayer.borderWidth  = thickness
         zlayer.borderColor  = color
     }

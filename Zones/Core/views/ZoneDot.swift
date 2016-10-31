@@ -19,24 +19,25 @@ import SnapKit
 class ZoneDot: ZView {
 
 
-    var toggle: Bool!
+    var          toggle: Bool!
     var shouldHighlight: Bool = false
 
 
     func setUp(_ widgetZone: Zone, asToggle: Bool) {
-        toggle                 = asToggle
-        shouldHighlight        = asToggle ? !widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
-        zlayer.backgroundColor = (shouldHighlight ? stateManager.lineColor : stateManager.unselectedColor).cgColor
+        toggle                   = asToggle
+        let     radius : CGFloat = stateManager.dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
+        shouldHighlight          = asToggle ? !widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
+        zlayer.backgroundColor   = (shouldHighlight ? stateManager.lineColor : stateManager.unselectedColor).cgColor
+        isUserInteractionEnabled = true
 
         snp.makeConstraints { (make) in
-            let  width = asToggle ? 12 : 8
-            let height = asToggle ? 12 : 12
+            let width: CGFloat = asToggle ? stateManager.dotLength : stateManager.dotLength * 0.65
 
-            make.size.equalTo(CGSize(width: width, height: height))
+            make.size.equalTo(CGSize(width: width, height: stateManager.dotLength))
         }
 
         updateConstraints()
-        addBorder(thickness: stateManager.dotThicknes, fractionalRadius: 0.3, color: stateManager.lineColor.cgColor)
+        addBorder(thickness: stateManager.dotThicknes, radius: radius, color: stateManager.lineColor.cgColor)
     }
 
 
@@ -45,7 +46,7 @@ class ZoneDot: ZView {
     }
 
 
-    @objc func hitAction(_ sender: AnyObject) {
+    func hitAction(_ sender: AnyObject) {
         if let zone = widget.widgetZone {
             if toggle == true {
                 zonesManager.toggleChildrenVisibility(zone)
@@ -66,7 +67,7 @@ class ZoneDot: ZView {
 
     #elseif os(iOS)
 
-    func mouseDown(with event: ZEvent) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         hitAction(self)
     }
     

@@ -129,8 +129,8 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
         }
 
         updateConstraints()
-        // textField   .addBorder(thickness: 5.0, fractionalRadius: 0.5, color: CGColor.black)
-        // childrenView.addBorder(thickness: 1.0, fractionalRadius: 0.5, color: NSColor.blue.cgColor)
+        // textField   .addBorder(thickness: 5.0, radius: 0.5, color: CGColor.black)
+        // childrenView.addBorder(thickness: 1.0, radius: 0.5, color: NSColor.blue.cgColor)
     }
 
 
@@ -162,7 +162,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                     make.height.equalTo(stateManager.lineThicknes)
                     make.centerY.equalTo(textField).offset(1.0)
                     make.left.equalTo(childrenView).offset(10.0)
-                    make.width.equalTo(stateManager.genericOffset.width + 9.0)
+                    make.width.equalTo(stateManager.genericOffset.width + 7.0)
                 })
             }
 
@@ -195,7 +195,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
                     lineView.snp.makeConstraints({ (make) in
                         make.width.equalTo(stateManager.lineThicknes)
-                        make.centerX.equalTo(childWidget.dragDot)
+                        make.centerX.equalTo(childWidget.dragDot).offset(-0.25)
                         make.bottom.equalTo((previous?.dragDot.snp.top)!)
                         make.top.equalTo(childWidget.dragDot.snp.bottom)
                     })
