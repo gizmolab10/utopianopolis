@@ -22,6 +22,23 @@ import Foundation
 #endif
 
 
+let userTouchLength: CGFloat = 33.0
+let      widgetFont:   ZFont = ZFont.systemFont(ofSize: fontSize)
+let       persistenceManager = ZLocalPersistenceManager()
+let             stateManager = ZStateManager()
+let             cloudManager = ZCloudManager()
+let             zonesManager = ZonesManager()
+let                  cloudID = "iCloud.com.zones.Zones"
+let          showChildrenKey = "showChildren"
+let            recordNameKey = "recordName"
+let            recordTypeKey = "recordType"
+let              childrenKey = "children"
+let              zoneNameKey = "zoneName"
+let              zoneTypeKey = "Zone"
+let              rootNameKey = "root"
+let                 linksKey = "links"
+
+
 enum ZSynchronizationState: Int {
     case restore
     case root
@@ -58,21 +75,3 @@ enum ZEditAction: UInt {
     case moveUp
     case moveDown
 }
-
-
-let userTouchLength: CGFloat = 33.0
-
-let       stateManager = ZStateManager()
-let       cloudManager = ZCloudManager()
-let       zonesManager = ZonesManager()
-let persistenceManager = ZLocalPersistenceManager()
-let  widgetFont: ZFont = ZFont.systemFont(ofSize: fontSize)
-let            cloudID = "iCloud.com.zones.Zones"
-let    showChildrenKey = "showChildren"
-let      recordNameKey = "recordName"
-let      recordTypeKey = "recordType"
-let        childrenKey = "children"
-let        zoneNameKey = "zoneName"
-let        zoneTypeKey = "Zone"
-let        rootNameKey = "root"
-let           linksKey = "links"

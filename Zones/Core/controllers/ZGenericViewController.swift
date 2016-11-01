@@ -19,6 +19,21 @@ import Foundation
 class ZGenericViewController: ZViewController {
 
 
+    func setup() {
+        zonesManager.registerUpdateClosure { (object, kind) -> (Void) in
+            if kind != .error {
+                self.update()
+            }
+        }
+
+        update()
+    }
+
+
+    func update() {}
+    func userEvent() {}
+
+
 #if os(OSX)
 
     override func viewWillAppear() {
@@ -26,24 +41,32 @@ class ZGenericViewController: ZViewController {
         setup()
     }
 
+
+    override func mouseDown(with event: ZEvent) {
+        super.mouseDown(with:event)
+        userEvent()
+    }
+
 #elseif os(iOS)
 
     override func viewWillAppear(_ animated: Bool) {
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(ZoneDot.handleTap))
+        let gestures = Array(view.gestureRecognizers ?? [])
+
+        for recognizer in gestures {
+            view.removeGestureRecognizer(recognizer)
+        }
+
         super.viewWillAppear(animated)
+        view.addGestureRecognizer(gesture)
         setup()
     }
 
-#endif
-
-
-    func setup() {
-        update()
-        zonesManager.registerUpdateClosure { (object, kind) -> (Void) in
-            if kind != .error {
-                self.update()
-            }
+    func handleTap(_ sender: UITapGestureRecognizer) {
+        if sender.state == .ended {
+            userEvent()
         }
     }
 
-    func update() {}
+#endif
 }

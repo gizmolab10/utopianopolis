@@ -22,8 +22,9 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     private var      _textField: ZoneTextField!
     var              widgetZone: Zone!
     private var   _childrenView: ZView!
-    private var connectLineView: ZoneLine!    = ZoneLine()
     private var childrenWidgets: [ZoneWidget] = []
+    private var    siblingLines: [ZoneCurve]  = []
+    private var     connectLine: ZoneLine!    = ZoneLine()
     private var       toggleDot: ZoneDot      = ZoneDot()
     private var         dragDot: ZoneDot      = ZoneDot()
     static  var       capturing: Bool         = false
@@ -98,8 +99,19 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
         layoutChildren()
         layoutText()
         layoutDots()
-        updateConstraints()
+    }
+
+
+    func layoutFinish() {
         layoutDecorations()
+
+        for line in siblingLines {
+            line.setup()
+        }
+
+        for widget in childrenWidgets {
+            widget.layoutFinish()
+        }
     }
 
 
@@ -160,10 +172,10 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             }
 
             if index > 0 {
-                childrenView.addSubview(connectLineView)
-                connectLineView.setupAsCurved(false)
+                childrenView.addSubview(connectLine)
+                connectLine.setup()
 
-                connectLineView.snp.makeConstraints({ (make) in
+                connectLine.snp.makeConstraints({ (make) in
                     make.height.equalTo(stateManager.lineThicknes)
                     make.centerY.equalTo(textField).offset(1.0)
                     make.left.equalTo(childrenView).offset(10.0)
@@ -193,12 +205,14 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                     make.height.lessThanOrEqualTo(childrenView)
                 })
 
-                if hasSiblingLines && previous != nil {
-                    let siblingLineView = ZoneLine()
-                    siblingLineView.setupAsCurved(false)
-                    childrenView.addSubview(siblingLineView)
+                var siblingLine: ZoneCurve?
 
-                    siblingLineView.snp.makeConstraints({ (make) in
+                if hasSiblingLines && previous != nil {
+                    siblingLine = ZoneCurve()
+
+                    siblingLines.append(siblingLine!)
+                    childrenView.addSubview(siblingLine!)
+                    siblingLine?.snp.makeConstraints({ (make) in
                         make.width.equalTo(stateManager.lineThicknes)
                         make.centerX.equalTo(childWidget.dragDot.innerDot!).offset(-0.25)
                         make.bottom.equalTo((previous?.dragDot.innerDot?.snp.top)!)
@@ -207,7 +221,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 }
 
                 childWidget.layoutText()
-                
+
                 previous = childWidget
             }
         }

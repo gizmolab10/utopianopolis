@@ -26,6 +26,8 @@ class ZEditorViewController: ZGenericViewController {
 
         zonesManager.clearWidgets()
         widget.layoutInView(view, atIndex: -1)
+        widget.updateConstraints()
+        widget.layoutFinish()
 
         ZoneWidget.capturing = false
     }
@@ -44,19 +46,7 @@ class ZEditorViewController: ZGenericViewController {
     }
 
 
-    #if os(OSX)
-
-    override func mouseDown(with event: ZEvent) {
-        super.mouseDown(with:event)
-
+    override func userEvent() {
         deselect()
     }
-
-    #elseif os(iOS)
-
-    func mouseDown(with event: ZEvent) {
-        deselect()
-    }
-    
-    #endif
 }
