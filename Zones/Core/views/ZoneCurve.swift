@@ -32,38 +32,44 @@ class ZoneCurve: ZView {
     func update() {
         snp.removeConstraints()
 
-        let            dragDot = child?.dragDot.innerDot
-        let          toggleDot = parent?.toggleDot.innerDot
-        let          textField = parent?.textField
-        let     dragDotCenterY =   dragDot?.convert((  dragDot?.bounds)!, to: parent).center.y
-        let   textFieldCenterY = textField?.convert((textField?.bounds)!, to: parent).center.y
-        let  halfLineThickness = stateManager.lineThicknes / 2.0
-        let              delta = dragDotCenterY! - textFieldCenterY!
-        zlayer.backgroundColor = ZColor.clear.cgColor
+        let    halfLineThickness = stateManager.lineThicknes / 2.0
+        let            toggleDot = parent?.toggleDot.innerDot
+        let              dragDot = child?.dragDot.innerDot
+        zlayer.backgroundColor   = ZColor.clear.cgColor
 
-        if delta > 0 {
-            kind = .above
-        } else if delta < 0 {
-            kind = .below
+        if (parent?.widgetZone.children.count)! > 1 {
+            let        textField = parent?.textField
+            let   dragDotCenterY =   dragDot?.convert((  dragDot?.bounds)!, to: parent).center.y
+            let textFieldCenterY = textField?.convert((textField?.bounds)!, to: parent).center.y
+            let            delta = dragDotCenterY! - textFieldCenterY!
+
+            if delta > 2.0 {
+                kind = .above
+            } else if delta < -2.0 {
+                kind = .below
+            }
         }
 
         snp.makeConstraints { (make) in
-            make .left.equalTo(toggleDot!.snp.centerX).offset(-halfLineThickness)
             make.right.equalTo((dragDot?.snp.left)!)
+
             switch (kind) {
             case .above:
                 make   .top.lessThanOrEqualTo((dragDot?.snp.centerY)!).offset(-halfLineThickness)
                 make.bottom.equalTo(toggleDot!.snp.top)
                 break
             case .straight:
-                make   .top.equalTo(toggleDot!.snp.centerY).offset( halfLineThickness)
+                make.height.equalTo(stateManager.lineThicknes)
                 make.bottom.equalTo(toggleDot!.snp.centerY).offset(-halfLineThickness)
-                break
+                make.left.equalTo(toggleDot!.snp.right)
+                return
             case .below:
                 make   .top.equalTo(toggleDot!.snp.bottom)
                 make.bottom.greaterThanOrEqualTo((dragDot?.snp.centerY)!).offset(halfLineThickness)
                 break
             }
+
+            make.left.equalTo(toggleDot!.snp.centerX).offset(-halfLineThickness)
         }
     }
 

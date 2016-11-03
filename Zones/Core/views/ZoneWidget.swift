@@ -153,7 +153,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     func layoutChildren() {
         var                 index = widgetZone.children.count
         var previous: ZoneWidget? = nil
-        let       hasSiblingLines = index > 1
+        let       hasSiblingLines = index > 0
 
         for view in childrenView.subviews {
             view.removeFromSuperview()
