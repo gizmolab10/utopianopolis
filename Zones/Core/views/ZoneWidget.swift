@@ -24,7 +24,6 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     private var   _childrenView: ZView!
     private var childrenWidgets: [ZoneWidget] = []
     private var    siblingLines: [ZoneCurve]  = []
-    private var     connectLine: ZoneLine!    = ZoneLine()
     var               toggleDot: ZoneDot      = ZoneDot()
     var                 dragDot: ZoneDot      = ZoneDot()
     static  var       capturing: Bool         = false
@@ -96,9 +95,9 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
         }
 
         zonesManager.registerWidget(self)
+        layoutDots()
         layoutChildren()
         layoutText()
-        layoutDots()
     }
 
 
@@ -171,18 +170,6 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 childrenWidgets.append(ZoneWidget())
             }
 
-//            if index > 0 {
-//                childrenView.addSubview(connectLine)
-//                connectLine.setup()
-//
-//                connectLine.snp.makeConstraints({ (make) in
-//                    make.height.equalTo(stateManager.lineThicknes)
-//                    make.centerY.equalTo(textField).offset(1.0)
-//                    make.left.equalTo(childrenView).offset(10.0)
-//                    make.width.equalTo(stateManager.genericOffset.width + 15.0)
-//                })
-//            }
-
             while index > 0 {
                 index                 -= 1
                 let childWidget        = childrenWidgets[index]
@@ -191,7 +178,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                 childWidget.layoutInView(childrenView, atIndex: index)
                 childWidget.snp.makeConstraints({ (make) in
                     if previous != nil {
-                        make.bottom.equalTo((previous?.snp.top)!)//.offset(-stateManager.genericOffset.height)
+                        make.bottom.equalTo((previous?.snp.top)!)
                     } else {
                         make.bottom.equalTo(childrenView)
                     }
@@ -201,8 +188,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                     }
 
                     make.left.equalTo(childrenView).offset(20.0)
-                    make.right.lessThanOrEqualTo(childrenView)//.offset(-10.0)
-                    make.height.lessThanOrEqualTo(childrenView)
+                    make.right.height.lessThanOrEqualTo(childrenView)
                 })
 
                 var siblingLine: ZoneCurve?
@@ -215,18 +201,9 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
                     siblingLines.append(siblingLine!)
                     childrenView.addSubview(siblingLine!)
                     siblingLine?.snp.makeConstraints({ (make) in
-                        make.size.equalTo(CGSize(width: 1.0, height: 1.0))
-                        make.center.equalTo(childWidget.dragDot)
+                        make.width.height.equalTo(stateManager.lineThicknes)
+                        make.center.equalTo(toggleDot)
                     })
-
-                    if hasSiblingLines == false {
-                        siblingLine?.snp.makeConstraints({ (make) in
-                            make.width.equalTo(stateManager.lineThicknes)
-                            make.centerX.equalTo(childWidget.dragDot.innerDot!).offset(-0.25)
-                            make.bottom.equalTo((previous?.dragDot.innerDot?.snp.top)!)
-                            make.top.equalTo((childWidget.dragDot.innerDot?.snp.bottom)!)
-                        })
-                    }
                 }
 
                 childWidget.layoutText()
@@ -242,7 +219,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             addSubview(toggleDot)
             toggleDot.setupForZone(widgetZone, asToggle: true)
             toggleDot.innerDot?.snp.makeConstraints({ (make) in
-                make.left.equalTo(textField.snp.right).offset(1.0)
+                make.left.equalTo(textField.snp.right).offset(-1.0)
                 make.centerY.equalTo(textField).offset(1.0)
                 make.right.lessThanOrEqualToSuperview().offset(-1.0)
             })
@@ -251,7 +228,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
         addSubview(dragDot)
         dragDot.setupForZone(widgetZone, asToggle: false)
         dragDot.innerDot?.snp.makeConstraints({ (make) in
-            make.right.equalTo(textField.snp.left).offset(-3.0)
+            make.right.equalTo(textField.snp.left)//.offset(1.0)
             make.centerY.equalTo(textField).offset(1.0)
         })
     }

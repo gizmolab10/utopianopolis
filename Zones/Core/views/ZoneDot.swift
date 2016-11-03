@@ -24,7 +24,6 @@ class ZoneDot: ZView {
     var      isOuterDot: Bool = true
     var shouldHighlight: Bool = false
 
-
     func setupForZone(_ widgetZone: Zone, asToggle: Bool) {
         toggle                     = asToggle
 
@@ -36,7 +35,7 @@ class ZoneDot: ZView {
 
             self.addSubview(innerDot!)
             innerDot?.setupForZone(widgetZone, asToggle: asToggle)
-            // addBorder(thickness: stateManager.dotThicknes, radius: radius, color: ZColor.red.cgColor)
+            // addBorder(thickness: stateManager.lineThicknes, radius: radius, color: ZColor.red.cgColor)
             snp.makeConstraints { (make) in
                 make.size.equalTo(CGSize(width: userTouchLength, height: userTouchLength))
                 make.center.equalTo(innerDot!)
@@ -46,7 +45,7 @@ class ZoneDot: ZView {
             shouldHighlight        = asToggle ? !widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
             zlayer.backgroundColor = (shouldHighlight ? stateManager.lineColor : stateManager.unselectedColor).cgColor
 
-            addBorder(thickness: stateManager.dotThicknes, radius: radius, color: stateManager.lineColor.cgColor)
+            addBorder(thickness: stateManager.lineThicknes, radius: radius, color: stateManager.lineColor.cgColor)
             snp.makeConstraints { (make) in
                 let width: CGFloat = asToggle ? stateManager.dotLength : stateManager.dotLength * 0.65
 

@@ -52,16 +52,16 @@ class ZoneCurve: ZView {
             make.right.equalTo((dragDot?.snp.left)!)
             switch (kind) {
             case .above:
-                make   .top.equalTo((dragDot?.snp.centerY)!).offset(-halfLineThickness)
-                make.bottom.equalTo(toggleDot!.snp.centerY)
+                make   .top.lessThanOrEqualTo((dragDot?.snp.centerY)!).offset(-halfLineThickness)
+                make.bottom.equalTo(toggleDot!.snp.top)
                 break
             case .straight:
                 make   .top.equalTo(toggleDot!.snp.centerY).offset( halfLineThickness)
                 make.bottom.equalTo(toggleDot!.snp.centerY).offset(-halfLineThickness)
                 break
             case .below:
-                make   .top.equalTo(toggleDot!.snp.centerY)
-                make.bottom.equalTo((dragDot?.snp.centerY)!).offset(halfLineThickness)
+                make   .top.equalTo(toggleDot!.snp.bottom)
+                make.bottom.greaterThanOrEqualTo((dragDot?.snp.centerY)!).offset(halfLineThickness)
                 break
             }
         }
@@ -73,21 +73,23 @@ class ZoneCurve: ZView {
         update()
 
         if dirtyRect.size.width > 1.0 {
+            let toggleHalfHeight = (parent?.toggleDot.innerDot?.bounds.size.height)! / 2.0
+            let    dragHalfWidth = (child? .dragDot  .innerDot?.bounds.size.width )! / 2.0
             var y: CGFloat
 
             switch kind {
-            case .straight: zlayer.backgroundColor = stateManager.lineColor.cgColor; return
-            case .above: y = -dirtyRect.maxY; break
+            case .above: y = -dirtyRect.maxY - toggleHalfHeight; break
             case .below: y =  dirtyRect.minY; break
+            case .straight: zlayer.backgroundColor = stateManager.lineColor.cgColor; return
             }
 
-            let rect = CGRect(x: dirtyRect.minX, y: y, width: dirtyRect.size.width * 2.0, height: dirtyRect.size.height * 2.0)
+            let rect = CGRect(x: dirtyRect.minX, y: y, width: dirtyRect.size.width * 2.0 + dragHalfWidth , height: (dirtyRect.size.height) * 2.0 + toggleHalfHeight )
             let path = ZBezierPath(ovalIn: rect)
 
-            stateManager.lineColor.setStroke()
             ZColor.clear.setFill()
+            stateManager.lineColor.setStroke()
             path.lineWidth = stateManager.lineThicknes
-            path.flatness = 0.01
+            path.flatness = 0.0001
             path.stroke()
         }
         #endif
