@@ -12,13 +12,13 @@ import Foundation
 #if os(OSX)
     import Cocoa
 
-    let fontSize:           CGFloat = 17.0
-    let unselectBrightness: CGFloat = 0.93
+let fontSize:           CGFloat = 17.0
+let unselectBrightness: CGFloat = 0.93
 #elseif os(iOS)
     import UIKit
 
-    let fontSize:           CGFloat = 14.0
-    let unselectBrightness: CGFloat = 0.98
+let fontSize:           CGFloat = 14.0
+let unselectBrightness: CGFloat = 0.98
 #endif
 
 
@@ -74,4 +74,11 @@ enum ZEditAction: UInt {
     case delete
     case moveUp
     case moveDown
+}
+
+
+enum ZLineKind: Int {
+    case below    = -1
+    case straight =  0
+    case above    =  1
 }

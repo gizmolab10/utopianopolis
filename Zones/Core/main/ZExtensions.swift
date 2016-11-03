@@ -24,6 +24,7 @@ import Foundation
     public typealias ZButton                = NSButton
     public typealias ZTextField             = NSTextField
     public typealias ZEdgeInsets            = EdgeInsets
+    public typealias ZBezierPath            = NSBezierPath
     public typealias ZApplication           = NSApplication
     public typealias ZViewController        = NSViewController
     public typealias ZSegmentedControl      = NSSegmentedControl
@@ -89,6 +90,7 @@ import Foundation
     public typealias ZButton                = UIButton
     public typealias ZTextField             = UITextField
     public typealias ZEdgeInsets            = UIEdgeInsets
+    public typealias ZBezierPath            = UIBezierPath
     public typealias ZApplication           = UIApplication
     public typealias ZViewController        = UIViewController
     public typealias ZSegmentedControl      = UISegmentedControl
@@ -145,6 +147,13 @@ import Foundation
 typealias ZStorageDict = [String : NSObject]
 
 
+extension CGRect {
+    var center : CGPoint {
+        return CGPoint(x: midX, y: midY)
+    }
+}
+
+
 extension String {
     func heightForFont(_ font: ZFont) -> CGFloat {
         return sizeWithFont(font).height
@@ -175,8 +184,8 @@ extension ZView {
 
 
     func addBorderRelative(thickness: CGFloat, radius: CGFloat, color: CGColor) {
-        let size = self.bounds.size
-        let radius = min(size.width, size.height)
+        let            size = self.bounds.size
+        let radius: CGFloat = min(size.width, size.height)
 
         self.addBorder(thickness: thickness, radius: radius, color: color)
     }
