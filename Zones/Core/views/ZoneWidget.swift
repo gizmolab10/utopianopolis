@@ -26,7 +26,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     private var    siblingLines: [ZoneCurve]  = []
     private var     connectLine: ZoneLine!    = ZoneLine()
     var               toggleDot: ZoneDot      = ZoneDot()
-    private var         dragDot: ZoneDot      = ZoneDot()
+    var                 dragDot: ZoneDot      = ZoneDot()
     static  var       capturing: Bool         = false
 
 
@@ -209,8 +209,8 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
                 if hasSiblingLines {
                     siblingLine = ZoneCurve()
-                    siblingLine?.dragDot = childWidget.dragDot.innerDot
-                    siblingLine?.widget  = self
+                    siblingLine?.child  = childWidget
+                    siblingLine?.parent = self
 
                     siblingLines.append(siblingLine!)
                     childrenView.addSubview(siblingLine!)
@@ -242,7 +242,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             addSubview(toggleDot)
             toggleDot.setupForZone(widgetZone, asToggle: true)
             toggleDot.innerDot?.snp.makeConstraints({ (make) in
-                make.left.equalTo(textField.snp.right).offset(6.0)
+                make.left.equalTo(textField.snp.right).offset(1.0)
                 make.centerY.equalTo(textField).offset(1.0)
                 make.right.lessThanOrEqualToSuperview().offset(-1.0)
             })

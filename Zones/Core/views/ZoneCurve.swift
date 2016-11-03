@@ -21,8 +21,8 @@ class ZoneCurve: ZView {
 
     var    kind:  ZLineKind = .straight
     var isInner:       Bool = false
-    var dragDot:    ZoneDot?
-    var  widget: ZoneWidget?
+    var  parent: ZoneWidget?
+    var   child: ZoneWidget?
     var   inner:  ZoneCurve?
 
 
@@ -32,32 +32,36 @@ class ZoneCurve: ZView {
     func update() {
         snp.removeConstraints()
 
-        let             offset = stateManager.lineThicknes / 2.0
-        let          textField = widget?.textField
-        let     dragDotCenterY =   dragDot?.convert((  dragDot?.bounds)!, to: widget).center.y
-        let   textFieldCenterY = textField?.convert((textField?.bounds)!, to: widget).center.y
+        let            dragDot = child?.dragDot.innerDot
+        let          toggleDot = parent?.toggleDot.innerDot
+        let          textField = parent?.textField
+        let     dragDotCenterY =   dragDot?.convert((  dragDot?.bounds)!, to: parent).center.y
+        let   textFieldCenterY = textField?.convert((textField?.bounds)!, to: parent).center.y
+        let  halfLineThickness = stateManager.lineThicknes / 2.0
         let              delta = dragDotCenterY! - textFieldCenterY!
         zlayer.backgroundColor = ZColor.clear.cgColor
 
-        if delta > 0.1 {
+        if delta > 0 {
             kind = .above
-        } else if delta < 0.1 {
+        } else if delta < 0 {
             kind = .below
         }
 
         snp.makeConstraints { (make) in
-            make.left.equalTo((widget?.toggleDot.snp.centerX)!).offset(-offset)
+            make .left.equalTo(toggleDot!.snp.centerX).offset(-halfLineThickness)
             make.right.equalTo((dragDot?.snp.left)!)
             switch (kind) {
             case .above:
-                make.top.equalTo((dragDot?.snp.centerY)!).offset(-offset)
-                make.bottom.equalTo((widget?.toggleDot.innerDot?.snp.top)!)
+                make   .top.equalTo((dragDot?.snp.centerY)!).offset(-halfLineThickness)
+                make.bottom.equalTo(toggleDot!.snp.centerY)
                 break
             case .straight:
+                make   .top.equalTo(toggleDot!.snp.centerY).offset( halfLineThickness)
+                make.bottom.equalTo(toggleDot!.snp.centerY).offset(-halfLineThickness)
                 break
             case .below:
-                make.top.equalTo((widget?.toggleDot.innerDot?.snp.bottom)!)
-                make.bottom.equalTo((dragDot?.snp.centerY)!).offset(offset)
+                make   .top.equalTo(toggleDot!.snp.centerY)
+                make.bottom.equalTo((dragDot?.snp.centerY)!).offset(halfLineThickness)
                 break
             }
         }
@@ -65,14 +69,16 @@ class ZoneCurve: ZView {
 
 
     override func draw(_ dirtyRect: CGRect) {
+        #if os(OSX)
         update()
 
-        if dirtyRect.size.width > 2.0 {
+        if dirtyRect.size.width > 1.0 {
             var y: CGFloat
 
             switch kind {
+            case .straight: zlayer.backgroundColor = stateManager.lineColor.cgColor; return
             case .above: y = -dirtyRect.maxY; break
-            default:     y =  dirtyRect.minY; break
+            case .below: y =  dirtyRect.minY; break
             }
 
             let rect = CGRect(x: dirtyRect.minX, y: y, width: dirtyRect.size.width * 2.0, height: dirtyRect.size.height * 2.0)
@@ -80,10 +86,10 @@ class ZoneCurve: ZView {
 
             stateManager.lineColor.setStroke()
             ZColor.clear.setFill()
-            ZBezierPath.clip(dirtyRect)
             path.lineWidth = stateManager.lineThicknes
             path.flatness = 0.01
             path.stroke()
         }
+        #endif
     }
 }
