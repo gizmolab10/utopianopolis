@@ -26,7 +26,7 @@ class ZoneTextField: ZTextField {
 
     var zoneWidgetDelegate: ZoneTextFieldDelegate?
 
-
+    
     #if os(OSX)
 
     var textAlignment : NSTextAlignment { get { return alignment } set { alignment = newValue } }

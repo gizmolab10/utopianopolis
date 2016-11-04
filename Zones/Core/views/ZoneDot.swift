@@ -24,6 +24,7 @@ class ZoneDot: ZView {
     var      isOuterDot: Bool = true
     var shouldHighlight: Bool = false
 
+
     func setupForZone(_ widgetZone: Zone, asToggle: Bool) {
         toggle                     = asToggle
 
@@ -40,6 +41,7 @@ class ZoneDot: ZView {
                 make.size.equalTo(CGSize(width: userTouchLength, height: userTouchLength))
                 make.center.equalTo(innerDot!)
             }
+            setupUserInteraction(isOuterDot)
         } else {
             let radius:    CGFloat = stateManager.dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
             shouldHighlight        = asToggle ? !widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
@@ -54,20 +56,17 @@ class ZoneDot: ZView {
         }
 
         updateConstraints()
-        setupUserInteraction(isOuterDot)
     }
 
 
     func hitAction(_ sender: AnyObject) {
-        if isOuterDot {
-            let widget: ZoneWidget = superview as! ZoneWidget
+        let widget: ZoneWidget = superview as! ZoneWidget
 
-            if let zone = widget.widgetZone {
-                if toggle == true {
-                    zonesManager.toggleChildrenVisibility(zone)
-                } else {
-                    zonesManager.currentlyGrabbedZones = [zone]
-                }
+        if let zone = widget.widgetZone {
+            if toggle == true {
+                zonesManager.toggleChildrenVisibility(zone)
+            } else {
+                zonesManager.currentlyGrabbedZones = [zone]
             }
         }
     }
@@ -78,9 +77,11 @@ class ZoneDot: ZView {
     override func mouseDown(with event: ZEvent) {
         super.mouseDown(with:event)
 
-        hitAction(self)
+        if isOuterDot {
+            hitAction(self)
+        }
     }
-
+    
 
     func setupUserInteraction(_ enable: Bool) {}
 

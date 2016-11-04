@@ -75,7 +75,6 @@ class ZoneCurve: ZView {
 
 
     override func draw(_ dirtyRect: CGRect) {
-        #if os(OSX)
         update()
 
         if dirtyRect.size.width > 1.0 {
@@ -84,12 +83,12 @@ class ZoneCurve: ZView {
             var y: CGFloat
 
             switch kind {
-            case .above: y = -dirtyRect.maxY - toggleHalfHeight; break
+            case .above: y = -dirtyRect.maxY - toggleHalfHeight * 2.0; break
             case .below: y =  dirtyRect.minY; break
             case .straight: zlayer.backgroundColor = stateManager.lineColor.cgColor; return
             }
 
-            let rect = CGRect(x: dirtyRect.minX, y: y, width: dirtyRect.size.width * 2.0 + dragHalfWidth , height: (dirtyRect.size.height) * 2.0 + toggleHalfHeight )
+            let rect = CGRect(x: dirtyRect.minX, y: y, width: dirtyRect.size.width * 2.0 + dragHalfWidth , height: (dirtyRect.size.height + toggleHalfHeight) * 2.0 )
             let path = ZBezierPath(ovalIn: rect)
 
             ZColor.clear.setFill()
@@ -98,6 +97,5 @@ class ZoneCurve: ZView {
             path.flatness = 0.0001
             path.stroke()
         }
-        #endif
     }
 }

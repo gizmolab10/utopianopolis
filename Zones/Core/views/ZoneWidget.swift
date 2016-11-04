@@ -65,7 +65,8 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     var childrenView: ZView {
         get {
             if _childrenView == nil {
-                _childrenView = ZView()
+                _childrenView                          = ZView()
+                _childrenView.isUserInteractionEnabled = false
 
                 addSubview(_childrenView)
 
@@ -144,7 +145,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             make.height.lessThanOrEqualTo(self).offset(-stateManager.genericOffset.height)
 
             if hasChildren {
-                make.right.equalTo(childrenView.snp.left)//.offset(-stateManager.genericOffset.width)
+                make.right.equalTo(childrenView.snp.left)
             }
         }
     }
@@ -229,8 +230,8 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             addSubview(dragDot)
             dragDot.setupForZone(widgetZone, asToggle: false)
             dragDot.innerDot?.snp.makeConstraints({ (make) in
-                make.right.equalTo(textField.snp.left)//.offset(1.0)
-                make.centerY.equalTo(textField).offset(1.0)
+                make.right.equalTo(textField.snp.left)
+                make.centerY.equalTo(textField)
             })
         }
     }

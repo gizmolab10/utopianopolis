@@ -38,9 +38,7 @@ class ZCloudManager {
         zonesManager.rootZone.resolveParents()
 
         for base: ZRecord in records.values {
-            //  if base.recordState == .needsSave {
-                recordsToSave.append(base.record)
-            // }
+            recordsToSave.append(base.record)
         }
 
         operation.recordsToSave = recordsToSave
@@ -165,8 +163,6 @@ class ZCloudManager {
 
                 badgeResetOperation.modifyBadgeCompletionBlock = { (error) -> Void in
                     if error == nil {
-//                        print("Error resetting badge: \(error)")
-//                    } else {
                         zapplication.clearBadge()
                     }
                 }

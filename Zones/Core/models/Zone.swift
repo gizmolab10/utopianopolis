@@ -28,8 +28,6 @@ class Zone : ZRecord {
 
 
     func resolveParents() {
-        print(parentZone)
-
         for child: Zone in children {
             child.resolveParents()
         }
