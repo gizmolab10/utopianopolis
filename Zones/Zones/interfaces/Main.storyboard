@@ -816,11 +816,11 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="acM-gT-2KT">
-                                <rect key="frame" x="14" y="219" width="129" height="32"/>
+                                <rect key="frame" x="14" y="219" width="94" height="32"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="117" id="SJI-0H-Mfu"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="SJI-0H-Mfu"/>
                                 </constraints>
-                                <buttonCell key="cell" type="push" title="Move Zone Up" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bBz-a0-4S3">
+                                <buttonCell key="cell" type="push" title="Move Up" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bBz-a0-4S3">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -829,11 +829,11 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="OZl-Ph-Yx4">
-                                <rect key="frame" x="14" y="186" width="145" height="32"/>
+                                <rect key="frame" x="14" y="186" width="111" height="32"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="133" id="D86-Uy-YsQ"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="D86-Uy-YsQ"/>
                                 </constraints>
-                                <buttonCell key="cell" type="push" title="Move Zone Down" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gXJ-pP-ikm">
+                                <buttonCell key="cell" type="push" title="Move Down" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gXJ-pP-ikm">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -842,11 +842,11 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="40T-ea-6re">
-                                <rect key="frame" x="14" y="153" width="166" height="32"/>
+                                <rect key="frame" x="14" y="153" width="132" height="32"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="133" id="K6z-pC-Vtx"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="K6z-pC-Vtx"/>
                                 </constraints>
-                                <buttonCell key="cell" type="push" title="Move Zone to Parent" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UVl-ls-cmf">
+                                <buttonCell key="cell" type="push" title="Move to Parent" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UVl-ls-cmf">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -855,11 +855,11 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="T4k-Pa-bXp" userLabel="Move Zone into Sibling Above Button">
-                                <rect key="frame" x="14" y="120" width="220" height="32"/>
+                                <rect key="frame" x="14" y="120" width="186" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="133" id="gSv-tK-rci"/>
                                 </constraints>
-                                <buttonCell key="cell" type="push" title="Move Zone into Sibling Above" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ciG-ss-aph">
+                                <buttonCell key="cell" type="push" title="Move into Sibling Above" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ciG-ss-aph">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -899,10 +899,10 @@
                     </view>
                     <connections>
                         <outlet property="deleteZoneButton" destination="OZx-FX-n1W" id="5cH-X7-knN"/>
-                        <outlet property="moveZoneDownButton" destination="OZl-Ph-Yx4" id="x7u-eH-A7L"/>
-                        <outlet property="moveZoneIntoSiblingAboveButton" destination="T4k-Pa-bXp" id="ctR-IJ-bak"/>
-                        <outlet property="moveZoneToParentButton" destination="40T-ea-6re" id="lcf-MT-RhB"/>
-                        <outlet property="moveZoneUpButton" destination="acM-gT-2KT" id="N4V-SZ-kVn"/>
+                        <outlet property="moveDownButton" destination="OZl-Ph-Yx4" id="x7u-eH-A7L"/>
+                        <outlet property="moveIntoSiblingAboveButton" destination="T4k-Pa-bXp" id="ctR-IJ-bak"/>
+                        <outlet property="moveToParentButton" destination="40T-ea-6re" id="lcf-MT-RhB"/>
+                        <outlet property="moveUpButton" destination="acM-gT-2KT" id="N4V-SZ-kVn"/>
                         <outlet property="newZoneButton" destination="Agf-qa-s1Q" id="nhm-vD-m1V"/>
                     </connections>
                 </viewController>

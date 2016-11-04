@@ -13,12 +13,12 @@ import Foundation
 class ZEditingToolsViewController: ZGenericViewController {
 
 
-    @IBOutlet weak var                  newZoneButton: ZButton!
-    @IBOutlet weak var               deleteZoneButton: ZButton!
-    @IBOutlet weak var               moveZoneUpButton: ZButton!
-    @IBOutlet weak var             moveZoneDownButton: ZButton!
-    @IBOutlet weak var         moveZoneToParentButton: ZButton!
-    @IBOutlet weak var moveZoneIntoSiblingAboveButton: ZButton!
+    @IBOutlet weak var           deleteZoneButton: ZButton!
+    @IBOutlet weak var              newZoneButton: ZButton!
+    @IBOutlet weak var               moveUpButton: ZButton!
+    @IBOutlet weak var             moveDownButton: ZButton!
+    @IBOutlet weak var         moveToParentButton: ZButton!
+    @IBOutlet weak var moveIntoSiblingAboveButton: ZButton!
 
 
     @IBAction func genericButtonAction(_ button: ZButton) {
@@ -31,12 +31,15 @@ class ZEditingToolsViewController: ZGenericViewController {
         let hasSelection = zone != nil
         let   parentZone = zone?.parentZone
         let     children = parentZone?.children
-        let  hasSiblings = parentZone != nil && (children?.count)! > 1
-        let        atTop = (children?.first == zone)
+        let    hasParent = parentZone != nil
+        let  hasSiblings = hasParent && (children?.count)! > 1
         let     atBottom = (children?.last  == zone)
+        let        atTop = (children?.first == zone)
 
-        deleteZoneButton  .isHidden = !hasSelection || !zonesManager.canDelete
-        moveZoneUpButton  .isHidden = !hasSelection || !hasSiblings || atTop
-        moveZoneDownButton.isHidden = !hasSelection || !hasSiblings || atBottom
+        deleteZoneButton          .isHidden = !hasSelection || !zonesManager.canDelete
+        moveDownButton            .isHidden = !hasSelection || !hasSiblings || atBottom
+        moveUpButton              .isHidden = !hasSelection || !hasSiblings || atTop
+        moveIntoSiblingAboveButton.isHidden = !hasSelection || !hasSiblings || atTop
+        moveToParentButton        .isHidden = !hasSelection || !hasParent
     }
 }

@@ -225,12 +225,14 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
             })
         }
 
-        addSubview(dragDot)
-        dragDot.setupForZone(widgetZone, asToggle: false)
-        dragDot.innerDot?.snp.makeConstraints({ (make) in
-            make.right.equalTo(textField.snp.left)//.offset(1.0)
-            make.centerY.equalTo(textField).offset(1.0)
-        })
+        if widgetZone != zonesManager.rootZone {
+            addSubview(dragDot)
+            dragDot.setupForZone(widgetZone, asToggle: false)
+            dragDot.innerDot?.snp.makeConstraints({ (make) in
+                make.right.equalTo(textField.snp.left)//.offset(1.0)
+                make.centerY.equalTo(textField).offset(1.0)
+            })
+        }
     }
 
 

@@ -66,14 +66,14 @@ class ZonesManager: NSObject {
 
     var currentlyMovableZone: Zone? {
         get {
-            var movable = currentlyEditingZone
+            var movable: Zone?
 
-            if movable == nil {
-                if currentlyGrabbedZones.count > 0 {
-                    movable = currentlyGrabbedZones[0]
-                } else {
-                    movable = rootZone
-                }
+            if currentlyGrabbedZones.count > 0 {
+                movable = currentlyGrabbedZones[0]
+            } else if currentlyEditingZone != nil {
+                movable = currentlyEditingZone
+            } else {
+                movable = rootZone
             }
 
             return movable!

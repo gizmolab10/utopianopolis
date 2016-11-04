@@ -60,7 +60,7 @@ class ZoneCurve: ZView {
                 break
             case .straight:
                 make.height.equalTo(stateManager.lineThicknes)
-                make.bottom.equalTo(toggleDot!.snp.centerY).offset(-halfLineThickness)
+                make.bottom.equalTo(toggleDot!.snp.centerY)
                 make.left.equalTo(toggleDot!.snp.right)
                 return
             case .below:
