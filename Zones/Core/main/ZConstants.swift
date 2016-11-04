@@ -74,6 +74,8 @@ enum ZEditAction: UInt {
     case delete
     case moveUp
     case moveDown
+    case moveToParent
+    case moveToSibling
 }
 
 

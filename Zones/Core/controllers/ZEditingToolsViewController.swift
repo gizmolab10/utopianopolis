@@ -13,10 +13,12 @@ import Foundation
 class ZEditingToolsViewController: ZGenericViewController {
 
 
-    @IBOutlet weak var      newZoneButton: ZButton!
-    @IBOutlet weak var   deleteZoneButton: ZButton!
-    @IBOutlet weak var   moveZoneUpButton: ZButton!
-    @IBOutlet weak var moveZoneDownButton: ZButton!
+    @IBOutlet weak var                  newZoneButton: ZButton!
+    @IBOutlet weak var               deleteZoneButton: ZButton!
+    @IBOutlet weak var               moveZoneUpButton: ZButton!
+    @IBOutlet weak var             moveZoneDownButton: ZButton!
+    @IBOutlet weak var         moveZoneToParentButton: ZButton!
+    @IBOutlet weak var moveZoneIntoSiblingAboveButton: ZButton!
 
 
     @IBAction func genericButtonAction(_ button: ZButton) {

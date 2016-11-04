@@ -134,10 +134,12 @@ class ZonesManager: NSObject {
 
     func takeAction(_ action: ZEditAction) {
         switch action {
-        case .add:      add();         break
-        case .delete:   delete();      break
-        case .moveUp:   moveUp(true);  break
-        case .moveDown: moveUp(false); break
+        case .add:                     add(); break
+        case .delete:               delete(); break
+        case .moveUp:           moveUp(true);  break
+        case .moveDown:        moveUp(false); break
+        case .moveToParent:   moveToParent(); break
+        case .moveToSibling: moveToSibling(); break
         }
     }
 
@@ -183,8 +185,8 @@ class ZonesManager: NSObject {
 
 
     func deleteZone(_ zone: Zone) {
-        if let parentZone = zone.parentZone {
-            let index = parentZone.children.index(of: zone)
+        if let        parentZone = zone.parentZone {
+            let            index = parentZone.children.index(of: zone)
             currentlyEditingZone = nil
 
             parentZone.children.remove(at: index!)
@@ -199,9 +201,9 @@ class ZonesManager: NSObject {
 
 
     func moveUp(_ moveUp: Bool) {
-        if let zone: Zone = currentlyMovableZone {
-            if let parentZone = zone.parentZone {
-                if let index = parentZone.children.index(of: zone) {
+        if let        zone: Zone = currentlyMovableZone {
+            if let    parentZone = zone.parentZone {
+                if let     index = parentZone.children.index(of: zone) {
                     let newIndex = index + (moveUp ? -1 : 1)
 
                     if newIndex >= 0 && newIndex < parentZone.children.count {
@@ -216,6 +218,47 @@ class ZonesManager: NSObject {
     }
 
 
+    func moveToSibling() {
+        if let            zone: Zone = currentlyMovableZone {
+            if let        parentZone = zone.parentZone {
+                if let         index = parentZone.children.index(of: zone) {
+                    let siblingIndex = index - 1
+
+                    if siblingIndex >= 0 {
+                        let  siblingZone = parentZone.children[siblingIndex]
+
+                        parentZone.children.remove(at: index)
+                        siblingZone.children.append(zone)
+                        zone.parentZone = siblingZone
+                        persistenceManager.save()
+                        updateToClosures(nil, regarding: .data)
+
+                        // operation to save all three: zone, sibling, parent
+                    }
+                }
+            }
+        }
+    }
+
+
+    func moveToParent() {
+        if let              zone: Zone = currentlyMovableZone {
+            if let          parentZone = zone.parentZone {
+                if let grandParentZone = parentZone.parentZone {
+                    let          index = parentZone.children.index(of: zone)
+
+                    parentZone.children.remove(at: index!)
+                    grandParentZone.children.append(zone)
+                    zone.parentZone = grandParentZone
+                    updateToClosures(nil, regarding: .data)
+
+                    // operation to save all three: zone, parent, grand
+                }
+            }
+        }
+    }
+
+
     func toggleChildrenVisibility(_ ofZone: Zone?) {
         if ofZone != nil {
             ofZone?.showChildren = !(ofZone?.showChildren)!
@@ -224,5 +267,4 @@ class ZonesManager: NSObject {
             updateToClosures(nil, regarding: .data)
         }
     }
-
 }

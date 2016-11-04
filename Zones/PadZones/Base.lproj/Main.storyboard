@@ -145,7 +145,7 @@
                         <viewControllerLayoutGuide type="bottom" id="khj-L7-oGL"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="E9Z-nV-dg7">
-                        <rect key="frame" x="0.0" y="0.0" width="341" height="724"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="956"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xlK-N9-ONC">
@@ -156,16 +156,6 @@
                                 <state key="normal" title="New Zone"/>
                                 <connections>
                                     <action selector="genericButtonAction:" destination="Oce-Up-u0Z" eventType="touchDown" id="VIN-ol-ngm"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Owo-Mu-J0s" userLabel="Delete Button">
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="ReM-Y1-1et"/>
-                                    <constraint firstAttribute="width" constant="109" id="VkI-X7-Iyy"/>
-                                </constraints>
-                                <state key="normal" title="Delete Zone"/>
-                                <connections>
-                                    <action selector="genericButtonAction:" destination="Oce-Up-u0Z" eventType="touchDown" id="ePp-4c-eVM"/>
                                 </connections>
                             </button>
                             <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8PB-jV-VH0">
@@ -188,15 +178,25 @@
                                     <action selector="genericButtonAction:" destination="Oce-Up-u0Z" eventType="touchDown" id="Kue-1R-983"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Owo-Mu-J0s" userLabel="Delete Button">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="ReM-Y1-1et"/>
+                                    <constraint firstAttribute="width" constant="109" id="VkI-X7-Iyy"/>
+                                </constraints>
+                                <state key="normal" title="Delete Zone"/>
+                                <connections>
+                                    <action selector="genericButtonAction:" destination="Oce-Up-u0Z" eventType="touchDown" id="ePp-4c-eVM"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="8PB-jV-VH0" firstAttribute="leading" secondItem="E9Z-nV-dg7" secondAttribute="leadingMargin" id="8Bt-xG-I6K"/>
-                            <constraint firstItem="Owo-Mu-J0s" firstAttribute="top" secondItem="xlK-N9-ONC" secondAttribute="bottom" constant="8" id="HTu-xC-ZHX"/>
+                            <constraint firstItem="khj-L7-oGL" firstAttribute="top" secondItem="Owo-Mu-J0s" secondAttribute="bottom" constant="20" id="AtG-mu-f0z"/>
                             <constraint firstItem="ghl-lg-Whk" firstAttribute="leading" secondItem="E9Z-nV-dg7" secondAttribute="leadingMargin" id="KkQ-Gq-ZWg"/>
                             <constraint firstItem="ghl-lg-Whk" firstAttribute="top" secondItem="8PB-jV-VH0" secondAttribute="bottom" constant="8" id="Myk-cy-gQF"/>
+                            <constraint firstItem="8PB-jV-VH0" firstAttribute="top" secondItem="xlK-N9-ONC" secondAttribute="bottom" constant="8" id="Tbx-YX-1md"/>
                             <constraint firstItem="xlK-N9-ONC" firstAttribute="top" secondItem="g58-MG-wGT" secondAttribute="bottom" constant="20" id="WuQ-fL-LHL"/>
-                            <constraint firstItem="8PB-jV-VH0" firstAttribute="top" secondItem="Owo-Mu-J0s" secondAttribute="bottom" constant="8" id="rCj-Ci-417"/>
                             <constraint firstItem="Owo-Mu-J0s" firstAttribute="leading" secondItem="E9Z-nV-dg7" secondAttribute="leadingMargin" id="t0e-KQ-lBh"/>
                             <constraint firstItem="xlK-N9-ONC" firstAttribute="leading" secondItem="E9Z-nV-dg7" secondAttribute="leadingMargin" id="vvR-zJ-V0O"/>
                         </constraints>
@@ -210,7 +210,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1mc-bd-Z9S" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1071" y="1676"/>
+            <point key="canvasLocation" x="1070.4000000000001" y="1675.8620689655174"/>
         </scene>
     </scenes>
 </document>

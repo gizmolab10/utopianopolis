@@ -24,7 +24,7 @@ class ZStateManager: NSObject {
     var      operations: [ZSynchronizationState:BlockOperation] = [:]
     let           queue:                         OperationQueue = OperationQueue()
     let   genericOffset:                                 CGSize = CGSize(width: 0.0, height: 6.0)
-    let       lineColor:                                 ZColor = ZColor(hue: 0.6, saturation: 0.6, brightness: 1.0,                alpha: 1)
+    let       lineColor:                                 ZColor = ZColor.purple //(hue: 0.6, saturation: 0.6, brightness: 1.0,                alpha: 1)
     let unselectedColor:                                 ZColor = ZColor(hue: 0.6, saturation: 0.0, brightness: unselectBrightness, alpha: 1)
     let    lineThicknes:                                CGFloat = 1.25
     let       dotLength:                                CGFloat = 12.0
