@@ -22,6 +22,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     private var      _textField: ZoneTextField!
     var              widgetZone: Zone!
     private var   _childrenView: ZView!
+    private var   selectionView: ZView!
     private var childrenWidgets: [ZoneWidget] = []
     private var    siblingLines: [ZoneCurve]  = []
     var               toggleDot: ZoneDot      = ZoneDot()
@@ -111,10 +112,30 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     }
 
 
+    override func draw(_ dirtyRect: CGRect) {
+        if selectionView != nil {
+            selectionView.addBorderRelative(thickness: 0.15, radius: 0.5, color: stateManager.lineColor.cgColor)
+        }
+
+        super.draw(dirtyRect)
+    }
+    
+
     func layoutDecorations() {
         // self        .addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.green.cgColor)
         // childrenView.addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.orange.cgColor)
         // textField.addBorder(thickness: 5.0, radius: 0.5, color: CGColor.black)
+
+        if zonesManager.isGrabbed(zone: widgetZone) {
+            selectionView = ZView()
+
+            addSubview(selectionView)
+            selectionView.snp.makeConstraints({ (make) in
+                make.height.top.bottom.right.equalTo(self)
+                make.width.equalTo(self).offset(-8.0)
+                make.left.equalTo(self).offset(8.0)
+            })
+        }
     }
 
 

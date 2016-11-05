@@ -37,8 +37,10 @@ class ZCloudManager {
 
         zonesManager.rootZone.resolveParents()
 
-        for base: ZRecord in records.values {
-            recordsToSave.append(base.record)
+        for record: ZRecord in records.values {
+            if record.recordState == .needsSave {
+                recordsToSave.append(record.record)
+            }
         }
 
         operation.recordsToSave   = recordsToSave
