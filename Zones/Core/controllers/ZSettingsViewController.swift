@@ -17,6 +17,6 @@ class ZSettingsViewController: ZGenericViewController {
 
 
     @IBAction func genericButtonAction(_ button: ZButton) {
-        cloudManager.flush()
+        cloudManager.flushOnCompletion {}
     }
 }

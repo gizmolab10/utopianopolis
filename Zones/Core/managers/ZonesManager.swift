@@ -126,18 +126,28 @@ class ZonesManager: NSObject {
     }
 
     
-    // MARK:- editing and moving
+    // MARK:- editing, moving and revealing
     // MARK:-
+
+
+    func toggleChildrenVisibility(_ ofZone: Zone?) {
+        if ofZone != nil {
+            ofZone?.showChildren = !(ofZone?.showChildren)!
+
+            persistenceManager.save()
+            updateToClosures(nil, regarding: .data)
+        }
+    }
 
 
     func takeAction(_ action: ZEditAction) {
         switch action {
-        case .add:                     add(); break
-        case .delete:               delete(); break
-        case .moveUp:           moveUp(true);  break
-        case .moveDown:        moveUp(false); break
-        case .moveToParent:   moveToParent(); break
-        case .moveToSibling: moveToSibling(); break
+        case .add:                         add(); break
+        case .delete:                   delete(); break
+        case .moveUp:               moveUp(true); break
+        case .moveDown:            moveUp(false); break
+        case .moveToParent:       moveToParent(); break
+        case .moveIntoSibling: moveIntoSibling(); break
         }
     }
 
@@ -198,6 +208,14 @@ class ZonesManager: NSObject {
     }
 
 
+    func saveAndUpdate() {
+        persistenceManager.save()
+        cloudManager.flushOnCompletion { 
+            self.updateToClosures(nil, regarding: .data)
+        }
+    }
+
+
     func moveUp(_ moveUp: Bool) {
         if let        zone: Zone = currentlyMovableZone {
             if let    parentZone = zone.parentZone {
@@ -205,10 +223,11 @@ class ZonesManager: NSObject {
                     let newIndex = index + (moveUp ? -1 : 1)
 
                     if newIndex >= 0 && newIndex < parentZone.children.count {
+                        zone.recordState = .needsSave
+
                         parentZone.children.remove(at: index)
                         parentZone.children.insert(zone, at:newIndex)
-                        persistenceManager.save()
-                        updateToClosures(nil, regarding: .data)
+                        saveAndUpdate()
                     }
                 }
             }
@@ -216,7 +235,7 @@ class ZonesManager: NSObject {
     }
 
 
-    func moveToSibling() {
+    func moveIntoSibling() {
         if let            zone: Zone = currentlyMovableZone {
             if let        parentZone = zone.parentZone {
                 if let         index = parentZone.children.index(of: zone) {
@@ -228,10 +247,7 @@ class ZonesManager: NSObject {
                         parentZone.children.remove(at: index)
                         siblingZone.children.append(zone)
                         zone.parentZone = siblingZone
-                        persistenceManager.save()
-                        updateToClosures(nil, regarding: .data)
-
-                        // operation to save all three: zone, sibling, parent
+                        saveAndUpdate()
                     }
                 }
             }
@@ -248,21 +264,9 @@ class ZonesManager: NSObject {
                     parentZone.children.remove(at: index!)
                     grandParentZone.children.append(zone)
                     zone.parentZone = grandParentZone
-                    updateToClosures(nil, regarding: .data)
-
-                    // operation to save all three: zone, parent, grand
+                    saveAndUpdate()
                 }
             }
-        }
-    }
-
-
-    func toggleChildrenVisibility(_ ofZone: Zone?) {
-        if ofZone != nil {
-            ofZone?.showChildren = !(ofZone?.showChildren)!
-
-            persistenceManager.save()
-            updateToClosures(nil, regarding: .data)
         }
     }
 }

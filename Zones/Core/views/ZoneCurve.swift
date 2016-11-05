@@ -26,10 +26,7 @@ class ZoneCurve: ZView {
     var   inner:  ZoneCurve?
 
 
-    func setup() {}
-
-
-    func update() {
+    override func draw(_ dirtyRect: CGRect) {
         snp.removeConstraints()
 
         let    halfLineThickness = stateManager.lineThicknes / 2.0
@@ -71,11 +68,6 @@ class ZoneCurve: ZView {
 
             make.left.equalTo(toggleDot!.snp.centerX).offset(-halfLineThickness)
         }
-    }
-
-
-    override func draw(_ dirtyRect: CGRect) {
-        update()
 
         if dirtyRect.size.width > 1.0 {
             let toggleHalfHeight = (parent?.toggleDot.innerDot?.bounds.size.height)! / 2.0

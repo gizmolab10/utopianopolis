@@ -41,7 +41,6 @@ class ZoneDot: ZView {
                 make.size.equalTo(CGSize(width: userTouchLength, height: userTouchLength))
                 make.center.equalTo(innerDot!)
             }
-            setupUserInteraction(isOuterDot)
         } else {
             let radius:    CGFloat = stateManager.dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
             shouldHighlight        = asToggle ? !widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
@@ -56,6 +55,7 @@ class ZoneDot: ZView {
         }
 
         updateConstraints()
+        setupUserInteraction(isOuterDot)
     }
 
 

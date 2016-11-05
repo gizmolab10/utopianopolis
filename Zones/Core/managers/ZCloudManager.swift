@@ -29,7 +29,7 @@ class ZCloudManager {
     // MARK:-
 
 
-    func flush() {
+    func flushOnCompletion(_ block: (() -> Swift.Void)?) {
         var recordsToSave: [CKRecord] = []
         let                 operation = CKModifyRecordsOperation()
         operation.container           = container
@@ -41,7 +41,8 @@ class ZCloudManager {
             recordsToSave.append(base.record)
         }
 
-        operation.recordsToSave = recordsToSave
+        operation.recordsToSave   = recordsToSave
+        operation.completionBlock = block
 
         operation.start()
     }

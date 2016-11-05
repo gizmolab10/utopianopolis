@@ -105,10 +105,6 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     func layoutFinish() {
         layoutDecorations()
 
-        for line in siblingLines {
-            line.setup()
-        }
-
         for widget in childrenWidgets {
             widget.layoutFinish()
         }
