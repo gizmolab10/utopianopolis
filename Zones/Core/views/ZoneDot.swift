@@ -26,17 +26,20 @@ class ZoneDot: ZView {
 
 
     func setupForZone(_ widgetZone: Zone, asToggle: Bool) {
-        toggle                     = asToggle
+        toggle                       = asToggle
 
         if isOuterDot {
-            zlayer.backgroundColor = ZColor.clear.cgColor
-            innerDot               = ZoneDot()
-            innerDot?.isOuterDot   = false
-            // let radius:    CGFloat = userTouchLength / 2.0
+            zlayer.backgroundColor   = ZColor.clear.cgColor
 
+            if innerDot == nil {
+                innerDot             = ZoneDot()
+                innerDot?.isOuterDot = false
+            }
+
+            setupGestures(target: self, action: #selector(ZoneDot.gestureEvent))
             self.addSubview(innerDot!)
             innerDot?.setupForZone(widgetZone, asToggle: asToggle)
-            // addBorder(thickness: stateManager.lineThicknes, radius: radius, color: ZColor.red.cgColor)
+            // addBorder(thickness: stateManager.lineThicknes, radius: userTouchLength / 2.0, color: ZColor.red.cgColor)
             snp.makeConstraints { (make) in
                 make.size.equalTo(CGSize(width: userTouchLength, height: userTouchLength))
                 make.center.equalTo(innerDot!)
@@ -55,54 +58,19 @@ class ZoneDot: ZView {
         }
 
         updateConstraints()
-        setupUserInteraction(isOuterDot)
     }
 
 
-    func hitAction(_ sender: AnyObject) {
+    func gestureEvent(_ sender: ZGestureRecognizer?) {
         let widget: ZoneWidget = superview as! ZoneWidget
 
         if let zone = widget.widgetZone {
             if toggle == true {
                 zonesManager.toggleChildrenVisibility(zone)
             } else {
+                zonesManager.deselect()
                 zonesManager.currentlyGrabbedZones = [zone]
             }
         }
     }
-
-
-    #if os(OSX)
-
-    override func mouseDown(with event: ZEvent) {
-        super.mouseDown(with:event)
-
-        if isOuterDot {
-            hitAction(self)
-        }
-    }
-    
-
-    func setupUserInteraction(_ enable: Bool) {}
-
-    #elseif os(iOS)
-
-    func handleTap(_ sender: UITapGestureRecognizer) {
-        if sender.state == .ended {
-            hitAction(self)
-        }
-    }
-
-
-    func setupUserInteraction(_ enable: Bool) {
-        isUserInteractionEnabled = enable
-
-        if enable {
-            let gesture = UITapGestureRecognizer(target: self, action: #selector(ZoneDot.handleTap))
-
-            self.addGestureRecognizer(gesture)
-        }
-    }
-
-    #endif
 }

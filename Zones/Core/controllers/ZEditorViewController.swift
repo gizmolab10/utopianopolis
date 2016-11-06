@@ -18,11 +18,18 @@ class ZEditorViewController: ZGenericViewController {
 
     override func updateFor(_ object: NSObject?) {
         var specificWidget: ZoneWidget?
-        var specificView: ZView?
+        var specificView: ZView = view
+        var specificindex       = -1
 
         if object != nil && object != zonesManager.rootZone! {
-            specificWidget = zonesManager.widgetForZone(object as! Zone)
-            specificView   = specificWidget?.superview
+            let       zone = object as! Zone
+            specificWidget = zonesManager.widgetForZone(zone)!
+            specificView   = (specificWidget?.superview)!
+            specificindex  = (zone.parentZone?.children.index(of: zone))!
+
+            if let name = zone.zoneName {
+                print(name)
+            }
         } else {
             if widget != nil {
                 widget.removeFromSuperview()
@@ -31,34 +38,26 @@ class ZEditorViewController: ZGenericViewController {
             widget            = ZoneWidget()
             widget.widgetZone = zonesManager.rootZone!
             specificWidget    = widget
-            specificView      = view
 
+            print("root")
             zonesManager.clearWidgets()
         }
 
-        specificWidget?.layoutInView(specificView!, atIndex: -1)
+        specificWidget?.layoutInView(specificView, atIndex: specificindex)
         specificWidget?.updateConstraints()
         specificWidget?.layoutFinish()
 
-        ZoneWidget.capturing = false
+        stateManager.textCapturing = false
     }
 
 
-    func deselect() {
-        let                         object = zonesManager.currentlyMovableZone
-        zonesManager.currentlyEditingZone  = nil
-        zonesManager.currentlyGrabbedZones = []
-
-        updateFor(object)
+    override func setup() {
+        view.setupGestures(target: self, action: #selector(ZEditorViewController.gestureEvent))
+        super.setup()
     }
 
-
-    @IBAction func tapped(_ sender: AnyObject) {
-        widget.captureText()
-    }
-
-
-    override func userEvent() {
-        deselect()
+    
+    func gestureEvent(_ sender: ZGestureRecognizer) {
+        zonesManager.deselect()
     }
 }

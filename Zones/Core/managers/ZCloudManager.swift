@@ -110,7 +110,6 @@ class ZCloudManager {
             }
 
             root?.fetchChildren()
-            zonesManager.updateToClosures(nil, regarding: .data)
             operation.finish()
         })
     }
@@ -269,7 +268,7 @@ class ZCloudManager {
                                 object.record      = saved!
                                 object.recordState = .ready
 
-                                zonesManager.updateToClosures(nil, regarding: .data)
+                                zonesManager.updateToClosures(object, regarding: .data)
                                 persistenceManager.save()
                             }
                         })

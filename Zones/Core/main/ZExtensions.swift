@@ -16,19 +16,20 @@ import Foundation
     import Cocoa
 
 
-    public typealias ZFont                  = NSFont
-    public typealias ZView                  = NSView
-    public typealias ZEvent                 = NSEvent
-    public typealias ZImage                 = NSImage
-    public typealias ZColor                 = NSColor
-    public typealias ZButton                = NSButton
-    public typealias ZTextField             = NSTextField
-    public typealias ZBezierPath            = NSBezierPath
-    public typealias ZApplication           = NSApplication
-    public typealias ZViewController        = NSViewController
-    public typealias ZSegmentedControl      = NSSegmentedControl
-    public typealias ZTextFieldDelegate     = NSTextFieldDelegate
-    public typealias ZApplicationDelegate   = NSApplicationDelegate
+    public typealias ZFont                = NSFont
+    public typealias ZView                = NSView
+    public typealias ZEvent               = NSEvent
+    public typealias ZImage               = NSImage
+    public typealias ZColor               = NSColor
+    public typealias ZButton              = NSButton
+    public typealias ZTextField           = NSTextField
+    public typealias ZBezierPath          = NSBezierPath
+    public typealias ZApplication         = NSApplication
+    public typealias ZViewController      = NSViewController
+    public typealias ZSegmentedControl    = NSSegmentedControl
+    public typealias ZGestureRecognizer   = NSGestureRecognizer
+    public typealias ZTextFieldDelegate   = NSTextFieldDelegate
+    public typealias ZApplicationDelegate = NSApplicationDelegate
 
 
     let zapplication = ZApplication.shared()
@@ -44,6 +45,18 @@ import Foundation
     extension NSView {
         var zlayer: CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
         var isUserInteractionEnabled: Bool { get { return true } set {} }
+
+
+        func setupGestures(target: Any, action: Selector?) {
+            let gestures = gestureRecognizers
+            let  gesture = NSClickGestureRecognizer(target: target, action: action)
+
+            for recognizer in gestures {
+                removeGestureRecognizer(recognizer)
+            }
+            
+            addGestureRecognizer(gesture)
+        }
     }
 
 
@@ -60,6 +73,7 @@ import Foundation
 
 
     extension NSTextField {
+        var textAlignment : NSTextAlignment { get { return alignment } set { alignment = newValue } }
         var text: String? {
             get { return stringValue }
             set { stringValue = newValue! }
@@ -81,19 +95,20 @@ import Foundation
     import UIKit
 
 
-    public typealias ZFont                  = UIFont
-    public typealias ZView                  = UIView
-    public typealias ZEvent                 = UIEvent
-    public typealias ZImage                 = UIImage
-    public typealias ZColor                 = UIColor
-    public typealias ZButton                = UIButton
-    public typealias ZTextField             = UITextField
-    public typealias ZBezierPath            = UIBezierPath
-    public typealias ZApplication           = UIApplication
-    public typealias ZViewController        = UIViewController
-    public typealias ZSegmentedControl      = UISegmentedControl
-    public typealias ZTextFieldDelegate     = UITextFieldDelegate
-    public typealias ZApplicationDelegate   = UIApplicationDelegate
+    public typealias ZFont                = UIFont
+    public typealias ZView                = UIView
+    public typealias ZEvent               = UIEvent
+    public typealias ZImage               = UIImage
+    public typealias ZColor               = UIColor
+    public typealias ZButton              = UIButton
+    public typealias ZTextField           = UITextField
+    public typealias ZBezierPath          = UIBezierPath
+    public typealias ZApplication         = UIApplication
+    public typealias ZViewController      = UIViewController
+    public typealias ZSegmentedControl    = UISegmentedControl
+    public typealias ZGestureRecognizer   = UIGestureRecognizer
+    public typealias ZTextFieldDelegate   = UITextFieldDelegate
+    public typealias ZApplicationDelegate = UIApplicationDelegate
 
 
     let zapplication = ZApplication.shared
@@ -116,6 +131,23 @@ import Foundation
 
     extension UIView {
         var zlayer: CALayer { get { return layer } }
+
+
+        func setupGestures(target: Any, action: Selector?) {
+            let gesture = UITapGestureRecognizer(target: target, action: action)
+            let gestures = gestureRecognizers
+
+            for recognizer in gestures {
+                removeGestureRecognizer(recognizer)
+            }
+            
+            addGestureRecognizer(gesture)
+        }
+    }
+
+
+    extension UITextField {
+        var isBordered : Bool { get { return borderStyle != .none } set { borderStyle = (newValue ? .line : .none) } }
     }
 
 

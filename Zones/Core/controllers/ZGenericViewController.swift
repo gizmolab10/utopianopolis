@@ -31,7 +31,6 @@ class ZGenericViewController: ZViewController {
 
 
     func updateFor(_ object: NSObject?) {}
-    func userEvent() {}
 
 
 #if os(OSX)
@@ -41,31 +40,11 @@ class ZGenericViewController: ZViewController {
         setup()
     }
 
-
-    override func mouseDown(with event: ZEvent) {
-        super.mouseDown(with:event)
-        userEvent()
-    }
-
 #elseif os(iOS)
 
     override func viewWillAppear(_ animated: Bool) {
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(ZoneDot.handleTap))
-        let gestures = Array(view.gestureRecognizers ?? [])
-
-        for recognizer in gestures {
-            view.removeGestureRecognizer(recognizer)
-        }
-
         super.viewWillAppear(animated)
-        view.addGestureRecognizer(gesture)
         setup()
-    }
-
-    func handleTap(_ sender: UITapGestureRecognizer) {
-        if sender.state == .ended {
-            userEvent()
-        }
     }
 
 #endif

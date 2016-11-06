@@ -20,6 +20,7 @@ class ZStateManager: NSObject {
 
 
     var         isReady:                                   Bool = false
+    var   textCapturing:                                   Bool = false
     var       toolState:                              ZToolMode = .edit
     var      operations: [ZSynchronizationState:BlockOperation] = [:]
     let           queue:                         OperationQueue = OperationQueue()

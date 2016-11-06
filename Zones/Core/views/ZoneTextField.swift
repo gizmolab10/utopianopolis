@@ -26,26 +26,18 @@ class ZoneTextField: ZTextField {
 
     var zoneWidgetDelegate: ZoneTextFieldDelegate?
 
-    
-    #if os(OSX)
 
-    var textAlignment : NSTextAlignment { get { return alignment } set { alignment = newValue } }
+    func setup() {
+        font            = widgetFont
+        isBordered      = false
+        textAlignment   = .center
+        backgroundColor = ZColor.clear
 
-
-    override func mouseDown(with event: ZEvent) {
-        super.mouseDown(with:event)
-
-        zoneWidgetDelegate!.selectForEditing()
+        setupGestures(target: self, action: #selector(ZoneTextField.gestureEvent))
     }
 
-    #elseif os(iOS)
 
-    var isBordered : Bool { get { return borderStyle != .none } set { borderStyle = (newValue ? .line : .none) } }
-
-
-    func mouseDown(with event: ZEvent) {
-        zoneWidgetDelegate!.selectForEditing()
+    func gestureEvent(_ sender: ZGestureRecognizer?) {
+        zoneWidgetDelegate?.selectForEditing()
     }
-
-    #endif
 }

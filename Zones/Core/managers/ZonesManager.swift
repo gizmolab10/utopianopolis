@@ -63,6 +63,18 @@ class ZonesManager: NSObject {
             let zone: Zone? = (newValue.count == 0) ? nil : newValue[0]
 
             _currentlyGrabbedZones = newValue;
+
+            updateToClosures(zone, regarding: .data)
+        }
+    }
+
+
+    func deselect() {
+        let               zone = currentlyMovableZone?.parentZone
+        _currentlyEditingZone  = nil
+        _currentlyGrabbedZones = []
+
+        if zone != nil {
             updateToClosures(zone, regarding: .data)
         }
     }
