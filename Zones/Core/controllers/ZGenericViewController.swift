@@ -22,15 +22,15 @@ class ZGenericViewController: ZViewController {
     func setup() {
         zonesManager.registerUpdateClosure { (object, kind) -> (Void) in
             if kind != .error {
-                self.update()
+                self.updateFor(object)
             }
         }
 
-        update()
+        updateFor(nil)
     }
 
 
-    func update() {}
+    func updateFor(_ object: NSObject?) {}
     func userEvent() {}
 
 

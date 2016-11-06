@@ -16,28 +16,40 @@ class ZEditorViewController: ZGenericViewController {
     var widget: ZoneWidget!
 
 
-    override func update() {
-        if widget != nil {
-            widget.removeFromSuperview()
+    override func updateFor(_ object: NSObject?) {
+        var specificWidget: ZoneWidget?
+        var specificView: ZView?
+
+        if object != nil && object != zonesManager.rootZone! {
+            specificWidget = zonesManager.widgetForZone(object as! Zone)
+            specificView   = specificWidget?.superview
+        } else {
+            if widget != nil {
+                widget.removeFromSuperview()
+            }
+
+            widget            = ZoneWidget()
+            widget.widgetZone = zonesManager.rootZone!
+            specificWidget    = widget
+            specificView      = view
+
+            zonesManager.clearWidgets()
         }
 
-        widget            = ZoneWidget()
-        widget.widgetZone = zonesManager.rootZone!
-
-        zonesManager.clearWidgets()
-        widget.layoutInView(view, atIndex: -1)
-        widget.updateConstraints()
-        widget.layoutFinish()
+        specificWidget?.layoutInView(specificView!, atIndex: -1)
+        specificWidget?.updateConstraints()
+        specificWidget?.layoutFinish()
 
         ZoneWidget.capturing = false
     }
 
 
     func deselect() {
-        zonesManager.currentlyEditingZone = nil
+        let                         object = zonesManager.currentlyMovableZone
+        zonesManager.currentlyEditingZone  = nil
         zonesManager.currentlyGrabbedZones = []
 
-        update()
+        updateFor(object)
     }
 
 

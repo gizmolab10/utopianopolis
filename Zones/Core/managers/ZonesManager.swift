@@ -42,18 +42,29 @@ class ZonesManager: NSObject {
 
 
     var currentlyEditingZone: Zone? {
-        get { return _currentlyEditingZone }
+        get {
+            return _currentlyEditingZone
+        }
+
         set {
             _currentlyEditingZone = newValue;
 
-            updateToClosures(nil, regarding: .data)
+            updateToClosures(newValue, regarding: .data)
         }
     }
 
 
     var currentlyGrabbedZones: [Zone] {
-        get { return _currentlyGrabbedZones }
-        set { _currentlyGrabbedZones = newValue; updateToClosures(nil, regarding: .data) }
+        get {
+            return _currentlyGrabbedZones
+        }
+
+        set {
+            let zone: Zone? = (newValue.count == 0) ? nil : newValue[0]
+
+            _currentlyGrabbedZones = newValue;
+            updateToClosures(zone, regarding: .data)
+        }
     }
 
 
@@ -125,6 +136,17 @@ class ZonesManager: NSObject {
         })
     }
 
+
+    func saveAndUpdateFor(_ zone: Zone?) {
+        persistenceManager.save()
+        cloudManager.flushOnCompletion {
+            self.updateToClosures(zone, regarding: .data)
+        }
+    }
+
+
+    func saveAndUpdate() { saveAndUpdateFor(nil) }
+
     
     // MARK:- editing, moving and revealing
     // MARK:-
@@ -136,14 +158,6 @@ class ZonesManager: NSObject {
 
             persistenceManager.save()
             updateToClosures(nil, regarding: .data)
-        }
-    }
-
-
-    func saveAndUpdate() {
-        persistenceManager.save()
-        cloudManager.flushOnCompletion {
-            self.updateToClosures(nil, regarding: .data)
         }
     }
 
@@ -178,7 +192,7 @@ class ZonesManager: NSObject {
             parentZone?.recordState  = .needsSave
             zone.parentZone          = parentZone
 
-            saveAndUpdate()
+            saveAndUpdateFor(parentZone)
         }
     }
 
@@ -210,7 +224,7 @@ class ZonesManager: NSObject {
             cloudManager.currentDB.delete(withRecordID: zone.record.recordID, completionHandler: { (deleted, error) in
                 zone.recordState = .needsSave
 
-                self.saveAndUpdate()
+                self.saveAndUpdateFor(parentZone)
             })
         }
     }
@@ -228,7 +242,7 @@ class ZonesManager: NSObject {
 
                         zone.recordState = .needsSave
 
-                        saveAndUpdate()
+                        saveAndUpdateFor(parentZone)
                     }
                 }
             }
@@ -248,11 +262,12 @@ class ZonesManager: NSObject {
                         parentZone.children.remove(at: index)
                         siblingZone.children.append(zone)
 
-                        siblingZone.recordState = .needsSave
-                        parentZone.recordState  = .needsSave
-                        zone.parentZone         = siblingZone
+                        siblingZone.showChildren = true
+                        siblingZone.recordState  = .needsSave
+                        parentZone.recordState   = .needsSave
+                        zone.parentZone          = siblingZone
 
-                        saveAndUpdate()
+                        saveAndUpdateFor(parentZone)
                     }
                 }
             }
@@ -273,7 +288,7 @@ class ZonesManager: NSObject {
                     grandParentZone.recordState = .needsSave
                     zone.parentZone             = grandParentZone
 
-                    saveAndUpdate()
+                    saveAndUpdateFor(grandParentZone)
                 }
             }
         }
