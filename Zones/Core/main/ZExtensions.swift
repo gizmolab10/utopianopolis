@@ -50,6 +50,7 @@ import Foundation
         func setupGestures(target: Any, action: Selector?) {
             let gestures = gestureRecognizers
             let  gesture = NSClickGestureRecognizer(target: target, action: action)
+            gesture.delaysPrimaryMouseButtonEvents = false
 
             for recognizer in gestures {
                 removeGestureRecognizer(recognizer)
@@ -135,9 +136,8 @@ import Foundation
 
         func setupGestures(target: Any, action: Selector?) {
             let gesture = UITapGestureRecognizer(target: target, action: action)
-            let gestures = gestureRecognizers
 
-            for recognizer in gestures {
+            for recognizer in gestureRecognizers {
                 removeGestureRecognizer(recognizer)
             }
             

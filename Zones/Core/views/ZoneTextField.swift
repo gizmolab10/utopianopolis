@@ -16,15 +16,10 @@ import Foundation
 #endif
 
 
-protocol ZoneTextFieldDelegate {
-    func selectForEditing()
-}
-
-
 class ZoneTextField: ZTextField {
 
 
-    var zoneWidgetDelegate: ZoneTextFieldDelegate?
+    var widgetZone: Zone!
 
 
     func setup() {
@@ -32,12 +27,5 @@ class ZoneTextField: ZTextField {
         isBordered      = false
         textAlignment   = .center
         backgroundColor = ZColor.clear
-
-        setupGestures(target: self, action: #selector(ZoneTextField.gestureEvent))
-    }
-
-
-    func gestureEvent(_ sender: ZGestureRecognizer?) {
-        zoneWidgetDelegate?.selectForEditing()
     }
 }

@@ -77,6 +77,8 @@ class ZonesManager: NSObject {
         if zone != nil {
             updateToClosures(zone, regarding: .data)
         }
+
+        widgetForZone(rootZone)?.stopEditingRecursively()
     }
 
 

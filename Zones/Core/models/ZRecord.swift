@@ -62,6 +62,11 @@ class ZRecord: NSObject {
     }
 
 
+    deinit {
+        teardownKVO()
+    }
+
+
     // MARK:- overrides
     // MARK:-
 
@@ -112,9 +117,16 @@ class ZRecord: NSObject {
     }
 
 
+    func teardownKVO() {
+        for keyPath: String in cloudProperties() {
+            removeObserver(self, forKeyPath: keyPath)
+        }
+    }
+
+
     func setupKVO() {
         for keyPath: String in cloudProperties() {
-            self.addObserver(self, forKeyPath: keyPath, options: [.new, .old], context: &kvoContext)
+            addObserver(self, forKeyPath: keyPath, options: [.new, .old], context: &kvoContext)
         }
     }
 
@@ -124,7 +136,7 @@ class ZRecord: NSObject {
             let observer = iObject as! NSObject
 
             if let value: NSObject = observer.value(forKey: keyPath!) as! NSObject? {
-                self.setValue(value, forPropertyName: keyPath!)
+                setValue(value, forPropertyName: keyPath!)
             }
         }
     }

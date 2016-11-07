@@ -16,7 +16,7 @@ import SnapKit
 #endif
 
 
-class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
+class ZoneWidget: ZView, ZTextFieldDelegate {
 
 
     private var        _textField: ZoneTextField!
@@ -37,9 +37,9 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     var textField: ZoneTextField {
         get {
             if _textField == nil {
-                _textField                    = ZoneTextField()
-                _textField.delegate           = self
-                _textField.zoneWidgetDelegate = self
+                _textField            = ZoneTextField()
+                _textField.widgetZone = widgetZone
+                _textField.delegate   = self
 
                 _textField.setup()
                 addSubview(_textField)
@@ -283,8 +283,12 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
     }
 
 
-    @objc func selectForEditing() {
-        zonesManager.currentlyEditingZone = widgetZone
+    func stopEditingRecursively() {
+        stopEditing()
+
+        for child in childrenWidgets {
+            child.stopEditingRecursively()
+        }
     }
 
 
@@ -326,7 +330,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
 //    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 //        updateLayout()
-//        selectForEditing()
+//        zonesManager.currentlyEditingZone = widgetZone
 //
 //        return true
 //    }
