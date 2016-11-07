@@ -199,7 +199,7 @@ class ZonesManager: NSObject {
             widgetForZone(parentZone!)?.stopEditing()
             parentZone?.children.append(zone)
 
-            currentlyEditingZone     = zone
+            _currentlyEditingZone    = zone
             parentZone?.showChildren = true
             parentZone?.recordState  = .needsSave
             zone.parentZone          = parentZone

@@ -112,6 +112,8 @@ class ZoneWidget: ZView, ZTextFieldDelegate, ZoneTextFieldDelegate {
 
     override func draw(_ dirtyRect: CGRect) {
         if dragHighlightView != nil {
+            dragHighlightView.zlayer.backgroundColor = stateManager.lightFillColor.cgColor
+
             dragHighlightView.addBorderRelative(thickness: 0.15, radius: 0.5, color: stateManager.lineColor.cgColor)
         }
 
