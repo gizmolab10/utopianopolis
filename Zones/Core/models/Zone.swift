@@ -27,6 +27,11 @@ class Zone : ZRecord {
     }
 
 
+    func siblingIndex() -> Int {
+        return (parentZone?.children.index(of: self))!
+    }
+
+
     func resolveParents() {
         for child: Zone in children {
             child.resolveParents()
@@ -44,8 +49,8 @@ class Zone : ZRecord {
         }
         get {
             if parent == nil && _parentZone?.record != nil {
-                recordState     = .needsSave
-                parent          = CKReference(record: (_parentZone?.record)!, action: .none)
+                recordState = .needsSave
+                parent      = CKReference(record: (_parentZone?.record)!, action: .none)
             }
 
             if parent != nil {
@@ -83,12 +88,7 @@ class Zone : ZRecord {
         }
     }
 
-
-    override func fetchChildren() {
-        cloudManager.fetchReferencesTo(self)
-    }
-
-
+    
     override func setStorageDictionary(_ dict: ZStorageDict) {
         if let string = dict[    zoneNameKey] as!   String? { zoneName     = string }
         if let number = dict[showChildrenKey] as! NSNumber? { showChildren = number.boolValue }

@@ -22,8 +22,9 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
 
 
     func applicationDidBecomeActive(_ notification: Notification) {
-        cloudManager.resetBadgeCounter()
+        cloudManager.setup()
         zapplication.registerForRemoteNotifications(matching: .badge)
+        stateManager.setupAndRun()
     }
 
 

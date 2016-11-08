@@ -13,15 +13,15 @@ import CloudKit
 
 class ZCloudManager {
     var   records: [CKRecordID : ZRecord]  = [:]
-    let container: CKContainer!
-    let currentDB: CKDatabase!
+    var container: CKContainer!
+    var currentDB: CKDatabase!
 
 
-    init() {
+    func setup() {
         container = CKContainer(identifier: cloudID)
         currentDB = container.publicCloudDatabase
 
-        stateManager.setupAndRun()
+        resetBadgeCounter()
     }
 
 
@@ -109,7 +109,7 @@ class ZCloudManager {
                 root?.saveToCloud()
             }
 
-            root?.fetchChildren()
+            self.fetchReferencesTo(root!)
             operation.finish()
         })
     }
@@ -119,31 +119,38 @@ class ZCloudManager {
         resetBadgeCounter()
         assureRecordExists(withRecordID: recordID, onCompletion: { (iRecord: CKRecord) -> (Void) in
             DispatchQueue.main.async {
-                if  let    generic = self.objectForRecordID(iRecord.recordID) as! Zone? {
-                    generic.record = iRecord
+                var zone: Zone? = self.objectForRecordID(iRecord.recordID) as! Zone?
 
-                    generic.fetchChildren()
+                if  zone != nil {
+                    zone?.record = iRecord
+                } else {
+                    zone = Zone(record: iRecord, database: self.currentDB)
 
-                    zonesManager.updateToClosures(generic.parentZone, regarding: .data)
+                    self.registerObject(zone!)
                 }
+
+                self.fetchReferencesTo(zone!)
+                zonesManager.updateToClosures(zone?.parentZone, regarding: .data)
             }
         })
     }
 
 
     func assureRecordExists(withRecordID recordID: CKRecordID, onCompletion: @escaping RecordClosure) {
-        currentDB.fetch(withRecordID: recordID) { (fetched: CKRecord?, fetchError: Error?) in
-            if (fetchError == nil) {
-                onCompletion(fetched!)
-            } else {
-                let created: CKRecord = CKRecord(recordType: zoneTypeKey, recordID: recordID)
+        if currentDB != nil {
+            currentDB.fetch(withRecordID: recordID) { (fetched: CKRecord?, fetchError: Error?) in
+                if (fetchError == nil) {
+                    onCompletion(fetched!)
+                } else {
+                    let created: CKRecord = CKRecord(recordType: zoneTypeKey, recordID: recordID)
 
-                self.currentDB.save(created, completionHandler: { (saved: CKRecord?, saveError: Error?) in
-                    if (saveError == nil) {
-                        onCompletion(saved!)
-                        persistenceManager.save()
-                    }
-                })
+                    self.currentDB.save(created, completionHandler: { (saved: CKRecord?, saveError: Error?) in
+                        if (saveError == nil) {
+                            onCompletion(saved!)
+                            persistenceManager.save()
+                        }
+                    })
+                }
             }
         }
     }

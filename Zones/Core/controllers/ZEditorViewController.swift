@@ -25,7 +25,7 @@ class ZEditorViewController: ZGenericViewController {
             let       zone = object as! Zone
             specificWidget = zonesManager.widgetForZone(zone)!
             specificView   = (specificWidget?.superview)!
-            specificindex  = (zone.parentZone?.children.index(of: zone))!
+            specificindex  = zone.siblingIndex()
 
             if let name = zone.zoneName {
                 print(name)

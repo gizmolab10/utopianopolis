@@ -93,9 +93,9 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
         }
 
         inView.zlayer.backgroundColor = ZColor.clear.cgColor
-        zlayer       .backgroundColor = ZColor.clear.cgColor
         isUserInteractionEnabled      = false
 
+        clear()
         zonesManager.registerWidget(self)
         layoutChildren()
         layoutLines()

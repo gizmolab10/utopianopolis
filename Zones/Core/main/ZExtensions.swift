@@ -47,6 +47,11 @@ import Foundation
         var isUserInteractionEnabled: Bool { get { return true } set {} }
 
 
+        func clear() {
+            zlayer.backgroundColor = ZColor.clear.cgColor
+        }
+
+
         func setupGestures(target: Any, action: Selector?) {
             let gestures = gestureRecognizers
             let  gesture = NSClickGestureRecognizer(target: target, action: action)
@@ -132,6 +137,11 @@ import Foundation
 
     extension UIView {
         var zlayer: CALayer { get { return layer } }
+
+
+        func clear() {
+            zlayer.isOpaque = false
+        }
 
 
         func setupGestures(target: Any, action: Selector?) {

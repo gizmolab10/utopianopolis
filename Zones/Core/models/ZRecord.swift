@@ -16,7 +16,7 @@ class ZRecord: NSObject {
 
     var recordState: RecordState = .needsFetch
     var  kvoContext: UInt8       = 1
-    var    database: CKDatabase!
+    var    database: CKDatabase?
     var     _record: CKRecord?
 
 
@@ -52,7 +52,7 @@ class ZRecord: NSObject {
     }
 
 
-    init(record: CKRecord?, database: CKDatabase) {
+    init(record: CKRecord?, database: CKDatabase?) {
         super.init()
 
         self.database = database
@@ -72,7 +72,6 @@ class ZRecord: NSObject {
 
 
     func saveToCloud() {}
-    func fetchChildren() {}
     func updateProperties() {}
     func cloudProperties() -> [String] { return [] }
 
