@@ -137,10 +137,12 @@ import Foundation
         func setupGestures(target: Any, action: Selector?) {
             let gesture = UITapGestureRecognizer(target: target, action: action)
 
-            for recognizer in gestureRecognizers {
-                removeGestureRecognizer(recognizer)
+            if let recognizers = gestureRecognizers {
+                for recognizer in recognizers {
+                    removeGestureRecognizer(recognizer)
+                }
             }
-            
+
             addGestureRecognizer(gesture)
         }
     }

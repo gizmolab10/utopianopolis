@@ -31,7 +31,7 @@ class ZStateManager: NSObject {
     let       dotLength:                                CGFloat = 12.0
 
 
-    var lightFillColor: ZColor { get { return ZColor(calibratedHue: lineColor.hueComponent, saturation: lineColor.saturationComponent, brightness: lineColor.brightnessComponent, alpha: 0.03) } }
+    var lightFillColor: ZColor { get { return lineColor.withAlphaComponent(0.03) } }
 
 
     func setupAndRun() {

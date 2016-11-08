@@ -23,9 +23,11 @@ class ZoneTextField: ZTextField {
 
 
     func setup() {
-        font            = widgetFont
-        isBordered      = false
-        textAlignment   = .center
-        backgroundColor = ZColor.clear
+        font                   = widgetFont
+        isBordered             = false
+        textAlignment          = .center
+        backgroundColor        = ZColor.clear
+        zlayer.backgroundColor = ZColor.clear.cgColor
+
     }
 }

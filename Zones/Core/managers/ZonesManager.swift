@@ -47,9 +47,11 @@ class ZonesManager: NSObject {
         }
 
         set {
-            _currentlyEditingZone = newValue;
+            if _currentlyEditingZone != newValue {
+                _currentlyEditingZone = newValue
 
-            updateToClosures(newValue, regarding: .data)
+                updateToClosures(newValue, regarding: .data)
+            }
         }
     }
 
@@ -141,13 +143,13 @@ class ZonesManager: NSObject {
 
 
     func updateToClosures(_ object: NSObject?, regarding: ZUpdateKind) {
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             //self.resetBadgeCounter()
 
             for closureObject: UpdateClosureObject in self.closures {
                 closureObject.closure(object, regarding)
             }
-        })
+        }
     }
 
 
@@ -168,10 +170,10 @@ class ZonesManager: NSObject {
 
     func toggleChildrenVisibility(_ ofZone: Zone?) {
         if ofZone != nil {
-            ofZone?.showChildren = !(ofZone?.showChildren)!
+            ofZone?.showChildren = (ofZone?.showChildren == false)
 
             persistenceManager.save()
-            updateToClosures(nil, regarding: .data)
+            updateToClosures(ofZone, regarding: .data)
         }
     }
 
@@ -204,6 +206,7 @@ class ZonesManager: NSObject {
             _currentlyEditingZone    = zone
             parentZone?.showChildren = true
             parentZone?.recordState  = .needsSave
+            zone.recordState         = .needsSave
             zone.parentZone          = parentZone
 
             saveAndUpdateFor(parentZone)

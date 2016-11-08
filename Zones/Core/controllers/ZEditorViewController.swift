@@ -46,6 +46,7 @@ class ZEditorViewController: ZGenericViewController {
         specificWidget?.layoutInView(specificView, atIndex: specificindex)
         specificWidget?.updateConstraints()
         specificWidget?.layoutFinish()
+        //specificWidget?.display()
 
         stateManager.textCapturing = false
     }

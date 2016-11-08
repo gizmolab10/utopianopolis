@@ -118,15 +118,15 @@ class ZCloudManager {
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
         assureRecordExists(withRecordID: recordID, onCompletion: { (iRecord: CKRecord) -> (Void) in
-            DispatchQueue.main.async(execute: {
-                if  let    generic = self.objectForRecordID(iRecord.recordID) {
+            DispatchQueue.main.async {
+                if  let    generic = self.objectForRecordID(iRecord.recordID) as! Zone? {
                     generic.record = iRecord
 
                     generic.fetchChildren()
 
-                    zonesManager.updateToClosures(nil, regarding: .data)
+                    zonesManager.updateToClosures(generic.parentZone, regarding: .data)
                 }
-            })
+            }
         })
     }
 

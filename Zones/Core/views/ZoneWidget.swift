@@ -63,7 +63,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
         get {
             if _childrenView == nil {
                 _childrenView                          = ZView()
-                _childrenView.isUserInteractionEnabled = false
+                _childrenView.isUserInteractionEnabled = false // does nothing in os x
 
                 addSubview(_childrenView)
 
@@ -92,12 +92,16 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
             }
         }
 
-        isUserInteractionEnabled = false
+        inView.zlayer.backgroundColor = ZColor.clear.cgColor
+        zlayer       .backgroundColor = ZColor.clear.cgColor
+        isUserInteractionEnabled      = false
+
         zonesManager.registerWidget(self)
         layoutChildren()
+        layoutLines()
         layoutText()
         layoutDots()
-        layoutLines()
+        layoutDragHighlight()
     }
 
 
@@ -111,29 +115,34 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
 
 
     override func draw(_ dirtyRect: CGRect) {
-        if dragHighlightView != nil {
-            dragHighlightView.zlayer.backgroundColor = stateManager.lightFillColor.cgColor
-
-            dragHighlightView.addBorderRelative(thickness: 0.15, radius: 0.5, color: stateManager.lineColor.cgColor)
-        }
-
         super.draw(dirtyRect)
+
+        DispatchQueue.main.async {
+            if self.dragHighlightView != nil {
+                self.dragHighlightView.zlayer.backgroundColor = stateManager.lightFillColor.cgColor
+
+                self.dragHighlightView.addBorderRelative(thickness: 0.15, radius: 0.5, color: stateManager.lineColor.cgColor)
+            }
+        }
     }
-    
+
 
     func layoutDecorations() {
         // self        .addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.green.cgColor)
         // childrenView.addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.orange.cgColor)
         // textField.addBorder(thickness: 5.0, radius: 0.5, color: CGColor.black)
+    }
 
-        if zonesManager.isGrabbed(zone: widgetZone) {
+
+    func layoutDragHighlight() {
+        if  dragHighlightView == nil && zonesManager.isGrabbed(zone: widgetZone) {
             dragHighlightView                          = ZView()
             dragHighlightView.isUserInteractionEnabled = false
 
             addSubview(dragHighlightView)
             dragHighlightView.snp.makeConstraints({ (make) in
-                make.height.top.bottom.right.equalTo(self)
-                make.width.equalTo(self).offset(-8.0)
+                make.top.bottom.equalTo(self)
+                make.right.equalTo(self).offset(-8.0)
                 make.left.equalTo(self).offset(8.0)
             })
         }
@@ -163,23 +172,25 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
             make.height.lessThanOrEqualTo(self).offset(-stateManager.genericOffset.height)
 
             if hasChildren {
-                make.right.equalTo(childrenView.snp.left)
+                make.right.equalTo(childrenView.snp.left).offset(-20.0)
             }
         }
     }
 
 
     func layoutChildren() {
-        var                 index = widgetZone.children.count
         var previous: ZoneWidget? = nil
+        var                 index = widgetZone.children.count
 
-        for view in childrenView.subviews {
-            view.removeFromSuperview()
+        if _childrenView != nil {
+            for view in _childrenView.subviews {
+                view.removeFromSuperview()
+            }
+
+            _childrenView.removeFromSuperview()
+
+            _childrenView = nil
         }
-
-        childrenView.removeFromSuperview()
-
-        _childrenView = nil
 
         childrenWidgets.removeAll()
 
@@ -205,7 +216,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
                         make.top.equalTo(childrenView)
                     }
 
-                    make.left.equalTo(childrenView).offset(20.0)
+                    make.left.equalTo(childrenView)//.offset(20.0)
                     make.right.height.lessThanOrEqualTo(childrenView)
                 })
 
@@ -218,6 +229,12 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
 
 
     func layoutLines() {
+        for line in siblingLines {
+            line.removeFromSuperview()
+        }
+
+        siblingLines.removeAll()
+
         if widgetZone.showChildren {
             var index = widgetZone.children.count
             var siblingLine: ZoneCurve?
@@ -230,10 +247,11 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
                 siblingLine?.parent = self
 
                 siblingLines.append(siblingLine!)
-                childrenView.addSubview(siblingLine!)
+                addSubview(siblingLine!)
                 siblingLine?.snp.makeConstraints({ (make) in
                     make.width.height.equalTo(stateManager.lineThicknes)
-                    make.center.equalTo(toggleDot)
+                    make.centerX.equalTo(textField.snp.right).offset(6.0)
+                    make.centerY.equalTo(textField)
                 })
             }
         }
@@ -264,7 +282,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
             dragDot.setupForZone(widgetZone, asToggle: false)
             dragDot.innerDot?.snp.makeConstraints({ (make) in
                 make.right.equalTo(textField.snp.left)
-                make.centerY.equalTo(textField)
+                make.centerY.equalTo(textField).offset(1.0)
             })
         }
     }
@@ -275,13 +293,17 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
 
 
     func captureText() {
-        if  stateManager.textCapturing       == false {
-            stateManager.textCapturing        = true
-            widgetZone.zoneName               = textField.text!
-            zonesManager.currentlyEditingZone = nil
+        if  stateManager.textCapturing    == false {
+            if widgetZone.zoneName        != textField.text! {
+                stateManager.textCapturing = true
+                widgetZone.zoneName        = textField.text!
+            }
+        }
+
+        DispatchQueue.main.async {
+            self.stopEditing()
         }
     }
-
 
     func stopEditingRecursively() {
         stopEditing()

@@ -14,9 +14,9 @@ extension NSObject {
 
 
     func dispatchAsyncInForeground(_ closure: @escaping Closure) {
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             closure();
-        })
+        }
     }
 
 
