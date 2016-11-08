@@ -28,7 +28,13 @@ class Zone : ZRecord {
 
 
     func siblingIndex() -> Int {
-        return (parentZone?.children.index(of: self))!
+        if let progeny: [Zone] = parentZone?.children {
+            if let index = progeny.index(of: self) {
+                return index
+            }
+        }
+
+        return -1
     }
 
 

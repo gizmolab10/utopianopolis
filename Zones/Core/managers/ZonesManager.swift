@@ -154,10 +154,9 @@ class ZonesManager: NSObject {
 
 
     func saveAndUpdateFor(_ zone: Zone?) {
+        updateToClosures(zone, regarding: .data)
         persistenceManager.save()
-        cloudManager.flushOnCompletion {
-            self.updateToClosures(zone, regarding: .data)
-        }
+        cloudManager.flushOnCompletion {}
     }
 
 
@@ -168,12 +167,26 @@ class ZonesManager: NSObject {
     // MARK:-
 
 
+    func deselectDragWithin(_ zone: Zone) {
+        for child in zone.children {
+            if currentlyGrabbedZones.contains(child) {
+                if let index = currentlyGrabbedZones.index(of: child) {
+                    currentlyGrabbedZones.remove(at: index)
+                }
+            }
+
+            deselectDragWithin(child)
+        }
+    }
+
+
     func toggleChildrenVisibility(_ ofZone: Zone?) {
         if ofZone != nil {
             ofZone?.showChildren = (ofZone?.showChildren == false)
 
-            persistenceManager.save()
+            deselectDragWithin(ofZone!)
             updateToClosures(nil, regarding: .data)
+            persistenceManager.save()
         }
     }
 

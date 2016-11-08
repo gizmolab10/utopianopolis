@@ -30,16 +30,16 @@ class ZEditingToolsViewController: ZGenericViewController {
         let         zone = zonesManager.currentlyMovableZone
         let hasSelection = zone != nil
         let   parentZone = zone?.parentZone
-        let     children = parentZone?.children
+        let     siblings = parentZone?.children
         let    hasParent = parentZone != nil
-        let  hasSiblings = hasParent && (children?.count)! > 1
-        let     atBottom = (children?.last  == zone)
-        let        atTop = (children?.first == zone)
+        let  hasSiblings = hasParent && (siblings?.count)! > 1
+        let     atBottom = (siblings?.last  == zone)
+        let        atTop = (siblings?.first == zone)
 
         deleteZoneButton          .isHidden = !hasSelection || !zonesManager.canDelete
         moveDownButton            .isHidden = !hasSelection || !hasSiblings || atBottom
         moveUpButton              .isHidden = !hasSelection || !hasSiblings || atTop
         moveIntoSiblingAboveButton.isHidden = !hasSelection || !hasSiblings || atTop
-        moveToParentButton        .isHidden = !hasSelection || !hasParent
+        moveToParentButton        .isHidden = !hasSelection || !hasParent   || parentZone?.parentZone == nil
     }
 }

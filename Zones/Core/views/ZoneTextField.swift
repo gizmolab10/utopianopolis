@@ -28,6 +28,5 @@ class ZoneTextField: ZTextField {
         textAlignment          = .center
         backgroundColor        = ZColor.clear
         zlayer.backgroundColor = ZColor.clear.cgColor
-
     }
 }

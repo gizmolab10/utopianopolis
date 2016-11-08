@@ -63,31 +63,33 @@ class ZCloudManager {
 
 
     func fetchReferencesTo(_ parent: Zone) {
-        let reference: CKReference = CKReference(recordID: parent.record.recordID, action: .none)
-        let predicate: NSPredicate = NSPredicate(format: "parent == %@", reference)
-        let     query:     CKQuery = CKQuery(recordType: zoneTypeKey, predicate: predicate)
+        if let parentRecord = parent.record {
+            let reference: CKReference = CKReference(recordID: parentRecord.recordID, action: .none)
+            let predicate: NSPredicate = NSPredicate(format: "parent == %@", reference)
+            let     query:     CKQuery = CKQuery(recordType: zoneTypeKey, predicate: predicate)
 
-        currentDB.perform(query, inZoneWith: nil) { (records, error) in
-            if error != nil {
-                print(error)
-            }
-
-            if records != nil && (records?.count)! > 0 {
-                for record: CKRecord in records! {
-                    var zone: Zone? = self.objectForRecordID(record.recordID) as! Zone?
-
-                    if zone == nil {
-                        zone = Zone(record: record, database: self.currentDB)
-
-                        self.registerObject(zone!)
-                        parent.children.append(zone!)
-                        self.fetchReferencesTo(zone!)
-                    }
-
-                    zone?.parentZone = parent
+            currentDB.perform(query, inZoneWith: nil) { (records, error) in
+                if error != nil {
+                    print(error)
                 }
 
-                zonesManager.updateToClosures(nil, regarding: .data)
+                if records != nil && (records?.count)! > 0 {
+                    for record: CKRecord in records! {
+                        var zone: Zone? = self.objectForRecordID(record.recordID) as! Zone?
+
+                        if zone == nil {
+                            zone = Zone(record: record, database: self.currentDB)
+
+                            self.registerObject(zone!)
+                            parent.children.append(zone!)
+                            self.fetchReferencesTo(zone!)
+                        }
+
+                        zone?.parentZone = parent
+                    }
+                    
+                    zonesManager.updateToClosures(nil, regarding: .data)
+                }
             }
         }
     }
@@ -132,7 +134,7 @@ class ZCloudManager {
                 self.fetchReferencesTo(zone!)
                 zonesManager.updateToClosures(zone?.parentZone, regarding: .data)
             }
-        })
+        } as! RecordClosure)
     }
 
 
@@ -145,7 +147,9 @@ class ZCloudManager {
                     let created: CKRecord = CKRecord(recordType: zoneTypeKey, recordID: recordID)
 
                     self.currentDB.save(created, completionHandler: { (saved: CKRecord?, saveError: Error?) in
-                        if (saveError == nil) {
+                        if (saveError != nil) {
+                            onCompletion(nil)
+                        } else {
                             onCompletion(saved!)
                             persistenceManager.save()
                         }

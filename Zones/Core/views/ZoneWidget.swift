@@ -298,10 +298,8 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
                 stateManager.textCapturing = true
                 widgetZone.zoneName        = textField.text!
             }
-        }
-
-        DispatchQueue.main.async {
-            self.stopEditing()
+//
+//            zonesManager.deselect()
         }
     }
 

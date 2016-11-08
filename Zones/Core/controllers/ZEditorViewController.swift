@@ -19,7 +19,7 @@ class ZEditorViewController: ZGenericViewController {
     override func updateFor(_ object: NSObject?) {
         var specificWidget: ZoneWidget?
         var specificView:        ZView? = view
-        var specificindex               = -1
+        var specificindex:          Int = -1
 
         if object != nil && object != zonesManager.rootZone! {
             let       zone = object as! Zone
