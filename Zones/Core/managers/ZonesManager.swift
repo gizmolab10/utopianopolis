@@ -173,7 +173,7 @@ class ZonesManager: NSObject {
             ofZone?.showChildren = (ofZone?.showChildren == false)
 
             persistenceManager.save()
-            updateToClosures(ofZone, regarding: .data)
+            updateToClosures(nil, regarding: .data)
         }
     }
 

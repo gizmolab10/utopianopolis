@@ -18,13 +18,13 @@ class ZEditorViewController: ZGenericViewController {
 
     override func updateFor(_ object: NSObject?) {
         var specificWidget: ZoneWidget?
-        var specificView: ZView = view
-        var specificindex       = -1
+        var specificView:        ZView? = view
+        var specificindex               = -1
 
         if object != nil && object != zonesManager.rootZone! {
             let       zone = object as! Zone
-            specificWidget = zonesManager.widgetForZone(zone)!
-            specificView   = (specificWidget?.superview)!
+            specificWidget = zonesManager.widgetForZone(zone)
+            specificView   = specificWidget?.superview
             specificindex  = zone.siblingIndex()
 
             if let name = zone.zoneName {
@@ -46,7 +46,7 @@ class ZEditorViewController: ZGenericViewController {
         specificWidget?.layoutInView(specificView, atIndex: specificindex)
         specificWidget?.updateConstraints()
         specificWidget?.layoutFinish()
-        //specificWidget?.display()
+        specificWidget?.display()
 
         stateManager.textCapturing = false
     }

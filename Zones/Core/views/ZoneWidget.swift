@@ -81,18 +81,18 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
     // MARK:-
 
 
-    func layoutInView(_ inView: ZView, atIndex: Int) {
-        if !inView.subviews.contains(self) {
-            inView.addSubview(self)
+    func layoutInView(_ inView: ZView?, atIndex: Int) {
+        if inView != nil && !(inView?.subviews.contains(self))! {
+            inView?.addSubview(self)
 
             if atIndex == -1 {
                 snp.remakeConstraints { (make) -> Void in
-                    make.center.equalTo(inView)
+                    make.center.equalTo(inView!)
                 }
             }
         }
 
-        inView.zlayer.backgroundColor = ZColor.clear.cgColor
+        inView?.zlayer.backgroundColor = ZColor.clear.cgColor
         isUserInteractionEnabled      = false
 
         clear()
