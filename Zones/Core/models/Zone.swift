@@ -88,8 +88,10 @@ class Zone : ZRecord {
 
     override func updateProperties() {
         if record != nil {
-            if let name = record[zoneNameKey] {
-                zoneName = name as? String
+            if let name = record[zoneNameKey] as? String {
+                if name != zoneName {
+                    zoneName = name
+                }
             }
         }
     }

@@ -49,8 +49,6 @@ class ZonesManager: NSObject {
         set {
             if _currentlyEditingZone != newValue {
                 _currentlyEditingZone = newValue
-
-                updateToClosures(newValue, regarding: .data)
             }
         }
     }
@@ -76,11 +74,11 @@ class ZonesManager: NSObject {
         _currentlyEditingZone  = nil
         _currentlyGrabbedZones = []
 
+        widgetForZone(rootZone)?.stopEditingRecursively()
+
         if zone != nil {
             updateToClosures(zone, regarding: .data)
         }
-
-        widgetForZone(rootZone)?.stopEditingRecursively()
     }
 
 
@@ -142,25 +140,34 @@ class ZonesManager: NSObject {
     }
 
 
-    func updateToClosures(_ object: NSObject?, regarding: ZUpdateKind) {
+    func updateToClosures(_ object: NSObject?, regarding: ZUpdateKind, onCompletion: Closure?) {
         DispatchQueue.main.async {
-            //self.resetBadgeCounter()
-
             for closureObject: UpdateClosureObject in self.closures {
                 closureObject.closure(object, regarding)
+            }
+
+            if onCompletion != nil {
+                onCompletion!()
             }
         }
     }
 
 
-    func saveAndUpdateFor(_ zone: Zone?) {
-        updateToClosures(zone, regarding: .data)
+    func updateToClosures(_ object: NSObject?, regarding: ZUpdateKind) {
+        updateToClosures(object, regarding: regarding, onCompletion: nil)
+    }
+
+
+    func saveAndUpdateFor(_ zone: Zone?, onCompletion: Closure?) {
+        updateToClosures(zone, regarding: .data, onCompletion: onCompletion)
         persistenceManager.save()
         cloudManager.flushOnCompletion {}
     }
 
 
-    func saveAndUpdate() { saveAndUpdateFor(nil) }
+    func saveAndUpdateFor(_ zone: Zone?) {
+        saveAndUpdateFor(zone, onCompletion: nil)
+    }
 
     
     // MARK:- editing, moving and revealing
@@ -222,7 +229,12 @@ class ZonesManager: NSObject {
             zone.recordState         = .needsSave
             zone.parentZone          = parentZone
 
-            saveAndUpdateFor(parentZone)
+            saveAndUpdateFor(parentZone, onCompletion: { () -> (Void) in
+                let when = DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    self.widgetForZone(zone)?.textField.becomeFirstResponder()
+                }
+            })
         }
     }
 
@@ -230,32 +242,31 @@ class ZonesManager: NSObject {
     func delete() {
         if let zone: Zone = currentlyEditingZone {
             deleteZone(zone)
+
+            currentlyEditingZone = nil
         } else {
             deleteZones(currentlyGrabbedZones)
+
+            _currentlyGrabbedZones = []
         }
+
+        saveAndUpdateFor(nil)
     }
 
 
-    func deleteZones(_ zones: [Zone]) {
+    private func deleteZones(_ zones: [Zone]) {
         for zone in zones {
             deleteZone(zone)
         }
     }
 
 
-    func deleteZone(_ zone: Zone) {
+    private func deleteZone(_ zone: Zone) {
         if let        parentZone = zone.parentZone {
             let            index = parentZone.children.index(of: zone)
-            currentlyEditingZone = nil
+            zone.recordState     = .needsDelete
 
             parentZone.children.remove(at: index!)
-            persistenceManager.save()
-
-            cloudManager.currentDB.delete(withRecordID: zone.record.recordID, completionHandler: { (deleted, error) in
-                zone.recordState = .needsSave
-
-                self.saveAndUpdateFor(parentZone)
-            })
         }
     }
 

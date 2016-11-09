@@ -153,10 +153,6 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
         textField.text = widgetZone.zoneName ?? "empty"
 
         layoutTextField()
-
-        if zonesManager.currentlyEditingZone == widgetZone {
-            textField.becomeFirstResponder()
-        }
     }
 
 
@@ -259,7 +255,11 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
 
 
     func layoutDots() {
-        if widgetZone.children.count != 0 {
+        if widgetZone.children.count == 0 {
+            if subviews.contains(toggleDot) {
+                toggleDot.removeFromSuperview()
+            }
+        } else {
             if !subviews.contains(toggleDot) {
                 addSubview(toggleDot)
             }
@@ -298,8 +298,6 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
                 stateManager.textCapturing = true
                 widgetZone.zoneName        = textField.text!
             }
-//
-//            zonesManager.deselect()
         }
     }
 
@@ -321,12 +319,10 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
     }
 
 
-    @discardableResult func stopEditing() -> Bool {
-        if let editor = textField.currentEditor() {
-            return control(textField, textShouldEndEditing: editor)
+    func stopEditing() {
+        if textField.currentEditor() != nil {
+            textField.resignFirstResponder()
         }
-
-        return true
     }
 
 
@@ -343,8 +339,8 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
     }
 
 
-    @discardableResult func stopEditing() -> Bool {
-        return textFieldShouldEndEditing(textField)
+    func stopEditing() {
+        textField.resignFirstResponder()
     }
 
 

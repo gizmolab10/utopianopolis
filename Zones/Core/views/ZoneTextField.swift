@@ -29,4 +29,11 @@ class ZoneTextField: ZTextField {
         backgroundColor        = ZColor.clear
         zlayer.backgroundColor = ZColor.clear.cgColor
     }
+
+
+    @discardableResult override func becomeFirstResponder() -> Bool {
+        zonesManager.currentlyEditingZone = widgetZone
+
+        return super.becomeFirstResponder()
+    }
 }

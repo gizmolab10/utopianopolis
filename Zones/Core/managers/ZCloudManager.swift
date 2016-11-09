@@ -30,21 +30,25 @@ class ZCloudManager {
 
 
     func flushOnCompletion(_ block: (() -> Swift.Void)?) {
-        var recordsToSave: [CKRecord] = []
-        let                 operation = CKModifyRecordsOperation()
-        operation.container           = container
-        operation.qualityOfService    = .background
+        var recordsToDelete: [CKRecordID] = []
+        var recordsToSave:     [CKRecord] = []
+        let                     operation = CKModifyRecordsOperation()
+        operation.container               = container
+        operation.qualityOfService        = .background
 
         zonesManager.rootZone.resolveParents()
 
         for record: ZRecord in records.values {
-            if record.recordState == .needsSave {
-                recordsToSave.append(record.record)
+            switch record.recordState {
+            case .needsSave:   recordsToSave  .append(record.record);          break
+            case .needsDelete: recordsToDelete.append(record.record.recordID); break
+            default:                                                           break
             }
         }
 
-        operation.recordsToSave   = recordsToSave
-        operation.completionBlock = block
+        operation.recordsToSave     = recordsToSave
+        operation.recordIDsToDelete = recordsToDelete
+        operation.completionBlock   = block
 
         operation.start()
     }

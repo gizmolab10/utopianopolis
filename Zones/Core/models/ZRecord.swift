@@ -14,8 +14,8 @@ import CloudKit
 class ZRecord: NSObject {
     
 
-    var recordState: RecordState = .needsFetch
-    var  kvoContext: UInt8       = 1
+    var recordState: ZRecordState = .needsFetch
+    var  kvoContext: UInt8        = 1
     var    database: CKDatabase?
     var     _record: CKRecord?
 

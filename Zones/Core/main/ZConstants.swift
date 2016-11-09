@@ -55,7 +55,8 @@ enum ZUpdateKind: UInt {
 }
 
 
-enum RecordState: Int {
+enum ZRecordState: Int {
+    case needsDelete
     case needsFetch
     case needsSave
     case ready
