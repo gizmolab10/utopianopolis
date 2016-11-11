@@ -50,6 +50,7 @@ enum ZSynchronizationState: Int {
 
 enum ZUpdateKind: UInt {
     case data
+    case datum
     case error
     case delete
 }

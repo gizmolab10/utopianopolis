@@ -32,7 +32,7 @@ class ZoneTextField: ZTextField {
 
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-        zonesManager.currentlyEditingZone = widgetZone
+        zonesManager.currentlyEditingZone  = widgetZone
 
         return super.becomeFirstResponder()
     }

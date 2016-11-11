@@ -52,15 +52,11 @@ import Foundation
         }
 
 
-        func setupGestures(target: Any, action: Selector?) {
-            let gestures = gestureRecognizers
-            let  gesture = NSClickGestureRecognizer(target: target, action: action)
+        func setupGestures(_ target: Any, action: Selector?) {
+            let                            gesture = NSClickGestureRecognizer(target: target, action: action)
             gesture.delaysPrimaryMouseButtonEvents = false
 
-            for recognizer in gestures {
-                removeGestureRecognizer(recognizer)
-            }
-            
+            clearGestures()
             addGestureRecognizer(gesture)
         }
     }
@@ -121,9 +117,8 @@ import Foundation
 
 
     extension ZApplication {
-        func presentError(_ error: NSError) -> Void {
 
-        }
+        func presentError(_ error: NSError) {}
 
         
         func clearBadge() {
@@ -139,20 +134,18 @@ import Foundation
         var zlayer: CALayer { get { return layer } }
 
 
-        func clear() {
-            zlayer.isOpaque = false
-        }
+        func display() {}
 
 
-        func setupGestures(target: Any, action: Selector?) {
+        func clear() { zlayer.isOpaque = false }
+
+
+        func setupGestures(_ target: Any, action: Selector?) {
             let gesture = UITapGestureRecognizer(target: target, action: action)
 
-            if let recognizers = gestureRecognizers {
-                for recognizer in recognizers {
-                    removeGestureRecognizer(recognizer)
-                }
+            if gestureRecognizers != nil {
+                clearGestures()
             }
-
             addGestureRecognizer(gesture)
         }
     }
@@ -216,6 +209,13 @@ extension String {
 
 
 extension ZView {
+
+    func clearGestures() {
+        for recognizer in gestureRecognizers {
+            removeGestureRecognizer(recognizer)
+        }
+    }
+
 
     func addBorder(thickness: CGFloat, radius: CGFloat, color: CGColor) {
         zlayer.cornerRadius = radius

@@ -81,7 +81,7 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
     // MARK:-
 
 
-    func layoutInView(_ inView: ZView?, atIndex: Int) {
+    func layoutInView(_ inView: ZView?, atIndex: Int, recursing: Bool) {
         if inView != nil && !(inView?.subviews.contains(self))! {
             inView?.addSubview(self)
 
@@ -97,8 +97,13 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
 
         clear()
         zonesManager.registerWidget(self)
-        layoutChildren()
-        layoutLines()
+        addDragHighlight()
+
+        if recursing {
+            layoutChildren()
+            layoutLines()
+        }
+
         layoutText()
         layoutDots()
         layoutDragHighlight()
@@ -134,12 +139,21 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
     }
 
 
-    func layoutDragHighlight() {
-        if  dragHighlightView == nil && zonesManager.isGrabbed(zone: widgetZone) {
+    func addDragHighlight() {
+        if  dragHighlightView       != nil && !zonesManager.isGrabbed(zone: widgetZone) {
+            dragHighlightView.removeFromSuperview()
+            dragHighlightView = nil
+        } else if dragHighlightView == nil &&  zonesManager.isGrabbed(zone: widgetZone) {
             dragHighlightView                          = ZView()
             dragHighlightView.isUserInteractionEnabled = false
 
             addSubview(dragHighlightView)
+        }
+    }
+
+
+    func layoutDragHighlight() {
+        if  dragHighlightView != nil {
             dragHighlightView.snp.makeConstraints({ (make) in
                 make.top.bottom.equalTo(self)
                 make.right.equalTo(self).offset(-8.0)
@@ -200,7 +214,9 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone = widgetZone.children[index]
 
-                childWidget.layoutInView(childrenView, atIndex: index)
+                childWidget.layoutInView(childrenView, atIndex: index, recursing: true)
+
+                childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints({ (make) in
                     if previous != nil {
                         make.bottom.equalTo((previous?.snp.top)!)

@@ -16,10 +16,11 @@ class ZEditorViewController: ZGenericViewController {
     var widget: ZoneWidget!
 
 
-    override func updateFor(_ object: NSObject?) {
+    override func updateFor(_ object: NSObject?, kind: ZUpdateKind) {
         var specificWidget: ZoneWidget?
         var specificView:        ZView? = view
         var specificindex:          Int = -1
+        var recursing:             Bool = kind == .data
 
         if object != nil && object != zonesManager.rootZone! {
             let       zone = object as! Zone
@@ -38,12 +39,13 @@ class ZEditorViewController: ZGenericViewController {
             widget            = ZoneWidget()
             widget.widgetZone = zonesManager.rootZone!
             specificWidget    = widget
+            recursing         = true
 
             print("root")
             zonesManager.clearWidgets()
         }
 
-        specificWidget?.layoutInView(specificView, atIndex: specificindex)
+        specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing)
         specificWidget?.updateConstraints()
         specificWidget?.layoutFinish()
         specificWidget?.display()
@@ -53,12 +55,12 @@ class ZEditorViewController: ZGenericViewController {
 
 
     override func setup() {
-        view.setupGestures(target: self, action: #selector(ZEditorViewController.gestureEvent))
+        view.setupGestures(self, action: #selector(ZEditorViewController.gestureEvent))
         super.setup()
     }
 
     
-    func gestureEvent(_ sender: ZGestureRecognizer) {
+    func gestureEvent(_ sender: ZGestureRecognizer?) {
         zonesManager.deselect()
     }
 }

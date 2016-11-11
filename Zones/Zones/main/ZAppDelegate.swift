@@ -17,14 +17,21 @@ import CloudKit
 class ZAppDelegate: NSResponder, ZApplicationDelegate {
 
 
+    var needsSetup = true
+
+
     func applicationDidFinishLaunching(aNotification: NSNotification) {
     }
 
 
     func applicationDidBecomeActive(_ notification: Notification) {
-        cloudManager.setup()
-        zapplication.registerForRemoteNotifications(matching: .badge)
-        stateManager.setupAndRun()
+        if needsSetup {
+            cloudManager.setup()
+            zapplication.registerForRemoteNotifications(matching: .badge)
+            stateManager.setupAndRun()
+
+            needsSetup = false
+        }
     }
 
 

@@ -30,7 +30,7 @@ class ZLocalPersistenceManager: NSObject {
     func save() {
         if !isSaving && stateManager.isReady {
             isSaving               = true
-            currentZoneFileName    = zonesManager.rootZone.record.recordID.recordName
+            currentZoneFileName    = "public"
             let dict: NSDictionary = zonesManager.rootZone.storageDict as NSDictionary
             let  url:          URL = pathToCurrentZoneFile()
 
@@ -61,7 +61,7 @@ class ZLocalPersistenceManager: NSObject {
             var name: String? = UserDefaults.standard.value(forKey:key) as? String
 
             if name == nil {
-                name = "root"
+                name = "public"
 
                 UserDefaults.standard.set(name, forKey:key)
             }

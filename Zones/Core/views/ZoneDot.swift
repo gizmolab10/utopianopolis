@@ -36,7 +36,7 @@ class ZoneDot: ZView {
                 innerDot?.isOuterDot = false
             }
 
-            setupGestures(target: self, action: #selector(ZoneDot.gestureEvent))
+            setupGestures(self, action: #selector(ZoneDot.gestureEvent))
             self.addSubview(innerDot!)
             innerDot?.setupForZone(widgetZone, asToggle: asToggle)
             // addBorder(thickness: stateManager.lineThicknes, radius: userTouchLength / 2.0, color: ZColor.red.cgColor)
@@ -70,6 +70,7 @@ class ZoneDot: ZView {
             } else {
                 zonesManager.deselect()
                 zonesManager.currentlyGrabbedZones = [zone]
+                zonesManager.updateToClosures(zone, regarding: .datum)
             }
         }
     }

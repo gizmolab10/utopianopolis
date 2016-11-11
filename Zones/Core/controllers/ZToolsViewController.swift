@@ -30,11 +30,11 @@ class ZToolsViewController: ZGenericViewController {
         case .settings: frontContainerView = settingsContainerView; break
         }
 
-        updateFor(nil)
+        updateFor(nil, kind: .data)
     }
 
 
-    override func updateFor(_ object: NSObject?) {
+    override func updateFor(_ object: NSObject?, kind: ZUpdateKind) {
         toolsChoiceControl.selectedSegmentIndex = stateManager.toolState.rawValue
 
         if frontContainerView != nil {

@@ -47,37 +47,37 @@ class ZonesManager: NSObject {
         }
 
         set {
-            if _currentlyEditingZone != newValue {
-                _currentlyEditingZone = newValue
+            if  _currentlyEditingZone != newValue {
+                _currentlyEditingZone  = newValue
+
+                for zone in currentlyGrabbedZones {
+                    if zone != _currentlyEditingZone {
+                        updateToClosures(zone, regarding: .datum)
+                    }
+                }
+
+                currentlyGrabbedZones = []
+
             }
         }
     }
 
 
     var currentlyGrabbedZones: [Zone] {
-        get {
-            return _currentlyGrabbedZones
-        }
-
-        set {
-            let zone: Zone? = (newValue.count == 0) ? nil : newValue[0]
-
-            _currentlyGrabbedZones = newValue;
-
-            updateToClosures(zone, regarding: .data)
-        }
+        get { return _currentlyGrabbedZones }
+        set { _currentlyGrabbedZones = newValue; }
     }
 
 
     func deselect() {
-        let               zone = currentlyMovableZone?.parentZone
+        let               zone = currentlyMovableZone
         _currentlyEditingZone  = nil
         _currentlyGrabbedZones = []
 
         widgetForZone(rootZone)?.stopEditingRecursively()
 
         if zone != nil {
-            updateToClosures(zone, regarding: .data)
+            updateToClosures(zone, regarding: .datum)
         }
     }
 
