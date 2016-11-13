@@ -14,9 +14,9 @@ import CloudKit
 class ZRecord: NSObject {
     
 
+    var storageMode: ZStorageMode?
     var recordState: ZRecordState = .needsFetch
     var  kvoContext: UInt8        = 1
-    var    database: CKDatabase?
     var     _record: CKRecord?
 
 
@@ -52,11 +52,11 @@ class ZRecord: NSObject {
     }
 
 
-    init(record: CKRecord?, database: CKDatabase?) {
+    init(record: CKRecord?, storageMode: ZStorageMode?) {
         super.init()
 
-        self.database = database
-        self.record   = record
+        self.storageMode = storageMode
+        self.record      = record
 
         self.setupKVO();
     }
@@ -82,9 +82,10 @@ class ZRecord: NSObject {
 
         for (key, value) in dict {
             switch key {
-            case recordTypeKey: type = value as? String; break
-            case recordNameKey: name = value as? String; break
-            default:                                    break
+            case recordTypeKey:                                type = value as? String; break
+            case recordNameKey:                                name = value as? String; break
+            case storageModeKey: storageMode = ZStorageMode(rawValue: value as!   Int); break
+            default:                                                                    break
             }
         }
 
@@ -97,8 +98,9 @@ class ZRecord: NSObject {
 
 
     func storageDictionary() -> ZStorageDict? {
-        return [recordNameKey : record.recordID.recordName as NSObject,
-                recordTypeKey : record.recordType          as NSObject]
+        return [recordNameKey : record.recordID.recordName    as NSObject,
+                recordTypeKey : record.recordType             as NSObject,
+                storageModeKey: Int((storageMode?.rawValue)!) as NSObject]
     }
 
 

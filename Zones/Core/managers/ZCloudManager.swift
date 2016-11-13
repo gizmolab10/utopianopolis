@@ -12,14 +12,24 @@ import CloudKit
 
 
 class ZCloudManager {
-    var   records: [CKRecordID : ZRecord]  = [:]
-    var container: CKContainer!
-    var currentDB: CKDatabase!
+    var     records: [CKRecordID : ZRecord] = [:]
+    var storageMode:           ZStorageMode = .shared
+    var   container:           CKContainer!
+
+
+    var   currentDB: CKDatabase {
+        get {
+            switch (storageMode) {
+            case .shared:   return container.publicCloudDatabase
+            case .personal: return container.privateCloudDatabase
+            }
+        }
+    }
 
 
     func setup() {
-        container = CKContainer(identifier: cloudID)
-        currentDB = container.publicCloudDatabase
+        container   = CKContainer(identifier: cloudID)
+        storageMode = .shared
 
         resetBadgeCounter()
     }
@@ -80,7 +90,7 @@ class ZCloudManager {
                         var zone: Zone? = self.objectForRecordID(record.recordID) as! Zone?
 
                         if zone == nil {
-                            zone = Zone(record: record, database: self.currentDB)
+                            zone = Zone(record: record, storageMode: self.storageMode)
 
                             self.registerObject(zone!)
                             parent.children.append(zone!)
@@ -101,13 +111,13 @@ class ZCloudManager {
         let recordID: CKRecordID = CKRecordID(recordName: rootNameKey)
 
         assureRecordExists(withRecordID: recordID, onCompletion: { (record: CKRecord?) -> (Void) in
-            var root: Zone? = zonesManager.fileRootZone
+            var root: Zone? = zonesManager.rootZone
 
             if root != nil {
                 root?.record = record
             } else {
                 record![zoneNameKey]      = rootNameKey as CKRecordValue?
-                root                      = Zone(record: record!, database: self.currentDB)
+                root                      = Zone(record: record!, storageMode: self.storageMode)
                 zonesManager.fileRootZone = root
                 zonesManager.rootZone     = root
 
@@ -129,7 +139,7 @@ class ZCloudManager {
                 if  zone != nil {
                     zone?.record = iRecord
                 } else {
-                    zone = Zone(record: iRecord, database: self.currentDB)
+                    zone = Zone(record: iRecord, storageMode: self.storageMode)
 
                     self.registerObject(zone!)
                 }
@@ -142,22 +152,20 @@ class ZCloudManager {
 
 
     func assureRecordExists(withRecordID recordID: CKRecordID, onCompletion: @escaping RecordClosure) {
-        if currentDB != nil {
-            currentDB.fetch(withRecordID: recordID) { (fetched: CKRecord?, fetchError: Error?) in
-                if (fetchError == nil) {
-                    onCompletion(fetched!)
-                } else {
-                    let created: CKRecord = CKRecord(recordType: zoneTypeKey, recordID: recordID)
+        currentDB.fetch(withRecordID: recordID) { (fetched: CKRecord?, fetchError: Error?) in
+            if (fetchError == nil) {
+                onCompletion(fetched!)
+            } else {
+                let created: CKRecord = CKRecord(recordType: zoneTypeKey, recordID: recordID)
 
-                    self.currentDB.save(created, completionHandler: { (saved: CKRecord?, saveError: Error?) in
-                        if (saveError != nil) {
-                            onCompletion(nil)
-                        } else {
-                            onCompletion(saved!)
-                            persistenceManager.save()
-                        }
-                    })
-                }
+                self.currentDB.save(created, completionHandler: { (saved: CKRecord?, saveError: Error?) in
+                    if (saveError != nil) {
+                        onCompletion(nil)
+                    } else {
+                        onCompletion(saved!)
+                        persistenceManager.save()
+                    }
+                })
             }
         }
     }
@@ -282,7 +290,7 @@ class ZCloudManager {
                                 object.record      = saved!
                                 object.recordState = .ready
 
-                                zonesManager.updateToClosures(object, regarding: .data)
+                                zonesManager.updateToClosures(nil, regarding: .data)
                                 persistenceManager.save()
                             }
                         })

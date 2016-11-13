@@ -22,19 +22,19 @@ class ZonesManager: NSObject {
     }
 
 
-    var                widgets: [Zone : ZoneWidget]   = [:]
-    var               closures: [UpdateClosureObject] = []
+    var                widgets: [CKRecordID : ZoneWidget] = [:]
+    var               closures:     [UpdateClosureObject] = []
     var              _rootZone: Zone!
     var          _fileRootZone: Zone!
     var  _currentlyEditingZone: Zone?
-    var _currentlyGrabbedZones: [Zone]                = []
+    var _currentlyGrabbedZones: [Zone]                    = []
 
 
     var rootZone: Zone! {
         set { _rootZone = newValue }
         get {
             if  _rootZone == nil {
-                _rootZone = Zone(record: nil, database: cloudManager.currentDB)
+                _rootZone = Zone(record: nil, storageMode: cloudManager.storageMode)
             }
 
             return _rootZone
@@ -46,7 +46,7 @@ class ZonesManager: NSObject {
         set { _fileRootZone = newValue }
         get {
             if  _fileRootZone == nil {
-                _fileRootZone = Zone(record: nil, database: cloudManager.currentDB)
+                _fileRootZone = Zone(record: nil, storageMode: cloudManager.storageMode)
             }
 
             return _fileRootZone
@@ -135,12 +135,18 @@ class ZonesManager: NSObject {
 
 
     func registerWidget(_ widget: ZoneWidget) {
-        widgets[widget.widgetZone] = widget
+        if let zone = widget.widgetZone, let record = zone.record {
+            widgets[record.recordID] = widget
+        }
     }
 
 
     func widgetForZone(_ zone: Zone) -> ZoneWidget? {
-        return widgets[zone]
+        if let record = zone.record {
+            return widgets[record.recordID]
+        }
+
+        return nil
     }
 
 
@@ -231,7 +237,7 @@ class ZonesManager: NSObject {
     func addZoneTo(_ parentZone: Zone?) {
         if parentZone != nil {
             let record = CKRecord(recordType: zoneTypeKey)
-            let   zone = Zone(record: record, database: cloudManager.currentDB)
+            let   zone = Zone(record: record, storageMode: cloudManager.storageMode)
 
             widgetForZone(parentZone!)?.stopEditing()
             parentZone?.children.append(zone)
@@ -331,18 +337,17 @@ class ZonesManager: NSObject {
 
 
     func moveToParent() {
-        if let              zone: Zone = currentlyMovableZone {
-            if let          parentZone = zone.parentZone {
-                if let grandParentZone = parentZone.parentZone {
-                    let          index = parentZone.children.index(of: zone)
-
-                    parentZone.children.remove(at: index!)
-                    grandParentZone.children.append(zone)
-
+        if let                       zone: Zone = currentlyMovableZone {
+            if let                   parentZone = zone.parentZone {
+                if let          grandParentZone = parentZone.parentZone {
+                    let                   index = parentZone.children.index(of: zone)
                     grandParentZone.recordState = .needsSave
                     parentZone.recordState      = .needsSave
                     zone.recordState            = .needsSave
                     zone.parentZone             = grandParentZone
+
+                    grandParentZone.children.append(zone)
+                    parentZone.children.remove(at: index!)
 
                     saveAndUpdateFor(grandParentZone)
                 }

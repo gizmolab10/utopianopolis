@@ -31,6 +31,7 @@ let             cloudManager = ZCloudManager()
 let             zonesManager = ZonesManager()
 let                  cloudID = "iCloud.com.zones.Zones"
 let          showChildrenKey = "showChildren"
+let           storageModeKey = "storageMode"
 let            recordNameKey = "recordName"
 let            recordTypeKey = "recordType"
 let              childrenKey = "children"

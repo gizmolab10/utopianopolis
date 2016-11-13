@@ -62,7 +62,7 @@ class Zone : ZRecord {
     
 
     convenience init(dict: ZStorageDict) {
-        self.init(record: nil, database: cloudManager.currentDB)
+        self.init(record: nil, storageMode: cloudManager.storageMode)
 
         storageDict = dict
     }

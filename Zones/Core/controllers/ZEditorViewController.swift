@@ -13,19 +13,25 @@ import SnapKit
 class ZEditorViewController: ZGenericViewController {
 
     
-    var widget: ZoneWidget!
+    var widget: ZoneWidget = ZoneWidget()
 
 
     override func identifier() -> ZControllerID { return .editor }
 
 
     override func updateFor(_ object: NSObject?, kind: ZUpdateKind) {
-        var specificWidget: ZoneWidget?
+        var specificWidget: ZoneWidget? = widget
         var specificView:        ZView? = view
         var specificindex:          Int = -1
         var recursing:             Bool = kind == .data
+        widget.widgetZone               = zonesManager.rootZone!
 
-        if object != nil && object != zonesManager.rootZone! {
+        if object == nil || object == zonesManager.rootZone! {
+            recursing = true
+
+            print("root")
+            zonesManager.clearWidgets()
+        } else {
             let       zone = object as! Zone
             specificWidget = zonesManager.widgetForZone(zone)
             specificView   = specificWidget?.superview
@@ -34,17 +40,6 @@ class ZEditorViewController: ZGenericViewController {
             if let name = zone.zoneName {
                 print(name)
             }
-        } else {
-            if widget == nil {
-                widget        = ZoneWidget()
-            }
-
-            widget.widgetZone = zonesManager.rootZone!
-            specificWidget    = widget
-            recursing         = true
-
-            print("root")
-            zonesManager.clearWidgets()
         }
 
         specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing)
