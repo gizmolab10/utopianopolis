@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		0C1AD4511DADA1C4004E69C3 /* ZGenericViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1AD4501DADA1C4004E69C3 /* ZGenericViewController.swift */; };
 		0C1AD4521DADA1C4004E69C3 /* ZGenericViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1AD4501DADA1C4004E69C3 /* ZGenericViewController.swift */; };
+		0C2349A71DD68F8400899672 /* ZControllersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2349A61DD68F8400899672 /* ZControllersManager.swift */; };
+		0C2349A81DD68F8400899672 /* ZControllersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2349A61DD68F8400899672 /* ZControllersManager.swift */; };
 		0C2DBB9C1DAC4EA300C83FF2 /* ZToolsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2DBB9B1DAC4EA300C83FF2 /* ZToolsViewController.swift */; };
 		0C2DBB9D1DAC4EA300C83FF2 /* ZToolsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2DBB9B1DAC4EA300C83FF2 /* ZToolsViewController.swift */; };
 		0C33128B1DC48E6F002DDB39 /* ZonesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C33128A1DC48E6F002DDB39 /* ZonesManager.swift */; };
@@ -189,6 +191,7 @@
 
 /* Begin PBXFileReference section */
 		0C1AD4501DADA1C4004E69C3 /* ZGenericViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGenericViewController.swift; sourceTree = "<group>"; };
+		0C2349A61DD68F8400899672 /* ZControllersManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZControllersManager.swift; sourceTree = "<group>"; };
 		0C2DBB9B1DAC4EA300C83FF2 /* ZToolsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZToolsViewController.swift; sourceTree = "<group>"; };
 		0C33128A1DC48E6F002DDB39 /* ZonesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZonesManager.swift; sourceTree = "<group>"; };
 		0C33128D1DC5A94D002DDB39 /* ZSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSettingsViewController.swift; sourceTree = "<group>"; };
@@ -379,6 +382,7 @@
 			isa = PBXGroup;
 			children = (
 				0CD9217E1D8F7A7800F80964 /* ZCloudManager.swift */,
+				0C2349A61DD68F8400899672 /* ZControllersManager.swift */,
 				0CF97D6A1DA9C1B500FEAA41 /* ZLocalPersistenceManager.swift */,
 				0CB4E9D61DB1CC3A0058807D /* ZStateManager.swift */,
 				0C33128A1DC48E6F002DDB39 /* ZonesManager.swift */,
@@ -876,6 +880,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C2349A81DD68F8400899672 /* ZControllersManager.swift in Sources */,
 				0CB1A7DC1D73F87B00283F7B /* ZAction.swift in Sources */,
 				0CD1EAF41DB725A800A096E4 /* BlockOperation.swift in Sources */,
 				0CD921801D8F7A7800F80964 /* ZCloudManager.swift in Sources */,
@@ -952,6 +957,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C2349A71DD68F8400899672 /* ZControllersManager.swift in Sources */,
 				0C58C37D1D45805400CAB387 /* ZAppDelegate.swift in Sources */,
 				0CD1EAF31DB725A800A096E4 /* BlockOperation.swift in Sources */,
 				0CF97D571DA785AB00FEAA41 /* ZEditorViewController.swift in Sources */,

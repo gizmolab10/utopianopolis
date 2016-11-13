@@ -64,6 +64,8 @@ class ZoneDot: ZView {
     func gestureEvent(_ sender: ZGestureRecognizer?) {
         let widget: ZoneWidget = superview as! ZoneWidget
 
+        controllersManager.controller(at: .editor).log("dot")
+
         if let zone = widget.widgetZone {
             if toggle == true {
                 zonesManager.toggleChildrenVisibility(zone)

@@ -19,6 +19,9 @@ import Foundation
 class ZGenericViewController: ZViewController {
 
 
+    func identifier() -> ZControllerID { return .editor }
+
+
     func setup() {
         zonesManager.registerUpdateClosure { (object, kind) -> (Void) in
             if kind != .error {
@@ -26,11 +29,17 @@ class ZGenericViewController: ZViewController {
             }
         }
 
+        controllersManager.register(self, at: identifier())
         updateFor(nil, kind: .data)
     }
 
 
     func updateFor(_ object: NSObject?, kind: ZUpdateKind) {}
+
+
+    func log(_ string: String) {
+        print(string)
+    }
 
 
 #if os(OSX)

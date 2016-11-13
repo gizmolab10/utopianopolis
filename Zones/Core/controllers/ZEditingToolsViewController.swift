@@ -21,6 +21,9 @@ class ZEditingToolsViewController: ZGenericViewController {
     @IBOutlet weak var moveIntoSiblingAboveButton: ZButton!
 
 
+    override func identifier() -> ZControllerID { return .editingTools }
+
+
     @IBAction func genericButtonAction(_ button: ZButton) {
         zonesManager.takeAction(ZEditAction(rawValue: UInt(button.tag))!)
     }

@@ -16,6 +16,9 @@ class ZSettingsViewController: ZGenericViewController {
     @IBOutlet weak var flushButton: ZButton!
 
 
+    override func identifier() -> ZControllerID { return .settings }
+
+
     @IBAction func genericButtonAction(_ button: ZButton) {
         cloudManager.flushOnCompletion {}
     }

@@ -37,14 +37,7 @@ class Zone : ZRecord {
         return -1
     }
 
-
-    func resolveParents() {
-        for child: Zone in children {
-            child.resolveParents()
-        }
-    }
-
-
+    
     var parentZone: Zone? {
         set {
             _parentZone  = newValue

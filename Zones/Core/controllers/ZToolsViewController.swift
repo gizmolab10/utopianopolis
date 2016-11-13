@@ -20,6 +20,9 @@ class ZToolsViewController: ZGenericViewController {
     var                       frontContainerView: ZView?
 
 
+    override func identifier() -> ZControllerID { return .tools }
+
+
     @IBAction func choiceAction(_ control: ZSegmentedControl) {
         let mode = ZToolMode(rawValue: control.selectedSegmentIndex)!
         stateManager.toolState = mode

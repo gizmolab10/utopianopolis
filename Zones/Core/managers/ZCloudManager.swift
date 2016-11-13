@@ -36,8 +36,6 @@ class ZCloudManager {
         operation.container               = container
         operation.qualityOfService        = .background
 
-        zonesManager.rootZone.resolveParents()
-
         for record: ZRecord in records.values {
             switch record.recordState {
             case .needsSave:   recordsToSave  .append(record.record);          break
@@ -103,14 +101,15 @@ class ZCloudManager {
         let recordID: CKRecordID = CKRecordID(recordName: rootNameKey)
 
         assureRecordExists(withRecordID: recordID, onCompletion: { (record: CKRecord?) -> (Void) in
-            var root: Zone? = zonesManager.rootZone
+            var root: Zone? = zonesManager.fileRootZone
 
             if root != nil {
                 root?.record = record
             } else {
-                record![zoneNameKey]  = rootNameKey as CKRecordValue?
-                root                  = Zone(record: record!, database: self.currentDB)
-                zonesManager.rootZone = root
+                record![zoneNameKey]      = rootNameKey as CKRecordValue?
+                root                      = Zone(record: record!, database: self.currentDB)
+                zonesManager.fileRootZone = root
+                zonesManager.rootZone     = root
 
                 root?.saveToCloud()
             }

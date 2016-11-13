@@ -25,6 +25,7 @@ let unselectBrightness: CGFloat = 0.98
 let userTouchLength: CGFloat = 33.0
 let      widgetFont:   ZFont = ZFont.systemFont(ofSize: fontSize)
 let       persistenceManager = ZLocalPersistenceManager()
+let       controllersManager = ZControllersManager()
 let             stateManager = ZStateManager()
 let             cloudManager = ZCloudManager()
 let             zonesManager = ZonesManager()
@@ -48,6 +49,16 @@ enum ZSynchronizationState: Int {
 }
 
 
+enum ZControllerID {
+    case editor
+    case tools
+    case main
+    case editingTools
+    case settings
+    case travel
+}
+
+
 enum ZUpdateKind: UInt {
     case data
     case datum
@@ -61,6 +72,12 @@ enum ZRecordState: Int {
     case needsFetch
     case needsSave
     case ready
+}
+
+
+enum ZStorageMode: Int {
+    case shared
+    case personal
 }
 
 

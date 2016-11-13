@@ -16,6 +16,9 @@ class ZEditorViewController: ZGenericViewController {
     var widget: ZoneWidget!
 
 
+    override func identifier() -> ZControllerID { return .editor }
+
+
     override func updateFor(_ object: NSObject?, kind: ZUpdateKind) {
         var specificWidget: ZoneWidget?
         var specificView:        ZView? = view
@@ -32,11 +35,10 @@ class ZEditorViewController: ZGenericViewController {
                 print(name)
             }
         } else {
-            if widget != nil {
-                widget.removeFromSuperview()
+            if widget == nil {
+                widget        = ZoneWidget()
             }
 
-            widget            = ZoneWidget()
             widget.widgetZone = zonesManager.rootZone!
             specificWidget    = widget
             recursing         = true

@@ -30,7 +30,7 @@ class ZLocalPersistenceManager: NSObject {
     func save() {
         if !isSaving && stateManager.isReady {
             isSaving               = true
-            currentZoneFileName    = "public"
+            currentStorageMode     = .shared
             let dict: NSDictionary = zonesManager.rootZone.storageDict as NSDictionary
             let  url:          URL = pathToCurrentZoneFile()
 
@@ -52,27 +52,35 @@ class ZLocalPersistenceManager: NSObject {
     // MARK:-
 
 
-    let key: String = "current zone file name"
+    let key: String = "current storage mode"
 
 
-    var currentZoneFileName: String {
-        set { UserDefaults.standard.set(newValue, forKey:key) }
+    var currentStorageMode: ZStorageMode {
+        set { UserDefaults.standard.set(Int(newValue.rawValue), forKey:key) }
         get {
-            var name: String? = UserDefaults.standard.value(forKey:key) as? String
+            var mode: ZStorageMode? = UserDefaults.standard.value(forKey:key) as? ZStorageMode
 
-            if name == nil {
-                name = "public"
+            if mode == nil {
+                mode = .shared
 
-                UserDefaults.standard.set(name, forKey:key)
+                UserDefaults.standard.set(Int((mode?.rawValue)!), forKey:key)
             }
 
-            return name!
+            return mode!
         }
     }
 
+    var currentZoneFileName: String {
+        get {
+            switch (currentStorageMode) {
+            case .shared:   return "shared.storage"
+            case .personal: return "personal.storage"
+            }
+        }
+    }
 
     func pathToCurrentZoneFile() -> URL {
-        return pathForZoneNamed(currentZoneFileName);
+        return pathForZoneNamed(currentZoneFileName)
     }
 
 

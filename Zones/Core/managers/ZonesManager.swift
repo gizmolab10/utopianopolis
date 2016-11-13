@@ -25,6 +25,7 @@ class ZonesManager: NSObject {
     var                widgets: [Zone : ZoneWidget]   = [:]
     var               closures: [UpdateClosureObject] = []
     var              _rootZone: Zone!
+    var          _fileRootZone: Zone!
     var  _currentlyEditingZone: Zone?
     var _currentlyGrabbedZones: [Zone]                = []
 
@@ -37,6 +38,18 @@ class ZonesManager: NSObject {
             }
 
             return _rootZone
+        }
+    }
+
+
+    var fileRootZone: Zone! {
+        set { _fileRootZone = newValue }
+        get {
+            if  _fileRootZone == nil {
+                _fileRootZone = Zone(record: nil, database: cloudManager.currentDB)
+            }
+
+            return _fileRootZone
         }
     }
 
@@ -306,6 +319,7 @@ class ZonesManager: NSObject {
                         siblingZone.showChildren = true
                         siblingZone.recordState  = .needsSave
                         parentZone.recordState   = .needsSave
+                        zone.recordState         = .needsSave
                         zone.parentZone          = siblingZone
 
                         saveAndUpdateFor(parentZone)
@@ -325,8 +339,9 @@ class ZonesManager: NSObject {
                     parentZone.children.remove(at: index!)
                     grandParentZone.children.append(zone)
 
-                    parentZone.recordState      = .needsSave
                     grandParentZone.recordState = .needsSave
+                    parentZone.recordState      = .needsSave
+                    zone.recordState            = .needsSave
                     zone.parentZone             = grandParentZone
 
                     saveAndUpdateFor(grandParentZone)
