@@ -13,15 +13,15 @@ import CloudKit
 
 class ZCloudManager {
     var     records: [CKRecordID : ZRecord] = [:]
-    var storageMode:           ZStorageMode = .shared
+    var storageMode:           ZStorageMode = .everyone
     var   container:           CKContainer!
 
 
     var   currentDB: CKDatabase {
         get {
             switch (storageMode) {
-            case .shared:   return container.publicCloudDatabase
-            case .personal: return container.privateCloudDatabase
+            case .everyone: return container.publicCloudDatabase
+            case .mine:     return container.privateCloudDatabase
             }
         }
     }
@@ -29,7 +29,7 @@ class ZCloudManager {
 
     func setup() {
         container   = CKContainer(identifier: cloudID)
-        storageMode = .shared
+        storageMode = .everyone
 
         resetBadgeCounter()
     }
@@ -178,7 +178,7 @@ class ZCloudManager {
                         onCompletion(nil)
                     } else {
                         onCompletion(saved!)
-                        localFileManager.save()
+                        zfileManager.save()
                     }
                 })
             }
@@ -306,7 +306,7 @@ class ZCloudManager {
                                 object.recordState = .ready
 
                                 zonesManager.updateToClosures(nil, regarding: .data)
-                                localFileManager.save()
+                                zfileManager.save()
                             }
                         })
                     }

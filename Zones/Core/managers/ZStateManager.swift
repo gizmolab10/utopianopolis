@@ -78,7 +78,7 @@ class ZStateManager: NSObject {
         print(state)
 
         switch(state) {
-        case .restore:     localFileManager.restore();   operation.finish();   break
+        case .restore:     zfileManager.restore();   operation.finish();   break
         case .root:        cloudManager.setupRootWith   (operation:operation); break
         case .unsubscribe: cloudManager.unsubscribeWith (operation:operation); break
         case .subscribe:   cloudManager.subscribeWith   (operation:operation); break

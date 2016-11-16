@@ -25,9 +25,9 @@ let unselectBrightness: CGFloat = 0.98
 let userTouchLength: CGFloat = 33.0
 let      widgetFont:   ZFont = ZFont.systemFont(ofSize: fontSize)
 let       controllersManager = ZControllersManager()
-let         localFileManager = ZFileManager()
 let             stateManager = ZStateManager()
 let             cloudManager = ZCloudManager()
+let             zfileManager = ZFileManager()
 let             zonesManager = ZonesManager()
 let                  cloudID = "iCloud.com.zones.Zones"
 let                 linksKey = "links"
@@ -76,9 +76,9 @@ enum ZRecordState: Int {
 }
 
 
-enum ZStorageMode: Int {
-    case shared
-    case personal
+enum ZStorageMode: String {
+    case everyone = "everyone"
+    case mine     = "mine"
 }
 
 

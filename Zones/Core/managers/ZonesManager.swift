@@ -179,7 +179,7 @@ class ZonesManager: NSObject {
 
     func saveAndUpdateFor(_ zone: Zone?, onCompletion: Closure?) {
         updateToClosures(zone, regarding: .data, onCompletion: onCompletion)
-        localFileManager.save()
+        zfileManager.save()
         cloudManager.flushOnCompletion {}
     }
 
@@ -211,18 +211,17 @@ class ZonesManager: NSObject {
             ofZone?.showChildren = (ofZone?.showChildren == false)
 
             deselectDragWithin(ofZone!)
-            updateToClosures(nil, regarding: .data)
-            localFileManager.save()
+            saveAndUpdateFor(nil)
         }
     }
 
 
     func travelAction(_ action: ZTravelAction) {
-        var mode: ZStorageMode = .shared
+        var mode: ZStorageMode = .everyone
 
         switch action {
-        case .mine:     mode = .personal; break
-        case .everyone: mode = .shared; break
+        case .mine:     mode = .mine;     break
+        case .everyone: mode = .everyone; break
         }
 
         cloudManager.storageMode = mode
@@ -296,11 +295,12 @@ class ZonesManager: NSObject {
 
 
     private func deleteZone(_ zone: Zone) {
-        if let        parentZone = zone.parentZone {
-            let            index = parentZone.children.index(of: zone)
-            zone.recordState     = .needsDelete
+        zone.recordState  = .needsDelete
 
-            parentZone.children.remove(at: index!)
+        if let parentZone = zone.parentZone {
+            if let  index = parentZone.children.index(of: zone) {
+                parentZone.children.remove(at: index)
+            }
         }
     }
 

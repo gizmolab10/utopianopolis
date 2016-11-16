@@ -57,7 +57,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
     
 
     func applicationWillTerminate(aNotification: NSNotification) {
-        localFileManager.save()
+        zfileManager.save()
         
         // Insert code here to tear down your application
     }

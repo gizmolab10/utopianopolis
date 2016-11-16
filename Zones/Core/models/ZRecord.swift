@@ -77,6 +77,7 @@ class ZRecord: NSObject {
 
 
     func setStorageDictionary(_ dict: ZStorageDict) {
+        storageMode       = cloudManager.storageMode
         var type: String? = nil
         var name: String? = nil
 
@@ -84,7 +85,6 @@ class ZRecord: NSObject {
             switch key {
             case recordTypeKey:                                type = value as? String; break
             case recordNameKey:                                name = value as? String; break
-            case storageModeKey: storageMode = ZStorageMode(rawValue: value as!   Int); break
             default:                                                                    break
             }
         }
@@ -98,9 +98,8 @@ class ZRecord: NSObject {
 
 
     func storageDictionary() -> ZStorageDict? {
-        return [recordNameKey : record.recordID.recordName    as NSObject,
-                recordTypeKey : record.recordType             as NSObject,
-                storageModeKey: Int((storageMode?.rawValue)!) as NSObject]
+        return [recordNameKey : record.recordID.recordName as NSObject,
+                recordTypeKey : record.recordType          as NSObject]
     }
 
 

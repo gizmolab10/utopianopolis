@@ -43,7 +43,7 @@ class ZFileManager: NSObject {
     func restore() {
         if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
             zonesManager.fileRootZone = Zone(dict: raw as! ZStorageDict)
-            zonesManager.rootZone = zonesManager.fileRootZone
+            zonesManager.rootZone     = zonesManager.fileRootZone
         }
     }
 
@@ -61,7 +61,7 @@ class ZFileManager: NSObject {
             var mode: ZStorageMode? = UserDefaults.standard.value(forKey:key) as? ZStorageMode
 
             if mode == nil {
-                mode = .shared
+                mode = .everyone
 
                 UserDefaults.standard.set(Int((mode?.rawValue)!), forKey:key)
             }
@@ -73,8 +73,8 @@ class ZFileManager: NSObject {
     var currentZoneFileName: String {
         get {
             switch (cloudManager.storageMode) {
-            case .shared:   return "shared.storage"
-            case .personal: return "personal.storage"
+            case .everyone: return "everyone.storage"
+            case .mine:     return "mine.storage"
             }
         }
     }
