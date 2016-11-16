@@ -44,6 +44,7 @@ class ZCloudManager {
         var recordsToSave:     [CKRecord] = []
         let                     operation = CKModifyRecordsOperation()
         operation.container               = container
+        operation.database                = currentDB
         operation.qualityOfService        = .background
 
         for record: ZRecord in records.values {
@@ -54,9 +55,23 @@ class ZCloudManager {
             }
         }
 
-        operation.recordsToSave     = recordsToSave
-        operation.recordIDsToDelete = recordsToDelete
-        operation.completionBlock   = block
+        operation.recordsToSave            = recordsToSave
+        operation.recordIDsToDelete        = recordsToDelete
+        operation.completionBlock          = block
+        operation.perRecordCompletionBlock = { (iRecord, iError) -> Swift.Void in
+            if let error:          CKError = iError as? CKError {
+                let                   info = error.errorUserInfo
+                var description:    String = info["ServerErrorDescription"] as! String
+
+                if description            != "record to insert already exists" {
+                    if let            name = iRecord?["zoneName"] as! String? {
+                        description        = "\(description): \(name)"
+                    }
+
+                    print(description)
+                }
+            }
+        }
 
         operation.start()
     }
@@ -163,7 +178,7 @@ class ZCloudManager {
                         onCompletion(nil)
                     } else {
                         onCompletion(saved!)
-                        persistenceManager.save()
+                        localFileManager.save()
                     }
                 })
             }
@@ -291,7 +306,7 @@ class ZCloudManager {
                                 object.recordState = .ready
 
                                 zonesManager.updateToClosures(nil, regarding: .data)
-                                persistenceManager.save()
+                                localFileManager.save()
                             }
                         })
                     }

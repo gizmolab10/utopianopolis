@@ -738,7 +738,7 @@
                                     <segments>
                                         <segment label="Settings" width="78"/>
                                         <segment label="Edit" width="51" selected="YES" tag="1"/>
-                                        <segment label="Travel" width="70" enabled="NO"/>
+                                        <segment label="Travel" width="70"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>
@@ -760,14 +760,24 @@
                                             <segue destination="OO6-jf-jKa" kind="embed" id="KUx-LL-3cz"/>
                                         </connections>
                                     </containerView>
+                                    <containerView identifier="Travel" hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9c-fw-MTv" userLabel="Travel">
+                                        <rect key="frame" x="0.0" y="0.0" width="203" height="279"/>
+                                        <connections>
+                                            <segue destination="YuX-iN-XtT" kind="embed" id="vZj-tz-dAj"/>
+                                        </connections>
+                                    </containerView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="V5K-yz-U7U" firstAttribute="leading" secondItem="qYZ-nw-Vzw" secondAttribute="leading" id="171-ga-wGv"/>
                                     <constraint firstAttribute="trailing" secondItem="zA2-uY-m7F" secondAttribute="trailing" id="3Wb-Ut-veo"/>
+                                    <constraint firstItem="h9c-fw-MTv" firstAttribute="top" secondItem="qYZ-nw-Vzw" secondAttribute="top" id="6ZC-7x-AIk"/>
                                     <constraint firstAttribute="bottom" secondItem="zA2-uY-m7F" secondAttribute="bottom" id="HSq-Ou-dxR"/>
+                                    <constraint firstAttribute="trailing" secondItem="h9c-fw-MTv" secondAttribute="trailing" id="P3F-1j-21Y"/>
                                     <constraint firstItem="V5K-yz-U7U" firstAttribute="top" secondItem="qYZ-nw-Vzw" secondAttribute="top" id="PAV-bt-9vr"/>
                                     <constraint firstAttribute="bottom" secondItem="V5K-yz-U7U" secondAttribute="bottom" id="PmG-9I-ylU"/>
                                     <constraint firstAttribute="trailing" secondItem="V5K-yz-U7U" secondAttribute="trailing" id="SW8-88-GmV"/>
+                                    <constraint firstAttribute="bottom" secondItem="h9c-fw-MTv" secondAttribute="bottom" id="fPL-Sc-CtI"/>
+                                    <constraint firstItem="h9c-fw-MTv" firstAttribute="leading" secondItem="qYZ-nw-Vzw" secondAttribute="leading" id="fYY-1e-U9D"/>
                                     <constraint firstItem="zA2-uY-m7F" firstAttribute="top" secondItem="qYZ-nw-Vzw" secondAttribute="top" id="k8c-PN-kxz"/>
                                     <constraint firstItem="zA2-uY-m7F" firstAttribute="leading" secondItem="qYZ-nw-Vzw" secondAttribute="leading" id="sGy-FY-U9D"/>
                                 </constraints>
@@ -788,6 +798,7 @@
                         <outlet property="editingToolsContainerView" destination="zA2-uY-m7F" id="vAO-jp-MXT"/>
                         <outlet property="settingsContainerView" destination="V5K-yz-U7U" id="vUZ-FD-kJ3"/>
                         <outlet property="toolsChoiceControl" destination="GBC-KB-wux" id="Xdf-tf-KM6"/>
+                        <outlet property="travelContainerView" destination="h9c-fw-MTv" id="HMm-Ra-lTy"/>
                     </connections>
                 </viewController>
                 <customObject id="AaD-MV-r0h" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -908,7 +919,7 @@
                 </viewController>
                 <customObject id="kir-YC-buw" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="276" y="1952"/>
+            <point key="canvasLocation" x="507" y="1995"/>
         </scene>
         <!--Settings View Controller-->
         <scene sceneID="Tae-az-4mZ">
@@ -937,7 +948,39 @@
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="765" y="1952"/>
+            <point key="canvasLocation" x="24" y="1995"/>
+        </scene>
+        <!--Travel View Controller-->
+        <scene sceneID="7Hb-7e-BTT">
+            <objects>
+                <viewController id="YuX-iN-XtT" userLabel="Travel View Controller" customClass="ZTravelViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="p8o-Hp-H71">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <segmentedControl horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TBt-fx-BOe">
+                                <rect key="frame" x="20" y="258" width="144" height="23"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="selectOne" id="IZr-NT-mWZ">
+                                    <font key="font" metaFont="system" size="14"/>
+                                    <segments>
+                                        <segment label="Mine" width="55"/>
+                                        <segment label="Everyone" width="86" tag="1"/>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="choiceAction:" target="YuX-iN-XtT" id="z2N-8h-2Hp"/>
+                                </connections>
+                            </segmentedControl>
+                        </subviews>
+                    </view>
+                    <connections>
+                        <outlet property="storageModeChoiceControl" destination="TBt-fx-BOe" id="3Wx-P4-GaR"/>
+                    </connections>
+                </viewController>
+                <customObject id="EFK-3j-cm6" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="992" y="1995"/>
         </scene>
     </scenes>
 </document>

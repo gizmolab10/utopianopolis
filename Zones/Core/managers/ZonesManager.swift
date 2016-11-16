@@ -179,7 +179,7 @@ class ZonesManager: NSObject {
 
     func saveAndUpdateFor(_ zone: Zone?, onCompletion: Closure?) {
         updateToClosures(zone, regarding: .data, onCompletion: onCompletion)
-        persistenceManager.save()
+        localFileManager.save()
         cloudManager.flushOnCompletion {}
     }
 
@@ -212,12 +212,27 @@ class ZonesManager: NSObject {
 
             deselectDragWithin(ofZone!)
             updateToClosures(nil, regarding: .data)
-            persistenceManager.save()
+            localFileManager.save()
         }
     }
 
 
-    func takeAction(_ action: ZEditAction) {
+    func travelAction(_ action: ZTravelAction) {
+        var mode: ZStorageMode = .shared
+
+        switch action {
+        case .mine:     mode = .personal; break
+        case .everyone: mode = .shared; break
+        }
+
+        cloudManager.storageMode = mode
+
+        widgets.removeAll()
+        stateManager.setupAndRun([ZSynchronizationState.restore.rawValue, ZSynchronizationState.root.rawValue])
+    }
+
+
+    func editingAction(_ action: ZEditAction) {
         switch action {
         case .add:                         add(); break
         case .delete:                   delete(); break

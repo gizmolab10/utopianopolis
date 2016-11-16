@@ -271,6 +271,17 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
 
 
     func layoutDots() {
+        if !subviews.contains(dragDot) {
+            addSubview(dragDot)
+        }
+
+        dragDot.innerDot?.snp.removeConstraints()
+        dragDot.setupForZone(widgetZone, asToggle: false)
+        dragDot.innerDot?.snp.makeConstraints({ (make) in
+            make.right.equalTo(textField.snp.left)
+            make.centerY.equalTo(textField).offset(1.0)
+        })
+
         if widgetZone.children.count == 0 {
             if subviews.contains(toggleDot) {
                 toggleDot.removeFromSuperview()
@@ -286,19 +297,6 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
                 make.left.equalTo(textField.snp.right).offset(-1.0)
                 make.centerY.equalTo(textField).offset(1.0)
                 make.right.lessThanOrEqualToSuperview().offset(-1.0)
-            })
-        }
-
-        if widgetZone != zonesManager.rootZone {
-            if !subviews.contains(dragDot) {
-                addSubview(dragDot)
-            }
-
-            dragDot.innerDot?.snp.removeConstraints()
-            dragDot.setupForZone(widgetZone, asToggle: false)
-            dragDot.innerDot?.snp.makeConstraints({ (make) in
-                make.right.equalTo(textField.snp.left)
-                make.centerY.equalTo(textField).offset(1.0)
             })
         }
     }

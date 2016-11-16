@@ -24,21 +24,21 @@ let unselectBrightness: CGFloat = 0.98
 
 let userTouchLength: CGFloat = 33.0
 let      widgetFont:   ZFont = ZFont.systemFont(ofSize: fontSize)
-let       persistenceManager = ZLocalPersistenceManager()
 let       controllersManager = ZControllersManager()
+let         localFileManager = ZFileManager()
 let             stateManager = ZStateManager()
 let             cloudManager = ZCloudManager()
 let             zonesManager = ZonesManager()
 let                  cloudID = "iCloud.com.zones.Zones"
-let          showChildrenKey = "showChildren"
-let           storageModeKey = "storageMode"
-let            recordNameKey = "recordName"
-let            recordTypeKey = "recordType"
-let              childrenKey = "children"
-let              zoneNameKey = "zoneName"
+let                 linksKey = "links"
 let              zoneTypeKey = "Zone"
 let              rootNameKey = "root"
-let                 linksKey = "links"
+let              childrenKey = "children"
+let              zoneNameKey = "zoneName"
+let            recordNameKey = "recordName"
+let            recordTypeKey = "recordType"
+let           storageModeKey = "storageMode"
+let          showChildrenKey = "showChildren"
 
 
 enum ZSynchronizationState: Int {
@@ -50,7 +50,7 @@ enum ZSynchronizationState: Int {
 }
 
 
-enum ZControllerID {
+enum ZControllerID: Int {
     case editor
     case tools
     case main
@@ -60,7 +60,7 @@ enum ZControllerID {
 }
 
 
-enum ZUpdateKind: UInt {
+enum ZUpdateKind: Int {
     case data
     case datum
     case error
@@ -89,13 +89,19 @@ enum ZToolMode: Int {
 }
 
 
-enum ZEditAction: UInt {
+enum ZEditAction: Int {
     case add
     case delete
     case moveUp
     case moveDown
     case moveToParent
     case moveIntoSibling
+}
+
+
+enum ZTravelAction: Int {
+    case mine
+    case everyone
 }
 
 

@@ -1,5 +1,5 @@
 //
-//  ZLocalPersistenceManager.swift
+//  ZFileManager.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 10/8/16.
@@ -17,7 +17,7 @@ import CoreFoundation
 #endif
 
 
-class ZLocalPersistenceManager: NSObject {
+class ZFileManager: NSObject {
 
 
     var isSaving: Bool = false
@@ -30,7 +30,7 @@ class ZLocalPersistenceManager: NSObject {
     func save() {
         if !isSaving && stateManager.isReady {
             isSaving               = true
-            let dict: NSDictionary = zonesManager.rootZone.storageDict as NSDictionary
+            let dict: NSDictionary = zonesManager.fileRootZone.storageDict as NSDictionary
             let  url:          URL = pathToCurrentZoneFile()
 
             dict.write(to: url, atomically: false)
@@ -42,7 +42,8 @@ class ZLocalPersistenceManager: NSObject {
 
     func restore() {
         if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
-            zonesManager.rootZone = Zone(dict: raw as! ZStorageDict)
+            zonesManager.fileRootZone = Zone(dict: raw as! ZStorageDict)
+            zonesManager.rootZone = zonesManager.fileRootZone
         }
     }
 

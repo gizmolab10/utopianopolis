@@ -29,7 +29,7 @@ class ZEditorViewController: ZGenericViewController {
         if object == nil || object == zonesManager.rootZone! {
             recursing = true
 
-            print("root")
+            print("all")
             zonesManager.clearWidgets()
         } else {
             let       zone = object as! Zone

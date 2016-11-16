@@ -35,13 +35,27 @@ class ZStateManager: NSObject {
 
 
     func setupAndRun() {
+        var syncStates: [Int] = []
+
+        for sync in ZSynchronizationState.restore.rawValue...ZSynchronizationState.subscribe.rawValue {
+            syncStates.append(sync)
+        }
+
+        setupAndRun(syncStates)
+    }
+
+
+    func setupAndRun(_ syncStates: [Int]) {
         queue.isSuspended                 = true
         queue.maxConcurrentOperationCount = 1
         queue.qualityOfService            = .background
+        var states                        = syncStates
         var priorOp:      BlockOperation? = nil
 
-        for sync in ZSynchronizationState.restore.rawValue...ZSynchronizationState.ready.rawValue {
-            let state = ZSynchronizationState(rawValue: sync)!
+        states.append(ZSynchronizationState.ready.rawValue)
+
+        for state in states {
+            let state = ZSynchronizationState(rawValue: state)!
             let    op = BlockOperation { self.invokeOn(state) }
 
             if priorOp != nil {
@@ -64,11 +78,19 @@ class ZStateManager: NSObject {
         print(state)
 
         switch(state) {
-        case .restore:     persistenceManager.restore();   operation.finish(); break
+        case .restore:     localFileManager.restore();   operation.finish();   break
         case .root:        cloudManager.setupRootWith   (operation:operation); break
         case .unsubscribe: cloudManager.unsubscribeWith (operation:operation); break
         case .subscribe:   cloudManager.subscribeWith   (operation:operation); break
-        case .ready:       isReady = true;                 operation.finish(); break
+        case .ready:                                        finish(operation); break
         }
+    }
+
+
+    func finish(_ operation: BlockOperation) {
+        isReady = true;
+
+        operation.finish()
+        zonesManager.updateToClosures(nil, regarding: .data)
     }
 }

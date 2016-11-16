@@ -16,6 +16,7 @@ class ZToolsViewController: ZGenericViewController {
     @IBOutlet weak var        toolsChoiceControl: ZSegmentedControl!
     @IBOutlet weak var editingToolsContainerView: ZView!
     @IBOutlet weak var     settingsContainerView: ZView!
+    @IBOutlet weak var       travelContainerView: ZView!
     @IBOutlet weak var            containersView: ZView!
     var                       frontContainerView: ZView?
 
@@ -24,13 +25,13 @@ class ZToolsViewController: ZGenericViewController {
 
 
     @IBAction func choiceAction(_ control: ZSegmentedControl) {
-        let mode = ZToolMode(rawValue: control.selectedSegmentIndex)!
+        let               mode = ZToolMode(rawValue: control.selectedSegmentIndex)!
         stateManager.toolState = mode
 
         switch mode {
-        case .edit: frontContainerView = editingToolsContainerView; break
-        case .travel:                                               break
-        case .settings: frontContainerView = settingsContainerView; break
+        case .edit:     frontContainerView = editingToolsContainerView; break
+        case .travel:   frontContainerView =       travelContainerView; break
+        case .settings: frontContainerView =     settingsContainerView; break
         }
 
         updateFor(nil, kind: .data)
