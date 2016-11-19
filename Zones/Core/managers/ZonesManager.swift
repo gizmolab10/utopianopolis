@@ -90,18 +90,17 @@ class ZonesManager: NSObject {
 
 
     func deselect() {
-        let               zone = currentlyEditingZone
-        _currentlyEditingZone  = nil
-        _currentlyGrabbedZones = []
+        let             zone = currentlyEditingZone
+        currentlyEditingZone = nil
 
-        if zone == nil {
+        if zone == nil || zone == rootZone {
             widgetForZone(rootZone)?.stopEditingRecursively()
             updateToClosures(nil, regarding: .data)
         } else {
             let widget = widgetForZone(zone!)
-            
+
             widget?.captureText()
-            // widget?.stopEditing()
+            widget?.textField.resignFirstResponder()
             updateToClosures(zone, regarding: .datum)
         }
     }

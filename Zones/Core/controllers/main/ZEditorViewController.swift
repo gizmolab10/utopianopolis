@@ -58,7 +58,7 @@ class ZEditorViewController: ZGenericViewController {
 
     
     func gestureEvent(_ sender: ZGestureRecognizer?) {
+        view.window?.makeFirstResponder(nil)
         zonesManager.deselect()
-        view.becomeFirstResponder()
     }
 }

@@ -45,6 +45,7 @@ import Foundation
     extension NSView {
         var zlayer: CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
         var isUserInteractionEnabled: Bool { get { return true } set {} }
+        var recognizers: [NSGestureRecognizer] { get { return gestureRecognizers } }
 
 
         func clear() {
@@ -132,6 +133,7 @@ import Foundation
 
     extension UIView {
         var zlayer: CALayer { get { return layer } }
+        var recognizers: [UIGestureRecognizer] { get { return gestureRecognizers! } }
 
 
         func display() {}
@@ -146,6 +148,7 @@ import Foundation
             if gestureRecognizers != nil {
                 clearGestures()
             }
+
             addGestureRecognizer(gesture)
         }
     }
@@ -210,8 +213,9 @@ extension String {
 
 extension ZView {
 
+
     func clearGestures() {
-        for recognizer in gestureRecognizers {
+        for recognizer in recognizers {
             removeGestureRecognizer(recognizer)
         }
     }

@@ -39,8 +39,25 @@ class ZoneTextField: ZTextField {
 
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-        zonesManager.currentlyEditingZone = widgetZone
+        let result = super.becomeFirstResponder()
 
-        return super.becomeFirstResponder()
+        if result {
+            zonesManager.currentlyEditingZone = widgetZone
+        }
+
+        return result
     }
+
+
+    // fix a bug where root zone is editing on launch
+
+    #if os(OSX)
+
+    override var acceptsFirstResponder: Bool { get { return stateManager.isReady } }
+
+    #elseif os(iOS)
+
+    override var canBecomeFirstResponder: Bool { get { return stateManager.isReady } }
+
+    #endif
 }
