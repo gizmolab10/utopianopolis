@@ -41,6 +41,8 @@ class ZFileManager: NSObject {
 
 
     func restore() {
+        cloudManager.records.removeAll()
+        
         if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
             zonesManager.storageRootZone = Zone(dict: raw as! ZStorageDict)
             zonesManager.rootZone        = zonesManager.storageRootZone
