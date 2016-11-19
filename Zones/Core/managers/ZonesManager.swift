@@ -24,10 +24,20 @@ class ZonesManager: NSObject {
 
     var                widgets: [CKRecordID : ZoneWidget] = [:]
     var               closures:     [UpdateClosureObject] = []
-    var              _rootZone: Zone!
-    var          _fileRootZone: Zone!
+    var _currentlyGrabbedZones:                    [Zone] = []
     var  _currentlyEditingZone: Zone?
-    var _currentlyGrabbedZones: [Zone]                    = []
+    var       _storageRootZone: Zone?
+    var              _rootZone: Zone?
+
+
+    func clear() {
+        _rootZone              = nil
+        _storageRootZone       = nil
+        _currentlyEditingZone  = nil
+        _currentlyGrabbedZones = []
+
+        widgets.removeAll()
+    }
 
 
     var rootZone: Zone! {
@@ -42,14 +52,14 @@ class ZonesManager: NSObject {
     }
 
 
-    var fileRootZone: Zone! {
-        set { _fileRootZone = newValue }
+    var storageRootZone: Zone! {
+        set { _storageRootZone = newValue }
         get {
-            if  _fileRootZone == nil {
-                _fileRootZone = Zone(record: nil, storageMode: cloudManager.storageMode)
+            if  _storageRootZone == nil {
+                _storageRootZone = Zone(record: nil, storageMode: cloudManager.storageMode)
             }
 
-            return _fileRootZone
+            return _storageRootZone
         }
     }
 
@@ -60,17 +70,14 @@ class ZonesManager: NSObject {
         }
 
         set {
-            if  _currentlyEditingZone != newValue {
-                _currentlyEditingZone  = newValue
+            _currentlyEditingZone = newValue
+            let             zones = currentlyGrabbedZones
+            currentlyGrabbedZones = []
 
-                for zone in currentlyGrabbedZones {
-                    if zone != _currentlyEditingZone {
-                        updateToClosures(zone, regarding: .datum)
-                    }
+            for zone in zones {
+                if zone != _currentlyEditingZone {
+                    updateToClosures(zone, regarding: .datum)
                 }
-
-                currentlyGrabbedZones = []
-
             }
         }
     }
@@ -83,13 +90,18 @@ class ZonesManager: NSObject {
 
 
     func deselect() {
-        let               zone = currentlyMovableZone
+        let               zone = currentlyEditingZone
         _currentlyEditingZone  = nil
         _currentlyGrabbedZones = []
 
-        widgetForZone(rootZone)?.stopEditingRecursively()
-
-        if zone != nil {
+        if zone == nil {
+            widgetForZone(rootZone)?.stopEditingRecursively()
+            updateToClosures(nil, regarding: .data)
+        } else {
+            let widget = widgetForZone(zone!)
+            
+            widget?.captureText()
+            // widget?.stopEditing()
             updateToClosures(zone, regarding: .datum)
         }
     }
@@ -224,9 +236,9 @@ class ZonesManager: NSObject {
         case .everyone: mode = .everyone; break
         }
 
-        cloudManager.storageMode = mode
+        clear()
 
-        widgets.removeAll()
+        cloudManager.storageMode = mode
         stateManager.setupAndRun([ZSynchronizationState.restore.rawValue, ZSynchronizationState.root.rawValue])
     }
 

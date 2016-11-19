@@ -55,6 +55,7 @@ class ZRecord: NSObject {
     init(record: CKRecord?, storageMode: ZStorageMode?) {
         super.init()
 
+        self.recordState = (record == nil) ? .needsCreating : .ready
         self.storageMode = storageMode
         self.record      = record
 
@@ -83,14 +84,15 @@ class ZRecord: NSObject {
 
         for (key, value) in dict {
             switch key {
-            case recordTypeKey:                                type = value as? String; break
-            case recordNameKey:                                name = value as? String; break
-            default:                                                                    break
+            case recordTypeKey: type = value as? String; break
+            case recordNameKey: name = value as? String; break
+            default:                                     break
             }
         }
 
         if type != nil && name != nil {
-            record = CKRecord(recordType: type!, recordID: CKRecordID(recordName: name!))
+            record      = CKRecord(recordType: type!, recordID: CKRecordID(recordName: name!))
+            recordState = .ready
 
             // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
         }

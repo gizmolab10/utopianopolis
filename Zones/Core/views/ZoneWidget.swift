@@ -38,8 +38,6 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
         get {
             if _textField == nil {
                 _textField            = ZoneTextField()
-                _textField.widgetZone = widgetZone
-                _textField.delegate   = self
 
                 _textField.setup()
                 addSubview(_textField)
@@ -164,7 +162,9 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
 
 
     func layoutText() {
-        textField.text = widgetZone.zoneName ?? "empty"
+        textField.widgetZone = widgetZone
+        textField.delegate   = self
+        textField.text       = widgetZone.zoneName ?? "empty"
 
         layoutTextField()
     }

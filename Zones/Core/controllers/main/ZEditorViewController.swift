@@ -29,7 +29,7 @@ class ZEditorViewController: ZGenericViewController {
         if object == nil || object == zonesManager.rootZone! {
             recursing = true
 
-            print("all")
+            log("all")
             zonesManager.clearWidgets()
         } else {
             let       zone = object as! Zone
@@ -38,7 +38,7 @@ class ZEditorViewController: ZGenericViewController {
             specificindex  = zone.siblingIndex()
 
             if let name = zone.zoneName {
-                print(name)
+                log(name)
             }
         }
 
@@ -59,5 +59,6 @@ class ZEditorViewController: ZGenericViewController {
     
     func gestureEvent(_ sender: ZGestureRecognizer?) {
         zonesManager.deselect()
+        view.becomeFirstResponder()
     }
 }

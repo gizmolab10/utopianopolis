@@ -31,8 +31,15 @@ class ZoneTextField: ZTextField {
     }
 
 
+    @discardableResult override func resignFirstResponder() -> Bool {
+        zonesManager.currentlyEditingZone = nil
+
+        return super.resignFirstResponder()
+    }
+
+
     @discardableResult override func becomeFirstResponder() -> Bool {
-        zonesManager.currentlyEditingZone  = widgetZone
+        zonesManager.currentlyEditingZone = widgetZone
 
         return super.becomeFirstResponder()
     }

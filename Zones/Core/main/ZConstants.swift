@@ -44,6 +44,7 @@ let          showChildrenKey = "showChildren"
 enum ZSynchronizationState: Int {
     case restore
     case root
+    case fetch
     case unsubscribe
     case subscribe
     case ready
@@ -69,6 +70,7 @@ enum ZUpdateKind: Int {
 
 
 enum ZRecordState: Int {
+    case needsCreating // record is nil
     case needsDelete
     case needsFetch
     case needsSave

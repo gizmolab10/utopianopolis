@@ -965,7 +965,7 @@
                                     <font key="font" metaFont="system" size="14"/>
                                     <segments>
                                         <segment label="Mine" width="55"/>
-                                        <segment label="Everyone" width="86" tag="1"/>
+                                        <segment label="Everyone" width="86" selected="YES" tag="1"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>

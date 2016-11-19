@@ -38,7 +38,7 @@ class ZGenericViewController: ZViewController {
 
 
     func log(_ string: String) {
-        print(string)
+        // print(string)
     }
 
 
