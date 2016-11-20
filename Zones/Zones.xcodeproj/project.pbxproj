@@ -35,6 +35,8 @@
 		0C371C481DE24B2A0030253D /* ZTravelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C461DE24B2A0030253D /* ZTravelManager.swift */; };
 		0C371C4A1DE24F710030253D /* ZSelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C491DE24F710030253D /* ZSelectionManager.swift */; };
 		0C371C4B1DE24F710030253D /* ZSelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C491DE24F710030253D /* ZSelectionManager.swift */; };
+		0C371C4D1DE2532C0030253D /* ZWidgetsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C4C1DE2532C0030253D /* ZWidgetsManager.swift */; };
+		0C371C4E1DE2532C0030253D /* ZWidgetsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C4C1DE2532C0030253D /* ZWidgetsManager.swift */; };
 		0C58C37C1D45805400CAB387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C58C36F1D45805400CAB387 /* Assets.xcassets */; };
 		0C58C37D1D45805400CAB387 /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C58C3711D45805400CAB387 /* ZAppDelegate.swift */; };
 		0C58C3821D45815A00CAB387 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B561D2ECF41001892E5 /* LaunchScreen.storyboard */; };
@@ -212,6 +214,7 @@
 		0C371C431DE195E00030253D /* ZCrossLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZCrossLink.swift; sourceTree = "<group>"; };
 		0C371C461DE24B2A0030253D /* ZTravelManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTravelManager.swift; sourceTree = "<group>"; };
 		0C371C491DE24F710030253D /* ZSelectionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSelectionManager.swift; sourceTree = "<group>"; };
+		0C371C4C1DE2532C0030253D /* ZWidgetsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZWidgetsManager.swift; sourceTree = "<group>"; };
 		0C58C36F1D45805400CAB387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C58C3711D45805400CAB387 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
 		0C58C3761D45805400CAB387 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -421,6 +424,7 @@
 				0C371C491DE24F710030253D /* ZSelectionManager.swift */,
 				0CB4E9D61DB1CC3A0058807D /* ZStateManager.swift */,
 				0C371C461DE24B2A0030253D /* ZTravelManager.swift */,
+				0C371C4C1DE2532C0030253D /* ZWidgetsManager.swift */,
 			);
 			path = managers;
 			sourceTree = "<group>";
@@ -964,6 +968,7 @@
 				0CD1EAEC1DB725A800A096E4 /* UIUserNotifications+Operations.swift in Sources */,
 				0CBD002D1D9DBC4200797F21 /* ZClosures.swift in Sources */,
 				0CF97D631DA880B000FEAA41 /* ZoneWidget.swift in Sources */,
+				0C371C4E1DE2532C0030253D /* ZWidgetsManager.swift in Sources */,
 				0CD1EAFC1DB725A800A096E4 /* Operation.swift in Sources */,
 				0CD1EADC1DB725A800A096E4 /* ReachabilityCondition.swift in Sources */,
 				0C36E7FF1DC31834005C5059 /* ZoneDot.swift in Sources */,
@@ -1045,6 +1050,7 @@
 				0CD921821D90C65E00F80964 /* ZRecord.swift in Sources */,
 				0CBD002C1D9DBC4200797F21 /* ZClosures.swift in Sources */,
 				0CF97D621DA880B000FEAA41 /* ZoneWidget.swift in Sources */,
+				0C371C4D1DE2532C0030253D /* ZWidgetsManager.swift in Sources */,
 				0CD1EAFB1DB725A800A096E4 /* Operation.swift in Sources */,
 				0CD1EADB1DB725A800A096E4 /* ReachabilityCondition.swift in Sources */,
 				0C36E7FE1DC31834005C5059 /* ZoneDot.swift in Sources */,

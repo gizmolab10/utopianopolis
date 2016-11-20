@@ -92,6 +92,6 @@ class ZStateManager: NSObject {
         isReady = true;
 
         operation.finish()
-        zonesManager.updateToClosures(nil, regarding: .data)
+        controllersManager.updateToClosures(nil, regarding: .data)
     }
 }

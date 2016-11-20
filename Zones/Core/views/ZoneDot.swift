@@ -72,7 +72,7 @@ class ZoneDot: ZView {
             } else {
                 selectionManager.deselect()
                 selectionManager.currentlyGrabbedZones = [zone]
-                zonesManager.updateToClosures(zone, regarding: .datum)
+                controllersManager.updateToClosures(zone, regarding: .datum)
             }
         }
     }

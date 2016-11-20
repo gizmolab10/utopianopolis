@@ -94,7 +94,7 @@ class ZoneWidget: ZView {
         isUserInteractionEnabled      = false
 
         clear()
-        zonesManager.registerWidget(self)
+        widgetsManager.registerWidget(self)
         addDragHighlight()
 
         if recursing {

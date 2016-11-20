@@ -29,7 +29,7 @@ class ZSelectionManager: NSObject {
 
         for zone in zones {
             if zone != currentlyEditingZone {
-                zonesManager.updateToClosures(zone, regarding: .datum)
+                controllersManager.updateToClosures(zone, regarding: .datum)
             }
         }
     }
@@ -37,7 +37,7 @@ class ZSelectionManager: NSObject {
 
     func fullResign() {
         currentlyEditingZone = nil
-        let           window = zonesManager.widgetForZone(zonesManager.rootZone)?.window
+        let           window = widgetsManager.widgetForZone(zonesManager.rootZone!)?.window
 
         window?.makeFirstResponder(nil) // ios broken
     }
@@ -48,12 +48,12 @@ class ZSelectionManager: NSObject {
         currentlyEditingZone = nil
 
         if zone == nil || zone == zonesManager.rootZone {
-            zonesManager.updateToClosures(nil, regarding: .data)
+            controllersManager.updateToClosures(nil, regarding: .data)
         } else {
-            let widget = zonesManager.widgetForZone(zone!)
+            let widget = widgetsManager.widgetForZone(zone!)
 
             widget?.textField.captureText()
-            zonesManager.updateToClosures(zone, regarding: .datum)
+            controllersManager.updateToClosures(zone, regarding: .datum)
         }
 
         fullResign()
@@ -98,8 +98,8 @@ class ZSelectionManager: NSObject {
 
     var canDelete: Bool {
         get {
-            return (currentlyEditingZone != nil     &&  currentlyEditingZone != zonesManager.rootZone) ||
-                (   currentlyGrabbedZones.count > 0 && !currentlyGrabbedZones.contains(zonesManager.rootZone))
+            return (currentlyEditingZone != nil     &&  currentlyEditingZone != zonesManager.rootZone!) ||
+                (   currentlyGrabbedZones.count > 0 && !currentlyGrabbedZones.contains(zonesManager.rootZone!))
         }
     }
     

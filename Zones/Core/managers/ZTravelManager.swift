@@ -19,8 +19,15 @@ class ZTravelManager: NSObject {
         case .everyone: cloudManager.storageMode = .everyone; break
         }
 
+        refresh()
+    }
+
+
+    func refresh() {
         zonesManager    .clear()
+        widgetsManager  .clear()
         selectionManager.clear()
+
         stateManager.setupAndRun([ZSynchronizationState.restore.rawValue, ZSynchronizationState.root.rawValue])
     }
 }

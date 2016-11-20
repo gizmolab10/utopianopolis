@@ -23,7 +23,7 @@ class ZGenericViewController: ZViewController {
 
 
     func setup() {
-        zonesManager.registerUpdateClosure { (object, kind) -> (Void) in
+        controllersManager.registerUpdateClosure { (object, kind) -> (Void) in
             if kind != .error {
                 self.updateFor(object, kind: kind)
             }

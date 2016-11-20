@@ -144,7 +144,7 @@ class ZCloudManager {
                         zone?.parentZone = parent
                     }
                     
-                    zonesManager.updateToClosures(nil, regarding: .data)
+                    controllersManager.updateToClosures(nil, regarding: .data)
                 }
             }
         }
@@ -178,7 +178,7 @@ class ZCloudManager {
                 }
 
                 self.fetchReferencesTo(zone!)
-                zonesManager.updateToClosures(zone?.parentZone, regarding: .data)
+                controllersManager.updateToClosures(zone?.parentZone, regarding: .data)
             }
         } as! RecordClosure)
     }
@@ -275,7 +275,7 @@ class ZCloudManager {
 
             currentDB.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iSaveError: Error?) in
                 if iSaveError != nil {
-                    zonesManager.updateToClosures(iSaveError as NSObject?, regarding: .error)
+                    controllersManager.updateToClosures(iSaveError as NSObject?, regarding: .error)
 
                     print(iSaveError)
                 }
@@ -311,19 +311,19 @@ class ZCloudManager {
                         record?[forPropertyName]  = newValue
 
                         object.updateProperties()
-                        zonesManager.updateToClosures(nil, regarding: .data)
+                        controllersManager.updateToClosures(nil, regarding: .data)
                         object.saveToCloud()
                     } else {
                         fetched![forPropertyName] = newValue
 
                         self.currentDB.save(fetched!, completionHandler: { (saved: CKRecord?, saveError: Error?) in
                             if saveError != nil {
-                                zonesManager.updateToClosures(saveError as NSObject?, regarding: .error)
+                                controllersManager.updateToClosures(saveError as NSObject?, regarding: .error)
                             } else {
                                 object.record      = saved!
                                 object.recordState = .ready
 
-                                zonesManager.updateToClosures(nil, regarding: .data)
+                                controllersManager.updateToClosures(nil, regarding: .data)
                                 zfileManager.save()
                             }
                         })
@@ -342,12 +342,12 @@ class ZCloudManager {
 
             currentDB.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, performanceError: Error?) in
                 if performanceError != nil {
-                    zonesManager.updateToClosures(performanceError as NSObject?, regarding: .error)
+                    controllersManager.updateToClosures(performanceError as NSObject?, regarding: .error)
                 } else {
                     let        record: CKRecord = (iResults?[0])!
                     object.record[valueForPropertyName] = (record as! CKRecordValue)
 
-                    zonesManager.updateToClosures(nil, regarding: .data)
+                    controllersManager.updateToClosures(nil, regarding: .data)
                 }
             }
         }

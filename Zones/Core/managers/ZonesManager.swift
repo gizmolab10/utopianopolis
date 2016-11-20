@@ -6,6 +6,7 @@
 //  Copyright © 2016 Zones. All rights reserved.
 //
 
+
 import Foundation
 import CloudKit
 
@@ -13,114 +14,13 @@ import CloudKit
 class ZonesManager: NSObject {
 
 
-    class UpdateClosureObject {
-        let closure: UpdateClosure!
-
-        init(iClosure: @escaping UpdateClosure) {
-            closure = iClosure
-        }
-    }
-
-
-    var               widgets: [CKRecordID : ZoneWidget] = [:]
-    var              closures:     [UpdateClosureObject] = []
-    var      _storageRootZone: Zone?
-    var             _rootZone: Zone?
+    var storageRootZone: Zone! = Zone(record: nil, storageMode: cloudManager.storageMode)
+    var        rootZone: Zone! = Zone(record: nil, storageMode: cloudManager.storageMode)
 
 
     func clear() {
-        _rootZone             = nil
-        _storageRootZone      = nil
-
-        widgets.removeAll()
-    }
-
-
-    var rootZone: Zone! {
-        set { _rootZone = newValue }
-        get {
-            if  _rootZone == nil {
-                _rootZone = Zone(record: nil, storageMode: cloudManager.storageMode)
-            }
-
-            return _rootZone
-        }
-    }
-
-
-    var storageRootZone: Zone! {
-        set { _storageRootZone = newValue }
-        get {
-            if  _storageRootZone == nil {
-                _storageRootZone = Zone(record: nil, storageMode: cloudManager.storageMode)
-            }
-
-            return _storageRootZone
-        }
-    }
-
-
-    // MARK:- widgets
-    // MARK:-
-
-
-    func clearWidgets() {
-        widgets.removeAll()
-    }
-
-
-    func registerWidget(_ widget: ZoneWidget) {
-        if let zone = widget.widgetZone, let record = zone.record {
-            widgets[record.recordID] = widget
-        }
-    }
-
-
-    func widgetForZone(_ zone: Zone) -> ZoneWidget? {
-        if let record = zone.record {
-            return widgets[record.recordID]
-        }
-
-        return nil
-    }
-
-
-    // MARK:- closures
-    // MARK:-
-
-
-    func registerUpdateClosure(_ closure: @escaping UpdateClosure) {
-        closures.append(UpdateClosureObject(iClosure: closure))
-    }
-
-
-    func updateToClosures(_ object: NSObject?, regarding: ZUpdateKind, onCompletion: Closure?) {
-        DispatchQueue.main.async {
-            for closureObject: UpdateClosureObject in self.closures {
-                closureObject.closure(object, regarding)
-            }
-
-            if onCompletion != nil {
-                onCompletion!()
-            }
-        }
-    }
-
-
-    func updateToClosures(_ object: NSObject?, regarding: ZUpdateKind) {
-        updateToClosures(object, regarding: regarding, onCompletion: nil)
-    }
-
-
-    func saveAndUpdateFor(_ zone: Zone?, onCompletion: Closure?) {
-        updateToClosures(zone, regarding: .data, onCompletion: onCompletion)
-        zfileManager.save()
-        cloudManager.flushOnCompletion {}
-    }
-
-
-    func saveAndUpdateFor(_ zone: Zone?) {
-        saveAndUpdateFor(zone, onCompletion: nil)
+        rootZone        = Zone(record: nil, storageMode: cloudManager.storageMode)
+        storageRootZone = Zone(record: nil, storageMode: cloudManager.storageMode)
     }
 
     
@@ -133,7 +33,7 @@ class ZonesManager: NSObject {
             ofZone?.showChildren = (ofZone?.showChildren == false)
 
             selectionManager.deselectDragWithin(ofZone!)
-            saveAndUpdateFor(nil)
+            controllersManager.saveAndUpdateFor(nil)
         }
     }
 
@@ -160,7 +60,7 @@ class ZonesManager: NSObject {
             let record = CKRecord(recordType: zoneTypeKey)
             let   zone = Zone(record: record, storageMode: cloudManager.storageMode)
 
-            widgetForZone(parentZone!)?.textField.stopEditing()
+            widgetsManager.widgetForZone(parentZone!)?.textField.stopEditing()
             parentZone?.children.append(zone)
 
             selectionManager.currentlyEditingZone = zone
@@ -169,10 +69,10 @@ class ZonesManager: NSObject {
             zone.recordState                      = .needsSave
             zone.parentZone                       = parentZone
 
-            saveAndUpdateFor(parentZone, onCompletion: { () -> (Void) in
+            controllersManager.saveAndUpdateFor(parentZone, onCompletion: { () -> (Void) in
                 let when = DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
                 DispatchQueue.main.asyncAfter(deadline: when) {
-                    self.widgetForZone(zone)?.textField.becomeFirstResponder()
+                    widgetsManager.widgetForZone(zone)?.textField.becomeFirstResponder()
                 }
             })
         }
@@ -190,7 +90,7 @@ class ZonesManager: NSObject {
             selectionManager.currentlyGrabbedZones = []
         }
 
-        saveAndUpdateFor(nil)
+        controllersManager.saveAndUpdateFor(nil)
     }
 
 
@@ -224,7 +124,7 @@ class ZonesManager: NSObject {
 
                         zone.recordState = .needsSave
 
-                        saveAndUpdateFor(parentZone)
+                        controllersManager.saveAndUpdateFor(parentZone)
                     }
                 }
             }
@@ -249,8 +149,7 @@ class ZonesManager: NSObject {
                         parentZone.recordState   = .needsSave
                         zone.recordState         = .needsSave
                         zone.parentZone          = siblingZone
-
-                        saveAndUpdateFor(parentZone)
+                        controllersManager.saveAndUpdateFor(parentZone)
                     }
                 }
             }
@@ -270,8 +169,7 @@ class ZonesManager: NSObject {
 
                     grandParentZone.children.append(zone)
                     parentZone.children.remove(at: index!)
-
-                    saveAndUpdateFor(grandParentZone)
+                    controllersManager.saveAndUpdateFor(grandParentZone)
                 }
             }
         }

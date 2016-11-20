@@ -30,10 +30,10 @@ class ZEditorViewController: ZGenericViewController {
             recursing = true
 
             log("all")
-            zonesManager.clearWidgets()
+            widgetsManager.clear()
         } else {
             let       zone = object as! Zone
-            specificWidget = zonesManager.widgetForZone(zone)
+            specificWidget = widgetsManager.widgetForZone(zone)
             specificView   = specificWidget?.superview
             specificindex  = zone.siblingIndex()
 
