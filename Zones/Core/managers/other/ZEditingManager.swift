@@ -36,6 +36,13 @@ class ZEditingManager: NSObject {
     }
 
 
+    func normalize() {
+        widgetsManager.clear()
+        travelManager.rootZone.normalize()
+        controllersManager.saveAndUpdateFor(nil)
+    }
+
+
     func add() {
         addZoneTo(selectionManager.currentlyMovableZone)
     }

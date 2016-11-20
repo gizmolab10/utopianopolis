@@ -33,8 +33,6 @@
 		0C371C5C1DE259700030253D /* ZEditingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C511DE259700030253D /* ZEditingManager.swift */; };
 		0C371C5D1DE259700030253D /* ZSelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C521DE259700030253D /* ZSelectionManager.swift */; };
 		0C371C5E1DE259700030253D /* ZSelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C521DE259700030253D /* ZSelectionManager.swift */; };
-		0C371C5F1DE259700030253D /* ZStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C531DE259700030253D /* ZStateManager.swift */; };
-		0C371C601DE259700030253D /* ZStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C531DE259700030253D /* ZStateManager.swift */; };
 		0C371C611DE259700030253D /* ZWidgetsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C541DE259700030253D /* ZWidgetsManager.swift */; };
 		0C371C621DE259700030253D /* ZWidgetsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C541DE259700030253D /* ZWidgetsManager.swift */; };
 		0C371C631DE259700030253D /* ZCloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C561DE259700030253D /* ZCloudManager.swift */; };
@@ -43,6 +41,8 @@
 		0C371C661DE259700030253D /* ZFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C571DE259700030253D /* ZFileManager.swift */; };
 		0C371C671DE259700030253D /* ZTravelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C581DE259700030253D /* ZTravelManager.swift */; };
 		0C371C681DE259700030253D /* ZTravelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C581DE259700030253D /* ZTravelManager.swift */; };
+		0C371C6A1DE268150030253D /* ZStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C691DE268150030253D /* ZStateManager.swift */; };
+		0C371C6B1DE268150030253D /* ZStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C691DE268150030253D /* ZStateManager.swift */; };
 		0C58C37C1D45805400CAB387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C58C36F1D45805400CAB387 /* Assets.xcassets */; };
 		0C58C37D1D45805400CAB387 /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C58C3711D45805400CAB387 /* ZAppDelegate.swift */; };
 		0C58C3821D45815A00CAB387 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B561D2ECF41001892E5 /* LaunchScreen.storyboard */; };
@@ -213,11 +213,11 @@
 		0C371C501DE259700030253D /* ZControllersManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZControllersManager.swift; sourceTree = "<group>"; };
 		0C371C511DE259700030253D /* ZEditingManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEditingManager.swift; sourceTree = "<group>"; };
 		0C371C521DE259700030253D /* ZSelectionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSelectionManager.swift; sourceTree = "<group>"; };
-		0C371C531DE259700030253D /* ZStateManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZStateManager.swift; sourceTree = "<group>"; };
 		0C371C541DE259700030253D /* ZWidgetsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZWidgetsManager.swift; sourceTree = "<group>"; };
 		0C371C561DE259700030253D /* ZCloudManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZCloudManager.swift; sourceTree = "<group>"; };
 		0C371C571DE259700030253D /* ZFileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFileManager.swift; sourceTree = "<group>"; };
 		0C371C581DE259700030253D /* ZTravelManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTravelManager.swift; sourceTree = "<group>"; };
+		0C371C691DE268150030253D /* ZStateManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZStateManager.swift; sourceTree = "<group>"; };
 		0C58C36F1D45805400CAB387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C58C3711D45805400CAB387 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
 		0C58C3761D45805400CAB387 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -365,7 +365,6 @@
 				0C371C501DE259700030253D /* ZControllersManager.swift */,
 				0C371C511DE259700030253D /* ZEditingManager.swift */,
 				0C371C521DE259700030253D /* ZSelectionManager.swift */,
-				0C371C531DE259700030253D /* ZStateManager.swift */,
 				0C371C541DE259700030253D /* ZWidgetsManager.swift */,
 			);
 			path = other;
@@ -376,6 +375,7 @@
 			children = (
 				0C371C561DE259700030253D /* ZCloudManager.swift */,
 				0C371C571DE259700030253D /* ZFileManager.swift */,
+				0C371C691DE268150030253D /* ZStateManager.swift */,
 				0C371C581DE259700030253D /* ZTravelManager.swift */,
 			);
 			path = storage;
@@ -935,7 +935,6 @@
 				0CB1A7DC1D73F87B00283F7B /* ZAction.swift in Sources */,
 				0CD1EAF41DB725A800A096E4 /* BlockOperation.swift in Sources */,
 				0C371C5C1DE259700030253D /* ZEditingManager.swift in Sources */,
-				0C371C601DE259700030253D /* ZStateManager.swift in Sources */,
 				0C2349C21DDBBD3B00899672 /* ZTravelViewController.swift in Sources */,
 				0CD1EADE1DB725A800A096E4 /* RemoteNotificationCondition.swift in Sources */,
 				0C2349B81DDBBD3B00899672 /* ZGenericViewController.swift in Sources */,
@@ -948,6 +947,7 @@
 				0CD1EACA1DB725A800A096E4 /* HealthCondition.swift in Sources */,
 				0CD1EACE1DB725A800A096E4 /* MutuallyExclusive.swift in Sources */,
 				0CD1EAEE1DB725A800A096E4 /* BlockObserver.swift in Sources */,
+				0C371C6B1DE268150030253D /* ZStateManager.swift in Sources */,
 				0CD1EAD01DB725A800A096E4 /* NegatedCondition.swift in Sources */,
 				0CD1EAE81DB725A800A096E4 /* NSLock+Operations.swift in Sources */,
 				0CD1EAD81DB725A800A096E4 /* PassbookCondition.swift in Sources */,
@@ -1017,7 +1017,6 @@
 				0C58C37D1D45805400CAB387 /* ZAppDelegate.swift in Sources */,
 				0CD1EAF31DB725A800A096E4 /* BlockOperation.swift in Sources */,
 				0C371C5B1DE259700030253D /* ZEditingManager.swift in Sources */,
-				0C371C5F1DE259700030253D /* ZStateManager.swift in Sources */,
 				0C2349C11DDBBD3B00899672 /* ZTravelViewController.swift in Sources */,
 				0CD1EADD1DB725A800A096E4 /* RemoteNotificationCondition.swift in Sources */,
 				0C2349B71DDBBD3B00899672 /* ZGenericViewController.swift in Sources */,
@@ -1030,6 +1029,7 @@
 				0CD1EAC91DB725A800A096E4 /* HealthCondition.swift in Sources */,
 				0CD1EACD1DB725A800A096E4 /* MutuallyExclusive.swift in Sources */,
 				0CD1EAED1DB725A800A096E4 /* BlockObserver.swift in Sources */,
+				0C371C6A1DE268150030253D /* ZStateManager.swift in Sources */,
 				0CD1EACF1DB725A800A096E4 /* NegatedCondition.swift in Sources */,
 				0CD1EAE71DB725A800A096E4 /* NSLock+Operations.swift in Sources */,
 				0CD1EAD71DB725A800A096E4 /* PassbookCondition.swift in Sources */,

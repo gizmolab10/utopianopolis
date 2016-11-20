@@ -27,6 +27,13 @@ class Zone : ZRecord {
     }
 
 
+    func normalize() {
+        for child: Zone in children {
+            child.normalize()
+        }
+    }
+
+
     func siblingIndex() -> Int {
         if let progeny: [Zone] = parentZone?.children {
             if let index = progeny.index(of: self) {

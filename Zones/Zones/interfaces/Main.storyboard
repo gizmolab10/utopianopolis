@@ -938,21 +938,29 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i7P-tX-Rsd">
-                                <rect key="frame" x="20" y="261" width="94" height="19"/>
+                                <rect key="frame" x="14" y="252" width="125" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="roundRect" title="Push to Cloud" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="12V-Xi-SE0">
+                                <buttonCell key="cell" type="push" title="Push to Cloud" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="12V-Xi-SE0">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="cellTitle"/>
+                                    <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="genericButtonAction:" target="YaQ-0g-PCb" id="WW5-kp-CJc"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d02-RZ-oux">
+                                <rect key="frame" x="12" y="219" width="142" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Normalize Graph" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sOy-bQ-Bn9">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="normalizeButtonAction:" target="YaQ-0g-PCb" id="2Gu-Wh-ikl"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
-                    <connections>
-                        <outlet property="flushButton" destination="i7P-tX-Rsd" id="vwm-Qg-AOL"/>
-                    </connections>
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
