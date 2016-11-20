@@ -184,6 +184,13 @@ import Foundation
 typealias ZStorageDict = [String : NSObject]
 
 
+extension NSObject {
+    func toConsole(_ loggable: Any...) {
+        // print(loggable)
+    }
+}
+
+
 extension CGRect {
     var center : CGPoint {
         return CGPoint(x: midX, y: midY)

@@ -37,11 +37,6 @@ class ZGenericViewController: ZViewController {
     func updateFor(_ object: NSObject?, kind: ZUpdateKind) {}
 
 
-    func log(_ string: String) {
-        // print(string)
-    }
-
-
 #if os(OSX)
 
     override func viewWillAppear() {

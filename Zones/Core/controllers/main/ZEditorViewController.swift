@@ -29,7 +29,7 @@ class ZEditorViewController: ZGenericViewController {
         if object == nil || object == travelManager.rootZone! {
             recursing = true
 
-            log("all")
+            toConsole("all")
             widgetsManager.clear()
         } else {
             let       zone = object as! Zone
@@ -38,7 +38,7 @@ class ZEditorViewController: ZGenericViewController {
             specificindex  = zone.siblingIndex()
 
             if let name = zone.zoneName {
-                log(name)
+                toConsole(name)
             }
         }
 

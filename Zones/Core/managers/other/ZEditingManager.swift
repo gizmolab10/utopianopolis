@@ -1,5 +1,5 @@
 //
-//  ZonesManager.swift
+//  ZEditingManager.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 10/29/16.
@@ -11,11 +11,7 @@ import Foundation
 import CloudKit
 
 
-class ZonesManager: NSObject {
-
-    
-    // MARK:- editing, moving and revealing
-    // MARK:-
+class ZEditingManager: NSObject {
 
 
     func toggleChildrenVisibility(_ ofZone: Zone?) {

@@ -25,7 +25,7 @@ class ZEditingToolsViewController: ZGenericViewController {
 
 
     @IBAction func genericButtonAction(_ button: ZButton) {
-        zonesManager.editingAction(ZEditAction(rawValue: Int(button.tag))!)
+        editingManager.editingAction(ZEditAction(rawValue: Int(button.tag))!)
     }
 
 

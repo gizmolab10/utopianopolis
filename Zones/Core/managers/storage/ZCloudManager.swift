@@ -11,7 +11,7 @@ import Foundation
 import CloudKit
 
 
-class ZCloudManager {
+class ZCloudManager: NSObject {
     var     records: [CKRecordID : ZRecord] = [:]
     var storageMode:           ZStorageMode = .everyone
     var   container:           CKContainer!
@@ -97,7 +97,7 @@ class ZCloudManager {
                         description        = "\(description): \(name)"
                     }
 
-                    print(description)
+                    self.toConsole(description)
                 }
             }
         }
@@ -126,7 +126,7 @@ class ZCloudManager {
 
             currentDB.perform(query, inZoneWith: nil) { (records, error) in
                 if error != nil {
-                    print(error)
+                    self.toConsole(error)
                 }
 
                 if records != nil && (records?.count)! > 0 {
@@ -233,7 +233,7 @@ class ZCloudManager {
     func unsubscribeWith(operation: BlockOperation) {
         currentDB.fetchAllSubscriptions { (iSubscriptions: [CKSubscription]?, iError: Error?) in
             if iError != nil {
-                print(iError)
+                self.toConsole(iError)
             } else {
                 var count: Int = iSubscriptions!.count
 
@@ -243,7 +243,7 @@ class ZCloudManager {
                     for subscription: CKSubscription in iSubscriptions! {
                         self.currentDB.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (iSubscription: String?, iDeleteError: Error?) in
                             if iDeleteError != nil {
-                                print(iDeleteError)
+                                self.toConsole(iDeleteError)
                             }
 
                             count -= 1
@@ -277,7 +277,7 @@ class ZCloudManager {
                 if iSaveError != nil {
                     controllersManager.updateToClosures(iSaveError as NSObject?, regarding: .error)
 
-                    print(iSaveError)
+                    self.toConsole(iSaveError)
                 }
 
                 count -= 1

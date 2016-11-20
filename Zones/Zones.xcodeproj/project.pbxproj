@@ -29,8 +29,8 @@
 		0C371C451DE195E00030253D /* ZCrossLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C431DE195E00030253D /* ZCrossLink.swift */; };
 		0C371C591DE259700030253D /* ZControllersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C501DE259700030253D /* ZControllersManager.swift */; };
 		0C371C5A1DE259700030253D /* ZControllersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C501DE259700030253D /* ZControllersManager.swift */; };
-		0C371C5B1DE259700030253D /* ZonesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C511DE259700030253D /* ZonesManager.swift */; };
-		0C371C5C1DE259700030253D /* ZonesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C511DE259700030253D /* ZonesManager.swift */; };
+		0C371C5B1DE259700030253D /* ZEditingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C511DE259700030253D /* ZEditingManager.swift */; };
+		0C371C5C1DE259700030253D /* ZEditingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C511DE259700030253D /* ZEditingManager.swift */; };
 		0C371C5D1DE259700030253D /* ZSelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C521DE259700030253D /* ZSelectionManager.swift */; };
 		0C371C5E1DE259700030253D /* ZSelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C521DE259700030253D /* ZSelectionManager.swift */; };
 		0C371C5F1DE259700030253D /* ZStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C531DE259700030253D /* ZStateManager.swift */; };
@@ -211,7 +211,7 @@
 		0C36E7FD1DC31834005C5059 /* ZoneDot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZoneDot.swift; path = views/ZoneDot.swift; sourceTree = "<group>"; };
 		0C371C431DE195E00030253D /* ZCrossLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZCrossLink.swift; sourceTree = "<group>"; };
 		0C371C501DE259700030253D /* ZControllersManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZControllersManager.swift; sourceTree = "<group>"; };
-		0C371C511DE259700030253D /* ZonesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZonesManager.swift; sourceTree = "<group>"; };
+		0C371C511DE259700030253D /* ZEditingManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEditingManager.swift; sourceTree = "<group>"; };
 		0C371C521DE259700030253D /* ZSelectionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSelectionManager.swift; sourceTree = "<group>"; };
 		0C371C531DE259700030253D /* ZStateManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZStateManager.swift; sourceTree = "<group>"; };
 		0C371C541DE259700030253D /* ZWidgetsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZWidgetsManager.swift; sourceTree = "<group>"; };
@@ -363,7 +363,7 @@
 			isa = PBXGroup;
 			children = (
 				0C371C501DE259700030253D /* ZControllersManager.swift */,
-				0C371C511DE259700030253D /* ZonesManager.swift */,
+				0C371C511DE259700030253D /* ZEditingManager.swift */,
 				0C371C521DE259700030253D /* ZSelectionManager.swift */,
 				0C371C531DE259700030253D /* ZStateManager.swift */,
 				0C371C541DE259700030253D /* ZWidgetsManager.swift */,
@@ -934,7 +934,7 @@
 			files = (
 				0CB1A7DC1D73F87B00283F7B /* ZAction.swift in Sources */,
 				0CD1EAF41DB725A800A096E4 /* BlockOperation.swift in Sources */,
-				0C371C5C1DE259700030253D /* ZonesManager.swift in Sources */,
+				0C371C5C1DE259700030253D /* ZEditingManager.swift in Sources */,
 				0C371C601DE259700030253D /* ZStateManager.swift in Sources */,
 				0C2349C21DDBBD3B00899672 /* ZTravelViewController.swift in Sources */,
 				0CD1EADE1DB725A800A096E4 /* RemoteNotificationCondition.swift in Sources */,
@@ -1016,7 +1016,7 @@
 			files = (
 				0C58C37D1D45805400CAB387 /* ZAppDelegate.swift in Sources */,
 				0CD1EAF31DB725A800A096E4 /* BlockOperation.swift in Sources */,
-				0C371C5B1DE259700030253D /* ZonesManager.swift in Sources */,
+				0C371C5B1DE259700030253D /* ZEditingManager.swift in Sources */,
 				0C371C5F1DE259700030253D /* ZStateManager.swift in Sources */,
 				0C2349C11DDBBD3B00899672 /* ZTravelViewController.swift in Sources */,
 				0CD1EADD1DB725A800A096E4 /* RemoteNotificationCondition.swift in Sources */,
