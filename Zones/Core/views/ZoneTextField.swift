@@ -33,7 +33,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
 
     @discardableResult override func resignFirstResponder() -> Bool {
-        zonesManager.currentlyEditingZone = nil
+        selectionManager.currentlyEditingZone = nil
 
         return super.resignFirstResponder()
     }
@@ -43,7 +43,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
         let result = super.becomeFirstResponder()
 
         if result {
-            zonesManager.currentlyEditingZone = widget.widgetZone
+            selectionManager.currentlyEditingZone = widget.widgetZone
         }
 
         return result
@@ -71,7 +71,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
         captureText()
         dispatchAsyncInForeground {
             self.resignFirstResponder()
-            zonesManager.fullResign()
+            selectionManager.fullResign()
         }
     }
 

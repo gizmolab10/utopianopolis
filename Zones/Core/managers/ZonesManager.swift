@@ -24,8 +24,6 @@ class ZonesManager: NSObject {
 
     var               widgets: [CKRecordID : ZoneWidget] = [:]
     var              closures:     [UpdateClosureObject] = []
-    var currentlyGrabbedZones:                    [Zone] = []
-    var  currentlyEditingZone: Zone?
     var      _storageRootZone: Zone?
     var             _rootZone: Zone?
 
@@ -33,8 +31,6 @@ class ZonesManager: NSObject {
     func clear() {
         _rootZone             = nil
         _storageRootZone      = nil
-        currentlyEditingZone  = nil
-        currentlyGrabbedZones = []
 
         widgets.removeAll()
     }
@@ -60,73 +56,6 @@ class ZonesManager: NSObject {
             }
 
             return _storageRootZone
-        }
-    }
-
-
-    func deselectDrags() {
-        let             zones = currentlyGrabbedZones
-        currentlyGrabbedZones = []
-
-        for zone in zones {
-            if zone != currentlyEditingZone {
-                updateToClosures(zone, regarding: .datum)
-            }
-        }
-    }
-
-
-    func fullResign() {
-        currentlyEditingZone = nil
-        let           window = widgetForZone(rootZone)?.window
-
-        window?.makeFirstResponder(nil) // ios broken
-    }
-
-
-    func deselect() {
-        let             zone = currentlyEditingZone
-        currentlyEditingZone = nil
-
-        if zone == nil || zone == rootZone {
-            updateToClosures(nil, regarding: .data)
-        } else {
-            let widget = widgetForZone(zone!)
-
-            widget?.textField.captureText()
-            updateToClosures(zone, regarding: .datum)
-        }
-
-        fullResign()
-    }
-
-
-    func isGrabbed(zone: Zone) -> Bool {
-        return currentlyGrabbedZones.contains(zone)
-    }
-
-
-    var currentlyMovableZone: Zone? {
-        get {
-            var movable: Zone?
-
-            if currentlyGrabbedZones.count > 0 {
-                movable = currentlyGrabbedZones[0]
-            } else if currentlyEditingZone != nil {
-                movable = currentlyEditingZone
-            } else {
-                movable = rootZone
-            }
-
-            return movable!
-        }
-    }
-
-
-    var canDelete: Bool {
-        get {
-            return (currentlyEditingZone != nil     &&  currentlyEditingZone != rootZone) ||
-                (   currentlyGrabbedZones.count > 0 && !currentlyGrabbedZones.contains(rootZone))
         }
     }
 
@@ -199,41 +128,13 @@ class ZonesManager: NSObject {
     // MARK:-
 
 
-    func deselectDragWithin(_ zone: Zone) {
-        for child in zone.children {
-            if currentlyGrabbedZones.contains(child) {
-                if let index = currentlyGrabbedZones.index(of: child) {
-                    currentlyGrabbedZones.remove(at: index)
-                }
-            }
-
-            deselectDragWithin(child)
-        }
-    }
-
-
     func toggleChildrenVisibility(_ ofZone: Zone?) {
         if ofZone != nil {
             ofZone?.showChildren = (ofZone?.showChildren == false)
 
-            deselectDragWithin(ofZone!)
+            selectionManager.deselectDragWithin(ofZone!)
             saveAndUpdateFor(nil)
         }
-    }
-
-
-    func travelAction(_ action: ZTravelAction) {
-        var mode: ZStorageMode = .everyone
-
-        switch action {
-        case .mine:     mode = .mine;     break
-        case .everyone: mode = .everyone; break
-        }
-
-        clear()
-
-        cloudManager.storageMode = mode
-        stateManager.setupAndRun([ZSynchronizationState.restore.rawValue, ZSynchronizationState.root.rawValue])
     }
 
 
@@ -250,7 +151,7 @@ class ZonesManager: NSObject {
 
 
     func add() {
-        addZoneTo(currentlyMovableZone)
+        addZoneTo(selectionManager.currentlyMovableZone)
     }
 
 
@@ -262,11 +163,11 @@ class ZonesManager: NSObject {
             widgetForZone(parentZone!)?.textField.stopEditing()
             parentZone?.children.append(zone)
 
-            currentlyEditingZone    = zone
-            parentZone?.showChildren = true
-            parentZone?.recordState  = .needsSave
-            zone.recordState         = .needsSave
-            zone.parentZone          = parentZone
+            selectionManager.currentlyEditingZone = zone
+            parentZone?.showChildren              = true
+            parentZone?.recordState               = .needsSave
+            zone.recordState                      = .needsSave
+            zone.parentZone                       = parentZone
 
             saveAndUpdateFor(parentZone, onCompletion: { () -> (Void) in
                 let when = DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
@@ -279,14 +180,14 @@ class ZonesManager: NSObject {
 
 
     func delete() {
-        if let zone: Zone = currentlyEditingZone {
+        if let zone: Zone = selectionManager.currentlyEditingZone {
             deleteZone(zone)
 
-            currentlyEditingZone = nil
+            selectionManager.currentlyEditingZone = nil
         } else {
-            deleteZones(currentlyGrabbedZones)
+            deleteZones(selectionManager.currentlyGrabbedZones)
 
-            currentlyGrabbedZones = []
+            selectionManager.currentlyGrabbedZones = []
         }
 
         saveAndUpdateFor(nil)
@@ -312,7 +213,7 @@ class ZonesManager: NSObject {
 
 
     func moveUp(_ moveUp: Bool) {
-        if let        zone: Zone = currentlyMovableZone {
+        if let        zone: Zone = selectionManager.currentlyMovableZone {
             if let    parentZone = zone.parentZone {
                 if let     index = parentZone.children.index(of: zone) {
                     let newIndex = index + (moveUp ? -1 : 1)
@@ -332,7 +233,7 @@ class ZonesManager: NSObject {
 
 
     func moveIntoSibling() {
-        if let            zone: Zone = currentlyMovableZone {
+        if let            zone: Zone = selectionManager.currentlyMovableZone {
             if let        parentZone = zone.parentZone {
                 if let         index = parentZone.children.index(of: zone) {
                     let siblingIndex = index - 1
@@ -358,7 +259,7 @@ class ZonesManager: NSObject {
 
 
     func moveToParent() {
-        if let                       zone: Zone = currentlyMovableZone {
+        if let                       zone: Zone = selectionManager.currentlyMovableZone {
             if let                   parentZone = zone.parentZone {
                 if let          grandParentZone = parentZone.parentZone {
                     let                   index = parentZone.children.index(of: zone)

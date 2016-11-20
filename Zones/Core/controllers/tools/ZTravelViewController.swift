@@ -22,7 +22,7 @@ class ZTravelViewController: ZGenericViewController {
 
 
     @IBAction func choiceAction(_ control: ZSegmentedControl) {
-        zonesManager.travelAction(ZTravelAction(rawValue: Int(control.selectedSegmentIndex))!)
+        travelManager.travelAction(ZTravelAction(rawValue: Int(control.selectedSegmentIndex))!)
     }
 
 }

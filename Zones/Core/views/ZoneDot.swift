@@ -46,7 +46,7 @@ class ZoneDot: ZView {
             }
         } else {
             let radius:    CGFloat = stateManager.dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
-            shouldHighlight        = asToggle ? !widgetZone.showChildren : zonesManager.isGrabbed(zone: widgetZone)
+            shouldHighlight        = asToggle ? !widgetZone.showChildren : selectionManager.isGrabbed(zone: widgetZone)
             zlayer.backgroundColor = (shouldHighlight ? stateManager.lineColor : stateManager.unselectedColor).cgColor
 
             addBorder(thickness: stateManager.lineThicknes, radius: radius, color: stateManager.lineColor.cgColor)
@@ -70,8 +70,8 @@ class ZoneDot: ZView {
             if toggle == true {
                 zonesManager.toggleChildrenVisibility(zone)
             } else {
-                zonesManager.deselect()
-                zonesManager.currentlyGrabbedZones = [zone]
+                selectionManager.deselect()
+                selectionManager.currentlyGrabbedZones = [zone]
                 zonesManager.updateToClosures(zone, regarding: .datum)
             }
         }

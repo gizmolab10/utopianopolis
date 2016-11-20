@@ -15,14 +15,14 @@ class ZCloudManager {
     var     records: [CKRecordID : ZRecord] = [:]
     var storageMode:           ZStorageMode = .everyone
     var   container:           CKContainer!
+    var   currentDB:            CKDatabase { get { return databaseForMode(storageMode) }     }
 
 
-    var   currentDB: CKDatabase {
-        get {
-            switch (storageMode) {
-            case .everyone: return container.publicCloudDatabase
-            case .mine:     return container.privateCloudDatabase
-            }
+    func databaseForMode(_ mode: ZStorageMode) -> CKDatabase {
+        switch (mode) {
+        case .everyone: return container.publicCloudDatabase
+        case .group:    return container.sharedCloudDatabase
+        case .mine:     return container.privateCloudDatabase
         }
     }
 

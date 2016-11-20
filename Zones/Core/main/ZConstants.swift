@@ -25,6 +25,8 @@ let unselectBrightness: CGFloat = 0.98
 let userTouchLength: CGFloat = 33.0
 let      widgetFont:   ZFont = ZFont.systemFont(ofSize: fontSize)
 let       controllersManager = ZControllersManager()
+let         selectionManager = ZSelectionManager()
+let            travelManager = ZTravelManager()
 let             stateManager = ZStateManager()
 let             cloudManager = ZCloudManager()
 let             zfileManager = ZFileManager()
@@ -80,6 +82,7 @@ enum ZRecordState: Int {
 
 enum ZStorageMode: String {
     case everyone = "everyone"
+    case group    = "group"
     case mine     = "mine"
 }
 

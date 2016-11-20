@@ -138,10 +138,10 @@ class ZoneWidget: ZView {
 
 
     func addDragHighlight() {
-        if  dragHighlightView       != nil && !zonesManager.isGrabbed(zone: widgetZone) {
+        if  dragHighlightView       != nil && !selectionManager.isGrabbed(zone: widgetZone) {
             dragHighlightView.removeFromSuperview()
             dragHighlightView = nil
-        } else if dragHighlightView == nil &&  zonesManager.isGrabbed(zone: widgetZone) {
+        } else if dragHighlightView == nil &&  selectionManager.isGrabbed(zone: widgetZone) {
             dragHighlightView                          = ZView()
             dragHighlightView.isUserInteractionEnabled = false
 

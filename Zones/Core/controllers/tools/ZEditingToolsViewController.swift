@@ -30,7 +30,7 @@ class ZEditingToolsViewController: ZGenericViewController {
 
 
     override func updateFor(_ object: NSObject?, kind: ZUpdateKind) {
-        let         zone = zonesManager.currentlyMovableZone
+        let         zone = selectionManager.currentlyMovableZone
         let hasSelection = zone != nil
         let   parentZone = zone?.parentZone
         let     siblings = parentZone?.children
@@ -39,7 +39,7 @@ class ZEditingToolsViewController: ZGenericViewController {
         let     atBottom = (siblings?.last  == zone)
         let        atTop = (siblings?.first == zone)
 
-        deleteZoneButton          .isHidden = !hasSelection || !zonesManager.canDelete
+        deleteZoneButton          .isHidden = !hasSelection || !selectionManager.canDelete
         moveDownButton            .isHidden = !hasSelection || !hasSiblings || atBottom
         moveUpButton              .isHidden = !hasSelection || !hasSiblings || atTop
         moveIntoSiblingAboveButton.isHidden = !hasSelection || !hasSiblings || atTop

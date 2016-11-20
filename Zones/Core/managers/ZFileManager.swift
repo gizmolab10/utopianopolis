@@ -76,6 +76,7 @@ class ZFileManager: NSObject {
         get {
             switch (cloudManager.storageMode) {
             case .everyone: return "everyone.storage"
+            case .group:    return "group.storage"
             case .mine:     return "mine.storage"
             }
         }

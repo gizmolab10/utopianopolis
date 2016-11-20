@@ -12,12 +12,13 @@ import CloudKit
 
 
 typealias Closure                 = ()          -> (Void)
+typealias TimerClosure            = (Timer)     -> (ObjCBool)
 typealias ObjectClosure           = (NSObject)  -> (Void)
 typealias RecordClosure           = (CKRecord?) -> (Void)
 typealias BooleanClosure          = (ObjCBool)  -> (Void)
-typealias TimerClosure            = (Timer)     -> (ObjCBool)
 typealias ClosureClosure          = (Closure)   -> (Void)
 typealias IntegerClosure          = (UInt)      -> (Void)
+typealias ToObjectClosure         = (Void)      -> (NSObject)
 typealias ObjectToObjectClosure   = (NSObject)  -> (NSObject)
 typealias BooleanToBooleanClosure = (ObjCBool)  -> (ObjCBool)
 typealias ObjectToStringClosure   = (NSObject)  -> (String)

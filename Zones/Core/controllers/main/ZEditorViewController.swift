@@ -58,6 +58,6 @@ class ZEditorViewController: ZGenericViewController {
 
     
     func gestureEvent(_ sender: ZGestureRecognizer?) {
-        zonesManager.deselect()
+        selectionManager.deselect()
     }
 }
