@@ -16,14 +16,15 @@ import Foundation
 #endif
 
 
-class ZoneTextField: ZTextField {
+class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
 
-    var widgetZone: Zone!
+    var widget: ZoneWidget!
 
 
     func setup() {
         font                   = widgetFont
+        delegate               = self
         isBordered             = false
         textAlignment          = .center
         backgroundColor        = ZColor.clear
@@ -42,22 +43,66 @@ class ZoneTextField: ZTextField {
         let result = super.becomeFirstResponder()
 
         if result {
-            zonesManager.currentlyEditingZone = widgetZone
+            zonesManager.currentlyEditingZone = widget.widgetZone
         }
 
         return result
     }
 
 
+    func captureText() {
+        if  stateManager.textCapturing    == false {
+            if widget.widgetZone.zoneName != text! {
+                stateManager.textCapturing = true
+                widget.widgetZone.zoneName = text!
+            }
+        }
+    }
+    
+
+
+#if os(OSX)
+
     // fix a bug where root zone is editing on launch
-
-    #if os(OSX)
-
     override var acceptsFirstResponder: Bool { get { return stateManager.isReady } }
 
-    #elseif os(iOS)
 
+    override func controlTextDidEndEditing(_ obj: Notification) {
+        captureText()
+        dispatchAsyncInForeground {
+            self.resignFirstResponder()
+            zonesManager.fullResign()
+        }
+    }
+
+
+    func stopEditing() {
+        if currentEditor() != nil {
+            resignFirstResponder()
+        }
+    }
+
+
+    override func controlTextDidChange(_ obj: Notification) {
+        widget.layoutTextField()
+    }
+
+#elseif os(iOS)
+
+    // fix a bug where root zone is editing on launch
     override var canBecomeFirstResponder: Bool { get { return stateManager.isReady } }
+    
 
-    #endif
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        captureText()
+
+        return true
+    }
+
+
+    func stopEditing() {
+        resignFirstResponder()
+    }
+
+#endif
 }

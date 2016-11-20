@@ -16,7 +16,7 @@ import SnapKit
 #endif
 
 
-class ZoneWidget: ZView, ZTextFieldDelegate {
+class ZoneWidget: ZView {
 
 
     private var        _textField: ZoneTextField!
@@ -162,9 +162,8 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
 
 
     func layoutText() {
-        textField.widgetZone = widgetZone
-        textField.delegate   = self
-        textField.text       = widgetZone.zoneName ?? "empty"
+        textField.widget = self
+        textField.text   = widgetZone.zoneName ?? "empty"
 
         layoutTextField()
     }
@@ -300,70 +299,4 @@ class ZoneWidget: ZView, ZTextFieldDelegate {
             })
         }
     }
-
-
-    // MARK:- delegates
-    // MARK:-
-
-
-    func captureText() {
-        if  stateManager.textCapturing    == false {
-            if widgetZone.zoneName        != textField.text! {
-                stateManager.textCapturing = true
-                widgetZone.zoneName        = textField.text!
-            }
-        }
-    }
-
-    func stopEditingRecursively() {
-        stopEditing()
-
-        for child in childrenWidgets {
-            child.stopEditingRecursively()
-        }
-    }
-
-
-#if os(OSX)
-
-    func control(_ control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
-        captureText()
-
-        return true
-    }
-
-
-    func stopEditing() {
-        if textField.currentEditor() != nil {
-            textField.resignFirstResponder()
-        }
-    }
-
-
-    override func controlTextDidChange(_ obj: Notification) {
-        layoutTextField()
-    }
-
-#elseif os(iOS)
-
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        captureText()
-
-        return true
-    }
-
-
-    func stopEditing() {
-        textField.resignFirstResponder()
-    }
-
-
-//    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-//        updateLayout()
-//        zonesManager.currentlyEditingZone = widgetZone
-//
-//        return true
-//    }
-
-#endif
 }
