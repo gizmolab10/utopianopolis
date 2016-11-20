@@ -28,7 +28,19 @@ class Zone : ZRecord {
 
 
     func normalize() {
-        for child: Zone in children {
+        var index = children.count
+
+        while index > 0 {
+            index -= 1
+            let child = children[index]
+
+            if let testParent = child.parentZone {
+                if testParent != self {
+                    children.remove(at: index)
+                    testParent.children.append(child)
+                }
+            }
+            
             child.normalize()
         }
     }
