@@ -13,16 +13,6 @@ import CloudKit
 
 class ZonesManager: NSObject {
 
-
-    var storageRootZone: Zone! = Zone(record: nil, storageMode: cloudManager.storageMode)
-    var        rootZone: Zone! = Zone(record: nil, storageMode: cloudManager.storageMode)
-
-
-    func clear() {
-        rootZone        = Zone(record: nil, storageMode: cloudManager.storageMode)
-        storageRootZone = Zone(record: nil, storageMode: cloudManager.storageMode)
-    }
-
     
     // MARK:- editing, moving and revealing
     // MARK:-

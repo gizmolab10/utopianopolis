@@ -37,7 +37,7 @@ class ZSelectionManager: NSObject {
 
     func fullResign() {
         currentlyEditingZone = nil
-        let           window = widgetsManager.widgetForZone(zonesManager.rootZone!)?.window
+        let           window = widgetsManager.widgetForZone(travelManager.rootZone!)?.window
 
         window?.makeFirstResponder(nil) // ios broken
     }
@@ -47,7 +47,7 @@ class ZSelectionManager: NSObject {
         let             zone = currentlyEditingZone
         currentlyEditingZone = nil
 
-        if zone == nil || zone == zonesManager.rootZone {
+        if zone == nil || zone == travelManager.rootZone {
             controllersManager.updateToClosures(nil, regarding: .data)
         } else {
             let widget = widgetsManager.widgetForZone(zone!)
@@ -88,7 +88,7 @@ class ZSelectionManager: NSObject {
             } else if currentlyEditingZone != nil {
                 movable = currentlyEditingZone
             } else {
-                movable = zonesManager.rootZone
+                movable = travelManager.rootZone
             }
 
             return movable!
@@ -98,8 +98,8 @@ class ZSelectionManager: NSObject {
 
     var canDelete: Bool {
         get {
-            return (currentlyEditingZone != nil     &&  currentlyEditingZone != zonesManager.rootZone!) ||
-                (   currentlyGrabbedZones.count > 0 && !currentlyGrabbedZones.contains(zonesManager.rootZone!))
+            return (currentlyEditingZone != nil     &&  currentlyEditingZone != travelManager.rootZone!) ||
+                (   currentlyGrabbedZones.count > 0 && !currentlyGrabbedZones.contains(travelManager.rootZone!))
         }
     }
     

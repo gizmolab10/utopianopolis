@@ -13,6 +13,16 @@ import Foundation
 class ZTravelManager: NSObject {
 
 
+    var storageRootZone: Zone! = Zone(record: nil, storageMode: cloudManager.storageMode)
+    var        rootZone: Zone! = Zone(record: nil, storageMode: cloudManager.storageMode)
+
+
+    func clear() {
+        rootZone        = Zone(record: nil, storageMode: cloudManager.storageMode)
+        storageRootZone = Zone(record: nil, storageMode: cloudManager.storageMode)
+    }
+
+
     func travelAction(_ action: ZTravelAction) {
         switch action {
         case .mine:     cloudManager.storageMode = .mine;     break
@@ -24,10 +34,9 @@ class ZTravelManager: NSObject {
 
 
     func refresh() {
-        zonesManager    .clear()
         widgetsManager  .clear()
         selectionManager.clear()
-
+        clear()
         stateManager.setupAndRun([ZSynchronizationState.restore.rawValue, ZSynchronizationState.root.rawValue])
     }
 }

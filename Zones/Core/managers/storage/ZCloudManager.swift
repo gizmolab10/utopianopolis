@@ -155,9 +155,9 @@ class ZCloudManager {
         let recordID: CKRecordID = CKRecordID(recordName: rootNameKey)
 
         assureRecordExists(withRecordID: recordID, onCompletion: { (record: CKRecord?) -> (Void) in
-            zonesManager.rootZone.record = record
+            travelManager.rootZone.record = record
 
-            self.fetchReferencesTo(zonesManager.rootZone)
+            self.fetchReferencesTo(travelManager.rootZone)
             operation.finish()
         })
     }

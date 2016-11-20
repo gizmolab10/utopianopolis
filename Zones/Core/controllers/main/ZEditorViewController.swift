@@ -24,9 +24,9 @@ class ZEditorViewController: ZGenericViewController {
         var specificView:        ZView? = view
         var specificindex:          Int = -1
         var recursing:             Bool = kind == .data
-        widget.widgetZone               = zonesManager.rootZone!
+        widget.widgetZone               = travelManager.rootZone!
 
-        if object == nil || object == zonesManager.rootZone! {
+        if object == nil || object == travelManager.rootZone! {
             recursing = true
 
             log("all")
