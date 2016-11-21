@@ -118,3 +118,11 @@ enum ZLineKind: Int {
     case straight =  0
     case above    =  1
 }
+
+
+enum ZArrowKey: CChar {
+    case up    = -128
+    case down
+    case left
+    case right
+}

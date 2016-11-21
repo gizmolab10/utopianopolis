@@ -201,6 +201,11 @@ extension CGRect {
 
 
 extension String {
+    var asciiArray: [UInt32] {
+        return unicodeScalars.filter{$0.isASCII}.map{$0.value}
+    }
+
+
     func heightForFont(_ font: ZFont) -> CGFloat {
         return sizeWithFont(font).height
     }
@@ -218,6 +223,14 @@ extension String {
         return bounds.size
     }
 }
+
+
+extension Character {
+    var asciiValue: UInt32? {
+        return String(self).unicodeScalars.filter{$0.isASCII}.first?.value
+    }
+}
+
 
 extension ZView {
 

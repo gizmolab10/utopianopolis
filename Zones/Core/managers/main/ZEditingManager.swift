@@ -105,6 +105,10 @@ class ZEditingManager: NSObject {
     }
 
 
+    func moveUp()   { moveUp(true) }
+    func moveDown() { moveUp(false) }
+
+
     func moveUp(_ moveUp: Bool) {
         if let        zone: Zone = selectionManager.currentlyMovableZone {
             if let    parentZone = zone.parentZone {

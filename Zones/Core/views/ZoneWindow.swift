@@ -18,7 +18,7 @@ import Foundation
 
 
 
-class ZoneWindow: NSWindow {
+class ZoneWindow: ZWindow {
 
 
     static var window: ZoneWindow?
@@ -40,13 +40,25 @@ class ZoneWindow: NSWindow {
 
 
     @discardableResult func handleKey(_ event: ZEvent) -> Bool {
-        let isOption = event.modifierFlags.contains(.option)
+        let    flags = event.modifierFlags
+        let  isShift = flags.contains(.shift)
+        let isOption = flags.contains(.option)
+        let  isArrow = flags.contains(.numericPad) && flags.contains(.function)
 
-        if isOption {
-            if let widget = widgetsManager.currentMovableWidget {
-                if let string = event.charactersIgnoringModifiers {
-                    let key   = string[string.startIndex].description
+        if let widget = widgetsManager.currentMovableWidget {
+            if let string = event.charactersIgnoringModifiers {
+                let key   = string[string.startIndex].description
 
+                if isArrow {
+                    let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
+
+                    switch arrow {
+                    case .down:  editingManager       .moveDown(); break
+                    case .up:    editingManager         .moveUp(); break
+                    case .left:  editingManager   .moveToParent(); break
+                    case .right: editingManager.moveIntoSibling(); break
+                    }
+                } else if isOption {
                     switch key {
                     case "\t":
                         widget.textField.resignFirstResponder()
@@ -74,13 +86,13 @@ class ZoneWindow: NSWindow {
                             selectionManager.currentlyGrabbedZones = []
 
                             widget.textField.becomeFirstResponder()
-//                        } else {
-//                            selectionManager.currentlyGrabbedZones = [widget.widgetZone]
-//                            selectionManager.currentlyEditingZone  = nil
-//
-//                            widget.textField.resignFirstResponder()
+                            //                        } else {
+                            //                            selectionManager.currentlyGrabbedZones = [widget.widgetZone]
+                            //                            selectionManager.currentlyEditingZone  = nil
+                            //
+                            //                            widget.textField.resignFirstResponder()
                         }
-
+                        
                         break
                     default:
                         break
@@ -89,6 +101,6 @@ class ZoneWindow: NSWindow {
             }
         }
 
-        return isOption
+        return isOption || isArrow
     }
 }
