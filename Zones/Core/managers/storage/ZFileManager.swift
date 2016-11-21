@@ -28,7 +28,7 @@ class ZFileManager: NSObject {
 
 
     func save() {
-        if !isSaving && stateManager.isReady {
+        if !isSaving && operationsManager.isReady {
             isSaving               = true
             let dict: NSDictionary = travelManager.storageRootZone.storageDict as NSDictionary
             let  url:          URL = pathToCurrentZoneFile()

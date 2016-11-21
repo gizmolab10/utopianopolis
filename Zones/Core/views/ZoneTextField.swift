@@ -20,6 +20,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
 
     var widget: ZoneWidget!
+    var isEditing: Bool = false
 
 
     func setup() {
@@ -32,8 +33,19 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
     }
 
 
+    func toggleResponderState() {
+        if isEditing {
+            resignFirstResponder()
+        } else {
+            becomeFirstResponder()
+        }
+    }
+
+
     @discardableResult override func resignFirstResponder() -> Bool {
         captureText()
+
+        isEditing = false
 
         return super.resignFirstResponder()
     }
@@ -41,6 +53,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
     @discardableResult override func becomeFirstResponder() -> Bool {
         let result = super.becomeFirstResponder()
+        isEditing  = true
 
         if result {
             selectionManager.currentlyEditingZone = widget.widgetZone
@@ -64,7 +77,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 #if os(OSX)
 
     // fix a bug where root zone is editing on launch
-    override var acceptsFirstResponder: Bool { get { return stateManager.isReady } }
+    override var acceptsFirstResponder: Bool { get { return operationsManager.isReady } }
 
 
     override func controlTextDidEndEditing(_ obj: Notification) {
@@ -90,7 +103,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 #elseif os(iOS)
 
     // fix a bug where root zone is editing on launch
-    override var canBecomeFirstResponder: Bool { get { return stateManager.isReady } }
+    override var canBecomeFirstResponder: Bool { get { return operationsManager.isReady } }
     
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {

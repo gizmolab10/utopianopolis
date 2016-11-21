@@ -28,7 +28,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
         if needsSetup {
             cloudManager.setup()
             zapplication.registerForRemoteNotifications(matching: .badge)
-            stateManager.setupAndRun()
+            operationsManager.setupAndRun()
 
             needsSetup = false
         }

@@ -124,7 +124,7 @@ class ZoneWidget: ZView {
             if self.dragHighlightView != nil {
                 self.dragHighlightView.zlayer.backgroundColor = stateManager.lightFillColor.cgColor
 
-                self.dragHighlightView.addBorderRelative(thickness: 0.15, radius: 0.5, color: stateManager.lineColor.cgColor)
+                self.dragHighlightView.addBorder(thickness: 0.15, radius: dirtyRect.size.height / 2.0, color: stateManager.lineColor.cgColor)
             }
         }
     }
@@ -191,7 +191,7 @@ class ZoneWidget: ZView {
         var previous: ZoneWidget? = nil
         var                 index = widgetZone.children.count
 
-        if childrenWidgets.count != index {
+        if childrenWidgets.count != index || !widgetZone.showChildren || index == 0 {
             childrenWidgets.removeAll()
 
             if _childrenView != nil {

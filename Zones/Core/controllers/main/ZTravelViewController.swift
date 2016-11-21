@@ -19,10 +19,22 @@ class ZTravelViewController: ZGenericViewController {
 
 
     @IBOutlet weak var storageModeChoiceControl: ZSegmentedControl!
+    var selection: Int?
+
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        selection = storageModeChoiceControl.selectedSegmentIndex
+    }
 
 
     @IBAction func choiceAction(_ control: ZSegmentedControl) {
-        travelManager.travelAction(ZTravelAction(rawValue: Int(control.selectedSegmentIndex))!)
+        if  selection != control.selectedSegmentIndex {
+            selection  = control.selectedSegmentIndex
+
+            travelManager.travelAction(ZTravelAction(rawValue: selection!)!)
+        }
     }
 
 }

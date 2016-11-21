@@ -37,6 +37,6 @@ class ZTravelManager: NSObject {
         widgetsManager  .clear()
         selectionManager.clear()
         clear()
-        stateManager.setupAndRun([ZSynchronizationState.restore.rawValue, ZSynchronizationState.root.rawValue])
+        operationsManager.setupAndRun([ZSynchronizationState.restore.rawValue, ZSynchronizationState.root.rawValue])
     }
 }

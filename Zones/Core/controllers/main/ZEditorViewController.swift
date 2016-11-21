@@ -35,7 +35,7 @@ class ZEditorViewController: ZGenericViewController {
                 recursing = true
 
                 toConsole("all")
-                widgetsManager.clear()
+                // widgetsManager.clear()
             } else {
                 specificWidget = widgetsManager.widgetForZone(zone!)
                 specificView   = specificWidget?.superview
@@ -67,7 +67,21 @@ class ZEditorViewController: ZGenericViewController {
         case "\r":
             if let widget = widgetsManager.currentEditingWidget {
                 widget.textField.resignFirstResponder()
-                editingManager.addZoneTo(widget.widgetZone.parentZone)
+
+                if let parent = widget.widgetZone.parentZone {
+                    editingManager.addZoneTo(parent)
+                } else {
+                    selectionManager.currentlyEditingZone = nil
+
+                    controllersManager.updateToClosures(nil, regarding: .data)
+                    
+                }
+            } else {
+                let grabbed = selectionManager.currentlyGrabbedZones
+                let    zone = grabbed.count > 0 ? grabbed[0] : travelManager.rootZone
+                let  widget = widgetsManager.widgetForZone(zone)
+
+                widget?.textField.toggleResponderState()
             }
 
             break

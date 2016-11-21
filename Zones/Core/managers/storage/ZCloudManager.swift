@@ -340,7 +340,7 @@ class ZCloudManager: NSObject {
 
 
     func getFromObject(_ object: ZRecord, valueForPropertyName: String) {
-        if object.record != nil && stateManager.isReady {
+        if object.record != nil && operationsManager.isReady {
             let      predicate = NSPredicate(format: "")
             let  type: String  = className(of: object);
             let query: CKQuery = CKQuery(recordType: type, predicate: predicate)
