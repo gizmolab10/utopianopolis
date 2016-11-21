@@ -20,10 +20,6 @@ class ZEditorViewController: ZGenericViewController {
 
 
     override func updateFor(_ object: Any?, kind: ZUpdateKind) {
-        switch kind {
-        case .key:   handleKey  (object as! String); break
-        case .arrow: handleArrow(object as! String); break
-        default:
             let                        zone = object as? Zone
             var specificWidget: ZoneWidget? = widget
             var specificView:        ZView? = view
@@ -52,47 +48,12 @@ class ZEditorViewController: ZGenericViewController {
             specificWidget?.display()
 
             stateManager.textCapturing = false
-        }
     }
 
 
     override func setup() {
         view.setupGestures(self, action: #selector(ZEditorViewController.gestureEvent))
         super.setup()
-    }
-
-
-    func handleKey(_ key: String) {
-        switch key {
-        case "\r":
-            if let widget = widgetsManager.currentEditingWidget {
-                widget.textField.resignFirstResponder()
-
-                if let parent = widget.widgetZone.parentZone {
-                    editingManager.addZoneTo(parent)
-                } else {
-                    selectionManager.currentlyEditingZone = nil
-
-                    controllersManager.updateToClosures(nil, regarding: .data)
-                    
-                }
-            } else {
-                let grabbed = selectionManager.currentlyGrabbedZones
-                let    zone = grabbed.count > 0 ? grabbed[0] : travelManager.rootZone
-                let  widget = widgetsManager.widgetForZone(zone)
-
-                widget?.textField.toggleResponderState()
-            }
-
-            break
-        default:
-            break
-        }
-    }
-
-
-    func handleArrow(_ arrow: String) {
-        toConsole(arrow)
     }
 
     

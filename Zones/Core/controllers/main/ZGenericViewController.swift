@@ -24,7 +24,7 @@ class ZGenericViewController: ZViewController {
 
     func setup() {
         controllersManager.registerUpdateClosure { (object, kind) -> (Void) in
-            if kind != .error && (kind != .key || self.identifier() == .editor) {
+            if kind != .error {
                 self.updateFor(object, kind: kind)
             }
         }

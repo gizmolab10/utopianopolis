@@ -36,9 +36,7 @@ class ZSelectionManager: NSObject {
 
 
     func fullResign() {
-        let window = widgetsManager.widgetForZone(travelManager.rootZone!)?.window
-
-        window?.makeFirstResponder(nil) // ios broken
+        mainWindow?.makeFirstResponder(nil) // ios broken
     }
 
 
@@ -48,10 +46,8 @@ class ZSelectionManager: NSObject {
 
         if zone == nil || zone == travelManager.rootZone {
             controllersManager.updateToClosures(nil, regarding: .data)
-        } else {
-            let widget = widgetsManager.currentEditingWidget
-
-            widget?.textField.captureText()
+        } else if let widget = widgetsManager.widgetForZone(zone) {
+            widget.textField.captureText()
             controllersManager.updateToClosures(zone, regarding: .datum)
         }
 

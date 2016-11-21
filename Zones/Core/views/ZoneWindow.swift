@@ -16,24 +16,70 @@ import Foundation
 #endif
 
 
+
+
 class ZoneWindow: NSWindow {
 
 
+    static var window: ZoneWindow?
     override var acceptsFirstResponder: Bool { get { return true } }
 
 
-    override func performKeyEquivalent(with event: ZEvent) -> Bool {
-        if let string = event.charactersIgnoringModifiers {
-            let first = string[string.startIndex].description
+    override func awakeFromNib() {
+        super.awakeFromNib()
 
-            controllersManager.updateToClosures(first as NSObject?, regarding: .key)
+        ZoneWindow.window = self
+    }
 
-            if first == "\r" {
-                return true
+
+    override func keyDown(with event: ZEvent) {
+        if selectionManager.currentlyEditingZone != nil || !handleKey(event) {
+            super.keyDown(with: event)
+        }
+    }
+
+
+    @discardableResult func handleKey(_ event: ZEvent) -> Bool {
+        let isOption = event.modifierFlags.contains(.option)
+
+        if isOption {
+            if let widget = widgetsManager.currentMovableWidget {
+                if let string = event.charactersIgnoringModifiers {
+                    let key   = string[string.startIndex].description
+
+                    switch key {
+                    case "\t":
+                        widget.textField.resignFirstResponder()
+
+                        if let parent = widget.widgetZone.parentZone {
+                            editingManager.addZoneTo(parent)
+                        } else {
+                            selectionManager.currentlyEditingZone = nil
+
+                            controllersManager.updateToClosures(nil, regarding: .data)
+
+                        }
+
+                        break
+                    case " ":
+                        editingManager.addZoneTo(widget.widgetZone)
+
+                        break
+                    case "\u{7F}":
+                        editingManager.delete()
+
+                        break
+                    case "\r":
+                        widget.textField.toggleResponderState()
+
+                        break
+                    default:
+                        break
+                    }
+                }
             }
         }
 
-        return false
+        return isOption
     }
-
 }

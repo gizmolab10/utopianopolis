@@ -21,6 +21,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
     var widget: ZoneWidget!
     var isEditing: Bool = false
+    var monitor: Any?
 
 
     func setup() {
@@ -45,7 +46,14 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
     @discardableResult override func resignFirstResponder() -> Bool {
         captureText()
 
+        if let save = monitor {
+            dispatchAsyncInForeground {
+                ZEvent.removeMonitor(save)
+            }
+        }
+
         isEditing = false
+        monitor   = nil
 
         return super.resignFirstResponder()
     }
@@ -57,6 +65,13 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
         if result {
             selectionManager.currentlyEditingZone = widget.widgetZone
+            controllersManager.updateToClosures(widget.widgetZone, regarding: .datum)
+
+            monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> NSEvent? in
+                mainWindow?.handleKey(event)
+
+                return event
+            })
         }
 
         return result
@@ -72,7 +87,6 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
         }
     }
     
-
 
 #if os(OSX)
 
