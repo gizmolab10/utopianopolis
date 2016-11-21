@@ -97,6 +97,8 @@ class ZEditingManager: NSObject {
     private func deleteZone(_ zone: Zone) {
         zone.recordState  = .needsDelete
 
+        deleteZones(zone.children)
+
         if let parentZone = zone.parentZone {
             if let  index = parentZone.children.index(of: zone) {
                 parentZone.children.remove(at: index)
