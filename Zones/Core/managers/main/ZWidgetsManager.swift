@@ -17,6 +17,11 @@ class ZWidgetsManager: NSObject {
     var widgets: [CKRecordID : ZoneWidget] = [:]
 
 
+    var currentEditingWidget: ZoneWidget? {
+        get { return widgetForZone(selectionManager.currentlyEditingZone) }
+    }
+
+
     func clear() {
         widgets.removeAll()
     }
@@ -29,13 +34,11 @@ class ZWidgetsManager: NSObject {
     }
 
 
-    func widgetForZone(_ zone: Zone) -> ZoneWidget? {
-        if let record = zone.record {
+    func widgetForZone(_ zone: Zone?) -> ZoneWidget? {
+        if let record = zone?.record {
             return widgets[record.recordID]
         }
 
         return nil
     }
-
-    
 }

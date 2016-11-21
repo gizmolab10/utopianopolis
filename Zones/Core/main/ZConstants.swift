@@ -32,6 +32,7 @@ let            travelManager = ZTravelManager()
 let             stateManager = ZStateManager()
 let             cloudManager = ZCloudManager()
 let             zfileManager = ZFileManager()
+let                   window = zapplication.window(withWindowNumber: 0)
 let                  cloudID = "iCloud.com.zones.Zones"
 let                 linksKey = "links"
 let              zoneTypeKey = "Zone"
@@ -65,9 +66,11 @@ enum ZControllerID: Int {
 
 
 enum ZUpdateKind: Int {
+    case key
     case data
     case datum
     case error
+    case arrow
     case delete
 }
 

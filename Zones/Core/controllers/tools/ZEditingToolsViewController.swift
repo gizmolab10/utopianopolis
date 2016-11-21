@@ -29,7 +29,7 @@ class ZEditingToolsViewController: ZGenericViewController {
     }
 
 
-    override func updateFor(_ object: NSObject?, kind: ZUpdateKind) {
+    override func updateFor(_ object: Any?, kind: ZUpdateKind) {
         let         zone = selectionManager.currentlyMovableZone
         let hasSelection = zone != nil
         let   parentZone = zone?.parentZone

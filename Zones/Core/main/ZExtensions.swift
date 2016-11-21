@@ -22,6 +22,7 @@ import Foundation
     public typealias ZImage               = NSImage
     public typealias ZColor               = NSColor
     public typealias ZButton              = NSButton
+    public typealias ZWindow              = NSWindow
     public typealias ZTextField           = NSTextField
     public typealias ZBezierPath          = NSBezierPath
     public typealias ZApplication         = NSApplication
@@ -104,6 +105,7 @@ import Foundation
     public typealias ZImage               = UIImage
     public typealias ZColor               = UIColor
     public typealias ZButton              = UIButton
+    public typealias ZWindow              = UIWindow
     public typealias ZTextField           = UITextField
     public typealias ZBezierPath          = UIBezierPath
     public typealias ZApplication         = UIApplication
@@ -185,8 +187,8 @@ typealias ZStorageDict = [String : NSObject]
 
 
 extension NSObject {
-    func toConsole(_ loggable: Any...) {
-        // print(loggable)
+    func toConsole(_ loggable: Any) {
+//        print(loggable)
     }
 }
 
@@ -216,7 +218,6 @@ extension String {
         return bounds.size
     }
 }
-
 
 extension ZView {
 

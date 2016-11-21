@@ -44,8 +44,8 @@ class ZControllersManager: NSObject {
     }
 
 
-    func updateToClosures(_ object: NSObject?, regarding: ZUpdateKind, onCompletion: Closure?) {
-        DispatchQueue.main.async {
+    func updateToClosures(_ object: Any?, regarding: ZUpdateKind, onCompletion: Closure?) {
+        let closure = {
             for closureObject: UpdateClosureObject in self.closures {
                 closureObject.closure(object, regarding)
             }
@@ -53,6 +53,12 @@ class ZControllersManager: NSObject {
             if onCompletion != nil {
                 onCompletion!()
             }
+        }
+
+        if Thread.isMainThread {
+            closure()
+        } else {
+            DispatchQueue.main.async { closure() }
         }
     }
 
