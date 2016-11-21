@@ -70,7 +70,16 @@ class ZoneWindow: NSWindow {
 
                         break
                     case "\r":
-                        widget.textField.toggleResponderState()
+                        if selectionManager.currentlyEditingZone == nil {
+                            selectionManager.currentlyGrabbedZones = []
+
+                            widget.textField.becomeFirstResponder()
+//                        } else {
+//                            selectionManager.currentlyGrabbedZones = [widget.widgetZone]
+//                            selectionManager.currentlyEditingZone  = nil
+//
+//                            widget.textField.resignFirstResponder()
+                        }
 
                         break
                     default:

@@ -64,7 +64,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
         isEditing  = true
 
         if result {
-            selectionManager.currentlyEditingZone = widget.widgetZone
+            selectionManager.currentlyEditingZone  = widget.widgetZone
             controllersManager.updateToClosures(widget.widgetZone, regarding: .datum)
 
             monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> NSEvent? in
