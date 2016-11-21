@@ -27,9 +27,13 @@ class ZoneWindow: NSWindow {
             let first = string[string.startIndex].description
 
             controllersManager.updateToClosures(first as NSObject?, regarding: .key)
+
+            if first == "\r" {
+                return true
+            }
         }
 
-        return true
+        return false
     }
 
 }

@@ -33,8 +33,6 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
 
     @discardableResult override func resignFirstResponder() -> Bool {
-        selectionManager.currentlyEditingZone = nil
-
         captureText()
 
         return super.resignFirstResponder()

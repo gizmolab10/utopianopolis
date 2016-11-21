@@ -36,8 +36,7 @@ class ZSelectionManager: NSObject {
 
 
     func fullResign() {
-        currentlyEditingZone = nil
-        let           window = widgetsManager.widgetForZone(travelManager.rootZone!)?.window
+        let window = widgetsManager.widgetForZone(travelManager.rootZone!)?.window
 
         window?.makeFirstResponder(nil) // ios broken
     }

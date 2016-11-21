@@ -120,7 +120,7 @@ class ZoneWidget: ZView {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        DispatchQueue.main.async {
+        dispatchAsyncInForeground {
             if self.dragHighlightView != nil {
                 self.dragHighlightView.zlayer.backgroundColor = stateManager.lightFillColor.cgColor
 
@@ -191,20 +191,22 @@ class ZoneWidget: ZView {
         var previous: ZoneWidget? = nil
         var                 index = widgetZone.children.count
 
-        if _childrenView != nil {
-            for view in _childrenView.subviews {
-                view.removeFromSuperview()
+        if childrenWidgets.count != index {
+            childrenWidgets.removeAll()
+
+            if _childrenView != nil {
+                for view in _childrenView.subviews {
+                    view.removeFromSuperview()
+                }
+
+                _childrenView.removeFromSuperview()
+
+                _childrenView = nil
             }
-
-            _childrenView.removeFromSuperview()
-
-            _childrenView = nil
         }
 
-        childrenWidgets.removeAll()
-
         if index > 0 && widgetZone.showChildren {
-            while childrenWidgets.count != index {
+            while childrenWidgets.count < index {
                 childrenWidgets.append(ZoneWidget())
             }
 

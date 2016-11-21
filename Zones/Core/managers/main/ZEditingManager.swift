@@ -56,17 +56,15 @@ class ZEditingManager: NSObject {
             widgetsManager.widgetForZone(parentZone!)?.textField.stopEditing()
             parentZone?.children.append(zone)
 
-            selectionManager.currentlyEditingZone = zone
-            parentZone?.showChildren              = true
-            parentZone?.recordState               = .needsSave
-            zone.recordState                      = .needsSave
-            zone.parentZone                       = parentZone
+            parentZone?.showChildren = true
+            parentZone?.recordState  = .needsSave
+            zone.recordState         = .needsSave
+            zone.parentZone          = parentZone
 
             controllersManager.saveAndUpdateFor(parentZone, onCompletion: { () -> (Void) in
-                let when = DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
-                DispatchQueue.main.asyncAfter(deadline: when) {
+                self.dispatchAsyncInForegroundAfter(0.1, closure: {
                     widgetsManager.widgetForZone(zone)?.textField.becomeFirstResponder()
-                }
+                })
             })
         }
     }

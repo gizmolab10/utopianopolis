@@ -166,7 +166,7 @@ class ZCloudManager: NSObject {
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
         assureRecordExists(withRecordID: recordID, onCompletion: { (iRecord: CKRecord) -> (Void) in
-            DispatchQueue.main.async {
+            self.dispatchAsyncInForeground {
                 var zone: Zone? = self.objectForRecordID(iRecord.recordID) as! Zone?
 
                 if  zone != nil {
@@ -291,7 +291,7 @@ class ZCloudManager: NSObject {
 
 
     func setIntoObject(_ object: ZRecord, value: NSObject, forPropertyName: String) {
-        var                  hasChange = true
+        var                  hasChange = false
         var identifier:    CKRecordID?
         let   newValue: CKRecordValue! = (value as! CKRecordValue)
         let     record:      CKRecord? = object.record
@@ -299,7 +299,12 @@ class ZCloudManager: NSObject {
         if record != nil {
             let oldValue: CKRecordValue! = record![forPropertyName]
             identifier                   = record?.recordID
-            hasChange                    = oldValue == nil || (oldValue as! NSObject != newValue as! NSObject)
+
+            if oldValue != nil && newValue != nil {
+                hasChange                = (oldValue as! NSObject != newValue as! NSObject)
+            } else {
+                hasChange                = oldValue != nil || newValue != nil
+            }
         }
 
         if hasChange {
