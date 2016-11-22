@@ -740,11 +740,11 @@
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZToolsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="214" height="567"/>
+                        <rect key="frame" x="0.0" y="0.0" width="198" height="448"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i7P-tX-Rsd">
-                                <rect key="frame" x="14" y="519" width="125" height="32"/>
+                                <rect key="frame" x="14" y="400" width="125" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="113" id="D31-dJ-hUc"/>
                                 </constraints>
@@ -757,7 +757,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d02-RZ-oux">
-                                <rect key="frame" x="12" y="486" width="142" height="32"/>
+                                <rect key="frame" x="12" y="367" width="142" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="130" id="UOB-Lh-Xg8"/>
                                 </constraints>
@@ -767,26 +767,29 @@
                                 </buttonCell>
                             </button>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IT7-2L-PqU">
-                                <rect key="frame" x="18" y="342" width="198" height="143"/>
+                                <rect key="frame" x="18" y="130" width="182" height="224"/>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="RJc-P2-wiE">
-                                    <font key="font" metaFont="system" size="10"/>
-                                    <string key="title">HELP ... for selected zone:
+                                    <font key="font" metaFont="system" size="12"/>
+                                    <string key="title">HELP:
+    for selected zone:
+
 OPTION:
-	arrows move within graph
-	TAB adds sibling zone
-	SPACE adds child zone 	DELETE deletes
-	RETURN begins editing
+    arrows move within graph
+    TAB adds sibling zone
+    SPACE adds child zone     DELETE deletes
+    RETURN begins editing
+
 SHIFT :
-	LEFT arrow expands
-	RIGHT arrow collapses
-	OPTION does it recursively</string>
+    LEFT arrow expands
+    RIGHT arrow collapses
+    OPTION all children</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="IT7-2L-PqU" firstAttribute="top" secondItem="d02-RZ-oux" secondAttribute="bottom" constant="8" id="1L9-0g-ix8"/>
+                            <constraint firstItem="IT7-2L-PqU" firstAttribute="top" secondItem="d02-RZ-oux" secondAttribute="bottom" constant="20" id="1L9-0g-ix8"/>
                             <constraint firstItem="i7P-tX-Rsd" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" constant="20" id="2KN-22-lDV"/>
                             <constraint firstItem="IT7-2L-PqU" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="9ia-fe-V5W"/>
                             <constraint firstItem="d02-RZ-oux" firstAttribute="top" secondItem="i7P-tX-Rsd" secondAttribute="bottom" constant="12" id="PpM-Fy-58J"/>
@@ -798,7 +801,7 @@ SHIFT :
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="474" y="1444.5"/>
+            <point key="canvasLocation" x="466" y="1385"/>
         </scene>
         <!--Travel View Controller-->
         <scene sceneID="7Hb-7e-BTT">
