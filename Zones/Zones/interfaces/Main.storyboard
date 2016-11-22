@@ -701,7 +701,7 @@
                                     <constraint firstAttribute="width" constant="200" id="us8-K9-IEo"/>
                                 </constraints>
                                 <connections>
-                                    <segue destination="UmS-w1-ZE0" kind="embed" id="uXE-2y-wQ0"/>
+                                    <segue destination="YaQ-0g-PCb" kind="embed" id="ndc-SO-JG6"/>
                                 </connections>
                             </containerView>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="oY0-De-wof">
@@ -736,210 +736,18 @@
             <point key="canvasLocation" x="194" y="757"/>
         </scene>
         <!--Tools View Controller-->
-        <scene sceneID="ftm-F7-hvs">
-            <objects>
-                <viewController id="UmS-w1-ZE0" customClass="ZToolsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="1fa-p3-5eT">
-                        <rect key="frame" x="0.0" y="0.0" width="203" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <segmentedControl horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GBC-KB-wux">
-                                <rect key="frame" x="0.0" y="278" width="203" height="23"/>
-                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="selectOne" id="DrU-WM-BCF">
-                                    <font key="font" metaFont="system" size="14"/>
-                                    <segments>
-                                        <segment label="Settings" width="114"/>
-                                        <segment label="Edit" width="86" selected="YES" tag="1"/>
-                                    </segments>
-                                </segmentedCell>
-                                <connections>
-                                    <action selector="choiceAction:" target="UmS-w1-ZE0" id="VPo-cI-oRn"/>
-                                </connections>
-                            </segmentedControl>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="qYZ-nw-Vzw">
-                                <rect key="frame" x="0.0" y="0.0" width="203" height="279"/>
-                                <subviews>
-                                    <containerView identifier="Settings" hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V5K-yz-U7U" userLabel="Settings">
-                                        <rect key="frame" x="0.0" y="0.0" width="203" height="279"/>
-                                        <connections>
-                                            <segue destination="YaQ-0g-PCb" kind="embed" id="jRo-n0-VYp"/>
-                                        </connections>
-                                    </containerView>
-                                    <containerView identifier="Editing Tools" horizontalHuggingPriority="999" translatesAutoresizingMaskIntoConstraints="NO" id="zA2-uY-m7F" userLabel="Editing">
-                                        <rect key="frame" x="0.0" y="0.0" width="203" height="279"/>
-                                        <connections>
-                                            <segue destination="OO6-jf-jKa" kind="embed" id="KUx-LL-3cz"/>
-                                        </connections>
-                                    </containerView>
-                                    <containerView identifier="Travel" hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9c-fw-MTv" userLabel="Travel">
-                                        <rect key="frame" x="0.0" y="0.0" width="203" height="279"/>
-                                    </containerView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="V5K-yz-U7U" firstAttribute="leading" secondItem="qYZ-nw-Vzw" secondAttribute="leading" id="171-ga-wGv"/>
-                                    <constraint firstAttribute="trailing" secondItem="zA2-uY-m7F" secondAttribute="trailing" id="3Wb-Ut-veo"/>
-                                    <constraint firstItem="h9c-fw-MTv" firstAttribute="top" secondItem="qYZ-nw-Vzw" secondAttribute="top" id="6ZC-7x-AIk"/>
-                                    <constraint firstAttribute="bottom" secondItem="zA2-uY-m7F" secondAttribute="bottom" id="HSq-Ou-dxR"/>
-                                    <constraint firstAttribute="trailing" secondItem="h9c-fw-MTv" secondAttribute="trailing" id="P3F-1j-21Y"/>
-                                    <constraint firstItem="V5K-yz-U7U" firstAttribute="top" secondItem="qYZ-nw-Vzw" secondAttribute="top" id="PAV-bt-9vr"/>
-                                    <constraint firstAttribute="bottom" secondItem="V5K-yz-U7U" secondAttribute="bottom" id="PmG-9I-ylU"/>
-                                    <constraint firstAttribute="trailing" secondItem="V5K-yz-U7U" secondAttribute="trailing" id="SW8-88-GmV"/>
-                                    <constraint firstAttribute="bottom" secondItem="h9c-fw-MTv" secondAttribute="bottom" id="fPL-Sc-CtI"/>
-                                    <constraint firstItem="h9c-fw-MTv" firstAttribute="leading" secondItem="qYZ-nw-Vzw" secondAttribute="leading" id="fYY-1e-U9D"/>
-                                    <constraint firstItem="zA2-uY-m7F" firstAttribute="top" secondItem="qYZ-nw-Vzw" secondAttribute="top" id="k8c-PN-kxz"/>
-                                    <constraint firstItem="zA2-uY-m7F" firstAttribute="leading" secondItem="qYZ-nw-Vzw" secondAttribute="leading" id="sGy-FY-U9D"/>
-                                </constraints>
-                            </customView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="GBC-KB-wux" secondAttribute="trailing" id="BPP-yS-JXx"/>
-                            <constraint firstAttribute="trailing" secondItem="qYZ-nw-Vzw" secondAttribute="trailing" id="JZs-kk-r2J"/>
-                            <constraint firstAttribute="bottom" secondItem="qYZ-nw-Vzw" secondAttribute="bottom" id="O4P-T1-up8"/>
-                            <constraint firstItem="GBC-KB-wux" firstAttribute="leading" secondItem="1fa-p3-5eT" secondAttribute="leading" id="VPb-XL-MmC"/>
-                            <constraint firstItem="qYZ-nw-Vzw" firstAttribute="top" secondItem="GBC-KB-wux" secondAttribute="bottom" id="e4b-NN-mNZ"/>
-                            <constraint firstItem="GBC-KB-wux" firstAttribute="top" secondItem="1fa-p3-5eT" secondAttribute="top" id="fvc-lj-U27"/>
-                            <constraint firstItem="qYZ-nw-Vzw" firstAttribute="leading" secondItem="1fa-p3-5eT" secondAttribute="leading" id="vvd-8M-Var"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="containersView" destination="qYZ-nw-Vzw" id="OjL-sX-nte"/>
-                        <outlet property="editingToolsContainerView" destination="zA2-uY-m7F" id="vAO-jp-MXT"/>
-                        <outlet property="settingsContainerView" destination="V5K-yz-U7U" id="vUZ-FD-kJ3"/>
-                        <outlet property="toolsChoiceControl" destination="GBC-KB-wux" id="Xdf-tf-KM6"/>
-                        <outlet property="travelContainerView" destination="h9c-fw-MTv" id="HMm-Ra-lTy"/>
-                    </connections>
-                </viewController>
-                <customObject id="AaD-MV-r0h" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="473.5" y="1311"/>
-        </scene>
-        <!--Editing Tools View Controller-->
-        <scene sceneID="G9K-8b-AJJ">
-            <objects>
-                <viewController id="OO6-jf-jKa" customClass="ZEditingToolsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="HgE-gu-5IU">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Agf-qa-s1Q">
-                                <rect key="frame" x="14" y="252" width="102" height="32"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="ned-lF-6dD"/>
-                                </constraints>
-                                <buttonCell key="cell" type="push" title="New Zone" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OBW-ha-Pxr">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="genericButtonAction:" target="OO6-jf-jKa" id="v1z-nc-5qa"/>
-                                </connections>
-                            </button>
-                            <button verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="acM-gT-2KT">
-                                <rect key="frame" x="14" y="219" width="94" height="32"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="SJI-0H-Mfu"/>
-                                </constraints>
-                                <buttonCell key="cell" type="push" title="Move Up" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bBz-a0-4S3">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="genericButtonAction:" target="OO6-jf-jKa" id="boM-eG-9Se"/>
-                                </connections>
-                            </button>
-                            <button verticalHuggingPriority="750" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="OZl-Ph-Yx4">
-                                <rect key="frame" x="14" y="186" width="111" height="32"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="D86-Uy-YsQ"/>
-                                </constraints>
-                                <buttonCell key="cell" type="push" title="Move Down" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gXJ-pP-ikm">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="genericButtonAction:" target="OO6-jf-jKa" id="ffw-r2-z7E"/>
-                                </connections>
-                            </button>
-                            <button verticalHuggingPriority="750" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="40T-ea-6re">
-                                <rect key="frame" x="14" y="153" width="132" height="32"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="K6z-pC-Vtx"/>
-                                </constraints>
-                                <buttonCell key="cell" type="push" title="Move to Parent" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UVl-ls-cmf">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="genericButtonAction:" target="OO6-jf-jKa" id="7L9-eh-G7O"/>
-                                </connections>
-                            </button>
-                            <button verticalHuggingPriority="750" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="T4k-Pa-bXp" userLabel="Move Zone into Sibling Above Button">
-                                <rect key="frame" x="14" y="120" width="186" height="32"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="133" id="gSv-tK-rci"/>
-                                </constraints>
-                                <buttonCell key="cell" type="push" title="Move into Sibling Above" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ciG-ss-aph">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="genericButtonAction:" target="OO6-jf-jKa" id="pjq-4c-Cl0"/>
-                                </connections>
-                            </button>
-                            <button verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="OZx-FX-n1W">
-                                <rect key="frame" x="14" y="13" width="114" height="32"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="YA5-co-uwL"/>
-                                    <constraint firstAttribute="height" constant="21" id="fOT-iN-DNv"/>
-                                </constraints>
-                                <buttonCell key="cell" type="push" title="Delete Zone" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4eQ-cC-WkT">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="genericButtonAction:" target="OO6-jf-jKa" id="fW5-G5-lEZ"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="OZl-Ph-Yx4" firstAttribute="top" secondItem="acM-gT-2KT" secondAttribute="bottom" constant="12" id="7oD-xq-i0Z"/>
-                            <constraint firstAttribute="bottom" secondItem="OZx-FX-n1W" secondAttribute="bottom" constant="20" id="F3q-ca-qaU"/>
-                            <constraint firstItem="Agf-qa-s1Q" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="P6f-Hx-joO"/>
-                            <constraint firstItem="OZx-FX-n1W" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="S0F-c2-HVu"/>
-                            <constraint firstItem="T4k-Pa-bXp" firstAttribute="top" secondItem="40T-ea-6re" secondAttribute="bottom" constant="12" id="SbO-mZ-k1M"/>
-                            <constraint firstItem="Agf-qa-s1Q" firstAttribute="top" secondItem="HgE-gu-5IU" secondAttribute="top" constant="20" id="Xm0-wF-msA"/>
-                            <constraint firstItem="40T-ea-6re" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="ZDc-xt-ZGz"/>
-                            <constraint firstItem="acM-gT-2KT" firstAttribute="top" secondItem="Agf-qa-s1Q" secondAttribute="bottom" constant="12" id="e9n-yF-fyf"/>
-                            <constraint firstItem="OZl-Ph-Yx4" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="eA1-6A-zND"/>
-                            <constraint firstItem="T4k-Pa-bXp" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="i1j-yU-sF6"/>
-                            <constraint firstItem="acM-gT-2KT" firstAttribute="leading" secondItem="HgE-gu-5IU" secondAttribute="leading" constant="20" id="osH-Qr-Rk5"/>
-                            <constraint firstItem="40T-ea-6re" firstAttribute="top" secondItem="OZl-Ph-Yx4" secondAttribute="bottom" constant="12" id="wZy-UE-Jvv"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="deleteZoneButton" destination="OZx-FX-n1W" id="5cH-X7-knN"/>
-                        <outlet property="moveDownButton" destination="OZl-Ph-Yx4" id="x7u-eH-A7L"/>
-                        <outlet property="moveIntoSiblingAboveButton" destination="T4k-Pa-bXp" id="ctR-IJ-bak"/>
-                        <outlet property="moveToParentButton" destination="40T-ea-6re" id="lcf-MT-RhB"/>
-                        <outlet property="moveUpButton" destination="acM-gT-2KT" id="N4V-SZ-kVn"/>
-                        <outlet property="newZoneButton" destination="Agf-qa-s1Q" id="nhm-vD-m1V"/>
-                    </connections>
-                </viewController>
-                <customObject id="kir-YC-buw" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="715" y="1950"/>
-        </scene>
-        <!--Settings View Controller-->
         <scene sceneID="Tae-az-4mZ">
             <objects>
-                <viewController id="YaQ-0g-PCb" customClass="ZSettingsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="YaQ-0g-PCb" customClass="ZToolsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <rect key="frame" x="0.0" y="0.0" width="214" height="567"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i7P-tX-Rsd">
-                                <rect key="frame" x="14" y="252" width="125" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i7P-tX-Rsd">
+                                <rect key="frame" x="14" y="519" width="125" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="113" id="D31-dJ-hUc"/>
+                                </constraints>
                                 <buttonCell key="cell" type="push" title="Push to Cloud" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="12V-Xi-SE0">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -948,20 +756,49 @@
                                     <action selector="genericButtonAction:" target="YaQ-0g-PCb" id="WW5-kp-CJc"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d02-RZ-oux">
-                                <rect key="frame" x="12" y="219" width="142" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d02-RZ-oux">
+                                <rect key="frame" x="12" y="486" width="142" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="130" id="UOB-Lh-Xg8"/>
+                                </constraints>
                                 <buttonCell key="cell" type="push" title="Normalize Graph" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sOy-bQ-Bn9">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IT7-2L-PqU">
+                                <rect key="frame" x="18" y="342" width="198" height="143"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="RJc-P2-wiE">
+                                    <font key="font" metaFont="system" size="10"/>
+                                    <string key="title">HELP ... for selected zone:
+OPTION:
+	arrows move within graph
+	TAB adds sibling zone
+	SPACE adds child zone 	DELETE deletes
+	RETURN begins editing
+SHIFT :
+	LEFT arrow expands
+	RIGHT arrow collapses
+	OPTION does it recursively</string>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
+                        <constraints>
+                            <constraint firstItem="IT7-2L-PqU" firstAttribute="top" secondItem="d02-RZ-oux" secondAttribute="bottom" constant="8" id="1L9-0g-ix8"/>
+                            <constraint firstItem="i7P-tX-Rsd" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" constant="20" id="2KN-22-lDV"/>
+                            <constraint firstItem="IT7-2L-PqU" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="9ia-fe-V5W"/>
+                            <constraint firstItem="d02-RZ-oux" firstAttribute="top" secondItem="i7P-tX-Rsd" secondAttribute="bottom" constant="12" id="PpM-Fy-58J"/>
+                            <constraint firstItem="i7P-tX-Rsd" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="UE1-j1-hQe"/>
+                            <constraint firstItem="d02-RZ-oux" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="18" id="bpG-KA-XWH"/>
+                            <constraint firstAttribute="trailing" secondItem="IT7-2L-PqU" secondAttribute="trailing" id="nXY-O2-qtm"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="232" y="1950"/>
+            <point key="canvasLocation" x="474" y="1444.5"/>
         </scene>
         <!--Travel View Controller-->
         <scene sceneID="7Hb-7e-BTT">

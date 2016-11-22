@@ -62,18 +62,6 @@ class ZEditingManager: NSObject {
             }
         }
     }
-    
-
-    func editingAction(_ action: ZEditAction) {
-        switch action {
-        case .add:                         add(); break
-        case .delete:                   delete(); break
-        case .moveUp:               moveUp(true); break
-        case .moveDown:            moveUp(false); break
-        case .moveToParent:       moveToParent(); break
-        case .moveIntoSibling: moveIntoSibling(); break
-        }
-    }
 
 
     func normalize() {

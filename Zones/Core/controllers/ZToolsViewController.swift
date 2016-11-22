@@ -1,16 +1,16 @@
 //
-//  ZSettingsViewController.swift
+//  ZToolsViewController.swift
 //  Zones
 //
-//  Created by Jonathan Sand on 10/29/16.
+//  Created by Jonathan Sand on 10/10/16.
 //  Copyright © 2016 Zones. All rights reserved.
 //
 
 
-import Foundation
+import SnapKit
 
 
-class ZSettingsViewController: ZGenericViewController {
+class ZToolsViewController: ZGenericViewController {
 
 
     override func identifier() -> ZControllerID { return .settings }
@@ -24,5 +24,4 @@ class ZSettingsViewController: ZGenericViewController {
     @IBAction func normalizeButtonAction(_ button: ZButton) {
         editingManager.normalize()
     }
-
 }
