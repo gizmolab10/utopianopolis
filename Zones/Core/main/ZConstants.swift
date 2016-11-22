@@ -126,3 +126,13 @@ enum ZArrowKey: CChar {
     case left
     case right
 }
+
+
+struct ZKeyModifierFlags: OptionSet {
+    let rawValue: Int
+
+    static let none    = ZKeyModifierFlags(rawValue: 0)
+    static let shift   = ZKeyModifierFlags(rawValue: 1)
+    static let option  = ZKeyModifierFlags(rawValue: 2)
+    static let command = ZKeyModifierFlags(rawValue: 4)
+}

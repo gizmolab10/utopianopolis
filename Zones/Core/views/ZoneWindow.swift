@@ -51,13 +51,12 @@ class ZoneWindow: ZWindow {
 
                 if isArrow {
                     let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
+                    var flags = ZKeyModifierFlags.none
 
-                    switch arrow {
-                    case .down:  editingManager       .moveDown(); break
-                    case .up:    editingManager         .moveUp(); break
-                    case .left:  editingManager   .moveToParent(); break
-                    case .right: editingManager.moveIntoSibling(); break
-                    }
+                    if isShift  { flags.insert(.shift ) }
+                    if isOption { flags.insert(.option) }
+
+                    editingManager.move(arrow, modifierFlags: flags)
                 } else if isOption {
                     switch key {
                     case "\t":
@@ -86,11 +85,11 @@ class ZoneWindow: ZWindow {
                             selectionManager.currentlyGrabbedZones = []
 
                             widget.textField.becomeFirstResponder()
-                            //                        } else {
-                            //                            selectionManager.currentlyGrabbedZones = [widget.widgetZone]
-                            //                            selectionManager.currentlyEditingZone  = nil
-                            //
-                            //                            widget.textField.resignFirstResponder()
+//                        } else {
+//                            selectionManager.currentlyGrabbedZones = [widget.widgetZone]
+//                            selectionManager.currentlyEditingZone  = nil
+//
+//                            widget.textField.resignFirstResponder()
                         }
                         
                         break

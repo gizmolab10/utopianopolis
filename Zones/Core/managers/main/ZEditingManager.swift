@@ -14,15 +14,55 @@ import CloudKit
 class ZEditingManager: NSObject {
 
 
-    func toggleChildrenVisibility(_ ofZone: Zone?) {
-        if ofZone != nil {
-            ofZone?.showChildren = (ofZone?.showChildren == false)
+    func setChildrenVisibilityTo(_ show: Bool, zone: Zone?, recursively: Bool) {
+        if zone != nil {
+            zone?.showChildren = show
 
-            selectionManager.deselectDragWithin(ofZone!)
+            if recursively {
+                for child: Zone in (zone?.children)! {
+                    setChildrenVisibilityTo(show, zone: child, recursively: true)
+                }
+            }
+        }
+    }
+
+
+    func toggleChildrenVisibility(_ zone: Zone?) {
+        if zone != nil {
+            setChildrenVisibilityTo(zone?.showChildren == false, zone: zone, recursively: false)
+
+            selectionManager.deselectDragWithin(zone!)
             controllersManager.saveAndUpdateFor(nil)
         }
     }
 
+
+    func move(_ arrow: ZArrowKey, modifierFlags: ZKeyModifierFlags) {
+        let isOption = modifierFlags.contains(.option)
+
+        if modifierFlags.contains(.shift) {
+            if selectionManager.currentlyGrabbedZones.count > 0 {
+                let zone = selectionManager.currentlyGrabbedZones[0]
+
+                switch arrow {
+                case .right: setChildrenVisibilityTo(true,  zone: zone, recursively: isOption); break
+                case .left:  setChildrenVisibilityTo(false, zone: zone, recursively: isOption); break
+                default: return
+                }
+
+                selectionManager.deselectDragWithin(zone)
+                controllersManager.saveAndUpdateFor(nil)
+            }
+        } else if isOption {
+            switch arrow {
+            case .right: moveIntoSibling(); break
+            case .left:     moveToParent(); break
+            case .down:      moveUp(false); break
+            case .up:        moveUp(true ); break
+            }
+        }
+    }
+    
 
     func editingAction(_ action: ZEditAction) {
         switch action {
@@ -103,10 +143,6 @@ class ZEditingManager: NSObject {
             }
         }
     }
-
-
-    func moveUp()   { moveUp(true) }
-    func moveDown() { moveUp(false) }
 
 
     func moveUp(_ moveUp: Bool) {
