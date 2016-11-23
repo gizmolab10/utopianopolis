@@ -59,6 +59,8 @@ class ZoneWindow: ZWindow {
                     if isCommand { flags.insert(.command) }
 
                     editingManager.move(arrow, modifierFlags: flags)
+
+                    return true
                 } else {
                     switch key {
                     case "\t":
@@ -72,16 +74,20 @@ class ZoneWindow: ZWindow {
                             controllersManager.updateToClosures(nil, regarding: .data)
                         }
 
-                        break
+                        return true
                     case " ":
-                        if isWindow {
+                        if isWindow || isOption {
                             editingManager.addZoneTo(widget.widgetZone)
+
+                            return true
                         }
 
                         break
                     case "\u{7F}":
                         if isWindow || isOption {
                             editingManager.delete()
+
+                            return true
                         }
 
                         break
@@ -90,6 +96,14 @@ class ZoneWindow: ZWindow {
                             selectionManager.currentlyGrabbedZones = []
 
                             widget.textField.becomeFirstResponder()
+
+                            return true
+                        } else if selectionManager.currentlyEditingZone != nil {
+                            selectionManager.currentlyGrabbedZones = [selectionManager.currentlyEditingZone!]
+
+                            widget.textField.resignFirstResponder()
+
+                            return true
                         }
                         
                         break
@@ -100,6 +114,6 @@ class ZoneWindow: ZWindow {
             }
         }
 
-        return isOption || isArrow
+        return false
     }
 }

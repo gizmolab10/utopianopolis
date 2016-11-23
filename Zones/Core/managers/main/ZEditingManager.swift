@@ -103,37 +103,57 @@ class ZEditingManager: NSObject {
 
 
     func delete() {
+        var last: Zone? = nil
+
         if let zone: Zone = selectionManager.currentlyEditingZone {
-            deleteZone(zone)
+            last = deleteZone(zone)
 
             selectionManager.currentlyEditingZone = nil
         } else {
-            deleteZones(selectionManager.currentlyGrabbedZones)
+            last = deleteZones(selectionManager.currentlyGrabbedZones)
 
             selectionManager.currentlyGrabbedZones = []
+        }
+
+        if last != nil {
+            selectionManager.currentlyGrabbedZones = [last!]
         }
 
         controllersManager.saveAndUpdateFor(nil)
     }
 
 
-    private func deleteZones(_ zones: [Zone]) {
+    @discardableResult private func deleteZones(_ zones: [Zone]) -> Zone? {
+        var last: Zone? = nil
+
         for zone in zones {
-            deleteZone(zone)
+            last = deleteZone(zone)
         }
+
+        return last
     }
 
 
-    private func deleteZone(_ zone: Zone) {
+    private func deleteZone(_ zone: Zone) -> Zone? {
         zone.recordState  = .needsDelete
 
         deleteZones(zone.children)
 
         if let parentZone = zone.parentZone {
-            if let  index = parentZone.children.index(of: zone) {
+            if var  index = parentZone.children.index(of: zone) {
                 parentZone.children.remove(at: index)
+
+                index = max(0, index - 1)
+
+                if parentZone.children.count > 0 {
+                    return parentZone.children[index]
+                } else  {
+                    return parentZone
+                }
             }
         }
+
+        return nil
     }
 
 

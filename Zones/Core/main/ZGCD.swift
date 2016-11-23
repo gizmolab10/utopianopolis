@@ -14,11 +14,7 @@ extension NSObject {
 
 
     func dispatchAsyncInForeground(_ closure: @escaping Closure) {
-        if Thread.isMainThread {
-            closure()
-        } else {
-            DispatchQueue.main.async { closure() }
-        }
+        DispatchQueue.main.async { closure() }
     }
 
 

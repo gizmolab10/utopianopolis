@@ -98,9 +98,11 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
         let result = super.resignFirstResponder()
 
         if result && isEditing {
-            isEditing = false
-
-            selectionManager.fullResign()
+            dispatchAsyncInForeground {
+                selectionManager.fullResign()
+                
+                self.isEditing = false
+            }
         }
 
         return result
@@ -134,11 +136,6 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
     override var acceptsFirstResponder: Bool { get { return operationsManager.isReady } }
 
 
-    override func controlTextDidEndEditing(_ obj: Notification) {
-        resignFirstResponder()
-    }
-
-
     override func controlTextDidChange(_ obj: Notification) {
         widget.layoutTextField()
     }
@@ -150,7 +147,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
     
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        stopEditing()
+        resignFirstResponder()
 
         return true
     }
