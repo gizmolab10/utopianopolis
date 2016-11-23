@@ -36,7 +36,7 @@ class ZoneCurve: ZView {
 
     func updateKind() {
         if (parent?.widgetZone.children.count)! > 1 {
-            let          dragDot = child?.dragDot.innerDot
+            let          dragDot = child?.dragDot!.innerDot
             let        textField = parent?.textField
             let   dragDotCenterY =   dragDot?.convert((  dragDot?.bounds)!, to: parent).center.y
             let textFieldCenterY = textField?.convert((textField?.bounds)!, to: parent).center.y
@@ -55,8 +55,8 @@ class ZoneCurve: ZView {
         snp.removeConstraints()
         snp.makeConstraints { (make) in
             let halfLineThickness = stateManager.lineThicknes / 2.0
-            let         toggleDot = parent?.toggleDot.innerDot
-            let           dragDot = child?.dragDot.innerDot
+            let         toggleDot = parent?.toggleDot!.innerDot
+            let           dragDot = child?.dragDot!.innerDot
 
             make.right.equalTo((dragDot?.snp.left)!)
 
@@ -83,8 +83,8 @@ class ZoneCurve: ZView {
 
     func drawCurveIn(_ dirtyRect: CGRect) {
         if dirtyRect.size.width > 1.0 {
-            let toggleHalfHeight = (parent?.toggleDot.innerDot?.bounds.size.height)! / 2.0
-            let    dragHalfWidth = (child? .dragDot  .innerDot?.bounds.size.width )! / 2.0
+            let toggleHalfHeight = (parent?.toggleDot!.innerDot?.bounds.size.height)! / 2.0
+            let    dragHalfWidth = (child? .dragDot!  .innerDot?.bounds.size.width )! / 2.0
             var y: CGFloat
 
             switch kind {

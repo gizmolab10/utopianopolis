@@ -19,9 +19,40 @@ import Foundation
 class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
 
-    var widget: ZoneWidget!
-    var isEditing: Bool = false
     var monitor: Any?
+    var widget: ZoneWidget!
+    var _isEditing: Bool = false
+
+
+    var isEditing: Bool {
+        get { return _isEditing }
+        set {
+            if _isEditing != newValue {
+                _isEditing = newValue
+                let   zone = widget.widgetZone
+
+                if !_isEditing {
+                    selectionManager.currentlyGrabbedZones = [zone!]
+                    selectionManager.currentlyEditingZone  = nil
+
+                    removeMonitorAsync()
+                } else {
+                    selectionManager.currentlyEditingZone  = zone
+                    selectionManager.currentlyGrabbedZones = []
+
+                    monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> NSEvent? in
+                        if self.isEditing {
+                            mainWindow?.handleKey(event, isWindow: false)
+                        }
+
+                        return event
+                    })
+                }
+
+                controllersManager.updateToClosures(zone?.parentZone, regarding: .data)
+            }
+        }
+    }
 
 
     func setup() {
@@ -43,35 +74,44 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
     }
 
 
+    deinit {
+        removeMonitorAsync()
+
+        widget = nil
+    }
+
+
+    func removeMonitorAsync() {
+        if let save = monitor {
+            monitor = nil
+
+            dispatchAsyncInForegroundAfter(0.001, closure: {
+                ZEvent.removeMonitor(save)
+            })
+        }
+    }
+
+
     @discardableResult override func resignFirstResponder() -> Bool {
         captureText()
 
-        if let save = monitor {
-            dispatchAsyncInForeground {
-                ZEvent.removeMonitor(save)
-            }
+        let result = super.resignFirstResponder()
+
+        if result && isEditing {
+            isEditing = false
+
+            selectionManager.fullResign()
         }
 
-        isEditing = false
-        monitor   = nil
-
-        return super.resignFirstResponder()
+        return result
     }
 
 
     @discardableResult override func becomeFirstResponder() -> Bool {
         let result = super.becomeFirstResponder()
-        isEditing  = true
 
         if result {
-            selectionManager.currentlyEditingZone  = widget.widgetZone
-            controllersManager.updateToClosures(widget.widgetZone, regarding: .datum)
-
-            monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> NSEvent? in
-                mainWindow?.handleKey(event)
-
-                return event
-            })
+            isEditing = true
         }
 
         return result
@@ -86,7 +126,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
             }
         }
     }
-    
+
 
 #if os(OSX)
 
@@ -95,18 +135,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
 
     override func controlTextDidEndEditing(_ obj: Notification) {
-        captureText()
-        dispatchAsyncInForeground {
-            self.resignFirstResponder()
-            selectionManager.fullResign()
-        }
-    }
-
-
-    func stopEditing() {
-        if currentEditor() != nil {
-            resignFirstResponder()
-        }
+        resignFirstResponder()
     }
 
 
@@ -121,14 +150,9 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
     
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        captureText()
+        stopEditing()
 
         return true
-    }
-
-
-    func stopEditing() {
-        resignFirstResponder()
     }
 
 #endif

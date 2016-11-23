@@ -72,7 +72,20 @@ class ZSelectionManager: NSObject {
             deselectDragWithin(child)
         }
     }
-    
+
+
+    var firstGrabbableZone: Zone? {
+        get {
+            var grabbable: Zone? = nil
+
+            if currentlyGrabbedZones.count > 0 {
+                grabbable = currentlyGrabbedZones[0]
+            }
+
+            return grabbable
+        }
+    }
+
 
     var currentlyMovableZone: Zone? {
         get {

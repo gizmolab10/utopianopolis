@@ -100,8 +100,9 @@ class ZRecord: NSObject {
 
 
     func storageDictionary() -> ZStorageDict? {
-        return [recordNameKey : record.recordID.recordName as NSObject,
-                recordTypeKey : record.recordType          as NSObject]
+        return record == nil ? [:] :
+            [recordNameKey : record.recordID.recordName as NSObject,
+             recordTypeKey : record.recordType          as NSObject]
     }
 
 

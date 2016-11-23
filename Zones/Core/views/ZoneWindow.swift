@@ -33,17 +33,18 @@ class ZoneWindow: ZWindow {
 
 
     override func keyDown(with event: ZEvent) {
-        if selectionManager.currentlyEditingZone != nil || !handleKey(event) {
+        if selectionManager.currentlyEditingZone != nil || !handleKey(event, isWindow: true) {
             super.keyDown(with: event)
         }
     }
 
 
-    @discardableResult func handleKey(_ event: ZEvent) -> Bool {
-        let    flags = event.modifierFlags
-        let  isShift = flags.contains(.shift)
-        let isOption = flags.contains(.option)
-        let  isArrow = flags.contains(.numericPad) && flags.contains(.function)
+    @discardableResult func handleKey(_ event: ZEvent, isWindow: Bool) -> Bool {
+        let     flags = event.modifierFlags
+        let   isShift = flags.contains(.shift)
+        let  isOption = flags.contains(.option)
+        let isCommand = flags.contains(.command)
+        let   isArrow = flags.contains(.numericPad) && flags.contains(.function)
 
         if let widget = widgetsManager.currentMovableWidget {
             if let string = event.charactersIgnoringModifiers {
@@ -53,11 +54,12 @@ class ZoneWindow: ZWindow {
                     let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
                     var flags = ZKeyModifierFlags.none
 
-                    if isShift  { flags.insert(.shift ) }
-                    if isOption { flags.insert(.option) }
+                    if isShift   { flags.insert(.shift ) }
+                    if isOption  { flags.insert(.option) }
+                    if isCommand { flags.insert(.command) }
 
                     editingManager.move(arrow, modifierFlags: flags)
-                } else if isOption {
+                } else {
                     switch key {
                     case "\t":
                         widget.textField.resignFirstResponder()
@@ -68,28 +70,26 @@ class ZoneWindow: ZWindow {
                             selectionManager.currentlyEditingZone = nil
 
                             controllersManager.updateToClosures(nil, regarding: .data)
-
                         }
 
                         break
                     case " ":
-                        editingManager.addZoneTo(widget.widgetZone)
+                        if isWindow {
+                            editingManager.addZoneTo(widget.widgetZone)
+                        }
 
                         break
                     case "\u{7F}":
-                        editingManager.delete()
+                        if isWindow || isOption {
+                            editingManager.delete()
+                        }
 
                         break
                     case "\r":
-                        if selectionManager.currentlyEditingZone == nil {
+                        if selectionManager.currentlyGrabbedZones.count != 0 {
                             selectionManager.currentlyGrabbedZones = []
 
                             widget.textField.becomeFirstResponder()
-//                        } else {
-//                            selectionManager.currentlyGrabbedZones = [widget.widgetZone]
-//                            selectionManager.currentlyEditingZone  = nil
-//
-//                            widget.textField.resignFirstResponder()
                         }
                         
                         break

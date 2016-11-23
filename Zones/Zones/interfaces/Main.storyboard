@@ -767,22 +767,23 @@
                                 </buttonCell>
                             </button>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IT7-2L-PqU">
-                                <rect key="frame" x="18" y="130" width="182" height="224"/>
+                                <rect key="frame" x="18" y="114" width="182" height="240"/>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="RJc-P2-wiE">
                                     <font key="font" metaFont="system" size="12"/>
-                                    <string key="title">HELP:
-    for selected zone:
+                                    <mutableString key="title">HELP:
+    ARROWS: change selection
 
-OPTION:
-    arrows move within graph
-    TAB adds sibling zone
-    SPACE adds child zone     DELETE deletes
-    RETURN begins editing
+with OPTION move/alter zone:
+    ARROWS move
+    COMMAND go all the way
+    TAB add sibling zone
+    SPACE add child zone     DELETE delete
+    RETURN begin to edit text
 
-SHIFT :
-    LEFT arrow expands
-    RIGHT arrow collapses
-    OPTION all children</string>
+with SHIFT :
+    LEFT ARROW expand
+    RIGHT ARROW collapse
+    COMMAND do all</mutableString>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>

@@ -25,8 +25,8 @@ class ZoneWidget: ZView {
     private var dragHighlightView: ZView!
     private var   childrenWidgets: [ZoneWidget] = []
     private var      siblingLines: [ZoneCurve]  = []
-    var                 toggleDot: ZoneDot      = ZoneDot()
-    var                   dragDot: ZoneDot      = ZoneDot()
+    var                 toggleDot: ZoneDot?     = ZoneDot()
+    var                   dragDot: ZoneDot?     = ZoneDot()
 
 
     var hasChildren: Bool {
@@ -73,6 +73,17 @@ class ZoneWidget: ZView {
             return _childrenView
         }
     }
+
+
+    deinit {
+        childrenWidgets.removeAll()
+
+        _childrenView = nil
+        _textField    = nil
+        widgetZone    = nil
+        toggleDot     = nil
+        dragDot       = nil
+}
 
 
     // MARK:- layout
@@ -194,14 +205,14 @@ class ZoneWidget: ZView {
         if childrenWidgets.count != index || !widgetZone.showChildren || index == 0 {
             childrenWidgets.removeAll()
 
-            if _childrenView != nil {
-                for view in _childrenView.subviews {
+            if let view = _childrenView {
+                _childrenView = nil
+
+                for view in view.subviews {
                     view.removeFromSuperview()
                 }
 
-                _childrenView.removeFromSuperview()
-
-                _childrenView = nil
+                view.removeFromSuperview()
             }
         }
 
@@ -272,29 +283,29 @@ class ZoneWidget: ZView {
 
 
     func layoutDots() {
-        if !subviews.contains(dragDot) {
-            addSubview(dragDot)
+        if !subviews.contains(dragDot!) {
+            addSubview(dragDot!)
         }
 
-        dragDot.innerDot?.snp.removeConstraints()
-        dragDot.setupForZone(widgetZone, asToggle: false)
-        dragDot.innerDot?.snp.makeConstraints({ (make) in
+        dragDot!.innerDot?.snp.removeConstraints()
+        dragDot!.setupForZone(widgetZone, asToggle: false)
+        dragDot!.innerDot?.snp.makeConstraints({ (make) in
             make.right.equalTo(textField.snp.left)
             make.centerY.equalTo(textField).offset(1.0)
         })
 
         if widgetZone.children.count == 0 {
-            if subviews.contains(toggleDot) {
-                toggleDot.removeFromSuperview()
+            if subviews.contains(toggleDot!) {
+                toggleDot!.removeFromSuperview()
             }
         } else {
-            if !subviews.contains(toggleDot) {
-                addSubview(toggleDot)
+            if !subviews.contains(toggleDot!) {
+                addSubview(toggleDot!)
             }
 
-            toggleDot.innerDot?.snp.removeConstraints()
-            toggleDot.setupForZone(widgetZone, asToggle: true)
-            toggleDot.innerDot?.snp.makeConstraints({ (make) in
+            toggleDot!.innerDot?.snp.removeConstraints()
+            toggleDot!.setupForZone(widgetZone, asToggle: true)
+            toggleDot!.innerDot?.snp.makeConstraints({ (make) in
                 make.left.equalTo(textField.snp.right).offset(-1.0)
                 make.centerY.equalTo(textField).offset(1.0)
                 make.right.lessThanOrEqualToSuperview().offset(-1.0)

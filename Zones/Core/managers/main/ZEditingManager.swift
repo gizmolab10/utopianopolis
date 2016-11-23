@@ -43,14 +43,15 @@ class ZEditingManager: NSObject {
 
 
     func move(_ arrow: ZArrowKey, modifierFlags: ZKeyModifierFlags) {
-        let isOption = modifierFlags.contains(.option)
+        let isCommand = modifierFlags.contains(.command)
+        let  isOption = modifierFlags.contains(.option)
 
         if modifierFlags.contains(.shift) {
-            if let zone = selectionManager.currentlyMovableZone {
+            if let zone = selectionManager.firstGrabbableZone {
 
                 switch arrow {
-                case .right: setChildrenVisibilityTo(true,  zone: zone, recursively: isOption);                                            break
-                case .left:  setChildrenVisibilityTo(false, zone: zone, recursively: isOption); selectionManager.deselectDragWithin(zone); break
+                case .right: setChildrenVisibilityTo(true,  zone: zone, recursively: isCommand);                                            break
+                case .left:  setChildrenVisibilityTo(false, zone: zone, recursively: isCommand); selectionManager.deselectDragWithin(zone); break
                 default: return
                 }
 
@@ -58,10 +59,10 @@ class ZEditingManager: NSObject {
             }
         } else {
             switch arrow {
-            case .right: moveIntoSibling(selectionOnly: !isOption); break
-            case .left:     moveToParent(selectionOnly: !isOption); break
-            case .down:    moveUp(false, selectionOnly: !isOption); break
-            case .up:      moveUp(true,  selectionOnly: !isOption); break
+            case .right:     moveInto(selectionOnly: !isOption, extreme: isCommand); break
+            case .left:       moveOut(selectionOnly: !isOption, extreme: isCommand); break
+            case .down: moveUp(false, selectionOnly: !isOption, extreme: isCommand); break
+            case .up:   moveUp(true,  selectionOnly: !isOption, extreme: isCommand); break
             }
         }
     }
@@ -84,7 +85,7 @@ class ZEditingManager: NSObject {
             let record = CKRecord(recordType: zoneTypeKey)
             let   zone = Zone(record: record, storageMode: cloudManager.storageMode)
 
-            widgetsManager.widgetForZone(parentZone!)?.textField.stopEditing()
+            widgetsManager.widgetForZone(parentZone!)?.textField.resignFirstResponder()
             parentZone?.children.append(zone)
 
             parentZone?.showChildren = true
@@ -136,11 +137,15 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveUp(_ moveUp: Bool, selectionOnly: Bool) {
-        if let        zone: Zone = selectionManager.currentlyMovableZone {
+    func moveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool) {
+        if let        zone: Zone = selectionManager.firstGrabbableZone {
             if let    parentZone = zone.parentZone {
                 if let     index = parentZone.children.index(of: zone) {
-                    let newIndex = index + (moveUp ? -1 : 1)
+                    var newIndex = index + (moveUp ? -1 : 1)
+
+                    if extreme {
+                        newIndex = moveUp ? 0 : parentZone.children.count - 1
+                    }
 
                     if newIndex >= 0 && newIndex < parentZone.children.count {
                         if selectionOnly {
@@ -158,8 +163,8 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveIntoSibling(selectionOnly: Bool) {
-        if let                                  zone: Zone = selectionManager.currentlyMovableZone {
+    func moveInto(selectionOnly: Bool, extreme: Bool) {
+        if let                                  zone: Zone = selectionManager.firstGrabbableZone {
             if selectionOnly {
                 if zone.children.count > 0 {
                     selectionManager.currentlyGrabbedZones = [zone.children.last!]
@@ -191,10 +196,14 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveToParent(selectionOnly: Bool) {
-        if let                                  zone: Zone = selectionManager.currentlyMovableZone {
-            if let                              parentZone = zone.parentZone {
+    func moveOut(selectionOnly: Bool, extreme: Bool) {
+        if let                                  zone: Zone = selectionManager.firstGrabbableZone {
+            if var                              parentZone = zone.parentZone {
                 if selectionOnly {
+                    if extreme {
+                        parentZone                         = travelManager.rootZone
+                    }
+
                     selectionManager.currentlyGrabbedZones = [parentZone]
 
                     controllersManager.updateToClosures(parentZone, regarding: .data)
