@@ -22,11 +22,11 @@ class ZoneWidget: ZView {
     private var        _textField: ZoneTextField!
     var                widgetZone: Zone!
     private var     _childrenView: ZView!
-    private var dragHighlightView: ZView!
+    private let dragHighlightView: ZView!       = ZView()
     private var   childrenWidgets: [ZoneWidget] = []
     private var      siblingLines: [ZoneCurve]  = []
-    var                 toggleDot: ZoneDot?     = ZoneDot()
-    var                   dragDot: ZoneDot?     = ZoneDot()
+    let                 toggleDot: ZoneDot?     = ZoneDot()
+    let                   dragDot: ZoneDot?     = ZoneDot()
 
 
     var hasChildren: Bool {
@@ -81,8 +81,6 @@ class ZoneWidget: ZView {
         _childrenView = nil
         _textField    = nil
         widgetZone    = nil
-        toggleDot     = nil
-        dragDot       = nil
 }
 
 
@@ -132,11 +130,9 @@ class ZoneWidget: ZView {
         super.draw(dirtyRect)
 
         dispatchAsyncInForeground {
-            if self.dragHighlightView != nil {
-                self.dragHighlightView.zlayer.backgroundColor = stateManager.lightFillColor.cgColor
+            self.dragHighlightView.zlayer.backgroundColor = stateManager.lightFillColor.cgColor
 
-                self.dragHighlightView.addBorder(thickness: 0.15, radius: dirtyRect.size.height / 2.0, color: stateManager.lineColor.cgColor)
-            }
+            self.dragHighlightView.addBorder(thickness: 0.15, radius: dirtyRect.size.height / 2.0, color: stateManager.lineColor.cgColor)
         }
     }
 
@@ -149,13 +145,9 @@ class ZoneWidget: ZView {
 
 
     func addDragHighlight() {
-        if  dragHighlightView       != nil && !selectionManager.isGrabbed(zone: widgetZone) {
-            dragHighlightView.removeFromSuperview()
-            dragHighlightView = nil
-        } else if dragHighlightView == nil &&  selectionManager.isGrabbed(zone: widgetZone) {
-            dragHighlightView                          = ZView()
-            dragHighlightView.isUserInteractionEnabled = false
+        dragHighlightView.isHidden = !selectionManager.isGrabbed(zone: widgetZone)
 
+        if dragHighlightView.superview == nil {
             addSubview(dragHighlightView)
         }
     }
