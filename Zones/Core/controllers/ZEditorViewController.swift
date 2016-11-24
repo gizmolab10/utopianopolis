@@ -47,7 +47,7 @@ class ZEditorViewController: ZGenericViewController {
             specificWidget?.layoutFinish()
             specificWidget?.display()
 
-            stateManager.textCapturing = false
+            textCapturing = false
     }
 
 

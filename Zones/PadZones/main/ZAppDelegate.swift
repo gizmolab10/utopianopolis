@@ -27,7 +27,8 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
         application.registerUserNotificationSettings(settings)
         application.registerForRemoteNotifications()
         cloudManager.setup()
-        stateManager.setupAndRun()
+        operationsManager
+            .setupAndRun()
 
         return true
     }

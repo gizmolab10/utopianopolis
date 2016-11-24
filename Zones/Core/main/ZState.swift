@@ -1,5 +1,5 @@
 //
-//  ZStateManager.swift
+//  ZState.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 10/14/16.
@@ -16,9 +16,6 @@ import Foundation
 #endif
 
 
-class ZStateManager: NSObject {
-
-
     var   textCapturing:      Bool = false
     var        editMode: ZEditMode = .task
     var       toolState: ZToolMode = .edit
@@ -30,4 +27,3 @@ class ZStateManager: NSObject {
 
 
     var lightFillColor: ZColor { get { return lineColor.withAlphaComponent(0.03) } }
-}

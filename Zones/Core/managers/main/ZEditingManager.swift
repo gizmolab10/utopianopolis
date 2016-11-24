@@ -151,10 +151,8 @@ class ZEditingManager: NSObject {
     //    if beyond end, search for uncles aunts whose children or email
 
 
-    func nextSiblingUpward(_ moveUp: Bool, extreme: Bool,  zone: Zone?) -> (Zone?, Int, Int) {
-        if let  parentZone: Zone = zone?.parentZone {
-            let         siblings = parentZone.children
-
+    func nextUpward(_ moveUp: Bool, extreme: Bool,  zone: Zone?) -> (Zone?, Int, Int) {
+        if let siblings = zone?.parentZone?.children {
             if siblings.count > 0 {
                 if let     index = siblings.index(of: zone!)  {
                     var newIndex = index + (moveUp ? -1 : 1)
@@ -168,18 +166,16 @@ class ZEditingManager: NSObject {
                     }
                 }
             }
-
         }
 
         return (nil, 0, 0)
     }
 
 
-    func newMoveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool) {
+    func newmoveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool) {
         if let        zone: Zone = selectionManager.firstGrabbableZone {
             if let    parentZone = zone.parentZone {
-
-                let (next, index, newIndex) = nextSiblingUpward(moveUp, extreme: extreme, zone: parentZone)
+                let (next, index, newIndex) = nextUpward(moveUp, extreme: extreme, zone: parentZone)
 
                 if !selectionOnly {
                     parentZone.children.remove(at: index)
@@ -220,7 +216,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    var asTask: Bool { get { return stateManager.editMode == .task } }
+    var asTask: Bool { get { return editMode == .task } }
 
 
     func moveInto(selectionOnly: Bool, extreme: Bool) {

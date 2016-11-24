@@ -27,6 +27,6 @@ class ZToolsViewController: ZGenericViewController {
 
 
     @IBAction func editModeChoiceAction(_ control: ZSegmentedControl) {
-        stateManager.editMode = ZEditMode(rawValue: control.selectedSegment)!
+        editMode = ZEditMode(rawValue: control.selectedSegment)!
     }
 }

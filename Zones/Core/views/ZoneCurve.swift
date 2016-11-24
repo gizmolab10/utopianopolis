@@ -54,7 +54,7 @@ class ZoneCurve: ZView {
     func constrain() {
         snp.removeConstraints()
         snp.makeConstraints { (make) in
-            let halfLineThickness = stateManager.lineThicknes / 2.0
+            let halfLineThickness = lineThicknes / 2.0
             let         toggleDot = parent?.toggleDot!.innerDot
             let           dragDot = child?.dragDot!.innerDot
 
@@ -66,7 +66,7 @@ class ZoneCurve: ZView {
                 make.bottom.equalTo(toggleDot!.snp.top)
                 break
             case .straight:
-                make.height.equalTo(stateManager.lineThicknes)
+                make.height.equalTo(lineThicknes)
                 make.bottom.equalTo(toggleDot!.snp.centerY)
                 make.left.equalTo(toggleDot!.snp.right)
                 return
@@ -90,15 +90,15 @@ class ZoneCurve: ZView {
             switch kind {
             case .above: y = -dirtyRect.maxY - toggleHalfHeight * 2.0; break
             case .below: y =  dirtyRect.minY; break
-            case .straight: zlayer.backgroundColor = stateManager.lineColor.cgColor; return
+            case .straight: zlayer.backgroundColor = lineColor.cgColor; return
             }
 
             let rect = CGRect(x: dirtyRect.minX, y: y, width: dirtyRect.size.width * 2.0 + dragHalfWidth , height: (dirtyRect.size.height + toggleHalfHeight) * 2.0 )
             let path = ZBezierPath(ovalIn: rect)
 
             ZColor.clear.setFill()
-            stateManager.lineColor.setStroke()
-            path.lineWidth = stateManager.lineThicknes
+            lineColor.setStroke()
+            path.lineWidth = lineThicknes
             path.flatness = 0.0001
             path.stroke()
         }

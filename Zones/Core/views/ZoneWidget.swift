@@ -130,9 +130,9 @@ class ZoneWidget: ZView {
         super.draw(dirtyRect)
 
         dispatchAsyncInForeground {
-            self.dragHighlightView.zlayer.backgroundColor = stateManager.lightFillColor.cgColor
+            self.dragHighlightView.zlayer.backgroundColor = lightFillColor.cgColor
 
-            self.dragHighlightView.addBorder(thickness: 0.15, radius: dirtyRect.size.height / 2.0, color: stateManager.lineColor.cgColor)
+            self.dragHighlightView.addBorder(thickness: 0.15, radius: dirtyRect.size.height / 2.0, color: lineColor.cgColor)
         }
     }
 
@@ -180,8 +180,8 @@ class ZoneWidget: ZView {
             make.width.equalTo(width)
             make.centerY.equalTo(self)
             make.right.lessThanOrEqualTo(self).offset(-29.0)
-            make.left.equalTo(self).offset(12.0 + stateManager.genericOffset.width)
-            make.height.lessThanOrEqualTo(self).offset(-stateManager.genericOffset.height)
+            make.left.equalTo(self).offset(12.0 + genericOffset.width)
+            make.height.lessThanOrEqualTo(self).offset(-genericOffset.height)
 
             if hasChildren {
                 make.right.equalTo(childrenView.snp.left).offset(-20.0)
@@ -265,7 +265,7 @@ class ZoneWidget: ZView {
                 siblingLines.append(siblingLine!)
                 addSubview(siblingLine!)
                 siblingLine?.snp.makeConstraints({ (make) in
-                    make.width.height.equalTo(stateManager.lineThicknes)
+                    make.width.height.equalTo(lineThicknes)
                     make.centerX.equalTo(textField.snp.right).offset(6.0)
                     make.centerY.equalTo(textField)
                 })

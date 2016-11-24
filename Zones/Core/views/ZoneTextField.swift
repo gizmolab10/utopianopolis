@@ -121,9 +121,9 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
 
     func captureText() {
-        if  stateManager.textCapturing    == false {
+        if  textCapturing    == false {
             if widget.widgetZone.zoneName != text! {
-                stateManager.textCapturing = true
+                textCapturing = true
                 widget.widgetZone.zoneName = text!
             }
         }

@@ -39,21 +39,21 @@ class ZoneDot: ZView {
             setupGestures(self, action: #selector(ZoneDot.gestureEvent))
             self.addSubview(innerDot!)
             innerDot?.setupForZone(widgetZone, asToggle: asToggle)
-            // addBorder(thickness: stateManager.lineThicknes, radius: userTouchLength / 2.0, color: ZColor.red.cgColor)
+            // addBorder(thickness: lineThicknes, radius: userTouchLength / 2.0, color: ZColor.red.cgColor)
             snp.makeConstraints { (make) in
                 make.size.equalTo(CGSize(width: userTouchLength, height: userTouchLength))
                 make.center.equalTo(innerDot!)
             }
         } else {
-            let radius:    CGFloat = stateManager.dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
+            let radius:    CGFloat = dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
             shouldHighlight        = asToggle ? !widgetZone.showChildren : selectionManager.isGrabbed(zone: widgetZone)
-            zlayer.backgroundColor = (shouldHighlight ? stateManager.lineColor : stateManager.unselectedColor).cgColor
+            zlayer.backgroundColor = (shouldHighlight ? lineColor : unselectedColor).cgColor
 
-            addBorder(thickness: stateManager.lineThicknes, radius: radius, color: stateManager.lineColor.cgColor)
+            addBorder(thickness: lineThicknes, radius: radius, color: lineColor.cgColor)
             snp.makeConstraints { (make) in
-                let width: CGFloat = asToggle ? stateManager.dotLength : stateManager.dotLength * 0.65
+                let width: CGFloat = asToggle ? dotLength : dotLength * 0.65
 
-                make.size.equalTo(CGSize(width: width, height: stateManager.dotLength))
+                make.size.equalTo(CGSize(width: width, height: dotLength))
             }
         }
 
