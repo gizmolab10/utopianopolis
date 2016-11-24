@@ -68,7 +68,7 @@ class ZEditingManager: NSObject {
             let   zone = Zone(record: record, storageMode: cloudManager.storageMode)
 
             widgetsManager.widgetForZone(parentZone!)?.textField.resignFirstResponder()
-            parentZone?.children.append(zone)
+            parentZone?.children.insert(zone, at: 0)
 
             parentZone?.showChildren = true
             parentZone?.recordState  = .needsSave
@@ -219,7 +219,7 @@ class ZEditingManager: NSObject {
         if let                                  zone: Zone = selectionManager.firstGrabbableZone {
             if selectionOnly {
                 if zone.children.count > 0 {
-                    selectionManager.currentlyGrabbedZones = [zone.children.last!]
+                    selectionManager.currentlyGrabbedZones = [zone.children.first!]
                     zone.showChildren                      = true
 
                     controllersManager.updateToClosures(zone, regarding: .data)
@@ -233,7 +233,7 @@ class ZEditingManager: NSObject {
                         siblingZone.showChildren           = true
 
                         parentZone.children.remove(at: index)
-                        siblingZone.children.append(zone)
+                        siblingZone.children.insert(zone, at: 0)
 
                         siblingZone.recordState            = .needsSave
                         parentZone.recordState             = .needsSave
@@ -296,10 +296,10 @@ class ZEditingManager: NSObject {
             }
         } else {
             switch arrow {
-            case .right:     moveInto(selectionOnly: !isOption, extreme: isCommand); break
-            case .left:       moveOut(selectionOnly: !isOption, extreme: isCommand); break
-            case .down: moveUp(false, selectionOnly: !isOption, extreme: isCommand); break
-            case .up:   moveUp(true,  selectionOnly: !isOption, extreme: isCommand); break
+            case .right: moveInto(     selectionOnly: !isOption, extreme: isCommand); break
+            case .left:  moveOut(      selectionOnly: !isOption, extreme: isCommand); break
+            case .down:  moveUp(false, selectionOnly: !isOption, extreme: isCommand); break
+            case .up:    moveUp(true,  selectionOnly: !isOption, extreme: isCommand); break
             }
         }
     }
