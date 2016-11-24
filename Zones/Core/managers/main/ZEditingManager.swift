@@ -68,7 +68,12 @@ class ZEditingManager: NSObject {
             let   zone = Zone(record: record, storageMode: cloudManager.storageMode)
 
             widgetsManager.widgetForZone(parentZone!)?.textField.resignFirstResponder()
-            parentZone?.children.insert(zone, at: 0)
+
+            if asTask {
+                parentZone?.children.insert(zone, at: 0)
+            } else {
+                parentZone?.children.append(zone)
+            }
 
             parentZone?.showChildren = true
             parentZone?.recordState  = .needsSave
@@ -215,25 +220,33 @@ class ZEditingManager: NSObject {
     }
 
 
+    var asTask: Bool { get { return stateManager.editMode == .task } }
+
+
     func moveInto(selectionOnly: Bool, extreme: Bool) {
         if let                                  zone: Zone = selectionManager.firstGrabbableZone {
             if selectionOnly {
                 if zone.children.count > 0 {
-                    selectionManager.currentlyGrabbedZones = [zone.children.first!]
+                    selectionManager.currentlyGrabbedZones = [asTask ? zone.children.first! : zone.children.last!]
                     zone.showChildren                      = true
 
                     controllersManager.updateToClosures(zone, regarding: .data)
                 }
             } else if let                       parentZone = zone.parentZone {
                 if let                               index = parentZone.children.index(of: zone) {
-                    let                       siblingIndex = index - 1
+                    let                       siblingIndex = index == 0 ? 1 : index - 1
 
                     if siblingIndex                       >= 0 {
                         let                    siblingZone = parentZone.children[siblingIndex]
                         siblingZone.showChildren           = true
 
                         parentZone.children.remove(at: index)
-                        siblingZone.children.insert(zone, at: 0)
+
+                        if asTask {
+                            siblingZone.children.insert(zone, at: 0)
+                        } else {
+                            siblingZone.children.append(zone)
+                        }
 
                         siblingZone.recordState            = .needsSave
                         parentZone.recordState             = .needsSave
@@ -266,7 +279,12 @@ class ZEditingManager: NSObject {
                     zone.recordState                       = .needsSave
                     zone.parentZone                        = grandParentZone
 
-                    grandParentZone.children.append(zone)
+                    if asTask {
+                        grandParentZone.children.insert(zone, at: 0)
+                    } else {
+                        grandParentZone.children.append(zone)
+                    }
+
                     parentZone.children.remove(at: index!)
                     controllersManager.saveAndUpdateFor(grandParentZone)
                 }

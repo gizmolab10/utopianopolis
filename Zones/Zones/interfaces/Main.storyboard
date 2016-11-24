@@ -740,7 +740,7 @@
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZToolsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="198" height="448"/>
+                        <rect key="frame" x="0.0" y="0.0" width="218" height="448"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i7P-tX-Rsd">
@@ -757,7 +757,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d02-RZ-oux">
-                                <rect key="frame" x="12" y="367" width="142" height="32"/>
+                                <rect key="frame" x="14" y="367" width="142" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="130" id="UOB-Lh-Xg8"/>
                                 </constraints>
@@ -766,8 +766,21 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
+                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LAJ-9k-rdw">
+                                <rect key="frame" x="18" y="342" width="158" height="20"/>
+                                <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="cX7-p0-us8">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <segments>
+                                        <segment label="Task Lists" selected="YES"/>
+                                        <segment label="Composition" tag="1"/>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="editModeChoiceAction:" target="YaQ-0g-PCb" id="SCs-Vn-Uzn"/>
+                                </connections>
+                            </segmentedControl>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IT7-2L-PqU">
-                                <rect key="frame" x="18" y="114" width="182" height="240"/>
+                                <rect key="frame" x="18" y="84" width="202" height="240"/>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="RJc-P2-wiE">
                                     <font key="font" metaFont="system" size="12"/>
                                     <mutableString key="title">HELP:
@@ -790,19 +803,21 @@ with SHIFT :
                             </textField>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="IT7-2L-PqU" firstAttribute="top" secondItem="d02-RZ-oux" secondAttribute="bottom" constant="20" id="1L9-0g-ix8"/>
                             <constraint firstItem="i7P-tX-Rsd" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" constant="20" id="2KN-22-lDV"/>
                             <constraint firstItem="IT7-2L-PqU" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="9ia-fe-V5W"/>
                             <constraint firstItem="d02-RZ-oux" firstAttribute="top" secondItem="i7P-tX-Rsd" secondAttribute="bottom" constant="12" id="PpM-Fy-58J"/>
                             <constraint firstItem="i7P-tX-Rsd" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="UE1-j1-hQe"/>
-                            <constraint firstItem="d02-RZ-oux" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="18" id="bpG-KA-XWH"/>
+                            <constraint firstItem="LAJ-9k-rdw" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="ZaN-1o-7Ok"/>
+                            <constraint firstItem="d02-RZ-oux" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="bpG-KA-XWH"/>
+                            <constraint firstItem="LAJ-9k-rdw" firstAttribute="top" secondItem="d02-RZ-oux" secondAttribute="bottom" constant="12" id="f7J-Vr-Icd"/>
+                            <constraint firstItem="IT7-2L-PqU" firstAttribute="top" secondItem="LAJ-9k-rdw" secondAttribute="bottom" constant="20" id="hGV-VX-CJk"/>
                             <constraint firstAttribute="trailing" secondItem="IT7-2L-PqU" secondAttribute="trailing" id="nXY-O2-qtm"/>
                         </constraints>
                     </view>
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="466" y="1385"/>
+            <point key="canvasLocation" x="476" y="1385"/>
         </scene>
         <!--Travel View Controller-->
         <scene sceneID="7Hb-7e-BTT">

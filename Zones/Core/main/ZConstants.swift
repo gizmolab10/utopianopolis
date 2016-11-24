@@ -97,6 +97,12 @@ enum ZToolMode: Int {
 }
 
 
+enum ZEditMode: Int {
+    case task
+    case essay
+}
+
+
 enum ZEditAction: Int {
     case add
     case delete
