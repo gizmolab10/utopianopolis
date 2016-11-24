@@ -14,6 +14,17 @@ import CloudKit
 class ZEditingManager: NSObject {
 
 
+    func normalize() {
+        widgetsManager.clear()
+        travelManager.rootZone.normalize()
+        controllersManager.saveAndUpdateFor(nil)
+    }
+
+
+    // MARK:- layout
+    // MARK:-
+
+
     func setChildrenVisibilityTo(_ show: Bool, zone: Zone?, recursively: Bool) {
         if zone != nil {
             zone?.showChildren = show
@@ -42,37 +53,8 @@ class ZEditingManager: NSObject {
     }
 
 
-    func move(_ arrow: ZArrowKey, modifierFlags: ZKeyModifierFlags) {
-        let isCommand = modifierFlags.contains(.command)
-        let  isOption = modifierFlags.contains(.option)
-
-        if modifierFlags.contains(.shift) {
-            if let zone = selectionManager.firstGrabbableZone {
-
-                switch arrow {
-                case .right: setChildrenVisibilityTo(true,  zone: zone, recursively: isCommand);                                            break
-                case .left:  setChildrenVisibilityTo(false, zone: zone, recursively: isCommand); selectionManager.deselectDragWithin(zone); break
-                default: return
-                }
-
-                controllersManager.saveAndUpdateFor(nil)
-            }
-        } else {
-            switch arrow {
-            case .right:     moveInto(selectionOnly: !isOption, extreme: isCommand); break
-            case .left:       moveOut(selectionOnly: !isOption, extreme: isCommand); break
-            case .down: moveUp(false, selectionOnly: !isOption, extreme: isCommand); break
-            case .up:   moveUp(true,  selectionOnly: !isOption, extreme: isCommand); break
-            }
-        }
-    }
-
-
-    func normalize() {
-        widgetsManager.clear()
-        travelManager.rootZone.normalize()
-        controllersManager.saveAndUpdateFor(nil)
-    }
+    // MARK:- creation
+    // MARK:-
 
 
     func add() {
@@ -154,6 +136,56 @@ class ZEditingManager: NSObject {
         }
 
         return nil
+    }
+
+
+    // MARK:- movement
+    // MARK:-
+
+
+    //    if beyond end, search for uncles aunts whose children or email
+
+
+    func nextSiblingUpward(_ moveUp: Bool, extreme: Bool,  zone: Zone?) -> (Zone?, Int, Int) {
+        if let  parentZone: Zone = zone?.parentZone {
+            let         siblings = parentZone.children
+
+            if siblings.count > 0 {
+                if let     index = siblings.index(of: zone!)  {
+                    var newIndex = index + (moveUp ? -1 : 1)
+
+                    if extreme {
+                        newIndex = moveUp ? 0 : siblings.count - 1
+                    }
+
+                    if newIndex >= 0 && newIndex < siblings.count {
+                        return (siblings[newIndex], index, newIndex)
+                    }
+                }
+            }
+
+        }
+
+        return (nil, 0, 0)
+    }
+
+
+    func newMoveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool) {
+        if let        zone: Zone = selectionManager.firstGrabbableZone {
+            if let    parentZone = zone.parentZone {
+
+                let (next, index, newIndex) = nextSiblingUpward(moveUp, extreme: extreme, zone: parentZone)
+
+                if !selectionOnly {
+                    parentZone.children.remove(at: index)
+                    parentZone.children.insert(zone, at:newIndex)
+                } else if next != nil {
+                    selectionManager.currentlyGrabbedZones = [next!]
+                }
+                
+                controllersManager.updateToClosures(parentZone, regarding: .data)
+            }
+        }
     }
 
 
@@ -240,5 +272,115 @@ class ZEditingManager: NSObject {
                 }
             }
         }
+    }
+
+
+    // MARK:- events
+    // MARK:-
+
+
+    func move(_ arrow: ZArrowKey, modifierFlags: ZKeyModifierFlags) {
+        let isCommand = modifierFlags.contains(.command)
+        let  isOption = modifierFlags.contains(.option)
+
+        if modifierFlags.contains(.shift) {
+            if let zone = selectionManager.firstGrabbableZone {
+
+                switch arrow {
+                case .right: setChildrenVisibilityTo(true,  zone: zone, recursively: isCommand);                                            break
+                case .left:  setChildrenVisibilityTo(false, zone: zone, recursively: isCommand); selectionManager.deselectDragWithin(zone); break
+                default: return
+                }
+
+                controllersManager.saveAndUpdateFor(nil)
+            }
+        } else {
+            switch arrow {
+            case .right:     moveInto(selectionOnly: !isOption, extreme: isCommand); break
+            case .left:       moveOut(selectionOnly: !isOption, extreme: isCommand); break
+            case .down: moveUp(false, selectionOnly: !isOption, extreme: isCommand); break
+            case .up:   moveUp(true,  selectionOnly: !isOption, extreme: isCommand); break
+            }
+        }
+    }
+
+
+    @discardableResult func handleKey(_ event: ZEvent, isWindow: Bool) -> Bool {
+        let     flags = event.modifierFlags
+        let   isShift = flags.contains(.shift)
+        let  isOption = flags.contains(.option)
+        let isCommand = flags.contains(.command)
+        let   isArrow = flags.contains(.numericPad) && flags.contains(.function)
+
+        if let widget = widgetsManager.currentMovableWidget {
+            if let string = event.charactersIgnoringModifiers {
+                let key   = string[string.startIndex].description
+
+                if isArrow {
+                    let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
+                    var flags = ZKeyModifierFlags.none
+
+                    if isShift   { flags.insert(.shift ) }
+                    if isOption  { flags.insert(.option) }
+                    if isCommand { flags.insert(.command) }
+
+                    move(arrow, modifierFlags: flags)
+
+                    return true
+                } else {
+                    switch key {
+                    case "\t":
+                        widget.textField.resignFirstResponder()
+
+                        if let parent = widget.widgetZone.parentZone {
+                            addZoneTo(parent)
+                        } else {
+                            selectionManager.currentlyEditingZone = nil
+
+                            controllersManager.updateToClosures(nil, regarding: .data)
+                        }
+
+                        return true
+                    case " ":
+                        if isWindow || isOption {
+                            addZoneTo(widget.widgetZone)
+
+                            return true
+                        }
+
+                        break
+                    case "\u{7F}":
+                        if isWindow || isOption {
+                            delete()
+
+                            return true
+                        }
+
+                        break
+                    case "\r":
+                        if selectionManager.currentlyGrabbedZones.count != 0 {
+                            selectionManager.currentlyGrabbedZones = []
+
+                            widget.textField.becomeFirstResponder()
+
+                            return true
+                        } else if selectionManager.currentlyEditingZone != nil {
+                            selectionManager.currentlyGrabbedZones = [selectionManager.currentlyEditingZone!]
+
+                            widget.textField.resignFirstResponder()
+                            
+                            return true
+                        }
+
+                        break
+                    default:
+
+                        break
+                    }
+                }
+            }
+        }
+        
+        return false
     }
 }

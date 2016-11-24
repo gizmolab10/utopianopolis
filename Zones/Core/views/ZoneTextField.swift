@@ -42,7 +42,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
                     monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> NSEvent? in
                         if self.isEditing {
-                            mainWindow?.handleKey(event, isWindow: false)
+                            editingManager.handleKey(event, isWindow: false)
                         }
 
                         return event
