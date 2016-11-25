@@ -30,7 +30,7 @@ class ZFileManager: NSObject {
     func save() {
         if !isSaving && operationsManager.isReady {
             isSaving               = true
-            let dict: NSDictionary = travelManager.storageRootZone.storageDict as NSDictionary
+            let dict: NSDictionary = travelManager.storageZone.storageDict as NSDictionary
             let  url:          URL = pathToCurrentZoneFile()
 
             dict.write(to: url, atomically: false)
@@ -44,8 +44,8 @@ class ZFileManager: NSObject {
         cloudManager.records.removeAll()
         
         if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
-            travelManager.storageRootZone = Zone(dict: raw as! ZStorageDict)
-            travelManager.rootZone        = travelManager.storageRootZone
+            travelManager.storageZone = Zone(dict: raw as! ZStorageDict)
+            travelManager.rootZone    = travelManager.storageZone
         }
     }
 

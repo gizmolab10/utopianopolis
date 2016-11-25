@@ -29,6 +29,11 @@ class ZOperationsManager: NSObject {
     }
 
 
+    func travel() {
+        setupAndRun([ZSynchronizationState.restore.rawValue, ZSynchronizationState.root.rawValue])
+    }
+    
+
     func setupAndRun(_ syncStates: [Int]) {
         queue.isSuspended                 = true
         queue.maxConcurrentOperationCount = 1

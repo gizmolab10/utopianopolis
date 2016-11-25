@@ -12,9 +12,10 @@ import CloudKit
 
 
 class ZCloudManager: NSObject {
-    var     records: [CKRecordID : ZRecord] = [:]
-    var   container:           CKContainer!
-    var   currentDB:            CKDatabase? { get { return databaseForMode(travelManager.storageMode) }     }
+    var        records:          [CKRecordID : ZRecord] = [:]
+    var cloudZonesByID: [CKRecordZoneID : CKRecordZone] = [:]
+    var      container:                    CKContainer!
+    var      currentDB:                     CKDatabase? { get { return databaseForMode(travelManager.storageMode) }     }
 
 
     func databaseForMode(_ mode: ZStorageMode) -> CKDatabase? {
@@ -40,7 +41,8 @@ class ZCloudManager: NSObject {
         container                                 = CKContainer(identifier: cloudID)
         let                             operation = setupOperation(CKFetchRecordZonesOperation()) as! CKFetchRecordZonesOperation
         operation.fetchRecordZonesCompletionBlock = { (recordZonesByZoneID, operationError) -> Swift.Void in
-            travelManager.setupWithDict(recordZonesByZoneID!)
+            self.cloudZonesByID = recordZonesByZoneID!
+
             self.resetBadgeCounter()
 
             block?()

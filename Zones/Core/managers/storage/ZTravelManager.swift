@@ -14,48 +14,38 @@ import CloudKit
 class ZTravelManager: NSObject {
 
 
-    var     storageRootZone:                           Zone!
-    var            rootZone:                           Zone!
-    var             ckzones:                          [Zone] = []
-    var           bookmarks:                          [Zone] = []
-    var recordZonesByZoneID: [CKRecordZoneID : CKRecordZone] = [:]
-    var         storageMode:                    ZStorageMode = .everyone
+    var    rootZone:        Zone!
+    var storageZone:        Zone!
+    var  cloudzones:       [Zone] = []
+    var   bookmarks:       [Zone] = []
+    var storageMode: ZStorageMode = .everyone
 
 
-    func setup() {
-        clear()
-    }
-
-
-    func clear() {
-        rootZone          = Zone(record: nil, storageMode: storageMode)
-        storageRootZone   = Zone(record: nil, storageMode: storageMode)
-    }
-
-
-    func setupWithDict(_ dict: [CKRecordZoneID : CKRecordZone]) {
-        recordZonesByZoneID = dict
-
+    func setupBookmarks() {
         if storageMode == .bookmarks {
-            addCKZone("mine",     storageMode: .mine)
-            addCKZone("everyone", storageMode: .everyone)
+            rootZone.zoneName = "bookmarks"
+
+            addCloudZone("mine",     storageMode: .mine)
+            addCloudZone("everyone", storageMode: .everyone)
         }
     }
 
 
-    func addCKZone(_ name: String, storageMode: ZStorageMode) {
-        let        zone = Zone(record: nil, storageMode: storageMode)
-        zone.parentZone = storageRootZone
-        zone.zoneName   = name
+    func setup() {
+        rootZone    = Zone(record: nil, storageMode: storageMode)
+        storageZone = Zone(record: nil, storageMode: storageMode)
 
-        ckzones.append(zone)
+        setupBookmarks()
     }
 
 
-    func rootZoneForMode(_ mode: ZStorageMode) -> Zone? { return nil }
+    func addCloudZone(_ name: String, storageMode: ZStorageMode) {
+        let        zone = Zone(record: nil, storageMode: storageMode)
+        zone.parentZone = rootZone
+        zone.zoneName   = name
 
-
-    func setRootZoneForMode(_ mode: ZStorageMode, zone: Zone?) {}
+        rootZone.children.append(zone)
+    }
 
 
     func travelAction(_ action: ZTravelAction) {
@@ -65,14 +55,9 @@ class ZTravelManager: NSObject {
         case .bookmarks: storageMode = .bookmarks; break
         }
 
-        refresh()
-    }
-
-
-    func refresh() {
-        widgetsManager  .clear()
-        selectionManager.clear()
-        clear()
-        operationsManager.setupAndRun([ZSynchronizationState.cloud.rawValue, ZSynchronizationState.restore.rawValue, ZSynchronizationState.root.rawValue])
+        widgetsManager    .clear()
+        selectionManager  .clear()
+        setup                   ()
+        operationsManager.travel()
     }
 }
