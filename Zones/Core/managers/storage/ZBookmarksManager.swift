@@ -8,8 +8,27 @@
 
 
 import Foundation
+import CloudKit
 
 
 class ZBookmarksManager: NSObject {
-    
+
+
+    // create two {mine, everyone}
+
+    var             ckzones:                    [ZCloudZone] = []
+    var           bookmarks:                          [Zone] = []
+    var recordZonesByZoneID: [CKRecordZoneID : CKRecordZone] = [:]
+
+    func setupWithDict(_ dict: [CKRecordZoneID : CKRecordZone]) {
+        recordZonesByZoneID = dict
+
+        addCKZone("mine",     storageMode: .mine)
+        addCKZone("everyone", storageMode: .everyone)
+    }
+
+
+    func addCKZone(_ name: String, storageMode: ZStorageMode) {
+        ckzones.append(ZCloudZone(name, storageMode: storageMode, zoneID: nil))
+    }
 }

@@ -27,11 +27,26 @@ class ZCloudManager: NSObject {
     }
 
 
-    func setup() {
-        container   = CKContainer(identifier: cloudID)
-        storageMode = .everyone
+    func setupOperation(_ operation: CKDatabaseOperation) -> CKDatabaseOperation {
+        operation.container               = container
+        operation.database                = currentDB
+        operation.qualityOfService        = .background
 
-        resetBadgeCounter()
+        return operation
+    }
+
+
+    func cloudSetup(_ block: (() -> Swift.Void)?) {
+        storageMode                               = .everyone
+        container                                 = CKContainer(identifier: cloudID)
+        let                             operation = setupOperation(CKFetchRecordZonesOperation()) as! CKFetchRecordZonesOperation
+        operation.fetchRecordZonesCompletionBlock = { (recordZonesByZoneID, operationError) -> Swift.Void in
+            bookmarksManager.setupWithDict(recordZonesByZoneID!)
+            self.resetBadgeCounter()
+            block!()
+        }
+
+        operation.start()
     }
 
 
@@ -40,10 +55,7 @@ class ZCloudManager: NSObject {
 
 
     func fetchOnCompletion(_ block: (() -> Swift.Void)?) {
-        let                     operation = CKFetchRecordsOperation()
-        operation.container               = container
-        operation.database                = currentDB
-        operation.qualityOfService        = .background
+        let                     operation = setupOperation(CKFetchRecordsOperation()) as! CKFetchRecordsOperation
         operation.completionBlock         = block
         var recordsToFetch:  [CKRecordID] = []
 
@@ -65,10 +77,7 @@ class ZCloudManager: NSObject {
 
 
     func flushOnCompletion(_ block: (() -> Swift.Void)?) {
-        let                      operation = CKModifyRecordsOperation()
-        operation.container                = container
-        operation.database                 = currentDB
-        operation.qualityOfService         = .background
+        let                     operation = setupOperation(CKModifyRecordsOperation()) as! CKModifyRecordsOperation
         var recordsToDelete:  [CKRecordID] = []
         var recordsToSave:      [CKRecord] = []
 

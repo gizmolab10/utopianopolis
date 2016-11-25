@@ -48,6 +48,7 @@ let          showChildrenKey = "showChildren"
 
 enum ZSynchronizationState: Int {
     case restore
+    case cloud
     case root
     case fetch
     case unsubscribe

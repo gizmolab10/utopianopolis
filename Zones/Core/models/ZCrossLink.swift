@@ -11,13 +11,12 @@ import Foundation
 import CloudKit
 
 
-class ZCrossLink : Zone {
+class ZCrossLink: NSObject {
 
 
-    dynamic var crossStorageMode: String?
-    dynamic var   crossReference: CKReference?
-    dynamic var    crossZoneName: String?
-    var        resolvedReference: ZRecord?
+    dynamic var crossReference: CKReference?
+    var                 ckzone: ZCloudZone?
+    var      resolvedReference: ZRecord?
 
 
     func resolvedObject(_ onResolution: ObjectClosure) {

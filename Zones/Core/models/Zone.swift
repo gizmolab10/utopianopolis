@@ -13,13 +13,14 @@ import CloudKit
 
 class Zone : ZRecord {
 
-    
+
     dynamic var zoneName:       String?
     dynamic var   parent:  CKReference?
     dynamic var    links: [CKReference] = []
     var      _parentZone:         Zone?
     var         children:        [Zone] = []
     var     showChildren:          Bool = true
+    var        crossLink:   ZCrossLink?
 
 
     override func cloudProperties() -> [String] {
