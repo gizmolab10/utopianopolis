@@ -42,7 +42,7 @@ class ZFileManager: NSObject {
 
     func restore() {
         cloudManager.records.removeAll()
-        
+
         if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
             travelManager.storageZone = Zone(dict: raw as! ZStorageDict)
             travelManager.rootZone    = travelManager.storageZone
@@ -53,24 +53,6 @@ class ZFileManager: NSObject {
     // MARK:- internals
     // MARK:-
 
-
-    let key: String = "current storage mode"
-
-
-    var currentStorageMode: ZStorageMode {
-        set { UserDefaults.standard.set(Int(newValue.rawValue), forKey:key) }
-        get {
-            var mode: ZStorageMode? = UserDefaults.standard.value(forKey:key) as? ZStorageMode
-
-            if mode == nil {
-                mode = .everyone
-
-                UserDefaults.standard.set(Int((mode?.rawValue)!), forKey:key)
-            }
-
-            return mode!
-        }
-    }
 
     var currentZoneFileName: String {
         get {

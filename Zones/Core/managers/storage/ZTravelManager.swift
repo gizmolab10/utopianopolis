@@ -14,11 +14,30 @@ import CloudKit
 class ZTravelManager: NSObject {
 
 
-    var    rootZone:        Zone!
-    var storageZone:        Zone!
-    var  cloudzones:       [Zone] = []
-    var   bookmarks:       [Zone] = []
-    var storageMode: ZStorageMode = .everyone
+    var    rootZone:  Zone!
+    var storageZone:  Zone!
+    var  cloudzones: [Zone] = []
+    var   bookmarks: [Zone] = []
+    let         key: String = "current storage mode"
+
+
+    var storageMode: ZStorageMode {
+        set { UserDefaults.standard.set(newValue.rawValue, forKey:key) }
+        get {
+            var mode: ZStorageMode? = nil
+
+            if let           object = UserDefaults.standard.object(forKey:key) {
+                mode                = ZStorageMode(rawValue: object as! String)
+            }
+
+            if mode == nil {
+                mode                = .everyone
+                self.storageMode    = mode!
+            }
+
+            return mode!
+        }
+    }
 
 
     func setupBookmarks() {
