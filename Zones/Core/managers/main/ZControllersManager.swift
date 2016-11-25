@@ -12,16 +12,16 @@ import Foundation
 class ZControllersManager: NSObject {
 
 
-    class UpdateClosureObject {
-        let closure: UpdateClosure!
+    class SignalObject {
+        let closure: SignalClosure!
 
-        init(iClosure: @escaping UpdateClosure) {
+        init(iClosure: @escaping SignalClosure) {
             closure = iClosure
         }
     }
 
 
-    var       closures: [UpdateClosureObject]                    = []
+    var       closures: [SignalObject]                    = []
     var controllersMap: [ZControllerID : ZGenericViewController] = [:]
 
 
@@ -39,14 +39,14 @@ class ZControllersManager: NSObject {
     // MARK:-
 
 
-    func registerUpdateClosure(_ closure: @escaping UpdateClosure) {
-        closures.append(UpdateClosureObject(iClosure: closure))
+    func registerSignal(_ closure: @escaping SignalClosure) {
+        closures.append(SignalObject(iClosure: closure))
     }
 
 
-    func updateToClosures(_ object: Any?, regarding: ZUpdateKind, onCompletion: Closure?) {
+    func signal(_ object: Any?, regarding: ZUpdateKind, onCompletion: Closure?) {
         dispatchAsyncInForeground {
-            for closureObject: UpdateClosureObject in self.closures {
+            for closureObject: SignalObject in self.closures {
                 closureObject.closure(object, regarding)
             }
 
@@ -57,13 +57,13 @@ class ZControllersManager: NSObject {
     }
 
 
-    func updateToClosures(_ object: NSObject?, regarding: ZUpdateKind) {
-        updateToClosures(object, regarding: regarding, onCompletion: nil)
+    func signal(_ object: NSObject?, regarding: ZUpdateKind) {
+        signal(object, regarding: regarding, onCompletion: nil)
     }
 
 
     func saveAndUpdateFor(_ zone: Zone?, onCompletion: Closure?) {
-        updateToClosures(zone, regarding: .data, onCompletion: onCompletion)
+        signal(zone, regarding: .data, onCompletion: onCompletion)
         zfileManager.save()
         cloudManager.flushOnCompletion {}
     }

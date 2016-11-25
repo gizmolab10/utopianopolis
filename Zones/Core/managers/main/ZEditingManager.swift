@@ -65,7 +65,7 @@ class ZEditingManager: NSObject {
     func addZoneTo(_ parentZone: Zone?) {
         if parentZone != nil {
             let record = CKRecord(recordType: zoneTypeKey)
-            let   zone = Zone(record: record, storageMode: cloudManager.storageMode)
+            let   zone = Zone(record: record, storageMode: travelManager.storageMode)
 
             widgetsManager.widgetForZone(parentZone!)?.textField.resignFirstResponder()
 
@@ -184,7 +184,7 @@ class ZEditingManager: NSObject {
                     selectionManager.currentlyGrabbedZones = [next!]
                 }
                 
-                controllersManager.updateToClosures(parentZone, regarding: .data)
+                controllersManager.signal(parentZone, regarding: .data)
             }
         }
     }
@@ -208,7 +208,7 @@ class ZEditingManager: NSObject {
                             parentZone.children.insert(zone, at:newIndex)
                         }
 
-                        controllersManager.updateToClosures(parentZone, regarding: .data)
+                        controllersManager.signal(parentZone, regarding: .data)
                     }
                 }
             }
@@ -226,7 +226,7 @@ class ZEditingManager: NSObject {
                     selectionManager.currentlyGrabbedZones = [asTask ? zone.children.first! : zone.children.last!]
                     zone.showChildren                      = true
 
-                    controllersManager.updateToClosures(zone, regarding: .data)
+                    controllersManager.signal(zone, regarding: .data)
                 }
             } else if let                       parentZone = zone.parentZone {
                 if let                               index = parentZone.children.index(of: zone) {
@@ -267,7 +267,7 @@ class ZEditingManager: NSObject {
 
                     selectionManager.currentlyGrabbedZones = [parentZone]
 
-                    controllersManager.updateToClosures(parentZone, regarding: .data)
+                    controllersManager.signal(parentZone, regarding: .data)
                 } else if let              grandParentZone = parentZone.parentZone {
                     let                              index = parentZone.children.index(of: zone)
                     grandParentZone.recordState            = .needsSave
@@ -351,7 +351,7 @@ class ZEditingManager: NSObject {
                         } else {
                             selectionManager.currentlyEditingZone = nil
 
-                            controllersManager.updateToClosures(nil, regarding: .data)
+                            controllersManager.signal(nil, regarding: .data)
                         }
 
                         return true

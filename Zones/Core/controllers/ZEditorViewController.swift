@@ -19,35 +19,35 @@ class ZEditorViewController: ZGenericViewController {
     override func identifier() -> ZControllerID { return .editor }
 
 
-    override func updateFor(_ object: Any?, kind: ZUpdateKind) {
-            let                        zone = object as? Zone
-            var specificWidget: ZoneWidget? = widget
-            var specificView:        ZView? = view
-            var specificindex:          Int = -1
-            var recursing:             Bool = kind == .data
-            widget.widgetZone               = travelManager.rootZone!
+    override func handleSignal(_ object: Any?, kind: ZUpdateKind) {
+        let                        zone = object as? Zone
+        var specificWidget: ZoneWidget? = widget
+        var specificView:        ZView? = view
+        var specificindex:          Int = -1
+        var recursing:             Bool = kind == .data
+        widget.widgetZone               = travelManager.rootZone!
 
-            if zone == nil || zone == travelManager.rootZone! {
-                recursing = true
+        if zone == nil || zone == travelManager.rootZone! {
+            recursing = true
 
-                toConsole("all")
-                // widgetsManager.clear()
-            } else {
-                specificWidget = widgetsManager.widgetForZone(zone!)
-                specificView   = specificWidget?.superview
-                specificindex  = zone!.siblingIndex()
+            toConsole("all")
+            // widgetsManager.clear()
+        } else {
+            specificWidget = widgetsManager.widgetForZone(zone!)
+            specificView   = specificWidget?.superview
+            specificindex  = zone!.siblingIndex()
 
-                if let name = zone?.zoneName {
-                    toConsole(name)
-                }
+            if let name = zone?.zoneName {
+                toConsole(name)
             }
+        }
 
-            specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing)
-            specificWidget?.updateConstraints()
-            specificWidget?.layoutFinish()
-            specificWidget?.display()
+        specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing)
+        specificWidget?.updateConstraints()
+        specificWidget?.layoutFinish()
+        specificWidget?.display()
 
-            textCapturing = false
+        textCapturing = false
     }
 
 

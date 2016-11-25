@@ -828,16 +828,13 @@ with SHIFT :
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <segmentedControl horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TBt-fx-BOe">
-                                <rect key="frame" x="86" y="127" width="278" height="46"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="l2i-Nq-NIV"/>
-                                </constraints>
+                                <rect key="frame" x="92" y="139" width="266" height="23"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="selectOne" id="IZr-NT-mWZ">
                                     <font key="font" metaFont="system" size="14"/>
                                     <segments>
                                         <segment label="Bookmarks" width="110"/>
-                                        <segment label="Mine" width="68" selected="YES" tag="1"/>
-                                        <segment label="Everyone" width="96"/>
+                                        <segment label="Everyone" width="96" selected="YES" tag="1"/>
+                                        <segment label="Me" width="56"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>

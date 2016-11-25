@@ -74,7 +74,7 @@ class ZFileManager: NSObject {
 
     var currentZoneFileName: String {
         get {
-            switch (cloudManager.storageMode) {
+            switch (travelManager.storageMode) {
             case .bookmarks: return "bookmarks.storage"
             case .everyone:  return "everyone.storage"
             case .group:     return "group.storage"

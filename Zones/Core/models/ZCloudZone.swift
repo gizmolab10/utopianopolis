@@ -11,7 +11,7 @@ import Foundation
 import CloudKit
 
 
-class ZCloudZone: Zone {
+class ZCloudZone: NSObject {
 
 
     var cloudZoneID: CKRecordZoneID? {

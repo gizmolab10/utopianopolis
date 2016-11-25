@@ -49,7 +49,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
                     })
                 }
 
-                controllersManager.updateToClosures(zone?.parentZone, regarding: .data)
+                controllersManager.signal(zone?.parentZone, regarding: .data)
             }
         }
     }

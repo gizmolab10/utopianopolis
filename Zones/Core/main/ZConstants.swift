@@ -27,7 +27,6 @@ let      widgetFont:   ZFont = ZFont.systemFont(ofSize: fontSize)
 let       controllersManager = ZControllersManager()
 let        operationsManager = ZOperationsManager()
 let         selectionManager = ZSelectionManager()
-let         bookmarksManager = ZBookmarksManager()
 let           widgetsManager = ZWidgetsManager()
 let           editingManager = ZEditingManager()
 let            travelManager = ZTravelManager()
@@ -92,33 +91,16 @@ enum ZStorageMode: String {
 }
 
 
-enum ZToolMode: Int {
-    case settings
-    case edit
-    case travel
-}
-
-
 enum ZEditMode: Int {
     case task
     case essay
 }
 
 
-enum ZEditAction: Int {
-    case add
-    case delete
-    case moveUp
-    case moveDown
-    case moveToParent
-    case moveIntoSibling
-}
-
-
 enum ZTravelAction: Int {
     case bookmarks
-    case mine
     case everyone
+    case mine
 }
 
 

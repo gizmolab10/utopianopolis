@@ -14,11 +14,10 @@ import CloudKit
 class ZBookmarksManager: NSObject {
 
 
-    // create two {mine, everyone}
-
-    var             ckzones:                    [ZCloudZone] = []
+    var             ckzones:                          [Zone] = []
     var           bookmarks:                          [Zone] = []
     var recordZonesByZoneID: [CKRecordZoneID : CKRecordZone] = [:]
+
 
     func setupWithDict(_ dict: [CKRecordZoneID : CKRecordZone]) {
         recordZonesByZoneID = dict
@@ -29,6 +28,9 @@ class ZBookmarksManager: NSObject {
 
 
     func addCKZone(_ name: String, storageMode: ZStorageMode) {
-        ckzones.append(ZCloudZone(name, storageMode: storageMode, zoneID: nil))
+        let      zone = Zone(record: nil, storageMode: storageMode)
+        zone.zoneName = name
+
+        ckzones.append(zone)
     }
 }

@@ -13,9 +13,8 @@ import CloudKit
 
 class ZCloudManager: NSObject {
     var     records: [CKRecordID : ZRecord] = [:]
-    var storageMode:           ZStorageMode = .everyone
     var   container:           CKContainer!
-    var   currentDB:            CKDatabase? { get { return databaseForMode(storageMode) }     }
+    var   currentDB:            CKDatabase? { get { return databaseForMode(travelManager.storageMode) }     }
 
 
     func databaseForMode(_ mode: ZStorageMode) -> CKDatabase? {
@@ -38,15 +37,16 @@ class ZCloudManager: NSObject {
 
 
     func cloudSetup(_ block: (() -> Swift.Void)?) {
-        storageMode                               = .everyone
         container                                 = CKContainer(identifier: cloudID)
         let                             operation = setupOperation(CKFetchRecordZonesOperation()) as! CKFetchRecordZonesOperation
         operation.fetchRecordZonesCompletionBlock = { (recordZonesByZoneID, operationError) -> Swift.Void in
-            bookmarksManager.setupWithDict(recordZonesByZoneID!)
+            travelManager.setupWithDict(recordZonesByZoneID!)
             self.resetBadgeCounter()
-            block!()
+
+            block?()
         }
 
+        travelManager.setup()
         operation.start()
     }
 
@@ -71,8 +71,8 @@ class ZCloudManager: NSObject {
             operation.recordIDs = recordsToFetch
 
             operation.start()
-        } else if block != nil {
-            block!()
+        } else {
+            block?()
         }
     }
 
@@ -144,7 +144,7 @@ class ZCloudManager: NSObject {
                         var zone: Zone? = self.objectForRecordID(record.recordID) as! Zone?
 
                         if zone == nil {
-                            zone = Zone(record: record, storageMode: self.storageMode)
+                            zone = Zone(record: record, storageMode: travelManager.storageMode)
 
                             self.registerObject(zone!)
                             parent.children.append(zone!)
@@ -154,21 +154,24 @@ class ZCloudManager: NSObject {
                         zone?.parentZone = parent
                     }
                     
-                    controllersManager.updateToClosures(nil, regarding: .data)
+                    controllersManager.signal(nil, regarding: .data)
                 }
             }
         }
     }
 
 
-    func setupRootWith(operation: BlockOperation) {
+    func setupRoot(_ block: (() -> Swift.Void)?) {
         let recordID: CKRecordID = CKRecordID(recordName: rootNameKey)
 
         assureRecordExists(withRecordID: recordID, onCompletion: { (record: CKRecord?) -> (Void) in
-            travelManager.rootZone.record = record
+            if record != nil {
+                travelManager.rootZone.record = record
 
-            self.fetchReferencesTo(travelManager.rootZone)
-            operation.finish()
+                self.fetchReferencesTo(travelManager.rootZone)
+            }
+
+            block?()
         })
     }
 
@@ -182,20 +185,22 @@ class ZCloudManager: NSObject {
                 if  zone != nil {
                     zone?.record = iRecord
                 } else {
-                    zone = Zone(record: iRecord, storageMode: self.storageMode)
+                    zone = Zone(record: iRecord, storageMode: travelManager.storageMode)
 
                     self.registerObject(zone!)
                 }
 
                 self.fetchReferencesTo(zone!)
-                controllersManager.updateToClosures(zone?.parentZone, regarding: .data)
+                controllersManager.signal(zone?.parentZone, regarding: .data)
             }
         } as! RecordClosure)
     }
 
 
     func assureRecordExists(withRecordID recordID: CKRecordID, onCompletion: @escaping RecordClosure) {
-        if currentDB != nil {
+        if currentDB == nil {
+            onCompletion(nil)
+        } else {
             currentDB?.fetch(withRecordID: recordID) { (fetched: CKRecord?, fetchError: Error?) in
                 if (fetchError == nil) {
                     onCompletion(fetched!)
@@ -242,8 +247,10 @@ class ZCloudManager: NSObject {
     }
 
 
-    func unsubscribeWith(operation: BlockOperation) {
-        if currentDB != nil {
+    func unsubscribe(_ block: (() -> Swift.Void)?) {
+        if currentDB == nil {
+            block?()
+        } else {
             currentDB?.fetchAllSubscriptions { (iSubscriptions: [CKSubscription]?, iError: Error?) in
                 if iError != nil {
                     self.toConsole(iError)
@@ -251,7 +258,7 @@ class ZCloudManager: NSObject {
                     var count: Int = iSubscriptions!.count
 
                     if count == 0 {
-                        operation.finish()
+                        block?()
                     } else {
                         for subscription: CKSubscription in iSubscriptions! {
                             self.currentDB?.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (iSubscription: String?, iDeleteError: Error?) in
@@ -262,7 +269,7 @@ class ZCloudManager: NSObject {
                                 count -= 1
 
                                 if count == 0 {
-                                    operation.finish()
+                                    block?()
                                 }
                             })
                         }
@@ -270,36 +277,40 @@ class ZCloudManager: NSObject {
                 }
             }
         }
-        }
+    }
 
 
-    func subscribeWith(operation: BlockOperation) {
-        let classNames = [zoneTypeKey] //, "ZTrait", "ZAction"]
-        var count = classNames.count
+    func subscribe(_ block: (() -> Swift.Void)?) {
+        if currentDB == nil {
+            block?()
+        } else {
+            let classNames = [zoneTypeKey] //, "ZTrait", "ZAction"]
+            var count = classNames.count
 
 
-        for className: String in classNames {
-            let    predicate:          NSPredicate = NSPredicate(value: true)
-            let subscription:       CKSubscription = CKSubscription(recordType: className, predicate: predicate, options: [.firesOnRecordUpdate])
-            let  information:   CKNotificationInfo = CKNotificationInfo()
-            information.alertLocalizationKey       = "somthing has changed, hah!";
-            information.shouldBadge                = true
-            information.shouldSendContentAvailable = true
-            subscription.notificationInfo          = information
+            for className: String in classNames {
+                let    predicate:          NSPredicate = NSPredicate(value: true)
+                let subscription:       CKSubscription = CKSubscription(recordType: className, predicate: predicate, options: [.firesOnRecordUpdate])
+                let  information:   CKNotificationInfo = CKNotificationInfo()
+                information.alertLocalizationKey       = "somthing has changed, hah!";
+                information.shouldBadge                = true
+                information.shouldSendContentAvailable = true
+                subscription.notificationInfo          = information
 
-            currentDB?.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iSaveError: Error?) in
-                if iSaveError != nil {
-                    controllersManager.updateToClosures(iSaveError as NSObject?, regarding: .error)
+                currentDB?.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iSaveError: Error?) in
+                    if iSaveError != nil {
+                        controllersManager.signal(iSaveError as NSObject?, regarding: .error)
 
-                    self.toConsole(iSaveError)
-                }
+                        self.toConsole(iSaveError)
+                    }
 
-                count -= 1
-
-                if count == 0 {
-                    operation.finish()
-                }
-            })
+                    count -= 1
+                    
+                    if count == 0 {
+                        block?()
+                    }
+                })
+            }
         }
     }
 
@@ -331,19 +342,19 @@ class ZCloudManager: NSObject {
                             record?[forPropertyName]  = newValue
 
                             object.updateProperties()
-                            controllersManager.updateToClosures(nil, regarding: .data)
+                            controllersManager.signal(nil, regarding: .data)
                             object.saveToCloud()
                         } else {
                             fetched![forPropertyName] = newValue
 
                             self.currentDB?.save(fetched!, completionHandler: { (saved: CKRecord?, saveError: Error?) in
                                 if saveError != nil {
-                                    controllersManager.updateToClosures(saveError as NSObject?, regarding: .error)
+                                    controllersManager.signal(saveError as NSObject?, regarding: .error)
                                 } else {
                                     object.record      = saved!
                                     object.recordState = .ready
 
-                                    controllersManager.updateToClosures(nil, regarding: .data)
+                                    controllersManager.signal(nil, regarding: .data)
                                     zfileManager.save()
                                 }
                             })
@@ -363,12 +374,12 @@ class ZCloudManager: NSObject {
 
             currentDB?.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, performanceError: Error?) in
                 if performanceError != nil {
-                    controllersManager.updateToClosures(performanceError as NSObject?, regarding: .error)
+                    controllersManager.signal(performanceError as NSObject?, regarding: .error)
                 } else {
                     let        record: CKRecord = (iResults?[0])!
                     object.record[valueForPropertyName] = (record as! CKRecordValue)
 
-                    controllersManager.updateToClosures(nil, regarding: .data)
+                    controllersManager.signal(nil, regarding: .data)
                 }
             }
         }

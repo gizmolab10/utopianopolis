@@ -14,17 +14,50 @@ import CloudKit
 class Zone : ZRecord {
 
 
-    dynamic var zoneName:       String?
-    dynamic var   parent:  CKReference?
-    dynamic var    links: [CKReference] = []
-    var      _parentZone:         Zone?
-    var         children:        [Zone] = []
-    var     showChildren:          Bool = true
-    var        crossLink:   ZCrossLink?
+    dynamic var cloudZone:      String?
+    dynamic var  zoneName:      String?
+    dynamic var    parent: CKReference?
+    dynamic var  crossRef: CKReference?
+    var       _parentZone:        Zone?
+    var          children:       [Zone] = []
+    var      showChildren:         Bool = true
+
+
+    var crossLink: Zone? { get { return nil } }
+
+    
+    var parentZone: Zone? {
+        set {
+            _parentZone  = newValue
+
+            if let parentRecord = newValue?.record {
+                parent          = CKReference(record: parentRecord, action: .none)
+            }
+        }
+        get {
+            if parent == nil && _parentZone?.record != nil {
+                recordState = .needsSave
+                parent      = CKReference(record: (_parentZone?.record)!, action: .none)
+            }
+
+            if parent != nil {
+                return cloudManager.objectForRecordID((parent?.recordID)!) as? Zone
+            }
+
+            return _parentZone
+        }
+    }
+
+
+    convenience init(dict: ZStorageDict) {
+        self.init(record: nil, storageMode: travelManager.storageMode)
+
+        storageDict = dict
+    }
 
 
     override func cloudProperties() -> [String] {
-        return super.cloudProperties() + [#keyPath(zoneName), #keyPath(links), #keyPath(parent)]
+        return super.cloudProperties() + [#keyPath(zoneName), #keyPath(parent)]
     }
 
 
@@ -55,36 +88,6 @@ class Zone : ZRecord {
         }
 
         return -1
-    }
-
-    
-    var parentZone: Zone? {
-        set {
-            _parentZone  = newValue
-
-            if let parentRecord = newValue?.record {
-                parent          = CKReference(record: parentRecord, action: .none)
-            }
-        }
-        get {
-            if parent == nil && _parentZone?.record != nil {
-                recordState = .needsSave
-                parent      = CKReference(record: (_parentZone?.record)!, action: .none)
-            }
-
-            if parent != nil {
-                return cloudManager.objectForRecordID((parent?.recordID)!) as? Zone
-            }
-
-            return _parentZone
-        }
-    }
-    
-
-    convenience init(dict: ZStorageDict) {
-        self.init(record: nil, storageMode: cloudManager.storageMode)
-
-        storageDict = dict
     }
 
 

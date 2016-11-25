@@ -23,18 +23,18 @@ class ZGenericViewController: ZViewController {
 
 
     func setup() {
-        controllersManager.registerUpdateClosure { (object, kind) -> (Void) in
+        controllersManager.registerSignal { (object, kind) -> (Void) in
             if kind != .error {
-                self.updateFor(object, kind: kind)
+                self.handleSignal(object, kind: kind)
             }
         }
 
         controllersManager.register(self, at: identifier())
-        updateFor(nil, kind: .data)
+        //handleSignal(nil, kind: .data)
     }
 
 
-    func updateFor(_ object: Any?, kind: ZUpdateKind) {}
+    func handleSignal(_ object: Any?, kind: ZUpdateKind) {}
 
 
 #if os(OSX)

@@ -78,7 +78,7 @@ class ZRecord: NSObject {
 
 
     func setStorageDictionary(_ dict: ZStorageDict) {
-        storageMode       = cloudManager.storageMode
+        storageMode       = travelManager.storageMode
         var type: String? = nil
         var name: String? = nil
 

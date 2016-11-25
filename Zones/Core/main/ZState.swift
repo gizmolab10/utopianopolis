@@ -12,7 +12,6 @@ import Foundation
 
 var   textCapturing:      Bool = false
 var        editMode: ZEditMode = .task
-var       toolState: ZToolMode = .edit
 var   genericOffset:    CGSize = CGSize(width: 0.0, height: 4.0)
 var       lineColor:    ZColor = ZColor.purple //(hue: 0.6, saturation: 0.6, brightness: 1.0,                alpha: 1)
 var unselectedColor:    ZColor = ZColor(hue: 0.6, saturation: 0.0, brightness: unselectBrightness, alpha: 1)

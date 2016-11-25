@@ -52,6 +52,7 @@ class ZOperationsManager: NSObject {
             queue.addOperation(op)
         }
 
+        isReady           = false;
         queue.isSuspended = false
     }
 
@@ -64,19 +65,19 @@ class ZOperationsManager: NSObject {
         switch(state) {
         case .restore:     zfileManager.restore();          operation.finish();   break
         case .cloud:       cloudManager.cloudSetup        { operation.finish() }; break
+        case .root:        cloudManager.setupRoot         { operation.finish() }; break
         case .fetch:       cloudManager.fetchOnCompletion { operation.finish() }; break
-        case .root:        cloudManager.setupRootWith      (operation:operation); break
-        case .unsubscribe: cloudManager.unsubscribeWith    (operation:operation); break
-        case .subscribe:   cloudManager.subscribeWith      (operation:operation); break
-        case .ready:                                           finish(operation); break
+        case .unsubscribe: cloudManager.unsubscribe       { operation.finish() }; break
+        case .subscribe:   cloudManager.subscribe         { operation.finish() }; break
+        case .ready:       becomeReady(                     operation);           break
         }
     }
 
 
-    func finish(_ operation: BlockOperation) {
+    func becomeReady(_ operation: BlockOperation) {
         isReady = true;
 
         operation.finish()
-        controllersManager.updateToClosures(nil, regarding: .data)
+        controllersManager.signal(nil, regarding: .data)
     }
 }
