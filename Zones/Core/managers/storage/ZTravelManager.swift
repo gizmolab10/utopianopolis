@@ -25,8 +25,9 @@ class ZTravelManager: NSObject {
 
     func travelAction(_ action: ZTravelAction) {
         switch action {
-        case .mine:     cloudManager.storageMode = .mine;     break
-        case .everyone: cloudManager.storageMode = .everyone; break
+        case .mine:      cloudManager.storageMode = .mine;      break
+        case .everyone:  cloudManager.storageMode = .everyone;  break
+        case .bookmarks: cloudManager.storageMode = .bookmarks; break
         }
 
         refresh()

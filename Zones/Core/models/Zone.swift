@@ -89,7 +89,7 @@ class Zone : ZRecord {
 
 
     override func saveToCloud() {
-        cloudManager.currentDB.save(record) { (iRecord: CKRecord?, iError: Error?) in
+        cloudManager.currentDB?.save(record) { (iRecord: CKRecord?, iError: Error?) in
             if iError != nil {
                 print(iError)
             } else {

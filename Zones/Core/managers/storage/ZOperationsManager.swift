@@ -21,7 +21,7 @@ class ZOperationsManager: NSObject {
     func setupAndRun() {
         var syncStates: [Int] = []
 
-        for sync in ZSynchronizationState.restore.rawValue...ZSynchronizationState.subscribe.rawValue {
+        for sync in ZSynchronizationState.cloud.rawValue...ZSynchronizationState.subscribe.rawValue {
             syncStates.append(sync)
         }
 

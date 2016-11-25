@@ -47,8 +47,8 @@ let          showChildrenKey = "showChildren"
 
 
 enum ZSynchronizationState: Int {
-    case restore
     case cloud
+    case restore
     case root
     case fetch
     case unsubscribe
@@ -85,9 +85,10 @@ enum ZRecordState: Int {
 
 
 enum ZStorageMode: String {
-    case everyone = "everyone"
-    case group    = "group"
-    case mine     = "mine"
+    case bookmarks = "bookmarks"
+    case everyone  = "everyone"
+    case group     = "group"
+    case mine      = "mine"
 }
 
 
@@ -115,6 +116,7 @@ enum ZEditAction: Int {
 
 
 enum ZTravelAction: Int {
+    case bookmarks
     case mine
     case everyone
 }

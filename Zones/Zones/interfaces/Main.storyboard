@@ -782,8 +782,8 @@
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IT7-2L-PqU">
                                 <rect key="frame" x="18" y="84" width="202" height="240"/>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="RJc-P2-wiE">
-                                    <font key="font" metaFont="system" size="12"/>
-                                    <mutableString key="title">HELP:
+                                    <font key="font" metaFont="cellTitle"/>
+                                    <string key="title">HELP:
     ARROWS: change selection
 
 with OPTION move/alter zone:
@@ -796,7 +796,7 @@ with OPTION move/alter zone:
 with SHIFT :
     LEFT ARROW expand
     RIGHT ARROW collapse
-    COMMAND do all</mutableString>
+    COMMAND do all</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -828,15 +828,16 @@ with SHIFT :
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <segmentedControl horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TBt-fx-BOe">
-                                <rect key="frame" x="153" y="127" width="144" height="46"/>
+                                <rect key="frame" x="86" y="127" width="278" height="46"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="l2i-Nq-NIV"/>
                                 </constraints>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="selectOne" id="IZr-NT-mWZ">
                                     <font key="font" metaFont="system" size="14"/>
                                     <segments>
-                                        <segment label="Mine" width="55"/>
-                                        <segment label="Everyone" width="86" selected="YES" tag="1"/>
+                                        <segment label="Bookmarks" width="110"/>
+                                        <segment label="Mine" width="68" selected="YES" tag="1"/>
+                                        <segment label="Everyone" width="96"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>
