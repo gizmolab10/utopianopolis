@@ -255,6 +255,7 @@ class ZCloudManager: NSObject {
         } else {
             currentDB?.fetchAllSubscriptions { (iSubscriptions: [CKSubscription]?, iError: Error?) in
                 if iError != nil {
+                    block?()
                     self.toConsole(iError)
                 } else {
                     var count: Int = iSubscriptions!.count

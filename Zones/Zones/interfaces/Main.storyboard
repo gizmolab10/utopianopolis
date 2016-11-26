@@ -686,15 +686,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HXu-f1-GOr">
-                                <rect key="frame" x="0.0" y="0.0" width="250" height="44"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="0MI-4t-uQI"/>
-                                </constraints>
-                                <connections>
-                                    <segue destination="YuX-iN-XtT" kind="embed" id="0As-es-chA"/>
-                                </connections>
-                            </containerView>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha">
                                 <rect key="frame" x="250" y="0.0" width="200" height="300"/>
                                 <constraints>
@@ -708,7 +699,7 @@
                                 <rect key="frame" x="247" y="0.0" width="5" height="300"/>
                             </box>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
-                                <rect key="frame" x="0.0" y="44" width="249" height="256"/>
+                                <rect key="frame" x="0.0" y="0.0" width="249" height="300"/>
                                 <connections>
                                     <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
                                 </connections>
@@ -721,12 +712,9 @@
                             <constraint firstAttribute="trailing" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="IqF-jM-a7V"/>
                             <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="QAD-MU-KFH"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="Swz-Ny-sRM"/>
-                            <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="HXu-f1-GOr" secondAttribute="trailing" id="X3v-ju-Pzv"/>
                             <constraint firstItem="oY0-De-wof" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="YwV-zC-dv4"/>
-                            <constraint firstAttribute="bottom" secondItem="HXu-f1-GOr" secondAttribute="bottom" id="cJU-EG-QBF"/>
-                            <constraint firstItem="HXu-f1-GOr" firstAttribute="top" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="e8A-fj-2iP"/>
+                            <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="YxK-3D-AHM"/>
                             <constraint firstAttribute="bottom" secondItem="oY0-De-wof" secondAttribute="bottom" id="gea-Tv-a7Q"/>
-                            <constraint firstItem="HXu-f1-GOr" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="rOq-Dt-frx"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="oY0-De-wof" secondAttribute="trailing" id="rk1-kh-wll"/>
                         </constraints>
                     </view>
@@ -818,42 +806,6 @@ with SHIFT :
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="476" y="1385"/>
-        </scene>
-        <!--Travel View Controller-->
-        <scene sceneID="7Hb-7e-BTT">
-            <objects>
-                <viewController id="YuX-iN-XtT" userLabel="Travel View Controller" customClass="ZTravelViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="p8o-Hp-H71">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <segmentedControl horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TBt-fx-BOe">
-                                <rect key="frame" x="92" y="139" width="266" height="23"/>
-                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="selectOne" id="IZr-NT-mWZ">
-                                    <font key="font" metaFont="system" size="14"/>
-                                    <segments>
-                                        <segment label="Bookmarks" width="110"/>
-                                        <segment label="Everyone" width="96" selected="YES" tag="1"/>
-                                        <segment label="Me" width="56"/>
-                                    </segments>
-                                </segmentedCell>
-                                <connections>
-                                    <action selector="choiceAction:" target="YuX-iN-XtT" id="z2N-8h-2Hp"/>
-                                </connections>
-                            </segmentedControl>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="TBt-fx-BOe" firstAttribute="centerX" secondItem="p8o-Hp-H71" secondAttribute="centerX" id="A9Z-s4-ePX"/>
-                            <constraint firstItem="TBt-fx-BOe" firstAttribute="centerY" secondItem="p8o-Hp-H71" secondAttribute="centerY" id="Psg-ep-TOH"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="storageModeChoiceControl" destination="TBt-fx-BOe" id="3Wx-P4-GaR"/>
-                    </connections>
-                </viewController>
-                <customObject id="EFK-3j-cm6" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-544" y="1311"/>
         </scene>
     </scenes>
 </document>

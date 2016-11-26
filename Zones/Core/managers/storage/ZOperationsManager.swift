@@ -21,6 +21,7 @@ class ZOperationsManager: NSObject {
 
 
     func fullRun(_ block: (() -> Swift.Void)?) {
+        onReady               = block
         var syncStates: [Int] = []
 
         for sync in ZSynchronizationState.cloud.rawValue...ZSynchronizationState.subscribe.rawValue {
@@ -33,6 +34,7 @@ class ZOperationsManager: NSObject {
 
     func travel(_ block: (() -> Swift.Void)?) {
         onReady = block
+
         setupAndRun([ZSynchronizationState.restore.rawValue, ZSynchronizationState.root.rawValue])
     }
     

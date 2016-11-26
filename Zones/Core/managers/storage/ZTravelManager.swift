@@ -57,19 +57,6 @@ class ZTravelManager: NSObject {
     }
 
 
-    func travelAction(_ action: ZTravelAction) {
-        switch action {
-        case .mine:      storageMode = .mine;      break
-        case .everyone:  storageMode = .everyone;  break
-        case .bookmarks: storageMode = .bookmarks; break
-        }
-
-        travel {
-            controllersManager.signal(nil, regarding: .data)
-        }
-    }
-
-
     func travel(_ block: (() -> Swift.Void)?) {
         widgetsManager    .clear()
         selectionManager  .clear()
@@ -109,7 +96,7 @@ class ZTravelManager: NSObject {
 
     func travelWhereThisZonePoints(_ zone: Zone, atArrival: @escaping SignalClosure) {
         if storageMode == .bookmarks {
-            if let mode = ZStorageMode(rawValue: zone.cloudZone!) {
+            if zone.cloudZone != nil, let mode = ZStorageMode(rawValue: zone.cloudZone!) {
                 storageMode = mode
 
                 travel {

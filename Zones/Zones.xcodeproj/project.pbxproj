@@ -17,8 +17,6 @@
 		0C2456271DE3CAD700EBCCDD /* ZMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C24561F1DE3CAD700EBCCDD /* ZMainViewController.swift */; };
 		0C2456281DE3CAD700EBCCDD /* ZToolsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2456201DE3CAD700EBCCDD /* ZToolsViewController.swift */; };
 		0C2456291DE3CAD700EBCCDD /* ZToolsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2456201DE3CAD700EBCCDD /* ZToolsViewController.swift */; };
-		0C24562A1DE3CAD700EBCCDD /* ZTravelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2456211DE3CAD700EBCCDD /* ZTravelViewController.swift */; };
-		0C24562B1DE3CAD700EBCCDD /* ZTravelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2456211DE3CAD700EBCCDD /* ZTravelViewController.swift */; };
 		0C2456331DE6FB7D00EBCCDD /* ZState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2456321DE6FB7D00EBCCDD /* ZState.swift */; };
 		0C2456341DE6FB7D00EBCCDD /* ZState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2456321DE6FB7D00EBCCDD /* ZState.swift */; };
 		0C3312961DC818FF002DDB39 /* ZoneCurve.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3312951DC818FF002DDB39 /* ZoneCurve.swift */; };
@@ -203,7 +201,6 @@
 		0C24561E1DE3CAD700EBCCDD /* ZGenericViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGenericViewController.swift; sourceTree = "<group>"; };
 		0C24561F1DE3CAD700EBCCDD /* ZMainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMainViewController.swift; sourceTree = "<group>"; };
 		0C2456201DE3CAD700EBCCDD /* ZToolsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZToolsViewController.swift; sourceTree = "<group>"; };
-		0C2456211DE3CAD700EBCCDD /* ZTravelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTravelViewController.swift; sourceTree = "<group>"; };
 		0C2456321DE6FB7D00EBCCDD /* ZState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZState.swift; sourceTree = "<group>"; };
 		0C3312951DC818FF002DDB39 /* ZoneCurve.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZoneCurve.swift; path = views/ZoneCurve.swift; sourceTree = "<group>"; };
 		0C36E7FD1DC31834005C5059 /* ZoneDot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZoneDot.swift; path = views/ZoneDot.swift; sourceTree = "<group>"; };
@@ -642,7 +639,6 @@
 				0C24561E1DE3CAD700EBCCDD /* ZGenericViewController.swift */,
 				0C24561F1DE3CAD700EBCCDD /* ZMainViewController.swift */,
 				0C2456201DE3CAD700EBCCDD /* ZToolsViewController.swift */,
-				0C2456211DE3CAD700EBCCDD /* ZTravelViewController.swift */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -931,7 +927,6 @@
 				0C371C721DE26FE10030253D /* ZControllersManager.swift in Sources */,
 				0CC8F8521DC2CECF00E25985 /* ZExtensions.swift in Sources */,
 				0CD1EAFE1DB725A800A096E4 /* URLSessionTaskOperation.swift in Sources */,
-				0C24562B1DE3CAD700EBCCDD /* ZTravelViewController.swift in Sources */,
 				0CB1A7E01D73F87B00283F7B /* ZTrait.swift in Sources */,
 				0C371C781DE26FE10030253D /* ZWidgetsManager.swift in Sources */,
 				0C2456271DE3CAD700EBCCDD /* ZMainViewController.swift in Sources */,
@@ -1012,7 +1007,6 @@
 				0C371C711DE26FE10030253D /* ZControllersManager.swift in Sources */,
 				0CC8F8511DC2CECF00E25985 /* ZExtensions.swift in Sources */,
 				0CD1EAFD1DB725A800A096E4 /* URLSessionTaskOperation.swift in Sources */,
-				0C24562A1DE3CAD700EBCCDD /* ZTravelViewController.swift in Sources */,
 				0CD1EAF51DB725A800A096E4 /* DelayOperation.swift in Sources */,
 				0C371C771DE26FE10030253D /* ZWidgetsManager.swift in Sources */,
 				0C2456261DE3CAD700EBCCDD /* ZMainViewController.swift in Sources */,
