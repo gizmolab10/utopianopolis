@@ -16,9 +16,11 @@ class ZOperationsManager: NSObject {
     var    isReady:                                   Bool = false
     var operations: [ZSynchronizationState:BlockOperation] = [:]
     let      queue:                         OperationQueue = OperationQueue()
+    var    onReady: Closure?
 
 
-    func setupAndRun() {
+
+    func fullRun(_ block: (() -> Swift.Void)?) {
         var syncStates: [Int] = []
 
         for sync in ZSynchronizationState.cloud.rawValue...ZSynchronizationState.subscribe.rawValue {
@@ -29,7 +31,8 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func travel() {
+    func travel(_ block: (() -> Swift.Void)?) {
+        onReady = block
         setupAndRun([ZSynchronizationState.restore.rawValue, ZSynchronizationState.root.rawValue])
     }
     
@@ -83,6 +86,11 @@ class ZOperationsManager: NSObject {
         isReady = true;
 
         operation.finish()
-        controllersManager.signal(nil, regarding: .data)
+
+        if onReady != nil {
+            onReady!()
+
+            onReady = nil
+        }
     }
 }

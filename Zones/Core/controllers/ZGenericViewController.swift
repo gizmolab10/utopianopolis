@@ -30,7 +30,6 @@ class ZGenericViewController: ZViewController {
         }
 
         controllersManager.register(self, at: identifier())
-        //handleSignal(nil, kind: .data)
     }
 
 

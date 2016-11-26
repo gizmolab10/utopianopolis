@@ -32,7 +32,7 @@ class ZTravelManager: NSObject {
 
             if mode == nil {
                 mode                = .everyone
-                self.storageMode    = mode!
+                self.storageMode    = mode!     // wow! this works
             }
 
             return mode!
@@ -44,8 +44,7 @@ class ZTravelManager: NSObject {
         if storageMode == .bookmarks {
             rootZone.zoneName = "bookmarks"
 
-            addCloudZone("mine",     storageMode: .mine)
-            addCloudZone("everyone", storageMode: .everyone)
+            setupStorageZones()
         }
     }
 
@@ -58,15 +57,6 @@ class ZTravelManager: NSObject {
     }
 
 
-    func addCloudZone(_ name: String, storageMode: ZStorageMode) {
-        let        zone = Zone(record: nil, storageMode: storageMode)
-        zone.parentZone = rootZone
-        zone.zoneName   = name
-
-        rootZone.children.append(zone)
-    }
-
-
     func travelAction(_ action: ZTravelAction) {
         switch action {
         case .mine:      storageMode = .mine;      break
@@ -74,9 +64,66 @@ class ZTravelManager: NSObject {
         case .bookmarks: storageMode = .bookmarks; break
         }
 
+        travel {
+            controllersManager.signal(nil, regarding: .data)
+        }
+    }
+
+
+    func travel(_ block: (() -> Swift.Void)?) {
         widgetsManager    .clear()
         selectionManager  .clear()
         setup                   ()
-        operationsManager.travel()
+        operationsManager.travel(block)
+    }
+
+
+    // MARK:- storage and cloud zones
+    // MARK:-
+
+
+    func setupStorageZones() {
+        addCloudZone("everyone", storageMode: .everyone)
+        addCloudZone("mine",     storageMode: .mine)
+    }
+
+
+    func addCloudZone(_ name: String, storageMode: ZStorageMode) { // KLUDGE, perhaps use ordered set or dictionary
+        let        zone = Zone(record: nil, storageMode: storageMode)
+        zone.parentZone = rootZone
+        zone.zoneName   = name
+        zone.cloudZone  = name
+
+        rootZone.children.append(zone)
+    }
+
+
+    func indexOfMode(_ mode: ZStorageMode) -> Int { // KLUDGE, perhaps use ordered set or dictionary
+        switch mode {
+        case .mine:     return  1
+        case .everyone: return  0
+        default:        return -1
+        }
+    }
+
+
+    func travelWhereThisZonePoints(_ zone: Zone, atArrival: @escaping SignalClosure) {
+        if storageMode == .bookmarks {
+            if let mode = ZStorageMode(rawValue: zone.cloudZone!) {
+                storageMode = mode
+
+                travel {
+                    atArrival(self.rootZone, .data)
+                }
+            }
+        } else if zone.parentZone == nil {
+            let index = indexOfMode(storageMode)
+
+            storageMode = .bookmarks
+
+            travel {
+                atArrival(self.rootZone.children[index], .data) // index is a KLUDGE
+            }
+        }
     }
 }

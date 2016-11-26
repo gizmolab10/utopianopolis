@@ -26,7 +26,9 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
 
         application.registerUserNotificationSettings(settings)
         application.registerForRemoteNotifications()
-        operationsManager.setupAndRun()
+        operationsManager.fullRun {
+            controllersManager.signal(nil, regarding: .data)
+        }
 
         return true
     }

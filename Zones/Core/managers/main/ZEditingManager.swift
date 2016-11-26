@@ -227,6 +227,14 @@ class ZEditingManager: NSObject {
                     zone.showChildren                      = true
 
                     controllersManager.signal(zone, regarding: .data)
+                } else if travelManager.storageMode == .bookmarks && zone.cloudZone != nil {
+                    travelManager.travelWhereThisZonePoints(zone, atArrival: { (object, kind) -> (Void) in
+                        if let zone: Zone = object as? Zone {
+                            selectionManager.currentlyGrabbedZones = [zone]
+
+                            controllersManager.signal(nil, regarding: .data)
+                        }
+                    })
                 }
             } else if let                       parentZone = zone.parentZone {
                 if let                               index = parentZone.children.index(of: zone) {
@@ -258,32 +266,42 @@ class ZEditingManager: NSObject {
 
 
     func moveOut(selectionOnly: Bool, extreme: Bool) {
-        if let                                  zone: Zone = selectionManager.firstGrabbableZone {
-            if var                              parentZone = zone.parentZone {
-                if selectionOnly {
-                    if extreme {
-                        parentZone                         = travelManager.rootZone
+        if let                              zone: Zone = selectionManager.firstGrabbableZone {
+            var                             parentZone = zone.parentZone
+
+            if selectionOnly {
+                if parentZone == nil {
+                    travelManager.travelWhereThisZonePoints(zone) { object, kind in
+                        if let zone: Zone = object as? Zone {
+                            selectionManager.currentlyGrabbedZones = [zone]
+
+                            controllersManager.signal(nil, regarding: .data)
+                        }
                     }
 
-                    selectionManager.currentlyGrabbedZones = [parentZone]
-
-                    controllersManager.signal(parentZone, regarding: .data)
-                } else if let              grandParentZone = parentZone.parentZone {
-                    let                              index = parentZone.children.index(of: zone)
-                    grandParentZone.recordState            = .needsSave
-                    parentZone.recordState                 = .needsSave
-                    zone.recordState                       = .needsSave
-                    zone.parentZone                        = grandParentZone
-
-                    if asTask {
-                        grandParentZone.children.insert(zone, at: 0)
-                    } else {
-                        grandParentZone.children.append(zone)
-                    }
-
-                    parentZone.children.remove(at: index!)
-                    controllersManager.saveAndUpdateFor(grandParentZone)
+                    return
+                } else if extreme {
+                    parentZone                         = travelManager.rootZone
                 }
+
+                selectionManager.currentlyGrabbedZones = [parentZone!]
+
+                controllersManager.signal(parentZone, regarding: .data)
+            } else if let              grandParentZone = parentZone?.parentZone {
+                let                              index = parentZone?.children.index(of: zone)
+                grandParentZone.recordState            = .needsSave
+                parentZone?.recordState                 = .needsSave
+                zone.recordState                       = .needsSave
+                zone.parentZone                        = grandParentZone
+
+                if asTask {
+                    grandParentZone.children.insert(zone, at: 0)
+                } else {
+                    grandParentZone.children.append(zone)
+                }
+
+                parentZone?.children.remove(at: index!)
+                controllersManager.saveAndUpdateFor(grandParentZone)
             }
         }
     }

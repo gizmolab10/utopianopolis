@@ -100,7 +100,7 @@ class ZoneWidget: ZView {
         }
 
         inView?.zlayer.backgroundColor = ZColor.clear.cgColor
-        isUserInteractionEnabled      = false
+        isUserInteractionEnabled = false
 
         clear()
         widgetsManager.registerWidget(self)

@@ -14,11 +14,12 @@ import CloudKit
 class ZWidgetsManager: NSObject {
 
 
-    var widgets: [CKRecordID : ZoneWidget] = [:]
+    var widgets: [Int : ZoneWidget] = [:]
 
 
     var currentEditingWidget: ZoneWidget? { get { return widgetForZone(selectionManager.currentlyEditingZone) } }
     var currentMovableWidget: ZoneWidget? { get { return widgetForZone(selectionManager.currentlyMovableZone) } }
+    var firstGrabbableWidget: ZoneWidget? { get { return widgetForZone(selectionManager.firstGrabbableZone) } }
 
 
     func clear() {
@@ -27,15 +28,15 @@ class ZWidgetsManager: NSObject {
 
 
     func registerWidget(_ widget: ZoneWidget) {
-        if let zone = widget.widgetZone, let record = zone.record {
-            widgets[record.recordID] = widget
+        if let zone = widget.widgetZone {
+            widgets[zone.hash] = widget
         }
     }
 
 
     func widgetForZone(_ zone: Zone?) -> ZoneWidget? {
-        if let record = zone?.record {
-            return widgets[record.recordID]
+        if zone != nil {
+            return widgets[(zone?.hash)!]
         }
 
         return nil
