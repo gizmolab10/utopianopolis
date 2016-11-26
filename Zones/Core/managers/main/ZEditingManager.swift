@@ -27,11 +27,17 @@ class ZEditingManager: NSObject {
 
     func setChildrenVisibilityTo(_ show: Bool, zone: Zone?, recursively: Bool) {
         if zone != nil {
-            zone?.showChildren = show
+            if !show && !(zone?.showChildren)!, let parent = zone?.parentZone {
+                selectionManager.currentlyGrabbedZones = [parent]
 
-            if recursively {
-                for child: Zone in (zone?.children)! {
-                    setChildrenVisibilityTo(show, zone: child, recursively: true)
+                setChildrenVisibilityTo(show, zone: parent, recursively: recursively)
+            } else {
+                zone?.showChildren = show
+
+                if recursively {
+                    for child: Zone in (zone?.children)! {
+                        setChildrenVisibilityTo(show, zone: child, recursively: recursively)
+                    }
                 }
             }
         }

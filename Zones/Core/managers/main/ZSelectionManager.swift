@@ -80,6 +80,8 @@ class ZSelectionManager: NSObject {
 
             if currentlyGrabbedZones.count > 0 {
                 grabbable = currentlyGrabbedZones[0]
+            } else {
+                grabbable = travelManager.rootZone
             }
 
             return grabbable

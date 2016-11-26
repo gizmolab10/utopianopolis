@@ -33,9 +33,14 @@ class ZOperationsManager: NSObject {
 
 
     func travel(_ block: (() -> Swift.Void)?) {
-        onReady = block
+        onReady               = block
+        var syncStates: [Int] = []
 
-        setupAndRun([ZSynchronizationState.restore.rawValue, ZSynchronizationState.root.rawValue])
+        for sync in ZSynchronizationState.restore.rawValue...ZSynchronizationState.subscribe.rawValue {
+            syncStates.append(sync)
+        }
+
+        setupAndRun(syncStates)
     }
     
 
