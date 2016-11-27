@@ -79,6 +79,8 @@ class ZEditingManager: NSObject {
             let   zone = Zone(record: record, storageMode: travelManager.storageMode)
 
             widgetsManager.widgetForZone(parentZone!)?.textField.resignFirstResponder()
+            parentZone?.recordState.insert(.needsSave)
+            zone       .recordState.insert(.needsSave)
 
             if asTask {
                 parentZone?.children.insert(zone, at: 0)
@@ -87,8 +89,6 @@ class ZEditingManager: NSObject {
             }
 
             parentZone?.showChildren = true
-            parentZone?.recordState  = .needsSave
-            zone.recordState         = .needsSave
             zone.parentZone          = parentZone
 
             controllersManager.saveAndUpdateFor(parentZone, onCompletion: { () -> (Void) in
@@ -253,6 +253,9 @@ class ZEditingManager: NSObject {
                         siblingZone.showChildren           = true
 
                         parentZone.children.remove(at: index)
+                        parentZone .recordState.insert(.needsSave)
+                        zone       .recordState.insert(.needsSave)
+                        siblingZone.recordState.insert(.needsSave)
 
                         if asTask {
                             siblingZone.children.insert(zone, at: 0)
@@ -260,9 +263,6 @@ class ZEditingManager: NSObject {
                             siblingZone.children.append(zone)
                         }
 
-                        siblingZone.recordState            = .needsSave
-                        parentZone.recordState             = .needsSave
-                        zone.recordState                   = .needsSave
                         zone.parentZone                    = siblingZone
 
                         controllersManager.saveAndUpdateFor(parentZone)
@@ -297,10 +297,11 @@ class ZEditingManager: NSObject {
                 controllersManager.signal(parentZone, regarding: .data)
             } else if let              grandParentZone = parentZone?.parentZone {
                 let                              index = parentZone?.children.index(of: zone)
-                grandParentZone.recordState            = .needsSave
-                parentZone?.recordState                 = .needsSave
-                zone.recordState                       = .needsSave
                 zone.parentZone                        = grandParentZone
+
+                grandParentZone.recordState.insert(.needsSave)
+                parentZone?    .recordState.insert(.needsSave)
+                zone           .recordState.insert(.needsSave)
 
                 if asTask {
                     grandParentZone.children.insert(zone, at: 0)

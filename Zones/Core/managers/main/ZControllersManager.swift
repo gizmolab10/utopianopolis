@@ -65,7 +65,7 @@ class ZControllersManager: NSObject {
     func saveAndUpdateFor(_ zone: Zone?, onCompletion: Closure?) {
         signal(zone, regarding: .data, onCompletion: onCompletion)
         zfileManager.save()
-        cloudManager.flushOnCompletion {}
+        cloudManager.flush {}
     }
 
 

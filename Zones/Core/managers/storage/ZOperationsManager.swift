@@ -78,13 +78,13 @@ class ZOperationsManager: NSObject {
         print(state)
 
         switch(state) {
-        case .restore:     zfileManager.restore();          operation.finish();   break
-        case .cloud:       cloudManager.cloudSetup        { operation.finish() }; break
-        case .root:        cloudManager.setupRoot         { operation.finish() }; break
-        case .fetch:       cloudManager.fetchOnCompletion { operation.finish() }; break
-        case .unsubscribe: cloudManager.unsubscribe       { operation.finish() }; break
-        case .subscribe:   cloudManager.subscribe         { operation.finish() }; break
-        case .ready:       becomeReady(                     operation);           break
+        case .restore:     zfileManager.restore();        operation.finish();   break
+        case .cloud:       cloudManager.fetchCloudZones { operation.finish() }; break
+        case .root:        cloudManager.setupRoot       { operation.finish() }; break
+        case .fetch:       cloudManager.fetch           { operation.finish() }; break
+        case .unsubscribe: cloudManager.unsubscribe     { operation.finish() }; break
+        case .subscribe:   cloudManager.subscribe       { operation.finish() }; break
+        case .ready:       becomeReady(                   operation);           break
         }
     }
 

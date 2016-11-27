@@ -36,12 +36,13 @@ class Zone : ZRecord {
         }
         get {
             if parent == nil && _parentZone?.record != nil {
-                recordState = .needsSave
-                parent      = CKReference(record: (_parentZone?.record)!, action: .none)
+                recordState.insert(.needsSave)
+
+                parent          = CKReference(record: (_parentZone?.record)!, action: .none)
             }
 
             if parent != nil {
-                return cloudManager.objectForRecordID((parent?.recordID)!) as? Zone
+                _parentZone = cloudManager.objectForRecordID((parent?.recordID)!) as? Zone
             }
 
             return _parentZone

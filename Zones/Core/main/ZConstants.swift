@@ -74,15 +74,6 @@ enum ZUpdateKind: Int {
 }
 
 
-enum ZRecordState: Int {
-    case needsCreating // record is nil
-    case needsDelete
-    case needsFetch
-    case needsSave
-    case ready
-}
-
-
 enum ZStorageMode: String {
     case bookmarks = "bookmarks"
     case everyone  = "everyone"
@@ -116,6 +107,18 @@ enum ZArrowKey: CChar {
     case down
     case left
     case right
+}
+
+
+struct ZRecordState: OptionSet {
+    let rawValue: Int
+
+    static let ready         = ZRecordState(rawValue:  0)
+    static let needsSave     = ZRecordState(rawValue:  1)
+    static let needsFetch    = ZRecordState(rawValue:  2)
+    static let needsDelete   = ZRecordState(rawValue:  4)
+    static let needsCreate   = ZRecordState(rawValue:  8)
+    static let needsChildren = ZRecordState(rawValue: 16)
 }
 
 

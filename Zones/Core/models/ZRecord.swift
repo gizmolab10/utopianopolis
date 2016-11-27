@@ -55,9 +55,13 @@ class ZRecord: NSObject {
     init(record: CKRecord?, storageMode: ZStorageMode?) {
         super.init()
 
-        self.recordState = (record == nil) ? .needsCreating : .ready
+        self.recordState = ZRecordState.ready
         self.storageMode = storageMode
         self.record      = record
+
+        if record == nil {
+            self.recordState.insert(.needsCreate)
+        }
 
         self.setupKVO();
     }

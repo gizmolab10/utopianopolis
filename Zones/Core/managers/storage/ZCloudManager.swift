@@ -28,18 +28,18 @@ class ZCloudManager: NSObject {
     }
 
 
-    func setupOperation(_ operation: CKDatabaseOperation) -> CKDatabaseOperation {
-        operation.container               = container
-        operation.database                = currentDB
-        operation.qualityOfService        = .background
+    func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation {
+        operation.qualityOfService = .background
+        operation.container        = container
+        operation.database         = currentDB
 
         return operation
     }
 
 
-    func cloudSetup(_ block: (() -> Swift.Void)?) {
+    func fetchCloudZones(_ block: (() -> Swift.Void)?) {
         container                                 = CKContainer(identifier: cloudID)
-        let                             operation = setupOperation(CKFetchRecordZonesOperation()) as! CKFetchRecordZonesOperation
+        let                             operation = configure(CKFetchRecordZonesOperation()) as! CKFetchRecordZonesOperation
         operation.fetchRecordZonesCompletionBlock = { (recordZonesByZoneID, operationError) -> Swift.Void in
             self.cloudZonesByID = recordZonesByZoneID!
 
@@ -57,15 +57,14 @@ class ZCloudManager: NSObject {
     // MARK:-
 
 
-    func fetchOnCompletion(_ block: (() -> Swift.Void)?) {
-        let                     operation = setupOperation(CKFetchRecordsOperation()) as! CKFetchRecordsOperation
+    func fetch(_ block: (() -> Swift.Void)?) {
+        let                     operation = configure(CKFetchRecordsOperation()) as! CKFetchRecordsOperation
         operation.completionBlock         = block
         var recordsToFetch:  [CKRecordID] = []
 
         for record: ZRecord in records.values {
-            switch record.recordState {
-            case .needsFetch: recordsToFetch.append(record.record.recordID); break
-            default:                                                         break
+            if record.recordState.contains(.needsFetch) {
+                recordsToFetch.append(record.record.recordID)
             }
         }
 
@@ -79,22 +78,22 @@ class ZCloudManager: NSObject {
     }
 
 
-    func flushOnCompletion(_ block: (() -> Swift.Void)?) {
-        let                     operation = setupOperation(CKModifyRecordsOperation()) as! CKModifyRecordsOperation
+    func flush(_ block: (() -> Swift.Void)?) {
+        let                      operation = configure(CKModifyRecordsOperation()) as! CKModifyRecordsOperation
         var recordsToDelete:  [CKRecordID] = []
         var recordsToSave:      [CKRecord] = []
 
         for record: ZRecord in records.values {
-            switch record.recordState {
-            case .needsSave:   recordsToSave  .append(record.record);          break
-            case .needsDelete: recordsToDelete.append(record.record.recordID); break
-            default:                                                           break
+            if record.recordState.contains(.needsDelete) {
+                recordsToDelete.append(record.record.recordID)
+            } else if record.recordState.contains(.needsSave) {
+                recordsToSave.append(record.record)
             }
         }
 
         operation.recordsToSave            = recordsToSave
         operation.recordIDsToDelete        = recordsToDelete
-        operation.completionBlock          = block // { () -> Swift.Void in self.fetchOnCompletion(block) }
+        operation.completionBlock          = block // { () -> Swift.Void in self.fetch(block) }
         operation.perRecordCompletionBlock = { (iRecord, iError) -> Swift.Void in
             if  let error:         CKError = iError as? CKError {
                 let info                   = error.errorUserInfo
@@ -102,7 +101,7 @@ class ZCloudManager: NSObject {
 
                 if  description           != "record to insert already exists" {
                     if let zone            = self.objectForRecordID((iRecord?.recordID)!) {
-                        zone.recordState   = .needsFetch
+                        zone.recordState.insert(.needsFetch)
                     }
 
                     if let name            = iRecord?["zoneName"] as! String? {
@@ -337,7 +336,8 @@ class ZCloudManager: NSObject {
             }
 
             if hasChange {
-                object.recordState = .needsSave
+                object.recordState.insert(.needsFetch)
+                object.recordState.insert(.needsSave)
 
                 if (identifier != nil) {
                     currentDB?.fetch(withRecordID: identifier!) { (fetched: CKRecord?, fetchError: Error?) in
@@ -355,8 +355,8 @@ class ZCloudManager: NSObject {
                                     controllersManager.signal(saveError as NSObject?, regarding: .error)
                                 } else {
                                     object.record      = saved!
-                                    object.recordState = .ready
 
+                                    object.recordState.remove(.needsSave)
                                     controllersManager.signal(nil, regarding: .data)
                                     zfileManager.save()
                                 }
