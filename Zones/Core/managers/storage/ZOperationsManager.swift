@@ -82,6 +82,7 @@ class ZOperationsManager: NSObject {
         case .cloud:       cloudManager.fetchCloudZones { operation.finish() }; break
         case .root:        cloudManager.setupRoot       { operation.finish() }; break
         case .fetch:       cloudManager.fetch           { operation.finish() }; break
+        case .children:    cloudManager.fetchChildren   { operation.finish() }; break
         case .unsubscribe: cloudManager.unsubscribe     { operation.finish() }; break
         case .subscribe:   cloudManager.subscribe       { operation.finish() }; break
         case .ready:       becomeReady(                   operation);           break

@@ -50,6 +50,7 @@ enum ZSynchronizationState: Int {
     case restore
     case root
     case fetch
+    case children
     case unsubscribe
     case subscribe
     case ready

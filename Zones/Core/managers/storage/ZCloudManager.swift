@@ -117,6 +117,55 @@ class ZCloudManager: NSObject {
     }
 
 
+    @discardableResult func fetchChildren(_ block: (() -> Swift.Void)?) -> Bool {
+        var childrenNeeded: [NSPredicate] = []
+
+        for record: ZRecord in records.values {
+            if record.recordState.contains(.needsDelete) {
+                let reference: CKReference = CKReference(recordID: record.record.recordID, action: .none)
+                let predicate: NSPredicate = NSPredicate(format: "parent == %@", reference)
+
+                childrenNeeded.append(predicate)
+            }
+        }
+
+        if childrenNeeded.count == 0 {
+            if block != nil {
+                block?()
+            }
+        } else {
+            let   bigPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: childrenNeeded)
+            let query: CKQuery = CKQuery(recordType: zoneTypeKey, predicate: bigPredicate)
+
+            currentDB?.perform(query, inZoneWith: nil) { (records, error) in
+                if error != nil {
+                    self.reportError(error)
+                }
+
+                if records != nil && (records?.count)! > 0 {
+                    for record: CKRecord in records! {
+                        var zone = self.objectForRecordID(record.recordID) as! Zone?
+
+                        if zone == nil {
+                            zone = Zone(record: record, storageMode: travelManager.storageMode)
+
+                            self.registerObject(zone!)
+                            zone?.parentZone?.children.append(zone!)
+                            zone?.recordState.insert(.needsChildren)
+                        }
+                    }
+
+                    if self.fetchChildren(block) && block != nil {
+                        block?()
+                    }
+                }
+            }
+        }
+
+        return childrenNeeded.count == 0 // true means done
+    }
+
+
     func registerObject(_ object: ZRecord) {
         if object.record != nil {
             records[object.record.recordID] = object
@@ -129,47 +178,13 @@ class ZCloudManager: NSObject {
     }
 
 
-    func fetchReferencesTo(_ parent: Zone) {
-        if let parentRecord = parent.record {
-            let reference: CKReference = CKReference(recordID: parentRecord.recordID, action: .none)
-            let predicate: NSPredicate = NSPredicate(format: "parent == %@", reference)
-            let     query:     CKQuery = CKQuery(recordType: zoneTypeKey, predicate: predicate)
-
-            currentDB?.perform(query, inZoneWith: nil) { (records, error) in
-                if error != nil {
-                    self.reportError(error)
-                }
-
-                if records != nil && (records?.count)! > 0 {
-                    for record: CKRecord in records! {
-                        var zone: Zone? = self.objectForRecordID(record.recordID) as! Zone?
-
-                        if zone == nil {
-                            zone = Zone(record: record, storageMode: travelManager.storageMode)
-
-                            self.registerObject(zone!)
-                            parent.children.append(zone!)
-                            self.fetchReferencesTo(zone!)
-                        }
-
-                        zone?.parentZone = parent
-                    }
-                    
-                    controllersManager.signal(nil, regarding: .data)
-                }
-            }
-        }
-    }
-
-
     func setupRoot(_ block: (() -> Swift.Void)?) {
         let recordID: CKRecordID = CKRecordID(recordName: rootNameKey)
 
         assureRecordExists(withRecordID: recordID, onCompletion: { (record: CKRecord?) -> (Void) in
             if record != nil {
                 travelManager.rootZone.record = record
-
-                self.fetchReferencesTo(travelManager.rootZone)
+                travelManager.rootZone.recordState.insert(.needsChildren)
             }
 
             block?()
@@ -191,7 +206,7 @@ class ZCloudManager: NSObject {
                     self.registerObject(zone!)
                 }
 
-                self.fetchReferencesTo(zone!)
+                zone?.recordState.insert(.needsChildren)
                 controllersManager.signal(zone?.parentZone, regarding: .data)
             }
         } as! RecordClosure)
