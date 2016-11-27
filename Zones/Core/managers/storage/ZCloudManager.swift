@@ -402,7 +402,7 @@ class ZCloudManager: NSObject {
             let     newValue: CKRecordValue! = (value as! CKRecordValue)
             let       record:      CKRecord? = object.record
 
-            if record != nil {
+            if record != nil && !object.recordState.contains(.needsSave) {
                 let oldValue: CKRecordValue! = record![forPropertyName]
 
                 if oldValue != nil && newValue != nil {
