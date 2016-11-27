@@ -10,61 +10,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/Core/main/ZExtensions.swift"
-            timestampString = "501894089.535946"
+            timestampString = "501978891.845497"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "198"
-            endingLineNumber = "198"
+            startingLineNumber = "201"
+            endingLineNumber = "201"
             landmarkName = "reportError(_:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/Core/managers/storage/ZOperationsManager.swift"
-            timestampString = "501976642.989807"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "64"
-            endingLineNumber = "64"
-            landmarkName = "setupAndRun(_:block:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Zones.ZOperationsManager.setupAndRun (Swift.Array&lt;Swift.Int&gt;, block : () -&gt; ()) -&gt; ()"
-                  moduleName = "Zones"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/storage/ZOperationsManager.swift"
-                  timestampString = "501977219.217879"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "64"
-                  endingLineNumber = "64"
-                  offsetFromSymbolStart = "374">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Zones.ZOperationsManager.(setupAndRun (Swift.Array&lt;Swift.Int&gt;, block : () -&gt; ()) -&gt; ()).(closure #1)"
-                  moduleName = "Zones"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/storage/ZOperationsManager.swift"
-                  timestampString = "501977219.219742"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "64"
-                  endingLineNumber = "64"
-                  offsetFromSymbolStart = "31">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

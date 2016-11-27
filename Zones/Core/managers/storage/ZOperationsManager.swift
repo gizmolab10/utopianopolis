@@ -13,10 +13,10 @@ import Foundation
 class ZOperationsManager: NSObject {
 
 
-    var    isReady:                                   Bool = false
-    var operations: [ZSynchronizationState:BlockOperation] = [:]
-    let      queue:                         OperationQueue = OperationQueue()
-    var    onReady: Closure?
+    var           isReady:                                   Bool = false
+    var operationsByState: [ZSynchronizationState:BlockOperation] = [:]
+    let             queue:                         OperationQueue = OperationQueue()
+    var           onReady: Closure?
 
 
 
@@ -53,35 +53,41 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func setupAndRun(_ syncStates: [Int], block: @escaping (() -> Swift.Void)) {
-        var states                   = syncStates
-        var priorOp: BlockOperation? = nil
-        queue.isSuspended            = true
+    func addOperation(_ op: BlockOperation) {
+        if let prior = queue.operations.last {
+            op.addDependency(prior)
+        } else {
+            queue.qualityOfService            = .background
+            queue.maxConcurrentOperationCount = 1
+        }
+
+        queue.addOperation(op)
+    }
+
+
+    private func setupAndRun(_ syncStates: [Int], block: @escaping (() -> Swift.Void)) {
+        queue.isSuspended = true
+        var states        = syncStates
 
         states.append(ZSynchronizationState.ready.rawValue)
 
-        if queue.operations.count > 0 {
-            let op = BlockOperation { self.setupAndRun(syncStates, block: block) }
-
-            op.addDependency(queue.operations.last!)
-            queue.addOperation(op)
+        if let prior = onReady {
+            onReady = {
+                prior()
+                self.setupAndRun(syncStates, block: block)
+            }
         } else {
-            onReady                           = block
-            queue.qualityOfService            = .background
-            queue.maxConcurrentOperationCount = 1
+            onReady = block
 
             for state in states {
                 let syncState = ZSynchronizationState(rawValue: state)!
-                let        op = BlockOperation { self.invokeOn(syncState) }
-
-                if priorOp != nil {
-                    op.addDependency(priorOp!)
+                let        op = BlockOperation {
+                    self.invokeOn(syncState)
                 }
 
-                priorOp               = op
-                operations[syncState] = op
-                
-                queue.addOperation(op)
+                operationsByState[syncState] = op
+
+                addOperation(op)
             }
         }
 
@@ -91,7 +97,8 @@ class ZOperationsManager: NSObject {
 
 
     func invokeOn(_ state: ZSynchronizationState) {
-        let operation = operations[state]!
+        let            operation = operationsByState[state]!
+        operationsByState[state] = nil
 
         print(state)
 

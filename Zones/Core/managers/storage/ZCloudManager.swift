@@ -62,11 +62,15 @@ class ZCloudManager: NSObject {
         operation.recordIDs       = recordIDsMatching(.needsMerge)
         operation.completionBlock = onCompletion
 
-        operation.perRecordCompletionBlock = { (record, identifier, error) in
-            let   zone: Zone = self.objectForRecordID(identifier!) as! Zone
-            zone.recordState = .needsSave
+        operation.perRecordCompletionBlock = { (iRecord, iID, iError) in
+            if let error: CKError = iError as? CKError {
+                self.reportError(error)
+            } else if let zone: Zone = self.objectForRecordID(iID!) as? Zone {
+                zone.recordState.remove(.needsMerge)
+                zone.recordState.insert(.needsSave)
 
-            zone.mergeIntoAndTake(record!)
+                zone.mergeIntoAndTake(iRecord!)
+            }
         }
 
         if (operation.recordIDs?.count)! > 0 {
@@ -81,6 +85,15 @@ class ZCloudManager: NSObject {
         let             operation = configure(CKFetchRecordsOperation()) as! CKFetchRecordsOperation
         operation.recordIDs       = recordIDsMatching(.needsFetch)
         operation.completionBlock = onCompletion
+
+        operation.perRecordCompletionBlock = { (iRecord, iID, iError) in
+            if let error: CKError = iError as? CKError {
+                self.reportError(error)
+            } else if let zone: Zone = self.objectForRecordID(iID!) as? Zone {
+                zone.recordState.remove(.needsFetch)
+                zone.mergeIntoAndTake(iRecord!)
+            }
+        }
 
         if (operation.recordIDs?.count)! > 0 {
             operation.start()
@@ -111,6 +124,8 @@ class ZCloudManager: NSObject {
 
                     self.reportError(description)
                 }
+            } else if let zone: Zone = self.objectForRecordID((iRecord?.recordID)!) as? Zone {
+                zone.recordState.remove(.needsSave)
             }
         }
 

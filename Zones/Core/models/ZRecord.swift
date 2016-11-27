@@ -15,7 +15,7 @@ class ZRecord: NSObject {
     
 
     var storageMode: ZStorageMode?
-    var recordState: ZRecordState = .needsFetch
+    var recordState: ZRecordState = .ready
     var  kvoContext: UInt8        = 1
     var     _record: CKRecord?
 
