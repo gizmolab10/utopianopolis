@@ -21,62 +21,68 @@ class ZOperationsManager: NSObject {
 
 
     func fullRun(_ block: (() -> Swift.Void)?) {
-        onReady               = block
         var syncStates: [Int] = []
 
         for sync in ZSynchronizationState.cloud.rawValue...ZSynchronizationState.subscribe.rawValue {
             syncStates.append(sync)
         }
 
-        setupAndRun(syncStates)
+        setupAndRun(syncStates, block: block!)
     }
 
 
     func travel(_ block: (() -> Swift.Void)?) {
-        onReady               = block
         var syncStates: [Int] = []
 
         for sync in ZSynchronizationState.restore.rawValue...ZSynchronizationState.subscribe.rawValue {
             syncStates.append(sync)
         }
 
-        setupAndRun(syncStates)
+        setupAndRun(syncStates, block: block!)
     }
 
 
     func sync(_ block: (() -> Swift.Void)?) {
-        onReady               = block
         var syncStates: [Int] = []
 
         for sync in ZSynchronizationState.merge.rawValue...ZSynchronizationState.flush.rawValue {
             syncStates.append(sync)
         }
 
-        setupAndRun(syncStates)
+        setupAndRun(syncStates, block: block!)
     }
 
 
-    func setupAndRun(_ syncStates: [Int]) {
-        queue.isSuspended                 = true
-        queue.maxConcurrentOperationCount = 1
-        queue.qualityOfService            = .background
-        var states                        = syncStates
-        var priorOp:      BlockOperation? = nil
+    func setupAndRun(_ syncStates: [Int], block: @escaping (() -> Swift.Void)) {
+        var states                   = syncStates
+        var priorOp: BlockOperation? = nil
+        queue.isSuspended            = true
 
         states.append(ZSynchronizationState.ready.rawValue)
 
-        for state in states {
-            let state = ZSynchronizationState(rawValue: state)!
-            let    op = BlockOperation { self.invokeOn(state) }
+        if queue.operations.count > 0 {
+            let op = BlockOperation { self.setupAndRun(syncStates, block: block) }
 
-            if priorOp != nil {
-                op.addDependency(priorOp!)
-            }
-
-            priorOp           = op
-            operations[state] = op
-
+            op.addDependency(queue.operations.last!)
             queue.addOperation(op)
+        } else {
+            onReady                           = block
+            queue.qualityOfService            = .background
+            queue.maxConcurrentOperationCount = 1
+
+            for state in states {
+                let syncState = ZSynchronizationState(rawValue: state)!
+                let        op = BlockOperation { self.invokeOn(syncState) }
+
+                if priorOp != nil {
+                    op.addDependency(priorOp!)
+                }
+
+                priorOp               = op
+                operations[syncState] = op
+                
+                queue.addOperation(op)
+            }
         }
 
         isReady           = false;
@@ -107,12 +113,12 @@ class ZOperationsManager: NSObject {
     func becomeReady(_ operation: BlockOperation) {
         isReady = true;
 
-        operation.finish()
-
         if onReady != nil {
             onReady!()
 
             onReady = nil
         }
+
+        operation.finish()
     }
 }

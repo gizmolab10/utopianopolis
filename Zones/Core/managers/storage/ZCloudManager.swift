@@ -198,7 +198,7 @@ class ZCloudManager: NSObject {
             let record:        ZRecord = object as! ZRecord
             let reference: CKReference = CKReference(recordID: record.record.recordID, action: .none)
 
-            record.recordState.remove(.needsChildren)
+            record.recordState.remove(state)
             identifiers.append(reference)
         }
 
