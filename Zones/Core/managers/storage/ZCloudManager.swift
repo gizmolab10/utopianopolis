@@ -109,7 +109,7 @@ class ZCloudManager: NSObject {
                         description        = "\(description): \(name)"
                     }
 
-                    self.toConsole(description)
+                    self.reportError(description)
                 }
             }
         }
@@ -138,7 +138,7 @@ class ZCloudManager: NSObject {
 
             currentDB?.perform(query, inZoneWith: nil) { (records, error) in
                 if error != nil {
-                    self.toConsole(error)
+                    self.reportError(error)
                 }
 
                 if records != nil && (records?.count)! > 0 {
@@ -256,7 +256,7 @@ class ZCloudManager: NSObject {
             currentDB?.fetchAllSubscriptions { (iSubscriptions: [CKSubscription]?, iError: Error?) in
                 if iError != nil {
                     block?()
-                    self.toConsole(iError)
+                    self.reportError(iError)
                 } else {
                     var count: Int = iSubscriptions!.count
 
@@ -266,7 +266,7 @@ class ZCloudManager: NSObject {
                         for subscription: CKSubscription in iSubscriptions! {
                             self.currentDB?.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (iSubscription: String?, iDeleteError: Error?) in
                                 if iDeleteError != nil {
-                                    self.toConsole(iDeleteError)
+                                    self.reportError(iDeleteError)
                                 }
 
                                 count -= 1
@@ -304,7 +304,7 @@ class ZCloudManager: NSObject {
                     if iSaveError != nil {
                         controllersManager.signal(iSaveError as NSObject?, regarding: .error)
 
-                        self.toConsole(iSaveError)
+                        self.reportError(iSaveError)
                     }
 
                     count -= 1

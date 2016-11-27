@@ -14,6 +14,10 @@ import CloudKit
 class ZEditingManager: NSObject {
 
 
+    var previousEvent: ZEvent?
+    var asTask: Bool { get { return editMode == .task } }
+    
+
     func normalize() {
         widgetsManager.clear()
         travelManager.rootZone.normalize()
@@ -27,8 +31,9 @@ class ZEditingManager: NSObject {
 
     func setChildrenVisibilityTo(_ show: Bool, zone: Zone?, recursively: Bool) {
         if zone != nil {
-            if !show && !(zone?.showChildren)!, let parent = zone?.parentZone {
+            if !show && !(zone?.showChildren)! && selectionManager.isGrabbed(zone: zone!), let parent = zone?.parentZone {
                 selectionManager.currentlyGrabbedZones = [parent]
+                zone?.showChildren                     = true
 
                 setChildrenVisibilityTo(show, zone: parent, recursively: recursively)
             } else {
@@ -222,9 +227,6 @@ class ZEditingManager: NSObject {
     }
 
 
-    var asTask: Bool { get { return editMode == .task } }
-
-
     func moveInto(selectionOnly: Bool, extreme: Bool) {
         if let                                  zone: Zone = selectionManager.firstGrabbableZone {
             if selectionOnly {
@@ -344,81 +346,86 @@ class ZEditingManager: NSObject {
 
 
     @discardableResult func handleKey(_ event: ZEvent, isWindow: Bool) -> Bool {
-        let     flags = event.modifierFlags
-        let   isShift = flags.contains(.shift)
-        let  isOption = flags.contains(.option)
-        let isCommand = flags.contains(.command)
-        let   isArrow = flags.contains(.numericPad) && flags.contains(.function)
+        if event == previousEvent {
+            return true
+        } else {
+            previousEvent = event
+            let     flags = event.modifierFlags
+            let   isShift = flags.contains(.shift)
+            let  isOption = flags.contains(.option)
+            let isCommand = flags.contains(.command)
+            let   isArrow = flags.contains(.numericPad) && flags.contains(.function)
 
-        if let widget = widgetsManager.currentMovableWidget {
-            if let string = event.charactersIgnoringModifiers {
-                let key   = string[string.startIndex].description
+            if let widget = widgetsManager.currentMovableWidget {
+                if let string = event.charactersIgnoringModifiers {
+                    let key   = string[string.startIndex].description
 
-                if isArrow {
-                    let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
-                    var flags = ZKeyModifierFlags.none
+                    if isArrow {
+                        let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
+                        var flags = ZKeyModifierFlags.none
 
-                    if isShift   { flags.insert(.shift ) }
-                    if isOption  { flags.insert(.option) }
-                    if isCommand { flags.insert(.command) }
+                        if isShift   { flags.insert(.shift ) }
+                        if isOption  { flags.insert(.option) }
+                        if isCommand { flags.insert(.command) }
 
-                    move(arrow, modifierFlags: flags)
-
-                    return true
-                } else {
-                    switch key {
-                    case "\t":
-                        widget.textField.resignFirstResponder()
-
-                        if let parent = widget.widgetZone.parentZone {
-                            addZoneTo(parent)
-                        } else {
-                            selectionManager.currentlyEditingZone = nil
-
-                            controllersManager.signal(nil, regarding: .data)
-                        }
+                        move(arrow, modifierFlags: flags)
 
                         return true
-                    case " ":
-                        if isWindow || isOption {
-                            addZoneTo(widget.widgetZone)
-
-                            return true
-                        }
-
-                        break
-                    case "\u{7F}":
-                        if isWindow || isOption {
-                            delete()
-
-                            return true
-                        }
-
-                        break
-                    case "\r":
-                        if selectionManager.currentlyGrabbedZones.count != 0 {
-                            selectionManager.currentlyGrabbedZones = []
-
-                            widget.textField.becomeFirstResponder()
-
-                            return true
-                        } else if selectionManager.currentlyEditingZone != nil {
-                            selectionManager.currentlyGrabbedZones = [selectionManager.currentlyEditingZone!]
-
+                    } else {
+                        switch key {
+                        case "\t":
                             widget.textField.resignFirstResponder()
-                            
+
+                            if let parent = widget.widgetZone.parentZone {
+                                addZoneTo(parent)
+                            } else {
+                                selectionManager.currentlyEditingZone = nil
+
+                                controllersManager.signal(nil, regarding: .data)
+                            }
+
                             return true
+                        case " ":
+                            if isWindow || isOption {
+                                addZoneTo(widget.widgetZone)
+
+                                return true
+                            }
+
+                            break
+                        case "\u{7F}":
+                            if isWindow || isOption {
+                                delete()
+
+                                return true
+                            }
+
+                            break
+                        case "\r":
+                            if selectionManager.currentlyGrabbedZones.count != 0 {
+                                selectionManager.currentlyGrabbedZones = []
+
+                                widget.textField.becomeFirstResponder()
+
+                                return true
+                            } else if selectionManager.currentlyEditingZone != nil {
+                                selectionManager.currentlyGrabbedZones = [selectionManager.currentlyEditingZone!]
+                                
+                                widget.textField.resignFirstResponder()
+                                
+                                return true
+                            }
+                            
+                            break
+                        default:
+                            
+                            break
                         }
-
-                        break
-                    default:
-
-                        break
                     }
                 }
             }
         }
-        
+
         return false
     }
 }

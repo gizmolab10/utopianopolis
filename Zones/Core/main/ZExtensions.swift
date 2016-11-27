@@ -8,6 +8,7 @@
 
 
 import Foundation
+import CloudKit
 
 
 #if os(OSX)
@@ -189,6 +190,15 @@ typealias ZStorageDict = [String : NSObject]
 extension NSObject {
     func toConsole(_ loggable: Any) {
 //        print(loggable)
+    }
+
+
+    func reportError(_ iError: Any) {
+        if let error: NSError = iError as? NSError, let waitForIt = error.userInfo[CKErrorRetryAfterKey] {
+            print(waitForIt)
+        }
+
+        print(iError)
     }
 }
 
