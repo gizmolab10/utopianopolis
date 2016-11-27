@@ -46,7 +46,7 @@ class ZoneDot: ZView {
             }
         } else {
             let radius:    CGFloat = dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
-            shouldHighlight        = asToggle ? !widgetZone.showChildren : selectionManager.isGrabbed(zone: widgetZone)
+            shouldHighlight        = asToggle ? !widgetZone.showChildren : selectionManager.isGrabbed(widgetZone)
             zlayer.backgroundColor = (shouldHighlight ? lineColor : unselectedColor).cgColor
 
             addBorder(thickness: lineThicknes, radius: radius, color: lineColor.cgColor)

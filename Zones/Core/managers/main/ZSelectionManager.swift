@@ -56,7 +56,7 @@ class ZSelectionManager: NSObject {
     }
 
 
-    func isGrabbed(zone: Zone) -> Bool {
+    func isGrabbed(_ zone: Zone) -> Bool {
         return currentlyGrabbedZones.contains(zone)
     }
 

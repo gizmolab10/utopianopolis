@@ -145,7 +145,7 @@ class ZoneWidget: ZView {
 
 
     func addDragHighlight() {
-        dragHighlightView.isHidden = !selectionManager.isGrabbed(zone: widgetZone)
+        dragHighlightView.isHidden = !selectionManager.isGrabbed(widgetZone)
 
         if dragHighlightView.superview == nil {
             addSubview(dragHighlightView)

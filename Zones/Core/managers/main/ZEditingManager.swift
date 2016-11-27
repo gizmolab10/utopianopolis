@@ -31,7 +31,9 @@ class ZEditingManager: NSObject {
 
     func setChildrenVisibilityTo(_ show: Bool, zone: Zone?, recursively: Bool) {
         if zone != nil {
-            if !show && !(zone?.showChildren)! && selectionManager.isGrabbed(zone: zone!), let parent = zone?.parentZone {
+            let noVisibleChildren = !(zone?.showChildren)! || ((zone?.children.count)! == 0)
+
+            if !show && noVisibleChildren && selectionManager.isGrabbed(zone!), let parent = zone?.parentZone {
                 selectionManager.currentlyGrabbedZones = [parent]
                 zone?.showChildren                     = true
 
