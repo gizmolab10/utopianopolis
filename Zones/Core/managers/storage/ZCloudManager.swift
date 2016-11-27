@@ -37,7 +37,11 @@ class ZCloudManager: NSObject {
     }
 
 
-    func fetchCloudZones(_ block: (() -> Swift.Void)?) {
+    // MARK:- operations
+    // MARK:-
+
+
+    func fetchCloudZones(_ onCompletion: (() -> Swift.Void)?) {
         container                                 = CKContainer(identifier: cloudID)
         let                             operation = configure(CKFetchRecordZonesOperation()) as! CKFetchRecordZonesOperation
         operation.fetchRecordZonesCompletionBlock = { (recordZonesByZoneID, operationError) -> Swift.Void in
@@ -45,7 +49,7 @@ class ZCloudManager: NSObject {
 
             self.resetBadgeCounter()
 
-            block?()
+            onCompletion?()
         }
 
         travelManager.setup()
@@ -57,9 +61,9 @@ class ZCloudManager: NSObject {
     // MARK:-
 
 
-    func fetch(_ block: (() -> Swift.Void)?) {
+    func fetch(_ onCompletion: (() -> Swift.Void)?) {
         let                     operation = configure(CKFetchRecordsOperation()) as! CKFetchRecordsOperation
-        operation.completionBlock         = block
+        operation.completionBlock         = onCompletion
         var recordsToFetch:  [CKRecordID] = []
 
         for record: ZRecord in records.values {
@@ -73,12 +77,12 @@ class ZCloudManager: NSObject {
 
             operation.start()
         } else {
-            block?()
+            onCompletion?()
         }
     }
 
 
-    func flush(_ block: (() -> Swift.Void)?) {
+    func flush(_ onCompletion: (() -> Swift.Void)?) {
         let                      operation = configure(CKModifyRecordsOperation()) as! CKModifyRecordsOperation
         var recordsToDelete:  [CKRecordID] = []
         var recordsToSave:      [CKRecord] = []
@@ -93,7 +97,7 @@ class ZCloudManager: NSObject {
 
         operation.recordsToSave            = recordsToSave
         operation.recordIDsToDelete        = recordsToDelete
-        operation.completionBlock          = block // { () -> Swift.Void in self.fetch(block) }
+        operation.completionBlock          = onCompletion
         operation.perRecordCompletionBlock = { (iRecord, iError) -> Swift.Void in
             if  let error:         CKError = iError as? CKError {
                 let info                   = error.errorUserInfo
@@ -117,52 +121,56 @@ class ZCloudManager: NSObject {
     }
 
 
-    @discardableResult func fetchChildren(_ block: (() -> Swift.Void)?) -> Bool {
-        var childrenNeeded: [NSPredicate] = []
+    @discardableResult func fetchChildren(_ onCompletion: (() -> Swift.Void)?) -> Bool {
+        var childrenNeeded: [CKReference] = []
 
         for record: ZRecord in records.values {
-            if record.recordState.contains(.needsDelete) {
-                let reference: CKReference = CKReference(recordID: record.record.recordID, action: .none)
-                let predicate: NSPredicate = NSPredicate(format: "parent == %@", reference)
+            if  record.recordState.contains(.needsChildren) {
+                record.recordState  .remove(.needsChildren)
 
-                childrenNeeded.append(predicate)
+                let reference: CKReference = CKReference(recordID: record.record.recordID, action: .none)
+
+                childrenNeeded.append(reference)
             }
         }
 
         if childrenNeeded.count == 0 {
-            if block != nil {
-                block?()
+            if onCompletion != nil {
+                onCompletion?()
             }
-        } else {
-            let   bigPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: childrenNeeded)
-            let query: CKQuery = CKQuery(recordType: zoneTypeKey, predicate: bigPredicate)
 
-            currentDB?.perform(query, inZoneWith: nil) { (records, error) in
+            return true // true means done
+        } else {
+            let                predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
+            let                operation = configure(CKQueryOperation()) as! CKQueryOperation
+            operation.query              = CKQuery(recordType: zoneTypeKey, predicate: predicate)
+            operation.desiredKeys        = ["parent", "zoneName"]
+            operation.recordFetchedBlock = { iRecord -> Swift.Void in
+                var zone = self.objectForRecordID(iRecord.recordID) as! Zone?
+
+                if zone == nil {
+                    zone = Zone(record: iRecord, storageMode: travelManager.storageMode)
+
+                    self.registerObject(zone!)
+                    zone?.recordState.insert(.needsChildren)
+                    zone?.parentZone?.children.append(zone!)
+                }
+            }
+
+            operation.queryCompletionBlock = { (cursor, error) -> Swift.Void in
                 if error != nil {
                     self.reportError(error)
                 }
 
-                if records != nil && (records?.count)! > 0 {
-                    for record: CKRecord in records! {
-                        var zone = self.objectForRecordID(record.recordID) as! Zone?
-
-                        if zone == nil {
-                            zone = Zone(record: record, storageMode: travelManager.storageMode)
-
-                            self.registerObject(zone!)
-                            zone?.parentZone?.children.append(zone!)
-                            zone?.recordState.insert(.needsChildren)
-                        }
-                    }
-
-                    if self.fetchChildren(block) && block != nil {
-                        block?()
-                    }
+                if self.fetchChildren(onCompletion) && onCompletion != nil {
+                    onCompletion?()
                 }
             }
-        }
 
-        return childrenNeeded.count == 0 // true means done
+            operation.start()
+
+            return false // false means more to do
+        }
     }
 
 
