@@ -81,6 +81,15 @@ class ZRecord: NSObject {
     func cloudProperties() -> [String] { return [] }
 
 
+    func mergeIntoAndTake(_ iRecord: CKRecord) {
+        for keyPath: String in cloudProperties() {
+            iRecord[keyPath] = record[keyPath]
+        }
+
+        record = iRecord
+    }
+
+
     func setStorageDictionary(_ dict: ZStorageDict) {
         storageMode       = travelManager.storageMode
         var type: String? = nil

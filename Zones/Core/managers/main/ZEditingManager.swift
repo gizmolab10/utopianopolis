@@ -322,16 +322,13 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func move(_ arrow: ZArrowKey, modifierFlags: ZKeyModifierFlags) {
-        let isCommand = modifierFlags.contains(.command)
-        let  isOption = modifierFlags.contains(.option)
-
-        if modifierFlags.contains(.shift) {
+    func move(_ arrow: ZArrowKey, childrenOnly: Bool, selectionOnly: Bool, recursively: Bool) {
+        if childrenOnly {
             if let zone = selectionManager.firstGrabbableZone {
 
                 switch arrow {
-                case .right: setChildrenVisibilityTo(true,  zone: zone, recursively: isCommand);                                            break
-                case .left:  setChildrenVisibilityTo(false, zone: zone, recursively: isCommand); selectionManager.deselectDragWithin(zone); break
+                case .right: setChildrenVisibilityTo(true,  zone: zone, recursively: recursively);                                            break
+                case .left:  setChildrenVisibilityTo(false, zone: zone, recursively: recursively); selectionManager.deselectDragWithin(zone); break
                 default: return
                 }
 
@@ -339,10 +336,10 @@ class ZEditingManager: NSObject {
             }
         } else {
             switch arrow {
-            case .right: moveInto(     selectionOnly: !isOption, extreme: isCommand); break
-            case .left:  moveOut(      selectionOnly: !isOption, extreme: isCommand); break
-            case .down:  moveUp(false, selectionOnly: !isOption, extreme: isCommand); break
-            case .up:    moveUp(true,  selectionOnly: !isOption, extreme: isCommand); break
+            case .right: moveInto(     selectionOnly: selectionOnly, extreme: recursively); break
+            case .left:  moveOut(      selectionOnly: selectionOnly, extreme: recursively); break
+            case .down:  moveUp(false, selectionOnly: selectionOnly, extreme: recursively); break
+            case .up:    moveUp(true,  selectionOnly: selectionOnly, extreme: recursively); break
             }
         }
     }
@@ -364,16 +361,13 @@ class ZEditingManager: NSObject {
                     let key   = string[string.startIndex].description
 
                     if isArrow {
-                        let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
-                        var flags = ZKeyModifierFlags.none
+                        if isWindow {
+                            let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
 
-                        if isShift   { flags.insert(.shift ) }
-                        if isOption  { flags.insert(.option) }
-                        if isCommand { flags.insert(.command) }
-
-                        move(arrow, modifierFlags: flags)
-
-                        return true
+                            move(arrow, childrenOnly: isShift, selectionOnly: !isOption, recursively: isCommand)
+                            
+                            return true
+                        }
                     } else {
                         switch key {
                         case "\t":

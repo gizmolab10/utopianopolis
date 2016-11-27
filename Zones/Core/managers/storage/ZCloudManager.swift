@@ -45,7 +45,7 @@ class ZCloudManager: NSObject {
         container                                 = CKContainer(identifier: cloudID)
         let                             operation = configure(CKFetchRecordZonesOperation()) as! CKFetchRecordZonesOperation
         operation.fetchRecordZonesCompletionBlock = { (recordZonesByZoneID, operationError) -> Swift.Void in
-            self.cloudZonesByID = recordZonesByZoneID!
+            self.cloudZonesByID                   = recordZonesByZoneID!
 
             self.resetBadgeCounter()
 
@@ -57,24 +57,32 @@ class ZCloudManager: NSObject {
     }
 
 
-    // MARK:- records
-    // MARK:-
+    func merge(_ onCompletion: (() -> Swift.Void)?) {
+        let             operation = configure(CKFetchRecordsOperation()) as! CKFetchRecordsOperation
+        operation.recordIDs       = recordIDsMatching(.needsMerge)
+        operation.completionBlock = onCompletion
+
+        operation.perRecordCompletionBlock = { (record, identifier, error) in
+            let   zone: Zone = self.objectForRecordID(identifier!) as! Zone
+            zone.recordState = .needsSave
+
+            zone.mergeIntoAndTake(record!)
+        }
+
+        if (operation.recordIDs?.count)! > 0 {
+            operation.start()
+        } else {
+            onCompletion?()
+        }
+    }
 
 
     func fetch(_ onCompletion: (() -> Swift.Void)?) {
-        let                     operation = configure(CKFetchRecordsOperation()) as! CKFetchRecordsOperation
-        operation.completionBlock         = onCompletion
-        var recordsToFetch:  [CKRecordID] = []
+        let             operation = configure(CKFetchRecordsOperation()) as! CKFetchRecordsOperation
+        operation.recordIDs       = recordIDsMatching(.needsFetch)
+        operation.completionBlock = onCompletion
 
-        for record: ZRecord in records.values {
-            if record.recordState.contains(.needsFetch) {
-                recordsToFetch.append(record.record.recordID)
-            }
-        }
-
-        if recordsToFetch.count > 0 {
-            operation.recordIDs = recordsToFetch
-
+        if (operation.recordIDs?.count)! > 0 {
             operation.start()
         } else {
             onCompletion?()
@@ -84,19 +92,8 @@ class ZCloudManager: NSObject {
 
     func flush(_ onCompletion: (() -> Swift.Void)?) {
         let                      operation = configure(CKModifyRecordsOperation()) as! CKModifyRecordsOperation
-        var recordsToDelete:  [CKRecordID] = []
-        var recordsToSave:      [CKRecord] = []
-
-        for record: ZRecord in records.values {
-            if record.recordState.contains(.needsDelete) {
-                recordsToDelete.append(record.record.recordID)
-            } else if record.recordState.contains(.needsSave) {
-                recordsToSave.append(record.record)
-            }
-        }
-
-        operation.recordsToSave            = recordsToSave
-        operation.recordIDsToDelete        = recordsToDelete
+        operation.recordsToSave            =   recordsMatching(.needsSave)
+        operation.recordIDsToDelete        = recordIDsMatching(.needsDelete)
         operation.completionBlock          = onCompletion
         operation.perRecordCompletionBlock = { (iRecord, iError) -> Swift.Void in
             if  let error:         CKError = iError as? CKError {
@@ -122,17 +119,7 @@ class ZCloudManager: NSObject {
 
 
     @discardableResult func fetchChildren(_ onCompletion: (() -> Swift.Void)?) -> Bool {
-        var childrenNeeded: [CKReference] = []
-
-        for record: ZRecord in records.values {
-            if  record.recordState.contains(.needsChildren) {
-                record.recordState  .remove(.needsChildren)
-
-                let reference: CKReference = CKReference(recordID: record.record.recordID, action: .none)
-
-                childrenNeeded.append(reference)
-            }
-        }
+        let childrenNeeded: [CKReference] = referencesMatching(.needsChildren)
 
         if childrenNeeded.count == 0 {
             if onCompletion != nil {
@@ -173,6 +160,60 @@ class ZCloudManager: NSObject {
         }
     }
 
+
+    // MARK:- records
+    // MARK:-
+
+
+    func recordIDsMatching(_ state: ZRecordState) -> [CKRecordID] {
+        var identifiers: [CKRecordID] = []
+
+        findRecordsMatching(state) { (object) -> (Void) in
+            let record: ZRecord = object as! ZRecord
+
+            identifiers.append(record.record.recordID)
+        }
+
+        return identifiers
+    }
+
+
+    func recordsMatching(_ state: ZRecordState) -> [CKRecord] {
+        var identifiers: [CKRecord] = []
+
+        findRecordsMatching(state) { (object) -> (Void) in
+            let record: ZRecord = object as! ZRecord
+
+            identifiers.append(record.record)
+        }
+
+        return identifiers
+    }
+
+
+    func referencesMatching(_ state: ZRecordState) -> [CKReference] {
+        var identifiers: [CKReference] = []
+
+        findRecordsMatching(state) { (object) -> (Void) in
+            let record:        ZRecord = object as! ZRecord
+            let reference: CKReference = CKReference(recordID: record.record.recordID, action: .none)
+
+            record.recordState.remove(.needsChildren)
+            identifiers.append(reference)
+        }
+
+        return identifiers
+    }
+
+
+    func findRecordsMatching(_ state: ZRecordState, onEach: ObjectClosure) {
+        for record: ZRecord in records.values {
+            if record.recordState.contains(state) {
+                onEach(record)
+            }
+        }
+    }
+    
 
     func registerObject(_ object: ZRecord) {
         if object.record != nil {
@@ -342,50 +383,21 @@ class ZCloudManager: NSObject {
 
     func setIntoObject(_ object: ZRecord, value: NSObject, forPropertyName: String) {
         if currentDB != nil {
-            var                  hasChange = false
-            var identifier:    CKRecordID?
-            let   newValue: CKRecordValue! = (value as! CKRecordValue)
-            let     record:      CKRecord? = object.record
+            var                    hasChange = false
+            let     newValue: CKRecordValue! = (value as! CKRecordValue)
+            let       record:      CKRecord? = object.record
 
             if record != nil {
                 let oldValue: CKRecordValue! = record![forPropertyName]
-                identifier                   = record?.recordID
 
                 if oldValue != nil && newValue != nil {
                     hasChange                = (oldValue as! NSObject != newValue as! NSObject)
                 } else {
                     hasChange                = oldValue != nil || newValue != nil
                 }
-            }
 
-            if hasChange {
-                object.recordState.insert(.needsFetch)
-                object.recordState.insert(.needsSave)
-
-                if (identifier != nil) {
-                    currentDB?.fetch(withRecordID: identifier!) { (fetched: CKRecord?, fetchError: Error?) in
-                        if fetchError != nil {
-                            record?[forPropertyName]  = newValue
-
-                            object.updateProperties()
-                            controllersManager.signal(nil, regarding: .data)
-                            object.saveToCloud()
-                        } else {
-                            fetched![forPropertyName] = newValue
-
-                            self.currentDB?.save(fetched!, completionHandler: { (saved: CKRecord?, saveError: Error?) in
-                                if saveError != nil {
-                                    controllersManager.signal(saveError as NSObject?, regarding: .error)
-                                } else {
-                                    object.record      = saved!
-
-                                    object.recordState.remove(.needsSave)
-                                    controllersManager.signal(nil, regarding: .data)
-                                    zfileManager.save()
-                                }
-                            })
-                        }
-                    }
+                if hasChange {
+                    object.recordState.insert(.needsMerge)
                 }
             }
         }

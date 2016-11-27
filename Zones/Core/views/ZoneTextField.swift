@@ -121,10 +121,12 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
 
     func captureText() {
-        if  textCapturing    == false {
+        if  textCapturing                 == false {
             if widget.widgetZone.zoneName != text! {
-                textCapturing = true
+                textCapturing              = true
                 widget.widgetZone.zoneName = text!
+
+                operationsManager.sync {}
             }
         }
     }

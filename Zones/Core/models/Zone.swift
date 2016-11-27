@@ -61,7 +61,7 @@ class Zone : ZRecord {
         return super.cloudProperties() + [#keyPath(zoneName), #keyPath(parent)]
     }
 
-
+    
     func normalize() {
         var index = children.count
 

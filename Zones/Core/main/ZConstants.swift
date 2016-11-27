@@ -54,6 +54,8 @@ enum ZSynchronizationState: Int {
     case unsubscribe
     case subscribe
     case ready
+    case merge
+    case flush
 }
 
 
@@ -114,20 +116,11 @@ enum ZArrowKey: CChar {
 struct ZRecordState: OptionSet {
     let rawValue: Int
 
-    static let ready         = ZRecordState(rawValue:  0)
-    static let needsSave     = ZRecordState(rawValue:  1)
-    static let needsFetch    = ZRecordState(rawValue:  2)
-    static let needsDelete   = ZRecordState(rawValue:  4)
-    static let needsCreate   = ZRecordState(rawValue:  8)
-    static let needsChildren = ZRecordState(rawValue: 16)
-}
-
-
-struct ZKeyModifierFlags: OptionSet {
-    let rawValue: Int
-
-    static let none    = ZKeyModifierFlags(rawValue: 0)
-    static let shift   = ZKeyModifierFlags(rawValue: 1)
-    static let option  = ZKeyModifierFlags(rawValue: 2)
-    static let command = ZKeyModifierFlags(rawValue: 4)
+    static let ready         = ZRecordState(rawValue:     0)
+    static let needsSave     = ZRecordState(rawValue: 1 ^ 0)
+    static let needsFetch    = ZRecordState(rawValue: 1 ^ 1)
+    static let needsMerge    = ZRecordState(rawValue: 1 ^ 2)
+    static let needsDelete   = ZRecordState(rawValue: 1 ^ 3)
+    static let needsCreate   = ZRecordState(rawValue: 1 ^ 4)
+    static let needsChildren = ZRecordState(rawValue: 1 ^ 5)
 }

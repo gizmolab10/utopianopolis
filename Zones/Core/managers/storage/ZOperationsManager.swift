@@ -42,7 +42,19 @@ class ZOperationsManager: NSObject {
 
         setupAndRun(syncStates)
     }
-    
+
+
+    func sync(_ block: (() -> Swift.Void)?) {
+        onReady               = block
+        var syncStates: [Int] = []
+
+        for sync in ZSynchronizationState.merge.rawValue...ZSynchronizationState.flush.rawValue {
+            syncStates.append(sync)
+        }
+
+        setupAndRun(syncStates)
+    }
+
 
     func setupAndRun(_ syncStates: [Int]) {
         queue.isSuspended                 = true
@@ -85,6 +97,8 @@ class ZOperationsManager: NSObject {
         case .children:    cloudManager.fetchChildren   { operation.finish() }; break
         case .unsubscribe: cloudManager.unsubscribe     { operation.finish() }; break
         case .subscribe:   cloudManager.subscribe       { operation.finish() }; break
+        case .merge:       cloudManager.merge           { operation.finish() }; break
+        case .flush:       cloudManager.flush           { operation.finish() }; break
         case .ready:       becomeReady(                   operation);           break
         }
     }
