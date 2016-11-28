@@ -20,11 +20,11 @@ class ZOperationsManager: NSObject {
 
 
 
-    func fullRun(_ block: (() -> Swift.Void)?) {
-        var syncStates: [Int] = []
+    func startup(_ block: (() -> Swift.Void)?) {
+        var syncStates: [ZSynchronizationState] = []
 
         for sync in ZSynchronizationState.cloud.rawValue...ZSynchronizationState.subscribe.rawValue {
-            syncStates.append(sync)
+            syncStates.append(ZSynchronizationState(rawValue: sync)!)
         }
 
         setupAndRun(syncStates, block: block!)
@@ -32,10 +32,10 @@ class ZOperationsManager: NSObject {
 
 
     func travel(_ block: (() -> Swift.Void)?) {
-        var syncStates: [Int] = []
+        var syncStates: [ZSynchronizationState] = []
 
         for sync in ZSynchronizationState.restore.rawValue...ZSynchronizationState.subscribe.rawValue {
-            syncStates.append(sync)
+            syncStates.append(ZSynchronizationState(rawValue: sync)!)
         }
 
         setupAndRun(syncStates, block: block!)
@@ -43,18 +43,12 @@ class ZOperationsManager: NSObject {
 
 
     func sync(_ block: (() -> Swift.Void)?) {
-        var syncStates: [Int] = []
-
-        for sync in ZSynchronizationState.merge.rawValue...ZSynchronizationState.flush.rawValue {
-            syncStates.append(sync)
-        }
-
-        setupAndRun(syncStates, block: block!)
+        setupAndRun([.merge, .flush], block: block!)
     }
 
 
     func getChildren(_ block: (() -> Swift.Void)?) {
-        setupAndRun([ZSynchronizationState.children.rawValue], block: block!)
+        setupAndRun([.children], block: block!)
     }
 
 
@@ -70,11 +64,11 @@ class ZOperationsManager: NSObject {
     }
 
 
-    private func setupAndRun(_ syncStates: [Int], block: @escaping (() -> Swift.Void)) {
+    private func setupAndRun(_ syncStates: [ZSynchronizationState], block: @escaping (() -> Swift.Void)) {
         queue.isSuspended = true
         var states        = syncStates
 
-        states.append(ZSynchronizationState.ready.rawValue)
+        states.append(.ready)
 
         if let prior = onReady {
             onReady = {
@@ -85,12 +79,11 @@ class ZOperationsManager: NSObject {
             onReady = block
 
             for state in states {
-                let syncState = ZSynchronizationState(rawValue: state)!
-                let        op = BlockOperation {
-                    self.invokeOn(syncState)
+                let op = BlockOperation {
+                    self.invokeOn(state)
                 }
 
-                operationsByState[syncState] = op
+                operationsByState[state] = op
 
                 addOperation(op)
             }

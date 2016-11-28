@@ -670,13 +670,13 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ZEditorViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="552" height="448"/>
+                        <rect key="frame" x="0.0" y="0.0" width="552" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </view>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="34" y="1385"/>
+            <point key="canvasLocation" x="34" y="1459"/>
         </scene>
         <!--Main View Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -728,11 +728,11 @@
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZToolsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="218" height="448"/>
+                        <rect key="frame" x="0.0" y="0.0" width="207" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i7P-tX-Rsd">
-                                <rect key="frame" x="14" y="400" width="125" height="32"/>
+                                <rect key="frame" x="14" y="46" width="125" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="113" id="D31-dJ-hUc"/>
                                 </constraints>
@@ -745,7 +745,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d02-RZ-oux">
-                                <rect key="frame" x="14" y="367" width="142" height="32"/>
+                                <rect key="frame" x="14" y="13" width="142" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="130" id="UOB-Lh-Xg8"/>
                                 </constraints>
@@ -755,7 +755,7 @@
                                 </buttonCell>
                             </button>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LAJ-9k-rdw">
-                                <rect key="frame" x="18" y="342" width="158" height="20"/>
+                                <rect key="frame" x="25" y="295" width="158" height="20"/>
                                 <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="cX7-p0-us8">
                                     <font key="font" metaFont="smallSystem"/>
                                     <segments>
@@ -768,10 +768,10 @@
                                 </connections>
                             </segmentedControl>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IT7-2L-PqU">
-                                <rect key="frame" x="18" y="84" width="202" height="240"/>
+                                <rect key="frame" x="6" y="348" width="203" height="240"/>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="RJc-P2-wiE">
                                     <font key="font" metaFont="cellTitle"/>
-                                    <mutableString key="title">HELP:
+                                    <string key="title">HELP:
     ARROWS: change selection
 
 with OPTION move/alter zone:
@@ -784,28 +784,61 @@ with OPTION move/alter zone:
 with SHIFT :
     RIGHT ARROW expand
     LEFT ARROW collapse
-    COMMAND do all</mutableString>
+    COMMAND do all</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="KCP-Y2-cVR">
+                                <rect key="frame" x="6" y="217" width="203" height="72"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="72" id="ZaM-7k-E99"/>
+                                </constraints>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="UcL-vR-AXp">
+                                    <font key="font" metaFont="cellTitle"/>
+                                    <string key="title">The WORKING AREA for:
+
+   TASKS is at top
+   COMPOSITION is at bottom</string>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="04s-PO-ttL">
+                                <rect key="frame" x="46" y="181" width="116" height="20"/>
+                                <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="w6m-UJ-g7X">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <segments>
+                                        <segment label="Ignore" selected="YES"/>
+                                        <segment label="Respect" tag="1"/>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="editModeChoiceAction:" target="YaQ-0g-PCb" id="9Tg-Pc-6tf"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="i7P-tX-Rsd" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" constant="20" id="2KN-22-lDV"/>
-                            <constraint firstItem="IT7-2L-PqU" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="9ia-fe-V5W"/>
-                            <constraint firstItem="d02-RZ-oux" firstAttribute="top" secondItem="i7P-tX-Rsd" secondAttribute="bottom" constant="12" id="PpM-Fy-58J"/>
-                            <constraint firstItem="i7P-tX-Rsd" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="UE1-j1-hQe"/>
-                            <constraint firstItem="LAJ-9k-rdw" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="ZaN-1o-7Ok"/>
-                            <constraint firstItem="d02-RZ-oux" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="bpG-KA-XWH"/>
-                            <constraint firstItem="LAJ-9k-rdw" firstAttribute="top" secondItem="d02-RZ-oux" secondAttribute="bottom" constant="12" id="f7J-Vr-Icd"/>
-                            <constraint firstItem="IT7-2L-PqU" firstAttribute="top" secondItem="LAJ-9k-rdw" secondAttribute="bottom" constant="20" id="hGV-VX-CJk"/>
-                            <constraint firstAttribute="trailing" secondItem="IT7-2L-PqU" secondAttribute="trailing" id="nXY-O2-qtm"/>
+                            <constraint firstAttribute="bottom" secondItem="d02-RZ-oux" secondAttribute="bottom" constant="20" id="Ewd-df-2HQ"/>
+                            <constraint firstItem="KCP-Y2-cVR" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="8" id="KRC-f1-yhR"/>
+                            <constraint firstItem="04s-PO-ttL" firstAttribute="top" secondItem="KCP-Y2-cVR" secondAttribute="bottom" constant="16" id="KbT-IG-nce"/>
+                            <constraint firstItem="IT7-2L-PqU" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="8" id="OYp-0Q-pkL"/>
+                            <constraint firstItem="LAJ-9k-rdw" firstAttribute="top" secondItem="IT7-2L-PqU" secondAttribute="bottom" constant="33" id="ZZh-eh-ezW"/>
+                            <constraint firstItem="KCP-Y2-cVR" firstAttribute="top" secondItem="LAJ-9k-rdw" secondAttribute="bottom" constant="8" id="b3M-Uw-e6f"/>
+                            <constraint firstAttribute="trailing" secondItem="IT7-2L-PqU" secondAttribute="trailing" id="dUF-Ou-Vxz"/>
+                            <constraint firstItem="d02-RZ-oux" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="i2p-C1-fYW"/>
+                            <constraint firstItem="IT7-2L-PqU" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" constant="8" id="iH6-O5-rLu"/>
+                            <constraint firstItem="d02-RZ-oux" firstAttribute="top" secondItem="i7P-tX-Rsd" secondAttribute="bottom" constant="12" id="ksV-QE-fEB"/>
+                            <constraint firstAttribute="trailing" secondItem="KCP-Y2-cVR" secondAttribute="trailing" id="ljD-ZI-lrz"/>
+                            <constraint firstItem="i7P-tX-Rsd" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="t31-hv-KRP"/>
+                            <constraint firstItem="04s-PO-ttL" firstAttribute="centerX" secondItem="3tA-Ue-bZS" secondAttribute="centerX" id="uny-01-W5K"/>
+                            <constraint firstItem="LAJ-9k-rdw" firstAttribute="centerX" secondItem="3tA-Ue-bZS" secondAttribute="centerX" id="vNs-sc-ZQI"/>
                         </constraints>
                     </view>
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="476" y="1385"/>
+            <point key="canvasLocation" x="470.5" y="1459"/>
         </scene>
     </scenes>
 </document>

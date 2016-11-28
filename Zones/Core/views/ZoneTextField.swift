@@ -42,7 +42,12 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
                     monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> NSEvent? in
                         if self.isEditing {
-                            editingManager.handleKey(event, isWindow: false)
+                            let   flags = event.modifierFlags
+                            let isArrow = flags.contains(.numericPad) && flags.contains(.function)
+
+                            if !isArrow {
+                                editingManager.handleKey(event, isWindow: false)
+                            }
                         }
 
                         return event

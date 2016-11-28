@@ -106,7 +106,9 @@ class ZoneWidget: ZView {
         widgetsManager.registerWidget(self)
         addDragHighlight()
 
-        if recursing {
+        if !recursing {
+            // clearChildrenView()
+        } else {
             layoutChildren()
             layoutLines()
         }
@@ -139,8 +141,12 @@ class ZoneWidget: ZView {
 
     func layoutDecorations() {
         // self        .addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.green.cgColor)
-        // childrenView.addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.orange.cgColor)
         // textField.addBorder(thickness: 5.0, radius: 0.5, color: CGColor.black)
+
+//        let  show = selectionManager.isGrabbed(widgetZone) && widgetZone.children.count > 0 && widgetZone.showChildren
+//        let color = show ? ZColor.orange : ZColor.clear
+//
+//        childrenView.addBorder(thickness: 1.0, radius: 10.0, color: color.cgColor)
     }
 
 
@@ -190,22 +196,26 @@ class ZoneWidget: ZView {
     }
 
 
+    func clearChildrenView() {
+        if let view = _childrenView {
+            for view in view.subviews {
+                view.removeFromSuperview()
+            }
+
+            view.removeFromSuperview()
+        }
+    }
+
+
     func layoutChildren() {
         var previous: ZoneWidget? = nil
         var                 index = widgetZone.children.count
 
         if childrenWidgets.count != index || !widgetZone.showChildren || index == 0 {
             childrenWidgets.removeAll()
+            clearChildrenView()
 
-            if let view = _childrenView {
-                _childrenView = nil
-
-                for view in view.subviews {
-                    view.removeFromSuperview()
-                }
-
-                view.removeFromSuperview()
-            }
+            _childrenView = nil
         }
 
         if index > 0 && widgetZone.showChildren {
