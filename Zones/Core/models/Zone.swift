@@ -36,7 +36,7 @@ class Zone : ZRecord {
         }
         get {
             if parent == nil && _parentZone?.record != nil {
-                recordState.insert(.needsSave)
+                needsSave()
 
                 parent          = CKReference(record: (_parentZone?.record)!, action: .none)
             }

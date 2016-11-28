@@ -123,6 +123,16 @@ class ZRecord: NSObject {
     // MARK:-
 
 
+    func needsSave() {
+        recordState.insert(.needsSave)
+    }
+
+
+    func needsChildren() {
+        recordState.insert(.needsChildren)
+    }
+
+
     func setValue(_ value: NSObject, forPropertyName: String) {
         cloudManager.setIntoObject(self, value: value, forPropertyName: forPropertyName)
     }

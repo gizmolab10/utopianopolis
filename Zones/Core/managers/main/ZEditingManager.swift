@@ -35,7 +35,7 @@ class ZEditingManager: NSObject {
 
             if !show && noVisibleChildren && selectionManager.isGrabbed(zone!), let parent = zone?.parentZone {
                 selectionManager.currentlyGrabbedZones = [parent]
-                zone?.showChildren                     = true
+                zone?.showChildren                     = false
 
                 setChildrenVisibilityTo(show, zone: parent, recursively: recursively)
             } else {
@@ -81,8 +81,8 @@ class ZEditingManager: NSObject {
             let   zone = Zone(record: record, storageMode: travelManager.storageMode)
 
             widgetsManager.widgetForZone(parentZone!)?.textField.resignFirstResponder()
-            parentZone?.recordState.insert(.needsSave)
-            zone       .recordState.insert(.needsSave)
+            parentZone?.needsSave()
+            zone       .needsSave()
 
             if asTask {
                 parentZone?.children.insert(zone, at: 0)
@@ -233,10 +233,11 @@ class ZEditingManager: NSObject {
         if let                                  zone: Zone = selectionManager.firstGrabbableZone {
             if selectionOnly {
                 if zone.children.count > 0 {
+                    let showingChildren = zone.showChildren
                     selectionManager.currentlyGrabbedZones = [asTask ? zone.children.first! : zone.children.last!]
                     zone.showChildren                      = true
 
-                    controllersManager.signal(zone, regarding: .data)
+                    controllersManager.signal(showingChildren ? zone : nil, regarding: .data)
                 } else if travelManager.storageMode == .bookmarks && zone.cloudZone != nil {
                     travelManager.travelWhereThisZonePoints(zone, atArrival: { (object, kind) -> (Void) in
                         if let zone: Zone = object as? Zone {
@@ -255,9 +256,9 @@ class ZEditingManager: NSObject {
                         siblingZone.showChildren           = true
 
                         parentZone.children.remove(at: index)
-                        parentZone .recordState.insert(.needsSave)
-                        zone       .recordState.insert(.needsSave)
-                        siblingZone.recordState.insert(.needsSave)
+                        parentZone .needsSave()
+                        zone       .needsSave()
+                        siblingZone.needsSave()
 
                         if asTask {
                             siblingZone.children.insert(zone, at: 0)
@@ -301,9 +302,9 @@ class ZEditingManager: NSObject {
                 let                              index = parentZone?.children.index(of: zone)
                 zone.parentZone                        = grandParentZone
 
-                grandParentZone.recordState.insert(.needsSave)
-                parentZone?    .recordState.insert(.needsSave)
-                zone           .recordState.insert(.needsSave)
+                grandParentZone.needsSave()
+                parentZone?    .needsSave()
+                zone           .needsSave()
 
                 if asTask {
                     grandParentZone.children.insert(zone, at: 0)

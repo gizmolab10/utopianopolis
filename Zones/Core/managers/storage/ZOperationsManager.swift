@@ -53,6 +53,11 @@ class ZOperationsManager: NSObject {
     }
 
 
+    func getChildren(_ block: (() -> Swift.Void)?) {
+        setupAndRun([ZSynchronizationState.children.rawValue], block: block!)
+    }
+
+
     func addOperation(_ op: BlockOperation) {
         if let prior = queue.operations.last {
             op.addDependency(prior)

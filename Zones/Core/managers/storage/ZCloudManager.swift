@@ -67,7 +67,7 @@ class ZCloudManager: NSObject {
                 self.reportError(error)
             } else if let zone: Zone = self.objectForRecordID(iID!) as? Zone {
                 zone.recordState.remove(.needsMerge)
-                zone.recordState.insert(.needsSave)
+                zone.needsSave()
 
                 zone.mergeIntoAndTake(iRecord!)
             }
@@ -154,7 +154,7 @@ class ZCloudManager: NSObject {
                     zone = Zone(record: iRecord, storageMode: travelManager.storageMode)
 
                     self.registerObject(zone!)
-                    zone?.recordState.insert(.needsChildren)
+                    zone?.needsChildren()
                     zone?.parentZone?.children.append(zone!)
                 }
             }
@@ -248,7 +248,8 @@ class ZCloudManager: NSObject {
         assureRecordExists(withRecordID: recordID, onCompletion: { (record: CKRecord?) -> (Void) in
             if record != nil {
                 travelManager.rootZone.record = record
-                travelManager.rootZone.recordState.insert(.needsChildren)
+
+                travelManager.rootZone.needsChildren()
             }
 
             block?()
@@ -259,19 +260,24 @@ class ZCloudManager: NSObject {
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
         assureRecordExists(withRecordID: recordID, onCompletion: { (iRecord: CKRecord) -> (Void) in
+            var zone: Zone? = self.objectForRecordID(iRecord.recordID) as! Zone?
+
+            if  zone != nil {
+                zone?.record = iRecord
+            } else {
+                zone = Zone(record: iRecord, storageMode: travelManager.storageMode)
+
+                self.registerObject(zone!)
+            }
+
+            zone?.needsChildren()
+
             self.dispatchAsyncInForeground {
-                var zone: Zone? = self.objectForRecordID(iRecord.recordID) as! Zone?
-
-                if  zone != nil {
-                    zone?.record = iRecord
-                } else {
-                    zone = Zone(record: iRecord, storageMode: travelManager.storageMode)
-
-                    self.registerObject(zone!)
-                }
-
-                zone?.recordState.insert(.needsChildren)
                 controllersManager.signal(zone?.parentZone, regarding: .data)
+
+                operationsManager.getChildren {
+                    controllersManager.signal(zone?.parentZone, regarding: .data)
+                }
             }
         } as! RecordClosure)
     }
@@ -396,22 +402,12 @@ class ZCloudManager: NSObject {
     }
 
 
-    func setIntoObject(_ object: ZRecord, value: NSObject, forPropertyName: String) {
-        if currentDB != nil {
-            var                    hasChange = false
-            let     newValue: CKRecordValue! = (value as! CKRecordValue)
-            let       record:      CKRecord? = object.record
+    func setIntoObject(_ object: ZRecord, value: NSObject?, forPropertyName: String) {
+        if currentDB != nil && !object.recordState.contains(.needsSave) {
+            if let    record = object.record {
+                let oldValue = record[forPropertyName] as? NSObject
 
-            if record != nil && !object.recordState.contains(.needsSave) {
-                let oldValue: CKRecordValue! = record![forPropertyName]
-
-                if oldValue != nil && newValue != nil {
-                    hasChange                = (oldValue as! NSObject != newValue as! NSObject)
-                } else {
-                    hasChange                = oldValue != nil || newValue != nil
-                }
-
-                if hasChange {
+                if oldValue != value {
                     object.recordState.insert(.needsMerge)
                 }
             }
