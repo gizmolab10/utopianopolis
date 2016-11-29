@@ -130,7 +130,7 @@ class Zone : ZRecord {
             if zoneName != nil && zoneName != name {
                 record[zoneNameKey] = zoneName as? CKRecordValue
 
-                reportError(zoneName)
+                // reportError(zoneName)
             }
 
             if parent != nil && parent != cloudParent {

@@ -65,24 +65,27 @@ class ZCloudManager: NSObject {
             }
 
             operation.start()
+
+            return
         }
+
+        onCompletion?()
     }
 
 
     func merge(_ onCompletion: (() -> Swift.Void)?) {
         if let        operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            operation.recordIDs = recordIDsMatching(.needsMerge)
+            operation.recordIDs = recordIDsMatching([.needsMerge])
 
             if (operation.recordIDs?.count)! > 0 {
                 operation.completionBlock          = onCompletion
                 operation.perRecordCompletionBlock = { (iRecord, iID, iError) in
-                    if let error: CKError = iError as? CKError {
-                        self.reportError(error)
-                    } else if let zone: Zone = self.objectForRecordID(iID!) as? Zone {
+                    if let zone: Zone = self.objectForRecordID(iRecord?.recordID) as? Zone {
                         zone.mergeIntoAndTake(iRecord!)
-                    } else {
-                        self.reportError("zoneless record")
+                    } else if let error: CKError = iError as? CKError {
+                        self.reportError(error)
                     }
+
                 }
 
                 operation.start()
@@ -97,7 +100,7 @@ class ZCloudManager: NSObject {
 
     func fetch(_ onCompletion: (() -> Swift.Void)?) {
         if let        operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            operation.recordIDs = recordIDsMatching(.needsFetch)
+            operation.recordIDs = recordIDsMatching([.needsFetch])
 
             if (operation.recordIDs?.count)! > 0 {
                 operation.completionBlock          = onCompletion
@@ -123,7 +126,7 @@ class ZCloudManager: NSObject {
 
     func royalFlush(_ onCompletion: (() -> Swift.Void)?) {
         for record in records.values {
-            if !record.recordState.contains(.needsFetch) && !record.recordState.contains(.needsMerge) {
+            if !record.recordState.contains(.needsFetch) && !record.recordState.contains(.needsSave) {
                 record.recordState.insert(.needsMerge)
 
                 let zone = record as? Zone
@@ -138,8 +141,8 @@ class ZCloudManager: NSObject {
 
     func flush(_ onCompletion: (() -> Swift.Void)?) {
         if let operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
-            operation.recordsToSave                =   recordsMatching(.needsSave)
-            operation.recordIDsToDelete            = recordIDsMatching(.needsDelete)
+            operation.recordsToSave                =   recordsMatching([.needsSave, .needsCreate])
+            operation.recordIDsToDelete            = recordIDsMatching([.needsDelete])
 
             if (operation.recordsToSave?.count)! > 0 || (operation.recordIDsToDelete?.count)! > 0 {
                 operation.completionBlock          = onCompletion
@@ -162,6 +165,7 @@ class ZCloudManager: NSObject {
                     }
 
                     if let zone: Zone = self.objectForRecordID((iRecord?.recordID)!) as? Zone {
+                        zone.recordState.remove(.needsCreate)
                         zone.recordState.remove(.needsSave)
                     }
                 }
@@ -177,7 +181,7 @@ class ZCloudManager: NSObject {
 
 
     @discardableResult func fetchChildren(_ onCompletion: (() -> Swift.Void)?) -> Bool {
-        let childrenNeeded: [CKReference] = referencesMatching(.needsChildren)
+        let childrenNeeded: [CKReference] = referencesMatching([.needsChildren])
 
         if childrenNeeded.count > 0, let operation = configure(CKQueryOperation()) as? CKQueryOperation {
             let                predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
@@ -228,10 +232,10 @@ class ZCloudManager: NSObject {
     // MARK:-
 
 
-    func recordIDsMatching(_ state: ZRecordState) -> [CKRecordID] {
+    func recordIDsMatching(_ states: [ZRecordState]) -> [CKRecordID] {
         var identifiers: [CKRecordID] = []
 
-        findRecordsMatching(state) { (object) -> (Void) in
+        findRecordsMatching(states) { (object) -> (Void) in
             let record:       ZRecord = object as! ZRecord
 
             identifiers.append(record.record.recordID)
@@ -241,10 +245,10 @@ class ZCloudManager: NSObject {
     }
 
 
-    func recordsMatching(_ state: ZRecordState) -> [CKRecord] {
+    func recordsMatching(_ states: [ZRecordState]) -> [CKRecord] {
         var objects: [CKRecord] = []
 
-        findRecordsMatching(state) { (object) -> (Void) in
+        findRecordsMatching(states) { (object) -> (Void) in
             let record: ZRecord = object as! ZRecord
 
             objects.append(record.record)
@@ -254,14 +258,17 @@ class ZCloudManager: NSObject {
     }
 
 
-    func referencesMatching(_ state: ZRecordState) -> [CKReference] {
+    func referencesMatching(_ states: [ZRecordState]) -> [CKReference] {
         var references:  [CKReference] = []
 
-        findRecordsMatching(state) { (object) -> (Void) in
+        findRecordsMatching(states) { (object) -> (Void) in
             let record:        ZRecord = object as! ZRecord
             let reference: CKReference = CKReference(recordID: record.record.recordID, action: .none)
 
-            record.recordState.remove(state)
+            for state in states {
+                record.recordState.remove(state)
+            }
+
             references.append(reference)
         }
 
@@ -269,9 +276,17 @@ class ZCloudManager: NSObject {
     }
 
 
-    func findRecordsMatching(_ state: ZRecordState, onEach: ObjectClosure) {
+    func findRecordsMatching(_ states: [ZRecordState], onEach: ObjectClosure) {
         for record: ZRecord in records.values {
-            if record.recordState.contains(state) {
+            var matches = false
+
+            for state in states {
+                if record.recordState.contains(state) {
+                    matches = true
+                }
+            }
+
+            if matches {
                 onEach(record)
             }
         }
@@ -285,8 +300,10 @@ class ZCloudManager: NSObject {
     }
 
 
-    func objectForRecordID(_ recordID: CKRecordID) -> ZRecord? {
-        return records[recordID]
+    func objectForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
+        if recordID == nil { return nil }
+
+        return records[recordID!]
     }
 
 
@@ -459,7 +476,9 @@ class ZCloudManager: NSObject {
                 if oldValue != value {
                     record[forPropertyName] = value as! CKRecordValue?
 
-                    object.recordState.insert(.needsMerge)
+                    if !object.recordState.contains(.needsCreate) {
+                        object.recordState.insert(.needsMerge)
+                    }
                 }
             }
         }

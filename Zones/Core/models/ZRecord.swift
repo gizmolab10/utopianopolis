@@ -18,8 +18,9 @@ struct ZRecordState: OptionSet {
     static let needsSave     = ZRecordState(rawValue: 1 << 0)
     static let needsFetch    = ZRecordState(rawValue: 1 << 1)
     static let needsMerge    = ZRecordState(rawValue: 1 << 2)
-    static let needsDelete   = ZRecordState(rawValue: 1 << 3)
-    static let needsChildren = ZRecordState(rawValue: 1 << 4)
+    static let needsCreate   = ZRecordState(rawValue: 1 << 3)
+    static let needsDelete   = ZRecordState(rawValue: 1 << 4)
+    static let needsChildren = ZRecordState(rawValue: 1 << 5)
 }
 
 
@@ -41,7 +42,9 @@ class ZRecord: NSObject {
             if _record != newValue {
                 _record = newValue
 
-                if _record != nil {
+                if _record == nil {
+                    recordState.insert(.needsCreate)
+                } else {
                     cloudManager.registerObject(self)
                 }
 
@@ -119,8 +122,8 @@ class ZRecord: NSObject {
 
         if type != nil && name != nil {
             record      = CKRecord(recordType: type!, recordID: CKRecordID(recordName: name!))
-            recordState = .ready
 
+            recordState.remove(.needsCreate)
             self.updateCloudProperties()
 
             // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud

@@ -58,8 +58,8 @@ class ZTravelManager: NSObject {
 
 
     func setup() {
-        hereZone    = Zone(record: nil, storageMode: storageMode)
         storageZone = Zone(record: nil, storageMode: storageMode)
+        hereZone    = storageZone
 
         setupBookmarks()
     }
@@ -68,7 +68,6 @@ class ZTravelManager: NSObject {
     func travel(_ block: (() -> Swift.Void)?) {
         widgetsManager    .clear()
         selectionManager  .clear()
-        cloudManager      .clear()
         setup                   ()
         operationsManager.travel(block)
     }
@@ -118,7 +117,13 @@ class ZTravelManager: NSObject {
             storageMode = .bookmarks // going out arrow to left
 
             travel {
-                atArrival(self.hereZone.children[index], .data)
+                var zone = self.hereZone
+
+                if index < (zone?.children.count)! {
+                    zone =  zone?.children[index]
+                }
+
+                atArrival(zone, .data)
             }
         }
     }

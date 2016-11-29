@@ -350,7 +350,7 @@ class ZEditingManager: NSObject {
                     controllersManager.signal(showingChildren ? zone : nil, regarding: .data)
                 } else if travelManager.storageMode == .bookmarks && zone.cloudZone != nil {
                     travelManager.travelWhereThisZonePoints(zone, atArrival: { (object, kind) -> (Void) in
-                        if let zone: Zone = object as? Zone {
+                        if let _: Zone = object as? Zone {
                             // selectionManager.currentlyGrabbedZones = [zone]
 
                             controllersManager.signal(nil, regarding: .data)

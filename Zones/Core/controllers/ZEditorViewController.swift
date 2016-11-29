@@ -13,7 +13,7 @@ import SnapKit
 class ZEditorViewController: ZGenericViewController {
 
     
-    var widget: ZoneWidget = ZoneWidget()
+    var hereWidget: ZoneWidget = ZoneWidget()
 
 
     override func identifier() -> ZControllerID { return .editor }
@@ -21,11 +21,11 @@ class ZEditorViewController: ZGenericViewController {
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         let                        zone = object as? Zone
-        var specificWidget: ZoneWidget? = widget
+        var specificWidget: ZoneWidget? = hereWidget
         var specificView:        ZView? = view
         var specificindex:          Int = -1
         var recursing:             Bool = kind == .data
-        widget.widgetZone               = travelManager.hereZone!
+        hereWidget.widgetZone           = travelManager.hereZone!
 
         if zone == nil || zone == travelManager.hereZone! {
             recursing = true
