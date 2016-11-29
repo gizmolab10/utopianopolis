@@ -50,7 +50,8 @@ class ZTravelManager: NSObject {
 
     func setupBookmarks() {
         if storageMode == .bookmarks {
-            hereZone.zoneName = "bookmarks"
+            hereZone.showChildren = true
+            hereZone.zoneName     = "bookmarks"
 
             setupCloudZonesForAccessToStorage()
         }

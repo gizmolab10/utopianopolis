@@ -80,7 +80,9 @@ class ZSelectionManager: NSObject {
 
             if currentlyGrabbedZones.count > 0 {
                 grabbable = currentlyGrabbedZones[0]
-            } else {
+            }
+
+            if grabbable == nil || (grabbable?.parentZone != nil && travelManager.storageMode != grabbable?.parentZone?.storageMode) {
                 grabbable = travelManager.hereZone
             }
 
@@ -91,13 +93,15 @@ class ZSelectionManager: NSObject {
 
     var currentlyMovableZone: Zone? {
         get {
-            var movable: Zone?
+            var movable: Zone? = nil
 
             if currentlyGrabbedZones.count > 0 {
                 movable = currentlyGrabbedZones[0]
             } else if currentlyEditingZone != nil {
                 movable = currentlyEditingZone
-            } else {
+            }
+
+            if movable == nil || (movable?.parentZone != nil && travelManager.storageMode != movable?.parentZone?.storageMode) {
                 movable = travelManager.hereZone
             }
 

@@ -14,13 +14,24 @@ import CloudKit
 class Zone : ZRecord {
 
 
-    dynamic var cloudZone:      String?
-    dynamic var  zoneName:      String?
-    dynamic var    parent: CKReference?
-    dynamic var  crossRef: CKReference?
-    var       _parentZone:        Zone?
-    var          children:       [Zone] = []
-    var      showChildren:         Bool = true
+    dynamic var    cloudZone:      String?
+    dynamic var     zoneName:      String?
+    dynamic var     crossRef: CKReference?
+    dynamic var       parent: CKReference?
+    dynamic var showSubzones:    NSNumber?
+    var             children:       [Zone] = []
+    var          _parentZone:        Zone?
+
+    var showChildren: Bool {
+        get { return showSubzones?.int64Value == 1 }
+        set {
+            if newValue != showChildren {
+                showSubzones = NSNumber(integerLiteral: newValue ? 1 : 0)
+
+                recordState.insert(.needsMerge)
+            }
+        }
+    }
 
 
     var crossLink: Zone? { get { return nil } }
@@ -58,7 +69,7 @@ class Zone : ZRecord {
 
 
     override func cloudProperties() -> [String] {
-        return super.cloudProperties() + [#keyPath(zoneName), #keyPath(parent)]
+        return super.cloudProperties() + [#keyPath(zoneName), #keyPath(parent), #keyPath(showSubzones)]
     }
 
     
@@ -113,6 +124,12 @@ class Zone : ZRecord {
                 }
             }
 
+            if let show = record["showSubzones"] as? NSNumber {
+                if show != showSubzones {
+                    showSubzones = show
+                }
+            }
+
             if let cloudParent = record["parent"] as? CKReference {
                 if cloudParent != parent {
                     parent = cloudParent
@@ -125,12 +142,15 @@ class Zone : ZRecord {
     override func updateCloudProperties() {
         if record != nil {
             let        name = record[zoneNameKey] as? String
+            let        show = record["showSubzones"] as? NSNumber
             let cloudParent = record["parent"] as? CKReference
 
             if zoneName != nil && zoneName != name {
                 record[zoneNameKey] = zoneName as? CKRecordValue
+            }
 
-                // reportError(zoneName)
+            if showSubzones != nil && showSubzones?.int64Value != show?.int64Value {
+                record["showSubzones"] = showSubzones as? CKRecordValue
             }
 
             if parent != nil && parent != cloudParent {

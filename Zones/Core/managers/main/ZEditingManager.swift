@@ -38,7 +38,7 @@ class ZEditingManager: NSObject {
 
 
     @discardableResult func handleKey(_ event: ZEvent, isWindow: Bool) -> Bool {
-        if event == previousEvent {
+        if event == previousEvent || !operationsManager.isReady {
             return true
         } else {
             previousEvent = event
@@ -343,15 +343,15 @@ class ZEditingManager: NSObject {
         if let                                  zone: Zone = selectionManager.firstGrabbableZone {
             if selectionOnly {
                 if zone.children.count > 0 {
-                    let showingChildren = zone.showChildren
+                    let redisplayZone:               Zone? = zone.showChildren ? zone : nil
                     selectionManager.currentlyGrabbedZones = [asTask ? zone.children.first! : zone.children.last!]
                     zone.showChildren                      = true
 
-                    controllersManager.signal(showingChildren ? zone : nil, regarding: .data)
+                    controllersManager.saveAndUpdateFor(redisplayZone)
                 } else if travelManager.storageMode == .bookmarks && zone.cloudZone != nil {
                     travelManager.travelWhereThisZonePoints(zone, atArrival: { (object, kind) -> (Void) in
                         if let _: Zone = object as? Zone {
-                            // selectionManager.currentlyGrabbedZones = [zone]
+                            selectionManager.currentlyGrabbedZones = [zone]
 
                             controllersManager.signal(nil, regarding: .data)
                         }

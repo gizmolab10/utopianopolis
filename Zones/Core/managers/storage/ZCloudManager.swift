@@ -80,12 +80,15 @@ class ZCloudManager: NSObject {
             if (operation.recordIDs?.count)! > 0 {
                 operation.completionBlock          = onCompletion
                 operation.perRecordCompletionBlock = { (iRecord, iID, iError) in
-                    if let zone: Zone = self.objectForRecordID(iRecord?.recordID) as? Zone {
-                        zone.mergeIntoAndTake(iRecord!)
+                    let zone = self.objectForRecordID(iID) as? Zone
+
+                    if iRecord != nil {
+                        zone?.mergeIntoAndTake(iRecord!)
                     } else if let error: CKError = iError as? CKError {
                         self.reportError(error)
-                    }
 
+                        zone?.needsSave()
+                    }
                 }
 
                 operation.start()
@@ -126,7 +129,7 @@ class ZCloudManager: NSObject {
 
     func royalFlush(_ onCompletion: (() -> Swift.Void)?) {
         for record in records.values {
-            if !record.recordState.contains(.needsFetch) && !record.recordState.contains(.needsSave) {
+            if !record.recordState.contains(.needsFetch) && !record.recordState.contains(.needsSave) && !record.recordState.contains(.needsCreate) {
                 record.recordState.insert(.needsMerge)
 
                 let zone = record as? Zone
