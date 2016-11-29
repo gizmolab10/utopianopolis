@@ -23,7 +23,7 @@ enum ZFileMode: Int {
 
 
 var   textCapturing:      Bool = false
-var        fileMode: ZFileMode = .local
+var        fileMode: ZFileMode = .cloud
 var        editMode: ZEditMode = .task
 var   genericOffset:    CGSize = CGSize(width: 0.0, height: 4.0)
 var       lineColor:    ZColor = ZColor.purple //(hue: 0.6, saturation: 0.6, brightness: 1.0,                alpha: 1)

@@ -812,8 +812,8 @@ with SHIFT :
                                 <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="w6m-UJ-g7X">
                                     <font key="font" metaFont="smallSystem"/>
                                     <segments>
-                                        <segment label="Local" selected="YES"/>
-                                        <segment label="Cloud" tag="1"/>
+                                        <segment label="Local"/>
+                                        <segment label="Cloud" selected="YES" tag="1"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>
