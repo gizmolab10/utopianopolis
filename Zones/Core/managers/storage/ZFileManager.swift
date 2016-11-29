@@ -28,7 +28,7 @@ class ZFileManager: NSObject {
 
 
     func save() {
-        if !isSaving && operationsManager.isReady {
+        if !isSaving && fileMode == .local && operationsManager.isReady {
             isSaving               = true
             let dict: NSDictionary = travelManager.storageZone.storageDict as NSDictionary
             let  url:          URL = pathToCurrentZoneFile()
@@ -41,14 +41,18 @@ class ZFileManager: NSObject {
 
 
     func restore() {
-        cloudManager.records.removeAll()
+        cloudManager.clear()
 
-        if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
-            travelManager.storageZone = Zone(dict: raw as! ZStorageDict)
-            travelManager.rootZone    = travelManager.storageZone
+        if fileMode == .local {
+            if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
+                travelManager.storageZone = Zone(dict: raw as! ZStorageDict)
+                travelManager.hereZone    = travelManager.storageZone
+
+                controllersManager.signal(nil, regarding: .data)
+            }
         }
     }
-
+    
 
     // MARK:- internals
     // MARK:-

@@ -10,7 +10,20 @@
 import Foundation
 
 
+enum ZEditMode: Int {
+    case task
+    case essay
+}
+
+
+enum ZFileMode: Int {
+    case local
+    case cloud
+}
+
+
 var   textCapturing:      Bool = false
+var        fileMode: ZFileMode = .local
 var        editMode: ZEditMode = .task
 var   genericOffset:    CGSize = CGSize(width: 0.0, height: 4.0)
 var       lineColor:    ZColor = ZColor.purple //(hue: 0.6, saturation: 0.6, brightness: 1.0,                alpha: 1)

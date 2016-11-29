@@ -11,10 +11,18 @@ import Foundation
 import CloudKit
 
 
+enum ZStorageMode: String {     ///// move this to cloud manager  //////////
+    case bookmarks = "bookmarks"
+    case everyone  = "everyone"
+    case group     = "group"
+    case mine      = "mine"
+}
+
+
 class ZTravelManager: NSObject {
 
 
-    var    rootZone:  Zone!
+    var    hereZone:  Zone!
     var storageZone:  Zone!
     var  cloudzones: [Zone] = []
     var   bookmarks: [Zone] = []
@@ -42,15 +50,15 @@ class ZTravelManager: NSObject {
 
     func setupBookmarks() {
         if storageMode == .bookmarks {
-            rootZone.zoneName = "bookmarks"
+            hereZone.zoneName = "bookmarks"
 
-            setupStorageZones()
+            setupCloudZonesForAccessToStorage()
         }
     }
 
 
     func setup() {
-        rootZone    = Zone(record: nil, storageMode: storageMode)
+        hereZone    = Zone(record: nil, storageMode: storageMode)
         storageZone = Zone(record: nil, storageMode: storageMode)
 
         setupBookmarks()
@@ -60,6 +68,7 @@ class ZTravelManager: NSObject {
     func travel(_ block: (() -> Swift.Void)?) {
         widgetsManager    .clear()
         selectionManager  .clear()
+        cloudManager      .clear()
         setup                   ()
         operationsManager.travel(block)
     }
@@ -69,7 +78,7 @@ class ZTravelManager: NSObject {
     // MARK:-
 
 
-    func setupStorageZones() {
+    func setupCloudZonesForAccessToStorage() {
         addCloudZone("everyone", storageMode: .everyone)
         addCloudZone("mine",     storageMode: .mine)
     }
@@ -77,11 +86,11 @@ class ZTravelManager: NSObject {
 
     func addCloudZone(_ name: String, storageMode: ZStorageMode) { // KLUDGE, perhaps use ordered set or dictionary
         let        zone = Zone(record: nil, storageMode: storageMode)
-        zone.parentZone = rootZone
+        zone.parentZone = hereZone
         zone.zoneName   = name
         zone.cloudZone  = name
 
-        rootZone.children.append(zone)
+        hereZone.children.append(zone)
     }
 
 
@@ -97,19 +106,19 @@ class ZTravelManager: NSObject {
     func travelWhereThisZonePoints(_ zone: Zone, atArrival: @escaping SignalClosure) {
         if storageMode == .bookmarks {
             if zone.cloudZone != nil, let mode = ZStorageMode(rawValue: zone.cloudZone!) {
-                storageMode = mode
+                storageMode = mode // going in arrow to right
 
                 travel {
-                    atArrival(self.rootZone, .data)
+                    atArrival(self.hereZone, .data)
                 }
             }
         } else if zone.parentZone == nil {
-            let index = indexOfMode(storageMode)
+            let index = indexOfMode(storageMode) // index is a KLUDGE
 
-            storageMode = .bookmarks
+            storageMode = .bookmarks // going out arrow to left
 
             travel {
-                atArrival(self.rootZone.children[index], .data) // index is a KLUDGE
+                atArrival(self.hereZone.children[index], .data)
             }
         }
     }

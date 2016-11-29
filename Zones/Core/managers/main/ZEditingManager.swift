@@ -11,6 +11,14 @@ import Foundation
 import CloudKit
 
 
+enum ZArrowKey: CChar {
+    case up    = -128
+    case down
+    case left
+    case right
+}
+
+
 class ZEditingManager: NSObject {
 
 
@@ -24,7 +32,7 @@ class ZEditingManager: NSObject {
 
     func normalize() {
         widgetsManager.clear()
-        travelManager.rootZone.normalize()
+        travelManager.hereZone.normalize()
         controllersManager.saveAndUpdateFor(nil)
     }
 
@@ -185,8 +193,6 @@ class ZEditingManager: NSObject {
             let   zone = Zone(record: record, storageMode: travelManager.storageMode)
 
             widgetsManager.widgetForZone(parentZone!)?.textField.resignFirstResponder()
-            parentZone?.needsSave()
-            zone       .needsSave()
 
             if asTask {
                 parentZone?.children.insert(zone, at: 0)
@@ -396,7 +402,7 @@ class ZEditingManager: NSObject {
 
                     return
                 } else if extreme {
-                    parentZone                         = travelManager.rootZone
+                    parentZone                         = travelManager.hereZone
                 }
 
                 selectionManager.currentlyGrabbedZones = [parentZone!]

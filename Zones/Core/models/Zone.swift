@@ -71,9 +71,11 @@ class Zone : ZRecord {
 
             if let testParent = child.parentZone {
                 if testParent != self {
-                    children.remove(at: index)
+                    children.remove(at: index) // remove is ok since index is decreasing, and therefore stays valid
                     testParent.children.append(child)
                 }
+            } else {
+                reportError(child)
             }
             
             child.normalize()
@@ -103,12 +105,36 @@ class Zone : ZRecord {
     }
 
 
-    override func updateProperties() {
+    override func updateZoneProperties() {
         if record != nil {
             if let name = record[zoneNameKey] as? String {
                 if name != zoneName {
                     zoneName = name
                 }
+            }
+
+            if let cloudParent = record["parent"] as? CKReference {
+                if cloudParent != parent {
+                    parent = cloudParent
+                }
+            }
+        }
+    }
+
+
+    override func updateCloudProperties() {
+        if record != nil {
+            let        name = record[zoneNameKey] as? String
+            let cloudParent = record["parent"] as? CKReference
+
+            if zoneName != nil && zoneName != name {
+                record[zoneNameKey] = zoneName as? CKRecordValue
+
+                reportError(zoneName)
+            }
+
+            if parent != nil && parent != cloudParent {
+                record["parent"] = parent
             }
         }
     }
@@ -119,15 +145,15 @@ class Zone : ZRecord {
         if let number = dict[showChildrenKey] as! NSNumber? { showChildren = number.boolValue }
 
         if let childrenStore: [ZStorageDict] = dict[childrenKey] as! [ZStorageDict]? {
-            for child: ZStorageDict in childrenStore {
-                let        zone = Zone(dict: child)
-                zone.parentZone = self
+            for childStore: ZStorageDict in childrenStore {
+                let        child = Zone(dict: childStore)
+                child.parentZone = self
 
-                children.append(zone)
+                children.append(child)
             }
         }
 
-        super.setStorageDictionary(dict) // do this step last so the assignment above is NOT pushed into iCloud
+        super.setStorageDictionary(dict) // do this step last so the assignment above is NOT pushed to cloud
     }
 
 

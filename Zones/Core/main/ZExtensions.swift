@@ -193,12 +193,14 @@ extension NSObject {
     }
 
 
-    func reportError(_ iError: Any) {
+    func reportError(_ iError: Any?) {
         if let error: NSError = iError as? NSError, let waitForIt = error.userInfo[CKErrorRetryAfterKey] {
             print(waitForIt)
         }
 
-        print(iError)
+        if iError != nil {
+            print(iError!)
+        }
     }
 }
 

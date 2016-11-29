@@ -9,6 +9,21 @@
 import Foundation
 
 
+enum ZControllerID: Int {
+    case editor
+    case tools
+    case main
+}
+
+
+enum ZSignalKind: Int {
+    case data
+    case datum
+    case error
+    case delete
+}
+
+
 class ZControllersManager: NSObject {
 
 
@@ -44,7 +59,7 @@ class ZControllersManager: NSObject {
     }
 
 
-    func signal(_ object: Any?, regarding: ZUpdateKind, onCompletion: Closure?) {
+    func signal(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
         dispatchAsyncInForeground {
             for closureObject: SignalObject in self.closures {
                 closureObject.closure(object, regarding)
@@ -57,7 +72,7 @@ class ZControllersManager: NSObject {
     }
 
 
-    func signal(_ object: NSObject?, regarding: ZUpdateKind) {
+    func signal(_ object: NSObject?, regarding: ZSignalKind) {
         signal(object, regarding: regarding, onCompletion: nil)
     }
 

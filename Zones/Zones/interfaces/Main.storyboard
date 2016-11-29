@@ -741,7 +741,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="genericButtonAction:" target="YaQ-0g-PCb" id="WW5-kp-CJc"/>
+                                    <action selector="pushToCloudButtonAction:" target="YaQ-0g-PCb" id="gx4-vu-rj3"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d02-RZ-oux">
@@ -753,6 +753,9 @@
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <connections>
+                                    <action selector="normalizeButtonAction:" target="YaQ-0g-PCb" id="tKm-9c-2Mi"/>
+                                </connections>
                             </button>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LAJ-9k-rdw">
                                 <rect key="frame" x="25" y="295" width="158" height="20"/>
@@ -805,16 +808,16 @@ with SHIFT :
                                 </textFieldCell>
                             </textField>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="04s-PO-ttL">
-                                <rect key="frame" x="46" y="181" width="116" height="20"/>
+                                <rect key="frame" x="55" y="181" width="98" height="20"/>
                                 <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="w6m-UJ-g7X">
                                     <font key="font" metaFont="smallSystem"/>
                                     <segments>
-                                        <segment label="Ignore" selected="YES"/>
-                                        <segment label="Respect" tag="1"/>
+                                        <segment label="Local" selected="YES"/>
+                                        <segment label="Cloud" tag="1"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>
-                                    <action selector="editModeChoiceAction:" target="YaQ-0g-PCb" id="9Tg-Pc-6tf"/>
+                                    <action selector="ignoreFilesChoiceAction:" target="YaQ-0g-PCb" id="O8H-CP-gKT"/>
                                 </connections>
                             </segmentedControl>
                         </subviews>

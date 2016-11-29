@@ -11,6 +11,18 @@ import Foundation
 import CloudKit
 
 
+struct ZRecordState: OptionSet {
+    let rawValue: Int
+
+    static let ready         = ZRecordState(rawValue:      0)
+    static let needsSave     = ZRecordState(rawValue: 1 << 0)
+    static let needsFetch    = ZRecordState(rawValue: 1 << 1)
+    static let needsMerge    = ZRecordState(rawValue: 1 << 2)
+    static let needsDelete   = ZRecordState(rawValue: 1 << 3)
+    static let needsChildren = ZRecordState(rawValue: 1 << 4)
+}
+
+
 class ZRecord: NSObject {
     
 
@@ -33,7 +45,7 @@ class ZRecord: NSObject {
                     cloudManager.registerObject(self)
                 }
 
-                updateProperties()
+                updateZoneProperties()
             }
         }
     }
@@ -59,10 +71,6 @@ class ZRecord: NSObject {
         self.storageMode = storageMode
         self.record      = record
 
-        if record == nil {
-            self.recordState.insert(.needsCreate)
-        }
-
         self.setupKVO();
     }
 
@@ -77,14 +85,20 @@ class ZRecord: NSObject {
 
 
     func saveToCloud() {}
-    func updateProperties() {}
+    func updateZoneProperties() {}
+    func updateCloudProperties() {}
     func cloudProperties() -> [String] { return [] }
 
 
     func mergeIntoAndTake(_ iRecord: CKRecord) {
-        for keyPath: String in cloudProperties() {
-            iRecord[keyPath] = record[keyPath]
+        if record != nil {
+            for keyPath: String in cloudProperties() {
+                iRecord[keyPath] = record[keyPath]
+            }
         }
+
+        recordState.remove(.needsMerge)
+        needsSave()
 
         record = iRecord
     }
@@ -107,6 +121,8 @@ class ZRecord: NSObject {
             record      = CKRecord(recordType: type!, recordID: CKRecordID(recordName: name!))
             recordState = .ready
 
+            self.updateCloudProperties()
+
             // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
         }
     }
@@ -125,6 +141,11 @@ class ZRecord: NSObject {
 
     func needsSave() {
         recordState.insert(.needsSave)
+    }
+
+
+    func needsFetch() {
+        recordState.insert(.needsFetch)
     }
 
 

@@ -16,6 +16,13 @@ import Foundation
 #endif
 
 
+enum ZLineKind: Int {
+    case below    = -1
+    case straight =  0
+    case above    =  1
+}
+
+
 class ZoneCurve: ZView {
 
 

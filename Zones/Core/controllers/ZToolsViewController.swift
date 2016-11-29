@@ -13,11 +13,11 @@ import SnapKit
 class ZToolsViewController: ZGenericViewController {
 
 
-    override func identifier() -> ZControllerID { return .settings }
+    override func identifier() -> ZControllerID { return .tools }
 
 
-    @IBAction func genericButtonAction(_ button: ZButton) {
-        cloudManager.flush {}
+    @IBAction func pushToCloudButtonAction(_ button: ZButton) {
+        cloudManager.royalFlush {}
     }
 
 
@@ -28,5 +28,10 @@ class ZToolsViewController: ZGenericViewController {
 
     @IBAction func editModeChoiceAction(_ control: ZSegmentedControl) {
         editMode = ZEditMode(rawValue: control.selectedSegment)!
+    }
+
+
+    @IBAction func ignoreFilesChoiceAction(_ control: ZSegmentedControl) {
+        fileMode = ZFileMode(rawValue: control.selectedSegment)!
     }
 }

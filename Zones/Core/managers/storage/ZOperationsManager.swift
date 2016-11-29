@@ -10,6 +10,20 @@
 import Foundation
 
 
+enum ZSynchronizationState: Int {
+    case ready
+    case cloud
+    case file
+    case root
+    case flush
+    case fetch
+    case children
+    case unsubscribe
+    case subscribe
+    case merge
+}
+
+
 class ZOperationsManager: NSObject {
 
 
@@ -34,7 +48,7 @@ class ZOperationsManager: NSObject {
     func travel(_ block: (() -> Swift.Void)?) {
         var syncStates: [ZSynchronizationState] = []
 
-        for sync in ZSynchronizationState.restore.rawValue...ZSynchronizationState.subscribe.rawValue {
+        for sync in ZSynchronizationState.file.rawValue...ZSynchronizationState.subscribe.rawValue {
             syncStates.append(ZSynchronizationState(rawValue: sync)!)
         }
 
@@ -43,7 +57,7 @@ class ZOperationsManager: NSObject {
 
 
     func sync(_ block: (() -> Swift.Void)?) {
-        setupAndRun([.merge, .flush], block: block!)
+        setupAndRun([.flush], block: block!)
     }
 
 
@@ -101,7 +115,7 @@ class ZOperationsManager: NSObject {
         print(state)
 
         switch(state) {
-        case .restore:     zfileManager.restore();        operation.finish();   break
+        case .file:        zfileManager.restore();        operation.finish();   break
         case .cloud:       cloudManager.fetchCloudZones { operation.finish() }; break
         case .root:        cloudManager.setupRoot       { operation.finish() }; break
         case .fetch:       cloudManager.fetch           { operation.finish() }; break

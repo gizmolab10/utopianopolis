@@ -44,7 +44,7 @@ class ZSelectionManager: NSObject {
         let             zone = currentlyEditingZone
         currentlyEditingZone = nil
 
-        if zone == nil || zone == travelManager.rootZone {
+        if zone == nil || zone == travelManager.hereZone {
             controllersManager.signal(nil, regarding: .data)
         } else if let widget = widgetsManager.widgetForZone(zone) {
             widget.textField.captureText()
@@ -81,7 +81,7 @@ class ZSelectionManager: NSObject {
             if currentlyGrabbedZones.count > 0 {
                 grabbable = currentlyGrabbedZones[0]
             } else {
-                grabbable = travelManager.rootZone
+                grabbable = travelManager.hereZone
             }
 
             return grabbable
@@ -98,20 +98,10 @@ class ZSelectionManager: NSObject {
             } else if currentlyEditingZone != nil {
                 movable = currentlyEditingZone
             } else {
-                movable = travelManager.rootZone
+                movable = travelManager.hereZone
             }
 
             return movable!
         }
     }
-
-
-    var canDelete: Bool {
-        get {
-            return (currentlyEditingZone != nil     &&  currentlyEditingZone != travelManager.rootZone!) ||
-                (   currentlyGrabbedZones.count > 0 && !currentlyGrabbedZones.contains(travelManager.rootZone!))
-        }
-    }
-    
-
 }
