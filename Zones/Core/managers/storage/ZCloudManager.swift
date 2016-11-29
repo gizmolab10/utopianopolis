@@ -189,7 +189,7 @@ class ZCloudManager: NSObject {
         if childrenNeeded.count > 0, let operation = configure(CKQueryOperation()) as? CKQueryOperation {
             let                predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
             operation.query              = CKQuery(recordType: zoneTypeKey, predicate: predicate)
-            operation.desiredKeys        = ["parent", "zoneName"]
+            operation.desiredKeys        = ["parent", "showSubzones", "zoneName"]
             operation.recordFetchedBlock = { iRecord -> Swift.Void in
                 var zone = self.objectForRecordID(iRecord.recordID) as! Zone?
 
@@ -199,6 +199,7 @@ class ZCloudManager: NSObject {
                     self.registerObject(zone!)
                 }
 
+                zone?.updateZoneProperties()
                 zone?.needsChildren()
 
                 if let parent = zone?.parentZone {

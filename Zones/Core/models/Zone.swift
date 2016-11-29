@@ -23,7 +23,18 @@ class Zone : ZRecord {
     var          _parentZone:        Zone?
 
     var showChildren: Bool {
-        get { return showSubzones?.int64Value == 1 }
+        get {
+            if showSubzones == nil {
+                updateZoneProperties()
+
+                if showSubzones == nil {
+                    showSubzones = NSNumber(value: 0)
+                }
+            }
+
+            return showSubzones?.int64Value == 1
+        }
+
         set {
             if newValue != showChildren {
                 showSubzones = NSNumber(integerLiteral: newValue ? 1 : 0)
