@@ -124,7 +124,7 @@ class ZCloudManager: NSObject {
     func royalFlush(_ onCompletion: (() -> Swift.Void)?) {
         for record in records.values {
             if !record.recordState.contains(.needsFetch) && !record.recordState.contains(.needsMerge) {
-                record.needsSave()
+                record.recordState.insert(.needsMerge)
 
                 let zone = record as? Zone
 
@@ -132,7 +132,7 @@ class ZCloudManager: NSObject {
             }
         }
 
-        flush(onCompletion)
+        operationsManager.sync(onCompletion)
     }
 
 
@@ -459,7 +459,7 @@ class ZCloudManager: NSObject {
                 if oldValue != value {
                     record[forPropertyName] = value as! CKRecordValue?
 
-                    object.recordState.insert(.needsSave)
+                    object.recordState.insert(.needsMerge)
                 }
             }
         }

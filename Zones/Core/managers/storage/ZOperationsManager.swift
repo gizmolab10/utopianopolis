@@ -57,7 +57,7 @@ class ZOperationsManager: NSObject {
 
 
     func sync(_ block: (() -> Swift.Void)?) {
-        setupAndRun([.flush], block: block!)
+        setupAndRun([.merge, .flush], block: block!)
     }
 
 
