@@ -251,6 +251,7 @@ class ZEditingManager: NSObject {
 
         if let parentZone = zone.parentZone {
             if var  index = parentZone.children.index(of: zone) {
+                cloudManager.records.removeValue(forKey: zone.record.recordID)
                 parentZone.children.remove(at: index)
 
                 index = max(0, index - 1)

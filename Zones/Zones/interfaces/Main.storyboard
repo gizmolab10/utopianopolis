@@ -732,7 +732,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i7P-tX-Rsd">
-                                <rect key="frame" x="14" y="46" width="125" height="32"/>
+                                <rect key="frame" x="41" y="46" width="125" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="113" id="D31-dJ-hUc"/>
                                 </constraints>
@@ -745,7 +745,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d02-RZ-oux">
-                                <rect key="frame" x="14" y="13" width="142" height="32"/>
+                                <rect key="frame" x="33" y="13" width="142" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="130" id="UOB-Lh-Xg8"/>
                                 </constraints>
@@ -807,6 +807,14 @@ with SHIFT :
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xmv-NU-oFf">
+                                <rect key="frame" x="18" y="86" width="171" height="21"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="w3l-ll-IMR">
+                                    <font key="font" metaFont="system" size="17"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="04s-PO-ttL">
                                 <rect key="frame" x="55" y="181" width="98" height="20"/>
                                 <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="w6m-UJ-g7X">
@@ -822,22 +830,28 @@ with SHIFT :
                             </segmentedControl>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="Xmv-NU-oFf" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="9Zd-ya-0BP"/>
+                            <constraint firstItem="d02-RZ-oux" firstAttribute="centerX" secondItem="3tA-Ue-bZS" secondAttribute="centerX" id="BzQ-e4-xA3"/>
+                            <constraint firstItem="i7P-tX-Rsd" firstAttribute="top" secondItem="Xmv-NU-oFf" secondAttribute="bottom" constant="12" id="Ctm-So-2Az"/>
                             <constraint firstAttribute="bottom" secondItem="d02-RZ-oux" secondAttribute="bottom" constant="20" id="Ewd-df-2HQ"/>
                             <constraint firstItem="KCP-Y2-cVR" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="8" id="KRC-f1-yhR"/>
                             <constraint firstItem="04s-PO-ttL" firstAttribute="top" secondItem="KCP-Y2-cVR" secondAttribute="bottom" constant="16" id="KbT-IG-nce"/>
                             <constraint firstItem="IT7-2L-PqU" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="8" id="OYp-0Q-pkL"/>
+                            <constraint firstAttribute="trailing" secondItem="Xmv-NU-oFf" secondAttribute="trailing" constant="20" id="Ul7-Oa-Bfl"/>
+                            <constraint firstItem="i7P-tX-Rsd" firstAttribute="centerX" secondItem="3tA-Ue-bZS" secondAttribute="centerX" id="Us2-xV-GCM"/>
                             <constraint firstItem="LAJ-9k-rdw" firstAttribute="top" secondItem="IT7-2L-PqU" secondAttribute="bottom" constant="33" id="ZZh-eh-ezW"/>
                             <constraint firstItem="KCP-Y2-cVR" firstAttribute="top" secondItem="LAJ-9k-rdw" secondAttribute="bottom" constant="8" id="b3M-Uw-e6f"/>
                             <constraint firstAttribute="trailing" secondItem="IT7-2L-PqU" secondAttribute="trailing" id="dUF-Ou-Vxz"/>
-                            <constraint firstItem="d02-RZ-oux" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="i2p-C1-fYW"/>
                             <constraint firstItem="IT7-2L-PqU" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" constant="8" id="iH6-O5-rLu"/>
                             <constraint firstItem="d02-RZ-oux" firstAttribute="top" secondItem="i7P-tX-Rsd" secondAttribute="bottom" constant="12" id="ksV-QE-fEB"/>
                             <constraint firstAttribute="trailing" secondItem="KCP-Y2-cVR" secondAttribute="trailing" id="ljD-ZI-lrz"/>
-                            <constraint firstItem="i7P-tX-Rsd" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="t31-hv-KRP"/>
                             <constraint firstItem="04s-PO-ttL" firstAttribute="centerX" secondItem="3tA-Ue-bZS" secondAttribute="centerX" id="uny-01-W5K"/>
                             <constraint firstItem="LAJ-9k-rdw" firstAttribute="centerX" secondItem="3tA-Ue-bZS" secondAttribute="centerX" id="vNs-sc-ZQI"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="totalCountLabel" destination="Xmv-NU-oFf" id="pBL-Qc-Xdz"/>
+                    </connections>
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

@@ -20,13 +20,13 @@ class ZoneWidget: ZView {
 
 
     private var        _textField: ZoneTextField!
-    var                widgetZone: Zone!
     private var     _childrenView: ZView!
     private let dragHighlightView: ZView!       = ZView()
     private var   childrenWidgets: [ZoneWidget] = []
     private var      siblingLines: [ZoneCurve]  = []
     let                 toggleDot: ZoneDot?     = ZoneDot()
     let                   dragDot: ZoneDot?     = ZoneDot()
+    var                widgetZone: Zone!
 
 
     var hasChildren: Bool {

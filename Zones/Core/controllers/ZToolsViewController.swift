@@ -13,9 +13,17 @@ import SnapKit
 class ZToolsViewController: ZGenericViewController {
 
 
+    @IBOutlet var totalCountLabel: ZTextField?
+
+
     override func identifier() -> ZControllerID { return .tools }
 
 
+    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+        totalCountLabel?.text = "zones: \(cloudManager.records.count)"
+    }
+
+    
     @IBAction func pushToCloudButtonAction(_ button: ZButton) {
         cloudManager.royalFlush {}
     }
