@@ -24,6 +24,10 @@ class Zone : ZRecord {
     var          _parentZone:        Zone?
 
 
+    // MARK:- properties
+    // MARK:-
+
+
     var crossLink: Zone? { get { return nil } } // compute from cross ref and cloud zone
 
 
@@ -98,16 +102,43 @@ class Zone : ZRecord {
     }
 
 
-    convenience init(dict: ZStorageDict) {
-        self.init(record: nil, storageMode: travelManager.storageMode)
-
-        storageDict = dict
-    }
-
-
     override func cloudProperties() -> [String] {
         return super.cloudProperties() + [#keyPath(zoneName), #keyPath(parent), #keyPath(zoneOrder), #keyPath(showSubzones)]
     }
+
+
+    override func updateZoneProperties() {
+        if record != nil {
+            for keyPath in cloudProperties() {
+                if let cloudValue = record[keyPath] as! NSObject? {
+                    let propertyValue = value(forKeyPath: keyPath) as! NSObject?
+
+                    if propertyValue != cloudValue {
+                        setValue(cloudValue, forKeyPath: keyPath)
+                    }
+                }
+            }
+        }
+    }
+
+
+    override func updateCloudProperties() {
+        if record != nil {
+            for keyPath in cloudProperties() {
+                if let cloudValue = record[keyPath] as! NSObject? {
+                    let propertyValue = value(forKeyPath: keyPath) as! NSObject?
+
+                    if propertyValue != nil && propertyValue != cloudValue {
+                        record[keyPath] = propertyValue as? CKRecordValue
+                    }
+                }
+            }
+        }
+    }
+
+
+    // MARK:- child ordering
+    // MARK:-
 
 
     func orderAt(_ index: Int) -> Double? {
@@ -171,55 +202,14 @@ class Zone : ZRecord {
     }
 
 
-    override func updateZoneProperties() {
-        if record != nil {
-            if let name = record[zoneNameKey] as? String {
-                if name != zoneName {
-                    zoneName = name
-                }
-            }
-
-            if let show = record["showSubzones"] as? NSNumber {
-                if show != showSubzones {
-                    showSubzones = show
-                }
-            }
-
-            if let rank = record["zoneOrder"] as? NSNumber {
-                if rank != zoneOrder {
-                    zoneOrder = rank
-                }
-            }
-
-            if let cloudParent = record["parent"] as? CKReference {
-                if cloudParent != parent {
-                    parent = cloudParent
-                }
-            }
-        }
-    }
+    // MARK:- file persistence
+    // MARK:-
 
 
-    override func updateCloudProperties() {
-        if record != nil {
-            let show = record["showSubzones"] as? NSNumber
+    convenience init(dict: ZStorageDict) {
+        self.init(record: nil, storageMode: travelManager.storageMode)
 
-            if showSubzones != nil && showSubzones?.int64Value != show?.int64Value {
-                record["showSubzones"] = showSubzones as? CKRecordValue
-            }
-
-            if zoneOrder != nil && zoneOrder != record["zoneOrder"] as? NSNumber {
-                record["zoneOrder"] = zoneOrder
-            }
-
-            if zoneName != nil && zoneName != record[zoneNameKey] as? String {
-                record[zoneNameKey] = zoneName as? CKRecordValue
-            }
-
-            if parent != nil && parent != record["parent"] as? CKReference {
-                record["parent"] = parent
-            }
-        }
+        storageDict = dict
     }
 
     
