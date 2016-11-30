@@ -30,6 +30,7 @@ import CloudKit
     public typealias ZViewController      = NSViewController
     public typealias ZSegmentedControl    = NSSegmentedControl
     public typealias ZGestureRecognizer   = NSGestureRecognizer
+    public typealias ZProgressIndicator   = NSProgressIndicator
     public typealias ZTextFieldDelegate   = NSTextFieldDelegate
     public typealias ZApplicationDelegate = NSApplicationDelegate
 

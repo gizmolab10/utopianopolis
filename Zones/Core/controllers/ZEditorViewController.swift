@@ -13,7 +13,8 @@ import SnapKit
 class ZEditorViewController: ZGenericViewController {
 
     
-    var hereWidget: ZoneWidget = ZoneWidget()
+    var hereWidget:                 ZoneWidget = ZoneWidget()
+    @IBOutlet var spinner: ZProgressIndicator?
 
 
     override func identifier() -> ZControllerID { return .editor }
@@ -48,6 +49,19 @@ class ZEditorViewController: ZGenericViewController {
         specificWidget?.display()
 
         textCapturing = false
+    }
+
+
+    override func displayActivity() {
+        let isActive = !operationsManager.isReady
+
+        spinner?.isHidden = !isActive
+
+        if isActive {
+            spinner?.startAnimation(self)
+        } else {
+            spinner?.stopAnimation(self)
+        }
     }
 
 

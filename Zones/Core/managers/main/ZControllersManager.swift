@@ -59,6 +59,15 @@ class ZControllersManager: NSObject {
     }
 
 
+    func displayActivity() {
+        dispatchAsyncInForeground {
+            for controller in self.controllersMap.values {
+                controller.displayActivity()
+            }
+        }
+    }
+
+
     func signal(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
         dispatchAsyncInForeground {
             for closureObject: SignalObject in self.closures {

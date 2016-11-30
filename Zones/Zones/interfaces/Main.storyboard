@@ -672,7 +672,23 @@
                     <view key="view" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="552" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
+                                <rect key="frame" x="176" y="198" width="200" height="200"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="bAV-En-6Wv"/>
+                                    <constraint firstAttribute="width" constant="200" id="vJp-G5-N5A"/>
+                                </constraints>
+                            </progressIndicator>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="uBD-4n-5KN" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="EwX-Al-jsb"/>
+                            <constraint firstItem="uBD-4n-5KN" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="GCY-RL-3tu"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="spinner" destination="uBD-4n-5KN" id="l76-tc-ycD"/>
+                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -808,10 +824,10 @@ with SHIFT :
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xmv-NU-oFf">
-                                <rect key="frame" x="18" y="86" width="171" height="21"/>
+                                <rect key="frame" x="18" y="86" width="171" height="19"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="w3l-ll-IMR">
-                                    <font key="font" metaFont="system" size="17"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <font key="font" metaFont="system" size="15"/>
+                                    <color key="textColor" name="keyboardFocusIndicatorColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>

@@ -34,6 +34,7 @@ class ZGenericViewController: ZViewController {
 
 
     func handleSignal(_ object: Any?, kind: ZSignalKind) {}
+    func displayActivity() {}
 
 
 #if os(OSX)

@@ -105,6 +105,8 @@ class ZOperationsManager: NSObject {
 
         isReady           = false;
         queue.isSuspended = false
+
+        controllersManager.displayActivity()
     }
 
 
@@ -131,6 +133,8 @@ class ZOperationsManager: NSObject {
 
     func becomeReady(_ operation: BlockOperation) {
         isReady = true;
+
+        controllersManager.displayActivity()
 
         if onReady != nil {
             onReady!()
