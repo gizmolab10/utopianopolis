@@ -33,6 +33,9 @@ class ZOperationsManager: NSObject {
     var           onReady: Closure?
 
 
+    // MARK:- API
+    // MARK:-
+
 
     func startup(_ block: (() -> Swift.Void)?) {
         var syncStates: [ZSynchronizationState] = []
@@ -64,6 +67,10 @@ class ZOperationsManager: NSObject {
     func getChildren(_ block: (() -> Swift.Void)?) {
         setupAndRun([.children], block: block!)
     }
+
+
+    // MARK:- internals
+    // MARK:-
 
 
     func addOperation(_ op: BlockOperation) {
@@ -110,6 +117,21 @@ class ZOperationsManager: NSObject {
     }
 
 
+    func becomeReady(_ operation: BlockOperation) {
+        isReady = true;
+
+        controllersManager.displayActivity()
+
+        if onReady != nil {
+            onReady!()
+
+            onReady = nil
+        }
+        
+        operation.finish()
+    }
+
+
     func invokeOn(_ state: ZSynchronizationState) {
         let            operation = operationsByState[state]!
         operationsByState[state] = nil
@@ -128,20 +150,5 @@ class ZOperationsManager: NSObject {
         case .flush:       cloudManager.flush           { operation.finish() }; break
         case .ready:       becomeReady(                   operation);           break
         }
-    }
-
-
-    func becomeReady(_ operation: BlockOperation) {
-        isReady = true;
-
-        controllersManager.displayActivity()
-
-        if onReady != nil {
-            onReady!()
-
-            onReady = nil
-        }
-
-        operation.finish()
     }
 }

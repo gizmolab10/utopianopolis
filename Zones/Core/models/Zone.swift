@@ -18,9 +18,37 @@ class Zone : ZRecord {
     dynamic var     zoneName:      String?
     dynamic var     crossRef: CKReference?
     dynamic var       parent: CKReference?
+    dynamic var    zoneOrder:    NSNumber?
     dynamic var showSubzones:    NSNumber?
     var             children:       [Zone] = []
     var          _parentZone:        Zone?
+
+
+    var crossLink: Zone? { get { return nil } } // compute from cross ref and cloud zone
+
+
+    var order: Double {
+        get {
+            if zoneOrder == nil {
+                updateZoneProperties()
+
+                if zoneOrder == nil {
+                    zoneOrder = NSNumber(value: 0.0)
+                }
+            }
+
+            return Double((zoneOrder?.doubleValue)!)
+        }
+
+        set {
+            if newValue != order {
+                zoneOrder = NSNumber(value: newValue)
+
+                recordState.insert(.needsMerge)
+            }
+        }
+    }
+
 
     var showChildren: Bool {
         get {
@@ -44,18 +72,8 @@ class Zone : ZRecord {
         }
     }
 
-
-    var crossLink: Zone? { get { return nil } }
-
     
     var parentZone: Zone? {
-        set {
-            _parentZone  = newValue
-
-            if let parentRecord = newValue?.record {
-                parent          = CKReference(record: parentRecord, action: .none)
-            }
-        }
         get {
             if parent == nil && _parentZone?.record != nil {
                 needsSave()
@@ -69,6 +87,14 @@ class Zone : ZRecord {
 
             return _parentZone
         }
+
+        set {
+            _parentZone  = newValue
+
+            if let parentRecord = newValue?.record {
+                parent          = CKReference(record: parentRecord, action: .none)
+            }
+        }
     }
 
 
@@ -80,28 +106,46 @@ class Zone : ZRecord {
 
 
     override func cloudProperties() -> [String] {
-        return super.cloudProperties() + [#keyPath(zoneName), #keyPath(parent), #keyPath(showSubzones)]
+        return super.cloudProperties() + [#keyPath(zoneName), #keyPath(parent), #keyPath(zoneOrder), #keyPath(showSubzones)]
     }
 
-    
-    func normalize() {
-        var index = children.count
 
-        while index > 0 {
-            index -= 1
+    func orderAt(_ index: Int) -> Double? {
+        if index >= 0 && index < children.count {
             let child = children[index]
 
-            if let testParent = child.parentZone {
-                if testParent != self {
-                    children.remove(at: index) // remove is ok since index is decreasing, and therefore stays valid
-                    testParent.children.append(child)
-                }
-            } else {
-                reportError(child)
-            }
-            
-            child.normalize()
+            return child.order
         }
+
+        return nil
+    }
+
+
+    func respectOrder() {
+        children.sort { (a, b) -> Bool in
+            return a.order < b.order
+        }
+    }
+
+
+    func normalizeOrdering() {
+        let     count = children.count
+        let increment = 1.0 / Double(count + 1)
+        var     index = 0
+
+        while index < count {
+            let   child = children[index]
+            index      += 1
+            child.order = increment * Double(index)
+        }
+    }
+
+
+    func recomputeOrderingUponInsertionAt(_ index: Int) {
+        let  orderLarger = orderAt(index + 1) ?? 1.0
+        let orderSmaller = orderAt(index - 1) ?? 0.0
+        let        child = children[index]
+        child.order      = (orderLarger + orderSmaller) / 2.0
     }
 
 
@@ -141,6 +185,12 @@ class Zone : ZRecord {
                 }
             }
 
+            if let rank = record["zoneOrder"] as? NSNumber {
+                if rank != zoneOrder {
+                    zoneOrder = rank
+                }
+            }
+
             if let cloudParent = record["parent"] as? CKReference {
                 if cloudParent != parent {
                     parent = cloudParent
@@ -152,19 +202,21 @@ class Zone : ZRecord {
 
     override func updateCloudProperties() {
         if record != nil {
-            let        name = record[zoneNameKey] as? String
-            let        show = record["showSubzones"] as? NSNumber
-            let cloudParent = record["parent"] as? CKReference
-
-            if zoneName != nil && zoneName != name {
-                record[zoneNameKey] = zoneName as? CKRecordValue
-            }
+            let show = record["showSubzones"] as? NSNumber
 
             if showSubzones != nil && showSubzones?.int64Value != show?.int64Value {
                 record["showSubzones"] = showSubzones as? CKRecordValue
             }
 
-            if parent != nil && parent != cloudParent {
+            if zoneOrder != nil && zoneOrder != record["zoneOrder"] as? NSNumber {
+                record["zoneOrder"] = zoneOrder
+            }
+
+            if zoneName != nil && zoneName != record[zoneNameKey] as? String {
+                record[zoneNameKey] = zoneName as? CKRecordValue
+            }
+
+            if parent != nil && parent != record["parent"] as? CKReference {
                 record["parent"] = parent
             }
         }
@@ -182,6 +234,8 @@ class Zone : ZRecord {
 
                 children.append(child)
             }
+
+            respectOrder()
         }
 
         super.setStorageDictionary(dict) // do this step last so the assignment above is NOT pushed to cloud

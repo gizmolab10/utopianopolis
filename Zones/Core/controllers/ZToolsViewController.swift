@@ -29,11 +29,6 @@ class ZToolsViewController: ZGenericViewController {
     }
 
 
-    @IBAction func normalizeButtonAction(_ button: ZButton) {
-        editingManager.normalize()
-    }
-
-
     @IBAction func editModeChoiceAction(_ control: ZSegmentedControl) {
         editMode = ZEditMode(rawValue: control.selectedSegment)!
     }

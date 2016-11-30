@@ -134,6 +134,7 @@ class ZCloudManager: NSObject {
 
                 let zone = record as? Zone
 
+                zone?.normalizeOrdering()
                 zone?.updateCloudProperties()
             }
         }
@@ -187,10 +188,11 @@ class ZCloudManager: NSObject {
         let childrenNeeded: [CKReference] = referencesMatching([.needsChildren])
 
         if childrenNeeded.count > 0, let operation = configure(CKQueryOperation()) as? CKQueryOperation {
-            let                predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
-            operation.query              = CKQuery(recordType: zoneTypeKey, predicate: predicate)
-            operation.desiredKeys        = ["parent", "showSubzones", "zoneName"]
-            operation.recordFetchedBlock = { iRecord -> Swift.Void in
+            var parentsNeedingResort: [Zone] = []
+            let                    predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
+            operation.query                  = CKQuery(recordType: zoneTypeKey, predicate: predicate)
+            operation.desiredKeys            = ["showSubzones", "zoneOrder", "zoneName", "parent"]
+            operation.recordFetchedBlock     = { iRecord -> Swift.Void in
                 var zone = self.objectForRecordID(iRecord.recordID) as! Zone?
 
                 if zone == nil {
@@ -206,6 +208,10 @@ class ZCloudManager: NSObject {
                     if !parent.children.contains(zone!) {
                         parent.children.append(zone!)
                     }
+
+                    if !parentsNeedingResort.contains(parent) {
+                        parentsNeedingResort.append(parent)
+                    }
                 } else {
                     self.reportError(zone)
                 }
@@ -214,6 +220,10 @@ class ZCloudManager: NSObject {
             operation.queryCompletionBlock = { (cursor, error) -> Swift.Void in
                 if error != nil {
                     self.reportError(error)
+                }
+
+                for parent in parentsNeedingResort {
+                    parent.respectOrder()
                 }
 
                 controllersManager.signal(nil, regarding: .data)

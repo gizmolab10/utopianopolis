@@ -30,13 +30,6 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func normalize() {
-        widgetsManager.clear()
-        travelManager.hereZone.normalize()
-        controllersManager.saveAndUpdateFor(nil)
-    }
-
-
     @discardableResult func handleKey(_ event: ZEvent, isWindow: Bool) -> Bool {
         if event == previousEvent || !operationsManager.isReady {
             return true
@@ -191,17 +184,22 @@ class ZEditingManager: NSObject {
         if parentZone != nil {
             let record = CKRecord(recordType: zoneTypeKey)
             let   zone = Zone(record: record, storageMode: travelManager.storageMode)
+            var insert = 0
 
             widgetsManager.widgetForZone(parentZone!)?.textField.resignFirstResponder()
 
             if asTask {
                 parentZone?.children.insert(zone, at: 0)
             } else {
+                insert = (parentZone?.children.count)!
+
                 parentZone?.children.append(zone)
             }
 
-            parentZone?.showChildren = true
             zone.parentZone          = parentZone
+            parentZone?.showChildren = true
+
+            parentZone?.recomputeOrderingUponInsertionAt(insert)
 
             controllersManager.saveAndUpdateFor(parentZone, onCompletion: { () -> (Void) in
                 self.dispatchAsyncInForegroundAfter(0.1, closure: {
@@ -327,12 +325,14 @@ class ZEditingManager: NSObject {
                     if newIndex >= 0 && newIndex < parentZone.children.count {
                         if selectionOnly {
                             selectionManager.currentlyGrabbedZones = [parentZone.children[newIndex]]
+
+                            controllersManager.signal(parentZone, regarding: .data)
                         } else {
                             parentZone.children.remove(at: index)
                             parentZone.children.insert(zone, at:newIndex)
+                            parentZone.recomputeOrderingUponInsertionAt(newIndex)
+                            controllersManager.saveAndUpdateFor(parentZone)
                         }
-
-                        controllersManager.signal(parentZone, regarding: .data)
                     }
                 }
             }
@@ -365,6 +365,7 @@ class ZEditingManager: NSObject {
                     if siblingIndex                       >= 0 {
                         let                    siblingZone = parentZone.children[siblingIndex]
                         siblingZone.showChildren           = true
+                        var                         insert = 0
 
                         parentZone.children.remove(at: index)
                         parentZone .needsSave()
@@ -374,11 +375,14 @@ class ZEditingManager: NSObject {
                         if asTask {
                             siblingZone.children.insert(zone, at: 0)
                         } else {
+                            insert = siblingZone.children.count
+                            
                             siblingZone.children.append(zone)
                         }
 
                         zone.parentZone                    = siblingZone
 
+                        siblingZone.recomputeOrderingUponInsertionAt(insert)
                         controllersManager.saveAndUpdateFor(parentZone)
                     }
                 }
@@ -411,6 +415,7 @@ class ZEditingManager: NSObject {
                 controllersManager.signal(parentZone, regarding: .data)
             } else if let              grandParentZone = parentZone?.parentZone {
                 let                              index = parentZone?.children.index(of: zone)
+                let                             insert = asTask ? 0 : grandParentZone.children.count
                 zone.parentZone                        = grandParentZone
 
                 grandParentZone.needsSave()
@@ -424,6 +429,7 @@ class ZEditingManager: NSObject {
                 }
 
                 parentZone?.children.remove(at: index!)
+                grandParentZone.recomputeOrderingUponInsertionAt(insert)
                 controllersManager.saveAndUpdateFor(grandParentZone)
             }
         }

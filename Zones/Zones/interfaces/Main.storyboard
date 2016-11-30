@@ -748,7 +748,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i7P-tX-Rsd">
-                                <rect key="frame" x="41" y="46" width="125" height="32"/>
+                                <rect key="frame" x="41" y="13" width="125" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="113" id="D31-dJ-hUc"/>
                                 </constraints>
@@ -758,19 +758,6 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="pushToCloudButtonAction:" target="YaQ-0g-PCb" id="gx4-vu-rj3"/>
-                                </connections>
-                            </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d02-RZ-oux">
-                                <rect key="frame" x="33" y="13" width="142" height="32"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="130" id="UOB-Lh-Xg8"/>
-                                </constraints>
-                                <buttonCell key="cell" type="push" title="Normalize Graph" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sOy-bQ-Bn9">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="normalizeButtonAction:" target="YaQ-0g-PCb" id="tKm-9c-2Mi"/>
                                 </connections>
                             </button>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LAJ-9k-rdw">
@@ -824,7 +811,7 @@ with SHIFT :
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xmv-NU-oFf">
-                                <rect key="frame" x="18" y="86" width="171" height="19"/>
+                                <rect key="frame" x="18" y="53" width="171" height="19"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="w3l-ll-IMR">
                                     <font key="font" metaFont="system" size="15"/>
                                     <color key="textColor" name="keyboardFocusIndicatorColor" catalog="System" colorSpace="catalog"/>
@@ -847,9 +834,7 @@ with SHIFT :
                         </subviews>
                         <constraints>
                             <constraint firstItem="Xmv-NU-oFf" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="9Zd-ya-0BP"/>
-                            <constraint firstItem="d02-RZ-oux" firstAttribute="centerX" secondItem="3tA-Ue-bZS" secondAttribute="centerX" id="BzQ-e4-xA3"/>
                             <constraint firstItem="i7P-tX-Rsd" firstAttribute="top" secondItem="Xmv-NU-oFf" secondAttribute="bottom" constant="12" id="Ctm-So-2Az"/>
-                            <constraint firstAttribute="bottom" secondItem="d02-RZ-oux" secondAttribute="bottom" constant="20" id="Ewd-df-2HQ"/>
                             <constraint firstItem="KCP-Y2-cVR" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="8" id="KRC-f1-yhR"/>
                             <constraint firstItem="04s-PO-ttL" firstAttribute="top" secondItem="KCP-Y2-cVR" secondAttribute="bottom" constant="16" id="KbT-IG-nce"/>
                             <constraint firstItem="IT7-2L-PqU" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="8" id="OYp-0Q-pkL"/>
@@ -859,8 +844,8 @@ with SHIFT :
                             <constraint firstItem="KCP-Y2-cVR" firstAttribute="top" secondItem="LAJ-9k-rdw" secondAttribute="bottom" constant="8" id="b3M-Uw-e6f"/>
                             <constraint firstAttribute="trailing" secondItem="IT7-2L-PqU" secondAttribute="trailing" id="dUF-Ou-Vxz"/>
                             <constraint firstItem="IT7-2L-PqU" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" constant="8" id="iH6-O5-rLu"/>
-                            <constraint firstItem="d02-RZ-oux" firstAttribute="top" secondItem="i7P-tX-Rsd" secondAttribute="bottom" constant="12" id="ksV-QE-fEB"/>
                             <constraint firstAttribute="trailing" secondItem="KCP-Y2-cVR" secondAttribute="trailing" id="ljD-ZI-lrz"/>
+                            <constraint firstAttribute="bottom" secondItem="i7P-tX-Rsd" secondAttribute="bottom" constant="20" id="qCe-q7-L0S"/>
                             <constraint firstItem="04s-PO-ttL" firstAttribute="centerX" secondItem="3tA-Ue-bZS" secondAttribute="centerX" id="uny-01-W5K"/>
                             <constraint firstItem="LAJ-9k-rdw" firstAttribute="centerX" secondItem="3tA-Ue-bZS" secondAttribute="centerX" id="vNs-sc-ZQI"/>
                         </constraints>
