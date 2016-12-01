@@ -87,7 +87,6 @@ class ZRecord: NSObject {
     // MARK:-
 
 
-    func saveToCloud() {}
     func updateZoneProperties() {}
     func updateCloudProperties() {}
     func cloudProperties() -> [String] { return [] }

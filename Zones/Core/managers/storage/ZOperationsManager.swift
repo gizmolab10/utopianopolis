@@ -117,21 +117,6 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func becomeReady(_ operation: BlockOperation) {
-        isReady = true;
-
-        controllersManager.displayActivity()
-
-        if onReady != nil {
-            onReady!()
-
-            onReady = nil
-        }
-        
-        operation.finish()
-    }
-
-
     func invokeOn(_ state: ZSynchronizationState) {
         let            operation = operationsByState[state]!
         operationsByState[state] = nil
@@ -150,5 +135,21 @@ class ZOperationsManager: NSObject {
         case .flush:       cloudManager.flush           { operation.finish() }; break
         case .ready:       becomeReady(                   operation);           break
         }
+    }
+
+
+    func becomeReady(_ operation: BlockOperation) {
+        isReady = true;
+
+        controllersManager.displayActivity()
+
+        if onReady != nil {
+            onReady!()
+            print("unspun")
+
+            onReady = nil
+        }
+        
+        operation.finish()
     }
 }

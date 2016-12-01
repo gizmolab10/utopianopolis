@@ -137,8 +137,16 @@ class Zone : ZRecord {
     }
 
 
-    // MARK:- child ordering
+    // MARK:- offspring
     // MARK:-
+
+
+    func removeChild(_ child: Zone?) {
+        if child != nil, let index = children.index(of: child!) {
+            children.remove(at: index)
+        }
+
+    }
 
 
     func orderAt(_ index: Int) -> Double? {
@@ -188,17 +196,6 @@ class Zone : ZRecord {
         }
 
         return -1
-    }
-
-
-    override func saveToCloud() {
-        cloudManager.currentDB?.save(record) { (iRecord: CKRecord?, iError: Error?) in
-            if iError != nil {
-                print(iError)
-            } else {
-                self.record = iRecord
-            }
-        }
     }
 
 
