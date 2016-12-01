@@ -22,6 +22,20 @@ enum ZArrowKey: CChar {
 class ZEditingManager: NSObject {
 
 
+    class ZoneEvent: NSObject {
+        var event: ZEvent?
+        var isWindow: Bool = true
+
+        convenience init(_ iEvent: ZEvent, iIsWindow: Bool) {
+            self.init()
+
+            isWindow = iIsWindow
+            event    = iEvent
+        }
+    }
+
+
+    var events: [ZoneEvent] = []
     var previousEvent: ZEvent?
     var asTask: Bool { get { return editMode == .task } }
 
@@ -30,8 +44,21 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
+    func callOnReady() {
+        while events.count != 0 {
+            let event = events.remove(at: 0)
+
+            handleKey(event.event!, isWindow: event.isWindow)
+        }
+    }
+
+
     @discardableResult func handleKey(_ event: ZEvent, isWindow: Bool) -> Bool {
-        if event == previousEvent || !operationsManager.isReady {
+        if !operationsManager.isReady {
+            if events.count < 1 {
+                events.append(ZoneEvent(event, iIsWindow: isWindow))
+            }
+        } else if event == previousEvent {
             return true
         } else {
             previousEvent = event
@@ -62,10 +89,10 @@ class ZEditingManager: NSObject {
                                 }
                             } else {
                                 switch arrow {
-                                case .right: moveInto(     selectionOnly: !isOption, extreme: isCommand, persist: true); break
-                                case .left:  moveOut(      selectionOnly: !isOption, extreme: isCommand, persist: true); break
-                                case .down:  moveUp(false, selectionOnly: !isOption, extreme: isCommand, persist: true); break
-                                case .up:    moveUp(true,  selectionOnly: !isOption, extreme: isCommand, persist: true); break
+                                case .right: moveInto(     selectionOnly: !isOption, extreme: isCommand, persistently: true); break
+                                case .left:  moveOut(      selectionOnly: !isOption, extreme: isCommand, persistently: true); break
+                                case .down:  moveUp(false, selectionOnly: !isOption, extreme: isCommand, persistently: true); break
+                                case .up:    moveUp(true,  selectionOnly: !isOption, extreme: isCommand, persistently: true); break
                                 }
                             }
 
@@ -103,11 +130,11 @@ class ZEditingManager: NSObject {
                             break
                         case "\r":
                             if selectionManager.currentlyGrabbedZones.count != 0 {
-                                if isShift {
-                                    addParentTo(selectionManager.firstGrabbableZone)
-                                } else {
+//                                if isShift {
+//                                    addParentTo(selectionManager.firstGrabbableZone)
+//                                } else {
                                     widget.textField.becomeFirstResponder()
-                                }
+//                                }
 
                                 return true
                             } else if selectionManager.currentlyEditingZone != nil {
@@ -189,14 +216,14 @@ class ZEditingManager: NSObject {
 
     func addParentTo(_ zone: Zone?) {
         if let grandParentZone = zone?.parentZone {
-            addZoneTo(grandParentZone, onCompletion: { (parent) -> (Void) in
+            addZoneTo(grandParentZone, onCompletion: { (parentZone) -> (Void) in
                 selectionManager.currentlyGrabbedZones = [zone!]
 
-                self.moveInto(selectionOnly: false, extreme: false, persist: false)
+                self.actuallyMove(zone!, forceIntoNew: true, persistently: false)
                 self.dispatchAsyncInForegroundAfter(0.5, closure: { () -> (Void) in
                     operationsManager.isReady = true
-                    
-                    widgetsManager.widgetForZone(parent as? Zone)?.textField.becomeFirstResponder()
+
+                    widgetsManager.widgetForZone(parentZone as? Zone)?.textField.becomeFirstResponder()
                     controllersManager.signal(grandParentZone, regarding: .data)
                 })
             })
@@ -265,14 +292,16 @@ class ZEditingManager: NSObject {
         deleteZones(zone.children)
 
         if let parentZone = zone.parentZone {
-            if var  index = parentZone.children.index(of: zone) {
+            let siblings  = parentZone.children
+
+            if var  index = siblings.index(of: zone) {
                 cloudManager.records.removeValue(forKey: zone.record.recordID)
                 parentZone.children.remove(at: index)
 
                 index = max(0, index - 1)
 
-                if parentZone.children.count > 0 {
-                    return parentZone.children[index]
+                if siblings.count > 0 {
+                    return siblings[index]
                 } else  {
                     return parentZone
                 }
@@ -285,6 +314,17 @@ class ZEditingManager: NSObject {
 
     // MARK:- movement
     // MARK:-
+
+
+    func saveAfterMoveWithin(_ zone: Zone?, persistently: Bool) {
+        if zone != nil {
+            if persistently {
+                controllersManager.saveAndUpdateFor(zone)
+            } else {
+                controllersManager.signal(zone, regarding: .data)
+            }
+        }
+    }
 
 
     //    if beyond end, search for uncles aunts whose children or email
@@ -331,31 +371,28 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool, persist: Bool) {
+    func moveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool, persistently: Bool) {
         if let        zone: Zone = selectionManager.firstGrabbableZone {
             if let    parentZone = zone.parentZone {
-                if let     index = parentZone.children.index(of: zone) {
+                let     siblings = parentZone.children
+                
+                if let     index = siblings.index(of: zone) {
                     var newIndex = index + (moveUp ? -1 : 1)
 
                     if extreme {
-                        newIndex = moveUp ? 0 : parentZone.children.count - 1
+                        newIndex = moveUp ? 0 : siblings.count - 1
                     }
 
-                    if newIndex >= 0 && newIndex < parentZone.children.count {
+                    if newIndex >= 0 && newIndex < siblings.count {
                         if selectionOnly {
-                            selectionManager.currentlyGrabbedZones = [parentZone.children[newIndex]]
+                            selectionManager.currentlyGrabbedZones = [siblings[newIndex]]
 
                             controllersManager.signal(parentZone, regarding: .data)
                         } else if travelManager.storageMode != .bookmarks {
                             parentZone.children.remove(at: index)
                             parentZone.children.insert(zone, at:newIndex)
                             parentZone.recomputeOrderingUponInsertionAt(newIndex)
-
-                            if persist {
-                                controllersManager.saveAndUpdateFor(parentZone)
-                            } else {
-                                controllersManager.signal(parentZone, regarding: .data)
-                            }
+                            saveAfterMoveWithin(parentZone, persistently: persistently)
                         }
                     }
                 }
@@ -364,9 +401,11 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveInto(selectionOnly: Bool, extreme: Bool, persist: Bool) {
+    func moveInto(selectionOnly: Bool, extreme: Bool, persistently: Bool) {
         if let                                  zone: Zone = selectionManager.firstGrabbableZone {
-            if selectionOnly {
+            if !selectionOnly {
+                actuallyMove(zone, forceIntoNew: false, persistently: persistently)
+            } else {
                 if zone.children.count > 0 {
                     let                           saveThis = !zone.showChildren
                     selectionManager.currentlyGrabbedZones = [asTask ? zone.children.first! : zone.children.last!]
@@ -386,45 +425,46 @@ class ZEditingManager: NSObject {
                         }
                     })
                 }
-            } else if travelManager.storageMode != .bookmarks, let parentZone = zone.parentZone {
-                if let                               index = parentZone.children.index(of: zone) {
-                    let                       siblingIndex = index == 0 ? 1 : index - 1
+            }
+        }
+    }
 
-                    if siblingIndex                       >= 0 {
-                        let                    siblingZone = parentZone.children[siblingIndex]
-                        siblingZone.showChildren           = true
-                        var                         insert = 0
 
-                        parentZone.children.remove(at: index)
-                        parentZone .needsSave()
-                        zone       .needsSave()
-                        siblingZone.needsSave()
+    func actuallyMove(_ zone: Zone, forceIntoNew: Bool, persistently: Bool) {
+        if travelManager.storageMode        != .bookmarks, let parentZone = zone.parentZone {
+            let siblings                     = parentZone.children
 
-                        if asTask {
-                            siblingZone.children.insert(zone, at: 0)
-                        } else {
-                            insert = siblingZone.children.count
-                            
-                            siblingZone.children.append(zone)
-                        }
+            if let                     index = forceIntoNew ? (asTask ? 0 : (siblings.count - 1)) : siblings.index(of: zone) {
+                let              cousinIndex = index == 0 ? 1 : index - 1
 
-                        zone.parentZone                    = siblingZone
+                if cousinIndex             >= 0 && cousinIndex < siblings.count {
+                    let          siblingZone = siblings[cousinIndex]
+                    zone.parentZone          = siblingZone
+                    siblingZone.showChildren = true
+                    var               insert = 0
 
-                        siblingZone.recomputeOrderingUponInsertionAt(insert)
+                    parentZone.children.remove(at: index)
+                    parentZone .needsSave()
+                    zone       .needsSave()
+                    siblingZone.needsSave()
 
-                        if persist {
-                            controllersManager.saveAndUpdateFor(parentZone)
-                        } else {
-                            controllersManager.signal(parentZone, regarding: .data)
-                        }
+                    if asTask {
+                        siblingZone.children.insert(zone, at: 0)
+                    } else {
+                        insert = siblingZone.children.count
+
+                        siblingZone.children.append(zone)
                     }
+
+                    siblingZone.recomputeOrderingUponInsertionAt(insert)
+                    saveAfterMoveWithin(parentZone, persistently: persistently)
                 }
             }
         }
     }
 
 
-    func moveOut(selectionOnly: Bool, extreme: Bool, persist: Bool) {
+    func moveOut(selectionOnly: Bool, extreme: Bool, persistently: Bool) {
         if let                              zone: Zone = selectionManager.firstGrabbableZone {
             var                             parentZone = zone.parentZone
 
@@ -463,12 +503,7 @@ class ZEditingManager: NSObject {
 
                 parentZone?.children.remove(at: index!)
                 grandParentZone.recomputeOrderingUponInsertionAt(insert)
-
-                if persist {
-                    controllersManager.saveAndUpdateFor(grandParentZone)
-                } else {
-                    controllersManager.signal(grandParentZone, regarding: .data)
-                }
+                saveAfterMoveWithin(grandParentZone, persistently: persistently)
             }
         }
     }

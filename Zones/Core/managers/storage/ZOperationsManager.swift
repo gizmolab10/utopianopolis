@@ -149,7 +149,9 @@ class ZOperationsManager: NSObject {
 
             onReady = nil
         }
-        
+
         operation.finish()
+
+        editingManager.callOnReady()
     }
 }
