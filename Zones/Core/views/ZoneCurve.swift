@@ -102,9 +102,10 @@ class ZoneCurve: ZView {
 
             let rect = CGRect(x: dirtyRect.minX, y: y, width: dirtyRect.size.width * 2.0 + dragHalfWidth , height: (dirtyRect.size.height + toggleHalfHeight) * 2.0 )
             let path = ZBezierPath(ovalIn: rect)
+            let color = (child?.widgetZone.isBookmark)! ? bookmarkColor : lineColor
 
             ZColor.clear.setFill()
-            lineColor.setStroke()
+            color.setStroke()
             path.lineWidth = lineThicknes
             path.flatness = 0.0001
             path.stroke()

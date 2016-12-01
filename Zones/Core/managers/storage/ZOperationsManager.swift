@@ -152,6 +152,6 @@ class ZOperationsManager: NSObject {
 
         operation.finish()
 
-        editingManager.callOnReady()
+        editingManager.handleDeferredEvents()
     }
 }

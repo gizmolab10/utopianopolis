@@ -14,21 +14,18 @@ import CloudKit
 class Zone : ZRecord {
 
 
-    dynamic var    cloudZone:      String?
     dynamic var     zoneName:      String?
-    dynamic var     crossRef: CKReference?
+    dynamic var    crossLink:     ZRecord?
     dynamic var       parent: CKReference?
     dynamic var    zoneOrder:    NSNumber?
     dynamic var showSubzones:    NSNumber?
     var             children:       [Zone] = []
     var          _parentZone:        Zone?
+    var           isBookmark:         Bool { get { return crossLink != nil } }
 
 
     // MARK:- properties
     // MARK:-
-
-
-    var crossLink: Zone? { get { return nil } } // compute from cross ref and cloud zone
 
 
     var order: Double {

@@ -35,7 +35,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    var events: [ZoneEvent] = []
+    var deferredEvents: [ZoneEvent] = []
     var previousEvent: ZEvent?
     var asTask: Bool { get { return editMode == .task } }
 
@@ -44,9 +44,9 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func callOnReady() {
-        while events.count != 0 {
-            let event = events.remove(at: 0)
+    func handleDeferredEvents() {
+        while deferredEvents.count != 0 {
+            let event = deferredEvents.remove(at: 0)
 
             handleKey(event.event!, isWindow: event.isWindow)
         }
@@ -55,8 +55,8 @@ class ZEditingManager: NSObject {
 
     @discardableResult func handleKey(_ event: ZEvent, isWindow: Bool) -> Bool {
         if !operationsManager.isReady {
-            if events.count < 1 {
-                events.append(ZoneEvent(event, iIsWindow: isWindow))
+            if deferredEvents.count < 1 {
+                deferredEvents.append(ZoneEvent(event, iIsWindow: isWindow))
             }
         } else if event == previousEvent {
             return true
@@ -144,6 +144,12 @@ class ZEditingManager: NSObject {
                             }
                             
                             break
+                        case "t":
+                            if isCommand, let zone = selectionManager.firstGrabbableZone {
+                                travelManager.hereZone = zone
+                                controllersManager.signal(nil, regarding: .data)
+                            }
+                            break
                         default:
                             
                             break
@@ -214,12 +220,14 @@ class ZEditingManager: NSObject {
     }
 
 
+    // this is currently not being called
+    
     func addParentTo(_ zone: Zone?) {
         if let grandParentZone = zone?.parentZone {
             addZoneTo(grandParentZone, onCompletion: { (parentZone) -> (Void) in
                 selectionManager.currentlyGrabbedZones = [zone!]
 
-                self.actuallyMove(zone!, forceIntoNew: true, persistently: false)
+                // self.actuallyMove(zone!, forceIntoNew: true, persistently: false)
                 self.dispatchAsyncInForegroundAfter(0.5, closure: { () -> (Void) in
                     operationsManager.isReady = true
 
@@ -404,7 +412,7 @@ class ZEditingManager: NSObject {
     func moveInto(selectionOnly: Bool, extreme: Bool, persistently: Bool) {
         if let                                  zone: Zone = selectionManager.firstGrabbableZone {
             if !selectionOnly {
-                actuallyMove(zone, forceIntoNew: false, persistently: persistently)
+                actuallyMove(zone, persistently: persistently)
             } else {
                 if zone.children.count > 0 {
                     let                           saveThis = !zone.showChildren
@@ -416,7 +424,7 @@ class ZEditingManager: NSObject {
                     } else {
                         controllersManager.signal(zone.parentZone, regarding: .data)
                     }
-                } else if travelManager.storageMode == .bookmarks && zone.cloudZone != nil {
+                } else if travelManager.storageMode == .bookmarks && zone.isBookmark {
                     travelManager.travelWhereThisZonePoints(zone, atArrival: { (object, kind) -> (Void) in
                         if let _: Zone = object as? Zone {
                             selectionManager.currentlyGrabbedZones = [zone]
@@ -430,11 +438,11 @@ class ZEditingManager: NSObject {
     }
 
 
-    func actuallyMove(_ zone: Zone, forceIntoNew: Bool, persistently: Bool) {
+    func actuallyMove(_ zone: Zone, persistently: Bool) {
         if travelManager.storageMode        != .bookmarks, let parentZone = zone.parentZone {
             let siblings                     = parentZone.children
 
-            if let                     index = forceIntoNew ? (asTask ? 0 : (siblings.count - 1)) : siblings.index(of: zone) {
+            if let                     index = siblings.index(of: zone) {
                 let              cousinIndex = index == 0 ? 1 : index - 1
 
                 if cousinIndex             >= 0 && cousinIndex < siblings.count {
@@ -481,6 +489,8 @@ class ZEditingManager: NSObject {
                     return
                 } else if extreme {
                     parentZone                         = travelManager.hereZone
+                } else if zone == travelManager.hereZone {
+                    travelManager.hereZone = parentZone
                 }
 
                 selectionManager.currentlyGrabbedZones = [parentZone!]

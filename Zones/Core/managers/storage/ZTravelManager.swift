@@ -88,7 +88,7 @@ class ZTravelManager: NSObject {
         let        zone = Zone(record: nil, storageMode: storageMode)
         zone.parentZone = hereZone
         zone.zoneName   = name
-        zone.cloudZone  = name
+        zone.crossLink  = ZRecord(record: nil, storageMode: ZStorageMode(rawValue: name))
 
         hereZone.children.append(zone)
     }
@@ -105,7 +105,7 @@ class ZTravelManager: NSObject {
 
     func travelWhereThisZonePoints(_ zone: Zone, atArrival: @escaping SignalClosure) {
         if storageMode == .bookmarks {
-            if zone.cloudZone != nil, let mode = ZStorageMode(rawValue: zone.cloudZone!) {
+            if zone.isBookmark, let mode = zone.crossLink?.storageMode {
                 storageMode = mode // going in arrow to right
 
                 travel {
