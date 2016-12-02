@@ -14,23 +14,41 @@ import CloudKit
 class ZBookmarksManager: NSObject {
 
 
-    var             ckzones:                          [Zone] = []
-    var           bookmarks:                          [Zone] = []
-    var recordZonesByZoneID: [CKRecordZoneID : CKRecordZone] = [:]
+    let storageZone:  Zone! = Zone(record: nil, storageMode: .bookmarks)
+    var  cloudzones: [Zone] = []
+    var   bookmarks: [Zone] = []
 
 
-    func setupWithDict(_ dict: [CKRecordZoneID : CKRecordZone]) {
-        recordZonesByZoneID = dict
+    func setup() {
+        storageZone.showChildren = true
+        storageZone.zoneName     = "bookmarks"
 
-        addCKZone("mine",     storageMode: .mine)
-        addCKZone("everyone", storageMode: .everyone)
+        setupCloudZonesForAccessToStorage()
     }
 
 
-    func addCKZone(_ name: String, storageMode: ZStorageMode) {
-        let      zone = Zone(record: nil, storageMode: storageMode)
-        zone.zoneName = name
+    func setupCloudZonesForAccessToStorage() {
+        addCloudZone("everyone", storageMode: .everyone)
+        addCloudZone("mine",     storageMode: .mine)
+    }
 
-        ckzones.append(zone)
+
+    func addCloudZone(_ name: String, storageMode: ZStorageMode) { // KLUDGE, perhaps use ordered set or dictionary
+        let        zone = Zone(record: nil, storageMode: storageMode)
+        zone.zoneName   = name
+
+        addNewBookmarkFor(zone)
+    }
+
+    
+    @discardableResult func addNewBookmarkFor(_ zone: Zone) -> Zone {
+        let        bookmark = Zone(record: nil, storageMode: .bookmarks)
+        bookmark.parentZone = storageZone
+        bookmark.zoneName   = zone.zoneName
+        bookmark.crossLink  = zone
+
+        storageZone.children.append(bookmark)
+
+        return bookmark
     }
 }

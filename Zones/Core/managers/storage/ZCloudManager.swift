@@ -53,7 +53,8 @@ class ZCloudManager: NSObject {
     func fetchCloudZones(_ onCompletion: (() -> Swift.Void)?) {
         container = CKContainer(identifier: cloudID)
 
-        travelManager.setup()
+        bookmarksManager.setup()
+        travelManager   .setup()
 
         if let                              operation = configure(CKFetchRecordZonesOperation()) as? CKFetchRecordZonesOperation {
             operation.fetchRecordZonesCompletionBlock = { (recordZonesByZoneID, operationError) -> Swift.Void in
@@ -191,14 +192,12 @@ class ZCloudManager: NSObject {
             var parentsNeedingResort: [Zone] = []
             let                    predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
             operation.query                  = CKQuery(recordType: zoneTypeKey, predicate: predicate)
-            operation.desiredKeys            = ["showSubzones", "zoneOrder", "zoneName", "parent"]
+            operation.desiredKeys            = Zone.cloudProperties()
             operation.recordFetchedBlock     = { iRecord -> Swift.Void in
                 var zone = self.objectForRecordID(iRecord.recordID) as! Zone?
 
                 if zone == nil {
                     zone = Zone(record: iRecord, storageMode: travelManager.storageMode)
-
-                    self.registerObject(zone!)
                 }
 
                 zone?.updateZoneProperties()
@@ -308,8 +307,8 @@ class ZCloudManager: NSObject {
     
 
     func registerObject(_ object: ZRecord) {
-        if object.record != nil {
-            records[object.record.recordID] = object
+        if let record = object.record {
+            records[record.recordID] = object
         }
     }
 
@@ -317,7 +316,9 @@ class ZCloudManager: NSObject {
     func objectForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
         if recordID == nil { return nil }
 
-        return records[recordID!]
+        let record = records[recordID!]
+
+        return record
     }
 
 
@@ -346,8 +347,6 @@ class ZCloudManager: NSObject {
                 zone?.record = iRecord
             } else {
                 zone = Zone(record: iRecord, storageMode: travelManager.storageMode)
-
-                self.registerObject(zone!)
             }
 
             zone?.needsChildren()

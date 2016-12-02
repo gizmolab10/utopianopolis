@@ -24,8 +24,6 @@ class ZTravelManager: NSObject {
 
     var    hereZone:  Zone!
     var storageZone:  Zone!
-    var  cloudzones: [Zone] = []
-    var   bookmarks: [Zone] = []
     let         key: String = "current storage mode"
 
 
@@ -48,21 +46,15 @@ class ZTravelManager: NSObject {
     }
 
 
-    func setupBookmarks() {
-        if storageMode == .bookmarks {
-            hereZone.showChildren = true
-            hereZone.zoneName     = "bookmarks"
-
-            setupCloudZonesForAccessToStorage()
-        }
-    }
-
-
     func setup() {
-        storageZone = Zone(record: nil, storageMode: storageMode)
-        hereZone    = storageZone
+        switch storageMode {
+        case .bookmarks:
+            storageZone = bookmarksManager.storageZone
+        default:
+            storageZone = Zone(record: nil, storageMode: storageMode)
+        }
 
-        setupBookmarks()
+        hereZone        = storageZone
     }
 
 
@@ -78,22 +70,6 @@ class ZTravelManager: NSObject {
     // MARK:-
 
 
-    func setupCloudZonesForAccessToStorage() {
-        addCloudZone("everyone", storageMode: .everyone)
-        addCloudZone("mine",     storageMode: .mine)
-    }
-
-
-    func addCloudZone(_ name: String, storageMode: ZStorageMode) { // KLUDGE, perhaps use ordered set or dictionary
-        let        zone = Zone(record: nil, storageMode: storageMode)
-        zone.parentZone = hereZone
-        zone.zoneName   = name
-        zone.crossLink  = ZRecord(record: nil, storageMode: ZStorageMode(rawValue: name))
-
-        hereZone.children.append(zone)
-    }
-
-
     func indexOfMode(_ mode: ZStorageMode) -> Int { // KLUDGE, perhaps use ordered set or dictionary
         switch mode {
         case .mine:     return  1
@@ -104,12 +80,14 @@ class ZTravelManager: NSObject {
 
 
     func travelWhereThisZonePoints(_ zone: Zone, atArrival: @escaping SignalClosure) {
-        if storageMode == .bookmarks {
-            if zone.isBookmark, let mode = zone.crossLink?.storageMode {
+        if zone.isBookmark {
+            if let link = zone.crossLink, let mode = link.storageMode {
                 storageMode = mode // going in arrow to right
 
                 travel {
-                    atArrival(self.hereZone, .data)
+                    let zone = link.record == nil ? self.hereZone : cloudManager.objectForRecordID(link.record.recordID)
+
+                    atArrival(zone, .data)
                 }
             }
         } else if zone.parentZone == nil {
@@ -120,7 +98,7 @@ class ZTravelManager: NSObject {
             travel {
                 var zone = self.hereZone
 
-                if index < (zone?.children.count)! {
+                if index >= 0 && index < (zone?.children.count)! {
                     zone =  zone?.children[index]
                 }
 

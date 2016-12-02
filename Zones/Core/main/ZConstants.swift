@@ -26,6 +26,7 @@ let userTouchLength: CGFloat = 33.0
 let      widgetFont:   ZFont = ZFont.systemFont(ofSize: fontSize)
 let       controllersManager = ZControllersManager()
 let        operationsManager = ZOperationsManager()
+let         bookmarksManager = ZBookmarksManager()
 let         selectionManager = ZSelectionManager()
 let           widgetsManager = ZWidgetsManager()
 let           editingManager = ZEditingManager()

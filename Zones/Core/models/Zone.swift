@@ -15,7 +15,7 @@ class Zone : ZRecord {
 
 
     dynamic var     zoneName:      String?
-    dynamic var    crossLink:     ZRecord?
+    dynamic var     zoneLink:      String?
     dynamic var       parent: CKReference?
     dynamic var    zoneOrder:    NSNumber?
     dynamic var showSubzones:    NSNumber?
@@ -26,6 +26,33 @@ class Zone : ZRecord {
 
     // MARK:- properties
     // MARK:-
+
+
+    var crossLink: ZRecord? {
+        get {
+            if zoneLink == nil {
+                return nil
+            } else {
+                let components: [String] = (zoneLink?.components(separatedBy: ":"))!
+                let refString:   String  = components[2]
+                let refID:   CKRecordID? = refString == "" ? nil : CKRecordID(recordName: refString)
+                let reference: CKRecord? = refID == nil ? nil : CKRecord(recordType: zoneTypeKey, recordID: refID!)
+                let mode:  ZStorageMode? = ZStorageMode(rawValue: components[0])
+
+                return ZRecord(record: reference, storageMode: mode)
+            }
+        }
+
+        set {
+            if newValue == nil {
+                zoneLink = nil
+            } else {
+                let    hasRef = newValue != nil && newValue!.record != nil
+                let reference = !hasRef ? "" : newValue!.record.recordID.recordName
+                zoneLink      = "\(newValue!.storageMode!.rawValue)::\(reference)"
+            }
+        }
+    }
 
 
     var order: Double {
@@ -79,11 +106,11 @@ class Zone : ZRecord {
             if parent == nil && _parentZone?.record != nil {
                 needsSave()
 
-                parent          = CKReference(record: (_parentZone?.record)!, action: .none)
+                parent      = CKReference(record: (_parentZone?.record)!, action: .none)
             }
 
-            if parent != nil {
-                _parentZone = cloudManager.objectForRecordID((parent?.recordID)!) as? Zone
+            if parent != nil && _parentZone == nil {
+                _parentZone = cloudManager.objectForRecordID((parent?.recordID)!) as? Zone // sometimes yields nil ... WHY?
             }
 
             return _parentZone
@@ -99,8 +126,13 @@ class Zone : ZRecord {
     }
 
 
+    class func cloudProperties() -> [String] {
+        return [#keyPath(parent), #keyPath(zoneName), #keyPath(zoneLink), #keyPath(zoneOrder), #keyPath(showSubzones)]
+    }
+
+
     override func cloudProperties() -> [String] {
-        return super.cloudProperties() + [#keyPath(zoneName), #keyPath(parent), #keyPath(zoneOrder), #keyPath(showSubzones)]
+        return super.cloudProperties() + Zone.cloudProperties()
     }
 
 
@@ -186,8 +218,8 @@ class Zone : ZRecord {
 
 
     func siblingIndex() -> Int {
-        if let progeny: [Zone] = parentZone?.children {
-            if let index = progeny.index(of: self) {
+        if let siblings: [Zone] = parentZone?.children {
+            if let index = siblings.index(of: self) {
                 return index
             }
         }

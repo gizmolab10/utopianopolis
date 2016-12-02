@@ -113,7 +113,7 @@ class ZEditingManager: NSObject {
 
                             return true
                         case " ":
-                            if isWindow || isOption {
+                            if isWindow || isOption && !widget.widgetZone.isBookmark {
                                 addZoneTo(widget.widgetZone)
 
                                 return true
@@ -142,13 +142,28 @@ class ZEditingManager: NSObject {
                                 
                                 return true
                             }
-                            
+
+                            break
+                        case "b":
+                            if isCommand, let zone = selectionManager.firstGrabbableZone {
+                                bookmarksManager.addNewBookmarkFor(zone)
+                            }
+
                             break
                         case "t":
                             if isCommand, let zone = selectionManager.firstGrabbableZone {
-                                travelManager.hereZone = zone
-                                controllersManager.signal(nil, regarding: .data)
+                                if zone.isBookmark {
+                                    travelManager.travelWhereThisZonePoints(zone, atArrival: { (object, kind) -> (Void) in
+                                        travelManager.hereZone = object as! Zone!
+
+                                        controllersManager.signal(nil, regarding: .data)
+                                    })
+                                } else {
+                                    travelManager.hereZone = zone
+                                    controllersManager.signal(nil, regarding: .data)
+                                }
                             }
+
                             break
                         default:
                             
@@ -227,7 +242,7 @@ class ZEditingManager: NSObject {
             addZoneTo(grandParentZone, onCompletion: { (parentZone) -> (Void) in
                 selectionManager.currentlyGrabbedZones = [zone!]
 
-                // self.actuallyMove(zone!, forceIntoNew: true, persistently: false)
+                // self.actuallyMoveInto(zone!, forceIntoNew: true, persistently: false)
                 self.dispatchAsyncInForegroundAfter(0.5, closure: { () -> (Void) in
                     operationsManager.isReady = true
 
@@ -239,25 +254,25 @@ class ZEditingManager: NSObject {
     }
 
 
-    func addZoneTo(_ parentZone: Zone?, onCompletion: ObjectClosure?) {
-        if parentZone != nil && travelManager.storageMode != .bookmarks {
+    func addZoneTo(_ zone: Zone?, onCompletion: ObjectClosure?) {
+        if zone != nil && travelManager.storageMode != .bookmarks {
             let record = CKRecord(recordType: zoneTypeKey)
-            let   zone = Zone(record: record, storageMode: travelManager.storageMode)
-            let insert = asTask ? 0 : (parentZone?.children.count)!
+            let   child = Zone(record: record, storageMode: travelManager.storageMode)
+            let insert = asTask ? 0 : (zone?.children.count)!
 
-            widgetsManager.widgetForZone(parentZone!)?.textField.resignFirstResponder()
+            widgetsManager.widgetForZone(zone!)?.textField.resignFirstResponder()
 
             if asTask {
-                parentZone?.children.insert(zone, at: 0)
+                zone?.children.insert(child, at: 0)
             } else {
-                parentZone?.children.append(zone)
+                zone?.children.append(child)
             }
 
-            zone.parentZone          = parentZone
-            parentZone?.showChildren = true
+            child.parentZone   = zone
+            zone?.showChildren = true
 
-            parentZone?.recomputeOrderingUponInsertionAt(insert)
-            onCompletion?(zone)
+            zone?.recomputeOrderingUponInsertionAt(insert)
+            onCompletion?(child)
         }
     }
 
@@ -396,7 +411,7 @@ class ZEditingManager: NSObject {
                             selectionManager.currentlyGrabbedZones = [siblings[newIndex]]
 
                             controllersManager.signal(parentZone, regarding: .data)
-                        } else if travelManager.storageMode != .bookmarks {
+                        } else {
                             parentZone.children.remove(at: index)
                             parentZone.children.insert(zone, at:newIndex)
                             parentZone.recomputeOrderingUponInsertionAt(newIndex)
@@ -412,7 +427,7 @@ class ZEditingManager: NSObject {
     func moveInto(selectionOnly: Bool, extreme: Bool, persistently: Bool) {
         if let                                  zone: Zone = selectionManager.firstGrabbableZone {
             if !selectionOnly {
-                actuallyMove(zone, persistently: persistently)
+                actuallyMoveInto(zone, persistently: persistently)
             } else {
                 if zone.children.count > 0 {
                     let                           saveThis = !zone.showChildren
@@ -422,12 +437,12 @@ class ZEditingManager: NSObject {
                     if saveThis {
                         controllersManager.saveAndUpdateFor(nil)
                     } else {
-                        controllersManager.signal(zone.parentZone, regarding: .data)
+                        controllersManager.signal(nil, regarding: .data)
                     }
-                } else if travelManager.storageMode == .bookmarks && zone.isBookmark {
+                } else if zone.isBookmark {
                     travelManager.travelWhereThisZonePoints(zone, atArrival: { (object, kind) -> (Void) in
-                        if let _: Zone = object as? Zone {
-                            selectionManager.currentlyGrabbedZones = [zone]
+                        if let arrival: Zone = object as? Zone {
+                            travelManager.hereZone = arrival
 
                             controllersManager.signal(nil, regarding: .data)
                         }
@@ -438,37 +453,53 @@ class ZEditingManager: NSObject {
     }
 
 
-    func actuallyMove(_ zone: Zone, persistently: Bool) {
-        if travelManager.storageMode        != .bookmarks, let parentZone = zone.parentZone {
-            let siblings                     = parentZone.children
+    func actuallyMoveInto(_ zone: Zone, persistently: Bool) {
+        if let           parentZone = zone.parentZone {
+            let siblings            = parentZone.children
 
-            if let                     index = siblings.index(of: zone) {
-                let              cousinIndex = index == 0 ? 1 : index - 1
+            if let            index = siblings.index(of: zone) {
+                let     cousinIndex = index == 0 ? 1 : index - 1
 
-                if cousinIndex             >= 0 && cousinIndex < siblings.count {
-                    let          siblingZone = siblings[cousinIndex]
-                    zone.parentZone          = siblingZone
-                    siblingZone.showChildren = true
-                    var               insert = 0
+                if cousinIndex     >= 0 && cousinIndex < siblings.count {
+                    let siblingZone = siblings[cousinIndex]
 
-                    parentZone.children.remove(at: index)
-                    parentZone .needsSave()
-                    zone       .needsSave()
-                    siblingZone.needsSave()
+                    parentZone.removeChild(zone)
+                    parentZone.needsSave()
 
-                    if asTask {
-                        siblingZone.children.insert(zone, at: 0)
+                    if !siblingZone.isBookmark {
+                        moveZone(zone, into: siblingZone)
+                        saveAfterMoveWithin(parentZone, persistently: persistently)
                     } else {
-                        insert = siblingZone.children.count
+                        travelManager.travelWhereThisZonePoints(siblingZone, atArrival: { (object, kind) -> (Void) in
+                            let      arrival = object as! Zone
+                            zone.record      = CKRecord(recordType: zoneTypeKey)
+                            zone.storageMode = travelManager.storageMode
 
-                        siblingZone.children.append(zone)
+                            self.moveZone(zone, into: arrival)
+                            self.saveAfterMoveWithin(nil, persistently: persistently)
+                        })
                     }
-
-                    siblingZone.recomputeOrderingUponInsertionAt(insert)
-                    saveAfterMoveWithin(parentZone, persistently: persistently)
                 }
             }
         }
+    }
+
+
+    func moveZone(_ zone: Zone, into: Zone) {
+        zone.parentZone   = into
+        into.showChildren = true
+        let        insert = asTask ? 0 : into.children.count
+
+        zone.needsSave()
+        into.needsSave()
+
+        if asTask {
+            into.children.insert(zone, at: 0)
+        } else {
+            into.children.append(zone)
+        }
+
+        into.recomputeOrderingUponInsertionAt(insert)
     }
 
 
@@ -488,31 +519,24 @@ class ZEditingManager: NSObject {
 
                     return
                 } else if extreme {
-                    parentZone                         = travelManager.hereZone
+                    parentZone                         = travelManager.storageZone
+                    travelManager.hereZone             = parentZone
                 } else if zone == travelManager.hereZone {
-                    travelManager.hereZone = parentZone
+                    travelManager.hereZone             = parentZone
                 }
 
                 selectionManager.currentlyGrabbedZones = [parentZone!]
 
                 controllersManager.signal(parentZone, regarding: .data)
             } else if travelManager.storageMode != .bookmarks, let grandParentZone = parentZone?.parentZone {
-                let                              index = parentZone?.children.index(of: zone)
-                let                             insert = asTask ? 0 : grandParentZone.children.count
-                zone.parentZone                        = grandParentZone
+                parentZone?.removeChild(zone)
+                parentZone?.needsSave()
 
-                grandParentZone.needsSave()
-                parentZone?    .needsSave()
-                zone           .needsSave()
-
-                if asTask {
-                    grandParentZone.children.insert(zone, at: 0)
-                } else {
-                    grandParentZone.children.append(zone)
+                if travelManager.hereZone == parentZone {
+                    travelManager.hereZone = grandParentZone
                 }
 
-                parentZone?.children.remove(at: index!)
-                grandParentZone.recomputeOrderingUponInsertionAt(insert)
+                moveZone(zone, into: grandParentZone)
                 saveAfterMoveWithin(grandParentZone, persistently: persistently)
             }
         }
