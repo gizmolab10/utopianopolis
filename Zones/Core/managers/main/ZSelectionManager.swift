@@ -82,7 +82,7 @@ class ZSelectionManager: NSObject {
                 grabbable = currentlyGrabbedZones[0]
             }
 
-            if grabbable == nil || (grabbable?.parentZone != nil && travelManager.storageMode != grabbable?.parentZone?.storageMode) {
+            if grabbable == nil { // || (grabbable?.parentZone != nil && travelManager.storageMode != grabbable?.parentZone?.storageMode) {
                 grabbable = travelManager.hereZone
             }
 

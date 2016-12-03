@@ -20,7 +20,7 @@ class ZToolsViewController: ZGenericViewController {
 
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-        totalCountLabel?.text = "zones: \(cloudManager.records.count)"
+        totalCountLabel?.text = "zones: \(cloudManager.zones.count)"
     }
 
     

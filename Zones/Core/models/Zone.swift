@@ -28,6 +28,15 @@ class Zone : ZRecord {
     // MARK:-
 
 
+    class func cloudProperties() -> [String] {
+        return [#keyPath(parent),
+                #keyPath(zoneName),
+                #keyPath(zoneLink),
+                #keyPath(zoneOrder),
+                #keyPath(showSubzones)]
+    }
+
+
     var crossLink: ZRecord? {
         get {
             if zoneLink == nil {
@@ -104,13 +113,13 @@ class Zone : ZRecord {
     var parentZone: Zone? {
         get {
             if parent == nil && _parentZone?.record != nil {
-                needsSave()
+                needSave()
 
                 parent      = CKReference(record: (_parentZone?.record)!, action: .none)
             }
 
             if parent != nil && _parentZone == nil {
-                _parentZone = cloudManager.objectForRecordID((parent?.recordID)!) as? Zone // sometimes yields nil ... WHY?
+                _parentZone = cloudManager.zoneForRecordID((parent?.recordID)!) // sometimes yields nil ... WHY?
             }
 
             return _parentZone
@@ -126,8 +135,8 @@ class Zone : ZRecord {
     }
 
 
-    class func cloudProperties() -> [String] {
-        return [#keyPath(parent), #keyPath(zoneName), #keyPath(zoneLink), #keyPath(zoneOrder), #keyPath(showSubzones)]
+    override func register() {
+        cloudManager.registerZone(self)
     }
 
 
@@ -154,12 +163,11 @@ class Zone : ZRecord {
     override func updateCloudProperties() {
         if record != nil {
             for keyPath in cloudProperties() {
-                if let cloudValue = record[keyPath] as! NSObject? {
-                    let propertyValue = value(forKeyPath: keyPath) as! NSObject?
+                let    cloudValue = record[keyPath] as! NSObject?
+                let propertyValue = value(forKeyPath: keyPath) as! NSObject?
 
-                    if propertyValue != nil && propertyValue != cloudValue {
-                        record[keyPath] = propertyValue as? CKRecordValue
-                    }
+                if propertyValue != nil && propertyValue != cloudValue {
+                    record[keyPath] = propertyValue as? CKRecordValue
                 }
             }
         }

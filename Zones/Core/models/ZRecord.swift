@@ -45,7 +45,7 @@ class ZRecord: NSObject {
                 if _record == nil {
                     recordState.insert(.needsCreate)
                 } else {
-                    cloudManager.registerObject(self)
+                    register()
                 }
 
                 updateZoneProperties()
@@ -87,6 +87,7 @@ class ZRecord: NSObject {
     // MARK:-
 
 
+    func register() {}
     func updateZoneProperties() {}
     func updateCloudProperties() {}
     func cloudProperties() -> [String] { return [] }
@@ -100,7 +101,7 @@ class ZRecord: NSObject {
         }
 
         recordState.remove(.needsMerge)
-        needsSave()
+        needSave()
 
         record = iRecord
     }
@@ -141,17 +142,17 @@ class ZRecord: NSObject {
     // MARK:-
 
 
-    func needsSave() {
+    func needSave() {
         recordState.insert(.needsSave)
     }
 
 
-    func needsFetch() {
+    func needFetch() {
         recordState.insert(.needsFetch)
     }
 
 
-    func needsChildren() {
+    func needChildren() {
         recordState.insert(.needsChildren)
     }
 

@@ -80,29 +80,37 @@ class ZTravelManager: NSObject {
 
 
     func travelWhereThisZonePoints(_ zone: Zone, atArrival: @escaping SignalClosure) {
+        var there: Zone? = nil
+
         if zone.isBookmark {
             if let link = zone.crossLink, let mode = link.storageMode {
-                storageMode = mode // going in arrow to right
+                if storageMode == mode {
+                    there = cloudManager.zoneForRecordID(link.record.recordID) ?? hereZone
 
-                travel {
-                    let zone = link.record == nil ? self.hereZone : cloudManager.objectForRecordID(link.record.recordID)
+                    atArrival(there, .data)
+                } else {
+                    storageMode = mode // going in arrow to right
 
-                    atArrival(zone, .data)
+                    travel {
+                        there = link.record == nil ? self.hereZone : cloudManager.zoneForRecordID(link.record.recordID) ?? self.hereZone
+
+                        atArrival(there, .data)
+                    }
                 }
             }
         } else if zone.parentZone == nil {
-            let index = indexOfMode(storageMode) // index is a KLUDGE
-
             storageMode = .bookmarks // going out arrow to left
 
-            travel {
-                var zone = self.hereZone
+            let index = indexOfMode(storageMode) // index is a KLUDGE
 
-                if index >= 0 && index < (zone?.children.count)! {
-                    zone =  zone?.children[index]
+            travel {
+                there = self.hereZone
+
+                if index >= 0 && index < (there?.children.count)! {
+                    there = there?.children[index]
                 }
 
-                atArrival(zone, .data)
+                atArrival(there, .data)
             }
         }
     }

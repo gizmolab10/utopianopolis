@@ -12,7 +12,7 @@ import CloudKit
 
 
 class ZCloudManager: NSObject {
-    var        records:          [CKRecordID : ZRecord] = [:]
+    var          zones: [CKRecordID     :         Zone] = [:]
     var cloudZonesByID: [CKRecordZoneID : CKRecordZone] = [:]
     var      container:                    CKContainer!
     var      currentDB:                     CKDatabase? { get { return databaseForMode(travelManager.storageMode) }     }
@@ -42,7 +42,7 @@ class ZCloudManager: NSObject {
 
 
     func clear() {
-        records.removeAll()
+        zones.removeAll()
     }
 
 
@@ -81,14 +81,14 @@ class ZCloudManager: NSObject {
             if (operation.recordIDs?.count)! > 0 {
                 operation.completionBlock          = onCompletion
                 operation.perRecordCompletionBlock = { (iRecord, iID, iError) in
-                    let zone = self.objectForRecordID(iID) as? Zone
+                    let zone = self.zoneForRecordID(iID)
 
                     if iRecord != nil {
                         zone?.mergeIntoAndTake(iRecord!)
                     } else if let error: CKError = iError as? CKError {
                         self.reportError(error)
 
-                        zone?.needsSave()
+                        zone?.needSave()
                     }
                 }
 
@@ -111,7 +111,7 @@ class ZCloudManager: NSObject {
                 operation.perRecordCompletionBlock = { (iRecord, iID, iError) in
                     if let error: CKError = iError as? CKError {
                         self.reportError(error)
-                    } else if let zone: Zone = self.objectForRecordID(iID!) as? Zone {
+                    } else if let zone: Zone = self.zoneForRecordID(iID) {
                         zone.recordState.remove(.needsFetch)
 
                         zone.record = iRecord
@@ -129,14 +129,11 @@ class ZCloudManager: NSObject {
 
 
     func royalFlush(_ onCompletion: (() -> Swift.Void)?) {
-        for record in records.values {
-            if !record.recordState.contains(.needsFetch) && !record.recordState.contains(.needsSave) && !record.recordState.contains(.needsCreate) {
-                record.recordState.insert(.needsMerge)
-
-                let zone = record as? Zone
-
-                zone?.normalizeOrdering()
-                zone?.updateCloudProperties()
+        for zone in zones.values {
+            if !zone.recordState.contains(.needsFetch) && !zone.recordState.contains(.needsSave) && !zone.recordState.contains(.needsCreate) {
+                zone.recordState.insert(.needsMerge)
+                zone.normalizeOrdering()
+                zone.updateCloudProperties()
             }
         }
 
@@ -157,8 +154,8 @@ class ZCloudManager: NSObject {
                         var description:    String = info["ServerErrorDescription"] as! String
 
                         if  description           != "record to insert already exists" {
-                            if let zone            = self.objectForRecordID((iRecord?.recordID)!) {
-                                zone.needsFetch()
+                            if let zone            = self.zoneForRecordID((iRecord?.recordID)!) {
+                                zone.needFetch()
                             }
 
                             if let name            = iRecord?["zoneName"] as! String? {
@@ -169,7 +166,7 @@ class ZCloudManager: NSObject {
                         }
                     }
 
-                    if let zone: Zone = self.objectForRecordID((iRecord?.recordID)!) as? Zone {
+                    if let zone = self.zoneForRecordID((iRecord?.recordID)!) {
                         zone.recordState.remove(.needsCreate)
                         zone.recordState.remove(.needsSave)
                     }
@@ -194,14 +191,14 @@ class ZCloudManager: NSObject {
             operation.query                  = CKQuery(recordType: zoneTypeKey, predicate: predicate)
             operation.desiredKeys            = Zone.cloudProperties()
             operation.recordFetchedBlock     = { iRecord -> Swift.Void in
-                var zone = self.objectForRecordID(iRecord.recordID) as! Zone?
+                var zone = self.zoneForRecordID(iRecord.recordID)
 
                 if zone == nil {
                     zone = Zone(record: iRecord, storageMode: travelManager.storageMode)
                 }
 
                 zone?.updateZoneProperties()
-                zone?.needsChildren()
+                zone?.needChildren()
 
                 if let parent = zone?.parentZone {
                     if !parent.children.contains(zone!) {
@@ -249,9 +246,9 @@ class ZCloudManager: NSObject {
         var identifiers: [CKRecordID] = []
 
         findRecordsMatching(states) { (object) -> (Void) in
-            let record:       ZRecord = object as! ZRecord
+            let zone: Zone = object as! Zone
 
-            identifiers.append(record.record.recordID)
+            identifiers.append(zone.record.recordID)
         }
 
         return identifiers
@@ -262,9 +259,9 @@ class ZCloudManager: NSObject {
         var objects: [CKRecord] = []
 
         findRecordsMatching(states) { (object) -> (Void) in
-            let record: ZRecord = object as! ZRecord
+            let zone: Zone = object as! Zone
 
-            objects.append(record.record)
+            objects.append(zone.record)
         }
 
         return objects
@@ -275,11 +272,11 @@ class ZCloudManager: NSObject {
         var references:  [CKReference] = []
 
         findRecordsMatching(states) { (object) -> (Void) in
-            let record:        ZRecord = object as! ZRecord
-            let reference: CKReference = CKReference(recordID: record.record.recordID, action: .none)
+            let zone:             Zone = object as! Zone
+            let reference: CKReference = CKReference(recordID: zone.record.recordID, action: .none)
 
             for state in states {
-                record.recordState.remove(state)
+                zone.recordState.remove(state)
             }
 
             references.append(reference)
@@ -290,35 +287,35 @@ class ZCloudManager: NSObject {
 
 
     func findRecordsMatching(_ states: [ZRecordState], onEach: ObjectClosure) {
-        for record: ZRecord in records.values {
+        for zone in zones.values {
             var matches = false
 
             for state in states {
-                if record.recordState.contains(state) {
+                if zone.recordState.contains(state) {
                     matches = true
                 }
             }
 
             if matches {
-                onEach(record)
+                onEach(zone)
             }
         }
     }
     
 
-    func registerObject(_ object: ZRecord) {
-        if let record = object.record {
-            records[record.recordID] = object
+    func registerZone(_ zone: Zone) {
+        if let record = zone.record {
+            zones[record.recordID] = zone
         }
     }
 
 
-    func objectForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
-        if recordID == nil { return nil }
+    func zoneForRecordID(_ recordID: CKRecordID?) -> Zone? {
+        if recordID == nil {
+            return nil
+        }
 
-        let record = records[recordID!]
-
-        return record
+        return zones[recordID!]
     }
 
 
@@ -329,8 +326,8 @@ class ZCloudManager: NSObject {
             if record != nil {
                 travelManager.hereZone.record = record
 
-                travelManager.hereZone.needsFetch()
-                travelManager.hereZone.needsChildren()
+                travelManager.hereZone.needFetch()
+                travelManager.hereZone.needChildren()
             }
 
             block?()
@@ -341,7 +338,7 @@ class ZCloudManager: NSObject {
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
         assureRecordExists(withRecordID: recordID, onCompletion: { (iRecord: CKRecord) -> (Void) in
-            var zone: Zone? = self.objectForRecordID(iRecord.recordID) as! Zone?
+            var zone = self.zoneForRecordID(iRecord.recordID)
 
             if  zone != nil {
                 zone?.record = iRecord
@@ -349,7 +346,7 @@ class ZCloudManager: NSObject {
                 zone = Zone(record: iRecord, storageMode: travelManager.storageMode)
             }
 
-            zone?.needsChildren()
+            zone?.needChildren()
 
             self.dispatchAsyncInForeground {
                 controllersManager.signal(zone?.parentZone, regarding: .data)
