@@ -45,16 +45,17 @@ class ZoneDot: ZView {
                 make.center.equalTo(innerDot!)
             }
         } else {
-            let radius:    CGFloat = dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
+            let radius:      Float = dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
             shouldHighlight        = asToggle ? !widgetZone.showChildren : selectionManager.isGrabbed(widgetZone)
-            let              color = widgetZone.isBookmark ? bookmarkColor : lineColor
-            zlayer.backgroundColor = (shouldHighlight ? color : unselectedColor).cgColor
+            let      selectedColor = widgetZone.isBookmark ? bookmarkColor : lineColor
+            zlayer.backgroundColor = (shouldHighlight ? selectedColor : unselectedColor).cgColor
 
-            addBorder(thickness: lineThicknes, radius: radius, color: color.cgColor)
+            addBorder(thickness: CGFloat(lineThicknes), radius: CGFloat(radius), color: selectedColor.cgColor)
             snp.makeConstraints { (make) in
-                let width: CGFloat = asToggle ? dotLength : dotLength * 0.65
+                let          width = CGFloat(asToggle ? dotLength : dotLength * 0.65)
+                let           size = CGSize(width: width, height: CGFloat(dotLength))
 
-                make.size.equalTo(CGSize(width: width, height: dotLength))
+                make.size.equalTo(size)
             }
         }
 

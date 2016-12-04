@@ -35,9 +35,11 @@ class ZoneCurve: ZView {
     override func draw(_ dirtyRect: CGRect) {
         zlayer.backgroundColor = ZColor.clear.cgColor
 
-        updateKind()
-        constrain()
-        drawCurveIn(dirtyRect)
+        if child != nil {
+            updateKind()
+            constrain()
+            drawCurveIn(dirtyRect)
+        }
     }
 
 
@@ -106,7 +108,7 @@ class ZoneCurve: ZView {
 
             ZColor.clear.setFill()
             color.setStroke()
-            path.lineWidth = lineThicknes
+            path.lineWidth = CGFloat(lineThicknes)
             path.flatness = 0.0001
             path.stroke()
         }

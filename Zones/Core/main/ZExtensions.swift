@@ -95,6 +95,12 @@ import CloudKit
     }
 
 
+    extension NSProgressIndicator {
+        func startAnimating() { startAnimation(self) }
+        func  stopAnimating() {  stopAnimation(self) }
+    }
+    
+
 #elseif os(iOS)
 
 
@@ -114,6 +120,7 @@ import CloudKit
     public typealias ZViewController      = UIViewController
     public typealias ZSegmentedControl    = UISegmentedControl
     public typealias ZGestureRecognizer   = UIGestureRecognizer
+    public typealias ZProgressIndicator   = UIActivityIndicatorView
     public typealias ZTextFieldDelegate   = UITextFieldDelegate
     public typealias ZApplicationDelegate = UIApplicationDelegate
 
@@ -121,7 +128,7 @@ import CloudKit
     let zapplication = ZApplication.shared
 
 
-    extension ZApplication {
+    extension UIApplication {
 
         func presentError(_ error: NSError) {}
 
@@ -158,6 +165,11 @@ import CloudKit
     }
 
 
+    extension UISegmentedControl {
+        var selectedSegment: Int { get { return selectedSegmentIndex } }
+    }
+
+
     extension UITextField {
         var isBordered : Bool { get { return borderStyle != .none } set { borderStyle = (newValue ? .line : .none) } }
     }
@@ -191,6 +203,11 @@ typealias ZStorageDict = [String : NSObject]
 extension NSObject {
     func toConsole(_ loggable: Any) {
 //        print(loggable)
+    }
+
+
+    func debugCheck() {
+        travelManager.debugCheck()
     }
 
 

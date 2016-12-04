@@ -61,6 +61,7 @@ class ZEditingManager: NSObject {
         } else if event == previousEvent {
             return true
         } else {
+            #if os(OSX)
             previousEvent = event
             let     flags = event.modifierFlags
             let   isShift = flags.contains(.shift)
@@ -173,6 +174,7 @@ class ZEditingManager: NSObject {
                     }
                 }
             }
+            #endif
         }
         
         return false
@@ -190,10 +192,15 @@ class ZEditingManager: NSObject {
             if !show && noVisibleChildren && selectionManager.isGrabbed(zone!), let parent = zone?.parentZone {
                 selectionManager.currentlyGrabbedZones = [parent]
                 zone?.showChildren                     = false
+                zone?.needSave()
 
                 setChildrenVisibilityTo(show, zone: parent, recursively: recursively)
             } else {
-                zone?.showChildren = show
+                if  zone?.showChildren != show {
+                    zone?.showChildren  = show
+
+                    zone?.needSave()
+                }
 
                 if recursively {
                     for child: Zone in (zone?.children)! {
@@ -319,9 +326,6 @@ class ZEditingManager: NSObject {
             let siblings  = parentZone.children
 
             if var  index = siblings.index(of: zone) {
-                cloudManager.zones.removeValue(forKey: zone.record.recordID)
-                parentZone.children.remove(at: index)
-
                 index = max(0, index - 1)
 
                 if siblings.count > 0 {
@@ -444,6 +448,7 @@ class ZEditingManager: NSObject {
                     travelManager.travelWhereThisZonePoints(zone, atArrival: { (object, kind) -> (Void) in
                         if let there: Zone = object as? Zone {
                             travelManager.hereZone = there
+                            selectionManager.currentlyGrabbedZones = [there]
 
                             controllersManager.signal(nil, regarding: .data)
                         }
@@ -522,11 +527,11 @@ class ZEditingManager: NSObject {
 
 
     func moveOut(selectionOnly: Bool, extreme: Bool, persistently: Bool) {
-        if let                              zone: Zone = selectionManager.firstGrabbableZone {
-            var                             parentZone = zone.parentZone
+        if let  zone: Zone = selectionManager.firstGrabbableZone {
+            let parentZone = zone.parentZone
 
             if selectionOnly {
-                if parentZone == nil {
+                if zone == travelManager.storageZone {
                     travelManager.travelWhereThisZonePoints(zone) { object, kind in
                         if let there: Zone = object as? Zone {
                             selectionManager.currentlyGrabbedZones = [there]
@@ -537,10 +542,9 @@ class ZEditingManager: NSObject {
 
                     return
                 } else if extreme {
-                    parentZone                         = travelManager.storageZone
-                    travelManager.hereZone             = parentZone
+                    travelManager.hereZone = travelManager.storageZone
                 } else if zone == travelManager.hereZone {
-                    travelManager.hereZone             = parentZone
+                    travelManager.hereZone = parentZone
                 }
 
                 selectionManager.currentlyGrabbedZones = [parentZone!]

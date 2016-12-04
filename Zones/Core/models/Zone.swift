@@ -145,35 +145,6 @@ class Zone : ZRecord {
     }
 
 
-    override func updateZoneProperties() {
-        if record != nil {
-            for keyPath in cloudProperties() {
-                if let cloudValue = record[keyPath] as! NSObject? {
-                    let propertyValue = value(forKeyPath: keyPath) as! NSObject?
-
-                    if propertyValue != cloudValue {
-                        setValue(cloudValue, forKeyPath: keyPath)
-                    }
-                }
-            }
-        }
-    }
-
-
-    override func updateCloudProperties() {
-        if record != nil {
-            for keyPath in cloudProperties() {
-                let    cloudValue = record[keyPath] as! NSObject?
-                let propertyValue = value(forKeyPath: keyPath) as! NSObject?
-
-                if propertyValue != nil && propertyValue != cloudValue {
-                    record[keyPath] = propertyValue as? CKRecordValue
-                }
-            }
-        }
-    }
-
-
     // MARK:- offspring
     // MARK:-
 

@@ -22,9 +22,12 @@ enum ZStorageMode: String {     ///// move this to cloud manager  //////////
 class ZTravelManager: NSObject {
 
 
-    var    hereZone:  Zone!
-    var storageZone:  Zone!
-    let         key: String = "current storage mode"
+    var storageZone:     Zone!
+    var    manifest: ZManifest = ZManifest()
+    let         key:    String = "current storage mode"
+
+
+    var hereZone: Zone? { get { return manifest.hereZone } set { manifest.hereZone = newValue } }
 
 
     var storageMode: ZStorageMode {
@@ -46,6 +49,14 @@ class ZTravelManager: NSObject {
     }
 
 
+
+    override func debugCheck() {
+        if storageZone == hereZone {
+            reportError("BROKEN")
+        }
+    }
+
+
     func setup() {
         switch storageMode {
         case .bookmarks:
@@ -58,15 +69,7 @@ class ZTravelManager: NSObject {
     }
 
 
-    func travel(_ block: (() -> Swift.Void)?) {
-        widgetsManager    .clear()
-        selectionManager  .clear()
-        setup                   ()
-        operationsManager.travel(block)
-    }
-
-
-    // MARK:- storage and cloud zones
+    // MARK:- kludge for selecting within bookmark view
     // MARK:-
 
 
@@ -76,6 +79,14 @@ class ZTravelManager: NSObject {
         case .everyone: return  0
         default:        return -1
         }
+    }
+
+
+    private func resetAndTravel(_ block: (() -> Swift.Void)?) {
+        widgetsManager    .clear()
+        selectionManager  .clear()
+        setup                   ()
+        operationsManager.travel(block)
     }
 
 
@@ -91,19 +102,19 @@ class ZTravelManager: NSObject {
                 } else {
                     storageMode = mode // going in arrow to right
 
-                    travel {
+                    resetAndTravel {
                         there = link.record == nil ? self.hereZone : cloudManager.zoneForRecordID(link.record.recordID) ?? self.hereZone
 
                         atArrival(there, .data)
                     }
                 }
             }
-        } else if zone.parentZone == nil {
-            storageMode = .bookmarks // going out arrow to left
-
+        } else if zone == storageZone {
             let index = indexOfMode(storageMode) // index is a KLUDGE
 
-            travel {
+            storageMode = .bookmarks // going out arrow to left
+
+            resetAndTravel {
                 there = self.hereZone
 
                 if index >= 0 && index < (there?.children.count)! {

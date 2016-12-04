@@ -21,17 +21,17 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
     var monitor: Any?
     var widget: ZoneWidget!
-    var _isEditing: Bool = false
+    var _isTextEditing: Bool = false
 
 
-    var isEditing: Bool {
-        get { return _isEditing }
+    var isTextEditing: Bool {
+        get { return _isTextEditing }
         set {
-            if _isEditing != newValue {
-                _isEditing = newValue
+            if _isTextEditing != newValue {
+                _isTextEditing = newValue
                 let   zone = widget.widgetZone
 
-                if !_isEditing {
+                if !_isTextEditing {
                     selectionManager.currentlyGrabbedZones = [zone!]
                     selectionManager.currentlyEditingZone  = nil
 
@@ -40,8 +40,9 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
                     selectionManager.currentlyEditingZone  = zone
                     selectionManager.currentlyGrabbedZones = []
 
-                    monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> NSEvent? in
-                        if self.isEditing {
+                    #if os(OSX)
+                    monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> ZEvent? in
+                        if self.isTextEditing {
                             let   flags = event.modifierFlags
                             let isArrow = flags.contains(.numericPad) && flags.contains(.function)
 
@@ -52,6 +53,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
                         return event
                     })
+                    #endif
                 }
 
                 controllersManager.signal(zone?.parentZone, regarding: .data)
@@ -71,7 +73,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
 
     func toggleResponderState() {
-        if isEditing {
+        if isTextEditing {
             resignFirstResponder()
         } else {
             becomeFirstResponder()
@@ -87,6 +89,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
 
     func removeMonitorAsync() {
+#if os(OSX)
         if let save = monitor {
             monitor = nil
 
@@ -94,6 +97,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
                 ZEvent.removeMonitor(save)
             })
         }
+#endif
     }
 
 
@@ -102,11 +106,11 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
         let result = super.resignFirstResponder()
 
-        if result && isEditing {
+        if result && isTextEditing {
             dispatchAsyncInForeground {
                 selectionManager.fullResign()
                 
-                self.isEditing = false
+                self.isTextEditing = false
             }
         }
 
@@ -118,7 +122,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
         let result = super.becomeFirstResponder()
 
         if result {
-            isEditing = true
+            isTextEditing = true
         }
 
         return result

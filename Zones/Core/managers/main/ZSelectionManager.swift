@@ -36,7 +36,9 @@ class ZSelectionManager: NSObject {
 
 
     func fullResign() {
+        #if os(OSX)
         mainWindow?.makeFirstResponder(nil) // ios broken
+        #endif
     }
 
 
@@ -63,16 +65,18 @@ class ZSelectionManager: NSObject {
 
     func deselectDragWithin(_ zone: Zone) {
         for child in zone.children {
-            if currentlyGrabbedZones.contains(child) {
-                if let index = currentlyGrabbedZones.index(of: child) {
-                    currentlyGrabbedZones.remove(at: index)
+            if child != zone {
+                if currentlyGrabbedZones.contains(child) {
+                    if let index = currentlyGrabbedZones.index(of: child) {
+                        currentlyGrabbedZones.remove(at: index)
+                    }
                 }
-            }
 
-            deselectDragWithin(child)
+                deselectDragWithin(child)
+            }
         }
     }
-
+    
 
     var firstGrabbableZone: Zone? {
         get {

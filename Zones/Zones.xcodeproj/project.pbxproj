@@ -49,6 +49,8 @@
 		0C60B67A1DBE876E005D99F9 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */; };
 		0C7348581DF0D67800E5E23B /* ZBookmarksManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7348571DF0D67800E5E23B /* ZBookmarksManager.swift */; };
 		0C7348591DF0D67800E5E23B /* ZBookmarksManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7348571DF0D67800E5E23B /* ZBookmarksManager.swift */; };
+		0C73485B1DF35F8700E5E23B /* ZManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C73485A1DF35F8700E5E23B /* ZManifest.swift */; };
+		0C73485C1DF35F8700E5E23B /* ZManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C73485A1DF35F8700E5E23B /* ZManifest.swift */; };
 		0CA04B2D1D2ECF1B001892E5 /* ZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */; };
 		0CA04B631D2ECF41001892E5 /* PadZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */; };
 		0CA04B6E1D2ECF41001892E5 /* PadZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */; };
@@ -220,6 +222,7 @@
 		0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/SnapKit.framework; sourceTree = "<group>"; };
 		0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/SnapKit.framework; sourceTree = "<group>"; };
 		0C7348571DF0D67800E5E23B /* ZBookmarksManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZBookmarksManager.swift; sourceTree = "<group>"; };
+		0C73485A1DF35F8700E5E23B /* ZManifest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZManifest.swift; sourceTree = "<group>"; };
 		0CA04B141D2ECF1A001892E5 /* Zones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zones.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
@@ -427,6 +430,7 @@
 			isa = PBXGroup;
 			children = (
 				0CB1A7CE1D73F87B00283F7B /* ZAction.swift */,
+				0C73485A1DF35F8700E5E23B /* ZManifest.swift */,
 				0CB1A7CA1D73F87B00283F7B /* Zone.swift */,
 				0CD921811D90C65E00F80964 /* ZRecord.swift */,
 				0CB1A7D01D73F87B00283F7B /* ZTrait.swift */,
@@ -943,6 +947,7 @@
 				0C371C811DE298EB0030253D /* ZoneWindow.swift in Sources */,
 				0C2456191DE3227900EBCCDD /* ZOperationsManager.swift in Sources */,
 				0CD1EAD21DB725A800A096E4 /* NoCancelledDependencies.swift in Sources */,
+				0C73485C1DF35F8700E5E23B /* ZManifest.swift in Sources */,
 				0C7348591DF0D67800E5E23B /* ZBookmarksManager.swift in Sources */,
 				0CD1EAD61DB725A800A096E4 /* OperationErrors.swift in Sources */,
 				0CD1EAE21DB725A800A096E4 /* UserNotificationCondition.swift in Sources */,
@@ -1024,6 +1029,7 @@
 				0C371C801DE298EB0030253D /* ZoneWindow.swift in Sources */,
 				0C2456181DE3227900EBCCDD /* ZOperationsManager.swift in Sources */,
 				0CD1EAD51DB725A800A096E4 /* OperationErrors.swift in Sources */,
+				0C73485B1DF35F8700E5E23B /* ZManifest.swift in Sources */,
 				0C7348581DF0D67800E5E23B /* ZBookmarksManager.swift in Sources */,
 				0CD1EAE11DB725A800A096E4 /* UserNotificationCondition.swift in Sources */,
 				0CB1A7DF1D73F87B00283F7B /* ZTrait.swift in Sources */,

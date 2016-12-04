@@ -14,7 +14,7 @@ enum ZSynchronizationState: Int {
     case ready
     case cloud
     case file
-    case root
+    case here
     case flush
     case fetch
     case children
@@ -126,7 +126,7 @@ class ZOperationsManager: NSObject {
         switch(state) {
         case .file:        zfileManager.restore();        operation.finish();   break
         case .cloud:       cloudManager.fetchCloudZones { operation.finish() }; break
-        case .root:        cloudManager.setupRoot       { operation.finish() }; break
+        case .here:        cloudManager.establishHere   { operation.finish() }; break
         case .fetch:       cloudManager.fetch           { operation.finish() }; break
         case .children:    cloudManager.fetchChildren   { operation.finish() }; break
         case .unsubscribe: cloudManager.unsubscribe     { operation.finish() }; break

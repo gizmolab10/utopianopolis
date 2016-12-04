@@ -67,14 +67,22 @@ class ZRecord: NSObject {
     }
 
 
-    init(record: CKRecord?, storageMode: ZStorageMode?) {
+    override init() {
         super.init()
 
         self.recordState = ZRecordState.ready
-        self.storageMode = storageMode
-        self.record      = record
+        self.storageMode = nil
+        self.record      = nil
 
         self.setupKVO();
+    }
+
+
+    convenience init(record: CKRecord?, storageMode: ZStorageMode?) {
+        self.init()
+
+        self.storageMode = storageMode
+        self.record      = record
     }
 
 
@@ -88,9 +96,55 @@ class ZRecord: NSObject {
 
 
     func register() {}
-    func updateZoneProperties() {}
-    func updateCloudProperties() {}
     func cloudProperties() -> [String] { return [] }
+
+
+    // MARK:- properties
+    // MARK:-
+
+
+    func containsStateIn(_ states: [ZRecordState], onEach: ObjectClosure) {
+        var matches = false
+
+        for state in states {
+            if recordState.contains(state) {
+                matches = true
+            }
+        }
+
+        if matches {
+            onEach(self)
+        }
+    }
+
+
+    func updateZoneProperties() {
+        if record != nil {
+            for keyPath in cloudProperties() {
+                if let cloudValue = record[keyPath] as! NSObject? {
+                    let propertyValue = value(forKeyPath: keyPath) as! NSObject?
+
+                    if propertyValue != cloudValue {
+                        setValue(cloudValue, forKeyPath: keyPath)
+                    }
+                }
+            }
+        }
+    }
+
+
+    func updateCloudProperties() {
+        if record != nil {
+            for keyPath in cloudProperties() {
+                let    cloudValue = record[keyPath] as! NSObject?
+                let propertyValue = value(forKeyPath: keyPath) as! NSObject?
+
+                if propertyValue != nil && propertyValue != cloudValue {
+                    record[keyPath] = propertyValue as? CKRecordValue
+                }
+            }
+        }
+    }
 
 
     func mergeIntoAndTake(_ iRecord: CKRecord) {

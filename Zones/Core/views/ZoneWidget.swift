@@ -21,11 +21,11 @@ class ZoneWidget: ZView {
 
     private var        _textField: ZoneTextField!
     private var     _childrenView: ZView!
-    private let dragHighlightView: ZView!       = ZView()
-    private var   childrenWidgets: [ZoneWidget] = []
-    private var      siblingLines: [ZoneCurve]  = []
-    let                 toggleDot: ZoneDot?     = ZoneDot()
-    let                   dragDot: ZoneDot?     = ZoneDot()
+    private let dragHighlightView: ZView!        = ZView()
+    private var   childrenWidgets: [ZoneWidget?] = []
+    private var      siblingLines: [ZoneCurve]   = []
+    let                 toggleDot: ZoneDot?      = ZoneDot()
+    let                   dragDot: ZoneDot?      = ZoneDot()
     var                widgetZone: Zone!
 
 
@@ -123,7 +123,7 @@ class ZoneWidget: ZView {
         layoutDecorations()
 
         for widget in childrenWidgets {
-            widget.layoutFinish()
+            widget?.layoutFinish()
         }
     }
 
@@ -225,31 +225,36 @@ class ZoneWidget: ZView {
             }
 
             while index > 0 {
-                index                 -= 1
-                let childWidget        = childrenWidgets[index]
-                childWidget.widgetZone = widgetZone.children[index]
+                index          -= 1
+                let childWidget = childrenWidgets[index]
+                let childZone   = widgetZone.children[index]
 
-                childWidget.layoutInView(childrenView, atIndex: index, recursing: true)
+                if childZone == widgetZone {
+                    childrenWidgets[index] = nil
+                } else if childWidget != nil {
+                    childWidget?.widgetZone = childZone
+                    childWidget?.layoutInView(childrenView, atIndex: index, recursing: true)
 
-                childWidget.snp.removeConstraints()
-                childWidget.snp.makeConstraints({ (make) in
-                    if previous != nil {
-                        make.bottom.equalTo((previous?.snp.top)!)
-                    } else {
-                        make.bottom.equalTo(childrenView)
-                    }
+                    childWidget?.snp.removeConstraints()
+                    childWidget?.snp.makeConstraints({ (make) in
+                        if previous != nil {
+                            make.bottom.equalTo((previous?.snp.top)!)
+                        } else {
+                            make.bottom.equalTo(childrenView)
+                        }
 
-                    if index == 0 {
-                        make.top.equalTo(childrenView)
-                    }
+                        if index == 0 {
+                            make.top.equalTo(childrenView)
+                        }
 
-                    make.left.equalTo(childrenView)//.offset(20.0)
-                    make.right.height.lessThanOrEqualTo(childrenView)
-                })
-
-                childWidget.layoutText()
-
-                previous = childWidget
+                        make.left.equalTo(childrenView)//.offset(20.0)
+                        make.right.height.lessThanOrEqualTo(childrenView)
+                    })
+                    
+                    childWidget?.layoutText()
+                    
+                    previous = childWidget
+                }
             }
         }
     }

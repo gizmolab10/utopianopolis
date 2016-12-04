@@ -22,7 +22,6 @@ class ZoneWindow: ZWindow {
 
 
     static var window: ZoneWindow?
-    override var acceptsFirstResponder: Bool { get { return true } }
 
 
     override func awakeFromNib() {
@@ -31,10 +30,14 @@ class ZoneWindow: ZWindow {
         ZoneWindow.window = self
     }
 
+    #if os(OSX)
+    override var acceptsFirstResponder: Bool { get { return true } }
+
 
     override func keyDown(with event: ZEvent) {
         if selectionManager.currentlyEditingZone != nil || !editingManager.handleKey(event, isWindow: true) {
             super.keyDown(with: event)
         }
     }
+    #endif
 }

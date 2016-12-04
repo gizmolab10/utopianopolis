@@ -9,6 +9,12 @@
 
 import Foundation
 
+#if os(OSX)
+    import Cocoa
+#elseif os(iOS)
+    import UIKit
+#endif
+
 
 enum ZEditMode: Int {
     case task
@@ -25,9 +31,9 @@ enum ZFileMode: Int {
 var   textCapturing:      Bool = false
 var        fileMode: ZFileMode = .cloud
 var        editMode: ZEditMode = .task
-var   genericOffset:    CGSize = CGSize(width: 0.0, height: 4.0)
+var   genericOffset            = CGSize(width: 0.0, height: 4.0)
 var       lineColor:    ZColor = ZColor.purple //(hue: 0.6, saturation: 0.6, brightness: 1.0,                alpha: 1)
 var   bookmarkColor:    ZColor = ZColor.blue
 var unselectedColor:    ZColor = ZColor(hue: 0.6, saturation: 0.0, brightness: unselectBrightness, alpha: 1)
-var    lineThicknes:   CGFloat = 1.25
-var       dotLength:   CGFloat = 12.0
+var    lineThicknes:     Float = 1.25
+var       dotLength:     Float = 12.0

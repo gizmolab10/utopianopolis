@@ -58,9 +58,9 @@ class ZEditorViewController: ZGenericViewController {
         spinner?.isHidden = !isActive
 
         if isActive {
-            spinner?.startAnimation(self)
+            spinner?.startAnimating()
         } else {
-            spinner?.stopAnimation(self)
+            spinner?.stopAnimating()
         }
     }
 
