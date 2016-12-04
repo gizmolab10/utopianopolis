@@ -11,24 +11,10 @@ import Foundation
 import CloudKit
 
 
-struct ZRecordState: OptionSet {
-    let rawValue: Int
-
-    static let ready         = ZRecordState(rawValue:      0)
-    static let needsSave     = ZRecordState(rawValue: 1 << 0)
-    static let needsFetch    = ZRecordState(rawValue: 1 << 1)
-    static let needsMerge    = ZRecordState(rawValue: 1 << 2)
-    static let needsCreate   = ZRecordState(rawValue: 1 << 3)
-    static let needsDelete   = ZRecordState(rawValue: 1 << 4)
-    static let needsChildren = ZRecordState(rawValue: 1 << 5)
-}
-
-
 class ZRecord: NSObject {
     
 
     var storageMode: ZStorageMode?
-    var recordState: ZRecordState = .ready
     var  kvoContext: UInt8        = 1
     var     _record: CKRecord?
 
@@ -43,7 +29,7 @@ class ZRecord: NSObject {
                 _record = newValue
 
                 if _record == nil {
-                    recordState.insert(.needsCreate)
+                    cloudManager.addRecord(self, forState: .needsCreate)
                 } else {
                     register()
                 }
@@ -67,10 +53,15 @@ class ZRecord: NSObject {
     }
 
 
+    // MARK:- overrides
+    // MARK:-
+
+
     override init() {
         super.init()
 
-        self.recordState = ZRecordState.ready
+        cloudManager.clearRecord(self)
+
         self.storageMode = nil
         self.record      = nil
 
@@ -91,31 +82,12 @@ class ZRecord: NSObject {
     }
 
 
-    // MARK:- overrides
-    // MARK:-
-
-
     func register() {}
     func cloudProperties() -> [String] { return [] }
 
 
     // MARK:- properties
     // MARK:-
-
-
-    func containsStateIn(_ states: [ZRecordState], onEach: ObjectClosure) {
-        var matches = false
-
-        for state in states {
-            if recordState.contains(state) {
-                matches = true
-            }
-        }
-
-        if matches {
-            onEach(self)
-        }
-    }
 
 
     func updateZoneProperties() {
@@ -154,7 +126,7 @@ class ZRecord: NSObject {
             }
         }
 
-        recordState.remove(.needsMerge)
+        cloudManager.removeRecord(self, forState: .needsMerge)
         needSave()
 
         record = iRecord
@@ -177,7 +149,7 @@ class ZRecord: NSObject {
         if type != nil && name != nil {
             record      = CKRecord(recordType: type!, recordID: CKRecordID(recordName: name!))
 
-            recordState.remove(.needsCreate)
+            cloudManager.removeRecord(self, forState: .needsCreate)
             self.updateCloudProperties()
 
             // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
@@ -197,17 +169,17 @@ class ZRecord: NSObject {
 
 
     func needSave() {
-        recordState.insert(.needsSave)
+        cloudManager.addRecord(self, forState: .needsSave)
     }
 
 
     func needFetch() {
-        recordState.insert(.needsFetch)
+        cloudManager.addRecord(self, forState: .needsFetch)
     }
 
 
     func needChildren() {
-        recordState.insert(.needsChildren)
+        cloudManager.addRecord(self, forState: .needsChildren)
     }
 
 

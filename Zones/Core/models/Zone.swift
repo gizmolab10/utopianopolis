@@ -81,7 +81,7 @@ class Zone : ZRecord {
             if newValue != order {
                 zoneOrder = NSNumber(value: newValue)
 
-                recordState.insert(.needsMerge)
+                cloudManager.addRecord(self, forState: .needsMerge)
             }
         }
     }
@@ -104,7 +104,7 @@ class Zone : ZRecord {
             if newValue != showChildren {
                 showSubzones = NSNumber(integerLiteral: newValue ? 1 : 0)
 
-                recordState.insert(.needsMerge)
+                cloudManager.addRecord(self, forState: .needsMerge)
             }
         }
     }

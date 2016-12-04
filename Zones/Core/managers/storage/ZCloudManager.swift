@@ -11,8 +11,7 @@ import Foundation
 import CloudKit
 
 
-class ZCloudManager: NSObject {
-    var          zones: [CKRecordID     :         Zone] = [:]
+class ZCloudManager: ZRecordsManager {
     var cloudZonesByID: [CKRecordZoneID : CKRecordZone] = [:]
     var      container:                    CKContainer!
 
@@ -162,7 +161,7 @@ class ZCloudManager: NSObject {
                     if let error: CKError = iError as? CKError {
                         self.reportError(error)
                     } else if let zone: Zone = self.zoneForRecordID(iID) {
-                        zone.recordState.remove(.needsFetch)
+                        self.removeRecord(zone, forState: .needsFetch)
 
                         zone.record = iRecord
                     }
@@ -180,8 +179,8 @@ class ZCloudManager: NSObject {
 
     func royalFlush(_ onCompletion: (() -> Swift.Void)?) {
         for zone in zones.values {
-            if !zone.recordState.contains(.needsFetch) && !zone.recordState.contains(.needsSave) && !zone.recordState.contains(.needsCreate) {
-                zone.recordState.insert(.needsMerge)
+            if !hasRecord(zone, forState: .needsFetch) && !hasRecord(zone, forState: .needsSave) && !hasRecord(zone, forState: .needsCreate) {
+                removeRecord(zone, forState: .needsMerge)
                 zone.normalizeOrdering()
                 zone.updateCloudProperties()
             }
@@ -227,8 +226,8 @@ class ZCloudManager: NSObject {
                     }
 
                     if let zone = self.zoneForRecordID((iRecord?.recordID)!) {
-                        zone.recordState.remove(.needsCreate)
-                        zone.recordState.remove(.needsSave)
+                        cloudManager.removeRecord(zone, forState: .needsCreate)
+                        cloudManager.removeRecord(zone, forState: .needsSave)
                     }
                 }
                 
@@ -301,81 +300,6 @@ class ZCloudManager: NSObject {
         onCompletion?()
 
         return true
-    }
-
-
-    // MARK:- records
-    // MARK:-
-
-
-    func recordIDsMatching(_ states: [ZRecordState]) -> [CKRecordID] {
-        var identifiers: [CKRecordID] = []
-
-        findRecordsMatching(states) { (object) -> (Void) in
-            let zone: ZRecord = object as! ZRecord
-
-            identifiers.append(zone.record.recordID)
-        }
-
-        return identifiers
-    }
-
-
-    func recordsMatching(_ states: [ZRecordState]) -> [CKRecord] {
-        var objects: [CKRecord] = []
-
-        findRecordsMatching(states) { (object) -> (Void) in
-            let zone: ZRecord = object as! ZRecord
-
-            if let record = zone.record {
-                objects.append(record)
-            }
-        }
-
-        return objects
-    }
-
-
-    func referencesMatching(_ states: [ZRecordState]) -> [CKReference] {
-        var references:  [CKReference] = []
-
-        findRecordsMatching(states) { (object) -> (Void) in
-            let zone:          ZRecord = object as! ZRecord
-            let reference: CKReference = CKReference(recordID: zone.record.recordID, action: .none)
-
-            for state in states {
-                zone.recordState.remove(state)
-            }
-
-            references.append(reference)
-        }
-
-        return references
-    }
-
-
-    func findRecordsMatching(_ states: [ZRecordState], onEach: ObjectClosure) {
-        travelManager.manifest.containsStateIn(states, onEach: onEach)
-
-        for zone in zones.values {
-            zone.containsStateIn(states, onEach: onEach)
-        }
-    }
-
-
-    func registerZone(_ zone: Zone) {
-        if let record = zone.record {
-            zones[record.recordID] = zone
-        }
-    }
-
-
-    func zoneForRecordID(_ recordID: CKRecordID?) -> Zone? {
-        if recordID == nil {
-            return nil
-        }
-
-        return zones[recordID!]
     }
 
 
@@ -530,8 +454,8 @@ class ZCloudManager: NSObject {
                 if oldValue != value {
                     record[forPropertyName] = value as! CKRecordValue?
 
-                    if !object.recordState.contains(.needsCreate) {
-                        object.recordState.insert(.needsMerge)
+                    if !cloudManager   .hasRecord(object, forState: .needsCreate) {
+                        cloudManager.removeRecord(object, forState: .needsMerge)
                     }
                 }
             }

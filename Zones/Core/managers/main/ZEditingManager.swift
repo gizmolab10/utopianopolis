@@ -318,7 +318,7 @@ class ZEditingManager: NSObject {
 
 
     private func deleteZone(_ zone: Zone) -> Zone? {
-        zone.recordState  = .needsDelete
+        cloudManager.addRecord(zone, forState: .needsDelete)
 
         deleteZones(zone.children)
 
@@ -447,8 +447,8 @@ class ZEditingManager: NSObject {
                 } else if zone.isBookmark {
                     travelManager.travelWhereThisZonePoints(zone, atArrival: { (object, kind) -> (Void) in
                         if let there: Zone = object as? Zone {
-                            travelManager.hereZone = there
                             selectionManager.currentlyGrabbedZones = [there]
+                            travelManager.hereZone                 = there
 
                             controllersManager.signal(nil, regarding: .data)
                         }
