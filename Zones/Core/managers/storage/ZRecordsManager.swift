@@ -32,6 +32,19 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
+    func recordsForState(_ state: ZRecordState) -> [ZRecord] {
+        var records = recordsByState[state]
+
+        if records == nil {
+            records = []
+
+            recordsByState[state] = records
+        }
+
+        return records!
+    }
+
+
     func hasRecord(_ record: ZRecord, forState: ZRecordState) -> Bool {
         return recordsForState(forState).contains(record)
     }
@@ -77,19 +90,6 @@ class ZRecordsManager: NSObject {
 
     func clearState(_ state: ZRecordState) {
         recordsByState[state] = nil
-    }
-
-
-    func recordsForState(_ state: ZRecordState) -> [ZRecord] {
-        var records = recordsByState[state]
-
-        if records == nil {
-            records = []
-
-            recordsByState[state] = records
-        }
-
-        return records!
     }
 
 
@@ -148,7 +148,7 @@ class ZRecordsManager: NSObject {
     }
 
 
-    // MARK:- records
+    // MARK:- zones
     // MARK:-
 
 

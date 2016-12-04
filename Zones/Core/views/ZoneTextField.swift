@@ -151,6 +151,11 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
         widget.layoutTextField()
     }
 
+
+    override func textDidEndEditing(_ notification: Notification) {
+        resignFirstResponder()
+    }
+
 #elseif os(iOS)
 
     // fix a bug where root zone is editing on launch
