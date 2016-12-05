@@ -14,14 +14,14 @@ import CloudKit
 class ZBookmarksManager: NSObject {
 
 
-    let storageZone:  Zone! = Zone(record: nil, storageMode: .bookmarks)
-    var  cloudzones: [Zone] = []
-    var   bookmarks: [Zone] = []
+    let   rootZone:  Zone! = Zone(record: nil, storageMode: .bookmarks)
+    var cloudzones: [Zone] = []
+    var  bookmarks: [Zone] = []
 
 
     func setup() {
-        storageZone.showChildren = true
-        storageZone.zoneName     = "bookmarks"
+        rootZone.showChildren = true
+        rootZone.zoneName     = "bookmarks"
 
         setupCloudZonesForAccessToStorage()
     }
@@ -34,8 +34,8 @@ class ZBookmarksManager: NSObject {
 
 
     func addCloudZone(_ name: String, storageMode: ZStorageMode) { // KLUDGE, perhaps use ordered set or dictionary
-        let        zone = Zone(record: nil, storageMode: storageMode)
-        zone.zoneName   = name
+        let      zone = Zone(record: nil, storageMode: storageMode)
+        zone.zoneName = name
 
         addNewBookmarkFor(zone)
     }
@@ -43,11 +43,11 @@ class ZBookmarksManager: NSObject {
     
     @discardableResult func addNewBookmarkFor(_ zone: Zone) -> Zone {
         let        bookmark = Zone(record: nil, storageMode: .bookmarks)
-        bookmark.parentZone = storageZone
+        bookmark.parentZone = rootZone
         bookmark.zoneName   = zone.zoneName
         bookmark.crossLink  = zone
 
-        storageZone.children.append(bookmark)
+        rootZone.children.append(bookmark)
 
         return bookmark
     }

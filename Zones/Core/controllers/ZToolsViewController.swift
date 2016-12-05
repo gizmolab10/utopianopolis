@@ -32,9 +32,4 @@ class ZToolsViewController: ZGenericViewController {
     @IBAction func editModeChoiceAction(_ control: ZSegmentedControl) {
         editMode = ZEditMode(rawValue: control.selectedSegment)!
     }
-
-
-    @IBAction func ignoreFilesChoiceAction(_ control: ZSegmentedControl) {
-        fileMode = ZFileMode(rawValue: control.selectedSegment)!
-    }
 }

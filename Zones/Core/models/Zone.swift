@@ -22,6 +22,7 @@ class Zone : ZRecord {
     var             children:       [Zone] = []
     var          _parentZone:        Zone?
     var           isBookmark:         Bool { get { return crossLink != nil } }
+    var               isRoot:         Bool { get { return record != nil && record.recordID.recordName == rootNameKey } }
 
 
     // MARK:- properties

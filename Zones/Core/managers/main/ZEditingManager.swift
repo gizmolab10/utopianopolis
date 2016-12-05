@@ -268,6 +268,7 @@ class ZEditingManager: NSObject {
             let   child = Zone(record: record, storageMode: travelManager.storageMode)
             let insert = asTask ? 0 : (zone?.children.count)!
 
+            cloudManager.addRecord(child, forState: .needsCreate)
             widgetsManager.widgetForZone(zone!)?.textField.resignFirstResponder()
 
             if asTask {
@@ -318,20 +319,22 @@ class ZEditingManager: NSObject {
 
 
     private func deleteZone(_ zone: Zone) -> Zone? {
-        cloudManager.addRecord(zone, forState: .needsDelete)
+        if !zone.isRoot {
+            cloudManager.addRecord(zone, forState: .needsDelete)
 
-        deleteZones(zone.children)
+            deleteZones(zone.children)
 
-        if let parentZone = zone.parentZone {
-            let siblings  = parentZone.children
+            if let parentZone = zone.parentZone {
+                let siblings  = parentZone.children
 
-            if var  index = siblings.index(of: zone) {
-                index = max(0, index - 1)
+                if var  index = siblings.index(of: zone) {
+                    index = max(0, index - 1)
 
-                if siblings.count > 0 {
-                    return siblings[index]
-                } else  {
-                    return parentZone
+                    if siblings.count > 0 {
+                        return siblings[index]
+                    } else  {
+                        return parentZone
+                    }
                 }
             }
         }
@@ -503,6 +506,7 @@ class ZEditingManager: NSObject {
                 applyModeRecursivelyTo(child, parentZone: zone)
             }
 
+            cloudManager.addRecord(zone!, forState: .needsCreate)
             zone?.updateCloudProperties()
         }
     }
@@ -531,7 +535,7 @@ class ZEditingManager: NSObject {
             let parentZone = zone.parentZone
 
             if selectionOnly {
-                if zone == travelManager.storageZone {
+                if zone.isRoot {
                     travelManager.travelWhereThisZonePoints(zone) { object, kind in
                         if let there: Zone = object as? Zone {
                             selectionManager.currentlyGrabbedZones = [there]
@@ -542,7 +546,7 @@ class ZEditingManager: NSObject {
 
                     return
                 } else if extreme {
-                    travelManager.hereZone = travelManager.storageZone
+                    travelManager.hereZone = travelManager.rootZone
                 } else if zone == travelManager.hereZone {
                     travelManager.hereZone = parentZone
                 }

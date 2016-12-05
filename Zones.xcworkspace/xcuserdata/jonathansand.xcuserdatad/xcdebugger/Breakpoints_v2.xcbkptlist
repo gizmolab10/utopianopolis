@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/Core/managers/storage/ZCloudManager.swift"
-            timestampString = "502584977.868278"
+            timestampString = "502592584.847915"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "161"
-            endingLineNumber = "161"
+            startingLineNumber = "167"
+            endingLineNumber = "167"
             landmarkName = "fetch(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -38,47 +38,79 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/Core/main/ZExtensions.swift"
-            timestampString = "502585010.820349"
+            filePath = "Zones/Core/managers/storage/ZOperationsManager.swift"
+            timestampString = "502605036.373913"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "215"
-            endingLineNumber = "215"
-            landmarkName = "reportError(_:)"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
+            landmarkName = "setupAndRun(_:block:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Zones/Core/managers/storage/ZOperationsManager.swift"
+            timestampString = "502605080.148611"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
+            landmarkName = "setupAndRun(_:block:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Zones/Core/managers/storage/ZCloudManager.swift"
+            timestampString = "502605104.739791"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "200"
+            endingLineNumber = "200"
+            landmarkName = "create(_:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(extension in Zones):__ObjC.NSObject.reportError (Swift.Optional&lt;Any&gt;) -&gt; ()"
+                  symbolName = "Zones.ZCloudManager.create (Swift.Optional&lt;() -&gt; ()&gt;) -&gt; ()"
                   moduleName = "Zones"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/main/ZExtensions.swift"
-                  timestampString = "502586580.638586"
+                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/storage/ZCloudManager.swift"
+                  timestampString = "502605104.745361"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "215"
-                  endingLineNumber = "215"
-                  offsetFromSymbolStart = "23">
+                  startingLineNumber = "200"
+                  endingLineNumber = "200"
+                  offsetFromSymbolStart = "30">
                </Location>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(extension in Zones):__ObjC.NSObject.reportError (Swift.Optional&lt;Any&gt;) -&gt; ()"
+                  symbolName = "Zones.ZCloudManager.create (Swift.Optional&lt;() -&gt; ()&gt;) -&gt; ()"
                   moduleName = "Zones"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/main/ZExtensions.swift"
-                  timestampString = "502586580.640833"
+                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/storage/ZCloudManager.swift"
+                  timestampString = "502605104.748228"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "215"
-                  endingLineNumber = "215"
-                  offsetFromSymbolStart = "344">
+                  startingLineNumber = "200"
+                  endingLineNumber = "200"
+                  offsetFromSymbolStart = "258">
                </Location>
             </Locations>
          </BreakpointContent>

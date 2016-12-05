@@ -28,12 +28,7 @@ class ZRecord: NSObject {
             if _record != newValue {
                 _record = newValue
 
-                if _record == nil {
-                    cloudManager.addRecord(self, forState: .needsCreate)
-                } else {
-                    register()
-                }
-
+                register()
                 updateZoneProperties()
             }
         }
@@ -149,7 +144,6 @@ class ZRecord: NSObject {
         if type != nil && name != nil {
             record      = CKRecord(recordType: type!, recordID: CKRecordID(recordName: name!))
 
-            cloudManager.removeRecord(self, forState: .needsCreate)
             self.updateCloudProperties()
 
             // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud

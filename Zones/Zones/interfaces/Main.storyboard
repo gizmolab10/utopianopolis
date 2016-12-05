@@ -818,25 +818,11 @@ with SHIFT :
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="04s-PO-ttL">
-                                <rect key="frame" x="55" y="181" width="98" height="20"/>
-                                <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="w6m-UJ-g7X">
-                                    <font key="font" metaFont="smallSystem"/>
-                                    <segments>
-                                        <segment label="Local"/>
-                                        <segment label="Cloud" selected="YES" tag="1"/>
-                                    </segments>
-                                </segmentedCell>
-                                <connections>
-                                    <action selector="ignoreFilesChoiceAction:" target="YaQ-0g-PCb" id="O8H-CP-gKT"/>
-                                </connections>
-                            </segmentedControl>
                         </subviews>
                         <constraints>
                             <constraint firstItem="Xmv-NU-oFf" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="20" id="9Zd-ya-0BP"/>
                             <constraint firstItem="i7P-tX-Rsd" firstAttribute="top" secondItem="Xmv-NU-oFf" secondAttribute="bottom" constant="12" id="Ctm-So-2Az"/>
                             <constraint firstItem="KCP-Y2-cVR" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="8" id="KRC-f1-yhR"/>
-                            <constraint firstItem="04s-PO-ttL" firstAttribute="top" secondItem="KCP-Y2-cVR" secondAttribute="bottom" constant="16" id="KbT-IG-nce"/>
                             <constraint firstItem="IT7-2L-PqU" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="8" id="OYp-0Q-pkL"/>
                             <constraint firstAttribute="trailing" secondItem="Xmv-NU-oFf" secondAttribute="trailing" constant="20" id="Ul7-Oa-Bfl"/>
                             <constraint firstItem="i7P-tX-Rsd" firstAttribute="centerX" secondItem="3tA-Ue-bZS" secondAttribute="centerX" id="Us2-xV-GCM"/>
@@ -845,8 +831,8 @@ with SHIFT :
                             <constraint firstAttribute="trailing" secondItem="IT7-2L-PqU" secondAttribute="trailing" id="dUF-Ou-Vxz"/>
                             <constraint firstItem="IT7-2L-PqU" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" constant="8" id="iH6-O5-rLu"/>
                             <constraint firstAttribute="trailing" secondItem="KCP-Y2-cVR" secondAttribute="trailing" id="ljD-ZI-lrz"/>
+                            <constraint firstItem="Xmv-NU-oFf" firstAttribute="top" relation="greaterThanOrEqual" secondItem="KCP-Y2-cVR" secondAttribute="bottom" id="nPV-MS-yUv"/>
                             <constraint firstAttribute="bottom" secondItem="i7P-tX-Rsd" secondAttribute="bottom" constant="20" id="qCe-q7-L0S"/>
-                            <constraint firstItem="04s-PO-ttL" firstAttribute="centerX" secondItem="3tA-Ue-bZS" secondAttribute="centerX" id="uny-01-W5K"/>
                             <constraint firstItem="LAJ-9k-rdw" firstAttribute="centerX" secondItem="3tA-Ue-bZS" secondAttribute="centerX" id="vNs-sc-ZQI"/>
                         </constraints>
                     </view>

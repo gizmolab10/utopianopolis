@@ -135,6 +135,7 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
                 textCapturing              = true
                 widget.widgetZone.zoneName = text!
 
+                cloudManager.addRecord(widget.widgetZone, forState: .needsMerge)
                 operationsManager.sync {}
             }
         }

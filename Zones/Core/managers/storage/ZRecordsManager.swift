@@ -114,7 +114,7 @@ class ZRecordsManager: NSObject {
         findRecordsMatching(states) { (object) -> (Void) in
             let zone: ZRecord = object as! ZRecord
 
-            if let record = zone.record {
+            if let record = zone.record, !objects.contains(record) {
                 objects.append(record)
             }
         }
@@ -143,8 +143,6 @@ class ZRecordsManager: NSObject {
                 onEach(record)
             }
         }
-
-        clearStates(states)
     }
 
 

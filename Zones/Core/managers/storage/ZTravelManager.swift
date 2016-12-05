@@ -22,9 +22,9 @@ enum ZStorageMode: String {     ///// move this to cloud manager  //////////
 class ZTravelManager: NSObject {
 
 
-    var storageZone:     Zone!
-    var    manifest: ZManifest = ZManifest()
-    let         key:    String = "current storage mode"
+    var rootZone:     Zone!
+    var manifest: ZManifest = ZManifest()
+    let      key:    String = "current storage mode"
 
 
     var hereZone: Zone? { get { return manifest.hereZone } set { manifest.hereZone = newValue } }
@@ -51,7 +51,7 @@ class ZTravelManager: NSObject {
 
 
     override func debugCheck() {
-        if storageZone == hereZone {
+        if rootZone == hereZone {
             reportError("BROKEN")
         }
     }
@@ -60,12 +60,12 @@ class ZTravelManager: NSObject {
     func setup() {
         switch storageMode {
         case .bookmarks:
-            storageZone = bookmarksManager.storageZone
+            rootZone = bookmarksManager.rootZone
         default:
-            storageZone = Zone(record: nil, storageMode: storageMode)
+            rootZone = Zone(record: nil, storageMode: storageMode)
         }
 
-        hereZone        = storageZone
+        hereZone     = rootZone
     }
 
 
@@ -109,7 +109,7 @@ class ZTravelManager: NSObject {
                     }
                 }
             }
-        } else if zone == storageZone {
+        } else if zone.isRoot {
             let index = indexOfMode(storageMode) // index is a KLUDGE
 
             storageMode = .bookmarks // going out arrow to left

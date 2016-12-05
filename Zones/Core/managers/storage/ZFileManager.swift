@@ -30,7 +30,7 @@ class ZFileManager: NSObject {
     func save() {
         if !isSaving && fileMode == .local && travelManager.storageMode != .bookmarks && operationsManager.isReady {
             isSaving               = true
-            let dict: NSDictionary = travelManager.storageZone.storageDict as NSDictionary
+            let dict: NSDictionary = travelManager.rootZone.storageDict as NSDictionary
             let  url:          URL = pathToCurrentZoneFile()
 
             dict.write(to: url, atomically: false)
@@ -45,8 +45,8 @@ class ZFileManager: NSObject {
 
         if fileMode == .local && travelManager.storageMode != .bookmarks {
             if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
-                travelManager.storageZone = Zone(dict: raw as! ZStorageDict)
-                travelManager.hereZone    = travelManager.storageZone
+                travelManager.rootZone = Zone(dict: raw as! ZStorageDict)
+                travelManager.hereZone    = travelManager.rootZone
 
                 controllersManager.signal(nil, regarding: .data)
             }

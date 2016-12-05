@@ -102,15 +102,15 @@ class ZCloudManager: ZRecordsManager {
 
             self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) -> (Void) in
                 if iRecord != nil {
-                    travelManager.storageZone?.record = iRecord
-                    travelManager.storageZone?.needChildren()
+                    travelManager.rootZone?.record = iRecord
+                    travelManager.rootZone?.needChildren()
 
-                    if iRecord != travelManager.storageZone?.record {
-                        self.reportError(travelManager.storageZone?.zoneName)
+                    if iRecord != travelManager.rootZone?.record {
+                        self.reportError(travelManager.rootZone?.zoneName)
                     }
 
                     if travelManager.manifest.here == nil {
-                        travelManager.hereZone = travelManager.storageZone
+                        travelManager.hereZone = travelManager.rootZone
                         travelManager.manifest.needSave()
                     }
                 }
@@ -128,6 +128,9 @@ class ZCloudManager: ZRecordsManager {
             operation.recordIDs = recordIDsMatching([.needsMerge])
 
             if (operation.recordIDs?.count)! > 0 {
+
+                reportError("merging \((operation.recordIDs?.count)!)")
+
                 operation.completionBlock          = onCompletion
                 operation.perRecordCompletionBlock = { (iRecord, iID, iError) in
                     let zone = self.zoneForRecordID(iID)
@@ -156,6 +159,9 @@ class ZCloudManager: ZRecordsManager {
             operation.recordIDs = recordIDsMatching([.needsFetch])
 
             if (operation.recordIDs?.count)! > 0 {
+
+                reportError("fetching \((operation.recordIDs?.count)!)")
+
                 operation.completionBlock          = onCompletion
                 operation.perRecordCompletionBlock = { (iRecord, iID, iError) in
                     if let error: CKError = iError as? CKError {
@@ -190,12 +196,38 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
+    func create(_ onCompletion: (() -> Swift.Void)?) {
+        if let operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
+            operation.recordsToSave   = recordsMatching([.needsCreate])
+            operation.completionBlock = onCompletion
+
+            clearState(.needsCreate)
+
+            if (operation.recordsToSave?.count)! > 0 {
+
+                reportError("creating \((operation.recordsToSave?.count)!)")
+
+                operation.start()
+                
+                return
+            }
+        }
+        
+        onCompletion?()
+    }
+
+
     func flush(_ onCompletion: (() -> Swift.Void)?) {
         if let operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
-            operation.recordsToSave                =   recordsMatching([.needsSave, .needsCreate])
-            operation.recordIDsToDelete            = recordIDsMatching([.needsDelete])
+            operation.recordsToSave     =   recordsMatching([.needsSave])
+            operation.recordIDsToDelete = recordIDsMatching([.needsDelete])
+
+            clearStates([.needsSave, .needsDelete])
 
             if (operation.recordsToSave?.count)! > 0 || (operation.recordIDsToDelete?.count)! > 0 {
+
+                reportError("saving \((operation.recordsToSave?.count)!) deleting \((operation.recordIDsToDelete?.count)!)")
+
                 operation.completionBlock          = { () in
                     for identifier: CKRecordID in operation.recordIDsToDelete! {
                         let zone = self.zones[identifier]
@@ -224,11 +256,6 @@ class ZCloudManager: ZRecordsManager {
                             self.reportError(description)
                         }
                     }
-
-                    if let zone = self.zoneForRecordID((iRecord?.recordID)!) {
-                        cloudManager.removeRecord(zone, forState: .needsCreate)
-                        cloudManager.removeRecord(zone, forState: .needsSave)
-                    }
                 }
                 
                 operation.start()
@@ -244,7 +271,12 @@ class ZCloudManager: ZRecordsManager {
     @discardableResult func fetchChildren(_ onCompletion: (() -> Swift.Void)?) -> Bool {
         let childrenNeeded: [CKReference] = referencesMatching([.needsChildren])
 
+        clearState(.needsChildren)
+
         if childrenNeeded.count > 0, let operation = configure(CKQueryOperation()) as? CKQueryOperation {
+
+            reportError("fetching children of \(childrenNeeded.count)")
+
             var parentsNeedingResort: [Zone] = []
             let                    predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
             operation.query                  = CKQuery(recordType: zoneTypeKey, predicate: predicate)
