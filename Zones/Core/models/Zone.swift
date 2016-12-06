@@ -136,6 +136,17 @@ class Zone : ZRecord {
     }
 
 
+    func copyAsOrphanBookmark() -> Zone {
+        let          zone = Zone(record: record, storageMode: storageMode)
+        zone.showChildren = showChildren
+        zone.crossLink    = crossLink
+        zone.zoneName     = zoneName
+        zone.order        = order
+
+        return zone
+    }
+
+
     override func register() {
         cloudManager.registerZone(self)
     }
@@ -148,6 +159,11 @@ class Zone : ZRecord {
 
     // MARK:- offspring
     // MARK:-
+
+
+    func orphan() {
+        parentZone?.removeChild(self)
+    }
 
 
     func removeChild(_ child: Zone?) {

@@ -133,7 +133,7 @@ class ZoneWidget: ZView {
 
         dispatchAsyncInForeground {
             let                             color: ZColor = self.widgetZone.isBookmark ? bookmarkColor : lineColor
-            self.dragHighlightView.zlayer.backgroundColor = color.withAlphaComponent(0.03).cgColor
+            self.dragHighlightView.zlayer.backgroundColor = color.withAlphaComponent(0.008).cgColor
 
             self.dragHighlightView.addBorder(thickness: 0.15, radius: dirtyRect.size.height / 2.0, color: color.cgColor)
         }

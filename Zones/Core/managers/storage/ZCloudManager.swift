@@ -232,7 +232,7 @@ class ZCloudManager: ZRecordsManager {
                     for identifier: CKRecordID in operation.recordIDsToDelete! {
                         let zone = self.zones[identifier]
 
-                        zone?.parentZone?.removeChild(zone)
+                        zone?.orphan()
                         self.zones.removeValue(forKey: identifier)
                     }
 

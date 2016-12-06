@@ -97,14 +97,23 @@ class ZTravelManager: NSObject {
         if zone.isBookmark {
             if let link = zone.crossLink, let mode = link.storageMode {
                 if storageMode == mode {
+
+                    // stay within graph
+
                     there = cloudManager.zoneForRecordID(link.record.recordID) ?? hereZone
 
                     arriveThere()
                 } else {
-                    storageMode = mode // going in arrow to right
+                    storageMode = mode // going in (right arrow)
+
+                    if link.record != nil {
+                        print("pfffflt!")
+                    }
 
                     travel {
-                        // now we are in a different graph
+
+                        // arrive in a different graph
+
                         there = link.record == nil ? self.hereZone : cloudManager.zoneForRecordID(link.record.recordID) ?? self.hereZone
 
                         arriveThere()
@@ -114,9 +123,12 @@ class ZTravelManager: NSObject {
         } else if zone.isRoot {
             let index = indexOfMode(storageMode) // index is a KLUDGE
 
-            storageMode = .bookmarks // going out arrow to left
+            storageMode = .bookmarks // going out (left arrow)
 
             travel {
+
+                // arrive in bookmarks graph
+
                 there = self.hereZone
 
                 if index >= 0 && index < (there?.children.count)! {
