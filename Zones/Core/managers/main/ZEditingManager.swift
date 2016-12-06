@@ -332,16 +332,18 @@ class ZEditingManager: NSObject {
             deleteZones(zone.children)
 
             if let parentZone = zone.parentZone {
-                let siblings  = parentZone.children
+                let  siblings = parentZone.children
 
                 if var  index = siblings.index(of: zone) {
-                    index = max(0, index - 1)
-
-                    if siblings.count > 0 {
-                        return siblings[index]
-                    } else  {
+                    if siblings.count <= 1 || index == -1 {
                         return parentZone
+                    } else if index < siblings.count - 1 && (!asTask || index == 0) {
+                        index += 1
+                    } else if index > 0 {
+                        index -= 1
                     }
+
+                    return siblings[index]
                 }
             }
         }
