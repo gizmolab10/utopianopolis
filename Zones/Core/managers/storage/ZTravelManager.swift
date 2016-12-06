@@ -82,7 +82,7 @@ class ZTravelManager: NSObject {
     }
 
 
-    private func resetAndTravel(_ block: (() -> Swift.Void)?) {
+    private func travel(_ block: (() -> Swift.Void)?) {
         widgetsManager    .clear()
         selectionManager  .clear()
         setup                   ()
@@ -92,20 +92,22 @@ class ZTravelManager: NSObject {
 
     func travelWhereThisZonePoints(_ zone: Zone, atArrival: @escaping SignalClosure) {
         var there: Zone? = nil
+        let  arriveThere = { atArrival(there, .data) }
 
         if zone.isBookmark {
             if let link = zone.crossLink, let mode = link.storageMode {
                 if storageMode == mode {
                     there = cloudManager.zoneForRecordID(link.record.recordID) ?? hereZone
 
-                    atArrival(there, .data)
+                    arriveThere()
                 } else {
                     storageMode = mode // going in arrow to right
 
-                    resetAndTravel {
+                    travel {
+                        // now we are in a different graph
                         there = link.record == nil ? self.hereZone : cloudManager.zoneForRecordID(link.record.recordID) ?? self.hereZone
 
-                        atArrival(there, .data)
+                        arriveThere()
                     }
                 }
             }
@@ -114,14 +116,14 @@ class ZTravelManager: NSObject {
 
             storageMode = .bookmarks // going out arrow to left
 
-            resetAndTravel {
+            travel {
                 there = self.hereZone
 
                 if index >= 0 && index < (there?.children.count)! {
                     there = there?.children[index]
                 }
 
-                atArrival(there, .data)
+                arriveThere()
             }
         }
     }

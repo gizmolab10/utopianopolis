@@ -122,7 +122,7 @@ class ZOperationsManager: NSObject {
         let            operation = operationsByState[state]!
         operationsByState[state] = nil
 
-        // print(state)
+        print(state)
 
         switch(state) {
         case .file:        zfileManager.restore();        operation.finish();   break

@@ -53,9 +53,11 @@ class ZRecordsManager: NSObject {
     func addRecord(_ record: ZRecord, forState: ZRecordState) {
         var records = recordsForState(forState)
 
-        records.append(record)
+        if !records.contains(record) {
+            records.append(record)
 
-        recordsByState[forState] = records
+            recordsByState[forState] = records
+        }
     }
 
 
@@ -99,7 +101,7 @@ class ZRecordsManager: NSObject {
         findRecordsMatching(states) { (object) -> (Void) in
             let zone: ZRecord = object as! ZRecord
 
-            if let record = zone.record {
+            if let record = zone.record, !identifiers.contains(record.recordID) {
                 identifiers.append(record.recordID)
             }
         }

@@ -447,9 +447,8 @@ class ZCloudManager: ZRecordsManager {
         if currentDB == nil {
             block?()
         } else {
-            let classNames = [zoneTypeKey] //, "ZTrait", "ZAction"]
-            var count = classNames.count
-
+            let classNames = [zoneTypeKey, "ZManifest"] //, "ZTrait", "ZAction"]
+            var      count = classNames.count
 
             for className: String in classNames {
                 let    predicate:          NSPredicate = NSPredicate(value: true)
