@@ -449,9 +449,28 @@ class ZEditingManager: NSObject {
     }
 
 
+    func revealRoot(_ onCompletion: (() -> Swift.Void)?) {
+        if root.record != nil {
+            onCompletion?()
+        } else {
+            operationsManager.root {
+                onCompletion?()
+            }
+        }
+    }
+
+
+    func revealParent(_ onCompletion: (() -> Swift.Void)?) {
+        cloudManager.addRecord(here, forState: .needsParent)
+        operationsManager.sync {
+            onCompletion?()
+        }
+    }
+
+
     func moveOut(selectionOnly: Bool, extreme: Bool, persistently: Bool) {
         if let zone: Zone = selectionManager.firstGrabbableZone {
-            var toThere = zone.parentZone
+            let toThere = zone.parentZone
 
             if selectionOnly {
                 if zone.isRoot {
@@ -462,46 +481,63 @@ class ZEditingManager: NSObject {
                             controllersManager.signal(nil, regarding: .data)
                         }
                     }
-
-                    return
                 } else if extreme {
-                    here        = root
-                    toThere     = root
-                } else if zone == here {
-                    if toThere != nil {
-                        here    = toThere!
-                    } else {
-                        cloudManager.addRecord(here, forState: .needsParent)
-                        operationsManager.sync({ 
-                            if let there = self.here.parentZone {
-                                selectionManager.currentlyGrabbedZones = [there]
-                                self.here                              =  there
+                    revealRoot {
+                        selectionManager.currentlyGrabbedZones = [self.root]
+                        self.here                              =  self.root
 
-                                travelManager.manifest.needSave()
-                                controllersManager.saveAndUpdateFor(there)
-                            }
-                        })
-
-                        return
+                        controllersManager.saveAndUpdateFor(nil)
                     }
+                } else if zone == here && toThere == nil {
+                    revealParent {
+                        if let there = self.here.parentZone {
+                            selectionManager.currentlyGrabbedZones = [there]
+                            self.here                              =  there
+
+                            travelManager.manifest.needSave()
+                            controllersManager.saveAndUpdateFor(there)
+                        }
+                    }
+                } else if toThere != nil {
+                    selectionManager.currentlyGrabbedZones = [toThere!]
+
+                    controllersManager.saveAndUpdateFor(toThere)
                 }
+            } else if travelManager.storageMode != .bookmarks, let fromThere = toThere {
+                var there = fromThere.parentZone
 
-                selectionManager.currentlyGrabbedZones = [toThere!]
-
-                controllersManager.signal(toThere, regarding: .data)
-            } else if travelManager.storageMode != .bookmarks, let fromThere = toThere, var there = fromThere.parentZone {
                 zone.parentZone?.needSave()
                 zone.orphan()
 
                 if extreme {
-                    here  = root
-                    there = root
-                } else if here == zone || here == fromThere {
-                    here  = there
-                }
+                    revealRoot {
+                        self.here = self.root
+                        there     = self.root
 
-                moveZone(zone, into: there)
-                saveAfterMoveAffecting(there, persistently: persistently)
+                        travelManager.manifest.needSave()
+                        self.moveZone(zone, into: there!)
+                        self.saveAfterMoveAffecting(there, persistently: persistently)
+                    }
+                } else if here == zone || here == fromThere {
+                    if there != nil {
+                        here = there!
+
+                        moveZone(zone, into: there!)
+                        saveAfterMoveAffecting(there, persistently: persistently)
+                    } else {
+                        revealParent {
+                            there = self.here.parentZone
+
+                            if there != nil {
+                                self.here = there!
+
+                                self.moveZone(zone, into: there!)
+                                travelManager.manifest.needSave()
+                                self.saveAfterMoveAffecting(there, persistently: persistently)
+                            }
+                        }
+                    }
+                }
             }
         }
     }

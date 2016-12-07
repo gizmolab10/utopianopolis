@@ -64,8 +64,6 @@ class ZTravelManager: NSObject {
         default:
             rootZone = Zone(record: nil, storageMode: storageMode)
         }
-
-        hereZone     = rootZone
     }
 
 
