@@ -163,12 +163,12 @@ class ZEditingManager: NSObject {
                                 if !zone.isBookmark {
                                     here = zone
 
-                                    controllersManager.signal(nil, regarding: .data)
+                                    controllersManager.saveAndUpdateFor(nil)
                                 } else {
                                     travelManager.travelWhereThisZonePoints(zone, atArrival: { (object, kind) -> (Void) in
                                         self.here = object as! Zone!
 
-                                        controllersManager.signal(nil, regarding: .data)
+                                        controllersManager.saveAndUpdateFor(nil)
                                     })
                                 }
                             }
@@ -465,10 +465,25 @@ class ZEditingManager: NSObject {
 
                     return
                 } else if extreme {
-                    here    = root
-                    toThere = root
+                    here        = root
+                    toThere     = root
                 } else if zone == here {
-                    here    = toThere!
+                    if toThere != nil {
+                        here    = toThere!
+                    } else {
+                        cloudManager.addRecord(here, forState: .needsParent)
+                        operationsManager.sync({ 
+                            if let there = self.here.parentZone {
+                                selectionManager.currentlyGrabbedZones = [there]
+                                self.here                              =  there
+
+                                travelManager.manifest.needSave()
+                                controllersManager.saveAndUpdateFor(there)
+                            }
+                        })
+
+                        return
+                    }
                 }
 
                 selectionManager.currentlyGrabbedZones = [toThere!]

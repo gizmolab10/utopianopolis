@@ -17,6 +17,7 @@ enum ZRecordState: Int {
     case needsMerge
     case needsCreate
     case needsDelete
+    case needsParent
     case needsChildren
 }
 
@@ -107,6 +108,25 @@ class ZRecordsManager: NSObject {
         }
 
         return identifiers
+    }
+
+
+    func parentIDsMatching(_ states: [ZRecordState]) -> [CKRecordID] {
+        var parents: [CKRecordID] = []
+
+        findRecordsMatching(states) { (object) -> (Void) in
+            let zone: Zone = object as! Zone
+
+            if let reference = zone.parent {
+                let parentID = reference.recordID
+
+                if !parents.contains(parentID) {
+                    parents.append(parentID)
+                }
+            }
+        }
+
+        return parents
     }
 
 

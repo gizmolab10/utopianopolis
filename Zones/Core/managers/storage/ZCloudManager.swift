@@ -74,52 +74,51 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func establishHere(_ block: (() -> Swift.Void)?) {
+    func establishRoot(_ onCompletion: (() -> Swift.Void)?) {
+        let recordID = CKRecordID(recordName: rootNameKey)
+
+        self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) -> (Void) in
+            if iRecord != nil {
+                travelManager.rootZone?.record = iRecord
+                travelManager.rootZone?.needChildren()
+
+                if iRecord != travelManager.rootZone?.record {
+                    self.reportError(travelManager.rootZone?.zoneName)
+                }
+
+                if travelManager.manifest.here == nil {
+                    travelManager.hereZone = travelManager.rootZone
+                    travelManager.manifest.needSave()
+                }
+            }
+
+            onCompletion?()
+        })
+    }
+
+
+    func establishHere(_ onCompletion: (() -> Swift.Void)?) {
         var recordID: CKRecordID = CKRecordID(recordName: manifestNameKey)
-        let callBlock = true
 
-//        assureRecordExists(withRecordID: recordID, recordType: manifestTypeKey, onCompletion: { (record: CKRecord?) -> (Void) in
-//            if record != nil {
-//                travelManager.manifest.record = record
-//            }
-//
-//            if travelManager.manifest.here != nil {
-//                recordID  = (travelManager.manifest.here?.recordID)!
-//                callBlock = false
-//
-//                self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { (record: CKRecord?) -> (Void) in
-//                    if record != nil {
-//                        travelManager.hereZone?.record = record
-//                        travelManager.hereZone?.needChildren()
-//                        travelManager.manifest.needSave()
-//                    }
-//
-//                    block?()
-//                })
-//            }
+        assureRecordExists(withRecordID: recordID, recordType: manifestTypeKey, onCompletion: { (record: CKRecord?) -> (Void) in
+            if record != nil {
+                travelManager.manifest.record = record
+            }
 
-            recordID = CKRecordID(recordName: rootNameKey)
+            if travelManager.manifest.here != nil {
+                recordID  = (travelManager.manifest.here?.recordID)!
 
-            self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) -> (Void) in
-                if iRecord != nil {
-                    travelManager.rootZone?.record = iRecord
-                    travelManager.rootZone?.needChildren()
-
-                    if iRecord != travelManager.rootZone?.record {
-                        self.reportError(travelManager.rootZone?.zoneName)
-                    }
-
-                    if travelManager.manifest.here == nil {
-                        travelManager.hereZone = travelManager.rootZone
+                self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { (record: CKRecord?) -> (Void) in
+                    if record != nil {
+                        travelManager.hereZone?.record = record
+                        travelManager.hereZone?.needChildren()
                         travelManager.manifest.needSave()
                     }
-                }
 
-                if callBlock {
-                    block?()
-                }
-            })
-//        })
+                    onCompletion?()
+                })
+            }
+        })
     }
 
 
@@ -150,6 +149,53 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
+        onCompletion?()
+    }
+
+
+    func fetchParents(_ onCompletion: (() -> Swift.Void)?) {
+        let missingParents = parentIDsMatching([.needsParent])
+        let orphans        = recordIDsMatching([.needsParent])
+
+        if missingParents.count > 0 {
+            if let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
+                operation.recordIDs       = missingParents
+                operation.completionBlock = onCompletion
+                operation.perRecordCompletionBlock = { (iRecord, iRecordID, iError) in
+                    var parent = self.zoneForRecordID(iRecordID)
+
+                    if parent != nil && iRecord != nil {
+                        parent?.mergeIntoAndTake(iRecord!)
+                    } else if let error: CKError = iError as? CKError {
+                        self.reportError(error)
+
+                        parent?.needSave()
+                    } else {
+                        parent = Zone(record: iRecord, storageMode: travelManager.storageMode)
+
+                        parent?.register()
+                        parent?.needChildren()
+
+                        for orphan in orphans {
+                            if iRecordID?.recordName == orphan.recordName, let child = self.zoneForRecordID(orphan) {
+                                parent?.children.append(child)
+                            }
+                        }
+
+
+                    }
+                }
+
+                clearState(.needsParent)
+
+                reportError("fetching parents \(missingParents.count)")
+
+                operation.start()
+
+                return
+            }
+        }
+        
         onCompletion?()
     }
 

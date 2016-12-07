@@ -20,6 +20,7 @@ enum ZSynchronizationState: Int {
     case children
     case unsubscribe
     case subscribe
+    case parent
     case create
     case merge
 }
@@ -61,7 +62,7 @@ class ZOperationsManager: NSObject {
 
 
     func sync(_ block: (() -> Swift.Void)?) {
-        setupAndRun([.create, .merge, .flush], block: block!)
+        setupAndRun([.create, .parent, .children, .merge, .flush], block: block!)
     }
 
 
@@ -122,13 +123,14 @@ class ZOperationsManager: NSObject {
         let            operation = operationsByState[state]!
         operationsByState[state] = nil
 
-        print(state)
+        // print(state)
 
         switch(state) {
         case .file:        zfileManager.restore();        operation.finish();   break
         case .cloud:       cloudManager.fetchCloudZones { operation.finish() }; break
         case .here:        cloudManager.establishHere   { operation.finish() }; break
         case .fetch:       cloudManager.fetch           { operation.finish() }; break
+        case .parent:      cloudManager.fetchParents    { operation.finish() }; break
         case .children:    cloudManager.fetchChildren   { operation.finish() }; break
         case .unsubscribe: cloudManager.unsubscribe     { operation.finish() }; break
         case .subscribe:   cloudManager.subscribe       { operation.finish() }; break

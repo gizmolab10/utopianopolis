@@ -87,10 +87,12 @@ class ZControllersManager: NSObject {
 
 
     func saveAndUpdateFor(_ zone: Zone?, onCompletion: Closure?) {
-        self.signal(zone, regarding: .data, onCompletion: onCompletion)
+        dispatchAsyncInForeground {
+            self.signal(zone, regarding: .data, onCompletion: onCompletion)
 
-        operationsManager.sync {
-            zfileManager.save()
+            operationsManager.sync {
+                zfileManager.save()
+            }
         }
     }
 
