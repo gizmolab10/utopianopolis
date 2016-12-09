@@ -474,7 +474,7 @@ class ZEditingManager: NSObject {
 
     func moveOut(selectionOnly: Bool, extreme: Bool, persistently: Bool) {
         if let zone: Zone = selectionManager.firstGrabbableZone {
-            let toThere = zone.parentZone
+            var toThere = zone.parentZone
 
             if selectionOnly {
                 if zone.isRoot {
@@ -508,40 +508,42 @@ class ZEditingManager: NSObject {
                     controllersManager.saveAndUpdateFor(toThere)
                 }
             } else if travelManager.storageMode != .bookmarks, let fromThere = toThere {
-                var there = fromThere.parentZone
+                toThere = fromThere.parentZone
 
                 zone.parentZone?.needSave()
-                zone.orphan()
 
                 if extreme {
                     revealRoot {
                         self.hereZone = self.rootZone
-                        there         = self.rootZone
+                        toThere       = self.rootZone
 
                         travelManager.manifest.needSave()
-                        self.moveZone(zone, into: there!)
-                        self.saveAfterMoveAffecting(there, persistently: persistently)
+                        self.moveZone(zone, into: toThere!)
+                        self.saveAfterMoveAffecting(toThere, persistently: persistently)
                     }
-                } else if hereZone == zone || hereZone == fromThere {
-                    if there != nil {
-                        hereZone = there!
 
-                        moveZone(zone, into: there!)
-                        saveAfterMoveAffecting(there, persistently: persistently)
-                    } else {
+                    return
+
+                } else if toThere == nil {
+                    if (hereZone == zone || hereZone == fromThere) {
                         revealParent {
-                            there = self.hereZone.parentZone
+                            toThere = fromThere.parentZone
 
-                            if there != nil {
-                                self.hereZone = there!
+                            if toThere != nil {
+                                self.hereZone = toThere!
 
-                                self.moveZone(zone, into: there!)
                                 travelManager.manifest.needSave()
-                                self.saveAfterMoveAffecting(there, persistently: persistently)
+                                self.moveZone(zone, into: toThere!)
+                                self.saveAfterMoveAffecting(toThere, persistently: persistently)
                             }
                         }
                     }
+
+                    return
                 }
+
+                moveZone(zone, into: toThere!)
+                saveAfterMoveAffecting(toThere, persistently: persistently)
             }
         }
     }
@@ -640,12 +642,13 @@ class ZEditingManager: NSObject {
 
 
     func moveZone(_ zone: Zone, into: Zone) {
+        zone.orphan()
+        zone.needSave()
+        into.needSave()
+
         zone.parentZone   = into
         into.showChildren = true
         let        insert = asTask ? 0 : into.children.count
-
-        zone.needSave()
-        into.needSave()
 
         if asTask {
             into.children.insert(zone, at: 0)

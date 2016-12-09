@@ -121,11 +121,11 @@ class Zone : ZRecord {
             if parent == nil && _parentZone?.record != nil {
                 needSave()
 
-                parent      = CKReference(record: (_parentZone?.record)!, action: .none)
+                parent          = CKReference(record: (_parentZone?.record)!, action: .none)
             }
 
             if parent != nil && _parentZone == nil {
-                _parentZone = cloudManager.zoneForRecordID((parent?.recordID)!) // sometimes yields nil ... WHY?
+                _parentZone     = cloudManager.zoneForRecordID((parent?.recordID)!) // sometimes yields nil ... WHY?
             }
 
             return _parentZone
@@ -136,6 +136,8 @@ class Zone : ZRecord {
 
             if let parentRecord = newValue?.record {
                 parent          = CKReference(record: parentRecord, action: .none)
+            } else {
+                parent          = nil
             }
         }
     }
@@ -168,6 +170,8 @@ class Zone : ZRecord {
 
     func orphan() {
         parentZone?.removeChild(self)
+        parentZone = nil
+        parent     = nil
     }
 
 
