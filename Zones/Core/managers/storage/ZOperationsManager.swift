@@ -97,7 +97,6 @@ class ZOperationsManager: NSObject {
         queue.isSuspended = true
         var states        = syncStates
 
-        controllersManager.displayActivity()
         states.append(.ready)
 
         if let prior = onReady {
@@ -121,6 +120,8 @@ class ZOperationsManager: NSObject {
 
         isReady           = false;
         queue.isSuspended = false
+
+        controllersManager.displayActivity()
     }
 
 

@@ -327,7 +327,9 @@ class ZEditingManager: NSObject {
 
     @discardableResult private func deleteZone(_ zone: Zone) -> Zone? {
         if !zone.isRoot {
-            cloudManager.addRecord(zone, forState: .needsDelete)
+            if travelManager.storageMode != .bookmarks {
+                cloudManager.addRecord(zone, forState: .needsDelete)
+            }
 
             deleteZones(zone.children)
 
@@ -590,6 +592,16 @@ class ZEditingManager: NSObject {
     }
 
 
+    func shouldCopyFrom(_ zone: Zone, into bookmark: Zone) -> Bool {
+        let     link = zone.crossLink
+        let isNormal = link == nil
+        let   isRoot = (link?.record != nil && link?.record.recordID.recordName == rootNameKey)
+        let toSameDB = zone.storageMode == bookmark.crossLink?.storageMode
+
+        return !toSameDB && (isRoot || isNormal)
+    }
+
+
     func actuallyMove(_ zone: Zone, persistently: Bool) {
         if  var         toThere = zone.parentZone {
             let        siblings = toThere.children
@@ -606,9 +618,8 @@ class ZEditingManager: NSObject {
                         moveZone(zone, into: toThere)
                         syncAndSignalAfterMoveAffecting(nil, persistently: persistently)
                     } else {
-                        let    link = zone.crossLink
-                        let  copyIt = link == nil || (link?.record != nil && link?.record.recordID.recordName == rootNameKey)
-                        let   mover = zone.copyForInsertionIntoAnotherDatabase() // [deep] copy it, and pass copy's pointer
+                        let   mover = zone.deepCopy()
+                        let  copyIt = shouldCopyFrom(zone, into: toThere)
                         let closure = {
                             travelManager.travelWhereThisZonePoints(toThere, atArrival: { (object, kind) -> (Void) in
                                 self.reportError("at arrival")
@@ -622,6 +633,7 @@ class ZEditingManager: NSObject {
                             closure()
                         } else {
                             self.deleteZone(zone)
+                            zone.orphan()
 
                             operationsManager.sync {
                                 self.dispatchAsyncInForeground(closure)

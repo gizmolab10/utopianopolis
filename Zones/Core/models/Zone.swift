@@ -143,7 +143,7 @@ class Zone : ZRecord {
     }
 
 
-    func copyForInsertionIntoAnotherDatabase() -> Zone {
+    func deepCopy() -> Zone {
         let          zone = Zone(record: nil, storageMode: storageMode)
         zone.showChildren = showChildren
         zone.crossLink    = crossLink
@@ -151,7 +151,7 @@ class Zone : ZRecord {
         zone.order        = order
 
         for child in children {
-            zone.children.append(child.copyForInsertionIntoAnotherDatabase())
+            zone.children.append(child.deepCopy())
         }
 
         return zone
