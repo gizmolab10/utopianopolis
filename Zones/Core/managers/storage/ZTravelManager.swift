@@ -49,14 +49,6 @@ class ZTravelManager: NSObject {
     }
 
 
-
-    override func debugCheck() {
-        if rootZone == hereZone {
-            reportError("BROKEN")
-        }
-    }
-
-
     func setup() {
         switch storageMode {
         case .bookmarks:
@@ -80,11 +72,13 @@ class ZTravelManager: NSObject {
     }
 
 
-    private func travel(_ block: (() -> Swift.Void)?) {
+    private func travel(_ atArrival: (() -> Swift.Void)?) {
+        setup                   ()
+        cloudManager      .clear()
         widgetsManager    .clear()
         selectionManager  .clear()
-        setup                   ()
-        operationsManager.travel(block)
+        bookmarksManager  .clear()
+        operationsManager.travel(atArrival)
     }
 
 
@@ -92,33 +86,7 @@ class ZTravelManager: NSObject {
         var there: Zone? = nil
         let  arriveThere = { atArrival(there, .data) }
 
-        if zone.isBookmark {
-            if let link = zone.crossLink, let mode = link.storageMode {
-                if storageMode == mode {
-
-                    // stay within graph
-
-                    there = cloudManager.zoneForRecordID(link.record.recordID) ?? hereZone
-
-                    arriveThere()
-                } else {
-                    storageMode = mode // going in (right arrow)
-
-                    if link.record != nil {
-                        print("pfffflt!")
-                    }
-
-                    travel {
-
-                        // arrive in a different graph
-
-                        there = link.record == nil ? self.hereZone : cloudManager.zoneForRecordID(link.record.recordID) ?? self.hereZone
-
-                        arriveThere()
-                    }
-                }
-            }
-        } else if zone.isRoot {
+        if zone.isRoot {
             let index = indexOfMode(storageMode) // index is a KLUDGE
 
             storageMode = .bookmarks // going out (left arrow)
@@ -129,11 +97,38 @@ class ZTravelManager: NSObject {
 
                 there = self.hereZone
 
+                // there is WRONG second time through:
+                // its storage mode is correct
+                // its record and record id are both wrong
+                // its children are wrong
+                // likely culprit is establishHere
+
                 if index >= 0 && index < (there?.children.count)! {
                     there = there?.children[index]
                 }
+                
+                arriveThere()
+            }
+        } else if zone.isBookmark, let link = zone.crossLink, let mode = link.storageMode {
+            if storageMode == mode {
+
+                // stay within graph
+
+                there = cloudManager.zoneForRecordID(link.record.recordID) ?? hereZone
 
                 arriveThere()
+            } else {
+                storageMode = mode // going in (right arrow)
+
+                cloudManager.clear()
+                travel {
+
+                    // arrive in a different graph
+
+                    there = link.record == nil ? self.hereZone : cloudManager.zoneForRecordID(link.record.recordID) ?? self.hereZone
+
+                    arriveThere()
+                }
             }
         }
     }

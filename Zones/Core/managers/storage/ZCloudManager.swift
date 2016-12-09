@@ -41,11 +41,6 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func clear() {
-        zones.removeAll()
-    }
-
-
     // MARK:- operations
     // MARK:-
 
@@ -80,11 +75,8 @@ class ZCloudManager: ZRecordsManager {
         self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) -> (Void) in
             if iRecord != nil {
                 travelManager.rootZone?.record = iRecord
-                travelManager.rootZone?.needChildren()
 
-                if iRecord != travelManager.rootZone?.record {
-                    self.reportError(travelManager.rootZone?.zoneName)
-                }
+                travelManager.rootZone?.needChildren()
 
                 if travelManager.manifest.here == nil {
                     travelManager.hereZone = travelManager.rootZone
@@ -98,27 +90,38 @@ class ZCloudManager: ZRecordsManager {
 
 
     func establishHere(_ onCompletion: (() -> Swift.Void)?) {
-        var recordID: CKRecordID = CKRecordID(recordName: manifestNameKey)
+        if travelManager.storageMode == .bookmarks {
+            travelManager.hereZone = travelManager.rootZone // points to wrong zone (has a record, should not have one)
 
-        assureRecordExists(withRecordID: recordID, recordType: manifestTypeKey, onCompletion: { (record: CKRecord?) -> (Void) in
-            if record != nil {
-                travelManager.manifest.record = record
-            }
+            onCompletion?()
+        } else {
+            var recordID: CKRecordID = CKRecordID(recordName: manifestNameKey)
 
-            if travelManager.manifest.here != nil {
-                recordID  = (travelManager.manifest.here?.recordID)!
+            assureRecordExists(withRecordID: recordID, recordType: manifestTypeKey, onCompletion: { (iManifestRecord: CKRecord?) -> (Void) in
+                if iManifestRecord != nil {
+                    travelManager.manifest.record = iManifestRecord
 
-                self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { (record: CKRecord?) -> (Void) in
-                    if record != nil {
-                        travelManager.hereZone?.record = record
-                        travelManager.hereZone?.needChildren()
-                        travelManager.manifest.needSave()
+                    if travelManager.manifest.here != nil {
+                        recordID = (travelManager.manifest.here?.recordID)!
+
+                        self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { (iHereRecord: CKRecord?) -> (Void) in
+                            if iHereRecord != nil {
+                                travelManager.hereZone = Zone(record: iHereRecord, storageMode: travelManager.storageMode)
+
+                                travelManager.hereZone?.needChildren()
+                                travelManager.manifest.needSave()
+                            }
+
+                            onCompletion?()
+                        })
+
+                        return
                     }
+                }
 
-                    onCompletion?()
-                })
-            }
-        })
+                self.establishRoot(onCompletion)
+            })
+        }
     }
 
 
@@ -328,32 +331,28 @@ class ZCloudManager: ZRecordsManager {
             operation.query                  = CKQuery(recordType: zoneTypeKey, predicate: predicate)
             operation.desiredKeys            = Zone.cloudProperties()
             operation.recordFetchedBlock     = { iRecord -> Swift.Void in
-                var zone = self.zoneForRecordID(iRecord.recordID)
+                var child = self.zoneForRecordID(iRecord.recordID)
 
-                if zone == nil {
-                    zone = Zone(record: iRecord, storageMode: travelManager.storageMode)
+                if child == nil {
+                    child = Zone(record: iRecord, storageMode: travelManager.storageMode)
                 }
 
-                zone?.updateZoneProperties()
-                zone?.needChildren()
+                child?.updateZoneProperties()
+                child?.needChildren()
 
-                if let parent = zone?.parentZone {
-                    if parent != zone {
-                        if !parent.children.contains(zone!) {
-                            parent.children.append(zone!)
-                        }
+                if let parent = child?.parentZone {
+                    if parent != child {
+                        parent.appendChild(child!)
 
                         if !parentsNeedingResort.contains(parent) {
                             parentsNeedingResort.append(parent)
                         }
-
-                        return
                     }
 
                     return
                 }
 
-                self.reportError(zone?.zoneName)
+                self.reportError(child?.zoneName)
             }
 
             operation.queryCompletionBlock = { (cursor, error) -> Swift.Void in

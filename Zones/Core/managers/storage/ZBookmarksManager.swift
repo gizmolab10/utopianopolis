@@ -27,6 +27,21 @@ class ZBookmarksManager: NSObject {
     }
 
 
+    func clear() {
+        var orphans: [Zone] = []
+
+        for child in rootZone.children {
+            if !child.isBookmark {
+                orphans.append(child)
+            }
+        }
+
+        for orphan in orphans {
+            orphan.orphan()
+        }
+    }
+
+
     func setupCloudZonesForAccessToStorage() {
         addCloudZone("everyone", storageMode: .everyone)
         addCloudZone("mine",     storageMode: .mine)

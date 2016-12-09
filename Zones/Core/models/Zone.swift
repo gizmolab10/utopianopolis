@@ -21,6 +21,7 @@ class Zone : ZRecord {
     dynamic var showSubzones:    NSNumber?
     var             children:       [Zone] = []
     var          _parentZone:        Zone?
+    var           _crossLink:     ZRecord?
     var           isBookmark:         Bool { get { return crossLink != nil } }
     var               isRoot:         Bool { get { return record != nil && record.recordID.recordName == rootNameKey } }
 
@@ -42,15 +43,17 @@ class Zone : ZRecord {
         get {
             if zoneLink == nil {
                 return nil
-            } else {
+            } else if _crossLink == nil {
                 let components: [String] = (zoneLink?.components(separatedBy: ":"))!
-                let refString:   String  = components[2]
-                let refID:   CKRecordID? = refString == "" ? nil : CKRecordID(recordName: refString)
-                let reference: CKRecord? = refID == nil ? nil : CKRecord(recordType: zoneTypeKey, recordID: refID!)
+                let refString:   String  = components[2] == "" ? "root" : components[2]
+                let refID:    CKRecordID = CKRecordID(recordName: refString)
+                let reference:  CKRecord = CKRecord(recordType: zoneTypeKey, recordID: refID)
                 let mode:  ZStorageMode? = ZStorageMode(rawValue: components[0])
 
-                return ZRecord(record: reference, storageMode: mode)
+                _crossLink = ZRecord(record: reference, storageMode: mode)
             }
+
+            return _crossLink
         }
 
         set {
@@ -61,6 +64,8 @@ class Zone : ZRecord {
                 let reference = !hasRef ? "" : newValue!.record.recordID.recordName
                 zoneLink      = "\(newValue!.storageMode!.rawValue)::\(reference)"
             }
+
+            _crossLink = nil
         }
     }
 
@@ -163,6 +168,25 @@ class Zone : ZRecord {
 
     func orphan() {
         parentZone?.removeChild(self)
+    }
+
+
+    func appendChild(_ child: Zone?) {
+        if child != nil {
+            if children.contains(child!) {
+                return
+            }
+
+            let identifier = child?.record.recordID.recordName
+
+            for sibling in children {
+                if sibling.record != nil && sibling.record.recordID.recordName == identifier {
+                    return
+                }
+            }
+
+            children.append(child!)
+        }
     }
 
 

@@ -96,7 +96,9 @@ class ZOperationsManager: NSObject {
     private func setupAndRun(_ syncStates: [ZSynchronizationState], onCompletion: @escaping (() -> Swift.Void)) {
         queue.isSuspended = true
         var states        = syncStates
+        isReady           = false;
 
+        controllersManager.displayActivity()
         states.append(.ready)
 
         if let prior = onReady {
@@ -118,10 +120,7 @@ class ZOperationsManager: NSObject {
             }
         }
 
-        isReady           = false;
         queue.isSuspended = false
-
-        controllersManager.displayActivity()
     }
 
 
@@ -129,7 +128,7 @@ class ZOperationsManager: NSObject {
         let            operation = operationsByState[state]!
         operationsByState[state] = nil
 
-        // print(state)
+        print(state)
 
         switch(state) {
         case .file:        zfileManager.restore();        operation.finish();   break

@@ -46,6 +46,12 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func clear() {
+        recordsByState = [:]
+        zones          = [:]
+    }
+
+
     func hasRecord(_ record: ZRecord, forState: ZRecordState) -> Bool {
         return recordsForState(forState).contains(record)
     }

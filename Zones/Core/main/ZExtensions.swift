@@ -201,7 +201,7 @@ typealias ZStorageDict = [String : NSObject]
 
 
 extension NSObject {
-    func toConsole(_ loggable: Any) {
+    func toConsole(_ loggable: Any?) {
 //        print(loggable)
     }
 

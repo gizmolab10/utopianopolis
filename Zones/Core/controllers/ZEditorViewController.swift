@@ -32,15 +32,12 @@ class ZEditorViewController: ZGenericViewController {
             recursing = true
 
             toConsole("all")
-            // widgetsManager.clear()
         } else {
             specificWidget = widgetsManager.widgetForZone(zone!)
             specificView   = specificWidget?.superview
             specificindex  = zone!.siblingIndex()
 
-            if let name = zone?.zoneName {
-                toConsole(name)
-            }
+            toConsole(zone?.zoneName)
         }
 
         specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing)

@@ -28,6 +28,10 @@ class ZRecord: NSObject {
             if _record != newValue {
                 _record = newValue
 
+                if newValue.recordID.recordName == rootNameKey {
+                    reportError("gotcha!")
+                }
+
                 register()
                 updateZoneProperties()
             }

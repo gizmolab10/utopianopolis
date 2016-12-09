@@ -31,12 +31,12 @@ class ZManifest: ZRecord {
         set {
             if  _hereZone != newValue {
                 _hereZone  = newValue
+            }
 
-                if let record = _hereZone?.record {
-                    here = CKReference(record: record, action: .none)
+            if let record = _hereZone?.record, record.recordID.recordName != here?.recordID.recordName {
+                here = CKReference(record: record, action: .none)
 
-                    needSave()
-                }
+                needSave()
             }
         }
     }
