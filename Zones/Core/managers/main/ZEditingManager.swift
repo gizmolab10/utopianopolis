@@ -606,22 +606,25 @@ class ZEditingManager: NSObject {
                         moveZone(zone, into: toThere)
                         syncAndSignalAfterMoveAffecting(nil, persistently: persistently)
                     } else {
-                        let     link = zone.crossLink
-                        let isNormal = link == nil || (link?.record != nil && link?.record.recordID.recordName != rootNameKey)
-                        let    mover = zone.copyForInsertionIntoAnotherDatabase() // [deep] copy it, and pass copy's pointer
-
-                        if isNormal {
-                            self.deleteZone(zone)
+                        let    link = zone.crossLink
+                        let  copyIt = link == nil || (link?.record != nil && link?.record.recordID.recordName == rootNameKey)
+                        let   mover = zone.copyForInsertionIntoAnotherDatabase() // [deep] copy it, and pass copy's pointer
+                        let closure = {
+                            travelManager.travelWhereThisZonePoints(toThere, atArrival: { (object, kind) -> (Void) in
+                                self.reportError("at arrival")
+                                self.applyModeRecursivelyTo(mover, parentZone: nil)
+                                self.moveZone(mover, into: object as! Zone)
+                                self.syncAndSignalAfterMoveAffecting(nil, persistently: persistently)
+                            })
                         }
 
-                        operationsManager.sync {
-                            self.dispatchAsyncInForeground {
-                                travelManager.travelWhereThisZonePoints(toThere, atArrival: { (object, kind) -> (Void) in
-                                    self.reportError("at arrival")
-                                    self.applyModeRecursivelyTo(mover, parentZone: nil)
-                                    self.moveZone(mover, into: object as! Zone)
-                                    self.syncAndSignalAfterMoveAffecting(nil, persistently: persistently)
-                                })
+                        if copyIt {
+                            closure()
+                        } else {
+                            self.deleteZone(zone)
+
+                            operationsManager.sync {
+                                self.dispatchAsyncInForeground(closure)
                             }
                         }
                     }
