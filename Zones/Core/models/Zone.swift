@@ -87,7 +87,7 @@ class Zone : ZRecord {
             if newValue != order {
                 zoneOrder = NSNumber(value: newValue)
 
-                cloudManager.addRecord(self, forState: .needsMerge)
+                self.needMerge()
             }
         }
     }
@@ -110,7 +110,7 @@ class Zone : ZRecord {
             if newValue != showChildren {
                 showSubzones = NSNumber(integerLiteral: newValue ? 1 : 0)
 
-                cloudManager.addRecord(self, forState: .needsMerge)
+                self.needMerge()
             }
         }
     }
@@ -143,12 +143,16 @@ class Zone : ZRecord {
     }
 
 
-    func copyAsOrphanBookmark() -> Zone {
-        let          zone = Zone(record: record, storageMode: storageMode)
+    func copyForInsertionIntoAnotherDatabase() -> Zone {
+        let          zone = Zone(record: nil, storageMode: storageMode)
         zone.showChildren = showChildren
         zone.crossLink    = crossLink
         zone.zoneName     = zoneName
         zone.order        = order
+
+        for child in children {
+            zone.children.append(child.copyForInsertionIntoAnotherDatabase())
+        }
 
         return zone
     }

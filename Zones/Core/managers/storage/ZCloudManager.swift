@@ -530,8 +530,8 @@ class ZCloudManager: ZRecordsManager {
                 if oldValue != value {
                     record[forPropertyName] = value as! CKRecordValue?
 
-                    if !cloudManager   .hasRecord(object, forState: .needsCreate) {
-                        cloudManager.removeRecord(object, forState: .needsMerge)
+                    if !hasRecord   (object, forState: .needsCreate) {
+                        removeRecord(object, forState: .needsMerge)
                     }
                 }
             }

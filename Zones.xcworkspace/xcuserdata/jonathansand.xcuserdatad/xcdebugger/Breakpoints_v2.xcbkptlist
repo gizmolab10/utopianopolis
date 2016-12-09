@@ -9,13 +9,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/Core/managers/main/ZEditingManager.swift"
-            timestampString = "502939124.918354"
+            filePath = "Zones/Core/managers/storage/ZOperationsManager.swift"
+            timestampString = "502947668.265055"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "532"
-            endingLineNumber = "532"
-            landmarkName = "moveOut(selectionOnly:extreme:persistently:)"
+            startingLineNumber = "153"
+            endingLineNumber = "153"
+            landmarkName = "becomeReady(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Zones/Core/managers/main/ZEditingManager.swift"
+            timestampString = "502966967.348605"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "607"
+            endingLineNumber = "607"
+            landmarkName = "actuallyMove(_:persistently:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

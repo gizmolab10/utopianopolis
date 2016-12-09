@@ -20,8 +20,8 @@ enum ZSynchronizationState: Int {
     case children
     case unsubscribe
     case subscribe
-    case parent
     case create
+    case parent
     case merge
     case root
 }
@@ -96,7 +96,6 @@ class ZOperationsManager: NSObject {
     private func setupAndRun(_ syncStates: [ZSynchronizationState], onCompletion: @escaping (() -> Swift.Void)) {
         queue.isSuspended = true
         var states        = syncStates
-        isReady           = false;
 
         controllersManager.displayActivity()
         states.append(.ready)
@@ -120,6 +119,7 @@ class ZOperationsManager: NSObject {
             }
         }
 
+        isReady           = false;
         queue.isSuspended = false
     }
 
@@ -149,19 +149,23 @@ class ZOperationsManager: NSObject {
 
 
     func becomeReady(_ operation: BlockOperation) {
-        isReady = true;
+        if queue.isSuspended {
+            reportError("operations manager attempting to become ready while queue is suspended")
+        } else {
+            isReady = true;
 
-        controllersManager.displayActivity()
+            controllersManager.displayActivity()
 
-        if onReady != nil {
-            onReady!()
-            print("unspun")
+            if onReady != nil {
+                onReady!()
+                print("unspun")
 
-            onReady = nil
+                onReady = nil
+            }
+
+            operation.finish()
+            
+            editingManager.handleDeferredEvents()
         }
-
-        operation.finish()
-
-        editingManager.handleDeferredEvents()
     }
 }

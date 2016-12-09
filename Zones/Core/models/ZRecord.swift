@@ -28,10 +28,6 @@ class ZRecord: NSObject {
             if _record != newValue {
                 _record = newValue
 
-                if newValue.recordID.recordName == rootNameKey {
-                    reportError("gotcha!")
-                }
-
                 register()
                 updateZoneProperties()
             }
@@ -173,6 +169,13 @@ class ZRecord: NSObject {
 
     func needFetch() {
         cloudManager.addRecord(self, forState: .needsFetch)
+    }
+
+
+    func needMerge() {
+        if !cloudManager.hasRecord(self, forState: .needsCreate) {
+            cloudManager.addRecord(self, forState: .needsMerge)
+        }
     }
 
 

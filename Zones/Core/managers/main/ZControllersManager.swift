@@ -86,7 +86,7 @@ class ZControllersManager: NSObject {
     }
 
 
-    func saveAndUpdateFor(_ zone: Zone?, onCompletion: Closure?) {
+    func syncToCloudAndSignalFor(_ zone: Zone?, onCompletion: Closure?) {
         dispatchAsyncInForeground {
             self.signal(zone, regarding: .data, onCompletion: onCompletion)
 
@@ -97,7 +97,7 @@ class ZControllersManager: NSObject {
     }
 
 
-    func saveAndUpdateFor(_ zone: Zone?) {
-        saveAndUpdateFor(zone, onCompletion: nil)
+    func syncToCloudAndSignalFor(_ zone: Zone?) {
+        syncToCloudAndSignalFor(zone, onCompletion: nil)
     }
 }

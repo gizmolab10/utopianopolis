@@ -32,9 +32,9 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
                 let   zone = widget.widgetZone
 
                 if !_isTextEditing {
-                    selectionManager.currentlyGrabbedZones = [zone!]
                     selectionManager.currentlyEditingZone  = nil
 
+                    selectionManager.grab(zone!)
                     removeMonitorAsync()
                 } else {
                     selectionManager.currentlyEditingZone  = zone

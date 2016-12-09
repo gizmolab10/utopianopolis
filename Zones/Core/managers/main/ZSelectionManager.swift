@@ -58,6 +58,20 @@ class ZSelectionManager: NSObject {
     }
 
 
+    func ungrab(_ zone: Zone?) {
+        if zone != nil, let index = currentlyGrabbedZones.index(of: zone!) {
+            currentlyGrabbedZones.remove(at: index)
+        }
+    }
+
+
+    func grab(_ zone: Zone?) {
+        if zone != nil {
+            currentlyGrabbedZones = [zone!]
+        }
+    }
+
+
     func isGrabbed(_ zone: Zone) -> Bool {
         return currentlyGrabbedZones.contains(zone)
     }

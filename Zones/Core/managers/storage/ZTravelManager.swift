@@ -114,13 +114,12 @@ class ZTravelManager: NSObject {
 
                 // stay within graph
 
-                there = cloudManager.zoneForRecordID(link.record.recordID) ?? hereZone
+                there = cloudManager.zoneForRecordID(link.record.recordID)
 
                 arriveThere()
             } else {
                 storageMode = mode // going in (right arrow)
 
-                cloudManager.clear()
                 travel {
 
                     // arrive in a different graph

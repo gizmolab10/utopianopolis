@@ -73,7 +73,7 @@ class ZoneDot: ZView {
                 editingManager.toggleChildrenVisibility(zone)
             } else {
                 selectionManager.deselect()
-                selectionManager.currentlyGrabbedZones = [zone]
+                selectionManager.grab(zone)
                 controllersManager.signal(zone, regarding: .datum)
             }
         }
