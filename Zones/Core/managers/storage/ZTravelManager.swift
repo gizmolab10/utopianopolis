@@ -97,12 +97,6 @@ class ZTravelManager: NSObject {
 
                 there = self.hereZone
 
-                // there is WRONG second time through:
-                // its storage mode is correct
-                // its record and record id are both wrong
-                // its children are wrong
-                // likely culprit is establishHere
-
                 if index >= 0 && index < (there?.children.count)! {
                     there = there?.children[index]
                 }
@@ -110,14 +104,7 @@ class ZTravelManager: NSObject {
                 arriveThere()
             }
         } else if zone.isBookmark, let link = zone.crossLink, let mode = link.storageMode {
-            if storageMode == mode {
-
-                // stay within graph
-
-                there = cloudManager.zoneForRecordID(link.record.recordID)
-
-                arriveThere()
-            } else {
+            if storageMode != mode {
                 storageMode = mode // going in (right arrow)
 
                 travel {
@@ -127,6 +114,22 @@ class ZTravelManager: NSObject {
                     there = link.record == nil ? self.hereZone : cloudManager.zoneForRecordID(link.record.recordID) ?? self.hereZone
 
                     arriveThere()
+                }
+            } else {
+                // stay within graph
+
+                let recordID = link.record.recordID
+                there        = cloudManager.zoneForRecordID(recordID)
+
+                if there != nil {
+                    arriveThere()
+                } else {
+                    cloudManager.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) -> (Void) in
+                        there = Zone(record: iRecord, storageMode: travelManager.storageMode)
+
+                        there?.needChildren()
+                        arriveThere()
+                    })
                 }
             }
         }
