@@ -95,11 +95,12 @@ class ZCloudManager: ZRecordsManager {
 
     func establishHere(_ onCompletion: (() -> Swift.Void)?) {
         if travelManager.storageMode == .bookmarks {
-            travelManager.hereZone = travelManager.rootZone // points to wrong zone (has a record, should not have one)
-
-            onCompletion?()
+            travelManager.hereZone   = travelManager.rootZone
+        } else if let here = travelManager.hereZone, here.record != nil {
+            here.needChildren()
+            here.needFetch()
         } else {
-            let         manifestName = "\(travelManager.storageMode.rawValue)\(manifestNameKey)"
+            let         manifestName = "\(manifestNameKey).\(travelManager.storageMode.rawValue)"
             var recordID: CKRecordID = CKRecordID(recordName: manifestName)
 
             assureRecordExists(withRecordID: recordID, storageMode: .mine, recordType: manifestTypeKey, onCompletion: { (iManifestRecord: CKRecord?) -> (Void) in
@@ -126,7 +127,11 @@ class ZCloudManager: ZRecordsManager {
 
                 self.establishRoot(onCompletion)
             })
+
+            return
         }
+
+        onCompletion?()
     }
 
 
@@ -288,7 +293,7 @@ class ZCloudManager: ZRecordsManager {
                 // if records to save contains a manifest object and travelManager's storage mode is .everyone
                 // remove it and set it aside for saving in a separate operation to save into mode .mine
 
-                if let index = operation.recordsToSave?.index(of: travelManager.manifest.record) {
+                if let record = travelManager.manifest.record, let index = operation.recordsToSave?.index(of: record) {
                     operation.recordsToSave?.remove(at: index)
                     travelManager.manifest.needSave()
                 }
