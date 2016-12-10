@@ -12,32 +12,36 @@ import CloudKit
 
 
 class ZCloudManager: ZRecordsManager {
-    var cloudZonesByID: [CKRecordZoneID : CKRecordZone] = [:]
     var      container:                    CKContainer!
+    var cloudZonesByID: [CKRecordZoneID : CKRecordZone] = [:]
+    var      currentDB:                     CKDatabase? { get { return databaseForMode(travelManager.storageMode) } }
 
-    
-    var currentDB: CKDatabase? {
-        get {
-            switch (travelManager.storageMode) {
-            case .everyone: return container.publicCloudDatabase
-            case .group:    return container.sharedCloudDatabase
-            case .mine:     return container.privateCloudDatabase
-            default:        return nil
-            }
+
+    func databaseForMode(_ mode: ZStorageMode) -> CKDatabase? {
+        switch (mode) {
+        case .everyone: return container.publicCloudDatabase
+        case .group:    return container.sharedCloudDatabase
+        case .mine:     return container.privateCloudDatabase
+        default:        return nil
         }
     }
 
 
-    func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
-        if currentDB == nil {
-            return nil
+    func configure(_ operation: CKDatabaseOperation, using mode: ZStorageMode) -> CKDatabaseOperation? {
+        if let database = databaseForMode(mode) {
+            operation.qualityOfService = .background
+            operation.container        = container
+            operation.database         = database
+
+            return operation
         }
 
-        operation.qualityOfService = .background
-        operation.container        = container
-        operation.database         = currentDB
+        return nil
+    }
 
-        return operation
+
+    func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
+        return configure(operation, using: travelManager.storageMode)
     }
 
 
@@ -72,7 +76,7 @@ class ZCloudManager: ZRecordsManager {
     func establishRoot(_ onCompletion: (() -> Swift.Void)?) {
         let recordID = CKRecordID(recordName: rootNameKey)
 
-        self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) -> (Void) in
+        self.assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) -> (Void) in
             if iRecord != nil {
                 travelManager.rootZone = Zone(record: iRecord, storageMode: travelManager.storageMode)
 
@@ -95,16 +99,17 @@ class ZCloudManager: ZRecordsManager {
 
             onCompletion?()
         } else {
-            var recordID: CKRecordID = CKRecordID(recordName: manifestNameKey)
+            let         manifestName = "\(travelManager.storageMode.rawValue)\(manifestNameKey)"
+            var recordID: CKRecordID = CKRecordID(recordName: manifestName)
 
-            assureRecordExists(withRecordID: recordID, recordType: manifestTypeKey, onCompletion: { (iManifestRecord: CKRecord?) -> (Void) in
+            assureRecordExists(withRecordID: recordID, storageMode: .mine, recordType: manifestTypeKey, onCompletion: { (iManifestRecord: CKRecord?) -> (Void) in
                 if iManifestRecord != nil {
                     travelManager.manifest.record = iManifestRecord
 
                     if travelManager.manifest.here != nil {
                         recordID = (travelManager.manifest.here?.recordID)!
 
-                        self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { (iHereRecord: CKRecord?) -> (Void) in
+                        self.assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { (iHereRecord: CKRecord?) -> (Void) in
                             if iHereRecord != nil {
                                 travelManager.hereZone = Zone(record: iHereRecord, storageMode: travelManager.storageMode)
 
@@ -267,27 +272,48 @@ class ZCloudManager: ZRecordsManager {
 
 
     func flush(_ onCompletion: (() -> Swift.Void)?) {
-        if let operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
+        flush(travelManager.storageMode, onCompletion: onCompletion)
+    }
+
+
+    func flush(_ storageMode: ZStorageMode, onCompletion: (() -> Swift.Void)?) {
+        if let operation = configure(CKModifyRecordsOperation(), using: storageMode) as? CKModifyRecordsOperation {
             operation.recordsToSave     =   recordsMatching([.needsSave])
             operation.recordIDsToDelete = recordIDsMatching([.needsDelete])
 
             clearStates([.needsSave, .needsDelete])
 
+            if storageMode == .everyone {
+
+                // if records to save contains a manifest object and travelManager's storage mode is .everyone
+                // remove it and set it aside for saving in a separate operation to save into mode .mine
+
+                if let index = operation.recordsToSave?.index(of: travelManager.manifest.record) {
+                    operation.recordsToSave?.remove(at: index)
+                    travelManager.manifest.needSave()
+                }
+            }
+
             if (operation.recordsToSave?.count)! > 0 || (operation.recordIDsToDelete?.count)! > 0 {
 
                 reportError("saving \((operation.recordsToSave?.count)!) deleting \((operation.recordIDsToDelete?.count)!)")
 
-                operation.completionBlock          = { () in
+                operation.completionBlock          = {
                     for identifier: CKRecordID in operation.recordIDsToDelete! {
                         let zone = self.zones[identifier]
 
                         zone?.orphan()
-                        self.zones.removeValue(forKey: identifier)
+                        self.unregisterZone(zone)
                     }
 
-                    controllersManager.signal(nil, regarding: .data)
-                    onCompletion?()
+                    if self.recordsMatching([.needsSave]).count > 0 {
+                        self.flush(.mine, onCompletion: onCompletion)
+                    } else {
+                        controllersManager.signal(nil, regarding: .data)
+                        onCompletion?()
+                    }
                 }
+
                 operation.perRecordCompletionBlock = { (iRecord, iError) -> Swift.Void in
                     if  let error:         CKError = iError as? CKError {
                         let info                   = error.errorUserInfo
@@ -313,7 +339,11 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        onCompletion?()
+        if self.recordsMatching([.needsSave]).count > 0 {
+            self.flush(.mine, onCompletion: onCompletion)
+        } else {
+            onCompletion?()
+        }
     }
 
 
@@ -382,7 +412,7 @@ class ZCloudManager: ZRecordsManager {
 
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
-        assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord) -> (Void) in
+        assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord) -> (Void) in
             var zone = self.zoneForRecordID(iRecord.recordID)
 
             if  zone != nil {
@@ -404,17 +434,19 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func assureRecordExists(withRecordID recordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
-        if currentDB == nil {
+    func assureRecordExists(withRecordID recordID: CKRecordID, storageMode: ZStorageMode, recordType: String, onCompletion: @escaping RecordClosure) {
+        let database = databaseForMode(storageMode)
+
+        if database == nil {
             onCompletion(nil)
         } else {
-            currentDB?.fetch(withRecordID: recordID) { (fetched: CKRecord?, fetchError: Error?) in
+            database?.fetch(withRecordID: recordID) { (fetched: CKRecord?, fetchError: Error?) in
                 if (fetchError == nil) {
                     onCompletion(fetched!)
                 } else {
                     let created: CKRecord = CKRecord(recordType: recordType, recordID: recordID)
 
-                    self.currentDB?.save(created, completionHandler: { (saved: CKRecord?, saveError: Error?) in
+                    database?.save(created, completionHandler: { (saved: CKRecord?, saveError: Error?) in
                         if (saveError != nil) {
                             onCompletion(nil)
                         } else {
@@ -492,7 +524,7 @@ class ZCloudManager: ZRecordsManager {
         if currentDB == nil {
             block?()
         } else {
-            let classNames = [zoneTypeKey, "ZManifest"] //, "ZTrait", "ZAction"]
+            let classNames = [zoneTypeKey, manifestTypeKey] //, "ZTrait", "ZAction"]
             var      count = classNames.count
 
             for className: String in classNames {

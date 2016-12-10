@@ -178,12 +178,19 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
-    func registerZone(_ zone: Zone) {
-        if let record = zone.record {
+    func registerZone(_ zone: Zone?) {
+        if let record = zone?.record {
             zones[record.recordID] = zone
         }
     }
-    
+
+
+    func unregisterZone(_ zone: Zone?) {
+        if let record = zone?.record {
+            zones[record.recordID] = nil
+        }
+    }
+
     
     func zoneForRecordID(_ recordID: CKRecordID?) -> Zone? {
         if recordID == nil {

@@ -633,7 +633,6 @@ class ZEditingManager: NSObject {
                             closure()
                         } else {
                             self.deleteZone(zone)
-                            zone.orphan()
 
                             operationsManager.sync {
                                 self.dispatchAsyncInForeground(closure)

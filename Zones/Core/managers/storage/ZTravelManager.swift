@@ -22,16 +22,31 @@ enum ZStorageMode: String {     ///// move this to cloud manager  //////////
 class ZTravelManager: NSObject {
 
 
-    var rootZone:     Zone!
-    var manifest: ZManifest = ZManifest()
-    let      key:    String = "current storage mode"
+    var              rootZone:                      Zone!
+    var manifestByStorageMode: [ZStorageMode : ZManifest] = [:]
+    let                   key:                     String = "current storage mode"
+    var              hereZone:     Zone? { get { return manifest.hereZone } set { manifest.hereZone = newValue } }
 
 
-    var hereZone: Zone? { get { return manifest.hereZone } set { manifest.hereZone = newValue } }
+    var manifest: ZManifest {
+        get {
+            var found = manifestByStorageMode[storageMode]
+
+            if found == nil {
+                found                              = ZManifest(record: nil, storageMode: storageMode)
+                manifestByStorageMode[storageMode] = found
+            }
+
+            return found!
+        }
+    }
 
 
     var storageMode: ZStorageMode {
-        set { UserDefaults.standard.set(newValue.rawValue, forKey:key) }
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey:key)
+        }
+
         get {
             var mode: ZStorageMode? = nil
 
@@ -124,8 +139,8 @@ class ZTravelManager: NSObject {
                 if there != nil {
                     arriveThere()
                 } else {
-                    cloudManager.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) -> (Void) in
-                        there = Zone(record: iRecord, storageMode: travelManager.storageMode)
+                    cloudManager.assureRecordExists(withRecordID: recordID, storageMode: storageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) -> (Void) in
+                        there = Zone(record: iRecord, storageMode: self.storageMode)
 
                         there?.needChildren()
                         arriveThere()
