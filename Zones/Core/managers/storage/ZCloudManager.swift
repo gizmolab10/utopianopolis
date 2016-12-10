@@ -95,7 +95,7 @@ class ZCloudManager: ZRecordsManager {
 
     func establishHere(_ onCompletion: (() -> Swift.Void)?) {
         if travelManager.storageMode == .bookmarks {
-            travelManager.hereZone   = travelManager.rootZone
+            travelManager.hereZone   = bookmarksManager.rootZone
         } else if let here = travelManager.hereZone, here.record != nil {
             here.needChildren()
             here.needFetch()

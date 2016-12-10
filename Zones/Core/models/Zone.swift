@@ -47,10 +47,10 @@ class Zone : ZRecord {
                 let components: [String] = (zoneLink?.components(separatedBy: ":"))!
                 let refString:   String  = components[2] == "" ? "root" : components[2]
                 let refID:    CKRecordID = CKRecordID(recordName: refString)
-                let reference:  CKRecord = CKRecord(recordType: zoneTypeKey, recordID: refID)
+                let refRecord:  CKRecord = CKRecord(recordType: zoneTypeKey, recordID: refID)
                 let mode:  ZStorageMode? = ZStorageMode(rawValue: components[0])
 
-                _crossLink = ZRecord(record: reference, storageMode: mode)
+                _crossLink = ZRecord(record: refRecord, storageMode: mode)
             }
 
             return _crossLink
