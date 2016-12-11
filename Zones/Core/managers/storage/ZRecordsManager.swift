@@ -26,7 +26,7 @@ class ZRecordsManager: NSObject {
 
 
     var recordsByState: [ZRecordState : [ZRecord]] = [:]
-    var          zones: [CKRecordID   :      Zone] = [:]
+    var          zones: [String       :      Zone] = [:]
 
 
     // MARK:- record state
@@ -180,14 +180,14 @@ class ZRecordsManager: NSObject {
 
     func registerZone(_ zone: Zone?) {
         if let record = zone?.record {
-            zones[record.recordID] = zone
+            zones[record.recordID.recordName] = zone
         }
     }
 
 
     func unregisterZone(_ zone: Zone?) {
         if let record = zone?.record {
-            zones[record.recordID] = nil
+            zones[record.recordID.recordName] = nil
         }
     }
 
@@ -197,6 +197,6 @@ class ZRecordsManager: NSObject {
             return nil
         }
         
-        return zones[recordID!]
+        return zones[recordID!.recordName]
     }
 }

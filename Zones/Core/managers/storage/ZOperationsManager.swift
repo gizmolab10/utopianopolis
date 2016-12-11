@@ -135,7 +135,7 @@ class ZOperationsManager: NSObject {
         case .file:        zfileManager.restore();        operation.finish();   break
         case .cloud:       cloudManager.fetchCloudZones { operation.finish() }; break
         case .root:        cloudManager.establishRoot   { operation.finish() }; break
-        case .here:        cloudManager.establishHere   { operation.finish() }; break
+        case .here:        travelManager.establishHere  { operation.finish() }; break
         case .fetch:       cloudManager.fetch           { operation.finish() }; break
         case .parent:      cloudManager.fetchParents    { operation.finish() }; break
         case .children:    cloudManager.fetchChildren   { operation.finish() }; break

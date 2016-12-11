@@ -94,44 +94,34 @@ class ZCloudManager: ZRecordsManager {
 
 
     func establishHere(_ onCompletion: (() -> Swift.Void)?) {
-        if travelManager.storageMode == .bookmarks {
-            travelManager.hereZone   = bookmarksManager.rootZone
-        } else if let here = travelManager.hereZone, here.record != nil {
-            here.needChildren()
-            here.needFetch()
-        } else {
-            let         manifestName = "\(manifestNameKey).\(travelManager.storageMode.rawValue)"
-            var recordID: CKRecordID = CKRecordID(recordName: manifestName)
+        let         manifestName = "\(manifestNameKey).\(travelManager.storageMode.rawValue)"
+        var recordID: CKRecordID = CKRecordID(recordName: manifestName)
 
-            assureRecordExists(withRecordID: recordID, storageMode: .mine, recordType: manifestTypeKey, onCompletion: { (iManifestRecord: CKRecord?) -> (Void) in
-                if iManifestRecord != nil {
-                    travelManager.manifest.record = iManifestRecord
+        assureRecordExists(withRecordID: recordID, storageMode: .mine, recordType: manifestTypeKey, onCompletion: { (iManifestRecord: CKRecord?) -> (Void) in
+            if iManifestRecord != nil {
+                travelManager.manifest.record = iManifestRecord
 
-                    if travelManager.manifest.here != nil {
-                        recordID = (travelManager.manifest.here?.recordID)!
+                if travelManager.manifest.here != nil {
+                    recordID = (travelManager.manifest.here?.recordID)!
 
-                        self.assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { (iHereRecord: CKRecord?) -> (Void) in
-                            if iHereRecord != nil {
-                                travelManager.hereZone = Zone(record: iHereRecord, storageMode: travelManager.storageMode)
+                    self.assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { (iHereRecord: CKRecord?) -> (Void) in
+                        if iHereRecord != nil {
+                            travelManager.hereZone = Zone(record: iHereRecord, storageMode: travelManager.storageMode)
 
-                                travelManager.hereZone?.needChildren()
-                                travelManager.manifest.needSave()
-                            }
+                            travelManager.hereZone?.updateZoneProperties()
+                            travelManager.hereZone?.needChildren()
+                            travelManager.manifest.needSave()
+                        }
 
-                            onCompletion?()
-                        })
+                        onCompletion?()
+                    })
 
-                        return
-                    }
+                    return
                 }
+            }
 
-                self.establishRoot(onCompletion)
-            })
-
-            return
-        }
-
-        onCompletion?()
+            self.establishRoot(onCompletion)
+        })
     }
 
 
@@ -305,7 +295,7 @@ class ZCloudManager: ZRecordsManager {
 
                 operation.completionBlock          = {
                     for identifier: CKRecordID in operation.recordIDsToDelete! {
-                        let zone = self.zones[identifier]
+                        let zone = self.zones[identifier.recordName]
 
                         zone?.orphan()
                         self.unregisterZone(zone)

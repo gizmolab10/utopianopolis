@@ -74,6 +74,22 @@ class ZTravelManager: NSObject {
     }
 
 
+    func establishHere(_ onCompletion: (() -> Swift.Void)?) {
+        if storageMode == .bookmarks {
+            hereZone = bookmarksManager.rootZone
+        } else if hereZone != nil && hereZone?.record != nil {
+            hereZone?.needChildren()
+            hereZone?.needFetch()
+        } else {
+            cloudManager.establishHere(onCompletion)
+
+            return
+        }
+
+        onCompletion?()
+    }
+
+
     // MARK:- kludge for selecting within bookmark view
     // MARK:-
 

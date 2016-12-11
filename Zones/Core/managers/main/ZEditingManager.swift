@@ -334,9 +334,20 @@ class ZEditingManager: NSObject {
             deleteZones(zone.children)
 
             if let parentZone = zone.parentZone {
-                let  siblings = parentZone.children
+                if zone == travelManager.hereZone {
+                    dispatchAsyncInForeground {
+                        self.revealParent {
+                            travelManager.hereZone = parentZone
 
-                if var  index = siblings.index(of: zone) {
+                            selectionManager.grab(parentZone)
+                            controllersManager.syncToCloudAndSignalFor(nil)
+                        }
+                    }
+                }
+
+                let siblings = parentZone.children
+
+                if var index = siblings.index(of: zone) {
                     if siblings.count <= 1 || index == -1 {
                         return parentZone
                     } else if index < siblings.count - 1 && (!asTask || index == 0) {
