@@ -468,7 +468,7 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func revealRoot(_ onCompletion: (() -> Swift.Void)?) {
+    func revealRoot(_ onCompletion: Closure?) {
         if rootZone.record != nil {
             onCompletion?()
         } else {
@@ -479,7 +479,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func revealParent(_ onCompletion: (() -> Swift.Void)?) {
+    func revealParent(_ onCompletion: Closure?) {
         cloudManager.addRecord(hereZone, forState: .needsParent)
         operationsManager.sync {
             onCompletion?()

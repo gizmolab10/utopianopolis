@@ -40,7 +40,7 @@ class ZOperationsManager: NSObject {
     // MARK:-
 
 
-    func startup(_ onCompletion: (() -> Swift.Void)?) {
+    func startup(_ onCompletion: Closure?) {
         var syncStates: [ZSynchronizationState] = []
 
         for sync in ZSynchronizationState.cloud.rawValue...ZSynchronizationState.subscribe.rawValue {
@@ -51,7 +51,7 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func travel(_ onCompletion: (() -> Swift.Void)?) {
+    func travel(_ onCompletion: Closure?) {
         var syncStates: [ZSynchronizationState] = []
 
         for sync in ZSynchronizationState.file.rawValue...ZSynchronizationState.subscribe.rawValue {
@@ -62,17 +62,17 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func root(_ onCompletion: (() -> Swift.Void)?) {
+    func root(_ onCompletion: Closure?) {
         setupAndRun([.root, .children], onCompletion: onCompletion!)
     }
 
 
-    func sync(_ onCompletion: (() -> Swift.Void)?) {
+    func sync(_ onCompletion: Closure?) {
         setupAndRun([.create, .parent, .children, .merge, .flush], onCompletion: onCompletion!)
     }
 
 
-    func getChildren(_ onCompletion: (() -> Swift.Void)?) {
+    func getChildren(_ onCompletion: Closure?) {
         setupAndRun([.children], onCompletion: onCompletion!)
     }
 
@@ -93,7 +93,7 @@ class ZOperationsManager: NSObject {
     }
 
 
-    private func setupAndRun(_ syncStates: [ZSynchronizationState], onCompletion: @escaping (() -> Swift.Void)) {
+    private func setupAndRun(_ syncStates: [ZSynchronizationState], onCompletion: @escaping Closure) {
         queue.isSuspended = true
         var states        = syncStates
 

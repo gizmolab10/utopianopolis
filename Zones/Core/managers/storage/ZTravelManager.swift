@@ -74,7 +74,7 @@ class ZTravelManager: NSObject {
     }
 
 
-    func establishHere(_ onCompletion: (() -> Swift.Void)?) {
+    func establishHere(_ onCompletion: Closure?) {
         if storageMode == .bookmarks {
             hereZone = bookmarksManager.rootZone
         } else if hereZone != nil && hereZone?.record != nil {
@@ -103,7 +103,7 @@ class ZTravelManager: NSObject {
     }
 
 
-    private func travel(_ atArrival: (() -> Swift.Void)?) {
+    private func travel(_ atArrival: Closure?) {
         setup                   ()
         cloudManager      .clear()
         widgetsManager    .clear()
