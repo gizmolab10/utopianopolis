@@ -130,12 +130,14 @@ class ZoneTextField: ZTextField, ZTextFieldDelegate {
 
 
     func captureText() {
-        if  textCapturing                 == false {
-            if widget.widgetZone.zoneName != text! {
-                textCapturing              = true
-                widget.widgetZone.zoneName = text!
+        let zone = widget.widgetZone
 
-                cloudManager.addRecord(widget.widgetZone, forState: .needsMerge)
+        if  textCapturing     == false {
+            if zone?.zoneName != text! {
+                textCapturing  = true
+                zone?.zoneName = text!
+
+                zone?.maybeNeedMerge()
                 operationsManager.sync {}
             }
         }

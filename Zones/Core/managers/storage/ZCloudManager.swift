@@ -127,7 +127,7 @@ class ZCloudManager: ZRecordsManager {
 
     func merge(_ onCompletion: Closure?) {
         if let        operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            operation.recordIDs = recordIDsMatching([.needsMerge])
+            operation.recordIDs = recordIDsWithMatchingStates([.needsMerge])
 
             if (operation.recordIDs?.count)! > 0 {
 
@@ -157,8 +157,8 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchParents(_ onCompletion: Closure?) {
-        let missingParents = parentIDsMatching([.needsParent])
-        let orphans        = recordIDsMatching([.needsParent])
+        let missingParents = parentIDsWithMatchingStates([.needsParent])
+        let orphans        = recordIDsWithMatchingStates([.needsParent])
 
         if missingParents.count > 0 {
             if let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
@@ -205,7 +205,7 @@ class ZCloudManager: ZRecordsManager {
 
     func fetch(_ onCompletion: Closure?) {
         if let        operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            operation.recordIDs = recordIDsMatching([.needsFetch])
+            operation.recordIDs = recordIDsWithMatchingStates([.needsFetch])
 
             if (operation.recordIDs?.count)! > 0 {
 
@@ -216,7 +216,7 @@ class ZCloudManager: ZRecordsManager {
                     if let error: CKError = iError as? CKError {
                         self.reportError(error)
                     } else if let zone: Zone = self.zoneForRecordID(iID) {
-                        self.removeRecord(zone, forState: .needsFetch)
+                        self.removeRecord(zone, forStates: [.needsFetch])
 
                         zone.record = iRecord
                     }
@@ -234,8 +234,8 @@ class ZCloudManager: ZRecordsManager {
 
     func royalFlush(_ onCompletion: Closure?) {
         for zone in zones.values {
-            if !hasRecord(zone, forState: .needsFetch) && !hasRecord(zone, forState: .needsSave) && !hasRecord(zone, forState: .needsCreate) {
-                removeRecord(zone, forState: .needsMerge)
+            if !hasRecord(zone, forStates: [.needsFetch, .needsSave, .needsCreate]) {
+                removeRecord(zone, forStates: [.needsMerge])
                 zone.normalizeOrdering()
                 zone.updateCloudProperties()
             }
@@ -247,7 +247,7 @@ class ZCloudManager: ZRecordsManager {
 
     func create(_ onCompletion: Closure?) {
         if let operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
-            operation.recordsToSave   = recordsMatching([.needsCreate])
+            operation.recordsToSave   = recordsWithMatchingStates([.needsCreate])
             operation.completionBlock = onCompletion
 
             clearState(.needsCreate)
@@ -273,10 +273,10 @@ class ZCloudManager: ZRecordsManager {
 
     func flush(_ storageMode: ZStorageMode, onCompletion: Closure?) {
         if let operation = configure(CKModifyRecordsOperation(), using: storageMode) as? CKModifyRecordsOperation {
-            operation.recordsToSave     =   recordsMatching([.needsSave])
-            operation.recordIDsToDelete = recordIDsMatching([.needsDelete])
+            operation.recordsToSave     =   recordsWithMatchingStates([.needsSave])
+            operation.recordIDsToDelete = recordIDsWithMatchingStates([.needsDelete])
 
-            clearStates([.needsSave, .needsDelete])
+            clearStates([.needsSave, .needsDelete]) // clear BEFORE looking at manifest
 
             if storageMode == .everyone {
 
@@ -301,7 +301,7 @@ class ZCloudManager: ZRecordsManager {
                         self.unregisterZone(zone)
                     }
 
-                    if self.recordsMatching([.needsSave]).count > 0 {
+                    if self.recordsWithMatchingStates([.needsSave]).count > 0 {
                         self.flush(.mine, onCompletion: onCompletion)
                     } else {
                         controllersManager.signal(nil, regarding: .data)
@@ -334,7 +334,7 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        if self.recordsMatching([.needsSave]).count > 0 {
+        if self.recordsWithMatchingStates([.needsSave]).count > 0 {
             self.flush(.mine, onCompletion: onCompletion)
         } else {
             onCompletion?()
@@ -380,7 +380,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     @discardableResult func fetchChildren(_ onCompletion: Closure?) -> Bool {
-        let childrenNeeded: [CKReference] = referencesMatching([.needsChildren])
+        let childrenNeeded: [CKReference] = referencesWithMatchingStates([.needsChildren])
         let                noMoreChildren = childrenNeeded.count == 0
 
         if noMoreChildren {
@@ -412,7 +412,7 @@ class ZCloudManager: ZRecordsManager {
 
                     if let parent = child?.parentZone {
                         if parent != child {
-                            parent.appendChild(child!)
+                            parent.addChild(child!)
 
                             if !parentsNeedingResort.contains(parent) {
                                 parentsNeedingResort.append(parent)
@@ -583,9 +583,7 @@ class ZCloudManager: ZRecordsManager {
                 if oldValue != value {
                     record[forPropertyName] = value as! CKRecordValue?
 
-                    if !hasRecord   (object, forState: .needsCreate) {
-                        removeRecord(object, forState: .needsMerge)
-                    }
+                    object.maybeNeedMerge()
                 }
             }
         }

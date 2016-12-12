@@ -129,7 +129,7 @@ class ZOperationsManager: NSObject {
         let            operation = operationsByState[state]!
         operationsByState[state] = nil
 
-        print(state)
+        // print(state)
 
         switch(state) {
         case .file:        zfileManager.restore();        operation.finish();   break
@@ -150,23 +150,19 @@ class ZOperationsManager: NSObject {
 
 
     func becomeReady(_ operation: BlockOperation) {
-        if queue.isSuspended {
-            reportError("operations manager attempting to become ready while queue is suspended")
-        } else {
-            isReady = true;
+        isReady = true;
 
-            controllersManager.displayActivity()
+        controllersManager.displayActivity()
 
-            if onReady != nil {
-                onReady!()
-                print("unspun")
+        if onReady != nil {
+            onReady!()
+            print("unspun")
 
-                onReady = nil
-            }
-
-            operation.finish()
-            
-            editingManager.handleDeferredEvents()
+            onReady = nil
         }
+
+        operation.finish()
+
+        editingManager.handleDeferredEvents()
     }
 }

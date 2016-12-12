@@ -121,7 +121,7 @@ class ZRecord: NSObject {
             }
         }
 
-        cloudManager.removeRecord(self, forState: .needsMerge)
+        cloudManager.removeRecord(self, forStates: [.needsMerge])
         needSave()
 
         record = iRecord
@@ -163,24 +163,24 @@ class ZRecord: NSObject {
 
 
     func needSave() {
-        cloudManager.addRecord(self, forState: .needsSave)
+        cloudManager.addRecord(self, forStates: [.needsSave])
     }
 
 
     func needFetch() {
-        cloudManager.addRecord(self, forState: .needsFetch)
+        cloudManager.addRecord(self, forStates: [.needsFetch])
     }
 
 
-    func needMerge() {
-        if !cloudManager.hasRecord(self, forState: .needsCreate) {
-            cloudManager.addRecord(self, forState: .needsMerge)
+    func maybeNeedMerge() {
+        if !cloudManager.hasRecord(self, forStates: [.needsCreate]) {
+            cloudManager.addRecord(self, forStates: [.needsMerge])
         }
     }
 
 
     func needChildren() {
-        cloudManager.addRecord(self, forState: .needsChildren)
+        cloudManager.addRecord(self, forStates: [.needsChildren])
     }
 
 

@@ -87,7 +87,7 @@ class Zone : ZRecord {
             if newValue != order {
                 zoneOrder = NSNumber(value: newValue)
 
-                self.needMerge()
+                self.maybeNeedMerge()
             }
         }
     }
@@ -110,7 +110,7 @@ class Zone : ZRecord {
             if newValue != showChildren {
                 showSubzones = NSNumber(integerLiteral: newValue ? 1 : 0)
 
-                self.needMerge()
+                self.maybeNeedMerge()
             }
         }
     }
@@ -179,17 +179,19 @@ class Zone : ZRecord {
     }
 
 
-    func appendChild(_ child: Zone?) {
+    func addChild(_ child: Zone?) {
         if child != nil {
             if children.contains(child!) {
                 return
             }
 
-            let identifier = child?.record.recordID.recordName
+            if child?.record != nil {
+                let identifier = child?.record.recordID.recordName
 
-            for sibling in children {
-                if sibling.record != nil && sibling.record.recordID.recordName == identifier {
-                    return
+                for sibling in children {
+                    if sibling.record != nil && sibling.record.recordID.recordName == identifier {
+                        return
+                    }
                 }
             }
 
