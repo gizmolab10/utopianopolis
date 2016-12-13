@@ -121,7 +121,9 @@ class ZOperationsManager: NSObject {
         isReady           = false;
         queue.isSuspended = false
 
-        controllersManager.displayActivity()
+        dispatchAsyncInForegroundAfter(0.5) {
+            controllersManager.displayActivity()
+        }
     }
 
 

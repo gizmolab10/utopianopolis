@@ -524,7 +524,7 @@ class ZEditingManager: NSObject {
                 } else if toThere != nil {
                     selectionManager.grab(toThere!)
 
-                    controllersManager.syncToCloudAndSignalFor(toThere)
+                    controllersManager.signal(toThere, regarding: .data)
                 }
             } else if travelManager.storageMode != .bookmarks, let fromThere = toThere {
                 toThere     = fromThere.parentZone

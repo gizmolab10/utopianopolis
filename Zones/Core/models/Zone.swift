@@ -172,6 +172,13 @@ class Zone : ZRecord {
     // MARK:-
 
 
+    override func needChildren() {
+        if children.count == 0 {
+            super.needChildren()
+        }
+    }
+
+
     func orphan() {
         parentZone?.removeChild(self)
         parentZone = nil
