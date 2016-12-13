@@ -117,10 +117,10 @@ class ZTravelManager: NSObject {
         var there: Zone? = nil
         let  arriveThere = { atArrival(there, .data) }
 
-        if zone.isRoot {
+        if zone.isRoot { // going out to bookmarks graph
             let index = indexOfMode(storageMode) // index is a KLUDGE
 
-            storageMode = .bookmarks // going out (left arrow)
+            storageMode = .bookmarks
 
             travel {
 
@@ -134,33 +134,52 @@ class ZTravelManager: NSObject {
                 
                 arriveThere()
             }
-        } else if zone.isBookmark, let link = zone.crossLink, let mode = link.storageMode {
-            if  storageMode      != mode {
-                storageMode       = mode // going in (right arrow)
-                manifest.hereLink = link
+        } else if zone.isBookmark, let link = zone.crossLink, let mode = link.storageMode { // going in (right arrow)
+            let linkID = link.record.recordID
 
-                travel {
+            if  storageMode != mode {
+                storageMode  = mode
 
-                    // arrive in a different graph
+                let  closure = {
+                    self.travel { // arrive in a different graph
+                        there = self.hereZone
+                        
+                        arriveThere()
+                    }
+                }
 
-                    there = self.hereZone
+                if linkID.recordName == rootNameKey {
+                    closure()
+                } else {
+                    cloudManager.assureRecordExists(withRecordID: linkID, storageMode: mode, recordType: zoneTypeKey, onCompletion: { iRecord in
+                        self.manifest.here     = CKReference(record: iRecord!, action: .none)
+                        self.manifest.hereZone = nil
 
-                    arriveThere()
+                        self.manifest.needSave()
+                        closure()
+                    })
                 }
             } else {
                 // stay within graph
 
-                let recordID = link.record.recordID
-                there        = cloudManager.zoneForRecordID(recordID)
+                there       = cloudManager.zoneForRecordID(linkID)
+                let closure = {
+                    if !(there?.isRoot)! && there?.parent == nil {
+                        there = self.hereZone
+                    } else {
+                        there?.needChildren()
+                    }
+
+                    arriveThere()
+                }
 
                 if there != nil {
-                    arriveThere()
+                    closure()
                 } else {
-                    cloudManager.assureRecordExists(withRecordID: recordID, storageMode: storageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) -> (Void) in
+                    cloudManager.assureRecordExists(withRecordID: linkID, storageMode: storageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) -> (Void) in
                         there = Zone(record: iRecord, storageMode: self.storageMode)
 
-                        there?.needChildren()
-                        arriveThere()
+                        closure()
                     })
                 }
             }

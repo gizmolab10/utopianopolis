@@ -211,12 +211,19 @@ extension NSObject {
     }
 
 
+    func report(_ iMessage: Any?) {
+        if iMessage != nil {
+            print(iMessage!)
+        }
+    }
+
+
     func reportError(_ iError: Any?) {
         if let error: NSError = iError as? NSError, let waitForIt = error.userInfo[CKErrorRetryAfterKey] {
             print(waitForIt)
-        }
-
-        if iError != nil {
+        } else if let error: CKError = iError as? CKError {
+            print(error.localizedDescription)
+        } else if iError != nil {
             print(iError!)
         }
     }

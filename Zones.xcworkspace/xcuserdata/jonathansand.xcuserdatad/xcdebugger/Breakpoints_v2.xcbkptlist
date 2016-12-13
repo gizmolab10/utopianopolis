@@ -9,22 +9,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/Core/managers/main/ZEditingManager.swift"
-            timestampString = "503207033.523473"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "534"
-            endingLineNumber = "534"
-            landmarkName = "moveOut(selectionOnly:extreme:persistently:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "Zones/Core/managers/storage/ZFileManager.swift"
             timestampString = "503030725.824732"
             startingColumnNumber = "9223372036854775807"
@@ -32,70 +16,6 @@
             startingLineNumber = "49"
             endingLineNumber = "49"
             landmarkName = "restore()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/Core/main/ZExtensions.swift"
-            timestampString = "503140896.68177"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "215"
-            endingLineNumber = "215"
-            landmarkName = "reportError(_:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(extension in Zones):__ObjC.NSObject.reportError (Swift.Optional&lt;Any&gt;) -&gt; ()"
-                  moduleName = "Zones"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/main/ZExtensions.swift"
-                  timestampString = "503200427.244993"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "215"
-                  endingLineNumber = "215"
-                  offsetFromSymbolStart = "23">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(extension in Zones):__ObjC.NSObject.reportError (Swift.Optional&lt;Any&gt;) -&gt; ()"
-                  moduleName = "Zones"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/main/ZExtensions.swift"
-                  timestampString = "503200427.246879"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "215"
-                  endingLineNumber = "215"
-                  offsetFromSymbolStart = "344">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/Core/models/ZRecord.swift"
-            timestampString = "503200640.044117"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "124"
-            endingLineNumber = "124"
-            landmarkName = "mergeIntoAndTake(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

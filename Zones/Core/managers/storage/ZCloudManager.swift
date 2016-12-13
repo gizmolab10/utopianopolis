@@ -73,19 +73,16 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func establishRoot(_ onCompletion: Closure?) {
+    func establishRootAsHere(_ onCompletion: Closure?) {
         let recordID = CKRecordID(recordName: rootNameKey)
 
         self.assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) -> (Void) in
             if iRecord != nil {
                 travelManager.rootZone = Zone(record: iRecord, storageMode: travelManager.storageMode)
+                travelManager.hereZone = travelManager.rootZone
 
                 travelManager.rootZone?.needChildren()
-
-                if travelManager.manifest.here == nil {
-                    travelManager.hereZone = travelManager.rootZone
-                    travelManager.manifest.needSave()
-                }
+                travelManager.manifest.needSave()
             }
 
             onCompletion?()
@@ -105,22 +102,24 @@ class ZCloudManager: ZRecordsManager {
                     recordID = (travelManager.manifest.here?.recordID)!
 
                     self.assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { (iHereRecord: CKRecord?) -> (Void) in
-                        if iHereRecord != nil {
+                        if iHereRecord == nil || iHereRecord?[zoneNameKey] == nil {
+                            self.establishRootAsHere(onCompletion)
+                        } else {
                             travelManager.hereZone = Zone(record: iHereRecord, storageMode: travelManager.storageMode)
 
                             travelManager.hereZone?.updateZoneProperties()
                             travelManager.hereZone?.needChildren()
                             travelManager.manifest.needSave()
-                        }
 
-                        onCompletion?()
+                            onCompletion?()
+                        }
                     })
 
                     return
                 }
             }
 
-            self.establishRoot(onCompletion)
+            self.establishRootAsHere(onCompletion)
         })
     }
 
@@ -131,18 +130,18 @@ class ZCloudManager: ZRecordsManager {
 
             if (operation.recordIDs?.count)! > 0 {
 
-                reportError("merging \((operation.recordIDs?.count)!)")
+                report("merging \((operation.recordIDs?.count)!)")
 
                 operation.completionBlock          = onCompletion
                 operation.perRecordCompletionBlock = { (iRecord, iID, iError) in
-                    let zone = self.zoneForRecordID(iID)
+                    let record = self.recordForRecordID(iID)
 
                     if iRecord != nil {
-                        zone?.mergeIntoAndTake(iRecord!)
+                        record?.mergeIntoAndTake(iRecord!)
                     } else if let error: CKError = iError as? CKError {
                         self.reportError(error)
 
-                        zone?.needSave()
+                        self.addRecord(record!, forStates: [.needsSave])
                     }
                 }
 
@@ -191,7 +190,7 @@ class ZCloudManager: ZRecordsManager {
 
                 clearState(.needsParent)
 
-                reportError("fetching parents \(missingParents.count)")
+                report("fetching parents \(missingParents.count)")
 
                 operation.start()
 
@@ -209,16 +208,16 @@ class ZCloudManager: ZRecordsManager {
 
             if (operation.recordIDs?.count)! > 0 {
 
-                reportError("fetching \((operation.recordIDs?.count)!)")
+                report("fetching \((operation.recordIDs?.count)!)")
 
                 operation.completionBlock          = onCompletion
                 operation.perRecordCompletionBlock = { (iRecord, iID, iError) in
                     if let error: CKError = iError as? CKError {
                         self.reportError(error)
-                    } else if let zone: Zone = self.zoneForRecordID(iID) {
-                        self.removeRecord(zone, forStates: [.needsFetch])
+                    } else if let record = self.recordForRecordID(iID) {
+                        self.removeRecord(record, forStates: [.needsFetch])
 
-                        zone.record = iRecord
+                        record.record = iRecord
                     }
                 }
 
@@ -254,7 +253,7 @@ class ZCloudManager: ZRecordsManager {
 
             if (operation.recordsToSave?.count)! > 0 {
 
-                reportError("creating \((operation.recordsToSave?.count)!)")
+                report("creating \((operation.recordsToSave?.count)!)")
 
                 operation.start()
                 
@@ -291,13 +290,12 @@ class ZCloudManager: ZRecordsManager {
 
             if (operation.recordsToSave?.count)! > 0 || (operation.recordIDsToDelete?.count)! > 0 {
 
-                reportError("saving \((operation.recordsToSave?.count)!) deleting \((operation.recordIDsToDelete?.count)!)")
+                report("saving \((operation.recordsToSave?.count)!) deleting \((operation.recordIDsToDelete?.count)!)")
 
                 operation.completionBlock          = {
                     for identifier: CKRecordID in operation.recordIDsToDelete! {
                         let zone = self.zones[identifier.recordName]
 
-                        zone?.orphan()
                         self.unregisterZone(zone)
                     }
 
@@ -315,8 +313,8 @@ class ZCloudManager: ZRecordsManager {
                         var description:    String = info["ServerErrorDescription"] as! String
 
                         if  description           != "record to insert already exists" {
-                            if let zone            = self.zoneForRecordID((iRecord?.recordID)!) {
-                                zone.needFetch()
+                            if let record          = self.recordForRecordID((iRecord?.recordID)!) {
+                                record.needFetch()
                             }
 
                             if let name            = iRecord?["zoneName"] as! String? {
@@ -390,7 +388,7 @@ class ZCloudManager: ZRecordsManager {
             let                    predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
 
             clearState(.needsChildren)
-            reportError("fetching children of \(childrenNeeded.count)")
+            report("fetching children of \(childrenNeeded.count)")
             cloudQueryUsingPredicate(predicate, onCompletion: { iRecord in
                 if iRecord == nil { // we already received full response from cloud
                     for parent in parentsNeedingResort {
@@ -433,25 +431,28 @@ class ZCloudManager: ZRecordsManager {
 
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
-        assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord) -> (Void) in
-            var zone = self.zoneForRecordID(iRecord.recordID)
+        assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { iRecord in
+            var         record = self.recordForRecordID(iRecord?.recordID)
+            var parent:  Zone? = nil
 
-            if  zone != nil {
-                zone?.record = iRecord
+            if  record == nil {
+                record = Zone(record: iRecord, storageMode: travelManager.storageMode) // it could be a ZManifest record, TODO: detect and correct
             } else {
-                zone = Zone(record: iRecord, storageMode: travelManager.storageMode)
+                record?.record = iRecord
+                parent         = (record as? Zone)?.parentZone
             }
 
-            zone?.needChildren()
+            record?.needChildren()
 
             self.dispatchAsyncInForeground {
-                controllersManager.signal(zone?.parentZone, regarding: .data)
+
+                controllersManager.signal(parent, regarding: .data)
 
                 operationsManager.getChildren {
-                    controllersManager.signal(zone?.parentZone, regarding: .data)
+                    controllersManager.signal(parent, regarding: .data)
                 }
             }
-        } as! RecordClosure)
+        })
     }
 
 

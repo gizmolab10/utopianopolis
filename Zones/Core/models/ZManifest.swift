@@ -19,20 +19,6 @@ class ZManifest: ZRecord {
     var         _hereZone:         Zone?
 
 
-    var hereLink: ZRecord? {
-        get { return nil }
-
-        set {
-            if newValue?.record.recordID.recordName != rootNameKey {
-                here      = newValue == nil ? nil : CKReference(record: (newValue?.record)!, action: .none)
-                _hereZone = nil
-
-                needSave()
-            }
-        }
-    }
-
-
     var hereZone: Zone? {
         get {
             if _hereZone == nil {

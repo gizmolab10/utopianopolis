@@ -129,22 +129,22 @@ class ZOperationsManager: NSObject {
         let            operation = operationsByState[state]!
         operationsByState[state] = nil
 
-        // print(state)
+        // report(state)
 
         switch(state) {
-        case .file:        zfileManager.restore();        operation.finish();   break
-        case .cloud:       cloudManager.fetchCloudZones { operation.finish() }; break
-        case .root:        cloudManager.establishRoot   { operation.finish() }; break
-        case .here:        travelManager.establishHere  { operation.finish() }; break
-        case .fetch:       cloudManager.fetch           { operation.finish() }; break
-        case .parent:      cloudManager.fetchParents    { operation.finish() }; break
-        case .children:    cloudManager.fetchChildren   { operation.finish() }; break
-        case .unsubscribe: cloudManager.unsubscribe     { operation.finish() }; break
-        case .subscribe:   cloudManager.subscribe       { operation.finish() }; break
-        case .create:      cloudManager.create          { operation.finish() }; break
-        case .merge:       cloudManager.merge           { operation.finish() }; break
-        case .flush:       cloudManager.flush           { operation.finish() }; break
-        case .ready:       becomeReady(                   operation);           break
+        case .root:        cloudManager.establishRootAsHere{ operation.finish() }; break
+        case .cloud:       cloudManager.fetchCloudZones    { operation.finish() }; break
+        case .here:       travelManager.establishHere      { operation.finish() }; break
+        case .children:    cloudManager.fetchChildren      { operation.finish() }; break
+        case .parent:      cloudManager.fetchParents       { operation.finish() }; break
+        case .unsubscribe: cloudManager.unsubscribe        { operation.finish() }; break
+        case .subscribe:   cloudManager.subscribe          { operation.finish() }; break
+        case .create:      cloudManager.create             { operation.finish() }; break
+        case .fetch:       cloudManager.fetch              { operation.finish() }; break
+        case .merge:       cloudManager.merge              { operation.finish() }; break
+        case .flush:       cloudManager.flush              { operation.finish() }; break
+        case .file:        zfileManager.restore();           operation.finish();   break
+        case .ready:       becomeReady(                      operation);           break
         }
     }
 
@@ -156,7 +156,7 @@ class ZOperationsManager: NSObject {
 
         if onReady != nil {
             onReady!()
-            print("unspun")
+            report("unspun")
 
             onReady = nil
         }

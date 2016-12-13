@@ -183,10 +183,11 @@ class ZRecordsManager: NSObject {
         var references:  [CKReference] = []
 
         findRecordsWithMatchingStates(states) { (object) -> (Void) in
-            let zone:          ZRecord = object as! ZRecord
-            let reference: CKReference = CKReference(recordID: zone.record.recordID, action: .none)
+            if let record: ZRecord = object as? ZRecord, record.record != nil {
+                let reference: CKReference = CKReference(recordID: record.record.recordID, action: .none)
 
-            references.append(reference)
+                references.append(reference)
+            }
         }
 
         return references
@@ -219,7 +220,20 @@ class ZRecordsManager: NSObject {
         }
     }
 
-    
+
+    func recordForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
+        var record = zoneForRecordID(recordID) as ZRecord?
+
+        if record == nil {
+            if travelManager.manifest.record.recordID.recordName == recordID?.recordName {
+                record = travelManager.manifest
+            }
+        }
+
+        return record
+    }
+
+
     func zoneForRecordID(_ recordID: CKRecordID?) -> Zone? {
         if recordID == nil {
             return nil

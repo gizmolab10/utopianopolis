@@ -37,3 +37,4 @@ var   bookmarkColor:    ZColor = ZColor.blue
 var unselectedColor:    ZColor = ZColor(hue: 0.6, saturation: 0.0, brightness: unselectBrightness, alpha: 1)
 var    lineThicknes:     Float = 1.25
 var       dotLength:     Float = 12.0
+var          asTask:      Bool { get { return editMode == .task } }

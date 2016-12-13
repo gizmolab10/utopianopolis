@@ -179,7 +179,7 @@ class Zone : ZRecord {
     }
 
 
-    func addChild(_ child: Zone?) {
+    func addChild(_ child: Zone?, at index: Int) {
         if child != nil {
             if children.contains(child!) {
                 return
@@ -195,8 +195,13 @@ class Zone : ZRecord {
                 }
             }
 
-            children.append(child!)
+            children.insert(child!, at: index)
         }
+    }
+
+
+    func addChild(_ child: Zone?) {
+        addChild(child, at: 0)
     }
 
 
