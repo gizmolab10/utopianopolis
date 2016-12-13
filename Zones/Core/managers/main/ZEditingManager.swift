@@ -350,13 +350,15 @@ class ZEditingManager: NSObject {
                 let siblings = parentZone.children
 
                 if var index = siblings.index(of: zone) {
-                    if siblings.count > 1 && index < siblings.count - 1 && (!asTask || index == 0) {
-                        index += 1
-                    } else if index > 0 {
-                        index -= 1
-                    }
+                    if siblings.count > 1 {
+                        if index < siblings.count - 1 && (!asTask || index == 0) {
+                            index += 1
+                        } else if index > 0 {
+                            index -= 1
+                        }
 
-                    parentZone = siblings[index]
+                        parentZone = siblings[index]
+                    }
                 }
 
                 zone.orphan()
