@@ -122,10 +122,7 @@ class ZTravelManager: NSObject {
 
             storageMode = .bookmarks
 
-            travel {
-
-                // arrive in bookmarks graph
-
+            travel { // arrive in bookmarks graph
                 there = bookmarksManager.rootZone
 
                 if index >= 0 && index < (there?.children.count)! {
@@ -134,7 +131,7 @@ class ZTravelManager: NSObject {
                 
                 arriveThere()
             }
-        } else if zone.isBookmark, let link = zone.crossLink, let mode = link.storageMode { // going in (right arrow)
+        } else if zone.isBookmark, let link = zone.crossLink, let mode = link.storageMode { // going into a bookmark
             let linkID = link.record.recordID
 
             if  storageMode != mode {
@@ -159,9 +156,7 @@ class ZTravelManager: NSObject {
                         closure()
                     })
                 }
-            } else {
-                // stay within graph
-
+            } else { // stay within graph
                 there       = cloudManager.zoneForRecordID(linkID)
                 let closure = {
                     if !(there?.isRoot)! && there?.parent == nil {

@@ -46,7 +46,7 @@ class ZFileManager: NSObject {
         if fileMode == .local && travelManager.storageMode != .bookmarks {
             if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
                 travelManager.rootZone = Zone(dict: raw as! ZStorageDict)
-                travelManager.hereZone    = travelManager.rootZone
+                travelManager.hereZone = travelManager.rootZone
 
                 controllersManager.signal(nil, regarding: .data)
             }

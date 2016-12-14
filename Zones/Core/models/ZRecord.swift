@@ -68,7 +68,10 @@ class ZRecord: NSObject {
         self.init()
 
         self.storageMode = storageMode
-        self.record      = record
+
+        if record != nil {
+            self.record = record
+        }
     }
 
 

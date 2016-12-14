@@ -54,7 +54,7 @@ class ZOperationsManager: NSObject {
     func travel(_ onCompletion: Closure?) {
         var syncStates: [ZSynchronizationState] = []
 
-        for sync in ZSynchronizationState.file.rawValue...ZSynchronizationState.subscribe.rawValue {
+        for sync in ZSynchronizationState.here.rawValue...ZSynchronizationState.subscribe.rawValue {
             syncStates.append(ZSynchronizationState(rawValue: sync)!)
         }
 
@@ -131,7 +131,7 @@ class ZOperationsManager: NSObject {
         let            operation = operationsByState[state]!
         operationsByState[state] = nil
 
-        // report(state)
+        report(state)
 
         switch(state) {
         case .root:        cloudManager.establishRootAsHere{ operation.finish() }; break

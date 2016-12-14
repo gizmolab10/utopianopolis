@@ -183,8 +183,6 @@ class ZCloudManager: ZRecordsManager {
                                 parent?.children.append(child)
                             }
                         }
-
-
                     }
                 }
 

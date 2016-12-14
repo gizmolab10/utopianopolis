@@ -196,7 +196,9 @@ class ZRecordsManager: NSObject {
 
     func findRecordsWithMatchingStates(_ states: [ZRecordState], onEach: ObjectClosure) {
         for state in states {
-            for record in recordsForState(state) {
+            let records = recordsForState(state)
+
+            for record in records {
                 onEach(record)
             }
         }
