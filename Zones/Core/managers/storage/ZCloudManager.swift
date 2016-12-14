@@ -292,7 +292,8 @@ class ZCloudManager: ZRecordsManager {
 
                 operation.completionBlock          = {
                     for identifier: CKRecordID in operation.recordIDsToDelete! {
-                        let zone = self.zones[identifier.recordName]
+                        var dict = self.zones
+                        let zone = dict[identifier.recordName]
 
                         self.unregisterZone(zone)
                     }

@@ -105,7 +105,6 @@ class ZTravelManager: NSObject {
 
     private func travel(_ atArrival: Closure?) {
         setup                   ()
-        cloudManager      .clear()
         widgetsManager    .clear()
         selectionManager  .clear()
         bookmarksManager  .clear()

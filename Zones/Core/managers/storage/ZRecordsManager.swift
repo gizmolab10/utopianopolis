@@ -25,8 +25,26 @@ enum ZRecordState: Int {
 class ZRecordsManager: NSObject {
 
 
-    var recordsByState: [ZRecordState : [ZRecord]] = [:]
-    var          zones: [String       :      Zone] = [:]
+    var recordsByState: [ZRecordState :       [ZRecord]] = [:]
+    var zoneRegistry:   [ZStorageMode : [String : Zone]] = [:]
+
+
+    var zones: [String : Zone] {
+        get {
+            var registry: [String : Zone]? = zoneRegistry[travelManager.storageMode]
+
+            if registry == nil {
+                registry   = [:]
+                self.zones = registry!
+            }
+
+            return registry!
+        }
+
+        set {
+            zoneRegistry[travelManager.storageMode] = newValue
+        }
+    }
 
 
     var allStates: [ZRecordState] {
@@ -61,7 +79,6 @@ class ZRecordsManager: NSObject {
 
     func clear() {
         recordsByState = [:]
-        zones          = [:]
     }
 
 
