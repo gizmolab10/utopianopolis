@@ -175,8 +175,10 @@ class ZoneWidget: ZView {
     func layoutText() {
         textField.widget   = self
 
-        if textField.text == "" {
-            textField.text = widgetZone.zoneName ?? "empty"
+        if textField.text != "" || widgetZone.zoneName != nil {
+            textField.text = widgetZone.zoneName
+        } else {
+            textField.text = "empty"
         }
 
         layoutTextField()
