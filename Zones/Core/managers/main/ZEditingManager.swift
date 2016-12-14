@@ -634,12 +634,15 @@ class ZEditingManager: NSObject {
                             selectionManager.grab(mover)
 
                             travelManager.travelWhereThisZonePoints(toThere, atArrival: { (object, kind) -> (Void) in
+                                let              there = object as! Zone
+                                travelManager.hereZone = there
+
                                 if !same {
                                     self.applyModeRecursivelyTo(mover, parentZone: nil)
                                 }
 
                                 self.report("at arrival")
-                                self.moveZone(mover, into: object as! Zone)
+                                self.moveZone(mover, into: there)
                                 self.syncAndSignalAfterMoveAffecting(nil, persistently: persistently)
                             })
                         }
