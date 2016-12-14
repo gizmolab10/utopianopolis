@@ -96,8 +96,8 @@ class ZTravelManager: NSObject {
 
     func indexOfMode(_ mode: ZStorageMode) -> Int { // KLUDGE, perhaps use ordered set or dictionary
         switch mode {
-        case .mine:     return  1
-        case .everyone: return  0
+        case .everyone: return  1
+        case .mine:     return  0
         default:        return -1
         }
     }

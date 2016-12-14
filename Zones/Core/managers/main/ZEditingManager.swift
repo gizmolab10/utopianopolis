@@ -82,8 +82,8 @@ class ZEditingManager: NSObject {
                                 if let zone = selectionManager.firstGrabbableZone {
 
                                     switch arrow {
-                                    case .right: setChildrenVisibilityTo(true,  zone: zone, recursively: isCommand);                                            break
-                                    case .left:  setChildrenVisibilityTo(false, zone: zone, recursively: isCommand); selectionManager.deselectDragWithin(zone); break
+                                    case .right: makeToggleDotShow(true,  zone: zone, recursively: isCommand);                                            break
+                                    case .left:  makeToggleDotShow(false, zone: zone, recursively: isCommand); selectionManager.deselectDragWithin(zone); break
                                     default: return true
                                     }
 
@@ -194,16 +194,16 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func setChildrenVisibilityTo(_ show: Bool, zone: Zone?, recursively: Bool) {
+    func makeToggleDotShow(_ show: Bool, zone: Zone?, recursively: Bool) {
         if zone != nil {
             let noVisibleChildren = !(zone?.showChildren)! || ((zone?.children.count)! == 0)
 
             if !show && noVisibleChildren && selectionManager.isGrabbed(zone!), let parent = zone?.parentZone {
                 selectionManager.grab(parent)
-                zone?.showChildren                     = false
+                zone?.showChildren = false
                 zone?.needSave()
 
-                setChildrenVisibilityTo(show, zone: parent, recursively: recursively)
+                makeToggleDotShow(show, zone: parent, recursively: recursively)
             } else {
                 if  zone?.showChildren != show {
                     zone?.showChildren  = show
@@ -213,7 +213,7 @@ class ZEditingManager: NSObject {
 
                 if recursively {
                     for child: Zone in (zone?.children)! {
-                        setChildrenVisibilityTo(show, zone: child, recursively: recursively)
+                        makeToggleDotShow(show, zone: child, recursively: recursively)
                     }
                 }
             }
@@ -221,17 +221,21 @@ class ZEditingManager: NSObject {
     }
 
 
-    func toggleChildrenVisibility(_ zone: Zone?) {
+    func toggleDotActionOnZone(_ zone: Zone?) {
         if zone != nil {
-            let show = zone?.showChildren == false
+            if (zone?.isBookmark)! {
+                travelThroughBookmark(zone!, persistently: true)
+            } else {
+                let show = zone?.showChildren == false
 
-            setChildrenVisibilityTo(show, zone: zone, recursively: false)
+                makeToggleDotShow(show, zone: zone, recursively: false)
 
-            if !show {
-                selectionManager.deselectDragWithin(zone!)
+                if !show {
+                    selectionManager.deselectDragWithin(zone!)
+                }
+
+                controllersManager.syncToCloudAndSignalFor(nil)
             }
-
-            controllersManager.syncToCloudAndSignalFor(nil)
         }
     }
 
@@ -571,34 +575,37 @@ class ZEditingManager: NSObject {
 
     // MARK:- move in
     // MARK:-
-    
+
+
+    func travelThroughBookmark(_ bookmark: Zone, persistently: Bool) {
+        travelManager.travelWhereThisZonePoints(bookmark, atArrival: { (object, kind) -> (Void) in
+            if let there: Zone = object as? Zone {
+                self.hereZone  = there
+
+                selectionManager.grab(there)
+                travelManager.manifest.needSave()
+                self.syncAndSignalAfterMoveAffecting(nil, persistently: persistently)
+            }
+        })
+    }
+
 
     func moveInto(selectionOnly: Bool, extreme: Bool, persistently: Bool) {
         if let zone: Zone = selectionManager.firstGrabbableZone {
             if !selectionOnly {
                 actuallyMoveInto(zone, persistently: persistently)
-            } else {
-                if zone.isBookmark {
-                    travelManager.travelWhereThisZonePoints(zone, atArrival: { (object, kind) -> (Void) in
-                        if let there: Zone = object as? Zone {
-                            self.hereZone  = there
+            } else if zone.isBookmark {
+                travelThroughBookmark(zone, persistently: persistently)
+            } else if zone.children.count > 0 {
+                let      saveThis = !zone.showChildren
+                zone.showChildren = true
 
-                            selectionManager.grab(there)
-                            travelManager.manifest.needSave()
-                            self.syncAndSignalAfterMoveAffecting(nil, persistently: persistently)
-                        }
-                    })
-                } else if zone.children.count > 0 {
-                    let      saveThis = !zone.showChildren
-                    zone.showChildren = true
+                selectionManager.grab(asTask ? zone.children.first! : zone.children.last!)
 
-                    selectionManager.grab(asTask ? zone.children.first! : zone.children.last!)
-
-                    if saveThis {
-                        controllersManager.syncToCloudAndSignalFor(nil)
-                    } else {
-                        controllersManager.signal(nil, regarding: .data)
-                    }
+                if saveThis {
+                    controllersManager.syncToCloudAndSignalFor(nil)
+                } else {
+                    controllersManager.signal(nil, regarding: .data)
                 }
             }
         }

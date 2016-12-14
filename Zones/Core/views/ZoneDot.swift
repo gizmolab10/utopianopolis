@@ -46,7 +46,7 @@ class ZoneDot: ZView {
             }
         } else {
             let radius:      Float = dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
-            shouldHighlight        = asToggle ? !widgetZone.showChildren : selectionManager.isGrabbed(widgetZone)
+            shouldHighlight        = asToggle ? !widgetZone.showChildren || widgetZone.isBookmark : selectionManager.isGrabbed(widgetZone)
             let      selectedColor = widgetZone.isBookmark ? bookmarkColor : lineColor
             zlayer.backgroundColor = (shouldHighlight ? selectedColor : unselectedColor).cgColor
 
@@ -70,7 +70,7 @@ class ZoneDot: ZView {
 
         if let zone = widget.widgetZone {
             if toggle == true {
-                editingManager.toggleChildrenVisibility(zone)
+                editingManager.toggleDotActionOnZone(zone)
             } else {
                 selectionManager.deselect()
                 selectionManager.grab(zone)

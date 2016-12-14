@@ -303,7 +303,7 @@ class ZoneWidget: ZView {
             make.centerY.equalTo(textField).offset(1.0)
         })
 
-        if widgetZone.children.count == 0 {
+        if widgetZone.children.count == 0 && !widgetZone.isBookmark {
             if subviews.contains(toggleDot!) {
                 toggleDot!.removeFromSuperview()
             }
