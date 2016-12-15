@@ -33,7 +33,7 @@ class ZTravelManager: NSObject {
             var found = manifestByStorageMode[storageMode]
 
             if found == nil {
-                found                              = ZManifest(record: nil, storageMode: storageMode)
+                found                              = ZManifest(record: nil, storageMode: .mine)
                 manifestByStorageMode[storageMode] = found
             }
 

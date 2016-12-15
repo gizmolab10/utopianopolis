@@ -281,7 +281,7 @@ class ZEditingManager: NSObject {
             let   child = Zone(record: record, storageMode: travelManager.storageMode)
             let insert = asTask ? 0 : (zone?.children.count)!
 
-            cloudManager.addRecord(child, forStates: [.needsCreate])
+            child.markForStates([.needsCreate])
             widgetsManager.widgetForZone(zone!)?.textField.resignFirstResponder()
 
             if asTask {
@@ -334,7 +334,7 @@ class ZEditingManager: NSObject {
     @discardableResult private func deleteZone(_ zone: Zone) -> Zone? {
         if !zone.isRoot {
             if travelManager.storageMode != .bookmarks {
-                cloudManager.addRecord(zone, forStates: [.needsDelete])
+                zone.markForStates([.needsDelete])
             }
 
             deleteZones(zone.children)
@@ -490,7 +490,7 @@ class ZEditingManager: NSObject {
 
 
     func revealParent(_ onCompletion: Closure?) {
-        cloudManager.addRecord(hereZone, forStates: [.needsParent])
+        hereZone.markForStates([.needsParent])
         operationsManager.sync {
             onCompletion?()
         }
@@ -685,7 +685,7 @@ class ZEditingManager: NSObject {
                 applyModeRecursivelyTo(child, parentZone: zone)
             }
 
-            cloudManager.addRecord(zone!, forStates: [.needsCreate])
+            zone!.markForStates([.needsCreate])
             zone?.updateCloudProperties()
         }
     }

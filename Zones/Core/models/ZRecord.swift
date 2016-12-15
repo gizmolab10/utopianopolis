@@ -124,7 +124,7 @@ class ZRecord: NSObject {
             }
         }
 
-        cloudManager.removeRecord(self, forStates: [.needsMerge])
+        self.unmarkForStates([.needsMerge])
         needSave()
 
         record = iRecord
@@ -161,30 +161,45 @@ class ZRecord: NSObject {
     }
 
 
-    // MARK:- accessors and KVO
+    // MARK:- states
     // MARK:-
 
 
-    func needSave() {
-        cloudManager.addRecord(self, forStates: [.needsSave])
-    }
-
-
-    func needFetch() {
-        cloudManager.addRecord(self, forStates: [.needsFetch])
-    }
-
-
-    func maybeNeedMerge() {
-        if !cloudManager.hasRecord(self, forStates: [.needsCreate]) {
-            cloudManager.addRecord(self, forStates: [.needsMerge])
+    func isMarkedForStates(_ states: [ZRecordState]) -> Bool {
+        return detectWithMode(storageMode!) {
+            cloudManager.hasRecord(self, forStates:states)
         }
     }
 
 
-    func needChildren() {
-        cloudManager.addRecord(self, forStates: [.needsChildren])
+    func markForStates(_ states: [ZRecordState]) {
+        invokeWithMode(storageMode!) {
+            cloudManager.addRecord(self, forStates:states)
+        }
     }
+    
+
+    func unmarkForStates(_ states: [ZRecordState]) {
+        invokeWithMode(storageMode!) {
+            cloudManager.removeRecord(self, forStates:states)
+        }
+    }
+
+
+    func needSave()     { markForStates([.needsSave]) }
+    func needFetch()    { markForStates([.needsFetch]) }
+    func needChildren() { markForStates([.needsChildren]) }
+    
+
+    func maybeNeedMerge() {
+        if !isMarkedForStates([.needsCreate]) {
+            markForStates([.needsMerge])
+        }
+    }
+
+
+    // MARK:- accessors and KVO
+    // MARK:-
 
 
     func setValue(_ value: NSObject, forPropertyName: String) {

@@ -25,11 +25,33 @@ enum ZRecordState: Int {
 class ZRecordsManager: NSObject {
 
 
-    var recordsByState: [ZRecordState :       [ZRecord]] = [:]
-    var zoneRegistry:   [ZStorageMode : [String : Zone]] = [:]
+    var statesByMode: [ZStorageMode : [ZRecordState : [ZRecord]]] = [:]
+    var zoneRegistry: [ZStorageMode : [String       :      Zone]] = [:]
+
+
+    var recordsByState: [ZRecordState : [ZRecord]] {
+        set {
+            statesByMode[travelManager.storageMode] = newValue
+        }
+
+        get {
+            var registry: [ZRecordState : [ZRecord]]? = statesByMode[travelManager.storageMode]
+
+            if registry == nil {
+                registry            = [:]
+                self.recordsByState = registry!
+            }
+
+            return registry!
+        }
+    }
 
 
     var zones: [String : Zone] {
+        set {
+            zoneRegistry[travelManager.storageMode] = newValue
+        }
+
         get {
             var registry: [String : Zone]? = zoneRegistry[travelManager.storageMode]
 
@@ -39,10 +61,6 @@ class ZRecordsManager: NSObject {
             }
 
             return registry!
-        }
-
-        set {
-            zoneRegistry[travelManager.storageMode] = newValue
         }
     }
 
@@ -222,7 +240,7 @@ class ZRecordsManager: NSObject {
     }
 
 
-    // MARK:- zones
+    // MARK:- zones registry
     // MARK:-
 
 

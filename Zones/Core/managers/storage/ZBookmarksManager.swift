@@ -73,8 +73,7 @@ class ZBookmarksManager: NSObject {
         if mode != .bookmarks && travelManager.storageMode != .bookmarks {
             parent.recomputeOrderingUponInsertionAt(index)
             parent.needSave()
-
-            cloudManager.addRecord(bookmark, forStates: [.needsCreate])
+            bookmark.markForStates([.needsCreate])
         }
 
         return bookmark

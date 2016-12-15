@@ -227,6 +227,26 @@ extension NSObject {
             print(iError!)
         }
     }
+
+
+    func detectWithMode(_ mode: ZStorageMode, block: BooleanClosure) -> Bool {
+        let             savedMode = travelManager.storageMode
+        travelManager.storageMode = mode
+        let                result = block()
+        travelManager.storageMode = savedMode
+
+        return result
+    }
+
+
+    func invokeWithMode(_ mode: ZStorageMode, block: Closure) {
+        let             savedMode = travelManager.storageMode
+        travelManager.storageMode = mode
+
+        block()
+
+        travelManager.storageMode = savedMode
+    }
 }
 
 

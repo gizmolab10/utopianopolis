@@ -10,7 +10,7 @@
 import Foundation
 
 
-enum ZSynchronizationState: Int {
+enum ZOperationID: Int {
     case ready
     case cloud
     case file
@@ -30,10 +30,10 @@ enum ZSynchronizationState: Int {
 class ZOperationsManager: NSObject {
 
 
-    var           isReady:                                   Bool = false
-    var operationsByState: [ZSynchronizationState:BlockOperation] = [:]
-    let             queue:                         OperationQueue = OperationQueue()
-    var           onReady: Closure?
+    var    isReady:                            Bool = false
+    var waitingOps: [ZOperationID : BlockOperation] = [:]
+    let      queue:                  OperationQueue = OperationQueue()
+    var    onReady: Closure?
 
 
     // MARK:- API
@@ -41,24 +41,24 @@ class ZOperationsManager: NSObject {
 
 
     func startup(_ onCompletion: Closure?) {
-        var syncStates: [ZSynchronizationState] = []
+        var operationIDs: [ZOperationID] = []
 
-        for sync in ZSynchronizationState.cloud.rawValue...ZSynchronizationState.subscribe.rawValue {
-            syncStates.append(ZSynchronizationState(rawValue: sync)!)
+        for sync in ZOperationID.cloud.rawValue...ZOperationID.subscribe.rawValue {
+            operationIDs.append(ZOperationID(rawValue: sync)!)
         }
 
-        setupAndRun(syncStates, onCompletion: onCompletion!)
+        setupAndRun(operationIDs, onCompletion: onCompletion!)
     }
 
 
     func travel(_ onCompletion: Closure?) {
-        var syncStates: [ZSynchronizationState] = []
+        var operationIDs: [ZOperationID] = []
 
-        for sync in ZSynchronizationState.here.rawValue...ZSynchronizationState.subscribe.rawValue {
-            syncStates.append(ZSynchronizationState(rawValue: sync)!)
+        for sync in ZOperationID.here.rawValue...ZOperationID.subscribe.rawValue {
+            operationIDs.append(ZOperationID(rawValue: sync)!)
         }
 
-        setupAndRun(syncStates, onCompletion: onCompletion!)
+        setupAndRun(operationIDs, onCompletion: onCompletion!)
     }
 
 
@@ -93,26 +93,26 @@ class ZOperationsManager: NSObject {
     }
 
 
-    private func setupAndRun(_ syncStates: [ZSynchronizationState], onCompletion: @escaping Closure) {
+    private func setupAndRun(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
         queue.isSuspended = true
-        var states        = syncStates
+        var identifiers   = operationIDs
 
-        states.append(.ready)
+        identifiers.append(.ready)
 
         if let prior = onReady {
             onReady = {
                 prior()
-                self.setupAndRun(syncStates, onCompletion: onCompletion)
+                self.setupAndRun(operationIDs, onCompletion: onCompletion)
             }
         } else {
             onReady = onCompletion
 
-            for state in states {
+            for identifier in identifiers {
                 let op = BlockOperation {
-                    self.invokeOn(state)
+                    self.invokeOn(identifier)
                 }
 
-                operationsByState[state] = op
+                waitingOps[identifier] = op
 
                 addOperation(op)
             }
@@ -127,13 +127,13 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func invokeOn(_ state: ZSynchronizationState) {
-        let            operation = operationsByState[state]!
-        operationsByState[state] = nil
+    func invokeOn(_ identifier: ZOperationID) {
+        let          operation = waitingOps[identifier]!
+        waitingOps[identifier] = nil
 
-        report(state)
+        report(identifier)
 
-        switch(state) {
+        switch(identifier) {
         case .root:        cloudManager.establishRootAsHere{ operation.finish() }; break
         case .cloud:       cloudManager.fetchCloudZones    { operation.finish() }; break
         case .here:       travelManager.establishHere      { operation.finish() }; break

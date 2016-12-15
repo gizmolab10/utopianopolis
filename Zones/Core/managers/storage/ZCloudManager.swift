@@ -126,7 +126,9 @@ class ZCloudManager: ZRecordsManager {
 
     func merge(_ onCompletion: Closure?) {
         if let        operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            operation.recordIDs = recordIDsWithMatchingStates([.needsMerge])
+            invokeWithMode(travelManager.storageMode, block: {
+                operation.recordIDs = recordIDsWithMatchingStates([.needsMerge])
+            })
 
             if (operation.recordIDs?.count)! > 0 {
 
@@ -140,8 +142,7 @@ class ZCloudManager: ZRecordsManager {
                         record?.mergeIntoAndTake(iRecord!)
                     } else if let error: CKError = iError as? CKError {
                         self.reportError(error)
-
-                        self.addRecord(record!, forStates: [.needsSave])
+                        record!.markForStates([.needsSave])
                     }
                 }
 
@@ -201,8 +202,10 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetch(_ onCompletion: Closure?) {
-        if let        operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            operation.recordIDs = recordIDsWithMatchingStates([.needsFetch])
+        if let            operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
+            invokeWithMode(travelManager.storageMode, block: {
+                operation.recordIDs = recordIDsWithMatchingStates([.needsFetch])
+            })
 
             if (operation.recordIDs?.count)! > 0 {
 
@@ -213,7 +216,7 @@ class ZCloudManager: ZRecordsManager {
                     if let error: CKError = iError as? CKError {
                         self.reportError(error)
                     } else if let record = self.recordForRecordID(iID) {
-                        self.removeRecord(record, forStates: [.needsFetch])
+                        record.unmarkForStates([.needsFetch])
 
                         record.record = iRecord
                     }
@@ -231,8 +234,8 @@ class ZCloudManager: ZRecordsManager {
 
     func royalFlush(_ onCompletion: Closure?) {
         for zone in zones.values {
-            if !hasRecord(zone, forStates: [.needsFetch, .needsSave, .needsCreate]) {
-                removeRecord(zone, forStates: [.needsMerge])
+            if !zone.isMarkedForStates([.needsFetch, .needsSave, .needsCreate]) {
+                zone.unmarkForStates([.needsMerge])
                 zone.normalizeOrdering()
                 zone.updateCloudProperties()
             }
@@ -270,20 +273,11 @@ class ZCloudManager: ZRecordsManager {
 
     func flush(_ storageMode: ZStorageMode, onCompletion: Closure?) {
         if let operation = configure(CKModifyRecordsOperation(), using: storageMode) as? CKModifyRecordsOperation {
-            operation.recordsToSave     =   recordsWithMatchingStates([.needsSave])
-            operation.recordIDsToDelete = recordIDsWithMatchingStates([.needsDelete])
+            invokeWithMode(storageMode) {
+                operation.recordsToSave     =   recordsWithMatchingStates([.needsSave])
+                operation.recordIDsToDelete = recordIDsWithMatchingStates([.needsDelete])
 
-            clearStates([.needsSave, .needsDelete]) // clear BEFORE looking at manifest
-
-            if storageMode == .everyone {
-
-                // if records to save contains a manifest object and travelManager's storage mode is .everyone
-                // remove it and set it aside for saving in a separate operation to save into mode .mine
-
-                if let record = travelManager.manifest.record, let index = operation.recordsToSave?.index(of: record) {
-                    operation.recordsToSave?.remove(at: index)
-                    travelManager.manifest.needSave()
-                }
+                clearStates([.needsSave, .needsDelete]) // clear BEFORE looking at manifest
             }
 
             if (operation.recordsToSave?.count)! > 0 || (operation.recordIDsToDelete?.count)! > 0 {
@@ -298,7 +292,11 @@ class ZCloudManager: ZRecordsManager {
                         self.unregisterZone(zone)
                     }
 
-                    if self.recordsWithMatchingStates([.needsSave]).count > 0 {
+                    let flushMine = self.detectWithMode(.mine, block: {
+                        return self.recordsWithMatchingStates([.needsSave]).count > 0
+                    })
+
+                    if flushMine {
                         self.flush(.mine, onCompletion: onCompletion)
                     } else {
                         controllersManager.signal(nil, regarding: .data)
@@ -331,8 +329,12 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        if self.recordsWithMatchingStates([.needsSave]).count > 0 {
-            self.flush(.mine, onCompletion: onCompletion)
+        let flushMine = detectWithMode(.mine, block: {
+            return self.recordsWithMatchingStates([.needsSave]).count > 0
+        })
+
+        if flushMine {
+            flush(.mine, onCompletion: onCompletion)
         } else {
             onCompletion?()
         }
