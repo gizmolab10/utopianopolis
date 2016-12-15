@@ -8,8 +8,19 @@
 
 
 import Foundation
+import Cocoa
 
 
-class ZMainViewController: ZViewController {
+class ZMainViewController: ZGenericViewController {
 
+
+    @IBOutlet var searchBoxHeight: NSLayoutConstraint?
+
+
+    override func identifier() -> ZControllerID { return .main }
+
+
+    override func awakeFromNib() {
+        searchBoxHeight?.constant = 0
+    }
 }

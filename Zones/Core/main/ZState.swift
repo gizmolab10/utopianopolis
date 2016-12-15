@@ -28,6 +28,7 @@ enum ZFileMode: Int {
 }
 
 
+var  showsSearching:      Bool = false
 var   textCapturing:      Bool = false
 var        fileMode: ZFileMode = .cloud
 var        editMode: ZEditMode = .task

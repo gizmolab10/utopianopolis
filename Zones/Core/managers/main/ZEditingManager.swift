@@ -160,6 +160,12 @@ class ZEditingManager: NSObject {
                             }
 
                             break
+                        case "s":
+                            if isCommand {
+                                controllersManager.foo("")
+                            }
+
+                            break
                         case "t":
                             if isCommand, let zone = selectionManager.firstGrabbableZone {
                                 if !zone.isBookmark {

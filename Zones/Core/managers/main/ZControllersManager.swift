@@ -36,7 +36,7 @@ class ZControllersManager: NSObject {
     }
 
 
-    var       closures: [SignalObject]                    = []
+    var       closures: [SignalObject]                           = []
     var controllersMap: [ZControllerID : ZGenericViewController] = [:]
 
 
@@ -47,6 +47,13 @@ class ZControllersManager: NSObject {
 
     func controller(at: ZControllerID) -> ZGenericViewController {
         return controllersMap[at]!
+    }
+
+
+    func foo(_ command: String) {
+        showsSearching                       = !showsSearching
+        let                       controller = self.controller(at: .main) as! ZMainViewController
+        controller.searchBoxHeight?.constant = showsSearching ? 44.0 : 0.0
     }
 
 
