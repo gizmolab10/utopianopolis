@@ -670,11 +670,11 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ZEditorViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="552" height="596"/>
+                        <rect key="frame" x="0.0" y="0.0" width="396" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
-                                <rect key="frame" x="176" y="198" width="200" height="200"/>
+                                <rect key="frame" x="98" y="198" width="200" height="200"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="200" id="bAV-En-6Wv"/>
                                     <constraint firstAttribute="width" constant="200" id="vJp-G5-N5A"/>
@@ -692,7 +692,7 @@
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="34" y="1459"/>
+            <point key="canvasLocation" x="247" y="1485"/>
         </scene>
         <!--Main View Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -729,34 +729,57 @@
                                     <constraint firstAttribute="height" constant="1" id="f4r-Vi-zXL"/>
                                 </constraints>
                             </box>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="E7h-Pg-qLQ">
                                 <rect key="frame" x="201" y="0.0" width="249" height="255"/>
-                                <connections>
-                                    <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
-                                </connections>
-                            </containerView>
+                                <subviews>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
+                                        <rect key="frame" x="0.0" y="0.0" width="249" height="255"/>
+                                        <connections>
+                                            <segue destination="Hxl-Pi-4li" kind="embed" id="VOo-Sq-lQs"/>
+                                        </connections>
+                                    </containerView>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
+                                        <rect key="frame" x="0.0" y="0.0" width="249" height="255"/>
+                                        <connections>
+                                            <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
+                                        </connections>
+                                    </containerView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="cYx-gW-vNV" secondAttribute="bottom" id="1Fv-XZ-4RS"/>
+                                    <constraint firstItem="cYx-gW-vNV" firstAttribute="top" secondItem="E7h-Pg-qLQ" secondAttribute="top" id="Ay2-YY-he4"/>
+                                    <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="E7h-Pg-qLQ" secondAttribute="top" id="C2Y-cX-l3I"/>
+                                    <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="Jar-th-id1"/>
+                                    <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="E7h-Pg-qLQ" secondAttribute="leading" id="Keq-iJ-QKQ"/>
+                                    <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Wg2-ai-i1Z"/>
+                                    <constraint firstAttribute="trailing" secondItem="cYx-gW-vNV" secondAttribute="trailing" id="anG-fh-1WZ"/>
+                                    <constraint firstItem="cYx-gW-vNV" firstAttribute="leading" secondItem="E7h-Pg-qLQ" secondAttribute="leading" id="ggg-pQ-BJ6"/>
+                                </constraints>
+                            </customView>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="E7h-Pg-qLQ" firstAttribute="leading" secondItem="oY0-De-wof" secondAttribute="trailing" id="5EX-92-39v"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="leading" secondItem="oY0-De-wof" secondAttribute="trailing" id="6tT-lW-u0d"/>
                             <constraint firstItem="oY0-De-wof" firstAttribute="leading" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="BSp-uN-mbN"/>
                             <constraint firstAttribute="trailing" secondItem="58m-fY-Oaa" secondAttribute="trailing" id="F3i-M3-bpQ"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="Jgg-0r-ye7"/>
-                            <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="oY0-De-wof" secondAttribute="trailing" id="K5Y-7w-cWF"/>
                             <constraint firstItem="cjt-2h-f03" firstAttribute="leading" secondItem="oY0-De-wof" secondAttribute="trailing" id="PHU-5d-l5j"/>
                             <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="QAD-MU-KFH"/>
-                            <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="cjt-2h-f03" secondAttribute="bottom" id="RYo-p0-Evk"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="Swz-Ny-sRM"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="V3R-5b-vYA"/>
-                            <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="WgQ-ft-hZ6"/>
+                            <constraint firstAttribute="trailing" secondItem="E7h-Pg-qLQ" secondAttribute="trailing" id="VaR-1I-XUX"/>
                             <constraint firstItem="oY0-De-wof" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="YwV-zC-dv4"/>
-                            <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="YxK-3D-AHM"/>
                             <constraint firstAttribute="trailing" secondItem="cjt-2h-f03" secondAttribute="trailing" id="ZR4-6V-Uy9"/>
                             <constraint firstItem="cjt-2h-f03" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="cD4-iz-G8Q"/>
+                            <constraint firstItem="E7h-Pg-qLQ" firstAttribute="top" secondItem="cjt-2h-f03" secondAttribute="bottom" id="dLz-x3-ttH"/>
                             <constraint firstAttribute="bottom" secondItem="oY0-De-wof" secondAttribute="bottom" id="gea-Tv-a7Q"/>
+                            <constraint firstAttribute="bottom" secondItem="E7h-Pg-qLQ" secondAttribute="bottom" id="xse-VP-hp0"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="editorView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
                         <outlet property="searchBoxHeight" destination="Xe2-bx-5kC" id="mxM-m0-Dqq"/>
+                        <outlet property="searchResultsView" destination="cYx-gW-vNV" id="l5J-qV-95r"/>
                     </connections>
                 </viewController>
                 <customObject id="GDK-b2-17b" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -866,20 +889,54 @@ with SHIFT :
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="470.5" y="1459"/>
+            <point key="canvasLocation" x="606" y="1485"/>
         </scene>
-        <!--View Controller-->
+        <!--Search Box View Controller-->
         <scene sceneID="Gwm-hS-Ozn">
             <objects>
-                <viewController id="cYL-kx-LTL" sceneMemberID="viewController">
+                <viewController id="cYL-kx-LTL" customClass="ZSearchBoxViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Vov-Ty-huu">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <rect key="frame" x="0.0" y="0.0" width="397" height="46"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <searchField wantsLayer="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bdk-eQ-YUz">
+                                <rect key="frame" x="20" y="12" width="357" height="22"/>
+                                <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="vRN-AU-kAR">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </searchFieldCell>
+                                <connections>
+                                    <outlet property="delegate" destination="cYL-kx-LTL" id="2JQ-bf-Vyk"/>
+                                </connections>
+                            </searchField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="bdk-eQ-YUz" secondAttribute="trailing" constant="20" id="DrT-Cn-BVA"/>
+                            <constraint firstItem="bdk-eQ-YUz" firstAttribute="centerY" secondItem="Vov-Ty-huu" secondAttribute="centerY" id="dBy-Lm-ulD"/>
+                            <constraint firstItem="bdk-eQ-YUz" firstAttribute="leading" secondItem="Vov-Ty-huu" secondAttribute="leading" constant="20" id="iG7-8U-xYU"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="searchBox" destination="bdk-eQ-YUz" id="fCv-MP-Ean"/>
+                    </connections>
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="729" y="757"/>
+            <point key="canvasLocation" x="710.5" y="757"/>
+        </scene>
+        <!--Search Results View Controller-->
+        <scene sceneID="Bi1-iO-heM">
+            <objects>
+                <viewController id="Hxl-Pi-4li" customClass="ZSearchResultsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="Yjc-TG-nmv">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="596"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-235" y="1485"/>
         </scene>
     </scenes>
 </document>

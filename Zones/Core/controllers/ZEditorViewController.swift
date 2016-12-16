@@ -21,6 +21,10 @@ class ZEditorViewController: ZGenericViewController {
 
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+        if kind == .search || kind == .found {
+            return
+        }
+
         let                        zone = object as? Zone
         var specificWidget: ZoneWidget? = hereWidget
         var specificView:        ZView? = view

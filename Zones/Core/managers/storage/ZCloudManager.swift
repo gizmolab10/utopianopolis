@@ -365,7 +365,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func searchFor(_ searchFor: String, onCompletion: ObjectClosure?) {
-        let           predicate = NSPredicate(format: "self CONTAINS '%@'", searchFor)
+        let           predicate = NSPredicate(format: "self CONTAINS %@", searchFor)
         var records: [CKRecord] = []
 
         cloudQueryUsingPredicate(predicate, onCompletion: { iRecord in

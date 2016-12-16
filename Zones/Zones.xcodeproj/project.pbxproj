@@ -140,7 +140,11 @@
 		0CD9217A1D8F4C3200F80964 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CD921791D8F4C3200F80964 /* CloudKit.framework */; };
 		0CD921821D90C65E00F80964 /* ZRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD921811D90C65E00F80964 /* ZRecord.swift */; };
 		0CD921831D90C65E00F80964 /* ZRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD921811D90C65E00F80964 /* ZRecord.swift */; };
+		0CE361781E0361F400F7F0FF /* ZSearchResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CE361771E0361F400F7F0FF /* ZSearchResultsViewController.swift */; };
+		0CE361791E0361F400F7F0FF /* ZSearchResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CE361771E0361F400F7F0FF /* ZSearchResultsViewController.swift */; };
 		0CEAAB511DA19B1C00EBF88A /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B991D2ED079001892E5 /* ZAppDelegate.swift */; };
+		0CEE1CBA1E0353EE007D892C /* ZSearchBoxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CEE1CB91E0353EE007D892C /* ZSearchBoxViewController.swift */; };
+		0CEE1CBB1E0353EE007D892C /* ZSearchBoxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CEE1CB91E0353EE007D892C /* ZSearchBoxViewController.swift */; };
 		0CF97D621DA880B000FEAA41 /* ZoneWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D611DA880B000FEAA41 /* ZoneWidget.swift */; };
 		0CF97D631DA880B000FEAA41 /* ZoneWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97D611DA880B000FEAA41 /* ZoneWidget.swift */; };
 /* End PBXBuildFile section */
@@ -289,6 +293,8 @@
 		0CD921751D8F4C0B00F80964 /* PadZones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PadZones.entitlements; path = ../PadZones.entitlements; sourceTree = "<group>"; };
 		0CD921791D8F4C3200F80964 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		0CD921811D90C65E00F80964 /* ZRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZRecord.swift; sourceTree = "<group>"; };
+		0CE361771E0361F400F7F0FF /* ZSearchResultsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSearchResultsViewController.swift; sourceTree = "<group>"; };
+		0CEE1CB91E0353EE007D892C /* ZSearchBoxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSearchBoxViewController.swift; sourceTree = "<group>"; };
 		0CF97D611DA880B000FEAA41 /* ZoneWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZoneWidget.swift; path = views/ZoneWidget.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -650,6 +656,8 @@
 				0C24561D1DE3CAD700EBCCDD /* ZEditorViewController.swift */,
 				0C24561E1DE3CAD700EBCCDD /* ZGenericViewController.swift */,
 				0C24561F1DE3CAD700EBCCDD /* ZMainViewController.swift */,
+				0CEE1CB91E0353EE007D892C /* ZSearchBoxViewController.swift */,
+				0CE361771E0361F400F7F0FF /* ZSearchResultsViewController.swift */,
 				0C2456201DE3CAD700EBCCDD /* ZToolsViewController.swift */,
 			);
 			path = controllers;
@@ -931,6 +939,7 @@
 				0CD1EACE1DB725A800A096E4 /* MutuallyExclusive.swift in Sources */,
 				0CD1EAEE1DB725A800A096E4 /* BlockObserver.swift in Sources */,
 				0CD1EAD01DB725A800A096E4 /* NegatedCondition.swift in Sources */,
+				0CE361791E0361F400F7F0FF /* ZSearchResultsViewController.swift in Sources */,
 				0C371C741DE26FE10030253D /* ZEditingManager.swift in Sources */,
 				0CD1EAE81DB725A800A096E4 /* NSLock+Operations.swift in Sources */,
 				0CD1EAD81DB725A800A096E4 /* PassbookCondition.swift in Sources */,
@@ -941,6 +950,7 @@
 				0CD1EAFE1DB725A800A096E4 /* URLSessionTaskOperation.swift in Sources */,
 				0C73485F1DF4C8B400E5E23B /* ZRecordsManager.swift in Sources */,
 				0CB1A7E01D73F87B00283F7B /* ZTrait.swift in Sources */,
+				0CEE1CBB1E0353EE007D892C /* ZSearchBoxViewController.swift in Sources */,
 				0C371C781DE26FE10030253D /* ZWidgetsManager.swift in Sources */,
 				0C2456271DE3CAD700EBCCDD /* ZMainViewController.swift in Sources */,
 				0CD1EAF61DB725A800A096E4 /* DelayOperation.swift in Sources */,
@@ -1014,6 +1024,7 @@
 				0CD1EACD1DB725A800A096E4 /* MutuallyExclusive.swift in Sources */,
 				0CD1EAED1DB725A800A096E4 /* BlockObserver.swift in Sources */,
 				0CD1EACF1DB725A800A096E4 /* NegatedCondition.swift in Sources */,
+				0CE361781E0361F400F7F0FF /* ZSearchResultsViewController.swift in Sources */,
 				0C371C731DE26FE10030253D /* ZEditingManager.swift in Sources */,
 				0CD1EAE71DB725A800A096E4 /* NSLock+Operations.swift in Sources */,
 				0CD1EAD71DB725A800A096E4 /* PassbookCondition.swift in Sources */,
@@ -1024,6 +1035,7 @@
 				0CD1EAFD1DB725A800A096E4 /* URLSessionTaskOperation.swift in Sources */,
 				0C73485E1DF4C8B400E5E23B /* ZRecordsManager.swift in Sources */,
 				0CD1EAF51DB725A800A096E4 /* DelayOperation.swift in Sources */,
+				0CEE1CBA1E0353EE007D892C /* ZSearchBoxViewController.swift in Sources */,
 				0C371C771DE26FE10030253D /* ZWidgetsManager.swift in Sources */,
 				0C2456261DE3CAD700EBCCDD /* ZMainViewController.swift in Sources */,
 				0CD1EAE51DB725A800A096E4 /* Dictionary+Operations.swift in Sources */,

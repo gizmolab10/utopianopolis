@@ -160,9 +160,11 @@ class ZEditingManager: NSObject {
                             }
 
                             break
-                        case "s":
+                        case "f":
                             if isCommand {
-                                controllersManager.foo("")
+                                let object: NSObject? = showsSearching ? nil : "" as NSObject
+
+                                controllersManager.signal(object, regarding: .search)
                             }
 
                             break

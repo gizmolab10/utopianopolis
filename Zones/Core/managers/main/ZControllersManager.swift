@@ -10,6 +10,8 @@ import Foundation
 
 
 enum ZControllerID: Int {
+    case searchResults
+    case searchBox
     case editor
     case tools
     case main
@@ -20,7 +22,8 @@ enum ZSignalKind: Int {
     case data
     case datum
     case error
-    case delete
+    case found
+    case search
 }
 
 
@@ -47,13 +50,6 @@ class ZControllersManager: NSObject {
 
     func controller(at: ZControllerID) -> ZGenericViewController {
         return controllersMap[at]!
-    }
-
-
-    func foo(_ command: String) {
-        showsSearching                       = !showsSearching
-        let                       controller = self.controller(at: .main) as! ZMainViewController
-        controller.searchBoxHeight?.constant = showsSearching ? 44.0 : 0.0
     }
 
 
