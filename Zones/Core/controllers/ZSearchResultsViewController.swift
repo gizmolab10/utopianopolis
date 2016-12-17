@@ -17,23 +17,38 @@ import CloudKit
 #endif
 
 
-class ZSearchResultsViewController: ZGenericViewController {
+class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource, ZTableViewDelegate {
 
 
-    @IBOutlet var searchBox: NSSearchField?
-    var foundRecords: [CKRecord] = []
-    
+    @IBOutlet var tableView: ZTableView?
+    var        foundRecords: [CKRecord] = []
+
 
     override func identifier() -> ZControllerID { return .searchResults }
 
 
     override func handleSignal(_ iObject: Any?, kind: ZSignalKind) {
         if kind == .found {
-
             foundRecords = iObject as! [CKRecord]
 
-            self.report(foundRecords)
+            tableView?.reloadData()
         }
     }
 
+    
+    func numberOfRows(in tableView: NSTableView) -> Int {
+        return foundRecords.count
+    }
+
+
+    func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
+        var object = ""
+
+        if row < foundRecords.count {
+            let record = foundRecords[row]
+            object     = record[zoneNameKey] as! String
+        }
+
+        return object
+    }
 }

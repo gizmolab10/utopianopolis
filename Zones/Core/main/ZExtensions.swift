@@ -25,13 +25,19 @@ import CloudKit
     public typealias ZButton              = NSButton
     public typealias ZWindow              = NSWindow
     public typealias ZTextField           = NSTextField
+    public typealias ZTableView           = NSTableView
     public typealias ZBezierPath          = NSBezierPath
+    public typealias ZSearchField         = NSSearchField
     public typealias ZApplication         = NSApplication
+    public typealias ZTableRowView        = NSTableRowView
     public typealias ZViewController      = NSViewController
     public typealias ZSegmentedControl    = NSSegmentedControl
     public typealias ZGestureRecognizer   = NSGestureRecognizer
     public typealias ZProgressIndicator   = NSProgressIndicator
     public typealias ZTextFieldDelegate   = NSTextFieldDelegate
+    public typealias ZTableViewDelegate   = NSTableViewDelegate
+    public typealias ZTableViewDataSource = NSTableViewDataSource
+    public typealias ZSearchFieldDelegate = NSSearchFieldDelegate
     public typealias ZApplicationDelegate = NSApplicationDelegate
 
 

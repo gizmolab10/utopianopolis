@@ -19,7 +19,7 @@ import SnapKit
 class ZoneWidget: ZView {
 
 
-    private var        _textField: ZoneTextField!
+    private var       _textWidget: ZoneTextWidget!
     private var     _childrenView: ZView!
     private let dragHighlightView: ZView!        = ZView()
     private var   childrenWidgets: [ZoneWidget?] = []
@@ -34,25 +34,25 @@ class ZoneWidget: ZView {
     }
 
 
-    var textField: ZoneTextField {
+    var textWidget: ZoneTextWidget {
         get {
-            if _textField == nil {
-                _textField            = ZoneTextField()
+            if _textWidget == nil {
+                _textWidget            = ZoneTextWidget()
 
-                _textField.setup()
-                addSubview(_textField)
+                _textWidget.setup()
+                addSubview(_textWidget)
 
-                _textField.snp.makeConstraints { (make) -> Void in
+                _textWidget.snp.makeConstraints { (make) -> Void in
                     make.width.equalTo(200.0)
                 }
 
                 snp.makeConstraints { (make) -> Void in
-                    make.centerY.equalTo(_textField)
-                    make.size.greaterThanOrEqualTo(_textField)
+                    make.centerY.equalTo(_textWidget)
+                    make.size.greaterThanOrEqualTo(_textWidget)
                 }
             }
 
-            return _textField
+            return _textWidget
         }
     }
 
@@ -79,7 +79,7 @@ class ZoneWidget: ZView {
         childrenWidgets.removeAll()
 
         _childrenView = nil
-        _textField    = nil
+        _textWidget   = nil
         widgetZone    = nil
 }
 
@@ -143,7 +143,7 @@ class ZoneWidget: ZView {
 
     func layoutDecorations() {
         // self        .addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.green.cgColor)
-        // textField.addBorder(thickness: 5.0, radius: 0.5, color: CGColor.black)
+        // textWidget.addBorder(thickness: 5.0, radius: 0.5, color: CGColor.black)
 
 //        let  show = selectionManager.isGrabbed(widgetZone) && widgetZone.children.count > 0 && widgetZone.showChildren
 //        let color = show ? ZColor.orange : ZColor.clear
@@ -173,12 +173,12 @@ class ZoneWidget: ZView {
 
 
     func layoutText() {
-        textField.widget   = self
+        textWidget.widget   = self
 
-        if textField.text == "" && widgetZone.zoneName == nil {
-            textField.text = "empty"
+        if textWidget.text == "" && widgetZone.zoneName == nil {
+            textWidget.text = "empty"
         } else if widgetZone.zoneName != nil {
-            textField.text = widgetZone.zoneName
+            textWidget.text = widgetZone.zoneName
         }
 
         layoutTextField()
@@ -186,9 +186,9 @@ class ZoneWidget: ZView {
 
 
     func layoutTextField() {
-        textField.snp.removeConstraints()
-        textField.snp.makeConstraints { (make) -> Void in
-            let width = textField.text!.widthForFont(widgetFont) + 5.0
+        textWidget.snp.removeConstraints()
+        textWidget.snp.makeConstraints { (make) -> Void in
+            let width = textWidget.text!.widthForFont(widgetFont) + 5.0
 
             make.width.equalTo(width)
             make.centerY.equalTo(self)
@@ -288,8 +288,8 @@ class ZoneWidget: ZView {
                 addSubview(siblingLine!)
                 siblingLine?.snp.makeConstraints({ (make) in
                     make.width.height.equalTo(lineThicknes)
-                    make.centerX.equalTo(textField.snp.right).offset(6.0)
-                    make.centerY.equalTo(textField)
+                    make.centerX.equalTo(textWidget.snp.right).offset(6.0)
+                    make.centerY.equalTo(textWidget)
                 })
             }
         }
@@ -304,8 +304,8 @@ class ZoneWidget: ZView {
         dragDot!.innerDot?.snp.removeConstraints()
         dragDot!.setupForZone(widgetZone, asToggle: false)
         dragDot!.innerDot?.snp.makeConstraints({ (make) in
-            make.right.equalTo(textField.snp.left)
-            make.centerY.equalTo(textField).offset(1.0)
+            make.right.equalTo(textWidget.snp.left)
+            make.centerY.equalTo(textWidget).offset(1.0)
         })
 
         if widgetZone.children.count == 0 && !widgetZone.isBookmark {
@@ -320,8 +320,8 @@ class ZoneWidget: ZView {
             toggleDot!.innerDot?.snp.removeConstraints()
             toggleDot!.setupForZone(widgetZone, asToggle: true)
             toggleDot!.innerDot?.snp.makeConstraints({ (make) in
-                make.left.equalTo(textField.snp.right).offset(-1.0)
-                make.centerY.equalTo(textField).offset(1.0)
+                make.left.equalTo(textWidget.snp.right).offset(-1.0)
+                make.centerY.equalTo(textWidget).offset(1.0)
                 make.right.lessThanOrEqualToSuperview().offset(-1.0)
             })
         }

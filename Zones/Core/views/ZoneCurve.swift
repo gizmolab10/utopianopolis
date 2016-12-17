@@ -45,11 +45,11 @@ class ZoneCurve: ZView {
 
     func updateKind() {
         if (parent?.widgetZone.children.count)! > 1 {
-            let          dragDot = child?.dragDot!.innerDot
-            let        textField = parent?.textField
-            let   dragDotCenterY =   dragDot?.convert((  dragDot?.bounds)!, to: parent).center.y
-            let textFieldCenterY = textField?.convert((textField?.bounds)!, to: parent).center.y
-            let            delta = dragDotCenterY! - textFieldCenterY!
+            let           dragDot = child?.dragDot!.innerDot
+            let        textWidget = parent?.textWidget
+            let    dragDotCenterY =    dragDot?.convert((   dragDot?.bounds)!, to: parent).center.y
+            let textWidgetCenterY = textWidget?.convert((textWidget?.bounds)!, to: parent).center.y
+            let             delta = dragDotCenterY! - textWidgetCenterY!
 
             if delta > 2.0 {
                 kind = .above

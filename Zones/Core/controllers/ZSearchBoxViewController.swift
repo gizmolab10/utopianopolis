@@ -17,10 +17,10 @@ import CloudKit
 #endif
 
 
-class ZSearchBoxViewController: ZGenericViewController, NSSearchFieldDelegate {
+class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
 
 
-    @IBOutlet var searchBox: NSSearchField?
+    @IBOutlet var searchBox: ZoneSearchField?
     
 
     override func identifier() -> ZControllerID { return .searchBox }
@@ -29,9 +29,7 @@ class ZSearchBoxViewController: ZGenericViewController, NSSearchFieldDelegate {
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         if kind == .search {
             if showsSearching {
-                searchBox?.becomeFirstResponder()
-            } else {
-                searchBox?.resignFirstResponder()
+                mainWindow?.makeFirstResponder(searchBox!)
             }
         }
     }

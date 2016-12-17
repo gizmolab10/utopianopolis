@@ -1,5 +1,5 @@
 //
-//  ZoneTextField.swift
+//  ZoneTextWidget.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 10/27/16.
@@ -16,7 +16,7 @@ import Foundation
 #endif
 
 
-class ZoneTextField: ZTextField, ZTextFieldDelegate {
+class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     var monitor: Any?

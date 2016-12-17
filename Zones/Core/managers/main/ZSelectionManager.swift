@@ -49,7 +49,7 @@ class ZSelectionManager: NSObject {
         if zone == nil || zone == travelManager.hereZone {
             controllersManager.signal(nil, regarding: .data)
         } else if let widget = widgetsManager.widgetForZone(zone) {
-            widget.textField.captureText()
+            widget.textWidget.captureText()
             controllersManager.signal(zone, regarding: .datum)
         }
 

@@ -142,7 +142,7 @@ class ZCloudManager: ZRecordsManager {
                         record?.mergeIntoAndTake(iRecord!)
                     } else if let error: CKError = iError as? CKError {
                         self.reportError(error)
-                        record!.markForStates([.needsSave])
+                        record?.markForStates([.needsSave])
                     }
                 }
 

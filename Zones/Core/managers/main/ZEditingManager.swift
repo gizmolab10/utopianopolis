@@ -103,7 +103,7 @@ class ZEditingManager: NSObject {
                     } else {
                         switch key {
                         case "\t":
-                            widget.textField.resignFirstResponder()
+                            widget.textWidget.resignFirstResponder()
 
                             if let parent = widget.widgetZone.parentZone {
                                 if widget.widgetZone == hereZone {
@@ -140,12 +140,12 @@ class ZEditingManager: NSObject {
                                 if isCommand {
                                     selectionManager.deselect()
                                 } else {
-                                    widget.textField.becomeFirstResponder()
+                                    widget.textWidget.becomeFirstResponder()
                                 }
 
                                 return true
                             } else if selectionManager.currentlyEditingZone != nil {
-                                widget.textField.resignFirstResponder()
+                                widget.textWidget.resignFirstResponder()
                                 
                                 return true
                             }
@@ -257,7 +257,7 @@ class ZEditingManager: NSObject {
             controllersManager.syncToCloudAndSignalFor(parentZone, onCompletion: { () -> (Void) in
                 operationsManager.isReady = true
 
-                widgetsManager.widgetForZone(object as? Zone)?.textField.becomeFirstResponder()
+                widgetsManager.widgetForZone(object as? Zone)?.textWidget.becomeFirstResponder()
                 controllersManager.signal(parentZone, regarding: .data)
             })
         }
@@ -275,7 +275,7 @@ class ZEditingManager: NSObject {
                 self.dispatchAsyncInForegroundAfter(0.5, closure: { () -> (Void) in
                     operationsManager.isReady = true
 
-                    widgetsManager.widgetForZone(parentZone as? Zone)?.textField.becomeFirstResponder()
+                    widgetsManager.widgetForZone(parentZone as? Zone)?.textWidget.becomeFirstResponder()
                     controllersManager.signal(grandParentZone, regarding: .data)
                 })
             })
@@ -290,7 +290,7 @@ class ZEditingManager: NSObject {
             let insert = asTask ? 0 : (zone?.children.count)!
 
             child.markForStates([.needsCreate])
-            widgetsManager.widgetForZone(zone!)?.textField.resignFirstResponder()
+            widgetsManager.widgetForZone(zone!)?.textWidget.resignFirstResponder()
 
             if asTask {
                 zone?.children.insert(child, at: 0)
