@@ -22,6 +22,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
     @IBOutlet var tableView: ZTableView?
     var        foundRecords: [CKRecord] = []
+    var             monitor: Any?
 
 
     override func identifier() -> ZControllerID { return .searchResults }
@@ -33,6 +34,9 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
             sortRecords()
             tableView?.reloadData()
+            monitorKeyEvents()
+        } else {
+            removeMonitorAsync()
         }
     }
 
@@ -70,4 +74,69 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
         return object
     }
+
+
+    func resolveRecord(_ record: CKRecord) {
+        var zone = cloudManager.zoneForRecordID(record.recordID)
+
+        if zone == nil {
+            zone = Zone(record: record, storageMode: travelManager.storageMode)
+
+            zone?.needChildren()
+        }
+
+        travelManager.hereZone = zone
+
+        selectionManager.grab(zone)
+        controllersManager.signal(nil, regarding: .data)
+    }
+
+
+    func monitorKeyEvents() {
+        #if os(OSX)
+            if monitor == nil {
+                monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> ZEvent? in
+                    if  let  string = event.charactersIgnoringModifiers {
+                        let     key = string[string.startIndex].description
+                        let   flags = event.modifierFlags
+                        let isArrow = flags.contains(.numericPad) && flags.contains(.function)
+
+                        if isArrow {
+                            let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
+
+                            if arrow == .right {
+                                let  index = self.tableView?.selectedRow
+
+                                if index != -1 {
+                                    let     record = self.foundRecords[index!]
+                                    showsSearching = false
+                                    workMode       = .edit
+
+                                    controllersManager.signal(nil, regarding: .search)
+                                    controllersManager.signal(nil, regarding: .found)
+                                    self.resolveRecord(record)
+                                }
+                            }
+                        }
+                    }
+
+                    return event
+                })
+            }
+        #endif
+    }
+
+
+    func removeMonitorAsync() {
+        #if os(OSX)
+            if let save = monitor {
+                monitor = nil
+
+                dispatchAsyncInForegroundAfter(0.001, closure: {
+                    ZEvent.removeMonitor(save)
+                })
+            }
+        #endif
+    }
+    
 }

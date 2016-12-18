@@ -781,6 +781,7 @@
                         <outlet property="mainView" destination="E7h-Pg-qLQ" id="PLu-7K-JWt"/>
                         <outlet property="searchBoxHeight" destination="lGr-3g-ayh" id="9xd-lu-oT0"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
+                        <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
                     </connections>
                 </viewController>
                 <customObject id="GDK-b2-17b" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

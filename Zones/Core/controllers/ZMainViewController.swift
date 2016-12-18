@@ -20,6 +20,7 @@ class ZMainViewController: ZGenericViewController {
 
 
     @IBOutlet var searchBoxHeight:   NSLayoutConstraint?
+    @IBOutlet var searchResultsView: NSView?
     @IBOutlet var searchBoxView:     NSView?
     @IBOutlet var editorView:        NSView?
     @IBOutlet var mainView:          NSView?
@@ -38,6 +39,13 @@ class ZMainViewController: ZGenericViewController {
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         switch kind {
+        case .found:
+            let isSearching = workMode == .search
+
+            show ( isSearching, view: searchResultsView!)
+            show (!isSearching, view: editorView!)
+
+            break
         case .search:
             searchBoxView?.snp.removeConstraints()
             searchBoxView?.snp.makeConstraints({ (make) in
@@ -49,20 +57,22 @@ class ZMainViewController: ZGenericViewController {
             }
 
             break
-        case .found:
-            if workMode == .search {
-                editorView?.removeFromSuperview()
-            } else if !view.subviews.contains(editorView!) {
-                mainView?.addSubview(editorView!)
-                editorView?.snp.makeConstraints({ (make) in
-                    make.top.bottom.left.right.equalTo(mainView!)
-                })
-            }
-
-            break
         default:
 
             break
         }
     }
+
+
+    func show(_ show: Bool, view: ZView) {
+        if !show {
+            view.removeFromSuperview()
+        } else if !(mainView?.subviews.contains(view))! {
+            mainView?.addSubview(view)
+            view.snp.makeConstraints({ (make) in
+                make.top.bottom.left.right.equalTo(mainView!)
+            })
+        }
+    }
+
 }

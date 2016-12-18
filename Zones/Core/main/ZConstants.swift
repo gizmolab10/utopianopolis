@@ -22,6 +22,14 @@ let unselectBrightness: CGFloat = 0.98
 #endif
 
 
+enum ZArrowKey: CChar {
+    case up    = -128
+    case down
+    case left
+    case right
+}
+
+
 let userTouchLength: CGFloat = 33.0
 let      widgetFont:   ZFont = ZFont.systemFont(ofSize: fontSize)
 let       controllersManager = ZControllersManager()

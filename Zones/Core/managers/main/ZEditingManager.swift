@@ -11,14 +11,6 @@ import Foundation
 import CloudKit
 
 
-enum ZArrowKey: CChar {
-    case up    = -128
-    case down
-    case left
-    case right
-}
-
-
 class ZEditingManager: NSObject {
 
 
@@ -61,6 +53,8 @@ class ZEditingManager: NSObject {
             }
         } else if event == previousEvent {
             return true
+        } else if workMode != .edit {
+            return false
         } else {
             #if os(OSX)
             previousEvent = event
