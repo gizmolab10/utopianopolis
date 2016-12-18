@@ -236,7 +236,7 @@ extension NSObject {
 
 
     func signal(_ object: NSObject?, regarding: ZSignalKind) {
-        controllersManager.signalForObject(object, regarding: regarding)
+        controllersManager.signalAboutObject(object, regarding: regarding)
     }
 
 
