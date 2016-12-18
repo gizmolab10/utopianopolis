@@ -702,7 +702,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha">
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Settings View">
                                 <rect key="frame" x="0.0" y="0.0" width="200" height="300"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="us8-K9-IEo"/>
@@ -714,10 +714,10 @@
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="oY0-De-wof">
                                 <rect key="frame" x="198" y="0.0" width="5" height="300"/>
                             </box>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa">
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Box View">
                                 <rect key="frame" x="201" y="256" width="249" height="44"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="Xe2-bx-5kC"/>
+                                    <constraint firstAttribute="height" constant="44" id="lGr-3g-ayh"/>
                                 </constraints>
                                 <connections>
                                     <segue destination="cYL-kx-LTL" kind="embed" id="chv-HO-K3M"/>
@@ -729,7 +729,7 @@
                                     <constraint firstAttribute="height" constant="1" id="f4r-Vi-zXL"/>
                                 </constraints>
                             </box>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="E7h-Pg-qLQ">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="E7h-Pg-qLQ" userLabel="Main View">
                                 <rect key="frame" x="201" y="0.0" width="249" height="255"/>
                                 <subviews>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
@@ -778,8 +778,9 @@
                     </view>
                     <connections>
                         <outlet property="editorView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
-                        <outlet property="searchBoxHeight" destination="Xe2-bx-5kC" id="mxM-m0-Dqq"/>
-                        <outlet property="searchResultsView" destination="cYx-gW-vNV" id="l5J-qV-95r"/>
+                        <outlet property="mainView" destination="E7h-Pg-qLQ" id="PLu-7K-JWt"/>
+                        <outlet property="searchBoxHeight" destination="lGr-3g-ayh" id="9xd-lu-oT0"/>
+                        <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
                     </connections>
                 </viewController>
                 <customObject id="GDK-b2-17b" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -899,7 +900,7 @@ with SHIFT :
                         <rect key="frame" x="0.0" y="0.0" width="397" height="46"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <searchField wantsLayer="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bdk-eQ-YUz" customClass="ZoneSearchField" customModule="Zones" customModuleProvider="target">
+                            <searchField wantsLayer="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bdk-eQ-YUz">
                                 <rect key="frame" x="20" y="12" width="357" height="22"/>
                                 <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="vRN-AU-kAR">
                                     <font key="font" metaFont="system"/>

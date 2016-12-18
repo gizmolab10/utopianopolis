@@ -295,6 +295,15 @@ extension Character {
 }
 
 
+extension NSMutableArray {
+    func remove(_ object: Any?) {
+        if object != nil {
+            remove(at: index(of: object))
+        }
+    }
+}
+
+
 extension ZView {
 
 

@@ -35,7 +35,7 @@ class ZoneWindow: ZWindow {
 
 
     override func keyDown(with event: ZEvent) {
-        if selectionManager.currentlyEditingZone != nil || !editingManager.handleKey(event, isWindow: true) {
+        if selectionManager.currentlyEditingZone != nil || !editingManager.handleEvent(event, isWindow: true) {
             super.keyDown(with: event)
         }
     }

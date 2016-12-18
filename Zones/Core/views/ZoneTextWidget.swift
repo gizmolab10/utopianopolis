@@ -47,7 +47,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                             let isArrow = flags.contains(.numericPad) && flags.contains(.function)
 
                             if !isArrow {
-                                editingManager.handleKey(event, isWindow: false)
+                                editingManager.handleEvent(event, isWindow: false)
                             }
                         }
 

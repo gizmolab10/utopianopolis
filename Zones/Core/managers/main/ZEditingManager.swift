@@ -49,12 +49,12 @@ class ZEditingManager: NSObject {
         while deferredEvents.count != 0 {
             let event = deferredEvents.remove(at: 0)
 
-            handleKey(event.event!, isWindow: event.isWindow)
+            handleEvent(event.event!, isWindow: event.isWindow)
         }
     }
 
 
-    @discardableResult func handleKey(_ event: ZEvent, isWindow: Bool) -> Bool {
+    @discardableResult func handleEvent(_ event: ZEvent, isWindow: Bool) -> Bool {
         if !operationsManager.isReady {
             if deferredEvents.count < 1 {
                 deferredEvents.append(ZoneEvent(event, iIsWindow: isWindow))
@@ -64,43 +64,16 @@ class ZEditingManager: NSObject {
         } else {
             #if os(OSX)
             previousEvent = event
-            let     flags = event.modifierFlags
-            let   isShift = flags.contains(.shift)
-            let  isOption = flags.contains(.option)
-            let isCommand = flags.contains(.command)
-            let   isArrow = flags.contains(.numericPad) && flags.contains(.function)
 
-            if let widget = widgetsManager.currentMovableWidget {
-                if let string = event.charactersIgnoringModifiers {
-                    let key   = string[string.startIndex].description
+                if  let    widget = widgetsManager.currentMovableWidget, let string = event.charactersIgnoringModifiers {
+                    let       key = string[string.startIndex].description
+                    let     flags = event.modifierFlags
+                    let   isShift = flags.contains(.shift)
+                    let  isOption = flags.contains(.option)
+                    let isCommand = flags.contains(.command)
+                    let   isArrow = flags.contains(.numericPad) && flags.contains(.function)
 
-                    if isArrow {
-                        if isWindow {
-                            let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
-
-                            if isShift {
-                                if let zone = selectionManager.firstGrabbableZone {
-
-                                    switch arrow {
-                                    case .right: makeToggleDotShow(true,  zone: zone, recursively: isCommand);                                            break
-                                    case .left:  makeToggleDotShow(false, zone: zone, recursively: isCommand); selectionManager.deselectDragWithin(zone); break
-                                    default: return true
-                                    }
-
-                                    controllersManager.syncToCloudAndSignalFor(nil)
-                                }
-                            } else {
-                                switch arrow {
-                                case .right: moveInto(     selectionOnly: !isOption, extreme: isCommand, persistently: true); break
-                                case .left:  moveOut(      selectionOnly: !isOption, extreme: isCommand, persistently: true); break
-                                case .down:  moveUp(false, selectionOnly: !isOption, extreme: isCommand, persistently: true); break
-                                case .up:    moveUp(true,  selectionOnly: !isOption, extreme: isCommand, persistently: true); break
-                                }
-                            }
-
-                            return true
-                        }
-                    } else {
+                    if !isArrow {
                         switch key {
                         case "\t":
                             widget.textWidget.resignFirstResponder()
@@ -146,7 +119,7 @@ class ZEditingManager: NSObject {
                                 return true
                             } else if selectionManager.currentlyEditingZone != nil {
                                 widget.textWidget.resignFirstResponder()
-                                
+
                                 return true
                             }
 
@@ -162,9 +135,9 @@ class ZEditingManager: NSObject {
                             break
                         case "f":
                             if isCommand {
-                                let object: NSObject? = showsSearching ? nil : "" as NSObject
+                                showsSearching = !showsSearching
 
-                                controllersManager.signal(object, regarding: .search)
+                                controllersManager.signal(nil, regarding: .search)
                             }
 
                             break
@@ -177,20 +150,43 @@ class ZEditingManager: NSObject {
                                 } else {
                                     travelManager.travelWhereThisZonePoints(zone, atArrival: { (object, kind) -> (Void) in
                                         self.hereZone = object as! Zone!
-
+                                        
                                         controllersManager.syncToCloudAndSignalFor(nil)
                                     })
                                 }
                             }
-
+                            
                             break
                         default:
                             
                             break
                         }
+                    } else if isWindow {
+                        let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
+
+                        if isShift {
+                            if let zone = selectionManager.firstGrabbableZone {
+
+                                switch arrow {
+                                case .right: makeToggleDotShow(true,  zone: zone, recursively: isCommand);                                            break
+                                case .left:  makeToggleDotShow(false, zone: zone, recursively: isCommand); selectionManager.deselectDragWithin(zone); break
+                                default: return true
+                                }
+
+                                controllersManager.syncToCloudAndSignalFor(nil)
+                            }
+                        } else {
+                            switch arrow {
+                            case .right: moveInto(     selectionOnly: !isOption, extreme: isCommand, persistently: true); break
+                            case .left:  moveOut(      selectionOnly: !isOption, extreme: isCommand, persistently: true); break
+                            case .down:  moveUp(false, selectionOnly: !isOption, extreme: isCommand, persistently: true); break
+                            case .up:    moveUp(true,  selectionOnly: !isOption, extreme: isCommand, persistently: true); break
+                            }
+                        }
+
+                        return true
                     }
                 }
-            }
             #endif
         }
         
@@ -605,12 +601,12 @@ class ZEditingManager: NSObject {
             } else if zone.isBookmark {
                 travelThroughBookmark(zone, persistently: persistently)
             } else if zone.children.count > 0 {
-                let      saveThis = !zone.showChildren
+                let  hideChildren = !zone.showChildren
                 zone.showChildren = true
 
                 selectionManager.grab(asTask ? zone.children.first! : zone.children.last!)
 
-                if saveThis {
+                if hideChildren {
                     controllersManager.syncToCloudAndSignalFor(nil)
                 } else {
                     controllersManager.signal(nil, regarding: .data)

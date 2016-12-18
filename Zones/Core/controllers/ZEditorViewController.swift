@@ -23,6 +23,11 @@ class ZEditorViewController: ZGenericViewController {
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         if kind == .search || kind == .found {
             return
+        } else if workMode != .edit {
+            view.snp.removeConstraints()
+            hereWidget.removeFromSuperview()
+
+            return
         }
 
         let                        zone = object as? Zone

@@ -28,10 +28,18 @@ enum ZFileMode: Int {
 }
 
 
+enum ZWorkMode: Int {
+    case search
+    case essay
+    case edit
+}
+
+
 var  showsSearching:      Bool = false
 var   textCapturing:      Bool = false
 var        fileMode: ZFileMode = .cloud
 var        editMode: ZEditMode = .task
+var        workMode: ZWorkMode = .edit
 var   genericOffset            = CGSize(width: 0.0, height: 4.0)
 var       lineColor:    ZColor = ZColor.purple //(hue: 0.6, saturation: 0.6, brightness: 1.0,                alpha: 1)
 var   bookmarkColor:    ZColor = ZColor.blue

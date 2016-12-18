@@ -53,8 +53,6 @@
 		0C73485C1DF35F8700E5E23B /* ZManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C73485A1DF35F8700E5E23B /* ZManifest.swift */; };
 		0C73485E1DF4C8B400E5E23B /* ZRecordsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C73485D1DF4C8B400E5E23B /* ZRecordsManager.swift */; };
 		0C73485F1DF4C8B400E5E23B /* ZRecordsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C73485D1DF4C8B400E5E23B /* ZRecordsManager.swift */; };
-		0C768BC11E04B88B00AD0D57 /* ZoneSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C768BC01E04B88B00AD0D57 /* ZoneSearchField.swift */; };
-		0C768BC21E04B88B00AD0D57 /* ZoneSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C768BC01E04B88B00AD0D57 /* ZoneSearchField.swift */; };
 		0CA04B2D1D2ECF1B001892E5 /* ZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */; };
 		0CA04B631D2ECF41001892E5 /* PadZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */; };
 		0CA04B6E1D2ECF41001892E5 /* PadZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */; };
@@ -232,7 +230,6 @@
 		0C7348571DF0D67800E5E23B /* ZBookmarksManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZBookmarksManager.swift; sourceTree = "<group>"; };
 		0C73485A1DF35F8700E5E23B /* ZManifest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZManifest.swift; sourceTree = "<group>"; };
 		0C73485D1DF4C8B400E5E23B /* ZRecordsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZRecordsManager.swift; sourceTree = "<group>"; };
-		0C768BC01E04B88B00AD0D57 /* ZoneSearchField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZoneSearchField.swift; path = views/ZoneSearchField.swift; sourceTree = "<group>"; };
 		0CA04B141D2ECF1A001892E5 /* Zones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zones.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
@@ -671,7 +668,6 @@
 			children = (
 				0C3312951DC818FF002DDB39 /* ZoneCurve.swift */,
 				0C36E7FD1DC31834005C5059 /* ZoneDot.swift */,
-				0C768BC01E04B88B00AD0D57 /* ZoneSearchField.swift */,
 				0CC8F84C1DC2963300E25985 /* ZoneTextWidget.swift */,
 				0CF97D611DA880B000FEAA41 /* ZoneWidget.swift */,
 				0C371C7F1DE298EB0030253D /* ZoneWindow.swift */,
@@ -933,7 +929,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0CB1A7DC1D73F87B00283F7B /* ZAction.swift in Sources */,
-				0C768BC21E04B88B00AD0D57 /* ZoneSearchField.swift in Sources */,
 				0CD1EAF41DB725A800A096E4 /* BlockOperation.swift in Sources */,
 				0CD1EADE1DB725A800A096E4 /* RemoteNotificationCondition.swift in Sources */,
 				0CD1EAF81DB725A800A096E4 /* GroupOperation.swift in Sources */,
@@ -1019,7 +1014,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C58C37D1D45805400CAB387 /* ZAppDelegate.swift in Sources */,
-				0C768BC11E04B88B00AD0D57 /* ZoneSearchField.swift in Sources */,
 				0CD1EAF31DB725A800A096E4 /* BlockOperation.swift in Sources */,
 				0CD1EADD1DB725A800A096E4 /* RemoteNotificationCondition.swift in Sources */,
 				0CD1EAF71DB725A800A096E4 /* GroupOperation.swift in Sources */,

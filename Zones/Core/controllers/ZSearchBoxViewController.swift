@@ -20,7 +20,7 @@ import CloudKit
 class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
 
 
-    @IBOutlet var searchBox: ZoneSearchField?
+    @IBOutlet var searchBox: ZSearchField?
     
 
     override func identifier() -> ZControllerID { return .searchBox }
@@ -29,7 +29,7 @@ class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         if kind == .search {
             if showsSearching {
-                mainWindow?.makeFirstResponder(searchBox!)
+                mainWindow.makeFirstResponder(searchBox!)
             }
         }
     }
@@ -42,14 +42,32 @@ class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
         let find = (searchBox?.text)!
 
         if find == "" {
+            showsSearching = false
+
             controllersManager.signal(nil, regarding: .search)
         } else {
             cloudManager.searchFor(find) { iObject in
+                let hasResults = ((iObject as? [Any])?.count)! != 0
+                workMode       = hasResults ? .search : .edit
+
                 controllersManager.signal(iObject, regarding: .found)
             }
         }
 
         return true
+    }
+
+
+    func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+        if commandSelector == Selector(("noop:")) {
+            showsSearching = false
+
+            controllersManager.signal(nil, regarding: .search)
+
+            return true
+        }
+
+        return false
     }
 
 }

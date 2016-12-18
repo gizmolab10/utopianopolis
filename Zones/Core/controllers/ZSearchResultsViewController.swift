@@ -28,11 +28,25 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
 
     override func handleSignal(_ iObject: Any?, kind: ZSignalKind) {
-        if kind == .found {
-            foundRecords = iObject as! [CKRecord]
+        if kind == .found, let records = iObject as? [CKRecord] {
+            foundRecords = records
 
+            sortRecords()
             tableView?.reloadData()
         }
+    }
+
+
+    func sortRecords() {
+        let records = foundRecords.map { $0 } // a copy, so that while enumerating it, elements can be removed from original
+
+        for record in records {
+            if record["parent"] == nil {
+                foundRecords.remove(at: foundRecords.index(of: record)!)
+            }
+        }
+
+        foundRecords.sort(by: { ($0[zoneNameKey] as! String) < ($1[zoneNameKey] as! String) } )
     }
 
     
