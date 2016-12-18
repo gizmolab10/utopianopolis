@@ -595,17 +595,29 @@ class ZEditingManager: NSObject {
             } else if zone.isBookmark {
                 travelThroughBookmark(zone, persistently: persistently)
             } else if zone.children.count > 0 {
-                let  hideChildren = !zone.showChildren
+                moveSelectionInto(zone)
+            } else {
                 zone.showChildren = true
+                zone.needChildren()
 
-                selectionManager.grab(asTask ? zone.children.first! : zone.children.last!)
-
-                if hideChildren {
-                    controllersManager.syncToCloudAndSignalFor(nil)
-                } else {
-                    signal(nil, regarding: .data)
+                operationsManager.getChildren {
+                    self.moveSelectionInto(zone)
                 }
             }
+        }
+    }
+
+
+    func moveSelectionInto(_ zone: Zone) {
+        let  hideChildren = !zone.showChildren
+        zone.showChildren = true
+
+        selectionManager.grab(asTask ? zone.children.first! : zone.children.last!)
+
+        if hideChildren {
+            controllersManager.syncToCloudAndSignalFor(nil)
+        } else {
+            signal(nil, regarding: .data)
         }
     }
 

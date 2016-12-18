@@ -105,11 +105,15 @@ class ZCloudManager: ZRecordsManager {
                         if iHereRecord == nil || iHereRecord?[zoneNameKey] == nil {
                             self.establishRootAsHere(onCompletion)
                         } else {
-                            travelManager.hereZone = Zone(record: iHereRecord, storageMode: travelManager.storageMode)
+                            let               here = Zone(record: iHereRecord, storageMode: travelManager.storageMode)
+                            travelManager.hereZone = here
 
-                            travelManager.hereZone?.updateZoneProperties()
-                            travelManager.hereZone?.needChildren()
                             travelManager.manifest.needSave()
+                            here.updateZoneProperties()
+
+                            if here.showChildren {
+                                here.needChildren()
+                            }
 
                             onCompletion?()
                         }
@@ -177,7 +181,11 @@ class ZCloudManager: ZRecordsManager {
                         parent = Zone(record: iRecord, storageMode: travelManager.storageMode)
 
                         parent?.register()
-                        parent?.needChildren()
+                        parent?.updateZoneProperties()
+
+                        if (parent?.showChildren)! {
+                            parent?.needChildren()
+                        }
 
                         for orphan in orphans {
                             if iRecordID?.recordName == orphan.recordName, let child = self.zoneForRecordID(orphan) {
@@ -391,14 +399,14 @@ class ZCloudManager: ZRecordsManager {
             clearState(.needsChildren)
             report("fetching children of \(childrenNeeded.count)")
             cloudQueryUsingPredicate(predicate, onCompletion: { iRecord in
-                if iRecord == nil { // we already received full response from cloud
+                if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                     for parent in parentsNeedingResort {
                         parent.respectOrder()
                     }
 
                     self.signal(nil, regarding: .data)
 
-                    self.fetchChildren(onCompletion)
+                    self.fetchChildren(onCompletion) // recurse: try another fetch
                 } else {
                     var child = self.zoneForRecordID(iRecord?.recordID)
 
@@ -407,7 +415,10 @@ class ZCloudManager: ZRecordsManager {
                     }
 
                     child?.updateZoneProperties()
-                    child?.needChildren()
+
+                    if (child?.showChildren)! {
+                        child?.needChildren()
+                    }
 
                     if let parent = child?.parentZone {
                         if parent != child {
@@ -434,23 +445,27 @@ class ZCloudManager: ZRecordsManager {
         resetBadgeCounter()
         assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { iRecord in
             var         record = self.recordForRecordID(iRecord?.recordID)
+            let           zone = (record as? Zone)!
             var parent:  Zone? = nil
 
             if  record == nil {
                 record = Zone(record: iRecord, storageMode: travelManager.storageMode) // it could be a ZManifest record, TODO: detect and correct
             } else {
                 record?.record = iRecord
-                parent         = (record as? Zone)?.parentZone
+                parent         = zone.parentZone
             }
 
-            record?.needChildren()
+            record?.updateZoneProperties()
 
-            self.dispatchAsyncInForeground {
+            if  zone.showChildren {
+                zone.needChildren()
 
-                self.signal(parent, regarding: .data)
-
-                operationsManager.getChildren {
+                self.dispatchAsyncInForeground {
                     self.signal(parent, regarding: .data)
+
+                    operationsManager.getChildren {
+                        self.signal(parent, regarding: .data)
+                    }
                 }
             }
         })
