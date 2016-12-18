@@ -88,7 +88,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
         travelManager.hereZone = zone
 
         selectionManager.grab(zone)
-        controllersManager.signal(nil, regarding: .data)
+        signal(nil, regarding: .data)
     }
 
 
@@ -112,8 +112,8 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
                                     showsSearching = false
                                     workMode       = .edit
 
-                                    controllersManager.signal(nil, regarding: .search)
-                                    controllersManager.signal(nil, regarding: .found)
+                                    self.signal(nil, regarding: .search)
+                                    self.signal(nil, regarding: .found)
                                     self.resolveRecord(record)
                                 }
                             }

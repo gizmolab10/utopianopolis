@@ -28,7 +28,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
         if needsSetup {
             zapplication.registerForRemoteNotifications(matching: .badge)
             operationsManager.startup {
-                controllersManager.signal(nil, regarding: .data)
+                self.signal(nil, regarding: .data)
             }
 
             needsSetup = false

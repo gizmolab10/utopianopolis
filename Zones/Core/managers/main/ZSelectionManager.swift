@@ -29,7 +29,7 @@ class ZSelectionManager: NSObject {
 
         for zone in zones {
             if zone != currentlyEditingZone {
-                controllersManager.signal(zone, regarding: .datum)
+                signal(zone, regarding: .datum)
             }
         }
     }
@@ -47,10 +47,10 @@ class ZSelectionManager: NSObject {
         currentlyEditingZone = nil
 
         if zone == nil || zone == travelManager.hereZone {
-            controllersManager.signal(nil, regarding: .data)
+            signal(nil, regarding: .data)
         } else if let widget = widgetsManager.widgetForZone(zone) {
             widget.textWidget.captureText()
-            controllersManager.signal(zone, regarding: .datum)
+            signal(zone, regarding: .datum)
         }
 
         fullResign()

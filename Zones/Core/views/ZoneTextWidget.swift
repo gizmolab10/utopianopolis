@@ -56,7 +56,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     #endif
                 }
 
-                controllersManager.signal(zone?.parentZone, regarding: .data)
+                signal(zone?.parentZone, regarding: .data)
             }
         }
     }

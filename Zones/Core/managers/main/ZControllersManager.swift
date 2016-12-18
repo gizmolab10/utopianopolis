@@ -71,7 +71,7 @@ class ZControllersManager: NSObject {
     }
 
 
-    func signal(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
+    func signalForObject(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
         dispatchAsyncInForeground {
             for closureObject: SignalObject in self.closures {
                 closureObject.closure(object, regarding)
@@ -84,14 +84,14 @@ class ZControllersManager: NSObject {
     }
 
 
-    func signal(_ object: NSObject?, regarding: ZSignalKind) {
-        signal(object, regarding: regarding, onCompletion: nil)
+    func signalForObject(_ object: NSObject?, regarding: ZSignalKind) {
+        signalForObject(object, regarding: regarding, onCompletion: nil)
     }
 
 
     func syncToCloudAndSignalFor(_ zone: Zone?, onCompletion: Closure?) {
         dispatchAsyncInForeground {
-            self.signal(zone, regarding: .data, onCompletion: onCompletion)
+            self.signalForObject(zone, regarding: .data, onCompletion: onCompletion)
 
             operationsManager.sync {
                 zfileManager.save()

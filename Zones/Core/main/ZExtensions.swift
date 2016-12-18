@@ -235,6 +235,11 @@ extension NSObject {
     }
 
 
+    func signal(_ object: NSObject?, regarding: ZSignalKind) {
+        controllersManager.signalForObject(object, regarding: regarding)
+    }
+
+
     func detectWithMode(_ mode: ZStorageMode, block: BooleanClosure) -> Bool {
         let             savedMode = travelManager.storageMode
         travelManager.storageMode = mode

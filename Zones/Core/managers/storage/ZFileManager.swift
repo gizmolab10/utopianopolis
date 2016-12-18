@@ -48,7 +48,7 @@ class ZFileManager: NSObject {
                 travelManager.rootZone = Zone(dict: raw as! ZStorageDict)
                 travelManager.hereZone = travelManager.rootZone
 
-                controllersManager.signal(nil, regarding: .data)
+                signal(nil, regarding: .data)
             }
         }
     }

@@ -299,7 +299,7 @@ class ZCloudManager: ZRecordsManager {
                     if flushMine {
                         self.flush(.mine, onCompletion: onCompletion)
                     } else {
-                        controllersManager.signal(nil, regarding: .data)
+                        self.signal(nil, regarding: .data)
                         onCompletion?()
                     }
                 }
@@ -396,7 +396,7 @@ class ZCloudManager: ZRecordsManager {
                         parent.respectOrder()
                     }
 
-                    controllersManager.signal(nil, regarding: .data)
+                    self.signal(nil, regarding: .data)
 
                     self.fetchChildren(onCompletion)
                 } else {
@@ -447,10 +447,10 @@ class ZCloudManager: ZRecordsManager {
 
             self.dispatchAsyncInForeground {
 
-                controllersManager.signal(parent, regarding: .data)
+                self.signal(parent, regarding: .data)
 
                 operationsManager.getChildren {
-                    controllersManager.signal(parent, regarding: .data)
+                    self.signal(parent, regarding: .data)
                 }
             }
         })
@@ -561,8 +561,7 @@ class ZCloudManager: ZRecordsManager {
 
                 currentDB?.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iSaveError: Error?) in
                     if iSaveError != nil {
-                        controllersManager.signal(iSaveError as NSObject?, regarding: .error)
-
+                        self.signal(iSaveError as NSObject?, regarding: .error)
                         self.reportError(iSaveError)
                     }
 
@@ -600,12 +599,12 @@ class ZCloudManager: ZRecordsManager {
 
             currentDB?.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, performanceError: Error?) in
                 if performanceError != nil {
-                    controllersManager.signal(performanceError as NSObject?, regarding: .error)
+                    self.signal(performanceError as NSObject?, regarding: .error)
                 } else {
                     let        record: CKRecord = (iResults?[0])!
                     object.record[valueForPropertyName] = (record as! CKRecordValue)
 
-                    controllersManager.signal(nil, regarding: .data)
+                    self.signal(nil, regarding: .data)
                 }
             }
         }

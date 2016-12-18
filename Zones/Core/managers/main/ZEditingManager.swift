@@ -82,7 +82,7 @@ class ZEditingManager: NSObject {
                             } else {
                                 selectionManager.currentlyEditingZone = nil
 
-                                controllersManager.signal(nil, regarding: .data)
+                                signal(nil, regarding: .data)
                             }
 
                             return true
@@ -131,7 +131,7 @@ class ZEditingManager: NSObject {
                             if isCommand {
                                 showsSearching = !showsSearching
 
-                                controllersManager.signal(nil, regarding: .search)
+                                signal(nil, regarding: .search)
                             }
 
                             break
@@ -248,7 +248,7 @@ class ZEditingManager: NSObject {
                 operationsManager.isReady = true
 
                 widgetsManager.widgetForZone(object as? Zone)?.textWidget.becomeFirstResponder()
-                controllersManager.signal(parentZone, regarding: .data)
+                self.signal(parentZone, regarding: .data)
             })
         }
     }
@@ -266,7 +266,7 @@ class ZEditingManager: NSObject {
                     operationsManager.isReady = true
 
                     widgetsManager.widgetForZone(parentZone as? Zone)?.textWidget.becomeFirstResponder()
-                    controllersManager.signal(grandParentZone, regarding: .data)
+                    self.signal(grandParentZone, regarding: .data)
                 })
             })
         }
@@ -412,7 +412,7 @@ class ZEditingManager: NSObject {
                     parentZone.children.insert(zone, at:newIndex)
                 }
 
-                controllersManager.signal(parentZone, regarding: .data)
+                signal(parentZone, regarding: .data)
             }
         }
     }
@@ -426,7 +426,7 @@ class ZEditingManager: NSObject {
         if persistently {
             controllersManager.syncToCloudAndSignalFor(zone)
         } else {
-            controllersManager.signal(zone, regarding: .data)
+            signal(zone, regarding: .data)
         }
     }
 
@@ -454,7 +454,7 @@ class ZEditingManager: NSObject {
                         if selectionOnly {
                             selectionManager.grab(siblings[newIndex])
 
-                            controllersManager.signal(there, regarding: .data)
+                            signal(there, regarding: .data)
                         } else {
                             there.children.remove(at: index)
                             there.children.insert(zone, at:newIndex)
@@ -528,7 +528,7 @@ class ZEditingManager: NSObject {
                 } else if toThere != nil {
                     selectionManager.grab(toThere!)
 
-                    controllersManager.signal(toThere, regarding: .data)
+                    signal(toThere, regarding: .data)
                 }
             } else if travelManager.storageMode != .bookmarks, let fromThere = toThere {
                 toThere     = fromThere.parentZone
@@ -603,7 +603,7 @@ class ZEditingManager: NSObject {
                 if hideChildren {
                     controllersManager.syncToCloudAndSignalFor(nil)
                 } else {
-                    controllersManager.signal(nil, regarding: .data)
+                    signal(nil, regarding: .data)
                 }
             }
         }
