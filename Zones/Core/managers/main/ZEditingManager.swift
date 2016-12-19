@@ -601,7 +601,9 @@ class ZEditingManager: NSObject {
                 zone.needChildren()
 
                 operationsManager.getChildren {
-                    self.moveSelectionInto(zone)
+                    if zone.children.count > 0 {
+                        self.moveSelectionInto(zone)
+                    }
                 }
             }
         }

@@ -32,9 +32,16 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
         if kind == .found, let records = iObject as? [CKRecord] {
             foundRecords = records
 
-            sortRecords()
-            tableView?.reloadData()
-            monitorKeyEvents()
+            if foundRecords.count > 0 {
+                sortRecords()
+                tableView?.reloadData()
+                monitorKeyEvents()
+
+                dispatchAsyncInForeground {
+                    mainWindow.makeFirstResponder(self.tableView)
+                    self.tableView?.selectRowIndexes(NSIndexSet(index: 0) as IndexSet, byExtendingSelection: false)
+                }
+            }
         } else {
             removeMonitorAsync()
         }
