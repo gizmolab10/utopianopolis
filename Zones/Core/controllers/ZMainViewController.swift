@@ -42,8 +42,8 @@ class ZMainViewController: ZGenericViewController {
         case .found:
             let isSearching = workMode == .search
 
-            show ( isSearching, view: searchResultsView!)
-            show (!isSearching, view: editorView!)
+            show ( isSearching, iViewID: .searchBox, view: searchResultsView!)
+            show (!isSearching, iViewID: .editor,    view: editorView!)
 
             break
         case .search:
@@ -64,7 +64,7 @@ class ZMainViewController: ZGenericViewController {
     }
 
 
-    func show(_ show: Bool, view: ZView) {
+    func show(_ show: Bool, iViewID: ZControllerID, view: ZView) {
         if !show {
             view.removeFromSuperview()
         } else if !(mainView?.subviews.contains(view))! {
@@ -72,6 +72,10 @@ class ZMainViewController: ZGenericViewController {
             view.snp.makeConstraints({ (make) in
                 make.top.bottom.left.right.equalTo(mainView!)
             })
+
+            dispatchAsyncInForeground {
+                controllersManager.controller(at: iViewID).setup()
+            }
         }
     }
 

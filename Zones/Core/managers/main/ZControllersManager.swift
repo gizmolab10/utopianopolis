@@ -32,40 +32,41 @@ class ZControllersManager: NSObject {
 
     class SignalObject {
         let closure: SignalClosure!
+        let controller: ZGenericViewController!
 
-        init(iClosure: @escaping SignalClosure) {
-            closure = iClosure
+        init(_ iClosure: @escaping SignalClosure, forController iController: ZGenericViewController) {
+            controller = iController
+            closure    = iClosure
         }
     }
 
 
-    var       closures: [SignalObject]                           = []
-    var controllersMap: [ZControllerID : ZGenericViewController] = [:]
+    var controllersMap: [ZControllerID : SignalObject] = [:]
 
 
-    func register(_ forController: ZGenericViewController, at: ZControllerID) {
-        controllersMap[at] = forController
+    func unregister(_ at: ZControllerID) {
+        controllersMap[at] = nil
+    }
+
+
+    func register(_ iController: ZGenericViewController, at: ZControllerID, closure: @escaping SignalClosure) {
+        if !controllersMap.keys.contains(at) {
+            controllersMap[at] = SignalObject(closure, forController: iController)
+        }
     }
 
 
     func controller(at: ZControllerID) -> ZGenericViewController {
-        return controllersMap[at]!
+        let signalObject = controllersMap[at]!
+
+        return signalObject.controller
     }
 
-
-    // MARK:- closures
-    // MARK:-
-
-
-    func registerSignal(_ closure: @escaping SignalClosure) {
-        closures.append(SignalObject(iClosure: closure))
-    }
-
-
+    
     func displayActivity() {
         dispatchAsyncInForeground {
-            for controller in self.controllersMap.values {
-                controller.displayActivity()
+            for signalObject in self.controllersMap.values {
+                signalObject.controller.displayActivity()
             }
         }
     }
@@ -73,8 +74,8 @@ class ZControllersManager: NSObject {
 
     func signalAboutObject(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
         dispatchAsyncInForeground {
-            for closureObject: SignalObject in self.closures {
-                closureObject.closure(object, regarding)
+            for signalObject: SignalObject in self.controllersMap.values {
+                signalObject.closure(object, regarding)
             }
 
             if onCompletion != nil {

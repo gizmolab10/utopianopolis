@@ -261,7 +261,7 @@ class ZEditingManager: NSObject {
             addZoneTo(grandParentZone, onCompletion: { (parentZone) -> (Void) in
                 selectionManager.grab(zone!)
 
-                // self.actuallyMoveInto(zone!, forceIntoNew: true, persistently: false)
+                // self.actuallyMoveZone(zone!, forceIntoNew: true, persistently: false)
                 self.dispatchAsyncInForegroundAfter(0.5, closure: { () -> (Void) in
                     operationsManager.isReady = true
 
@@ -537,8 +537,9 @@ class ZEditingManager: NSObject {
 
                     zone.orphan()
                     travelManager.manifest.needSave()
-                    self.moveZone(zone, into: toThere!)
-                    self.syncAndSignalAfterMoveAffecting(toThere, persistently: persistently)
+                    self.moveZone(zone, into: toThere!) {
+                        self.syncAndSignalAfterMoveAffecting(toThere, persistently: persistently)
+                    }
                 }
 
                 fromThere.needSave()
@@ -563,8 +564,9 @@ class ZEditingManager: NSObject {
                     }
                 } else {
                     zone.orphan()
-                    moveZone(zone, into: toThere!)
-                    syncAndSignalAfterMoveAffecting(toThere, persistently: persistently)
+                    moveZone(zone, into: toThere!){
+                        self.syncAndSignalAfterMoveAffecting(toThere, persistently: persistently)
+                    }
                 }
             }
         }
@@ -591,13 +593,15 @@ class ZEditingManager: NSObject {
     func moveInto(selectionOnly: Bool, extreme: Bool, persistently: Bool) {
         if let zone: Zone = selectionManager.firstGrabbableZone {
             if !selectionOnly {
-                actuallyMoveInto(zone, persistently: persistently)
+                actuallyMoveZone(zone, persistently: persistently)
             } else if zone.isBookmark {
                 travelThroughBookmark(zone, persistently: persistently)
             } else if zone.children.count > 0 {
                 moveSelectionInto(zone)
             } else {
                 zone.showChildren = true
+                recursivelyExpand = extreme
+
                 zone.needChildren()
 
                 operationsManager.getChildren {
@@ -624,7 +628,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func actuallyMoveInto(_ zone: Zone, persistently: Bool) {
+    func actuallyMoveZone(_ zone: Zone, persistently: Bool) {
         if  var         toThere = zone.parentZone {
             let        siblings = toThere.children
 
@@ -637,8 +641,9 @@ class ZEditingManager: NSObject {
                     if !toThere.isBookmark {
                         zone.parentZone?.needSave()
                         zone.orphan()
-                        moveZone(zone, into: toThere)
-                        syncAndSignalAfterMoveAffecting(nil, persistently: persistently)
+                        moveZone(zone, into: toThere){
+                            self.syncAndSignalAfterMoveAffecting(toThere, persistently: persistently)
+                        }
                     } else {
                         let    same = zone.storageMode == toThere.crossLink?.storageMode
                         var   mover = zone
@@ -654,8 +659,9 @@ class ZEditingManager: NSObject {
                                 }
 
                                 self.report("at arrival")
-                                self.moveZone(mover, into: there)
-                                self.syncAndSignalAfterMoveAffecting(nil, persistently: persistently)
+                                self.moveZone(mover, into: there){
+                                    self.syncAndSignalAfterMoveAffecting(nil, persistently: persistently)
+                                }
                             })
                         }
 
@@ -703,20 +709,25 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveZone(_ zone: Zone, into: Zone) {
+    func moveZone(_ zone: Zone, into: Zone, onCompletion: Closure?) {
         zone.needSave()
         into.needSave()
+        into.needChildren()
 
         zone.parentZone   = into
         into.showChildren = true
-        let        insert = asTask ? 0 : into.children.count
 
-        if asTask {
-            into.children.insert(zone, at: 0)
-        } else {
-            into.children.append(zone)
+        operationsManager.getChildren {
+            let insert = asTask ? 0 : into.children.count
+
+            if asTask {
+                into.children.insert(zone, at: 0)
+            } else {
+                into.children.append(zone)
+            }
+
+            into.recomputeOrderingUponInsertionAt(insert)
+            onCompletion?()
         }
-
-        into.recomputeOrderingUponInsertionAt(insert)
     }
 }

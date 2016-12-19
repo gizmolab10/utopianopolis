@@ -83,8 +83,9 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
     }
 
 
-    func resolveRecord(_ record: CKRecord) {
-        var zone = cloudManager.zoneForRecordID(record.recordID)
+    func resolveRecordAtIndex(_ index: Int) {
+        let record = self.foundRecords[index]
+        var   zone = cloudManager.zoneForRecordID(record.recordID)
 
         if zone == nil {
             zone = Zone(record: record, storageMode: travelManager.storageMode)
@@ -96,6 +97,15 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
         selectionManager.grab(zone)
         signal(nil, regarding: .data)
+    }
+
+
+    func clear() {
+        showsSearching = false
+        workMode       = .edit
+
+        self.signal(nil, regarding: .search)
+        self.signal(nil, regarding: .found)
     }
 
 
@@ -111,18 +121,25 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
                         if isArrow {
                             let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
 
-                            if arrow == .right {
-                                let  index = self.tableView?.selectedRow
+                            switch(arrow) {
+                            case .left:
+                                self.clear()
+
+                                return nil
+                            case .right:
+                                let index = self.tableView?.selectedRow
 
                                 if index != -1 {
-                                    let     record = self.foundRecords[index!]
-                                    showsSearching = false
-                                    workMode       = .edit
+                                    self.clear()
+                                    self.resolveRecordAtIndex(index!)
 
-                                    self.signal(nil, regarding: .search)
-                                    self.signal(nil, regarding: .found)
-                                    self.resolveRecord(record)
+                                    return nil
                                 }
+
+                                break
+                            default:
+
+                                break
                             }
                         }
                     }

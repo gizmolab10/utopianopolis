@@ -182,10 +182,7 @@ class ZCloudManager: ZRecordsManager {
 
                         parent?.register()
                         parent?.updateZoneProperties()
-
-                        if (parent?.showChildren)! {
-                            parent?.needChildren()
-                        }
+                        parent?.needChildren()
 
                         for orphan in orphans {
                             if iRecordID?.recordName == orphan.recordName, let child = self.zoneForRecordID(orphan) {
@@ -391,6 +388,8 @@ class ZCloudManager: ZRecordsManager {
         let                noMoreChildren = childrenNeeded.count == 0
 
         if noMoreChildren {
+            recursivelyExpand = false
+
             onCompletion?()
         } else {
             var parentsNeedingResort: [Zone] = []
@@ -416,7 +415,7 @@ class ZCloudManager: ZRecordsManager {
 
                     child?.updateZoneProperties()
 
-                    if (child?.showChildren)! {
+                    if (child?.showChildren)! || recursivelyExpand {
                         child?.needChildren()
                     }
 

@@ -23,13 +23,11 @@ class ZGenericViewController: ZViewController {
 
 
     func setup() {
-        controllersManager.registerSignal { (object, kind) -> (Void) in
+        controllersManager.register(self, at: identifier()) { (object, kind) -> (Void) in
             if kind != .error {
                 self.handleSignal(object, kind: kind)
             }
         }
-
-        controllersManager.register(self, at: identifier())
     }
 
 
