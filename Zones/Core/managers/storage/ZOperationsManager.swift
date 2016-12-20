@@ -138,6 +138,7 @@ class ZOperationsManager: NSObject {
         report(String(describing: identifier))
 
         switch(identifier) {
+        case .file:        zfileManager.restore();           operation.finish();   break
         case .root:        cloudManager.establishRootAsHere{ operation.finish() }; break
         case .cloud:       cloudManager.fetchCloudZones    { operation.finish() }; break
         case .here:       travelManager.establishHere      { operation.finish() }; break
@@ -149,13 +150,12 @@ class ZOperationsManager: NSObject {
         case .fetch:       cloudManager.fetch              { operation.finish() }; break
         case .merge:       cloudManager.merge              { operation.finish() }; break
         case .flush:       cloudManager.flush              { operation.finish() }; break
-        case .file:        zfileManager.restore();           operation.finish();   break
-        case .ready:       becomeReady(                      operation);           break
+        case .ready:       becomeReady                     { operation.finish() }; break
         }
     }
 
 
-    func becomeReady(_ operation: BlockOperation) {
+    func becomeReady(_ onCompletion: Closure?) {
         recursivelyExpand = false
         isReady           = true;
 
@@ -166,13 +166,12 @@ class ZOperationsManager: NSObject {
 
             dispatchAsyncInForeground {
                 closure()
-            }
 
-            report("unspin")
+                self.report("unspin")
+                editingManager.handleDeferredEvents()
+            }
         }
 
-        operation.finish()
-
-        editingManager.handleDeferredEvents()
+        onCompletion?()
     }
 }

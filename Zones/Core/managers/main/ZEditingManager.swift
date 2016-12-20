@@ -251,11 +251,11 @@ class ZEditingManager: NSObject {
 
 
     func addZoneTo(_ parentZone: Zone?) {
-        addZoneTo(parentZone) { (object) -> (Void) in
+        addZoneTo(parentZone) { iObject in
             controllersManager.syncToCloudAndSignalFor(parentZone, onCompletion: { () -> (Void) in
                 operationsManager.isReady = true
 
-                widgetsManager.widgetForZone(object as? Zone)?.textWidget.becomeFirstResponder()
+                widgetsManager.widgetForZone(iObject as? Zone)?.textWidget.becomeFirstResponder()
                 self.signal(parentZone, regarding: .data)
             })
         }
@@ -266,14 +266,14 @@ class ZEditingManager: NSObject {
     
     func addParentTo(_ zone: Zone?) {
         if let grandParentZone = zone?.parentZone {
-            addZoneTo(grandParentZone, onCompletion: { (parentZone) -> (Void) in
+            addZoneTo(grandParentZone, onCompletion: { iParentZone in
                 selectionManager.grab(zone!)
 
                 // self.actuallyMoveZone(zone!, forceIntoNew: true, persistently: false)
                 self.dispatchAsyncInForegroundAfter(0.5, closure: { () -> (Void) in
                     operationsManager.isReady = true
 
-                    widgetsManager.widgetForZone(parentZone as? Zone)?.textWidget.becomeFirstResponder()
+                    widgetsManager.widgetForZone(iParentZone as? Zone)?.textWidget.becomeFirstResponder()
                     self.signal(grandParentZone, regarding: .data)
                 })
             })
@@ -283,24 +283,30 @@ class ZEditingManager: NSObject {
 
     func addZoneTo(_ zone: Zone?, onCompletion: ObjectClosure?) {
         if zone != nil && travelManager.storageMode != .bookmarks {
-            let record = CKRecord(recordType: zoneTypeKey)
-            let   child = Zone(record: record, storageMode: travelManager.storageMode)
-            let insert = asTask ? 0 : (zone?.children.count)!
+            zone?.needChildren()
 
-            child.markForStates([.needsCreate])
-            widgetsManager.widgetForZone(zone!)?.textWidget.resignFirstResponder()
+            operationsManager.getChildren(false) {
+                if operationsManager.isReady {
+                    let record = CKRecord(recordType: zoneTypeKey)
+                    let insert = asTask ? 0 : (zone?.children.count)!
+                    let  child = Zone(record: record, storageMode: travelManager.storageMode)
 
-            if asTask {
-                zone?.children.insert(child, at: 0)
-            } else {
-                zone?.children.append(child)
+                    child.markForStates([.needsCreate])
+                    widgetsManager.widgetForZone(zone!)?.textWidget.resignFirstResponder()
+
+                    if asTask {
+                        zone?.children.insert(child, at: 0)
+                    } else {
+                        zone?.children.append(child)
+                    }
+
+                    child.parentZone   = zone
+                    zone?.showChildren = true
+
+                    zone?.recomputeOrderingUponInsertionAt(insert)
+                    onCompletion?(child)
+                }
             }
-
-            child.parentZone   = zone
-            zone?.showChildren = true
-
-            zone?.recomputeOrderingUponInsertionAt(insert)
-            onCompletion?(child)
         }
     }
 
