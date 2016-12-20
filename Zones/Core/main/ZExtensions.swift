@@ -65,6 +65,7 @@ import CloudKit
         func setupGestures(_ target: Any, action: Selector?) {
             let                            gesture = NSClickGestureRecognizer(target: target, action: action)
             gesture.delaysPrimaryMouseButtonEvents = false
+            isUserInteractionEnabled               = true
 
             clearGestures()
             addGestureRecognizer(gesture)
@@ -160,7 +161,8 @@ import CloudKit
 
 
         func setupGestures(_ target: Any, action: Selector?) {
-            let gesture = UITapGestureRecognizer(target: target, action: action)
+            let              gesture = UITapGestureRecognizer(target: target, action: action)
+            isUserInteractionEnabled = true
 
             if gestureRecognizers != nil {
                 clearGestures()

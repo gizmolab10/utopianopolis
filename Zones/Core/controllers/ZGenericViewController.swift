@@ -19,7 +19,7 @@ import Foundation
 class ZGenericViewController: ZViewController {
 
 
-    func identifier() -> ZControllerID { return .editor }
+    func identifier() -> ZControllerID { return .main }
 
 
     func setup() {
@@ -37,15 +37,15 @@ class ZGenericViewController: ZViewController {
 
 #if os(OSX)
 
-    override func viewWillAppear() {
-        super.viewWillAppear()
+    override func viewDidAppear() {
+        super.viewDidAppear()
         setup()
     }
 
 #elseif os(iOS)
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         setup()
     }
 
