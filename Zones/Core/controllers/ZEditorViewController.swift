@@ -60,14 +60,14 @@ class ZEditorViewController: ZGenericViewController {
 
 
     override func displayActivity() {
-        let isActive = !operationsManager.isReady
+        let isReady = operationsManager.isReady
 
-        spinner?.isHidden = !isActive
+        spinner?.isHidden = isReady
 
-        if isActive {
-            spinner?.startAnimating()
-        } else {
+        if isReady {
             spinner?.stopAnimating()
+        } else {
+            spinner?.startAnimating()
         }
     }
 

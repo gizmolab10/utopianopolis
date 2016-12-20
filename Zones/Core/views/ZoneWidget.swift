@@ -24,7 +24,7 @@ class ZoneWidget: ZView {
     private let dragHighlightView: ZView!        = ZView()
     private var   childrenWidgets: [ZoneWidget?] = []
     private var      siblingLines: [ZoneCurve]   = []
-    let                 toggleDot: ZoneDot?      = ZoneDot()
+    let                 revealerDot: ZoneDot?      = ZoneDot()
     let                   dragDot: ZoneDot?      = ZoneDot()
     var                widgetZone: Zone!
 
@@ -233,7 +233,7 @@ class ZoneWidget: ZView {
             while index > 0 {
                 index          -= 1
                 let childWidget = childrenWidgets[index]
-                let childZone   = widgetZone.children[index]
+                let childZone   = widgetZone[index]
 
                 if childZone == widgetZone {
                     childrenWidgets[index] = nil
@@ -309,17 +309,17 @@ class ZoneWidget: ZView {
         })
 
         if widgetZone.children.count == 0 && !widgetZone.isBookmark {
-            if subviews.contains(toggleDot!) {
-                toggleDot!.removeFromSuperview()
+            if subviews.contains(revealerDot!) {
+                revealerDot!.removeFromSuperview()
             }
         } else {
-            if !subviews.contains(toggleDot!) {
-                addSubview(toggleDot!)
+            if !subviews.contains(revealerDot!) {
+                addSubview(revealerDot!)
             }
 
-            toggleDot!.innerDot?.snp.removeConstraints()
-            toggleDot!.setupForZone(widgetZone, asToggle: true)
-            toggleDot!.innerDot?.snp.makeConstraints({ (make) in
+            revealerDot!.innerDot?.snp.removeConstraints()
+            revealerDot!.setupForZone(widgetZone, asToggle: true)
+            revealerDot!.innerDot?.snp.makeConstraints({ (make) in
                 make.left.equalTo(textWidget.snp.right).offset(-1.0)
                 make.centerY.equalTo(textWidget).offset(1.0)
                 make.right.lessThanOrEqualToSuperview().offset(-1.0)

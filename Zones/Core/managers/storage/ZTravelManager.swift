@@ -103,7 +103,7 @@ class ZTravelManager: NSObject {
     }
 
 
-    private func travel(_ atArrival: Closure?) {
+    private func travel(_ atArrival: @escaping Closure) {
         setup                   ()
         widgetsManager    .clear()
         selectionManager  .clear()
@@ -125,7 +125,7 @@ class ZTravelManager: NSObject {
                 there = bookmarksManager.rootZone
 
                 if index >= 0 && index < (there?.children.count)! {
-                    there = there?.children[index]
+                    there = there?[index]
                 }
                 
                 arriveThere()

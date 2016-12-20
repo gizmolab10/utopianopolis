@@ -158,23 +158,18 @@ class ZEditingManager: NSObject {
                     } else if isWindow {
                         let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
 
-                        if isShift {
-                            if let zone = selectionManager.firstGrabbableZone {
-
-                                switch arrow {
-                                case .right: makeToggleDotShow(true,  zone: zone, recursively: isCommand);                                            break
-                                case .left:  makeToggleDotShow(false, zone: zone, recursively: isCommand); selectionManager.deselectDragWithin(zone); break
-                                default: return true
-                                }
-
-                                controllersManager.syncToCloudAndSignalFor(nil)
-                            }
-                        } else {
+                        if !isShift {
                             switch arrow {
                             case .right: moveInto(     selectionOnly: !isOption, extreme: isCommand, persistently: true); break
                             case .left:  moveOut(      selectionOnly: !isOption, extreme: isCommand, persistently: true); break
                             case .down:  moveUp(false, selectionOnly: !isOption, extreme: isCommand, persistently: true); break
                             case .up:    moveUp(true,  selectionOnly: !isOption, extreme: isCommand, persistently: true); break
+                            }
+                        } else if let zone = selectionManager.firstGrabbableZone {
+                            switch arrow {
+                            case .right: showRevealerDot(true,  zone: zone, recursively: isCommand) { controllersManager.syncToCloudAndSignalFor(nil) }; break
+                            case .left:  showRevealerDot(false, zone: zone, recursively: isCommand) { controllersManager.syncToCloudAndSignalFor(nil) }; break
+                            default: return true
                             }
                         }
 
@@ -192,46 +187,59 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func makeToggleDotShow(_ show: Bool, zone: Zone?, recursively: Bool) {
-        if zone != nil {
-            let noVisibleChildren = !(zone?.showChildren)! || ((zone?.children.count)! == 0)
+    func showRevealerDot(_ show: Bool, zone: Zone, recursively: Bool, onCompletion: Closure?) {
+        let       isChildless = zone.children.count == 0
+        let noVisibleChildren = !zone.showChildren || isChildless
 
-            if !show && noVisibleChildren && selectionManager.isGrabbed(zone!), let parent = zone?.parentZone {
-                selectionManager.grab(parent)
-                zone?.showChildren = false
-                zone?.needSave()
+        if !show && noVisibleChildren && selectionManager.isGrabbed(zone), let parent = zone.parentZone {
+            zone.showChildren = show
 
-                makeToggleDotShow(show, zone: parent, recursively: recursively)
-            } else {
-                if  zone?.showChildren != show {
-                    zone?.showChildren  = show
+            zone.needSave()
+            selectionManager.grab(parent)
+            showRevealerDot(show, zone: parent, recursively: recursively, onCompletion: onCompletion)
+        } else {
+            if  zone.showChildren != show {
+                zone.showChildren  = show
 
-                    zone?.needSave()
+                zone.needSave()
+
+                if !show {
+                    selectionManager.deselectDragWithin(zone);
+                } else if isChildless {
+                    zone.needChildren()
+                }
+            }
+
+            let recurseMaybe = {
+                if operationsManager.isReady {
+                    onCompletion?()
                 }
 
                 if recursively {
-                    for child: Zone in (zone?.children)! {
-                        makeToggleDotShow(show, zone: child, recursively: recursively)
+                    for child: Zone in zone.children {
+                        self.showRevealerDot(show, zone: child, recursively: recursively, onCompletion: nil)
                     }
+                }
+            }
+
+            if !show || !isChildless {
+                recurseMaybe()
+            } else {
+                operationsManager.getChildren(recursively) {
+                    recurseMaybe()
                 }
             }
         }
     }
 
 
-    func toggleDotActionOnZone(_ zone: Zone?) {
-        if zone != nil {
-            if (zone?.isBookmark)! {
-                travelThroughBookmark(zone!, persistently: true)
-            } else {
-                let show = zone?.showChildren == false
+    func revealerDotActionOnZone(_ zone: Zone) {
+        if zone.isBookmark {
+            travelThroughBookmark(zone, persistently: true)
+        } else {
+            let show = zone.showChildren == false
 
-                makeToggleDotShow(show, zone: zone, recursively: false)
-
-                if !show {
-                    selectionManager.deselectDragWithin(zone!)
-                }
-
+            showRevealerDot(show, zone: zone, recursively: false) {
                 controllersManager.syncToCloudAndSignalFor(nil)
             }
         }
@@ -600,11 +608,10 @@ class ZEditingManager: NSObject {
                 moveSelectionInto(zone)
             } else {
                 zone.showChildren = true
-                recursivelyExpand = extreme
 
                 zone.needChildren()
 
-                operationsManager.getChildren {
+                operationsManager.getChildren(false) {
                     if zone.children.count > 0 {
                         self.moveSelectionInto(zone)
                     }
@@ -717,7 +724,7 @@ class ZEditingManager: NSObject {
         zone.parentZone   = into
         into.showChildren = true
 
-        operationsManager.getChildren {
+        operationsManager.getChildren(false) {
             let insert = asTask ? 0 : into.children.count
 
             if asTask {

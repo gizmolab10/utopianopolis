@@ -40,40 +40,44 @@ class ZOperationsManager: NSObject {
     // MARK:-
 
 
-    func startup(_ onCompletion: Closure?) {
+    func startup(_ onCompletion: @escaping Closure) {
         var operationIDs: [ZOperationID] = []
 
         for sync in ZOperationID.cloud.rawValue...ZOperationID.subscribe.rawValue {
             operationIDs.append(ZOperationID(rawValue: sync)!)
         }
 
-        setupAndRun(operationIDs, onCompletion: onCompletion!)
+        setupAndRun(operationIDs, onCompletion: onCompletion)
     }
 
 
-    func travel(_ onCompletion: Closure?) {
+    func travel(_ onCompletion: @escaping Closure) {
         var operationIDs: [ZOperationID] = []
 
         for sync in ZOperationID.here.rawValue...ZOperationID.subscribe.rawValue {
             operationIDs.append(ZOperationID(rawValue: sync)!)
         }
 
-        setupAndRun(operationIDs, onCompletion: onCompletion!)
+        setupAndRun(operationIDs, onCompletion: onCompletion)
     }
 
 
-    func root(_ onCompletion: Closure?) {
-        setupAndRun([.root, .children], onCompletion: onCompletion!)
+    func root(_ onCompletion: @escaping Closure) {
+        setupAndRun([.root, .children], onCompletion: onCompletion)
     }
 
 
-    func sync(_ onCompletion: Closure?) {
-        setupAndRun([.create, .parent, .children, .merge, .flush], onCompletion: onCompletion!)
+    func sync(_ onCompletion: @escaping Closure) {
+        setupAndRun([.create, .parent, .children, .merge, .flush], onCompletion: onCompletion)
     }
 
 
-    func getChildren(_ onCompletion: Closure?) {
-        setupAndRun([.children], onCompletion: onCompletion!)
+    func getChildren(_ recursively: Bool, onCompletion: @escaping Closure) {
+        recursivelyExpand = recursively
+        
+        setupAndRun([.children]) {
+            onCompletion()
+        }
     }
 
 
@@ -94,8 +98,9 @@ class ZOperationsManager: NSObject {
 
 
     private func setupAndRun(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
-        queue.isSuspended = true
         var identifiers   = operationIDs
+        isReady           = false;
+        queue.isSuspended = true
 
         identifiers.append(.ready)
 
@@ -118,7 +123,6 @@ class ZOperationsManager: NSObject {
             }
         }
 
-        isReady           = false;
         queue.isSuspended = false
 
         dispatchAsyncInForegroundAfter(0.5) {
@@ -131,7 +135,7 @@ class ZOperationsManager: NSObject {
         let          operation = waitingOps[identifier]!
         waitingOps[identifier] = nil
 
-        report(identifier)
+        report(String(describing: identifier))
 
         switch(identifier) {
         case .root:        cloudManager.establishRootAsHere{ operation.finish() }; break
@@ -152,15 +156,19 @@ class ZOperationsManager: NSObject {
 
 
     func becomeReady(_ operation: BlockOperation) {
-        isReady = true;
+        recursivelyExpand = false
+        isReady           = true;
 
         controllersManager.displayActivity()
 
-        if onReady != nil {
-            onReady!()
-            report("unspun")
-
+        if let closure = onReady {
             onReady = nil
+
+            dispatchAsyncInForeground {
+                closure()
+            }
+
+            report("unspin")
         }
 
         operation.finish()

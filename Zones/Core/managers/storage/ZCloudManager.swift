@@ -237,7 +237,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func royalFlush(_ onCompletion: Closure?) {
+    func royalFlush(_ onCompletion: @escaping Closure) {
         for zone in zones.values {
             if !zone.isMarkedForStates([.needsFetch, .needsSave, .needsCreate]) {
                 zone.unmarkForStates([.needsMerge])
@@ -388,8 +388,6 @@ class ZCloudManager: ZRecordsManager {
         let                noMoreChildren = childrenNeeded.count == 0
 
         if noMoreChildren {
-            recursivelyExpand = false
-
             onCompletion?()
         } else {
             var parentsNeedingResort: [Zone] = []
@@ -462,7 +460,7 @@ class ZCloudManager: ZRecordsManager {
                 self.dispatchAsyncInForeground {
                     self.signal(parent, regarding: .data)
 
-                    operationsManager.getChildren {
+                    operationsManager.getChildren(false) {
                         self.signal(parent, regarding: .data)
                     }
                 }

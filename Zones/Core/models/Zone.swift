@@ -143,6 +143,15 @@ class Zone : ZRecord {
     }
 
 
+    subscript(i: Int) -> Zone? {
+        if i < children.count && i >= 0 {
+            return children[i]
+        } else {
+            return nil
+        }
+    }
+
+
     func deepCopy() -> Zone {
         let          zone = Zone(record: nil, storageMode: storageMode)
         zone.showChildren = showChildren
@@ -239,14 +248,10 @@ class Zone : ZRecord {
 
 
     func normalizeOrdering() {
-        let     count = children.count
-        let increment = 1.0 / Double(count + 1)
-        var     index = 0
+        let increment = 1.0 / Double(children.count + 2)
 
-        while index < count {
-            let   child = children[index]
-            index      += 1
-            child.order = increment * Double(index)
+        for (index, child) in children.enumerated() {
+            child.order = increment * Double(index + 1)
         }
     }
 

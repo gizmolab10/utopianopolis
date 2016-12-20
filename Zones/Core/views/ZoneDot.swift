@@ -70,7 +70,7 @@ class ZoneDot: ZView {
 
         if let zone = widget.widgetZone {
             if toggle == true {
-                editingManager.toggleDotActionOnZone(zone)
+                editingManager.revealerDotActionOnZone(zone)
             } else {
                 selectionManager.deselect()
                 selectionManager.grab(zone)
