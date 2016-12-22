@@ -29,7 +29,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         set {
             if _isTextEditing != newValue {
                 _isTextEditing = newValue
-                let   zone = widget.widgetZone
+                let       zone = widget.widgetZone
 
                 if !_isTextEditing {
                     selectionManager.currentlyEditingZone  = nil
@@ -39,6 +39,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 } else {
                     selectionManager.currentlyEditingZone  = zone
                     selectionManager.currentlyGrabbedZones = []
+                    font = grabbedWidgetFont
 
                     #if os(OSX)
                     monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> ZEvent? in
@@ -63,7 +64,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func setup() {
-        font                   = widgetFont
         delegate               = self
         isBordered             = false
         textAlignment          = .center

@@ -37,7 +37,7 @@ class ZoneWidget: ZView {
     var textWidget: ZoneTextWidget {
         get {
             if _textWidget == nil {
-                _textWidget            = ZoneTextWidget()
+                _textWidget = ZoneTextWidget()
 
                 _textWidget.setup()
                 addSubview(_textWidget)
@@ -171,7 +171,9 @@ class ZoneWidget: ZView {
 
 
     func layoutText() {
-        textWidget.widget   = self
+        textWidget.widget = self
+        let    isSelected = selectionManager.isSelected(widgetZone)
+        textWidget.font   = isSelected ? grabbedWidgetFont : widgetFont
 
         if textWidget.text == "" && widgetZone.zoneName == nil {
             textWidget.text = "empty"
@@ -186,7 +188,9 @@ class ZoneWidget: ZView {
     func layoutTextField() {
         textWidget.snp.removeConstraints()
         textWidget.snp.makeConstraints { (make) -> Void in
-            let width = textWidget.text!.widthForFont(widgetFont) + 5.0
+            let isSelected = selectionManager.isSelected(widgetZone)
+            let       font = isSelected ? grabbedWidgetFont : widgetFont
+            let      width = textWidget.text!.widthForFont(font) + 5.0
 
             make.width.equalTo(width)
             make.centerY.equalTo(self)

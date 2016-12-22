@@ -13,7 +13,7 @@ enum ZControllerID: Int {
     case searchResults
     case searchBox
     case editor
-    case tools
+    case settings
     case main
 }
 

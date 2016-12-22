@@ -1,5 +1,5 @@
 //
-//  ZToolsViewController.swift
+//  ZSettingsViewController.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 10/10/16.
@@ -10,13 +10,13 @@
 import SnapKit
 
 
-class ZToolsViewController: ZGenericViewController {
+class ZSettingsViewController: ZGenericViewController {
 
 
     @IBOutlet var totalCountLabel: ZTextField?
 
 
-    override func identifier() -> ZControllerID { return .tools }
+    override func identifier() -> ZControllerID { return .settings }
 
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
