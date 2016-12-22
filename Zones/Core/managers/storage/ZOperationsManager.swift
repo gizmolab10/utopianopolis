@@ -30,10 +30,10 @@ enum ZOperationID: Int {
 class ZOperationsManager: NSObject {
 
 
-    var    isReady:                            Bool = false
-    var waitingOps: [ZOperationID : BlockOperation] = [:]
-    let      queue:                  OperationQueue = OperationQueue()
     var    onReady: Closure?
+    var    isReady = false
+    var waitingOps = [ZOperationID : BlockOperation] ()
+    let      queue = OperationQueue()
 
 
     // MARK:- API
@@ -137,7 +137,7 @@ class ZOperationsManager: NSObject {
 
         report(String(describing: identifier))
 
-        switch(identifier) {
+        switch identifier {
         case .file:        zfileManager.restore();           operation.finish();   break
         case .root:        cloudManager.establishRootAsHere{ operation.finish() }; break
         case .cloud:       cloudManager.fetchCloudZones    { operation.finish() }; break

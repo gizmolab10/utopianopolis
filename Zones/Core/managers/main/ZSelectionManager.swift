@@ -13,7 +13,7 @@ import Foundation
 class ZSelectionManager: NSObject {
 
 
-    var currentlyGrabbedZones: [Zone] = []
+    var currentlyGrabbedZones = [Zone] ()
     var  currentlyEditingZone: Zone?
 
 

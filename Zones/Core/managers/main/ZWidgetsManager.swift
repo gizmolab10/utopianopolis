@@ -14,7 +14,7 @@ import CloudKit
 class ZWidgetsManager: NSObject {
 
 
-    var widgets: [Int : ZoneWidget] = [:]
+    var widgets = [Int : ZoneWidget] ()
 
 
     var currentEditingWidget: ZoneWidget? { get { return widgetForZone(selectionManager.currentlyEditingZone) } }

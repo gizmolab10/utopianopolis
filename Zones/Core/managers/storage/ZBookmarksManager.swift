@@ -14,9 +14,9 @@ import CloudKit
 class ZBookmarksManager: NSObject {
 
 
-    let   rootZone:  Zone! = Zone(record: nil, storageMode: .bookmarks)
-    var cloudzones: [Zone] = []
-    var  bookmarks: [Zone] = []
+    let   rootZone = Zone(record: nil, storageMode: .bookmarks)
+    var cloudzones = [Zone] ()
+    var  bookmarks = [Zone] ()
 
 
     func setup() {

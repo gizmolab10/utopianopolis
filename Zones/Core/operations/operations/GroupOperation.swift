@@ -26,7 +26,7 @@ class GroupOperation: Operation {
     fileprivate let startingOperation = Foundation.BlockOperation(block: {})
     fileprivate let finishingOperation = Foundation.BlockOperation(block: {})
 
-    fileprivate var aggregatedErrors = [NSError]()
+    fileprivate var aggregatedErrors = [NSError] ()
     
     convenience init(operations: Foundation.Operation...) {
         self.init(operations: operations)

@@ -14,9 +14,9 @@ import CloudKit
 class ZManifest: ZRecord {
 
 
-    dynamic var bookmarks: [CKReference] = []
-    dynamic var  here:      CKReference?
-    var         _hereZone:         Zone?
+    dynamic var bookmarks = [CKReference] ()
+    dynamic var here:        CKReference?
+    var        _hereZone:           Zone?
 
 
     var hereZone: Zone? {

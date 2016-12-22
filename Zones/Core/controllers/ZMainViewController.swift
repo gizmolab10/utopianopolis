@@ -35,8 +35,7 @@ class ZMainViewController: ZGenericViewController {
             make.height.equalTo(0.0)
         })
 
-        dispatchAsyncInForegroundAfter(1.0) {
-            // controllersManager.controller(at: .searchResults).setup()
+        dispatchAsyncInForegroundAfter(0.1) {
             self.searchResultsView?.removeFromSuperview()
         }
     }

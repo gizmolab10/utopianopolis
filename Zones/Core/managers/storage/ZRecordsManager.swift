@@ -25,8 +25,8 @@ enum ZRecordState: Int {
 class ZRecordsManager: NSObject {
 
 
-    var statesByMode: [ZStorageMode : [ZRecordState : [ZRecord]]] = [:]
-    var zoneRegistry: [ZStorageMode : [String       :      Zone]] = [:]
+    var statesByMode = [ZStorageMode : [ZRecordState : [ZRecord]]] ()
+    var zoneRegistry = [ZStorageMode : [String       :      Zone]] ()
 
 
     var recordsByState: [ZRecordState : [ZRecord]] {
@@ -35,7 +35,7 @@ class ZRecordsManager: NSObject {
         }
 
         get {
-            var registry: [ZRecordState : [ZRecord]]? = statesByMode[travelManager.storageMode]
+            var registry = statesByMode[travelManager.storageMode]
 
             if registry == nil {
                 registry            = [:]
@@ -67,7 +67,7 @@ class ZRecordsManager: NSObject {
 
     var allStates: [ZRecordState] {
         get {
-            var states: [ZRecordState] = []
+            var states = [ZRecordState] ()
 
             for state in recordsByState.keys {
                 states.append(state)
@@ -166,7 +166,7 @@ class ZRecordsManager: NSObject {
 
 
     func recordIDsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecordID] {
-        var identifiers: [CKRecordID] = []
+        var identifiers = [CKRecordID] ()
 
         findRecordsWithMatchingStates(states) { (object) -> (Void) in
             let zone: ZRecord = object as! ZRecord
@@ -181,7 +181,7 @@ class ZRecordsManager: NSObject {
 
 
     func parentIDsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecordID] {
-        var parents: [CKRecordID] = []
+        var parents = [CKRecordID] ()
 
         findRecordsWithMatchingStates(states) { (object) -> (Void) in
             let zone: Zone = object as! Zone
@@ -200,7 +200,7 @@ class ZRecordsManager: NSObject {
 
 
     func recordsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecord] {
-        var objects: [CKRecord] = []
+        var objects = [CKRecord] ()
 
         findRecordsWithMatchingStates(states) { (object) -> (Void) in
             let zone: ZRecord = object as! ZRecord
@@ -215,7 +215,7 @@ class ZRecordsManager: NSObject {
 
 
     func referencesWithMatchingStates(_ states: [ZRecordState]) -> [CKReference] {
-        var references:  [CKReference] = []
+        var references = [CKReference] ()
 
         findRecordsWithMatchingStates(states) { (object) -> (Void) in
             if let record: ZRecord = object as? ZRecord, record.record != nil {

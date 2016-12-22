@@ -12,13 +12,13 @@ import CloudKit
 
 
 class ZCloudManager: ZRecordsManager {
-    var      container:                    CKContainer!
-    var cloudZonesByID: [CKRecordZoneID : CKRecordZone] = [:]
-    var      currentDB:                     CKDatabase? { get { return databaseForMode(travelManager.storageMode) } }
+    var cloudZonesByID = [CKRecordZoneID : CKRecordZone] ()
+    var        container: CKContainer!
+    var        currentDB: CKDatabase? { get { return databaseForMode(travelManager.storageMode) } }
 
 
     func databaseForMode(_ mode: ZStorageMode) -> CKDatabase? {
-        switch (mode) {
+        switch mode {
         case .everyone: return container.publicCloudDatabase
         case .group:    return container.sharedCloudDatabase
         case .mine:     return container.privateCloudDatabase
@@ -370,8 +370,8 @@ class ZCloudManager: ZRecordsManager {
 
 
     func searchFor(_ searchFor: String, onCompletion: ObjectClosure?) {
-        let           predicate = NSPredicate(format: "self CONTAINS %@", searchFor)
-        var records: [CKRecord] = []
+        let predicate = NSPredicate(format: "self CONTAINS %@", searchFor)
+        var   records = [CKRecord] ()
 
         cloudQueryUsingPredicate(predicate, onCompletion: { iRecord in
             if iRecord != nil {
@@ -384,14 +384,14 @@ class ZCloudManager: ZRecordsManager {
 
 
     @discardableResult func fetchChildren(_ onCompletion: Closure?) -> Bool {
-        let childrenNeeded: [CKReference] = referencesWithMatchingStates([.needsChildren])
-        let                noMoreChildren = childrenNeeded.count == 0
+        let childrenNeeded = referencesWithMatchingStates([.needsChildren])
+        let noMoreChildren = childrenNeeded.count == 0
 
         if noMoreChildren {
             onCompletion?()
         } else {
-            var parentsNeedingResort: [Zone] = []
-            let                    predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
+            var parentsNeedingResort = [Zone] ()
+            let            predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
 
             clearState(.needsChildren)
             report("fetching children of \(childrenNeeded.count)")

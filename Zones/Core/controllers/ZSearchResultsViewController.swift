@@ -21,7 +21,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
 
     @IBOutlet var tableView: ZTableView?
-    var        foundRecords: [CKRecord] = []
+    var        foundRecords = [CKRecord] ()
     var             monitor: Any?
 
 
@@ -121,7 +121,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
                         if isArrow {
                             let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
 
-                            switch(arrow) {
+                            switch arrow {
                             case .left:
                                 self.clear()
 

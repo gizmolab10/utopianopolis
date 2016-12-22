@@ -189,7 +189,7 @@ class Operation: Foundation.Operation {
     
     // MARK: Observers and Conditions
     
-    fileprivate(set) var conditions = [OperationCondition]()
+    fileprivate(set) var conditions = [OperationCondition] ()
 
     func addCondition(_ condition: OperationCondition) {
         assert(state < .evaluatingConditions, "Cannot modify conditions after execution has begun.")
@@ -197,7 +197,7 @@ class Operation: Foundation.Operation {
         conditions.append(condition)
     }
     
-    fileprivate(set) var observers = [OperationObserver]()
+    fileprivate(set) var observers = [OperationObserver] ()
     
     func addObserver(_ observer: OperationObserver) {
         assert(state < .executing, "Cannot modify observers after execution has begun.")
@@ -256,7 +256,7 @@ class Operation: Foundation.Operation {
         finish()
     }
     
-    fileprivate var _internalErrors = [NSError]()    
+    fileprivate var _internalErrors = [NSError] ()    
     func cancelWithError(_ error: NSError? = nil) {
         if let error = error {
             _internalErrors.append(error)

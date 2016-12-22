@@ -11,6 +11,18 @@ import Foundation
 import CloudKit
 
 
+struct ZSubzoneState: OptionSet {
+    let rawValue: Int
+
+    init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+
+    static let Shows = ZSubzoneState(rawValue: 1 << 0)
+    static let   Has = ZSubzoneState(rawValue: 1 << 1)
+}
+
+
 class Zone : ZRecord {
 
 
@@ -18,8 +30,8 @@ class Zone : ZRecord {
     dynamic var     zoneLink:      String?
     dynamic var       parent: CKReference?
     dynamic var    zoneOrder:    NSNumber?
-    dynamic var showSubzones:    NSNumber?
-    var             children:       [Zone] = []
+    dynamic var subzoneState:    NSNumber?
+    var             children      = [Zone] ()
     var          _parentZone:        Zone?
     var           _crossLink:     ZRecord?
     var           isBookmark:         Bool { get { return crossLink != nil } }
@@ -35,7 +47,7 @@ class Zone : ZRecord {
                 #keyPath(zoneName),
                 #keyPath(zoneLink),
                 #keyPath(zoneOrder),
-                #keyPath(showSubzones)]
+                #keyPath(subzoneState)]
     }
 
 
@@ -93,24 +105,58 @@ class Zone : ZRecord {
     }
 
 
-    var showChildren: Bool {
+    var childrenState: ZSubzoneState {
         get {
-            if showSubzones == nil {
+            if subzoneState == nil {
                 updateZoneProperties()
 
-                if showSubzones == nil {
-                    showSubzones = NSNumber(value: 0)
+                if subzoneState == nil {
+                    subzoneState = NSNumber(value: 1)
                 }
             }
 
-            return showSubzones?.int64Value == 1
+            return ZSubzoneState(rawValue: Int((subzoneState?.int64Value)!))
+        }
+
+        set {
+            if newValue != childrenState {
+                subzoneState = NSNumber(integerLiteral: newValue.rawValue)
+                
+                self.maybeNeedMerge()
+            }
+        }
+    }
+
+
+    var hasChildren: Bool {
+        get {
+            return childrenState.contains(.Has)
+        }
+
+        set {
+            if newValue != hasChildren {
+                if newValue {
+                    childrenState.insert(.Has)
+                } else {
+                    childrenState.remove(.Has)
+                }
+            }
+        }
+    }
+
+
+    var showChildren: Bool {
+        get {
+            return childrenState.contains(.Shows)
         }
 
         set {
             if newValue != showChildren {
-                showSubzones = NSNumber(integerLiteral: newValue ? 1 : 0)
-
-                self.maybeNeedMerge()
+                if newValue {
+                    childrenState.insert(.Shows)
+                } else {
+                    childrenState.remove(.Shows)
+                }
             }
         }
     }
@@ -197,6 +243,8 @@ class Zone : ZRecord {
 
     func addChild(_ child: Zone?, at index: Int) {
         if child != nil {
+            hasChildren = true
+
             if children.contains(child!) {
                 return
             }
@@ -224,8 +272,11 @@ class Zone : ZRecord {
     func removeChild(_ child: Zone?) {
         if child != nil, let index = children.index(of: child!) {
             children.remove(at: index)
-        }
 
+            if children.count == 0 {
+                hasChildren = false
+            }
+        }
     }
 
 
@@ -306,11 +357,10 @@ class Zone : ZRecord {
 
 
     override func storageDictionary() -> ZStorageDict? {
-        var dict: ZStorageDict = super.storageDictionary()!
+        var      childrenStore = [ZStorageDict] ()
+        var               dict = super.storageDictionary()!
         dict[zoneNameKey]      = zoneName as NSObject?
         dict[showChildrenKey]  = NSNumber(booleanLiteral: showChildren)
-
-        var childrenStore: [ZStorageDict] = []
 
         for child: Zone in children {
             childrenStore.append(child.storageDictionary()!)

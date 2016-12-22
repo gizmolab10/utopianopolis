@@ -45,7 +45,7 @@ class ZoneCurve: ZView {
 
     func updateKind() {
         if (parent?.widgetZone.children.count)! > 1 {
-            let           dragDot = child?.dragDot!.innerDot
+            let           dragDot = child?.dragDot.innerDot
             let        textWidget = parent?.textWidget
             let    dragDotCenterY =    dragDot?.convert((   dragDot?.bounds)!, to: parent).center.y
             let textWidgetCenterY = textWidget?.convert((textWidget?.bounds)!, to: parent).center.y
@@ -64,12 +64,12 @@ class ZoneCurve: ZView {
         snp.removeConstraints()
         snp.makeConstraints { (make) in
             let halfLineThickness = lineThicknes / 2.0
-            let         revealerDot = parent?.revealerDot!.innerDot
-            let           dragDot = child?.dragDot!.innerDot
+            let       revealerDot = parent?.revealerDot.innerDot
+            let           dragDot = child?.dragDot.innerDot
 
             make.right.equalTo((dragDot?.snp.left)!)
 
-            switch (kind) {
+            switch kind {
             case .above:
                 make   .top.lessThanOrEqualTo((dragDot?.snp.centerY)!).offset(-halfLineThickness)
                 make.bottom.equalTo(revealerDot!.snp.top)
@@ -92,8 +92,8 @@ class ZoneCurve: ZView {
 
     func drawCurveIn(_ dirtyRect: CGRect) {
         if dirtyRect.size.width > 1.0 {
-            let toggleHalfHeight = (parent?.revealerDot!.innerDot?.bounds.size.height)! / 2.0
-            let    dragHalfWidth = (child? .dragDot!  .innerDot?.bounds.size.width )! / 2.0
+            let toggleHalfHeight = (parent?.revealerDot.innerDot?.bounds.size.height)! / 2.0
+            let    dragHalfWidth = (child? .dragDot    .innerDot?.bounds.size.width )! / 2.0
             var y: CGFloat
 
             switch kind {

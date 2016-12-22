@@ -41,7 +41,7 @@ class ZControllersManager: NSObject {
     }
 
 
-    var controllersMap: [ZControllerID : SignalObject] = [:]
+    var controllersMap = [ZControllerID : SignalObject] ()
 
 
     func unregister(_ at: ZControllerID) {

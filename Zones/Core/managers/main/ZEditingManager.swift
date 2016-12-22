@@ -29,8 +29,8 @@ class ZEditingManager: NSObject {
 
     var rootZone: Zone { get { return travelManager.rootZone! } set { travelManager.rootZone = newValue } }
     var hereZone: Zone { get { return travelManager.hereZone! } set { travelManager.hereZone = newValue } }
-    var deferredEvents: [ZoneEvent] = []
-    var previousEvent: ZEvent?
+    var deferredEvents = [ZoneEvent] ()
+    var previousEvent:    ZEvent?
 
 
     // MARK:- API

@@ -22,10 +22,10 @@ enum ZStorageMode: String {     ///// move this to cloud manager  //////////
 class ZTravelManager: NSObject {
 
 
-    var              rootZone:                      Zone!
-    var manifestByStorageMode: [ZStorageMode : ZManifest] = [:]
-    let                   key:                     String = "current storage mode"
-    var              hereZone:     Zone? { get { return manifest.hereZone } set { manifest.hereZone = newValue } }
+    let                   key = "current storage mode"
+    var manifestByStorageMode = [ZStorageMode : ZManifest] ()
+    var              rootZone: Zone!
+    var              hereZone: Zone? { get { return manifest.hereZone } set { manifest.hereZone = newValue } }
 
 
     var manifest: ZManifest {
@@ -66,10 +66,8 @@ class ZTravelManager: NSObject {
 
     func setup() {
         switch storageMode {
-        case .bookmarks:
-            rootZone = bookmarksManager.rootZone
-        default:
-            rootZone = Zone(record: nil, storageMode: storageMode)
+        case .bookmarks: rootZone = bookmarksManager.rootZone
+        default:         rootZone = Zone(record: nil, storageMode: storageMode)
         }
     }
 
