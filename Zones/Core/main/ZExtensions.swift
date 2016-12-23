@@ -26,6 +26,7 @@ import CloudKit
     public typealias ZWindow              = NSWindow
     public typealias ZTextField           = NSTextField
     public typealias ZTableView           = NSTableView
+    public typealias ZStackView           = NSStackView
     public typealias ZBezierPath          = NSBezierPath
     public typealias ZSearchField         = NSSearchField
     public typealias ZApplication         = NSApplication
@@ -308,6 +309,11 @@ extension NSMutableArray {
             remove(at: index(of: object))
         }
     }
+}
+
+
+extension ZColor {
+    func darker(by: CGFloat) -> ZColor { return ZColor(calibratedHue: hueComponent, saturation: saturationComponent * 1.1, brightness: brightnessComponent / by, alpha: alphaComponent) }
 }
 
 

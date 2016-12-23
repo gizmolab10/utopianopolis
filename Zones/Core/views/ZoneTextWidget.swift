@@ -36,10 +36,12 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
                     selectionManager.grab(zone!)
                     removeMonitorAsync()
+                    abortEditing()
                 } else {
                     selectionManager.currentlyEditingZone  = zone
                     selectionManager.currentlyGrabbedZones = []
-                    font = grabbedWidgetFont
+                    textColor                              = widget.widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor
+                    font                                   = grabbedWidgetFont
 
                     #if os(OSX)
                     monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> ZEvent? in

@@ -23,6 +23,9 @@ enum ZLineKind: Int {
 }
 
 
+let threshold = 6.0
+
+
 class ZoneCurve: ZView {
 
 
@@ -49,11 +52,11 @@ class ZoneCurve: ZView {
             let        textWidget = parent?.textWidget
             let    dragDotCenterY =    dragDot?.convert((   dragDot?.bounds)!, to: parent).center.y
             let textWidgetCenterY = textWidget?.convert((textWidget?.bounds)!, to: parent).center.y
-            let             delta = dragDotCenterY! - textWidgetCenterY!
+            let             delta = Double(dragDotCenterY! - textWidgetCenterY!)
 
-            if delta > 2.0 {
+            if delta >= threshold {
                 kind = .above
-            } else if delta < -2.0 {
+            } else if delta < -threshold {
                 kind = .below
             }
         }

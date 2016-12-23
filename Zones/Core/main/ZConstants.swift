@@ -31,8 +31,8 @@ enum ZArrowKey: CChar {
 
 
 let userTouchLength: CGFloat = 33.0
-let grabbedWidgetFont: ZFont = ZFont.systemFont(ofSize: fontSize * 1.3)
-let      widgetFont:   ZFont = ZFont.systemFont(ofSize: fontSize)
+let grabbedWidgetFont: ZFont = ZFont.systemFont(ofSize: fontSize) // .boldSystemFont(ofSize: fontSize * 0.93)
+let        widgetFont: ZFont = ZFont.systemFont(ofSize: fontSize)
 let       controllersManager = ZControllersManager()
 let        operationsManager = ZOperationsManager()
 let         bookmarksManager = ZBookmarksManager()

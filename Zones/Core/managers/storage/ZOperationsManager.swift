@@ -135,7 +135,7 @@ class ZOperationsManager: NSObject {
         let          operation = waitingOps[identifier]!
         waitingOps[identifier] = nil
 
-        report(String(describing: identifier))
+        // report(String(describing: identifier))
 
         switch identifier {
         case .file:        zfileManager.restore();           operation.finish();   break

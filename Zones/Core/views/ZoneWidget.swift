@@ -164,16 +164,17 @@ class ZoneWidget: ZView {
     func layoutDragHighlight() {
         dragHighlightView.snp.makeConstraints({ (make) in
             make.top.bottom.equalTo(self)
-            make.right.equalTo(self).offset(-8.0)
+            make.right.equalTo(self).offset(-10.0)
             make.left.equalTo(self).offset(8.0)
         })
     }
 
 
     func layoutText() {
-        textWidget.widget = self
-        let    isSelected = selectionManager.isSelected(widgetZone)
-        textWidget.font   = isSelected ? grabbedWidgetFont : widgetFont
+        textWidget.widget    = self
+        let       isSelected = selectionManager.isSelected(widgetZone)
+        textWidget.font      = isSelected ? grabbedWidgetFont : widgetFont
+        textWidget.textColor = isSelected ? widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor : ZColor.black
 
         if textWidget.text == "" && widgetZone.zoneName == nil {
             textWidget.text = "empty"
@@ -193,7 +194,7 @@ class ZoneWidget: ZView {
             let      width = textWidget.text!.widthForFont(font) + 5.0
 
             make.width.equalTo(width)
-            make.centerY.equalTo(self)
+            make.centerY.equalTo(self) // .offset(-1.0)
             make.right.lessThanOrEqualTo(self).offset(-29.0)
             make.left.equalTo(self).offset(12.0 + genericOffset.width)
             make.height.lessThanOrEqualTo(self).offset(-genericOffset.height)
@@ -307,7 +308,7 @@ class ZoneWidget: ZView {
         dragDot.setupForZone(widgetZone, asToggle: false)
         dragDot.innerDot?.snp.makeConstraints({ (make) in
             make.right.equalTo(textWidget.snp.left)
-            make.centerY.equalTo(textWidget).offset(1.0)
+            make.centerY.equalTo(textWidget).offset(0.5)
         })
 
         if !hasChildren && !widgetZone.isBookmark {
@@ -323,7 +324,7 @@ class ZoneWidget: ZView {
             revealerDot.setupForZone(widgetZone, asToggle: true)
             revealerDot.innerDot?.snp.makeConstraints({ (make) in
                 make.left.equalTo(textWidget.snp.right).offset(-1.0)
-                make.centerY.equalTo(textWidget).offset(1.0)
+                make.centerY.equalTo(textWidget).offset(0.5)
                 make.right.lessThanOrEqualToSuperview().offset(-1.0)
             })
         }

@@ -16,7 +16,16 @@ import Foundation
 #endif
 
 
-class ZGenericViewController: ZViewController {
+protocol ZGenericViewControllerProtocol {
+
+    func handleSignal(_ object: Any?, kind: ZSignalKind)
+    func identifier() -> ZControllerID
+    func displayActivity()
+    func setup()
+}
+
+
+class ZGenericViewController: ZViewController, ZGenericViewControllerProtocol {
 
 
     func identifier() -> ZControllerID { return .main }

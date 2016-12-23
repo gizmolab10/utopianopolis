@@ -788,10 +788,10 @@
             </objects>
             <point key="canvasLocation" x="194" y="757"/>
         </scene>
-        <!--Tools View Controller-->
+        <!--Settings View Controller-->
         <scene sceneID="Tae-az-4mZ">
             <objects>
-                <viewController id="YaQ-0g-PCb" customClass="ZToolsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="YaQ-0g-PCb" customClass="ZSettingsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
                         <rect key="frame" x="0.0" y="0.0" width="207" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -826,20 +826,20 @@
                                 <rect key="frame" x="6" y="348" width="203" height="240"/>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="RJc-P2-wiE">
                                     <font key="font" metaFont="cellTitle"/>
-                                    <string key="title">HELP:
+                                    <mutableString key="title">HELP:
     ARROWS: change selection
 
 with OPTION move/alter zone:
     ARROWS move
-    COMMAND go all the way
+    with COMMAND: reach far
     TAB add sibling zone
     SPACE add child zone     DELETE delete
     RETURN begin / end editing
 
-with SHIFT :
-    RIGHT ARROW expand
-    LEFT ARROW collapse
-    COMMAND do all</string>
+ARROWS with SHIFT:
+    RIGHT expand
+    LEFT collapse
+    with COMMAND: reach far</mutableString>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
