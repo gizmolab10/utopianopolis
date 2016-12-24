@@ -100,11 +100,13 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func findRecordByRecordIDFrom(_ iRecord: ZRecord, forStates: [ZRecordState], onEach: StateRecordClosure?) {
-        for state in forStates {
-            for record in recordsForState(state) {
-                if record == iRecord || (record.record != nil && iRecord.record != nil && record.record.recordID.recordName == iRecord.record.recordID.recordName) {
-                    onEach?(state, record)
+    func findRecordByRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState], onEach: StateRecordClosure?) {
+        if iRecordID != nil {
+            for state in forStates {
+                for record in recordsForState(state) {
+                    if record.record != nil && record.record.recordID.recordName == iRecordID?.recordName {
+                        onEach?(state, record)
+                    }
                 }
             }
         }
@@ -114,7 +116,7 @@ class ZRecordsManager: NSObject {
     func hasRecord(_ iRecord: ZRecord, forStates: [ZRecordState]) -> Bool {
         var found = false
 
-        findRecordByRecordIDFrom(iRecord, forStates: forStates, onEach: { (state, record) in
+        findRecordByRecordID(iRecord.record?.recordID, forStates: forStates, onEach: { (state, record) in
             found = true
         })
 
@@ -135,8 +137,8 @@ class ZRecordsManager: NSObject {
 
     }
 
-    func removeRecord(_ iRecord: ZRecord, forStates: [ZRecordState]) {
-        findRecordByRecordIDFrom(iRecord, forStates: forStates, onEach: { (state, record) in
+    func removeRecordByRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState]) {
+        findRecordByRecordID(iRecordID, forStates: forStates, onEach: { (state, record) in
             var records = self.recordsForState(state)
 
             if let index = records.index(of: record) {
@@ -148,8 +150,8 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func clearRecord(_ record: ZRecord) {
-        removeRecord(record, forStates: allStates)
+    func clearRecord(_ iRecord: ZRecord) {
+        removeRecordByRecordID(iRecord.record?.recordID, forStates: allStates)
     }
 
 

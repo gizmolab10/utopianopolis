@@ -11,31 +11,32 @@ import Foundation
 import CloudKit
 
 
-struct ZSubzoneState: OptionSet {
+struct ZoneState: OptionSet {
     let rawValue: Int
 
     init(rawValue: Int) {
         self.rawValue = rawValue
     }
 
-    static let Shows = ZSubzoneState(rawValue: 1 << 0)
-    static let   Has = ZSubzoneState(rawValue: 1 << 1)
+    static let ShowsChildren = ZoneState(rawValue: 1 <<  0)
+    static let   HasChildren = ZoneState(rawValue: 1 <<  1)
+    static let     IsDeleted = ZoneState(rawValue: 1 << 30)
 }
 
 
 class Zone : ZRecord {
 
 
-    dynamic var     zoneName:      String?
-    dynamic var     zoneLink:      String?
-    dynamic var       parent: CKReference?
-    dynamic var    zoneOrder:    NSNumber?
-    dynamic var subzoneState:    NSNumber?
-    var             children      = [Zone] ()
-    var          _parentZone:        Zone?
-    var           _crossLink:     ZRecord?
-    var           isBookmark:         Bool { get { return crossLink != nil } }
-    var               isRoot:         Bool { get { return record != nil && record.recordID.recordName == rootNameKey } }
+    dynamic var  zoneName:      String?
+    dynamic var  zoneLink:      String?
+    dynamic var    parent: CKReference?
+    dynamic var zoneOrder:    NSNumber?
+    dynamic var zoneState:    NSNumber?
+    var          children      = [Zone] ()
+    var       _parentZone:        Zone?
+    var        _crossLink:     ZRecord?
+    var        isBookmark:         Bool { get { return crossLink != nil } }
+    var            isRoot:         Bool { get { return record != nil && record.recordID.recordName == rootNameKey } }
 
 
     // MARK:- properties
@@ -47,7 +48,7 @@ class Zone : ZRecord {
                 #keyPath(zoneName),
                 #keyPath(zoneLink),
                 #keyPath(zoneOrder),
-                #keyPath(subzoneState)]
+                #keyPath(zoneState)]
     }
 
 
@@ -105,22 +106,22 @@ class Zone : ZRecord {
     }
 
 
-    var childrenState: ZSubzoneState {
+    var stateBooleans: ZoneState {
         get {
-            if subzoneState == nil {
+            if zoneState == nil {
                 updateZoneProperties()
 
-                if subzoneState == nil {
-                    subzoneState = NSNumber(value: 1)
+                if zoneState == nil {
+                    zoneState = NSNumber(value: 1)
                 }
             }
 
-            return ZSubzoneState(rawValue: Int((subzoneState?.int64Value)!))
+            return ZoneState(rawValue: Int((zoneState?.int64Value)!))
         }
 
         set {
-            if newValue != childrenState {
-                subzoneState = NSNumber(integerLiteral: newValue.rawValue)
+            if newValue != stateBooleans {
+                zoneState = NSNumber(integerLiteral: newValue.rawValue)
                 
                 self.maybeNeedMerge()
             }
@@ -128,17 +129,34 @@ class Zone : ZRecord {
     }
 
 
+    var isDeleted: Bool {
+        get {
+            return stateBooleans.contains(.IsDeleted)
+        }
+
+        set {
+            if newValue != isDeleted {
+                if newValue {
+                    stateBooleans.insert(.IsDeleted)
+                } else {
+                    stateBooleans.remove(.IsDeleted)
+                }
+            }
+        }
+    }
+
+
     var hasChildren: Bool {
         get {
-            return childrenState.contains(.Has)
+            return stateBooleans.contains(.HasChildren)
         }
 
         set {
             if newValue != hasChildren {
                 if newValue {
-                    childrenState.insert(.Has)
+                    stateBooleans.insert(.HasChildren)
                 } else {
-                    childrenState.remove(.Has)
+                    stateBooleans.remove(.HasChildren)
                 }
             }
         }
@@ -147,15 +165,15 @@ class Zone : ZRecord {
 
     var showChildren: Bool {
         get {
-            return childrenState.contains(.Shows)
+            return stateBooleans.contains(.ShowsChildren)
         }
 
         set {
             if newValue != showChildren {
                 if newValue {
-                    childrenState.insert(.Shows)
+                    stateBooleans.insert(.ShowsChildren)
                 } else {
-                    childrenState.remove(.Shows)
+                    stateBooleans.remove(.ShowsChildren)
                 }
             }
         }

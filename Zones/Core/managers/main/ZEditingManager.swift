@@ -53,7 +53,7 @@ class ZEditingManager: NSObject {
             }
         } else if event == previousEvent {
             return true
-        } else if workMode != .edit {
+        } else if workMode != .editMode {
             return false
         } else {
             #if os(OSX)
@@ -124,6 +124,8 @@ class ZEditingManager: NSObject {
 
                                 selectionManager.grab(bookmark)
                                 controllersManager.syncToCloudAndSignalFor(nil)
+
+                                return true
                             }
 
                             break
@@ -132,6 +134,8 @@ class ZEditingManager: NSObject {
                                 showsSearching = !showsSearching
 
                                 signal(nil, regarding: .search)
+
+                                return true
                             }
 
                             break
@@ -148,6 +152,8 @@ class ZEditingManager: NSObject {
                                         controllersManager.syncToCloudAndSignalFor(nil)
                                     })
                                 }
+
+                                return true
                             }
                             
                             break
@@ -346,7 +352,9 @@ class ZEditingManager: NSObject {
     @discardableResult private func deleteZone(_ zone: Zone) -> Zone? {
         if !zone.isRoot {
             if travelManager.storageMode != .bookmarks {
-                zone.markForStates([.needsDelete])
+                zone.isDeleted = true
+
+                zone.needSave()
             }
 
             deleteZones(zone.children)
@@ -478,8 +486,12 @@ class ZEditingManager: NSObject {
                     }
                 }
             } else if !zone.isRoot {
+                let here = hereZone
+
                 revealParent {
-                    self.moveUp(moveUp, selectionOnly: selectionOnly, extreme: extreme, persistently: persistently)
+                    if self.hereZone != here {
+                        self.moveUp(moveUp, selectionOnly: selectionOnly, extreme: extreme, persistently: persistently)
+                    }
                 }
             }
         }
@@ -531,8 +543,8 @@ class ZEditingManager: NSObject {
                     }
                 } else if zone == hereZone || toThere == nil {
                     revealParent {
-                        if let there = self.hereZone.parentZone {
-                            self.hereZone =  there
+                        if let      there = self.hereZone.parentZone {
+                            self.hereZone = there
 
                             selectionManager.grab(there)
                             travelManager.manifest.needSave()

@@ -23,7 +23,7 @@ class ZEditorViewController: ZGenericViewController {
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         if kind == .search || kind == .found {
             return
-        } else if workMode != .edit {
+        } else if workMode != .editMode {
             view.snp.removeConstraints()
             hereWidget.removeFromSuperview()
 

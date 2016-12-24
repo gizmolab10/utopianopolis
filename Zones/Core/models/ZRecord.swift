@@ -181,7 +181,7 @@ class ZRecord: NSObject {
 
     func unmarkForStates(_ states: [ZRecordState]) {
         invokeWithMode(storageMode!) {
-            cloudManager.removeRecord(self, forStates:states)
+            cloudManager.removeRecordByRecordID(self.record.recordID, forStates:states)
         }
     }
 

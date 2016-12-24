@@ -48,7 +48,7 @@ class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
         } else {
             cloudManager.searchFor(find) { iObject in
                 let hasResults = ((iObject as? [Any])?.count)! != 0
-                workMode       = hasResults ? .search : .edit
+                workMode       = hasResults ? .searchMode : .editMode
 
                 if hasResults {
                     self.searchBox?.text = ""

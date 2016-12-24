@@ -29,21 +29,23 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
 
     override func handleSignal(_ iObject: Any?, kind: ZSignalKind) {
-        if kind == .found, let records = iObject as? [CKRecord] {
-            foundRecords = records
+        if kind == .found {
+            if let records = iObject as? [CKRecord] {
+                foundRecords = records
 
-            if foundRecords.count > 0 {
-                sortRecords()
-                tableView?.reloadData()
-                monitorKeyEvents()
+                if foundRecords.count > 0 {
+                    sortRecords()
+                    tableView?.reloadData()
+                    monitorKeyEvents()
 
-                dispatchAsyncInForeground {
-                    mainWindow.makeFirstResponder(self.tableView)
-                    self.tableView?.selectRowIndexes(NSIndexSet(index: 0) as IndexSet, byExtendingSelection: false)
+                    dispatchAsyncInForeground {
+                        mainWindow.makeFirstResponder(self.tableView)
+                        self.tableView?.selectRowIndexes(NSIndexSet(index: 0) as IndexSet, byExtendingSelection: false)
+                    }
                 }
+            } else {
+                removeMonitorAsync()
             }
-        } else {
-            removeMonitorAsync()
         }
     }
 
@@ -65,7 +67,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
         })
     }
 
-    
+
     func numberOfRows(in tableView: NSTableView) -> Int {
         return foundRecords.count
     }
@@ -80,6 +82,19 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
         }
 
         return object
+    }
+
+
+    func resolve() -> Bool {
+        let    index = self.tableView?.selectedRow
+        let resolved = index != -1
+
+        if resolved{
+            self.clear()
+            self.resolveRecordAtIndex(index!)
+        }
+
+        return resolved
     }
 
 
@@ -102,7 +117,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
     func clear() {
         showsSearching = false
-        workMode       = .edit
+        workMode       = .editMode
 
         self.signal(nil, regarding: .search)
         self.signal(nil, regarding: .found)
@@ -118,7 +133,23 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
                         let   flags = event.modifierFlags
                         let isArrow = flags.contains(.numericPad) && flags.contains(.function)
 
-                        if isArrow {
+                        if !isArrow {
+                            switch key {
+                            case "f":
+                                self.signal(nil, regarding: .search)
+
+                                return nil
+                            case "\r":
+                                if self.resolve() {
+                                    return nil
+                                }
+
+                                break
+                            default:
+
+                                break
+                            }
+                        } else {
                             let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
 
                             switch arrow {
@@ -127,12 +158,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
                                 return nil
                             case .right:
-                                let index = self.tableView?.selectedRow
-
-                                if index != -1 {
-                                    self.clear()
-                                    self.resolveRecordAtIndex(index!)
-
+                                if self.resolve() {
                                     return nil
                                 }
 
@@ -149,13 +175,13 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
             }
         #endif
     }
-
-
+    
+    
     func removeMonitorAsync() {
         #if os(OSX)
             if let save = monitor {
                 monitor = nil
-
+                
                 dispatchAsyncInForegroundAfter(0.001, closure: {
                     ZEvent.removeMonitor(save)
                 })

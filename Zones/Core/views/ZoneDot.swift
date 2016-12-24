@@ -19,10 +19,9 @@ import SnapKit
 class ZoneDot: ZView {
 
 
-    var          toggle: Bool!
-    var        innerDot: ZoneDot?
-    var      isOuterDot: Bool = true
-    var shouldHighlight: Bool = false
+    var     toggle: Bool!
+    var   innerDot: ZoneDot?
+    var isOuterDot: Bool = true
 
 
     func setupForZone(_ widgetZone: Zone, asToggle: Bool) {
@@ -45,15 +44,15 @@ class ZoneDot: ZView {
                 make.center.equalTo(innerDot!)
             }
         } else {
-            let radius:      Float = dotLength * 0.5 * (asToggle ? 1.0 : 0.65)
-            shouldHighlight        = asToggle ? !widgetZone.showChildren || widgetZone.isBookmark : selectionManager.isGrabbed(widgetZone)
+            let             radius = dotHeight / (asToggle ? 2.0 : 3.0)
             let      selectedColor = widgetZone.isBookmark ? bookmarkColor : lineColor
+            let    shouldHighlight = asToggle ? !widgetZone.showChildren || widgetZone.isBookmark : selectionManager.isGrabbed(widgetZone)
             zlayer.backgroundColor = (shouldHighlight ? selectedColor : unselectedColor).cgColor
 
             addBorder(thickness: CGFloat(lineThicknes), radius: CGFloat(radius), color: selectedColor.cgColor)
             snp.makeConstraints { (make) in
-                let          width = CGFloat(asToggle ? dotLength : dotLength * 0.65)
-                let           size = CGSize(width: width, height: CGFloat(dotLength))
+                let          width = CGFloat(asToggle ? dotHeight : dotHeight * 0.65)
+                let           size = CGSize(width: width, height: CGFloat(dotHeight))
 
                 make.size.equalTo(size)
             }
