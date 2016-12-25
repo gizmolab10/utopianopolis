@@ -22,6 +22,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
     @IBOutlet var tableView: ZTableView?
     var        foundRecords = [CKRecord] ()
+    var               again = false
     var             monitor: Any?
 
 
@@ -30,7 +31,9 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
     override func handleSignal(_ iObject: Any?, kind: ZSignalKind) {
         if kind == .found {
-            if let records = iObject as? [CKRecord] {
+            again = false
+            
+            if showsSearching, let records = iObject as? [CKRecord] {
                 foundRecords = records
 
                 if foundRecords.count > 0 {
@@ -116,11 +119,23 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
 
     func clear() {
+        again          = false
         showsSearching = false
         workMode       = .editMode
 
         self.signal(nil, regarding: .search)
         self.signal(nil, regarding: .found)
+    }
+
+
+    func reset() {
+        if  again || foundRecords.count == 0 {
+            clear()
+        } else {
+            again = true
+
+            signal(nil, regarding: .search)
+        }
     }
 
 
@@ -135,37 +150,17 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
                         if !isArrow {
                             switch key {
-                            case "f":
-                                self.signal(nil, regarding: .search)
-
-                                return nil
-                            case "\r":
-                                if self.resolve() {
-                                    return nil
-                                }
-
-                                break
-                            default:
-
-                                break
+                            case    "f": self.reset();       return nil
+                            case   "\r": if self.resolve() { return nil }; break
+                            default:                         break
                             }
                         } else {
                             let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
 
                             switch arrow {
-                            case .left:
-                                self.clear()
-
-                                return nil
-                            case .right:
-                                if self.resolve() {
-                                    return nil
-                                }
-
-                                break
-                            default:
-
-                                break
+                            case  .left: self.clear();       return nil
+                            case .right: if self.resolve() { return nil }; break
+                            default:                         break
                             }
                         }
                     }

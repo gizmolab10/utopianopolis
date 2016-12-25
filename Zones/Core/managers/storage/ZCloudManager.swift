@@ -262,22 +262,22 @@ class ZCloudManager: ZRecordsManager {
     func flush(_ storageMode: ZStorageMode, onCompletion: Closure?) {
         if let operation = configure(CKModifyRecordsOperation(), using: storageMode) as? CKModifyRecordsOperation {
             invokeWithMode(storageMode) {
-                operation.recordsToSave     =   recordsWithMatchingStates([.needsSave])
-                operation.recordIDsToDelete = recordIDsWithMatchingStates([.needsDelete])
+                operation.recordsToSave = recordsWithMatchingStates([.needsSave])
 
-                clearStates([.needsSave, .needsDelete]) // clear BEFORE looking at manifest
+                clearStates([.needsSave]) // clear BEFORE looking at manifest
             }
 
-            if (operation.recordsToSave?.count)! > 0 || (operation.recordIDsToDelete?.count)! > 0 {
+            if (operation.recordsToSave?.count)! > 0 {
 
-                report("saving \((operation.recordsToSave?.count)!) deleting \((operation.recordIDsToDelete?.count)!)")
+                report("saving \((operation.recordsToSave?.count)!)")
 
                 operation.completionBlock          = {
-                    for identifier: CKRecordID in operation.recordIDsToDelete! {
+                    for record: CKRecord in operation.recordsToSave! {
                         var dict = self.zones
-                        let zone = dict[identifier.recordName]
 
-                        self.unregisterZone(zone)
+                        if let zone = dict[record.recordID.recordName], zone.isDeleted {
+                            self.unregisterZone(zone)
+                        }
                     }
 
                     let flushMine = self.detectWithMode(.mine, block: {
@@ -353,7 +353,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func searchFor(_ searchFor: String, onCompletion: ObjectClosure?) {
-        let predicate = NSPredicate(format: "self CONTAINS %@", searchFor)
+        let predicate = NSPredicate(format: "zoneState < %d AND self CONTAINS %@", ZoneState.IsDeleted.rawValue, searchFor)
         var   records = [CKRecord] ()
 
         cloudQueryUsingPredicate(predicate, onCompletion: { iRecord in

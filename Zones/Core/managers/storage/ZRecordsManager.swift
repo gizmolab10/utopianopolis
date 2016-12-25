@@ -16,7 +16,6 @@ enum ZRecordState: Int {
     case needsFetch
     case needsMerge
     case needsCreate
-    case needsDelete
     case needsParent
     case needsChildren
 }
