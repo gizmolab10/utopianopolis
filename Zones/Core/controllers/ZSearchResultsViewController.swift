@@ -34,9 +34,13 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
             again = false
             
             if showsSearching, let records = iObject as? [CKRecord] {
-                foundRecords = records
+                let count = records.count
 
-                if foundRecords.count > 0 {
+                if count == 1 {
+                    self.resolveRecord(records[0])
+                } else if count > 0 {
+                    foundRecords = records
+
                     sortRecords()
                     tableView?.reloadData()
                     monitorKeyEvents()
@@ -93,17 +97,17 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
         let resolved = index != -1
 
         if resolved{
-            self.clear()
-            self.resolveRecordAtIndex(index!)
+            let record = self.foundRecords[index!]
+
+            resolveRecord(record)
         }
 
         return resolved
     }
 
 
-    func resolveRecordAtIndex(_ index: Int) {
-        let record = self.foundRecords[index]
-        var   zone = cloudManager.zoneForRecordID(record.recordID)
+    func resolveRecord(_ record: CKRecord) {
+        var zone = cloudManager.zoneForRecordID(record.recordID)
 
         if zone == nil {
             zone = Zone(record: record, storageMode: travelManager.storageMode)
@@ -113,6 +117,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
         travelManager.hereZone = zone
 
+        clear()
         selectionManager.grab(zone)
         signal(nil, regarding: .data)
     }

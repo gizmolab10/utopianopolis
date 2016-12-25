@@ -51,9 +51,11 @@ class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
                 workMode       = hasResults && showsSearching ? .searchMode : .editMode
 
                 if hasResults {
-                    self.searchBox?.text = ""
+                    self.dispatchAsyncInForeground {
+                        self.searchBox?.text = ""
 
-                    self.signal(iObject, regarding: .found)
+                        self.signal(iObject, regarding: .found)
+                    }
                 }
             }
         }
