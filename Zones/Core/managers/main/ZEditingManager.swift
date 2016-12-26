@@ -56,11 +56,7 @@ class ZEditingManager: NSObject {
             if deferredEvents.count < 1 {
                 deferredEvents.append(ZoneEvent(event, iIsWindow: isWindow))
             }
-        } else if event == previousEvent {
-            return true
-        } else if workMode != .editMode {
-            return false
-        } else {
+        } else if event != previousEvent && workMode == .editMode {
             #if os(OSX)
             previousEvent = event
 
@@ -90,20 +86,15 @@ class ZEditingManager: NSObject {
                                 signalFor(nil, regarding: .data)
                             }
 
-                            return true
                         case " ":
                             if (isWindow || isOption) && !widget.widgetZone.isBookmark {
                                 addZoneTo(widget.widgetZone)
-
-                                return true
                             }
 
                             break
                         case "\u{7F}":
                             if isWindow || isOption {
                                 delete()
-
-                                return true
                             }
 
                             break
@@ -114,12 +105,8 @@ class ZEditingManager: NSObject {
                                 } else {
                                     widget.textWidget.becomeFirstResponder()
                                 }
-
-                                return true
                             } else if selectionManager.currentlyEditingZone != nil {
                                 widget.textWidget.resignFirstResponder()
-
-                                return true
                             }
 
                             break
@@ -129,8 +116,6 @@ class ZEditingManager: NSObject {
 
                                 selectionManager.grab(bookmark)
                                 syncToCloudAndSignal()
-
-                                return true
                             }
 
                             break
@@ -139,8 +124,6 @@ class ZEditingManager: NSObject {
                                 showsSearching = !showsSearching
 
                                 signalFor(nil, regarding: .search)
-
-                                return true
                             }
 
                             break
@@ -157,8 +140,6 @@ class ZEditingManager: NSObject {
                                         self.syncToCloudAndSignal()
                                     })
                                 }
-
-                                return true
                             }
                             
                             break
@@ -180,17 +161,15 @@ class ZEditingManager: NSObject {
                             switch arrow {
                             case .right: showRevealerDot(true,  zone: zone, recursively: isCommand) { self.syncToCloudAndSignal() }; break
                             case .left:  showRevealerDot(false, zone: zone, recursively: isCommand) { self.syncToCloudAndSignal() }; break
-                            default: return true
+                            default:                                                                                                 break
                             }
                         }
-
-                        return true
                     }
                 }
             #endif
         }
         
-        return false
+        return true
     }
 
 
