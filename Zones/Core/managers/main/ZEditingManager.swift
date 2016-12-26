@@ -525,6 +525,7 @@ class ZEditingManager: NSObject {
                         self.hereZone =  self.rootZone
 
                         selectionManager.grab(self.rootZone)
+
                         self.syncToCloudAndSignal()
                     }
                 } else if zone == hereZone || toThere == nil {

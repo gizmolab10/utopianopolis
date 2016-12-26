@@ -78,10 +78,11 @@ class ZCloudManager: ZRecordsManager {
 
         self.assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) -> (Void) in
             if iRecord != nil {
-                travelManager.rootZone = Zone(record: iRecord, storageMode: travelManager.storageMode)
-                travelManager.hereZone = travelManager.rootZone
+                let               root = Zone(record: iRecord, storageMode: travelManager.storageMode)
+                travelManager.hereZone = root
+                travelManager.rootZone = root
 
-                travelManager.rootZone?.needChildren()
+                root.needChildren()
                 travelManager.manifest.needSave()
             }
 

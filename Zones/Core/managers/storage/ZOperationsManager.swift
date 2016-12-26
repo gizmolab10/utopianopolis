@@ -47,7 +47,7 @@ class ZOperationsManager: NSObject {
             operationIDs.append(ZOperationID(rawValue: sync)!)
         }
 
-        setupAndRun(operationIDs, onCompletion: onCompletion)
+        setupAndRun(operationIDs) { onCompletion() }
     }
 
 
@@ -58,17 +58,17 @@ class ZOperationsManager: NSObject {
             operationIDs.append(ZOperationID(rawValue: sync)!)
         }
 
-        setupAndRun(operationIDs, onCompletion: onCompletion)
+        setupAndRun(operationIDs) { onCompletion() }
     }
 
 
     func root(_ onCompletion: @escaping Closure) {
-        setupAndRun([.root, .children], onCompletion: onCompletion)
+        setupAndRun([.root, .children, .flush]) { onCompletion() }
     }
 
 
     func sync(_ onCompletion: @escaping Closure) {
-        setupAndRun([.create, .parent, .children, .merge, .flush], onCompletion: onCompletion)
+        setupAndRun([.create, .parent, .children, .merge, .flush]) { onCompletion() }
     }
 
 
@@ -107,7 +107,7 @@ class ZOperationsManager: NSObject {
         if let prior = onReady {
             onReady = {
                 prior()
-                self.setupAndRun(operationIDs, onCompletion: onCompletion)
+                self.setupAndRun(operationIDs) { onCompletion() }
             }
         } else {
             onReady = onCompletion
@@ -135,7 +135,7 @@ class ZOperationsManager: NSObject {
         let          operation = waitingOps[identifier]!
         waitingOps[identifier] = nil
 
-        // report(String(describing: identifier))
+        report(String(describing: identifier))
 
         switch identifier {
         case .file:        zfileManager.restore();           operation.finish();   break
