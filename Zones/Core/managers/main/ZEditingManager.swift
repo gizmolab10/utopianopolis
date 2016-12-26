@@ -476,12 +476,8 @@ class ZEditingManager: NSObject {
                     }
                 }
             } else if !zone.isRoot {
-                let here = hereZone
-
                 revealParent {
-                    if self.hereZone != here {
-                        self.moveUp(moveUp, selectionOnly: selectionOnly, extreme: extreme, persistently: persistently)
-                    }
+                    self.moveUp(moveUp, selectionOnly: selectionOnly, extreme: extreme, persistently: persistently)
                 }
             }
         }
