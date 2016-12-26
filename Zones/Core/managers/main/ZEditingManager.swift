@@ -652,9 +652,10 @@ class ZEditingManager: NSObject {
                     toThere     = siblings[cousinIndex]
 
                     if !toThere.isBookmark {
-                        zone.parentZone?.needSave()
+                        let parent = zone.parentZone
+                        parent?.needSave()
                         moveZone(zone, into: toThere, orphan: true){
-                            self.syncAndSignalAfterMoveAffecting(toThere, persistently: persistently)
+                            self.syncAndSignalAfterMoveAffecting(parent, persistently: persistently)
                         }
                     } else {
                         let    same = zone.storageMode == toThere.crossLink?.storageMode
