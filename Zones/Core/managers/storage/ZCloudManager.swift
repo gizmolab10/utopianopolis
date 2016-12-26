@@ -287,7 +287,7 @@ class ZCloudManager: ZRecordsManager {
                     if flushMine {
                         self.flush(.mine, onCompletion: onCompletion)
                     } else {
-                        self.signal(nil, regarding: .data)
+                        self.signalFor(nil, regarding: .data)
                         onCompletion?()
                     }
                 }
@@ -375,16 +375,17 @@ class ZCloudManager: ZRecordsManager {
         } else {
             var parentsNeedingResort = [Zone] ()
             let            predicate = NSPredicate(format: "zoneState < %d AND parent IN %@", ZoneState.IsDeleted.rawValue, childrenNeeded)
+            let                zones = zoneNamesWithMatchingStates([.needsChildren])
 
             clearState(.needsChildren)
-            report("fetching children of \(childrenNeeded.count)")
+            report("fetching children of \(zones)")
             cloudQueryUsingPredicate(predicate, onCompletion: { iRecord in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                     for parent in parentsNeedingResort {
                         parent.respectOrder()
                     }
 
-                    self.signal(nil, regarding: .data)
+                    self.signalFor(nil, regarding: .data)
 
                     self.fetchChildren(onCompletion) // recurse: try another fetch
                 } else {
@@ -441,10 +442,10 @@ class ZCloudManager: ZRecordsManager {
                 zone.needChildren()
 
                 self.dispatchAsyncInForeground {
-                    self.signal(parent, regarding: .data)
+                    self.signalFor(parent, regarding: .data)
 
                     operationsManager.getChildren(false) {
-                        self.signal(parent, regarding: .data)
+                        self.signalFor(parent, regarding: .data)
                     }
                 }
             }
@@ -556,7 +557,7 @@ class ZCloudManager: ZRecordsManager {
 
                 currentDB?.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iSaveError: Error?) in
                     if iSaveError != nil {
-                        self.signal(iSaveError as NSObject?, regarding: .error)
+                        self.signalFor(iSaveError as NSObject?, regarding: .error)
                         self.reportError(iSaveError)
                     }
 
@@ -594,12 +595,12 @@ class ZCloudManager: ZRecordsManager {
 
             currentDB?.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, performanceError: Error?) in
                 if performanceError != nil {
-                    self.signal(performanceError as NSObject?, regarding: .error)
+                    self.signalFor(performanceError as NSObject?, regarding: .error)
                 } else {
                     let        record: CKRecord = (iResults?[0])!
                     object.record[valueForPropertyName] = (record as! CKRecordValue)
 
-                    self.signal(nil, regarding: .data)
+                    self.signalFor(nil, regarding: .data)
                 }
             }
         }

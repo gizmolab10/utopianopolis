@@ -119,7 +119,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
         clear()
         selectionManager.grab(zone)
-        signal(nil, regarding: .data)
+        signalFor(nil, regarding: .data)
     }
 
 
@@ -128,8 +128,8 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
         showsSearching = false
         workMode       = .editMode
 
-        self.signal(nil, regarding: .search)
-        self.signal(nil, regarding: .found)
+        self.signalFor(nil, regarding: .search)
+        self.signalFor(nil, regarding: .found)
     }
 
 
@@ -139,7 +139,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
         } else {
             again = true
 
-            signal(nil, regarding: .search)
+            signalFor(nil, regarding: .search)
         }
     }
 

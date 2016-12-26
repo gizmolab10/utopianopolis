@@ -166,6 +166,21 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func zoneNamesWithMatchingStates(_ states: [ZRecordState]) -> String {
+        var names = [String] ()
+
+        findRecordsWithMatchingStates(states) { object in
+            let zone: Zone = object as! Zone
+
+            if let name = zone.zoneName, !names.contains(name) {
+                names.append(name)
+            }
+        }
+
+        return names.joined(separator: ", ")
+    }
+
+
     func recordIDsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecordID] {
         var identifiers = [CKRecordID] ()
 
@@ -263,7 +278,7 @@ class ZRecordsManager: NSObject {
         var record = zoneForRecordID(recordID) as ZRecord?
 
         if record == nil {
-            if travelManager.manifest.record.recordID.recordName == recordID?.recordName {
+            if travelManager.manifest.record?.recordID.recordName == recordID?.recordName {
                 record = travelManager.manifest
             }
         }

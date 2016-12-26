@@ -196,7 +196,7 @@ class ZoneWidget: ZView {
             make.width.equalTo(width)
             make.centerY.equalTo(self) // .offset(-1.0)
             make.right.lessThanOrEqualTo(self).offset(-29.0)
-            make.left.equalTo(self).offset(12.0 + genericOffset.width)
+            make.left.equalTo(self).offset(dotHeight + Double(genericOffset.width))
             make.height.lessThanOrEqualTo(self).offset(-genericOffset.height)
 
             if hasChildren {

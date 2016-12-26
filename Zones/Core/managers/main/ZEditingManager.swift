@@ -33,6 +33,11 @@ class ZEditingManager: NSObject {
     var previousEvent:    ZEvent?
 
 
+    func syncToCloudAndSignal() {
+        controllersManager.syncToCloudAndSignalFor(nil, onCompletion: nil)
+    }
+
+
     // MARK:- API
     // MARK:-
 
@@ -82,7 +87,7 @@ class ZEditingManager: NSObject {
                             } else {
                                 selectionManager.currentlyEditingZone = nil
 
-                                signal(nil, regarding: .data)
+                                signalFor(nil, regarding: .data)
                             }
 
                             return true
@@ -123,7 +128,7 @@ class ZEditingManager: NSObject {
                                 let bookmark = bookmarksManager.addNewBookmarkFor(zone)
 
                                 selectionManager.grab(bookmark)
-                                controllersManager.syncToCloudAndSignalFor(nil)
+                                syncToCloudAndSignal()
 
                                 return true
                             }
@@ -133,7 +138,7 @@ class ZEditingManager: NSObject {
                             if isCommand {
                                 showsSearching = !showsSearching
 
-                                signal(nil, regarding: .search)
+                                signalFor(nil, regarding: .search)
 
                                 return true
                             }
@@ -144,12 +149,12 @@ class ZEditingManager: NSObject {
                                 if !zone.isBookmark {
                                     hereZone = zone
 
-                                    controllersManager.syncToCloudAndSignalFor(nil)
+                                    syncToCloudAndSignal()
                                 } else {
                                     travelManager.travelWhereThisZonePoints(zone, atArrival: { (object, kind) -> (Void) in
                                         self.hereZone = object as! Zone!
                                         
-                                        controllersManager.syncToCloudAndSignalFor(nil)
+                                        self.syncToCloudAndSignal()
                                     })
                                 }
 
@@ -173,8 +178,8 @@ class ZEditingManager: NSObject {
                             }
                         } else if let zone = selectionManager.firstGrabbableZone {
                             switch arrow {
-                            case .right: showRevealerDot(true,  zone: zone, recursively: isCommand) { controllersManager.syncToCloudAndSignalFor(nil) }; break
-                            case .left:  showRevealerDot(false, zone: zone, recursively: isCommand) { controllersManager.syncToCloudAndSignalFor(nil) }; break
+                            case .right: showRevealerDot(true,  zone: zone, recursively: isCommand) { self.syncToCloudAndSignal() }; break
+                            case .left:  showRevealerDot(false, zone: zone, recursively: isCommand) { self.syncToCloudAndSignal() }; break
                             default: return true
                             }
                         }
@@ -246,7 +251,7 @@ class ZEditingManager: NSObject {
             let show = zone.showChildren == false
 
             showRevealerDot(show, zone: zone, recursively: false) {
-                controllersManager.syncToCloudAndSignalFor(nil)
+                self.syncToCloudAndSignal()
             }
         }
     }
@@ -258,31 +263,12 @@ class ZEditingManager: NSObject {
 
     func addZoneTo(_ parentZone: Zone?) {
         addZoneTo(parentZone) { iObject in
-            controllersManager.syncToCloudAndSignalFor(parentZone, onCompletion: { () -> (Void) in
+            controllersManager.syncToCloudAndSignalFor(parentZone) {
                 operationsManager.isReady = true
 
                 widgetsManager.widgetForZone(iObject as? Zone)?.textWidget.becomeFirstResponder()
-                self.signal(parentZone, regarding: .data)
-            })
-        }
-    }
-
-
-    // this is currently not being called
-    
-    func addParentTo(_ zone: Zone?) {
-        if let grandParentZone = zone?.parentZone {
-            addZoneTo(grandParentZone, onCompletion: { iParentZone in
-                selectionManager.grab(zone!)
-
-                // self.actuallyMoveZone(zone!, forceIntoNew: true, persistently: false)
-                self.dispatchAsyncInForegroundAfter(0.5, closure: { () -> (Void) in
-                    operationsManager.isReady = true
-
-                    widgetsManager.widgetForZone(iParentZone as? Zone)?.textWidget.becomeFirstResponder()
-                    self.signal(grandParentZone, regarding: .data)
-                })
-            })
+                self.signalFor(parentZone, regarding: .data)
+            }
         }
     }
 
@@ -325,7 +311,7 @@ class ZEditingManager: NSObject {
 
             selectionManager.currentlyEditingZone = nil
         } else {
-            last = deleteZones(selectionManager.currentlyGrabbedZones)
+            last = deleteZones(selectionManager.currentlyGrabbedZones, in: nil)
 
             selectionManager.currentlyGrabbedZones = []
         }
@@ -334,15 +320,17 @@ class ZEditingManager: NSObject {
             selectionManager.grab(last!)
         }
 
-        controllersManager.syncToCloudAndSignalFor(nil)
+        syncToCloudAndSignal()
     }
 
 
-    @discardableResult private func deleteZones(_ zones: [Zone]) -> Zone? {
+    @discardableResult private func deleteZones(_ zones: [Zone], in parent: Zone?) -> Zone? {
         var last: Zone? = nil
 
         for zone in zones {
-            last = deleteZone(zone)
+            if  zone != parent {
+                last  = deleteZone(zone)
+            }
         }
 
         return last
@@ -351,41 +339,43 @@ class ZEditingManager: NSObject {
 
     @discardableResult private func deleteZone(_ zone: Zone) -> Zone? {
         if !zone.isRoot {
-            if travelManager.storageMode != .bookmarks {
+            var parentZone = zone.parentZone
+
+            if travelManager.storageMode != .bookmarks && !zone.isDeleted {
                 zone.isDeleted = true
 
                 zone.needSave()
             }
 
-            deleteZones(zone.children)
+            deleteZones(zone.children, in: zone)
+            zone.orphan()
 
-            if var parentZone = zone.parentZone {
+            if parentZone != nil {
                 if zone == travelManager.hereZone {
                     dispatchAsyncInForeground {
                         self.revealParent {
                             travelManager.hereZone = parentZone
 
                             selectionManager.grab(parentZone)
-                            controllersManager.syncToCloudAndSignalFor(nil)
+                            self.syncToCloudAndSignal()
                         }
                     }
                 }
 
-                let siblings = parentZone.children
+                let siblings = parentZone?.children
+                let    count = (siblings?.count)!
 
-                if var index = siblings.index(of: zone) {
-                    if siblings.count > 1 {
-                        if index < siblings.count - 1 && (!asTask || index == 0) {
+                if var index = siblings?.index(of: zone) {
+                    if count > 1 {
+                        if index < count - 1 && (!asTask || index == 0) {
                             index += 1
                         } else if index > 0 {
                             index -= 1
                         }
 
-                        parentZone = siblings[index]
+                        parentZone = siblings?[index]
                     }
                 }
-
-                zone.orphan()
 
                 return parentZone
             }
@@ -434,7 +424,7 @@ class ZEditingManager: NSObject {
                     parentZone.children.insert(zone, at:newIndex)
                 }
 
-                signal(parentZone, regarding: .data)
+                signalFor(parentZone, regarding: .data)
             }
         }
     }
@@ -446,9 +436,9 @@ class ZEditingManager: NSObject {
 
     func syncAndSignalAfterMoveAffecting(_ zone: Zone?, persistently: Bool) {
         if persistently {
-            controllersManager.syncToCloudAndSignalFor(zone)
+            controllersManager.syncToCloudAndSignalFor(zone) {}
         } else {
-            signal(zone, regarding: .data)
+            signalFor(zone, regarding: .data)
         }
     }
 
@@ -476,7 +466,7 @@ class ZEditingManager: NSObject {
                         if selectionOnly {
                             selectionManager.grab(siblings[newIndex])
 
-                            signal(there, regarding: .data)
+                            signalFor(there, regarding: .data)
                         } else {
                             there.children.remove(at: index)
                             there.children.insert(zone, at:newIndex)
@@ -539,7 +529,7 @@ class ZEditingManager: NSObject {
                         self.hereZone =  self.rootZone
 
                         selectionManager.grab(self.rootZone)
-                        controllersManager.syncToCloudAndSignalFor(nil)
+                        self.syncToCloudAndSignal()
                     }
                 } else if zone == hereZone || toThere == nil {
                     revealParent {
@@ -554,16 +544,15 @@ class ZEditingManager: NSObject {
                 } else if toThere != nil {
                     selectionManager.grab(toThere!)
 
-                    signal(toThere, regarding: .data)
+                    signalFor(toThere, regarding: .data)
                 }
             } else if travelManager.storageMode != .bookmarks, let fromThere = toThere {
                 toThere     = fromThere.parentZone
                 let closure = {
                     self.hereZone = toThere!
 
-                    zone.orphan()
                     travelManager.manifest.needSave()
-                    self.moveZone(zone, into: toThere!) {
+                    self.moveZone(zone, into: toThere!, orphan: true) {
                         self.syncAndSignalAfterMoveAffecting(toThere, persistently: persistently)
                     }
                 }
@@ -589,8 +578,7 @@ class ZEditingManager: NSObject {
                         }
                     }
                 } else {
-                    zone.orphan()
-                    moveZone(zone, into: toThere!){
+                    moveZone(zone, into: toThere!, orphan: true){
                         self.syncAndSignalAfterMoveAffecting(toThere, persistently: persistently)
                     }
                 }
@@ -646,9 +634,9 @@ class ZEditingManager: NSObject {
         selectionManager.grab(asTask ? zone.children.first! : zone.children.last!)
 
         if hideChildren {
-            controllersManager.syncToCloudAndSignalFor(nil)
+            syncToCloudAndSignal()
         } else {
-            signal(nil, regarding: .data)
+            signalFor(nil, regarding: .data)
         }
     }
 
@@ -665,8 +653,7 @@ class ZEditingManager: NSObject {
 
                     if !toThere.isBookmark {
                         zone.parentZone?.needSave()
-                        zone.orphan()
-                        moveZone(zone, into: toThere){
+                        moveZone(zone, into: toThere, orphan: true){
                             self.syncAndSignalAfterMoveAffecting(toThere, persistently: persistently)
                         }
                     } else {
@@ -684,7 +671,7 @@ class ZEditingManager: NSObject {
                                 }
 
                                 self.report("at arrival")
-                                self.moveZone(mover, into: there){
+                                self.moveZone(mover, into: there, orphan: false){
                                     self.syncAndSignalAfterMoveAffecting(nil, persistently: persistently)
                                 }
                             })
@@ -734,16 +721,20 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveZone(_ zone: Zone, into: Zone, onCompletion: Closure?) {
+    func moveZone(_ zone: Zone, into: Zone, orphan: Bool, onCompletion: Closure?) {
         zone.needSave()
         into.needSave()
         into.needChildren()
 
-        zone.parentZone   = into
         into.showChildren = true
 
         operationsManager.getChildren(false) {
-            let insert = asTask ? 0 : into.children.count
+            if orphan {
+                zone.orphan()
+            }
+
+            zone.parentZone = into
+            let      insert = asTask ? 0 : into.children.count
 
             if asTask {
                 into.children.insert(zone, at: 0)

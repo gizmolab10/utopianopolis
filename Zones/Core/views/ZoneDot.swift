@@ -73,7 +73,7 @@ class ZoneDot: ZView {
             } else {
                 selectionManager.deselect()
                 selectionManager.grab(zone)
-                signal(zone, regarding: .datum)
+                signalFor(zone, regarding: .datum)
             }
         }
     }

@@ -44,7 +44,7 @@ class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
         if find == "" {
             showsSearching = false
 
-            signal(nil, regarding: .search)
+            signalFor(nil, regarding: .search)
         } else {
             cloudManager.searchFor(find) { iObject in
                 let hasResults = ((iObject as? [Any])?.count)! != 0
@@ -54,7 +54,7 @@ class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
                     self.dispatchAsyncInForeground {
                         self.searchBox?.text = ""
 
-                        self.signal(iObject, regarding: .found)
+                        self.signalFor(iObject, regarding: .found)
                     }
                 }
             }
@@ -71,7 +71,7 @@ class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
             workMode       = .editMode
             showsSearching = false
 
-            signal(nil, regarding: .search)
+            signalFor(nil, regarding: .search)
         }
 
         return handledIt

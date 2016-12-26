@@ -247,6 +247,7 @@ class Zone : ZRecord {
 
     override func needChildren() {
         if children.count == 0 {
+//            report("need children of \(zoneName!)")
             super.needChildren()
         }
     }

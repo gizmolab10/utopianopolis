@@ -59,7 +59,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     #endif
                 }
 
-                signal(zone?.parentZone, regarding: .data)
+                signalFor(zone?.parentZone, regarding: .data)
             }
         }
     }

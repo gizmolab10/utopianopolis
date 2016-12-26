@@ -30,8 +30,11 @@ enum ZSignalKind: Int {
 class ZControllersManager: NSObject {
 
 
-    class SignalObject {
-        let closure: SignalClosure!
+    var signalObjectsByControllerID = [ZControllerID : ZSignalObject] ()
+
+
+    class ZSignalObject {
+        let    closure: SignalClosure!
         let controller: ZGenericViewController!
 
         init(_ iClosure: @escaping SignalClosure, forController iController: ZGenericViewController) {
@@ -41,40 +44,38 @@ class ZControllersManager: NSObject {
     }
 
 
-    var controllersMap = [ZControllerID : SignalObject] ()
+    // MARK:- registry
+    // MARK:-
 
 
-    func unregister(_ at: ZControllerID) {
-        controllersMap[at] = nil
-    }
-
-
-    func register(_ iController: ZGenericViewController, at: ZControllerID, closure: @escaping SignalClosure) {
-        if !controllersMap.keys.contains(at) {
-            controllersMap[at] = SignalObject(closure, forController: iController)
+    func register(_ iController: ZGenericViewController, iID: ZControllerID, closure: @escaping SignalClosure) {
+        if !signalObjectsByControllerID.keys.contains(iID) {
+            signalObjectsByControllerID[iID] = ZSignalObject(closure, forController: iController)
         }
     }
 
 
-    func controller(at: ZControllerID) -> ZGenericViewController {
-        let signalObject = controllersMap[at]!
-
-        return signalObject.controller
+    func unregister(_ at: ZControllerID) {
+        signalObjectsByControllerID[at] = nil
     }
 
-    
+
+    // MARK:- signals
+    // MARK:-
+
+
     func displayActivity() {
         dispatchAsyncInForeground {
-            for signalObject in self.controllersMap.values {
+            for signalObject in self.signalObjectsByControllerID.values {
                 signalObject.controller.displayActivity()
             }
         }
     }
 
 
-    func signalAboutObject(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
+    func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
         dispatchAsyncInForeground {
-            for signalObject: SignalObject in self.controllersMap.values {
+            for signalObject: ZSignalObject in self.signalObjectsByControllerID.values {
                 signalObject.closure(object, regarding)
             }
 
@@ -85,23 +86,11 @@ class ZControllersManager: NSObject {
     }
 
 
-    func signalAboutObject(_ object: NSObject?, regarding: ZSignalKind) {
-        signalAboutObject(object, regarding: regarding, onCompletion: nil)
-    }
-
-
     func syncToCloudAndSignalFor(_ zone: Zone?, onCompletion: Closure?) {
-        dispatchAsyncInForeground {
-            self.signalAboutObject(zone, regarding: .data, onCompletion: onCompletion)
+        self.signalFor(zone, regarding: .data, onCompletion: onCompletion)
 
-            operationsManager.sync {
-                zfileManager.save()
-            }
+        operationsManager.sync {
+            zfileManager.save()
         }
-    }
-
-
-    func syncToCloudAndSignalFor(_ zone: Zone?) {
-        syncToCloudAndSignalFor(zone, onCompletion: nil)
     }
 }

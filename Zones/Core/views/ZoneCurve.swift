@@ -52,7 +52,7 @@ class ZoneCurve: ZView {
             let             delta = Double(dragDotCenterY! - textWidgetCenterY!)
             let         threshold = dotHeight / 2.0
 
-            if delta >= threshold {
+            if delta > threshold {
                 kind = .above
             } else if delta < -threshold {
                 kind = .below
