@@ -43,7 +43,7 @@ class ZEditingManager: NSObject {
 
 
     func handleDeferredEvents() {
-        while deferredEvents.count != 0 {
+        while deferredEvents.count != 0 && operationsManager.isReady {
             let event = deferredEvents.remove(at: 0)
 
             handleEvent(event.event!, isWindow: event.isWindow)
