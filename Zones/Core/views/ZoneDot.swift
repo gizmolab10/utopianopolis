@@ -39,7 +39,7 @@ class ZoneDot: ZView {
             self.addSubview(innerDot!)
             innerDot?.setupForZone(widgetZone, asToggle: asToggle)
             // addBorder(thickness: lineThicknes, radius: fingerBreadth / 2.0, color: ZColor.red.cgColor)
-            snp.makeConstraints { (make) in
+            snp.makeConstraints { (make: ConstraintMaker) in
                 make.size.equalTo(CGSize(width: fingerBreadth, height: fingerBreadth))
                 make.center.equalTo(innerDot!)
             }
@@ -50,7 +50,7 @@ class ZoneDot: ZView {
             zlayer.backgroundColor = (shouldHighlight ? selectedColor : unselectedColor).cgColor
 
             addBorder(thickness: CGFloat(lineThicknes), radius: CGFloat(radius), color: selectedColor.cgColor)
-            snp.makeConstraints { (make) in
+            snp.makeConstraints { (make: ConstraintMaker) in
                 let          width = CGFloat(asToggle ? dotHeight : dotHeight * 0.65)
                 let           size = CGSize(width: width, height: CGFloat(dotHeight))
 

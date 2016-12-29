@@ -7,7 +7,7 @@
 //
 
 
-import Foundation
+import SnapKit
 
 #if os(OSX)
     import Cocoa
@@ -63,7 +63,7 @@ class ZoneCurve: ZView {
 
     func constrain() {
         snp.removeConstraints()
-        snp.makeConstraints { (make) in
+        snp.makeConstraints { (make: ConstraintMaker) in
             let halfLineThickness = lineThicknes / 2.0
             let       revealerDot = parent?.revealerDot.innerDot
             let           dragDot = child?.dragDot.innerDot

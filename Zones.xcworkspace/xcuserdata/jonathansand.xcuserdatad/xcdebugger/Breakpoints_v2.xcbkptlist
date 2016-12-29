@@ -9,13 +9,184 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/Core/managers/storage/ZCloudManager.swift"
-            timestampString = "504667650.960523"
+            filePath = "Zones/Core/managers/storage/ZTravelManager.swift"
+            timestampString = "504673152.912063"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "83"
-            endingLineNumber = "83"
-            landmarkName = "establishRootAsHere(_:)"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
+            landmarkName = "travelToWhereThisZonePoints(_:atArrival:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Zones.ZTravelManager.travelToWhereThisZonePoints (Zones.Zone, atArrival : (Swift.Optional&lt;Any&gt;, Zones.ZSignalKind) -&gt; ()) -&gt; ()"
+                  moduleName = "Zones"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/storage/ZTravelManager.swift"
+                  timestampString = "504745359.355788"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "106">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Zones.ZTravelManager.(travelToWhereThisZonePoints (Zones.Zone, atArrival : (Swift.Optional&lt;Any&gt;, Zones.ZSignalKind) -&gt; ()) -&gt; ()).(closure #1)"
+                  moduleName = "Zones"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/storage/ZTravelManager.swift"
+                  timestampString = "504745359.357999"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "19">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Zones.ZTravelManager.(travelToWhereThisZonePoints (Zones.Zone, atArrival : (Swift.Optional&lt;Any&gt;, Zones.ZSignalKind) -&gt; ()) -&gt; ()).(closure #2)"
+                  moduleName = "Zones"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/storage/ZTravelManager.swift"
+                  timestampString = "504745359.360046"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "4">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Zones.ZTravelManager.(travelToWhereThisZonePoints (Zones.Zone, atArrival : (Swift.Optional&lt;Any&gt;, Zones.ZSignalKind) -&gt; ()) -&gt; ()).(closure #3)"
+                  moduleName = "Zones"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/storage/ZTravelManager.swift"
+                  timestampString = "504745359.362015"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "12">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Zones.ZTravelManager.(travelToWhereThisZonePoints (Zones.Zone, atArrival : (Swift.Optional&lt;Any&gt;, Zones.ZSignalKind) -&gt; ()) -&gt; ()).(closure #3).(closure #1)"
+                  moduleName = "Zones"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/storage/ZTravelManager.swift"
+                  timestampString = "504745359.363925"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "15">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Zones.ZTravelManager.(travelToWhereThisZonePoints (Zones.Zone, atArrival : (Swift.Optional&lt;Any&gt;, Zones.ZSignalKind) -&gt; ()) -&gt; ()).(closure #5)"
+                  moduleName = "Zones"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/storage/ZTravelManager.swift"
+                  timestampString = "504745359.367734"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "4">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Zones.ZTravelManager.(travelToWhereThisZonePoints (Zones.Zone, atArrival : (Swift.Optional&lt;Any&gt;, Zones.ZSignalKind) -&gt; ()) -&gt; ()).(closure #6)"
+                  moduleName = "Zones"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/storage/ZTravelManager.swift"
+                  timestampString = "504745359.370988"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "12">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Zones/Core/managers/main/ZEditingManager.swift"
+            timestampString = "504673161.447299"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "262"
+            endingLineNumber = "262"
+            landmarkName = "travelThroughBookmark(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Zones.ZEditingManager.(travelThroughBookmark (Zones.Zone) -&gt; ()).(closure #1)"
+                  moduleName = "Zones"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/main/ZEditingManager.swift"
+                  timestampString = "504745359.378738"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "262"
+                  endingLineNumber = "262"
+                  offsetFromSymbolStart = "31">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Zones.ZEditingManager.(travelThroughBookmark (Zones.Zone) -&gt; ()).(closure #1)"
+                  moduleName = "Zones"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/main/ZEditingManager.swift"
+                  timestampString = "504745359.380688"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "262"
+                  endingLineNumber = "262"
+                  offsetFromSymbolStart = "326">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Zones/Core/managers/storage/ZTravelManager.swift"
+            timestampString = "504673269.036429"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "149"
+            endingLineNumber = "149"
+            landmarkName = "travelToWhereThisZonePoints(_:atArrival:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

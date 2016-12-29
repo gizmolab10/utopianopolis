@@ -145,7 +145,7 @@ class ZTravelManager: NSObject {
                 if linkID.recordName == rootNameKey {
                     closure()
                 } else {
-                    cloudManager.assureRecordExists(withRecordID: linkID, storageMode: mode, recordType: zoneTypeKey, onCompletion: { iRecord in
+                    cloudManager.assureRecordExists(withRecordID: linkID, storageMode: mode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) in
                         self.manifest.here     = CKReference(record: iRecord!, action: .none)
                         self.manifest.hereZone = nil
 
@@ -168,7 +168,7 @@ class ZTravelManager: NSObject {
                 if there != nil {
                     closure()
                 } else {
-                    cloudManager.assureRecordExists(withRecordID: linkID, storageMode: storageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) -> (Void) in
+                    cloudManager.assureRecordExists(withRecordID: linkID, storageMode: storageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) in
                         there = Zone(record: iRecord, storageMode: self.storageMode)
 
                         closure()

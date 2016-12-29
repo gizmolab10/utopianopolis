@@ -19,6 +19,11 @@ class ZManifest: ZRecord {
     var        _hereZone:           Zone?
 
 
+    override func cloudProperties() -> [String] {
+        return super.cloudProperties() + [#keyPath(here), #keyPath(bookmarks)]
+    }
+
+
     var hereZone: Zone? {
         get {
             if _hereZone == nil {
@@ -40,10 +45,5 @@ class ZManifest: ZRecord {
                 needSave()
             }
         }
-    }
-
-
-    override func cloudProperties() -> [String] {
-        return super.cloudProperties() + [#keyPath(here), #keyPath(bookmarks)]
     }
 }

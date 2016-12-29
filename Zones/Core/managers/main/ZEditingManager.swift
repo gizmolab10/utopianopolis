@@ -134,7 +134,7 @@ class ZEditingManager: NSObject {
 
                                     controllersManager.syncToCloudAndSignalFor(nil) {}
                                 } else {
-                                    travelManager.travelToWhereThisZonePoints(zone, atArrival: { (object, kind) -> (Void) in
+                                    travelManager.travelToWhereThisZonePoints(zone, atArrival: { (object, kind) in
                                         self.hereZone = object as! Zone!
                                         
                                         controllersManager.syncToCloudAndSignalFor(nil) {}
@@ -257,6 +257,19 @@ class ZEditingManager: NSObject {
     }
 
 
+    func travelThroughBookmark(_ bookmark: Zone) {
+        travelManager.travelToWhereThisZonePoints(bookmark, atArrival: { (object, kind) in
+            if let there: Zone = object as? Zone {
+                self.hereZone  = there
+
+                selectionManager.grab(there)
+                travelManager.manifest.needSave()
+                controllersManager.syncToCloudAndSignalFor(nil) {}
+            }
+        })
+    }
+    
+
     // MARK:- creation
     // MARK:-
 
@@ -338,9 +351,9 @@ class ZEditingManager: NSObject {
 
 
     @discardableResult private func deleteZone(_ zone: Zone) -> Zone? {
-        if !zone.isRoot {
-            var parentZone = zone.parentZone
+        var parentZone = zone.parentZone
 
+        if !zone.isRoot {
             if travelManager.storageMode != .bookmarks && !zone.isDeleted {
                 zone.isDeleted = true
 
@@ -348,7 +361,6 @@ class ZEditingManager: NSObject {
             }
 
             deleteZones(zone.children, in: zone)
-            zone.orphan()
 
             if parentZone != nil {
                 if zone == travelManager.hereZone {
@@ -376,12 +388,12 @@ class ZEditingManager: NSObject {
                         parentZone = siblings?[index]
                     }
                 }
-
-                return parentZone
             }
+
+            zone.orphan()
         }
 
-        return nil
+        return parentZone
     }
 
 
@@ -615,19 +627,6 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func travelThroughBookmark(_ bookmark: Zone) {
-        travelManager.travelToWhereThisZonePoints(bookmark, atArrival: { (object, kind) -> (Void) in
-            if let there: Zone = object as? Zone {
-                self.hereZone  = there
-
-                selectionManager.grab(there)
-                travelManager.manifest.needSave()
-                controllersManager.syncToCloudAndSignalFor(nil) {}
-            }
-        })
-    }
-
-
     func moveInto(selectionOnly: Bool, extreme: Bool) {
         if let zone: Zone = selectionManager.firstGrabbableZone {
             if !selectionOnly {
@@ -687,7 +686,7 @@ class ZEditingManager: NSObject {
                         let closure = {
                             selectionManager.grab(mover)
 
-                            travelManager.travelToWhereThisZonePoints(toThere, atArrival: { (object, kind) -> (Void) in
+                            travelManager.travelToWhereThisZonePoints(toThere, atArrival: { (object, kind) in
                                 let              there = object as! Zone
                                 travelManager.hereZone = there
 

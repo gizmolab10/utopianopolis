@@ -115,7 +115,7 @@ class ZRecordsManager: NSObject {
     func hasRecord(_ iRecord: ZRecord, forStates: [ZRecordState]) -> Bool {
         var found = false
 
-        findRecordByRecordID(iRecord.record?.recordID, forStates: forStates, onEach: { (state, record) in
+        findRecordByRecordID(iRecord.record?.recordID, forStates: forStates, onEach: { (state: ZRecordState, record: ZRecord) in
             found = true
         })
 
@@ -137,7 +137,7 @@ class ZRecordsManager: NSObject {
     }
 
     func removeRecordByRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState]) {
-        findRecordByRecordID(iRecordID, forStates: forStates, onEach: { (state, record) in
+        findRecordByRecordID(iRecordID, forStates: forStates, onEach: { (state: ZRecordState, record: ZRecord) in
             var records = self.recordsForState(state)
 
             if let index = records.index(of: record) {
@@ -184,7 +184,7 @@ class ZRecordsManager: NSObject {
     func recordIDsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecordID] {
         var identifiers = [CKRecordID] ()
 
-        findRecordsWithMatchingStates(states) { (object) -> (Void) in
+        findRecordsWithMatchingStates(states) { object in
             let zone: ZRecord = object as! ZRecord
 
             if let record = zone.record, !identifiers.contains(record.recordID) {
@@ -199,7 +199,7 @@ class ZRecordsManager: NSObject {
     func parentIDsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecordID] {
         var parents = [CKRecordID] ()
 
-        findRecordsWithMatchingStates(states) { (object) -> (Void) in
+        findRecordsWithMatchingStates(states) { object in
             let zone: Zone = object as! Zone
 
             if let reference = zone.parent {
@@ -218,7 +218,7 @@ class ZRecordsManager: NSObject {
     func recordsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecord] {
         var objects = [CKRecord] ()
 
-        findRecordsWithMatchingStates(states) { (object) -> (Void) in
+        findRecordsWithMatchingStates(states) { object in
             let zone: ZRecord = object as! ZRecord
 
             if let record = zone.record, !objects.contains(record) {
@@ -233,7 +233,7 @@ class ZRecordsManager: NSObject {
     func referencesWithMatchingStates(_ states: [ZRecordState]) -> [CKReference] {
         var references = [CKReference] ()
 
-        findRecordsWithMatchingStates(states) { (object) -> (Void) in
+        findRecordsWithMatchingStates(states) { object in
             if let record: ZRecord = object as? ZRecord, record.record != nil {
                 let reference: CKReference = CKReference(recordID: record.record.recordID, action: .none)
 

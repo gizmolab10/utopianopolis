@@ -42,11 +42,11 @@ class ZoneWidget: ZView {
                 _textWidget.setup()
                 addSubview(_textWidget)
 
-                _textWidget.snp.makeConstraints { (make) -> Void in
+                _textWidget.snp.makeConstraints { (make: ConstraintMaker) -> Void in
                     make.width.equalTo(200.0)
                 }
 
-                snp.makeConstraints { (make) -> Void in
+                snp.makeConstraints { (make: ConstraintMaker) -> Void in
                     make.centerY.equalTo(_textWidget)
                     make.size.greaterThanOrEqualTo(_textWidget)
                 }
@@ -65,7 +65,7 @@ class ZoneWidget: ZView {
 
                 addSubview(_childrenView)
 
-                _childrenView.snp.makeConstraints { (make) -> Void in
+                _childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
                     make.top.bottom.right.equalTo(self)
                 }
             }
@@ -93,7 +93,7 @@ class ZoneWidget: ZView {
             inView?.addSubview(self)
 
             if atIndex == -1 {
-                snp.remakeConstraints { (make) -> Void in
+                snp.remakeConstraints { (make: ConstraintMaker) -> Void in
                     make.center.equalTo(inView!)
                 }
             }
@@ -162,7 +162,7 @@ class ZoneWidget: ZView {
 
 
     func layoutDragHighlight() {
-        dragHighlightView.snp.makeConstraints({ (make) in
+        dragHighlightView.snp.makeConstraints({ (make: ConstraintMaker) in
             make.top.bottom.equalTo(self)
             make.right.equalTo(self).offset(-10.0)
             make.left.equalTo(self).offset(8.0)
@@ -188,7 +188,7 @@ class ZoneWidget: ZView {
 
     func layoutTextField() {
         textWidget.snp.removeConstraints()
-        textWidget.snp.makeConstraints { (make) -> Void in
+        textWidget.snp.makeConstraints { (make: ConstraintMaker) -> Void in
             let isSelected = selectionManager.isSelected(widgetZone)
             let       font = isSelected ? grabbedWidgetFont : widgetFont
             let      width = textWidget.text!.widthForFont(font) + 5.0
@@ -245,7 +245,7 @@ class ZoneWidget: ZView {
                     childWidget?.layoutInView(childrenView, atIndex: index, recursing: true)
 
                     childWidget?.snp.removeConstraints()
-                    childWidget?.snp.makeConstraints({ (make) in
+                    childWidget?.snp.makeConstraints({ (make: ConstraintMaker) in
                         if previous != nil {
                             make.bottom.equalTo((previous?.snp.top)!)
                         } else {
@@ -289,7 +289,7 @@ class ZoneWidget: ZView {
 
                 siblingLines.append(siblingLine!)
                 addSubview(siblingLine!)
-                siblingLine?.snp.makeConstraints({ (make) in
+                siblingLine?.snp.makeConstraints({ (make: ConstraintMaker) in
                     make.width.height.equalTo(lineThicknes)
                     make.centerX.equalTo(textWidget.snp.right).offset(6.0)
                     make.centerY.equalTo(textWidget)
@@ -306,7 +306,7 @@ class ZoneWidget: ZView {
 
         dragDot.innerDot?.snp.removeConstraints()
         dragDot.setupForZone(widgetZone, asToggle: false)
-        dragDot.innerDot?.snp.makeConstraints({ (make) in
+        dragDot.innerDot?.snp.makeConstraints({ (make: ConstraintMaker) in
             make.right.equalTo(textWidget.snp.left)
             make.centerY.equalTo(textWidget).offset(0.5)
         })
@@ -322,7 +322,7 @@ class ZoneWidget: ZView {
 
             revealerDot.innerDot?.snp.removeConstraints()
             revealerDot.setupForZone(widgetZone, asToggle: true)
-            revealerDot.innerDot?.snp.makeConstraints({ (make) in
+            revealerDot.innerDot?.snp.makeConstraints({ (make: ConstraintMaker) in
                 make.left.equalTo(textWidget.snp.right).offset(-1.0)
                 make.centerY.equalTo(textWidget).offset(0.5)
                 make.right.lessThanOrEqualToSuperview().offset(-1.0)
