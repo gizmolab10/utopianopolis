@@ -53,9 +53,9 @@ import CloudKit
 
 
     extension NSView {
-        var zlayer: CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
-        var isUserInteractionEnabled: Bool { get { return true } set {} }
-        var recognizers: [NSGestureRecognizer] { get { return gestureRecognizers } }
+        var                   zlayer:               CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
+        var isUserInteractionEnabled:                  Bool { get { return true }                      set {} }
+        var              recognizers: [NSGestureRecognizer] { get { return gestureRecognizers } }
 
 
         func clear() {
@@ -299,15 +299,6 @@ extension String {
 extension Character {
     var asciiValue: UInt32? {
         return String(self).unicodeScalars.filter{$0.isASCII}.first?.value
-    }
-}
-
-
-extension NSMutableArray {
-    func remove(_ object: Any?) {
-        if object != nil {
-            remove(at: index(of: object))
-        }
     }
 }
 

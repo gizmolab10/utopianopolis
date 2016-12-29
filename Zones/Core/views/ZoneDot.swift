@@ -38,9 +38,9 @@ class ZoneDot: ZView {
             setupGestures(self, action: #selector(ZoneDot.gestureEvent))
             self.addSubview(innerDot!)
             innerDot?.setupForZone(widgetZone, asToggle: asToggle)
-            // addBorder(thickness: lineThicknes, radius: userTouchLength / 2.0, color: ZColor.red.cgColor)
+            // addBorder(thickness: lineThicknes, radius: fingerBreadth / 2.0, color: ZColor.red.cgColor)
             snp.makeConstraints { (make) in
-                make.size.equalTo(CGSize(width: userTouchLength, height: userTouchLength))
+                make.size.equalTo(CGSize(width: fingerBreadth, height: fingerBreadth))
                 make.center.equalTo(innerDot!)
             }
         } else {

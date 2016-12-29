@@ -35,7 +35,7 @@ class ZMainViewController: ZGenericViewController {
             make.height.equalTo(0.0)
         })
 
-        dispatchAsyncInForegroundAfter(0.1) {
+        dispatchAsyncInForegroundAfter(0.1) { // can't be done during awakeFromNib
             self.searchResultsView?.removeFromSuperview()
         }
     }
@@ -46,6 +46,7 @@ class ZMainViewController: ZGenericViewController {
         case .found:
             let isSearching = workMode == .searchMode
 
+            // show(false, view: <#T##ZView#>)
             show ( isSearching, view: searchResultsView!)
             show (!isSearching, view: editorView!)
 

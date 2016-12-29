@@ -67,12 +67,17 @@ class ZOperationsManager: NSObject {
     }
 
 
+    func families(_ onCompletion: @escaping Closure) {
+        setupAndRun([.parent, .children]) { onCompletion() }
+    }
+
+
     func sync(_ onCompletion: @escaping Closure) {
         setupAndRun([.create, .parent, .children, .merge, .flush]) { onCompletion() }
     }
 
 
-    func getChildren(_ recursively: Bool, onCompletion: @escaping Closure) {
+    func children(_ recursively: Bool, onCompletion: @escaping Closure) {
         recursivelyExpand = recursively
         
         setupAndRun([.children]) {
@@ -135,7 +140,7 @@ class ZOperationsManager: NSObject {
         let          operation = waitingOps[identifier]!
         waitingOps[identifier] = nil
 
-        report(String(describing: identifier))
+        // report(String(describing: identifier))
 
         switch identifier {
         case .file:        zfileManager.restore();           operation.finish();   break

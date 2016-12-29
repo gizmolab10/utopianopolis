@@ -32,6 +32,7 @@ class Zone : ZRecord {
     dynamic var    parent: CKReference?
     dynamic var zoneOrder:    NSNumber?
     dynamic var zoneState:    NSNumber?
+    dynamic var zoneLevel:    NSNumber?
     var          children      = [Zone] ()
     var       _parentZone:        Zone?
     var        _crossLink:     ZRecord?
@@ -48,7 +49,8 @@ class Zone : ZRecord {
                 #keyPath(zoneName),
                 #keyPath(zoneLink),
                 #keyPath(zoneOrder),
-                #keyPath(zoneState)]
+                #keyPath(zoneState),
+                #keyPath(zoneLevel)]
     }
 
 
@@ -106,7 +108,30 @@ class Zone : ZRecord {
     }
 
 
-    var stateBooleans: ZoneState {
+    var level: Int {
+        get {
+            if zoneLevel == nil {
+                updateZoneProperties()
+
+                if zoneLevel == nil {
+                    zoneLevel = NSNumber(value: unlevel)
+                }
+            }
+
+            return (zoneLevel?.intValue)!
+        }
+
+        set {
+            if newValue != level {
+                zoneLevel = NSNumber(value: newValue)
+
+                self.maybeNeedMerge()
+            }
+        }
+    }
+
+
+    var state: ZoneState {
         get {
             if zoneState == nil {
                 updateZoneProperties()
@@ -120,7 +145,7 @@ class Zone : ZRecord {
         }
 
         set {
-            if newValue != stateBooleans {
+            if newValue != state {
                 zoneState = NSNumber(integerLiteral: newValue.rawValue)
                 
                 self.maybeNeedMerge()
@@ -131,15 +156,15 @@ class Zone : ZRecord {
 
     var isDeleted: Bool {
         get {
-            return stateBooleans.contains(.IsDeleted)
+            return state.contains(.IsDeleted)
         }
 
         set {
             if newValue != isDeleted {
                 if newValue {
-                    stateBooleans.insert(.IsDeleted)
+                    state.insert(.IsDeleted)
                 } else {
-                    stateBooleans.remove(.IsDeleted)
+                    state.remove(.IsDeleted)
                 }
             }
         }
@@ -148,15 +173,15 @@ class Zone : ZRecord {
 
     var hasChildren: Bool {
         get {
-            return stateBooleans.contains(.HasChildren)
+            return state.contains(.HasChildren)
         }
 
         set {
             if newValue != hasChildren {
                 if newValue {
-                    stateBooleans.insert(.HasChildren)
+                    state.insert(.HasChildren)
                 } else {
-                    stateBooleans.remove(.HasChildren)
+                    state.remove(.HasChildren)
                 }
             }
         }
@@ -165,15 +190,15 @@ class Zone : ZRecord {
 
     var showChildren: Bool {
         get {
-            return stateBooleans.contains(.ShowsChildren)
+            return state.contains(.ShowsChildren)
         }
 
         set {
             if newValue != showChildren {
                 if newValue {
-                    stateBooleans.insert(.ShowsChildren)
+                    state.insert(.ShowsChildren)
                 } else {
-                    stateBooleans.remove(.ShowsChildren)
+                    state.remove(.ShowsChildren)
                 }
             }
         }
@@ -206,6 +231,16 @@ class Zone : ZRecord {
         }
     }
 
+
+    static func == ( left: Zone, right: Zone) -> Bool {
+        let unequal = left != right // avoid infinite recursion by using negated version of this infix operator
+
+        if  unequal && left.record != nil && right.record != nil {
+            return left.record.recordID.recordName == right.record.recordID.recordName
+        }
+
+        return !unequal
+    }
 
     subscript(i: Int) -> Zone? {
         if i < children.count && i >= 0 {
@@ -247,7 +282,7 @@ class Zone : ZRecord {
 
     override func needChildren() {
         if children.count == 0 {
-//            report("need children of \(zoneName!)")
+            // report("need children of \(zoneName!)")
             super.needChildren()
         }
     }
@@ -268,6 +303,9 @@ class Zone : ZRecord {
                 return
             }
 
+            // make sure it's not already been added
+            // NOTE: both must have a record for this to be effective
+
             if child?.record != nil {
                 let identifier = child?.record.recordID.recordName
 
@@ -277,6 +315,8 @@ class Zone : ZRecord {
                     }
                 }
             }
+
+            child?.updateLevel()
 
             children.insert(child!, at: index)
         }
@@ -345,6 +385,34 @@ class Zone : ZRecord {
     }
 
 
+    @discardableResult func traverseApply(_ block: ZoneToBooleanClosure) -> Bool {
+        var stop = block(self)
+
+        if !stop {
+            for child in children {
+                if child.traverseApply(block) {
+                    stop = true
+
+                    break
+                }
+            }
+        }
+
+        return stop
+    }
+
+
+    func updateLevel() {
+        traverseApply { iZone -> Bool in
+            if let parentLevel = iZone.parentZone?.level, parentLevel != unlevel {
+                iZone.level = parentLevel + 1
+            }
+
+            return false
+        }
+    }
+
+
     // MARK:- file persistence
     // MARK:-
 
@@ -380,6 +448,7 @@ class Zone : ZRecord {
         var               dict = super.storageDictionary()!
         dict[zoneNameKey]      = zoneName as NSObject?
         dict[showChildrenKey]  = NSNumber(booleanLiteral: showChildren)
+
 
         for child: Zone in children {
             childrenStore.append(child.storageDictionary()!)

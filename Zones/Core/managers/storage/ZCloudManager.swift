@@ -81,6 +81,7 @@ class ZCloudManager: ZRecordsManager {
                 let               root = Zone(record: iRecord, storageMode: travelManager.storageMode)
                 travelManager.hereZone = root
                 travelManager.rootZone = root
+                root.level             = 0
 
                 root.needChildren()
                 travelManager.manifest.needSave()
@@ -178,7 +179,7 @@ class ZCloudManager: ZRecordsManager {
                         parent?.needChildren()
 
                         for orphan in orphans {
-                            if iRecordID?.recordName == orphan.recordName, let child = self.zoneForRecordID(orphan) {
+                            if let child = self.zoneForRecordID(orphan), let parentID = child.parentZone?.record.recordID, parentID == parent?.record.recordID {
                                 parent?.children.append(child)
                             }
                         }
@@ -445,7 +446,7 @@ class ZCloudManager: ZRecordsManager {
                 self.dispatchAsyncInForeground {
                     self.signalFor(parent, regarding: .data)
 
-                    operationsManager.getChildren(false) {
+                    operationsManager.children(false) {
                         self.signalFor(parent, regarding: .data)
                     }
                 }

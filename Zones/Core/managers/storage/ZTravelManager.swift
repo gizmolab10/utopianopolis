@@ -110,7 +110,7 @@ class ZTravelManager: NSObject {
     }
 
 
-    func travelWhereThisZonePoints(_ zone: Zone, atArrival: @escaping SignalClosure) {
+    func travelToWhereThisZonePoints(_ zone: Zone, atArrival: @escaping SignalClosure) {
         var there: Zone? = nil
         let  arriveThere = { atArrival(there, .data) }
 

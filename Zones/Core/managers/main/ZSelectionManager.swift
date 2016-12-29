@@ -83,16 +83,12 @@ class ZSelectionManager: NSObject {
 
 
     func deselectDragWithin(_ zone: Zone) {
-        for child in zone.children {
-            if child != zone {
-                if currentlyGrabbedZones.contains(child) {
-                    if let index = currentlyGrabbedZones.index(of: child) {
-                        currentlyGrabbedZones.remove(at: index)
-                    }
-                }
-
-                deselectDragWithin(child)
+        zone.traverseApply { iZone -> Bool in
+            if iZone != zone && currentlyGrabbedZones.contains(iZone), let index = currentlyGrabbedZones.index(of: iZone) {
+                currentlyGrabbedZones.remove(at: index)
             }
+
+            return false
         }
     }
     
