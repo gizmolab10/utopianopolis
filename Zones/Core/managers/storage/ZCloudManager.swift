@@ -78,12 +78,11 @@ class ZCloudManager: ZRecordsManager {
 
         self.assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) in
             if iRecord != nil {
-                let               root = Zone(record: iRecord, storageMode: travelManager.storageMode)
+                let               root = self.zoneForRecord(iRecord!)
                 travelManager.hereZone = root
                 travelManager.rootZone = root
                 root.level             = 0
 
-                root.needChildren()
                 travelManager.manifest.needSave()
             }
 
@@ -107,15 +106,10 @@ class ZCloudManager: ZRecordsManager {
                         if iHereRecord == nil || iHereRecord?[zoneNameKey] == nil {
                             self.establishRootAsHere(onCompletion)
                         } else {
-                            let               here = Zone(record: iHereRecord, storageMode: travelManager.storageMode)
+                            let               here = self.zoneForRecord(iHereRecord!)
                             travelManager.hereZone = here
 
                             travelManager.manifest.needSave()
-                            here.updateZoneProperties()
-
-                            if here.showChildren {
-                                here.needChildren()
-                            }
 
                             onCompletion?()
                         }
@@ -172,11 +166,7 @@ class ZCloudManager: ZRecordsManager {
                     } else if let error: CKError = iError as? CKError {
                         self.reportError(error)
                     } else {
-                        parent = Zone(record: iRecord, storageMode: travelManager.storageMode)
-
-                        parent?.register()
-                        parent?.updateZoneProperties()
-                        parent?.needChildren()
+                        parent = self.zoneForRecord(iRecord!)
 
                         for orphan in orphans {
                             if let child = self.zoneForRecordID(orphan), let parentID = child.parentZone?.record.recordID, parentID == parent?.record.recordID {
@@ -381,7 +371,7 @@ class ZCloudManager: ZRecordsManager {
 
             clearState(.needsChildren)
             report("fetching children of \(zones)")
-            cloudQueryUsingPredicate(predicate, onCompletion: { iRecord in
+            cloudQueryUsingPredicate(predicate, onCompletion: { (iRecord: CKRecord?) in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                     for parent in parentsNeedingResort {
                         parent.respectOrder()
@@ -391,21 +381,15 @@ class ZCloudManager: ZRecordsManager {
 
                     self.fetchChildren(onCompletion) // recurse: try another fetch
                 } else {
-                    var child = self.zoneForRecordID(iRecord?.recordID)
+                    let child = self.zoneForRecord(iRecord!)
 
-                    if child == nil {
-                        child = Zone(record: iRecord, storageMode: travelManager.storageMode)
+                    if recursivelyExpand {
+                        child.needChildren()
                     }
 
-                    child?.updateZoneProperties()
-
-                    if (child?.showChildren)! || recursivelyExpand {
-                        child?.needChildren()
-                    }
-
-                    if let parent = child?.parentZone {
+                    if let parent = child.parentZone {
                         if parent != child {
-                            parent.addChild(child!)
+                            parent.addChild(child)
 
                             if !parentsNeedingResort.contains(parent) {
                                 parentsNeedingResort.append(parent)
@@ -415,7 +399,7 @@ class ZCloudManager: ZRecordsManager {
                         return
                     }
 
-                    self.reportError(child?.zoneName)
+                    self.reportError(child.zoneName)
                 }
             })
         }
@@ -427,22 +411,10 @@ class ZCloudManager: ZRecordsManager {
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
         assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { iRecord in
-            var         record = self.recordForRecordID(iRecord?.recordID)
-            let           zone = (record as? Zone)!
-            var parent:  Zone? = nil
-
-            if  record == nil {
-                record = Zone(record: iRecord, storageMode: travelManager.storageMode) // it could be a ZManifest record, TODO: detect and correct
-            } else {
-                record?.record = iRecord
-                parent         = zone.parentZone
-            }
-
-            record?.updateZoneProperties()
+            let   zone = self.zoneForRecord(iRecord!)
+            let parent = zone.parentZone
 
             if  zone.showChildren {
-                zone.needChildren()
-
                 self.dispatchAsyncInForeground {
                     self.signalFor(parent, regarding: .data)
 
@@ -463,6 +435,10 @@ class ZCloudManager: ZRecordsManager {
         } else {
             database?.fetch(withRecordID: recordID) { (fetched: CKRecord?, fetchError: Error?) in
                 if (fetchError == nil) {
+                    if let zone = self.zoneForRecordID(fetched?.recordID), zone.zoneName == nil {
+                        zone.record = fetched
+                    }
+
                     onCompletion(fetched!)
                 } else {
                     let created: CKRecord = CKRecord(recordType: recordType, recordID: recordID)

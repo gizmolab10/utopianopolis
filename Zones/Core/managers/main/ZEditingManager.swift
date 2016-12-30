@@ -135,8 +135,6 @@ class ZEditingManager: NSObject {
                                     controllersManager.syncToCloudAndSignalFor(nil) {}
                                 } else {
                                     travelManager.travelToWhereThisZonePoints(zone, atArrival: { (object, kind) in
-                                        self.hereZone = object as! Zone!
-                                        
                                         controllersManager.syncToCloudAndSignalFor(nil) {}
                                     })
                                 }
@@ -204,10 +202,6 @@ class ZEditingManager: NSObject {
             zone.needSave()
             selectionManager.grab(parent)
             showRevealerDot(show, zone: parent, recursively: recursively, onCompletion: onCompletion)
-//        } else if recursively {
-//            let level = levelFor(show, zone: zone)
-//
-//            report("showRevealerDot '\(zone.zoneName!)' level is \(level)")
         } else {
             if  zone.showChildren != show {
                 zone.showChildren  = show
@@ -260,8 +254,6 @@ class ZEditingManager: NSObject {
     func travelThroughBookmark(_ bookmark: Zone) {
         travelManager.travelToWhereThisZonePoints(bookmark, atArrival: { (object, kind) in
             if let there: Zone = object as? Zone {
-                self.hereZone  = there
-
                 selectionManager.grab(there)
                 travelManager.manifest.needSave()
                 controllersManager.syncToCloudAndSignalFor(nil) {}
@@ -296,7 +288,7 @@ class ZEditingManager: NSObject {
                     let insert = asTask ? 0 : (zone?.children.count)!
                     let  child = Zone(record: record, storageMode: travelManager.storageMode)
 
-                    child.markForStates([.needsCreate])
+                    child.needCreate()
                     widgetsManager.widgetForZone(zone!)?.textWidget.resignFirstResponder()
 
                     if asTask {
@@ -687,8 +679,7 @@ class ZEditingManager: NSObject {
                             selectionManager.grab(mover)
 
                             travelManager.travelToWhereThisZonePoints(toThere, atArrival: { (object, kind) in
-                                let              there = object as! Zone
-                                travelManager.hereZone = there
+                                let there = object as! Zone
 
                                 if !same {
                                     self.applyModeRecursivelyTo(mover, parentZone: nil)
@@ -739,7 +730,7 @@ class ZEditingManager: NSObject {
                 applyModeRecursivelyTo(child, parentZone: zone)
             }
 
-            zone!.markForStates([.needsCreate])
+            zone!.needCreate()
             zone?.updateCloudProperties()
         }
     }
