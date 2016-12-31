@@ -141,6 +141,8 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
             signalFor(nil, regarding: .search)
         }
+
+        removeMonitorAsync()
     }
 
 
