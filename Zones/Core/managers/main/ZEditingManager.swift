@@ -668,21 +668,27 @@ class ZEditingManager: NSObject {
 
                     if !toThere.isBookmark {
                         let parent = zone.parentZone
-                        parent?.needSave()
+
+                        zone.orphan()
                         moveZone(zone, into: toThere, orphan: true){
                             controllersManager.syncToCloudAndSignalFor(parent) {}
                         }
                     } else {
-                        let    same = zone.storageMode == toThere.crossLink?.storageMode
-                        var   mover = zone
-                        let closure = {
+
+                        ///////////////////////////////
+                        // move zone through a bookmark
+                        ///////////////////////////////
+
+                        var         mover = zone
+                        let     sameGraph = zone.storageMode == toThere.crossLink?.storageMode
+                        let grabAndTravel = {
                             selectionManager.grab(mover)
 
                             travelManager.travelToWhereThisZonePoints(toThere, atArrival: { (object, kind) in
                                 let there = object as! Zone
 
-                                if !same {
-                                    self.applyModeRecursivelyTo(mover, parentZone: nil)
+                                if !sameGraph {
+                                    self.applyModeRecursivelyTo(mover)
                                 }
 
                                 self.report("at arrival")
@@ -692,22 +698,21 @@ class ZEditingManager: NSObject {
                             })
                         }
 
-                        if same {
+                        if sameGraph {
                             mover.orphan()
 
-                            closure()
+                            grabAndTravel()
                         } else {
-                            let       link = zone.crossLink
-                            let linkIsRoot = link?.record == nil || link?.record.recordID.recordName == rootNameKey
+                            let crossLink = mover.crossLink
 
-                            if linkIsRoot || !zone.isBookmark {
-                                mover = zone.deepCopy()
-                            } else {
+                            if mover.isBookmark && crossLink?.record != nil && !(crossLink?.isRoot)! {
                                 mover.orphan()
+                            } else {
+                                mover = zone.deepCopy()
                             }
 
                             operationsManager.sync {
-                                self.dispatchAsyncInForeground(closure)
+                                grabAndTravel()
                             }
                         }
                     }
@@ -717,17 +722,13 @@ class ZEditingManager: NSObject {
     }
 
 
-    func applyModeRecursivelyTo(_ zone: Zone?, parentZone: Zone?) {
+    func applyModeRecursivelyTo(_ zone: Zone?) {
         if zone != nil {
             zone?.record      = CKRecord(recordType: zoneTypeKey)
             zone?.storageMode = travelManager.storageMode
 
-            if parentZone != nil {
-                zone?.parentZone = parentZone
-            }
-
             for child in (zone?.children)! {
-                applyModeRecursivelyTo(child, parentZone: zone)
+                applyModeRecursivelyTo(child)
             }
 
             zone!.needCreate()

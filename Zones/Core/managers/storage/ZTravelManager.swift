@@ -139,7 +139,7 @@ class ZTravelManager: NSObject {
             ////////////////////////
 
             let recordIDOfLink = crossLink.record.recordID
-            let pointsAtHere   = recordIDOfLink.recordName == rootNameKey
+            let pointsAtHere   = crossLink.isRoot
 
             if  storageMode != mode {
                 storageMode  = mode

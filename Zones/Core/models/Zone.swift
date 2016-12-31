@@ -37,7 +37,6 @@ class Zone : ZRecord {
     var       _parentZone:        Zone?
     var        _crossLink:     ZRecord?
     var        isBookmark:         Bool { get { return crossLink != nil } }
-    var            isRoot:         Bool { get { return record != nil && record.recordID.recordName == rootNameKey } }
 
 
     // MARK:- properties
@@ -290,6 +289,8 @@ class Zone : ZRecord {
 
     func orphan() {
         parentZone?.removeChild(self)
+        needSave()
+
         parentZone = nil
         parent     = nil
     }
@@ -331,6 +332,8 @@ class Zone : ZRecord {
     func removeChild(_ child: Zone?) {
         if child != nil, let index = children.index(of: child!) {
             children.remove(at: index)
+            child!.orphan()
+            needSave()
 
             if children.count == 0 {
                 hasChildren = false
