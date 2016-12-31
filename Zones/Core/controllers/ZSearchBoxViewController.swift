@@ -71,6 +71,7 @@ class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
             workMode       = .editMode
             showsSearching = false
 
+            signalFor(nil, regarding: .found)
             signalFor(nil, regarding: .search)
         }
 

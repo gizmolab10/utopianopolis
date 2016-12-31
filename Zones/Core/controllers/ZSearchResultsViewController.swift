@@ -21,8 +21,8 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
 
     @IBOutlet var tableView: ZTableView?
+    var   resultsAreVisible = false
     var        foundRecords = [CKRecord] ()
-    var               again = false
     var             monitor: Any?
 
 
@@ -31,7 +31,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
     override func handleSignal(_ iObject: Any?, kind: ZSignalKind) {
         if kind == .found {
-            again = false
+            resultsAreVisible = false
             
             if showsSearching, let records = iObject as? [CKRecord] {
                 let count = records.count
@@ -124,9 +124,9 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
 
     func clear() {
-        again          = false
-        showsSearching = false
-        workMode       = .editMode
+        resultsAreVisible = false
+        showsSearching    = false
+        workMode          = .editMode
 
         self.signalFor(nil, regarding: .search)
         self.signalFor(nil, regarding: .found)
@@ -134,10 +134,10 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
 
     func reset() {
-        if  again || foundRecords.count == 0 {
+        if  resultsAreVisible || foundRecords.count == 0 {
             clear()
         } else {
-            again = true
+            resultsAreVisible = true
 
             signalFor(nil, regarding: .search)
         }
