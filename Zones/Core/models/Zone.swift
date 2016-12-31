@@ -55,7 +55,7 @@ class Zone : ZRecord {
 
     var crossLink: ZRecord? {
         get {
-            if zoneLink == nil {
+            if zoneLink == "" {
                 return nil
             } else if _crossLink == nil {
                 let components: [String] = (zoneLink?.components(separatedBy: ":"))!
@@ -274,6 +274,16 @@ class Zone : ZRecord {
         return super.cloudProperties() + Zone.cloudProperties()
     }
 
+
+    override func updateZoneProperties() {
+        super.updateZoneProperties()
+
+        if zoneLink == nil {
+            zoneLink = ""
+
+            needSave()
+        }
+    }
 
     // MARK:- offspring
     // MARK:-

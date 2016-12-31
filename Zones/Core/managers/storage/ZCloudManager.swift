@@ -132,14 +132,11 @@ class ZCloudManager: ZRecordsManager {
 
             operation.recordIDs                = recordIDs
             operation.completionBlock          = onCompletion
-            operation.perRecordCompletionBlock = { (iRecord, iID, iError) in
-                let record = self.recordForRecordID(iID)
-
-                if iRecord != nil {
-                    record?.mergeIntoAndTake(iRecord!)
+            operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
+                if let record = self.recordForRecordID(iID) {
+                    record.mergeIntoAndTake(iRecord!)
                 } else if let error: CKError = iError as? CKError {
                     self.reportError(error)
-                    record?.markForStates([.needsSave])
                 }
             }
 
@@ -158,8 +155,8 @@ class ZCloudManager: ZRecordsManager {
             if let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
                 operation.recordIDs       = missingParents
                 operation.completionBlock = onCompletion
-                operation.perRecordCompletionBlock = { (iRecord, iRecordID, iError) in
-                    var parent = self.zoneForRecordID(iRecordID)
+                operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
+                    var parent = self.zoneForRecordID(iID)
 
                     if parent != nil && iRecord != nil {
                         parent?.mergeIntoAndTake(iRecord!)
@@ -284,7 +281,7 @@ class ZCloudManager: ZRecordsManager {
                     }
                 }
 
-                operation.perRecordCompletionBlock = { (iRecord, iError) in
+                operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
                     if  let error:         CKError = iError as? CKError {
                         let info                   = error.errorUserInfo
                         var description:    String = info["ServerErrorDescription"] as! String
@@ -345,7 +342,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func searchFor(_ searchFor: String, onCompletion: ObjectClosure?) {
-        let predicate = NSPredicate(format: "zoneState < %d AND self CONTAINS %@", ZoneState.IsDeleted.rawValue, searchFor)
+        let predicate = NSPredicate(format: "zoneState < %d AND zoneLink = %@ AND self CONTAINS %@", ZoneState.IsDeleted.rawValue, "", searchFor)
         var   records = [CKRecord] ()
 
         cloudQueryUsingPredicate(predicate, onCompletion: { iRecord in

@@ -51,6 +51,7 @@ class ZBookmarksManager: NSObject {
     func addCloudZone(_ name: String, storageMode: ZStorageMode) { // KLUDGE, perhaps use ordered set or dictionary
         let      zone = Zone(record: nil, storageMode: storageMode)
         zone.zoneName = name
+        zone.zoneLink = ""
 
         addNewBookmarkFor(zone)
     }
