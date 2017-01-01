@@ -212,10 +212,11 @@ class ZEditingManager: NSObject {
             travelManager.manifest.needSave()
         } else {
             revealParentAndSiblingsOf(descendent) {
-                let    parent = descendent.parentZone!
-                self.hereZone = parent
+                if let     parent = descendent.parentZone {
+                    self.hereZone = parent
 
-                self.revealSiblingsOf(parent, toHere: toHere)
+                    self.revealSiblingsOf(parent, toHere: toHere)
+                }
             }
         }
         
@@ -397,24 +398,16 @@ class ZEditingManager: NSObject {
     @discardableResult private func deleteZone(_ zone: Zone) -> Zone? {
         var parentZone = zone.parentZone
 
-        if !zone.isRoot {
-            if travelManager.storageMode != .bookmarks && !zone.isDeleted {
-                zone.isDeleted = true
-
-                zone.needSave()
-            }
-
-            deleteZones(zone.children, in: zone)
-
+        if !zone.isRoot && !zone.isDeleted {
             if parentZone != nil {
                 if zone == travelManager.hereZone {
-                    dispatchAsyncInForeground {
-                        self.revealParentAndSiblingsOf(zone) {
-                            travelManager.hereZone = parentZone
+                    let toHere = parentZone
 
-                            selectionManager.grab(parentZone)
-                            controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
-                        }
+                    revealParentAndSiblingsOf(zone) {
+                        travelManager.hereZone = toHere
+
+                        selectionManager.grab(parentZone)
+                        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                     }
                 }
 
@@ -434,6 +427,13 @@ class ZEditingManager: NSObject {
                 }
             }
 
+            if travelManager.storageMode != .bookmarks {
+                zone.isDeleted = true
+
+                zone.needSave()
+            }
+
+            deleteZones(zone.children, in: zone)
             zone.orphan()
         }
 
@@ -573,7 +573,7 @@ class ZEditingManager: NSObject {
                     }
                 } else if toThere != nil {
                     selectionManager.grab(toThere!)
-                    signalFor(toThere!, regarding: .redraw)
+                    signalFor(toThere!, regarding: .data)
                 }
             } else if travelManager.storageMode != .bookmarks, let fromThere = toThere {
                 toThere     = fromThere.parentZone
