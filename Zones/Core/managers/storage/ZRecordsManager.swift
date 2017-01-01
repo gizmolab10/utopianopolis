@@ -287,6 +287,25 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func zoneForReference(_ reference: CKReference) -> Zone? {
+        var zone = zones[reference.recordID.recordName]
+
+        if let record = recordForRecordID(reference.recordID)?.record {
+            if zone != nil {
+                zone?.record = record
+            } else {
+                zone = Zone(record: record, storageMode: travelManager.storageMode)
+            }
+        }
+
+        if  zone?.showChildren ?? false {
+            zone?.needChildren()
+        }
+
+        return zone
+    }
+
+
     func zoneForRecord(_ record: CKRecord) -> Zone {
         var zone = zones[record.recordID.recordName]
 

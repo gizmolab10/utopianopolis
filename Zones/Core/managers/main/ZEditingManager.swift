@@ -170,6 +170,59 @@ class ZEditingManager: NSObject {
     }
 
 
+    // MARK:- async reveal
+    // MARK:-
+
+
+    func revealRoot(_ onCompletion: Closure?) {
+        if rootZone.record != nil {
+            onCompletion?()
+        } else {
+            operationsManager.root {
+                onCompletion?()
+            }
+        }
+    }
+
+
+    func revealParentAndSiblingsOf(_ iZone: Zone, onCompletion: Closure?) {
+        let           parent = iZone.parentZone
+        parent?.showChildren = true
+
+        if parent != nil && parent?.zoneName != nil {
+            parent?.needChildren()
+
+            operationsManager.children(false) {
+                onCompletion?()
+            }
+        } else {
+            iZone.markForStates([.needsParent])
+
+            operationsManager.families {
+                onCompletion?()
+            }
+        }
+    }
+
+
+    func revealSiblingsOf(_ descendent: Zone, toHere: Zone) {
+        if toHere   == descendent {
+            hereZone = descendent
+
+            travelManager.manifest.needSave()
+        } else {
+            revealParentAndSiblingsOf(descendent) {
+                let    parent = descendent.parentZone!
+                self.hereZone = parent
+
+                self.revealSiblingsOf(parent, toHere: toHere)
+            }
+        }
+        
+        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+    }
+
+
     // MARK:- layout
     // MARK:-
 
@@ -476,57 +529,6 @@ class ZEditingManager: NSObject {
                 }
             }
         }
-    }
-
-
-    // MARK:- move out
-    // MARK:-
-
-
-    func revealRoot(_ onCompletion: Closure?) {
-        if rootZone.record != nil {
-            onCompletion?()
-        } else {
-            operationsManager.root {
-                onCompletion?()
-            }
-        }
-    }
-
-
-    func revealParentAndSiblingsOf(_ iZone: Zone, onCompletion: Closure?) {
-        let parent = iZone.parentZone
-
-        if parent != nil && parent?.zoneName != nil {
-            parent?.needChildren()
-
-            operationsManager.children(false) {
-                onCompletion?()
-            }
-        } else {
-            iZone.markForStates([.needsParent])
-
-            operationsManager.families {
-                onCompletion?()
-            }
-        }
-    }
-
-
-    func revealSiblingsOf(_ descendent: Zone, toHere: Zone) {
-        if toHere   == descendent {
-            hereZone = descendent
-
-            travelManager.manifest.needSave()
-        } else if let parent = descendent.parentZone {
-            hereZone = parent
-
-            revealParentAndSiblingsOf(descendent) {
-                self.revealSiblingsOf(parent, toHere: toHere)
-            }
-        }
-
-        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
     }
 
 

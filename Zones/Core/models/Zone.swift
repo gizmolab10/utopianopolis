@@ -213,7 +213,7 @@ class Zone : ZRecord {
             }
 
             if parent != nil && _parentZone == nil {
-                _parentZone     = cloudManager.zoneForRecordID((parent?.recordID)!) // sometimes yields nil ... WHY?
+                _parentZone     = cloudManager.zoneForReference(parent!) // sometimes yields nil ... WHY?
             }
 
             return _parentZone
