@@ -24,6 +24,7 @@ enum ZSignalKind: Int {
     case error
     case found
     case search
+    case redraw
 }
 
 
@@ -86,8 +87,8 @@ class ZControllersManager: NSObject {
     }
 
 
-    func syncToCloudAndSignalFor(_ zone: Zone?, onCompletion: Closure?) {
-        self.signalFor(zone, regarding: .data, onCompletion: onCompletion)
+    func syncToCloudAndSignalFor(_ zone: Zone?, regarding: ZSignalKind, onCompletion: Closure?) {
+        self.signalFor(zone, regarding: regarding, onCompletion: onCompletion)
 
         operationsManager.sync {
             zfileManager.save()

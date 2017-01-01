@@ -128,7 +128,7 @@ class ZCloudManager: ZRecordsManager {
         let recordIDs = recordIDsWithMatchingStates([.needsMerge])
 
         if  recordIDs.count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            report("merging \(recordIDs.count)")
+            toConsole("merging \(recordIDs.count)")
 
             operation.recordIDs                = recordIDs
             operation.completionBlock          = onCompletion
@@ -192,7 +192,7 @@ class ZCloudManager: ZRecordsManager {
             let    needed = referencesWithMatchingStates([.needsFetch])
             let predicate = NSPredicate(format: "zoneState < %d AND creatorUserRecordID IN %@", ZoneState.IsDeleted.rawValue, needed)
 
-            self.report("fetching \(needed.count)")
+            self.toConsole("fetching \(needed.count)")
 
             self.cloudQueryUsingPredicate(predicate, onCompletion: { iRecord in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
@@ -231,7 +231,7 @@ class ZCloudManager: ZRecordsManager {
 
             if (operation.recordsToSave?.count)! > 0 {
 
-                report("creating \((operation.recordsToSave?.count)!)")
+                toConsole("creating \((operation.recordsToSave?.count)!)")
 
                 operation.start()
                 
@@ -258,7 +258,7 @@ class ZCloudManager: ZRecordsManager {
 
             if (operation.recordsToSave?.count)! > 0 {
 
-                report("saving \((operation.recordsToSave?.count)!)")
+                toConsole("saving \((operation.recordsToSave?.count)!)")
 
                 operation.completionBlock          = {
                     for record: CKRecord in operation.recordsToSave! {
@@ -367,14 +367,14 @@ class ZCloudManager: ZRecordsManager {
             let                zones = zoneNamesWithMatchingStates([.needsChildren])
 
             clearState(.needsChildren)
-            report("fetching children of \(zones)")
+            toConsole("fetching children of \(zones)")
             cloudQueryUsingPredicate(predicate, onCompletion: { (iRecord: CKRecord?) in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                     for parent in parentsNeedingResort {
                         parent.respectOrder()
                     }
 
-                    self.signalFor(nil, regarding: .data)
+                    self.signalFor(nil, regarding: .redraw)
 
                     self.fetchChildren(onCompletion) // recurse: try another fetch
                 } else {
@@ -413,10 +413,10 @@ class ZCloudManager: ZRecordsManager {
 
             if  zone.showChildren {
                 self.dispatchAsyncInForeground {
-                    self.signalFor(parent, regarding: .data)
+                    self.signalFor(parent, regarding: .redraw)
 
                     operationsManager.children(false) {
-                        self.signalFor(parent, regarding: .data)
+                        self.signalFor(parent, regarding: .redraw)
                     }
                 }
             }
@@ -564,7 +564,7 @@ class ZCloudManager: ZRecordsManager {
 
     func getFromObject(_ object: ZRecord, valueForPropertyName: String) {
         if currentDB != nil && object.record != nil && operationsManager.isReady {
-            let      predicate = NSPredicate(format: "")
+            let      predicate = NSPredicate(value: true)
             let  type: String  = className(of: object);
             let query: CKQuery = CKQuery(recordType: type, predicate: predicate)
 

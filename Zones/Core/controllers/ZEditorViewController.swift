@@ -21,7 +21,7 @@ class ZEditorViewController: ZGenericViewController {
 
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-        if kind == .search || kind == .found {
+        if [.search, .found].contains(kind) {
             return
         } else if workMode != .editMode {
             view.snp.removeConstraints()
@@ -34,7 +34,7 @@ class ZEditorViewController: ZGenericViewController {
         var specificWidget: ZoneWidget? = hereWidget
         var specificView:        ZView? = view
         var specificindex:          Int = -1
-        var recursing:             Bool = kind == .data
+        var recursing:             Bool = [.data, .redraw].contains(kind)
         hereWidget.widgetZone           = travelManager.hereZone!
 
         if zone == nil || zone == travelManager.hereZone! {
@@ -49,7 +49,7 @@ class ZEditorViewController: ZGenericViewController {
             toConsole(zone?.zoneName)
         }
 
-        specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing)
+        specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, redrawLines: kind == .redraw)
         specificWidget?.updateConstraints()
         specificWidget?.layoutFinish()
         specificWidget?.display()

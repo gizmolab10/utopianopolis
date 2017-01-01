@@ -27,7 +27,7 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
         application.registerUserNotificationSettings(settings)
         application.registerForRemoteNotifications()
         operationsManager.startup {
-            signalFor(nil, regarding: .data)
+            signalFor(nil, regarding: .redraw)
         }
 
         return true

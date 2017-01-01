@@ -130,7 +130,7 @@ class ZTravelManager: NSObject {
                     there = there?[index]
                 }
 
-                atArrival(there, .data)
+                atArrival(there, .redraw)
             }
         } else if zone.isBookmark, let crossLink = zone.crossLink, let mode = crossLink.storageMode {
 
@@ -150,7 +150,7 @@ class ZTravelManager: NSObject {
 
                 if pointsAtHere {
                     travel {
-                        atArrival(self.hereZone, .data)
+                        atArrival(self.hereZone, .redraw)
                     }
                 } else {
                     cloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: mode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) in
@@ -159,7 +159,7 @@ class ZTravelManager: NSObject {
 
                             self.manifest.needSave()
                             self.travel {
-                                atArrival(self.hereZone, .data)
+                                atArrival(self.hereZone, .redraw)
                             }
                         }
                     })
@@ -177,13 +177,13 @@ class ZTravelManager: NSObject {
 
                     there?.needChildren()
 
-                    atArrival(there, .data)
+                    atArrival(there, .redraw)
                 } else {
                     cloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: storageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) in
                         self.hereZone = cloudManager.zoneForRecord(iRecord!)
 
                         self.manifest.needSave()
-                        atArrival(self.hereZone, .data)
+                        atArrival(self.hereZone, .redraw)
                     })
                 }
             }

@@ -172,7 +172,7 @@ class ZOperationsManager: NSObject {
             dispatchAsyncInForeground {
                 closure()
 
-                self.report("unspin")
+                // self.report("unspin")
                 editingManager.handleDeferredEvents()
             }
         }

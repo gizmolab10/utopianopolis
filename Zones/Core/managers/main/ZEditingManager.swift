@@ -30,12 +30,7 @@ class ZEditingManager: NSObject {
     var rootZone: Zone { get { return travelManager.rootZone! } set { travelManager.rootZone = newValue } }
     var hereZone: Zone { get { return travelManager.hereZone! } set { travelManager.hereZone = newValue } }
     var deferredEvents = [ZoneEvent] ()
-    var previousEvent:    ZEvent?
-
-
-    func syncToCloudAndSignal() {
-        controllersManager.syncToCloudAndSignalFor(nil, onCompletion: nil)
-    }
+    var previousEvent: ZEvent?
 
 
     // MARK:- API
@@ -83,7 +78,7 @@ class ZEditingManager: NSObject {
                             } else {
                                 selectionManager.currentlyEditingZone = nil
 
-                                signalFor(nil, regarding: .data)
+                                signalFor(nil, regarding: .redraw)
                             }
 
                         case " ":
@@ -115,7 +110,7 @@ class ZEditingManager: NSObject {
                                 let bookmark = bookmarksManager.addNewBookmarkFor(zone)
 
                                 selectionManager.grab(bookmark)
-                                controllersManager.syncToCloudAndSignalFor(nil) {}
+                                controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                             }
 
                             break
@@ -132,10 +127,10 @@ class ZEditingManager: NSObject {
                                 if !zone.isBookmark {
                                     hereZone = zone
 
-                                    controllersManager.syncToCloudAndSignalFor(nil) {}
+                                    controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                                 } else {
                                     travelManager.travelToWhereThisZonePoints(zone, atArrival: { (object, kind) in
-                                        controllersManager.syncToCloudAndSignalFor(nil) {}
+                                        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                                     })
                                 }
                             }
@@ -156,11 +151,15 @@ class ZEditingManager: NSObject {
                             case .up:    moveUp(true,  selectionOnly: !isOption, extreme: isCommand); break
                             }
                         } else if let zone = selectionManager.firstGrabbableZone {
+                            var show = true
+
                             switch arrow {
-                            case .right: showRevealerDot(true,  zone: zone, recursively: isCommand) { controllersManager.syncToCloudAndSignalFor(nil) {} }; break
-                            case .left:  showRevealerDot(false, zone: zone, recursively: isCommand) { controllersManager.syncToCloudAndSignalFor(nil) {} }; break
-                            default:                                                                                                 break
+                            case .left: show = false; break
+                            case .right:              break
+                            default:                  return true
                             }
+
+                            showRevealerDot(show, zone: zone, recursively: isCommand) { controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {} };
                         }
                     }
                 }
@@ -245,7 +244,7 @@ class ZEditingManager: NSObject {
             let show = zone.showChildren == false
 
             showRevealerDot(show, zone: zone, recursively: false) {
-                controllersManager.syncToCloudAndSignalFor(nil) {}
+                controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
             }
         }
     }
@@ -256,7 +255,7 @@ class ZEditingManager: NSObject {
             if let there: Zone = object as? Zone {
                 selectionManager.grab(there)
                 travelManager.manifest.needSave()
-                controllersManager.syncToCloudAndSignalFor(nil) {}
+                controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
             }
         })
     }
@@ -268,11 +267,11 @@ class ZEditingManager: NSObject {
 
     func addZoneTo(_ parentZone: Zone?) {
         addZoneTo(parentZone) { iObject in
-            controllersManager.syncToCloudAndSignalFor(parentZone) {
+            controllersManager.syncToCloudAndSignalFor(parentZone, regarding: .redraw) {
                 operationsManager.isReady = true
 
                 widgetsManager.widgetForZone(iObject as? Zone)?.textWidget.becomeFirstResponder()
-                self.signalFor(parentZone, regarding: .data)
+                self.signalFor(parentZone, regarding: .redraw)
             }
         }
     }
@@ -325,7 +324,7 @@ class ZEditingManager: NSObject {
             selectionManager.grab(last!)
         }
 
-        controllersManager.syncToCloudAndSignalFor(nil) {}
+        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
     }
 
 
@@ -361,7 +360,7 @@ class ZEditingManager: NSObject {
                             travelManager.hereZone = parentZone
 
                             selectionManager.grab(parentZone)
-                            controllersManager.syncToCloudAndSignalFor(nil) {}
+                            controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                         }
                     }
                 }
@@ -428,7 +427,7 @@ class ZEditingManager: NSObject {
                     parentZone.children.insert(zone, at:newIndex)
                 }
 
-                signalFor(parentZone, regarding: .data)
+                signalFor(parentZone, regarding: .redraw)
             }
         }
     }
@@ -465,7 +464,7 @@ class ZEditingManager: NSObject {
                             there.children.remove(at: index)
                             there.children.insert(zone, at:newIndex)
                             there.recomputeOrderingUponInsertionAt(newIndex)
-                            controllersManager.syncToCloudAndSignalFor(there) {}
+                            controllersManager.syncToCloudAndSignalFor(there, regarding: .redraw) {}
                         }
                     }
                 }
@@ -527,7 +526,7 @@ class ZEditingManager: NSObject {
             }
         }
 
-        controllersManager.syncToCloudAndSignalFor(nil) {}
+        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
     }
 
 
@@ -544,7 +543,7 @@ class ZEditingManager: NSObject {
                         if let there: Zone = object as? Zone {
                             selectionManager.grab(there)
 
-                            controllersManager.syncToCloudAndSignalFor(nil) {}
+                            controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                         }
                     }
                 } else if extreme {
@@ -560,7 +559,7 @@ class ZEditingManager: NSObject {
                         hereZone = zone
 
                         travelManager.manifest.needSave()
-                        controllersManager.syncToCloudAndSignalFor(nil) {}
+                        controllersManager.syncToCloudAndSignalFor(nil, regarding: .data) {}
                     }
                 } else if zone == hereZone || toThere == nil {
                     revealParentAndSiblingsOf(zone) {
@@ -572,7 +571,7 @@ class ZEditingManager: NSObject {
                     }
                 } else if toThere != nil {
                     selectionManager.grab(toThere!)
-                    signalFor(toThere!, regarding: .data)
+                    signalFor(toThere!, regarding: .redraw)
                 }
             } else if travelManager.storageMode != .bookmarks, let fromThere = toThere {
                 toThere     = fromThere.parentZone
@@ -581,7 +580,7 @@ class ZEditingManager: NSObject {
 
                     travelManager.manifest.needSave()
                     self.moveZone(zone, into: toThere!, orphan: true) {
-                        controllersManager.syncToCloudAndSignalFor(toThere) {}
+                        controllersManager.syncToCloudAndSignalFor(toThere, regarding: .redraw) {}
                     }
                 }
 
@@ -607,7 +606,7 @@ class ZEditingManager: NSObject {
                     }
                 } else {
                     moveZone(zone, into: toThere!, orphan: true){
-                        controllersManager.syncToCloudAndSignalFor(toThere) {}
+                        controllersManager.syncToCloudAndSignalFor(toThere, regarding: .redraw) {}
                     }
                 }
             }
@@ -649,7 +648,7 @@ class ZEditingManager: NSObject {
         selectionManager.grab(asTask ? zone.children.first! : zone.children.last!)
 
         if hideChildren {
-            syncToCloudAndSignal()
+            controllersManager.syncToCloudAndSignalFor(nil, regarding: .data) {}
         } else {
             signalFor(nil, regarding: .data)
         }
@@ -671,7 +670,7 @@ class ZEditingManager: NSObject {
 
                         zone.orphan()
                         moveZone(zone, into: toThere, orphan: true){
-                            controllersManager.syncToCloudAndSignalFor(parent) {}
+                            controllersManager.syncToCloudAndSignalFor(parent, regarding: .redraw) {}
                         }
                     } else {
 
@@ -693,7 +692,7 @@ class ZEditingManager: NSObject {
 
                                 self.report("at arrival")
                                 self.moveZone(mover, into: there, orphan: false){
-                                    controllersManager.syncToCloudAndSignalFor(nil) {}
+                                    controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                                 }
                             })
                         }

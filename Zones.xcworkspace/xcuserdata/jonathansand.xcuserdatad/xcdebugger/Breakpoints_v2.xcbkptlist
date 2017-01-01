@@ -25,13 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/Core/main/ZExtensions.swift"
-            timestampString = "504867428.453741"
+            filePath = "Zones/Core/views/ZoneWidget.swift"
+            timestampString = "504958921.682068"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "234"
-            endingLineNumber = "234"
-            landmarkName = "reportError(_:)"
+            startingLineNumber = "244"
+            endingLineNumber = "244"
+            landmarkName = "layoutChildren(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

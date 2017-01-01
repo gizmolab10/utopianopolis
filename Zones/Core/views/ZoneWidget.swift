@@ -88,7 +88,7 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    func layoutInView(_ inView: ZView?, atIndex: Int, recursing: Bool) {
+    func layoutInView(_ inView: ZView?, atIndex: Int, recursing: Bool, redrawLines: Bool) {
         if inView != nil && !(inView?.subviews.contains(self))! {
             inView?.addSubview(self)
 
@@ -106,11 +106,9 @@ class ZoneWidget: ZView {
         widgetsManager.registerWidget(self)
         addDragHighlight()
 
-        if !recursing {
-            // clearChildrenView()
-        } else {
-            layoutChildren()
-            layoutLines()
+        if recursing {
+            layoutChildren(redrawLines)
+            layoutLines(redrawLines)
         }
 
         layoutText()
@@ -217,33 +215,37 @@ class ZoneWidget: ZView {
     }
 
 
-    func layoutChildren() {
-        var previous: ZoneWidget? = nil
-        var                 index = widgetZone.children.count
+    func layoutChildren(_ redrawLines: Bool) {
+        let zoneChildrenCount = widgetZone.children.count
 
-        if childrenWidgets.count != index || !widgetZone.showChildren || index == 0 {
-            childrenWidgets.removeAll()
-            clearChildrenView()
+        if _childrenView != nil {
+            if  childrenWidgets.count != zoneChildrenCount || !widgetZone.showChildren || zoneChildrenCount == 0 {
+                childrenWidgets.removeAll()
+                clearChildrenView()
 
-            _childrenView = nil
+                _childrenView = nil
+            }
         }
 
-        if index > 0 && widgetZone.showChildren {
-            while childrenWidgets.count < index {
+        if zoneChildrenCount > 0 && widgetZone.showChildren {
+            while childrenWidgets.count < zoneChildrenCount {
                 childrenWidgets.append(ZoneWidget())
             }
 
+            var            index = zoneChildrenCount
+            var previous: ZView? = nil
+
             while index > 0 {
-                index          -= 1
+                index          -= 1 // go backwards down the arrays, constraint making expect it, below
+                let childZone   = widgetZone     [index]
                 let childWidget = childrenWidgets[index]
-                let childZone   = widgetZone[index]
 
-                if childZone == widgetZone {
-                    childrenWidgets[index] = nil
-                } else if childWidget != nil {
+                if  widgetZone == childZone {
+                    childrenWidgets[index] = nil // when?????
+                } else {
                     childWidget?.widgetZone = childZone
-                    childWidget?.layoutInView(childrenView, atIndex: index, recursing: true)
 
+                    childWidget?.layoutInView(childrenView, atIndex: index, recursing: true, redrawLines: redrawLines)
                     childWidget?.snp.removeConstraints()
                     childWidget?.snp.makeConstraints({ (make: ConstraintMaker) in
                         if previous != nil {
@@ -256,7 +258,7 @@ class ZoneWidget: ZView {
                             make.top.equalTo(childrenView)
                         }
 
-                        make.left.equalTo(childrenView)//.offset(20.0)
+                        make.left.equalTo(childrenView)
                         make.right.height.lessThanOrEqualTo(childrenView)
                     })
                     
@@ -269,31 +271,62 @@ class ZoneWidget: ZView {
     }
 
 
-    func layoutLines() {
-        for line in siblingLines {
-            line.removeFromSuperview()
+    func layoutLines(_ redrawLines: Bool) {
+        let show = widgetZone.showChildren
+
+        if !show || redrawLines {
+            for line in siblingLines {
+                line.removeFromSuperview()
+            }
+
+            siblingLines.removeAll()
         }
 
-        siblingLines.removeAll()
+        if show {
+            var needUpdate = IndexSet()
+            let   children = widgetZone.children
+            let      count = children.count
 
-        if widgetZone.showChildren {
-            var index = widgetZone.children.count
-            var siblingLine: ZoneCurve?
+            if count > 0 {
+                for index in 0...count - 1 {
+                    needUpdate.insert(index)
+                }
+            }
 
-            while index > 0 {
-                index              -= 1
-                let childWidget     = childrenWidgets[index]
-                siblingLine         = ZoneCurve()
-                siblingLine?.child  = childWidget
-                siblingLine?.parent = self
+            for line in siblingLines {
+                var found = false
 
-                siblingLines.append(siblingLine!)
-                addSubview(siblingLine!)
-                siblingLine?.snp.makeConstraints({ (make: ConstraintMaker) in
-                    make.width.height.equalTo(lineThicknes)
-                    make.centerX.equalTo(textWidget.snp.right).offset(6.0)
-                    make.centerY.equalTo(textWidget)
-                })
+                for (index, child) in children.enumerated() {
+                    if show && child == line.child?.widgetZone {
+                        if !redrawLines {
+                            needUpdate.remove(index)
+                        }
+
+                        found = true
+                    }
+                }
+
+                if !show || !found {
+                    line.removeFromSuperview()
+                }
+            }
+
+            if show && needUpdate.count > 0 {
+                for (index, childWidget) in childrenWidgets.enumerated() {
+                    if needUpdate.contains(index) {
+                        let siblingLine    = ZoneCurve()
+                        siblingLine.child  = childWidget
+                        siblingLine.parent = self
+
+                        siblingLines.insert(siblingLine, at:index)
+                        addSubview(siblingLine)
+                        siblingLine.snp.makeConstraints({ (make: ConstraintMaker) in
+                            make.width.height.equalTo(lineThicknes)
+                            make.centerX.equalTo(textWidget.snp.right).offset(6.0)
+                            make.centerY.equalTo(textWidget)
+                        })
+                    }
+                }
             }
         }
     }
@@ -305,7 +338,7 @@ class ZoneWidget: ZView {
         }
 
         dragDot.innerDot?.snp.removeConstraints()
-        dragDot.setupForZone(widgetZone, asToggle: false)
+        dragDot.setupForZone(widgetZone, asRevealer: false)
         dragDot.innerDot?.snp.makeConstraints({ (make: ConstraintMaker) in
             make.right.equalTo(textWidget.snp.left)
             make.centerY.equalTo(textWidget).offset(0.5)
@@ -321,7 +354,7 @@ class ZoneWidget: ZView {
             }
 
             revealerDot.innerDot?.snp.removeConstraints()
-            revealerDot.setupForZone(widgetZone, asToggle: true)
+            revealerDot.setupForZone(widgetZone, asRevealer: true)
             revealerDot.innerDot?.snp.makeConstraints({ (make: ConstraintMaker) in
                 make.left.equalTo(textWidget.snp.right).offset(-1.0)
                 make.centerY.equalTo(textWidget).offset(0.5)

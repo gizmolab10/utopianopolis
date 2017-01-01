@@ -119,7 +119,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
         clear()
         selectionManager.grab(zone)
-        signalFor(nil, regarding: .data)
+        signalFor(nil, regarding: .redraw)
     }
 
 
