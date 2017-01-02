@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/Core/views/ZoneWidget.swift"
-            timestampString = "504958921.682068"
+            timestampString = "505023385.381941"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "244"
-            endingLineNumber = "244"
+            startingLineNumber = "242"
+            endingLineNumber = "242"
             landmarkName = "layoutChildren(_:)"
             landmarkType = "7">
          </BreakpointContent>

@@ -16,7 +16,7 @@ import SnapKit
 #endif
 
 
-class ZEditorViewController: ZGenericViewController, NSGestureRecognizerDelegate {
+class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate {
 
     
     var hereWidget:                 ZoneWidget = ZoneWidget()

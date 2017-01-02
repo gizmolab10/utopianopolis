@@ -16,12 +16,12 @@ import SnapKit
 #endif
 
 
-class ZoneDot: ZView, NSGestureRecognizerDelegate {
+class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     var      innerDot: ZoneDot?
     var    isInnerDot: Bool = false
-    var    isToggle: Bool = true
+    var      isToggle: Bool = true
     var  douleClicker: NSGestureRecognizer?
     var singleClicker: NSGestureRecognizer?
 

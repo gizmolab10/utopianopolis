@@ -17,29 +17,30 @@ import CloudKit
     import Cocoa
 
 
-    public typealias ZFont                = NSFont
-    public typealias ZView                = NSView
-    public typealias ZEvent               = NSEvent
-    public typealias ZImage               = NSImage
-    public typealias ZColor               = NSColor
-    public typealias ZButton              = NSButton
-    public typealias ZWindow              = NSWindow
-    public typealias ZTextField           = NSTextField
-    public typealias ZTableView           = NSTableView
-    public typealias ZStackView           = NSStackView
-    public typealias ZBezierPath          = NSBezierPath
-    public typealias ZSearchField         = NSSearchField
-    public typealias ZApplication         = NSApplication
-    public typealias ZTableRowView        = NSTableRowView
-    public typealias ZViewController      = NSViewController
-    public typealias ZSegmentedControl    = NSSegmentedControl
-    public typealias ZGestureRecognizer   = NSGestureRecognizer
-    public typealias ZProgressIndicator   = NSProgressIndicator
-    public typealias ZTextFieldDelegate   = NSTextFieldDelegate
-    public typealias ZTableViewDelegate   = NSTableViewDelegate
-    public typealias ZTableViewDataSource = NSTableViewDataSource
-    public typealias ZSearchFieldDelegate = NSSearchFieldDelegate
-    public typealias ZApplicationDelegate = NSApplicationDelegate
+    public typealias ZFont                      = NSFont
+    public typealias ZView                      = NSView
+    public typealias ZEvent                     = NSEvent
+    public typealias ZImage                     = NSImage
+    public typealias ZColor                     = NSColor
+    public typealias ZButton                    = NSButton
+    public typealias ZWindow                    = NSWindow
+    public typealias ZTextField                 = NSTextField
+    public typealias ZTableView                 = NSTableView
+    public typealias ZStackView                 = NSStackView
+    public typealias ZBezierPath                = NSBezierPath
+    public typealias ZSearchField               = NSSearchField
+    public typealias ZApplication               = NSApplication
+    public typealias ZTableRowView              = NSTableRowView
+    public typealias ZViewController            = NSViewController
+    public typealias ZSegmentedControl          = NSSegmentedControl
+    public typealias ZGestureRecognizer         = NSGestureRecognizer
+    public typealias ZProgressIndicator         = NSProgressIndicator
+    public typealias ZTextFieldDelegate         = NSTextFieldDelegate
+    public typealias ZTableViewDelegate         = NSTableViewDelegate
+    public typealias ZTableViewDataSource       = NSTableViewDataSource
+    public typealias ZSearchFieldDelegate       = NSSearchFieldDelegate
+    public typealias ZApplicationDelegate       = NSApplicationDelegate
+    public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 
 
     let zapplication = ZApplication.shared()
@@ -53,9 +54,8 @@ import CloudKit
 
 
     extension NSView {
-        var                   zlayer:               CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
-        var isUserInteractionEnabled:                  Bool { get { return true }                      set {} }
-        var              recognizers: [NSGestureRecognizer] { get { return gestureRecognizers } }
+        var      zlayer:               CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
+        var recognizers: [NSGestureRecognizer] { get { return gestureRecognizers } }
 
 
         func clear() {
@@ -63,12 +63,11 @@ import CloudKit
         }
 
 
-        @discardableResult func createGestureRecognizer(_ target: NSGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> NSGestureRecognizer {
+        @discardableResult func createGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> NSGestureRecognizer {
             let                            gesture = NSClickGestureRecognizer(target: target, action: action)
             gesture.numberOfClicksRequired         = clicksRequired
             gesture.delaysPrimaryMouseButtonEvents = false
             gesture.delegate                       = target
-            isUserInteractionEnabled               = true
 
             addGestureRecognizer(gesture)
 
@@ -110,7 +109,7 @@ import CloudKit
         func startAnimating() { startAnimation(self) }
         func  stopAnimating() {  stopAnimation(self) }
     }
-    
+
 
 #elseif os(iOS)
 
@@ -118,22 +117,23 @@ import CloudKit
     import UIKit
 
 
-    public typealias ZFont                = UIFont
-    public typealias ZView                = UIView
-    public typealias ZEvent               = UIEvent
-    public typealias ZImage               = UIImage
-    public typealias ZColor               = UIColor
-    public typealias ZButton              = UIButton
-    public typealias ZWindow              = UIWindow
-    public typealias ZTextField           = UITextField
-    public typealias ZBezierPath          = UIBezierPath
-    public typealias ZApplication         = UIApplication
-    public typealias ZViewController      = UIViewController
-    public typealias ZSegmentedControl    = UISegmentedControl
-    public typealias ZGestureRecognizer   = UIGestureRecognizer
-    public typealias ZProgressIndicator   = UIActivityIndicatorView
-    public typealias ZTextFieldDelegate   = UITextFieldDelegate
-    public typealias ZApplicationDelegate = UIApplicationDelegate
+    public typealias ZFont                      = UIFont
+    public typealias ZView                      = UIView
+    public typealias ZEvent                     = UIEvent
+    public typealias ZImage                     = UIImage
+    public typealias ZColor                     = UIColor
+    public typealias ZButton                    = UIButton
+    public typealias ZWindow                    = UIWindow
+    public typealias ZTextField                 = UITextField
+    public typealias ZBezierPath                = UIBezierPath
+    public typealias ZApplication               = UIApplication
+    public typealias ZViewController            = UIViewController
+    public typealias ZSegmentedControl          = UISegmentedControl
+    public typealias ZGestureRecognizer         = UIGestureRecognizer
+    public typealias ZTextFieldDelegate         = UITextFieldDelegate
+    public typealias ZProgressIndicator         = UIActivityIndicatorView
+    public typealias ZApplicationDelegate       = UIApplicationDelegate
+    public typealias ZGestureRecognizerDelegate = UIGestureRecognizerDelegate
 
 
     let zapplication = ZApplication.shared
@@ -154,25 +154,25 @@ import CloudKit
 
 
     extension UIView {
-        var zlayer: CALayer { get { return layer } }
-        var recognizers: [UIGestureRecognizer] { get { return gestureRecognizers! } }
-
-
-        func display() {}
+        var      zlayer:              CALayer { get { return layer } }
+        var recognizers: [ZGestureRecognizer] { get { return gestureRecognizers! } }
 
 
         func clear() { zlayer.isOpaque = false }
+        func display() {}
 
 
-        func setupGestures(_ target: Any, action: Selector?) {
+        @discardableResult func createGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> NSGestureRecognizer {
             let              gesture = UITapGestureRecognizer(target: target, action: action)
             isUserInteractionEnabled = true
 
-            if gestureRecognizers != nil {
+            if recognizers != nil {
                 clearGestures()
             }
 
             addGestureRecognizer(gesture)
+
+            return gesture
         }
     }
 
@@ -352,4 +352,37 @@ extension ZView {
 //        return boundingBox.width
 //    }
 //}
+
+
+public extension ZImage {
+    public func imageRotatedByDegrees(_ degrees: CGFloat) -> ZImage {
+
+        var imageBounds = NSZeroRect ; imageBounds.size = self.size
+        let pathBounds = NSBezierPath(rect: imageBounds)
+        var transform = NSAffineTransform()
+        transform.rotate(byDegrees: degrees)
+        pathBounds.transform(using: transform as AffineTransform)
+        let rotatedBounds:NSRect = NSMakeRect(NSZeroPoint.x, NSZeroPoint.y , self.size.width, self.size.height )
+        let rotatedImage = NSImage(size: rotatedBounds.size)
+
+        //Center the image within the rotated bounds
+        imageBounds.origin.x = NSMidX(rotatedBounds) - (NSWidth(imageBounds) / 2)
+        imageBounds.origin.y  = NSMidY(rotatedBounds) - (NSHeight(imageBounds) / 2)
+
+        // Start a new transform
+        transform = NSAffineTransform()
+        // Move coordinate system to the center (since we want to rotate around the center)
+        transform.translateX(by: +(NSWidth(rotatedBounds) / 2 ), yBy: +(NSHeight(rotatedBounds) / 2))
+        transform.rotate(byDegrees: degrees)
+        // Move the coordinate system bak to normal
+        transform.translateX(by: -(NSWidth(rotatedBounds) / 2 ), yBy: -(NSHeight(rotatedBounds) / 2))
+        // Draw the original image, rotated, into the new image
+        rotatedImage.lockFocus()
+        transform.concat()
+        self.draw(in: imageBounds, from: NSZeroRect, operation: .copy, fraction: 1.0)
+        rotatedImage.unlockFocus()
+
+        return rotatedImage
+    }
+}
 

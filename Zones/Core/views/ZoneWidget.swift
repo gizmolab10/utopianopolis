@@ -24,7 +24,7 @@ class ZoneWidget: ZView {
     private let dragHighlightView = ZView()
     private var   childrenWidgets = [ZoneWidget?] ()
     private var      siblingLines = [ZoneCurve] ()
-    let               toggleDot = ZoneDot()
+    let                 toggleDot = ZoneDot()
     let                   dragDot = ZoneDot()
     var                widgetZone: Zone!
 
@@ -60,8 +60,7 @@ class ZoneWidget: ZView {
     var childrenView: ZView {
         get {
             if _childrenView == nil {
-                _childrenView                          = ZView()
-                _childrenView.isUserInteractionEnabled = false // does nothing in os x
+                _childrenView = ZView()
 
                 addSubview(_childrenView)
 
@@ -100,7 +99,6 @@ class ZoneWidget: ZView {
         }
 
         inView?.zlayer.backgroundColor = ZColor.clear.cgColor
-        isUserInteractionEnabled = false
 
         clear()
         widgetsManager.registerWidget(self)

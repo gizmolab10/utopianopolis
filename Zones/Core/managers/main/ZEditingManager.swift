@@ -123,8 +123,10 @@ class ZEditingManager: NSObject {
 
                             break
                         case "'":
-                            travelManager.cycleStorageMode {
-                                controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                            if isCommand && !isEditing {
+                                travelManager.cycleStorageMode {
+                                    controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                                }
                             }
 
                             break
@@ -169,16 +171,32 @@ class ZEditingManager: NSObject {
 
 
     func focusOnZone(_ iZone: Zone) {
+        let closure = { (kind: ZSignalKind) in
+            selectionManager.deselect()
+            selectionManager.grab(iZone)
+            self.signalFor(iZone, regarding: .datum)
+            controllersManager.syncToCloudAndSignalFor(nil, regarding: kind) {}
+        }
+
         if !iZone.isBookmark {
             hereZone = iZone
 
-            controllersManager.syncToCloudAndSignalFor(nil, regarding: .data) {}
+            closure(.data)
         } else {
             travelManager.travelToWhereThisZonePoints(iZone, atArrival: { (object, kind) in
-                controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                closure(.redraw)
             })
         }
+    }
 
+
+    var isEditing: Bool {
+        get {
+            let editedZone = selectionManager.currentlyEditingZone
+            let editedWidget = widgetsManager.widgetForZone(editedZone)
+
+            return (editedWidget?.textWidget.isTextEditing)!
+        }
     }
 
 

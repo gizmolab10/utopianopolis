@@ -39,6 +39,8 @@
 		0C371C781DE26FE10030253D /* ZWidgetsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C701DE26FE10030253D /* ZWidgetsManager.swift */; };
 		0C371C801DE298EB0030253D /* ZoneWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C7F1DE298EB0030253D /* ZoneWindow.swift */; };
 		0C371C811DE298EB0030253D /* ZoneWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C7F1DE298EB0030253D /* ZoneWindow.swift */; };
+		0C4CB4881E1A19490018B2C9 /* ZStackableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4CB4871E1A19490018B2C9 /* ZStackableView.swift */; };
+		0C4CB4891E1A19490018B2C9 /* ZStackableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4CB4871E1A19490018B2C9 /* ZStackableView.swift */; };
 		0C58C37C1D45805400CAB387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C58C36F1D45805400CAB387 /* Assets.xcassets */; };
 		0C58C37D1D45805400CAB387 /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C58C3711D45805400CAB387 /* ZAppDelegate.swift */; };
 		0C58C3821D45815A00CAB387 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B561D2ECF41001892E5 /* LaunchScreen.storyboard */; };
@@ -75,6 +77,7 @@
 		0CC8F8541DC2CECF00E25985 /* ZGCD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC8F8501DC2CECF00E25985 /* ZGCD.swift */; };
 		0CC8F8561DC2CEF600E25985 /* ZConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC8F8551DC2CEF600E25985 /* ZConstants.swift */; };
 		0CC8F8571DC2CEF600E25985 /* ZConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC8F8551DC2CEF600E25985 /* ZConstants.swift */; };
+		0CD1179A1E1A464A00866251 /* yangle.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0CD117991E1A464A00866251 /* yangle.gif */; };
 		0CD1EAC51DB725A800A096E4 /* CalendarCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAA21DB725A800A096E4 /* CalendarCondition.swift */; };
 		0CD1EAC61DB725A800A096E4 /* CalendarCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAA21DB725A800A096E4 /* CalendarCondition.swift */; };
 		0CD1EAC71DB725A800A096E4 /* CloudCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAA31DB725A800A096E4 /* CloudCondition.swift */; };
@@ -222,6 +225,7 @@
 		0C371C6F1DE26FE10030253D /* ZSelectionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSelectionManager.swift; sourceTree = "<group>"; };
 		0C371C701DE26FE10030253D /* ZWidgetsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZWidgetsManager.swift; sourceTree = "<group>"; };
 		0C371C7F1DE298EB0030253D /* ZoneWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZoneWindow.swift; path = views/ZoneWindow.swift; sourceTree = "<group>"; };
+		0C4CB4871E1A19490018B2C9 /* ZStackableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZStackableView.swift; path = views/ZStackableView.swift; sourceTree = "<group>"; };
 		0C58C36F1D45805400CAB387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C58C3711D45805400CAB387 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
 		0C58C3761D45805400CAB387 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -259,6 +263,7 @@
 		0CC8F84F1DC2CECF00E25985 /* ZExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZExtensions.swift; sourceTree = "<group>"; };
 		0CC8F8501DC2CECF00E25985 /* ZGCD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGCD.swift; sourceTree = "<group>"; };
 		0CC8F8551DC2CEF600E25985 /* ZConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZConstants.swift; sourceTree = "<group>"; };
+		0CD117991E1A464A00866251 /* yangle.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = yangle.gif; path = Assets.xcassets/yangle.gif; sourceTree = "<group>"; };
 		0CD1EAA21DB725A800A096E4 /* CalendarCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarCondition.swift; sourceTree = "<group>"; };
 		0CD1EAA31DB725A800A096E4 /* CloudCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudCondition.swift; sourceTree = "<group>"; };
 		0CD1EAA41DB725A800A096E4 /* HealthCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HealthCondition.swift; sourceTree = "<group>"; };
@@ -549,6 +554,7 @@
 			isa = PBXGroup;
 			children = (
 				0CA04B961D2ED079001892E5 /* Assets.xcassets */,
+				0CD117991E1A464A00866251 /* yangle.gif */,
 				0CB1A7FE1D740EC500283F7B /* Main.storyboard */,
 			);
 			path = interfaces;
@@ -671,6 +677,7 @@
 				0CC8F84C1DC2963300E25985 /* ZoneTextWidget.swift */,
 				0CF97D611DA880B000FEAA41 /* ZoneWidget.swift */,
 				0C371C7F1DE298EB0030253D /* ZoneWindow.swift */,
+				0C4CB4871E1A19490018B2C9 /* ZStackableView.swift */,
 			);
 			name = views;
 			sourceTree = "<group>";
@@ -879,6 +886,7 @@
 			files = (
 				0CB1A7FF1D740EC500283F7B /* Main.storyboard in Resources */,
 				0CA04B9F1D2ED079001892E5 /* Zones.entitlements in Resources */,
+				0CD1179A1E1A464A00866251 /* yangle.gif in Resources */,
 				0CA04B9C1D2ED079001892E5 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -974,6 +982,7 @@
 				0CD1EAFA1DB725A800A096E4 /* LocationOperation.swift in Sources */,
 				0CD1EAF01DB725A800A096E4 /* OperationObserver.swift in Sources */,
 				0CD921831D90C65E00F80964 /* ZRecord.swift in Sources */,
+				0C4CB4891E1A19490018B2C9 /* ZStackableView.swift in Sources */,
 				0CD1EADA1DB725A800A096E4 /* PhotosCondition.swift in Sources */,
 				0CC8F8571DC2CEF600E25985 /* ZConstants.swift in Sources */,
 				0CD1EB021DB725A800A096E4 /* OperationQueue.swift in Sources */,
@@ -1059,6 +1068,7 @@
 				0CD1EAEF1DB725A800A096E4 /* OperationObserver.swift in Sources */,
 				0CB1A7D31D73F87B00283F7B /* Zone.swift in Sources */,
 				0CD1EAD91DB725A800A096E4 /* PhotosCondition.swift in Sources */,
+				0C4CB4881E1A19490018B2C9 /* ZStackableView.swift in Sources */,
 				0CC8F8561DC2CEF600E25985 /* ZConstants.swift in Sources */,
 				0CD1EB011DB725A800A096E4 /* OperationQueue.swift in Sources */,
 				0CC8F8531DC2CECF00E25985 /* ZGCD.swift in Sources */,
