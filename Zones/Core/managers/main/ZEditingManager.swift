@@ -157,7 +157,7 @@ class ZEditingManager: NSObject {
                             default:                  return true
                             }
 
-                            showRevealerDot(show, zone: zone, recursively: isCommand) { controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {} };
+                            showToggleDot(show, zone: zone, recursively: isCommand) { controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {} };
                         }
                     }
                 }
@@ -257,7 +257,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func showRevealerDot(_ show: Bool, zone: Zone, recursively: Bool, onCompletion: Closure?) {
+    func showToggleDot(_ show: Bool, zone: Zone, recursively: Bool, onCompletion: Closure?) {
         let       isChildless = zone.children.count == 0
         let noVisibleChildren = !zone.showChildren || isChildless
 
@@ -266,7 +266,7 @@ class ZEditingManager: NSObject {
 
             zone.needSave()
             selectionManager.grab(parent)
-            showRevealerDot(show, zone: parent, recursively: recursively, onCompletion: onCompletion)
+            showToggleDot(show, zone: parent, recursively: recursively, onCompletion: onCompletion)
         } else {
             if  zone.showChildren != show {
                 zone.showChildren  = show
@@ -287,7 +287,7 @@ class ZEditingManager: NSObject {
 
                 if recursively {
                     for child: Zone in zone.children {
-                        self.showRevealerDot(show, zone: child, recursively: recursively, onCompletion: nil)
+                        self.showToggleDot(show, zone: child, recursively: recursively, onCompletion: nil)
                     }
                 }
             }
@@ -303,13 +303,13 @@ class ZEditingManager: NSObject {
     }
 
 
-    func revealerDotActionOnZone(_ zone: Zone, extreme: Bool) {
+    func toggleDotActionOnZone(_ zone: Zone, recursively: Bool) {
         if zone.isBookmark {
             travelThroughBookmark(zone)
         } else {
             let show = zone.showChildren == false
 
-            showRevealerDot(show, zone: zone, recursively: false) {
+            showToggleDot(show, zone: zone, recursively: recursively) {
                 controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
             }
         }

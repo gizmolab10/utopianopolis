@@ -21,23 +21,23 @@ class ZoneDot: ZView, NSGestureRecognizerDelegate {
 
     var      innerDot: ZoneDot?
     var    isInnerDot: Bool = false
-    var    isRevealer: Bool = true
+    var    isToggle: Bool = true
     var  douleClicker: NSGestureRecognizer?
     var singleClicker: NSGestureRecognizer?
 
 
-    func setupForZone(_ widgetZone: Zone, asRevealer: Bool) {
-        isRevealer                 = asRevealer
+    func setupForZone(_ widgetZone: Zone, asToggle: Bool) {
+        isToggle                   = asToggle
 
         if isInnerDot {
-            let             radius = dotHeight / (isRevealer ? 2.0 : 3.0)
+            let             radius = dotHeight / (isToggle ? 2.0 : 3.0)
             let      selectedColor = widgetZone.isBookmark ? bookmarkColor : lineColor
-            let    shouldHighlight = isRevealer ? !widgetZone.showChildren || widgetZone.isBookmark : selectionManager.isGrabbed(widgetZone)
+            let    shouldHighlight = isToggle ? !widgetZone.showChildren || widgetZone.isBookmark : selectionManager.isGrabbed(widgetZone)
             zlayer.backgroundColor = (shouldHighlight ? selectedColor : unselectedColor).cgColor
 
             addBorder(thickness: CGFloat(lineThicknes), radius: CGFloat(radius), color: selectedColor.cgColor)
             snp.makeConstraints { (make: ConstraintMaker) in
-                let          width = CGFloat(asRevealer ? dotHeight : dotHeight * 0.65)
+                let          width = CGFloat(asToggle ? dotHeight : dotHeight * 0.65)
                 let           size = CGSize(width: width, height: CGFloat(dotHeight))
 
                 make.size.equalTo(size)
@@ -51,12 +51,12 @@ class ZoneDot: ZView, NSGestureRecognizerDelegate {
 
             clearGestures()
 
-            singleClicker          = createGestureRecognizer(self, action: #selector(ZoneDot.oneClick),  clicksRequired: 1)
             douleClicker           = createGestureRecognizer(self, action: #selector(ZoneDot.twoClicks), clicksRequired: 2)
+            singleClicker          = createGestureRecognizer(self, action: #selector(ZoneDot.oneClick),  clicksRequired: 1)
             zlayer.backgroundColor = ZColor.clear.cgColor
             innerDot?.isInnerDot   = true
 
-            innerDot?.setupForZone(widgetZone, asRevealer: isRevealer)
+            innerDot?.setupForZone(widgetZone, asToggle: isToggle)
             // addBorder(thickness: lineThicknes, radius: fingerBreadth / 2.0, color: ZColor.red.cgColor)
             snp.makeConstraints { (make: ConstraintMaker) in
                 make.size.equalTo(CGSize(width: fingerBreadth, height: fingerBreadth))
@@ -75,8 +75,8 @@ class ZoneDot: ZView, NSGestureRecognizerDelegate {
 
     func twoClicks(_ iGesture: ZGestureRecognizer?) {
         if let widget: ZoneWidget = superview as? ZoneWidget, let zone = widget.widgetZone {
-            if isRevealer {
-                editingManager.revealerDotActionOnZone(zone, extreme: true)
+            if isToggle {
+                editingManager.toggleDotActionOnZone(zone, recursively: true)
             } else {
                 editingManager.focusOnZone(zone)
             }
@@ -86,8 +86,8 @@ class ZoneDot: ZView, NSGestureRecognizerDelegate {
 
     func oneClick(_ iGesture: ZGestureRecognizer?) {
         if let widget: ZoneWidget = superview as? ZoneWidget, let zone = widget.widgetZone {
-            if isRevealer {
-                editingManager.revealerDotActionOnZone(zone, extreme: false)
+            if isToggle {
+                editingManager.toggleDotActionOnZone(zone, recursively: false)
             } else {
                 selectionManager.deselect()
                 selectionManager.grab(zone)

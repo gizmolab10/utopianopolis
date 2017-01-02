@@ -65,7 +65,7 @@ class ZoneCurve: ZView {
         snp.removeConstraints()
         snp.makeConstraints { (make: ConstraintMaker) in
             let halfLineThickness = lineThicknes / 2.0
-            let       revealerDot = parent?.revealerDot.innerDot
+            let       toggleDot = parent?.toggleDot.innerDot
             let           dragDot = child?.dragDot.innerDot
 
             make.right.equalTo((dragDot?.snp.left)!)
@@ -73,27 +73,27 @@ class ZoneCurve: ZView {
             switch kind {
             case .above:
                 make   .top.lessThanOrEqualTo((dragDot?.snp.centerY)!).offset(-halfLineThickness)
-                make.bottom.equalTo(revealerDot!.snp.top)
+                make.bottom.equalTo(toggleDot!.snp.top)
                 break
             case .straight:
                 make.height.equalTo(lineThicknes)
-                make.bottom.equalTo(revealerDot!.snp.centerY)
-                make.left.equalTo(revealerDot!.snp.right)
+                make.bottom.equalTo(toggleDot!.snp.centerY)
+                make.left.equalTo(toggleDot!.snp.right)
                 return
             case .below:
-                make   .top.equalTo(revealerDot!.snp.bottom)
+                make   .top.equalTo(toggleDot!.snp.bottom)
                 make.bottom.greaterThanOrEqualTo((dragDot?.snp.centerY)!).offset(halfLineThickness)
                 break
             }
 
-            make.left.equalTo(revealerDot!.snp.centerX).offset(-halfLineThickness)
+            make.left.equalTo(toggleDot!.snp.centerX).offset(-halfLineThickness)
         }
     }
 
 
     func drawCurveIn(_ dirtyRect: CGRect) {
         if dirtyRect.size.width > 1.0 {
-            let toggleHalfHeight = (parent?.revealerDot.innerDot?.bounds.size.height)! / 2.0
+            let toggleHalfHeight = (parent?.toggleDot.innerDot?.bounds.size.height)! / 2.0
             let    dragHalfWidth = (child? .dragDot    .innerDot?.bounds.size.width )! / 2.0
             var y: CGFloat
 
