@@ -122,6 +122,12 @@ class ZEditingManager: NSObject {
                             }
 
                             break
+                        case "'":
+                            travelManager.cycleStorageMode {
+                                controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                            }
+
+                            break
                         case "t":
                             if isCommand, let zone = selectionManager.firstGrabbableZone {
                                 if !zone.isBookmark {

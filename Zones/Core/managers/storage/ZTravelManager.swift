@@ -101,6 +101,25 @@ class ZTravelManager: NSObject {
     }
 
 
+    // MARK:- travel
+    // MARK:-
+
+
+    func cycleStorageMode(_ atArrival: @escaping Closure) {
+        var mode = storageMode
+
+        switch mode {
+        case .everyone: mode = .mine;     break
+        case .mine:     mode = .everyone; break
+        default: return
+        }
+
+        storageMode = mode
+
+        travel(atArrival)
+    }
+
+
     private func travel(_ atArrival: @escaping Closure) {
         setup                   ()
         widgetsManager    .clear()
