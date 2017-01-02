@@ -341,8 +341,25 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
+    func predicateFrom(_ searchString: String) -> NSPredicate {
+        let    tokens = searchString.components(separatedBy: " ")
+        let separator = " AND "
+        var    suffix = ""
+
+        for token in tokens {
+            if token != "" {
+                suffix = String(format: "%@%@SELF CONTAINS \"%@\"", suffix, separator, token)
+            }
+        }
+
+        let format = String(format: "zoneState < %d AND zoneLink = \"\"%@", ZoneState.IsDeleted.rawValue, suffix)
+
+        return NSPredicate(format: format)
+    }
+
+
     func searchFor(_ searchFor: String, onCompletion: ObjectClosure?) {
-        let predicate = NSPredicate(format: "zoneState < %d AND zoneLink = %@ AND self CONTAINS %@", ZoneState.IsDeleted.rawValue, "", searchFor)
+        let predicate = predicateFrom(searchFor)
         var   records = [CKRecord] ()
 
         cloudQueryUsingPredicate(predicate, onCompletion: { iRecord in

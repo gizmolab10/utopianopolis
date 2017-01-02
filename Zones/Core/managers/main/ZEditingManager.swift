@@ -320,18 +320,18 @@ class ZEditingManager: NSObject {
 
 
     func addZoneTo(_ parentZone: Zone?) {
-        addZoneTo(parentZone) { iObject in
+        addZoneTo(parentZone) { (iZone: Zone) in
             controllersManager.syncToCloudAndSignalFor(parentZone, regarding: .redraw) {
                 operationsManager.isReady = true
 
-                widgetsManager.widgetForZone(iObject as? Zone)?.textWidget.becomeFirstResponder()
-                self.signalFor(parentZone, regarding: .redraw)
+                widgetsManager.widgetForZone(iZone)?.textWidget.becomeFirstResponder()
+                self.signalFor(nil, regarding: .redraw)
             }
         }
     }
 
 
-    func addZoneTo(_ zone: Zone?, onCompletion: ObjectClosure?) {
+    func addZoneTo(_ zone: Zone?, onCompletion: ZoneClosure?) {
         if zone != nil && travelManager.storageMode != .bookmarks {
             zone?.needChildren()
 
