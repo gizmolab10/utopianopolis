@@ -9,8 +9,14 @@
 
 import SnapKit
 
+#if os(OSX)
+    import Cocoa
+#elseif os(iOS)
+    import UIKit
+#endif
 
-class ZEditorViewController: ZGenericViewController {
+
+class ZEditorViewController: ZGenericViewController, NSGestureRecognizerDelegate {
 
     
     var hereWidget:                 ZoneWidget = ZoneWidget()
@@ -73,12 +79,13 @@ class ZEditorViewController: ZGenericViewController {
 
 
     override func setup() {
-        view.setupGestures(self, action: #selector(ZEditorViewController.gestureEvent))
+        view.clearGestures()
+        view.createGestureRecognizer(self, action: #selector(ZEditorViewController.oneClick), clicksRequired: 1)
         super.setup()
     }
 
     
-    func gestureEvent(_ sender: ZGestureRecognizer?) {
+    func oneClick(_ sender: ZGestureRecognizer?) {
         selectionManager.deselect()
     }
 }

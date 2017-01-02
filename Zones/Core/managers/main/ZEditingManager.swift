@@ -130,15 +130,7 @@ class ZEditingManager: NSObject {
                             break
                         case "t":
                             if isCommand, let zone = selectionManager.firstGrabbableZone {
-                                if !zone.isBookmark {
-                                    hereZone = zone
-
-                                    controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
-                                } else {
-                                    travelManager.travelToWhereThisZonePoints(zone, atArrival: { (object, kind) in
-                                        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
-                                    })
-                                }
+                                focusOnZone(zone)
                             }
                             
                             break
@@ -173,6 +165,20 @@ class ZEditingManager: NSObject {
         }
         
         return true
+    }
+
+
+    func focusOnZone(_ iZone: Zone) {
+        if !iZone.isBookmark {
+            hereZone = iZone
+
+            controllersManager.syncToCloudAndSignalFor(nil, regarding: .data) {}
+        } else {
+            travelManager.travelToWhereThisZonePoints(iZone, atArrival: { (object, kind) in
+                controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+            })
+        }
+
     }
 
 
@@ -297,7 +303,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func revealerDotActionOnZone(_ zone: Zone) {
+    func revealerDotActionOnZone(_ zone: Zone, extreme: Bool) {
         if zone.isBookmark {
             travelThroughBookmark(zone)
         } else {

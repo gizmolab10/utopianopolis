@@ -63,13 +63,16 @@ import CloudKit
         }
 
 
-        func setupGestures(_ target: Any, action: Selector?) {
+        @discardableResult func createGestureRecognizer(_ target: NSGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> NSGestureRecognizer {
             let                            gesture = NSClickGestureRecognizer(target: target, action: action)
+            gesture.numberOfClicksRequired         = clicksRequired
             gesture.delaysPrimaryMouseButtonEvents = false
+            gesture.delegate                       = target
             isUserInteractionEnabled               = true
 
-            clearGestures()
             addGestureRecognizer(gesture)
+
+            return gesture
         }
     }
 

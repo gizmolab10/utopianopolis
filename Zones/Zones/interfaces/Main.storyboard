@@ -673,7 +673,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="396" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
+                            <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
                                 <rect key="frame" x="98" y="198" width="200" height="200"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="200" id="bAV-En-6Wv"/>
@@ -826,7 +826,7 @@
                                 <rect key="frame" x="6" y="348" width="203" height="240"/>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="RJc-P2-wiE">
                                     <font key="font" metaFont="cellTitle"/>
-                                    <mutableString key="title">HELP:
+                                    <string key="title">HELP:
     ARROWS: change selection
 
 with OPTION move/alter zone:
@@ -839,7 +839,7 @@ with OPTION move/alter zone:
 ARROWS with SHIFT:
     RIGHT expand
     LEFT collapse
-    with COMMAND: reach far</mutableString>
+    with COMMAND: reach far</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -970,7 +970,7 @@ ARROWS with SHIFT:
                                     </subviews>
                                 </clipView>
                                 <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="FGu-3L-f1L">
-                                    <rect key="frame" x="1" y="119" width="223" height="15"/>
+                                    <rect key="frame" x="1" y="580" width="448" height="15"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="5Ch-fr-lbq">

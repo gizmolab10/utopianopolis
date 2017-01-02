@@ -16,12 +16,14 @@ import SnapKit
 #endif
 
 
-class ZoneDot: ZView {
+class ZoneDot: ZView, NSGestureRecognizerDelegate {
 
 
-    var   innerDot: ZoneDot?
-    var isInnerDot: Bool = false
-    var isRevealer: Bool = true
+    var      innerDot: ZoneDot?
+    var    isInnerDot: Bool = false
+    var    isRevealer: Bool = true
+    var  douleClicker: NSGestureRecognizer?
+    var singleClicker: NSGestureRecognizer?
 
 
     func setupForZone(_ widgetZone: Zone, asRevealer: Bool) {
@@ -47,10 +49,13 @@ class ZoneDot: ZView {
                 addSubview(innerDot!)
             }
 
+            clearGestures()
+
+            singleClicker          = createGestureRecognizer(self, action: #selector(ZoneDot.oneClick),  clicksRequired: 1)
+            douleClicker           = createGestureRecognizer(self, action: #selector(ZoneDot.twoClicks), clicksRequired: 2)
             zlayer.backgroundColor = ZColor.clear.cgColor
             innerDot?.isInnerDot   = true
 
-            setupGestures(self, action: #selector(ZoneDot.gestureEvent))
             innerDot?.setupForZone(widgetZone, asRevealer: isRevealer)
             // addBorder(thickness: lineThicknes, radius: fingerBreadth / 2.0, color: ZColor.red.cgColor)
             snp.makeConstraints { (make: ConstraintMaker) in
@@ -63,14 +68,26 @@ class ZoneDot: ZView {
     }
 
 
-    func gestureEvent(_ sender: ZGestureRecognizer?) {
-        let widget: ZoneWidget = superview as! ZoneWidget
+    func gestureRecognizer(_ gestureRecognizer: NSGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: NSGestureRecognizer) -> Bool {
+        return gestureRecognizer == singleClicker && otherGestureRecognizer == douleClicker
+    }
+    
 
-        toConsole("dot")
-
-        if let zone = widget.widgetZone {
+    func twoClicks(_ iGesture: ZGestureRecognizer?) {
+        if let widget: ZoneWidget = superview as? ZoneWidget, let zone = widget.widgetZone {
             if isRevealer {
-                editingManager.revealerDotActionOnZone(zone)
+                editingManager.revealerDotActionOnZone(zone, extreme: true)
+            } else {
+                editingManager.focusOnZone(zone)
+            }
+        }
+    }
+
+
+    func oneClick(_ iGesture: ZGestureRecognizer?) {
+        if let widget: ZoneWidget = superview as? ZoneWidget, let zone = widget.widgetZone {
+            if isRevealer {
+                editingManager.revealerDotActionOnZone(zone, extreme: false)
             } else {
                 selectionManager.deselect()
                 selectionManager.grab(zone)
