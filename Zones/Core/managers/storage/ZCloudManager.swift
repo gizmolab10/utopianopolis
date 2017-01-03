@@ -14,7 +14,7 @@ import CloudKit
 class ZCloudManager: ZRecordsManager {
     var cloudZonesByID = [CKRecordZoneID : CKRecordZone] ()
     var        container: CKContainer!
-    var        currentDB: CKDatabase? { get { return databaseForMode(travelManager.storageMode) } }
+    var        currentDB: CKDatabase? { get { return databaseForMode(gStorageMode) } }
 
 
     func databaseForMode(_ mode: ZStorageMode) -> CKDatabase? {
@@ -41,7 +41,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
-        return configure(operation, using: travelManager.storageMode)
+        return configure(operation, using: gStorageMode)
     }
 
 
@@ -84,7 +84,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func flush(_ onCompletion: Closure?) {
-        flush(travelManager.storageMode, onCompletion: onCompletion)
+        flush(gStorageMode, onCompletion: onCompletion)
     }
 
 
@@ -164,7 +164,7 @@ class ZCloudManager: ZRecordsManager {
 
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
-        assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { iRecord in
+        assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey, onCompletion: { iRecord in
             let   zone = self.zoneForRecord(iRecord!)
             let parent = zone.parentZone
 
@@ -186,7 +186,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func establishHere(_ onCompletion: Closure?) {
-        let         manifestName = "\(manifestNameKey).\(travelManager.storageMode.rawValue)"
+        let         manifestName = "\(manifestNameKey).\(gStorageMode.rawValue)"
         var recordID: CKRecordID = CKRecordID(recordName: manifestName)
 
         assureRecordExists(withRecordID: recordID, storageMode: .mine, recordType: manifestTypeKey, onCompletion: { (iManifestRecord: CKRecord?) in
@@ -196,7 +196,7 @@ class ZCloudManager: ZRecordsManager {
                 if travelManager.manifest.here != nil {
                     recordID = (travelManager.manifest.here?.recordID)!
 
-                    self.assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { (iHereRecord: CKRecord?) in
+                    self.assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey, onCompletion: { (iHereRecord: CKRecord?) in
                         if iHereRecord == nil || iHereRecord?[zoneNameKey] == nil {
                             self.establishRootAsHere(onCompletion)
                         } else {
@@ -221,7 +221,7 @@ class ZCloudManager: ZRecordsManager {
     func establishRootAsHere(_ onCompletion: Closure?) {
         let recordID = CKRecordID(recordName: rootNameKey)
 
-        self.assureRecordExists(withRecordID: recordID, storageMode: travelManager.storageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) in
+        self.assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) in
             if iRecord != nil {
                 let               root = self.zoneForRecord(iRecord!)
                 travelManager.hereZone = root
@@ -458,7 +458,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetch(_ onCompletion: Closure?) {
-        invokeWithMode(travelManager.storageMode) {
+        invokeWithMode(gStorageMode) {
             let    needed = referencesWithMatchingStates([.needsFetch])
             let predicate = NSPredicate(format: "zoneState < %d AND creatorUserRecordID IN %@", ZoneState.IsDeleted.rawValue, needed)
 

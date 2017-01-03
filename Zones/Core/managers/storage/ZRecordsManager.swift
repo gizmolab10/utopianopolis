@@ -30,11 +30,11 @@ class ZRecordsManager: NSObject {
 
     var recordsByState: [ZRecordState : [ZRecord]] {
         set {
-            statesByMode[travelManager.storageMode] = newValue
+            statesByMode[gStorageMode] = newValue
         }
 
         get {
-            var registry = statesByMode[travelManager.storageMode]
+            var registry = statesByMode[gStorageMode]
 
             if registry == nil {
                 registry            = [:]
@@ -48,11 +48,11 @@ class ZRecordsManager: NSObject {
 
     var zones: [String : Zone] {
         set {
-            zoneRegistry[travelManager.storageMode] = newValue
+            zoneRegistry[gStorageMode] = newValue
         }
 
         get {
-            var registry: [String : Zone]? = zoneRegistry[travelManager.storageMode]
+            var registry: [String : Zone]? = zoneRegistry[gStorageMode]
 
             if registry == nil {
                 registry   = [:]
@@ -294,7 +294,7 @@ class ZRecordsManager: NSObject {
             if zone != nil {
                 zone?.record = record
             } else {
-                zone = Zone(record: record, storageMode: travelManager.storageMode)
+                zone = Zone(record: record, storageMode: gStorageMode)
             }
         }
 
@@ -312,7 +312,7 @@ class ZRecordsManager: NSObject {
         if zone != nil {
             zone?.record = record
         } else {
-            zone = Zone(record: record, storageMode: travelManager.storageMode)
+            zone = Zone(record: record, storageMode: gStorageMode)
         }
 
         if  zone!.showChildren {

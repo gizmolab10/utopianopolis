@@ -192,10 +192,11 @@ class ZEditingManager: NSObject {
 
     var isEditing: Bool {
         get {
-            let editedZone = selectionManager.currentlyEditingZone
-            let editedWidget = widgetsManager.widgetForZone(editedZone)
+            if let editedZone = selectionManager.currentlyEditingZone, let editedWidget = widgetsManager.widgetForZone(editedZone) {
+                return editedWidget.textWidget.isTextEditing
+            }
 
-            return (editedWidget?.textWidget.isTextEditing)!
+            return false
         }
     }
 
@@ -362,14 +363,14 @@ class ZEditingManager: NSObject {
 
 
     func addZoneTo(_ zone: Zone?, onCompletion: ZoneClosure?) {
-        if zone != nil && travelManager.storageMode != .bookmarks {
+        if zone != nil && gStorageMode != .bookmarks {
             zone?.needChildren()
 
             operationsManager.children(false) {
                 if operationsManager.isReady {
                     let record = CKRecord(recordType: zoneTypeKey)
                     let insert = asTask ? 0 : (zone?.children.count)!
-                    let  child = Zone(record: record, storageMode: travelManager.storageMode)
+                    let  child = Zone(record: record, storageMode: gStorageMode)
 
                     child.needCreate()
                     widgetsManager.widgetForZone(zone!)?.textWidget.resignFirstResponder()
@@ -457,7 +458,7 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            if travelManager.storageMode != .bookmarks {
+            if gStorageMode != .bookmarks {
                 zone.isDeleted = true
 
                 zone.needSave()
@@ -505,7 +506,7 @@ class ZEditingManager: NSObject {
                     if next != nil {
                         selectionManager.grab(next!)
                     }
-                } else if travelManager.storageMode != .bookmarks {
+                } else if gStorageMode != .bookmarks {
                     parentZone.children.remove(at: index)
                     parentZone.children.insert(zone, at:newIndex)
                 }
@@ -605,7 +606,7 @@ class ZEditingManager: NSObject {
                     selectionManager.grab(toThere!)
                     signalFor(toThere!, regarding: .data)
                 }
-            } else if travelManager.storageMode != .bookmarks, let fromThere = toThere {
+            } else if gStorageMode != .bookmarks, let fromThere = toThere {
                 toThere     = fromThere.parentZone
                 let closure = {
                     self.hereZone = toThere!
@@ -755,8 +756,8 @@ class ZEditingManager: NSObject {
 
     func applyModeRecursivelyTo(_ zone: Zone?) {
         if zone != nil {
-            zone?.record      = CKRecord(recordType: zoneTypeKey)
-            zone?.storageMode = travelManager.storageMode
+            zone?.record    = CKRecord(recordType: zoneTypeKey)
+            zone?.storageMode = gStorageMode
 
             for child in (zone?.children)! {
                 applyModeRecursivelyTo(child)

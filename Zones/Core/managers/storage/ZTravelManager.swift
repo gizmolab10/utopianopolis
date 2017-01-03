@@ -22,7 +22,6 @@ enum ZStorageMode: String {     ///// move this to cloud manager  //////////
 class ZTravelManager: NSObject {
 
 
-    let                   key = "current storage mode"
     var manifestByStorageMode = [ZStorageMode : ZManifest] ()
     var              rootZone: Zone!
     var              hereZone: Zone? { get { return manifest.hereZone } set { manifest.hereZone = newValue } }
@@ -30,11 +29,11 @@ class ZTravelManager: NSObject {
 
     var manifest: ZManifest {
         get {
-            var found = manifestByStorageMode[storageMode]
+            var found = manifestByStorageMode[gStorageMode]
 
             if found == nil {
-                found                              = ZManifest(record: nil, storageMode: .mine)
-                manifestByStorageMode[storageMode] = found
+                found                               = ZManifest(record: nil, storageMode: .mine)
+                manifestByStorageMode[gStorageMode] = found
             }
 
             return found!
@@ -42,38 +41,16 @@ class ZTravelManager: NSObject {
     }
 
 
-    var storageMode: ZStorageMode {
-        set {
-            UserDefaults.standard.set(newValue.rawValue, forKey:key)
-        }
-
-        get {
-            var mode: ZStorageMode? = nil
-
-            if let           object = UserDefaults.standard.object(forKey:key) {
-                mode                = ZStorageMode(rawValue: object as! String)
-            }
-
-            if mode == nil {
-                mode                = .everyone
-                self.storageMode    = mode!     // wow! this works
-            }
-
-            return mode!
-        }
-    }
-
-
     func setup() {
-        switch storageMode {
+        switch gStorageMode {
         case .bookmarks: rootZone = bookmarksManager.rootZone
-        default:         rootZone = Zone(record: nil, storageMode: storageMode)
+        default:         rootZone = Zone(record: nil, storageMode: gStorageMode)
         }
     }
 
 
     func establishHere(_ onCompletion: Closure?) {
-        if storageMode == .bookmarks {
+        if gStorageMode == .bookmarks {
             hereZone = bookmarksManager.rootZone
         } else if hereZone != nil && hereZone?.record != nil {
             hereZone?.needChildren()
@@ -106,7 +83,7 @@ class ZTravelManager: NSObject {
 
 
     func cycleStorageMode(_ atArrival: @escaping Closure) {
-        var mode = storageMode
+        var mode = gStorageMode
 
         switch mode {
         case .everyone: mode = .mine;     break
@@ -114,7 +91,7 @@ class ZTravelManager: NSObject {
         default: return
         }
 
-        storageMode = mode
+        gStorageMode = mode
 
         travel(atArrival)
     }
@@ -138,9 +115,9 @@ class ZTravelManager: NSObject {
             // going out to bookmarks graph
             ///////////////////////////////
 
-            let index = indexOfMode(storageMode) // index is a KLUDGE
+            let index = indexOfMode(gStorageMode) // index is a KLUDGE
 
-            storageMode = .bookmarks
+            gStorageMode = .bookmarks
 
             travel {
                 there = bookmarksManager.rootZone
@@ -160,8 +137,8 @@ class ZTravelManager: NSObject {
             let recordIDOfLink = crossLink.record.recordID
             let pointsAtHere   = crossLink.isRoot
 
-            if  storageMode != mode {
-                storageMode  = mode
+            if  gStorageMode != mode {
+                gStorageMode  = mode
 
                 //////////////////////////////
                 // travel to a different graph
@@ -198,7 +175,7 @@ class ZTravelManager: NSObject {
 
                     atArrival(there, .redraw)
                 } else {
-                    cloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: storageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) in
+                    cloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: gStorageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) in
                         self.hereZone = cloudManager.zoneForRecord(iRecord!)
 
                         self.manifest.needSave()

@@ -58,7 +58,7 @@ class ZBookmarksManager: NSObject {
 
     
     @discardableResult func addNewBookmarkFor(_ zone: Zone) -> Zone {
-        let            mode = zone.isRoot ? .bookmarks : travelManager.storageMode
+        let            mode = zone.isRoot ? .bookmarks : gStorageMode
         let        bookmark = zone.isBookmark ? zone.deepCopy() : Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: mode)
         let    parent: Zone = zone.parentZone ?? rootZone
         let           index = parent.children.index(of: zone) ?? 0
@@ -71,7 +71,7 @@ class ZBookmarksManager: NSObject {
             bookmark.crossLink = zone
         }
 
-        if mode != .bookmarks && travelManager.storageMode != .bookmarks {
+        if mode != .bookmarks && gStorageMode != .bookmarks {
             parent.recomputeOrderingUponInsertionAt(index)
             parent.needSave()
             bookmark.needCreate()

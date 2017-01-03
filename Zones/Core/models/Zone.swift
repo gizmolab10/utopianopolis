@@ -251,7 +251,7 @@ class Zone : ZRecord {
 
 
     func deepCopy() -> Zone {
-        let          zone = Zone(record: nil, storageMode: storageMode)
+        let          zone = Zone(record: nil, storageMode: gStorageMode)
         zone.showChildren = showChildren
         zone.crossLink    = crossLink
         zone.zoneName     = zoneName
@@ -431,7 +431,7 @@ class Zone : ZRecord {
 
 
     convenience init(dict: ZStorageDict) {
-        self.init(record: nil, storageMode: travelManager.storageMode)
+        self.init(record: nil, storageMode: gStorageMode)
 
         storageDict = dict
     }

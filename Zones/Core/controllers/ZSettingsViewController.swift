@@ -14,6 +14,7 @@ class ZSettingsViewController: ZGenericViewController {
 
 
     @IBOutlet var totalCountLabel: ZTextField?
+    @IBOutlet var      depthLabel: ZTextField?
 
 
     override func identifier() -> ZControllerID { return .settings }
@@ -21,6 +22,7 @@ class ZSettingsViewController: ZGenericViewController {
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         totalCountLabel?.text = "zones: \(cloudManager.zones.count)"
+        depthLabel?     .text = "depth: \((selectionManager.currentlyMovableZone?.level)!)"
     }
 
     

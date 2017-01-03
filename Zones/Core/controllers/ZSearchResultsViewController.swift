@@ -110,7 +110,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
         var zone = cloudManager.zoneForRecordID(record.recordID)
 
         if zone == nil {
-            zone = Zone(record: record, storageMode: travelManager.storageMode)
+            zone = Zone(record: record, storageMode: gStorageMode)
 
             zone?.needChildren()
         }

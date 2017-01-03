@@ -247,22 +247,22 @@ extension NSObject {
 
 
     func detectWithMode(_ mode: ZStorageMode, block: BooleanClosure) -> Bool {
-        let             savedMode = travelManager.storageMode
-        travelManager.storageMode = mode
-        let                result = block()
-        travelManager.storageMode = savedMode
+        let savedMode = gStorageMode
+        gStorageMode  = mode
+        let    result = block()
+        gStorageMode  = savedMode
 
         return result
     }
 
 
     func invokeWithMode(_ mode: ZStorageMode, block: Closure) {
-        let             savedMode = travelManager.storageMode
-        travelManager.storageMode = mode
+        let             savedMode = gStorageMode
+        gStorageMode = mode
 
         block()
 
-        travelManager.storageMode = savedMode
+        gStorageMode = savedMode
     }
 }
 

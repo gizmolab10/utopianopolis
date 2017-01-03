@@ -133,7 +133,7 @@ class ZRecord: NSObject {
 
 
     func setStorageDictionary(_ dict: ZStorageDict) {
-        storageMode       = travelManager.storageMode
+        storageMode       = gStorageMode
         var type: String? = nil
         var name: String? = nil
 

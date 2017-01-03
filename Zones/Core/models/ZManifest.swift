@@ -28,7 +28,7 @@ class ZManifest: ZRecord {
         get {
             if _hereZone == nil {
                 let hereRecord: CKRecord? = (here == nil) ? nil : CKRecord(recordType: zoneTypeKey, recordID: (here?.recordID)!)
-                _hereZone                 = Zone(record: hereRecord, storageMode: travelManager.storageMode)
+                _hereZone                 = Zone(record: hereRecord, storageMode: gStorageMode)
             }
 
             return _hereZone
