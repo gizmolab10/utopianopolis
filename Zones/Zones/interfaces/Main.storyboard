@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
     </dependencies>
     <scenes>
@@ -798,19 +797,19 @@
                         <rect key="frame" x="0.0" y="0.0" width="195" height="767"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" misplaced="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="145" width="195" height="622"/>
+                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
+                                <rect key="frame" x="0.0" y="139" width="195" height="628"/>
                                 <subviews>
                                     <customView identifier="help" translatesAutoresizingMaskIntoConstraints="NO" id="E5h-DF-X3i" userLabel="Help View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="286" width="195" height="336"/>
+                                        <rect key="frame" x="0.0" y="288" width="195" height="340"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="GnQ-iS-bgR" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="320" width="195" height="16"/>
+                                                <rect key="frame" x="0.0" y="320" width="195" height="20"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ds2-S9-Udj">
-                                                        <rect key="frame" x="0.0" y="0.0" width="195" height="16"/>
+                                                        <rect key="frame" x="0.0" y="2" width="195" height="17"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" constant="16" id="y8O-9V-P1c"/>
+                                                            <constraint firstAttribute="height" constant="17" id="Umo-fQ-duv"/>
                                                         </constraints>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Keyboard Help" drawsBackground="YES" id="Xsj-zV-K1c">
                                                             <font key="font" metaFont="system"/>
@@ -818,13 +817,14 @@
                                                             <color key="backgroundColor" name="highlightColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kYb-ao-3Mw" userLabel="Triangle Button">
-                                                        <rect key="frame" x="171" y="0.0" width="16" height="16"/>
+                                                    <button identifier="help toggle" horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kYb-ao-3Mw" userLabel="Triangle Button">
+                                                        <rect key="frame" x="173" y="3" width="14" height="14"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" secondItem="kYb-ao-3Mw" secondAttribute="height" id="pt1-bR-pJm"/>
+                                                            <constraint firstAttribute="height" constant="14" id="L2e-Gp-cDO"/>
+                                                            <constraint firstAttribute="width" constant="14" id="ih1-UQ-s1f"/>
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="egZ-t8-JM0">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <behavior key="behavior" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
@@ -833,11 +833,10 @@
                                                     </button>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstAttribute="bottom" secondItem="kYb-ao-3Mw" secondAttribute="bottom" id="667-Id-cOD"/>
-                                                    <constraint firstItem="kYb-ao-3Mw" firstAttribute="top" secondItem="GnQ-iS-bgR" secondAttribute="top" id="7cC-37-bIz"/>
                                                     <constraint firstAttribute="trailing" secondItem="ds2-S9-Udj" secondAttribute="trailing" id="Dtv-SH-cIe"/>
-                                                    <constraint firstItem="ds2-S9-Udj" firstAttribute="top" secondItem="GnQ-iS-bgR" secondAttribute="top" id="aWz-dD-r0w"/>
-                                                    <constraint firstAttribute="bottom" secondItem="ds2-S9-Udj" secondAttribute="bottom" id="maN-bO-Y04"/>
+                                                    <constraint firstItem="ds2-S9-Udj" firstAttribute="centerY" secondItem="GnQ-iS-bgR" secondAttribute="centerY" id="Ycx-9c-6Nx"/>
+                                                    <constraint firstAttribute="height" constant="20" id="asr-im-qVs"/>
+                                                    <constraint firstItem="kYb-ao-3Mw" firstAttribute="centerY" secondItem="GnQ-iS-bgR" secondAttribute="centerY" id="d3O-jJ-yNv"/>
                                                     <constraint firstItem="ds2-S9-Udj" firstAttribute="leading" secondItem="GnQ-iS-bgR" secondAttribute="leading" id="nIT-Ny-yPM"/>
                                                     <constraint firstAttribute="trailing" secondItem="kYb-ao-3Mw" secondAttribute="trailing" constant="8" id="w3N-D2-bBi"/>
                                                 </constraints>
@@ -900,15 +899,15 @@ COMMAND with:
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="162" width="195" height="123"/>
+                                        <rect key="frame" x="0.0" y="160" width="195" height="127"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="107" width="195" height="16"/>
+                                                <rect key="frame" x="0.0" y="107" width="195" height="20"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gUX-Sv-09B">
-                                                        <rect key="frame" x="0.0" y="0.0" width="195" height="16"/>
+                                                        <rect key="frame" x="0.0" y="2" width="195" height="17"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" constant="16" id="yPx-4L-4qt"/>
+                                                            <constraint firstAttribute="height" constant="17" id="jiJ-DE-IDs"/>
                                                         </constraints>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Preferences" drawsBackground="YES" id="nO8-26-YFc">
                                                             <font key="font" metaFont="system"/>
@@ -917,12 +916,13 @@ COMMAND with:
                                                         </textFieldCell>
                                                     </textField>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aCk-9D-lHI" userLabel="Triangle Button">
-                                                        <rect key="frame" x="171" y="0.0" width="16" height="16"/>
+                                                        <rect key="frame" x="173" y="3" width="14" height="14"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" secondItem="aCk-9D-lHI" secondAttribute="height" id="p3u-Yb-CHD"/>
+                                                            <constraint firstAttribute="width" constant="14" id="hAG-lD-Wcz"/>
+                                                            <constraint firstAttribute="height" constant="14" id="pOY-vw-MiT"/>
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="Ztr-89-MNY">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <behavior key="behavior" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
@@ -933,11 +933,10 @@ COMMAND with:
                                                 <constraints>
                                                     <constraint firstAttribute="trailing" secondItem="aCk-9D-lHI" secondAttribute="trailing" constant="8" id="7gp-cz-BBw"/>
                                                     <constraint firstItem="gUX-Sv-09B" firstAttribute="leading" secondItem="Ul6-QC-jDi" secondAttribute="leading" id="9RE-Z7-rXt"/>
-                                                    <constraint firstAttribute="bottom" secondItem="aCk-9D-lHI" secondAttribute="bottom" id="Ce4-lx-ZMx"/>
-                                                    <constraint firstItem="aCk-9D-lHI" firstAttribute="top" secondItem="Ul6-QC-jDi" secondAttribute="top" id="htH-jV-OZH"/>
-                                                    <constraint firstAttribute="bottom" secondItem="gUX-Sv-09B" secondAttribute="bottom" id="pcg-dT-xfl"/>
+                                                    <constraint firstItem="gUX-Sv-09B" firstAttribute="centerY" secondItem="Ul6-QC-jDi" secondAttribute="centerY" id="Gzf-t5-8IX"/>
+                                                    <constraint firstAttribute="height" constant="20" id="Lun-Vz-ROc"/>
+                                                    <constraint firstItem="aCk-9D-lHI" firstAttribute="centerY" secondItem="Ul6-QC-jDi" secondAttribute="centerY" id="t1n-0m-22k"/>
                                                     <constraint firstAttribute="trailing" secondItem="gUX-Sv-09B" secondAttribute="trailing" id="tPT-03-TsN"/>
-                                                    <constraint firstItem="gUX-Sv-09B" firstAttribute="top" secondItem="Ul6-QC-jDi" secondAttribute="top" id="zuR-cc-JKp"/>
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="BBZ-rq-7h8" userLabel="Hideable View">
@@ -1001,27 +1000,30 @@ COMMAND with:
                                         </connections>
                                     </customView>
                                     <customView identifier="details" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Details View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="55" width="195" height="106"/>
+                                        <rect key="frame" x="0.0" y="58" width="195" height="101"/>
                                         <subviews>
-                                            <customView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="89" width="195" height="17"/>
+                                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
+                                                <rect key="frame" x="0.0" y="81" width="195" height="20"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ce9-hv-nUx">
-                                                        <rect key="frame" x="0.0" y="0.0" width="195" height="17"/>
+                                                        <rect key="frame" x="0.0" y="2" width="195" height="17"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="17" id="c6d-cF-0Bg"/>
+                                                        </constraints>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Details" drawsBackground="YES" id="XHZ-cX-qig">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="highlightColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="hIy-eV-7gW" userLabel="Triangle Button">
-                                                        <rect key="frame" x="171" y="1" width="16" height="16"/>
+                                                    <button identifier="details toggle" horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="hIy-eV-7gW" userLabel="Triangle Button">
+                                                        <rect key="frame" x="173" y="3" width="14" height="14"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" constant="16" id="Btc-fY-AcD"/>
-                                                            <constraint firstAttribute="width" secondItem="hIy-eV-7gW" secondAttribute="height" id="J3K-RF-XWw"/>
+                                                            <constraint firstAttribute="height" constant="14" id="Btc-fY-AcD"/>
+                                                            <constraint firstAttribute="width" constant="14" id="j0n-Bq-iHU"/>
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="7oD-gH-cVi">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <behavior key="behavior" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
@@ -1030,19 +1032,22 @@ COMMAND with:
                                                     </button>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstItem="hIy-eV-7gW" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="12p-bh-L6G"/>
                                                     <constraint firstAttribute="trailing" secondItem="hIy-eV-7gW" secondAttribute="trailing" constant="8" id="9pe-MS-jhP"/>
+                                                    <constraint firstAttribute="height" constant="20" id="OPH-Ni-UYm"/>
                                                     <constraint firstAttribute="trailing" secondItem="ce9-hv-nUx" secondAttribute="trailing" id="Ut8-Od-VBt"/>
-                                                    <constraint firstAttribute="bottom" secondItem="ce9-hv-nUx" secondAttribute="bottom" id="iU5-hx-161"/>
+                                                    <constraint firstItem="hIy-eV-7gW" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="i6w-cL-2uR"/>
                                                     <constraint firstItem="ce9-hv-nUx" firstAttribute="leading" secondItem="xwW-xc-XIh" secondAttribute="leading" id="vt8-oA-J89"/>
-                                                    <constraint firstItem="ce9-hv-nUx" firstAttribute="top" secondItem="xwW-xc-XIh" secondAttribute="top" id="w4G-7S-Vad"/>
+                                                    <constraint firstItem="ce9-hv-nUx" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="xJH-i0-UpX"/>
                                                 </constraints>
                                             </customView>
-                                            <customView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="icr-XL-kk7">
-                                                <rect key="frame" x="0.0" y="-2" width="195" height="90"/>
+                                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="icr-XL-kk7">
+                                                <rect key="frame" x="0.0" y="0.0" width="195" height="80"/>
                                                 <subviews>
+                                                    <progressIndicator wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="dmI-b1-Z0D">
+                                                        <rect key="frame" x="20" y="53" width="155" height="20"/>
+                                                    </progressIndicator>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xmv-NU-oFf" userLabel="Total Count Label">
-                                                        <rect key="frame" x="-2" y="61" width="199" height="19"/>
+                                                        <rect key="frame" x="-2" y="35" width="199" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="19" id="FXf-NW-zak"/>
                                                         </constraints>
@@ -1053,7 +1058,7 @@ COMMAND with:
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ph8-7t-kSh">
-                                                        <rect key="frame" x="-2" y="36" width="199" height="19"/>
+                                                        <rect key="frame" x="-2" y="8" width="199" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="19" id="1Kn-jc-7t3"/>
                                                         </constraints>
@@ -1065,14 +1070,17 @@ COMMAND with:
                                                     </textField>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstItem="Xmv-NU-oFf" firstAttribute="top" secondItem="icr-XL-kk7" secondAttribute="top" constant="8" id="11I-x9-S7W"/>
-                                                    <constraint firstItem="Ph8-7t-kSh" firstAttribute="top" secondItem="Xmv-NU-oFf" secondAttribute="bottom" constant="6" id="8ai-I8-I6R"/>
+                                                    <constraint firstItem="Ph8-7t-kSh" firstAttribute="top" secondItem="Xmv-NU-oFf" secondAttribute="bottom" constant="8" id="8ai-I8-I6R"/>
                                                     <constraint firstItem="Ph8-7t-kSh" firstAttribute="leading" secondItem="icr-XL-kk7" secondAttribute="leading" id="Onk-FF-6fc"/>
                                                     <constraint firstAttribute="trailing" secondItem="Xmv-NU-oFf" secondAttribute="trailing" id="VCO-LS-iVu"/>
+                                                    <constraint firstItem="dmI-b1-Z0D" firstAttribute="top" secondItem="icr-XL-kk7" secondAttribute="top" constant="8" id="Y1W-Vn-Wxg"/>
+                                                    <constraint firstAttribute="trailing" secondItem="dmI-b1-Z0D" secondAttribute="trailing" constant="20" id="aI2-nw-VPA"/>
                                                     <constraint firstItem="Xmv-NU-oFf" firstAttribute="centerX" secondItem="icr-XL-kk7" secondAttribute="centerX" id="eG8-K0-vT8"/>
-                                                    <constraint firstAttribute="bottom" secondItem="Ph8-7t-kSh" secondAttribute="bottom" constant="36" id="hLX-6e-HyT"/>
+                                                    <constraint firstItem="dmI-b1-Z0D" firstAttribute="leading" secondItem="icr-XL-kk7" secondAttribute="leading" constant="20" id="eUf-4p-PZZ"/>
+                                                    <constraint firstAttribute="bottom" secondItem="Ph8-7t-kSh" secondAttribute="bottom" constant="8" id="gkk-gY-u4X"/>
                                                     <constraint firstItem="Xmv-NU-oFf" firstAttribute="leading" secondItem="icr-XL-kk7" secondAttribute="leading" id="pEm-P7-iSS"/>
                                                     <constraint firstAttribute="trailing" secondItem="Ph8-7t-kSh" secondAttribute="trailing" id="sxU-VQ-lgb"/>
+                                                    <constraint firstItem="Xmv-NU-oFf" firstAttribute="top" secondItem="dmI-b1-Z0D" secondAttribute="bottom" id="zN7-Me-e0W"/>
                                                 </constraints>
                                             </customView>
                                         </subviews>
@@ -1092,27 +1100,30 @@ COMMAND with:
                                         </connections>
                                     </customView>
                                     <customView identifier="actions" translatesAutoresizingMaskIntoConstraints="NO" id="FnR-Ns-9C5" userLabel="Actions View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="195" height="54"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="195" height="57"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Fou-Go-Rux" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="37" width="195" height="17"/>
+                                                <rect key="frame" x="0.0" y="37" width="195" height="20"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NYk-X4-ICp">
-                                                        <rect key="frame" x="0.0" y="0.0" width="195" height="17"/>
+                                                        <rect key="frame" x="0.0" y="2" width="195" height="17"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="17" id="fzI-kf-WP2"/>
+                                                        </constraints>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Actions" drawsBackground="YES" id="vZV-IR-oP7">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="highlightColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="192-Dg-ITw" userLabel="Triangle Button">
-                                                        <rect key="frame" x="171" y="1" width="16" height="16"/>
+                                                    <button identifier="action toggle" horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="192-Dg-ITw" userLabel="Triangle Button">
+                                                        <rect key="frame" x="173" y="3" width="14" height="14"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" constant="16" id="9c3-Oc-Sai"/>
-                                                            <constraint firstAttribute="width" secondItem="192-Dg-ITw" secondAttribute="height" id="mk0-d4-bZH"/>
+                                                            <constraint firstAttribute="height" constant="14" id="9c3-Oc-Sai"/>
+                                                            <constraint firstAttribute="width" constant="14" id="bVR-dQ-Rys"/>
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="HTV-2a-pqd">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <behavior key="behavior" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
@@ -1121,12 +1132,12 @@ COMMAND with:
                                                     </button>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstItem="NYk-X4-ICp" firstAttribute="top" secondItem="Fou-Go-Rux" secondAttribute="top" id="QId-Ch-LlU"/>
+                                                    <constraint firstItem="NYk-X4-ICp" firstAttribute="centerY" secondItem="Fou-Go-Rux" secondAttribute="centerY" id="9JN-DE-eFO"/>
                                                     <constraint firstAttribute="trailing" secondItem="NYk-X4-ICp" secondAttribute="trailing" id="TU8-9K-89I"/>
+                                                    <constraint firstAttribute="height" constant="20" id="ctA-nb-Rgp"/>
                                                     <constraint firstAttribute="trailing" secondItem="192-Dg-ITw" secondAttribute="trailing" constant="8" id="gzk-C6-Y8E"/>
                                                     <constraint firstItem="192-Dg-ITw" firstAttribute="centerY" secondItem="Fou-Go-Rux" secondAttribute="centerY" id="lYh-4A-DDN"/>
                                                     <constraint firstItem="NYk-X4-ICp" firstAttribute="leading" secondItem="Fou-Go-Rux" secondAttribute="leading" id="mvx-Z0-ZBP"/>
-                                                    <constraint firstAttribute="bottom" secondItem="NYk-X4-ICp" secondAttribute="bottom" id="rSt-0R-zqm"/>
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="a9P-rC-Og1">
@@ -1206,6 +1217,7 @@ COMMAND with:
                     </view>
                     <connections>
                         <outlet property="depthLabel" destination="Ph8-7t-kSh" id="2FW-va-uY9"/>
+                        <outlet property="fractionInMemory" destination="dmI-b1-Z0D" id="aDQ-oC-iLc"/>
                         <outlet property="totalCountLabel" destination="Xmv-NU-oFf" id="pBL-Qc-Xdz"/>
                     </connections>
                 </viewController>

@@ -95,17 +95,17 @@ class ZStackableView: ZView {
 
 
     func updateHideableView() {
-        if hideableIsHidden {
+        if !hideableIsHidden {
+            hideableView?.removeFromSuperview()
+            titleLabel?.snp.makeConstraints({ (make: ConstraintMaker) in
+                make.bottom.equalTo(self)
+            })
+        } else if !subviews.contains(hideableView!) {
             addSubview(hideableView!)
             titleLabel?.snp.removeConstraints()
             hideableView?.snp.makeConstraints({ (make: ConstraintMaker) in
                 make.top.equalTo((self.toggleButton?.snp.bottom)!)
                 make.left.right.bottom.equalTo(self)
-            })
-        } else {
-            hideableView?.removeFromSuperview()
-            titleLabel?.snp.makeConstraints({ (make: ConstraintMaker) in
-                make.bottom.equalTo(self)
             })
         }
     }

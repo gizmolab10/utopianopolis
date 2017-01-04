@@ -1,3 +1,4 @@
+
 //
 //  ZManifest.swift
 //  Zones
@@ -15,12 +16,13 @@ class ZManifest: ZRecord {
 
 
     dynamic var bookmarks = [CKReference] ()
+    dynamic var count:          NSNumber?
     dynamic var here:        CKReference?
     var        _hereZone:           Zone?
 
 
     override func cloudProperties() -> [String] {
-        return super.cloudProperties() + [#keyPath(here), #keyPath(bookmarks)]
+        return super.cloudProperties() + [#keyPath(here), #keyPath(count), #keyPath(bookmarks)]
     }
 
 
@@ -44,6 +46,27 @@ class ZManifest: ZRecord {
 
                 needSave()
             }
+        }
+    }
+
+
+    var total: Int {
+        get {
+            if count == nil {
+                updateZoneProperties()
+
+                if count == nil {
+                    count = NSNumber(value: 0)
+                }
+            }
+
+            return (count?.intValue)!
+        }
+
+        set {
+            count = NSNumber(value: newValue)
+
+            needSave()
         }
     }
 }

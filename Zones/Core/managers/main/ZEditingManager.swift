@@ -381,8 +381,9 @@ class ZEditingManager: NSObject {
                         zone?.children.append(child)
                     }
 
-                    child.parentZone   = zone
-                    zone?.showChildren = true
+                    child.parentZone              = zone
+                    zone?.showChildren            = true
+                    travelManager.manifest.total += 1
 
                     zone?.recomputeOrderingUponInsertionAt(insert)
                     onCompletion?(child)
@@ -459,7 +460,8 @@ class ZEditingManager: NSObject {
             }
 
             if gStorageMode != .bookmarks {
-                zone.isDeleted = true
+                travelManager.manifest.total -= 1
+                zone               .isDeleted = true
 
                 zone.needSave()
             }
