@@ -16,7 +16,7 @@ import Foundation
 #endif
 
 
-enum ZEditMode: Int {
+enum ZGraphAlteringMode: Int {
     case task
     case essay
 }
@@ -44,34 +44,101 @@ struct ZSettingsState: OptionSet {
 
     static let        Help = ZSettingsState(rawValue: 1 << 0)
     static let Preferences = ZSettingsState(rawValue: 1 << 1)
-    static let     Details = ZSettingsState(rawValue: 1 << 2)
+    static let Information = ZSettingsState(rawValue: 1 << 2)
     static let     Actions = ZSettingsState(rawValue: 1 << 3)
     static let         All = ZSettingsState(rawValue: 0xFFFF)
 }
 
 
 var recursivelyExpand = false
-var    showsSearching = false
+var    gShowsSearching = false
 var     textCapturing = false
-var          editMode = ZEditMode.task
 var          fileMode = ZFileMode.cloud
 var          workMode = ZWorkMode.editMode
-var     genericOffset = CGSize(width: 0.0, height: 4.0)
-var         lineColor = ZColor.purple //(hue: 0.6, saturation: 0.6, brightness: 1.0,                alpha: 1)
-var     bookmarkColor = ZColor.blue
-var   unselectedColor = ZColor(hue: 0.6, saturation: 0.0, brightness: unselectBrightness, alpha: 1)
-var      lineThicknes = 1.25
-var         dotHeight = 12.0
+var gGraphAlteringMode = ZGraphAlteringMode.task
+var     gGenericOffset = CGSize(width: 12.0, height: 4.0)
+var         gDotHeight = 12.0
 
 
-var               asTask:   Bool { get { return editMode == .task             } }
-var grabbedBookmarkColor: ZColor { get { return bookmarkColor.darker(by: 1.5) } }
-var     grabbedTextColor: ZColor { get { return lineColor    .darker(by: 1.8) } }
+var               asTask:   Bool { get { return gGraphAlteringMode == .task    } }
+var grabbedBookmarkColor: ZColor { get { return gBookmarkColor.darker(by: 1.5) } }
+var     grabbedTextColor: ZColor { get { return gZoneColor    .darker(by: 1.8) } }
+
+
+// MARK:- persistence
+// MARK:-
+
+
+let       zoneColorKey = "zone color"
+let   bookmarkColorKey = "bookmark color"
+let backgroundColorKey = "background color"
+let     storageModeKey = "current storage mode"
+let   settingsStateKey = "current settings state"
+let   lineThicknessKey = "line thickness"
+
+
+func getColorForKey(_ key: String, defaultColor: ZColor) -> ZColor {
+    if let data = UserDefaults.standard.object(forKey: key) as? Data, let color = NSKeyedUnarchiver.unarchiveObject(with: data) as? ZColor {
+        return color
+    }
+
+    setColor(defaultColor, key: key)
+
+    return defaultColor
+}
+
+
+func setColor(_ iColor: ZColor, key: String) {
+    let data: Data = NSKeyedArchiver.archivedData(withRootObject: iColor)
+
+    UserDefaults.standard.set(data, forKey: key)
+    UserDefaults.standard.synchronize()
+}
+
+
+var gZoneColor: ZColor {
+    set { setColor(newValue, key: zoneColorKey) }
+    get { return   getColorForKey(zoneColorKey, defaultColor: ZColor.purple) }
+}
+
+
+var gBookmarkColor: ZColor {
+    set { setColor(newValue, key: bookmarkColorKey) }
+    get { return   getColorForKey(bookmarkColorKey, defaultColor: ZColor.blue) }
+}
+
+
+var gBackgroundColor: ZColor {
+    set { setColor(newValue, key: backgroundColorKey) }
+    get { return   getColorForKey(backgroundColorKey, defaultColor: ZColor(hue: 0.6, saturation: 0.0, brightness: unselectBrightness, alpha: 1)) }
+}
+
+
+var gLineThickness: Double {
+    set {
+        UserDefaults.standard.set(newValue, forKey:lineThicknessKey)
+        UserDefaults.standard.synchronize()
+    }
+
+    get {
+        var value: Double? = UserDefaults.standard.object(forKey: lineThicknessKey) as? Double
+
+        if value == nil {
+            value = 1.25
+
+            UserDefaults.standard.set(value, forKey:lineThicknessKey)
+            UserDefaults.standard.synchronize()
+        }
+
+        return value!
+    }
+}
 
 
 var gStorageMode: ZStorageMode {
     set {
         UserDefaults.standard.set(newValue.rawValue, forKey:storageModeKey)
+        UserDefaults.standard.synchronize()
     }
 
     get {
@@ -85,6 +152,7 @@ var gStorageMode: ZStorageMode {
             mode      = .everyone
 
             UserDefaults.standard.set(mode!.rawValue, forKey:storageModeKey)
+            UserDefaults.standard.synchronize()
         }
 
         return mode!
@@ -92,9 +160,10 @@ var gStorageMode: ZStorageMode {
 }
 
 
-var settingsState: ZSettingsState {
+var gSettingsState: ZSettingsState {
     set {
         UserDefaults.standard.set(newValue.rawValue, forKey:settingsStateKey)
+        UserDefaults.standard.synchronize()
     }
 
     get {
@@ -108,6 +177,7 @@ var settingsState: ZSettingsState {
             state     = .All
 
             UserDefaults.standard.set(state!.rawValue, forKey:settingsStateKey)
+            UserDefaults.standard.synchronize()
         }
 
         return state!

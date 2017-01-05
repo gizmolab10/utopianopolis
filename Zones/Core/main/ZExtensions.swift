@@ -23,6 +23,7 @@ import CloudKit
     public typealias ZImage                     = NSImage
     public typealias ZColor                     = NSColor
     public typealias ZButton                    = NSButton
+    public typealias ZSlider                    = NSSlider
     public typealias ZWindow                    = NSWindow
     public typealias ZTextField                 = NSTextField
     public typealias ZTableView                 = NSTableView

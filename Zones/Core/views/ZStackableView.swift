@@ -34,7 +34,7 @@ class ZStackableView: ZView {
                 switch kind {
                 case        "help": return .Help
                 case "preferences": return .Preferences
-                case     "details": return .Details
+                case "information": return .Information
                 case     "actions": return .Actions
                 case           nil: return .All
                 default:            return .All
@@ -48,14 +48,14 @@ class ZStackableView: ZView {
 
     var hideableIsHidden: Bool {
         get {
-            return settingsState.contains(state)
+            return gSettingsState.contains(state)
         }
 
         set {
             if newValue {
-                settingsState.insert(state)
+                gSettingsState.insert(state)
             } else {
-                settingsState.remove(state)
+                gSettingsState.remove(state)
             }
         }
     }

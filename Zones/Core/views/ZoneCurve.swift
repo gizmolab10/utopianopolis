@@ -50,7 +50,7 @@ class ZoneCurve: ZView {
             let    dragDotCenterY =    dragDot?.convert((   dragDot?.bounds)!, to: parent).center.y
             let textWidgetCenterY = textWidget?.convert((textWidget?.bounds)!, to: parent).center.y
             let             delta = Double(dragDotCenterY! - textWidgetCenterY!)
-            let         threshold = dotHeight / 2.0
+            let         threshold = gDotHeight / 2.0
 
             if delta > threshold {
                 kind = .above
@@ -64,9 +64,9 @@ class ZoneCurve: ZView {
     func constrain() {
         snp.removeConstraints()
         snp.makeConstraints { (make: ConstraintMaker) in
-            let halfLineThickness = lineThicknes / 2.0
-            let       toggleDot = parent?.toggleDot.innerDot
-            let           dragDot = child?.dragDot.innerDot
+            let halfLineThickness = gLineThickness / 2.0
+            let         toggleDot = parent?.toggleDot.innerDot
+            let           dragDot = child?   .dragDot.innerDot
 
             make.right.equalTo((dragDot?.snp.left)!)
 
@@ -76,9 +76,9 @@ class ZoneCurve: ZView {
                 make.bottom.equalTo(toggleDot!.snp.top)
                 break
             case .straight:
-                make.height.equalTo(lineThicknes)
-                make.bottom.equalTo(toggleDot!.snp.centerY)
-                make.left.equalTo(toggleDot!.snp.right)
+                make.height.equalTo(gLineThickness)
+                make.bottom.equalTo(toggleDot!.snp.centerY).offset(halfLineThickness - 0.5)
+                make.left.equalTo(toggleDot!.snp.right).offset(-1.0)
                 return
             case .below:
                 make   .top.equalTo(toggleDot!.snp.bottom)
@@ -100,16 +100,16 @@ class ZoneCurve: ZView {
             switch kind {
             case .above: y = -dirtyRect.maxY - toggleHalfHeight * 2.0; break
             case .below: y =  dirtyRect.minY; break
-            case .straight: zlayer.backgroundColor = lineColor.cgColor; return
+            case .straight: zlayer.backgroundColor = gZoneColor.cgColor; return
             }
 
             let rect = CGRect(x: dirtyRect.minX, y: y, width: dirtyRect.size.width * 2.0 + dragHalfWidth , height: (dirtyRect.size.height + toggleHalfHeight) * 2.0 )
             let path = ZBezierPath(ovalIn: rect)
-            let color = (child?.widgetZone.isBookmark)! ? bookmarkColor : lineColor
+            let color = (child?.widgetZone.isBookmark)! ? gBookmarkColor : gZoneColor
 
             ZColor.clear.setFill()
             color.setStroke()
-            path.lineWidth = CGFloat(lineThicknes)
+            path.lineWidth = CGFloat(gLineThickness)
             path.flatness = 0.0001
             path.stroke()
         }

@@ -54,10 +54,10 @@ class ZMainViewController: ZGenericViewController {
         case .search:
             searchBoxView?.snp.removeConstraints()
             searchBoxView?.snp.makeConstraints({ (make: ConstraintMaker) in
-                make.height.equalTo(showsSearching ? 44.0 : 0.0)
+                make.height.equalTo(gShowsSearching ? 44.0 : 0.0)
             })
 
-            if !showsSearching {
+            if !gShowsSearching {
                 mainWindow.makeFirstResponder(nil)
             }
 

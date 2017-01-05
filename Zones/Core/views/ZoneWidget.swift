@@ -47,7 +47,7 @@ class ZoneWidget: ZView {
                 }
 
                 snp.makeConstraints { (make: ConstraintMaker) -> Void in
-                    make.centerY.equalTo(_textWidget)
+                    make.centerY.equalTo(_textWidget).offset(1.5)
                     make.size.greaterThanOrEqualTo(_textWidget)
                 }
             }
@@ -87,7 +87,7 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    func layoutInView(_ inView: ZView?, atIndex: Int, recursing: Bool, redrawLines: Bool) {
+    func layoutInView(_ inView: ZView?, atIndex: Int, recursing: Bool, kind: ZSignalKind) {
         if inView != nil && !(inView?.subviews.contains(self))! {
             inView?.addSubview(self)
 
@@ -105,8 +105,8 @@ class ZoneWidget: ZView {
         addDragHighlight()
 
         if recursing {
-            layoutChildren(redrawLines)
-            layoutLines(redrawLines)
+            layoutChildren(kind)
+            layoutLines(kind)
         }
 
         layoutText()
@@ -129,7 +129,7 @@ class ZoneWidget: ZView {
 
         dispatchAsyncInForeground {
             let                                    radius = min(dirtyRect.size.height, dirtyRect.size.width) / 2.0
-            let                             color: ZColor = self.widgetZone.isBookmark ? bookmarkColor : lineColor
+            let                             color: ZColor = self.widgetZone.isBookmark ? gBookmarkColor : gZoneColor
             self.dragHighlightView.zlayer.backgroundColor = color.withAlphaComponent(0.008).cgColor
 
             self.dragHighlightView.addBorder(thickness: 0.15, radius: radius, color: color.cgColor)
@@ -161,7 +161,7 @@ class ZoneWidget: ZView {
         dragHighlightView.snp.makeConstraints({ (make: ConstraintMaker) in
             make.top.bottom.equalTo(self)
             make.right.equalTo(self).offset(-10.0)
-            make.left.equalTo(self).offset(8.0)
+            make.left.equalTo(self).offset(gDotHeight / 1.75)
         })
     }
 
@@ -190,10 +190,10 @@ class ZoneWidget: ZView {
             let      width = textWidget.text!.widthForFont(font) + 5.0
 
             make.width.equalTo(width)
-            make.centerY.equalTo(self) // .offset(-1.0)
+            make.centerY.equalTo(self).offset(-1.5)
             make.right.lessThanOrEqualTo(self).offset(-29.0)
-            make.left.equalTo(self).offset(dotHeight + Double(genericOffset.width))
-            make.height.lessThanOrEqualTo(self).offset(-genericOffset.height)
+            make.left.equalTo(self).offset(Double(gGenericOffset.width))
+            make.height.lessThanOrEqualTo(self).offset(-gGenericOffset.height)
 
             if hasChildren {
                 make.right.equalTo(childrenView.snp.left).offset(-20.0)
@@ -213,7 +213,7 @@ class ZoneWidget: ZView {
     }
 
 
-    func layoutChildren(_ redrawLines: Bool) {
+    func layoutChildren(_ kind: ZSignalKind) {
         let zoneChildrenCount = widgetZone.children.count
 
         if _childrenView != nil {
@@ -243,7 +243,7 @@ class ZoneWidget: ZView {
                 } else {
                     childWidget?.widgetZone = childZone
 
-                    childWidget?.layoutInView(childrenView, atIndex: index, recursing: true, redrawLines: redrawLines)
+                    childWidget?.layoutInView(childrenView, atIndex: index, recursing: true, kind: kind)
                     childWidget?.snp.removeConstraints()
                     childWidget?.snp.makeConstraints({ (make: ConstraintMaker) in
                         if previous != nil {
@@ -259,9 +259,9 @@ class ZoneWidget: ZView {
                         make.left.equalTo(childrenView)
                         make.right.height.lessThanOrEqualTo(childrenView)
                     })
-                    
+
                     childWidget?.layoutText()
-                    
+
                     previous = childWidget
                 }
             }
@@ -269,8 +269,9 @@ class ZoneWidget: ZView {
     }
 
 
-    func layoutLines(_ redrawLines: Bool) {
-        let show = widgetZone.showChildren
+    func layoutLines(_ kind: ZSignalKind) {
+        let         show = widgetZone.showChildren
+        let  redrawLines = kind == .redraw
 
         if !show || redrawLines {
             for line in siblingLines {
@@ -318,8 +319,9 @@ class ZoneWidget: ZView {
 
                         siblingLines.insert(siblingLine, at:index)
                         addSubview(siblingLine)
+
                         siblingLine.snp.makeConstraints({ (make: ConstraintMaker) in
-                            make.width.height.equalTo(lineThicknes)
+                            make.width.height.equalTo(gLineThickness)
                             make.centerX.equalTo(textWidget.snp.right).offset(6.0)
                             make.centerY.equalTo(textWidget)
                         })
@@ -339,7 +341,7 @@ class ZoneWidget: ZView {
         dragDot.setupForZone(widgetZone, asToggle: false)
         dragDot.innerDot?.snp.makeConstraints({ (make: ConstraintMaker) in
             make.right.equalTo(textWidget.snp.left)
-            make.centerY.equalTo(textWidget).offset(0.5)
+            make.centerY.equalTo(textWidget).offset(1.0)
         })
 
         if !hasChildren && !widgetZone.isBookmark {
@@ -355,7 +357,7 @@ class ZoneWidget: ZView {
             toggleDot.setupForZone(widgetZone, asToggle: true)
             toggleDot.innerDot?.snp.makeConstraints({ (make: ConstraintMaker) in
                 make.left.equalTo(textWidget.snp.right).offset(-1.0)
-                make.centerY.equalTo(textWidget).offset(0.5)
+                make.centerY.equalTo(textWidget).offset(1.0)
                 make.right.lessThanOrEqualToSuperview().offset(-1.0)
             })
         }

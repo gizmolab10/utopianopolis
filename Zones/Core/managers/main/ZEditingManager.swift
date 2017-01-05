@@ -46,18 +46,18 @@ class ZEditingManager: NSObject {
     }
 
 
-    @discardableResult func handleEvent(_ event: ZEvent, isWindow: Bool) -> Bool {
+    @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
         if !operationsManager.isReady {
             if deferredEvents.count < 1 {
-                deferredEvents.append(ZoneEvent(event, iIsWindow: isWindow))
+                deferredEvents.append(ZoneEvent(iEvent, iIsWindow: isWindow))
             }
-        } else if event != previousEvent && workMode == .editMode {
-            previousEvent = event
+        } else if !isEditing && iEvent != previousEvent && workMode == .editMode {
+            previousEvent = iEvent
 
             #if os(OSX)
-                if  let    widget = widgetsManager.currentMovableWidget, let string = event.charactersIgnoringModifiers {
+                if  let    widget = widgetsManager.currentMovableWidget, let string = iEvent.charactersIgnoringModifiers {
                     let       key = string[string.startIndex].description
-                    let     flags = event.modifierFlags
+                    let     flags = iEvent.modifierFlags
                     let   isShift = flags.contains(.shift)
                     let  isOption = flags.contains(.option)
                     let isCommand = flags.contains(.command)
@@ -106,7 +106,7 @@ class ZEditingManager: NSObject {
 
                             break
                         case "b":
-                            if isCommand, let zone = selectionManager.firstGrabbableZone {
+                            if  let zone = selectionManager.firstGrabbableZone {
                                 let bookmark = bookmarksManager.addNewBookmarkFor(zone)
 
                                 selectionManager.grab(bookmark)
@@ -115,23 +115,19 @@ class ZEditingManager: NSObject {
 
                             break
                         case "f":
-                            if isCommand {
-                                showsSearching = !showsSearching
+                            gShowsSearching = !gShowsSearching
 
-                                signalFor(nil, regarding: .search)
-                            }
+                            signalFor(nil, regarding: .search)
 
                             break
                         case "'":
-                            if isCommand && !isEditing {
-                                travelManager.cycleStorageMode {
-                                    controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
-                                }
+                            travelManager.cycleStorageMode {
+                                controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                             }
 
                             break
-                        case "t":
-                            if isCommand, let zone = selectionManager.firstGrabbableZone {
+                        case "/":
+                            if let zone = selectionManager.firstGrabbableZone {
                                 focusOnZone(zone)
                             }
                             

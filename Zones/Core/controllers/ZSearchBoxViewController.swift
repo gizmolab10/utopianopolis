@@ -28,7 +28,7 @@ class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         if kind == .search {
-            if showsSearching {
+            if gShowsSearching {
                 mainWindow.makeFirstResponder(searchBox!)
             }
         }
@@ -42,13 +42,13 @@ class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
         let find = (searchBox?.text)!
 
         if find == "" {
-            showsSearching = false
+            gShowsSearching = false
 
             signalFor(nil, regarding: .search)
         } else {
             cloudManager.searchFor(find) { iObject in
                 let hasResults = ((iObject as? [Any])?.count)! != 0
-                workMode       = hasResults && showsSearching ? .searchMode : .editMode
+                workMode       = hasResults && gShowsSearching ? .searchMode : .editMode
 
                 if hasResults {
                     self.dispatchAsyncInForeground {
@@ -69,7 +69,7 @@ class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
 
         if  handledIt {
             workMode       = .editMode
-            showsSearching = false
+            gShowsSearching = false
 
             signalFor(nil, regarding: .found)
             signalFor(nil, regarding: .search)

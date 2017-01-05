@@ -55,13 +55,14 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
             toConsole(zone?.zoneName)
         }
 
-        specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, redrawLines: kind == .redraw)
+        specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind)
         specificWidget?.updateConstraints()
         specificWidget?.layoutFinish()
         specificWidget?.display()
         setup()
 
-        textCapturing = false
+        view.zlayer.backgroundColor = gBackgroundColor.cgColor
+        textCapturing               = false
     }
 
 

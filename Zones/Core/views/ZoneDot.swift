@@ -30,15 +30,15 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         isToggle                   = asToggle
 
         if isInnerDot {
-            let             radius = dotHeight / (isToggle ? 2.0 : 3.0)
-            let      selectedColor = widgetZone.isBookmark ? bookmarkColor : lineColor
+            let             radius = gDotHeight / (isToggle ? 2.0 : 3.0)
+            let      selectedColor = widgetZone.isBookmark ? gBookmarkColor : gZoneColor
             let    shouldHighlight = isToggle ? !widgetZone.showChildren || widgetZone.isBookmark : selectionManager.isGrabbed(widgetZone)
-            zlayer.backgroundColor = (shouldHighlight ? selectedColor : unselectedColor).cgColor
+            zlayer.backgroundColor = (shouldHighlight ? selectedColor : gBackgroundColor).cgColor
 
-            addBorder(thickness: CGFloat(lineThicknes), radius: CGFloat(radius), color: selectedColor.cgColor)
+            addBorder(thickness: CGFloat(gLineThickness), radius: CGFloat(radius), color: selectedColor.cgColor)
             snp.makeConstraints { (make: ConstraintMaker) in
-                let          width = CGFloat(asToggle ? dotHeight : dotHeight * 0.65)
-                let           size = CGSize(width: width, height: CGFloat(dotHeight))
+                let          width = CGFloat(asToggle ? gDotHeight : gDotHeight * 0.65)
+                let           size = CGSize(width: width, height: CGFloat(gDotHeight))
 
                 make.size.equalTo(size)
             }
@@ -57,7 +57,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             innerDot?.isInnerDot   = true
 
             innerDot?.setupForZone(widgetZone, asToggle: isToggle)
-            // addBorder(thickness: lineThicknes, radius: fingerBreadth / 2.0, color: ZColor.red.cgColor)
+            // addBorder(thickness: gLineThickness, radius: fingerBreadth / 2.0, color: ZColor.red.cgColor)
             snp.makeConstraints { (make: ConstraintMaker) in
                 make.size.equalTo(CGSize(width: fingerBreadth, height: fingerBreadth))
                 make.center.equalTo(innerDot!)

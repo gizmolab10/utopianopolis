@@ -33,7 +33,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
         if kind == .found {
             resultsAreVisible = false
             
-            if showsSearching, let records = iObject as? [CKRecord] {
+            if gShowsSearching, let records = iObject as? [CKRecord] {
                 let count = records.count
 
                 if count == 1 {
@@ -125,7 +125,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
     func clear() {
         resultsAreVisible = false
-        showsSearching    = false
+        gShowsSearching    = false
         workMode          = .editMode
 
         self.signalFor(nil, regarding: .search)
