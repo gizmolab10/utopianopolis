@@ -45,19 +45,17 @@ struct ZSettingsState: OptionSet {
     static let        Help = ZSettingsState(rawValue: 1 << 0)
     static let Preferences = ZSettingsState(rawValue: 1 << 1)
     static let Information = ZSettingsState(rawValue: 1 << 2)
-    static let     Actions = ZSettingsState(rawValue: 1 << 3)
+    static let     Tools = ZSettingsState(rawValue: 1 << 3)
     static let         All = ZSettingsState(rawValue: 0xFFFF)
 }
 
 
 var recursivelyExpand = false
-var    gShowsSearching = false
+var   gShowsSearching = false
 var     textCapturing = false
 var          fileMode = ZFileMode.cloud
 var          workMode = ZWorkMode.editMode
-var gGraphAlteringMode = ZGraphAlteringMode.task
-var     gGenericOffset = CGSize(width: 12.0, height: 4.0)
-var         gDotHeight = 12.0
+var        gDotHeight = 12.0
 
 
 var               asTask:   Bool { get { return gGraphAlteringMode == .task    } }
@@ -69,12 +67,14 @@ var     grabbedTextColor: ZColor { get { return gZoneColor    .darker(by: 1.8) }
 // MARK:-
 
 
-let       zoneColorKey = "zone color"
-let   bookmarkColorKey = "bookmark color"
-let backgroundColorKey = "background color"
-let     storageModeKey = "current storage mode"
-let   settingsStateKey = "current settings state"
-let   lineThicknessKey = "line thickness"
+let         zoneColorKey = "zone color"
+let     bookmarkColorKey = "bookmark color"
+let   backgroundColorKey = "background color"
+let graphAlteringModeKey = "graph altering mode"
+let       storageModeKey = "current storage mode"
+let     settingsStateKey = "current settings state"
+let     lineThicknessKey = "line thickness"
+let     genericOffsetKey = "generick offset"
 
 
 func getColorForKey(_ key: String, defaultColor: ZColor) -> ZColor {
@@ -114,6 +114,30 @@ var gBackgroundColor: ZColor {
 }
 
 
+var gGenericOffset: NSSize {
+    set {
+        let string = NSStringFromSize(newValue)
+
+        UserDefaults.standard.set(string, forKey: genericOffsetKey)
+        UserDefaults.standard.synchronize()
+    }
+
+    get {
+        if let string = UserDefaults.standard.object(forKey: genericOffsetKey) as? String {
+            return NSSizeFromString(string)
+        }
+
+        let defaultValue = NSSize(width: 12.0, height: 4.0)
+        let string = NSStringFromSize(defaultValue)
+
+        UserDefaults.standard.set(string, forKey: genericOffsetKey)
+        UserDefaults.standard.synchronize()
+
+        return defaultValue
+    }
+}
+
+
 var gLineThickness: Double {
     set {
         UserDefaults.standard.set(newValue, forKey:lineThicknessKey)
@@ -131,6 +155,31 @@ var gLineThickness: Double {
         }
 
         return value!
+    }
+}
+
+
+var gGraphAlteringMode: ZGraphAlteringMode {
+    set {
+        UserDefaults.standard.set(newValue.rawValue, forKey:graphAlteringModeKey)
+        UserDefaults.standard.synchronize()
+    }
+
+    get {
+        var mode: ZGraphAlteringMode? = nil
+
+        if let object = UserDefaults.standard.object(forKey:graphAlteringModeKey) {
+            mode      = ZGraphAlteringMode(rawValue: object as! Int)
+        }
+
+        if mode == nil {
+            mode      = .task
+
+            UserDefaults.standard.set(mode!.rawValue, forKey:graphAlteringModeKey)
+            UserDefaults.standard.synchronize()
+        }
+
+        return mode!
     }
 }
 

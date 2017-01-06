@@ -33,15 +33,16 @@ enum ZColorBoxKind: String {
 class ZSettingsViewController: ZGenericViewController {
 
 
-    @IBOutlet var    totalCountLabel: ZTextField?
-    @IBOutlet var         depthLabel: ZTextField?
-    @IBOutlet var   fractionInMemory: NSProgressIndicator?
-    @IBOutlet var  horizontalSpacing: NSSlider?
-    @IBOutlet var    verticalSpacing: NSSlider?
-    @IBOutlet var          thickness: NSSlider?
-    @IBOutlet var       zoneColorBox: NSColorWell?
-    @IBOutlet var   bookmarkColorBox: NSColorWell?
-    @IBOutlet var backgroundColorBox: NSColorWell?
+    @IBOutlet var         fractionInMemory: ZProgressIndicator?
+    @IBOutlet var graphAlteringModeControl: ZSegmentedControl?
+    @IBOutlet var          totalCountLabel: ZTextField?
+    @IBOutlet var               depthLabel: ZTextField?
+    @IBOutlet var             zoneColorBox: ZColorWell?
+    @IBOutlet var         bookmarkColorBox: ZColorWell?
+    @IBOutlet var       backgroundColorBox: ZColorWell?
+    @IBOutlet var        horizontalSpacing: ZSlider?
+    @IBOutlet var          verticalSpacing: ZSlider?
+    @IBOutlet var                thickness: ZSlider?
 
     
     override func identifier() -> ZControllerID { return .settings }
@@ -51,7 +52,7 @@ class ZSettingsViewController: ZGenericViewController {
         let                     count = cloudManager.zones.count
         let                     total = travelManager.manifest.total
         totalCountLabel?        .text = "of \(total), retrieved: \(count)"
-        depthLabel?             .text = "depth within graph: \((travelManager.hereZone?.level)!)"
+        depthLabel?             .text = "focus level in graph: \((travelManager.hereZone?.level)!)"
         view  .zlayer.backgroundColor = gBackgroundColor.cgColor
         fractionInMemory?   .maxValue = Double(total)
         fractionInMemory?.doubleValue = Double(count)
@@ -59,13 +60,14 @@ class ZSettingsViewController: ZGenericViewController {
 
 
     override func awakeFromNib() {
-        fractionInMemory?    .minValue = 0
-        thickness?        .doubleValue = gLineThickness
-        verticalSpacing?  .doubleValue = Double(gGenericOffset.height)
-        horizontalSpacing?.doubleValue = Double(gGenericOffset.width)
-        backgroundColorBox?     .color = gBackgroundColor
-        bookmarkColorBox?       .color = gBookmarkColor
-        zoneColorBox?           .color = gZoneColor
+        fractionInMemory?               .minValue = 0
+        graphAlteringModeControl?.selectedSegment = gGraphAlteringMode.rawValue
+        thickness?                   .doubleValue = gLineThickness
+        verticalSpacing?             .doubleValue = Double(gGenericOffset.height)
+        horizontalSpacing?           .doubleValue = Double(gGenericOffset.width)
+        backgroundColorBox?                .color = gBackgroundColor
+        bookmarkColorBox?                  .color = gBookmarkColor
+        zoneColorBox?                      .color = gZoneColor
     }
 
 
@@ -104,7 +106,7 @@ class ZSettingsViewController: ZGenericViewController {
     }
 
 
-    @IBAction func editModeChoiceAction(_ control: ZSegmentedControl) {
+    @IBAction func graphAlteringModeAction(_ control: ZSegmentedControl) {
         gGraphAlteringMode = ZGraphAlteringMode(rawValue: control.selectedSegment)!
     }
 }

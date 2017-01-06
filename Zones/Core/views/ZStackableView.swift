@@ -35,7 +35,7 @@ class ZStackableView: ZView {
                 case        "help": return .Help
                 case "preferences": return .Preferences
                 case "information": return .Information
-                case     "actions": return .Actions
+                case     "tools": return .Tools
                 case           nil: return .All
                 default:            return .All
                 }

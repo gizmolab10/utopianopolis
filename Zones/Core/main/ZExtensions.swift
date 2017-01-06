@@ -28,6 +28,7 @@ import CloudKit
     public typealias ZTextField                 = NSTextField
     public typealias ZTableView                 = NSTableView
     public typealias ZStackView                 = NSStackView
+    public typealias ZColorWell                 = NSColorWell
     public typealias ZBezierPath                = NSBezierPath
     public typealias ZSearchField               = NSSearchField
     public typealias ZApplication               = NSApplication

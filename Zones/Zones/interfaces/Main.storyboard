@@ -795,17 +795,17 @@
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZSettingsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="195" height="960"/>
+                        <rect key="frame" x="0.0" y="0.0" width="195" height="978"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="26" width="195" height="934"/>
+                                <rect key="frame" x="0.0" y="38" width="195" height="940"/>
                                 <subviews>
                                     <customView identifier="help" translatesAutoresizingMaskIntoConstraints="NO" id="E5h-DF-X3i" userLabel="Help View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="539" width="195" height="395"/>
+                                        <rect key="frame" x="0.0" y="535" width="195" height="405"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="GnQ-iS-bgR" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="376" width="195" height="19"/>
+                                                <rect key="frame" x="0.0" y="386" width="195" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ds2-S9-Udj">
                                                         <rect key="frame" x="0.0" y="1" width="195" height="17"/>
@@ -843,12 +843,12 @@
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="oTc-Mj-4gz" userLabel="Hideable View">
-                                                <rect key="frame" x="0.0" y="0.0" width="195" height="376"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="195" height="386"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="749" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IT7-2L-PqU" userLabel="Help Text">
-                                                        <rect key="frame" x="6" y="8" width="183" height="360"/>
+                                                        <rect key="frame" x="6" y="8" width="183" height="370"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" constant="360" id="Vbt-r3-FA8"/>
+                                                            <constraint firstAttribute="height" constant="370" id="Vbt-r3-FA8"/>
                                                         </constraints>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="RJc-P2-wiE">
                                                             <font key="font" metaFont="cellTitle"/>
@@ -870,8 +870,9 @@ COMMAND with:
     ARROWS all (reach farthest)
 
 when not editing text:
-    B create  bookmark
+    B create bookmark
     F find
+    P print graph
     / focus on selected zone
     ' switch to another graph</string>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -903,10 +904,10 @@ when not editing text:
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="157" width="195" height="381"/>
+                                        <rect key="frame" x="0.0" y="157" width="195" height="377"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="362" width="195" height="19"/>
+                                                <rect key="frame" x="0.0" y="358" width="195" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gUX-Sv-09B">
                                                         <rect key="frame" x="0.0" y="1" width="195" height="17"/>
@@ -944,16 +945,16 @@ when not editing text:
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="BBZ-rq-7h8" userLabel="Hideable View">
-                                                <rect key="frame" x="0.0" y="0.0" width="195" height="362"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="195" height="358"/>
                                                 <subviews>
-                                                    <box title="line thickness" translatesAutoresizingMaskIntoConstraints="NO" id="ZKf-5G-qWF">
-                                                        <rect key="frame" x="5" y="314" width="185" height="40"/>
+                                                    <box borderType="line" title="line thickness" translatesAutoresizingMaskIntoConstraints="NO" id="ZKf-5G-qWF">
+                                                        <rect key="frame" x="5" y="311" width="185" height="39"/>
                                                         <view key="contentView" id="XhY-V9-QQ8">
-                                                            <rect key="frame" x="2" y="2" width="181" height="23"/>
+                                                            <rect key="frame" x="1" y="1" width="183" height="23"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <slider identifier="thickness" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="w6J-MU-9os">
-                                                                    <rect key="frame" x="6" y="4" width="169" height="19"/>
+                                                                    <rect key="frame" x="6" y="4" width="171" height="19"/>
                                                                     <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="1" maxValue="2.5" doubleValue="1.25" tickMarkPosition="above" sliderType="linear" id="KlI-uw-fXQ"/>
                                                                     <connections>
                                                                         <action selector="sliderAction:" target="YaQ-0g-PCb" id="msE-5l-vk1"/>
@@ -968,14 +969,14 @@ when not editing text:
                                                             </constraints>
                                                         </view>
                                                     </box>
-                                                    <box title="vertical spacing" translatesAutoresizingMaskIntoConstraints="NO" id="6y7-tU-8gG" userLabel="vertical spacing">
-                                                        <rect key="frame" x="5" y="274" width="185" height="40"/>
+                                                    <box borderType="line" title="vertical spacing" translatesAutoresizingMaskIntoConstraints="NO" id="6y7-tU-8gG" userLabel="vertical spacing">
+                                                        <rect key="frame" x="5" y="272" width="185" height="39"/>
                                                         <view key="contentView" id="egb-z0-1ch">
-                                                            <rect key="frame" x="2" y="2" width="181" height="23"/>
+                                                            <rect key="frame" x="1" y="1" width="183" height="23"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <slider identifier="vertical" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="P4e-qG-Zcg">
-                                                                    <rect key="frame" x="6" y="4" width="169" height="19"/>
+                                                                    <rect key="frame" x="6" y="4" width="171" height="19"/>
                                                                     <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="20" doubleValue="4" tickMarkPosition="above" sliderType="linear" id="4eS-SV-OKd"/>
                                                                     <connections>
                                                                         <action selector="sliderAction:" target="YaQ-0g-PCb" id="Qci-uB-8WN"/>
@@ -990,15 +991,15 @@ when not editing text:
                                                             </constraints>
                                                         </view>
                                                     </box>
-                                                    <box title="horizontal spacing" translatesAutoresizingMaskIntoConstraints="NO" id="Qns-tb-akX" userLabel="horizontal spacing">
-                                                        <rect key="frame" x="5" y="234" width="185" height="40"/>
+                                                    <box borderType="line" title="horizontal spacing" translatesAutoresizingMaskIntoConstraints="NO" id="Qns-tb-akX" userLabel="horizontal spacing">
+                                                        <rect key="frame" x="5" y="233" width="185" height="39"/>
                                                         <view key="contentView" id="yxJ-ve-YZE">
-                                                            <rect key="frame" x="2" y="2" width="181" height="23"/>
+                                                            <rect key="frame" x="1" y="1" width="183" height="23"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <slider identifier="horizontal" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4gc-Kr-Jkn">
-                                                                    <rect key="frame" x="6" y="4" width="169" height="19"/>
-                                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="10" maxValue="30" doubleValue="12" tickMarkPosition="above" sliderType="linear" id="C47-eV-jKg"/>
+                                                                    <rect key="frame" x="6" y="4" width="171" height="19"/>
+                                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="13" maxValue="40" doubleValue="22" tickMarkPosition="above" sliderType="linear" id="C47-eV-jKg"/>
                                                                     <connections>
                                                                         <action selector="sliderAction:" target="YaQ-0g-PCb" id="7t4-XK-BpS"/>
                                                                     </connections>
@@ -1012,56 +1013,25 @@ when not editing text:
                                                             </constraints>
                                                         </view>
                                                     </box>
-                                                    <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LAJ-9k-rdw">
-                                                        <rect key="frame" x="19" y="104" width="158" height="20"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="18" id="83w-9I-bSv"/>
-                                                        </constraints>
-                                                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="cX7-p0-us8">
-                                                            <font key="font" metaFont="smallSystem"/>
-                                                            <segments>
-                                                                <segment label="Task Lists" selected="YES"/>
-                                                                <segment label="Composition" tag="1"/>
-                                                            </segments>
-                                                        </segmentedCell>
-                                                        <connections>
-                                                            <action selector="editModeChoiceAction:" target="YaQ-0g-PCb" id="SCs-Vn-Uzn"/>
-                                                        </connections>
-                                                    </segmentedControl>
-                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="KCP-Y2-cVR">
-                                                        <rect key="frame" x="6" y="8" width="191" height="90"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="90" id="ZaM-7k-E99"/>
-                                                        </constraints>
-                                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="UcL-vR-AXp">
-                                                            <font key="font" metaFont="cellTitle"/>
-                                                            <string key="title">New children and sibling zones are added at
-
-   top of TASK LISTS
-   bottom of COMPOSITIONS</string>
-                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                        </textFieldCell>
-                                                    </textField>
-                                                    <box title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="KMy-vH-Jfb">
-                                                        <rect key="frame" x="5" y="128" width="185" height="106"/>
+                                                    <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="KMy-vH-Jfb">
+                                                        <rect key="frame" x="5" y="128" width="185" height="105"/>
                                                         <view key="contentView" id="VZX-ic-xER">
-                                                            <rect key="frame" x="2" y="2" width="181" height="89"/>
+                                                            <rect key="frame" x="1" y="1" width="183" height="89"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7kB-i9-BLu">
-                                                                    <rect key="frame" x="6" y="65" width="73" height="17"/>
+                                                                    <rect key="frame" x="6" y="65" width="75" height="17"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="17" id="Nlz-uA-ju4"/>
                                                                     </constraints>
                                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="zones" id="cmC-E6-Bbx">
-                                                                        <font key="font" metaFont="system" size="12"/>
+                                                                        <font key="font" metaFont="cellTitle"/>
                                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                     </textFieldCell>
                                                                 </textField>
                                                                 <colorWell identifier="zones" translatesAutoresizingMaskIntoConstraints="NO" id="zkL-Cs-OSE">
-                                                                    <rect key="frame" x="85" y="62" width="88" height="23"/>
+                                                                    <rect key="frame" x="87" y="62" width="88" height="23"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="88" id="P3i-t2-sNo"/>
                                                                         <constraint firstAttribute="height" constant="23" id="xJo-hF-2Rf"/>
@@ -1072,18 +1042,18 @@ when not editing text:
                                                                     </connections>
                                                                 </colorWell>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="G6J-cF-m9H">
-                                                                    <rect key="frame" x="12" y="38" width="67" height="17"/>
+                                                                    <rect key="frame" x="14" y="38" width="67" height="17"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="17" id="aXY-lZ-XaB"/>
                                                                     </constraints>
                                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="bookmarks" id="FYE-sx-kW1">
-                                                                        <font key="font" metaFont="system" size="12"/>
+                                                                        <font key="font" metaFont="cellTitle"/>
                                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                     </textFieldCell>
                                                                 </textField>
                                                                 <colorWell identifier="bookmarks" translatesAutoresizingMaskIntoConstraints="NO" id="Eae-G1-GtF">
-                                                                    <rect key="frame" x="85" y="35" width="88" height="23"/>
+                                                                    <rect key="frame" x="87" y="35" width="88" height="23"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="88" id="Qqo-CC-k0K"/>
                                                                         <constraint firstAttribute="height" constant="23" id="Vf2-kE-P3L"/>
@@ -1094,18 +1064,18 @@ when not editing text:
                                                                     </connections>
                                                                 </colorWell>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sJw-uT-bsV">
-                                                                    <rect key="frame" x="7" y="11" width="72" height="17"/>
+                                                                    <rect key="frame" x="9" y="11" width="72" height="17"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="17" id="fqk-Ld-tvT"/>
                                                                     </constraints>
                                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="background" id="2qU-zH-nie">
-                                                                        <font key="font" metaFont="system" size="12"/>
+                                                                        <font key="font" metaFont="cellTitle"/>
                                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                     </textFieldCell>
                                                                 </textField>
                                                                 <colorWell identifier="background" translatesAutoresizingMaskIntoConstraints="NO" id="iLH-vJ-oIt">
-                                                                    <rect key="frame" x="85" y="8" width="88" height="23"/>
+                                                                    <rect key="frame" x="87" y="8" width="88" height="23"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="88" id="efK-yS-uGp"/>
                                                                         <constraint firstAttribute="height" constant="23" id="nfJ-cC-oR6"/>
@@ -1134,6 +1104,37 @@ when not editing text:
                                                             </constraints>
                                                         </view>
                                                     </box>
+                                                    <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LAJ-9k-rdw">
+                                                        <rect key="frame" x="19" y="104" width="158" height="20"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="18" id="83w-9I-bSv"/>
+                                                        </constraints>
+                                                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="cX7-p0-us8">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <segments>
+                                                                <segment label="Task Lists" selected="YES"/>
+                                                                <segment label="Composition" tag="1"/>
+                                                            </segments>
+                                                        </segmentedCell>
+                                                        <connections>
+                                                            <action selector="graphAlteringModeAction:" target="YaQ-0g-PCb" id="SCs-Vn-Uzn"/>
+                                                        </connections>
+                                                    </segmentedControl>
+                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="KCP-Y2-cVR">
+                                                        <rect key="frame" x="6" y="8" width="191" height="90"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="90" id="ZaM-7k-E99"/>
+                                                        </constraints>
+                                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="UcL-vR-AXp">
+                                                            <font key="font" metaFont="cellTitle"/>
+                                                            <string key="title">New children and sibling zones are added at
+
+   top of TASK LISTS
+   bottom of COMPOSITIONS</string>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstItem="ZKf-5G-qWF" firstAttribute="leading" secondItem="BBZ-rq-7h8" secondAttribute="leading" constant="8" id="0OF-h3-Nwp"/>
@@ -1272,7 +1273,7 @@ when not editing text:
                                             <outlet property="toggleButton" destination="hIy-eV-7gW" id="Pdh-ir-ANX"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="actions" translatesAutoresizingMaskIntoConstraints="NO" id="FnR-Ns-9C5" userLabel="Actions View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
+                                    <customView identifier="tools" translatesAutoresizingMaskIntoConstraints="NO" id="FnR-Ns-9C5" userLabel="Tools View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="195" height="56"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Fou-Go-Rux" userLabel="Title and Toggle">
@@ -1283,7 +1284,7 @@ when not editing text:
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="fzI-kf-WP2"/>
                                                         </constraints>
-                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Actions" drawsBackground="YES" id="vZV-IR-oP7">
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Tools" drawsBackground="YES" id="vZV-IR-oP7">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="highlightColor" catalog="System" colorSpace="catalog"/>
@@ -1393,6 +1394,7 @@ when not editing text:
                         <outlet property="bookmarkColorBox" destination="Eae-G1-GtF" id="hKi-kq-08B"/>
                         <outlet property="depthLabel" destination="Ph8-7t-kSh" id="2FW-va-uY9"/>
                         <outlet property="fractionInMemory" destination="dmI-b1-Z0D" id="aDQ-oC-iLc"/>
+                        <outlet property="graphAlteringModeControl" destination="LAJ-9k-rdw" id="yrD-aq-dJS"/>
                         <outlet property="horizontalSpacing" destination="4gc-Kr-Jkn" id="CDq-PQ-xm8"/>
                         <outlet property="thickness" destination="w6J-MU-9os" id="a2j-5J-T8q"/>
                         <outlet property="totalCountLabel" destination="Xmv-NU-oFf" id="pBL-Qc-Xdz"/>

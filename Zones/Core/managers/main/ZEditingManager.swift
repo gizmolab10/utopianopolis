@@ -10,6 +10,12 @@
 import Foundation
 import CloudKit
 
+#if os(OSX)
+    import Cocoa
+#elseif os(iOS)
+    import UIKit
+#endif
+
 
 class ZEditingManager: NSObject {
 
@@ -114,6 +120,10 @@ class ZEditingManager: NSObject {
                             }
 
                             break
+                        case "p":
+                            printHere()
+
+                            break
                         case "f":
                             gShowsSearching = !gShowsSearching
 
@@ -163,6 +173,22 @@ class ZEditingManager: NSObject {
         }
         
         return true
+    }
+
+
+    func printHere() {
+        if let view = widgetsManager.widgetForZone(hereZone) {
+            let printInfo = NSPrintInfo.shared()
+            let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
+
+            PMSetOrientation(pmPageFormat, PMOrientation(kPMLandscape), false)
+            printInfo.updateFromPMPageFormat()
+
+            let             printOperation = NSPrintOperation(view: view, printInfo: printInfo)
+            printOperation.showsPrintPanel = false
+
+            printOperation.run()
+        }
     }
 
 
@@ -276,12 +302,21 @@ class ZEditingManager: NSObject {
         let       isChildless = zone.children.count == 0
         let noVisibleChildren = !zone.showChildren || isChildless
 
-        if !show && noVisibleChildren && selectionManager.isGrabbed(zone), let parent = zone.parentZone {
-            zone.showChildren = show
+        if !show && noVisibleChildren && selectionManager.isGrabbed(zone) {
+            zone.showChildren = false
 
             zone.needSave()
-            selectionManager.grab(parent)
-            showToggleDot(show, zone: parent, recursively: recursively, onCompletion: onCompletion)
+
+            revealParentAndSiblingsOf(zone) {
+                let parent = zone.parentZone
+
+                if  self.hereZone == zone {
+                    self.hereZone = parent!
+                }
+
+                selectionManager.grab(parent)
+                self.showToggleDot(show, zone: parent!, recursively: recursively, onCompletion: onCompletion)
+            }
         } else {
             if  zone.showChildren != show {
                 zone.showChildren  = show

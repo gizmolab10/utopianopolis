@@ -45,6 +45,15 @@ class ZControllersManager: NSObject {
     }
 
 
+    func controllerForID(_ iID: ZControllerID) -> ZGenericViewController? {
+        if let object = signalObjectsByControllerID[iID] {
+            return object.controller
+        }
+
+        return nil
+    }
+
+
     // MARK:- registry
     // MARK:-
 
