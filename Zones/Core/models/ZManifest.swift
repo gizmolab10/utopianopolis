@@ -19,6 +19,7 @@ class ZManifest: ZRecord {
     dynamic var count:          NSNumber?
     dynamic var here:        CKReference?
     var        _hereZone:           Zone?
+    var         currentlyGrabbedZones = [Zone] ()
 
 
     override func cloudProperties() -> [String] {

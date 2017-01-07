@@ -13,13 +13,18 @@ import Foundation
 class ZSelectionManager: NSObject {
 
 
-    var currentlyGrabbedZones = [Zone] ()
     var  currentlyEditingZone: Zone?
+
+
+    var currentlyGrabbedZones: [Zone] {
+        get { return travelManager.manifest.currentlyGrabbedZones }
+        set { travelManager.manifest.currentlyGrabbedZones = newValue }
+    }
 
 
     func clear() {
         currentlyEditingZone  = nil
-        currentlyGrabbedZones = []
+        // currentlyGrabbedZones = []
     }
 
 

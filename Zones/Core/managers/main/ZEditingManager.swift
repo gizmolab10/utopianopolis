@@ -180,8 +180,9 @@ class ZEditingManager: NSObject {
         if let view = widgetsManager.widgetForZone(hereZone) {
             let printInfo = NSPrintInfo.shared()
             let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
+            let isWider = view.bounds.size.width > view.bounds.size.height
 
-            PMSetOrientation(pmPageFormat, PMOrientation(kPMLandscape), false)
+            PMSetOrientation(pmPageFormat, PMOrientation(isWider ? kPMLandscape : kPMPortrait), false)
             printInfo.updateFromPMPageFormat()
 
             let             printOperation = NSPrintOperation(view: view, printInfo: printInfo)

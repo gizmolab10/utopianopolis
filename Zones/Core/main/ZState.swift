@@ -45,7 +45,7 @@ struct ZSettingsState: OptionSet {
     static let        Help = ZSettingsState(rawValue: 1 << 0)
     static let Preferences = ZSettingsState(rawValue: 1 << 1)
     static let Information = ZSettingsState(rawValue: 1 << 2)
-    static let     Tools = ZSettingsState(rawValue: 1 << 3)
+    static let       Tools = ZSettingsState(rawValue: 1 << 3)
     static let         All = ZSettingsState(rawValue: 0xFFFF)
 }
 
