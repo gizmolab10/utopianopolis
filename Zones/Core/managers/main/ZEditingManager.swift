@@ -177,18 +177,14 @@ class ZEditingManager: NSObject {
 
 
     func printHere() {
-        if let view = widgetsManager.widgetForZone(hereZone) {
-            let printInfo = NSPrintInfo.shared()
+        if  let         view = widgetsManager.widgetForZone(hereZone) {
+            let    printInfo = NSPrintInfo.shared()
             let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
-            let isWider = view.bounds.size.width > view.bounds.size.height
+            let      isWider = view.bounds.size.width > view.bounds.size.height
 
             PMSetOrientation(pmPageFormat, PMOrientation(isWider ? kPMLandscape : kPMPortrait), false)
             printInfo.updateFromPMPageFormat()
-
-            let             printOperation = NSPrintOperation(view: view, printInfo: printInfo)
-            printOperation.showsPrintPanel = false
-
-            printOperation.run()
+            NSPrintOperation(view: view, printInfo: printInfo).run()
         }
     }
 
@@ -259,22 +255,31 @@ class ZEditingManager: NSObject {
     }
 
 
-    func revealSiblingsOf(_ descendent: Zone, toHere: Zone) {
-        if toHere   == descendent {
-            hereZone = descendent
-
-            travelManager.manifest.needSave()
-        } else {
+    func recursivelyRevealSiblingsOf(_ descendent: Zone, toZone: Zone, onCompletion: ZoneClosure?) {
+        if toZone != descendent {
             revealParentAndSiblingsOf(descendent) {
                 if let     parent = descendent.parentZone {
                     self.hereZone = parent
 
-                    self.revealSiblingsOf(parent, toHere: toHere)
+                    self.recursivelyRevealSiblingsOf(parent, toZone: toZone, onCompletion: onCompletion)
                 }
             }
         }
-        
-        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+
+        onCompletion?(descendent)
+    }
+
+
+    func revealSiblingsOf(_ descendent: Zone, toHere: Zone) {
+        recursivelyRevealSiblingsOf(descendent, toZone: toHere) { (iZone: Zone) in
+            if iZone == toHere {
+                self.hereZone = toHere
+
+                travelManager.manifest.needSave()
+            }
+
+            controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+        }
     }
 
 
@@ -577,7 +582,7 @@ class ZEditingManager: NSObject {
 
                         if selectionOnly {
                             selectionManager.grab(siblings[newIndex])
-                            signalFor(nil, regarding: .data)
+                            signalFor(nil, regarding: .redraw)
                         } else {
                             there.children.remove(at: index)
                             there.children.insert(zone, at:newIndex)
@@ -599,9 +604,14 @@ class ZEditingManager: NSObject {
 
     func moveOut(selectionOnly: Bool, extreme: Bool) {
         if let zone: Zone = selectionManager.firstGrabbableZone {
-            var toThere = zone.parentZone
+            let    parent = zone.parentZone
 
             if selectionOnly {
+
+                /////////////////
+                // move selection
+                /////////////////
+
                 if zone.isRoot {
 
                     // for "travelling out", root "points to" corresponding zone in bookmarks graph
@@ -615,7 +625,7 @@ class ZEditingManager: NSObject {
                     }
                 } else if extreme {
                     if !hereZone.isRoot {
-                        let here = hereZone // revealRoot changes here, so nab it first
+                        let here = hereZone // revealRoot changes hereZone, so nab it first
 
                         selectionManager.grab(zone)
 
@@ -628,7 +638,7 @@ class ZEditingManager: NSObject {
                         travelManager.manifest.needSave()
                         controllersManager.syncToCloudAndSignalFor(nil, regarding: .data) {}
                     }
-                } else if zone == hereZone || toThere == nil {
+                } else if zone == hereZone || parent == nil {
                     revealParentAndSiblingsOf(zone) {
                         if  let here = self.hereZone.parentZone {
 
@@ -636,44 +646,49 @@ class ZEditingManager: NSObject {
                             self.revealSiblingsOf(self.hereZone, toHere: here)
                         }
                     }
-                } else if toThere != nil {
-                    selectionManager.grab(toThere!)
-                    signalFor(toThere!, regarding: .data)
+                } else if parent != nil {
+                    selectionManager.grab(parent!)
+                    signalFor(parent!, regarding: .data)
                 }
-            } else if gStorageMode != .bookmarks, let fromThere = toThere {
-                toThere     = fromThere.parentZone
-                let closure = {
-                    self.hereZone = toThere!
+            } else if gStorageMode != .bookmarks {
+                parent?.needSave() // for when zone is orphaned
+
+                ////////////
+                // move zone
+                ////////////
+
+                var grandparent = parent?.parentZone
+
+                let moveIntoHereIsGrandparent = {
+                    self.hereZone = grandparent!
 
                     travelManager.manifest.needSave()
-                    self.moveZone(zone, into: toThere!, orphan: true) {
-                        controllersManager.syncToCloudAndSignalFor(toThere, regarding: .redraw) {}
+                    self.moveZone(zone, outTo: grandparent!, orphan: true) {
+                        controllersManager.syncToCloudAndSignalFor(grandparent, regarding: .redraw) {}
                     }
                 }
-
-                fromThere.needSave()
 
                 if extreme {
                     if hereZone.isRoot {
-                        closure()
+                        moveIntoHereIsGrandparent()
                     } else {
                         revealRoot {
-                            toThere = self.rootZone
+                            grandparent = self.rootZone
 
-                            closure()
+                            moveIntoHereIsGrandparent()
                         }
                     }
-                } else if (hereZone == zone || hereZone == fromThere) {
+                } else if (hereZone == zone || hereZone == parent) {
                     revealParentAndSiblingsOf(hereZone) {
-                        toThere = fromThere.parentZone
+                        grandparent = parent?.parentZone
 
-                        if toThere != nil {
-                            closure()
+                        if grandparent != nil {
+                            moveIntoHereIsGrandparent()
                         }
                     }
                 } else {
-                    moveZone(zone, into: toThere!, orphan: true){
-                        controllersManager.syncToCloudAndSignalFor(toThere, regarding: .redraw) {}
+                    moveZone(zone, outTo: grandparent!, orphan: true){
+                        controllersManager.syncToCloudAndSignalFor(grandparent, regarding: .redraw) {}
                     }
                 }
             }
@@ -715,7 +730,7 @@ class ZEditingManager: NSObject {
         selectionManager.grab(asTask ? zone.children.first! : zone.children.last!)
 
         if hideChildren {
-            controllersManager.syncToCloudAndSignalFor(nil, regarding: .data) {}
+            controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
         } else {
             signalFor(nil, regarding: .data)
         }
@@ -735,7 +750,6 @@ class ZEditingManager: NSObject {
                     if !toThere.isBookmark {
                         let parent = zone.parentZone
 
-                        zone.orphan()
                         moveZone(zone, into: toThere, orphan: true){
                             controllersManager.syncToCloudAndSignalFor(parent, regarding: .redraw) {}
                         }
@@ -803,6 +817,46 @@ class ZEditingManager: NSObject {
     }
 
 
+    func moveZone(_ zone: Zone, outTo: Zone, orphan: Bool, onCompletion: Closure?) {
+        var insert = -1
+
+        recursivelyRevealSiblingsOf(zone, toZone: outTo) { (iZone: Zone) in
+            if iZone.parentZone == outTo {
+                insert = iZone.siblingIndex + (asTask ? 1 : -1)
+                // to compute the insertion index:
+                // if orphan == true
+                // visit zone's parent and parent of that, etc, until sibling's parent matches "into"
+                // grab sibling.siblingIndex
+                // then regarding atTask
+                // apply (+/- 1) so afterwards, moving back returns exactly
+                // if == count, use -1, means "append" (no insertion index)
+                // else use as insertion index
+
+            } else if iZone == outTo {
+                zone.needSave()
+                outTo.needSave()
+
+                if orphan {
+                    zone.orphan()
+                }
+
+                zone.parentZone  = outTo
+                let siblingCount = outTo.children.count
+
+                if insert == siblingCount {
+                    outTo.children.append(zone)
+                } else {
+                    outTo.children.insert(zone, at: insert)
+                }
+
+                outTo.recomputeOrderingUponInsertionAt(insert)
+                zone.updateLevel()
+                onCompletion?()
+            }
+        }
+    }
+
+
     func moveZone(_ zone: Zone, into: Zone, orphan: Bool, onCompletion: Closure?) {
         zone.needSave()
         into.needSave()
@@ -811,17 +865,19 @@ class ZEditingManager: NSObject {
         into.showChildren = true
 
         operationsManager.children(false) {
+            let siblingCount = into.children.count
+            let       insert = asTask ? 0 : siblingCount
+
             if orphan {
                 zone.orphan()
             }
 
             zone.parentZone = into
-            let      insert = asTask ? 0 : into.children.count
 
-            if asTask {
-                into.children.insert(zone, at: 0)
-            } else {
+            if insert == siblingCount {
                 into.children.append(zone)
+            } else {
+                into.children.insert(zone, at: insert)
             }
 
             into.recomputeOrderingUponInsertionAt(insert)
