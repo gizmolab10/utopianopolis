@@ -158,10 +158,11 @@ class ZoneWidget: ZView {
 
 
     func layoutDragHighlight() {
+        dragHighlightView.snp.removeConstraints()
         dragHighlightView.snp.makeConstraints({ (make: ConstraintMaker) in
             make.top.bottom.equalTo(self)
             make.right.equalTo(self).offset(-10.0)
-            make.left.equalTo(self).offset(gDotHeight / 1.75)
+            make.left.equalTo(dragDot.snp.centerX)
         })
     }
 

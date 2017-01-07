@@ -33,13 +33,15 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             let   selectedColor = isBookmark ? gBookmarkColor : gZoneColor
             let shouldHighlight = isToggle ? !(widgetZone?.showChildren)! || isBookmark : selectionManager.isGrabbed(widgetZone!)
             let       fillColor = shouldHighlight ? selectedColor : gBackgroundColor
-            let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: 1.0, dy: 1.0))
+            let       thickness = CGFloat(gLineThickness)
+            let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
 
             fillColor.setFill()
             selectedColor.setStroke()
-            path.lineWidth = CGFloat(gLineThickness)
+            path.lineWidth = thickness * CGFloat(2.0)
             path.flatness = 0.0001
             path.stroke()
+            path.fill()
         }
     }
 
@@ -55,6 +57,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
                 make.size.equalTo(size)
             }
+
+            setNeedsDisplay(frame)
         } else {
             if innerDot == nil {
                 innerDot  = ZoneDot()
@@ -66,11 +70,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             douleClicker           = createGestureRecognizer(self, action: #selector(ZoneDot.twoClicks), clicksRequired: 2)
             singleClicker          = createGestureRecognizer(self, action: #selector(ZoneDot.oneClick),  clicksRequired: 1)
-            zlayer.backgroundColor = ZColor.clear.cgColor
             innerDot?.isInnerDot   = true
 
             innerDot?.setupForZone(zone, asToggle: isToggle)
-            // addBorder(thickness: gLineThickness, radius: fingerBreadth / 2.0, color: ZColor.red.cgColor)
             snp.makeConstraints { (make: ConstraintMaker) in
                 make.size.equalTo(CGSize(width: fingerBreadth, height: fingerBreadth))
                 make.center.equalTo(innerDot!)
