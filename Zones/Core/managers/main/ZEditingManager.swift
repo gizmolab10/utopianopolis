@@ -262,9 +262,7 @@ class ZEditingManager: NSObject {
     func recursivelyRevealSiblingsOf(_ descendent: Zone, toZone: Zone, onCompletion: ZoneClosure?) {
         if toZone != descendent {
             revealParentAndSiblingsOf(descendent) {
-                if let     parent = descendent.parentZone {
-                    self.hereZone = parent
-
+                if let parent = descendent.parentZone {
                     self.recursivelyRevealSiblingsOf(parent, toZone: toZone, onCompletion: onCompletion)
                 }
             }
