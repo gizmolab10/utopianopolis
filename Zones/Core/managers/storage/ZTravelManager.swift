@@ -106,7 +106,7 @@ class ZTravelManager: NSObject {
     }
 
 
-    func travelToWhereThisZonePoints(_ zone: Zone, atArrival: @escaping SignalClosure) {
+    func changeFocusThroughZone(_ zone: Zone, atArrival: @escaping SignalClosure) {
         var there: Zone? = nil
 
         if zone.isRoot {
@@ -172,13 +172,15 @@ class ZTravelManager: NSObject {
                     self.hereZone = there
 
                     there?.needChildren()
-
+                    selectionManager.grab(there)
                     atArrival(there, .redraw)
                 } else {
                     cloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: gStorageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) in
                         self.hereZone = cloudManager.zoneForRecord(iRecord!)
 
+                        self.hereZone?.needChildren()
                         self.manifest.needSave()
+                        selectionManager.grab(there)
                         atArrival(self.hereZone, .redraw)
                     })
                 }

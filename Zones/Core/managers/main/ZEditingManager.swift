@@ -181,8 +181,12 @@ class ZEditingManager: NSObject {
             let    printInfo = NSPrintInfo.shared()
             let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
             let      isWider = view.bounds.size.width > view.bounds.size.height
+            let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
+            let       length = Double(isWider ? view.bounds.size.width : view.bounds.size.height)
+            let        scale = 64800.0 / length // 72 dpi * 9 inches * 100 percent
 
-            PMSetOrientation(pmPageFormat, PMOrientation(isWider ? kPMLandscape : kPMPortrait), false)
+            PMSetScale(pmPageFormat, scale)
+            PMSetOrientation(pmPageFormat, orientation, false)
             printInfo.updateFromPMPageFormat()
             NSPrintOperation(view: view, printInfo: printInfo).run()
         }
@@ -202,7 +206,7 @@ class ZEditingManager: NSObject {
 
             closure(.data)
         } else {
-            travelManager.travelToWhereThisZonePoints(iZone, atArrival: { (object, kind) in
+            travelManager.changeFocusThroughZone(iZone, atArrival: { (object, kind) in
                 closure(.redraw)
             })
         }
@@ -373,10 +377,9 @@ class ZEditingManager: NSObject {
 
 
     func travelThroughBookmark(_ bookmark: Zone) {
-        travelManager.travelToWhereThisZonePoints(bookmark, atArrival: { (object, kind) in
+        travelManager.changeFocusThroughZone(bookmark, atArrival: { (object, kind) in
             if let there: Zone = object as? Zone {
                 selectionManager.grab(there)
-                travelManager.manifest.needSave()
                 controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
             }
         })
@@ -616,7 +619,7 @@ class ZEditingManager: NSObject {
 
                     // for "travelling out", root "points to" corresponding zone in bookmarks graph
 
-                    travelManager.travelToWhereThisZonePoints(zone) { object, kind in
+                    travelManager.changeFocusThroughZone(zone) { object, kind in
                         if let there: Zone = object as? Zone {
                             selectionManager.grab(there)
 
@@ -764,7 +767,7 @@ class ZEditingManager: NSObject {
                         let grabAndTravel = {
                             selectionManager.grab(mover)
 
-                            travelManager.travelToWhereThisZonePoints(toThere, atArrival: { (object, kind) in
+                            travelManager.changeFocusThroughZone(toThere, atArrival: { (object, kind) in
                                 let there = object as! Zone
 
                                 if !sameGraph {
@@ -823,12 +826,13 @@ class ZEditingManager: NSObject {
         recursivelyRevealSiblingsOf(zone, toZone: outTo) { (iZone: Zone) in
             if iZone.parentZone == outTo {
                 insert = iZone.siblingIndex + (asTask ? 1 : -1)
-                // to compute the insertion index:
+                // to compute the insertion index
+                // so that moving back in returns exactly:
                 // if orphan == true
                 // visit zone's parent and parent of that, etc, until sibling's parent matches "into"
                 // grab sibling.siblingIndex
                 // then regarding atTask
-                // apply (+/- 1) so afterwards, moving back returns exactly
+                // apply (+/- 1) so afterwards (code is above)
                 // if == count, use -1, means "append" (no insertion index)
                 // else use as insertion index
 
@@ -845,7 +849,7 @@ class ZEditingManager: NSObject {
 
                 if insert == siblingCount {
                     outTo.children.append(zone)
-                } else {
+                } else if insert > -1 {
                     outTo.children.insert(zone, at: insert)
                 }
 
