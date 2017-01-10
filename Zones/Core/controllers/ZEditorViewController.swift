@@ -59,7 +59,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         specificWidget?.updateConstraints()
         specificWidget?.layoutFinish()
         specificWidget?.display()
-        setup()
+        // setup()
 
         view.zlayer.backgroundColor = gBackgroundColor.cgColor
         textCapturing               = false

@@ -49,6 +49,8 @@ class ZSelectionManager: NSObject {
 
     func deselect() {
         let             zone = currentlyEditingZone
+        let            saved = gAutoGrab
+        gAutoGrab            = false
         currentlyEditingZone = nil
 
         if zone == nil || zone == travelManager.hereZone {
@@ -60,6 +62,10 @@ class ZSelectionManager: NSObject {
 
         fullResign()
         deselectDrags()
+
+        dispatchAsyncInForeground {
+            gAutoGrab = saved
+        }
     }
 
 

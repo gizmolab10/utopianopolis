@@ -50,12 +50,13 @@ struct ZSettingsState: OptionSet {
 }
 
 
-var recursivelyExpand = false
-var   gShowsSearching = false
+var         gAutoGrab = true
 var     textCapturing = false
-var          fileMode = ZFileMode.cloud
-var          workMode = ZWorkMode.editMode
+var   gShowsSearching = false
+var recursivelyExpand = false
 var        gDotHeight = 12.0
+var          workMode = ZWorkMode.editMode
+var          fileMode = ZFileMode.cloud
 
 
 var               asTask:   Bool { get { return gGraphAlteringMode == .task    } }

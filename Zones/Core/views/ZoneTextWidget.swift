@@ -21,7 +21,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     var monitor: Any?
     var widget: ZoneWidget!
-    var _isTextEditing: Bool = false
+    var _isTextEditing  = false
 
 
     var isTextEditing: Bool {
@@ -34,9 +34,12 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 if !_isTextEditing {
                     selectionManager.currentlyEditingZone  = nil
 
-                    selectionManager.grab(zone!)
                     removeMonitorAsync()
                     abortEditing()
+
+                    if gAutoGrab {
+                        selectionManager.grab(zone)
+                    }
                 } else {
                     selectionManager.currentlyEditingZone  = zone
                     selectionManager.currentlyGrabbedZones = []
@@ -59,7 +62,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     #endif
                 }
 
-                signalFor(zone?.parentZone, regarding: .data)
+                signalFor(nil, regarding: .data)
             }
         }
     }
@@ -109,8 +112,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         let result = super.resignFirstResponder()
 
         if result && isTextEditing {
-            dispatchAsyncInForeground {
-                selectionManager.fullResign()
+            dispatchAsyncInForeground { // avoid state garbling
+                selectionManager.currentlyGrabbedZones = []
                 
                 self.isTextEditing = false
             }
@@ -122,9 +125,15 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     @discardableResult override func becomeFirstResponder() -> Bool {
         let result = super.becomeFirstResponder()
+        let  saved = gAutoGrab
 
         if result {
             isTextEditing = true
+            gAutoGrab     = false
+
+            dispatchAsyncInForeground {
+                gAutoGrab = saved
+            }
         }
 
         return result
