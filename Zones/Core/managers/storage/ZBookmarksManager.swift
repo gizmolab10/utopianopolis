@@ -21,7 +21,7 @@ class ZBookmarksManager: NSObject {
 
     func setup() {
         rootZone.showChildren = true
-        rootZone.zoneName     = "bookmarks"
+        rootZone.zoneName     = "patchboard"
 
         setupCloudZonesForAccessToStorage()
     }
@@ -53,14 +53,14 @@ class ZBookmarksManager: NSObject {
         zone.zoneName = name
         zone.zoneLink = ""
 
-        addNewBookmarkFor(zone)
+        addNewBookmarkFor(zone, inPatchboard: false)
     }
 
     
-    @discardableResult func addNewBookmarkFor(_ zone: Zone) -> Zone {
+    @discardableResult func addNewBookmarkFor(_ zone: Zone, inPatchboard: Bool) -> Zone {
         let            mode = zone.isRoot ? .bookmarks : gStorageMode
         let        bookmark = zone.isBookmark ? zone.deepCopy() : Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: mode)
-        let    parent: Zone = zone.parentZone ?? rootZone
+        let    parent: Zone = inPatchboard ? rootZone : zone.parentZone ?? rootZone
         let           index = parent.children.index(of: zone) ?? 0
         bookmark.zoneName   = zone.zoneName
         bookmark.parentZone = parent
@@ -74,6 +74,14 @@ class ZBookmarksManager: NSObject {
         if mode != .bookmarks && gStorageMode != .bookmarks {
             parent.recomputeOrderingUponInsertionAt(index)
             parent.needSave()
+            bookmark.needCreate()
+        } else if inPatchboard {
+            // save in manifest
+            let  manifest = travelManager.manifest
+            let reference = CKReference(record: bookmark.record, action: .none)
+
+            manifest.bookmarks.append(reference)
+            manifest.needSave()
             bookmark.needCreate()
         }
 

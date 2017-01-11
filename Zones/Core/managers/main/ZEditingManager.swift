@@ -79,9 +79,9 @@ class ZEditingManager: NSObject {
 
 
     func handleArrow(_ arrow: ZArrowKey, flags: NSEventModifierFlags) {
-        let   isShift = flags.contains(.shift)
-        let  isOption = flags.contains(.option)
         let isCommand = flags.contains(.command)
+        let  isOption = flags.contains(.option)
+        let   isShift = flags.contains(.shift)
 
         if !isShift {
             switch arrow {
@@ -106,8 +106,9 @@ class ZEditingManager: NSObject {
 
     func handleKey(_ key: String?, flags: NSEventModifierFlags, isWindow: Bool) {
         if  key != nil, !isEditing, let widget = widgetsManager.currentMovableWidget {
-            let  isOption = flags.contains(.option)
             let isCommand = flags.contains(.command)
+            let  isOption = flags.contains(.option)
+            let   isShift = flags.contains(.shift)
 
             switch key! {
             case "\t":
@@ -152,10 +153,17 @@ class ZEditingManager: NSObject {
                 break
             case "b":
                 if  let zone = selectionManager.firstGrabbableZone {
-                    let bookmark = bookmarksManager.addNewBookmarkFor(zone)
+                    let bookmark = bookmarksManager.addNewBookmarkFor(zone, inPatchboard: isShift)
 
                     selectionManager.grab(bookmark)
-                    controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+
+                    if !isShift {
+                        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                    } else {
+                        travelManager.travelToPatchboardGraph() { (iThere: Any?, iKind: ZSignalKind) in
+                            controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                        }
+                    }
                 }
 
                 break
@@ -170,8 +178,14 @@ class ZEditingManager: NSObject {
 
                 break
             case "'":
-                travelManager.cycleStorageMode {
-                    controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                if isShift && isCommand {
+                    travelManager.travelToPatchboardGraph() { (iThere: Any?, iKind: ZSignalKind) in
+                        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                    }
+                } else {
+                    travelManager.cycleStorageMode {
+                        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                    }
                 }
 
                 break
@@ -186,7 +200,7 @@ class ZEditingManager: NSObject {
                 // TODO: needs test against -100 (expressed as a one-character string) ...
                 // let arrowFirstKey = String("%c", -100)
 
-                if let arrow = ZArrowKey(rawValue: (key?.utf8CString[2])!) {
+                if isEditing, let arrow = ZArrowKey(rawValue: (key?.utf8CString[2])!) {
                     handleArrow(arrow, flags: flags)
                 }
 

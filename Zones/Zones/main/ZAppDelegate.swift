@@ -93,10 +93,14 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
 
     @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
-        let flags = (iItem?.keyEquivalentModifierMask)!
+        var flags = (iItem?.keyEquivalentModifierMask)!
         let   key = (iItem?.keyEquivalent)!
 
-        editingManager.handleKey(key, flags: flags, isWindow: true)
+        if key.uppercased() == key {
+            flags.insert(.shift)    // add isShift to flags
+        }
+
+        editingManager.handleKey(key.lowercased(), flags: flags, isWindow: true)
     }
 
 

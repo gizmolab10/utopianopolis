@@ -106,28 +106,33 @@ class ZTravelManager: NSObject {
     }
 
 
+    func travelToPatchboardGraph(_ atArrival: @escaping SignalClosure) {
+
+        ///////////////////////////////
+        // going out to bookmarks graph
+        ///////////////////////////////
+
+        let index = indexOfMode(gStorageMode) // index is a KLUDGE
+
+        gStorageMode = .bookmarks
+
+        travel {
+            var there = bookmarksManager.rootZone
+
+            if index >= 0 && index < there.children.count {
+                there = there[index]!
+            }
+
+            atArrival(there, .redraw)
+        }
+    }
+
+
     func changeFocusThroughZone(_ zone: Zone, atArrival: @escaping SignalClosure) {
         var there: Zone? = nil
 
         if zone.isRoot {
-
-            ///////////////////////////////
-            // going out to bookmarks graph
-            ///////////////////////////////
-
-            let index = indexOfMode(gStorageMode) // index is a KLUDGE
-
-            gStorageMode = .bookmarks
-
-            travel {
-                there = bookmarksManager.rootZone
-
-                if index >= 0 && index < (there?.children.count)! {
-                    there = there?[index]
-                }
-
-                atArrival(there, .redraw)
-            }
+            travelToPatchboardGraph(atArrival)
         } else if zone.isBookmark, let crossLink = zone.crossLink, let mode = crossLink.storageMode {
 
             ////////////////////////

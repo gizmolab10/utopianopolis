@@ -46,46 +46,14 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/Core/managers/main/ZEditingManager.swift"
-            timestampString = "505802817.335214"
+            filePath = "Zones/Core/managers/storage/ZBookmarksManager.swift"
+            timestampString = "505809250.863828"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "189"
-            endingLineNumber = "189"
-            landmarkName = "handleKey(_:flags:isWindow:)"
+            startingLineNumber = "80"
+            endingLineNumber = "80"
+            landmarkName = "addNewBookmarkFor(_:inPatchboard:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Zones.ZEditingManager.handleKey (Swift.Optional&lt;Swift.String&gt;, flags : __C.NSEventModifierFlags, isWindow : Swift.Bool) -&gt; ()"
-                  moduleName = "Zones"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/main/ZEditingManager.swift"
-                  timestampString = "505804761.128437"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "189"
-                  endingLineNumber = "189"
-                  offsetFromSymbolStart = "7989">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Zones.ZEditingManager.handleKey (Swift.Optional&lt;Swift.String&gt;, flags : __C.NSEventModifierFlags, isWindow : Swift.Bool) -&gt; ()"
-                  moduleName = "Zones"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/Core/managers/main/ZEditingManager.swift"
-                  timestampString = "505804761.130525"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "189"
-                  endingLineNumber = "189"
-                  offsetFromSymbolStart = "8438">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

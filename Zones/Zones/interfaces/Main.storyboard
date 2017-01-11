@@ -358,27 +358,32 @@
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="K55-i7-n9G"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Switch to next special" keyEquivalent="'" id="EOp-0B-lbw">
+                                                    <menuItem title="Next from Patchboard" keyEquivalent="'" id="EOp-0B-lbw">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="hYt-2W-4Vx"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="View Patchboard" keyEquivalent="'" id="2od-ln-crd">
+                                                        <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="0YO-LL-6oo"/>
+                                                        </connections>
+                                                    </menuItem>
                                                 </items>
                                             </menu>
                                         </menuItem>
-                                        <menuItem title="Create Bookmark" id="PJi-eK-2ck">
+                                        <menuItem title="Bookmarks" id="PJi-eK-2ck">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Create Bookmark" id="GbF-qY-vTh">
+                                            <menu key="submenu" title="Bookmarks" id="GbF-qY-vTh">
                                                 <items>
-                                                    <menuItem title="Normal" keyEquivalent="b" id="3wN-52-oXT">
+                                                    <menuItem title="Create a Bookmark" keyEquivalent="b" id="3wN-52-oXT">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Oel-Sg-rlG"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Special" keyEquivalent="'" id="wDs-1b-toe">
-                                                        <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                                    <menuItem title="Create in Patchboard" keyEquivalent="B" id="wDs-1b-toe">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Os1-X8-xe2"/>
                                                         </connections>
