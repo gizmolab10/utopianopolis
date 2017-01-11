@@ -24,18 +24,18 @@ class ZStackableView: ZView {
     @IBOutlet var toggleButton: NSButton?
 
 
-    // MARK:- state
+    // MARK:- identity
     // MARK:-
     
 
-    var state: ZSettingsState {
+    var identity: ZSettingsViewID {
         get {
             if let kind = identifier {
                 switch kind {
                 case        "help": return .Help
                 case "preferences": return .Preferences
                 case "information": return .Information
-                case     "tools": return .Tools
+                case       "tools": return .Tools
                 case           nil: return .All
                 default:            return .All
                 }
@@ -48,14 +48,14 @@ class ZStackableView: ZView {
 
     var hideableIsHidden: Bool {
         get {
-            return gSettingsState.contains(state)
+            return gSettingsViewIDs.contains(identity)
         }
 
         set {
             if newValue {
-                gSettingsState.insert(state)
+                gSettingsViewIDs.insert(identity)
             } else {
-                gSettingsState.remove(state)
+                gSettingsViewIDs.remove(identity)
             }
         }
     }

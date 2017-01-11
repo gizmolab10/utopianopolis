@@ -78,9 +78,11 @@ class ZOperationsManager: NSObject {
 
 
     func children(_ recursively: Bool, onCompletion: @escaping Closure) {
-        recursivelyExpand = recursively
+        gRecursivelyExpand     = recursively
         
         setupAndRun([.children]) {
+            gRecursivelyExpand = false
+
             onCompletion()
         }
     }
@@ -161,8 +163,7 @@ class ZOperationsManager: NSObject {
 
 
     func becomeReady(_ onCompletion: Closure?) {
-        recursivelyExpand = false
-        isReady           = true;
+        isReady = true;
 
         controllersManager.displayActivity()
 

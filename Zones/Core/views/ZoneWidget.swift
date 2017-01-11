@@ -80,7 +80,7 @@ class ZoneWidget: ZView {
         _childrenView = nil
         _textWidget   = nil
         widgetZone    = nil
-}
+    }
 
 
     // MARK:- layout

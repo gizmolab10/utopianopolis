@@ -13,6 +13,7 @@ import CloudKit
 
 typealias Closure                 = ()          -> (Void)
 typealias ZoneClosure             = (Zone)      -> (Void)
+typealias ViewClosure             = (ZView)     -> (Void)
 typealias TimerClosure            = (Timer)     -> (ObjCBool)
 typealias ObjectClosure           = (NSObject)  -> (Void)
 typealias RecordClosure           = (CKRecord?) -> (Void)

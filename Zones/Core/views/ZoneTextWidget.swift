@@ -143,9 +143,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     func captureText() {
         let zone = widget.widgetZone
 
-        if  textCapturing     == false {
+        if  gTextCapturing     == false {
             if zone?.zoneName != text! {
-                textCapturing  = true
+                gTextCapturing  = true
                 zone?.zoneName = text!
 
                 zone?.maybeNeedMerge()

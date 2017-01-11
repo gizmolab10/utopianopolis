@@ -345,7 +345,7 @@ class ZCloudManager: ZRecordsManager {
                 } else {
                     let child = self.zoneForRecord(iRecord!)
 
-                    if recursivelyExpand {
+                    if gRecursivelyExpand {
                         child.needChildren()
                     }
 

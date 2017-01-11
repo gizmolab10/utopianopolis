@@ -20,10 +20,6 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
     var needsSetup = true
 
 
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
-    }
-
-
     func applicationDidBecomeActive(_ notification: Notification) {
         if needsSetup {
             zapplication.registerForRemoteNotifications(matching: .badge)
@@ -47,6 +43,10 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
     }
 
 
+    func applicationDidFinishLaunching(aNotification: NSNotification) {
+    }
+
+
     func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         // print(deviceToken)
     }
@@ -66,6 +66,35 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplicationTerminateReply {
         return .terminateNow
+    }
+
+
+    // MARK:- actions
+    // MARK:-
+
+
+    var settingsController: ZSettingsViewController? { get { return controllersManager.controllerForID(.settings) as? ZSettingsViewController } }
+
+
+    @IBAction func displayPreferences(_ sender: Any?) {
+        settingsController?.displayViewFor(id: .Preferences)
+    }
+
+
+    @IBAction func toggleSearch(_ sender: Any?) {
+        gShowsSearching = !gShowsSearching
+
+        signalFor(nil, regarding: .search)
+    }
+
+
+    @IBAction func displayHelp(_ sender: Any?) {
+        settingsController?.displayViewFor(id: .Help)
+    }
+
+
+    @IBAction func printHere(_ sender: Any?) {
+        editingManager.printHere()
     }
 }
 

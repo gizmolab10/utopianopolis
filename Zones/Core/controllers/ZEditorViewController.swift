@@ -29,7 +29,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         if [.search, .found].contains(kind) {
             return
-        } else if workMode != .editMode {
+        } else if gWorkMode != .editMode {
             view.snp.removeConstraints()
             hereWidget.removeFromSuperview()
 
@@ -62,7 +62,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         // setup()
 
         view.zlayer.backgroundColor = gBackgroundColor.cgColor
-        textCapturing               = false
+        gTextCapturing               = false
     }
 
 
@@ -87,6 +87,9 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
     
     func oneClick(_ sender: ZGestureRecognizer?) {
+        gShowsSearching = false
+
         selectionManager.deselect()
+        signalFor(nil, regarding: .search)
     }
 }

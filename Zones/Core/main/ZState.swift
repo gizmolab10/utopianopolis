@@ -35,28 +35,28 @@ enum ZWorkMode: Int {
 }
 
 
-struct ZSettingsState: OptionSet {
+struct ZSettingsViewID: OptionSet {
     let rawValue: Int
 
     init(rawValue: Int) {
         self.rawValue = rawValue
     }
 
-    static let        Help = ZSettingsState(rawValue: 1 << 0)
-    static let Preferences = ZSettingsState(rawValue: 1 << 1)
-    static let Information = ZSettingsState(rawValue: 1 << 2)
-    static let       Tools = ZSettingsState(rawValue: 1 << 3)
-    static let         All = ZSettingsState(rawValue: 0xFFFF)
+    static let        Help = ZSettingsViewID(rawValue: 1 << 0)
+    static let Preferences = ZSettingsViewID(rawValue: 1 << 1)
+    static let Information = ZSettingsViewID(rawValue: 1 << 2)
+    static let       Tools = ZSettingsViewID(rawValue: 1 << 3)
+    static let         All = ZSettingsViewID(rawValue: 0xFFFF)
 }
 
 
-var         gAutoGrab = true
-var     textCapturing = false
-var   gShowsSearching = false
-var recursivelyExpand = false
-var        gDotHeight = 12.0
-var          workMode = ZWorkMode.editMode
-var          fileMode = ZFileMode.cloud
+var          gAutoGrab = true
+var     gTextCapturing = false
+var    gShowsSearching = false
+var gRecursivelyExpand = false
+var         gDotHeight = 12.0
+var          gWorkMode = ZWorkMode.editMode
+var          gFileMode = ZFileMode.cloud
 
 
 var               asTask:   Bool { get { return gGraphAlteringMode == .task    } }
@@ -210,17 +210,17 @@ var gStorageMode: ZStorageMode {
 }
 
 
-var gSettingsState: ZSettingsState {
+var gSettingsViewIDs: ZSettingsViewID {
     set {
         UserDefaults.standard.set(newValue.rawValue, forKey:settingsStateKey)
         UserDefaults.standard.synchronize()
     }
 
     get {
-        var state: ZSettingsState? = nil
+        var state: ZSettingsViewID? = nil
 
         if let object = UserDefaults.standard.object(forKey:settingsStateKey) {
-            state     = ZSettingsState(rawValue: object as! Int)
+            state     = ZSettingsViewID(rawValue: object as! Int)
         }
 
         if state == nil {

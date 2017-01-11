@@ -44,7 +44,7 @@ class ZMainViewController: ZGenericViewController {
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         switch kind {
         case .found:
-            let isSearching = workMode == .searchMode
+            let isSearching = gWorkMode == .searchMode
 
             // show(false, view: <#T##ZView#>)
             show ( isSearching, view: searchResultsView!)

@@ -57,7 +57,7 @@ class ZEditingManager: NSObject {
             if deferredEvents.count < 1 {
                 deferredEvents.append(ZoneEvent(iEvent, iIsWindow: isWindow))
             }
-        } else if !isEditing && iEvent != previousEvent && workMode == .editMode {
+        } else if !isEditing && iEvent != previousEvent && gWorkMode == .editMode {
             previousEvent = iEvent
 
             #if os(OSX)

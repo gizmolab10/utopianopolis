@@ -336,6 +336,15 @@ extension ZView {
 
         self.addBorder(thickness: thickness, radius: radius, color: color)
     }
+
+
+    func applyToAllSubviews(_ closure: ViewClosure) {
+        for view in subviews {
+            closure(view)
+
+            view.applyToAllSubviews(closure)
+        }
+    }
 }
 
 

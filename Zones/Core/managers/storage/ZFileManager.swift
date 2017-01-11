@@ -28,7 +28,7 @@ class ZFileManager: NSObject {
 
 
     func save() {
-        if !isSaving && fileMode == .local && gStorageMode != .bookmarks && operationsManager.isReady {
+        if !isSaving && gFileMode == .local && gStorageMode != .bookmarks && operationsManager.isReady {
             isSaving               = true
             let dict: NSDictionary = travelManager.rootZone.storageDict as NSDictionary
             let  url:          URL = pathToCurrentZoneFile()
@@ -43,7 +43,7 @@ class ZFileManager: NSObject {
     func restore() {
         cloudManager.clear()
 
-        if fileMode == .local && gStorageMode != .bookmarks {
+        if gFileMode == .local && gStorageMode != .bookmarks {
             if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
                 travelManager.rootZone = Zone(dict: raw as! ZStorageDict)
                 travelManager.hereZone = travelManager.rootZone

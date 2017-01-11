@@ -126,7 +126,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
     func clear() {
         resultsAreVisible = false
         gShowsSearching    = false
-        workMode          = .editMode
+        gWorkMode          = .editMode
 
         self.signalFor(nil, regarding: .search)
         self.signalFor(nil, regarding: .found)

@@ -71,6 +71,24 @@ class ZSettingsViewController: ZGenericViewController {
     }
 
 
+    func displayViewFor(id: ZSettingsViewID) {
+        let type = ZStackableView.self.className()
+
+        gSettingsViewIDs.insert(id)
+        view.applyToAllSubviews { (iView: ZView) in
+            if type == iView.className {
+                let stackView = iView as? ZStackableView
+
+                stackView?.update()
+            }
+        }
+    }
+
+
+    // MARK:- actions
+    // MARK:-
+
+
     @IBAction func sliderAction(_ iSlider: NSSlider) {
         let value = CGFloat(iSlider.doubleValue)
 
