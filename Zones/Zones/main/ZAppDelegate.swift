@@ -7,17 +7,27 @@
 //
 
 
-import Cocoa
 import CloudKit
+
+#if os(OSX)
+    import Cocoa
+#elseif os(iOS)
+    import UIKit
+#endif
 
 
 @NSApplicationMain
 
 
-class ZAppDelegate: NSResponder, ZApplicationDelegate {
+class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
 
+    var settingsController: ZSettingsViewController? { get { return controllersManager.controllerForID(.settings) as? ZSettingsViewController }     }
     var needsSetup = true
+
+
+    // MARK:- delegation
+    // MARK:-
 
 
     func applicationDidBecomeActive(_ notification: Notification) {
@@ -69,11 +79,17 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
     }
 
 
+    // MARK:- menu delegation
+    // MARK:-
+    
+
+    override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        return !editingManager.isEditing
+    }
+    
+
     // MARK:- actions
     // MARK:-
-
-
-    var settingsController: ZSettingsViewController? { get { return controllersManager.controllerForID(.settings) as? ZSettingsViewController }     }
 
 
     @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {

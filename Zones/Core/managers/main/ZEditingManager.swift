@@ -105,7 +105,7 @@ class ZEditingManager: NSObject {
 
 
     func handleKey(_ key: String?, flags: NSEventModifierFlags, isWindow: Bool) {
-        if  key != nil, let widget = widgetsManager.currentMovableWidget {
+        if  key != nil, !isEditing, let widget = widgetsManager.currentMovableWidget {
             let  isOption = flags.contains(.option)
             let isCommand = flags.contains(.command)
 
@@ -182,6 +182,10 @@ class ZEditingManager: NSObject {
 
                 break
             default:
+
+                // TODO: needs test against -100 (expressed as a one-character string) ...
+                // let arrowFirstKey = String("%c", -100)
+
                 if let arrow = ZArrowKey(rawValue: (key?.utf8CString[2])!) {
                     handleArrow(arrow, flags: flags)
                 }

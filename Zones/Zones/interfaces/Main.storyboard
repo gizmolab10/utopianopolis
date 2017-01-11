@@ -344,9 +344,9 @@
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="Go" id="34Y-GC-lZU">
+                            <menuItem title="Zone" id="34Y-GC-lZU">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Go" id="ixh-Wh-nLR">
+                                <menu key="submenu" title="Zone" id="ixh-Wh-nLR">
                                     <items>
                                         <menuItem title="Focus" id="lnb-Ni-gF3">
                                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -390,25 +390,25 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Move" id="Qjq-Pc-dm0">
                                                 <items>
-                                                    <menuItem title="Up" keyEquivalent="" id="kEe-eC-JSj">
+                                                    <menuItem title="Up" tag="100" keyEquivalent="" id="kEe-eC-JSj">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="55c-GH-63F"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Down" keyEquivalent="" id="xJR-BI-E3h">
+                                                    <menuItem title="Down" tag="100" keyEquivalent="" id="xJR-BI-E3h">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="RKB-6v-SmR"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Out" keyEquivalent="" id="0rp-Qw-Xbp">
+                                                    <menuItem title="Out" tag="100" keyEquivalent="" id="0rp-Qw-Xbp">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="80J-5g-YNk"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="In" keyEquivalent="" id="qZI-WR-1fU">
+                                                    <menuItem title="In" tag="100" keyEquivalent="" id="qZI-WR-1fU">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="pbh-Oa-bSW"/>
@@ -436,6 +436,9 @@
                                 </menu>
                             </menuItem>
                         </items>
+                        <connections>
+                            <outlet property="delegate" destination="Voe-Tx-rLC" id="xfE-PG-Rj7"/>
+                        </connections>
                     </menu>
                     <connections>
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
@@ -924,7 +927,7 @@ when not editing text:
                                                         </constraints>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="UcL-vR-AXp">
                                                             <font key="font" metaFont="cellTitle"/>
-                                                            <string key="title">New children and sibling zones are added at
+                                                            <string key="title">New and arriving children and sibling zones appear at
 
    top of TASK LISTS
    bottom of COMPOSITIONS</string>
