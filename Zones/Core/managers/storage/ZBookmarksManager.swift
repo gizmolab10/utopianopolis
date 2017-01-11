@@ -76,12 +76,12 @@ class ZBookmarksManager: NSObject {
             parent.needSave()
             bookmark.needCreate()
         } else if inPatchboard {
-            // save in manifest
-            let  manifest = travelManager.manifest
+            // save in personal manifest
+            let  manifest = travelManager.manifestForMode(.mine)
             let reference = CKReference(record: bookmark.record, action: .none)
 
-            manifest.bookmarks.append(reference)
-            manifest.needSave()
+            manifest?.bookmarks.append(reference)
+            manifest?.needSave()
             bookmark.needCreate()
         }
 

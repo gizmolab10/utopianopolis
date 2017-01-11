@@ -39,7 +39,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         let                        zone = object as? Zone
         var specificWidget: ZoneWidget? = hereWidget
         var specificView:        ZView? = view
-        var specificindex:          Int = -1
+        var specificindex:         Int? = nil
         var recursing:             Bool = [.data, .redraw].contains(kind)
         hereWidget.widgetZone           = travelManager.hereZone!
 

@@ -93,10 +93,12 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
 
     @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
-        var flags = (iItem?.keyEquivalentModifierMask)!
-        let   key = (iItem?.keyEquivalent)!
+        var   flags = (iItem?.keyEquivalentModifierMask)!
+        let     key = (iItem?.keyEquivalent)!
+        let letters = NSCharacterSet.letters
+        let  scalar = key.unicodeScalars.first
 
-        if key.uppercased() == key {
+        if scalar != nil, letters.contains(scalar!) && key.uppercased() == key {
             flags.insert(.shift)    // add isShift to flags
         }
 

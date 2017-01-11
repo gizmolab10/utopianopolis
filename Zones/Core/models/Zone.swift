@@ -387,15 +387,15 @@ class Zone : ZRecord {
     }
 
 
-    var siblingIndex: Int { get {
-        if let siblings: [Zone] = parentZone?.children {
-            if let index = siblings.index(of: self) {
+    var siblingIndex: Int? {
+        get {
+            if let siblings: [Zone] = parentZone?.children, let index = siblings.index(of: self) {
                 return index
             }
-        }
 
-        return -1
-        } }
+            return nil
+        }
+    }
 
 
     @discardableResult func traverseApply(_ block: ZoneToBooleanClosure) -> Bool {

@@ -196,11 +196,7 @@ class ZEditingManager: NSObject {
 
                 break
             default:
-
-                // TODO: needs test against -100 (expressed as a one-character string) ...
-                // let arrowFirstKey = String("%c", -100)
-
-                if isEditing, let arrow = ZArrowKey(rawValue: (key?.utf8CString[2])!) {
+                if key?.characters.first?.asciiValue == nil, !isEditing, let arrow = ZArrowKey(rawValue: (key?.utf8CString[2])!) {
                     handleArrow(arrow, flags: flags)
                 }
 
@@ -341,7 +337,7 @@ class ZEditingManager: NSObject {
 
 
     func showToggleDot(_ show: Bool, zone: Zone, recursively: Bool, onCompletion: Closure?) {
-        let       isChildless = zone.children.count == 0
+        var       isChildless = zone.children.count == 0
         let noVisibleChildren = !zone.showChildren || isChildless
 
         if !show && noVisibleChildren && selectionManager.isGrabbed(zone) {
@@ -373,6 +369,14 @@ class ZEditingManager: NSObject {
             }
 
             let recurseMaybe = {
+                isChildless = zone.children.count == 0
+
+                if  zone.hasChildren == isChildless {
+                    zone.hasChildren = !isChildless
+
+                    zone.needSave()
+                }
+
                 if operationsManager.isReady {
                     onCompletion?()
                 }
@@ -454,10 +458,12 @@ class ZEditingManager: NSObject {
                     }
 
                     child.parentZone              = zone
+                    zone?.hasChildren             = true
                     zone?.showChildren            = true
                     travelManager.manifest.total += 1
 
                     zone?.recomputeOrderingUponInsertionAt(insert)
+                    zone?.needSave()
                     onCompletion?(child)
                 }
             }
@@ -759,16 +765,18 @@ class ZEditingManager: NSObject {
 
 
     func moveSelectionInto(_ zone: Zone) {
-        let  hideChildren = !zone.showChildren
+        let  showChildren = zone.showChildren
         zone.showChildren = true
 
         selectionManager.grab(asTask ? zone.children.first! : zone.children.last!)
 
-        if hideChildren {
-            controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
-        } else {
-            signalFor(nil, regarding: .data)
+        if showChildren {
+            zone.hasChildren = zone.children.count != 0
+
+            zone.needSave()
         }
+
+        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
     }
 
 
@@ -839,35 +847,41 @@ class ZEditingManager: NSObject {
 
     func applyModeRecursivelyTo(_ zone: Zone?) {
         if zone != nil {
-            zone?.record    = CKRecord(recordType: zoneTypeKey)
+            zone?.record      = CKRecord(recordType: zoneTypeKey)
             zone?.storageMode = gStorageMode
 
             for child in (zone?.children)! {
                 applyModeRecursivelyTo(child)
             }
 
-            zone!.needCreate()
+            zone?.needCreate()
+            zone?.updateLevel()
             zone?.updateCloudProperties()
         }
     }
 
 
     func moveZone(_ zone: Zone, outTo: Zone, orphan: Bool, onCompletion: Closure?) {
-        var insert = -1
+        var insert: Int? = nil
 
         recursivelyRevealSiblingsOf(zone, toZone: outTo) { (iZone: Zone) in
             if iZone.parentZone == outTo {
-                insert = iZone.siblingIndex + (asTask ? 1 : -1)
-                // to compute the insertion index
-                // so that moving back in returns exactly:
-                // if orphan == true
-                // visit zone's parent and parent of that, etc, until sibling's parent matches "into"
-                // grab sibling.siblingIndex
-                // then regarding atTask
-                // apply (+/- 1) so afterwards (code is above)
-                // if == count, use -1, means "append" (no insertion index)
-                // else use as insertion index
+                insert = iZone.siblingIndex
 
+                if insert != nil {
+                    insert = insert! + (asTask ? 1 : -1)
+
+                    // to compute the insertion index
+                    // so that moving back in returns exactly:
+                    // if orphan == true
+                    // visit zone's parent and parent of that, etc, until sibling's parent matches "into"
+                    // grab sibling.siblingIndex
+                    // then regarding atTask
+                    // apply (+/- 1) so afterwards (code is above)
+                    // if == count, use -1, means "append" (no insertion index)
+                    // else use as insertion index
+                    
+                }
             } else if iZone == outTo {
                 zone.needSave()
                 outTo.needSave()
@@ -881,11 +895,11 @@ class ZEditingManager: NSObject {
 
                 if insert == siblingCount {
                     outTo.children.append(zone)
-                } else if insert > -1 {
-                    outTo.children.insert(zone, at: insert)
+                } else if insert != nil {
+                    outTo.children.insert(zone, at: insert!)
                 }
 
-                outTo.recomputeOrderingUponInsertionAt(insert)
+                outTo.recomputeOrderingUponInsertionAt(insert!)
                 zone.updateLevel()
                 onCompletion?()
             }

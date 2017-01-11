@@ -87,11 +87,11 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    func layoutInView(_ inView: ZView?, atIndex: Int, recursing: Bool, kind: ZSignalKind) {
+    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, kind: ZSignalKind) {
         if inView != nil && !(inView?.subviews.contains(self))! {
             inView?.addSubview(self)
 
-            if atIndex == -1 {
+            if atIndex == nil {
                 snp.remakeConstraints { (make: ConstraintMaker) -> Void in
                     make.center.equalTo(inView!)
                 }

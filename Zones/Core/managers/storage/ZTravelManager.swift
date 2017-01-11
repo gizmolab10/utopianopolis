@@ -29,7 +29,7 @@ class ZTravelManager: NSObject {
 
     var manifest: ZManifest {
         get {
-            var found = manifestByStorageMode[gStorageMode]
+            var found = manifestForMode(gStorageMode)
 
             if found == nil {
                 found                               = ZManifest(record: nil, storageMode: .mine)
@@ -38,6 +38,11 @@ class ZTravelManager: NSObject {
 
             return found!
         }
+    }
+
+
+    func manifestForMode(_ mode: ZStorageMode) -> ZManifest? {
+        return manifestByStorageMode[mode]
     }
 
 
