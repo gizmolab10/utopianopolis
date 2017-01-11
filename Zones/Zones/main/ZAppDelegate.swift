@@ -73,7 +73,15 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
     // MARK:-
 
 
-    var settingsController: ZSettingsViewController? { get { return controllersManager.controllerForID(.settings) as? ZSettingsViewController } }
+    var settingsController: ZSettingsViewController? { get { return controllersManager.controllerForID(.settings) as? ZSettingsViewController }     }
+
+
+    @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
+        let flags = (iItem?.keyEquivalentModifierMask)!
+        let   key = (iItem?.keyEquivalent)!
+
+        editingManager.handleKey(key, flags: flags, isWindow: true)
+    }
 
 
     @IBAction func displayPreferences(_ sender: Any?) {
@@ -81,7 +89,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
     }
 
 
-    @IBAction func toggleSearch(_ sender: Any?) {
+    @IBAction func toggleSearch(_ iItem: NSMenuItem?) {
         gShowsSearching = !gShowsSearching
 
         signalFor(nil, regarding: .search)

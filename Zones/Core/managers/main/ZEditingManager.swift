@@ -53,126 +53,142 @@ class ZEditingManager: NSObject {
 
 
     @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
-        if !operationsManager.isReady {
-            if deferredEvents.count < 1 {
-                deferredEvents.append(ZoneEvent(iEvent, iIsWindow: isWindow))
-            }
-        } else if !isEditing && iEvent != previousEvent && gWorkMode == .editMode {
-            previousEvent = iEvent
-
-            #if os(OSX)
-                if  let    widget = widgetsManager.currentMovableWidget, let string = iEvent.charactersIgnoringModifiers {
-                    let       key = string[string.startIndex].description
-                    let     flags = iEvent.modifierFlags
-                    let   isShift = flags.contains(.shift)
-                    let  isOption = flags.contains(.option)
-                    let isCommand = flags.contains(.command)
-                    let   isArrow = flags.contains(.numericPad) && flags.contains(.function)
-
-                    if !isArrow {
-                        switch key {
-                        case "\t":
-                            widget.textWidget.resignFirstResponder()
-
-                            if let parent = widget.widgetZone.parentZone {
-                                if widget.widgetZone == hereZone {
-                                    hereZone            = parent
-                                    parent.showChildren = true
-                                }
-
-                                addZoneTo(parent)
-                            } else {
-                                selectionManager.currentlyEditingZone = nil
-
-                                signalFor(nil, regarding: .redraw)
-                            }
-
-                        case " ":
-                            if (isWindow || isOption) && !widget.widgetZone.isBookmark {
-                                addZoneTo(widget.widgetZone)
-                            }
-
-                            break
-                        case "\u{7F}":
-                            if isWindow || isOption {
-                                delete()
-                            }
-
-                            break
-                        case "\r":
-                            if selectionManager.currentlyGrabbedZones.count != 0 {
-                                if isCommand {
-                                    selectionManager.deselect()
-                                } else {
-                                    widget.textWidget.becomeFirstResponder()
-                                }
-                            } else if selectionManager.currentlyEditingZone != nil {
-                                widget.textWidget.resignFirstResponder()
-                            }
-
-                            break
-                        case "b":
-                            if  let zone = selectionManager.firstGrabbableZone {
-                                let bookmark = bookmarksManager.addNewBookmarkFor(zone)
-
-                                selectionManager.grab(bookmark)
-                                controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
-                            }
-
-                            break
-                        case "p":
-                            printHere()
-
-                            break
-                        case "f":
-                            gShowsSearching = !gShowsSearching
-
-                            signalFor(nil, regarding: .search)
-
-                            break
-                        case "'":
-                            travelManager.cycleStorageMode {
-                                controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
-                            }
-
-                            break
-                        case "/":
-                            if let zone = selectionManager.firstGrabbableZone {
-                                focusOnZone(zone)
-                            }
-                            
-                            break
-                        default:
-                            
-                            break
-                        }
-                    } else if isWindow {
-                        let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
-
-                        if !isShift {
-                            switch arrow {
-                            case .right: moveInto(     selectionOnly: !isOption, extreme: isCommand); break
-                            case .left:  moveOut(      selectionOnly: !isOption, extreme: isCommand); break
-                            case .down:  moveUp(false, selectionOnly: !isOption, extreme: isCommand); break
-                            case .up:    moveUp(true,  selectionOnly: !isOption, extreme: isCommand); break
-                            }
-                        } else if let zone = selectionManager.firstGrabbableZone {
-                            var show = true
-
-                            switch arrow {
-                            case .left: show = false; break
-                            case .right:              break
-                            default:                  return true
-                            }
-
-                            showToggleDot(show, zone: zone, recursively: isCommand) { controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {} };
-                        }
-                    }
+        #if os(OSX)
+            if !operationsManager.isReady {
+                if deferredEvents.count < 1 {
+                    deferredEvents.append(ZoneEvent(iEvent, iIsWindow: isWindow))
                 }
-            #endif
-        }
-        
+            } else if !isEditing, iEvent != previousEvent, gWorkMode == .editMode, let  string = iEvent.charactersIgnoringModifiers {
+                let   flags = iEvent.modifierFlags
+                let isArrow = flags.contains(.numericPad) && flags.contains(.function)
+                let     key = string[string.startIndex].description
+
+                if !isArrow {
+                    handleKey(key, flags: flags, isWindow: isWindow)
+                } else if isWindow {
+                    let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
+
+                    handleArrow(arrow, flags: flags)
+                }
+            }
+
+        #endif
+
         return true
+    }
+
+
+    func handleArrow(_ arrow: ZArrowKey, flags: NSEventModifierFlags) {
+        let   isShift = flags.contains(.shift)
+        let  isOption = flags.contains(.option)
+        let isCommand = flags.contains(.command)
+
+        if !isShift {
+            switch arrow {
+            case .right: moveInto(     selectionOnly: !isOption, extreme: isCommand); break
+            case .left:  moveOut(      selectionOnly: !isOption, extreme: isCommand); break
+            case .down:  moveUp(false, selectionOnly: !isOption, extreme: isCommand); break
+            case .up:    moveUp(true,  selectionOnly: !isOption, extreme: isCommand); break
+            }
+        } else if let zone = selectionManager.firstGrabbableZone {
+            var show = true
+
+            switch arrow {
+            case .left: show = false; break
+            case .right:              break
+            default:                  return
+            }
+
+            showToggleDot(show, zone: zone, recursively: isCommand) { controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {} };
+        }
+    }
+
+
+    func handleKey(_ key: String?, flags: NSEventModifierFlags, isWindow: Bool) {
+        if  key != nil, let widget = widgetsManager.currentMovableWidget {
+            let  isOption = flags.contains(.option)
+            let isCommand = flags.contains(.command)
+
+            switch key! {
+            case "\t":
+                widget.textWidget.resignFirstResponder()
+
+                if let parent = widget.widgetZone.parentZone {
+                    if widget.widgetZone == hereZone {
+                        hereZone            = parent
+                        parent.showChildren = true
+                    }
+
+                    addZoneTo(parent)
+                } else {
+                    selectionManager.currentlyEditingZone = nil
+
+                    signalFor(nil, regarding: .redraw)
+                }
+
+            case " ":
+                if (isWindow || isOption) && !widget.widgetZone.isBookmark {
+                    addZoneTo(widget.widgetZone)
+                }
+
+                break
+            case "\u{7F}":
+                if isWindow || isOption {
+                    delete()
+                }
+
+                break
+            case "\r":
+                if selectionManager.currentlyGrabbedZones.count != 0 {
+                    if isCommand {
+                        selectionManager.deselect()
+                    } else {
+                        widget.textWidget.becomeFirstResponder()
+                    }
+                } else if selectionManager.currentlyEditingZone != nil {
+                    widget.textWidget.resignFirstResponder()
+                }
+
+                break
+            case "b":
+                if  let zone = selectionManager.firstGrabbableZone {
+                    let bookmark = bookmarksManager.addNewBookmarkFor(zone)
+
+                    selectionManager.grab(bookmark)
+                    controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                }
+
+                break
+            case "p":
+                printHere()
+
+                break
+            case "f":
+                gShowsSearching = !gShowsSearching
+
+                signalFor(nil, regarding: .search)
+
+                break
+            case "'":
+                travelManager.cycleStorageMode {
+                    controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                }
+
+                break
+            case "/":
+                if let zone = selectionManager.firstGrabbableZone {
+                    focusOnZone(zone)
+                }
+
+                break
+            default:
+                if let arrow = ZArrowKey(rawValue: (key?.utf8CString[2])!) {
+                    handleArrow(arrow, flags: flags)
+                }
+
+                break
+            }
+        }
     }
 
 
