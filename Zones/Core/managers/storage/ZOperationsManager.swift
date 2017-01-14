@@ -13,10 +13,12 @@ import Foundation
 enum ZOperationID: Int {
     case ready
     case cloud
+    case manifest
+    case switchers
     case file
     case here
-    case flush
     case fetch
+    case flush // zones, manifests, switchers
     case children
     case unsubscribe
     case subscribe
@@ -73,7 +75,7 @@ class ZOperationsManager: NSObject {
 
 
     func sync(_ onCompletion: @escaping Closure) {
-        setupAndRun([.create, .parent, .children, .merge, .flush]) { onCompletion() }
+        setupAndRun([.create, .fetch, .parent, .children, .merge, .flush]) { onCompletion() }
     }
 
 
@@ -117,16 +119,28 @@ class ZOperationsManager: NSObject {
                 self.setupAndRun(operationIDs) { onCompletion() }
             }
         } else {
-            onReady = onCompletion
+            let saved = gStorageMode
+            onReady   = onCompletion
 
             for identifier in identifiers {
-                let op = BlockOperation {
-                    self.invokeOn(identifier)
+                let operation = BlockOperation {
+                    self.report(String(describing: identifier))
+
+                    self          .invokeOn(identifier, mode: saved) {
+
+                        if gStorageMode == .mine || [.file, .ready, .here, .root, .cloud, .subscribe, .unsubscribe].contains(identifier) {
+                            self    .finish(identifier, mode: saved)
+                        } else {
+                            self  .invokeOn(identifier, mode: .mine) {
+                                self.finish(identifier, mode: saved)
+                            }
+                        }
+                    }
                 }
 
-                waitingOps[identifier] = op
+                waitingOps[identifier] = operation
 
-                addOperation(op)
+                addOperation(operation)
             }
         }
 
@@ -138,31 +152,39 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func invokeOn(_ identifier: ZOperationID) {
-        let          operation = waitingOps[identifier]!
-        waitingOps[identifier] = nil
+    func finish(_ identifier: ZOperationID, mode: ZStorageMode) {
+        let               operation = waitingOps[identifier]!
+        self.waitingOps[identifier] = nil
+        gStorageMode                = mode
 
-        // report(String(describing: identifier))
+        operation.finish()
+    }
+
+
+    func invokeOn(_ identifier: ZOperationID, mode: ZStorageMode, onCompletion: Closure?) {
+        gStorageMode = mode
 
         switch identifier {
-        case .file:        zfileManager.restore();           operation.finish();   break
-        case .root:        cloudManager.establishRootAsHere{ operation.finish() }; break
-        case .cloud:       cloudManager.fetchCloudZones    { operation.finish() }; break
-        case .here:       travelManager.establishHere      { operation.finish() }; break
-        case .children:    cloudManager.fetchChildren      { operation.finish() }; break
-        case .parent:      cloudManager.fetchParents       { operation.finish() }; break
-        case .unsubscribe: cloudManager.unsubscribe        { operation.finish() }; break
-        case .subscribe:   cloudManager.subscribe          { operation.finish() }; break
-        case .create:      cloudManager.create             { operation.finish() }; break
-        case .fetch:       cloudManager.fetch              { operation.finish() }; break
-        case .merge:       cloudManager.merge              { operation.finish() }; break
-        case .flush:       cloudManager.flush              { operation.finish() }; break
-        case .ready:       becomeReady                     { operation.finish() }; break
+        case .file:        zfileManager.restore();                  onCompletion?()  ; break
+        case .root:        cloudManager.establishRootAsHere(mode) { onCompletion?() }; break
+        case .cloud:       cloudManager.fetchCloudZones    (mode) { onCompletion?() }; break
+        case .manifest:    cloudManager.fetchManifest      (mode) { onCompletion?() }; break
+        case .switchers:   cloudManager.fetchSwitchers     (mode) { onCompletion?() }; break
+        case .here:       travelManager.establishHere      (mode) { onCompletion?() }; break // TODO: BROKEN
+        case .children:    cloudManager.fetchChildren      (mode) { onCompletion?() }; break
+        case .parent:      cloudManager.fetchParents       (mode) { onCompletion?() }; break
+        case .unsubscribe: cloudManager.unsubscribe        (mode) { onCompletion?() }; break
+        case .subscribe:   cloudManager.subscribe          (mode) { onCompletion?() }; break
+        case .create:      cloudManager.create             (mode) { onCompletion?() }; break
+        case .fetch:       cloudManager.fetch              (mode) { onCompletion?() }; break
+        case .merge:       cloudManager.merge              (mode) { onCompletion?() }; break
+        case .flush:       cloudManager.flush              (mode) { onCompletion?() }; break
+        case .ready:       becomeReady                     (mode) { onCompletion?() }; break
         }
     }
 
 
-    func becomeReady(_ onCompletion: Closure?) {
+    func becomeReady(_ mode: ZStorageMode, onCompletion: Closure?) {
         isReady = true;
 
         controllersManager.displayActivity()
@@ -174,7 +196,7 @@ class ZOperationsManager: NSObject {
                 closure()
 
                 // self.report("unspin")
-                editingManager.handleDeferredEvents()
+                editingManager.handleStalledEvents()
             }
         }
 

@@ -234,7 +234,7 @@ class ZRecordsManager: NSObject {
         var references = [CKReference] ()
 
         findRecordsWithMatchingStates(states) { object in
-            if let record: ZRecord = object as? ZRecord, record.record != nil {
+            if  let    record:     ZRecord = object as? ZRecord, record.record != nil {
                 let reference: CKReference = CKReference(recordID: record.record.recordID, action: .none)
 
                 references.append(reference)

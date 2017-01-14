@@ -15,15 +15,15 @@ import CloudKit
 class ZManifest: ZRecord {
 
 
-    dynamic var bookmarks = [CKReference] ()
     dynamic var count:          NSNumber?
     dynamic var here:        CKReference?
     var        _hereZone:           Zone?
     var         currentlyGrabbedZones = [Zone] ()
+    var         switcherBookmarks     = [Zone] ()
 
 
     override func cloudProperties() -> [String] {
-        return super.cloudProperties() + [#keyPath(here), #keyPath(count), #keyPath(bookmarks)]
+        return super.cloudProperties() + [#keyPath(here), #keyPath(count)]
     }
 
 

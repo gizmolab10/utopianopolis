@@ -352,19 +352,19 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Focus" id="ZXK-72-mgU">
                                                 <items>
-                                                    <menuItem title="Here" keyEquivalent="/" id="5Uf-9y-jOf">
+                                                    <menuItem title="On selected Zone" keyEquivalent="/" id="5Uf-9y-jOf">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="K55-i7-n9G"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Next from Patchboard" keyEquivalent="'" id="EOp-0B-lbw">
+                                                    <menuItem title="Next focus" keyEquivalent="'" id="EOp-0B-lbw">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="hYt-2W-4Vx"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="View Patchboard" keyEquivalent="'" id="2od-ln-crd">
+                                                    <menuItem title="Focus view" keyEquivalent="'" id="2od-ln-crd">
                                                         <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="0YO-LL-6oo"/>
@@ -373,17 +373,32 @@
                                                 </items>
                                             </menu>
                                         </menuItem>
-                                        <menuItem title="Bookmarks" id="PJi-eK-2ck">
+                                        <menuItem title="Create" id="PJi-eK-2ck">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Bookmarks" id="GbF-qY-vTh">
+                                            <menu key="submenu" title="Create" id="GbF-qY-vTh">
                                                 <items>
-                                                    <menuItem title="Create a Bookmark" keyEquivalent="b" id="3wN-52-oXT">
+                                                    <menuItem title="Child" keyEquivalent=" " id="hu1-W0-ukM">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="7ug-ra-lWZ"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Sibling" id="8Vw-09-keH">
+                                                        <string key="keyEquivalent" base64-UTF8="YES">
+CQ
+</string>
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Xte-u6-NHv"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Bookmark" keyEquivalent="b" id="3wN-52-oXT">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Oel-Sg-rlG"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Create in Patchboard" keyEquivalent="B" id="wDs-1b-toe">
+                                                    <menuItem title="Focus view bookmark" keyEquivalent="B" id="wDs-1b-toe">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Os1-X8-xe2"/>
                                                         </connections>
@@ -600,14 +615,14 @@
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZSettingsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="195" height="978"/>
+                        <rect key="frame" x="0.0" y="0.0" width="195" height="986"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="38" width="195" height="940"/>
+                                <rect key="frame" x="0.0" y="13" width="195" height="973"/>
                                 <subviews>
                                     <customView identifier="help" translatesAutoresizingMaskIntoConstraints="NO" id="E5h-DF-X3i" userLabel="Help View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="535" width="195" height="405"/>
+                                        <rect key="frame" x="0.0" y="568" width="195" height="405"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="GnQ-iS-bgR" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="386" width="195" height="19"/>
@@ -709,7 +724,7 @@ when not editing text:
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="157" width="195" height="377"/>
+                                        <rect key="frame" x="0.0" y="190" width="195" height="377"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="358" width="195" height="19"/>
@@ -979,7 +994,7 @@ when not editing text:
                                         </connections>
                                     </customView>
                                     <customView identifier="information" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="57" width="195" height="99"/>
+                                        <rect key="frame" x="0.0" y="90" width="195" height="99"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="80" width="195" height="19"/>
@@ -1079,10 +1094,10 @@ when not editing text:
                                         </connections>
                                     </customView>
                                     <customView identifier="tools" translatesAutoresizingMaskIntoConstraints="NO" id="FnR-Ns-9C5" userLabel="Tools View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="195" height="56"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="195" height="89"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Fou-Go-Rux" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="37" width="195" height="19"/>
+                                                <rect key="frame" x="0.0" y="70" width="195" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NYk-X4-ICp">
                                                         <rect key="frame" x="0.0" y="1" width="195" height="17"/>
@@ -1120,12 +1135,11 @@ when not editing text:
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="a9P-rC-Og1">
-                                                <rect key="frame" x="0.0" y="0.0" width="195" height="37"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="195" height="70"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zLu-zM-dDh">
-                                                        <rect key="frame" x="35" y="1" width="125" height="32"/>
+                                                        <rect key="frame" x="6" y="34" width="183" height="32"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="113" id="fFg-nd-m0y"/>
                                                             <constraint firstAttribute="height" constant="21" id="sVF-Kw-7zz"/>
                                                         </constraints>
                                                         <buttonCell key="cell" type="push" title="Push to Cloud" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ufk-xx-Olh">
@@ -1136,10 +1150,27 @@ when not editing text:
                                                             <action selector="pushToCloudButtonAction:" target="YaQ-0g-PCb" id="oB3-Du-0Ka"/>
                                                         </connections>
                                                     </button>
+                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AZV-DY-sw3">
+                                                        <rect key="frame" x="6" y="1" width="183" height="32"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="21" id="VgO-8R-Jh7"/>
+                                                        </constraints>
+                                                        <buttonCell key="cell" type="push" title="Reclaim Zone" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cm1-bL-4Hz">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="reclaimButtonAction:" target="YaQ-0g-PCb" id="CkV-Bv-e66"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstItem="zLu-zM-dDh" firstAttribute="centerX" secondItem="a9P-rC-Og1" secondAttribute="centerX" id="77k-4g-bGE"/>
-                                                    <constraint firstAttribute="bottom" secondItem="zLu-zM-dDh" secondAttribute="bottom" constant="8" id="cVe-bt-sQR"/>
+                                                    <constraint firstAttribute="trailing" secondItem="zLu-zM-dDh" secondAttribute="trailing" constant="12" id="5dU-tL-CXm"/>
+                                                    <constraint firstAttribute="bottom" secondItem="AZV-DY-sw3" secondAttribute="bottom" constant="8" id="KnS-YJ-Lvp"/>
+                                                    <constraint firstItem="AZV-DY-sw3" firstAttribute="top" secondItem="zLu-zM-dDh" secondAttribute="bottom" constant="12" id="VAZ-XJ-M6S"/>
+                                                    <constraint firstAttribute="trailing" secondItem="AZV-DY-sw3" secondAttribute="trailing" constant="12" id="Xv8-6k-KTa"/>
+                                                    <constraint firstItem="zLu-zM-dDh" firstAttribute="leading" secondItem="a9P-rC-Og1" secondAttribute="leading" constant="12" id="jqK-e9-cdI"/>
+                                                    <constraint firstItem="AZV-DY-sw3" firstAttribute="leading" secondItem="a9P-rC-Og1" secondAttribute="leading" constant="12" id="uLi-lO-AIC"/>
                                                     <constraint firstItem="zLu-zM-dDh" firstAttribute="top" secondItem="a9P-rC-Og1" secondAttribute="top" constant="8" id="xBk-Zr-kxi"/>
                                                 </constraints>
                                             </customView>
@@ -1209,7 +1240,7 @@ when not editing text:
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-193" y="1657"/>
+            <point key="canvasLocation" x="-193.5" y="1657"/>
         </scene>
         <!--Search Box View Controller-->
         <scene sceneID="Gwm-hS-Ozn">

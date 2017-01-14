@@ -259,12 +259,17 @@ extension NSObject {
 
 
     func invokeWithMode(_ mode: ZStorageMode, block: Closure) {
-        let             savedMode = gStorageMode
-        gStorageMode = mode
+        let savedMode = gStorageMode
+        gStorageMode  = mode
 
         block()
 
-        gStorageMode = savedMode
+        gStorageMode  = savedMode
+    }
+
+
+    func manifestNameForMode(_ mode: ZStorageMode) -> String {
+        return "\(manifestNameKey).\(mode.rawValue)"
     }
 }
 

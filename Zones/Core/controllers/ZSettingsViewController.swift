@@ -118,6 +118,24 @@ class ZSettingsViewController: ZGenericViewController {
         }
     }
 
+
+    @IBAction func reclaimButtonAction(_ button: ZButton) {
+        // similar to editingManager.moveInto
+        if  let               zone = selectionManager.firstGrabbableZone {
+            let             parent = travelManager.rootZone
+            travelManager.hereZone = parent
+            zone.parentZone        = parent
+
+            parent?.needChildren()
+            operationsManager.children(true) {
+                parent?.children.insert(zone, at: 0)
+                parent?.recomputeOrderingUponInsertionAt(0)
+                zone.updateLevel()
+                controllersManager.syncToCloudAndSignalFor(parent, regarding: .redraw) {}
+            }
+        }
+    }
+
     
     @IBAction func pushToCloudButtonAction(_ button: ZButton) {
         cloudManager.royalFlush {}

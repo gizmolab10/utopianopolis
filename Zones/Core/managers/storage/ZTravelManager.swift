@@ -11,57 +11,49 @@ import Foundation
 import CloudKit
 
 
-enum ZStorageMode: String {     ///// move this to cloud manager  //////////
-    case bookmarks = "bookmarks"
-    case everyone  = "everyone"
-    case group     = "group"
-    case mine      = "mine"
-}
-
-
 class ZTravelManager: NSObject {
 
 
     var manifestByStorageMode = [ZStorageMode : ZManifest] ()
-    var              rootZone: Zone!
-    var              hereZone: Zone? { get { return manifest.hereZone } set { manifest.hereZone = newValue } }
+    var hereZone: Zone? { get { return manifest.hereZone } set { manifest.hereZone = newValue } }
+    var rootZone: Zone!
 
 
     var manifest: ZManifest {
         get {
-            var found = manifestForMode(gStorageMode)
-
-            if found == nil {
-                found                               = ZManifest(record: nil, storageMode: .mine)
-                manifestByStorageMode[gStorageMode] = found
-            }
-
-            return found!
+            return manifestForMode(gStorageMode)
         }
     }
 
 
-    func manifestForMode(_ mode: ZStorageMode) -> ZManifest? {
-        return manifestByStorageMode[mode]
+    func manifestForMode(_ mode: ZStorageMode) -> ZManifest {
+        var found = manifestByStorageMode[mode]
+
+        if found == nil {
+            found                       = ZManifest(record: nil, storageMode: .mine)
+            manifestByStorageMode[mode] = found
+        }
+
+        return found!
     }
 
 
-    func setup() {
+    func establishRoot() {
         switch gStorageMode {
-        case .bookmarks: rootZone = bookmarksManager.rootZone
-        default:         rootZone = Zone(record: nil, storageMode: gStorageMode)
+        case .switcher: rootZone = switcherManager.switcherRootZone
+        default:        rootZone = Zone(record: nil, storageMode: gStorageMode)
         }
     }
 
 
-    func establishHere(_ onCompletion: Closure?) {
-        if gStorageMode == .bookmarks {
-            hereZone = bookmarksManager.rootZone
-        } else if hereZone != nil && hereZone?.record != nil {
+    func establishHere(_ storageMode: ZStorageMode, onCompletion: Closure?) {
+        if storageMode == .switcher {
+            hereZone = switcherManager.switcherRootZone
+        } else if hereZone != nil && hereZone?.record != nil && hereZone?.zoneName != nil {
             hereZone?.needChildren()
             hereZone?.needFetch()
         } else {
-            cloudManager.establishHere(onCompletion)
+            cloudManager.establishHere((storageMode, onCompletion: onCompletion))
 
             return
         }
@@ -103,26 +95,26 @@ class ZTravelManager: NSObject {
 
 
     private func travel(_ atArrival: @escaping Closure) {
-        setup                   ()
-        widgetsManager    .clear()
-        selectionManager  .clear()
-        bookmarksManager  .clear()
+        establishRoot          ()
+        widgetsManager   .clear()
+        selectionManager .clear()
+        //switcherManager  .clear()
         operationsManager.travel(atArrival)
     }
 
 
-    func travelToPatchboardGraph(_ atArrival: @escaping SignalClosure) {
+    func travelToSwitcher(_ atArrival: @escaping SignalClosure) {
 
-        ///////////////////////////////
-        // going out to bookmarks graph
-        ///////////////////////////////
+        //////////////////////////////
+        // going out to switcher graph
+        //////////////////////////////
 
         let index = indexOfMode(gStorageMode) // index is a KLUDGE
 
-        gStorageMode = .bookmarks
+        gStorageMode = .switcher
 
         travel {
-            var there = bookmarksManager.rootZone
+            var there = switcherManager.switcherRootZone
 
             if index >= 0 && index < there.children.count {
                 there = there[index]!
@@ -137,7 +129,7 @@ class ZTravelManager: NSObject {
         var there: Zone? = nil
 
         if zone.isRoot {
-            travelToPatchboardGraph(atArrival)
+            travelToSwitcher(atArrival)
         } else if zone.isBookmark, let crossLink = zone.crossLink, let mode = crossLink.storageMode {
 
             ////////////////////////

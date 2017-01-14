@@ -35,7 +35,7 @@ class ZEditingManager: NSObject {
 
     var rootZone: Zone { get { return travelManager.rootZone! } set { travelManager.rootZone = newValue } }
     var hereZone: Zone { get { return travelManager.hereZone! } set { travelManager.hereZone = newValue } }
-    var deferredEvents = [ZoneEvent] ()
+    var stalledEvents = [ZoneEvent] ()
     var previousEvent: ZEvent?
 
 
@@ -43,9 +43,9 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func handleDeferredEvents() {
-        while deferredEvents.count != 0 && operationsManager.isReady {
-            let event = deferredEvents.remove(at: 0)
+    func handleStalledEvents() {
+        while stalledEvents.count != 0 && operationsManager.isReady {
+            let event = stalledEvents.remove(at: 0)
 
             handleEvent(event.event!, isWindow: event.isWindow)
         }
@@ -55,8 +55,8 @@ class ZEditingManager: NSObject {
     @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
         #if os(OSX)
             if !operationsManager.isReady {
-                if deferredEvents.count < 1 {
-                    deferredEvents.append(ZoneEvent(iEvent, iIsWindow: isWindow))
+                if stalledEvents.count < 1 {
+                    stalledEvents.append(ZoneEvent(iEvent, iIsWindow: isWindow))
                 }
             } else if !isEditing, iEvent != previousEvent, gWorkMode == .editMode, let  string = iEvent.charactersIgnoringModifiers {
                 let   flags = iEvent.modifierFlags
@@ -152,16 +152,24 @@ class ZEditingManager: NSObject {
 
                 break
             case "b":
-                if  let zone = selectionManager.firstGrabbableZone {
-                    let bookmark = bookmarksManager.addNewBookmarkFor(zone, inPatchboard: isShift)
+                if gStorageMode != .switcher, let zone = selectionManager.firstGrabbableZone, !zone.isRoot {
+                    var bookmark: Zone? = nil
 
-                    selectionManager.grab(bookmark)
+                    invokeWithMode(.mine) {
+                        bookmark = switcherManager.addNewBookmarkFor(zone, inSwitcher: isShift)
+                    }
+
+                    let grabAndRedraw = {
+                        selectionManager.grab(bookmark)
+                        controllersManager.signalFor(nil, regarding: .redraw) {}
+                        operationsManager.sync {}
+                    }
 
                     if !isShift {
-                        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                        grabAndRedraw()
                     } else {
-                        travelManager.travelToPatchboardGraph() { (iThere: Any?, iKind: ZSignalKind) in
-                            controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                        travelManager.travelToSwitcher() { (iThere: Any?, iKind: ZSignalKind) in
+                            grabAndRedraw()
                         }
                     }
                 }
@@ -179,7 +187,7 @@ class ZEditingManager: NSObject {
                 break
             case "'":
                 if isShift && isCommand {
-                    travelManager.travelToPatchboardGraph() { (iThere: Any?, iKind: ZSignalKind) in
+                    travelManager.travelToSwitcher() { (iThere: Any?, iKind: ZSignalKind) in
                         controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                     }
                 } else {
@@ -439,7 +447,7 @@ class ZEditingManager: NSObject {
 
 
     func addZoneTo(_ zone: Zone?, onCompletion: ZoneClosure?) {
-        if zone != nil && gStorageMode != .bookmarks {
+        if zone != nil && gStorageMode != .switcher {
             zone?.needChildren()
 
             operationsManager.children(false) {
@@ -537,13 +545,10 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            if gStorageMode != .bookmarks {
-                travelManager.manifest.total -= 1
-                zone               .isDeleted = true
+            travelManager.manifest.total -= 1
+            zone               .isDeleted = true
 
-                zone.needSave()
-            }
-
+            zone.needSave()
             deleteZones(zone.children, in: zone)
             zone.orphan()
         }
@@ -586,7 +591,7 @@ class ZEditingManager: NSObject {
                     if next != nil {
                         selectionManager.grab(next!)
                     }
-                } else if gStorageMode != .bookmarks {
+                } else if gStorageMode != .switcher {
                     parentZone.children.remove(at: index)
                     parentZone.children.insert(zone, at:newIndex)
                 }
@@ -655,7 +660,7 @@ class ZEditingManager: NSObject {
 
                 if zone.isRoot {
 
-                    // for "travelling out", root "points to" corresponding zone in bookmarks graph
+                    // for "travelling out", root "points to" corresponding zone in switcher graph
 
                     travelManager.changeFocusThroughZone(zone) { object, kind in
                         if let there: Zone = object as? Zone {
@@ -691,7 +696,7 @@ class ZEditingManager: NSObject {
                     selectionManager.grab(parent!)
                     signalFor(parent!, regarding: .data)
                 }
-            } else if gStorageMode != .bookmarks {
+            } else if gStorageMode != .switcher {
                 parent?.needSave() // for when zone is orphaned
 
                 ////////////
