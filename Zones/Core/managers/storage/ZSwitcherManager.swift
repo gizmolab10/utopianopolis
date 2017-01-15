@@ -15,6 +15,7 @@ class ZSwitcherManager: NSObject {
 
 
     let switcherRootZone = Zone(record: nil, storageMode: .switcher)
+    var switcherIndex    = 0
 
 
     func setup() {
@@ -42,40 +43,85 @@ class ZSwitcherManager: NSObject {
 
     func setupCloudZonesForAccessToStorage() {
         if switcherRootZone.children.count == 0 {
-            addCloudZone("everyone", storageMode: .everyone)
-            addCloudZone("mine",     storageMode: .mine)
+            addCloudZone("everyone", order: 0.9999999, storageMode: .everyone)
+            addCloudZone("mine",     order: 0.9999998, storageMode: .mine)
         }
     }
 
 
-    func addCloudZone(_ name: String, storageMode: ZStorageMode) { // KLUDGE, perhaps use ordered set or dictionary
+    func addCloudZone(_ name: String, order: Double, storageMode: ZStorageMode) { // KLUDGE, perhaps use ordered set or dictionary
         let      zone = Zone(record: nil, storageMode: storageMode)
+        zone.order    = order
         zone.zoneName = name
         zone.zoneLink = ""
 
-        addNewBookmarkFor(zone, inSwitcher: false)
+        invokeWithMode(storageMode) {
+            addNewBookmarkFor(zone, isSwitcher: false)
+        }
     }
 
-    
-    @discardableResult func addNewBookmarkFor(_ zone: Zone, inSwitcher: Bool) -> Zone {
+
+    func modeFor(_ bookmark: Zone) -> ZStorageMode? {
+        let mode = bookmark.crossLink?.storageMode
+
+        if mode != nil {
+            for switcher in switcherRootZone.children {
+                if switcher.isSwitcher && switcher.crossLink?.storageMode == mode {
+                    return nil
+                }
+            }
+        }
+
+        return mode
+    }
+
+
+    func switchToNext(_ atArrival: @escaping Closure) {
+        switcherIndex = (switcherIndex == 0 ? switcherRootZone.children.count : switcherIndex) - 1
+        let  bookmark = switcherRootZone.children[switcherIndex]
+
+        if bookmark.isSwitcher {
+            travelManager.changeFocusThroughZone(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
+                atArrival()
+            }
+        } else if let mode = modeFor(bookmark) {
+            gStorageMode = mode
+
+            travelManager.travel(atArrival)
+        } else {
+            switchToNext(atArrival)
+
+            return
+        }
+
+        report(bookmark.zoneName)
+    }
+
+
+    @discardableResult func addNewBookmarkFor(_ zone: Zone, isSwitcher: Bool) -> Zone {
+        let    parent: Zone = isSwitcher ? switcherRootZone : zone.parentZone ?? switcherRootZone
+        let           count = parent.children.count
+        let           index = parent.children.index(of: zone) ?? count
         let        bookmark = zone.isBookmark ? zone.deepCopy() : Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: gStorageMode)
-        let    parent: Zone = inSwitcher ? switcherRootZone : zone.parentZone ?? switcherRootZone
-        let           index = parent.children.index(of: zone) ?? 0
         bookmark.zoneName   = zone.zoneName
-        bookmark.isSwitcher = inSwitcher
+        bookmark.isSwitcher = isSwitcher
         bookmark.parentZone = parent
 
-        parent.needSave()
-        parent.addChild(bookmark, at: index)
-        parent.recomputeOrderingUponInsertionAt(index)
+        if isSwitcher || index == count {
+            parent.children.append(bookmark)
+        } else {
+            parent.addChild(bookmark, at: index)
+        }
 
         if !zone.isBookmark {
             bookmark.crossLink = zone
         }
 
+        parent.needSave()
+        parent.recomputeOrderingUponInsertionAt(index)
         bookmark.updateCloudProperties()
         bookmark.needCreate()
 
         return bookmark
-    }    
+    }
 }

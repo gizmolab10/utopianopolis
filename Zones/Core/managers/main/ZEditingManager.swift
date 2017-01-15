@@ -156,7 +156,7 @@ class ZEditingManager: NSObject {
                     var bookmark: Zone? = nil
 
                     invokeWithMode(.mine) {
-                        bookmark = switcherManager.addNewBookmarkFor(zone, inSwitcher: isShift)
+                        bookmark = switcherManager.addNewBookmarkFor(zone, isSwitcher: isShift)
                     }
 
                     let grabAndRedraw = {
@@ -191,7 +191,7 @@ class ZEditingManager: NSObject {
                         controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                     }
                 } else {
-                    travelManager.cycleStorageMode {
+                    switcherManager.switchToNext {
                         controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                     }
                 }

@@ -79,26 +79,10 @@ class ZTravelManager: NSObject {
     // MARK:-
 
 
-    func cycleStorageMode(_ atArrival: @escaping Closure) {
-        var mode = gStorageMode
-
-        switch mode {
-        case .everyone: mode = .mine;     break
-        case .mine:     mode = .everyone; break
-        default: return
-        }
-
-        gStorageMode = mode
-
-        travel(atArrival)
-    }
-
-
-    private func travel(_ atArrival: @escaping Closure) {
+    func travel(_ atArrival: @escaping Closure) {
         establishRoot          ()
         widgetsManager   .clear()
         selectionManager .clear()
-        //switcherManager  .clear()
         operationsManager.travel(atArrival)
     }
 

@@ -471,6 +471,7 @@ class ZCloudManager: ZRecordsManager {
                 bookmark.parentZone = root
 
                 root.addChild(bookmark)
+                root.respectOrder()
             }
         })
     }
