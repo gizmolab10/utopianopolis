@@ -358,13 +358,13 @@
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="K55-i7-n9G"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Next focus" keyEquivalent="'" id="EOp-0B-lbw">
+                                                    <menuItem title="Next favorite" keyEquivalent="'" id="EOp-0B-lbw">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="hYt-2W-4Vx"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Focus view" keyEquivalent="'" id="2od-ln-crd">
+                                                    <menuItem title="Favorites" keyEquivalent="'" id="2od-ln-crd">
                                                         <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="0YO-LL-6oo"/>
@@ -398,7 +398,7 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Oel-Sg-rlG"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Focus view bookmark" keyEquivalent="B" id="wDs-1b-toe">
+                                                    <menuItem title="Favorites bookmark" keyEquivalent="B" id="wDs-1b-toe">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Os1-X8-xe2"/>
                                                         </connections>

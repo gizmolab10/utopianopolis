@@ -20,7 +20,7 @@ struct ZoneState: OptionSet {
 
     static let ShowsChildren = ZoneState(rawValue: 1 <<  0)
     static let   HasChildren = ZoneState(rawValue: 1 <<  1)
-    static let    IsSwitcher = ZoneState(rawValue: 1 << 29)
+    static let    IsFavorite = ZoneState(rawValue: 1 << 29)
     static let     IsDeleted = ZoneState(rawValue: 1 << 30)
 }
 
@@ -171,17 +171,17 @@ class Zone : ZRecord {
     }
 
 
-    var isSwitcher: Bool {
+    var isFavorite: Bool {
         get {
-            return state.contains(.IsSwitcher)
+            return state.contains(.IsFavorite)
         }
 
         set {
-            if newValue != isSwitcher {
+            if newValue != isFavorite {
                 if newValue {
-                    state.insert(.IsSwitcher)
+                    state.insert(.IsFavorite)
                 } else {
-                    state.remove(.IsSwitcher)
+                    state.remove(.IsFavorite)
                 }
             }
         }

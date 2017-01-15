@@ -19,7 +19,7 @@ class ZManifest: ZRecord {
     dynamic var here:        CKReference?
     var        _hereZone:           Zone?
     var         currentlyGrabbedZones = [Zone] ()
-    var         switcherBookmarks     = [Zone] ()
+    var         favoritesBookmarks     = [Zone] ()
 
 
     override func cloudProperties() -> [String] {

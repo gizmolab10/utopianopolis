@@ -12,7 +12,7 @@ import CloudKit
 
 
 enum ZStorageMode: String {     ///// move this to cloud manager  //////////
-    case switcher = "switcher"
+    case favorites = "favorites"
     case everyone = "everyone"
     case group    = "group"
     case mine     = "mine"
@@ -176,7 +176,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchManifest(_ storageMode: ZStorageMode, onCompletion: Closure?) {
-        switcherManager.setup()
+        favoritesManager.setup()
         travelManager.establishRoot()
 
         let         manifestName = manifestNameForMode(storageMode)
@@ -299,7 +299,7 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        let format = String(format: "zoneState < %d AND zoneLink = \"\"%@", ZoneState.IsSwitcher.rawValue, suffix)
+        let format = String(format: "zoneState < %d AND zoneLink = \"\"%@", ZoneState.IsFavorite.rawValue, suffix)
 
         return NSPredicate(format: format)
     }
@@ -327,7 +327,7 @@ class ZCloudManager: ZRecordsManager {
             onCompletion?()
         } else {
             var parentsNeedingResort = [Zone] ()
-            let            predicate = NSPredicate(format: "zoneState < %d AND parent IN %@", ZoneState.IsSwitcher.rawValue, childrenNeeded)
+            let            predicate = NSPredicate(format: "zoneState < %d AND parent IN %@", ZoneState.IsFavorite.rawValue, childrenNeeded)
             let                zones = zoneNamesWithMatchingStates([.needsChildren])
 
             clearState(.needsChildren)
@@ -447,7 +447,7 @@ class ZCloudManager: ZRecordsManager {
 
                 clearState(.needsParent)
 
-                report("fetching parents \(missingParents.count)")
+                toConsole("fetching parents \(missingParents.count)")
 
                 operation.start()
 
@@ -459,15 +459,15 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetchSwitchers(_ storageMode: ZStorageMode, onCompletion: Closure?) {
-        let predicate = NSPredicate(format: "zoneState >= %d AND zoneState < %d", ZoneState.IsSwitcher.rawValue, ZoneState.IsDeleted.rawValue)
+    func fetchFavorites(_ storageMode: ZStorageMode, onCompletion: Closure?) {
+        let predicate = NSPredicate(format: "zoneState >= %d AND zoneState < %d", ZoneState.IsFavorite.rawValue, ZoneState.IsDeleted.rawValue)
 
         self.cloudQueryUsingPredicate(predicate, onCompletion: { (iRecord: CKRecord?) in
             if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                 onCompletion?()
             } else {
                 let        bookmark = Zone(record: iRecord, storageMode: storageMode)
-                let            root = switcherManager.switcherRootZone
+                let            root = favoritesManager.favoritesRootZone
                 bookmark.parentZone = root
 
                 root.addChild(bookmark)
@@ -483,7 +483,7 @@ class ZCloudManager: ZRecordsManager {
         if  needed.count == 0 {
             onCompletion?()
         } else {
-            let predicate = NSPredicate(format: "zoneState < %d AND recordID IN %@", ZoneState.IsSwitcher.rawValue, needed)
+            let predicate = NSPredicate(format: "zoneState < %d AND recordID IN %@", ZoneState.IsFavorite.rawValue, needed)
 
             self.toConsole("fetching \(needed.count)")
 

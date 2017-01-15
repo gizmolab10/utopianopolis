@@ -14,11 +14,11 @@ enum ZOperationID: Int {
     case ready
     case cloud
     case manifest
-    case switchers
+    case favoritess
     case file
     case here
     case fetch
-    case flush // zones, manifests, switchers
+    case flush // zones, manifests, favoritess
     case children
     case unsubscribe
     case subscribe
@@ -169,7 +169,7 @@ class ZOperationsManager: NSObject {
         case .root:        cloudManager.establishRootAsHere(mode) { onCompletion?() }; break
         case .cloud:       cloudManager.fetchCloudZones    (mode) { onCompletion?() }; break
         case .manifest:    cloudManager.fetchManifest      (mode) { onCompletion?() }; break
-        case .switchers:   cloudManager.fetchSwitchers     (mode) { onCompletion?() }; break
+        case .favoritess:   cloudManager.fetchFavorites     (mode) { onCompletion?() }; break
         case .here:       travelManager.establishHere      (mode) { onCompletion?() }; break // TODO: BROKEN
         case .children:    cloudManager.fetchChildren      (mode) { onCompletion?() }; break
         case .parent:      cloudManager.fetchParents       (mode) { onCompletion?() }; break

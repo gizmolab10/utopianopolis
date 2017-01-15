@@ -40,15 +40,15 @@ class ZTravelManager: NSObject {
 
     func establishRoot() {
         switch gStorageMode {
-        case .switcher: rootZone = switcherManager.switcherRootZone
+        case .favorites: rootZone = favoritesManager.favoritesRootZone
         default:        rootZone = Zone(record: nil, storageMode: gStorageMode)
         }
     }
 
 
     func establishHere(_ storageMode: ZStorageMode, onCompletion: Closure?) {
-        if storageMode == .switcher {
-            hereZone = switcherManager.switcherRootZone
+        if storageMode == .favorites {
+            hereZone = favoritesManager.favoritesRootZone
         } else if hereZone != nil && hereZone?.record != nil && hereZone?.zoneName != nil {
             hereZone?.needChildren()
             hereZone?.needFetch()
@@ -87,18 +87,18 @@ class ZTravelManager: NSObject {
     }
 
 
-    func travelToSwitcher(_ atArrival: @escaping SignalClosure) {
+    func travelToFavorites(_ atArrival: @escaping SignalClosure) {
 
         //////////////////////////////
-        // going out to switcher graph
+        // going out to favorites graph
         //////////////////////////////
 
         let index = indexOfMode(gStorageMode) // index is a KLUDGE
 
-        gStorageMode = .switcher
+        gStorageMode = .favorites
 
         travel {
-            var there = switcherManager.switcherRootZone
+            var there = favoritesManager.favoritesRootZone
 
             if index >= 0 && index < there.children.count {
                 there = there[index]!
@@ -113,7 +113,7 @@ class ZTravelManager: NSObject {
         var there: Zone? = nil
 
         if zone.isRoot {
-            travelToSwitcher(atArrival)
+            travelToFavorites(atArrival)
         } else if zone.isBookmark, let crossLink = zone.crossLink, let mode = crossLink.storageMode {
 
             ////////////////////////

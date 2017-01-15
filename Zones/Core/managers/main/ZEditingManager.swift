@@ -105,58 +105,59 @@ class ZEditingManager: NSObject {
 
 
     func handleKey(_ key: String?, flags: NSEventModifierFlags, isWindow: Bool) {
-        if  key != nil, !isEditing, let widget = widgetsManager.currentMovableWidget {
+        if  key != nil, !isEditing {
+            let    widget = widgetsManager.currentMovableWidget
             let isCommand = flags.contains(.command)
             let  isOption = flags.contains(.option)
             let   isShift = flags.contains(.shift)
 
             switch key! {
             case "\t":
-                widget.textWidget.resignFirstResponder()
+                if widget != nil {
+                    widget?.textWidget.resignFirstResponder()
 
-                if let parent = widget.widgetZone.parentZone {
-                    if widget.widgetZone == hereZone {
-                        hereZone            = parent
-                        parent.showChildren = true
+                    if let parent = widget?.widgetZone.parentZone {
+                        if widget?.widgetZone == hereZone {
+                            hereZone            = parent
+                            parent.showChildren = true
+                        }
+
+                        addZoneTo(parent)
+                    } else {
+                        selectionManager.currentlyEditingZone = nil
+                        
+                        signalFor(nil, regarding: .redraw)
                     }
-
-                    addZoneTo(parent)
-                } else {
-                    selectionManager.currentlyEditingZone = nil
-
-                    signalFor(nil, regarding: .redraw)
-                }
+                }; break
 
             case " ":
-                if (isWindow || isOption) && !widget.widgetZone.isBookmark {
-                    addZoneTo(widget.widgetZone)
-                }
-
-                break
+                if widget != nil {
+                    if (isWindow || isOption) && !(widget?.widgetZone.isBookmark)! {
+                        addZoneTo(widget?.widgetZone)
+                    }
+                }; break
+            case "\r":
+                if widget != nil {
+                    if selectionManager.currentlyGrabbedZones.count != 0 {
+                        if isCommand {
+                            selectionManager.deselect()
+                        } else {
+                            widget?.textWidget.becomeFirstResponder()
+                        }
+                    } else if selectionManager.currentlyEditingZone != nil {
+                        widget?.textWidget.resignFirstResponder()
+                    }
+                }; break
             case "\u{7F}":
                 if isWindow || isOption {
                     delete()
-                }
-
-                break
-            case "\r":
-                if selectionManager.currentlyGrabbedZones.count != 0 {
-                    if isCommand {
-                        selectionManager.deselect()
-                    } else {
-                        widget.textWidget.becomeFirstResponder()
-                    }
-                } else if selectionManager.currentlyEditingZone != nil {
-                    widget.textWidget.resignFirstResponder()
-                }
-
-                break
+                }; break
             case "b":
-                if gStorageMode != .switcher, let zone = selectionManager.firstGrabbableZone, !zone.isRoot {
+                if gStorageMode != .favorites, let zone = selectionManager.firstGrabbableZone, !zone.isRoot {
                     var bookmark: Zone? = nil
 
                     invokeWithMode(.mine) {
-                        bookmark = switcherManager.addNewBookmarkFor(zone, isSwitcher: isShift)
+                        bookmark = favoritesManager.createBookmarkFor(zone, isFavorite: isShift)
                     }
 
                     let grabAndRedraw = {
@@ -168,13 +169,11 @@ class ZEditingManager: NSObject {
                     if !isShift {
                         grabAndRedraw()
                     } else {
-                        travelManager.travelToSwitcher() { (iThere: Any?, iKind: ZSignalKind) in
+                        travelManager.travelToFavorites() { (iThere: Any?, iKind: ZSignalKind) in
                             grabAndRedraw()
                         }
                     }
-                }
-
-                break
+                }; break
             case "p":
                 printHere()
 
@@ -187,28 +186,22 @@ class ZEditingManager: NSObject {
                 break
             case "'":
                 if isShift && isCommand {
-                    travelManager.travelToSwitcher() { (iThere: Any?, iKind: ZSignalKind) in
+                    travelManager.travelToFavorites() { (iThere: Any?, iKind: ZSignalKind) in
                         controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                     }
                 } else {
-                    switcherManager.switchToNext {
+                    favoritesManager.switchToNext {
                         controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                     }
-                }
-
-                break
+                }; break
             case "/":
                 if let zone = selectionManager.firstGrabbableZone {
                     focusOnZone(zone)
-                }
-
-                break
+                }; break
             default:
                 if key?.characters.first?.asciiValue == nil, !isEditing, let arrow = ZArrowKey(rawValue: (key?.utf8CString[2])!) {
                     handleArrow(arrow, flags: flags)
-                }
-
-                break
+                }; break
             }
         }
     }
@@ -447,7 +440,7 @@ class ZEditingManager: NSObject {
 
 
     func addZoneTo(_ zone: Zone?, onCompletion: ZoneClosure?) {
-        if zone != nil && gStorageMode != .switcher {
+        if zone != nil && gStorageMode != .favorites {
             zone?.needChildren()
 
             operationsManager.children(false) {
@@ -591,7 +584,7 @@ class ZEditingManager: NSObject {
                     if next != nil {
                         selectionManager.grab(next!)
                     }
-                } else if gStorageMode != .switcher {
+                } else if gStorageMode != .favorites {
                     parentZone.children.remove(at: index)
                     parentZone.children.insert(zone, at:newIndex)
                 }
@@ -660,7 +653,7 @@ class ZEditingManager: NSObject {
 
                 if zone.isRoot {
 
-                    // for "travelling out", root "points to" corresponding zone in switcher graph
+                    // for "travelling out", root "points to" corresponding zone in favorites graph
 
                     travelManager.changeFocusThroughZone(zone) { object, kind in
                         if let there: Zone = object as? Zone {
@@ -696,7 +689,7 @@ class ZEditingManager: NSObject {
                     selectionManager.grab(parent!)
                     signalFor(parent!, regarding: .data)
                 }
-            } else if gStorageMode != .switcher {
+            } else if gStorageMode != .favorites {
                 parent?.needSave() // for when zone is orphaned
 
                 ////////////
