@@ -44,7 +44,7 @@ class ZoneCurve: ZView {
 
 
     func updateKind() {
-        if (parent?.widgetZone.children.count)! > 1 {
+        if (parent?.widgetZone.count)! > 1 {
             let           dragDot = child?.dragDot.innerDot
             let        textWidget = parent?.textWidget
             let    dragDotCenterY =    dragDot?.convert((   dragDot?.bounds)!, to: parent).center.y

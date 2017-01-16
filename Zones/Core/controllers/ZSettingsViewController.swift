@@ -36,7 +36,8 @@ class ZSettingsViewController: ZGenericViewController {
     @IBOutlet var         fractionInMemory: ZProgressIndicator?
     @IBOutlet var graphAlteringModeControl: ZSegmentedControl?
     @IBOutlet var          totalCountLabel: ZTextField?
-    @IBOutlet var               depthLabel: ZTextField?
+    @IBOutlet var           graphNameLabel: NSTextField?
+    @IBOutlet var               levelLabel: ZTextField?
     @IBOutlet var             zoneColorBox: ZColorWell?
     @IBOutlet var         bookmarkColorBox: ZColorWell?
     @IBOutlet var       backgroundColorBox: ZColorWell?
@@ -52,7 +53,8 @@ class ZSettingsViewController: ZGenericViewController {
         let                     count = cloudManager.zones.count
         let                     total = travelManager.manifest.total
         totalCountLabel?        .text = "of \(total), retrieved: \(count)"
-        depthLabel?             .text = "focus level in graph: \((travelManager.hereZone?.level)!)"
+        graphNameLabel?         .text = "in graph: \(gStorageMode.rawValue)"
+        levelLabel?             .text = "focus level: \((travelManager.hereZone?.level)!)"
         view  .zlayer.backgroundColor = gBackgroundColor.cgColor
         fractionInMemory?   .maxValue = Double(total)
         fractionInMemory?.doubleValue = Double(count)

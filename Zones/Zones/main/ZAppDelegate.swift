@@ -93,12 +93,10 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
 
     @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
-        var   flags = (iItem?.keyEquivalentModifierMask)!
-        let     key = (iItem?.keyEquivalent)!
-        let letters = NSCharacterSet.letters
-        let  scalar = key.unicodeScalars.first
+        var flags = (iItem?.keyEquivalentModifierMask)!
+        let   key = (iItem?.keyEquivalent)!
 
-        if scalar != nil, letters.contains(scalar!) && key.uppercased() == key {
+        if key != key.lowercased() {
             flags.insert(.shift)    // add isShift to flags
         }
 
@@ -106,15 +104,17 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
     }
 
 
-    @IBAction func displayPreferences(_ sender: Any?) {
-        settingsController?.displayViewFor(id: .Preferences)
+    @IBAction func toggleSearch(_ iItem: NSMenuItem?) {
+        if gStorageMode != .favorites {
+            gShowsSearching = !gShowsSearching
+
+            signalFor(nil, regarding: .search)
+        }
     }
 
 
-    @IBAction func toggleSearch(_ iItem: NSMenuItem?) {
-        gShowsSearching = !gShowsSearching
-
-        signalFor(nil, regarding: .search)
+    @IBAction func displayPreferences(_ sender: Any?) {
+        settingsController?.displayViewFor(id: .Preferences)
     }
 
 

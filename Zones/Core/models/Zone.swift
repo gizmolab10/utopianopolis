@@ -34,6 +34,7 @@ class Zone : ZRecord {
     dynamic var zoneOrder:    NSNumber?
     dynamic var zoneState:    NSNumber?
     dynamic var zoneLevel:    NSNumber?
+    var         bookmarks      = [Zone] ()
     var          children      = [Zone] ()
     var       _parentZone:        Zone?
     var        _crossLink:     ZRecord?
@@ -54,20 +55,11 @@ class Zone : ZRecord {
     }
 
 
+    var count: Int { get { return children.count } }
+
+
     var crossLink: ZRecord? {
         get {
-            if zoneLink == "" {
-                return nil
-            } else if _crossLink == nil {
-                let components: [String] = (zoneLink?.components(separatedBy: ":"))!
-                let refString:   String  = components[2] == "" ? "root" : components[2]
-                let refID:    CKRecordID = CKRecordID(recordName: refString)
-                let refRecord:  CKRecord = CKRecord(recordType: zoneTypeKey, recordID: refID)
-                let mode:  ZStorageMode? = ZStorageMode(rawValue: components[0])
-
-                _crossLink = ZRecord(record: refRecord, storageMode: mode)
-            }
-
             return _crossLink
         }
 
@@ -80,7 +72,7 @@ class Zone : ZRecord {
                 zoneLink      = "\(newValue!.storageMode!.rawValue)::\(reference)"
             }
 
-            _crossLink = nil
+            _crossLink = newValue
         }
     }
 
@@ -259,8 +251,9 @@ class Zone : ZRecord {
         return !unequal
     }
 
+
     subscript(i: Int) -> Zone? {
-        if i < children.count && i >= 0 {
+        if i < count && i >= 0 {
             return children[i]
         } else {
             return nil
@@ -296,11 +289,21 @@ class Zone : ZRecord {
     override func updateZoneProperties() {
         super.updateZoneProperties()
 
-        if zoneLink == nil {
-            zoneLink = ""
+        if zoneLink != nil && zoneLink != "" && _crossLink == nil {
+            let components: [String] = (zoneLink?.components(separatedBy: ":"))!
+            let refString:   String  = components[2] == "" ? "root" : components[2]
+            let refID:    CKRecordID = CKRecordID(recordName: refString)
+            let refRecord:  CKRecord = CKRecord(recordType: zoneTypeKey, recordID: refID)
+            let mode:  ZStorageMode? = ZStorageMode(rawValue: components[0])
 
-            needSave()
+            if let record = cloudManager.recordForRecordID(refID), let zone: Zone = record as? Zone {
+                zone.bookmarks.append(self)
+            }
+
+            crossLink = ZRecord(record: refRecord, storageMode: mode)
         }
+
+        needSave()
     }
 
     
@@ -309,7 +312,7 @@ class Zone : ZRecord {
 
 
     override func needChildren() {
-        if children.count == 0 {
+        if count == 0 {
             // report("need children of \(zoneName!)")
             super.needChildren()
         }
@@ -364,7 +367,7 @@ class Zone : ZRecord {
             child!.orphan()
             needSave()
 
-            if children.count == 0 {
+            if count == 0 {
                 hasChildren = false
             }
         }
@@ -372,7 +375,7 @@ class Zone : ZRecord {
 
 
     func orderAt(_ index: Int) -> Double? {
-        if index >= 0 && index < children.count {
+        if index >= 0 && index < count {
             let child = children[index]
 
             return child.order
@@ -390,7 +393,7 @@ class Zone : ZRecord {
 
 
     func normalizeOrdering() {
-        let increment = 1.0 / Double(children.count + 2)
+        let increment = 1.0 / Double(count + 2)
 
         for (index, child) in children.enumerated() {
             child.order = increment * Double(index + 1)

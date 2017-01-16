@@ -100,7 +100,7 @@ class ZTravelManager: NSObject {
         travel {
             var there = favoritesManager.favoritesRootZone
 
-            if index >= 0 && index < there.children.count {
+            if index >= 0 && index < there.count {
                 there = there[index]!
             }
 

@@ -46,7 +46,7 @@ class ZFavoritesManager: NSObject {
 
 
     func setupRootFavorites() {
-        if favoritesRootZone.children.count == 0 {
+        if favoritesRootZone.count == 0 {
             createRootFavorite("everyone", order: 0.9999999, storageMode: .everyone)
             createRootFavorite("mine",     order: 0.9999998, storageMode: .mine)
         }
@@ -71,7 +71,7 @@ class ZFavoritesManager: NSObject {
 
     @discardableResult func createBookmarkFor(_ zone: Zone, isFavorite: Bool) -> Zone {
         let    parent: Zone = isFavorite ? favoritesRootZone : zone.parentZone ?? favoritesRootZone
-        let           count = parent.children.count
+        let           count = parent.count
         let           index = parent.children.index(of: zone) ?? count
         let        bookmark = zone.isBookmark ? zone.deepCopy() : Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: gStorageMode)
         bookmark.zoneName   = zone.zoneName
@@ -90,6 +90,7 @@ class ZFavoritesManager: NSObject {
 
         parent.needSave()
         parent.recomputeOrderingUponInsertionAt(index)
+        zone.bookmarks.append(bookmark)
         bookmark.updateCloudProperties()
         bookmark.needCreate()
         
@@ -97,11 +98,18 @@ class ZFavoritesManager: NSObject {
     }
 
 
-    // MARK:- switch
+    // MARK:- private
     // MARK:-
 
 
-    func modeFor(_ rootBookmark: Zone) -> ZStorageMode? {
+    private func updateForIndex(_ index: Int) {
+        favoritesIndex = index
+
+        selectionManager.grab(favoritesRootZone[index])
+    }
+
+
+    private func modeFor(_ rootBookmark: Zone) -> ZStorageMode? {
         // assume bookmark is not a favorite
         let mode = rootBookmark.crossLink?.storageMode
 
@@ -117,15 +125,50 @@ class ZFavoritesManager: NSObject {
     }
 
 
-    func switchToNext(_ atArrival: @escaping Closure) {
-        let      count = favoritesRootZone.children.count
-        favoritesIndex = (favoritesIndex == 0 || favoritesIndex >= count ? count : favoritesIndex) - 1
-        let   bookmark = favoritesRootZone.children[favoritesIndex]
+    private func nextFavorite(_ forward: Bool) -> Zone {
+        let count = favoritesRootZone.count
+
+        if forward {
+            favoritesIndex = (favoritesIndex == 0 || favoritesIndex >= count ? count : favoritesIndex) - 1
+        } else {
+            favoritesIndex = favoritesIndex >= (count - 1) ? 0 : (favoritesIndex + 1)
+        }
+
+        return favoritesRootZone[favoritesIndex]!
+    }
+
+
+    // MARK:- switch
+    // MARK:-
+
+
+    func updateGrabAndIndexFor(_ zone: Zone?) {
+        if zone != nil {
+            let identifier = zone?.record.recordID.recordName
+            let       mode = zone?.storageMode
+
+            for (index, favorite) in favoritesRootZone.children.enumerated() {
+                if favorite.isFavorite && favorite.crossLink?.record.recordID.recordName == identifier {
+                    return updateForIndex(index)
+                }
+            }
+
+            for (index, favorite) in favoritesRootZone.children.enumerated() {
+                if !favorite.isFavorite && favorite.crossLink?.storageMode == mode {
+                    return updateForIndex(index)
+                }
+            }
+        }
+    }
+
+
+    func switchToNext(_ forward: Bool, atArrival: @escaping Closure) {
+        let bookmark = nextFavorite(forward)
 
         if bookmark.isFavorite {
             travelManager.changeFocusThroughZone(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
                 if (travelManager.hereZone?.isDeleted)! {
-                    return self.switchToNext(atArrival)
+                    return self.switchToNext(forward) { atArrival() }
                 }
 
                 atArrival()
@@ -135,7 +178,7 @@ class ZFavoritesManager: NSObject {
 
             travelManager.travel(atArrival)
         } else {
-            return switchToNext(atArrival)
+            return switchToNext(forward) { atArrival() }
         }
 
         // report(bookmark.zoneName)

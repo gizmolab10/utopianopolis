@@ -30,7 +30,7 @@ class ZoneWidget: ZView {
 
 
     var hasChildren: Bool {
-        get { return widgetZone.hasChildren || widgetZone.children.count > 0 }
+        get { return widgetZone.hasChildren || widgetZone.count > 0 }
     }
 
 
@@ -141,7 +141,7 @@ class ZoneWidget: ZView {
         // self        .addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.green.cgColor)
         // textWidget.addBorder(thickness: 5.0, radius: 0.5, color: CGColor.black)
 
-//        let  show = selectionManager.isGrabbed(widgetZone) && widgetZone.children.count > 0 && widgetZone.showChildren
+//        let  show = selectionManager.isGrabbed(widgetZone) && widgetZone.count > 0 && widgetZone.showChildren
 //        let color = show ? ZColor.orange : ZColor.clear
 //
 //        childrenView.addBorder(thickness: 1.0, radius: 10.0, color: color.cgColor)
@@ -215,7 +215,7 @@ class ZoneWidget: ZView {
 
 
     func layoutChildren(_ kind: ZSignalKind) {
-        let zoneChildrenCount = widgetZone.children.count
+        let zoneChildrenCount = widgetZone.count
 
         if _childrenView != nil {
             if  childrenWidgets.count != zoneChildrenCount || !widgetZone.showChildren || zoneChildrenCount == 0 {
