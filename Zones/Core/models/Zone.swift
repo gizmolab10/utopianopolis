@@ -60,6 +60,23 @@ class Zone : ZRecord {
 
     var crossLink: ZRecord? {
         get {
+            if zoneLink == nil || zoneLink == "" {
+                return nil
+            } else if _crossLink == nil {
+                if (zoneLink?.contains("Optional("))! {
+                    zoneLink = zoneLink?.replacingOccurrences(of: "Optional(\"", with: "")
+                    zoneLink = zoneLink?.replacingOccurrences(of:         "\")", with: "")
+                }
+
+                let components: [String] = (zoneLink?.components(separatedBy: ":"))!
+                let refString:   String  = components[2] == "" ? "root" : components[2]
+                let refID:    CKRecordID = CKRecordID(recordName: refString)
+                let refRecord:  CKRecord = CKRecord(recordType: zoneTypeKey, recordID: refID)
+                let mode:  ZStorageMode? = ZStorageMode(rawValue: components[0])
+
+                _crossLink = ZRecord(record: refRecord, storageMode: mode)
+            }
+
             return _crossLink
         }
 
@@ -72,7 +89,7 @@ class Zone : ZRecord {
                 zoneLink      = "\(newValue!.storageMode!.rawValue)::\(reference)"
             }
 
-            _crossLink = newValue
+            _crossLink = nil
         }
     }
 
@@ -286,25 +303,25 @@ class Zone : ZRecord {
     }
 
 
-    override func updateZoneProperties() {
-        super.updateZoneProperties()
-
-        if zoneLink != nil && zoneLink != "" && _crossLink == nil {
-            let components: [String] = (zoneLink?.components(separatedBy: ":"))!
-            let refString:   String  = components[2] == "" ? "root" : components[2]
-            let refID:    CKRecordID = CKRecordID(recordName: refString)
-            let refRecord:  CKRecord = CKRecord(recordType: zoneTypeKey, recordID: refID)
-            let mode:  ZStorageMode? = ZStorageMode(rawValue: components[0])
-
-            if let record = cloudManager.recordForRecordID(refID), let zone: Zone = record as? Zone {
-                zone.bookmarks.append(self)
-            }
-
-            crossLink = ZRecord(record: refRecord, storageMode: mode)
-        }
-
-        needSave()
-    }
+//    override func updateZoneProperties() {
+//        super.updateZoneProperties()
+//
+//        if zoneLink != nil && zoneLink != "" && _crossLink == nil {
+//            let components: [String] = (zoneLink?.components(separatedBy: ":"))!
+//            let refString:   String  = components[2] == "" ? "root" : components[2]
+//            let refID:    CKRecordID = CKRecordID(recordName: refString)
+//            let refRecord:  CKRecord = CKRecord(recordType: zoneTypeKey, recordID: refID)
+//            let mode:  ZStorageMode? = ZStorageMode(rawValue: components[0])
+//
+//            if let record = cloudManager.recordForRecordID(refID), let zone: Zone = record as? Zone {
+//                zone.bookmarks.append(self)
+//            }
+//
+//            crossLink = ZRecord(record: refRecord, storageMode: mode)
+//        }
+//
+//        needSave()
+//    }
 
     
     // MARK:- offspring

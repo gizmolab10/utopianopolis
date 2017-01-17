@@ -621,20 +621,20 @@ CQ
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZSettingsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="195" height="1008"/>
+                        <rect key="frame" x="0.0" y="0.0" width="209" height="1041"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="8" width="195" height="1000"/>
+                                <rect key="frame" x="0.0" y="8" width="209" height="1033"/>
                                 <subviews>
                                     <customView identifier="help" translatesAutoresizingMaskIntoConstraints="NO" id="E5h-DF-X3i" userLabel="Help View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="595" width="195" height="405"/>
+                                        <rect key="frame" x="0.0" y="628" width="209" height="405"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="GnQ-iS-bgR" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="386" width="195" height="19"/>
+                                                <rect key="frame" x="0.0" y="386" width="209" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ds2-S9-Udj">
-                                                        <rect key="frame" x="0.0" y="1" width="195" height="17"/>
+                                                        <rect key="frame" x="0.0" y="1" width="209" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="Umo-fQ-duv"/>
                                                         </constraints>
@@ -645,7 +645,7 @@ CQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kYb-ao-3Mw" userLabel="Triangle Button">
-                                                        <rect key="frame" x="173" y="3" width="14" height="14"/>
+                                                        <rect key="frame" x="187" y="3" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="L2e-Gp-cDO"/>
                                                             <constraint firstAttribute="width" constant="14" id="ih1-UQ-s1f"/>
@@ -669,10 +669,10 @@ CQ
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="oTc-Mj-4gz" userLabel="Hideable View">
-                                                <rect key="frame" x="0.0" y="0.0" width="195" height="386"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="209" height="386"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="749" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IT7-2L-PqU" userLabel="Help Text">
-                                                        <rect key="frame" x="6" y="8" width="183" height="370"/>
+                                                        <rect key="frame" x="6" y="8" width="197" height="370"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="370" id="Vbt-r3-FA8"/>
                                                         </constraints>
@@ -730,13 +730,13 @@ when not editing text:
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="217" width="195" height="377"/>
+                                        <rect key="frame" x="0.0" y="250" width="209" height="377"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="358" width="195" height="19"/>
+                                                <rect key="frame" x="0.0" y="358" width="209" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gUX-Sv-09B">
-                                                        <rect key="frame" x="0.0" y="1" width="195" height="17"/>
+                                                        <rect key="frame" x="0.0" y="1" width="209" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="jiJ-DE-IDs"/>
                                                         </constraints>
@@ -747,7 +747,7 @@ when not editing text:
                                                         </textFieldCell>
                                                     </textField>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aCk-9D-lHI" userLabel="Triangle Button">
-                                                        <rect key="frame" x="173" y="3" width="14" height="14"/>
+                                                        <rect key="frame" x="187" y="3" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="14" id="hAG-lD-Wcz"/>
                                                             <constraint firstAttribute="height" constant="14" id="pOY-vw-MiT"/>
@@ -771,16 +771,16 @@ when not editing text:
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="BBZ-rq-7h8" userLabel="Hideable View">
-                                                <rect key="frame" x="0.0" y="0.0" width="195" height="358"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="209" height="358"/>
                                                 <subviews>
                                                     <box borderType="line" title="line thickness" translatesAutoresizingMaskIntoConstraints="NO" id="ZKf-5G-qWF">
-                                                        <rect key="frame" x="5" y="311" width="185" height="39"/>
+                                                        <rect key="frame" x="5" y="311" width="199" height="39"/>
                                                         <view key="contentView" id="XhY-V9-QQ8">
-                                                            <rect key="frame" x="1" y="1" width="183" height="23"/>
+                                                            <rect key="frame" x="1" y="1" width="197" height="23"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <slider identifier="thickness" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="w6J-MU-9os">
-                                                                    <rect key="frame" x="6" y="4" width="171" height="19"/>
+                                                                    <rect key="frame" x="6" y="4" width="185" height="19"/>
                                                                     <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="1" maxValue="2.5" doubleValue="1.25" tickMarkPosition="above" sliderType="linear" id="KlI-uw-fXQ"/>
                                                                     <connections>
                                                                         <action selector="sliderAction:" target="YaQ-0g-PCb" id="msE-5l-vk1"/>
@@ -796,13 +796,13 @@ when not editing text:
                                                         </view>
                                                     </box>
                                                     <box borderType="line" title="vertical spacing" translatesAutoresizingMaskIntoConstraints="NO" id="6y7-tU-8gG" userLabel="vertical spacing">
-                                                        <rect key="frame" x="5" y="272" width="185" height="39"/>
+                                                        <rect key="frame" x="5" y="272" width="199" height="39"/>
                                                         <view key="contentView" id="egb-z0-1ch">
-                                                            <rect key="frame" x="1" y="1" width="183" height="23"/>
+                                                            <rect key="frame" x="1" y="1" width="197" height="23"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <slider identifier="vertical" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="P4e-qG-Zcg">
-                                                                    <rect key="frame" x="6" y="4" width="171" height="19"/>
+                                                                    <rect key="frame" x="6" y="4" width="185" height="19"/>
                                                                     <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="20" doubleValue="4" tickMarkPosition="above" sliderType="linear" id="4eS-SV-OKd"/>
                                                                     <connections>
                                                                         <action selector="sliderAction:" target="YaQ-0g-PCb" id="Qci-uB-8WN"/>
@@ -818,13 +818,13 @@ when not editing text:
                                                         </view>
                                                     </box>
                                                     <box borderType="line" title="horizontal spacing" translatesAutoresizingMaskIntoConstraints="NO" id="Qns-tb-akX" userLabel="horizontal spacing">
-                                                        <rect key="frame" x="5" y="233" width="185" height="39"/>
+                                                        <rect key="frame" x="5" y="233" width="199" height="39"/>
                                                         <view key="contentView" id="yxJ-ve-YZE">
-                                                            <rect key="frame" x="1" y="1" width="183" height="23"/>
+                                                            <rect key="frame" x="1" y="1" width="197" height="23"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <slider identifier="horizontal" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4gc-Kr-Jkn">
-                                                                    <rect key="frame" x="6" y="4" width="171" height="19"/>
+                                                                    <rect key="frame" x="6" y="4" width="185" height="19"/>
                                                                     <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="13" maxValue="40" doubleValue="22" tickMarkPosition="above" sliderType="linear" id="C47-eV-jKg"/>
                                                                     <connections>
                                                                         <action selector="sliderAction:" target="YaQ-0g-PCb" id="7t4-XK-BpS"/>
@@ -840,13 +840,13 @@ when not editing text:
                                                         </view>
                                                     </box>
                                                     <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="KMy-vH-Jfb">
-                                                        <rect key="frame" x="5" y="128" width="185" height="105"/>
+                                                        <rect key="frame" x="5" y="128" width="199" height="105"/>
                                                         <view key="contentView" id="VZX-ic-xER">
-                                                            <rect key="frame" x="1" y="1" width="183" height="89"/>
+                                                            <rect key="frame" x="1" y="1" width="197" height="89"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7kB-i9-BLu">
-                                                                    <rect key="frame" x="6" y="65" width="75" height="17"/>
+                                                                    <rect key="frame" x="6" y="65" width="89" height="17"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="17" id="Nlz-uA-ju4"/>
                                                                     </constraints>
@@ -857,7 +857,7 @@ when not editing text:
                                                                     </textFieldCell>
                                                                 </textField>
                                                                 <colorWell identifier="zones" translatesAutoresizingMaskIntoConstraints="NO" id="zkL-Cs-OSE">
-                                                                    <rect key="frame" x="87" y="62" width="88" height="23"/>
+                                                                    <rect key="frame" x="101" y="62" width="88" height="23"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="88" id="P3i-t2-sNo"/>
                                                                         <constraint firstAttribute="height" constant="23" id="xJo-hF-2Rf"/>
@@ -868,7 +868,7 @@ when not editing text:
                                                                     </connections>
                                                                 </colorWell>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="G6J-cF-m9H">
-                                                                    <rect key="frame" x="14" y="38" width="67" height="17"/>
+                                                                    <rect key="frame" x="28" y="38" width="67" height="17"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="17" id="aXY-lZ-XaB"/>
                                                                     </constraints>
@@ -879,7 +879,7 @@ when not editing text:
                                                                     </textFieldCell>
                                                                 </textField>
                                                                 <colorWell identifier="bookmarks" translatesAutoresizingMaskIntoConstraints="NO" id="Eae-G1-GtF">
-                                                                    <rect key="frame" x="87" y="35" width="88" height="23"/>
+                                                                    <rect key="frame" x="101" y="35" width="88" height="23"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="88" id="Qqo-CC-k0K"/>
                                                                         <constraint firstAttribute="height" constant="23" id="Vf2-kE-P3L"/>
@@ -890,7 +890,7 @@ when not editing text:
                                                                     </connections>
                                                                 </colorWell>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sJw-uT-bsV">
-                                                                    <rect key="frame" x="9" y="11" width="72" height="17"/>
+                                                                    <rect key="frame" x="23" y="11" width="72" height="17"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="17" id="fqk-Ld-tvT"/>
                                                                     </constraints>
@@ -901,7 +901,7 @@ when not editing text:
                                                                     </textFieldCell>
                                                                 </textField>
                                                                 <colorWell identifier="background" translatesAutoresizingMaskIntoConstraints="NO" id="iLH-vJ-oIt">
-                                                                    <rect key="frame" x="87" y="8" width="88" height="23"/>
+                                                                    <rect key="frame" x="101" y="8" width="88" height="23"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="88" id="efK-yS-uGp"/>
                                                                         <constraint firstAttribute="height" constant="23" id="nfJ-cC-oR6"/>
@@ -931,7 +931,7 @@ when not editing text:
                                                         </view>
                                                     </box>
                                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LAJ-9k-rdw">
-                                                        <rect key="frame" x="19" y="104" width="158" height="20"/>
+                                                        <rect key="frame" x="26" y="104" width="158" height="20"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="83w-9I-bSv"/>
                                                         </constraints>
@@ -947,7 +947,7 @@ when not editing text:
                                                         </connections>
                                                     </segmentedControl>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="KCP-Y2-cVR">
-                                                        <rect key="frame" x="6" y="8" width="191" height="90"/>
+                                                        <rect key="frame" x="6" y="8" width="205" height="90"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="90" id="ZaM-7k-E99"/>
                                                         </constraints>
@@ -1000,13 +1000,13 @@ when not editing text:
                                         </connections>
                                     </customView>
                                     <customView identifier="information" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="90" width="195" height="126"/>
+                                        <rect key="frame" x="0.0" y="123" width="209" height="126"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="107" width="195" height="19"/>
+                                                <rect key="frame" x="0.0" y="107" width="209" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ce9-hv-nUx" userLabel="Information">
-                                                        <rect key="frame" x="0.0" y="1" width="195" height="17"/>
+                                                        <rect key="frame" x="0.0" y="1" width="209" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="c6d-cF-0Bg"/>
                                                         </constraints>
@@ -1017,7 +1017,7 @@ when not editing text:
                                                         </textFieldCell>
                                                     </textField>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="hIy-eV-7gW" userLabel="Triangle Button">
-                                                        <rect key="frame" x="173" y="3" width="14" height="14"/>
+                                                        <rect key="frame" x="187" y="3" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="Btc-fY-AcD"/>
                                                             <constraint firstAttribute="width" constant="14" id="j0n-Bq-iHU"/>
@@ -1041,13 +1041,13 @@ when not editing text:
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="icr-XL-kk7">
-                                                <rect key="frame" x="0.0" y="0.0" width="195" height="107"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="209" height="107"/>
                                                 <subviews>
                                                     <progressIndicator wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="dmI-b1-Z0D">
-                                                        <rect key="frame" x="20" y="80" width="155" height="20"/>
+                                                        <rect key="frame" x="20" y="80" width="169" height="20"/>
                                                     </progressIndicator>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xmv-NU-oFf" userLabel="Total Count Label">
-                                                        <rect key="frame" x="-2" y="62" width="199" height="19"/>
+                                                        <rect key="frame" x="-2" y="62" width="213" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="19" id="FXf-NW-zak"/>
                                                         </constraints>
@@ -1058,7 +1058,7 @@ when not editing text:
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ph8-7t-kSh">
-                                                        <rect key="frame" x="-2" y="35" width="199" height="19"/>
+                                                        <rect key="frame" x="-2" y="35" width="213" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="19" id="1Kn-jc-7t3"/>
                                                         </constraints>
@@ -1069,7 +1069,7 @@ when not editing text:
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ctL-6d-P2u">
-                                                        <rect key="frame" x="-2" y="8" width="199" height="19"/>
+                                                        <rect key="frame" x="-2" y="8" width="213" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="19" id="Lfd-gf-Mjg"/>
                                                         </constraints>
@@ -1114,13 +1114,13 @@ when not editing text:
                                         </connections>
                                     </customView>
                                     <customView identifier="tools" translatesAutoresizingMaskIntoConstraints="NO" id="FnR-Ns-9C5" userLabel="Tools View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="195" height="89"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="209" height="122"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Fou-Go-Rux" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="70" width="195" height="19"/>
+                                                <rect key="frame" x="0.0" y="103" width="209" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NYk-X4-ICp">
-                                                        <rect key="frame" x="0.0" y="1" width="195" height="17"/>
+                                                        <rect key="frame" x="0.0" y="1" width="209" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="fzI-kf-WP2"/>
                                                         </constraints>
@@ -1131,7 +1131,7 @@ when not editing text:
                                                         </textFieldCell>
                                                     </textField>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="192-Dg-ITw" userLabel="Triangle Button">
-                                                        <rect key="frame" x="173" y="3" width="14" height="14"/>
+                                                        <rect key="frame" x="187" y="3" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="9c3-Oc-Sai"/>
                                                             <constraint firstAttribute="width" constant="14" id="bVR-dQ-Rys"/>
@@ -1155,10 +1155,10 @@ when not editing text:
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="a9P-rC-Og1">
-                                                <rect key="frame" x="0.0" y="0.0" width="195" height="70"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="209" height="103"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zLu-zM-dDh">
-                                                        <rect key="frame" x="6" y="34" width="183" height="32"/>
+                                                        <rect key="frame" x="6" y="67" width="197" height="32"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="21" id="sVF-Kw-7zz"/>
                                                         </constraints>
@@ -1170,28 +1170,44 @@ when not editing text:
                                                             <action selector="pushToCloudButtonAction:" target="YaQ-0g-PCb" id="oB3-Du-0Ka"/>
                                                         </connections>
                                                     </button>
-                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AZV-DY-sw3">
-                                                        <rect key="frame" x="6" y="1" width="183" height="32"/>
+                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AZV-DY-sw3" userLabel="Restore Zone">
+                                                        <rect key="frame" x="6" y="34" width="197" height="32"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="21" id="VgO-8R-Jh7"/>
                                                         </constraints>
-                                                        <buttonCell key="cell" type="push" title="Reclaim Zone" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cm1-bL-4Hz">
+                                                        <buttonCell key="cell" type="push" title="Restore Zone" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cm1-bL-4Hz">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                         <connections>
-                                                            <action selector="reclaimButtonAction:" target="YaQ-0g-PCb" id="CkV-Bv-e66"/>
+                                                            <action selector="restoreZoneButtonAction:" target="YaQ-0g-PCb" id="CkV-Bv-e66"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hza-45-Chy" userLabel="Restore Deleted">
+                                                        <rect key="frame" x="6" y="1" width="197" height="32"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="21" id="QgG-HY-GRd"/>
+                                                        </constraints>
+                                                        <buttonCell key="cell" type="push" title="Restore Deleted Zones" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eSJ-8G-D6d">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="restoreAllDeletedZonesButtonAction:" target="YaQ-0g-PCb" id="Rza-ep-nBf"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstAttribute="trailing" secondItem="zLu-zM-dDh" secondAttribute="trailing" constant="12" id="5dU-tL-CXm"/>
-                                                    <constraint firstAttribute="bottom" secondItem="AZV-DY-sw3" secondAttribute="bottom" constant="8" id="KnS-YJ-Lvp"/>
+                                                    <constraint firstAttribute="bottom" secondItem="hza-45-Chy" secondAttribute="bottom" constant="8" id="6Sr-0D-A1R"/>
+                                                    <constraint firstItem="hza-45-Chy" firstAttribute="top" secondItem="AZV-DY-sw3" secondAttribute="bottom" constant="12" id="N6Q-DR-6eI"/>
                                                     <constraint firstItem="AZV-DY-sw3" firstAttribute="top" secondItem="zLu-zM-dDh" secondAttribute="bottom" constant="12" id="VAZ-XJ-M6S"/>
                                                     <constraint firstAttribute="trailing" secondItem="AZV-DY-sw3" secondAttribute="trailing" constant="12" id="Xv8-6k-KTa"/>
                                                     <constraint firstItem="zLu-zM-dDh" firstAttribute="leading" secondItem="a9P-rC-Og1" secondAttribute="leading" constant="12" id="jqK-e9-cdI"/>
+                                                    <constraint firstItem="hza-45-Chy" firstAttribute="leading" secondItem="a9P-rC-Og1" secondAttribute="leading" constant="12" id="qEm-eV-f7N"/>
                                                     <constraint firstItem="AZV-DY-sw3" firstAttribute="leading" secondItem="a9P-rC-Og1" secondAttribute="leading" constant="12" id="uLi-lO-AIC"/>
                                                     <constraint firstItem="zLu-zM-dDh" firstAttribute="top" secondItem="a9P-rC-Og1" secondAttribute="top" constant="8" id="xBk-Zr-kxi"/>
+                                                    <constraint firstAttribute="trailing" secondItem="hza-45-Chy" secondAttribute="trailing" constant="12" id="yhZ-Jz-ChF"/>
                                                 </constraints>
                                             </customView>
                                         </subviews>
@@ -1261,7 +1277,7 @@ when not editing text:
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-193.5" y="1657"/>
+            <point key="canvasLocation" x="-189" y="1689"/>
         </scene>
         <!--Search Box View Controller-->
         <scene sceneID="Gwm-hS-Ozn">

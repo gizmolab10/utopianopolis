@@ -523,7 +523,11 @@ class ZEditingManager: NSObject {
 
     @discardableResult private func deleteZone(_ zone: Zone) -> Zone? {
         var grabThisZone = zone.parentZone
-        let     deleteMe = !zone.isRoot && !zone.isDeleted && zone.crossLink?.record.recordID.recordName != rootNameKey
+        var     deleteMe = !zone.isRoot && !zone.isDeleted // && ( || zone.crossLink?.record.recordID.recordName != rootNameKey)
+
+        if !deleteMe && zone.parentZone == favoritesManager.favoritesRootZone {
+            deleteMe = zone.crossLink?.record.recordID.recordName != rootNameKey
+        }
 
         if deleteMe {
             if grabThisZone != nil {
@@ -554,12 +558,13 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            let    manifest = travelManager.manifestForMode(zone.storageMode!)
+            let   toDelete  = cloudManager.bookmarksFor(zone)
+            let   manifest  = travelManager.manifestForMode(zone.storageMode!)
             zone.isDeleted  = true // should be saved, then ignored after next launch
             manifest.total -= 1
 
-            deleteZones(zone.bookmarks, in: zone)
-            deleteZones(zone.children, in: zone)
+            deleteZones(toDelete, in: zone)
+            deleteZones(zone.children,                   in: zone)
             manifest.needSave()
             zone.needSave()
             zone.orphan()

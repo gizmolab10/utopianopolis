@@ -45,68 +45,8 @@ class ZFavoritesManager: NSObject {
     }
 
 
-    func setupRootFavorites() {
-        if favoritesRootZone.count == 0 {
-            createRootFavorite("everyone", order: 0.9999999, storageMode: .everyone)
-            createRootFavorite("mine",     order: 0.9999998, storageMode: .mine)
-        }
-    }
-
-
-    // MARK:- create
-    // MARK:-
-    
-
-    func createRootFavorite(_ name: String, order: Double, storageMode: ZStorageMode) { // KLUDGE, perhaps use ordered set or dictionary
-        let      zone = Zone(record: nil, storageMode: storageMode)
-        zone.order    = order
-        zone.zoneName = name
-        zone.zoneLink = ""
-
-        invokeWithMode(storageMode) {
-            createBookmarkFor(zone, isFavorite: false)
-        }
-    }
-
-
-    @discardableResult func createBookmarkFor(_ zone: Zone, isFavorite: Bool) -> Zone {
-        let    parent: Zone = isFavorite ? favoritesRootZone : zone.parentZone ?? favoritesRootZone
-        let           count = parent.count
-        let           index = parent.children.index(of: zone) ?? count
-        let        bookmark = zone.isBookmark ? zone.deepCopy() : Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: gStorageMode)
-        bookmark.zoneName   = zone.zoneName
-        bookmark.isFavorite = isFavorite
-        bookmark.parentZone = parent
-
-        if isFavorite || index == count {
-            parent.children.append(bookmark)
-        } else {
-            parent.addChild(bookmark, at: index)
-        }
-
-        if !zone.isBookmark {
-            bookmark.crossLink = zone
-        }
-
-        parent.needSave()
-        parent.recomputeOrderingUponInsertionAt(index)
-        zone.bookmarks.append(bookmark)
-        bookmark.updateCloudProperties()
-        bookmark.needCreate()
-        
-        return bookmark
-    }
-
-
     // MARK:- private
     // MARK:-
-
-
-    private func updateForIndex(_ index: Int) {
-        favoritesIndex = index
-
-        selectionManager.grab(favoritesRootZone[index])
-    }
 
 
     private func modeFor(_ rootBookmark: Zone) -> ZStorageMode? {
@@ -140,6 +80,13 @@ class ZFavoritesManager: NSObject {
 
     // MARK:- switch
     // MARK:-
+
+
+    private func updateForIndex(_ index: Int) {
+        favoritesIndex = index
+
+        selectionManager.grab(favoritesRootZone[index])
+    }
 
 
     func updateGrabAndIndexFor(_ zone: Zone?) {
@@ -182,5 +129,64 @@ class ZFavoritesManager: NSObject {
         }
 
         // report(bookmark.zoneName)
+    }
+
+
+    // MARK:- create
+    // MARK:-
+
+
+    func setupRootFavorites() {
+        if favoritesRootZone.count == 0 {
+            createBookmark(atIndex: 0, .everyone)
+            createBookmark(atIndex: 1, .mine)
+        }
+    }
+    
+
+    func createBookmark(atIndex: Int, _ mode: ZStorageMode) {
+        let           name = mode.rawValue
+        let       bookmark = create(withBookmark: nil, false, parent: favoritesRootZone, atIndex: atIndex, mode, name)
+        bookmark?.zoneLink =  "\(name)::"
+    }
+
+
+    @discardableResult func create(withBookmark: Zone?, _ isFavorite: Bool, parent: Zone, atIndex: Int, _ storageMode: ZStorageMode?, _ name: String?) -> Zone? {
+        let           count = parent.count
+        let bookmark:  Zone = withBookmark ?? Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: storageMode)
+        bookmark.isFavorite = isFavorite
+        bookmark.parentZone = parent
+        bookmark.zoneName   = name
+
+        if isFavorite || atIndex == count {
+            parent.children.append(bookmark)
+        } else {
+            parent.addChild(bookmark, at: atIndex)
+        }
+
+        parent.recomputeOrderingUponInsertionAt(atIndex)
+        bookmark.updateCloudProperties() // is this needed?
+        bookmark.needCreate()
+
+        return bookmark
+    }
+
+
+    @discardableResult func createBookmarkFor(_ zone: Zone, isFavorite: Bool) -> Zone {
+        let    parent: Zone = isFavorite ? favoritesRootZone : zone.parentZone ?? favoritesRootZone
+        let           count = parent.count
+        let           index = parent.children.index(of: zone) ?? count
+        var bookmark: Zone? = zone.isBookmark ? zone.deepCopy() : nil
+        bookmark            = create(withBookmark: bookmark, isFavorite, parent: parent, atIndex: index, zone.storageMode, zone.zoneName)
+
+        if !isFavorite {
+            parent.needSave()
+        }
+
+        if !zone.isBookmark {
+            bookmark?.crossLink = zone
+        }
+
+        return bookmark!
     }
 }

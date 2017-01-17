@@ -274,6 +274,20 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func bookmarksFor(_ zone: Zone) -> [Zone] {
+        let  recordID = zone.record.recordID
+        var bookmarks = [Zone] ()
+
+        for bookmark in zones.values {
+            if let link = bookmark.crossLink, recordID == link.record?.recordID {
+                bookmarks.append(bookmark)
+            }
+        }
+
+        return bookmarks
+    }
+
+
     func recordForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
         var record = zoneForRecordID(recordID) as ZRecord?
 

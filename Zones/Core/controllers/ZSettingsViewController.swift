@@ -36,7 +36,7 @@ class ZSettingsViewController: ZGenericViewController {
     @IBOutlet var         fractionInMemory: ZProgressIndicator?
     @IBOutlet var graphAlteringModeControl: ZSegmentedControl?
     @IBOutlet var          totalCountLabel: ZTextField?
-    @IBOutlet var           graphNameLabel: NSTextField?
+    @IBOutlet var           graphNameLabel: ZTextField?
     @IBOutlet var               levelLabel: ZTextField?
     @IBOutlet var             zoneColorBox: ZColorWell?
     @IBOutlet var         bookmarkColorBox: ZColorWell?
@@ -121,7 +121,15 @@ class ZSettingsViewController: ZGenericViewController {
     }
 
 
-    @IBAction func reclaimButtonAction(_ button: ZButton) {
+    @IBAction func restoreAllDeletedZonesButtonAction(_ button: ZButton) {
+        operationsManager.undelete {
+            self.signalFor(nil, regarding: .redraw)
+        }
+        
+    }
+
+
+    @IBAction func restoreZoneButtonAction(_ button: ZButton) {
         // similar to editingManager.moveInto
         if  let               zone = selectionManager.firstGrabbableZone {
             let             parent = travelManager.rootZone

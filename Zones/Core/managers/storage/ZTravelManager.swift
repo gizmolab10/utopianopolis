@@ -114,13 +114,13 @@ class ZTravelManager: NSObject {
 
         if zone.isRoot {
             travelToFavorites(atArrival)
-        } else if zone.isBookmark, let crossLink = zone.crossLink, let mode = crossLink.storageMode {
+        } else if zone.isBookmark, let crossLink = zone.crossLink, let mode = crossLink.storageMode, let record = crossLink.record {
 
             ////////////////////////
             // going into a bookmark
             ////////////////////////
 
-            let recordIDOfLink = crossLink.record.recordID
+            let recordIDOfLink = record.recordID
             let pointsAtHere   = crossLink.isRoot
 
             if  gStorageMode != mode {

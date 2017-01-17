@@ -190,6 +190,7 @@ class ZRecord: NSObject {
     func needSave()     { markForStates([.needsSave]) }
     func needFetch()    { markForStates([.needsFetch]) }
     func needCreate()   { markForStates([.needsCreate]) }
+    func needParent()   { markForStates([.needsParent]) }
     func needChildren() { markForStates([.needsChildren]) }
 
 

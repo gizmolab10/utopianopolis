@@ -55,10 +55,14 @@ class ZManifest: ZRecord {
         get {
             if count == nil {
                 updateZoneProperties()
+            }
 
-                if count == nil {
-                    count = NSNumber(value: 0)
-                }
+            if count == nil {
+                count = NSNumber(value: 0)
+//            } else {
+//                count = NSNumber(value: 189)
+//
+//                needSave()
             }
 
             return (count?.intValue)!

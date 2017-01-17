@@ -459,6 +459,32 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
+    func undelete(_ storageMode: ZStorageMode, onCompletion: Closure?) {
+        let predicate = NSPredicate(format: "zoneState >= %d", ZoneState.IsDeleted.rawValue) // "parent = nil")
+
+        self.cloudQueryUsingPredicate(predicate, onCompletion: { (iRecord: CKRecord?) in
+            if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
+                onCompletion?()
+            } else {
+                let           root = travelManager.rootZone
+                let        deleted = self.recordForRecordID(iRecord?.recordID) as? Zone ?? Zone(record: iRecord, storageMode: storageMode)
+                deleted .isDeleted = false
+
+                if deleted.parent == nil {
+                    deleted.parentZone = root
+
+                    root?.needFetch()
+                } else {
+                    deleted.needParent()
+                }
+
+                deleted.needSave()
+                deleted.updateCloudProperties()
+            }
+        })
+    }
+
+
     func fetchFavorites(_ storageMode: ZStorageMode, onCompletion: Closure?) {
         let predicate = NSPredicate(format: "zoneState >= %d AND zoneState < %d", ZoneState.IsFavorite.rawValue, ZoneState.IsDeleted.rawValue)
 
