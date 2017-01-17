@@ -77,6 +77,25 @@ class ZRecordsManager: NSObject {
     }
 
 
+    var bookmarks: [Zone] {
+        get {
+            var bookmarks = [Zone] ()
+
+            for mode: ZStorageMode in [.mine, .everyone, .favorites] {
+                invokeWithMode(mode) {
+                    for zone in zones.values {
+                        if zone.isBookmark {
+                            bookmarks.append(zone)
+                        }
+                    }
+                }
+            }
+
+            return bookmarks
+        }
+    }
+
+
     // MARK:- record state
     // MARK:-
 
@@ -275,16 +294,16 @@ class ZRecordsManager: NSObject {
 
 
     func bookmarksFor(_ zone: Zone) -> [Zone] {
-        let  recordID = zone.record.recordID
-        var bookmarks = [Zone] ()
+        let      recordID = zone.record.recordID
+        var zoneBookmarks = [Zone] ()
 
-        for bookmark in zones.values {
-            if let link = bookmark.crossLink, recordID == link.record?.recordID {
-                bookmarks.append(bookmark)
+        for bookmark in bookmarks {
+            if recordID == bookmark.crossLink?.record?.recordID {
+                zoneBookmarks.append(bookmark)
             }
         }
 
-        return bookmarks
+        return zoneBookmarks
     }
 
 
