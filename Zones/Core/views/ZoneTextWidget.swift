@@ -168,6 +168,12 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     override func textDidEndEditing(_ notification: Notification) {
         resignFirstResponder()
+
+        if let value = notification.userInfo?["NSTextMovement"] as! NSNumber?, value == NSNumber(value: 17) {
+            dispatchAsyncInForeground {
+                editingManager.handleKey("\t", flags: NSEventModifierFlags(), isWindow: true)
+            }
+        }
     }
 
 #elseif os(iOS)

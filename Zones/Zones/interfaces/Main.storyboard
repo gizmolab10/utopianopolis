@@ -621,17 +621,17 @@ CQ
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZSettingsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="209" height="1091"/>
+                        <rect key="frame" x="0.0" y="0.0" width="209" height="1121"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="18" width="209" height="1073"/>
+                                <rect key="frame" x="0.0" y="18" width="209" height="1103"/>
                                 <subviews>
                                     <customView identifier="help" translatesAutoresizingMaskIntoConstraints="NO" id="E5h-DF-X3i" userLabel="Help View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="628" width="209" height="445"/>
+                                        <rect key="frame" x="0.0" y="628" width="209" height="475"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="GnQ-iS-bgR" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="426" width="209" height="19"/>
+                                                <rect key="frame" x="0.0" y="456" width="209" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ds2-S9-Udj">
                                                         <rect key="frame" x="0.0" y="1" width="209" height="17"/>
@@ -669,32 +669,16 @@ CQ
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="oTc-Mj-4gz" userLabel="Hideable View">
-                                                <rect key="frame" x="0.0" y="0.0" width="209" height="426"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="209" height="456"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="749" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IT7-2L-PqU" userLabel="Help Text">
-                                                        <rect key="frame" x="6" y="8" width="197" height="410"/>
+                                                        <rect key="frame" x="6" y="8" width="197" height="440"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" constant="410" id="Vbt-r3-FA8"/>
+                                                            <constraint firstAttribute="height" constant="440" id="Vbt-r3-FA8"/>
                                                         </constraints>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="RJc-P2-wiE">
                                                             <font key="font" metaFont="cellTitle"/>
-                                                            <string key="title">    B create bookmark
-    F find
-    P print graph
-    / focus on selected zone
-    ' show next favorite
-
-with OPTION move/alter zone:
-    " show favorites
-    ARROWS move zone
-    TAB add sibling zone
-    SPACE add child zone
-    DELETE delete
-    RETURN begin editing
-
-when editing text:
-    RETURN end editing
-
+                                                            <string key="title">   an incomplete list:
 ARROWS: navigate graph
 
 ARROWS with COMMAND:
@@ -702,7 +686,25 @@ ARROWS with COMMAND:
 
 ARROWS with SHIFT:
     RIGHT expand
-    LEFT collapse</string>
+    LEFT collapse
+
+when editing text:
+    RETURN end editing
+
+other KEYS:
+    RETURN begin editing
+    TAB add sibling zone
+    SPACE add child zone
+    DELETE delete zone
+    B create bookmark
+    F find in cloud
+    P print the graph
+    / focus on selected zone
+    ' show next favorite
+
+with OPTION:
+    " show favorites
+    ARROWS move zone</string>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
