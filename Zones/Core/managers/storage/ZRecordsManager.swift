@@ -294,12 +294,13 @@ class ZRecordsManager: NSObject {
 
 
     func bookmarksFor(_ zone: Zone) -> [Zone] {
-        let      recordID = zone.record.recordID
         var zoneBookmarks = [Zone] ()
 
-        for bookmark in bookmarks {
-            if recordID == bookmark.crossLink?.record?.recordID {
-                zoneBookmarks.append(bookmark)
+        if let recordID = zone.record?.recordID {
+            for bookmark in bookmarks {
+                if recordID == bookmark.crossLink?.record?.recordID {
+                    zoneBookmarks.append(bookmark)
+                }
             }
         }
 

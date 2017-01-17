@@ -523,9 +523,9 @@ class ZEditingManager: NSObject {
 
     @discardableResult private func deleteZone(_ zone: Zone) -> Zone? {
         var grabThisZone = zone.parentZone
-        var     deleteMe = !zone.isRoot && !zone.isDeleted // && ( || zone.crossLink?.record.recordID.recordName != rootNameKey)
+        var     deleteMe = !zone.isRoot && !zone.isDeleted && zone.parentZone?.record != nil
 
-        if !deleteMe && zone.parentZone == favoritesManager.favoritesRootZone {
+        if !deleteMe && zone.isBookmark {
             deleteMe = zone.crossLink?.record.recordID.recordName != rootNameKey
         }
 
