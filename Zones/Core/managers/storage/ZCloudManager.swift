@@ -53,6 +53,29 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
+    // MARK:- receive from cloud
+    // MARK:-
+
+
+    func receivedUpdateFor(_ recordID: CKRecordID) {
+        resetBadgeCounter()
+        assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey, onCompletion: { iRecord in
+            let   zone = self.zoneForRecord(iRecord!)
+            let parent = zone.parentZone
+
+            if  zone.showChildren {
+                self.dispatchAsyncInForeground {
+                    self.signalFor(parent, regarding: .redraw)
+
+                    operationsManager.children(false) {
+                        self.signalFor(parent, regarding: .redraw)
+                    }
+                }
+            }
+        })
+    }
+
+
     // MARK:- push to cloud
     // MARK:-
 
@@ -148,24 +171,27 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    // MARK:- receive from cloud
-    // MARK:-
+    func emptyTrash(_ storageMode: ZStorageMode, onCompletion: Closure?) {
+        let   predicate = NSPredicate(format: "zoneState <= %d", ZoneState.IsDeleted.rawValue)
+        var toBeDeleted = [CKRecordID] ()
 
+        self.cloudQueryUsingPredicate(predicate, onCompletion: { (iRecord: CKRecord?) in
+            if iRecord != nil {
+                self.report("deleting \(iRecord![zoneNameKey])")
+                toBeDeleted.append((iRecord?.recordID)!)
 
-    func receivedUpdateFor(_ recordID: CKRecordID) {
-        resetBadgeCounter()
-        assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey, onCompletion: { iRecord in
-            let   zone = self.zoneForRecord(iRecord!)
-            let parent = zone.parentZone
+            } else { // iRecord == nil means: end of response to this particular query
 
-            if  zone.showChildren {
-                self.dispatchAsyncInForeground {
-                    self.signalFor(parent, regarding: .redraw)
+                if (toBeDeleted.count) > 0, let operation = self.configure(CKModifyRecordsOperation(), using: storageMode) as? CKModifyRecordsOperation {
+                    operation.completionBlock   = onCompletion
+                    operation.recordIDsToDelete = toBeDeleted   // delete them
 
-                    operationsManager.children(false) {
-                        self.signalFor(parent, regarding: .redraw)
-                    }
+                    operation.start()
+
+                    return
                 }
+
+                onCompletion?()
             }
         })
     }

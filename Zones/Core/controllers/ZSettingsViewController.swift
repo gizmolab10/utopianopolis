@@ -121,7 +121,14 @@ class ZSettingsViewController: ZGenericViewController {
     }
 
 
-    @IBAction func restoreAllDeletedZonesButtonAction(_ button: ZButton) {
+    @IBAction func emptyTrashButtonAction(_ button: NSButton) {
+        operationsManager.emptyTrash {
+            self.toConsole("eliminated")
+        }
+    }
+
+
+    @IBAction func restoreFromTrashButtonAction(_ button: NSButton) {
         operationsManager.undelete {
             self.signalFor(nil, regarding: .redraw)
         }
@@ -129,7 +136,7 @@ class ZSettingsViewController: ZGenericViewController {
     }
 
 
-    @IBAction func restoreZoneButtonAction(_ button: ZButton) {
+    @IBAction func restoreZoneButtonAction(_ button: NSButton) {
         // similar to editingManager.moveInto
         if  let               zone = selectionManager.firstGrabbableZone {
             let             parent = travelManager.rootZone
@@ -147,7 +154,7 @@ class ZSettingsViewController: ZGenericViewController {
     }
 
     
-    @IBAction func pushToCloudButtonAction(_ button: ZButton) {
+    @IBAction func pushToCloudButtonAction(_ button: NSButton) {
         cloudManager.royalFlush {}
     }
 

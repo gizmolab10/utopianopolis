@@ -22,6 +22,7 @@ enum ZOperationID: Int {
     case children
     case unsubscribe
     case subscribe
+    case emptyTrash
     case undelete
     case create
     case parent
@@ -65,10 +66,11 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func     sync(_ onCompletion: @escaping Closure) { setupAndRun([.create,   .fetch, .parent, .children, .merge, .flush]) { onCompletion() } }
-    func     root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                      .children,         .flush]) { onCompletion() } }
-    func families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent, .children                ]) { onCompletion() } }
-    func undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent, .children,         .flush]) { onCompletion() } }
+    func       sync(_ onCompletion: @escaping Closure) { setupAndRun([.create,   .fetch, .parent, .children, .merge, .flush]) { onCompletion() } }
+    func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                      .children,         .flush]) { onCompletion() } }
+    func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent, .children                ]) { onCompletion() } }
+    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent, .children,         .flush]) { onCompletion() } }
+    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                          ]) { onCompletion() } }
 
 
     func children(_ recursively: Bool, onCompletion: @escaping Closure) {
@@ -167,6 +169,7 @@ class ZOperationsManager: NSObject {
         case .parent:      cloudManager.fetchParents       (mode) { onCompletion?() }; break
         case .unsubscribe: cloudManager.unsubscribe        (mode) { onCompletion?() }; break
         case .subscribe:   cloudManager.subscribe          (mode) { onCompletion?() }; break
+        case .emptyTrash:  cloudManager.emptyTrash         (mode) { onCompletion?() }; break
         case .undelete:    cloudManager.undelete           (mode) { onCompletion?() }; break
         case .create:      cloudManager.create             (mode) { onCompletion?() }; break
         case .fetch:       cloudManager.fetch              (mode) { onCompletion?() }; break
