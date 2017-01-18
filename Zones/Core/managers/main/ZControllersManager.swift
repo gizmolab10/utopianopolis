@@ -59,9 +59,7 @@ class ZControllersManager: NSObject {
 
 
     func register(_ iController: ZGenericViewController, iID: ZControllerID, closure: @escaping SignalClosure) {
-        if !signalObjectsByControllerID.keys.contains(iID) {
-            signalObjectsByControllerID[iID] = ZSignalObject(closure, forController: iController)
-        }
+        signalObjectsByControllerID[iID] = ZSignalObject(closure, forController: iController)
     }
 
 

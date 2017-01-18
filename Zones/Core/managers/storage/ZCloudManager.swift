@@ -288,7 +288,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func predicateFrom(_ searchString: String) -> NSPredicate {
+    func searchPredicateFrom(_ searchString: String) -> NSPredicate {
         let    tokens = searchString.components(separatedBy: " ")
         let separator = " AND "
         var    suffix = ""
@@ -299,14 +299,14 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        let format = String(format: "zoneState < %d AND zoneLink = \"\"%@", ZoneState.IsFavorite.rawValue, suffix)
+        let format = String(format: "zoneState < %d%@", ZoneState.IsFavorite.rawValue, suffix) //  AND zoneLink = \"\"
 
         return NSPredicate(format: format)
     }
 
 
     func searchFor(_ searchFor: String, onCompletion: ObjectClosure?) {
-        let predicate = predicateFrom(searchFor)
+        let predicate = searchPredicateFrom(searchFor)
         var   records = [CKRecord] ()
 
         cloudQueryUsingPredicate(predicate, onCompletion: { iRecord in

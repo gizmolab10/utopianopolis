@@ -324,7 +324,7 @@ class ZEditingManager: NSObject {
             }
         }
 
-        onCompletion?(descendent)
+        onCompletion?(toZone)
     }
 
 
@@ -715,38 +715,40 @@ class ZEditingManager: NSObject {
                 // move zone
                 ////////////
 
-                var grandparent = parent?.parentZone
+                let grandparent = parent?.parentZone
 
-                let moveIntoHereIsGrandparent = {
-                    self.hereZone = grandparent!
+                let moveIntoHere = { (iHere: Zone?) in
+                    if iHere != nil {
+                        self.hereZone = iHere!
 
-                    travelManager.manifest.needSave()
-                    self.moveZone(zone, outTo: grandparent!, orphan: true) {
-                        controllersManager.syncToCloudAndSignalFor(grandparent, regarding: .redraw) {}
+                        travelManager.manifest.needSave()
+                        self.moveZone(zone, outTo: iHere!, orphan: true) {
+                            self.syncAnd(.redraw)
+                        }
                     }
                 }
 
                 if extreme {
                     if hereZone.isRoot {
-                        moveIntoHereIsGrandparent()
+                        moveIntoHere(grandparent)
                     } else {
                         revealRoot {
-                            grandparent = self.rootZone
-
-                            moveIntoHereIsGrandparent()
+                            moveIntoHere(self.rootZone)
                         }
                     }
-                } else if (hereZone == zone || hereZone == parent) {
-                    revealParentAndSiblingsOf(hereZone) {
-                        grandparent = parent?.parentZone
-
-                        if grandparent != nil {
-                            moveIntoHereIsGrandparent()
-                        }
+                } else if hereZone != zone && hereZone != parent && grandparent != nil {
+                    moveZone(zone, outTo: grandparent!, orphan: true){
+                        controllersManager.syncToCloudAndSignalFor(grandparent!, regarding: .redraw) {}
+                    }
+                } else if parent != nil && parent!.isRoot {
+                    travelManager.travelToFavorites() { object, kind in
+                        moveIntoHere(favoritesManager.favoritesRootZone)
                     }
                 } else {
-                    moveZone(zone, outTo: grandparent!, orphan: true){
-                        controllersManager.syncToCloudAndSignalFor(grandparent, regarding: .redraw) {}
+                    revealParentAndSiblingsOf(hereZone) {
+                        if parent?.parentZone != nil {
+                            moveIntoHere((parent?.parentZone)!)
+                        }
                     }
                 }
             }
@@ -879,43 +881,49 @@ class ZEditingManager: NSObject {
 
 
     func moveZone(_ zone: Zone, outTo: Zone, orphan: Bool, onCompletion: Closure?) {
-        var insert: Int? = nil
+        var completedYet = false
 
-        recursivelyRevealSiblingsOf(zone, toZone: outTo) { (iZone: Zone) in
-            if iZone.parentZone == outTo {
-                insert = iZone.siblingIndex
+        recursivelyRevealSiblingsOf(zone, toZone: outTo) { (iRevealedZone: Zone) in
+            if !completedYet && iRevealedZone == outTo {
+                completedYet     = true
+                var insert: Int? = zone.parentZone?.siblingIndex
 
-                if insert != nil {
-                    insert = insert! + (asTask ? 1 : -1)
-
-                    // to compute the insertion index
-                    // so that moving back in returns exactly:
-                    // if orphan == true
-                    // visit zone's parent and parent of that, etc, until sibling's parent matches "into"
-                    // grab sibling.siblingIndex
-                    // then regarding atTask
-                    // apply (+/- 1) so afterwards (code is above)
-                    // if == count, use -1, means "append" (no insertion index)
-                    // else use as insertion index
-                    
-                }
-            } else if iZone == outTo {
                 zone.needSave()
                 outTo.needSave()
+
+                if zone.parentZone?.parentZone == outTo {
+                    if insert != nil {
+                        insert = insert! + (asTask ? 1 : -1)
+
+                        // to compute the insertion index
+                        // so that moving back in returns exactly:
+                        // if orphan == true
+                        // visit zone's parent and parent of that, etc, until sibling's parent matches "into"
+                        // grab sibling.siblingIndex
+                        // then regarding atTask
+                        // apply (+/- 1) so afterwards (code is above)
+                        // if == count, use -1, means "append" (no insertion index)
+                        // else use as insertion index
+
+                    }
+                }
+
+                if insert == nil || insert! > outTo.count {
+                    insert = outTo.count
+                }
+
+                if insert == outTo.count {
+                    outTo.children.append(zone)
+                } else {
+                    outTo.children.insert(zone, at: insert!)
+                }
 
                 if orphan {
                     zone.orphan()
                 }
-
-                zone.parentZone  = outTo
-                let siblingCount = outTo.count
-
-                if insert == siblingCount {
-                    outTo.children.append(zone)
-                } else if insert != nil {
-                    outTo.children.insert(zone, at: insert!)
-                }
-
+                
+                zone.parentZone = outTo
+                
                 outTo.recomputeOrderingUponInsertionAt(insert!)
                 zone.updateLevel()
                 onCompletion?()

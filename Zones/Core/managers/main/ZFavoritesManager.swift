@@ -24,7 +24,9 @@ class ZFavoritesManager: NSObject {
 
     func setup() {
         favoritesRootZone.showChildren = true
+        favoritesRootZone.storageMode  = .favorites
         favoritesRootZone.zoneName     = "favorites"
+        favoritesRootZone.record       = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: rootNameKey))
 
         setupRootFavorites()
     }
