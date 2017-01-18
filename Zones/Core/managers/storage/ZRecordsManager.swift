@@ -325,10 +325,10 @@ class ZRecordsManager: NSObject {
         var zone = zones[reference.recordID.recordName]
 
         if let record = recordForRecordID(reference.recordID)?.record {
-            if zone != nil {
-                zone?.record = record
-            } else {
+            if zone == nil {
                 zone = Zone(record: record, storageMode: gStorageMode)
+            } else {
+                zone?.record = record
             }
         }
 
@@ -343,13 +343,13 @@ class ZRecordsManager: NSObject {
     func zoneForRecord(_ record: CKRecord) -> Zone {
         var zone = zones[record.recordID.recordName]
 
-        if zone != nil {
-            zone?.record = record
-        } else {
+        if zone == nil {
             zone = Zone(record: record, storageMode: gStorageMode)
+        } else {
+            zone?.record = record
         }
 
-        if  zone!.showChildren {
+        if  zone!.showChildren || zone!.hasChildren {
             zone!.needChildren()
         }
 
