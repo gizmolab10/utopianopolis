@@ -121,7 +121,12 @@ class ZRecord: NSObject {
     func deepCopy() -> Zone {
         let zone = Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: gStorageMode)
 
-        zone.mergeIntoAndTake(record)
+        updateCloudProperties()
+
+        for keyPath: String in cloudProperties() {
+            zone.record[keyPath] = record[keyPath]
+        }
+
         zone.updateZoneProperties()
 
         return zone

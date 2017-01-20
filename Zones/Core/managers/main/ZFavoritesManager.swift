@@ -220,6 +220,17 @@ class ZFavoritesManager: NSObject {
 
 
     @discardableResult func createBookmarkFor(_ zone: Zone, isFavorite: Bool) -> Zone {
+        if isFavorite {
+            let basis: ZRecord = !zone.isBookmark ? zone : zone.crossLink!
+            let     recordName = basis.record.recordID.recordName
+
+            for bookmark in favoritesRootZone.children {
+                if bookmark.isFavorite, recordName == bookmark.crossLink?.record.recordID.recordName {
+                    return bookmark
+                }
+            }
+        }
+
         let    parent: Zone = isFavorite ? favoritesRootZone : zone.parentZone ?? favoritesRootZone
         let           count = parent.count
         let           index = parent.children.index(of: zone) ?? count

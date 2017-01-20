@@ -456,7 +456,7 @@ class ZCloudManager: ZRecordsManager {
                         var parent = self.zoneForRecordID(iID)
 
                         if parent != nil && iRecord != nil {
-                            parent?.mergeIntoAndTake(iRecord!)
+                            parent?.mergeIntoAndTake(iRecord!) // BROKEN: likely this does not do what's needed here
                         } else if let error: CKError = iError as? CKError {
                             self.reportError(error)
                         } else {
