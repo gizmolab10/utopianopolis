@@ -200,8 +200,7 @@ class ZEditingManager: NSObject {
         } else {
             let zone = selectionManager.firstGrabbableZone
 
-            travelManager.travelToFavorites() { (iThere: Any?, iKind: ZSignalKind) in
-                favoritesManager.updateGrabAndIndexFor(zone)
+            favoritesManager.showFavoritesAndGrab(zone) { (iThere: Any?, iKind: ZSignalKind) in
                 self.syncAnd(.redraw)
             }
         }
@@ -209,7 +208,7 @@ class ZEditingManager: NSObject {
 
 
     func travelThroughBookmark(_ bookmark: Zone) {
-        travelManager.changeFocusThroughZone(bookmark, atArrival: { (object, kind) in
+        travelManager.travelThrough(bookmark, atArrival: { (object, kind) in
             if let there: Zone = object as? Zone {
                 selectionManager.grab(there)
                 self.syncAnd(.redraw)
@@ -235,7 +234,7 @@ class ZEditingManager: NSObject {
             if !isShift {
                 grabAndRedraw()
             } else {
-                travelManager.travelToFavorites() { (iThere: Any?, iKind: ZSignalKind) in
+                favoritesManager.showFavoritesAndGrab(nil) { (iThere: Any?, iKind: ZSignalKind) in
                     grabAndRedraw()
                 }
             }
@@ -273,7 +272,7 @@ class ZEditingManager: NSObject {
         if !iZone.isBookmark {
             focusOn(iZone, .data)
         } else {
-            travelManager.changeFocusThroughZone(iZone, atArrival: { (object, kind) in
+            travelManager.travelThrough(iZone, atArrival: { (object, kind) in
                 focusOn((object as! Zone), .redraw)
             })
         }
@@ -666,8 +665,7 @@ class ZEditingManager: NSObject {
                 /////////////////
 
                 if zone.isRoot {
-                    favoritesManager.updateGrabAndIndexFor(zone)
-                    travelManager.changeFocusThroughZone(zone) { object, kind in
+                    favoritesManager.showFavoritesAndGrab(zone) { object, kind in
                         self.syncAnd(.redraw)
                     }
                 } else if extreme {
@@ -730,7 +728,7 @@ class ZEditingManager: NSObject {
                         controllersManager.syncToCloudAndSignalFor(grandparent!, regarding: .redraw) {}
                     }
                 } else if parent != nil && parent!.isRoot {
-                    travelManager.travelToFavorites() { object, kind in
+                    favoritesManager.showFavoritesAndGrab(nil) { object, kind in
                         moveIntoHere(favoritesManager.favoritesRootZone)
                     }
                 } else {
@@ -815,7 +813,7 @@ class ZEditingManager: NSObject {
                         let grabAndTravel = {
                             selectionManager.grab(mover)
 
-                            travelManager.changeFocusThroughZone(toThere, atArrival: { (object, kind) in
+                            travelManager.travelThrough(toThere, atArrival: { (object, kind) in
                                 let there = object as! Zone
 
                                 if !sameGraph {

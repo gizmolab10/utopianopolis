@@ -33,22 +33,30 @@ class ZFavoritesManager: NSObject {
     }
 
 
-    func clear() {
-        var toBeOrphaned: [Zone] = []
-
-        for child in favoritesRootZone.children {
-            if !child.isBookmark {
-                toBeOrphaned.append(child)
+    func setupDefaultFavorites() {
+        let modeAtIndex = { (_ index: Int) -> ZStorageMode in
+            switch index {
+            case 0:  return .everyone
+            default: return .mine
             }
         }
 
-        for zone in toBeOrphaned {
-            zone.orphan()
+        let createDefaultFavoriteAt = { (_ index: Int) in
+            let          mode = modeAtIndex(index)
+            let          name = mode.rawValue
+            let      bookmark = self.create(withBookmark: nil, false, parent: self.defaultFavorites, atIndex: index, mode, name)
+            bookmark.zoneLink =  "\(name)::"
+        }
+
+        if defaultFavorites.count == 0 {
+            for index in [0, 1] {
+                createDefaultFavoriteAt(index)
+            }
         }
     }
 
 
-    // MARK:- new API
+    // MARK:- API
     // MARK:-
 
 
@@ -83,46 +91,33 @@ class ZFavoritesManager: NSObject {
     }
 
 
-    func setupDefaultFavorites() {
+    func showFavoritesAndGrab(_ zone: Zone?, _ atArrival: @escaping SignalClosure) {
+        gStorageMode = .favorites
 
-        func modeAtIndex(_ index: Int) -> ZStorageMode {
-            switch index {
-            case 0:  return .everyone
-            default: return .mine
-            }
-        }
-
-        func createDefaultFavoriteAt(_ index: Int) {
-            let          mode = modeAtIndex(index)
-            let          name = mode.rawValue
-            let      bookmark = create(withBookmark: nil, false, parent: defaultFavorites, atIndex: index, mode, name)
-            bookmark.zoneLink =  "\(name)::"
-        }
-
-        if defaultFavorites.count == 0 {
-            for index in [0, 1] {
-                createDefaultFavoriteAt(index)
-            }
+        update()
+        travelManager.travel {
+            self.updateGrabAndIndexFor(zone)
+            atArrival(zone, .redraw)
         }
     }
 
 
-    // MARK:- switch
+    // MARK:- internals
     // MARK:-
 
 
-    func updateGrabAndIndexFor(_ zone: Zone?) {
+    private func updateGrabAndIndexFor(_ zone: Zone?) {
         update()
 
-        func updateForIndex(_ index: Int) {
-            favoritesIndex = index
+        let updateForIndex = { (_ index: Int) in
+            self.favoritesIndex = index
 
-            selectionManager.grab(favoritesRootZone[index])
+            selectionManager.grab(self.favoritesRootZone[index])
         }
 
         if zone != nil {
-            let identifier = zone?.record.recordID.recordName
-            let       mode = zone?.storageMode
+            let     identifier = zone?.record.recordID.recordName
+            let           mode = zone?.storageMode
 
             for (index, favorite) in favoritesRootZone.children.enumerated() {
                 if favorite.isFavorite && favorite.crossLink?.record.recordID.recordName == identifier {
@@ -136,10 +131,12 @@ class ZFavoritesManager: NSObject {
                 }
             }
         }
+
+        updateForIndex(0)
     }
 
 
-    func incrementFavoritesIndex(by: Int) -> Int {
+    private func incrementFavoritesIndex(by: Int) -> Int {
         update()
 
         var index = favoritesIndex + by
@@ -155,8 +152,13 @@ class ZFavoritesManager: NSObject {
     }
 
 
-    func nextFavorite(increment: Int) -> Zone? {
-        let index = incrementFavoritesIndex(by: increment)
+    // MARK:- switch
+    // MARK:-
+
+
+    func nextFavorite(forward: Bool) -> Zone? {
+        let  increment = (forward ? 1 : -1)
+        let      index = incrementFavoritesIndex(by: increment)
 
         return favoritesRootZone.count <= index ? nil :favoritesRootZone[index]
     }
@@ -170,7 +172,7 @@ class ZFavoritesManager: NSObject {
             let bookmark = favoritesRootZone[favoritesIndex]!
 
             if bookmark.isFavorite {
-                travelManager.changeFocusThroughZone(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
+                travelManager.travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
                     if (travelManager.hereZone?.isDeleted)! {
                         return self.switchToNext(forward) { atArrival() }
                     }

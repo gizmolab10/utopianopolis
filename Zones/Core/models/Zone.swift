@@ -364,8 +364,8 @@ class Zone : ZRecord {
     }
 
 
-    func addAndReorderChild(_ child: Zone?, at index: Int?) {
-        if let index = addChild(child, at: asTask ? 0 : nil) {
+    func addAndReorderChild(_ child: Zone?, at iIndex: Int?) {
+        if let index = addChild(child, at: iIndex) {
             recomputeOrderingUponInsertionAt(index)
         }
     }

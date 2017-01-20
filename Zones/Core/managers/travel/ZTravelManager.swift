@@ -62,19 +62,6 @@ class ZTravelManager: NSObject {
     }
 
 
-    // MARK:- kludge for selecting within bookmark view
-    // MARK:-
-
-
-    func indexOfMode(_ mode: ZStorageMode) -> Int { // KLUDGE, perhaps use ordered set or dictionary
-        switch mode {
-        case .everyone: return  1
-        case .mine:     return  0
-        default:        return -1
-        }
-    }
-
-
     // MARK:- travel
     // MARK:-
 
@@ -87,34 +74,8 @@ class ZTravelManager: NSObject {
     }
 
 
-    func travelToFavorites(_ atArrival: @escaping SignalClosure) {
-
-        //////////////////////////////
-        // going out to favorites graph
-        //////////////////////////////
-
-        let index = indexOfMode(gStorageMode) // index is a KLUDGE
-
-        gStorageMode = .favorites
-
-        travel {
-            var there = favoritesManager.favoritesRootZone
-
-            if index >= 0 && index < there.count {
-                there = there[index]!
-            }
-
-            atArrival(there, .redraw)
-        }
-    }
-
-
-    func changeFocusThroughZone(_ zone: Zone, atArrival: @escaping SignalClosure) {
-        var there: Zone? = nil
-
-        if zone.isRoot {
-            travelToFavorites(atArrival)
-        } else if zone.isBookmark, let crossLink = zone.crossLink, let mode = crossLink.storageMode, let record = crossLink.record {
+    func travelThrough(_ zone: Zone, atArrival: @escaping SignalClosure) {
+        if !zone.isRoot, zone.isBookmark, let crossLink = zone.crossLink, let mode = crossLink.storageMode, let record = crossLink.record {
 
             ////////////////////////
             // going into a bookmark
@@ -122,6 +83,7 @@ class ZTravelManager: NSObject {
 
             let recordIDOfLink = record.recordID
             let pointsAtHere   = crossLink.isRoot
+            var   there: Zone? = nil
 
             if  gStorageMode != mode {
                 gStorageMode  = mode

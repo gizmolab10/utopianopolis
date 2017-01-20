@@ -53,8 +53,8 @@ class ZSettingsViewController: ZGenericViewController {
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         let                     count = cloudManager.zones.count
         let                     total = travelManager.manifest.total
-        let              nextFavorite = (favoritesManager.nextFavorite(increment: 1)?.zoneName)!
-        nextFavoriteLabel?      .text = "next: \(nextFavorite)"
+        let                  nextName = (favoritesManager.nextFavorite(forward: true)?.zoneName)!
+        nextFavoriteLabel?      .text = "next: \(nextName)"
         totalCountLabel?        .text = "of \(total), retrieved: \(count)"
         graphNameLabel?         .text = "in graph: \(gStorageMode.rawValue)"
         levelLabel?             .text = "focus level: \((travelManager.hereZone?.level)!)"
