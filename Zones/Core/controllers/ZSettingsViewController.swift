@@ -159,7 +159,7 @@ class ZSettingsViewController: ZGenericViewController {
 
             root?.needChildren()
             operationsManager.children(true) {
-                root?.addChild(zone, at: 0)
+                root?.addAndReorderChild(zone, at: 0)
                 controllersManager.syncToCloudAndSignalFor(root, regarding: .redraw) {}
             }
         }

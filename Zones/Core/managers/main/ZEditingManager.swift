@@ -465,8 +465,7 @@ class ZEditingManager: NSObject {
 
                     child.needCreate()
                     widgetsManager.widgetForZone(zone!)?.textWidget.resignFirstResponder()
-
-                    zone?.addChild(child, at: asTask ? 0 : nil)
+                    zone?.addAndReorderChild(child, at: asTask ? 0 : nil)
 
                     zone?.showChildren            = true
                     travelManager.manifest.total += 1
@@ -640,7 +639,7 @@ class ZEditingManager: NSObject {
                             signalFor(nil, regarding: .redraw)
                         } else {
                             there.children.remove(at: index)
-                            there.addChild(zone, at:newIndex)
+                            there.addAndReorderChild(zone, at:newIndex)
                             controllersManager.syncToCloudAndSignalFor(there, regarding: .redraw) {}
                         }
                     }
@@ -906,7 +905,7 @@ class ZEditingManager: NSObject {
                     insert = nil
                 }
 
-                outTo.addChild(zone, at: insert!)
+                outTo.addAndReorderChild(zone, at: insert!)
 
                 onCompletion?()
             }
@@ -926,7 +925,7 @@ class ZEditingManager: NSObject {
                 zone.orphan()
             }
 
-            into.addChild(zone, at: asTask ? 0 : nil)
+            into.addAndReorderChild(zone, at: asTask ? 0 : nil)
             onCompletion?()
         }
     }

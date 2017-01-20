@@ -212,7 +212,7 @@ class ZFavoritesManager: NSObject {
         let bookmark:  Zone = create(withBookmark: withBookmark, isFavorite, storageMode, name)
         let  insertAt: Int? = isFavorite || atIndex == count ? nil : atIndex
 
-        parent.addChild(bookmark, at: insertAt)
+        parent.addAndReorderChild(bookmark, at: insertAt)
         bookmark.updateCloudProperties() // is this needed?
 
         return bookmark

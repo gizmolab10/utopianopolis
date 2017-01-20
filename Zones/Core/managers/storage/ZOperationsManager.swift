@@ -118,7 +118,7 @@ class ZOperationsManager: NSObject {
 
             for identifier in identifiers {
                 let operation = BlockOperation {
-                    self.report(String(describing: identifier))
+                    // self.report(String(describing: identifier))
 
                     self          .invokeOn(identifier, mode: saved) {
 

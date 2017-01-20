@@ -320,12 +320,12 @@ class Zone : ZRecord {
     }
 
 
-    func addChild(_ child: Zone?) {
-        addChild(child, at: 0)
+    @discardableResult func addChild(_ child: Zone?) -> Int? {
+        return addChild(child, at: 0)
     }
 
 
-    func addChild(_ child: Zone?, at index: Int?) {
+    @discardableResult func addChild(_ child: Zone?, at index: Int?) -> Int? {
         if child != nil {
             hasChildren = true
 
@@ -333,7 +333,7 @@ class Zone : ZRecord {
             // NOTE: both must have a record for this to be effective
 
             if children.contains(child!) {
-                return
+                return children.index(of: child!)
             }
 
             if child?.record != nil {
@@ -341,7 +341,7 @@ class Zone : ZRecord {
 
                 for sibling in children {
                     if sibling.record != nil && sibling.record.recordID.recordName == identifier {
-                        return
+                        return children.index(of: child!)
                     }
                 }
             }
@@ -356,7 +356,17 @@ class Zone : ZRecord {
             }
 
             child?.updateLevel()
-            recomputeOrderingUponInsertionAt(insertAt)
+
+            return insertAt
+        }
+
+        return nil
+    }
+
+
+    func addAndReorderChild(_ child: Zone?, at index: Int?) {
+        if let index = addChild(child, at: asTask ? 0 : nil) {
+            recomputeOrderingUponInsertionAt(index)
         }
     }
 
