@@ -124,7 +124,7 @@ class ZEditingManager: NSObject {
 
             switch key! {
             case "p":  printHere()
-            case "b":  createBookmark(isShift)
+            case "b":  createBookmark()
             case "\"": doFavorites(true, isOption)
             case "'":  doFavorites(isShift, isOption)
             case "/":
@@ -208,6 +208,7 @@ class ZEditingManager: NSObject {
 
 
     func travelThroughBookmark(_ bookmark: Zone) {
+        favoritesManager.updateGrabAndIndexFor(bookmark)
         travelManager.travelThrough(bookmark, atArrival: { (object, kind) in
             if let there: Zone = object as? Zone {
                 selectionManager.grab(there)
@@ -217,27 +218,17 @@ class ZEditingManager: NSObject {
     }
 
 
-    func createBookmark(_ isShift: Bool) {
+    func createBookmark() {
         if gStorageMode != .favorites, let zone = selectionManager.firstGrabbableZone, !zone.isRoot {
             var bookmark: Zone? = nil
 
             invokeWithMode(.mine) {
-                bookmark = favoritesManager.createBookmarkFor(zone, isFavorite: isShift)
+                bookmark = favoritesManager.createBookmarkFor(zone, isFavorite: false)
             }
 
-            let grabAndRedraw = {
-                selectionManager.grab(bookmark)
-                self.signalFor(nil, regarding: .redraw)
-                operationsManager.sync {}
-            }
-
-            if !isShift {
-                grabAndRedraw()
-            } else {
-                favoritesManager.showFavoritesAndGrab(nil) { (iThere: Any?, iKind: ZSignalKind) in
-                    grabAndRedraw()
-                }
-            }
+            selectionManager.grab(bookmark)
+            self.signalFor(nil, regarding: .redraw)
+            operationsManager.sync {}
         }
     }
 
@@ -270,6 +261,7 @@ class ZEditingManager: NSObject {
         }
 
         if !iZone.isBookmark {
+            favoritesManager.createBookmarkFor(iZone, isFavorite: true)
             focusOn(iZone, .data)
         } else {
             travelManager.travelThrough(iZone, atArrival: { (object, kind) in

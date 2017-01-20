@@ -404,11 +404,6 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Oel-Sg-rlG"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Favorites bookmark" keyEquivalent="B" id="wDs-1b-toe">
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Os1-X8-xe2"/>
-                                                        </connections>
-                                                    </menuItem>
                                                 </items>
                                             </menu>
                                         </menuItem>

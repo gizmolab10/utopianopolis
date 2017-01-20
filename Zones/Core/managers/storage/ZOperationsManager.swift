@@ -120,12 +120,11 @@ class ZOperationsManager: NSObject {
                 let operation = BlockOperation {
                     // self.report(String(describing: identifier))
 
-                    self          .invokeOn(identifier, mode: saved) {
-
+                    self            .invoke(identifier, mode: saved) {
                         if gStorageMode == .mine || [.file, .ready, .here, .root, .cloud, .subscribe, .unsubscribe].contains(identifier) {
                             self    .finish(identifier, mode: saved)
                         } else {
-                            self  .invokeOn(identifier, mode: .mine) {
+                            self    .invoke(identifier, mode: .mine) {
                                 self.finish(identifier, mode: saved)
                             }
                         }
@@ -147,15 +146,15 @@ class ZOperationsManager: NSObject {
 
 
     func finish(_ identifier: ZOperationID, mode: ZStorageMode) {
-        let               operation = waitingOps[identifier]!
-        self.waitingOps[identifier] = nil
-        gStorageMode                = mode
+        let          operation = waitingOps[identifier]!
+        waitingOps[identifier] = nil
+        gStorageMode           = mode
 
         operation.finish()
     }
 
 
-    func invokeOn(_ identifier: ZOperationID, mode: ZStorageMode, onCompletion: Closure?) {
+    func invoke(_ identifier: ZOperationID, mode: ZStorageMode, onCompletion: Closure?) {
         gStorageMode = mode
 
         switch identifier {

@@ -74,15 +74,9 @@ class ZTravelManager: NSObject {
     }
 
 
-    func travelThrough(_ zone: Zone, atArrival: @escaping SignalClosure) {
-        if !zone.isRoot, zone.isBookmark, let crossLink = zone.crossLink, let mode = crossLink.storageMode, let record = crossLink.record {
-
-            ////////////////////////
-            // going into a bookmark
-            ////////////////////////
-
+    func travelThrough(_ bookmark: Zone, atArrival: @escaping SignalClosure) {
+        if  let      crossLink = bookmark.crossLink, let mode = crossLink.storageMode, let record = crossLink.record {
             let recordIDOfLink = record.recordID
-            let pointsAtHere   = crossLink.isRoot
             var   there: Zone? = nil
 
             if  gStorageMode != mode {
@@ -92,7 +86,7 @@ class ZTravelManager: NSObject {
                 // travel to a different graph
                 //////////////////////////////
 
-                if pointsAtHere {
+                if crossLink.isRoot {
                     travel {
                         atArrival(self.hereZone, .redraw)
                     }

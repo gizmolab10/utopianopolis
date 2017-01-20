@@ -128,11 +128,12 @@ class ZoneWidget: ZView {
         super.draw(dirtyRect)
 
         dispatchAsyncInForeground {
+            let                                 thickness = self.dragDot.width / 2.0
             let                                    radius = min(dirtyRect.size.height, dirtyRect.size.width) / 2.0
-            let                             color: ZColor = self.widgetZone.isBookmark ? gBookmarkColor : gZoneColor
+            let                                     color = self.widgetZone.isBookmark ? gBookmarkColor : gZoneColor
             self.dragHighlightView.zlayer.backgroundColor = color.withAlphaComponent(0.008).cgColor
 
-            self.dragHighlightView.addBorder(thickness: 0.15, radius: radius, color: color.cgColor)
+            self.dragHighlightView.addBorder(thickness: thickness, radius: radius, color: color.withAlphaComponent(0.2).cgColor)
         }
     }
 
@@ -160,9 +161,9 @@ class ZoneWidget: ZView {
     func layoutDragHighlight() {
         dragHighlightView.snp.removeConstraints()
         dragHighlightView.snp.makeConstraints({ (make: ConstraintMaker) in
-            make.top.bottom.equalTo(self)
+            make.bottom.top.equalTo(self)
             make.right.equalTo(self).offset(-10.0)
-            make.left.equalTo(dragDot.snp.centerX)
+            make.left.equalTo(dragDot.innerDot!.snp.left).offset(self.dragDot.width / 4.0)
         })
     }
 
@@ -324,7 +325,7 @@ class ZoneWidget: ZView {
                         siblingLine.snp.makeConstraints({ (make: ConstraintMaker) in
                             make.width.height.equalTo(gLineThickness)
                             make.centerX.equalTo(textWidget.snp.right).offset(6.0)
-                            make.centerY.equalTo(textWidget)
+                            make.centerY.equalTo(textWidget).offset(1.5)
                         })
                     }
                 }
@@ -342,7 +343,7 @@ class ZoneWidget: ZView {
         dragDot.setupForZone(widgetZone, asToggle: false)
         dragDot.innerDot?.snp.makeConstraints({ (make: ConstraintMaker) in
             make.right.equalTo(textWidget.snp.left)
-            make.centerY.equalTo(textWidget).offset(1.0)
+            make.centerY.equalTo(textWidget).offset(1.5)
         })
 
         if !hasChildren && !widgetZone.isBookmark {
@@ -358,7 +359,7 @@ class ZoneWidget: ZView {
             toggleDot.setupForZone(widgetZone, asToggle: true)
             toggleDot.innerDot?.snp.makeConstraints({ (make: ConstraintMaker) in
                 make.left.equalTo(textWidget.snp.right).offset(-1.0)
-                make.centerY.equalTo(textWidget).offset(1.0)
+                make.centerY.equalTo(textWidget).offset(1.5)
                 make.right.lessThanOrEqualToSuperview().offset(-1.0)
             })
         }

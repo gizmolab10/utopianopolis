@@ -106,7 +106,7 @@ class ZFavoritesManager: NSObject {
     // MARK:-
 
 
-    private func updateGrabAndIndexFor(_ zone: Zone?) {
+    func updateGrabAndIndexFor(_ zone: Zone?) {
         update()
 
         let updateForIndex = { (_ index: Int) in

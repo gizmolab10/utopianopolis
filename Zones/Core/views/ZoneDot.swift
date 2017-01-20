@@ -27,11 +27,18 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var singleClicker: NSGestureRecognizer?
 
 
+    var width: CGFloat {
+        get {
+            return innerDot!.bounds.width
+        }
+    }
+
+
     override func draw(_ dirtyRect: CGRect) {
         if isInnerDot {
             let      isBookmark = (widgetZone?.isBookmark)!
             let   selectedColor = isBookmark ? gBookmarkColor : gZoneColor
-            let shouldHighlight = isToggle ? !(widgetZone?.showChildren)! || isBookmark : selectionManager.isGrabbed(widgetZone!)
+            let shouldHighlight = isToggle ? (!(widgetZone?.showChildren)! || isBookmark) : selectionManager.isGrabbed(widgetZone!)
             let       fillColor = shouldHighlight ? selectedColor : ZColor.clear
             let       thickness = CGFloat(gLineThickness)
             let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))

@@ -94,13 +94,13 @@ class ZCloudManager: ZRecordsManager {
 
 
     func create(_ storageMode: ZStorageMode, onCompletion: Closure?) {
-        if  let             operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
-            operation  .recordsToSave = recordsWithMatchingStates([.needsCreate])
-            operation.completionBlock = onCompletion
+        if  let           operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
+            operation.recordsToSave = recordsWithMatchingStates([.needsCreate])
 
             clearState(.needsCreate)
 
             if (operation.recordsToSave?.count)! > 0 {
+                operation.completionBlock = onCompletion
 
                 toConsole("creating \((operation.recordsToSave?.count)!)")
 

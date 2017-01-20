@@ -23,8 +23,7 @@ class ZSelectionManager: NSObject {
 
 
     func clear() {
-        currentlyEditingZone  = nil
-        // currentlyGrabbedZones = []
+        currentlyEditingZone = nil
     }
 
 
