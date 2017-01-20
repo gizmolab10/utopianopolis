@@ -35,6 +35,7 @@ class ZSettingsViewController: ZGenericViewController {
 
     @IBOutlet var         fractionInMemory: ZProgressIndicator?
     @IBOutlet var graphAlteringModeControl: ZSegmentedControl?
+    @IBOutlet var        nextFavoriteLabel: ZTextField?
     @IBOutlet var          totalCountLabel: ZTextField?
     @IBOutlet var           graphNameLabel: ZTextField?
     @IBOutlet var               levelLabel: ZTextField?
@@ -52,6 +53,8 @@ class ZSettingsViewController: ZGenericViewController {
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         let                     count = cloudManager.zones.count
         let                     total = travelManager.manifest.total
+        let              nextFavorite = (favoritesManager.nextFavorite(increment: 1)?.zoneName)!
+        nextFavoriteLabel?      .text = "next: \(nextFavorite)"
         totalCountLabel?        .text = "of \(total), retrieved: \(count)"
         graphNameLabel?         .text = "in graph: \(gStorageMode.rawValue)"
         levelLabel?             .text = "focus level: \((travelManager.hereZone?.level)!)"
@@ -87,7 +90,7 @@ class ZSettingsViewController: ZGenericViewController {
     }
 
 
-    // MARK:- actions
+    // MARK:- preference actions
     // MARK:-
 
 
@@ -121,14 +124,26 @@ class ZSettingsViewController: ZGenericViewController {
     }
 
 
-    @IBAction func emptyTrashButtonAction(_ button: NSButton) {
-        operationsManager.emptyTrash {
-            self.toConsole("eliminated")
-        }
+    @IBAction func graphAlteringModeAction(_ control: ZSegmentedControl) {
+        gGraphAlteringMode = ZGraphAlteringMode(rawValue: control.selectedSegment)!
     }
 
 
-    @IBAction func restoreFromTrashButtonAction(_ button: NSButton) {
+    // MARK:- cloud actions
+    // MARK:-
+    
+
+    @IBAction func emptyTrashButtonAction(_ button: ZButton) {
+
+        // needs elaborate gui, like search results, but with checkboxes and [de]select all checkbox
+
+        //operationsManager.emptyTrash {
+        //    self.toConsole("eliminated")
+        //}
+    }
+
+
+    @IBAction func restoreFromTrashButtonAction(_ button: ZButton) {
         operationsManager.undelete {
             self.signalFor(nil, regarding: .redraw)
         }
@@ -136,30 +151,22 @@ class ZSettingsViewController: ZGenericViewController {
     }
 
 
-    @IBAction func restoreZoneButtonAction(_ button: NSButton) {
+    @IBAction func restoreZoneButtonAction(_ button: ZButton) {
         // similar to editingManager.moveInto
         if  let               zone = selectionManager.firstGrabbableZone {
-            let             parent = travelManager.rootZone
-            travelManager.hereZone = parent
-            zone.parentZone        = parent
+            let               root = travelManager.rootZone
+            travelManager.hereZone = root
 
-            parent?.needChildren()
+            root?.needChildren()
             operationsManager.children(true) {
-                parent?.children.insert(zone, at: 0)
-                parent?.recomputeOrderingUponInsertionAt(0)
-                zone.updateLevel()
-                controllersManager.syncToCloudAndSignalFor(parent, regarding: .redraw) {}
+                root?.addChild(zone, at: 0)
+                controllersManager.syncToCloudAndSignalFor(root, regarding: .redraw) {}
             }
         }
     }
 
     
-    @IBAction func pushToCloudButtonAction(_ button: NSButton) {
+    @IBAction func pushToCloudButtonAction(_ button: ZButton) {
         cloudManager.royalFlush {}
-    }
-
-
-    @IBAction func graphAlteringModeAction(_ control: ZSegmentedControl) {
-        gGraphAlteringMode = ZGraphAlteringMode(rawValue: control.selectedSegment)!
     }
 }

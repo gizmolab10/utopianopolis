@@ -621,17 +621,17 @@ CQ
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZSettingsViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="222" height="1124"/>
+                        <rect key="frame" x="0.0" y="0.0" width="222" height="1151"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="0.0" width="222" height="1124"/>
+                                <rect key="frame" x="0.0" y="0.0" width="222" height="1151"/>
                                 <subviews>
                                     <customView identifier="information" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="998" width="222" height="126"/>
+                                        <rect key="frame" x="0.0" y="998" width="222" height="153"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="107" width="222" height="19"/>
+                                                <rect key="frame" x="0.0" y="134" width="222" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ce9-hv-nUx" userLabel="Information">
                                                         <rect key="frame" x="0.0" y="1" width="222" height="17"/>
@@ -669,13 +669,13 @@ CQ
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="icr-XL-kk7">
-                                                <rect key="frame" x="0.0" y="0.0" width="222" height="107"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="222" height="134"/>
                                                 <subviews>
                                                     <progressIndicator wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="dmI-b1-Z0D">
-                                                        <rect key="frame" x="20" y="80" width="182" height="20"/>
+                                                        <rect key="frame" x="20" y="107" width="182" height="20"/>
                                                     </progressIndicator>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xmv-NU-oFf" userLabel="Total Count Label">
-                                                        <rect key="frame" x="-2" y="62" width="226" height="19"/>
+                                                        <rect key="frame" x="-2" y="89" width="226" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="19" id="FXf-NW-zak"/>
                                                         </constraints>
@@ -686,7 +686,7 @@ CQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ph8-7t-kSh">
-                                                        <rect key="frame" x="-2" y="35" width="226" height="19"/>
+                                                        <rect key="frame" x="-2" y="62" width="226" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="19" id="1Kn-jc-7t3"/>
                                                         </constraints>
@@ -697,11 +697,22 @@ CQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ctL-6d-P2u">
-                                                        <rect key="frame" x="-2" y="8" width="226" height="19"/>
+                                                        <rect key="frame" x="-2" y="35" width="226" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="19" id="Lfd-gf-Mjg"/>
                                                         </constraints>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="UeS-3i-qKd">
+                                                            <font key="font" metaFont="system" size="15"/>
+                                                            <color key="textColor" name="keyboardFocusIndicatorColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0sl-fO-vIV">
+                                                        <rect key="frame" x="-2" y="8" width="226" height="19"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="19" id="TQo-kd-jzi"/>
+                                                        </constraints>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="iAA-dr-cwO">
                                                             <font key="font" metaFont="system" size="15"/>
                                                             <color key="textColor" name="keyboardFocusIndicatorColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -715,13 +726,16 @@ CQ
                                                     <constraint firstAttribute="trailing" secondItem="Xmv-NU-oFf" secondAttribute="trailing" id="VCO-LS-iVu"/>
                                                     <constraint firstItem="dmI-b1-Z0D" firstAttribute="top" secondItem="icr-XL-kk7" secondAttribute="top" constant="8" id="Y1W-Vn-Wxg"/>
                                                     <constraint firstAttribute="trailing" secondItem="dmI-b1-Z0D" secondAttribute="trailing" constant="20" id="aI2-nw-VPA"/>
+                                                    <constraint firstAttribute="bottom" secondItem="0sl-fO-vIV" secondAttribute="bottom" constant="8" id="doq-il-34f"/>
                                                     <constraint firstItem="Xmv-NU-oFf" firstAttribute="centerX" secondItem="icr-XL-kk7" secondAttribute="centerX" id="eG8-K0-vT8"/>
                                                     <constraint firstItem="dmI-b1-Z0D" firstAttribute="leading" secondItem="icr-XL-kk7" secondAttribute="leading" constant="20" id="eUf-4p-PZZ"/>
                                                     <constraint firstItem="ctL-6d-P2u" firstAttribute="top" secondItem="Ph8-7t-kSh" secondAttribute="bottom" constant="8" id="nGJ-WH-1K6"/>
                                                     <constraint firstItem="Xmv-NU-oFf" firstAttribute="leading" secondItem="icr-XL-kk7" secondAttribute="leading" id="pEm-P7-iSS"/>
+                                                    <constraint firstItem="0sl-fO-vIV" firstAttribute="top" secondItem="ctL-6d-P2u" secondAttribute="bottom" constant="8" id="q2m-A7-s53"/>
                                                     <constraint firstAttribute="trailing" secondItem="Ph8-7t-kSh" secondAttribute="trailing" id="sxU-VQ-lgb"/>
                                                     <constraint firstItem="ctL-6d-P2u" firstAttribute="leading" secondItem="icr-XL-kk7" secondAttribute="leading" id="uaz-K9-0kX"/>
-                                                    <constraint firstAttribute="bottom" secondItem="ctL-6d-P2u" secondAttribute="bottom" constant="8" id="wKf-6U-MtS"/>
+                                                    <constraint firstAttribute="trailing" secondItem="0sl-fO-vIV" secondAttribute="trailing" id="ydt-FI-OGh"/>
+                                                    <constraint firstItem="0sl-fO-vIV" firstAttribute="leading" secondItem="icr-XL-kk7" secondAttribute="leading" id="zEX-Wg-7Ws"/>
                                                     <constraint firstItem="Xmv-NU-oFf" firstAttribute="top" secondItem="dmI-b1-Z0D" secondAttribute="bottom" id="zN7-Me-e0W"/>
                                                 </constraints>
                                             </customView>
@@ -1011,7 +1025,7 @@ CQ
                                             <outlet property="toggleButton" destination="aCk-9D-lHI" id="lcf-J5-cK6"/>
                                         </connections>
                                     </customView>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Tools View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Cloud View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="476" width="222" height="143"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Dnz-Gb-8cH" userLabel="Title and Toggle">
@@ -1022,7 +1036,7 @@ CQ
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="c3Z-ep-PLR"/>
                                                         </constraints>
-                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Tools" drawsBackground="YES" id="qf8-FE-82u">
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Cloud" drawsBackground="YES" id="qf8-FE-82u">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="highlightColor" catalog="System" colorSpace="catalog"/>
@@ -1087,7 +1101,7 @@ CQ
                                                     </button>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="m6t-D6-cP0">
                                                         <rect key="frame" x="14" y="1" width="194" height="32"/>
-                                                        <buttonCell key="cell" type="push" title="Empty Trash" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2MN-ZG-DWJ">
+                                                        <buttonCell key="cell" type="push" title="Empty Trash" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2MN-ZG-DWJ">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
@@ -1242,7 +1256,6 @@ with OPTION:
                                     <constraint firstItem="9j5-fI-wCz" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="NFa-oz-tCT"/>
                                     <constraint firstItem="E5h-DF-X3i" firstAttribute="top" secondItem="q69-Nq-Tsm" secondAttribute="bottom" constant="1" id="QeE-0M-0Gx"/>
                                     <constraint firstItem="q69-Nq-Tsm" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="Sns-ea-bR9"/>
-                                    <constraint firstItem="M2W-8y-R0e" firstAttribute="top" secondItem="1wo-H2-e9s" secondAttribute="top" id="WrG-ac-Q77"/>
                                     <constraint firstAttribute="trailing" secondItem="q69-Nq-Tsm" secondAttribute="trailing" id="ZUC-ce-LOv"/>
                                     <constraint firstItem="9j5-fI-wCz" firstAttribute="top" secondItem="M2W-8y-R0e" secondAttribute="bottom" constant="1" id="cJJ-DH-e2W"/>
                                     <constraint firstItem="E5h-DF-X3i" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="cyO-Ii-0Xy"/>
@@ -1278,6 +1291,7 @@ with OPTION:
                         <outlet property="graphNameLabel" destination="ctL-6d-P2u" id="9Yj-ff-Cr2"/>
                         <outlet property="horizontalSpacing" destination="4gc-Kr-Jkn" id="CDq-PQ-xm8"/>
                         <outlet property="levelLabel" destination="Ph8-7t-kSh" id="2FW-va-uY9"/>
+                        <outlet property="nextFavoriteLabel" destination="0sl-fO-vIV" id="gUs-6S-Jch"/>
                         <outlet property="thickness" destination="w6J-MU-9os" id="a2j-5J-T8q"/>
                         <outlet property="totalCountLabel" destination="Xmv-NU-oFf" id="pBL-Qc-Xdz"/>
                         <outlet property="verticalSpacing" destination="P4e-qG-Zcg" id="y3D-nG-kMm"/>
@@ -1286,7 +1300,7 @@ with OPTION:
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-183" y="1675.5"/>
+            <point key="canvasLocation" x="-183" y="1675"/>
         </scene>
         <!--Search Box View Controller-->
         <scene sceneID="Gwm-hS-Ozn">

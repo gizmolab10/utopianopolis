@@ -45,7 +45,7 @@ struct ZSettingsViewID: OptionSet {
     static let        Help = ZSettingsViewID(rawValue: 1 << 0)
     static let Preferences = ZSettingsViewID(rawValue: 1 << 1)
     static let Information = ZSettingsViewID(rawValue: 1 << 2)
-    static let       Tools = ZSettingsViewID(rawValue: 1 << 3)
+    static let  CloudTools = ZSettingsViewID(rawValue: 1 << 3)
     static let         All = ZSettingsViewID(rawValue: 0xFFFF)
 }
 

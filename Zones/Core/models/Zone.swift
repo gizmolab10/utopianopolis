@@ -320,16 +320,21 @@ class Zone : ZRecord {
     }
 
 
-    func addChild(_ child: Zone?, at index: Int) {
+    func addChild(_ child: Zone?) {
+        addChild(child, at: 0)
+    }
+
+
+    func addChild(_ child: Zone?, at index: Int?) {
         if child != nil {
             hasChildren = true
+
+            // make sure it's not already been added
+            // NOTE: both must have a record for this to be effective
 
             if children.contains(child!) {
                 return
             }
-
-            // make sure it's not already been added
-            // NOTE: both must have a record for this to be effective
 
             if child?.record != nil {
                 let identifier = child?.record.recordID.recordName
@@ -341,15 +346,26 @@ class Zone : ZRecord {
                 }
             }
 
-            child?.updateLevel()
+            child!.parentZone = self
+            let      insertAt = index ?? count
 
-            children.insert(child!, at: index)
+            if index == nil {
+                children.append(child!)
+            } else {
+                children.insert(child!, at: insertAt)
+            }
+
+            child?.updateLevel()
+            recomputeOrderingUponInsertionAt(insertAt)
         }
     }
 
 
-    func addChild(_ child: Zone?) {
-        addChild(child, at: 0)
+    func recomputeOrderingUponInsertionAt(_ index: Int) {
+        let  orderLarger = orderAt(index + 1) ?? 1.0
+        let orderSmaller = orderAt(index - 1) ?? 0.0
+        let        child = children[index]
+        child.order      = (orderLarger + orderSmaller) / 2.0
     }
 
 
@@ -390,14 +406,6 @@ class Zone : ZRecord {
         for (index, child) in children.enumerated() {
             child.order = increment * Double(index + 1)
         }
-    }
-
-
-    func recomputeOrderingUponInsertionAt(_ index: Int) {
-        let  orderLarger = orderAt(index + 1) ?? 1.0
-        let orderSmaller = orderAt(index - 1) ?? 0.0
-        let        child = children[index]
-        child.order      = (orderLarger + orderSmaller) / 2.0
     }
 
 
@@ -457,10 +465,9 @@ class Zone : ZRecord {
 
         if let childrenStore: [ZStorageDict] = dict[childrenKey] as! [ZStorageDict]? {
             for childStore: ZStorageDict in childrenStore {
-                let        child = Zone(dict: childStore)
-                child.parentZone = self
+                let child = Zone(dict: childStore)
 
-                children.append(child)
+                addChild(child, at: nil)
             }
 
             respectOrder()

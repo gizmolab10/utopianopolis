@@ -122,6 +122,7 @@ class ZRecord: NSObject {
         let zone = Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: gStorageMode)
 
         zone.mergeIntoAndTake(record)
+        zone.updateZoneProperties()
 
         return zone
     }

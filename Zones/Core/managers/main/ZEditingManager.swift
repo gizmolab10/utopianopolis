@@ -372,14 +372,14 @@ class ZEditingManager: NSObject {
             zone.needSave()
 
             revealParentAndSiblingsOf(zone) {
-                let parent = zone.parentZone
+                if let parent = zone.parentZone {
+                    if  self.hereZone == zone {
+                        self.hereZone = parent
+                    }
 
-                if  self.hereZone == zone {
-                    self.hereZone = parent!
+                    selectionManager.grab(parent)
+                    self.showToggleDot(show, zone: parent, recursively: recursively, onCompletion: onCompletion)
                 }
-
-                selectionManager.grab(parent)
-                self.showToggleDot(show, zone: parent!, recursively: recursively, onCompletion: onCompletion)
             }
         } else {
             if  zone.showChildren != show {
@@ -461,25 +461,16 @@ class ZEditingManager: NSObject {
             operationsManager.children(false) {
                 if operationsManager.isReady {
                     let record = CKRecord(recordType: zoneTypeKey)
-                    let insert = asTask ? 0 : (zone?.count)!
                     let  child = Zone(record: record, storageMode: gStorageMode)
 
                     child.needCreate()
                     widgetsManager.widgetForZone(zone!)?.textWidget.resignFirstResponder()
 
-                    if asTask {
-                        zone?.children.insert(child, at: 0)
-                    } else {
-                        zone?.children.append(child)
-                    }
+                    zone?.addChild(child, at: asTask ? 0 : nil)
 
-                    child.parentZone              = zone
-                    zone?.hasChildren             = true
                     zone?.showChildren            = true
                     travelManager.manifest.total += 1
 
-                    zone?.recomputeOrderingUponInsertionAt(insert)
-                    zone?.needSave()
                     onCompletion?(child)
                 }
             }
@@ -649,8 +640,7 @@ class ZEditingManager: NSObject {
                             signalFor(nil, regarding: .redraw)
                         } else {
                             there.children.remove(at: index)
-                            there.children.insert(zone, at:newIndex)
-                            there.recomputeOrderingUponInsertionAt(newIndex)
+                            there.addChild(zone, at:newIndex)
                             controllersManager.syncToCloudAndSignalFor(there, regarding: .redraw) {}
                         }
                     }
@@ -908,24 +898,16 @@ class ZEditingManager: NSObject {
                     }
                 }
 
-                if insert == nil || insert! > outTo.count {
-                    insert = outTo.count
-                }
-
-                if insert == outTo.count {
-                    outTo.children.append(zone)
-                } else {
-                    outTo.children.insert(zone, at: insert!)
-                }
-
                 if orphan {
                     zone.orphan()
                 }
-                
-                zone.parentZone = outTo
-                
-                outTo.recomputeOrderingUponInsertionAt(insert!)
-                zone.updateLevel()
+
+                if  insert! > outTo.count {
+                    insert = nil
+                }
+
+                outTo.addChild(zone, at: insert!)
+
                 onCompletion?()
             }
         }
@@ -940,23 +922,11 @@ class ZEditingManager: NSObject {
         into.showChildren = true
 
         operationsManager.children(false) {
-            let siblingCount = into.count
-            let       insert = asTask ? 0 : siblingCount
-
             if orphan {
                 zone.orphan()
             }
 
-            zone.parentZone = into
-
-            if insert == siblingCount {
-                into.children.append(zone)
-            } else {
-                into.children.insert(zone, at: insert)
-            }
-
-            into.recomputeOrderingUponInsertionAt(insert)
-            zone.updateLevel()
+            into.addChild(zone, at: asTask ? 0 : nil)
             onCompletion?()
         }
     }
