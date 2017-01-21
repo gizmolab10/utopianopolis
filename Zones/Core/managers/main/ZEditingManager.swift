@@ -193,8 +193,10 @@ class ZEditingManager: NSObject {
 
 
     func doFavorites(_ isShift: Bool, _ isOption: Bool) {
-        if !isShift || !isOption {
-            favoritesManager.switchToNext(!isShift) {
+        if                !isShift || !isOption {
+            let backward = isShift ||  isOption
+
+            favoritesManager.switchToNext(!backward) {
                 self.syncAnd(.redraw)
             }
         } else {
@@ -889,7 +891,7 @@ class ZEditingManager: NSObject {
                     zone.orphan()
                 }
 
-                if  insert! > outTo.count {
+                if  insert != nil && insert! > outTo.count {
                     insert = nil
                 }
 

@@ -144,7 +144,7 @@ class ZFavoritesManager: NSObject {
 
         if index >= count {
             index = 0
-        } else if by < 0 && index <= 0 {
+        } else if index < 0 {
             index = count - 1
         }
 
@@ -180,7 +180,10 @@ class ZFavoritesManager: NSObject {
             } else if let mode = bookmark.crossLink?.storageMode {
                 gStorageMode = mode
 
-                travelManager.travel(atArrival)
+                travelManager.travel {
+                    selectionManager.grab(travelManager.hereZone)
+                    atArrival()
+                }
             } else {
                 return switchToNext(forward) { atArrival() }
             }
