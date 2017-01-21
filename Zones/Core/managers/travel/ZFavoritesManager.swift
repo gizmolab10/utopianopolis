@@ -102,17 +102,26 @@ class ZFavoritesManager: NSObject {
     }
 
 
+    func updateGrabAndIndexFor(_ zone: Zone?) {
+        updateIndexFor(zone) { iObject in
+            if let bookmark = iObject as? Zone {
+                selectionManager.grab(bookmark)
+            }
+        }
+    }
+
+
     // MARK:- internals
     // MARK:-
 
 
-    func updateGrabAndIndexFor(_ zone: Zone?) {
+    func updateIndexFor(_ zone: Zone?, grab: ObjectClosure?) {
         update()
 
         let updateForIndex = { (_ index: Int) in
             self.favoritesIndex = index
 
-            selectionManager.grab(self.favoritesRootZone[index])
+            grab?(self.favoritesRootZone[index]!)
         }
 
         if zone != nil {
@@ -131,7 +140,7 @@ class ZFavoritesManager: NSObject {
                 }
             }
         }
-
+        
         updateForIndex(0)
     }
 
@@ -154,6 +163,13 @@ class ZFavoritesManager: NSObject {
 
     // MARK:- switch
     // MARK:-
+
+
+    func nextName(forward: Bool) -> String {
+        let name = nextFavorite(forward: forward)?.zoneName?.substring(to: 12)
+
+        return name ?? ""
+    }
 
 
     func nextFavorite(forward: Bool) -> Zone? {
@@ -213,7 +229,7 @@ class ZFavoritesManager: NSObject {
     @discardableResult func create(withBookmark: Zone?, _ isFavorite: Bool, parent: Zone, atIndex: Int, _ storageMode: ZStorageMode?, _ name: String?) -> Zone {
         let           count = parent.count
         let bookmark:  Zone = create(withBookmark: withBookmark, isFavorite, storageMode, name)
-        let  insertAt: Int? = isFavorite || atIndex == count ? nil : atIndex
+        let  insertAt: Int? = atIndex == count ? nil : atIndex
 
         parent.addAndReorderChild(bookmark, at: insertAt)
         bookmark.updateCloudProperties() // is this needed?
@@ -236,8 +252,15 @@ class ZFavoritesManager: NSObject {
 
         let    parent: Zone = isFavorite ? favoritesRootZone : zone.parentZone ?? favoritesRootZone
         let           count = parent.count
-        let           index = parent.children.index(of: zone) ?? count
         var bookmark: Zone? = zone.isBookmark ? zone.deepCopy() : nil
+        var           index = parent.children.index(of: zone) ?? count
+
+        if isFavorite {
+            updateIndexFor(zone) { object in }
+
+            index           = incrementFavoritesIndex(by: 1)
+        }
+
         bookmark            = create(withBookmark: bookmark, isFavorite, parent: parent, atIndex: index, zone.storageMode, zone.zoneName)
 
         if !isFavorite {

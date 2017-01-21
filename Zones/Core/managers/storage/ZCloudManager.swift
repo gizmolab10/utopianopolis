@@ -248,7 +248,6 @@ class ZCloudManager: ZRecordsManager {
         self.assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) in
             if iRecord != nil {
                 let               root = self.zoneForRecord(iRecord!)
-                travelManager.hereZone = root
                 travelManager.rootZone = root
                 root.level             = 0
 

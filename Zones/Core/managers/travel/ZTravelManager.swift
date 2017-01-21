@@ -94,16 +94,16 @@ class ZTravelManager: NSObject {
             let recordIDOfLink = record.recordID
             var   there: Zone? = nil
 
+            if isFavorites {
+                favoritesManager.updateIndexFor(bookmark) { object in }
+            }
+
             if  gStorageMode != mode {
                 gStorageMode  = mode
 
                 //////////////////////////////
                 // travel to a different graph
                 //////////////////////////////
-
-                if isFavorites {
-                    favoritesManager.updateGrabAndIndexFor(bookmark)
-                }
 
                 if crossLink.isRoot {
                     travel {
@@ -114,6 +114,7 @@ class ZTravelManager: NSObject {
                         if iRecord != nil {
                             self.hereZone = cloudManager.zoneForRecord(iRecord!)
 
+                            selectionManager.grab(self.hereZone)
                             self.manifest.needSave()
                             self.travel {
                                 atArrival(self.hereZone, .redraw)

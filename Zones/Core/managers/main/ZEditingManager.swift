@@ -212,10 +212,7 @@ class ZEditingManager: NSObject {
     func travelThroughBookmark(_ bookmark: Zone) {
         favoritesManager.updateGrabAndIndexFor(bookmark)
         travelManager.travelThrough(bookmark, atArrival: { (object, kind) in
-            if let there: Zone = object as? Zone {
-                selectionManager.grab(there)
-                self.syncAnd(.redraw)
-            }
+            self.syncAnd(.redraw)
         })
     }
 

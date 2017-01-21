@@ -303,6 +303,39 @@ extension String {
 
         return bounds.size
     }
+
+
+    func index(at: Int) -> Index {
+        var position = at
+
+        repeat {
+            if let index = index(startIndex, offsetBy: position, limitedBy: endIndex) {
+                return index
+            }
+
+            position -= 1
+        } while position > 0
+
+        return startIndex
+    }
+
+
+    func substring(from: Int) -> String {
+        return substring(from: index(at: from))
+    }
+
+
+    func substring(to: Int) -> String {
+        return substring(to: index(at: to))
+    }
+
+
+    func substring(with r: Range<Int>) -> String {
+        let startIndex = index(at: r.lowerBound)
+        let   endIndex = index(at: r.upperBound)
+
+        return substring(with: startIndex..<endIndex)
+    }
 }
 
 
