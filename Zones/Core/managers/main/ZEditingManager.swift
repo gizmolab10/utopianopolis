@@ -892,7 +892,7 @@ class ZEditingManager: NSObject {
                     insert = nil
                 }
 
-                outTo.addAndReorderChild(zone, at: insert!)
+                outTo.addAndReorderChild(zone, at: insert)
 
                 onCompletion?()
             }

@@ -124,9 +124,8 @@ class ZFavoritesManager: NSObject {
             grab?(self.favoritesRootZone[index]!)
         }
 
-        if zone != nil {
-            let     identifier = zone?.record.recordID.recordName
-            let           mode = zone?.storageMode
+        if  let identifier = zone?.record?.recordID.recordName, zone != nil {
+            let mode = zone!.storageMode
 
             for (index, favorite) in favoritesRootZone.children.enumerated() {
                 if favorite.isFavorite && favorite.crossLink?.record.recordID.recordName == identifier {

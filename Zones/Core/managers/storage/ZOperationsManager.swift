@@ -15,11 +15,11 @@ enum ZOperationID: Int {
     case cloud
     case manifest
     case root
-    case favoritess
+    case favorites
     case file
     case here
     case fetch
-    case flush // zones, manifests, favoritess
+    case flush // zones, manifests, favorites
     case children
     case unsubscribe
     case subscribe
@@ -113,19 +113,27 @@ class ZOperationsManager: NSObject {
                 self.setupAndRun(operationIDs) { onCompletion() }
             }
         } else {
-            let saved = gStorageMode
-            onReady   = onCompletion
+            let isFavorite = gStorageMode == .favorites
+            let      saved = gStorageMode
+            onReady        = onCompletion
 
             for identifier in identifiers {
                 let operation = BlockOperation {
                     // self.report(String(describing: identifier))
+                    let simple = [.file, .ready, .cloud, .subscribe, .unsubscribe].contains(identifier)
 
-                    self            .invoke(identifier, mode: saved) {
-                        if gStorageMode == .mine || [.file, .ready, .here, .root, .cloud, .subscribe, .unsubscribe].contains(identifier) {
-                            self    .finish(identifier, mode: saved)
+                    self                    .invoke(identifier, mode: saved) {
+                        if saved == .mine || (simple && !isFavorite) {
+                            self            .finish(identifier, mode: saved)
                         } else {
-                            self    .invoke(identifier, mode: .mine) {
-                                self.finish(identifier, mode: saved)
+                            self            .invoke(identifier, mode: .mine) {
+                                if !isFavorite {
+                                    self    .finish(identifier, mode: saved)
+                                } else {
+                                    self    .invoke(identifier, mode: .everyone) {
+                                        self.finish(identifier, mode: saved)
+                                    }
+                                }
                             }
                         }
                     }
@@ -162,7 +170,7 @@ class ZOperationsManager: NSObject {
         case .root:        cloudManager.establishRootAsHere(mode) { onCompletion?() }; break
         case .cloud:       cloudManager.fetchCloudZones    (mode) { onCompletion?() }; break
         case .manifest:    cloudManager.fetchManifest      (mode) { onCompletion?() }; break
-        case .favoritess:  cloudManager.fetchFavorites     (mode) { onCompletion?() }; break
+        case .favorites:   cloudManager.fetchFavorites     (mode) { onCompletion?() }; break
         case .here:       travelManager.establishHere      (mode) { onCompletion?() }; break // TODO: BROKEN
         case .children:    cloudManager.fetchChildren      (mode) { onCompletion?() }; break
         case .parent:      cloudManager.fetchParents       (mode) { onCompletion?() }; break
