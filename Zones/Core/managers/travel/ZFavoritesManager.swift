@@ -157,16 +157,14 @@ class ZFavoritesManager: NSObject {
 
 
     func nextFavorite(forward: Bool) -> Zone? {
-        let  increment = (forward ? 1 : -1)
-        let      index = incrementFavoritesIndex(by: increment)
+        let index = incrementFavoritesIndex(by: (forward ? 1 : -1))
 
         return favoritesRootZone.count <= index ? nil :favoritesRootZone[index]
     }
 
 
     func switchToNext(_ forward: Bool, atArrival: @escaping Closure) {
-        let  increment = (forward ? 1 : -1)
-        favoritesIndex = incrementFavoritesIndex(by: increment)
+        favoritesIndex = incrementFavoritesIndex(by: (forward ? 1 : -1))
 
         if favoritesRootZone.count > favoritesIndex {
             let bookmark = favoritesRootZone[favoritesIndex]!

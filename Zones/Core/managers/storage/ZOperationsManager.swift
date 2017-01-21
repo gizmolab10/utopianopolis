@@ -14,6 +14,7 @@ enum ZOperationID: Int {
     case ready
     case cloud
     case manifest
+    case root
     case favoritess
     case file
     case here
@@ -27,7 +28,6 @@ enum ZOperationID: Int {
     case create
     case parent
     case merge
-    case root
 }
 
 

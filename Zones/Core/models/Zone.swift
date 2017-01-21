@@ -392,6 +392,14 @@ class Zone : ZRecord {
     }
 
 
+    func moveChild(from: Int, to: Int) {
+        if to < count, from < count, let child = self[from] {
+            children.remove(       at: from)
+            children.insert(child, at: to)
+        }
+    }
+
+
     func orderAt(_ index: Int) -> Double? {
         if index >= 0 && index < count {
             let child = children[index]
@@ -435,7 +443,7 @@ class Zone : ZRecord {
 
         if !stop {
             for child in children {
-                if child.traverseApply(block) {
+                if child == self || child.traverseApply(block) {
                     stop = true
 
                     break

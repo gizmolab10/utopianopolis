@@ -15,8 +15,23 @@ class ZTravelManager: NSObject {
 
 
     var manifestByStorageMode = [ZStorageMode : ZManifest] ()
-    var hereZone: Zone? { get { return manifest.hereZone } set { manifest.hereZone = newValue } }
-    var rootZone: Zone!
+    var     rootByStorageMode = [ZStorageMode : Zone] ()
+    var       hereZone: Zone? { get { return manifest.hereZone } set { manifest.hereZone = newValue } }
+    var       rootZone: Zone? {
+        get {
+            switch gStorageMode {
+            case .favorites: return favoritesManager.favoritesRootZone
+            default:         return rootByStorageMode[gStorageMode]
+            }
+        }
+
+        set {
+            switch gStorageMode {
+            case .favorites: break
+            default:         rootByStorageMode[gStorageMode] = newValue; break
+            }
+        }
+    }
 
 
     var manifest: ZManifest {
@@ -41,7 +56,7 @@ class ZTravelManager: NSObject {
     func establishRoot() {
         switch gStorageMode {
         case .favorites: rootZone = favoritesManager.favoritesRootZone
-        default:        rootZone = Zone(record: nil, storageMode: gStorageMode)
+        default:         rootZone = Zone(record: nil, storageMode: gStorageMode)
         }
     }
 
@@ -67,7 +82,6 @@ class ZTravelManager: NSObject {
 
 
     func travel(_ atArrival: @escaping Closure) {
-        establishRoot          ()
         widgetsManager   .clear()
         selectionManager .clear()
         operationsManager.travel(atArrival)
@@ -76,6 +90,7 @@ class ZTravelManager: NSObject {
 
     func travelThrough(_ bookmark: Zone, atArrival: @escaping SignalClosure) {
         if  let      crossLink = bookmark.crossLink, let mode = crossLink.storageMode, let record = crossLink.record {
+            let    isFavorites = gStorageMode == .favorites
             let recordIDOfLink = record.recordID
             var   there: Zone? = nil
 
@@ -85,6 +100,10 @@ class ZTravelManager: NSObject {
                 //////////////////////////////
                 // travel to a different graph
                 //////////////////////////////
+
+                if isFavorites {
+                    favoritesManager.updateGrabAndIndexFor(bookmark)
+                }
 
                 if crossLink.isRoot {
                     travel {

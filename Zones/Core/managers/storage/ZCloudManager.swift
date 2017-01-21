@@ -13,9 +13,9 @@ import CloudKit
 
 enum ZStorageMode: String {     ///// move this to cloud manager  //////////
     case favorites = "favorites"
-    case everyone = "everyone"
-    case group    = "group"
-    case mine     = "mine"
+    case everyone  = "everyone"
+    case shared    = "group"
+    case mine      = "mine"
 }
 
 
@@ -28,7 +28,7 @@ class ZCloudManager: ZRecordsManager {
     func databaseForMode(_ mode: ZStorageMode) -> CKDatabase? {
         switch mode {
         case .everyone: return container.publicCloudDatabase
-        case .group:    return container.sharedCloudDatabase
+        case .shared:   return container.sharedCloudDatabase
         case .mine:     return container.privateCloudDatabase
         default:        return nil
         }
@@ -203,7 +203,6 @@ class ZCloudManager: ZRecordsManager {
 
     func fetchManifest(_ storageMode: ZStorageMode, onCompletion: Closure?) {
         favoritesManager.setup()
-        travelManager.establishRoot()
 
         let         manifestName = manifestNameForMode(storageMode)
         let recordID: CKRecordID = CKRecordID(recordName: manifestName)
