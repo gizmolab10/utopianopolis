@@ -717,7 +717,7 @@ class ZEditingManager: NSObject {
                         controllersManager.syncToCloudAndSignalFor(grandparent!, regarding: .redraw) {}
                     }
                 } else if parent != nil && parent!.isRoot {
-                    favoritesManager.showFavoritesAndGrab(zone) { object, kind in
+                    favoritesManager.showFavoritesAndGrab(nil) { object, kind in
                         zone.isFavorite = true
 
                         moveIntoHere(favoritesManager.favoritesRootZone)
@@ -793,17 +793,17 @@ class ZEditingManager: NSObject {
                         moveZone(zone, into: toThere, orphan: true){
                             controllersManager.syncToCloudAndSignalFor(parent, regarding: .redraw) {}
                         }
-                    } else {
+                    } else if !travelManager.isZone(zone, ancestorOf: toThere) {
 
                         ///////////////////////////////
                         // move zone through a bookmark
                         ///////////////////////////////
 
                         var         mover = zone
-                        let     sameGraph = zone.storageMode == toThere.crossLink?.storageMode
+                        let    targetLink = toThere.crossLink
+                        let     sameGraph = zone.storageMode == targetLink?.storageMode
+                        mover .isFavorite = false
                         let grabAndTravel = {
-                            selectionManager.grab(mover)
-
                             travelManager.travelThrough(toThere) { object, kind in
                                 let there = object as! Zone
 
@@ -812,7 +812,8 @@ class ZEditingManager: NSObject {
                                 }
 
                                 self.report("at arrival")
-                                self.moveZone(mover, into: there, orphan: false){
+                                self.moveZone(mover, into: there, orphan: false) {
+                                    selectionManager.grab(mover)
                                     self.syncAnd(.redraw)
                                 }
                             }
@@ -823,12 +824,13 @@ class ZEditingManager: NSObject {
 
                             grabAndTravel()
                         } else {
-                            let crossLink = mover.crossLink
 
-                            if mover.isBookmark && crossLink?.record != nil && !(crossLink?.isRoot)! {
+                            if mover.isBookmark && mover.crossLink?.record != nil && !(mover.crossLink?.isRoot)! {
                                 mover.orphan()
                             } else {
                                 mover = zone.deepCopy()
+
+                                selectionManager.grab(mover)
                             }
 
                             operationsManager.sync {
@@ -869,7 +871,9 @@ class ZEditingManager: NSObject {
                 zone.needSave()
                 outTo.needSave()
 
-                if zone.parentZone?.parentZone == outTo {
+                if outTo.storageMode == .favorites {
+                    insert = favoritesManager.nextFavoritesIndex(forward: !asTask)
+                } else if zone.parentZone?.parentZone == outTo {
                     if insert != nil {
                         insert = insert! + (asTask ? 1 : -1)
 

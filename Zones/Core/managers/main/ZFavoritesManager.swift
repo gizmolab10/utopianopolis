@@ -144,11 +144,16 @@ class ZFavoritesManager: NSObject {
     }
 
 
-    private func incrementFavoritesIndex(by: Int) -> Int {
+    // MARK:- switch
+    // MARK:-
+
+
+    func nextFavoritesIndex(forward: Bool) -> Int {
         update()
 
-        var index = favoritesIndex + by
-        let count = favoritesRootZone.count
+        let increment = (forward ? 1 : -1)
+        var     index = favoritesIndex + increment
+        let     count = favoritesRootZone.count
 
         if index >= count {
             index = 0
@@ -160,10 +165,6 @@ class ZFavoritesManager: NSObject {
     }
 
 
-    // MARK:- switch
-    // MARK:-
-
-
     func nextName(forward: Bool) -> String {
         let name = nextFavorite(forward: forward)?.zoneName?.substring(to: 12)
 
@@ -172,14 +173,14 @@ class ZFavoritesManager: NSObject {
 
 
     func nextFavorite(forward: Bool) -> Zone? {
-        let index = incrementFavoritesIndex(by: (forward ? 1 : -1))
+        let index = nextFavoritesIndex(forward: forward)
 
         return favoritesRootZone.count <= index ? nil :favoritesRootZone[index]
     }
 
 
     func switchToNext(_ forward: Bool, atArrival: @escaping Closure) {
-        favoritesIndex = incrementFavoritesIndex(by: (forward ? 1 : -1))
+        favoritesIndex = nextFavoritesIndex(forward: forward)
 
         if favoritesRootZone.count > favoritesIndex {
             let bookmark = favoritesRootZone[favoritesIndex]!
@@ -257,7 +258,7 @@ class ZFavoritesManager: NSObject {
         if isFavorite {
             updateIndexFor(zone) { object in }
 
-            index           = incrementFavoritesIndex(by: 1)
+            index           = nextFavoritesIndex(forward: !asTask)
         }
 
         bookmark            = create(withBookmark: bookmark, isFavorite, parent: parent, atIndex: index, zone.storageMode, zone.zoneName)

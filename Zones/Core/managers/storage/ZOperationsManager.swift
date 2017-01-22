@@ -120,7 +120,7 @@ class ZOperationsManager: NSObject {
             for identifier in identifiers {
                 let operation = BlockOperation {
                     // self.report(String(describing: identifier))
-                    let simple = [.file, .ready, .cloud, .subscribe, .unsubscribe].contains(identifier)
+                    let simple = [.file, .ready, .cloud, .children, .subscribe, .unsubscribe].contains(identifier)
 
                     self                    .invoke(identifier, mode: saved) {
                         if saved == .mine || (simple && !isFavorite) {

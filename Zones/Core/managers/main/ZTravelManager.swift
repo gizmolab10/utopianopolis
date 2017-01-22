@@ -81,6 +81,23 @@ class ZTravelManager: NSObject {
     // MARK:-
 
 
+    func isZone(_ zone: Zone, ancestorOf bookmark: Zone) -> Bool {
+        var    targetID = bookmark.crossLink?.record.recordID
+        let  identifier = zone.record.recordID.recordName
+
+        while  targetID != nil {
+            if targetID!.recordName == identifier {
+                return true
+            }
+
+            let    zone = cloudManager.zoneForRecordID(targetID)
+            targetID    = zone?.parent?.recordID
+        }
+
+        return false
+    }
+
+
     func travel(_ atArrival: @escaping Closure) {
         widgetsManager   .clear()
         selectionManager .clear()
