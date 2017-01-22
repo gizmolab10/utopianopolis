@@ -105,12 +105,12 @@ class ZTravelManager: NSObject {
                 // travel to a different graph
                 //////////////////////////////
 
-                if crossLink.isRoot {
+                if crossLink.isRoot { // e.g., default root favorite
                     travel {
                         atArrival(self.hereZone, .redraw)
                     }
                 } else {
-                    cloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: mode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) in
+                    cloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: mode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
                         if iRecord != nil {
                             self.hereZone = cloudManager.zoneForRecord(iRecord!)
 
@@ -120,7 +120,7 @@ class ZTravelManager: NSObject {
                                 atArrival(self.hereZone, .redraw)
                             }
                         }
-                    })
+                    }
                 }
             } else {
 
@@ -137,14 +137,14 @@ class ZTravelManager: NSObject {
                     selectionManager.grab(there)
                     atArrival(there, .redraw)
                 } else {
-                    cloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: gStorageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) in
+                    cloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: gStorageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
                         self.hereZone = cloudManager.zoneForRecord(iRecord!)
 
                         self.hereZone?.needChildren()
                         self.manifest.needSave()
                         selectionManager.grab(there)
                         atArrival(self.hereZone, .redraw)
-                    })
+                    }
                 }
             }
         }

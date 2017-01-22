@@ -202,7 +202,7 @@ class ZEditingManager: NSObject {
         } else {
             let zone = selectionManager.firstGrabbableZone
 
-            favoritesManager.showFavoritesAndGrab(zone) { (iThere: Any?, iKind: ZSignalKind) in
+            favoritesManager.showFavoritesAndGrab(zone) { object, kind in
                 self.syncAnd(.redraw)
             }
         }
@@ -211,9 +211,9 @@ class ZEditingManager: NSObject {
 
     func travelThroughBookmark(_ bookmark: Zone) {
         favoritesManager.updateGrabAndIndexFor(bookmark)
-        travelManager.travelThrough(bookmark, atArrival: { (object, kind) in
+        travelManager.travelThrough(bookmark) { object, kind in
             self.syncAnd(.redraw)
-        })
+        }
     }
 
 
@@ -263,9 +263,9 @@ class ZEditingManager: NSObject {
             favoritesManager.createBookmarkFor(iZone, isFavorite: true)
             focusOn(iZone, .data)
         } else {
-            travelManager.travelThrough(iZone, atArrival: { (object, kind) in
+            travelManager.travelThrough(iZone) { object, kind in
                 focusOn((object as! Zone), .redraw)
-            })
+            }
         }
     }
 
@@ -717,7 +717,9 @@ class ZEditingManager: NSObject {
                         controllersManager.syncToCloudAndSignalFor(grandparent!, regarding: .redraw) {}
                     }
                 } else if parent != nil && parent!.isRoot {
-                    favoritesManager.showFavoritesAndGrab(nil) { object, kind in
+                    favoritesManager.showFavoritesAndGrab(zone) { object, kind in
+                        zone.isFavorite = true
+
                         moveIntoHere(favoritesManager.favoritesRootZone)
                     }
                 } else {
@@ -802,7 +804,7 @@ class ZEditingManager: NSObject {
                         let grabAndTravel = {
                             selectionManager.grab(mover)
 
-                            travelManager.travelThrough(toThere, atArrival: { (object, kind) in
+                            travelManager.travelThrough(toThere) { object, kind in
                                 let there = object as! Zone
 
                                 if !sameGraph {
@@ -813,7 +815,7 @@ class ZEditingManager: NSObject {
                                 self.moveZone(mover, into: there, orphan: false){
                                     self.syncAnd(.redraw)
                                 }
-                            })
+                            }
                         }
 
                         if sameGraph {

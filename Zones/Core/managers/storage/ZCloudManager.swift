@@ -59,7 +59,7 @@ class ZCloudManager: ZRecordsManager {
 
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
-        assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey, onCompletion: { iRecord in
+        assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey) { iRecord in
             let   zone = self.zoneForRecord(iRecord!)
             let parent = zone.parentZone
 
@@ -72,7 +72,7 @@ class ZCloudManager: ZRecordsManager {
                     }
                 }
             }
-        })
+        }
     }
 
 
@@ -175,7 +175,7 @@ class ZCloudManager: ZRecordsManager {
         let   predicate = NSPredicate(format: "zoneState <= %d", ZoneState.IsDeleted.rawValue)
         var toBeDeleted = [CKRecordID] ()
 
-        self.cloudQueryUsingPredicate(predicate, onCompletion: { (iRecord: CKRecord?) in
+        self.cloudQueryUsingPredicate(predicate) { (iRecord: CKRecord?) in
             if iRecord != nil {
                 self.report("deleting \(iRecord![zoneNameKey])")
                 toBeDeleted.append((iRecord?.recordID)!)
@@ -193,7 +193,7 @@ class ZCloudManager: ZRecordsManager {
 
                 onCompletion?()
             }
-        })
+        }
     }
 
 
@@ -222,7 +222,7 @@ class ZCloudManager: ZRecordsManager {
         if travelManager.manifest.here != nil {
             let recordID = (travelManager.manifest.here?.recordID)!
 
-            self.assureRecordExists(withRecordID: recordID, storageMode: storageMode, recordType: zoneTypeKey, onCompletion: { (iHereRecord: CKRecord?) in
+            self.assureRecordExists(withRecordID: recordID, storageMode: storageMode, recordType: zoneTypeKey) { (iHereRecord: CKRecord?) in
                 if iHereRecord == nil || iHereRecord?[zoneNameKey] == nil {
                     self.establishRootAsHere(storageMode, onCompletion: onCompletion)
                 } else {
@@ -233,7 +233,7 @@ class ZCloudManager: ZRecordsManager {
 
                     onCompletion?()
                 }
-            })
+            }
 
             return
         }
@@ -245,7 +245,7 @@ class ZCloudManager: ZRecordsManager {
     func establishRootAsHere(_ storageMode: ZStorageMode, onCompletion: Closure?) {
         let recordID = CKRecordID(recordName: rootNameKey)
 
-        self.assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey, onCompletion: { (iRecord: CKRecord?) in
+        self.assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
             if iRecord != nil {
                 let               root = self.zoneForRecord(iRecord!)
                 travelManager.rootZone = root
@@ -255,7 +255,7 @@ class ZCloudManager: ZRecordsManager {
             }
 
             onCompletion?()
-        })
+        }
     }
     
 
@@ -333,13 +333,13 @@ class ZCloudManager: ZRecordsManager {
         let predicate = searchPredicateFrom(searchFor)
         var   records = [CKRecord] ()
 
-        cloudQueryUsingPredicate(predicate, onCompletion: { iRecord in
+        cloudQueryUsingPredicate(predicate) { iRecord in
             if iRecord != nil {
                 records.append(iRecord!)
             } else {
                 onCompletion?(records as NSObject)
             }
-        })
+        }
     }
 
 
@@ -356,7 +356,7 @@ class ZCloudManager: ZRecordsManager {
 
             clearState(.needsChildren)
             toConsole("fetching children of \(zones)")
-            cloudQueryUsingPredicate(predicate, onCompletion: { (iRecord: CKRecord?) in
+            cloudQueryUsingPredicate(predicate) { (iRecord: CKRecord?) in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                     for parent in parentsNeedingResort {
                         parent.respectOrder()
@@ -388,7 +388,7 @@ class ZCloudManager: ZRecordsManager {
                         self.reportError(child.zoneName)
                     }
                 }
-            })
+            }
         }
         
         return noMoreChildren
@@ -486,7 +486,7 @@ class ZCloudManager: ZRecordsManager {
     func undelete(_ storageMode: ZStorageMode, onCompletion: Closure?) {
         let predicate = NSPredicate(format: "zoneState >= %d", ZoneState.IsDeleted.rawValue) // "parent = nil")
 
-        self.cloudQueryUsingPredicate(predicate, onCompletion: { (iRecord: CKRecord?) in
+        self.cloudQueryUsingPredicate(predicate) { (iRecord: CKRecord?) in
             if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                 onCompletion?()
             } else {
@@ -505,14 +505,14 @@ class ZCloudManager: ZRecordsManager {
                 deleted.needSave()
                 deleted.updateCloudProperties()
             }
-        })
+        }
     }
 
 
     func fetchFavorites(_ storageMode: ZStorageMode, onCompletion: Closure?) {
         let predicate = NSPredicate(format: "zoneState >= %d AND zoneState < %d", ZoneState.IsFavorite.rawValue, ZoneState.IsDeleted.rawValue)
 
-        self.cloudQueryUsingPredicate(predicate, onCompletion: { (iRecord: CKRecord?) in
+        self.cloudQueryUsingPredicate(predicate) { (iRecord: CKRecord?) in
             if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                 onCompletion?()
             } else {
@@ -523,7 +523,7 @@ class ZCloudManager: ZRecordsManager {
                 root.addChild(bookmark)
                 root.respectOrder()
             }
-        })
+        }
     }
 
 
@@ -537,7 +537,7 @@ class ZCloudManager: ZRecordsManager {
 
             self.toConsole("fetching \(needed.count)")
 
-            self.cloudQueryUsingPredicate(predicate, onCompletion: { (iRecord: CKRecord?) in
+            self.cloudQueryUsingPredicate(predicate) { (iRecord: CKRecord?) in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                     onCompletion?()
                 } else {
@@ -549,7 +549,7 @@ class ZCloudManager: ZRecordsManager {
                         }
                     }
                 }
-            })
+            }
         }
     }
 
