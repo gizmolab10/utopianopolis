@@ -404,6 +404,11 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Oel-Sg-rlG"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="Favorites bookmark" keyEquivalent="B" id="wDs-1b-toe">
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Os1-X8-xe2"/>
+                                                        </connections>
+                                                    </menuItem>
                                                 </items>
                                             </menu>
                                         </menuItem>
@@ -824,7 +829,7 @@ CQ
                                                             <subviews>
                                                                 <slider identifier="vertical" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="P4e-qG-Zcg">
                                                                     <rect key="frame" x="6" y="4" width="198" height="19"/>
-                                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="20" doubleValue="4" tickMarkPosition="above" sliderType="linear" id="4eS-SV-OKd"/>
+                                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="2" maxValue="20" doubleValue="6" tickMarkPosition="above" sliderType="linear" id="4eS-SV-OKd"/>
                                                                     <connections>
                                                                         <action selector="sliderAction:" target="YaQ-0g-PCb" id="Qci-uB-8WN"/>
                                                                     </connections>

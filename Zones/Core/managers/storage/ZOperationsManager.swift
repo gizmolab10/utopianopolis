@@ -118,20 +118,24 @@ class ZOperationsManager: NSObject {
             onReady        = onCompletion
 
             for identifier in identifiers {
-                let operation = BlockOperation {
-                    // self.report(String(describing: identifier))
+                let  operation = BlockOperation {
                     let simple = [.file, .ready, .cloud, .children, .subscribe, .unsubscribe].contains(identifier)
+                    let report = { (iCount: Int) in
+                        // self.report("\(String(describing: identifier)) \(iCount)")
+                    }
 
-                    self                    .invoke(identifier, mode: saved) {
-                        if saved == .mine || (simple && !isFavorite) {
+                    self                    .invoke(identifier, mode: saved) { iCount in
+                        if iCount != 0 { report(iCount) } else if saved == .mine || (simple && !isFavorite) {
                             self            .finish(identifier, mode: saved)
                         } else {
-                            self            .invoke(identifier, mode: .mine) {
-                                if !isFavorite {
+                            self            .invoke(identifier, mode: .mine) { iCount in
+                                if iCount != 0 { report(iCount) } else if !isFavorite {
                                     self    .finish(identifier, mode: saved)
                                 } else {
-                                    self    .invoke(identifier, mode: .everyone) {
-                                        self.finish(identifier, mode: saved)
+                                    self    .invoke(identifier, mode: .everyone) { iCount in
+                                        if iCount != 0 { report(iCount) } else {
+                                            self.finish(identifier, mode: saved)
+                                        }
                                     }
                                 }
                             }
@@ -162,32 +166,32 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func invoke(_ identifier: ZOperationID, mode: ZStorageMode, onCompletion: Closure?) {
+    func invoke(_ identifier: ZOperationID, mode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         gStorageMode = mode
 
         switch identifier {
-        case .file:        zfileManager.restore();                  onCompletion?()  ; break
-        case .root:        cloudManager.establishRootAsHere(mode) { onCompletion?() }; break
-        case .cloud:       cloudManager.fetchCloudZones    (mode) { onCompletion?() }; break
-        case .manifest:    cloudManager.fetchManifest      (mode) { onCompletion?() }; break
-        case .favorites:   cloudManager.fetchFavorites     (mode) { onCompletion?() }; break
-        case .here:       travelManager.establishHere      (mode) { onCompletion?() }; break // TODO: BROKEN
-        case .children:    cloudManager.fetchChildren      (mode) { onCompletion?() }; break
-        case .parent:      cloudManager.fetchParents       (mode) { onCompletion?() }; break
-        case .unsubscribe: cloudManager.unsubscribe        (mode) { onCompletion?() }; break
-        case .subscribe:   cloudManager.subscribe          (mode) { onCompletion?() }; break
-        case .emptyTrash:  cloudManager.emptyTrash         (mode) { onCompletion?() }; break
-        case .undelete:    cloudManager.undelete           (mode) { onCompletion?() }; break
-        case .create:      cloudManager.create             (mode) { onCompletion?() }; break
-        case .fetch:       cloudManager.fetch              (mode) { onCompletion?() }; break
-        case .merge:       cloudManager.merge              (mode) { onCompletion?() }; break
-        case .flush:       cloudManager.flush              (mode) { onCompletion?() }; break
-        case .ready:       becomeReady                     (mode) { onCompletion?() }; break
+        case .file:        zfileManager.restore();                onCompletion?(0); break
+        case .root:        cloudManager.establishRootAsHere(mode, onCompletion); break
+        case .cloud:       cloudManager.fetchCloudZones    (mode, onCompletion); break
+        case .manifest:    cloudManager.fetchManifest      (mode, onCompletion); break
+        case .favorites:   cloudManager.fetchFavorites     (mode, onCompletion); break
+        case .here:       travelManager.establishHere      (mode, onCompletion); break // TODO: BROKEN
+        case .children:    cloudManager.fetchChildren      (mode, onCompletion); break
+        case .parent:      cloudManager.fetchParents       (mode, onCompletion); break
+        case .unsubscribe: cloudManager.unsubscribe        (mode, onCompletion); break
+        case .subscribe:   cloudManager.subscribe          (mode, onCompletion); break
+        case .emptyTrash:  cloudManager.emptyTrash         (mode, onCompletion); break
+        case .undelete:    cloudManager.undelete           (mode, onCompletion); break
+        case .create:      cloudManager.create             (mode, onCompletion); break
+        case .fetch:       cloudManager.fetch              (mode, onCompletion); break
+        case .merge:       cloudManager.merge              (mode, onCompletion); break
+        case .flush:       cloudManager.flush              (mode, onCompletion); break
+        case .ready:       becomeReady                     (mode, onCompletion); break
         }
     }
 
 
-    func becomeReady(_ mode: ZStorageMode, onCompletion: Closure?) {
+    func becomeReady(_ mode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         isReady = true;
 
         controllersManager.displayActivity()
@@ -203,6 +207,6 @@ class ZOperationsManager: NSObject {
             }
         }
 
-        onCompletion?()
+        onCompletion?(0)
     }
 }

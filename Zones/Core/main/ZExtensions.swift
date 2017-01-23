@@ -248,7 +248,7 @@ extension NSObject {
     }
 
 
-    func detectWithMode(_ mode: ZStorageMode, block: BooleanClosure) -> Bool {
+    func detectWithMode(_ mode: ZStorageMode, block: ToBooleanClosure) -> Bool {
         let savedMode = gStorageMode
         gStorageMode  = mode
         let    result = block()

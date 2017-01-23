@@ -38,7 +38,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     abortEditing()
 
                     if gAutoGrab {
-                        selectionManager.grab(zone)
+                        zone?.grab()
                     }
                 } else {
                     selectionManager.currentlyEditingZone  = zone
@@ -141,14 +141,36 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func captureText() {
-        let zone = widget.widgetZone
+        var zone = widget.widgetZone
 
-        if  gTextCapturing     == false {
-            if zone?.zoneName != text! {
-                gTextCapturing  = true
-                zone?.zoneName = text!
+        if  gTextCapturing    == false, zone != nil {
+            if zone!.zoneName != text! {
+                gTextCapturing = true
 
-                zone?.maybeNeedMerge()
+                let assignText = { (iText: String?, toZone: Zone?) in
+                    if toZone != nil, iText != nil {
+                        toZone!.zoneName = iText!
+
+                        toZone!.needSave()
+                        toZone!.unmarkForStates([.needsMerge])
+                        toZone!.updateCloudProperties()
+                    }
+                }
+
+                assignText(text, zone)
+
+                if  zone!.isBookmark {
+                    invokeWithMode((zone?.crossLink?.storageMode)!) {
+                        zone = cloudManager.zoneForRecordID(zone?.crossLink?.record.recordID)
+                    }
+
+                    assignText(text, zone)
+                }
+
+                for bookmark in cloudManager.bookmarksFor(zone) {
+                    assignText(text, bookmark)
+                }
+
                 operationsManager.sync {}
             }
         }

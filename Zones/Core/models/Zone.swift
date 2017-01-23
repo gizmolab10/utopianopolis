@@ -258,6 +258,17 @@ class Zone : ZRecord {
     }
 
 
+    var  isGrabbed: Bool { get { return selectionManager .isGrabbed(self) } }
+    var isSelected: Bool { get { return selectionManager.isSelected(self) } }
+
+
+    // MARK:- convenience
+    // MARK:-
+
+
+    func grab() { selectionManager.grab(self) }
+
+
     static func == ( left: Zone, right: Zone) -> Bool {
         let unequal = left != right // avoid infinite recursion by using negated version of this infix operator
 
@@ -304,8 +315,7 @@ class Zone : ZRecord {
 
 
     override func needChildren() {
-        if count == 0 {
-            // report("need children of \(zoneName!)")
+        if count <= 1 && showChildren {
             super.needChildren()
         }
     }

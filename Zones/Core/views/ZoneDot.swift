@@ -35,10 +35,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     override func draw(_ dirtyRect: CGRect) {
-        if isInnerDot {
-            let      isBookmark = (widgetZone?.isBookmark)!
+        if isInnerDot && widgetZone != nil {
+            let      isBookmark = widgetZone!.isBookmark
             let   selectedColor = isBookmark ? gBookmarkColor : gZoneColor
-            let shouldHighlight = isToggle ? (!(widgetZone?.showChildren)! || isBookmark) : selectionManager.isSelected(widgetZone!)
+            let shouldHighlight = isToggle ? (!(widgetZone!.showChildren) || isBookmark) : widgetZone!.isSelected
             let       fillColor = shouldHighlight ? selectedColor : ZColor.clear
             let       thickness = CGFloat(gLineThickness)
             let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
@@ -112,7 +112,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 editingManager.toggleDotActionOnZone(zone, recursively: false)
             } else {
                 selectionManager.deselect()
-                selectionManager.grab(zone)
+                zone.grab()
                 signalFor(zone, regarding: .datum)
             }
         }

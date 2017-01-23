@@ -61,19 +61,19 @@ class ZTravelManager: NSObject {
     }
 
 
-    func establishHere(_ storageMode: ZStorageMode, onCompletion: Closure?) {
+    func establishHere(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         if storageMode == .favorites {
             hereZone = favoritesManager.favoritesRootZone
         } else if hereZone != nil && hereZone?.record != nil && hereZone?.zoneName != nil {
             hereZone?.needChildren()
             hereZone?.needFetch()
         } else {
-            cloudManager.establishHere((storageMode, onCompletion: onCompletion))
+            cloudManager.establishHere((storageMode, onCompletion))
 
             return
         }
 
-        onCompletion?()
+        onCompletion?(0)
     }
 
 
@@ -131,7 +131,7 @@ class ZTravelManager: NSObject {
                         if iRecord != nil {
                             self.hereZone = cloudManager.zoneForRecord(iRecord!)
 
-                            selectionManager.grab(self.hereZone)
+                            self.hereZone?.grab()
                             self.manifest.needSave()
                             self.travel {
                                 atArrival(self.hereZone, .redraw)
@@ -151,15 +151,15 @@ class ZTravelManager: NSObject {
                     self.hereZone = there
 
                     there?.needChildren()
-                    selectionManager.grab(there)
+                    there?.grab()
                     atArrival(there, .redraw)
                 } else {
                     cloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: gStorageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
                         self.hereZone = cloudManager.zoneForRecord(iRecord!)
 
-                        self.hereZone?.needChildren()
+                        there?.grab()
                         self.manifest.needSave()
-                        selectionManager.grab(there)
+                        self.hereZone?.needChildren()
                         atArrival(self.hereZone, .redraw)
                     }
                 }

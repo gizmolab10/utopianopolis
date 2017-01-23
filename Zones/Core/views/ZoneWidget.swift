@@ -142,7 +142,7 @@ class ZoneWidget: ZView {
         // self        .addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.green.cgColor)
         // textWidget.addBorder(thickness: 5.0, radius: 0.5, color: CGColor.black)
 
-//        let  show = selectionManager.isGrabbed(widgetZone) && widgetZone.count > 0 && widgetZone.showChildren
+//        let  show = widgetZone.isGrabbed && widgetZone.count > 0 && widgetZone.showChildren
 //        let color = show ? ZColor.orange : ZColor.clear
 //
 //        childrenView.addBorder(thickness: 1.0, radius: 10.0, color: color.cgColor)
@@ -150,7 +150,7 @@ class ZoneWidget: ZView {
 
 
     func addDragHighlight() {
-        dragHighlightView.isHidden = !selectionManager.isGrabbed(widgetZone)
+        dragHighlightView.isHidden = !widgetZone.isGrabbed
 
         if dragHighlightView.superview == nil {
             addSubview(dragHighlightView)
@@ -170,7 +170,7 @@ class ZoneWidget: ZView {
 
     func layoutText() {
         textWidget.widget    = self
-        let       isSelected = selectionManager.isSelected(widgetZone)
+        let       isSelected = widgetZone.isSelected
         textWidget.font      = isSelected ? grabbedWidgetFont : widgetFont
         textWidget.textColor = isSelected ? widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor : ZColor.black
 
@@ -187,9 +187,8 @@ class ZoneWidget: ZView {
     func layoutTextField() {
         textWidget.snp.removeConstraints()
         textWidget.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let isSelected = selectionManager.isSelected(widgetZone)
-            let       font = isSelected ? grabbedWidgetFont : widgetFont
-            let      width = textWidget.text!.widthForFont(font) + 5.0
+            let  font = widgetZone.isSelected ? grabbedWidgetFont : widgetFont
+            let width = textWidget.text!.widthForFont(font) + 5.0
 
             make.width.equalTo(width)
             make.centerY.equalTo(self).offset(-1.5)

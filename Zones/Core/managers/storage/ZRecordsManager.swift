@@ -324,10 +324,10 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func bookmarksFor(_ zone: Zone) -> [Zone] {
+    func bookmarksFor(_ zone: Zone?) -> [Zone] {
         var zoneBookmarks = [Zone] ()
 
-        if let recordID = zone.record?.recordID {
+        if zone != nil, let recordID = zone?.record?.recordID {
             for bookmark in bookmarks {
                 if recordID == bookmark.crossLink?.record?.recordID {
                     zoneBookmarks.append(bookmark)

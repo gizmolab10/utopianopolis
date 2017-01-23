@@ -105,7 +105,7 @@ class ZFavoritesManager: NSObject {
     func updateGrabAndIndexFor(_ zone: Zone?) {
         updateIndexFor(zone) { iObject in
             if let bookmark = iObject as? Zone {
-                selectionManager.grab(bookmark)
+                bookmark.grab()
             }
         }
     }
@@ -166,7 +166,7 @@ class ZFavoritesManager: NSObject {
 
 
     func nextName(forward: Bool) -> String {
-        let name = nextFavorite(forward: forward)?.zoneName?.substring(to: 12)
+        let name = nextFavorite(forward: forward)?.zoneName?.substring(to: 10)
 
         return name ?? ""
     }
@@ -197,7 +197,7 @@ class ZFavoritesManager: NSObject {
                 gStorageMode = mode
 
                 travelManager.travel {
-                    selectionManager.grab(travelManager.hereZone)
+                    travelManager.hereZone?.grab()
                     atArrival()
                 }
             } else {

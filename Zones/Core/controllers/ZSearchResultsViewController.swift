@@ -118,7 +118,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
         travelManager.hereZone = zone
 
         clear()
-        selectionManager.grab(zone)
+        zone?.grab()
         signalFor(nil, regarding: .redraw)
     }
 

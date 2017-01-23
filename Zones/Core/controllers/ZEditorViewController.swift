@@ -52,6 +52,10 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
             specificView   = specificWidget?.superview
             specificindex  = zone!.siblingIndex
 
+            if zone!.isSelected {
+                zone!.grab()
+            }
+
             toConsole(zone?.zoneName)
         }
 
