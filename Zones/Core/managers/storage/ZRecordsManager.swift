@@ -279,9 +279,40 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
+    func isRegistered(_ zone: Zone) -> String? {
+        if zones.values.contains(zone) {
+            for name in zones.keys {
+                let examined = zones[name]
+
+                if examined?.hash == zone.hash {
+                    return name
+                }
+            }
+        }
+
+        return nil
+    }
+
+
     func registerZone(_ zone: Zone?) {
-        if let record = zone?.record {
-            zones[record.recordID.recordName] = zone
+        if  let     record = zone?.record {
+            let registered = isRegistered(zone!)
+            let identifier = record.recordID.recordName
+
+            if registered == nil {
+                zones[identifier]  = zone
+                let       manifest = travelManager.manifest
+                let          total = zones.count
+
+                if  manifest.total < total {
+                    manifest.total = total
+
+                    manifest.needSave()
+                }
+            } else if registered! != identifier {
+                zones[registered!] = nil
+                zones[identifier]  = zone
+            }
         }
     }
 

@@ -95,9 +95,10 @@ class ZControllersManager: NSObject {
 
 
     func syncToCloudAndSignalFor(_ zone: Zone?, regarding: ZSignalKind, onCompletion: Closure?) {
-        signalFor(zone, regarding: regarding, onCompletion: onCompletion)
+        signalFor             (zone, regarding: regarding, onCompletion: onCompletion)
         dispatchAsyncInForeground {
             operationsManager.sync {
+                onCompletion?()
                 zfileManager.save()
             }
         }

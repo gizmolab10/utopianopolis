@@ -129,7 +129,7 @@ class ZoneWidget: ZView {
 
         dispatchAsyncInForeground {
             let                                 thickness = self.dragDot.width / 2.5
-            let                                    radius = min(dirtyRect.size.height, dirtyRect.size.width) / 2.0
+            let                                    radius = min(dirtyRect.size.height, dirtyRect.size.width) / 2.08 - 1.0
             let                                     color = self.widgetZone.isBookmark ? gBookmarkColor : gZoneColor
             self.dragHighlightView.zlayer.backgroundColor = color.withAlphaComponent(0.02).cgColor
 

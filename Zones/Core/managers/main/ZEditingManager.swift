@@ -434,11 +434,16 @@ class ZEditingManager: NSObject {
 
     func addZoneTo(_ parentZone: Zone?) {
         addZoneTo(parentZone) { (iZone: Zone) in
-            controllersManager.syncToCloudAndSignalFor(parentZone, regarding: .redraw) {
-                operationsManager.isReady = true
+            var beenHereBefore = false
 
-                widgetsManager.widgetForZone(iZone)?.textWidget.becomeFirstResponder()
-                self.signalFor(nil, regarding: .redraw)
+            controllersManager.syncToCloudAndSignalFor(parentZone, regarding: .redraw) {
+                if !beenHereBefore {
+                    beenHereBefore            = true
+                    operationsManager.isReady = true
+
+                    widgetsManager.widgetForZone(iZone)?.textWidget.becomeFirstResponder()
+                    self.signalFor(nil, regarding: .redraw)
+                }
             }
         }
     }
@@ -484,7 +489,9 @@ class ZEditingManager: NSObject {
             selectionManager.grab(last!)
         }
 
-        syncAnd(.redraw)
+        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
+            self.signalFor(nil, regarding: .redraw)
+        }
     }
 
 
@@ -540,11 +547,11 @@ class ZEditingManager: NSObject {
 
             let   toDelete  = cloudManager.bookmarksFor(zone)
             let   manifest  = travelManager.manifestForMode(zone.storageMode!)
-            zone.isDeleted  = true // should be saved, then ignored after next launch
+            zone.isDeleted  = true // will be saved, then ignored after next launch
             manifest.total -= 1
 
-            deleteZones(toDelete, in: zone)
-            deleteZones(zone.children,                   in: zone)
+            deleteZones(toDelete,      in: zone)
+            deleteZones(zone.children, in: zone)
             manifest.needSave()
             zone.needSave()
             zone.orphan()
