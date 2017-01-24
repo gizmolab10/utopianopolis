@@ -30,12 +30,13 @@ enum ZColorBoxKind: String {
 }
 
 
-class ZSettingsViewController: ZGenericViewController {
+class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTableViewDataSource {
 
 
     @IBOutlet var         fractionInMemory: ZProgressIndicator?
+    @IBOutlet var     favoritesTableHeight: NSLayoutConstraint?
     @IBOutlet var graphAlteringModeControl: ZSegmentedControl?
-    @IBOutlet var        nextFavoriteLabel: ZTextField?
+    @IBOutlet var       favoritesTableView: NSTableView?
     @IBOutlet var          totalCountLabel: ZTextField?
     @IBOutlet var           graphNameLabel: ZTextField?
     @IBOutlet var               levelLabel: ZTextField?
@@ -46,6 +47,10 @@ class ZSettingsViewController: ZGenericViewController {
     @IBOutlet var          verticalSpacing: ZSlider?
     @IBOutlet var                thickness: ZSlider?
 
+
+    // MARK:- generic methods
+    // MARK:-
+
     
     override func identifier() -> ZControllerID { return .settings }
 
@@ -53,15 +58,19 @@ class ZSettingsViewController: ZGenericViewController {
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         let                     count = cloudManager.zones.count
         let                     total = travelManager.manifest.total
-        let                  nextName = favoritesManager.nextName(forward:  true)
-        let              previousName = favoritesManager.nextName(forward: false)
-        nextFavoriteLabel?      .text = "\(previousName) <-'-> \(nextName)"
         totalCountLabel?        .text = "of \(total), retrieved: \(count)"
         graphNameLabel?         .text = "in graph: \(gStorageMode.rawValue)"
         levelLabel?             .text = "focus level: \((travelManager.hereZone?.level)!)"
         view  .zlayer.backgroundColor = gBackgroundColor.cgColor
         fractionInMemory?   .maxValue = Double(total)
         fractionInMemory?.doubleValue = Double(count)
+
+
+        if let              tableView = favoritesTableView {
+            tableView.reloadData()
+
+            favoritesTableHeight?.constant = CGFloat((favoritesManager.count + 1) * 20)
+        }
     }
 
 
@@ -130,7 +139,7 @@ class ZSettingsViewController: ZGenericViewController {
     }
 
 
-    // MARK:- cloud actions
+    // MARK:- cloud tool actions
     // MARK:-
     
 
@@ -169,5 +178,45 @@ class ZSettingsViewController: ZGenericViewController {
     
     @IBAction func pushToCloudButtonAction(_ button: ZButton) {
         cloudManager.royalFlush {}
+    }
+
+
+    // MARK:- favorites table
+    // MARK:-
+
+
+    func numberOfRows(in tableView: NSTableView) -> Int {
+        let count = favoritesManager.count
+
+        return count + 1
+    }
+
+    
+    func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
+        let  text = row == 0 ? "edit favorites" : (favoritesManager.textAtIndex(row - 1))!
+        let value = "     \(text)"
+
+        return value
+    }
+
+
+    func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
+        let select = operationsManager.isReady
+
+        if  select {
+            if row == 0 {
+                gStorageMode = .favorites
+
+                travelManager.travel {
+                    self.signalFor(nil, regarding: .redraw)
+                }
+            } else if let zone: Zone = favoritesManager.zoneAtIndex(row - 1) {
+                favoritesManager.favoritesIndex = row - 1
+
+                editingManager.focusOnZone(zone)
+            }
+        }
+
+        return select
     }
 }

@@ -259,13 +259,14 @@ class ZEditingManager: NSObject {
             self.syncAnd(kind)
         }
 
-        if !iZone.isBookmark {
-            favoritesManager.createBookmarkFor(iZone, isFavorite: true)
-            focusOn(iZone, .data)
-        } else {
+        if iZone.isBookmark {
             travelManager.travelThrough(iZone) { object, kind in
                 focusOn((object as! Zone), .redraw)
             }
+        } else {
+            favoritesManager.createBookmarkFor(iZone, isFavorite: true)
+            focusOn(iZone, .data)
+
         }
     }
 
@@ -512,8 +513,8 @@ class ZEditingManager: NSObject {
         var grabThisZone = zone.parentZone
         var     deleteMe = !zone.isRoot && !zone.isDeleted && zone.parentZone?.record != nil
 
-        if !deleteMe && zone.isBookmark {
-            deleteMe = zone.crossLink?.record.recordID.recordName != rootNameKey
+        if !deleteMe && zone.isBookmark, let name = zone.crossLink?.record.recordID.recordName {
+            deleteMe = ![rootNameKey, favoritesRootNameKey].contains(name)
         }
 
         if deleteMe {

@@ -17,6 +17,7 @@ class ZFavoritesManager: NSObject {
     let favoritesRootZone = Zone(record: nil, storageMode: .favorites)
     let defaultFavorites  = Zone(record: nil, storageMode: .favorites)
     var favoritesIndex    = 0
+    var       count: Int { get { return favoritesRootZone.count } }
 
 
     // MARK:- init
@@ -26,7 +27,7 @@ class ZFavoritesManager: NSObject {
     func setup() {
         favoritesRootZone.showChildren = true
         favoritesRootZone.zoneName     = "favorites"
-        favoritesRootZone.record       = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: "favoritesRoot"))
+        favoritesRootZone.record       = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
 
         setupDefaultFavorites()
         update()
@@ -91,10 +92,19 @@ class ZFavoritesManager: NSObject {
     }
 
 
+    func zoneAtIndex(_ index: Int) -> Zone? {
+        return favoritesRootZone[index]
+    }
+    
+
+    func textAtIndex(_ index: Int) -> String? {
+        return zoneAtIndex(index)?.zoneName
+    }
+
+
     func showFavoritesAndGrab(_ zone: Zone?, _ atArrival: @escaping SignalClosure) {
         gStorageMode = .favorites
 
-        update()
         travelManager.travel {
             self.updateGrabAndIndexFor(zone)
             atArrival(zone, .redraw)
@@ -102,45 +112,74 @@ class ZFavoritesManager: NSObject {
     }
 
 
-    func updateGrabAndIndexFor(_ zone: Zone?) {
-        updateIndexFor(zone) { iObject in
-            if let bookmark = iObject as? Zone {
-                bookmark.grab()
+    func updateGrabAndIndexFor(_ iZone: Zone?) {
+        updateIndexFor(iZone) { object in
+            if let zone = object as? Zone {
+                zone.grab()
             }
         }
     }
 
 
-    // MARK:- internals
-    // MARK:-
+    var naturalEnumeration: EnumeratedSequence<Array<Zone>> {
+        var natural = [Zone] ()
+        var   begun = false
 
+        for (index, favorite) in favoritesRootZone.children.enumerated() {
+            if !begun && index == favoritesIndex {
+                begun = true
+            }
 
-    func updateIndexFor(_ zone: Zone?, grab: ObjectClosure?) {
-        update()
-
-        let updateForIndex = { (_ index: Int) in
-            self.favoritesIndex = index
-
-            grab?(self.favoritesRootZone[index]!)
+            if begun {
+                natural.append(favorite)
+            }
         }
 
-        if  let identifier = zone?.record?.recordID.recordName, zone != nil {
-            let mode = zone!.storageMode
+        for (index, favorite) in favoritesRootZone.children.enumerated() {
+            if  begun && index == favoritesIndex {
+                begun = false
 
-            for (index, favorite) in favoritesRootZone.children.enumerated() {
-                if favorite.isFavorite && favorite.crossLink?.record.recordID.recordName == identifier {
-                    return updateForIndex(index)
+                continue
+            }
+
+            if !begun {
+                natural.append(favorite)
+            }
+        }
+
+        return natural.enumerated()
+    }
+
+
+    func updateIndexFor(_ zone: Zone?, iGrabClosure: ObjectClosure?) {
+        update()
+
+        let updateIndex = { (_ index: Int) in
+            self.favoritesIndex = index
+
+            iGrabClosure?(self.favoritesRootZone[index]!)
+        }
+
+        if  let identifier = zone!.record?.recordID.recordName, zone != nil {
+            let enumeration = naturalEnumeration
+            let        mode = zone!.storageMode
+
+            for (index, favorite) in enumeration {
+                if favorite.isFavorite, let target = favorite.bookmarkTarget {
+                    if favorite.crossLink?.record.recordID.recordName == identifier || target.isAncestorOf(zone!) || zone!.isAncestorOf(target) {
+                        return updateIndex(index)
+                    }
                 }
             }
 
             for (index, favorite) in favoritesRootZone.children.enumerated() {
                 if !favorite.isFavorite && favorite.crossLink?.storageMode == mode {
-                    return updateForIndex(index)
+                    return updateIndex(index)
                 }
             }
         }
         
-        updateForIndex(0)
+        updateIndex(0)
     }
 
 
@@ -165,17 +204,17 @@ class ZFavoritesManager: NSObject {
     }
 
 
-    func nextName(forward: Bool) -> String {
-        let name = nextFavorite(forward: forward)?.zoneName?.substring(to: 10)
-
-        return name ?? ""
-    }
-
-
     func nextFavorite(forward: Bool) -> Zone? {
         let index = nextFavoritesIndex(forward: forward)
 
         return favoritesRootZone.count <= index ? nil :favoritesRootZone[index]
+    }
+
+
+    func nextName(forward: Bool) -> String {
+        let name = nextFavorite(forward: forward)?.zoneName?.substring(to: 10)
+
+        return name ?? ""
     }
 
 

@@ -58,6 +58,17 @@ class Zone : ZRecord {
     var count: Int { get { return children.count } }
 
 
+    var bookmarkTarget: Zone? {
+        get {
+            if  let link = crossLink {
+                return cloudManager.zoneForRecordID(link.record.recordID)
+            }
+
+            return nil
+        }
+    }
+
+
     var crossLink: ZRecord? {
         get {
             if zoneLink == nil || zoneLink == "" {
@@ -464,6 +475,18 @@ class Zone : ZRecord {
         return stop
     }
 
+
+    func isAncestorOf(_ iChild: Zone) -> Bool {
+        var result = false;
+
+        traverseApply { iZone -> Bool in
+            result = iZone == iChild
+
+            return result
+        }
+
+        return result
+    }
 
     func updateLevel() {
         traverseApply { iZone -> Bool in

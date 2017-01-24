@@ -29,10 +29,10 @@ import CloudKit
     public typealias ZTableView                 = NSTableView
     public typealias ZStackView                 = NSStackView
     public typealias ZColorWell                 = NSColorWell
+    public typealias ZButtonCell                = NSButtonCell
     public typealias ZBezierPath                = NSBezierPath
     public typealias ZSearchField               = NSSearchField
     public typealias ZApplication               = NSApplication
-    public typealias ZTableRowView              = NSTableRowView
     public typealias ZViewController            = NSViewController
     public typealias ZSegmentedControl          = NSSegmentedControl
     public typealias ZGestureRecognizer         = NSGestureRecognizer
