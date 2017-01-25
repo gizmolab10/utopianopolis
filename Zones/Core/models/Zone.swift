@@ -61,7 +61,13 @@ class Zone : ZRecord {
     var bookmarkTarget: Zone? {
         get {
             if  let link = crossLink {
-                return cloudManager.zoneForRecordID(link.record.recordID)
+                var target: Zone? = nil
+
+                invokeWithMode(link.storageMode) {
+                    target = cloudManager.zoneForRecordID(link.record.recordID)
+                }
+
+                return target
             }
 
             return nil

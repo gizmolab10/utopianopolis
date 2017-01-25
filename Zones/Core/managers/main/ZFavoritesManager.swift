@@ -73,8 +73,7 @@ class ZFavoritesManager: NSObject {
         var found = [Int] ()
 
         for favorite in favoritesRootZone.children {
-            if favorite.isFavorite {
-                let mode = (favorite.crossLink?.storageMode)!
+            if favorite.isFavorite, let mode = favorite.crossLink?.storageMode {
 
                 switch mode {
                 case .everyone: found.append(0); break
@@ -113,73 +112,72 @@ class ZFavoritesManager: NSObject {
 
 
     func updateGrabAndIndexFor(_ iZone: Zone?) {
-        updateIndexFor(iZone) { object in
-            if let zone = object as? Zone {
-                zone.grab()
+        if iZone != nil {
+            updateIndexFor(iZone!) { object in
+                if let zone = object as? Zone {
+                    zone.grab()
+                }
             }
         }
     }
 
 
-    var naturalEnumeration: EnumeratedSequence<Array<Zone>> {
-        var natural = [Zone] ()
-        var   begun = false
+    var rotatedEnumeration: EnumeratedSequence<Array<Zone>> {
+        let enumeration = favoritesRootZone.children.enumerated()
+        var     rotated = [Zone] ()
 
-        for (index, favorite) in favoritesRootZone.children.enumerated() {
-            if !begun && index == favoritesIndex {
-                begun = true
-            }
-
-            if begun {
-                natural.append(favorite)
+        for (index, favorite) in enumeration {
+            if  index >= favoritesIndex {
+                rotated.append(favorite)
             }
         }
 
-        for (index, favorite) in favoritesRootZone.children.enumerated() {
-            if  begun && index == favoritesIndex {
-                begun = false
-
-                continue
-            }
-
-            if !begun {
-                natural.append(favorite)
+        for (index, favorite) in enumeration {
+            if  index < favoritesIndex {
+                rotated.append(favorite)
             }
         }
 
-        return natural.enumerated()
+        return rotated.enumerated()
     }
 
 
-    func updateIndexFor(_ zone: Zone?, iGrabClosure: ObjectClosure?) {
+    func updateIndexFor(_ iZone: Zone, iGrabClosure: ObjectClosure?) {
         update()
 
-        let updateIndex = { (_ index: Int) in
-            self.favoritesIndex = index
+        let          traveler = !iZone.isBookmark ? iZone : iZone.bookmarkTarget
 
-            iGrabClosure?(self.favoritesRootZone[index]!)
-        }
+        if  let    identifier = traveler?.record?.recordID.recordName {
+            let          mode = traveler!.storageMode
+            let   enumeration = rotatedEnumeration
+            let updateForZone = { (iZoneToMatch: Zone) in
+                for (index, zone) in self.favoritesRootZone.children.enumerated() {
+                    if zone == iZoneToMatch {
+                        self.favoritesIndex = index
 
-        if  let identifier = zone!.record?.recordID.recordName, zone != nil {
-            let enumeration = naturalEnumeration
-            let        mode = zone!.storageMode
+                        iGrabClosure?(zone)
 
-            for (index, favorite) in enumeration {
-                if favorite.isFavorite, let target = favorite.bookmarkTarget {
-                    if favorite.crossLink?.record.recordID.recordName == identifier || target.isAncestorOf(zone!) || zone!.isAncestorOf(target) {
-                        return updateIndex(index)
+                        return
                     }
                 }
             }
 
-            for (index, favorite) in favoritesRootZone.children.enumerated() {
-                if !favorite.isFavorite && favorite.crossLink?.storageMode == mode {
-                    return updateIndex(index)
+            for (_, zone) in enumeration {
+                if zone == iZone {
+                    return updateForZone(zone)
+                } else if zone.isFavorite, let target = zone.bookmarkTarget {
+                    if zone.crossLink?.record.recordID.recordName == identifier || target.isAncestorOf(traveler!) || traveler!.isAncestorOf(target) {
+                        return updateForZone(zone)
+                    }
+                }
+            }
+
+            for (_, zone) in enumeration {
+                if !zone.isFavorite, zone.crossLink?.storageMode == mode {
+                    return updateForZone(zone)
                 }
             }
         }
-        
-        updateIndex(0)
     }
 
 

@@ -59,17 +59,17 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
         let                     count = cloudManager.zones.count
         let                     total = travelManager.manifest.total
         totalCountLabel?        .text = "of \(total), retrieved: \(count)"
-        graphNameLabel?         .text = "in graph: \(gStorageMode.rawValue)"
-        levelLabel?             .text = "focus level: \((travelManager.hereZone?.level)!)"
+        graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
+        levelLabel?             .text = "level: \((travelManager.hereZone?.level)!)"
         view  .zlayer.backgroundColor = gBackgroundColor.cgColor
         fractionInMemory?   .maxValue = Double(total)
         fractionInMemory?.doubleValue = Double(count)
 
-
         if let              tableView = favoritesTableView {
+            favoritesManager.update()
             tableView.reloadData()
 
-            favoritesTableHeight?.constant = CGFloat((favoritesManager.count + 1) * 20)
+            favoritesTableHeight?.constant = CGFloat((favoritesManager.count + 1) * 19)
         }
     }
 
@@ -193,10 +193,32 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
     
     func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        let  text = row == 0 ? "edit favorites" : (favoritesManager.textAtIndex(row - 1))!
-        let value = "     \(text)"
+        var   value = ""
 
+        if let text = row == 0 ? "edit these items" : favoritesManager.textAtIndex(row - 1) {
+            value   = " • \(text)"
+
+            if favoritesManager.favoritesIndex != row - 1 {
+                value = value.replacingOccurrences(of: "•", with: "  ")
+            }
+        }
+        
         return value
+    }
+
+
+    func actOnSelection(_ row: Int) {
+        if row == 0 {
+            gStorageMode = .favorites
+
+            travelManager.travel {
+                self.signalFor(nil, regarding: .redraw)
+            }
+        } else if let zone: Zone = favoritesManager.zoneAtIndex(row - 1) {
+            favoritesManager.favoritesIndex = row - 1
+
+            editingManager.focusOnZone(zone)
+        }
     }
 
 
@@ -204,19 +226,9 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
         let select = operationsManager.isReady
 
         if  select {
-            if row == 0 {
-                gStorageMode = .favorites
-
-                travelManager.travel {
-                    self.signalFor(nil, regarding: .redraw)
-                }
-            } else if let zone: Zone = favoritesManager.zoneAtIndex(row - 1) {
-                favoritesManager.favoritesIndex = row - 1
-
-                editingManager.focusOnZone(zone)
-            }
+            actOnSelection(row)
         }
 
-        return select
+        return false
     }
 }

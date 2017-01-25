@@ -160,7 +160,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 assignText(text, zone)
 
                 if  zone!.isBookmark {
-                    invokeWithMode((zone?.crossLink?.storageMode)!) {
+                    invokeWithMode(zone?.crossLink?.storageMode) {
                         zone = cloudManager.zoneForRecordID(zone?.crossLink?.record.recordID)
                     }
 

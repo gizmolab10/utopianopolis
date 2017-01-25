@@ -615,32 +615,31 @@ class ZEditingManager: NSObject {
 
     func moveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool) {
         if      let         zone = selectionManager.firstGrabbableZone {
-            if  let        there = zone.parentZone {
-                if let     index = there.children.index(of: zone) {
-                    var newIndex = index + (moveUp ? -1 : 1)
+            if  let        there = zone.parentZone, let index = there.children.index(of: zone) {
+                var newIndex = index + (moveUp ? -1 : 1)
 
-                    if extreme {
-                        newIndex = moveUp ? 0 : there.count - 1
+                if extreme {
+                    newIndex = moveUp ? 0 : there.count - 1
+                }
+
+                if newIndex >= 0 && newIndex < there.count {
+                    if zone == hereZone {
+                        hereZone = there
                     }
 
-                    if newIndex >= 0 && newIndex < there.count {
-                        if zone == hereZone {
-                            hereZone = there
-                        }
-
-                        if selectionOnly {
-                            there.children[newIndex].grab()
-                            signalFor(nil, regarding: .redraw)
-                        } else {
-                            there.moveChild(from: index, to: newIndex)
-                            there.recomputeOrderingUponInsertionAt(newIndex)
-                            controllersManager.syncToCloudAndSignalFor(there, regarding: .redraw) {}
-                        }
+                    if selectionOnly {
+                        there.children[newIndex].grab()
+                        signalFor(nil, regarding: .redraw)
+                    } else {
+                        there.moveChild(from: index, to: newIndex)
+                        there.recomputeOrderingUponInsertionAt(newIndex)
+                        controllersManager.syncToCloudAndSignalFor(there, regarding: .redraw) {}
                     }
+
                 }
             } else if !zone.isRoot {
                 revealParentAndSiblingsOf(zone) {
-                    if zone.parentZone != nil {
+                    if zone.parentZone != nil && zone.parentZone!.count > 1 {
                         self.moveUp(moveUp, selectionOnly: selectionOnly, extreme: extreme)
                     }
                 }

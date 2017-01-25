@@ -78,8 +78,6 @@
 		0CC8F8541DC2CECF00E25985 /* ZGCD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC8F8501DC2CECF00E25985 /* ZGCD.swift */; };
 		0CC8F8561DC2CEF600E25985 /* ZConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC8F8551DC2CEF600E25985 /* ZConstants.swift */; };
 		0CC8F8571DC2CEF600E25985 /* ZConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC8F8551DC2CEF600E25985 /* ZConstants.swift */; };
-		0CCA87B91E37242800F8B95A /* ZCheckboxCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CCA87B81E37242800F8B95A /* ZCheckboxCell.swift */; };
-		0CCA87BA1E37242800F8B95A /* ZCheckboxCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CCA87B81E37242800F8B95A /* ZCheckboxCell.swift */; };
 		0CD1EAC51DB725A800A096E4 /* CalendarCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAA21DB725A800A096E4 /* CalendarCondition.swift */; };
 		0CD1EAC61DB725A800A096E4 /* CalendarCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAA21DB725A800A096E4 /* CalendarCondition.swift */; };
 		0CD1EAC71DB725A800A096E4 /* CloudCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAA31DB725A800A096E4 /* CloudCondition.swift */; };
@@ -265,7 +263,6 @@
 		0CC8F84F1DC2CECF00E25985 /* ZExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZExtensions.swift; sourceTree = "<group>"; };
 		0CC8F8501DC2CECF00E25985 /* ZGCD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGCD.swift; sourceTree = "<group>"; };
 		0CC8F8551DC2CEF600E25985 /* ZConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZConstants.swift; sourceTree = "<group>"; };
-		0CCA87B81E37242800F8B95A /* ZCheckboxCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZCheckboxCell.swift; sourceTree = "<group>"; };
 		0CD1EAA21DB725A800A096E4 /* CalendarCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarCondition.swift; sourceTree = "<group>"; };
 		0CD1EAA31DB725A800A096E4 /* CloudCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudCondition.swift; sourceTree = "<group>"; };
 		0CD1EAA41DB725A800A096E4 /* HealthCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HealthCondition.swift; sourceTree = "<group>"; };
@@ -674,7 +671,6 @@
 		0CF97D601DA8807400FEAA41 /* views */ = {
 			isa = PBXGroup;
 			children = (
-				0CCA87B81E37242800F8B95A /* ZCheckboxCell.swift */,
 				0C3312951DC818FF002DDB39 /* ZoneCurve.swift */,
 				0C36E7FD1DC31834005C5059 /* ZoneDot.swift */,
 				0CC8F84C1DC2963300E25985 /* ZoneTextWidget.swift */,
@@ -979,7 +975,6 @@
 				0C371C641DE259700030253D /* ZCloudManager.swift in Sources */,
 				0C2456251DE3CAD700EBCCDD /* ZGenericViewController.swift in Sources */,
 				0C2456231DE3CAD700EBCCDD /* ZEditorViewController.swift in Sources */,
-				0CCA87BA1E37242800F8B95A /* ZCheckboxCell.swift in Sources */,
 				0CB1A7D41D73F87B00283F7B /* Zone.swift in Sources */,
 				0CD1EAFA1DB725A800A096E4 /* LocationOperation.swift in Sources */,
 				0CD1EAF01DB725A800A096E4 /* OperationObserver.swift in Sources */,
@@ -1066,7 +1061,6 @@
 				0C371C631DE259700030253D /* ZCloudManager.swift in Sources */,
 				0C2456241DE3CAD700EBCCDD /* ZGenericViewController.swift in Sources */,
 				0C2456221DE3CAD700EBCCDD /* ZEditorViewController.swift in Sources */,
-				0CCA87B91E37242800F8B95A /* ZCheckboxCell.swift in Sources */,
 				0CD1EAF91DB725A800A096E4 /* LocationOperation.swift in Sources */,
 				0CD1EAEF1DB725A800A096E4 /* OperationObserver.swift in Sources */,
 				0CB1A7D31D73F87B00283F7B /* Zone.swift in Sources */,

@@ -258,13 +258,17 @@ extension NSObject {
     }
 
 
-    func invokeWithMode(_ mode: ZStorageMode, block: Closure) {
-        let savedMode = gStorageMode
-        gStorageMode  = mode
+    func invokeWithMode(_ mode: ZStorageMode?, block: Closure) {
+        if  mode == nil || mode == gStorageMode {
+            block()
+        } else {
+            let savedMode = gStorageMode
+            gStorageMode  = mode!
 
-        block()
+            block()
 
-        gStorageMode  = savedMode
+            gStorageMode  = savedMode
+        }
     }
 
 
