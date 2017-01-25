@@ -163,12 +163,14 @@ class ZFavoritesManager: NSObject {
             }
 
             for (_, zone) in enumeration {
-                if zone == iZone {
+                if zone == iZone || (zone.isFavorite && zone.crossLink?.record.recordID.recordName == identifier) {
                     return updateForZone(zone)
-                } else if zone.isFavorite, let target = zone.bookmarkTarget {
-                    if zone.crossLink?.record.recordID.recordName == identifier || target.isAncestorOf(traveler!) || traveler!.isAncestorOf(target) {
-                        return updateForZone(zone)
-                    }
+                }
+            }
+
+            for (_, zone) in enumeration {
+                if zone.isFavorite, let target = zone.bookmarkTarget, (target.isAncestorOf(traveler!) || traveler!.isAncestorOf(target)) {
+                    return updateForZone(zone)
                 }
             }
 

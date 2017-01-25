@@ -114,8 +114,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         if result && isTextEditing {
             dispatchAsyncInForeground { // avoid state garbling
                 selectionManager.currentlyGrabbedZones = []
-                
+
+                let          saved = gAutoGrab
+                gAutoGrab          = true
                 self.isTextEditing = false
+                gAutoGrab          = saved
             }
         }
 

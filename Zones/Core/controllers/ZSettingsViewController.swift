@@ -198,7 +198,9 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
         if let text = row == 0 ? "edit these items" : favoritesManager.textAtIndex(row - 1) {
             value   = " • \(text)"
 
-            if favoritesManager.favoritesIndex != row - 1 {
+            if favoritesManager.favoritesIndex == row - 1 {
+                toConsole("debugger breakpoint opportunity")
+            } else {
                 value = value.replacingOccurrences(of: "•", with: "  ")
             }
         }
@@ -208,6 +210,8 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
 
     func actOnSelection(_ row: Int) {
+        selectionManager.fullResign()
+
         if row == 0 {
             gStorageMode = .favorites
 
