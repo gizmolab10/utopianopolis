@@ -123,14 +123,12 @@ class ZOperationsManager: NSObject {
                     var closure: IntegerClosure? = nil
 
                     closure = { (index: Int) in
-                        if index >= modes.count {
-                            self.dispatchAsyncInBackground {
-                                self.finish(identifier, mode: saved)
-                            }
-                        } else {
+                        if index < modes.count {
                             self.invoke(identifier, mode: modes[index]) {
                                 closure?(index + 1)
                             }
+                        } else {
+                            self.finish(identifier, mode: saved)
                         }
                     }
 
@@ -138,7 +136,7 @@ class ZOperationsManager: NSObject {
                 }
 
                 waitingOps[identifier] = operation
-
+                
                 addOperation(operation)
             }
         }
@@ -157,7 +155,7 @@ class ZOperationsManager: NSObject {
         if let operation = waitingOps[identifier] {
             waitingOps[identifier] = nil
 
-            operation.finish()
+            operation.abort()
         }
     }
 

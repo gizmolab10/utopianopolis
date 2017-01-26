@@ -320,7 +320,15 @@ class Operation: Foundation.Operation {
     func finished(_ errors: [NSError]) {
         // No op.
     }
-    
+
+    func abort() {
+        if state == .pending              { state = .evaluatingConditions }
+        if state == .evaluatingConditions { state = .ready }
+
+        state = .finishing
+        state = .finished
+    }
+
     override final func waitUntilFinished() {
         /*
             Waiting on operations is almost NEVER the right thing to do. It is

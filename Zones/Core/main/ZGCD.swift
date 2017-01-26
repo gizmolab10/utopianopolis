@@ -28,4 +28,11 @@ extension NSObject {
 
         DispatchQueue.main.asyncAfter(deadline: when) { closure() }
     }
+
+
+    func dispatchAsyncInBackgroundAfter(_ seconds: Double, closure: @escaping Closure) {
+        let when = DispatchTime.now() + Double(Int64(seconds * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+
+        DispatchQueue.global(qos: .background).asyncAfter(deadline: when) { closure() }
+    }
 }
