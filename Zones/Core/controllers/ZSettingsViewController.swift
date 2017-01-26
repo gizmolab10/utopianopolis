@@ -65,11 +65,13 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
         fractionInMemory?   .maxValue = Double(total)
         fractionInMemory?.doubleValue = Double(count)
 
-        if let              tableView = favoritesTableView {
-            favoritesManager.update()
-            tableView.reloadData()
+        if let                   here = travelManager.hereZone, let tableView = favoritesTableView {
+            favoritesManager.updateIndexFor(here) { object in
+                favoritesManager.update()
+                tableView.reloadData()
 
-            favoritesTableHeight?.constant = CGFloat((favoritesManager.count + 1) * 19)
+                self.favoritesTableHeight?.constant = CGFloat((favoritesManager.count + 1) * 19)
+            }
         }
     }
 
@@ -193,16 +195,12 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
     
     func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        var   value = ""
+        var        value = ""
 
-        if let text = row == 0 ? "edit these items" : favoritesManager.textAtIndex(row - 1) {
-            value   = " • \(text)"
-
-            if favoritesManager.favoritesIndex == row - 1 {
-                toConsole("debugger breakpoint opportunity")
-            } else {
-                value = value.replacingOccurrences(of: "•", with: "  ")
-            }
+        if  let     text = row == 0 ? "edit these items" : favoritesManager.textAtIndex(row - 1) {
+            let needsDot = favoritesManager.favoritesIndex == row - 1
+            let   prefix = needsDot ? "•" : "  "
+            value        = " \(prefix) \(text)"
         }
         
         return value

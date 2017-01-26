@@ -18,6 +18,11 @@ extension NSObject {
     }
 
 
+    func dispatchAsyncInBackground(_ closure: @escaping Closure) {
+        DispatchQueue.global(qos: .background).async { closure() }
+    }
+
+
     func dispatchAsyncInForegroundAfter(_ seconds: Double, closure: @escaping Closure) {
         let when = DispatchTime.now() + Double(Int64(seconds * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
 

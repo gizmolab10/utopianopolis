@@ -113,34 +113,28 @@ class ZOperationsManager: NSObject {
                 self.setupAndRun(operationIDs) { onCompletion() }
             }
         } else {
-            let isFavorite = gStorageMode == .favorites
-            let      saved = gStorageMode
-            onReady        = onCompletion
+            onReady   = onCompletion
+            let saved = gStorageMode
 
             for identifier in identifiers {
                 let  operation = BlockOperation {
-                    let simple = [.file, .ready, .cloud, .children, .subscribe, .unsubscribe].contains(identifier)
-                    let report = { (iCount: Int) in
-                        // self.report("\(String(describing: identifier)) \(iCount)")
-                    }
+                    let                   simple = [.file, .ready, .cloud, .subscribe, .unsubscribe].contains(identifier)
+                    let    modes: [ZStorageMode] = simple  ? [saved] : [.mine, .everyone, .favorites]
+                    var closure: IntegerClosure? = nil
 
-                    self                    .invoke(identifier, mode: saved) { iCount in
-                        if iCount != 0 { report(iCount) } else if saved == .mine || (simple && !isFavorite) {
-                            self            .finish(identifier, mode: saved)
+                    closure = { (index: Int) in
+                        if index >= modes.count {
+                            self.dispatchAsyncInBackground {
+                                self.finish(identifier, mode: saved)
+                            }
                         } else {
-                            self            .invoke(identifier, mode: .mine) { iCount in
-                                if iCount != 0 { report(iCount) } else if !isFavorite {
-                                    self    .finish(identifier, mode: saved)
-                                } else {
-                                    self    .invoke(identifier, mode: .everyone) { iCount in
-                                        if iCount != 0 { report(iCount) } else {
-                                            self.finish(identifier, mode: saved)
-                                        }
-                                    }
-                                }
+                            self.invoke(identifier, mode: modes[index]) {
+                                closure?(index + 1)
                             }
                         }
                     }
+
+                    closure?(0)
                 }
 
                 waitingOps[identifier] = operation
@@ -158,35 +152,45 @@ class ZOperationsManager: NSObject {
 
 
     func finish(_ identifier: ZOperationID, mode: ZStorageMode) {
-        let          operation = waitingOps[identifier]!
-        waitingOps[identifier] = nil
-        gStorageMode           = mode
+        gStorageMode = mode
 
-        operation.finish()
+        if let operation = waitingOps[identifier] {
+            waitingOps[identifier] = nil
+
+            operation.finish()
+        }
     }
 
 
-    func invoke(_ identifier: ZOperationID, mode: ZStorageMode, _ onCompletion: IntegerClosure?) {
+    func invoke(_ identifier: ZOperationID, mode: ZStorageMode, _ onCompletion: Closure?) {
         gStorageMode = mode
 
+        let report = { (iCount: Int) -> Void in
+            if iCount > 0 {
+                // self.report("\(String(describing: identifier)) \(iCount)")
+            }
+
+            onCompletion?()
+        }
+
         switch identifier {
-        case .file:        zfileManager.restore();                onCompletion?(0); break
-        case .root:        cloudManager.establishRootAsHere(mode, onCompletion); break
-        case .cloud:       cloudManager.fetchCloudZones    (mode, onCompletion); break
-        case .manifest:    cloudManager.fetchManifest      (mode, onCompletion); break
-        case .favorites:   cloudManager.fetchFavorites     (mode, onCompletion); break
-        case .here:       travelManager.establishHere      (mode, onCompletion); break // TODO: BROKEN
-        case .children:    cloudManager.fetchChildren      (mode, onCompletion); break
-        case .parent:      cloudManager.fetchParents       (mode, onCompletion); break
-        case .unsubscribe: cloudManager.unsubscribe        (mode, onCompletion); break
-        case .subscribe:   cloudManager.subscribe          (mode, onCompletion); break
-        case .emptyTrash:  cloudManager.emptyTrash         (mode, onCompletion); break
-        case .undelete:    cloudManager.undelete           (mode, onCompletion); break
-        case .create:      cloudManager.create             (mode, onCompletion); break
-        case .fetch:       cloudManager.fetch              (mode, onCompletion); break
-        case .merge:       cloudManager.merge              (mode, onCompletion); break
-        case .flush:       cloudManager.flush              (mode, onCompletion); break
-        case .ready:       becomeReady                     (mode, onCompletion); break
+        case .file:        zfileManager.restore();                report(0); break
+        case .root:        cloudManager.establishRootAsHere(mode, report); break
+        case .cloud:       cloudManager.fetchCloudZones    (mode, report); break
+        case .manifest:    cloudManager.fetchManifest      (mode, report); break
+        case .favorites:   cloudManager.fetchFavorites     (mode, report); break
+        case .here:       travelManager.establishHere      (mode, report); break // TODO: BROKEN
+        case .children:    cloudManager.fetchChildren      (mode, report); break
+        case .parent:      cloudManager.fetchParents       (mode, report); break
+        case .unsubscribe: cloudManager.unsubscribe        (mode, report); break
+        case .subscribe:   cloudManager.subscribe          (mode, report); break
+        case .emptyTrash:  cloudManager.emptyTrash         (mode, report); break
+        case .undelete:    cloudManager.undelete           (mode, report); break
+        case .create:      cloudManager.create             (mode, report); break
+        case .fetch:       cloudManager.fetch              (mode, report); break
+        case .merge:       cloudManager.merge              (mode, report); break
+        case .flush:       cloudManager.flush              (mode, report); break
+        case .ready:       becomeReady                     (mode, report); break
         }
     }
 

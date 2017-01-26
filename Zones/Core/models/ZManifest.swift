@@ -46,10 +46,6 @@ class ZManifest: ZRecord {
 
                 needSave()
             }
-
-            if let zone = _hereZone {
-                favoritesManager.updateIndexFor(zone) { object in }
-            }
         }
     }
 
