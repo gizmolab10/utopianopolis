@@ -107,13 +107,8 @@ class ZTravelManager: NSObject {
 
     func travelThrough(_ bookmark: Zone, atArrival: @escaping SignalClosure) {
         if  let      crossLink = bookmark.crossLink, let mode = crossLink.storageMode, let record = crossLink.record {
-            let    isFavorites = gStorageMode == .favorites
             let recordIDOfLink = record.recordID
             var   there: Zone? = nil
-
-            if isFavorites {
-                favoritesManager.updateIndexFor(bookmark) { object in }
-            }
 
             if  gStorageMode != mode {
                 gStorageMode  = mode

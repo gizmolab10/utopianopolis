@@ -322,11 +322,12 @@ class Operation: Foundation.Operation {
     }
 
     func abort() {
-        if state == .pending              { state = .evaluatingConditions }
-        if state == .evaluatingConditions { state = .ready }
+        if ![State.finished, State.pending].contains(state) {
+            if state == .evaluatingConditions { state = .ready }
 
-        state = .finishing
-        state = .finished
+            state = .finishing
+            state = .finished
+        }
     }
 
     override final func waitUntilFinished() {

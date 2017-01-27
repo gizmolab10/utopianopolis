@@ -551,10 +551,9 @@ class ZEditingManager: NSObject {
 
             deleteZones(toDelete,      in: zone)
             deleteZones(zone.children, in: zone)
-            manifest.needSave()
-            zone.needSave()
             zone.orphan()
-            zone.updateCloudProperties()
+            zone.needSave()
+            manifest.needSave()
         }
 
         return grabThisZone
@@ -614,8 +613,8 @@ class ZEditingManager: NSObject {
 
 
     func moveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool) {
-        if      let         zone = selectionManager.firstGrabbableZone {
-            if  let        there = zone.parentZone, let index = there.children.index(of: zone) {
+        if      let     zone = selectionManager.firstGrabbableZone {
+            if  let    there = zone.parentZone, let index = there.children.index(of: zone) {
                 var newIndex = index + (moveUp ? -1 : 1)
 
                 if extreme {

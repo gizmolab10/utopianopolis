@@ -156,7 +156,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
                         toZone!.needSave()
                         toZone!.unmarkForStates([.needsMerge])
-                        toZone!.updateCloudProperties()
                     }
                 }
 

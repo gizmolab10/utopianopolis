@@ -115,7 +115,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func flush(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
-        if let operation = configure(CKModifyRecordsOperation(), using: storageMode) as? CKModifyRecordsOperation {
+        if  let           operation = configure(CKModifyRecordsOperation(), using: storageMode) as? CKModifyRecordsOperation {
             operation.recordsToSave = recordsWithMatchingStates([.needsSave])
 
             clearStates([.needsSave]) // clear BEFORE looking at manifest
@@ -323,7 +323,7 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        let format = String(format: "zoneState < %d%@", ZoneState.IsFavorite.rawValue, suffix) //  AND zoneLink = \"\"
+        let format = String(format: "zoneState < %d%@", ZoneState.IsFavorite.rawValue, suffix)
 
         return NSPredicate(format: format)
     }
@@ -506,7 +506,6 @@ class ZCloudManager: ZRecordsManager {
                 }
 
                 deleted.needSave()
-                deleted.updateCloudProperties()
             }
         }
     }
@@ -517,14 +516,16 @@ class ZCloudManager: ZRecordsManager {
 
         self.cloudQueryUsingPredicate(predicate) { (iRecord: CKRecord?) in
             if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
+                favoritesManager.update()
+                favoritesManager.favoritesRootZone.respectOrder()
                 onCompletion?(0)
             } else {
                 let        bookmark = Zone(record: iRecord, storageMode: storageMode)
                 let            root = favoritesManager.favoritesRootZone
                 bookmark.parentZone = root
 
+                // self.report("fetching \(bookmark.zoneName!) order \(bookmark.order)")
                 root.addChild(bookmark)
-                root.respectOrder()
             }
         }
     }

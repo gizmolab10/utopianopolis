@@ -241,6 +241,10 @@ class ZRecordsManager: NSObject {
             let zone: ZRecord = object as! ZRecord
 
             if let record = zone.record, !objects.contains(record) {
+//                if let actual: Zone = zone as? Zone {
+//                    self.report("saving \(actual.zoneName!) order \(actual.order)")
+//                }
+
                 objects.append(record)
             }
         }

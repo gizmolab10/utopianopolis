@@ -113,13 +113,14 @@ class ZOperationsManager: NSObject {
                 self.setupAndRun(operationIDs) { onCompletion() }
             }
         } else {
-            onReady   = onCompletion
-            let saved = gStorageMode
+            onReady    = onCompletion
+            let  saved = gStorageMode
+            let isMine = saved == .mine
 
             for identifier in identifiers {
                 let  operation = BlockOperation {
-                    let                   simple = [.file, .ready, .cloud, .subscribe, .unsubscribe].contains(identifier)
-                    let    modes: [ZStorageMode] = simple  ? [saved] : [.mine, .everyone, .favorites]
+                    let                   simple = [.file, .ready, .cloud, .parent, .children, .subscribe, .unsubscribe].contains(identifier)
+                    let    modes: [ZStorageMode] = simple || isMine ? [saved] : [.mine, .everyone, .favorites]
                     var closure: IntegerClosure? = nil
 
                     closure = { (index: Int) in
@@ -164,11 +165,11 @@ class ZOperationsManager: NSObject {
         gStorageMode = mode
 
         let report = { (iCount: Int) -> Void in
-            if iCount > 0 {
-                // self.report("\(String(describing: identifier)) \(iCount)")
+            if iCount == 0 {
+                onCompletion?()
+//            } else {
+//                self.report("\(String(describing: identifier)) \(iCount) \(mode)")
             }
-
-            onCompletion?()
         }
 
         switch identifier {

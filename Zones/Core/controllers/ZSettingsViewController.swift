@@ -188,9 +188,15 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
 
     func numberOfRows(in tableView: NSTableView) -> Int {
-        let count = favoritesManager.count
+        var count = 1
 
-        return count + 1
+        for zone in favoritesManager.favoritesRootZone.children {
+            if zone.isBookmark {
+                count += 1
+            }
+        }
+
+        return count
     }
 
     

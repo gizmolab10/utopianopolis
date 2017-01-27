@@ -25,6 +25,7 @@ class ZFavoritesManager: NSObject {
 
 
     func setup() {
+        favoritesRootZone.level        = 0
         favoritesRootZone.showChildren = true
         favoritesRootZone.zoneName     = "favorites"
         favoritesRootZone.record       = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
@@ -47,6 +48,7 @@ class ZFavoritesManager: NSObject {
             let          name = mode.rawValue
             let      bookmark = self.create(withBookmark: nil, false, parent: self.defaultFavorites, atIndex: index, mode, name)
             bookmark.zoneLink =  "\(name)::"
+            bookmark.order    = Double(index) * 0.0001
         }
 
         if defaultFavorites.count == 0 {
@@ -145,38 +147,42 @@ class ZFavoritesManager: NSObject {
     func updateIndexFor(_ iZone: Zone, iGrabClosure: ObjectClosure?) {
         update()
 
-        let          traveler = !iZone.isBookmark ? iZone : iZone.bookmarkTarget
+        let        traveler = !iZone.isBookmark ? iZone : iZone.bookmarkTarget
 
-        if  let    identifier = traveler?.record?.recordID.recordName {
-            let          mode = traveler!.storageMode
-            let   enumeration = rotatedEnumeration
-            let updateForZone = { (iZoneToMatch: Zone) in
-                for (index, zone) in self.favoritesRootZone.children.enumerated() {
-                    if zone == iZoneToMatch {
-                        self.favoritesIndex = index
+        if  let identifier  = traveler?.record?.recordID.recordName {
+            if  identifier == favoritesRootNameKey {
+                iGrabClosure?(iZone)
+            } else {
+                let          mode = traveler!.storageMode
+                let   enumeration = rotatedEnumeration
+                let updateForZone = { (iZoneToMatch: Zone) in
+                    for (index, zone) in self.favoritesRootZone.children.enumerated() {
+                        if zone == iZoneToMatch {
+                            self.favoritesIndex = index
 
-                        iGrabClosure?(zone)
+                            iGrabClosure?(zone)
 
-                        return
+                            return
+                        }
                     }
                 }
-            }
 
-            for (_, zone) in enumeration {
-                if zone == iZone || (zone.isFavorite && zone.crossLink?.record.recordID.recordName == identifier) {
-                    return updateForZone(zone)
+                for (_, zone) in enumeration {
+                    if zone == iZone || (zone.isFavorite && zone.crossLink?.record.recordID.recordName == identifier) {
+                        return updateForZone(zone)
+                    }
                 }
-            }
 
-            for (_, zone) in enumeration {
-                if zone.isFavorite, let target = zone.bookmarkTarget, (target.isAncestorOf(traveler!) || traveler!.isAncestorOf(target)) {
-                    return updateForZone(zone)
+                for (_, zone) in enumeration {
+                    if zone.isFavorite, let target = zone.bookmarkTarget, (target.isAncestorOf(traveler!) || traveler!.isAncestorOf(target)) {
+                        return updateForZone(zone)
+                    }
                 }
-            }
 
-            for (_, zone) in enumeration {
-                if !zone.isFavorite, zone.crossLink?.storageMode == mode {
-                    return updateForZone(zone)
+                for (_, zone) in enumeration {
+                    if !zone.isFavorite, zone.isBookmark, zone.crossLink?.storageMode == mode {
+                        return updateForZone(zone)
+                    }
                 }
             }
         }
@@ -270,7 +276,7 @@ class ZFavoritesManager: NSObject {
         let bookmark:  Zone = create(withBookmark: withBookmark, isFavorite, storageMode, name)
         let  insertAt: Int? = atIndex == count ? nil : atIndex
 
-        parent.addAndReorderChild(bookmark, at: insertAt)
+        parent.addChild(bookmark, at: insertAt)
         bookmark.updateCloudProperties() // is this needed?
 
         return bookmark

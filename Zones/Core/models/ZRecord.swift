@@ -202,7 +202,7 @@ class ZRecord: NSObject {
     }
 
 
-    func needSave()     { markForStates([.needsSave]) }
+    func needSave()     { markForStates([.needsSave]); updateCloudProperties() }
     func needFetch()    { markForStates([.needsFetch]) }
     func needCreate()   { markForStates([.needsCreate]) }
     func needParent()   { markForStates([.needsParent]) }

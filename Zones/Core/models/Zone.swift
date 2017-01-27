@@ -1,4 +1,4 @@
-//
+ //
 //  Zone.swift
 //  Zones
 //
@@ -128,7 +128,7 @@ class Zone : ZRecord {
             if newValue != order {
                 zoneOrder = NSNumber(value: newValue)
 
-                self.maybeNeedMerge()
+                self.needSave()
             }
         }
     }
@@ -403,6 +403,8 @@ class Zone : ZRecord {
         let orderSmaller = orderAt(index - 1) ?? 0.0
         let        child = children[index]
         child.order      = (orderLarger + orderSmaller) / 2.0
+
+        child.needSave()
     }
 
 
@@ -410,10 +412,11 @@ class Zone : ZRecord {
         if child != nil, let index = children.index(of: child!) {
             children.remove(at: index)
             child!.orphan()
-            needSave()
 
             if count == 0 {
                 hasChildren = false
+
+                needSave()
             }
         }
     }
