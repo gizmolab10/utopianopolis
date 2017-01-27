@@ -156,7 +156,7 @@ class ZOperationsManager: NSObject {
         if let operation = waitingOps[identifier] {
             waitingOps[identifier] = nil
 
-            operation.abort()
+            operation.bandaid()
         }
     }
 

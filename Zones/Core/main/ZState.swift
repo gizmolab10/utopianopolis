@@ -51,7 +51,6 @@ struct ZSettingsViewID: OptionSet {
 }
 
 
-var          gAutoGrab = true
 var     gTextCapturing = false
 var    gShowsSearching = false
 var gRecursivelyExpand = false

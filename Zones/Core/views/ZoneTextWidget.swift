@@ -32,12 +32,14 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 let       zone = widget.widgetZone
 
                 if !_isTextEditing {
-                    selectionManager.currentlyEditingZone  = nil
+                    let grab = selectionManager.currentlyEditingZone == zone
 
                     removeMonitorAsync()
                     abortEditing()
 
-                    if gAutoGrab {
+                    if grab {
+                        selectionManager.currentlyEditingZone  = nil
+
                         zone?.grab()
                     }
                 } else {
@@ -115,10 +117,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             dispatchAsyncInForeground { // avoid state garbling
                 selectionManager.currentlyGrabbedZones = []
 
-                let          saved = gAutoGrab
-                gAutoGrab          = true
                 self.isTextEditing = false
-                gAutoGrab          = saved
             }
         }
 
@@ -128,15 +127,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     @discardableResult override func becomeFirstResponder() -> Bool {
         let result = super.becomeFirstResponder()
-        let  saved = gAutoGrab
 
         if result {
             isTextEditing = true
-            gAutoGrab     = false
-
-            dispatchAsyncInForeground {
-                gAutoGrab = saved
-            }
         }
 
         return result
@@ -154,7 +147,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     if toZone != nil, iText != nil {
                         toZone!.zoneName = iText!
 
-                        toZone!.needSave()
+                        toZone!.needUpdateSave()
                         toZone!.unmarkForStates([.needsMerge])
                     }
                 }

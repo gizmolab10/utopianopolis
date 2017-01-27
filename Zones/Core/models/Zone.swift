@@ -128,7 +128,7 @@ class Zone : ZRecord {
             if newValue != order {
                 zoneOrder = NSNumber(value: newValue)
 
-                self.needSave()
+                self.needUpdateSave()
             }
         }
     }
@@ -173,10 +173,16 @@ class Zone : ZRecord {
         set {
             if newValue != state {
                 zoneState = NSNumber(integerLiteral: newValue.rawValue)
-                
-                self.maybeNeedMerge()
+
+                debug(" state")
+                markForStates([.needsSave])
             }
         }
+    }
+
+
+    override func debug(_  iMessage: String) {
+        // report("\(iMessage) children \(count) parent \(parent != nil) isDeleted \(isDeleted) mode \(storageMode!) \(zoneName ?? "unknown")")
     }
 
 
@@ -251,7 +257,7 @@ class Zone : ZRecord {
     var parentZone: Zone? {
         get {
             if parent == nil && _parentZone?.record != nil {
-                needSave()
+                needUpdateSave()
 
                 parent          = CKReference(record: (_parentZone?.record)!, action: .none)
             }
@@ -340,10 +346,11 @@ class Zone : ZRecord {
 
     func orphan() {
         parentZone?.removeChild(self)
-        needSave()
 
         parentZone = nil
         parent     = nil
+
+        needUpdateSave()
     }
 
 
@@ -404,19 +411,18 @@ class Zone : ZRecord {
         let        child = children[index]
         child.order      = (orderLarger + orderSmaller) / 2.0
 
-        child.needSave()
+        child.needUpdateSave()
     }
 
 
     func removeChild(_ child: Zone?) {
         if child != nil, let index = children.index(of: child!) {
             children.remove(at: index)
-            child!.orphan()
 
             if count == 0 {
                 hasChildren = false
 
-                needSave()
+                needUpdateSave()
             }
         }
     }

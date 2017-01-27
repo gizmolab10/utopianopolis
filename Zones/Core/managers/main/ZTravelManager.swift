@@ -127,7 +127,7 @@ class ZTravelManager: NSObject {
                             self.hereZone = cloudManager.zoneForRecord(iRecord!)
 
                             self.hereZone?.grab()
-                            self.manifest.needSave()
+                            self.manifest.needUpdateSave()
                             self.travel {
                                 atArrival(self.hereZone, .redraw)
                             }
@@ -153,7 +153,7 @@ class ZTravelManager: NSObject {
                         self.hereZone = cloudManager.zoneForRecord(iRecord!)
 
                         there?.grab()
-                        self.manifest.needSave()
+                        self.manifest.needUpdateSave()
                         self.hereZone?.needChildren()
                         atArrival(self.hereZone, .redraw)
                     }

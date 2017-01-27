@@ -82,6 +82,7 @@ class ZRecord: NSObject {
 
 
     func register() {}
+    func debug(_  iMessage: String) {}
     func cloudProperties() -> [String] { return [] }
 
 
@@ -141,7 +142,7 @@ class ZRecord: NSObject {
         }
 
         self.unmarkForStates([.needsMerge])
-        needSave()
+        needUpdateSave()
 
         record = iRecord
     }
@@ -202,7 +203,7 @@ class ZRecord: NSObject {
     }
 
 
-    func needSave()     { markForStates([.needsSave]); updateCloudProperties() }
+    func needUpdateSave()     { markForStates([.needsSave]); updateCloudProperties() }
     func needFetch()    { markForStates([.needsFetch]) }
     func needCreate()   { markForStates([.needsCreate]) }
     func needParent()   { markForStates([.needsParent]) }

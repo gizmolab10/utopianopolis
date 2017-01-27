@@ -324,7 +324,7 @@ class ZEditingManager: NSObject {
             if iZone == toHere {
                 self.hereZone = toHere
 
-                travelManager.manifest.needSave()
+                travelManager.manifest.needUpdateSave()
             }
 
             self.syncAnd(.redraw)
@@ -360,7 +360,7 @@ class ZEditingManager: NSObject {
         if !show && noVisibleChildren && zone.isGrabbed {
             zone.showChildren = false
 
-            zone.needSave()
+            zone.needUpdateSave()
 
             revealParentAndSiblingsOf(zone) {
                 if let parent = zone.parentZone {
@@ -376,7 +376,7 @@ class ZEditingManager: NSObject {
             if  zone.showChildren != show {
                 zone.showChildren  = show
 
-                zone.needSave()
+                zone.needUpdateSave()
 
                 if !show {
                     selectionManager.deselectDragWithin(zone);
@@ -391,7 +391,7 @@ class ZEditingManager: NSObject {
                 if  zone.hasChildren == isChildless {
                     zone.hasChildren = !isChildless
 
-                    zone.needSave()
+                    zone.needUpdateSave()
                 }
 
                 if operationsManager.isReady {
@@ -486,9 +486,7 @@ class ZEditingManager: NSObject {
             selectionManager.currentlyGrabbedZones = []
         }
 
-        if last != nil {
-            last!.grab()
-        }
+        last?.grab()
 
         controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
             self.signalFor(nil, regarding: .redraw)
@@ -519,13 +517,14 @@ class ZEditingManager: NSObject {
 
         if deleteMe {
             if grabThisZone != nil {
-                if zone == travelManager.hereZone {
+                if zone == hereZone { // this only happens once during recursion
                     revealParentAndSiblingsOf(zone) {
-                        travelManager.hereZone = grabThisZone
+                        self.hereZone = grabThisZone!
 
-                        grabThisZone!.grab()
-                        self.syncAnd(.redraw)
+                        self.deleteZone(zone)
                     }
+
+                    return grabThisZone
                 }
 
                 let siblings = grabThisZone!.children
@@ -544,16 +543,15 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            let   toDelete  = cloudManager.bookmarksFor(zone)
+            let  bookmarks  = cloudManager.bookmarksFor(zone)
             let   manifest  = travelManager.manifestForMode(zone.storageMode!)
             zone.isDeleted  = true // will be saved, then ignored after next launch
             manifest.total -= 1
 
-            deleteZones(toDelete,      in: zone)
             deleteZones(zone.children, in: zone)
+            deleteZones(bookmarks,     in: zone)
             zone.orphan()
-            zone.needSave()
-            manifest.needSave()
+            manifest.needUpdateSave()
         }
 
         return grabThisZone
@@ -673,7 +671,7 @@ class ZEditingManager: NSObject {
                     } else if !zone.isRoot {
                         hereZone = zone
 
-                        travelManager.manifest.needSave()
+                        travelManager.manifest.needUpdateSave()
                         syncAnd(.data)
                     }
                 } else if zone == hereZone || parent == nil {
@@ -689,7 +687,7 @@ class ZEditingManager: NSObject {
                     signalFor(parent!, regarding: .data)
                 }
             } else if gStorageMode != .favorites {
-                parent?.needSave() // for when zone is orphaned
+                parent?.needUpdateSave() // for when zone is orphaned
 
                 ////////////
                 // move zone
@@ -701,7 +699,7 @@ class ZEditingManager: NSObject {
                     if iHere != nil {
                         self.hereZone = iHere!
 
-                        travelManager.manifest.needSave()
+                        travelManager.manifest.needUpdateSave()
                         self.moveZone(zone, outTo: iHere!, orphan: true) {
                             self.syncAnd(.redraw)
                         }
@@ -774,7 +772,7 @@ class ZEditingManager: NSObject {
         if showChildren {
             zone.hasChildren = zone.count != 0
 
-            zone.needSave()
+            zone.needUpdateSave()
         }
 
         syncAnd(.redraw)
@@ -872,8 +870,8 @@ class ZEditingManager: NSObject {
                 completedYet     = true
                 var insert: Int? = zone.parentZone?.siblingIndex
 
-                zone.needSave()
-                outTo.needSave()
+                zone.needUpdateSave()
+                outTo.needUpdateSave()
 
                 if outTo.storageMode == .favorites {
                     insert = favoritesManager.nextFavoritesIndex(forward: !asTask)
@@ -911,8 +909,8 @@ class ZEditingManager: NSObject {
 
 
     func moveZone(_ zone: Zone, into: Zone, orphan: Bool, onCompletion: Closure?) {
-        zone.needSave()
-        into.needSave()
+        zone.needUpdateSave()
+        into.needUpdateSave()
         into.needChildren()
 
         into.showChildren = true

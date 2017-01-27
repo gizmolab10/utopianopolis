@@ -238,12 +238,10 @@ class ZRecordsManager: NSObject {
         var objects = [CKRecord] ()
 
         findRecordsWithMatchingStates(states) { object in
-            let zone: ZRecord = object as! ZRecord
+            let  zone: ZRecord = object as! ZRecord
 
-            if let record = zone.record, !objects.contains(record) {
-//                if let actual: Zone = zone as? Zone {
-//                    self.report("saving \(actual.zoneName!) order \(actual.order)")
-//                }
+            if let      record = zone.record, !objects.contains(record) {
+                zone.debug("saving")
 
                 objects.append(record)
             }
@@ -311,7 +309,7 @@ class ZRecordsManager: NSObject {
                 if  manifest.total < total {
                     manifest.total = total
 
-                    manifest.needSave()
+                    manifest.needUpdateSave()
                 }
             } else if registered! != identifier {
                 zones[registered!] = nil
@@ -380,7 +378,7 @@ class ZRecordsManager: NSObject {
 
         if zone == nil {
             zone = Zone(record: record, storageMode: gStorageMode)
-        } else {
+        } else if !(zone?.isDeleted ?? false) {
             zone?.record = record
         }
 

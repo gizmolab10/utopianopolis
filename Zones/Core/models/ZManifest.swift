@@ -44,7 +44,7 @@ class ZManifest: ZRecord {
             if let record = _hereZone?.record, record.recordID.recordName != here?.recordID.recordName {
                 here = CKReference(record: record, action: .none)
 
-                needSave()
+                needUpdateSave()
             }
         }
     }
@@ -61,7 +61,7 @@ class ZManifest: ZRecord {
 //            } else {
 //                count = NSNumber(value: 189)
 //
-//                needSave()
+//                needUpdateSave()
             }
 
             return (count?.intValue)!
@@ -70,7 +70,7 @@ class ZManifest: ZRecord {
         set {
             count = NSNumber(value: newValue)
 
-            needSave()
+            needUpdateSave()
         }
     }
 }

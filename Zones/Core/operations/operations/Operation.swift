@@ -321,7 +321,7 @@ class Operation: Foundation.Operation {
         // No op.
     }
 
-    func abort() {
+    func bandaid() {
         if ![State.finished, State.pending].contains(state) {
             if state == .evaluatingConditions { state = .ready }
 

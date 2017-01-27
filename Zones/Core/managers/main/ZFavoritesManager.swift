@@ -303,13 +303,13 @@ class ZFavoritesManager: NSObject {
         if isFavorite {
             updateIndexFor(zone) { object in }
 
-            index           = nextFavoritesIndex(forward: !asTask)
+            index           = nextFavoritesIndex(forward: asTask)
         }
 
         bookmark            = create(withBookmark: bookmark, isFavorite, parent: parent, atIndex: index, zone.storageMode, zone.zoneName)
 
         if !isFavorite {
-            parent.needSave()
+            parent.needUpdateSave()
         }
 
         if !zone.isBookmark {

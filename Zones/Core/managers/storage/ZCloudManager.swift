@@ -229,7 +229,7 @@ class ZCloudManager: ZRecordsManager {
                     let               here = self.zoneForRecord(iHereRecord!)
                     travelManager.hereZone = here
 
-                    travelManager.manifest.needSave()
+                    travelManager.manifest.needUpdateSave()
 
                     onCompletion?(0)
                 }
@@ -251,7 +251,7 @@ class ZCloudManager: ZRecordsManager {
                 travelManager.rootZone = root
                 root.level             = 0
 
-                travelManager.manifest.needSave()
+                travelManager.manifest.needUpdateSave()
             }
 
             onCompletion?(0)
@@ -363,7 +363,7 @@ class ZCloudManager: ZRecordsManager {
                         parent.respectOrder()
                     }
 
-                    self.signalFor(nil, regarding: .redraw)
+                    // self.signalFor(nil, regarding: .redraw)
 
                     self.fetchChildren(storageMode, onCompletion) // recurse: try another fetch
                 } else {
@@ -505,7 +505,7 @@ class ZCloudManager: ZRecordsManager {
                     deleted.needParent()
                 }
 
-                deleted.needSave()
+                deleted.needUpdateSave()
             }
         }
     }
@@ -656,7 +656,7 @@ class ZCloudManager: ZRecordsManager {
                 if oldValue != value {
                     record[forPropertyName] = value as! CKRecordValue?
 
-                    object.maybeNeedMerge()
+                    object.needUpdateSave()
                 }
             }
         }
