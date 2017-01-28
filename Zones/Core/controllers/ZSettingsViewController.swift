@@ -169,8 +169,8 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
             let               root = travelManager.rootZone
             travelManager.hereZone = root
 
-            root?.needChildren()
-            operationsManager.children(true) {
+            root?.maybeNeedChildren()
+            operationsManager.children(recursively: true) {
                 root?.addAndReorderChild(zone, at: 0)
                 controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
             }

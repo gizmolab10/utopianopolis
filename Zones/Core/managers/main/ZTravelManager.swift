@@ -65,7 +65,7 @@ class ZTravelManager: NSObject {
         if storageMode == .favorites {
             hereZone = favoritesManager.favoritesRootZone
         } else if hereZone != nil && hereZone?.record != nil && hereZone?.zoneName != nil {
-            hereZone?.needChildren()
+            hereZone?.maybeNeedChildren()
             hereZone?.needFetch()
         } else {
             cloudManager.establishHere((storageMode, onCompletion))
@@ -145,7 +145,7 @@ class ZTravelManager: NSObject {
                 if there != nil {
                     self.hereZone = there
 
-                    there?.needChildren()
+                    there?.maybeNeedChildren()
                     there?.grab()
                     atArrival(there, .redraw)
                 } else {
@@ -154,7 +154,7 @@ class ZTravelManager: NSObject {
 
                         there?.grab()
                         self.manifest.needUpdateSave()
-                        self.hereZone?.needChildren()
+                        self.hereZone?.maybeNeedChildren()
                         atArrival(self.hereZone, .redraw)
                     }
                 }

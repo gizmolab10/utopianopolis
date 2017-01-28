@@ -84,7 +84,20 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
     
 
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
-        return !editingManager.isEditing
+        var valid = !editingManager.isEditing
+
+        if valid {
+            switch menuItem.tag {
+            case 1:
+                valid = selectionManager.currentlyMovableZone != nil
+            case 2:
+                valid = selectionManager.pasteableZones.count != 0
+            default:
+                break
+            }
+        }
+
+        return valid
     }
     
 
@@ -103,6 +116,26 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
         editingManager.handleKey(key.lowercased(), flags: flags, isWindow: true)
     }
 
+
+    @IBAction func copy(_ iItem: NSMenuItem?) {
+        editingManager.copyToPaste()
+    }
+    
+
+    @IBAction func cut(_ iItem: NSMenuItem?) {
+        editingManager.delete()
+    }
+
+
+    @IBAction func delete(_ iItem: NSMenuItem?) {
+        editingManager.delete()
+    }
+
+
+    @IBAction func paste(_ iItem: NSMenuItem?) {
+        editingManager.pasteFromList()
+    }
+    
 
     @IBAction func toggleSearch(_ iItem: NSMenuItem?) {
         if gStorageMode != .favorites {

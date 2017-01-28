@@ -13,9 +13,8 @@ import Foundation
 class ZSelectionManager: NSObject {
 
 
+    var       pasteableZones = [Zone] ()
     var  currentlyEditingZone: Zone?
-
-
     var currentlyGrabbedZones: [Zone] {
         get { return travelManager.manifest.currentlyGrabbedZones }
         set { travelManager.manifest.currentlyGrabbedZones = newValue }

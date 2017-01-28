@@ -137,7 +137,7 @@ class ZEditingManager: NSObject {
                 }
             case " ":
                 if widget != nil && (isWindow || isOption) && !(widget?.widgetZone.isBookmark)! {
-                    addZoneTo(widget?.widgetZone)
+                    addNewChildTo(widget?.widgetZone)
                 }
             case "f":
                 if gStorageMode != .favorites {
@@ -167,7 +167,7 @@ class ZEditingManager: NSObject {
                             parent.showChildren = true
                         }
 
-                        addZoneTo(parent)
+                        addNewChildTo(parent)
                     } else {
                         selectionManager.currentlyEditingZone = nil
 
@@ -291,9 +291,9 @@ class ZEditingManager: NSObject {
         parent?.showChildren = true
 
         if parent != nil && parent?.zoneName != nil {
-            parent?.needChildren()
+            parent?.maybeNeedChildren()
 
-            operationsManager.children(false) {
+            operationsManager.children(recursively: false) {
                 onCompletion?()
             }
         } else {
@@ -381,7 +381,7 @@ class ZEditingManager: NSObject {
                 if !show {
                     selectionManager.deselectDragWithin(zone);
                 } else if isChildless {
-                    zone.needChildren()
+                    zone.maybeNeedChildren()
                 }
             }
 
@@ -408,7 +408,7 @@ class ZEditingManager: NSObject {
             if !show || !isChildless {
                 recurseMaybe()
             } else {
-                operationsManager.children(recursively) {
+                operationsManager.children(recursively: recursively) {
                     recurseMaybe()
                 }
             }
@@ -433,8 +433,8 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func addZoneTo(_ parentZone: Zone?) {
-        addZoneTo(parentZone) { (iZone: Zone) in
+    func addNewChildTo(_ parentZone: Zone?) {
+        addNewChildTo(parentZone) { (iZone: Zone) in
             var beenHereBefore = false
 
             controllersManager.syncToCloudAndSignalFor(parentZone, regarding: .redraw) {
@@ -450,23 +450,60 @@ class ZEditingManager: NSObject {
     }
 
 
-    func addZoneTo(_ zone: Zone?, onCompletion: ZoneClosure?) {
+    func addNewChildTo(_ zone: Zone?, onCompletion: ZoneClosure?) {
         if zone != nil && gStorageMode != .favorites {
-            zone?.needChildren()
+            let addNewChild = {
+                let record = CKRecord(recordType: zoneTypeKey)
+                let  child = Zone(record: record, storageMode: gStorageMode)
 
-            operationsManager.children(false) {
-                if operationsManager.isReady {
-                    let record = CKRecord(recordType: zoneTypeKey)
-                    let  child = Zone(record: record, storageMode: gStorageMode)
+                child.needCreate()
+                widgetsManager.widgetForZone(zone!)?.textWidget.resignFirstResponder()
+                zone?.addAndReorderChild(child, at: asTask ? 0 : nil)
 
-                    child.needCreate()
-                    widgetsManager.widgetForZone(zone!)?.textWidget.resignFirstResponder()
-                    zone?.addAndReorderChild(child, at: asTask ? 0 : nil)
+                travelManager.manifest.total += 1
 
-                    zone?.showChildren            = true
-                    travelManager.manifest.total += 1
+                onCompletion?(child)
+            }
 
-                    onCompletion?(child)
+            zone?.showChildren = true // needed for logic internal to maybeNeedChildren
+
+            if zone?.count != 0 {
+                addNewChild()
+            } else {
+                zone?.maybeNeedChildren()
+
+                operationsManager.children(recursively: false) {
+                    addNewChild()
+                }
+            }
+        }
+    }
+
+
+    func copyToPaste() {
+        for zone in selectionManager.currentlyGrabbedZones {
+            let    copy = zone.deepCopy()
+            copy.parent = nil
+
+            selectionManager.pasteableZones.append(copy)
+        }
+    }
+
+
+    func pasteFromList() {
+        var count = selectionManager.pasteableZones.count
+
+        if let zone = selectionManager.currentlyMovableZone, count > 0 {
+
+            for pastable in selectionManager.pasteableZones {
+                moveZone(pastable, into: zone, orphan: false) {
+                    count -= 1
+
+                    if count == 0 {
+                        selectionManager.pasteableZones = []
+
+                        controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                    }
                 }
             }
         }
@@ -474,7 +511,8 @@ class ZEditingManager: NSObject {
 
 
     func delete() {
-        var last: Zone? = nil
+        selectionManager.pasteableZones = []
+        var                 last: Zone? = nil
 
         if let zone: Zone = selectionManager.currentlyEditingZone {
             last = deleteZone(zone)
@@ -517,11 +555,11 @@ class ZEditingManager: NSObject {
 
         if deleteMe {
             if grabThisZone != nil {
-                if zone == hereZone { // this only happens once during recursion
+                if zone == hereZone { // this can only happen once during recursion (multiple places, below)
                     revealParentAndSiblingsOf(zone) {
                         self.hereZone = grabThisZone!
 
-                        self.deleteZone(zone)
+                        self.deleteZone(zone) // recurse
                     }
 
                     return grabThisZone
@@ -548,8 +586,9 @@ class ZEditingManager: NSObject {
             zone.isDeleted  = true // will be saved, then ignored after next launch
             manifest.total -= 1
 
-            deleteZones(zone.children, in: zone)
-            deleteZones(bookmarks,     in: zone)
+            deleteZones(zone.children, in: zone) // recurse
+            deleteZones(bookmarks,     in: zone) // recurse
+            selectionManager.pasteableZones.append(zone)
             zone.orphan()
             manifest.needUpdateSave()
         }
@@ -751,9 +790,9 @@ class ZEditingManager: NSObject {
             } else {
                 zone.showChildren = true
 
-                zone.needChildren()
+                zone.maybeNeedChildren()
 
-                operationsManager.children(false) {
+                operationsManager.children(recursively: false) {
                     if zone.count > 0 {
                         self.moveSelectionInto(zone)
                     }
@@ -911,11 +950,11 @@ class ZEditingManager: NSObject {
     func moveZone(_ zone: Zone, into: Zone, orphan: Bool, onCompletion: Closure?) {
         zone.needUpdateSave()
         into.needUpdateSave()
-        into.needChildren()
+        into.maybeNeedChildren()
 
         into.showChildren = true
 
-        operationsManager.children(false) {
+        operationsManager.children(recursively: false) {
             if orphan {
                 zone.orphan()
             }

@@ -53,7 +53,7 @@ struct ZSettingsViewID: OptionSet {
 
 var     gTextCapturing = false
 var    gShowsSearching = false
-var gRecursivelyExpand = false
+var gRecursivelyFetch = false
 var         gDotHeight = 12.0
 var          gWorkMode = ZWorkMode.editMode
 var          gFileMode = ZFileMode.cloud

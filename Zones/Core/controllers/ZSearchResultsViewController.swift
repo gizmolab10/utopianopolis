@@ -112,7 +112,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
         if zone == nil {
             zone = Zone(record: record, storageMode: gStorageMode)
 
-            zone?.needChildren()
+            zone?.maybeNeedChildren()
         }
 
         travelManager.hereZone = zone

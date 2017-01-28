@@ -120,17 +120,17 @@ class ZRecord: NSObject {
 
 
     func deepCopy() -> Zone {
-        let zone = Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: gStorageMode)
+        let copy = Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: gStorageMode)
 
         updateCloudProperties()
 
         for keyPath: String in cloudProperties() {
-            zone.record[keyPath] = record[keyPath]
+            copy.record[keyPath] = record[keyPath]
         }
 
-        zone.updateZoneProperties()
+        copy.updateZoneProperties()
 
-        return zone
+        return copy
     }
 
 
@@ -207,7 +207,7 @@ class ZRecord: NSObject {
     func needFetch()    { markForStates([.needsFetch]) }
     func needCreate()   { markForStates([.needsCreate]) }
     func needParent()   { markForStates([.needsParent]) }
-    func needChildren() { markForStates([.needsChildren]) }
+    func maybeNeedChildren() { markForStates([.needsChildren]) }
 
 
     func maybeNeedMerge() {

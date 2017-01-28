@@ -34,14 +34,11 @@ class ZRecordsManager: NSObject {
         }
 
         get {
-            var registry = statesByMode[gStorageMode]
-
-            if registry == nil {
-                registry            = [:]
-                self.recordsByState = registry!
+            if statesByMode[gStorageMode] == nil {
+                self.recordsByState = [:]
             }
 
-            return registry!
+            return statesByMode[gStorageMode]!
         }
     }
 
@@ -101,7 +98,8 @@ class ZRecordsManager: NSObject {
 
 
     func recordsForState(_ state: ZRecordState) -> [ZRecord] {
-        var records = recordsByState[state]
+        let    dict = recordsByState    // note: statesByMode is a dictionary of dictionaries
+        var records = dict[state]       // swift's terse nature has confused me, here
 
         if records == nil {
             records = []
@@ -366,7 +364,7 @@ class ZRecordsManager: NSObject {
         }
 
         if  zone?.showChildren ?? false {
-            zone?.needChildren()
+            zone?.maybeNeedChildren()
         }
 
         return zone
@@ -383,7 +381,7 @@ class ZRecordsManager: NSObject {
         }
 
         if  zone!.showChildren || zone!.hasChildren {
-            zone!.needChildren()
+            zone!.maybeNeedChildren()
         }
 
         return zone!

@@ -316,7 +316,7 @@ class Zone : ZRecord {
         let zone = super.deepCopy()
 
         for child in children {
-            zone.children.append(child.deepCopy())
+            zone.addChild(child.deepCopy())
         }
 
         return zone
@@ -337,9 +337,9 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    override func needChildren() {
+    override func maybeNeedChildren() {
         if count <= 1 && showChildren {
-            super.needChildren()
+            super.maybeNeedChildren()
         }
     }
 

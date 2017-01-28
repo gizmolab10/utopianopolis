@@ -36,6 +36,7 @@ class ZOperationsManager: NSObject {
 
     var    onReady: Closure?
     var    isReady = false
+    var      debug = false
     var waitingOps = [ZOperationID : BlockOperation] ()
     let      queue = OperationQueue()
 
@@ -73,11 +74,11 @@ class ZOperationsManager: NSObject {
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                          ]) { onCompletion() } }
 
 
-    func children(_ recursively: Bool, onCompletion: @escaping Closure) {
-        gRecursivelyExpand     = recursively
+    func children(recursively: Bool, onCompletion: @escaping Closure) {
+        gRecursivelyFetch     = recursively
         
         setupAndRun([.children]) {
-            gRecursivelyExpand = false
+            gRecursivelyFetch = false
 
             onCompletion()
         }
@@ -113,14 +114,15 @@ class ZOperationsManager: NSObject {
                 self.setupAndRun(operationIDs) { onCompletion() }
             }
         } else {
-            onReady    = onCompletion
-            let  saved = gStorageMode
-            let isMine = saved == .mine
+            onReady   = onCompletion
+            let saved = gStorageMode
+            let  only = [.mine].contains(saved)
 
             for identifier in identifiers {
                 let  operation = BlockOperation {
+                    let                     full = [.root, .favorites].contains(identifier)
                     let                   simple = [.file, .ready, .cloud, .parent, .children, .subscribe, .unsubscribe].contains(identifier)
-                    let    modes: [ZStorageMode] = simple || isMine ? [saved] : [.mine, .everyone, .favorites]
+                    let    modes: [ZStorageMode] = !full && (simple || only) ? [saved] : [.mine, .everyone, .favorites]
                     var closure: IntegerClosure? = nil
 
                     closure = { (index: Int) in
@@ -167,8 +169,8 @@ class ZOperationsManager: NSObject {
         let report = { (iCount: Int) -> Void in
             if iCount == 0 {
                 onCompletion?()
-//            } else {
-//                self.report("\(String(describing: identifier)) \(iCount) \(mode)")
+            } else if self.debug {
+                self.report("\(String(describing: identifier)) \(iCount) \(mode)")
             }
         }
 

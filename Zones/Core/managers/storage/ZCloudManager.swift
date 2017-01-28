@@ -67,7 +67,7 @@ class ZCloudManager: ZRecordsManager {
                 self.dispatchAsyncInForeground {
                     self.signalFor(parent, regarding: .redraw)
 
-                    operationsManager.children(false) {
+                    operationsManager.children(recursively: false) {
                         self.signalFor(parent, regarding: .redraw)
                     }
                 }
@@ -370,8 +370,8 @@ class ZCloudManager: ZRecordsManager {
                     self.invokeWithMode(storageMode) {
                         let child = self.zoneForRecord(iRecord!)
 
-                        if gRecursivelyExpand {
-                            child.needChildren()
+                        if gRecursivelyFetch {
+                            child.maybeNeedChildren()
                         }
 
                         if let parent = child.parentZone {
