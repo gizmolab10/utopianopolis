@@ -151,7 +151,7 @@ class Zone : ZRecord {
             if newValue != level {
                 zoneLevel = NSNumber(value: newValue)
 
-                self.maybeNeedMerge()
+                self.needJustSave()
             }
         }
     }
@@ -175,7 +175,7 @@ class Zone : ZRecord {
                 zoneState = NSNumber(integerLiteral: newValue.rawValue)
 
                 debug(" state")
-                markForStates([.needsSave])
+                needJustSave()
             }
         }
     }
@@ -337,9 +337,9 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    override func maybeNeedChildren() {
+    override func needChildren() {
         if count <= 1 && showChildren {
-            super.maybeNeedChildren()
+            super.needChildren()
         }
     }
 

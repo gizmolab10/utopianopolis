@@ -123,6 +123,7 @@ class ZEditingManager: NSObject {
             let   isShift = flags.contains(.shift)
 
             switch key! {
+            case "f":  find()
             case "p":  printHere()
             case "b":  createBookmark()
             case "\"": doFavorites(true, isOption)
@@ -139,12 +140,6 @@ class ZEditingManager: NSObject {
                 if widget != nil && (isWindow || isOption) && !(widget?.widgetZone.isBookmark)! {
                     addNewChildTo(widget?.widgetZone)
                 }
-            case "f":
-                if gStorageMode != .favorites {
-                    gShowsSearching = !gShowsSearching
-
-                    signalFor(nil, regarding: .search)
-                }
             case "\r":
                 if widget != nil {
                     if selectionManager.currentlyGrabbedZones.count != 0 {
@@ -159,20 +154,7 @@ class ZEditingManager: NSObject {
                 }
             case "\t":
                 if widget != nil {
-                    widget?.textWidget.resignFirstResponder()
-
-                    if let parent = widget?.widgetZone.parentZone {
-                        if widget?.widgetZone == hereZone {
-                            hereZone            = parent
-                            parent.showChildren = true
-                        }
-
-                        addNewChildTo(parent)
-                    } else {
-                        selectionManager.currentlyEditingZone = nil
-
-                        signalFor(nil, regarding: .redraw)
-                    }
+                    addSibling()
                 }
             default:
                 if key?.characters.first?.asciiValue == nil, !isEditing, let arrow = ZArrowKey(rawValue: (key?.utf8CString[2])!) {
@@ -185,6 +167,15 @@ class ZEditingManager: NSObject {
 
     // MARK:- other
     // MARK:-
+
+
+    func find() {
+        if gStorageMode != .favorites {
+            gShowsSearching = !gShowsSearching
+
+            signalFor(nil, regarding: .search)
+        }
+    }
 
 
     func syncAnd(_ kind: ZSignalKind) {
@@ -219,15 +210,27 @@ class ZEditingManager: NSObject {
 
     func createBookmark() {
         if gStorageMode != .favorites, let zone = selectionManager.firstGrabbableZone, !zone.isRoot {
-            var bookmark: Zone? = nil
+            let closure = {
+                var bookmark: Zone? = nil
 
-            invokeWithMode(.mine) {
-                bookmark = favoritesManager.createBookmarkFor(zone, isFavorite: false)
+                self.invokeWithMode(.mine) {
+                    bookmark = favoritesManager.createBookmarkFor(zone, isFavorite: false)
+                }
+
+                bookmark?.grab()
+                self.signalFor(nil, regarding: .redraw)
+                operationsManager.sync {}
             }
 
-            bookmark?.grab()
-            self.signalFor(nil, regarding: .redraw)
-            operationsManager.sync {}
+            if hereZone != zone {
+                closure()
+            } else {
+                self.revealParentAndSiblingsOf(zone) {
+                    self.hereZone = zone.parentZone ?? self.hereZone
+
+                    closure()
+                }
+            }
         }
     }
 
@@ -291,7 +294,7 @@ class ZEditingManager: NSObject {
         parent?.showChildren = true
 
         if parent != nil && parent?.zoneName != nil {
-            parent?.maybeNeedChildren()
+            parent?.needChildren()
 
             operationsManager.children(recursively: false) {
                 onCompletion?()
@@ -381,7 +384,7 @@ class ZEditingManager: NSObject {
                 if !show {
                     selectionManager.deselectDragWithin(zone);
                 } else if isChildless {
-                    zone.maybeNeedChildren()
+                    zone.needChildren()
                 }
             }
 
@@ -435,6 +438,22 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
+    func addSibling() {
+        let widget = widgetsManager.currentMovableWidget
+
+        widget?.textWidget.resignFirstResponder()
+
+        if let parent = widget?.widgetZone.parentZone {
+            if widget?.widgetZone == hereZone {
+                hereZone            = parent
+                parent.showChildren = true
+            }
+
+            addNewChildTo(parent)
+        }
+    }
+
+
     func addNewChildTo(_ parentZone: Zone?) {
         addNewChildTo(parentZone) { (iZone: Zone) in
             var beenHereBefore = false
@@ -467,12 +486,12 @@ class ZEditingManager: NSObject {
                 onCompletion?(child)
             }
 
-            zone?.showChildren = true // needed for logic internal to maybeNeedChildren
+            zone?.showChildren = true // needed for logic internal to needChildren
 
             if zone?.count != 0 {
                 addNewChild()
             } else {
-                zone?.maybeNeedChildren()
+                zone?.needChildren()
 
                 operationsManager.children(recursively: false) {
                     addNewChild()
@@ -791,7 +810,7 @@ class ZEditingManager: NSObject {
             } else {
                 zone.showChildren = true
 
-                zone.maybeNeedChildren()
+                zone.needChildren()
 
                 operationsManager.children(recursively: false) {
                     if zone.count > 0 {
@@ -951,7 +970,7 @@ class ZEditingManager: NSObject {
     func moveZone(_ zone: Zone, into: Zone, orphan: Bool, onCompletion: Closure?) {
         zone.needUpdateSave()
         into.needUpdateSave()
-        into.maybeNeedChildren()
+        into.needChildren()
 
         into.showChildren = true
 

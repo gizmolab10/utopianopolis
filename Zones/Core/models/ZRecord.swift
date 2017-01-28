@@ -141,7 +141,7 @@ class ZRecord: NSObject {
             }
         }
 
-        self.unmarkForStates([.needsMerge])
+        // self.unmarkForStates([.needsMerge])
         needUpdateSave()
 
         record = iRecord
@@ -203,18 +203,12 @@ class ZRecord: NSObject {
     }
 
 
-    func needUpdateSave()     { markForStates([.needsSave]); updateCloudProperties() }
-    func needFetch()    { markForStates([.needsFetch]) }
-    func needCreate()   { markForStates([.needsCreate]) }
-    func needParent()   { markForStates([.needsParent]) }
-    func maybeNeedChildren() { markForStates([.needsChildren]) }
-
-
-    func maybeNeedMerge() {
-        if !isMarkedForStates([.needsCreate]) {
-            markForStates([.needsMerge])
-        }
-    }
+    func needUpdateSave() { markForStates([.needsSave]); updateCloudProperties() }
+    func needJustSave()   { markForStates([.needsSave]) }
+    func needFetch()      { markForStates([.needsFetch]) }
+    func needCreate()     { markForStates([.needsCreate]) }
+    func needParent()     { markForStates([.needsParent]) }
+    func needChildren()   { markForStates([.needsChildren]) }
 
 
     // MARK:- accessors and KVO

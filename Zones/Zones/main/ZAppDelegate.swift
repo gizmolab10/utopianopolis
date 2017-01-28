@@ -117,47 +117,13 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
     }
 
 
-    @IBAction func copy(_ iItem: NSMenuItem?) {
-        editingManager.copyToPaste()
-    }
-    
-
-    @IBAction func cut(_ iItem: NSMenuItem?) {
-        editingManager.delete()
-    }
-
-
-    @IBAction func delete(_ iItem: NSMenuItem?) {
-        editingManager.delete()
-    }
-
-
-    @IBAction func paste(_ iItem: NSMenuItem?) {
-        editingManager.paste()
-    }
-    
-
-    @IBAction func toggleSearch(_ iItem: NSMenuItem?) {
-        if gStorageMode != .favorites {
-            gShowsSearching = !gShowsSearching
-
-            signalFor(nil, regarding: .search)
-        }
-    }
-
-
-    @IBAction func displayPreferences(_ sender: Any?) {
-        settingsController?.displayViewFor(id: .Preferences)
-    }
-
-
-    @IBAction func displayHelp(_ sender: Any?) {
-        settingsController?.displayViewFor(id: .Help)
-    }
-
-
-    @IBAction func printHere(_ sender: Any?) {
-        editingManager.printHere()
-    }
+    @IBAction func displayPreferences(_ sender: Any?) { settingsController?.displayViewFor(id: .Preferences) }
+    @IBAction func displayHelp       (_ sender: Any?) { settingsController?.displayViewFor(id: .Help) }
+    @IBAction func printHere         (_ sender: Any?) { editingManager.printHere() }
+    @IBAction func copy        (_ iItem: NSMenuItem?) { editingManager.copyToPaste() }
+    @IBAction func cut         (_ iItem: NSMenuItem?) { editingManager.delete() }
+    @IBAction func delete      (_ iItem: NSMenuItem?) { editingManager.delete() }
+    @IBAction func paste       (_ iItem: NSMenuItem?) { editingManager.paste() }
+    @IBAction func toggleSearch(_ iItem: NSMenuItem?) { editingManager.find() }
 }
 

@@ -14,7 +14,6 @@ import CloudKit
 enum ZRecordState: Int {
     case needsSave
     case needsFetch
-    case needsMerge
     case needsCreate
     case needsParent
     case needsChildren
@@ -364,7 +363,7 @@ class ZRecordsManager: NSObject {
         }
 
         if  zone?.showChildren ?? false {
-            zone?.maybeNeedChildren()
+            zone?.needChildren()
         }
 
         return zone
@@ -381,7 +380,7 @@ class ZRecordsManager: NSObject {
         }
 
         if  zone!.showChildren || zone!.hasChildren {
-            zone!.maybeNeedChildren()
+            zone!.needChildren()
         }
 
         return zone!

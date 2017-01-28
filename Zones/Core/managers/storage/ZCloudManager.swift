@@ -83,7 +83,6 @@ class ZCloudManager: ZRecordsManager {
     func royalFlush(_ onCompletion: @escaping Closure) {
         for zone in zones.values {
             if !zone.isMarkedForStates([.needsFetch, .needsSave, .needsCreate]) {
-                zone.unmarkForStates([.needsMerge])
                 zone.normalizeOrdering()
                 zone.updateCloudProperties()
             }
@@ -371,7 +370,7 @@ class ZCloudManager: ZRecordsManager {
                         let child = self.zoneForRecord(iRecord!)
 
                         if gRecursivelyFetch {
-                            child.maybeNeedChildren()
+                            child.needChildren()
                         }
 
                         if let parent = child.parentZone {
@@ -418,29 +417,29 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func merge(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
-        let recordIDs = recordIDsWithMatchingStates([.needsMerge])
-
-        if  recordIDs.count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            onCompletion?(recordIDs.count)
-
-            operation.recordIDs                = recordIDs
-            operation.completionBlock          = { onCompletion?(0) }
-            operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
-                self.invokeWithMode(storageMode) {
-                    if let error: CKError = iError as? CKError {
-                        self.reportError(error)
-                    } else if let record = self.recordForRecordID(iID) {
-                        record.mergeIntoAndTake(iRecord!)
-                    }
-                }
-            }
-
-            operation.start()
-        } else {
-            onCompletion?(0)
-        }
-    }
+//    func merge(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
+//        let recordIDs = recordIDsWithMatchingStates([.needsMerge])
+//
+//        if  recordIDs.count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
+//            onCompletion?(recordIDs.count)
+//
+//            operation.recordIDs                = recordIDs
+//            operation.completionBlock          = { onCompletion?(0) }
+//            operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
+//                self.invokeWithMode(storageMode) {
+//                    if let error: CKError = iError as? CKError {
+//                        self.reportError(error)
+//                    } else if let record = self.recordForRecordID(iID) {
+//                        record.mergeIntoAndTake(iRecord!)
+//                    }
+//                }
+//            }
+//
+//            operation.start()
+//        } else {
+//            onCompletion?(0)
+//        }
+//    }
 
 
     func fetchParents(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
