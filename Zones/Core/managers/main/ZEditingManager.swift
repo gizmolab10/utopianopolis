@@ -239,7 +239,7 @@ class ZEditingManager: NSObject {
             let      isWider = view.bounds.size.width > view.bounds.size.height
             let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
             let       length = Double(isWider ? view.bounds.size.width : view.bounds.size.height)
-            let        scale = 64800.0 / length // 72 dpi * 9 inches * 100 percent
+            let        scale = 46800.0 / length // 72 dpi * 6.5 inches * 100 percent
 
             PMSetScale(pmPageFormat, scale)
             PMSetOrientation(pmPageFormat, orientation, false)
@@ -400,7 +400,9 @@ class ZEditingManager: NSObject {
 
                 if recursively {
                     for child: Zone in zone.children {
-                        self.showToggleDot(show, zone: child, recursively: recursively, onCompletion: nil)
+                        if child != zone {
+                            self.showToggleDot(show, zone: child, recursively: true, onCompletion: nil)
+                        }
                     }
                 }
             }
@@ -481,6 +483,8 @@ class ZEditingManager: NSObject {
 
 
     func copyToPaste() {
+        selectionManager.pasteableZones = []
+
         for zone in selectionManager.currentlyGrabbedZones {
             let    copy = zone.deepCopy()
             copy.parent = nil
@@ -490,18 +494,15 @@ class ZEditingManager: NSObject {
     }
 
 
-    func pasteFromList() {
+    func paste() {
         var count = selectionManager.pasteableZones.count
 
-        if let zone = selectionManager.currentlyMovableZone, count > 0 {
-
+        if let zone = selectionManager.firstGrabbableZone, count > 0, !zone.isBookmark {
             for pastable in selectionManager.pasteableZones {
-                moveZone(pastable, into: zone, orphan: false) {
+                moveZone(pastable.deepCopy(), into: zone, orphan: false) {
                     count -= 1
 
                     if count == 0 {
-                        selectionManager.pasteableZones = []
-
                         controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                     }
                 }
@@ -519,6 +520,7 @@ class ZEditingManager: NSObject {
 
             selectionManager.currentlyEditingZone = nil
         } else {
+            copyToPaste()
             last = deleteZones(selectionManager.currentlyGrabbedZones, in: nil)
 
             selectionManager.currentlyGrabbedZones = []
@@ -588,7 +590,6 @@ class ZEditingManager: NSObject {
 
             deleteZones(zone.children, in: zone) // recurse
             deleteZones(bookmarks,     in: zone) // recurse
-            selectionManager.pasteableZones.append(zone)
             zone.orphan()
             manifest.needUpdateSave()
         }

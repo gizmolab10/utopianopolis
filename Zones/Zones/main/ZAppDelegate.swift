@@ -133,7 +133,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
 
     @IBAction func paste(_ iItem: NSMenuItem?) {
-        editingManager.pasteFromList()
+        editingManager.paste()
     }
     
 
