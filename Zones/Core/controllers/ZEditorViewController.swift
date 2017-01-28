@@ -41,14 +41,14 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         var specificView:        ZView? = view
         var specificindex:         Int? = nil
         var recursing:             Bool = [.data, .redraw].contains(kind)
-        hereWidget.widgetZone           = travelManager.hereZone!
+        hereWidget.widgetZone           = gTravelManager.hereZone!
 
-        if zone == nil || zone == travelManager.hereZone! {
+        if zone == nil || zone == gTravelManager.hereZone! {
             recursing = true
 
             toConsole("all")
         } else {
-            specificWidget = widgetsManager.widgetForZone(zone!)
+            specificWidget = gWidgetsManager.widgetForZone(zone!)
             specificView   = specificWidget?.superview
             specificindex  = zone!.siblingIndex
 
@@ -71,7 +71,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
 
     override func displayActivity() {
-        let isReady = operationsManager.isReady
+        let isReady = gOperationsManager.isReady
 
         spinner?.isHidden = isReady
 
@@ -93,7 +93,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
     func oneClick(_ sender: ZGestureRecognizer?) {
         gShowsSearching = false
 
-        selectionManager.deselect()
+        gSelectionManager.deselect()
         signalFor(nil, regarding: .search)
     }
 }

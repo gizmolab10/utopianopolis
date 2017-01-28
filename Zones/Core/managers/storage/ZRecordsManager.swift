@@ -300,7 +300,7 @@ class ZRecordsManager: NSObject {
 
             if registered == nil {
                 zones[identifier]  = zone
-                let       manifest = travelManager.manifest
+                let       manifest = gTravelManager.manifest
                 let          total = zones.count
 
                 if  manifest.total < total {
@@ -342,8 +342,8 @@ class ZRecordsManager: NSObject {
         var record = zoneForRecordID(recordID) as ZRecord?
 
         if record == nil {
-            if travelManager.manifest.record?.recordID.recordName == recordID?.recordName {
-                record = travelManager.manifest
+            if gTravelManager.manifest.record?.recordID.recordName == recordID?.recordName {
+                record = gTravelManager.manifest
             }
         }
 

@@ -81,7 +81,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             innerDot?.setupForZone(zone, asToggle: isToggle)
             snp.makeConstraints { (make: ConstraintMaker) in
-                make.size.equalTo(CGSize(width: fingerBreadth, height: fingerBreadth))
+                make.size.equalTo(CGSize(width: gFingerBreadth, height: gFingerBreadth))
                 make.center.equalTo(innerDot!)
             }
         }
@@ -98,9 +98,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     func twoClicks(_ iGesture: ZGestureRecognizer?) {
         if let widget: ZoneWidget = superview as? ZoneWidget, let zone = widget.widgetZone {
             if isToggle {
-                editingManager.toggleDotActionOnZone(zone, recursively: true)
+                gEditingManager.toggleDotActionOnZone(zone, recursively: true)
             } else {
-                editingManager.focusOnZone(zone)
+                gEditingManager.focusOnZone(zone)
             }
         }
     }
@@ -109,9 +109,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     func oneClick(_ iGesture: ZGestureRecognizer?) {
         if let widget: ZoneWidget = superview as? ZoneWidget, let zone = widget.widgetZone {
             if isToggle {
-                editingManager.toggleDotActionOnZone(zone, recursively: false)
+                gEditingManager.toggleDotActionOnZone(zone, recursively: false)
             } else {
-                selectionManager.deselect()
+                gSelectionManager.deselect()
                 zone.grab()
                 signalFor(zone, regarding: .datum)
             }

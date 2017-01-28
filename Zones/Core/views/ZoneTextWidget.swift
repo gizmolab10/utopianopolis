@@ -32,21 +32,21 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 let       zone = widget.widgetZone
 
                 if !_isTextEditing {
-                    let grab = selectionManager.currentlyEditingZone == zone
+                    let grab = gSelectionManager.currentlyEditingZone == zone
 
                     removeMonitorAsync()
                     abortEditing()
 
                     if grab {
-                        selectionManager.currentlyEditingZone  = nil
+                        gSelectionManager.currentlyEditingZone  = nil
 
                         zone?.grab()
                     }
                 } else {
-                    selectionManager.currentlyEditingZone  = zone
-                    selectionManager.currentlyGrabbedZones = []
+                    gSelectionManager.currentlyEditingZone  = zone
+                    gSelectionManager.currentlyGrabbedZones = []
                     textColor                              = widget.widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor
-                    font                                   = grabbedWidgetFont
+                    font                                   = gGrabbedWidgetFont
 
                     #if os(OSX)
                     monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> ZEvent? in
@@ -55,7 +55,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                             let isArrow = flags.contains(.numericPad) && flags.contains(.function)
 
                             if !isArrow {
-                                editingManager.handleEvent(event, isWindow: false)
+                                gEditingManager.handleEvent(event, isWindow: false)
                             }
                         }
 
@@ -115,7 +115,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
         if result && isTextEditing {
             dispatchAsyncInForeground { // avoid state garbling
-                selectionManager.currentlyGrabbedZones = []
+                gSelectionManager.currentlyGrabbedZones = []
 
                 self.isTextEditing = false
             }
@@ -155,17 +155,17 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
                 if  zone!.isBookmark {
                     invokeWithMode(zone?.crossLink?.storageMode) {
-                        zone = cloudManager.zoneForRecordID(zone?.crossLink?.record.recordID)
+                        zone = gCloudManager.zoneForRecordID(zone?.crossLink?.record.recordID)
                     }
 
                     assignText(text, zone)
                 }
 
-                for bookmark in cloudManager.bookmarksFor(zone) {
+                for bookmark in gCloudManager.bookmarksFor(zone) {
                     assignText(text, bookmark)
                 }
 
-                operationsManager.sync {}
+                gOperationsManager.sync {}
             }
         }
     }
@@ -174,7 +174,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 #if os(OSX)
 
     // fix a bug where root zone is editing on launch
-    override var acceptsFirstResponder: Bool { get { return operationsManager.isReady } }
+    override var acceptsFirstResponder: Bool { get { return gOperationsManager.isReady } }
 
 
     override func controlTextDidChange(_ obj: Notification) {
@@ -187,7 +187,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
         if let value = notification.userInfo?["NSTextMovement"] as! NSNumber?, value == NSNumber(value: 17) {
             dispatchAsyncInForeground {
-                editingManager.handleKey("\t", flags: NSEventModifierFlags(), isWindow: true)
+                gEditingManager.handleKey("\t", flags: NSEventModifierFlags(), isWindow: true)
             }
         }
     }
@@ -195,7 +195,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 #elseif os(iOS)
 
     // fix a bug where root zone is editing on launch
-    override var canBecomeFirstResponder: Bool { get { return operationsManager.isReady } }
+    override var canBecomeFirstResponder: Bool { get { return gOperationsManager.isReady } }
     
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {

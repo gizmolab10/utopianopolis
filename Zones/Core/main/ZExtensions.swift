@@ -221,7 +221,7 @@ extension NSObject {
 
 
     func debugCheck() {
-        travelManager.debugCheck()
+        gTravelManager.debugCheck()
     }
 
 
@@ -244,7 +244,7 @@ extension NSObject {
 
 
     func signalFor(_ object: NSObject?, regarding: ZSignalKind) {
-        controllersManager.signalFor(object, regarding: regarding, onCompletion: nil)
+        gControllersManager.signalFor(object, regarding: regarding, onCompletion: nil)
     }
 
 

@@ -64,7 +64,7 @@ class Zone : ZRecord {
                 var target: Zone? = nil
 
                 invokeWithMode(link.storageMode) {
-                    target = cloudManager.zoneForRecordID(link.record.recordID)
+                    target = gCloudManager.zoneForRecordID(link.record.recordID)
                 }
 
                 return target
@@ -140,7 +140,7 @@ class Zone : ZRecord {
                 updateZoneProperties()
 
                 if zoneLevel == nil {
-                    zoneLevel = NSNumber(value: unlevel)
+                    zoneLevel = NSNumber(value: gUnlevel)
                 }
             }
 
@@ -263,7 +263,7 @@ class Zone : ZRecord {
             }
 
             if parent != nil && _parentZone == nil {
-                _parentZone     = cloudManager.zoneForReference(parent!) // sometimes yields nil ... WHY?
+                _parentZone     = gCloudManager.zoneForReference(parent!) // sometimes yields nil ... WHY?
             }
 
             return _parentZone
@@ -281,15 +281,15 @@ class Zone : ZRecord {
     }
 
 
-    var  isGrabbed: Bool { get { return selectionManager .isGrabbed(self) } }
-    var isSelected: Bool { get { return selectionManager.isSelected(self) } }
+    var  isGrabbed: Bool { get { return gSelectionManager .isGrabbed(self) } }
+    var isSelected: Bool { get { return gSelectionManager.isSelected(self) } }
 
 
     // MARK:- convenience
     // MARK:-
 
 
-    func grab() { selectionManager.grab(self) }
+    func grab() { gSelectionManager.grab(self) }
 
 
     static func == ( left: Zone, right: Zone) -> Bool {
@@ -324,7 +324,7 @@ class Zone : ZRecord {
 
 
     override func register() {
-        cloudManager.registerZone(self)
+        gCloudManager.registerZone(self)
     }
 
 
@@ -505,7 +505,7 @@ class Zone : ZRecord {
 
     func updateLevel() {
         traverseApply { iZone -> Bool in
-            if let parentLevel = iZone.parentZone?.level, parentLevel != unlevel {
+            if let parentLevel = iZone.parentZone?.level, parentLevel != gUnlevel {
                 iZone.level = parentLevel + 1
             }
 

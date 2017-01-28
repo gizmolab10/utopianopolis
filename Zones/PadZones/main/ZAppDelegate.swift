@@ -26,7 +26,7 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
 
         application.registerUserNotificationSettings(settings)
         application.registerForRemoteNotifications()
-        operationsManager.startup {
+        gOperationsManager.startup {
             signalFor(nil, regarding: .redraw)
         }
 
@@ -40,7 +40,7 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
         if note.notificationType == .query {
             let queryNote: CKQueryNotification = note as! CKQueryNotification
 
-            cloudManager.receivedUpdateFor(queryNote.recordID!)
+            gCloudManager.receivedUpdateFor(queryNote.recordID!)
         }
     }
 

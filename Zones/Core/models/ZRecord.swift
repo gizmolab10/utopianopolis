@@ -56,7 +56,7 @@ class ZRecord: NSObject {
     override init() {
         super.init()
 
-        cloudManager.clearRecord(self)
+        gCloudManager.clearRecord(self)
 
         self.storageMode = nil
         self.record      = nil
@@ -184,21 +184,21 @@ class ZRecord: NSObject {
 
     func isMarkedForStates(_ states: [ZRecordState]) -> Bool {
         return detectWithMode(storageMode!) {
-            cloudManager.hasRecord(self, forStates:states)
+            gCloudManager.hasRecord(self, forStates:states)
         }
     }
 
 
     func markForStates(_ states: [ZRecordState]) {
         invokeWithMode(storageMode) {
-            cloudManager.addRecord(self, forStates:states)
+            gCloudManager.addRecord(self, forStates:states)
         }
     }
     
 
     func unmarkForStates(_ states: [ZRecordState]) {
         invokeWithMode(storageMode) {
-            cloudManager.removeRecordByRecordID(self.record.recordID, forStates:states)
+            gCloudManager.removeRecordByRecordID(self.record.recordID, forStates:states)
         }
     }
 
@@ -216,12 +216,12 @@ class ZRecord: NSObject {
 
 
     func setValue(_ value: NSObject, forPropertyName: String) {
-        cloudManager.setIntoObject(self, value: value, forPropertyName: forPropertyName)
+        gCloudManager.setIntoObject(self, value: value, forPropertyName: forPropertyName)
     }
 
 
     func get(propertyName: String) {
-        cloudManager.getFromObject(self, valueForPropertyName: propertyName)
+        gCloudManager.getFromObject(self, valueForPropertyName: propertyName)
     }
 
 

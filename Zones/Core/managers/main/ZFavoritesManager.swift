@@ -106,7 +106,7 @@ class ZFavoritesManager: NSObject {
     func showFavoritesAndGrab(_ zone: Zone?, _ atArrival: @escaping SignalClosure) {
         gStorageMode = .favorites
 
-        travelManager.travel {
+        gTravelManager.travel {
             self.updateGrabAndIndexFor(zone)
             atArrival(zone, .redraw)
         }
@@ -231,8 +231,8 @@ class ZFavoritesManager: NSObject {
             let bookmark = favoritesRootZone[favoritesIndex]!
 
             if bookmark.isFavorite {
-                travelManager.travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
-                    if (travelManager.hereZone?.isDeleted)! {
+                gTravelManager.travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
+                    if (gTravelManager.hereZone?.isDeleted)! {
                         return self.switchToNext(forward) { atArrival() }
                     }
 
@@ -241,8 +241,8 @@ class ZFavoritesManager: NSObject {
             } else if let mode = bookmark.crossLink?.storageMode {
                 gStorageMode = mode
 
-                travelManager.travel {
-                    travelManager.hereZone?.grab()
+                gTravelManager.travel {
+                    gTravelManager.hereZone?.grab()
                     atArrival()
                 }
             } else {

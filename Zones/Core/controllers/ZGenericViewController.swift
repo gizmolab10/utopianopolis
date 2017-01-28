@@ -32,7 +32,7 @@ class ZGenericViewController: ZViewController, ZGenericViewControllerProtocol {
 
 
     func setup() {
-        controllersManager.register(self, iID: identifier()) { object, kind in
+        gControllersManager.register(self, iID: identifier()) { object, kind in
             if kind != .error {
                 self.handleSignal(object, kind: kind)
             }

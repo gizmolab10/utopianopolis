@@ -22,27 +22,20 @@ let unselectBrightness: CGFloat = 0.98
 #endif
 
 
-enum ZArrowKey: CChar {
-    case up    = -128
-    case down
-    case left
-    case right
-}
-
-
-let              unlevel = -1
-let        fingerBreadth = CGFloat(33.0)
-let           widgetFont = ZFont.systemFont(ofSize: fontSize)
-let    grabbedWidgetFont = ZFont.systemFont(ofSize: fontSize) // .boldSystemFont(ofSize: fontSize * 0.93)
-let   controllersManager = ZControllersManager()
-let    operationsManager = ZOperationsManager()
-let     selectionManager = ZSelectionManager()
-let     favoritesManager = ZFavoritesManager()
-let       widgetsManager = ZWidgetsManager()
-let       editingManager = ZEditingManager()
-let        travelManager = ZTravelManager()
-let         cloudManager = ZCloudManager()
-let         zfileManager = ZFileManager()
+let             gUnlevel = -1
+let       gFingerBreadth = CGFloat(33.0)
+let          gWidgetFont = ZFont.systemFont(ofSize: fontSize)
+let   gGrabbedWidgetFont = ZFont.systemFont(ofSize: fontSize) // .boldSystemFont(ofSize: fontSize * 0.93)
+let  gControllersManager = ZControllersManager()
+let   gOperationsManager = ZOperationsManager()
+let    gSelectionManager = ZSelectionManager()
+let    gFavoritesManager = ZFavoritesManager()
+let      gWidgetsManager = ZWidgetsManager()
+let      gEditingManager = ZEditingManager()
+let       gTravelManager = ZTravelManager()
+let        gCloudManager = ZCloudManager()
+let         gfileManager = ZFileManager()
+let         gUndoManager = UndoManager()
 let           mainWindow = ZoneWindow.window!
 let              cloudID = "iCloud.com.zones.Zones"
 let             linksKey = "links"

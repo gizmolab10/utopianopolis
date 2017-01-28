@@ -16,8 +16,8 @@ class ZSelectionManager: NSObject {
     var       pasteableZones = [Zone] ()
     var  currentlyEditingZone: Zone?
     var currentlyGrabbedZones: [Zone] {
-        get { return travelManager.manifest.currentlyGrabbedZones }
-        set { travelManager.manifest.currentlyGrabbedZones = newValue }
+        get { return gTravelManager.manifest.currentlyGrabbedZones }
+        set { gTravelManager.manifest.currentlyGrabbedZones = newValue }
     }
 
 
@@ -49,9 +49,9 @@ class ZSelectionManager: NSObject {
         let             zone = currentlyEditingZone
         currentlyEditingZone = nil
 
-        if zone == nil || zone == travelManager.hereZone {
+        if zone == nil || zone == gTravelManager.hereZone {
             signalFor(nil, regarding: .data)
-        } else if let widget = widgetsManager.widgetForZone(zone) {
+        } else if let widget = gWidgetsManager.widgetForZone(zone) {
             widget.textWidget.captureText()
             signalFor(zone, regarding: .datum)
         }
@@ -105,7 +105,7 @@ class ZSelectionManager: NSObject {
             }
 
             if grabbable == nil || grabbable?.record == nil {
-                grabbable = travelManager.hereZone
+                grabbable = gTravelManager.hereZone
             }
 
             return grabbable
@@ -124,7 +124,7 @@ class ZSelectionManager: NSObject {
             }
 
             if movable == nil || (movable?.parentZone != nil && gStorageMode != movable?.parentZone?.storageMode) {
-                movable = travelManager.hereZone
+                movable = gTravelManager.hereZone
             }
 
             return movable!

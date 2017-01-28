@@ -107,7 +107,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
 
     func resolveRecord(_ record: CKRecord) {
-        var zone = cloudManager.zoneForRecordID(record.recordID)
+        var zone = gCloudManager.zoneForRecordID(record.recordID)
 
         if zone == nil {
             zone = Zone(record: record, storageMode: gStorageMode)
@@ -115,7 +115,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
             zone?.needChildren()
         }
 
-        travelManager.hereZone = zone
+        gTravelManager.hereZone = zone
 
         clear()
         zone?.grab()

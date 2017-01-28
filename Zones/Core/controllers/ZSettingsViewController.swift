@@ -56,21 +56,21 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-        let                     count = cloudManager.zones.count
-        let                     total = travelManager.manifest.total
+        let                     count = gCloudManager.zones.count
+        let                     total = gTravelManager.manifest.total
         totalCountLabel?        .text = "of \(total), retrieved: \(count)"
         graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
-        levelLabel?             .text = "level: \((travelManager.hereZone?.level)!)"
+        levelLabel?             .text = "level: \((gTravelManager.hereZone?.level)!)"
         view  .zlayer.backgroundColor = gBackgroundColor.cgColor
         fractionInMemory?   .maxValue = Double(total)
         fractionInMemory?.doubleValue = Double(count)
 
-        if let                   here = travelManager.hereZone, let tableView = favoritesTableView {
-            favoritesManager.updateIndexFor(here) { object in
-                favoritesManager.update()
+        if let                   here = gTravelManager.hereZone, let tableView = favoritesTableView {
+            gFavoritesManager.updateIndexFor(here) { object in
+                gFavoritesManager.update()
                 tableView.reloadData()
 
-                self.favoritesTableHeight?.constant = CGFloat((favoritesManager.count + 1) * 19)
+                self.favoritesTableHeight?.constant = CGFloat((gFavoritesManager.count + 1) * 19)
             }
         }
     }
@@ -149,14 +149,14 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
         // needs elaborate gui, like search results, but with checkboxes and [de]select all checkbox
 
-        //operationsManager.emptyTrash {
+        //gOperationsManager.emptyTrash {
         //    self.toConsole("eliminated")
         //}
     }
 
 
     @IBAction func restoreFromTrashButtonAction(_ button: ZButton) {
-        operationsManager.undelete {
+        gOperationsManager.undelete {
             self.signalFor(nil, regarding: .redraw)
         }
         
@@ -164,22 +164,22 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
 
     @IBAction func restoreZoneButtonAction(_ button: ZButton) {
-        // similar to editingManager.moveInto
-        if  let               zone = selectionManager.firstGrabbableZone {
-            let               root = travelManager.rootZone
-            travelManager.hereZone = root
+        // similar to gEditingManager.moveInto
+        if  let               zone = gSelectionManager.firstGrabbableZone {
+            let               root = gTravelManager.rootZone
+            gTravelManager.hereZone = root
 
             root?.needChildren()
-            operationsManager.children(recursively: true) {
+            gOperationsManager.children(recursively: true) {
                 root?.addAndReorderChild(zone, at: 0)
-                controllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
             }
         }
     }
 
     
     @IBAction func pushToCloudButtonAction(_ button: ZButton) {
-        cloudManager.royalFlush {}
+        gCloudManager.royalFlush {}
     }
 
 
@@ -190,7 +190,7 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
     func numberOfRows(in tableView: NSTableView) -> Int {
         var count = 1
 
-        for zone in favoritesManager.favoritesRootZone.children {
+        for zone in gFavoritesManager.favoritesRootZone.children {
             if zone.isBookmark {
                 count += 1
             }
@@ -203,8 +203,8 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
     func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
         var        value = ""
 
-        if  let     text = row == 0 ? "edit these items" : favoritesManager.textAtIndex(row - 1) {
-            let needsDot = favoritesManager.favoritesIndex == row - 1
+        if  let     text = row == 0 ? "edit these items" : gFavoritesManager.textAtIndex(row - 1) {
+            let needsDot = gFavoritesManager.favoritesIndex == row - 1
             let   prefix = needsDot ? "•" : "  "
             value        = " \(prefix) \(text)"
         }
@@ -214,24 +214,24 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
 
     func actOnSelection(_ row: Int) {
-        selectionManager.fullResign()
+        gSelectionManager.fullResign()
 
         if row == 0 {
             gStorageMode = .favorites
 
-            travelManager.travel {
+            gTravelManager.travel {
                 self.signalFor(nil, regarding: .redraw)
             }
-        } else if let zone: Zone = favoritesManager.zoneAtIndex(row - 1) {
-            favoritesManager.favoritesIndex = row - 1
+        } else if let zone: Zone = gFavoritesManager.zoneAtIndex(row - 1) {
+            gFavoritesManager.favoritesIndex = row - 1
 
-            editingManager.focusOnZone(zone)
+            gEditingManager.focusOnZone(zone)
         }
     }
 
 
     func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
-        let select = operationsManager.isReady
+        let select = gOperationsManager.isReady
 
         if  select {
             actOnSelection(row)

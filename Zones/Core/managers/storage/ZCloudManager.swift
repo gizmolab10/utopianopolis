@@ -67,7 +67,7 @@ class ZCloudManager: ZRecordsManager {
                 self.dispatchAsyncInForeground {
                     self.signalFor(parent, regarding: .redraw)
 
-                    operationsManager.children(recursively: false) {
+                    gOperationsManager.children(recursively: false) {
                         self.signalFor(parent, regarding: .redraw)
                     }
                 }
@@ -88,7 +88,7 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        operationsManager.sync(onCompletion)
+        gOperationsManager.sync(onCompletion)
     }
 
 
@@ -201,14 +201,14 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchManifest(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
-        favoritesManager.setup()
+        gFavoritesManager.setup()
 
         let         manifestName = manifestNameForMode(storageMode)
         let recordID: CKRecordID = CKRecordID(recordName: manifestName)
 
         assureRecordExists(withRecordID: recordID, storageMode: .mine, recordType: manifestTypeKey) { (iManifestRecord: CKRecord?) in
             if iManifestRecord != nil {
-                let    manifest = travelManager.manifest
+                let    manifest = gTravelManager.manifest
                 manifest.record = iManifestRecord
             }
 
@@ -218,17 +218,17 @@ class ZCloudManager: ZRecordsManager {
 
 
     func establishHere(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
-        if travelManager.manifest.here != nil {
-            let recordID = (travelManager.manifest.here?.recordID)!
+        if gTravelManager.manifest.here != nil {
+            let recordID = (gTravelManager.manifest.here?.recordID)!
 
             self.assureRecordExists(withRecordID: recordID, storageMode: storageMode, recordType: zoneTypeKey) { (iHereRecord: CKRecord?) in
                 if iHereRecord == nil || iHereRecord?[zoneNameKey] == nil {
                     self.establishRootAsHere(storageMode, onCompletion)
                 } else {
                     let               here = self.zoneForRecord(iHereRecord!)
-                    travelManager.hereZone = here
+                    gTravelManager.hereZone = here
 
-                    travelManager.manifest.needUpdateSave()
+                    gTravelManager.manifest.needUpdateSave()
 
                     onCompletion?(0)
                 }
@@ -247,10 +247,10 @@ class ZCloudManager: ZRecordsManager {
         self.assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
             if iRecord != nil {
                 let               root = self.zoneForRecord(iRecord!)
-                travelManager.rootZone = root
+                gTravelManager.rootZone = root
                 root.level             = 0
 
-                travelManager.manifest.needUpdateSave()
+                gTravelManager.manifest.needUpdateSave()
             }
 
             onCompletion?(0)
@@ -279,7 +279,7 @@ class ZCloudManager: ZRecordsManager {
                             onCompletion(nil)
                         } else {
                             onCompletion(saved!)
-                            zfileManager.save()
+                            gfileManager.save()
                         }
                     })
                 }
@@ -492,7 +492,7 @@ class ZCloudManager: ZRecordsManager {
             if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                 onCompletion?(0)
             } else {
-                let           root = travelManager.rootZone
+                let           root = gTravelManager.rootZone
                 let        deleted = self.recordForRecordID(iRecord?.recordID) as? Zone ?? Zone(record: iRecord, storageMode: storageMode)
                 deleted .isDeleted = false
 
@@ -515,12 +515,12 @@ class ZCloudManager: ZRecordsManager {
 
         self.cloudQueryUsingPredicate(predicate) { (iRecord: CKRecord?) in
             if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
-                favoritesManager.update()
-                favoritesManager.favoritesRootZone.respectOrder()
+                gFavoritesManager.update()
+                gFavoritesManager.favoritesRootZone.respectOrder()
                 onCompletion?(0)
             } else {
                 let        bookmark = Zone(record: iRecord, storageMode: storageMode)
-                let            root = favoritesManager.favoritesRootZone
+                let            root = gFavoritesManager.favoritesRootZone
                 bookmark.parentZone = root
 
                 // self.report("fetching \(bookmark.zoneName!) order \(bookmark.order)")
@@ -663,7 +663,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func getFromObject(_ object: ZRecord, valueForPropertyName: String) {
-        if currentDB != nil && object.record != nil && operationsManager.isReady {
+        if currentDB != nil && object.record != nil && gOperationsManager.isReady {
             let      predicate = NSPredicate(value: true)
             let  type: String  = NSStringFromClass(type(of: object)) as String
             let query: CKQuery = CKQuery(recordType: type, predicate: predicate)

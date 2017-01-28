@@ -20,7 +20,7 @@ class ZTravelManager: NSObject {
     var       rootZone: Zone? {
         get {
             switch gStorageMode {
-            case .favorites: return favoritesManager.favoritesRootZone
+            case .favorites: return gFavoritesManager.favoritesRootZone
             default:         return rootByStorageMode[gStorageMode]
             }
         }
@@ -55,7 +55,7 @@ class ZTravelManager: NSObject {
 
     func establishRoot() {
         switch gStorageMode {
-        case .favorites: rootZone = favoritesManager.favoritesRootZone
+        case .favorites: rootZone = gFavoritesManager.favoritesRootZone
         default:         rootZone = Zone(record: nil, storageMode: gStorageMode)
         }
     }
@@ -63,12 +63,12 @@ class ZTravelManager: NSObject {
 
     func establishHere(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         if storageMode == .favorites {
-            hereZone = favoritesManager.favoritesRootZone
+            hereZone = gFavoritesManager.favoritesRootZone
         } else if hereZone != nil && hereZone?.record != nil && hereZone?.zoneName != nil {
             hereZone?.needChildren()
             hereZone?.needFetch()
         } else {
-            cloudManager.establishHere((storageMode, onCompletion))
+            gCloudManager.establishHere((storageMode, onCompletion))
 
             return
         }
@@ -90,7 +90,7 @@ class ZTravelManager: NSObject {
                 return true
             }
 
-            let    zone = cloudManager.zoneForRecordID(targetID)
+            let    zone = gCloudManager.zoneForRecordID(targetID)
             targetID    = zone?.parent?.recordID
         }
 
@@ -99,9 +99,9 @@ class ZTravelManager: NSObject {
 
 
     func travel(_ atArrival: @escaping Closure) {
-        widgetsManager   .clear()
-        selectionManager .clear()
-        operationsManager.travel(atArrival)
+        gWidgetsManager   .clear()
+        gSelectionManager .clear()
+        gOperationsManager.travel(atArrival)
     }
 
 
@@ -122,9 +122,9 @@ class ZTravelManager: NSObject {
                         atArrival(self.hereZone, .redraw)
                     }
                 } else {
-                    cloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: mode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
+                    gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: mode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
                         if iRecord != nil {
-                            self.hereZone = cloudManager.zoneForRecord(iRecord!)
+                            self.hereZone = gCloudManager.zoneForRecord(iRecord!)
 
                             self.hereZone?.grab()
                             self.manifest.needUpdateSave()
@@ -140,7 +140,7 @@ class ZTravelManager: NSObject {
                 // stay within graph
                 ////////////////////
 
-                there = cloudManager.zoneForRecordID(recordIDOfLink)
+                there = gCloudManager.zoneForRecordID(recordIDOfLink)
 
                 if there != nil {
                     self.hereZone = there
@@ -149,8 +149,8 @@ class ZTravelManager: NSObject {
                     there?.grab()
                     atArrival(there, .redraw)
                 } else {
-                    cloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: gStorageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
-                        self.hereZone = cloudManager.zoneForRecord(iRecord!)
+                    gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: gStorageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
+                        self.hereZone = gCloudManager.zoneForRecord(iRecord!)
 
                         there?.grab()
                         self.manifest.needUpdateSave()

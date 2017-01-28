@@ -101,7 +101,7 @@ class ZoneWidget: ZView {
         inView?.zlayer.backgroundColor = ZColor.clear.cgColor
 
         clear()
-        widgetsManager.registerWidget(self)
+        gWidgetsManager.registerWidget(self)
         addDragHighlight()
 
         if recursing {
@@ -171,7 +171,7 @@ class ZoneWidget: ZView {
     func layoutText() {
         textWidget.widget    = self
         let       isSelected = widgetZone.isSelected
-        textWidget.font      = isSelected ? grabbedWidgetFont : widgetFont
+        textWidget.font      = isSelected ? gGrabbedWidgetFont : gWidgetFont
         textWidget.textColor = isSelected ? widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor : ZColor.black
 
         if textWidget.text == "" && widgetZone.zoneName == nil {
@@ -187,7 +187,7 @@ class ZoneWidget: ZView {
     func layoutTextField() {
         textWidget.snp.removeConstraints()
         textWidget.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let  font = widgetZone.isSelected ? grabbedWidgetFont : widgetFont
+            let  font = widgetZone.isSelected ? gGrabbedWidgetFont : gWidgetFont
             let width = textWidget.text!.widthForFont(font) + 5.0
 
             make.width.equalTo(width)

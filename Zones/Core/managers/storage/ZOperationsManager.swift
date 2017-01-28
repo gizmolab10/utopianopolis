@@ -146,7 +146,7 @@ class ZOperationsManager: NSObject {
         queue.isSuspended = false
 
         dispatchAsyncInForegroundAfter(0.5) {
-            controllersManager.displayActivity()
+            gControllersManager.displayActivity()
         }
     }
 
@@ -174,22 +174,21 @@ class ZOperationsManager: NSObject {
         }
 
         switch identifier {
-        case .file:        zfileManager.restore();                report(0); break
-        case .root:        cloudManager.establishRootAsHere(mode, report); break
-        case .cloud:       cloudManager.fetchCloudZones    (mode, report); break
-        case .manifest:    cloudManager.fetchManifest      (mode, report); break
-        case .favorites:   cloudManager.fetchFavorites     (mode, report); break
-        case .here:       travelManager.establishHere      (mode, report); break // TODO: BROKEN
-        case .children:    cloudManager.fetchChildren      (mode, report); break
-        case .parent:      cloudManager.fetchParents       (mode, report); break
-        case .unsubscribe: cloudManager.unsubscribe        (mode, report); break
-        case .subscribe:   cloudManager.subscribe          (mode, report); break
-        case .emptyTrash:  cloudManager.emptyTrash         (mode, report); break
-        case .undelete:    cloudManager.undelete           (mode, report); break
-        case .create:      cloudManager.create             (mode, report); break
-        case .fetch:       cloudManager.fetch              (mode, report); break
-     // case .merge:       cloudManager.merge              (mode, report); break
-        case .flush:       cloudManager.flush              (mode, report); break
+        case .file:        gfileManager.restore();                report(0); break
+        case .root:        gCloudManager.establishRootAsHere(mode, report); break
+        case .cloud:       gCloudManager.fetchCloudZones    (mode, report); break
+        case .manifest:    gCloudManager.fetchManifest      (mode, report); break
+        case .favorites:   gCloudManager.fetchFavorites     (mode, report); break
+        case .here:       gTravelManager.establishHere      (mode, report); break // TODO: BROKEN
+        case .children:    gCloudManager.fetchChildren      (mode, report); break
+        case .parent:      gCloudManager.fetchParents       (mode, report); break
+        case .unsubscribe: gCloudManager.unsubscribe        (mode, report); break
+        case .subscribe:   gCloudManager.subscribe          (mode, report); break
+        case .emptyTrash:  gCloudManager.emptyTrash         (mode, report); break
+        case .undelete:    gCloudManager.undelete           (mode, report); break
+        case .create:      gCloudManager.create             (mode, report); break
+        case .fetch:       gCloudManager.fetch              (mode, report); break
+        case .flush:       gCloudManager.flush              (mode, report); break
         case .ready:       becomeReady                     (mode, report); break
         }
     }
@@ -198,7 +197,7 @@ class ZOperationsManager: NSObject {
     func becomeReady(_ mode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         isReady = true;
 
-        controllersManager.displayActivity()
+        gControllersManager.displayActivity()
 
         if let closure = onReady {
             onReady = nil
@@ -207,7 +206,7 @@ class ZOperationsManager: NSObject {
                 closure()
 
                 // self.report("unspin")
-                editingManager.handleStalledEvents()
+                gEditingManager.handleStalledEvents()
             }
         }
 
