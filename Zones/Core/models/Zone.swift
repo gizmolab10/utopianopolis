@@ -259,11 +259,15 @@ class Zone : ZRecord {
             if parent == nil && _parentZone?.record != nil {
                 needUpdateSave()
 
-                parent          = CKReference(record: (_parentZone?.record)!, action: .none)
+                parent      = CKReference(record: (_parentZone?.record)!, action: .none)
             }
 
             if parent != nil && _parentZone == nil {
-                _parentZone     = gCloudManager.zoneForReference(parent!) // sometimes yields nil ... WHY?
+                _parentZone = gCloudManager.zoneForReference(parent!)
+
+                if  _parentZone?.showChildren ?? false {
+                    _parentZone?.needChildren()
+                }
             }
 
             return _parentZone
@@ -348,7 +352,6 @@ class Zone : ZRecord {
         parentZone?.removeChild(self)
 
         parentZone = nil
-        parent     = nil
 
         needUpdateSave()
     }

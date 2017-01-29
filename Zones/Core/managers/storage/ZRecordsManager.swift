@@ -354,16 +354,8 @@ class ZRecordsManager: NSObject {
     func zoneForReference(_ reference: CKReference) -> Zone? {
         var zone = zones[reference.recordID.recordName]
 
-        if let record = recordForRecordID(reference.recordID)?.record {
-            if zone == nil {
-                zone = Zone(record: record, storageMode: gStorageMode)
-            } else {
-                zone?.record = record
-            }
-        }
-
-        if  zone?.showChildren ?? false {
-            zone?.needChildren()
+        if  zone == nil, let record = recordForRecordID(reference.recordID)?.record {
+            zone = Zone(record: record, storageMode: gStorageMode)
         }
 
         return zone

@@ -369,23 +369,25 @@ class ZCloudManager: ZRecordsManager {
                     self.invokeWithMode(storageMode) {
                         let child = self.zoneForRecord(iRecord!)
 
-                        if gRecursivelyFetch {
-                            child.needChildren()
-                        }
-
-                        if let parent = child.parentZone {
-                            if parent != child {
-                                parent.addChild(child)
-
-                                if !parentsNeedingResort.contains(parent) {
-                                    parentsNeedingResort.append(parent)
-                                }
+                        if !child.isDeleted {
+                            if gRecursivelyFetch {
+                                child.needChildren()
                             }
 
-                            return
+                            if let parent = child.parentZone {
+                                if parent != child {
+                                    parent.addChild(child)
+
+                                    if !parentsNeedingResort.contains(parent) {
+                                        parentsNeedingResort.append(parent)
+                                    }
+                                }
+
+                                return
+                            }
+                            
+                            self.reportError(child.zoneName)
                         }
-                        
-                        self.reportError(child.zoneName)
                     }
                 }
             }

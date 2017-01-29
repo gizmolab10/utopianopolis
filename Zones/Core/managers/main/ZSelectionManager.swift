@@ -14,7 +14,7 @@ class ZSelectionManager: NSObject {
 
 
     var       pasteableZones = [Zone] ()
-    var  currentlyEditingZone: Zone?
+    var  currentlyEditingZone:  Zone?
     var currentlyGrabbedZones: [Zone] {
         get { return gTravelManager.manifest.currentlyGrabbedZones }
         set { gTravelManager.manifest.currentlyGrabbedZones = newValue }
@@ -26,9 +26,20 @@ class ZSelectionManager: NSObject {
     }
 
 
-    func deselectDrags() {
-        let             zones = currentlyGrabbedZones
+    func clearGrab() {
         currentlyGrabbedZones = []
+    }
+
+
+    func clearPaste() {
+        pasteableZones = []
+    }
+
+
+    func deselectGrabs() {
+        let zones = currentlyGrabbedZones
+
+        clearGrab()
 
         for zone in zones {
             if zone != currentlyEditingZone {
@@ -57,7 +68,7 @@ class ZSelectionManager: NSObject {
         }
 
         fullResign()
-        deselectDrags()
+        deselectGrabs()
     }
 
 

@@ -44,9 +44,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     }
                 } else {
                     gSelectionManager.currentlyEditingZone  = zone
-                    gSelectionManager.currentlyGrabbedZones = []
                     textColor                              = widget.widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor
                     font                                   = gGrabbedWidgetFont
+
+                    gSelectionManager.clearGrab()
 
                     #if os(OSX)
                     monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> ZEvent? in
@@ -115,7 +116,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
         if result && isTextEditing {
             dispatchAsyncInForeground { // avoid state garbling
-                gSelectionManager.currentlyGrabbedZones = []
+                gSelectionManager.clearGrab()
+
 
                 self.isTextEditing = false
             }
