@@ -275,6 +275,16 @@ extension NSObject {
     func manifestNameForMode(_ mode: ZStorageMode) -> String {
         return "\(manifestNameKey).\(mode.rawValue)"
     }
+
+
+    func addUndo<TargetType : AnyObject>(withTarget target: TargetType, handler: @escaping (TargetType) -> Swift.Void) {
+        gUndoManager.registerUndo(withTarget:target, handler: { iObject in
+            gUndoManager.beginUndoGrouping()
+            handler(iObject)
+            gUndoManager.endUndoGrouping()
+        })
+    }
+
 }
 
 

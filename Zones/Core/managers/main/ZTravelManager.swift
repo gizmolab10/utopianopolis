@@ -16,8 +16,8 @@ class ZTravelManager: NSObject {
 
     var manifestByStorageMode = [ZStorageMode : ZManifest] ()
     var     rootByStorageMode = [ZStorageMode : Zone] ()
-    var       hereZone: Zone? { get { return manifest.hereZone } set { manifest.hereZone = newValue } }
-    var       rootZone: Zone? {
+    var        hereZone: Zone  { get { return manifest.hereZone } set { manifest.hereZone = newValue } }
+    var        rootZone: Zone? {
         get {
             switch gStorageMode {
             case .favorites: return gFavoritesManager.favoritesRootZone
@@ -64,9 +64,9 @@ class ZTravelManager: NSObject {
     func establishHere(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         if storageMode == .favorites {
             hereZone = gFavoritesManager.favoritesRootZone
-        } else if hereZone != nil && hereZone?.record != nil && hereZone?.zoneName != nil {
-            hereZone?.needChildren()
-            hereZone?.needFetch()
+        } else if hereZone.record != nil && hereZone.zoneName != nil {
+            hereZone.needChildren()
+            hereZone.needFetch()
         } else {
             gCloudManager.establishHere((storageMode, onCompletion))
 
@@ -98,7 +98,28 @@ class ZTravelManager: NSObject {
     }
 
 
+    func createUndoForTravelBackTo(_ zone: Zone, atArrival: @escaping Closure) {
+        let        here = hereZone
+        let restoreMode = gStorageMode
+
+        self.addUndo(withTarget: self, handler: { iObject in
+            self.createUndoForTravelBackTo(gSelectionManager.currentlyMovableZone, atArrival: atArrival)
+
+            gStorageMode = restoreMode
+
+            self.travel {
+                self.hereZone = here
+
+                zone.grab()
+                atArrival()
+            }
+        })
+    }
+
+
     func travel(_ atArrival: @escaping Closure) {
+        createUndoForTravelBackTo(gSelectionManager.currentlyMovableZone, atArrival: atArrival)
+
         gWidgetsManager   .clear()
         gSelectionManager .clear()
         gOperationsManager.travel(atArrival)
@@ -126,7 +147,7 @@ class ZTravelManager: NSObject {
                         if iRecord != nil {
                             self.hereZone = gCloudManager.zoneForRecord(iRecord!)
 
-                            self.hereZone?.grab()
+                            self.hereZone.grab()
                             self.manifest.needUpdateSave()
                             self.travel {
                                 atArrival(self.hereZone, .redraw)
@@ -141,20 +162,33 @@ class ZTravelManager: NSObject {
                 ////////////////////
 
                 there = gCloudManager.zoneForRecordID(recordIDOfLink)
+                let grab = gSelectionManager.firstGrabbableZone
+                let here = hereZone
+
+                self.addUndo(withTarget: self, handler: { iObject in
+                    self.addUndo(withTarget: self, handler: { iObject in
+                        self.travelThrough(bookmark, atArrival: atArrival)
+                    })
+
+                    self.hereZone = here
+
+                    grab.grab()
+                    atArrival(self.hereZone, .redraw)
+                })
 
                 if there != nil {
-                    self.hereZone = there
+                    self.hereZone = there!
 
                     there?.needChildren()
                     there?.grab()
-                    atArrival(there, .redraw)
+                    atArrival(self.hereZone, .redraw)
                 } else {
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: gStorageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
                         self.hereZone = gCloudManager.zoneForRecord(iRecord!)
 
                         there?.grab()
                         self.manifest.needUpdateSave()
-                        self.hereZone?.needChildren()
+                        self.hereZone.needChildren()
                         atArrival(self.hereZone, .redraw)
                     }
                 }

@@ -41,9 +41,9 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         var specificView:        ZView? = view
         var specificindex:         Int? = nil
         var recursing:             Bool = [.data, .redraw].contains(kind)
-        hereWidget.widgetZone           = gTravelManager.hereZone!
+        hereWidget.widgetZone           = gTravelManager.hereZone
 
-        if zone == nil || zone == gTravelManager.hereZone! {
+        if zone == nil || zone == gTravelManager.hereZone {
             recursing = true
 
             toConsole("all")

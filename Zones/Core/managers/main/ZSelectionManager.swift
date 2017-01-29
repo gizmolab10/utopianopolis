@@ -96,7 +96,7 @@ class ZSelectionManager: NSObject {
     }
     
 
-    var firstGrabbableZone: Zone? {
+    var firstGrabbableZone: Zone {
         get {
             var grabbable: Zone? = nil
 
@@ -108,12 +108,12 @@ class ZSelectionManager: NSObject {
                 grabbable = gTravelManager.hereZone
             }
 
-            return grabbable
+            return grabbable!
         }
     }
 
 
-    var currentlyMovableZone: Zone? {
+    var currentlyMovableZone: Zone {
         get {
             var movable: Zone? = nil
 

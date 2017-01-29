@@ -115,7 +115,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
             zone?.needChildren()
         }
 
-        gTravelManager.hereZone = zone
+        gTravelManager.hereZone = zone!
 
         clear()
         zone?.grab()

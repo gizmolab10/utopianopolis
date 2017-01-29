@@ -26,14 +26,14 @@ class ZManifest: ZRecord {
     }
 
 
-    var hereZone: Zone? {
+    var hereZone: Zone {
         get {
             if _hereZone == nil {
                 let hereRecord: CKRecord? = (here == nil) ? nil : CKRecord(recordType: zoneTypeKey, recordID: (here?.recordID)!)
                 _hereZone                 = Zone(record: hereRecord, storageMode: gStorageMode)
             }
 
-            return _hereZone
+            return _hereZone!
         }
 
         set {

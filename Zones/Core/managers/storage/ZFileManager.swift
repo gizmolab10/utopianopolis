@@ -46,7 +46,7 @@ class ZFileManager: NSObject {
         if gFileMode == .local && gStorageMode != .favorites {
             if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
                 gTravelManager.rootZone = Zone(dict: raw as! ZStorageDict)
-                gTravelManager.hereZone = gTravelManager.rootZone
+                gTravelManager.hereZone = gTravelManager.rootZone!
 
                 signalFor(nil, regarding: .redraw)
             }

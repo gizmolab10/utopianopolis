@@ -60,12 +60,14 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
         let                     total = gTravelManager.manifest.total
         totalCountLabel?        .text = "of \(total), retrieved: \(count)"
         graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
-        levelLabel?             .text = "level: \((gTravelManager.hereZone?.level)!)"
+        levelLabel?             .text = "level: \(gTravelManager.hereZone.level)"
         view  .zlayer.backgroundColor = gBackgroundColor.cgColor
         fractionInMemory?   .maxValue = Double(total)
         fractionInMemory?.doubleValue = Double(count)
 
-        if let                   here = gTravelManager.hereZone, let tableView = favoritesTableView {
+        if  let tableView = favoritesTableView {
+            let      here = gTravelManager.hereZone
+
             gFavoritesManager.updateIndexFor(here) { object in
                 gFavoritesManager.update()
                 tableView.reloadData()
@@ -165,19 +167,18 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
     @IBAction func restoreZoneButtonAction(_ button: ZButton) {
         // similar to gEditingManager.moveInto
-        if  let               zone = gSelectionManager.firstGrabbableZone {
-            let               root = gTravelManager.rootZone
-            gTravelManager.hereZone = root
+        let                zone = gSelectionManager.firstGrabbableZone
+        let                root = gTravelManager.rootZone!
+        gTravelManager.hereZone = root
 
-            root?.needChildren()
-            gOperationsManager.children(recursively: true) {
-                root?.addAndReorderChild(zone, at: 0)
-                gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
-            }
+        root.needChildren()
+        gOperationsManager.children(recursively: true) {
+            root.addAndReorderChild(zone, at: 0)
+            gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
         }
     }
 
-    
+
     @IBAction func pushToCloudButtonAction(_ button: ZButton) {
         gCloudManager.royalFlush {}
     }

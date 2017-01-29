@@ -232,17 +232,13 @@ class ZFavoritesManager: NSObject {
 
             if bookmark.isFavorite {
                 gTravelManager.travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
-                    if (gTravelManager.hereZone?.isDeleted)! {
-                        return self.switchToNext(forward) { atArrival() }
-                    }
-
                     atArrival()
                 }
             } else if let mode = bookmark.crossLink?.storageMode {
                 gStorageMode = mode
 
                 gTravelManager.travel {
-                    gTravelManager.hereZone?.grab()
+                    gTravelManager.hereZone.grab()
                     atArrival()
                 }
             } else {
