@@ -115,7 +115,7 @@ var gBackgroundColor: ZColor {
 }
 
 
-var gGenericOffset: NSSize {
+var gGenericOffset: CGSize {
     set {
         let string = NSStringFromSize(newValue)
 
@@ -125,10 +125,10 @@ var gGenericOffset: NSSize {
 
     get {
         if let string = UserDefaults.standard.object(forKey: genericOffsetKey) as? String {
-            return NSSizeFromString(string)
+            return CGSizeFromString(string)
         }
 
-        let defaultValue = NSSize(width: 12.0, height: 4.0)
+        let defaultValue = CGSize(width: 12.0, height: 4.0)
         let string = NSStringFromSize(defaultValue)
 
         UserDefaults.standard.set(string, forKey: genericOffsetKey)

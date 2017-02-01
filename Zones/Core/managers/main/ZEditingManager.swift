@@ -97,6 +97,8 @@ class ZEditingManager: NSObject {
     }
 
 
+    #if os(OSX)
+
     func handleArrow(_ arrow: ZArrowKey, flags: NSEventModifierFlags) {
         let isCommand = flags.contains(.command)
         let  isOption = flags.contains(.option)
@@ -172,6 +174,8 @@ class ZEditingManager: NSObject {
         }
     }
 
+    #endif
+
 
     // MARK:- other
     // MARK:-
@@ -244,6 +248,8 @@ class ZEditingManager: NSObject {
 
 
     func printHere() {
+        #if os(OSX)
+
         if  let         view = gWidgetsManager.widgetForZone(hereZone) {
             let    printInfo = NSPrintInfo.shared()
             let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
@@ -257,6 +263,8 @@ class ZEditingManager: NSObject {
             printInfo.updateFromPMPageFormat()
             NSPrintOperation(view: view, printInfo: printInfo).run()
         }
+
+        #endif
     }
 
 
@@ -276,7 +284,7 @@ class ZEditingManager: NSObject {
             }
         } else {
             gFavoritesManager.createBookmarkFor(iZone, isFavorite: true)
-            focusOn(iZone, .data)
+            focusOn(iZone, .redraw)
 
         }
     }
@@ -513,12 +521,12 @@ class ZEditingManager: NSObject {
         gSelectionManager.clearPaste()
 
         for zone in gSelectionManager.currentlyGrabbedZones {
-            copyAndAddToPaste(zone)
+            addToPasteCopyOf(zone)
         }
     }
 
 
-    func copyAndAddToPaste(_ zone: Zone) {
+    func addToPasteCopyOf(_ zone: Zone) {
         let        copy = zone.deepCopy()
         copy.isDeleted  = false
         copy.parentZone = nil
@@ -557,6 +565,7 @@ class ZEditingManager: NSObject {
             addUndo(withTarget: self, handler: { iTarget in
                 self.prepareUndoForDelete()
                 self.deleteZones(originals, in: nil)
+                zone.grab()
                 self.syncAndRedraw()
             })
         }
@@ -568,7 +577,7 @@ class ZEditingManager: NSObject {
 
         for zone in gSelectionManager.currentlyGrabbedZones {
             if let into = zone.parentZone {
-                copyAndAddToPaste(zone)
+                addToPasteCopyOf(zone)
 
                 addUndo(withTarget: self, handler: { iTarget in
                     self.pasteInto(into)
@@ -582,7 +591,6 @@ class ZEditingManager: NSObject {
         prepareUndoForDelete()
 
         let last = deleteZones(gSelectionManager.currentlyGrabbedZones, in: nil)
-        gSelectionManager.clearGrab()
 
         last?.grab()
 
@@ -766,7 +774,7 @@ class ZEditingManager: NSObject {
                     hereZone = zone
 
                     gTravelManager.manifest.needUpdateSave()
-                    gControllersManager.syncToCloudAndSignalFor(nil, regarding: .data) {}
+                    gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                 }
             } else if zone == hereZone || parent == nil {
                 revealParentAndSiblingsOf(zone) {

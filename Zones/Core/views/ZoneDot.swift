@@ -23,8 +23,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var    isInnerDot: Bool = false
     var      isToggle: Bool = true
     var    widgetZone: Zone?
-    var  douleClicker: NSGestureRecognizer?
-    var singleClicker: NSGestureRecognizer?
+    var doubleClicker: ZGestureRecognizer?
+    var singleClicker: ZGestureRecognizer?
 
 
     var width: CGFloat {
@@ -75,7 +75,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             clearGestures()
 
-            douleClicker           = createGestureRecognizer(self, action: #selector(ZoneDot.twoClicks), clicksRequired: 2)
+            doubleClicker          = createGestureRecognizer(self, action: #selector(ZoneDot.twoClicks), clicksRequired: 2)
             singleClicker          = createGestureRecognizer(self, action: #selector(ZoneDot.oneClick),  clicksRequired: 1)
             innerDot?.isInnerDot   = true
 
@@ -90,8 +90,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func gestureRecognizer(_ gestureRecognizer: NSGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: NSGestureRecognizer) -> Bool {
-        return gestureRecognizer == singleClicker && otherGestureRecognizer == douleClicker
+    func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: ZGestureRecognizer) -> Bool {
+        return gestureRecognizer == singleClicker && otherGestureRecognizer == doubleClicker
     }
     
 

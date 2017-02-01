@@ -19,9 +19,9 @@ import SnapKit
 class ZStackableView: ZView {
 
 
-    @IBOutlet var hideableView: NSView?
-    @IBOutlet var   titleLabel: NSTextField?
-    @IBOutlet var toggleButton: NSButton?
+    @IBOutlet var hideableView: ZView?
+    @IBOutlet var   titleLabel: ZTextField?
+    @IBOutlet var toggleButton: ZButton?
 
 
     // MARK:- identity
@@ -30,6 +30,7 @@ class ZStackableView: ZView {
 
     var identity: ZSettingsViewID {
         get {
+            #if os(OSX)
             if let kind = identifier {
                 switch kind {
                 case        "help": return .Help
@@ -41,6 +42,7 @@ class ZStackableView: ZView {
                 default:            return .All
                 }
             }
+            #endif
 
             return .All
         }
@@ -66,7 +68,7 @@ class ZStackableView: ZView {
     // MARK:-
     
 
-    @IBAction func toggleAction(_ sender: NSButton) {
+    @IBAction func toggleAction(_ sender: ZButton) {
         hideableIsHidden = !hideableIsHidden
 
         update()
@@ -85,6 +87,7 @@ class ZStackableView: ZView {
 
 
     func updateToggleImage() {
+        #if os(OSX)
         var image = ZImage(named: "yangle.png")
 
         if hideableIsHidden {
@@ -92,6 +95,7 @@ class ZStackableView: ZView {
         }
 
         toggleButton?.image = image
+        #endif
     }
 
 

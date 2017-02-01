@@ -285,15 +285,16 @@ class Zone : ZRecord {
     }
 
 
-    var  isGrabbed: Bool { get { return gSelectionManager .isGrabbed(self) } }
-    var isSelected: Bool { get { return gSelectionManager.isSelected(self) } }
-
-
     // MARK:- convenience
     // MARK:-
 
 
-    func grab() { gSelectionManager.grab(self) }
+    var  isGrabbed: Bool { get { return gSelectionManager .isGrabbed(self) } }
+    var isSelected: Bool { get { return gSelectionManager.isSelected(self) } }
+    
+
+    func      grab() { gSelectionManager     .grab(self) }
+    func addToGrab() { gSelectionManager.addToGrab(self) }
 
 
     static func == ( left: Zone, right: Zone) -> Bool {

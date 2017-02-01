@@ -397,6 +397,13 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
+    func cloudLogic(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
+        fetchCloudZones(storageMode) { value in
+            onCompletion?(value)
+        }
+    }
+
+
     func fetchCloudZones(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         container = CKContainer(identifier: cloudID)
 
@@ -677,7 +684,7 @@ class ZCloudManager: ZRecordsManager {
                     let        record: CKRecord = (iResults?[0])!
                     object.record[valueForPropertyName] = (record as! CKRecordValue)
 
-                    self.signalFor(nil, regarding: .data)
+                    self.signalFor(nil, regarding: .redraw)
                 }
             }
         }

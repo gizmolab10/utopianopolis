@@ -20,10 +20,10 @@ class ZMainViewController: ZGenericViewController {
 
 
     @IBOutlet var searchBoxHeight:   NSLayoutConstraint?
-    @IBOutlet var searchResultsView: NSView?
-    @IBOutlet var searchBoxView:     NSView?
-    @IBOutlet var editorView:        NSView?
-    @IBOutlet var mainView:          NSView?
+    @IBOutlet var searchResultsView: ZView?
+    @IBOutlet var searchBoxView:     ZView?
+    @IBOutlet var editorView:        ZView?
+    @IBOutlet var mainView:          ZView?
 
 
     override func identifier() -> ZControllerID { return .main }

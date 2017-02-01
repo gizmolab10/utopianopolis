@@ -35,7 +35,8 @@ class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
     }
 
 
-    func control(_ control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
+    #if os(OSX)
+    func control(_ control: ZControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
         report(searchBox?.text)
         searchBox?.resignFirstResponder()
 
@@ -62,9 +63,10 @@ class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
 
         return true
     }
+    #endif
 
-
-    func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+    
+    func control(_ control: ZControl, textView: ZTextView, doCommandBy commandSelector: Selector) -> Bool {
         let handledIt = commandSelector == Selector(("noop:"))
 
         if  handledIt {

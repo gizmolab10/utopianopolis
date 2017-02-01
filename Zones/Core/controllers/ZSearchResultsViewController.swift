@@ -45,10 +45,12 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
                     tableView?.reloadData()
                     monitorKeyEvents()
 
+                    #if os(OSX)
                     dispatchAsyncInForeground {
                         mainWindow.makeFirstResponder(self.tableView)
                         self.tableView?.selectRowIndexes(NSIndexSet(index: 0) as IndexSet, byExtendingSelection: false)
                     }
+                    #endif
                 }
             } else {
                 removeMonitorAsync()
@@ -75,7 +77,9 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
     }
 
 
-    func numberOfRows(in tableView: NSTableView) -> Int {
+    #if os(OSX)
+
+    func numberOfRows(in tableView: ZTableView) -> Int {
         return foundRecords.count
     }
 
@@ -91,18 +95,39 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
         return object
     }
 
+    #else
+
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return foundRecords.count
+    }
+
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        return UITableViewCell()
+    }
+
+
+    #endif
+
 
     func resolve() -> Bool {
+        #if os(iOS)
+            return false
+        #else
+
         let    index = self.tableView?.selectedRow
         let resolved = index != -1
 
-        if resolved{
+        if resolved {
             let record = self.foundRecords[index!]
 
             resolveRecord(record)
         }
 
         return resolved
+
+        #endif
     }
 
 

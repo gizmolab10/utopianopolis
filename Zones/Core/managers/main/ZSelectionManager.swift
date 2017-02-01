@@ -79,10 +79,16 @@ class ZSelectionManager: NSObject {
     }
 
 
-    func grab(_ zone: Zone?) {
+    func addToGrab(_ zone: Zone?) {
         if zone != nil {
-            currentlyGrabbedZones = [zone!]
+            currentlyGrabbedZones.append(zone!)
         }
+    }
+
+
+    func grab(_ zone: Zone?) {
+        clearGrab()
+        addToGrab(zone!)
     }
 
 

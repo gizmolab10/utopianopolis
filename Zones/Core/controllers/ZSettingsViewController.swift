@@ -30,22 +30,27 @@ enum ZColorBoxKind: String {
 }
 
 
-class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTableViewDataSource {
+#if os(iOS)
 
+class ZSettingsViewController: ZGenericViewController {}
+
+#elseif os(OSX)
+
+class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTableViewDataSource {
 
     @IBOutlet var         fractionInMemory: ZProgressIndicator?
     @IBOutlet var     favoritesTableHeight: NSLayoutConstraint?
     @IBOutlet var graphAlteringModeControl: ZSegmentedControl?
-    @IBOutlet var       favoritesTableView: NSTableView?
+    @IBOutlet var       favoritesTableView: ZTableView?
     @IBOutlet var          totalCountLabel: ZTextField?
     @IBOutlet var           graphNameLabel: ZTextField?
     @IBOutlet var               levelLabel: ZTextField?
-    @IBOutlet var             zoneColorBox: ZColorWell?
-    @IBOutlet var         bookmarkColorBox: ZColorWell?
-    @IBOutlet var       backgroundColorBox: ZColorWell?
-    @IBOutlet var        horizontalSpacing: ZSlider?
-    @IBOutlet var          verticalSpacing: ZSlider?
-    @IBOutlet var                thickness: ZSlider?
+    @IBOutlet var             zoneColorBox: NSColorWell?
+    @IBOutlet var         bookmarkColorBox: NSColorWell?
+    @IBOutlet var       backgroundColorBox: NSColorWell?
+    @IBOutlet var        horizontalSpacing: NSSlider?
+    @IBOutlet var          verticalSpacing: NSSlider?
+    @IBOutlet var                thickness: NSSlider?
 
 
     // MARK:- generic methods
@@ -108,7 +113,7 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
     // MARK:-
 
 
-    @IBAction func sliderAction(_ iSlider: NSSlider) {
+    @IBAction func sliderAction(_ iSlider: ZSlider) {
         let value = CGFloat(iSlider.doubleValue)
 
         if let kind = ZSliderKind(rawValue: iSlider.identifier!) {
@@ -188,7 +193,7 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
     // MARK:-
 
 
-    func numberOfRows(in tableView: NSTableView) -> Int {
+    func numberOfRows(in tableView: ZTableView) -> Int {
         var count = 1
 
         for zone in gFavoritesManager.favoritesRootZone.children {
@@ -201,7 +206,7 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
     }
 
     
-    func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
+    func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
         var        value = ""
 
         if  let     text = row == 0 ? "edit these items" : gFavoritesManager.textAtIndex(row - 1) {
@@ -231,7 +236,7 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
     }
 
 
-    func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
+    func tableView(_ tableView: ZTableView, shouldSelectRow row: Int) -> Bool {
         let select = gOperationsManager.isReady
 
         if  select {
@@ -240,4 +245,7 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
         return false
     }
+
 }
+
+#endif

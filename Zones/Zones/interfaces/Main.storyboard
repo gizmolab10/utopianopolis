@@ -1137,7 +1137,7 @@ CQ
                                                         </constraints>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="RJc-P2-wiE">
                                                             <font key="font" metaFont="cellTitle"/>
-                                                            <string key="title">   an incomplete list:
+                                                            <mutableString key="title">   an incomplete list:
 ARROWS: navigate graph
 
 ARROWS with COMMAND:
@@ -1160,10 +1160,11 @@ other KEYS:
     P print the graph
     / focus on selected zone
     ' show next favorite
+    " show previous favorite
 
 with OPTION:
     " show favorites
-    ARROWS move zone</string>
+    ARROWS move zone</mutableString>
                                                             <color key="textColor" name="selectedMenuItemColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>

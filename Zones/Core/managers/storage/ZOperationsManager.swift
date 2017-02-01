@@ -176,15 +176,15 @@ class ZOperationsManager: NSObject {
         switch identifier {
         case .file:        gfileManager.restore();                report(0); break
         case .root:        gCloudManager.establishRootAsHere(mode, report); break
-        case .cloud:       gCloudManager.fetchCloudZones    (mode, report); break
         case .manifest:    gCloudManager.fetchManifest      (mode, report); break
         case .favorites:   gCloudManager.fetchFavorites     (mode, report); break
         case .here:       gTravelManager.establishHere      (mode, report); break // TODO: BROKEN
         case .children:    gCloudManager.fetchChildren      (mode, report); break
         case .parent:      gCloudManager.fetchParents       (mode, report); break
         case .unsubscribe: gCloudManager.unsubscribe        (mode, report); break
-        case .subscribe:   gCloudManager.subscribe          (mode, report); break
+        case .cloud:       gCloudManager.cloudLogic         (mode, report); break
         case .emptyTrash:  gCloudManager.emptyTrash         (mode, report); break
+        case .subscribe:   gCloudManager.subscribe          (mode, report); break
         case .undelete:    gCloudManager.undelete           (mode, report); break
         case .create:      gCloudManager.create             (mode, report); break
         case .fetch:       gCloudManager.fetch              (mode, report); break
