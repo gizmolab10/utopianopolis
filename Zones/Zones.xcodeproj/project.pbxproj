@@ -63,6 +63,8 @@
 		0CA04B6E1D2ECF41001892E5 /* PadZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */; };
 		0CA04B9C1D2ED079001892E5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B961D2ED079001892E5 /* Assets.xcassets */; };
 		0CA04B9F1D2ED079001892E5 /* Zones.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B9A1D2ED079001892E5 /* Zones.entitlements */; };
+		0CA6B8301E4179D200A49F1D /* ZPadExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA6B82F1E4179D200A49F1D /* ZPadExtensions.swift */; };
+		0CA6B8341E417A4700A49F1D /* ZonesExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA6B8331E417A4700A49F1D /* ZonesExtensions.swift */; };
 		0CB1A7D31D73F87B00283F7B /* Zone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB1A7CA1D73F87B00283F7B /* Zone.swift */; };
 		0CB1A7D41D73F87B00283F7B /* Zone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB1A7CA1D73F87B00283F7B /* Zone.swift */; };
 		0CB1A7DB1D73F87B00283F7B /* ZAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB1A7CE1D73F87B00283F7B /* ZAction.swift */; };
@@ -257,6 +259,8 @@
 		0CA04B981D2ED079001892E5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0CA04B991D2ED079001892E5 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
 		0CA04B9A1D2ED079001892E5 /* Zones.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Zones.entitlements; sourceTree = "<group>"; };
+		0CA6B82F1E4179D200A49F1D /* ZPadExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZPadExtensions.swift; sourceTree = "<group>"; };
+		0CA6B8331E417A4700A49F1D /* ZonesExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZonesExtensions.swift; sourceTree = "<group>"; };
 		0CB1A7CA1D73F87B00283F7B /* Zone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Zone.swift; sourceTree = "<group>"; };
 		0CB1A7CE1D73F87B00283F7B /* ZAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAction.swift; sourceTree = "<group>"; };
 		0CB1A7D01D73F87B00283F7B /* ZTrait.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTrait.swift; sourceTree = "<group>"; };
@@ -405,6 +409,7 @@
 			children = (
 				0CD921751D8F4C0B00F80964 /* PadZones.entitlements */,
 				0C58C3711D45805400CAB387 /* ZAppDelegate.swift */,
+				0CA6B82F1E4179D200A49F1D /* ZPadExtensions.swift */,
 				0C58C3761D45805400CAB387 /* Info.plist */,
 			);
 			path = main;
@@ -568,6 +573,7 @@
 			children = (
 				0CA04B981D2ED079001892E5 /* Info.plist */,
 				0CA04B991D2ED079001892E5 /* ZAppDelegate.swift */,
+				0CA6B8331E417A4700A49F1D /* ZonesExtensions.swift */,
 				0CA04B9A1D2ED079001892E5 /* Zones.entitlements */,
 			);
 			path = main;
@@ -999,6 +1005,7 @@
 				0CD1EADC1DB725A800A096E4 /* ReachabilityCondition.swift in Sources */,
 				0C36E7FF1DC31834005C5059 /* ZoneDot.swift in Sources */,
 				0CD1EAEA1DB725A800A096E4 /* NSOperation+Operations.swift in Sources */,
+				0CA6B8341E417A4700A49F1D /* ZonesExtensions.swift in Sources */,
 				0CD1EACC1DB725A800A096E4 /* LocationCondition.swift in Sources */,
 				0CD1EAD41DB725A800A096E4 /* OperationCondition.swift in Sources */,
 				0C371C761DE26FE10030253D /* ZSelectionManager.swift in Sources */,
@@ -1051,6 +1058,7 @@
 				0CEE1CBA1E0353EE007D892C /* ZSearchBoxViewController.swift in Sources */,
 				0C371C771DE26FE10030253D /* ZWidgetsManager.swift in Sources */,
 				0C2456261DE3CAD700EBCCDD /* ZMainViewController.swift in Sources */,
+				0CA6B8301E4179D200A49F1D /* ZPadExtensions.swift in Sources */,
 				0CD1EAE51DB725A800A096E4 /* Dictionary+Operations.swift in Sources */,
 				0CB1A7DB1D73F87B00283F7B /* ZAction.swift in Sources */,
 				0CD1EAC71DB725A800A096E4 /* CloudCondition.swift in Sources */,
