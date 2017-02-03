@@ -51,6 +51,13 @@ func CGSizeFromString(_ string: String) -> CGSize {
 }
 
 
+extension NSObject {
+    func assignFirstResponder(_ responder: NSResponder?) {
+        mainWindow.makeFirstResponder(responder)
+    }
+}
+
+
 extension NSApplication {
     func clearBadge() {
         dockTile.badgeLabel = ""

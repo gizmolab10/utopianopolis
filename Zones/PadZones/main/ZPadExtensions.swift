@@ -48,6 +48,13 @@ func NSStringFromSize(_ size: CGSize) -> String {
 }
 
 
+extension NSObject {
+    func assignFirstResponder(_ responder: UIResponder?) {
+        responder?.becomeFirstResponder()
+    }
+}
+
+
 extension UIColor {
     func darker(by: CGFloat) -> UIColor {
         var        hue: CGFloat = 0.0
@@ -72,13 +79,6 @@ extension UIApplication {
         applicationIconBadgeNumber  = 0
 
         cancelAllLocalNotifications()
-    }
-}
-
-
-extension UIWindow {
-    @discardableResult func makeFirstResponder(_ responder: UIResponder?) -> Bool {
-        return responder == nil ? false : responder!.becomeFirstResponder()
     }
 }
 

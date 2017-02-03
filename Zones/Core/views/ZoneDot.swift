@@ -35,16 +35,16 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     override func draw(_ dirtyRect: CGRect) {
-        if isInnerDot, let zone = widgetZone, let record = zone.record {
-            let      isBookmark = zone.isBookmark || record.recordID.recordName == favoritesRootNameKey
-            let   selectedColor = isBookmark ? gBookmarkColor : gZoneColor
+        if isInnerDot, let zone = widgetZone { // , let record = zone.record {
+            let      isBookmark = zone.isBookmark // || record.recordID.recordName == favoritesRootNameKey
+            let     strokeColor = isBookmark ? gBookmarkColor : gZoneColor
             let shouldHighlight = isToggle ? (!(zone.showChildren) || isBookmark) : zone.isSelected
-            let       fillColor = shouldHighlight ? selectedColor : ZColor.clear
+            let       fillColor = shouldHighlight ? strokeColor : ZColor.clear
             let       thickness = CGFloat(gLineThickness)
             let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
 
             fillColor.setFill()
-            selectedColor.setStroke()
+            strokeColor.setStroke()
             path.lineWidth = thickness
             path.flatness = 0.0001
             path.stroke()
@@ -75,9 +75,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             clearGestures()
 
-            doubleClicker          = createGestureRecognizer(self, action: #selector(ZoneDot.twoClicks), clicksRequired: 2)
-            singleClicker          = createGestureRecognizer(self, action: #selector(ZoneDot.oneClick),  clicksRequired: 1)
-            innerDot?.isInnerDot   = true
+            doubleClicker        = createGestureRecognizer(self, action: #selector(ZoneDot.twoClicks), clicksRequired: 2)
+            singleClicker        = createGestureRecognizer(self, action: #selector(ZoneDot.oneClick),  clicksRequired: 1)
+            innerDot?.isInnerDot = true
 
             innerDot?.setupForZone(zone, asToggle: isToggle)
             snp.makeConstraints { (make: ConstraintMaker) in
@@ -85,6 +85,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 make.center.equalTo(innerDot!)
             }
         }
+
+        #if os(iOS)
+        backgroundColor = ZColor.clear
+        #endif
 
         updateConstraints()
     }

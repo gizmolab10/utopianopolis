@@ -86,7 +86,6 @@ extension NSObject {
             gUndoManager.endUndoGrouping()
         })
     }
-
 }
 
 

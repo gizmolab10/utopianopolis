@@ -3,8 +3,8 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -20,34 +20,36 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PVe-Yq-zKg">
-                                <connections>
-                                    <segue destination="BYZ-38-t0r" kind="embed" id="udK-HA-zL1"/>
-                                </connections>
-                            </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HQJ-zK-x6P">
                                 <connections>
                                     <segue destination="hg4-4k-bWE" kind="embed" id="9gx-n2-Hga"/>
                                 </connections>
                             </containerView>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PVe-Yq-zKg">
+                                <connections>
+                                    <segue destination="BYZ-38-t0r" kind="embed" id="udK-HA-zL1"/>
+                                </connections>
+                            </containerView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Grj-er-BXw">
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="1" id="UeU-CB-rzQ"/>
+                                </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="HQJ-zK-x6P" firstAttribute="leading" secondItem="Grj-er-BXw" secondAttribute="trailing" id="3fR-y4-nJ2"/>
                             <constraint firstItem="Grj-er-BXw" firstAttribute="top" secondItem="Dtj-3D-CEf" secondAttribute="topMargin" id="4Lf-Ol-ade"/>
                             <constraint firstItem="PVe-Yq-zKg" firstAttribute="top" secondItem="Dtj-3D-CEf" secondAttribute="top" id="EX5-Km-fL3"/>
-                            <constraint firstItem="Grj-er-BXw" firstAttribute="leading" secondItem="PVe-Yq-zKg" secondAttribute="trailing" id="Vju-7A-oR6"/>
+                            <constraint firstItem="HQJ-zK-x6P" firstAttribute="width" secondItem="Dtj-3D-CEf" secondAttribute="height" multiplier="1:3" id="OtF-a5-qAn"/>
                             <constraint firstItem="4aP-Nc-aEc" firstAttribute="top" secondItem="Grj-er-BXw" secondAttribute="bottom" id="Xde-ua-ymG"/>
-                            <constraint firstItem="PVe-Yq-zKg" firstAttribute="leading" secondItem="Dtj-3D-CEf" secondAttribute="leading" id="ZLD-GY-9b2"/>
+                            <constraint firstItem="HQJ-zK-x6P" firstAttribute="leading" secondItem="Dtj-3D-CEf" secondAttribute="leading" id="Z4W-Ym-ZVL"/>
+                            <constraint firstAttribute="trailing" secondItem="PVe-Yq-zKg" secondAttribute="trailing" id="bdo-Pe-UNa"/>
+                            <constraint firstItem="Grj-er-BXw" firstAttribute="leading" secondItem="HQJ-zK-x6P" secondAttribute="trailing" id="ggY-fy-NrD"/>
                             <constraint firstItem="4aP-Nc-aEc" firstAttribute="top" secondItem="HQJ-zK-x6P" secondAttribute="bottom" id="kaT-G8-BOo"/>
-                            <constraint firstItem="PVe-Yq-zKg" firstAttribute="width" secondItem="HQJ-zK-x6P" secondAttribute="width" multiplier="2" id="lpa-OT-yQw"/>
-                            <constraint firstItem="HQJ-zK-x6P" firstAttribute="leading" secondItem="PVe-Yq-zKg" secondAttribute="trailing" constant="1" id="mhx-bt-HoC"/>
                             <constraint firstItem="HQJ-zK-x6P" firstAttribute="top" secondItem="Dtj-3D-CEf" secondAttribute="top" id="qfA-sI-b6f"/>
                             <constraint firstItem="4aP-Nc-aEc" firstAttribute="top" secondItem="PVe-Yq-zKg" secondAttribute="bottom" id="uAU-iQ-qaA"/>
-                            <constraint firstAttribute="trailing" secondItem="HQJ-zK-x6P" secondAttribute="trailing" id="wAW-g8-Gwl"/>
+                            <constraint firstItem="PVe-Yq-zKg" firstAttribute="leading" secondItem="Grj-er-BXw" secondAttribute="trailing" id="vN4-N4-hQl"/>
                         </constraints>
                     </view>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -79,16 +81,16 @@
             </objects>
             <point key="canvasLocation" x="-272" y="801"/>
         </scene>
-        <!--Tools View Controller-->
+        <!--Settings View Controller-->
         <scene sceneID="EFi-vN-wHw">
             <objects>
-                <viewController id="hg4-4k-bWE" customClass="ZToolsViewController" customModule="PadZones" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="hg4-4k-bWE" customClass="ZSettingsViewController" customModule="PadZones" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="qCp-aW-Kfa"/>
                         <viewControllerLayoutGuide type="bottom" id="RLc-mT-izr"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="CzG-ST-OXx">
-                        <rect key="frame" x="0.0" y="0.0" width="341" height="768"/>
+                        <rect key="frame" x="0.0" y="0.0" width="256" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
