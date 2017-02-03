@@ -49,7 +49,7 @@ func NSStringFromSize(_ size: CGSize) -> String {
 
 
 extension NSObject {
-    func assignFirstResponder(_ responder: UIResponder?) {
+    func assignAsFirstResponder(_ responder: UIResponder?) {
         responder?.becomeFirstResponder()
     }
 }

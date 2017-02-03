@@ -35,8 +35,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     override func draw(_ dirtyRect: CGRect) {
-        if isInnerDot, let zone = widgetZone { // , let record = zone.record {
-            let      isBookmark = zone.isBookmark // || record.recordID.recordName == favoritesRootNameKey
+        if isInnerDot, let zone = widgetZone {
+            let      isBookmark = zone.isBookmark || zone.isRootOfFavorites
             let     strokeColor = isBookmark ? gBookmarkColor : gZoneColor
             let shouldHighlight = isToggle ? (!(zone.showChildren) || isBookmark) : zone.isSelected
             let       fillColor = shouldHighlight ? strokeColor : ZColor.clear

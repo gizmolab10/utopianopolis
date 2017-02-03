@@ -58,7 +58,7 @@ class ZMainViewController: ZGenericViewController {
             })
 
             if !gShowsSearching {
-                assignFirstResponder(nil)
+                assignAsFirstResponder(nil)
             }
 
             break

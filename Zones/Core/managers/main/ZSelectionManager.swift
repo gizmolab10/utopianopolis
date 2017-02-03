@@ -50,7 +50,7 @@ class ZSelectionManager: NSObject {
 
 
     func fullResign() {
-        assignFirstResponder(nil) // ios broken
+        assignAsFirstResponder(nil) // ios broken
     }
 
 

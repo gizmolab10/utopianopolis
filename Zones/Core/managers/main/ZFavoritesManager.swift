@@ -174,7 +174,7 @@ class ZFavoritesManager: NSObject {
                 }
 
                 for (_, zone) in enumeration {
-                    if zone.isFavorite, let target = zone.bookmarkTarget, (target.isAncestorOf(traveler!) || traveler!.isAncestorOf(target)) {
+                    if zone.isFavorite, let target = zone.bookmarkTarget, (target.spawned(traveler!) || traveler!.spawned(target)) {
                         return updateForZone(zone)
                     }
                 }

@@ -39,6 +39,8 @@ class Zone : ZRecord {
     var       _parentZone:        Zone?
     var        _crossLink:     ZRecord?
     var        isBookmark:         Bool { get { return crossLink != nil } }
+    var isRootOfFavorites:         Bool { get { return record != nil && record.recordID.recordName == favoritesRootNameKey } }
+
 
 
     // MARK:- properties
@@ -483,7 +485,7 @@ class Zone : ZRecord {
 
         if !stop {
             for child in children {
-                if child == self || child.traverseApply(block) {
+                if self.isProgenyOf(child) || child.traverseApply(block) {
                     stop = true
 
                     break
@@ -495,17 +497,23 @@ class Zone : ZRecord {
     }
 
 
-    func isAncestorOf(_ iChild: Zone) -> Bool {
-        var result = false;
-
-        traverseApply { iZone -> Bool in
-            result = iZone == iChild
-
-            return result
+    func isProgenyOf(_ iZone: Zone) -> Bool {
+        if let p = iZone.parentZone {
+            return p == self || p.isProgenyOf(self)
         }
 
-        return result
+        return false
     }
+    
+
+    func spawned(_ iChild: Zone) -> Bool {
+        traverseApply { iZone -> Bool in
+            return iZone == iChild
+        }
+
+        return false
+    }
+
 
     func updateLevel() {
         traverseApply { iZone -> Bool in

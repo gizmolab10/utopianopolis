@@ -7,18 +7,22 @@
 //
 
 
-import CoreGraphics
 import Foundation
-import CoreText
 import CloudKit
+
+#if os(OSX)
+    import Cocoa
+#elseif os(iOS)
+    import UIKit
+#endif
 
 
 typealias ZStorageDict = [String : NSObject]
 
 
 extension NSObject {
-    func toConsole(_ loggable: Any?) {
-//        print(loggable)
+    func toConsole(_ iMessage: Any?) {
+//        print(iMessage)
     }
 
 

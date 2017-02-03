@@ -47,7 +47,7 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
                     #if os(OSX)
                     dispatchAsyncInForeground {
-                        self.assignFirstResponder(self.tableView)
+                        self.assignAsFirstResponder(self.tableView)
                         self.tableView?.selectRowIndexes(NSIndexSet(index: 0) as IndexSet, byExtendingSelection: false)
                     }
                     #endif

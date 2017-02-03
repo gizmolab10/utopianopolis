@@ -29,7 +29,7 @@ class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         if kind == .search {
             if gShowsSearching {
-                assignFirstResponder(searchBox!)
+                assignAsFirstResponder(searchBox!)
             }
         }
     }

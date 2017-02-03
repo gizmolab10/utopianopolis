@@ -52,7 +52,7 @@ func CGSizeFromString(_ string: String) -> CGSize {
 
 
 extension NSObject {
-    func assignFirstResponder(_ responder: NSResponder?) {
+    func assignAsFirstResponder(_ responder: NSResponder?) {
         mainWindow.makeFirstResponder(responder)
     }
 }
