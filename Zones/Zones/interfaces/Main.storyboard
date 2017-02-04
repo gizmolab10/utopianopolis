@@ -461,7 +461,7 @@ CQ
                     </view>
                     <connections>
                         <outlet property="editorView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
-                        <outlet property="mainView" destination="E7h-Pg-qLQ" id="PLu-7K-JWt"/>
+                        <outlet property="overlaysView" destination="E7h-Pg-qLQ" id="PLu-7K-JWt"/>
                         <outlet property="searchBoxHeight" destination="lGr-3g-ayh" id="9xd-lu-oT0"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
@@ -1137,7 +1137,7 @@ CQ
                                                         </constraints>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="RJc-P2-wiE">
                                                             <font key="font" metaFont="cellTitle"/>
-                                                            <mutableString key="title">   an incomplete list:
+                                                            <string key="title">   an incomplete list:
 ARROWS: navigate graph
 
 ARROWS with COMMAND:
@@ -1164,7 +1164,7 @@ other KEYS:
 
 with OPTION:
     " show favorites
-    ARROWS move zone</mutableString>
+    ARROWS move zone</string>
                                                             <color key="textColor" name="selectedMenuItemColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>

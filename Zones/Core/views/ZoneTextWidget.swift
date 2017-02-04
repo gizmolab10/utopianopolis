@@ -118,7 +118,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             dispatchAsyncInForeground { // avoid state garbling
                 gSelectionManager.clearGrab()
 
-
                 self.isTextEditing = false
             }
         }
@@ -189,7 +188,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
         if let value = notification.userInfo?["NSTextMovement"] as! NSNumber?, value == NSNumber(value: 17) {
             dispatchAsyncInForeground {
-                gEditingManager.handleKey("\t", flags: NSEventModifierFlags(), isWindow: true)
+                gEditingManager.handleKey("\t", flags: ZEventFlags(), isWindow: true)
             }
         }
     }

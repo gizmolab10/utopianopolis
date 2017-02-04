@@ -22,8 +22,12 @@ class ZMainViewController: ZGenericViewController {
     @IBOutlet var searchBoxHeight:   NSLayoutConstraint?
     @IBOutlet var searchResultsView: ZView?
     @IBOutlet var searchBoxView:     ZView?
+    @IBOutlet var overlaysView:      ZView?
     @IBOutlet var editorView:        ZView?
-    @IBOutlet var mainView:          ZView?
+
+    #if os(iOS)
+    @IBOutlet var keyView: ZKeyView?
+    #endif
 
 
     override func identifier() -> ZControllerID { return .main }
@@ -47,8 +51,8 @@ class ZMainViewController: ZGenericViewController {
             let isSearching = gWorkMode == .searchMode
 
             // show(false, view: <#T##ZView#>)
-            show ( isSearching, view: searchResultsView!)
-            show (!isSearching, view: editorView!)
+            show( isSearching, view: searchResultsView!)
+            show(!isSearching, view: editorView!)
 
             break
         case .search:
@@ -72,10 +76,10 @@ class ZMainViewController: ZGenericViewController {
     func show(_ show: Bool, view: ZView) {
         if !show {
             view.removeFromSuperview()
-        } else if !(mainView?.subviews.contains(view))! {
-            mainView?.addSubview(view)
+        } else if !(overlaysView?.subviews.contains(view))! {
+            overlaysView?.addSubview(view)
             view.snp.makeConstraints({ (make: ConstraintMaker) in
-                make.top.bottom.left.right.equalTo(mainView!)
+                make.top.bottom.left.right.equalTo(overlaysView!)
             })
         }
     }

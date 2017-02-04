@@ -77,6 +77,7 @@ class ZEditingManager: NSObject {
                 if stalledEvents.count < 1 {
                     stalledEvents.append(ZoneEvent(iEvent, iIsWindow: isWindow))
                 }
+
             } else if !isEditing, iEvent != previousEvent, gWorkMode == .editMode, let  string = iEvent.charactersIgnoringModifiers {
                 let   flags = iEvent.modifierFlags
                 let isArrow = flags.contains(.numericPad) && flags.contains(.function)
@@ -90,19 +91,16 @@ class ZEditingManager: NSObject {
                     handleArrow(arrow, flags: flags)
                 }
             }
-
         #endif
 
         return true
     }
 
 
-    #if os(OSX)
-
-    func handleArrow(_ arrow: ZArrowKey, flags: NSEventModifierFlags) {
-        let isCommand = flags.contains(.command)
-        let  isOption = flags.contains(.option)
-        let   isShift = flags.contains(.shift)
+    func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
+        let isCommand = flags.isCommand
+        let  isOption = flags.isOption
+        let   isShift = flags.isShift
 
         if !isShift {
             switch arrow {
@@ -127,12 +125,12 @@ class ZEditingManager: NSObject {
     }
 
 
-    func handleKey(_ key: String?, flags: NSEventModifierFlags, isWindow: Bool) {
+    func handleKey(_ key: String?, flags: ZEventFlags, isWindow: Bool) {
         if  key != nil, !isEditing {
             let    widget = gWidgetsManager.currentMovableWidget
-            let isCommand = flags.contains(.command)
-            let  isOption = flags.contains(.option)
-            let   isShift = flags.contains(.shift)
+            let isCommand = flags.isCommand
+            let  isOption = flags.isOption
+            let   isShift = flags.isShift
 
             switch key! {
             case "f":  find()
@@ -174,7 +172,7 @@ class ZEditingManager: NSObject {
         }
     }
 
-    #endif
+//    #endif
 
 
     // MARK:- other

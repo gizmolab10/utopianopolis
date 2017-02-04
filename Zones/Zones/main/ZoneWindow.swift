@@ -8,12 +8,7 @@
 
 
 import Foundation
-
-#if os(OSX)
-    import Cocoa
-#elseif os(iOS)
-    import UIKit
-#endif
+import Cocoa
 
 
 class ZoneWindow: ZWindow {
@@ -29,7 +24,6 @@ class ZoneWindow: ZWindow {
         ZoneWindow.window = self
     }
 
-    #if os(OSX)
 
     override var acceptsFirstResponder: Bool { get { return true } }
 
@@ -97,7 +91,5 @@ class ZoneWindow: ZWindow {
     @IBAction func toggleSearch (_ iItem: ZMenuItem?) { gEditingManager.find() }
     @IBAction func undo         (_ iItem: ZMenuItem?) { gUndoManager.undo() }
     @IBAction func redo         (_ iItem: ZMenuItem?) { gUndoManager.redo() }
-
-    #endif
 
 }

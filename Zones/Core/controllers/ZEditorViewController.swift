@@ -87,6 +87,10 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         view.clearGestures()
         view.createGestureRecognizer(self, action: #selector(ZEditorViewController.oneClick), clicksRequired: 1)
         super.setup()
+
+        #if os(iOS)
+            view.becomeFirstResponder()
+        #endif
     }
 
     

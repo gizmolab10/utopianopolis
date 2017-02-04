@@ -28,7 +28,7 @@ protocol ZGenericViewControllerProtocol {
 class ZGenericViewController: ZViewController, ZGenericViewControllerProtocol {
 
 
-    func identifier() -> ZControllerID { return .main }
+    func identifier() -> ZControllerID { return .undefined }
 
 
     func setup() {

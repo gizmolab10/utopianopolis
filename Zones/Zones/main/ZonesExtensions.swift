@@ -27,6 +27,7 @@ public typealias ZTableView                 = NSTableView
 public typealias ZStackView                 = NSStackView
 public typealias ZButtonCell                = NSButtonCell
 public typealias ZBezierPath                = NSBezierPath
+public typealias ZEventFlags                = NSEventModifierFlags
 public typealias ZSearchField               = NSSearchField
 public typealias ZApplication               = NSApplication
 public typealias ZViewController            = NSViewController
@@ -42,6 +43,7 @@ public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 
 
 let zapplication = NSApplication.shared()
+let   mainWindow = ZoneWindow.window!
 
 
 func CGSizeFromString(_ string: String) -> CGSize {
@@ -62,6 +64,13 @@ extension NSApplication {
     func clearBadge() {
         dockTile.badgeLabel = ""
     }
+}
+
+
+extension NSEventModifierFlags {
+    var isCommand: Bool { get { return contains(.command) } }
+    var isOption:  Bool { get { return contains(.option) } }
+    var isShift:   Bool { get { return contains(.shift) } }
 }
 
 

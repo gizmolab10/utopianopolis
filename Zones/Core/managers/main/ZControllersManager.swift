@@ -10,10 +10,11 @@ import Foundation
 
 
 enum ZControllerID: Int {
+    case undefined
     case searchResults
     case searchBox
-    case editor
     case settings
+    case editor
     case main
 }
 
@@ -21,6 +22,7 @@ enum ZControllerID: Int {
 enum ZSignalKind: Int {
     case data
     case datum
+    case setup
     case error
     case found
     case search

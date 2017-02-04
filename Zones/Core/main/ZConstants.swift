@@ -36,7 +36,6 @@ let       gTravelManager = ZTravelManager()
 let        gCloudManager = ZCloudManager()
 let         gfileManager = ZFileManager()
 let         gUndoManager = UndoManager()
-let           mainWindow = ZoneWindow.window!
 let              cloudID = "iCloud.com.zones.Zones"
 let             linksKey = "links"
 let          zoneTypeKey = "Zone"

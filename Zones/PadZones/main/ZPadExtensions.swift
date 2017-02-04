@@ -25,6 +25,7 @@ public typealias ZMenuItem                  = UIMenuItem
 public typealias ZTextView                  = UITextView
 public typealias ZTextField                 = UITextField
 public typealias ZTableView                 = UITableView
+public typealias ZEventFlags                = UIEventType
 public typealias ZBezierPath                = UIBezierPath
 public typealias ZSearchField               = UISearchBar
 public typealias ZApplication               = UIApplication
@@ -66,6 +67,13 @@ extension UIColor {
 
         return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: alpha)
     }
+}
+
+
+extension UIEventType {
+    var isCommand: Bool { get { return false } }
+    var isOption:  Bool { get { return false } }
+    var isShift:   Bool { get { return false } }
 }
 
 
