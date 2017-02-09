@@ -63,10 +63,19 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         specificWidget?.updateConstraints()
         specificWidget?.layoutFinish()
         specificWidget?.display()
-        // setup()
 
         view.zlayer.backgroundColor = gBackgroundColor.cgColor
         gTextCapturing               = false
+    }
+
+
+    func handleDragEvent(_ iGesture: ZGestureRecognizer?) {
+        if  iGesture != nil, let location = iGesture?.location(in: view) {
+            let  dot = iGesture!.target as! ZoneDot
+            let name = dot.widgetZone!.zoneName!
+
+            report("\(name) \(iGesture!.state.rawValue) at \(location.debugDescription)")
+        }
     }
 
 
@@ -85,12 +94,8 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
     override func setup() {
         view.clearGestures()
-        view.createGestureRecognizer(self, action: #selector(ZEditorViewController.oneClick), clicksRequired: 1)
+        view.createPointGestureRecognizer(self, action: #selector(ZEditorViewController.oneClick), clicksRequired: 1)
         super.setup()
-
-        #if os(iOS)
-            view.becomeFirstResponder()
-        #endif
     }
 
     

@@ -153,7 +153,7 @@ class Zone : ZRecord {
             if newValue != level {
                 zoneLevel = NSNumber(value: newValue)
 
-                self.needJustSave()
+                self.maybeNeedMerge()
             }
         }
     }
@@ -177,7 +177,7 @@ class Zone : ZRecord {
                 zoneState = NSNumber(integerLiteral: newValue.rawValue)
 
                 debug(" state")
-                needJustSave()
+                maybeNeedMerge()
             }
         }
     }

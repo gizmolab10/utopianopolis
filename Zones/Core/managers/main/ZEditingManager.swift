@@ -72,26 +72,24 @@ class ZEditingManager: NSObject {
 
 
     @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
-        #if os(OSX)
-            if !gOperationsManager.isReady {
-                if stalledEvents.count < 1 {
-                    stalledEvents.append(ZoneEvent(iEvent, iIsWindow: isWindow))
-                }
-
-            } else if !isEditing, iEvent != previousEvent, gWorkMode == .editMode, let  string = iEvent.charactersIgnoringModifiers {
-                let   flags = iEvent.modifierFlags
-                let isArrow = flags.contains(.numericPad) && flags.contains(.function)
-                let     key = string[string.startIndex].description
-
-                if !isArrow {
-                    handleKey(key, flags: flags, isWindow: isWindow)
-                } else if isWindow {
-                    let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
-
-                    handleArrow(arrow, flags: flags)
-                }
+        if !gOperationsManager.isReady {
+            if stalledEvents.count < 1 {
+                stalledEvents.append(ZoneEvent(iEvent, iIsWindow: isWindow))
             }
-        #endif
+
+        } else if !isEditing, iEvent != previousEvent, gWorkMode == .editMode {
+            let string = iEvent.input
+            let  flags = iEvent.modifierFlags
+            let    key = string[string.startIndex].description
+
+            if !flags.isArrow || key.isAscii {
+                handleKey(key, flags: flags, isWindow: isWindow)
+            } else if isWindow {
+                let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
+
+                handleArrow(arrow, flags: flags)
+            }
+        }
 
         return true
     }
@@ -165,14 +163,12 @@ class ZEditingManager: NSObject {
                     addSibling()
                 }
             default:
-                if key?.characters.first?.asciiValue == nil, !isEditing, let arrow = ZArrowKey(rawValue: (key?.utf8CString[2])!) {
+                if !key!.isAscii, let arrow = ZArrowKey(rawValue: (key?.utf8CString[2])!) {
                     handleArrow(arrow, flags: flags)
                 }
             }
         }
     }
-
-//    #endif
 
 
     // MARK:- other

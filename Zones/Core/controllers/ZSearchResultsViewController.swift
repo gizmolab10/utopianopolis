@@ -174,31 +174,30 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
     func monitorKeyEvents() {
         #if os(OSX)
             if monitor == nil {
-                monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> ZEvent? in
-                    if  let  string = event.charactersIgnoringModifiers {
-                        let     key = string[string.startIndex].description
-                        let   flags = event.modifierFlags
-                        let isArrow = flags.contains(.numericPad) && flags.contains(.function)
+                monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { (event) -> ZEvent? in
+                    let  string = event.input
+                    let     key = string[string.startIndex].description
+                    let   flags = event.modifierFlags
+                    let isArrow = flags.contains(.numericPad) && flags.contains(.function)
 
-                        if !isArrow {
-                            switch key {
-                            case    "f": self.reset();       return nil
-                            case   "\r": if self.resolve() { return nil }; break
-                            default:                         break
-                            }
-                        } else {
-                            let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
+                    if !isArrow {
+                        switch key {
+                        case    "f": self.reset();       return nil
+                        case   "\r": if self.resolve() { return nil }; break
+                        default:                         break
+                        }
+                    } else {
+                        let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
 
-                            switch arrow {
-                            case  .left: self.clear();       return nil
-                            case .right: if self.resolve() { return nil }; break
-                            default:                         break
-                            }
+                        switch arrow {
+                        case  .left: self.clear();       return nil
+                        case .right: if self.resolve() { return nil }; break
+                        default:                         break
                         }
                     }
 
                     return event
-                })
+                }
             }
         #endif
     }

@@ -22,7 +22,6 @@ enum ZControllerID: Int {
 enum ZSignalKind: Int {
     case data
     case datum
-    case setup
     case error
     case found
     case search

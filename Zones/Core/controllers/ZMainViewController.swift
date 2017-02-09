@@ -25,10 +25,6 @@ class ZMainViewController: ZGenericViewController {
     @IBOutlet var overlaysView:      ZView?
     @IBOutlet var editorView:        ZView?
 
-    #if os(iOS)
-    @IBOutlet var keyView: ZKeyView?
-    #endif
-
 
     override func identifier() -> ZControllerID { return .main }
 

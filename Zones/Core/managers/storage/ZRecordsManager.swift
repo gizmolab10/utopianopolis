@@ -13,6 +13,7 @@ import CloudKit
 
 enum ZRecordState: Int {
     case needsSave
+    case needsMerge
     case needsFetch
     case needsCreate
     case needsParent

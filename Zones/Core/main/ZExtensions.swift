@@ -21,6 +21,10 @@ typealias ZStorageDict = [String : NSObject]
 
 
 extension NSObject {
+    var settingsController: ZSettingsViewController? { get { return gControllersManager.controllerForID(.settings) as? ZSettingsViewController } }
+    var   editorController:   ZEditorViewController? { get { return gControllersManager.controllerForID(.editor)   as? ZEditorViewController } }
+
+
     func toConsole(_ iMessage: Any?) {
 //        print(iMessage)
     }
@@ -106,6 +110,16 @@ extension String {
     }
 
 
+    var isDigit: Bool {
+        return "0123456789.+-=*/".characters.contains(self[startIndex])
+    }
+
+
+    var isAscii: Bool {
+        return unicodeScalars.filter{$0.isASCII}.count > 0
+    }
+
+
     func heightForFont(_ font: ZFont) -> CGFloat {
         return sizeWithFont(font).height
     }
@@ -160,7 +174,7 @@ extension String {
 
 extension Character {
     var asciiValue: UInt32? {
-        return String(self).unicodeScalars.filter{$0.isASCII}.first?.value
+        return String(self).unicodeScalars.first?.value
     }
 }
 

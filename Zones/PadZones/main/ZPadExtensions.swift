@@ -14,9 +14,9 @@ import UIKit
 
 public typealias ZFont                      = UIFont
 public typealias ZView                      = UIView
-public typealias ZEvent                     = UIEvent
 public typealias ZImage                     = UIImage
 public typealias ZColor                     = UIColor
+public typealias ZEvent                     = UIKeyCommand
 public typealias ZButton                    = UIButton
 public typealias ZWindow                    = UIWindow
 public typealias ZSlider                    = UISlider
@@ -25,7 +25,7 @@ public typealias ZMenuItem                  = UIMenuItem
 public typealias ZTextView                  = UITextView
 public typealias ZTextField                 = UITextField
 public typealias ZTableView                 = UITableView
-public typealias ZEventFlags                = UIEventType
+public typealias ZEventFlags                = UIKeyModifierFlags
 public typealias ZBezierPath                = UIBezierPath
 public typealias ZSearchField               = UISearchBar
 public typealias ZApplication               = UIApplication
@@ -41,7 +41,7 @@ public typealias ZApplicationDelegate       = UIApplicationDelegate
 public typealias ZGestureRecognizerDelegate = UIGestureRecognizerDelegate
 
 
-let zapplication = ZApplication.shared
+let zapplication = UIApplication.shared
 
 
 func NSStringFromSize(_ size: CGSize) -> String {
@@ -70,24 +70,11 @@ extension UIColor {
 }
 
 
-extension UIEventType {
-    var isCommand: Bool { get { return false } }
-    var isOption:  Bool { get { return false } }
-    var isShift:   Bool { get { return false } }
-}
-
-
-extension UIApplication {
-
-    func presentError(_ error: NSError) {}
-
-
-    func clearBadge() {
-        applicationIconBadgeNumber += 1
-        applicationIconBadgeNumber  = 0
-
-        cancelAllLocalNotifications()
-    }
+extension UIKeyModifierFlags {
+    var isArrow:   Bool { get { return contains(.numericPad) } }
+    var isCommand: Bool { get { return contains(.command) } }
+    var isOption:  Bool { get { return contains(.alternate) } }
+    var isShift:   Bool { get { return contains(.shift) } }
 }
 
 
@@ -100,7 +87,7 @@ extension UIView {
     func display() {}
 
 
-    @discardableResult func createGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> ZGestureRecognizer {
+    @discardableResult func createPointGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> ZGestureRecognizer {
         let              gesture = UITapGestureRecognizer(target: target, action: action)
         isUserInteractionEnabled = true
 
@@ -146,8 +133,60 @@ extension UIButton {
         set { setTitle(newValue, for: .normal) }
     }
 
+
     var isCircular: Bool {
         get { return true }
         set { }
     }
+}
+
+
+var _keyCommands: [UIKeyCommand]? = nil
+
+
+extension UIApplication {
+
+    func presentError(_ error: NSError) {}
+
+
+    func clearBadge() {
+        applicationIconBadgeNumber += 1
+        applicationIconBadgeNumber  = 0
+
+        cancelAllLocalNotifications()
+    }
+
+
+    override open var keyCommands: [UIKeyCommand]? {
+        get {
+            if gSelectionManager.currentlyEditingZone != nil {
+                return nil
+            }
+
+            if  _keyCommands == nil {
+                _keyCommands = [UIKeyCommand] ()
+                let   action = #selector(UIApplication.action)
+
+                for character in "abcdefghijklmnopqrstuvwxyz '\t\r/".characters {
+                    _keyCommands?.append(UIKeyCommand(input: String(character),    modifierFlags: .init(rawValue: 0), action: action))
+                    _keyCommands?.append(UIKeyCommand(input: String(character),    modifierFlags: .alternate,         action: action))
+                    _keyCommands?.append(UIKeyCommand(input: String(character),    modifierFlags: .command,           action: action))
+                    _keyCommands?.append(UIKeyCommand(input: String(character),    modifierFlags: .shift,             action: action))
+                }
+
+                _keyCommands?.append    (UIKeyCommand(input: UIKeyInputUpArrow,    modifierFlags: .numericPad,        action: action))
+                _keyCommands?.append    (UIKeyCommand(input: UIKeyInputDownArrow,  modifierFlags: .numericPad,        action: action))
+                _keyCommands?.append    (UIKeyCommand(input: UIKeyInputLeftArrow,  modifierFlags: .numericPad,        action: action))
+                _keyCommands?.append    (UIKeyCommand(input: UIKeyInputRightArrow, modifierFlags: .numericPad,        action: action))
+            }
+
+            return _keyCommands
+        }
+    }
+
+
+    func action(command: UIKeyCommand) {
+        gEditingManager.handleEvent(command, isWindow: true)
+    }
+
 }

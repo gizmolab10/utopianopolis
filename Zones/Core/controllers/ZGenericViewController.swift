@@ -26,13 +26,13 @@ protocol ZGenericViewControllerProtocol {
 
 
 class ZGenericViewController: ZViewController, ZGenericViewControllerProtocol {
-
-
     func identifier() -> ZControllerID { return .undefined }
 
 
     func setup() {
-        gControllersManager.register(self, iID: identifier()) { object, kind in
+        let identity = identifier()
+
+        gControllersManager.register(self, iID: identity) { object, kind in
             if kind != .error {
                 self.handleSignal(object, kind: kind)
             }

@@ -27,6 +27,7 @@ enum ZOperationID: Int {
     case undelete
     case create
     case parent
+    case merge
 }
 
 
@@ -66,11 +67,11 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func       sync(_ onCompletion: @escaping Closure) { setupAndRun([.create,   .fetch, .parent, .children, .flush]) { onCompletion() } }
-    func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                      .children, .flush]) { onCompletion() } }
-    func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent, .children        ]) { onCompletion() } }
-    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent, .children, .flush]) { onCompletion() } }
-    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                  ]) { onCompletion() } }
+    func       sync(_ onCompletion: @escaping Closure) { setupAndRun([.create,   .fetch, .parent, .children, .merge, .flush]) { onCompletion() } }
+    func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                      .children,         .flush]) { onCompletion() } }
+    func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent, .children                ]) { onCompletion() } }
+    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent, .children,         .flush]) { onCompletion() } }
+    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                          ]) { onCompletion() } }
 
 
     func children(recursively: Bool, onCompletion: @escaping Closure) {
@@ -174,7 +175,7 @@ class ZOperationsManager: NSObject {
         }
 
         switch identifier {
-        case .file:        gfileManager.restore();                report(0); break
+        case .file:         gfileManager.restore();              report(0); break
         case .root:        gCloudManager.establishRootAsHere(mode, report); break
         case .manifest:    gCloudManager.fetchManifest      (mode, report); break
         case .favorites:   gCloudManager.fetchFavorites     (mode, report); break
@@ -188,8 +189,9 @@ class ZOperationsManager: NSObject {
         case .undelete:    gCloudManager.undelete           (mode, report); break
         case .create:      gCloudManager.create             (mode, report); break
         case .fetch:       gCloudManager.fetch              (mode, report); break
+        case .merge:       gCloudManager.merge              (mode, report); break
         case .flush:       gCloudManager.flush              (mode, report); break
-        case .ready:       becomeReady                     (mode, report); break
+        case .ready:                     becomeReady        (mode, report); break
         }
     }
 

@@ -15,7 +15,6 @@ class ZoneWindow: ZWindow {
 
 
     static var window: ZoneWindow?
-    var settingsController: ZSettingsViewController? { get { return gControllersManager.controllerForID(.settings) as? ZSettingsViewController }     }
 
 
     override func awakeFromNib() {

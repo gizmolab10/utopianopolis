@@ -68,9 +68,23 @@ extension NSApplication {
 
 
 extension NSEventModifierFlags {
+    var isArrow:   Bool { get { return contains(.numericPad) } }
     var isCommand: Bool { get { return contains(.command) } }
     var isOption:  Bool { get { return contains(.option) } }
     var isShift:   Bool { get { return contains(.shift) } }
+}
+
+
+extension NSEvent {
+    var input: String {
+        get {
+            if let result = charactersIgnoringModifiers {
+                return result as String
+            }
+
+            return ""
+        }
+    }
 }
 
 
@@ -92,7 +106,17 @@ extension NSView {
     }
 
 
-    @discardableResult func createGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> NSGestureRecognizer {
+    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> NSGestureRecognizer {
+        let      gesture = NSPanGestureRecognizer(target: target, action: action)
+        gesture.delegate = target
+
+        addGestureRecognizer(gesture)
+
+        return gesture
+    }
+
+
+    @discardableResult func createPointGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> NSGestureRecognizer {
         let                            gesture = NSClickGestureRecognizer(target: target, action: action)
         gesture.numberOfClicksRequired         = clicksRequired
         gesture.delaysPrimaryMouseButtonEvents = false

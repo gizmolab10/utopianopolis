@@ -23,8 +23,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var    isInnerDot: Bool = false
     var      isToggle: Bool = true
     var    widgetZone: Zone?
-    var doubleClicker: ZGestureRecognizer?
-    var singleClicker: ZGestureRecognizer?
+    var   dragGesture: ZGestureRecognizer?
+    var doubleGesture: ZGestureRecognizer?
+    var singleGesture: ZGestureRecognizer?
 
 
     var width: CGFloat {
@@ -75,8 +76,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             clearGestures()
 
-            doubleClicker        = createGestureRecognizer(self, action: #selector(ZoneDot.twoClicks), clicksRequired: 2)
-            singleClicker        = createGestureRecognizer(self, action: #selector(ZoneDot.oneClick),  clicksRequired: 1)
+            doubleGesture        = createPointGestureRecognizer(self, action: #selector(ZoneDot.doubleEvent), clicksRequired: 2)
+            singleGesture        = createPointGestureRecognizer(self, action: #selector(ZoneDot.singleEvent), clicksRequired: 1)
+            dragGesture          =  createDragGestureRecognizer(self, action: #selector(ZoneDot.dragEvent))
             innerDot?.isInnerDot = true
 
             innerDot?.setupForZone(zone, asToggle: isToggle)
@@ -95,11 +97,11 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: ZGestureRecognizer) -> Bool {
-        return gestureRecognizer == singleClicker && otherGestureRecognizer == doubleClicker
+        return gestureRecognizer == singleGesture && otherGestureRecognizer == doubleGesture
     }
     
 
-    func twoClicks(_ iGesture: ZGestureRecognizer?) {
+    func doubleEvent(_ iGesture: ZGestureRecognizer?) {
         if let widget: ZoneWidget = superview as? ZoneWidget, let zone = widget.widgetZone {
             if isToggle {
                 gEditingManager.toggleDotActionOnZone(zone, recursively: true)
@@ -110,7 +112,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func oneClick(_ iGesture: ZGestureRecognizer?) {
+    func singleEvent(_ iGesture: ZGestureRecognizer?) {
         if let widget: ZoneWidget = superview as? ZoneWidget, let zone = widget.widgetZone {
             if isToggle {
                 gEditingManager.toggleDotActionOnZone(zone, recursively: false)
@@ -121,4 +123,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             }
         }
     }
+
+
+    func dragEvent(_ iGesture: ZGestureRecognizer?) { editorController?.handleDragEvent(iGesture) }
 }

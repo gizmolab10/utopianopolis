@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		0C19EFA51E3EC07000913B1E /* ZReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C19EFA41E3EC07000913B1E /* ZReachability.swift */; };
 		0C19EFA61E3EC07000913B1E /* ZReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C19EFA41E3EC07000913B1E /* ZReachability.swift */; };
-		0C1BF0061E1B5FB500C84CB7 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		0C2456181DE3227900EBCCDD /* ZOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2456171DE3227900EBCCDD /* ZOperationsManager.swift */; };
 		0C2456191DE3227900EBCCDD /* ZOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2456171DE3227900EBCCDD /* ZOperationsManager.swift */; };
 		0C2456221DE3CAD700EBCCDD /* ZEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C24561D1DE3CAD700EBCCDD /* ZEditorViewController.swift */; };
@@ -70,7 +69,6 @@
 		0CB1A7DF1D73F87B00283F7B /* ZTrait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB1A7D01D73F87B00283F7B /* ZTrait.swift */; };
 		0CB1A7E01D73F87B00283F7B /* ZTrait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB1A7D01D73F87B00283F7B /* ZTrait.swift */; };
 		0CB1A7FF1D740EC500283F7B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CB1A7FE1D740EC500283F7B /* Main.storyboard */; };
-		0CB8441C1E45401800526AC7 /* ZKeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB8441B1E45401800526AC7 /* ZKeyView.swift */; };
 		0CB8441E1E45410300526AC7 /* ZoneWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB8441D1E45410300526AC7 /* ZoneWindow.swift */; };
 		0CBD002C1D9DBC4200797F21 /* ZClosures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBD002B1D9DBC4200797F21 /* ZClosures.swift */; };
 		0CBD002D1D9DBC4200797F21 /* ZClosures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBD002B1D9DBC4200797F21 /* ZClosures.swift */; };
@@ -264,7 +262,6 @@
 		0CB1A7CE1D73F87B00283F7B /* ZAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAction.swift; sourceTree = "<group>"; };
 		0CB1A7D01D73F87B00283F7B /* ZTrait.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTrait.swift; sourceTree = "<group>"; };
 		0CB1A7FE1D740EC500283F7B /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		0CB8441B1E45401800526AC7 /* ZKeyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZKeyView.swift; sourceTree = "<group>"; };
 		0CB8441D1E45410300526AC7 /* ZoneWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneWindow.swift; sourceTree = "<group>"; };
 		0CBD002B1D9DBC4200797F21 /* ZClosures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZClosures.swift; sourceTree = "<group>"; };
 		0CC8F84C1DC2963300E25985 /* ZoneTextWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZoneTextWidget.swift; path = views/ZoneTextWidget.swift; sourceTree = "<group>"; };
@@ -339,7 +336,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C60B6791DBE84DF005D99F9 /* SnapKit.framework in Frameworks */,
-				0C1BF0061E1B5FB500C84CB7 /* SnapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,7 +406,6 @@
 			children = (
 				0CD921751D8F4C0B00F80964 /* PadZones.entitlements */,
 				0C58C3711D45805400CAB387 /* ZAppDelegate.swift */,
-				0CB8441B1E45401800526AC7 /* ZKeyView.swift */,
 				0CA6B82F1E4179D200A49F1D /* ZPadExtensions.swift */,
 				0C58C3761D45805400CAB387 /* Info.plist */,
 			);
@@ -1079,7 +1074,6 @@
 				0CD1EAEF1DB725A800A096E4 /* OperationObserver.swift in Sources */,
 				0CB1A7D31D73F87B00283F7B /* Zone.swift in Sources */,
 				0CD1EAD91DB725A800A096E4 /* PhotosCondition.swift in Sources */,
-				0CB8441C1E45401800526AC7 /* ZKeyView.swift in Sources */,
 				0C4CB4881E1A19490018B2C9 /* ZStackableView.swift in Sources */,
 				0CC8F8561DC2CEF600E25985 /* ZConstants.swift in Sources */,
 				0CD1EB011DB725A800A096E4 /* OperationQueue.swift in Sources */,

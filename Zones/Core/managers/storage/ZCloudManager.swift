@@ -186,11 +186,9 @@ class ZCloudManager: ZRecordsManager {
                     operation.recordIDsToDelete = toBeDeleted   // delete them
 
                     operation.start()
-
-                    return
+                } else {
+                    onCompletion?(0)
                 }
-
-                onCompletion?(0)
             }
         }
     }
@@ -233,11 +231,9 @@ class ZCloudManager: ZRecordsManager {
                     onCompletion?(0)
                 }
             }
-
-            return
+        } else {
+            self.establishRootAsHere(storageMode, onCompletion)
         }
-
-        self.establishRootAsHere(storageMode, onCompletion)
     }
 
 
@@ -418,37 +414,35 @@ class ZCloudManager: ZRecordsManager {
             }
 
             operation.start()
-
-            return
+        } else {
+            onCompletion?(0)
         }
-
-        onCompletion?(0)
     }
 
 
-//    func merge(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
-//        let recordIDs = recordIDsWithMatchingStates([.needsMerge])
-//
-//        if  recordIDs.count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-//            onCompletion?(recordIDs.count)
-//
-//            operation.recordIDs                = recordIDs
-//            operation.completionBlock          = { onCompletion?(0) }
-//            operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
-//                self.invokeWithMode(storageMode) {
-//                    if let error: CKError = iError as? CKError {
-//                        self.reportError(error)
-//                    } else if let record = self.recordForRecordID(iID) {
-//                        record.mergeIntoAndTake(iRecord!)
-//                    }
-//                }
-//            }
-//
-//            operation.start()
-//        } else {
-//            onCompletion?(0)
-//        }
-//    }
+    func merge(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
+        let recordIDs = recordIDsWithMatchingStates([.needsMerge])
+
+        if  recordIDs.count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
+            onCompletion?(recordIDs.count)
+
+            operation.recordIDs                = recordIDs
+            operation.completionBlock          = { onCompletion?(0) }
+            operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
+                self.invokeWithMode(storageMode) {
+                    if let error: CKError = iError as? CKError {
+                        self.reportError(error)
+                    } else if let record = self.recordForRecordID(iID) {
+                        record.mergeIntoAndTake(iRecord!)
+                    }
+                }
+            }
+
+            operation.start()
+        } else {
+            onCompletion?(0)
+        }
+    }
 
 
     func fetchParents(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
@@ -664,7 +658,7 @@ class ZCloudManager: ZRecordsManager {
                 if oldValue != value {
                     record[forPropertyName] = value as! CKRecordValue?
 
-                    object.needUpdateSave()
+                    object.maybeNeedMerge()
                 }
             }
         }

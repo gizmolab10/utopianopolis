@@ -149,6 +149,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                         toZone!.zoneName = iText!
 
                         toZone!.needUpdateSave()
+                        toZone!.unmarkForStates([.needsMerge])
                     }
                 }
 
