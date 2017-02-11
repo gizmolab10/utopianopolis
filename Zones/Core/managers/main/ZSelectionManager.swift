@@ -14,10 +14,47 @@ class ZSelectionManager: NSObject {
 
 
     var       pasteableZones = [Zone] ()
+    var               hasGrab: Bool { return currentlyGrabbedZones.count > 0 }
     var  currentlyEditingZone:  Zone?
     var currentlyGrabbedZones: [Zone] {
         get { return gTravelManager.manifest.currentlyGrabbedZones }
         set { gTravelManager.manifest.currentlyGrabbedZones = newValue }
+    }
+
+
+    var firstGrabbableZone: Zone {
+        get {
+            var grabbable: Zone? = nil
+
+            if currentlyGrabbedZones.count > 0 {
+                grabbable = currentlyGrabbedZones[0]
+            }
+
+            if grabbable == nil || grabbable?.record == nil {
+                grabbable = gTravelManager.hereZone
+            }
+
+            return grabbable!
+        }
+    }
+
+
+    var currentlyMovableZone: Zone {
+        get {
+            var movable: Zone? = nil
+
+            if currentlyGrabbedZones.count > 0 {
+                movable = currentlyGrabbedZones[0]
+            } else if currentlyEditingZone != nil {
+                movable = currentlyEditingZone
+            }
+
+            if movable == nil || (movable?.parentZone != nil && gStorageMode != movable?.parentZone?.storageMode) {
+                movable = gTravelManager.hereZone
+            }
+            
+            return movable!
+        }
     }
 
 
@@ -107,42 +144,6 @@ class ZSelectionManager: NSObject {
             }
 
             return false
-        }
-    }
-    
-
-    var firstGrabbableZone: Zone {
-        get {
-            var grabbable: Zone? = nil
-
-            if currentlyGrabbedZones.count > 0 {
-                grabbable = currentlyGrabbedZones[0]
-            }
-
-            if grabbable == nil || grabbable?.record == nil {
-                grabbable = gTravelManager.hereZone
-            }
-
-            return grabbable!
-        }
-    }
-
-
-    var currentlyMovableZone: Zone {
-        get {
-            var movable: Zone? = nil
-
-            if currentlyGrabbedZones.count > 0 {
-                movable = currentlyGrabbedZones[0]
-            } else if currentlyEditingZone != nil {
-                movable = currentlyEditingZone
-            }
-
-            if movable == nil || (movable?.parentZone != nil && gStorageMode != movable?.parentZone?.storageMode) {
-                movable = gTravelManager.hereZone
-            }
-
-            return movable!
         }
     }
 }

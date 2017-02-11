@@ -120,6 +120,26 @@ extension String {
     }
 
 
+    var containsNonAscii: Bool {
+        return unicodeScalars.filter{!$0.isASCII}.count > 0
+    }
+
+
+    var arrow: ZArrowKey? {
+        if containsNonAscii {
+            let character = utf8CString[2]
+
+            for arrowKey in ZArrowKey.up.rawValue...ZArrowKey.right.rawValue {
+                if arrowKey == character {
+                    return ZArrowKey(rawValue: character)
+                }
+            }
+        }
+
+        return nil
+    }
+
+
     func heightForFont(_ font: ZFont) -> CGFloat {
         return sizeWithFont(font).height
     }

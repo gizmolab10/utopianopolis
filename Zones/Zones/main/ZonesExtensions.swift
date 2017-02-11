@@ -68,10 +68,10 @@ extension NSApplication {
 
 
 extension NSEventModifierFlags {
-    var isArrow:   Bool { get { return contains(.numericPad) } }
-    var isCommand: Bool { get { return contains(.command) } }
-    var isOption:  Bool { get { return contains(.option) } }
-    var isShift:   Bool { get { return contains(.shift) } }
+    var isNumericPad: Bool { get { return contains(.numericPad) } }
+    var isCommand:    Bool { get { return contains(.command) } }
+    var isOption:     Bool { get { return contains(.option) } }
+    var isShift:      Bool { get { return contains(.shift) } }
 }
 
 

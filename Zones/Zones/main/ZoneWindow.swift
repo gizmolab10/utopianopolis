@@ -34,8 +34,9 @@ class ZoneWindow: ZWindow {
     }
 
 
-    // MARK:- menu delegation
+    // MARK:- menu validation
     // MARK:-
+
 
     override func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
         var valid = !gEditingManager.isEditing
@@ -68,27 +69,16 @@ class ZoneWindow: ZWindow {
     // MARK:-
 
 
-    @IBAction func genericMenuHandler(_ iItem: ZMenuItem?) {
-        var flags = (iItem?.keyEquivalentModifierMask)!
-        let   key = (iItem?.keyEquivalent)!
-
-        if key != key.lowercased() {
-            flags.insert(.shift)    // add isShift to flags
-        }
-
-        gEditingManager.handleKey(key.lowercased(), flags: flags, isWindow: true)
-    }
-
-
-    @IBAction func displayPreferences(_ sender: Any?) { settingsController?.displayViewFor(id: .Preferences) }
-    @IBAction func displayHelp       (_ sender: Any?) { settingsController?.displayViewFor(id: .Help) }
-    @IBAction func printHere         (_ sender: Any?) { gEditingManager.printHere() }
-    @IBAction func copy         (_ iItem: ZMenuItem?) { gEditingManager.copyToPaste() }
-    @IBAction func cut          (_ iItem: ZMenuItem?) { gEditingManager.delete() }
-    @IBAction func delete       (_ iItem: ZMenuItem?) { gEditingManager.delete() }
-    @IBAction func paste        (_ iItem: ZMenuItem?) { gEditingManager.paste() }
-    @IBAction func toggleSearch (_ iItem: ZMenuItem?) { gEditingManager.find() }
-    @IBAction func undo         (_ iItem: ZMenuItem?) { gUndoManager.undo() }
-    @IBAction func redo         (_ iItem: ZMenuItem?) { gUndoManager.redo() }
+    @IBAction func displayPreferences     (_ sender: Any?) { settingsController?.displayViewFor(id: .Preferences) }
+    @IBAction func displayHelp            (_ sender: Any?) { settingsController?.displayViewFor(id: .Help) }
+    @IBAction func printHere              (_ sender: Any?) { gEditingManager.printHere() }
+    @IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gEditingManager.handleMenuItem(iItem) }
+    @IBAction func copy              (_ iItem: ZMenuItem?) { gEditingManager.copyToPaste() }
+    @IBAction func cut               (_ iItem: ZMenuItem?) { gEditingManager.delete() }
+    @IBAction func delete            (_ iItem: ZMenuItem?) { gEditingManager.delete() }
+    @IBAction func paste             (_ iItem: ZMenuItem?) { gEditingManager.paste() }
+    @IBAction func toggleSearch      (_ iItem: ZMenuItem?) { gEditingManager.find() }
+    @IBAction func undo              (_ iItem: ZMenuItem?) { gUndoManager.undo() }
+    @IBAction func redo              (_ iItem: ZMenuItem?) { gUndoManager.redo() }
 
 }

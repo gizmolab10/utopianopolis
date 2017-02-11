@@ -71,10 +71,10 @@ extension UIColor {
 
 
 extension UIKeyModifierFlags {
-    var isArrow:   Bool { get { return contains(.numericPad) } }
-    var isCommand: Bool { get { return contains(.command) } }
-    var isOption:  Bool { get { return contains(.alternate) } }
-    var isShift:   Bool { get { return contains(.shift) } }
+    var isNumericPad: Bool { get { return contains(.numericPad) } }
+    var isCommand:    Bool { get { return contains(.command) } }
+    var isOption:     Bool { get { return contains(.alternate) } }
+    var isShift:      Bool { get { return contains(.shift) } }
 }
 
 

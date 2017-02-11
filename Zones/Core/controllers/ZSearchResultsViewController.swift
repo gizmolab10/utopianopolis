@@ -173,24 +173,20 @@ class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource
 
     func monitorKeyEvents() {
         #if os(OSX)
-            if monitor == nil {
-                monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { (event) -> ZEvent? in
-                    let  string = event.input
-                    let     key = string[string.startIndex].description
-                    let   flags = event.modifierFlags
-                    let isArrow = flags.contains(.numericPad) && flags.contains(.function)
+            if  monitor == nil {
+                monitor        = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { (event) -> ZEvent? in
+                    let string = event.input
+                    let    key = string[string.startIndex].description
 
-                    if !isArrow {
+                    if !event.modifierFlags.isNumericPad {
                         switch key {
-                        case    "f": self.reset();       return nil
+                        case    "f":    self.reset();    return nil
                         case   "\r": if self.resolve() { return nil }; break
                         default:                         break
                         }
-                    } else {
-                        let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
-
+                    } else if let arrow = key.arrow {
                         switch arrow {
-                        case  .left: self.clear();       return nil
+                        case  .left:    self.clear();    return nil
                         case .right: if self.resolve() { return nil }; break
                         default:                         break
                         }

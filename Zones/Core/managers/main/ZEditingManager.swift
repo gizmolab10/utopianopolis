@@ -58,7 +58,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    // MARK:- API
+    // MARK:- user input event handlers
     // MARK:-
 
 
@@ -76,22 +76,70 @@ class ZEditingManager: NSObject {
             if stalledEvents.count < 1 {
                 stalledEvents.append(ZoneEvent(iEvent, iIsWindow: isWindow))
             }
-
         } else if !isEditing, iEvent != previousEvent, gWorkMode == .editMode {
             let string = iEvent.input
             let  flags = iEvent.modifierFlags
             let    key = string[string.startIndex].description
 
-            if !flags.isArrow || key.isAscii {
-                handleKey(key, flags: flags, isWindow: isWindow)
-            } else if isWindow {
-                let arrow = ZArrowKey(rawValue: key.utf8CString[2])!
-
-                handleArrow(arrow, flags: flags)
-            }
+            handleKey(key, flags: flags, isWindow: isWindow)
         }
 
         return true
+    }
+
+
+    func handleMenuItem(_ iItem: ZMenuItem?) {
+        var flags = (iItem?.keyEquivalentModifierMask)!
+        var   key = (iItem?.keyEquivalent)!
+
+        if key != key.lowercased() {
+            flags.insert(.shift)    // add isShift to flags
+
+            key = key.lowercased()
+        }
+
+        handleKey(key, flags: flags, isWindow: true)
+    }
+
+
+    func handleKey(_ key: String?, flags: ZEventFlags, isWindow: Bool) {
+        if  !isEditing &&   key != nil {
+            if  let arrow = key?.arrow, isWindow {
+                handleArrow(arrow, flags: flags)
+            } else {
+                let    widget = gWidgetsManager.currentMovableWidget
+                let isCommand = flags.isCommand
+                let  isOption = flags.isOption
+                let   isShift = flags.isShift
+                let hasWidget = widget != nil
+                let isSpecial = isWindow || isOption
+
+                switch key! {
+                case "f":       find()
+                case "p":       printHere()
+                case "b":       createBookmark()
+                case "\t":      if hasWidget { addSibling() }
+                case "\"":      doFavorites(true,    isOption)
+                case "'":       doFavorites(isShift, isOption)
+                case "\u{7F}":  if isSpecial { delete() } // delete key
+                case "/":       focusOnZone(gSelectionManager.firstGrabbableZone)
+                case " ":
+                    if hasWidget && isSpecial && !(widget?.widgetZone.isBookmark)! {
+                        addNewChildTo(widget?.widgetZone)
+                    }
+                case "\r":
+                    if hasWidget && gSelectionManager.hasGrab {
+                        if isCommand {
+                            gSelectionManager.deselect()
+                        } else {
+                            widget?.textWidget.becomeFirstResponder()
+                        }
+                    }
+                default:
+                    break
+                }
+            }
+        }
     }
 
 
@@ -122,61 +170,34 @@ class ZEditingManager: NSObject {
         }
     }
 
+    // MARK:- API
+    // MARK:-
 
-    func handleKey(_ key: String?, flags: ZEventFlags, isWindow: Bool) {
-        if  key != nil, !isEditing {
-            let    widget = gWidgetsManager.currentMovableWidget
-            let isCommand = flags.isCommand
-            let  isOption = flags.isOption
-            let   isShift = flags.isShift
 
-            switch key! {
-            case "f":  find()
-            case "p":  printHere()
-            case "b":  createBookmark()
-            case "\"": doFavorites(true, isOption)
-            case "'":  doFavorites(isShift, isOption)
-            case "/":
-                focusOnZone(gSelectionManager.firstGrabbableZone)
-            case "\u{7F}": // delete key
-                if isWindow || isOption {
-                    delete()
-                }
-            case " ":
-                if widget != nil && (isWindow || isOption) && !(widget?.widgetZone.isBookmark)! {
-                    addNewChildTo(widget?.widgetZone)
-                }
-            case "\r":
-                if widget != nil {
-                    if gSelectionManager.currentlyGrabbedZones.count != 0 {
-                        if isCommand {
-                            gSelectionManager.deselect()
-                        } else {
-                            widget?.textWidget.becomeFirstResponder()
-                        }
-                    } else if gSelectionManager.currentlyEditingZone != nil {
-                        widget?.textWidget.resignFirstResponder()
-                    }
-                }
-            case "\t":
-                if widget != nil {
-                    addSibling()
-                }
-            default:
-                if !key!.isAscii, let arrow = ZArrowKey(rawValue: (key?.utf8CString[2])!) {
-                    handleArrow(arrow, flags: flags)
-                }
-            }
+    func copyToPaste() {
+        gSelectionManager.clearPaste()
+
+        for zone in gSelectionManager.currentlyGrabbedZones {
+            addToPasteCopyOf(zone)
         }
     }
 
 
-    // MARK:- other
-    // MARK:-
+    func paste() {
+        pasteInto(gSelectionManager.firstGrabbableZone)
+    }
 
 
-    func syncAndRedraw() {
-        gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+    func delete() {
+        prepareUndoForDelete()
+
+        let last = deleteZones(gSelectionManager.currentlyGrabbedZones, in: nil)
+
+        last?.grab()
+
+        gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
+            self.signalFor(nil, regarding: .redraw)
+        }
     }
 
 
@@ -185,29 +206,6 @@ class ZEditingManager: NSObject {
             gShowsSearching = !gShowsSearching
 
             signalFor(nil, regarding: .search)
-        }
-    }
-
-
-    func doFavorites(_ isShift: Bool, _ isOption: Bool) {
-        if                !isShift || !isOption {
-            let backward = isShift ||  isOption
-
-            gFavoritesManager    .switchToNext(!backward) { self.syncAndRedraw() }
-        } else {
-            let zone = gSelectionManager.firstGrabbableZone
-
-            gFavoritesManager.showFavoritesAndGrab(zone) { object, kind in
-                self.syncAndRedraw()
-            }
-        }
-    }
-
-
-    func travelThroughBookmark(_ bookmark: Zone) {
-        gFavoritesManager.updateGrabAndIndexFor(bookmark)
-        gTravelManager.travelThrough(bookmark) { object, kind in
-            self.syncAndRedraw()
         }
     }
 
@@ -259,6 +257,36 @@ class ZEditingManager: NSObject {
         }
 
         #endif
+    }
+
+
+    // MARK:- other
+    // MARK:-
+
+
+    func syncAndRedraw() {
+        gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+    }
+
+
+    func doFavorites(_ isShift: Bool, _ isOption: Bool) {
+        if                !isShift || !isOption {
+            let backward = isShift ||  isOption
+
+            gFavoritesManager.switchToNext(!backward) { self.syncAndRedraw() }
+        } else {
+            gFavoritesManager.showFavoritesAndGrab(gSelectionManager.firstGrabbableZone) { object, kind in
+                self.syncAndRedraw()
+            }
+        }
+    }
+
+
+    func travelThroughBookmark(_ bookmark: Zone) {
+        gFavoritesManager.updateGrabAndIndexFor(bookmark)
+        gTravelManager.travelThrough(bookmark) { object, kind in
+            self.syncAndRedraw()
+        }
     }
 
 
@@ -511,86 +539,12 @@ class ZEditingManager: NSObject {
     }
 
 
-    func copyToPaste() {
-        gSelectionManager.clearPaste()
-
-        for zone in gSelectionManager.currentlyGrabbedZones {
-            addToPasteCopyOf(zone)
-        }
-    }
-
-
     func addToPasteCopyOf(_ zone: Zone) {
         let        copy = zone.deepCopy()
         copy.isDeleted  = false
         copy.parentZone = nil
 
         gSelectionManager.pasteableZones.append(copy)
-    }
-
-
-    func paste() {
-        pasteInto(gSelectionManager.firstGrabbableZone)
-    }
-
-
-    func pasteInto(_ zone: Zone) {
-        let pastables = gSelectionManager.pasteableZones
-
-        var count = pastables.count
-
-        if count > 0, !zone.isBookmark {
-            var originals = [Zone] ()
-
-            for pastable in pastables {
-                let pasteThis = pastable.deepCopy()
-
-                originals.append(pasteThis)
-                pasteThis.orphan() // disable undo inside moveZone
-                moveZone(pasteThis, into: zone, orphan: false) {
-                    count -= 1
-
-                    if count == 0 {
-                        self.syncAndRedraw()
-                    }
-                }
-            }
-
-            addUndo(withTarget: self, handler: { iTarget in
-                self.prepareUndoForDelete()
-                self.deleteZones(originals, in: nil)
-                zone.grab()
-                self.syncAndRedraw()
-            })
-        }
-    }
-
-
-    func prepareUndoForDelete() {
-        gSelectionManager.clearPaste()
-
-        for zone in gSelectionManager.currentlyGrabbedZones {
-            if let into = zone.parentZone {
-                addToPasteCopyOf(zone)
-
-                addUndo(withTarget: self, handler: { iTarget in
-                    self.pasteInto(into)
-                })
-            }
-        }
-    }
-
-
-    func delete() {
-        prepareUndoForDelete()
-
-        let last = deleteZones(gSelectionManager.currentlyGrabbedZones, in: nil)
-
-        last?.grab()
-
-        gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
-            self.signalFor(nil, regarding: .redraw)
-        }
     }
 
 
@@ -958,6 +912,53 @@ class ZEditingManager: NSObject {
 
     // MARK:- undoables
     // MARK:-
+
+
+    func pasteInto(_ zone: Zone) {
+        let pastables = gSelectionManager.pasteableZones
+
+        var count = pastables.count
+
+        if count > 0, !zone.isBookmark {
+            var originals = [Zone] ()
+
+            for pastable in pastables {
+                let pasteThis = pastable.deepCopy()
+
+                originals.append(pasteThis)
+                pasteThis.orphan() // disable undo inside moveZone
+                moveZone(pasteThis, into: zone, orphan: false) {
+                    count -= 1
+
+                    if count == 0 {
+                        self.syncAndRedraw()
+                    }
+                }
+            }
+
+            addUndo(withTarget: self, handler: { iTarget in
+                self.prepareUndoForDelete()
+                self.deleteZones(originals, in: nil)
+                zone.grab()
+                self.syncAndRedraw()
+            })
+        }
+    }
+
+
+    func prepareUndoForDelete() {
+        gSelectionManager.clearPaste()
+
+        for zone in gSelectionManager.currentlyGrabbedZones {
+            if let into = zone.parentZone {
+                addToPasteCopyOf(zone)
+
+                addUndo(withTarget: self, handler: { iTarget in
+                    self.pasteInto(into)
+                })
+            }
+        }
+    }
 
 
     func moveZone(_ zone: Zone, outTo: Zone, orphan: Bool, onCompletion: Closure?) {

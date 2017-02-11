@@ -79,7 +79,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
 
     @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
-        mainWindow.genericMenuHandler(iItem)
+        gEditingManager.handleMenuItem(iItem)
     }
 
 }

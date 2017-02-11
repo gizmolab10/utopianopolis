@@ -51,13 +51,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
                     #if os(OSX)
                     monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> ZEvent? in
-                        if self.isTextEditing {
-                            let   flags = event.modifierFlags
-                            let isArrow = flags.contains(.numericPad) && flags.contains(.function)
-
-                            if !isArrow {
-                                gEditingManager.handleEvent(event, isWindow: false)
-                            }
+                        if self.isTextEditing, !event.modifierFlags.isNumericPad {
+                            gEditingManager.handleEvent(event, isWindow: false)
                         }
 
                         return event
