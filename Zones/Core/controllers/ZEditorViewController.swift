@@ -104,21 +104,54 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
     // MARK:-
 
 
+    enum ZRelation: Int {
+        case above
+        case below
+        case upon
+    }
+
+
+    func between(_ iPoint: CGPoint, relativeTo iView: ZView?) -> ZRelation {
+        if     iView != nil {
+            let point = view.convert(iPoint, to: iView)
+            let frame = iView!.bounds
+
+            if     frame.minX + 30.0 < point.x {
+                if frame.midY +  3.0 < point.y { return .below }
+                if frame.midY -  3.0 > point.y { return .above }
+            }
+        }
+
+        return .upon
+    }
+
+
     func handleDragEvent(_ iGesture: ZGestureRecognizer?) {
-        if  iGesture  != nil, let location = iGesture?.location (in: view) {
-            let    dot = iGesture!.target as! ZoneDot
-            let target = hereWidget.widgetNearestTo(   location, in: view, excluding: gWidgetsManager.widgetForZone(dot.widgetZone))
-            let  prior = gWidgetsManager.widgetForZone(gSelectionManager.currentDragTarget)
-            let   zone = target?.widgetZone
-            let   name = dot.widgetZone!.zoneName!
-            let noDrag = [NSGestureRecognizerState.ended, NSGestureRecognizerState.cancelled].contains(iGesture!.state)
+        if  iGesture   != nil, let location = iGesture?.location (in: view) {
+            let  nearest = hereWidget.widgetNearestTo(   location, in: view)
+            let   relate = between(location, relativeTo: nearest?.textWidget)
+            let    prior = gWidgetsManager.widgetForZone(gSelectionManager.currentDragTarget)
+            let     done = [NSGestureRecognizerState.ended, NSGestureRecognizerState.cancelled].contains(iGesture!.state)
+            let      dot = iGesture?.target as! ZoneDot
+            let    match = nearest?.widgetZone
+            let    mover = dot.widgetZone
+            let     same = mover == match
+            let isTarget = match == gTravelManager.hereZone || relate == .upon
+            let   target = same ? nil : isTarget ? match : match?.parentZone
+            let    index = isTarget ? (asTask ? 0 : target?.count) : match!.siblingIndex! + relate.rawValue
 
-            gSelectionManager.currentDragTarget = noDrag ? nil : zone
+            gSelectionManager.currentDragTarget     = done ? nil : target
+            gSelectionManager.currentDragLocation   = location
+            prior?  .dragDot.innerDot?.needsDisplay = true
+            nearest?.dragDot.innerDot?.needsDisplay = true
 
-            prior? .dragDot.innerDot?.needsDisplay = true
-            target?.dragDot.innerDot?.needsDisplay = true
+            report("\(relate) \(index!)")
 
-            report("[\(name)] \(iGesture!.state.rawValue) points to [\(zone?.zoneName ?? "none")]")
+            if done && !same && mover != nil && target != nil {
+                gEditingManager.moveZone(mover!, into: target!, at: index, orphan: true) {
+                    self.signalFor(nil, regarding: .redraw)
+                }
+            }
         }
     }
 }

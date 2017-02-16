@@ -409,12 +409,14 @@ class Zone : ZRecord {
             }
 
             child!.parentZone = self
-            let      insertAt = index ?? count
+            var      insertAt = index ?? count
 
-            if index == nil {
-                children.append(child!)
-            } else {
+            if index != nil && index! < count {
                 children.insert(child!, at: insertAt)
+            } else {
+                insertAt = count
+
+                children.append(child!)
             }
 
             child?.updateLevel()

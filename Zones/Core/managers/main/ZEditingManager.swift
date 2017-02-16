@@ -1014,9 +1014,16 @@ class ZEditingManager: NSObject {
 
 
     func moveZone(_ zone: Zone, into: Zone, orphan: Bool, onCompletion: Closure?) {
+        moveZone(zone, into: into, at: asTask ? 0 : nil, orphan: orphan, onCompletion: onCompletion)
+    }
+
+
+    func moveZone(_ zone: Zone, into: Zone, at iIndex: Int?, orphan: Bool, onCompletion: Closure?) {
         if let parent = zone.parentZone {
+            let index = zone.siblingIndex
+
             UNDO(self) { iUndoSelf in
-                iUndoSelf.moveZone(zone, outTo: parent, orphan: orphan) { onCompletion?() }
+                iUndoSelf.moveZone(zone, into: parent, at: index, orphan: orphan) { onCompletion?() }
             }
         }
 
@@ -1032,7 +1039,7 @@ class ZEditingManager: NSObject {
                 zone.orphan()
             }
 
-            into.addAndReorderChild(zone, at: asTask ? 0 : nil)
+            into.addAndReorderChild(zone, at: iIndex)
             onCompletion?()
         }
     }

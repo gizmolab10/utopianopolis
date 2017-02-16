@@ -83,80 +83,6 @@ class ZoneWidget: ZView {
     }
 
 
-    // MARK:- drag
-    // MARK:-
-
-
-    var dragTargetFrame: CGRect {
-        let isHere = widgetZone == gTravelManager.hereZone
-        let cFrame = convert(childrenView.frame, to: controllerView)
-        let tFrame = convert(textWidget.frame, to: controllerView)
-        let  right = (widgetZone.includeChildren            ? tFrame : controllerView.bounds).maxX
-        let    top = ((!isHere && widgetZone.hasZonesAbove) ? cFrame : controllerView.bounds).maxY
-        let bottom =  (!isHere && widgetZone.hasZonesBelow) ? cFrame.minY : 0.0
-        let   left =    isHere ? 0.0 : convert(dragDot.innerDot!.frame, to: controllerView).minX - gGenericOffset.width
-        let result = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
-
-        return result
-    }
-
-
-    func dragBoundsPoint(_ iPoint: CGPoint) -> Bool {
-        let rect = dragTargetFrame
-
-        return rect.minX <= iPoint.x && rect.minY <= iPoint.y && rect.maxY >= iPoint.y
-    }
-
-
-    func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView, excluding: ZoneWidget?) -> ZoneWidget? {
-        if  self != excluding && dragBoundsPoint(iPoint) {
-            for child in widgetZone.children {
-                if let childWidget = gWidgetsManager.widgetForZone(child), let found = childWidget.widgetNearestTo(iPoint, in: self, excluding: excluding) {
-                    return found
-                }
-            }
-
-            return self
-        }
-
-        return nil
-    }
-
-
-    func layoutDragViews() {
-        dragHighlightView.snp.removeConstraints()
-        dragHighlightView.snp.makeConstraints { (make: ConstraintMaker) in
-            make.bottom.top.equalTo(self)
-            make.right.equalTo(self).offset(-10.0)
-            make.left.equalTo(dragDot.innerDot!).offset(self.dragDot.width / 4.0)
-        }
-    }
-
-
-    func addDragViews() {
-        dragHighlightView.isHidden = !widgetZone.isGrabbed
-
-        if dragHighlightView.superview == nil {
-            addSubview(dragHighlightView)
-        }
-    }
-
-
-    override func draw(_ dirtyRect: CGRect) {
-        super.draw(dirtyRect)
-
-        dispatchAsyncInForeground {
-            let                    viewH = self.dragHighlightView
-            let                thickness = self.dragDot.width / 2.5
-            let                   radius = min(dirtyRect.size.height, dirtyRect.size.width) / 2.08 - 1.0
-            let                    color = self.widgetZone.isBookmark ? gBookmarkColor : gZoneColor
-            viewH.zlayer.backgroundColor = color.withAlphaComponent(0.02).cgColor
-
-            viewH.addBorder(thickness: thickness, radius: radius, color: color.withAlphaComponent(0.2).cgColor)
-        }
-    }
-
-
     // MARK:- layout
     // MARK:-
 
@@ -381,6 +307,81 @@ class ZoneWidget: ZView {
                 make.centerY.equalTo(textWidget).offset(1.5)
                 make.right.lessThanOrEqualToSuperview().offset(-1.0)
             }
+        }
+    }
+
+
+    // MARK:- drag
+    // MARK:-
+
+
+    var dragTargetFrame: CGRect {
+        let isHere = widgetZone == gTravelManager.hereZone
+        let cFrame = convert(childrenView.frame, to: controllerView)
+        let  right =                                                   controllerView.bounds .maxX
+        let    top = ((!isHere && widgetZone.hasZonesAbove) ? cFrame : controllerView.bounds).maxY
+        let bottom =  (!isHere && widgetZone.hasZonesBelow) ? cFrame.minY : 0.0
+        let   left =    isHere ? 0.0 : convert(dragDot.innerDot!.frame, to: controllerView).minX
+        let result = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
+
+        return result
+    }
+
+
+    func dragBoundsPoint(_ iPoint: CGPoint) -> Bool {
+        let rect = dragTargetFrame
+
+        return rect.minX <= iPoint.x && rect.minY <= iPoint.y && rect.maxY >= iPoint.y
+    }
+
+
+    func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView) -> ZoneWidget? {
+        if dragBoundsPoint(iPoint) {
+            if widgetZone.showChildren {
+                for child in widgetZone.children {
+                    if let childWidget = gWidgetsManager.widgetForZone(child), let found = childWidget.widgetNearestTo(iPoint, in: self) {
+                        return found
+                    }
+                }
+            }
+
+            return self
+        }
+
+        return nil
+    }
+
+
+    func layoutDragViews() {
+        dragHighlightView.snp.removeConstraints()
+        dragHighlightView.snp.makeConstraints { (make: ConstraintMaker) in
+            make.bottom.top.equalTo(self)
+            make.right.equalTo(self).offset(-10.0)
+            make.left.equalTo(dragDot.innerDot!).offset(self.dragDot.width / 4.0)
+        }
+    }
+
+
+    func addDragViews() {
+        dragHighlightView.isHidden = !widgetZone.isGrabbed
+
+        if dragHighlightView.superview == nil {
+            addSubview(dragHighlightView)
+        }
+    }
+
+
+    override func draw(_ dirtyRect: CGRect) {
+        super.draw(dirtyRect)
+
+        dispatchAsyncInForeground {
+            let                    viewH = self.dragHighlightView
+            let                thickness = self.dragDot.width / 2.5
+            let                   radius = min(dirtyRect.size.height, dirtyRect.size.width) / 2.08 - 1.0
+            let                    color = self.widgetZone.isBookmark ? gBookmarkColor : gZoneColor
+            viewH.zlayer.backgroundColor = color.withAlphaComponent(0.02).cgColor
+
+            viewH.addBorder(thickness: thickness, radius: radius, color: color.withAlphaComponent(0.2).cgColor)
         }
     }
 }
