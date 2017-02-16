@@ -38,9 +38,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     override func draw(_ dirtyRect: CGRect) {
         if isInnerDot, let zone = widgetZone {
             let      isBookmark = zone.isBookmark || zone.isRootOfFavorites
+            let    isDragTarget = gSelectionManager.currentDragTarget == zone
             let     strokeColor = isBookmark ? gBookmarkColor : gZoneColor
-            let shouldHighlight = isToggle ? (!(zone.showChildren) || isBookmark) : zone.isSelected
-            let       fillColor = shouldHighlight ? strokeColor : ZColor.clear
+            let shouldHighlight = isToggle ? (!(zone.showChildren) || isBookmark) : zone.isSelected || isDragTarget
+            let       fillColor = shouldHighlight ? isDragTarget ? ZColor.red : strokeColor : ZColor.clear
             let       thickness = CGFloat(gLineThickness)
             let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
 
@@ -68,18 +69,21 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             setNeedsDisplay(frame)
         } else {
-            if innerDot == nil {
-                innerDot  = ZoneDot()
+            if  innerDot            == nil {
+                innerDot             = ZoneDot()
+                innerDot?.isInnerDot = true
 
                 addSubview(innerDot!)
             }
 
             clearGestures()
 
-            doubleGesture        = createPointGestureRecognizer(self, action: #selector(ZoneDot.doubleEvent), clicksRequired: 2)
-            singleGesture        = createPointGestureRecognizer(self, action: #selector(ZoneDot.singleEvent), clicksRequired: 1)
-            dragGesture          =  createDragGestureRecognizer(self, action: #selector(ZoneDot.dragEvent))
-            innerDot?.isInnerDot = true
+            if !isToggle {
+                dragGesture          =  createDragGestureRecognizer(self, action: #selector(ZoneDot.dragEvent))
+                doubleGesture        = createPointGestureRecognizer(self, action: #selector(ZoneDot.doubleEvent), clicksRequired: 2)
+            }
+
+            singleGesture            = createPointGestureRecognizer(self, action: #selector(ZoneDot.singleEvent), clicksRequired: 1)
 
             innerDot?.setupForZone(zone, asToggle: isToggle)
             snp.makeConstraints { (make: ConstraintMaker) in
@@ -97,7 +101,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: ZGestureRecognizer) -> Bool {
-        return gestureRecognizer == singleGesture && otherGestureRecognizer == doubleGesture
+        return isToggle ? false : gestureRecognizer == singleGesture && otherGestureRecognizer == doubleGesture
     }
     
 

@@ -57,7 +57,8 @@ class Zone : ZRecord {
     }
 
 
-    var count: Int { get { return children.count } }
+    var           count: Int  { return children.count }
+    var includeChildren: Bool { return showChildren && hasChildren }
 
 
     var bookmarkTarget: Zone? {
@@ -153,7 +154,7 @@ class Zone : ZRecord {
             if newValue != level {
                 zoneLevel = NSNumber(value: newValue)
 
-                self.maybeNeedMerge()
+                self.needJustSave()
             }
         }
     }
@@ -177,7 +178,7 @@ class Zone : ZRecord {
                 zoneState = NSNumber(integerLiteral: newValue.rawValue)
 
                 debug(" state")
-                maybeNeedMerge()
+                needJustSave()
             }
         }
     }
@@ -287,6 +288,27 @@ class Zone : ZRecord {
     }
 
 
+    // MARK:- siblings
+    // MARK:-
+
+
+    var hasZonesBelow: Bool { return hasAnyZonesAbove(false) }
+    var hasZonesAbove: Bool { return hasAnyZonesAbove(true) }
+
+
+    private func hasAnyZonesAbove(_ iAbove: Bool) -> Bool {
+        let here = gTravelManager.hereZone
+
+        if self != here, let i = siblingIndex {
+            let hasZone = i != (iAbove ? 0 : (parentZone!.count - 1))
+
+            return hasZone || parentZone!.hasAnyZonesAbove(iAbove)
+        }
+        
+        return false
+    }
+
+    
     // MARK:- convenience
     // MARK:-
 
@@ -498,8 +520,8 @@ class Zone : ZRecord {
 
 
     func isProgenyOf(_ iZone: Zone) -> Bool {
-        if let p = iZone.parentZone {
-            return p == self || p.isProgenyOf(self)
+        if let p = parentZone {
+            return p == iZone || p.isProgenyOf(iZone)
         }
 
         return false

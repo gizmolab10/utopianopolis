@@ -110,9 +110,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         let result = super.resignFirstResponder()
 
         if result && isTextEditing {
-            dispatchAsyncInForeground { // avoid state garbling
-                gSelectionManager.clearGrab()
+            gSelectionManager.clearGrab()
 
+            dispatchAsyncInForeground { // avoid state garbling
                 self.isTextEditing = false
             }
         }
@@ -133,10 +133,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func captureText() {
-        var zone = widget.widgetZone
+        let zone = widget.widgetZone
 
         if  gTextCapturing    == false, zone != nil {
-            if zone!.zoneName != text! {
+            if  zone!.zoneName != text! {
                 gTextCapturing = true
 
                 let assignText = { (iText: String?, toZone: Zone?) in
@@ -148,14 +148,20 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     }
                 }
 
+//                UNDO(self) { iUndoSelf in
+//                    iUndoSelf.text = priorName
+//
+//                    iUndoSelf.captureText()
+//                }
+
                 assignText(text, zone)
 
                 if  zone!.isBookmark {
                     invokeWithMode(zone?.crossLink?.storageMode) {
-                        zone = gCloudManager.zoneForRecordID(zone?.crossLink?.record.recordID)
+                        if let target = gCloudManager.zoneForRecordID(zone?.crossLink?.record.recordID) {
+                            assignText(text, target)
+                        }
                     }
-
-                    assignText(text, zone)
                 }
 
                 for bookmark in gCloudManager.bookmarksFor(zone) {

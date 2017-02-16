@@ -104,7 +104,7 @@ class ZEditingManager: NSObject {
 
     func handleKey(_ key: String?, flags: ZEventFlags, isWindow: Bool) {
         if  !isEditing &&   key != nil {
-            if  let arrow = key?.arrow, isWindow {
+            if  let     arrow = key?.arrow, isWindow {
                 handleArrow(arrow, flags: flags)
             } else {
                 let    widget = gWidgetsManager.currentMovableWidget
@@ -118,10 +118,10 @@ class ZEditingManager: NSObject {
                 case "f":       find()
                 case "p":       printHere()
                 case "b":       createBookmark()
-                case "\t":      if hasWidget { addSibling() }
-                case "\"":      doFavorites(true,    isOption)
                 case "'":       doFavorites(isShift, isOption)
-                case "\u{7F}":  if isSpecial { delete() } // delete key
+                case "\"":      doFavorites(true,    isOption)
+                case "\u{7F}":  if isSpecial { delete() } // delete
+                case "\t":      if hasWidget { addSibling() } // tab
                 case "/":       focusOnZone(gSelectionManager.firstGrabbableZone)
                 case " ":
                     if hasWidget && isSpecial && !(widget?.widgetZone.isBookmark)! {
@@ -498,7 +498,7 @@ class ZEditingManager: NSObject {
 
             gControllersManager.syncToCloudAndSignalFor(parentZone, regarding: .redraw) {
                 if !beenHereBefore {
-                    beenHereBefore            = true
+                    beenHereBefore             = true
                     gOperationsManager.isReady = true
 
                     gWidgetsManager.widgetForZone(iZone)?.textWidget.becomeFirstResponder()
@@ -936,12 +936,12 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            addUndo(withTarget: self, handler: { iTarget in
-                self.prepareUndoForDelete()
-                self.deleteZones(originals, in: nil)
+            UNDO(self) { iUndoSelf in
+                iUndoSelf.prepareUndoForDelete()
+                iUndoSelf.deleteZones(originals, in: nil)
                 zone.grab()
-                self.syncAndRedraw()
-            })
+                iUndoSelf.syncAndRedraw()
+            }
         }
     }
 
@@ -953,9 +953,9 @@ class ZEditingManager: NSObject {
             if let into = zone.parentZone {
                 addToPasteCopyOf(zone)
 
-                addUndo(withTarget: self, handler: { iTarget in
-                    self.pasteInto(into)
-                })
+                UNDO(self) { iUndoSelf in
+                    iUndoSelf.pasteInto(into)
+                }
             }
         }
     }
@@ -992,8 +992,8 @@ class ZEditingManager: NSObject {
                 }
 
                 if let from = zone.parentZone {
-                    self.addUndo(withTarget: self) { iObject in
-                        self.moveZone(zone, into: from, orphan: orphan) { onCompletion?() }
+                    self.UNDO(self) { iUndoSelf in
+                        iUndoSelf.moveZone(zone, into: from, orphan: orphan) { onCompletion?() }
                     }
                 }
 
@@ -1015,8 +1015,8 @@ class ZEditingManager: NSObject {
 
     func moveZone(_ zone: Zone, into: Zone, orphan: Bool, onCompletion: Closure?) {
         if let parent = zone.parentZone {
-            addUndo(withTarget: self) { iObject in
-                self.moveZone(zone, outTo: parent, orphan: orphan) { onCompletion?() }
+            UNDO(self) { iUndoSelf in
+                iUndoSelf.moveZone(zone, outTo: parent, orphan: orphan) { onCompletion?() }
             }
         }
 

@@ -102,18 +102,18 @@ class ZTravelManager: NSObject {
         let        here = hereZone
         let restoreMode = gStorageMode
 
-        self.addUndo(withTarget: self, handler: { iObject in
-            self.createUndoForTravelBackTo(gSelectionManager.currentlyMovableZone, atArrival: atArrival)
+        self.UNDO(self) { iUndoSelf in
+            iUndoSelf.createUndoForTravelBackTo(gSelectionManager.currentlyMovableZone, atArrival: atArrival)
 
             gStorageMode = restoreMode
 
-            self.travel {
-                self.hereZone = here
+            iUndoSelf.travel {
+                iUndoSelf.hereZone = here
 
                 zone.grab()
                 atArrival()
             }
-        })
+        }
     }
 
 
@@ -162,19 +162,19 @@ class ZTravelManager: NSObject {
                 ////////////////////
 
                 there = gCloudManager.zoneForRecordID(recordIDOfLink)
-                let grab = gSelectionManager.firstGrabbableZone
-                let here = hereZone
+                let grabbed = gSelectionManager.firstGrabbableZone
+                let    here = hereZone
 
-                self.addUndo(withTarget: self, handler: { iObject in
-                    self.addUndo(withTarget: self, handler: { iObject in
-                        self.travelThrough(bookmark, atArrival: atArrival)
-                    })
+                self.UNDO(self) { iUndoSelf in
+                    iUndoSelf.UNDO(iUndoSelf) { iRedoSelf in
+                        iRedoSelf.travelThrough(bookmark, atArrival: atArrival)
+                    }
 
-                    self.hereZone = here
+                    iUndoSelf.hereZone = here
 
-                    grab.grab()
-                    atArrival(self.hereZone, .redraw)
-                })
+                    grabbed.grab()
+                    atArrival(iUndoSelf.hereZone, .redraw)
+                }
 
                 if there != nil {
                     self.hereZone = there!

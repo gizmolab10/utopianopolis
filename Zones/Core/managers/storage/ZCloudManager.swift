@@ -658,7 +658,7 @@ class ZCloudManager: ZRecordsManager {
                 if oldValue != value {
                     record[forPropertyName] = value as! CKRecordValue?
 
-                    object.maybeNeedMerge()
+                    object.needJustSave()
                 }
             }
         }

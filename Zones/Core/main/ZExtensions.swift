@@ -87,11 +87,11 @@ extension NSObject {
     }
 
 
-    func addUndo<TargetType : AnyObject>(withTarget target: TargetType, handler: @escaping (TargetType) -> Swift.Void) {
-        gUndoManager.registerUndo(withTarget:target, handler: { iObject in
-            gUndoManager.beginUndoGrouping()
-            handler(iObject)
-            gUndoManager.endUndoGrouping()
+    func UNDO<TargetType : AnyObject>(_ target: TargetType, handler: @escaping (TargetType) -> Swift.Void) {
+        gUndoManager.registerUndo(withTarget:target, handler: { iTarget in
+            // gUndoManager.beginUndoGrouping()
+            handler(iTarget)
+            // gUndoManager.endUndoGrouping()
         })
     }
 }

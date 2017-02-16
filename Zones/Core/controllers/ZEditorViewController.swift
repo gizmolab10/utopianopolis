@@ -19,11 +19,22 @@ import SnapKit
 class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate {
 
     
-    var hereWidget:                 ZoneWidget = ZoneWidget()
+    var        hereWidget: ZoneWidget = ZoneWidget()
     @IBOutlet var spinner: ZProgressIndicator?
 
 
     override func identifier() -> ZControllerID { return .editor }
+
+
+    override func setup() {
+        view.clearGestures()
+        view.createPointGestureRecognizer(self, action: #selector(ZEditorViewController.oneClick), clicksRequired: 1)
+        super.setup()
+    }
+
+
+    // MARK:- events
+    // MARK:-
 
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
@@ -61,21 +72,10 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
         specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind)
         specificWidget?.updateConstraints()
-        specificWidget?.layoutFinish()
         specificWidget?.display()
 
         view.zlayer.backgroundColor = gBackgroundColor.cgColor
-        gTextCapturing               = false
-    }
-
-
-    func handleDragEvent(_ iGesture: ZGestureRecognizer?) {
-        if  iGesture != nil, let location = iGesture?.location(in: view) {
-            let  dot = iGesture!.target as! ZoneDot
-            let name = dot.widgetZone!.zoneName!
-
-            report("\(name) \(iGesture!.state.rawValue) at \(location.debugDescription)")
-        }
+        gTextCapturing              = false
     }
 
 
@@ -91,18 +91,34 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         }
     }
 
-
-    override func setup() {
-        view.clearGestures()
-        view.createPointGestureRecognizer(self, action: #selector(ZEditorViewController.oneClick), clicksRequired: 1)
-        super.setup()
-    }
-
     
     func oneClick(_ sender: ZGestureRecognizer?) {
         gShowsSearching = false
 
         gSelectionManager.deselect()
         signalFor(nil, regarding: .search)
+    }
+
+
+    // MARK:- dragon droppings
+    // MARK:-
+
+
+    func handleDragEvent(_ iGesture: ZGestureRecognizer?) {
+        if  iGesture  != nil, let location = iGesture?.location (in: view) {
+            let    dot = iGesture!.target as! ZoneDot
+            let target = hereWidget.widgetNearestTo(   location, in: view, excluding: gWidgetsManager.widgetForZone(dot.widgetZone))
+            let  prior = gWidgetsManager.widgetForZone(gSelectionManager.currentDragTarget)
+            let   zone = target?.widgetZone
+            let   name = dot.widgetZone!.zoneName!
+            let noDrag = [NSGestureRecognizerState.ended, NSGestureRecognizerState.cancelled].contains(iGesture!.state)
+
+            gSelectionManager.currentDragTarget = noDrag ? nil : zone
+
+            prior? .dragDot.innerDot?.needsDisplay = true
+            target?.dragDot.innerDot?.needsDisplay = true
+
+            report("[\(name)] \(iGesture!.state.rawValue) points to [\(zone?.zoneName ?? "none")]")
+        }
     }
 }

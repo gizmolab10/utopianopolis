@@ -480,10 +480,10 @@ CQ
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="119" width="222" height="1152"/>
+                                <rect key="frame" x="0.0" y="139" width="222" height="1132"/>
                                 <subviews>
                                     <customView identifier="information" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1038" width="222" height="114"/>
+                                        <rect key="frame" x="0.0" y="1018" width="222" height="114"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="95" width="222" height="19"/>
@@ -597,7 +597,7 @@ CQ
                                         </connections>
                                     </customView>
                                     <customView identifier="favorites" translatesAutoresizingMaskIntoConstraints="NO" id="47v-DX-fSo" userLabel="Favorites View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="998" width="222" height="39"/>
+                                        <rect key="frame" x="0.0" y="978" width="222" height="39"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="DdL-Cp-gGl" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="20" width="222" height="19"/>
@@ -700,7 +700,7 @@ CQ
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="620" width="222" height="377"/>
+                                        <rect key="frame" x="0.0" y="600" width="222" height="377"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="358" width="222" height="19"/>
@@ -970,7 +970,7 @@ CQ
                                         </connections>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Cloud View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="476" width="222" height="143"/>
+                                        <rect key="frame" x="0.0" y="456" width="222" height="143"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Dnz-Gb-8cH" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="124" width="222" height="19"/>
@@ -1087,10 +1087,10 @@ CQ
                                         </connections>
                                     </customView>
                                     <customView identifier="help" translatesAutoresizingMaskIntoConstraints="NO" id="E5h-DF-X3i" userLabel="Help View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="222" height="475"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="222" height="455"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="GnQ-iS-bgR" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="456" width="222" height="19"/>
+                                                <rect key="frame" x="0.0" y="436" width="222" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ds2-S9-Udj">
                                                         <rect key="frame" x="0.0" y="1" width="222" height="17"/>
@@ -1128,16 +1128,16 @@ CQ
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="oTc-Mj-4gz" userLabel="Hideable View">
-                                                <rect key="frame" x="0.0" y="0.0" width="222" height="456"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="222" height="436"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="749" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IT7-2L-PqU" userLabel="Help Text">
-                                                        <rect key="frame" x="6" y="8" width="210" height="440"/>
+                                                        <rect key="frame" x="6" y="8" width="210" height="420"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" constant="440" id="Vbt-r3-FA8"/>
+                                                            <constraint firstAttribute="height" constant="420" id="Vbt-r3-FA8"/>
                                                         </constraints>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="RJc-P2-wiE">
                                                             <font key="font" metaFont="cellTitle"/>
-                                                            <string key="title">   an incomplete list:
+                                                            <string key="title">   a PARTIAL list:
 ARROWS: navigate graph
 
 ARROWS with COMMAND:
@@ -1161,10 +1161,8 @@ other KEYS:
     / focus on selected zone
     ' show next favorite
     " show previous favorite
-
-with OPTION:
-    " show favorites
-    ARROWS move zone</string>
+    OPTION " show favorites
+    OPTION ARROWS move zone</string>
                                                             <color key="textColor" name="selectedMenuItemColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
