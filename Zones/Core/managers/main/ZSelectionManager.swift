@@ -10,14 +10,20 @@
 import Foundation
 
 
+enum ZRelation: Int {
+    case above
+    case below
+    case upon
+}
+
+
 class ZSelectionManager: NSObject {
 
 
-    var       pasteableZones = [Zone] ()
     var               hasGrab: Bool { return currentlyGrabbedZones.count > 0 }
-    var     currentDragTarget:  Zone?
-    var   currentDragLocation = CGPoint()
     var  currentlyEditingZone:  Zone?
+    var     currentDragTarget:  Zone?
+    var       pasteableZones = [Zone] ()
     var currentlyGrabbedZones: [Zone] {
         get { return gTravelManager.manifest.currentlyGrabbedZones }
         set { gTravelManager.manifest.currentlyGrabbedZones = newValue }

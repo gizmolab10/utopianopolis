@@ -291,28 +291,37 @@ class ZoneWidget: ZView {
             make.centerY.equalTo(textWidget).offset(1.5)
         }
 
-        if !hasChildren && !widgetZone.isBookmark {
-            if subviews.contains(toggleDot) {
-                toggleDot.removeFromSuperview()
-            }
-        } else {
-            if !subviews.contains(toggleDot) {
-                addSubview(toggleDot)
-            }
+        if !subviews.contains(toggleDot) {
+            addSubview(toggleDot)
+        }
 
-            toggleDot.innerDot?.snp.removeConstraints()
-            toggleDot.setupForZone(widgetZone, asToggle: true)
-            toggleDot.innerDot?.snp.makeConstraints { (make: ConstraintMaker) in
-                make.left.equalTo(textWidget.snp.right).offset(-1.0)
-                make.centerY.equalTo(textWidget).offset(1.5)
-                make.right.lessThanOrEqualToSuperview().offset(-1.0)
-            }
+        toggleDot.innerDot?.snp.removeConstraints()
+        toggleDot.setupForZone(widgetZone, asToggle: true)
+        toggleDot.innerDot?.snp.makeConstraints { (make: ConstraintMaker) in
+            make.left.equalTo(textWidget.snp.right).offset(-1.0)
+            make.centerY.equalTo(textWidget).offset(1.5)
+            make.right.lessThanOrEqualToSuperview().offset(-1.0)
         }
     }
 
 
     // MARK:- drag
     // MARK:-
+
+
+    override func draw(_ dirtyRect: CGRect) {
+        super.draw(dirtyRect)
+
+        dispatchAsyncInForeground {
+            let                    viewH = self.dragHighlightView
+            let                thickness = self.dragDot.width / 2.5
+            let                   radius = min(dirtyRect.size.height, dirtyRect.size.width) / 2.08 - 1.0
+            let                    color = self.widgetZone.isBookmark ? gBookmarkColor : gZoneColor
+            viewH.zlayer.backgroundColor = color.withAlphaComponent(0.02).cgColor
+
+            viewH.addBorder(thickness: thickness, radius: radius, color: color.withAlphaComponent(0.2).cgColor)
+        }
+    }
 
 
     var dragTargetFrame: CGRect {
@@ -367,21 +376,6 @@ class ZoneWidget: ZView {
 
         if dragHighlightView.superview == nil {
             addSubview(dragHighlightView)
-        }
-    }
-
-
-    override func draw(_ dirtyRect: CGRect) {
-        super.draw(dirtyRect)
-
-        dispatchAsyncInForeground {
-            let                    viewH = self.dragHighlightView
-            let                thickness = self.dragDot.width / 2.5
-            let                   radius = min(dirtyRect.size.height, dirtyRect.size.width) / 2.08 - 1.0
-            let                    color = self.widgetZone.isBookmark ? gBookmarkColor : gZoneColor
-            viewH.zlayer.backgroundColor = color.withAlphaComponent(0.02).cgColor
-
-            viewH.addBorder(thickness: thickness, radius: radius, color: color.withAlphaComponent(0.2).cgColor)
         }
     }
 }

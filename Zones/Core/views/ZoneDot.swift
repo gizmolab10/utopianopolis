@@ -36,11 +36,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     override func draw(_ dirtyRect: CGRect) {
+        super.draw(dirtyRect)
+
         if isInnerDot, let zone = widgetZone {
             let      isBookmark = zone.isBookmark || zone.isRootOfFavorites
             let    isDragTarget = gSelectionManager.currentDragTarget == zone
+            isHidden            = !zone.hasChildren && !zone.isBookmark && isToggle && !isDragTarget
             let     strokeColor = isBookmark ? gBookmarkColor : gZoneColor
-            let shouldHighlight = isToggle ? (!(zone.showChildren) || isBookmark) : zone.isSelected || isDragTarget
+            let shouldHighlight = isToggle ? (!(zone.showChildren) || isDragTarget || isBookmark) : zone.isSelected || isDragTarget
             let       fillColor = shouldHighlight ? isDragTarget ? ZColor.red : strokeColor : ZColor.clear
             let       thickness = CGFloat(gLineThickness)
             let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))

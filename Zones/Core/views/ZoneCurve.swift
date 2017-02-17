@@ -33,6 +33,8 @@ class ZoneCurve: ZView {
 
 
     override func draw(_ dirtyRect: CGRect) {
+        super.draw(dirtyRect)
+
         zlayer.backgroundColor = ZColor.clear.cgColor
 
         if child != nil {
