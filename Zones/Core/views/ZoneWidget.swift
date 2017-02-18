@@ -309,6 +309,19 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
+    func displayForDrag() {
+        toggleDot.innerDot?         .needsDisplay = true
+
+        for line in siblingLines {
+            line                    .needsDisplay = true
+        }
+
+        for child in childrenWidgets {
+            child?.dragDot.innerDot?.needsDisplay = true
+        }
+    }
+
+
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
@@ -337,7 +350,7 @@ class ZoneWidget: ZView {
     }
 
 
-    func dragBoundsPoint(_ iPoint: CGPoint) -> Bool {
+    func dragContainsPoint(_ iPoint: CGPoint) -> Bool {
         let rect = dragTargetFrame
 
         return rect.minX <= iPoint.x && rect.minY <= iPoint.y && rect.maxY >= iPoint.y
@@ -345,7 +358,7 @@ class ZoneWidget: ZView {
 
 
     func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView) -> ZoneWidget? {
-        if dragBoundsPoint(iPoint) {
+        if dragContainsPoint(iPoint) {
             if widgetZone.showChildren {
                 for child in widgetZone.children {
                     if let childWidget = gWidgetsManager.widgetForZone(child), let found = childWidget.widgetNearestTo(iPoint, in: self) {

@@ -20,9 +20,10 @@ enum ZRelation: Int {
 class ZSelectionManager: NSObject {
 
 
-    var               hasGrab: Bool { return currentlyGrabbedZones.count > 0 }
+    var               hasGrab:  Bool { return currentlyGrabbedZones.count > 0 }
+    var     targetLineIndices:  NSMutableIndexSet?
     var  currentlyEditingZone:  Zone?
-    var     currentDragTarget:  Zone?
+    var        targetDropZone:  Zone?
     var       pasteableZones = [Zone] ()
     var currentlyGrabbedZones: [Zone] {
         get { return gTravelManager.manifest.currentlyGrabbedZones }

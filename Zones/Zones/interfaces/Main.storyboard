@@ -923,7 +923,7 @@ CQ
                                                         </constraints>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="UcL-vR-AXp">
                                                             <font key="font" metaFont="cellTitle"/>
-                                                            <string key="title">New and arriving children and sibling zones appear at
+                                                            <string key="title">New and arriving children and sibling zones insert at
 
    top of TASK LISTS
    bottom of COMPOSITIONS</string>

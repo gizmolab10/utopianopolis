@@ -32,6 +32,19 @@ class ZoneCurve: ZView {
     var   child: ZoneWidget?
 
 
+    var isDropTarget: Bool {
+        let   index = child?.widgetZone.siblingIndex
+        let isIndex = gSelectionManager.targetLineIndices?.contains(index!)
+        let  isDrop = parent?.widgetZone == gSelectionManager.targetDropZone
+
+        if isDrop && isIndex! {
+            return true
+        }
+
+        return false
+    }
+
+
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
@@ -95,9 +108,10 @@ class ZoneCurve: ZView {
 
     func drawCurveIn(_ dirtyRect: CGRect) {
         if dirtyRect.size.width > 1.0 {
+            let             zone = child?.widgetZone
             let toggleHalfHeight = (parent?.toggleDot.innerDot?.bounds.size.height)! / 2.0
-            let    dragHalfWidth = (child? .dragDot    .innerDot?.bounds.size.width )! / 2.0
-            let            color = (child?.widgetZone.isBookmark)! ? gBookmarkColor : gZoneColor
+            let    dragHalfWidth = (child?   .dragDot.innerDot?.bounds.size.width )! / 2.0
+            let            color = (zone?.isBookmark)! ? gBookmarkColor : isDropTarget ? ZColor.red : gZoneColor
             var y: CGFloat
 
             switch kind {
