@@ -108,11 +108,14 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         if     iView != nil {
             let point = view.convert(iPoint, to: iView)
             let frame = iView!.bounds
+            let delta = point.x - frame.minX
 
-            if     frame.minX + 5.0 < point.x {
-                if frame.midY + 8.0 < point.y { return .below }
-                if frame.midY - 8.0 > point.y { return .above }
+            if     delta      > -10.0 {
+                if frame.midY +   8.0 < point.y { return .below }
+                if frame.midY -   8.0 > point.y { return .above }
             }
+
+            // report("\(delta)")
         }
 
         return .upon
@@ -130,22 +133,28 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
             let            same = mover == match
             let        useMatch = relate == .upon || match == gTravelManager.hereZone
             let          target = same ? nil : useMatch ? match : match?.parentZone
-            let           index = (useMatch ? (asTask ? 0 : target?.count) : match!.siblingIndex! + relate.rawValue)!
+            let           index = (useMatch ? (asTask ? 0 : target?.count) : (match!.siblingIndex! - relate.rawValue))!
             let           prior = gWidgetsManager.widgetForZone(gSelectionManager.targetDropZone)
             let               s = gSelectionManager
             s.targetLineIndices = NSMutableIndexSet(index: index)
             s.targetDropZone    = done ? nil : target
 
-            if !useMatch && index > 0 {
-                s.targetLineIndices?.add(index - 1)
+            if relate != .upon && index > 0 {
+                let delta = relate == .above ? 1 : -1
+
+                s.targetLineIndices?.add(index + delta)
             }
 
             prior?  .displayForDrag()
             nearest?.displayForDrag()
 
-            if done && !same && mover != nil && target != nil {
-                gEditingManager.moveZone(mover!, into: target!, at: index, orphan: true) {
-                    self.signalFor(nil, regarding: .redraw)
+            if done {
+                gSelectionManager.zoneBeingDragged = nil
+
+                if !same && mover != nil && target != nil {
+                    gEditingManager.moveZone(mover!, into: target!, at: index, orphan: true) {
+                        self.signalFor(nil, regarding: .redraw)
+                    }
                 }
             }
         }

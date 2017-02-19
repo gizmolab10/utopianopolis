@@ -11,8 +11,8 @@ import Foundation
 
 
 enum ZRelation: Int {
-    case above
     case below
+    case above
     case upon
 }
 
@@ -23,6 +23,7 @@ class ZSelectionManager: NSObject {
     var               hasGrab:  Bool { return currentlyGrabbedZones.count > 0 }
     var     targetLineIndices:  NSMutableIndexSet?
     var  currentlyEditingZone:  Zone?
+    var      zoneBeingDragged:  Zone?
     var        targetDropZone:  Zone?
     var       pasteableZones = [Zone] ()
     var currentlyGrabbedZones: [Zone] {

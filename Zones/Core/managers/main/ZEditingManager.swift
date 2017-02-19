@@ -658,43 +658,6 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    //    if beyond end, search for uncles aunts whose children or email
-
-
-    func moveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool) {
-        let         zone = gSelectionManager.firstGrabbableZone
-        if  let    there = zone.parentZone, let index = there.children.index(of: zone) {
-            var newIndex = index + (moveUp ? -1 : 1)
-
-            if extreme {
-                newIndex = moveUp ? 0 : there.count - 1
-            }
-
-            if newIndex >= 0 && newIndex < there.count {
-                if zone == hereZone {
-                    hereZone = there
-                }
-
-                if selectionOnly {
-                    there.children[newIndex].grab()
-                    signalFor(nil, regarding: .redraw)
-                } else {
-                    there.moveChild(from: index, to: newIndex)
-                    there.recomputeOrderingUponInsertionAt(newIndex)
-                    gControllersManager.syncToCloudAndSignalFor(there, regarding: .redraw) {}
-                }
-
-            }
-        } else if !zone.isRoot {
-            revealParentAndSiblingsOf(zone) {
-                if zone.parentZone != nil && zone.parentZone!.count > 1 {
-                    self.moveUp(moveUp, selectionOnly: selectionOnly, extreme: extreme)
-                }
-            }
-        }
-    }
-
-
     func moveOut(selectionOnly: Bool, extreme: Bool) {
         let zone: Zone = gSelectionManager.firstGrabbableZone
         let     parent = zone.parentZone
@@ -783,10 +746,6 @@ class ZEditingManager: NSObject {
             }
         }
     }
-
-
-    // MARK:- move in
-    // MARK:-
 
 
     func moveInto(selectionOnly: Bool, extreme: Bool) {
@@ -910,6 +869,11 @@ class ZEditingManager: NSObject {
     }
 
 
+    func moveZone(_ zone: Zone, into: Zone, orphan: Bool, onCompletion: Closure?) {
+        moveZone(zone, into: into, at: asTask ? 0 : nil, orphan: orphan, onCompletion: onCompletion)
+    }
+
+
     // MARK:- undoables
     // MARK:-
 
@@ -1013,11 +977,6 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveZone(_ zone: Zone, into: Zone, orphan: Bool, onCompletion: Closure?) {
-        moveZone(zone, into: into, at: asTask ? 0 : nil, orphan: orphan, onCompletion: onCompletion)
-    }
-
-
     func moveZone(_ zone: Zone, into: Zone, at iIndex: Int?, orphan: Bool, onCompletion: Closure?) {
         if let parent = zone.parentZone {
             let index = zone.siblingIndex
@@ -1041,6 +1000,44 @@ class ZEditingManager: NSObject {
 
             into.addAndReorderChild(zone, at: iIndex)
             onCompletion?()
+        }
+    }
+
+
+    func moveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool) {
+        let         zone = gSelectionManager.firstGrabbableZone
+        if  let    there = zone.parentZone, let index = there.children.index(of: zone) {
+            var newIndex = index + (moveUp ? -1 : 1)
+
+            if extreme {
+                newIndex = moveUp ? 0 : there.count - 1
+            }
+
+            if newIndex >= 0 && newIndex < there.count {
+                if zone == hereZone {
+                    hereZone = there
+                }
+
+                UNDO(self) { iUndoSelf in
+                    iUndoSelf.moveUp(!moveUp, selectionOnly: selectionOnly, extreme: extreme)
+                }
+
+                if selectionOnly {
+                    there.children[newIndex].grab()
+                    signalFor(nil, regarding: .redraw)
+                } else {
+                    there.moveChild(from: index, to: newIndex)
+                    there.recomputeOrderingUponInsertionAt(newIndex)
+                    gControllersManager.syncToCloudAndSignalFor(there, regarding: .redraw) {}
+                }
+
+            }
+        } else if !zone.isRoot {
+            revealParentAndSiblingsOf(zone) {
+                if zone.parentZone != nil && zone.parentZone!.count > 1 {
+                    self.moveUp(moveUp, selectionOnly: selectionOnly, extreme: extreme)
+                }
+            }
         }
     }
 }

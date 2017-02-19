@@ -100,12 +100,12 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             clearGestures()
 
-            if !isToggle {
-                dragGesture          =  createDragGestureRecognizer(self, action: #selector(ZoneDot.dragEvent))
-                doubleGesture        = createPointGestureRecognizer(self, action: #selector(ZoneDot.doubleEvent), clicksRequired: 2)
-            }
+            singleGesture     = createPointGestureRecognizer(self, action: #selector(ZoneDot.singleEvent), clicksRequired: 1)
 
-            singleGesture            = createPointGestureRecognizer(self, action: #selector(ZoneDot.singleEvent), clicksRequired: 1)
+            if !isToggle {
+                dragGesture   =  createDragGestureRecognizer(self, action: #selector(ZoneDot.dragEvent))
+                doubleGesture = createPointGestureRecognizer(self, action: #selector(ZoneDot.doubleEvent), clicksRequired: 2)
+            }
 
             innerDot?.setupForZone(zone, asToggle: isToggle)
             snp.makeConstraints { (make: ConstraintMaker) in
@@ -151,5 +151,11 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func dragEvent(_ iGesture: ZGestureRecognizer?) { editorController?.handleDragEvent(iGesture) }
+    func dragEvent(_ iGesture: ZGestureRecognizer?) {
+        if widgetZone != gTravelManager.hereZone {
+            gSelectionManager.zoneBeingDragged = widgetZone
+
+            editorController?.handleDragEvent(iGesture)
+        }
+    }
 }
