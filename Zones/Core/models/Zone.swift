@@ -313,6 +313,8 @@ class Zone : ZRecord {
     // MARK:-
 
 
+
+    var  isEditing: Bool { get { return gSelectionManager .isEditing(self) } }
     var  isGrabbed: Bool { get { return gSelectionManager .isGrabbed(self) } }
     var isSelected: Bool { get { return gSelectionManager.isSelected(self) } }
     

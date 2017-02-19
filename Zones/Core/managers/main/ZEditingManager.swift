@@ -129,9 +129,9 @@ class ZEditingManager: NSObject {
                     }
                 case "\r":
                     if hasWidget && gSelectionManager.hasGrab {
-                        if isCommand {
-                            gSelectionManager.deselect()
-                        } else {
+                        gSelectionManager.deselect()
+
+                        if !isCommand {
                             widget?.textWidget.becomeFirstResponder()
                         }
                     }
@@ -296,7 +296,6 @@ class ZEditingManager: NSObject {
 
             gSelectionManager.deselect()
             zone.grab()
-            self.signalFor(zone, regarding: .datum)
             gControllersManager.syncToCloudAndSignalFor(nil, regarding: kind) {}
         }
 
@@ -459,14 +458,16 @@ class ZEditingManager: NSObject {
     }
 
 
-    func toggleDotActionOnZone(_ zone: Zone, recursively: Bool) {
-        if zone.isBookmark {
-            travelThroughBookmark(zone)
-        } else {
-            let show = zone.showChildren == false
+    func toggleDotActionOnZone(_ zone: Zone?, recursively: Bool) {
+        if zone != nil {
+            if zone!.isBookmark {
+                travelThroughBookmark(zone!)
+            } else {
+                let show = zone!.showChildren == false
 
-            showToggleDot(show, zone: zone, recursively: recursively) {
-                self.syncAndRedraw()
+                showToggleDot(show, zone: zone!, recursively: recursively) {
+                    self.syncAndRedraw()
+                }
             }
         }
     }
@@ -1025,7 +1026,6 @@ class ZEditingManager: NSObject {
 
                 if selectionOnly {
                     there.children[newIndex].grab()
-                    signalFor(nil, regarding: .redraw)
                 } else {
                     there.moveChild(from: index, to: newIndex)
                     there.recomputeOrderingUponInsertionAt(newIndex)

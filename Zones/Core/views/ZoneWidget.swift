@@ -24,9 +24,8 @@ class ZoneWidget: ZView {
 
     private var       _textWidget:  ZoneTextWidget!
     private var     _childrenView:  ZView!
-    private let dragHighlightView = ZView()
-    private var   childrenWidgets = [ZoneWidget?] ()
     private var      siblingLines = [ZoneCurve] ()
+    private var   childrenWidgets = [ZoneWidget?] ()
     let                 toggleDot = ZoneDot()
     let                   dragDot = ZoneDot()
     var                widgetZone:  Zone!
@@ -60,8 +59,8 @@ class ZoneWidget: ZView {
 
 
     var childrenView: ZView {
-        if _childrenView == nil {
-            _childrenView = ZView()
+        if  _childrenView == nil {
+            _childrenView  = ZView()
 
             addSubview(_childrenView)
 
@@ -80,6 +79,36 @@ class ZoneWidget: ZView {
         _childrenView = nil
         _textWidget   = nil
         widgetZone    = nil
+    }
+
+
+    // MARK:- draw
+    // MARK:-
+
+
+    override func draw(_ dirtyRect: CGRect) {
+        super.draw(dirtyRect)
+
+        let        isGrabbed = widgetZone.isGrabbed
+        textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor : ZColor.black
+
+        if isGrabbed && !widgetZone.isEditing {
+            let     thickness = dragDot.width / 2.5
+            var          rect = textWidget.frame.insetBy(dx: -13.0, dy: 0.0)
+            rect.size .width += 1.0
+            rect.size.height -= 3.0
+            let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
+            let         color = widgetZone.isBookmark ? gBookmarkColor : gZoneColor
+            let     fillColor = color.withAlphaComponent(0.02)
+            let   strokeColor = color.withAlphaComponent(0.2)
+            let          path = ZBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius)
+            path   .lineWidth = thickness
+            path    .flatness = 0.0001
+
+            fillColor.setFill()
+            strokeColor.setStroke()
+            path.stroke()
+        }
     }
 
 
@@ -102,7 +131,6 @@ class ZoneWidget: ZView {
 
         clear()
         gWidgetsManager.registerWidget(self)
-        addDragViews()
 
         if recursing {
             layoutChildren(kind)
@@ -111,15 +139,13 @@ class ZoneWidget: ZView {
 
         layoutText()
         layoutDots()
-        layoutDragViews()
     }
 
 
     func layoutText() {
-        textWidget.widget    = self
-        let       isSelected = widgetZone.isSelected
-        textWidget.font      = isSelected ? gGrabbedWidgetFont : gWidgetFont
-        textWidget.textColor = isSelected ? widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor : ZColor.black
+        textWidget.widget   = self
+        let      isSelected = widgetZone.isSelected
+        textWidget.font     = isSelected ? gGrabbedWidgetFont : gWidgetFont
 
         if textWidget.text == "" && widgetZone.zoneName == nil {
             textWidget.text = "empty"
@@ -285,7 +311,7 @@ class ZoneWidget: ZView {
         }
 
         dragDot.innerDot?.snp.removeConstraints()
-        dragDot.setupForZone(widgetZone, asToggle: false)
+        dragDot.setupForWidget(self, asToggle: false)
         dragDot.innerDot?.snp.makeConstraints { (make: ConstraintMaker) in
             make.right.equalTo(textWidget.snp.left)
             make.centerY.equalTo(textWidget).offset(1.5)
@@ -296,7 +322,7 @@ class ZoneWidget: ZView {
         }
 
         toggleDot.innerDot?.snp.removeConstraints()
-        toggleDot.setupForZone(widgetZone, asToggle: true)
+        toggleDot.setupForWidget(self, asToggle: true)
         toggleDot.innerDot?.snp.makeConstraints { (make: ConstraintMaker) in
             make.left.equalTo(textWidget.snp.right).offset(-1.0)
             make.centerY.equalTo(textWidget).offset(1.5)
@@ -318,21 +344,6 @@ class ZoneWidget: ZView {
 
         for child in childrenWidgets {
             child?.dragDot.innerDot?.needsDisplay = true
-        }
-    }
-
-
-    override func draw(_ dirtyRect: CGRect) {
-        super.draw(dirtyRect)
-
-        dispatchAsyncInForeground {
-            let                    viewH = self.dragHighlightView
-            let                thickness = self.dragDot.width / 2.5
-            let                   radius = min(dirtyRect.size.height, dirtyRect.size.width) / 2.08 - 1.0
-            let                    color = self.widgetZone.isBookmark ? gBookmarkColor : gZoneColor
-            viewH.zlayer.backgroundColor = color.withAlphaComponent(0.02).cgColor
-
-            viewH.addBorder(thickness: thickness, radius: radius, color: color.withAlphaComponent(0.2).cgColor)
         }
     }
 
@@ -371,24 +382,5 @@ class ZoneWidget: ZView {
         }
 
         return nil
-    }
-
-
-    func layoutDragViews() {
-        dragHighlightView.snp.removeConstraints()
-        dragHighlightView.snp.makeConstraints { (make: ConstraintMaker) in
-            make.bottom.top.equalTo(self)
-            make.right.equalTo(self).offset(-10.0)
-            make.left.equalTo(dragDot.innerDot!).offset(self.dragDot.width / 4.0)
-        }
-    }
-
-
-    func addDragViews() {
-        dragHighlightView.isHidden = !widgetZone.isGrabbed
-
-        if dragHighlightView.superview == nil {
-            addSubview(dragHighlightView)
-        }
     }
 }

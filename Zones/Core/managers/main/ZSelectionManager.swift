@@ -89,8 +89,9 @@ class ZSelectionManager: NSObject {
         clearGrab()
 
         for zone in zones {
-            if zone != currentlyEditingZone {
-                signalFor(zone, regarding: .datum)
+            if zone != currentlyEditingZone, let widget = gWidgetsManager.widgetForZone(zone) {
+                widget.dragDot.innerDot?.needsDisplay = true
+                widget                  .needsDisplay = true
             }
         }
     }
@@ -102,14 +103,13 @@ class ZSelectionManager: NSObject {
 
 
     func deselect() {
-        let             zone = currentlyEditingZone
+        let      editingZone = currentlyEditingZone
         currentlyEditingZone = nil
+        let           widget = gWidgetsManager.widgetForZone(editingZone)
+        widget?.needsDisplay = true
 
-        if zone == nil || zone == gTravelManager.hereZone {
-            signalFor(nil, regarding: .data)
-        } else if let widget = gWidgetsManager.widgetForZone(zone) {
-            widget.textWidget.captureText()
-            signalFor(zone, regarding: .datum)
+        if editingZone != nil && editingZone != gTravelManager.hereZone {
+            widget?.textWidget.captureText()
         }
 
         fullResign()
@@ -127,18 +127,27 @@ class ZSelectionManager: NSObject {
     func addToGrab(_ zone: Zone?) {
         if zone != nil {
             currentlyGrabbedZones.append(zone!)
+
+            let                             widget = gWidgetsManager.widgetForZone(zone!)
+            widget?                  .needsDisplay = true
+            widget?.dragDot.innerDot?.needsDisplay = true
         }
     }
 
 
     func grab(_ zone: Zone?) {
-        clearGrab()
+        deselectGrabs()
         addToGrab(zone!)
     }
 
 
+    func isEditing(_ zone: Zone) -> Bool {
+        return currentlyEditingZone == zone
+    }
+
+
     func isSelected(_ zone: Zone) -> Bool {
-        return isGrabbed(zone) || currentlyEditingZone == zone
+        return isGrabbed(zone) || isEditing(zone)
     }
 
 

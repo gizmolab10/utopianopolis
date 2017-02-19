@@ -22,6 +22,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var      innerDot: ZoneDot?
     var    isInnerDot: Bool = false
     var      isToggle: Bool = true
+    var        widget: ZoneWidget?
     var    widgetZone: Zone?
     var   dragGesture: ZGestureRecognizer?
     var doubleGesture: ZGestureRecognizer?
@@ -77,9 +78,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func setupForZone(_ zone: Zone, asToggle: Bool) {
+    func setupForWidget(_ iWidget: ZoneWidget, asToggle: Bool) {
+        widgetZone = iWidget.widgetZone
         isToggle   = asToggle
-        widgetZone = zone
+        widget     = iWidget
 
         if isInnerDot {
             snp.makeConstraints { (make: ConstraintMaker) in
@@ -100,13 +102,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             clearGestures()
 
-            singleGesture   = createPointGestureRecognizer(self, action: #selector(ZoneDot.singleEvent), clicksRequired: 1)
+            singleGesture = createPointGestureRecognizer(self, action: #selector(ZoneDot.singleEvent), clicksRequired: 1)
 
             if !isToggle {
-                dragGesture =  createDragGestureRecognizer(self, action: #selector(ZoneDot.dragEvent))
+                dragGesture = createDragGestureRecognizer(self, action: #selector(ZoneDot.dragEvent))
+                gSelectionManager.zoneBeingDragged = nil
             }
 
-            innerDot?.setupForZone(zone, asToggle: isToggle)
+            innerDot?.setupForWidget(iWidget, asToggle: isToggle)
             snp.makeConstraints { (make: ConstraintMaker) in
                 make.size.equalTo(CGSize(width: gFingerBreadth, height: gFingerBreadth))
                 make.center.equalTo(innerDot!)
@@ -127,35 +130,30 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     
 
     func singleEvent(_ iGesture: ZGestureRecognizer?) {
-        if let widget: ZoneWidget = superview as? ZoneWidget, let zone = widget.widgetZone {
-            if isToggle {
-                gEditingManager.toggleDotActionOnZone(zone, recursively: false)
-            } else {
-                let priorDot = gWidgetsManager.widgetForZone(gSelectionManager.firstGrabbableZone)?.dragDot.innerDot
-
-                zone.grab()
-
-                priorDot?.needsDisplay = true
-
-                signalFor(zone, regarding: .datum)
-            }
+        if isToggle {
+            gEditingManager.toggleDotActionOnZone(widgetZone, recursively: false)
+        } else {
+            gSelectionManager.deselect()
+            widgetZone?.grab()
         }
     }
 
 
     func dragEvent(_ iGesture: ZGestureRecognizer?) {
-        if iGesture?.state == .began {
-            let priorDot = gWidgetsManager.widgetForZone(gSelectionManager.firstGrabbableZone)?.dragDot.innerDot
+        let isHere = widgetZone == gTravelManager.hereZone
 
+        if iGesture?.state == .began {
+            gSelectionManager.deselect()
             widgetZone?.grab()
 
-            priorDot?.needsDisplay = true
-            innerDot?.needsDisplay = true
+            if !isHere {
+                gSelectionManager.zoneBeingDragged = widgetZone
+            }
+
+            widget?.needsDisplay = true
         }
 
-        if widgetZone != gTravelManager.hereZone {
-            gSelectionManager.zoneBeingDragged = widgetZone
-
+        if !isHere {
             editorController?.handleDragEvent(iGesture)
         }
     }
