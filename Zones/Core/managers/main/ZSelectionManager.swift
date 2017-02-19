@@ -11,8 +11,8 @@ import Foundation
 
 
 enum ZRelation: Int {
-    case below
     case above
+    case below
     case upon
 }
 

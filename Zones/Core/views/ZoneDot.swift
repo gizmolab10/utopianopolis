@@ -100,11 +100,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             clearGestures()
 
-            singleGesture     = createPointGestureRecognizer(self, action: #selector(ZoneDot.singleEvent), clicksRequired: 1)
+            singleGesture   = createPointGestureRecognizer(self, action: #selector(ZoneDot.singleEvent), clicksRequired: 1)
 
             if !isToggle {
-                dragGesture   =  createDragGestureRecognizer(self, action: #selector(ZoneDot.dragEvent))
-                doubleGesture = createPointGestureRecognizer(self, action: #selector(ZoneDot.doubleEvent), clicksRequired: 2)
+                dragGesture =  createDragGestureRecognizer(self, action: #selector(ZoneDot.dragEvent))
             }
 
             innerDot?.setupForZone(zone, asToggle: isToggle)
@@ -127,24 +126,17 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
     
 
-    func doubleEvent(_ iGesture: ZGestureRecognizer?) {
-        if let widget: ZoneWidget = superview as? ZoneWidget, let zone = widget.widgetZone {
-            if isToggle {
-                gEditingManager.toggleDotActionOnZone(zone, recursively: true)
-            } else {
-                gEditingManager.focusOnZone(zone)
-            }
-        }
-    }
-
-
     func singleEvent(_ iGesture: ZGestureRecognizer?) {
         if let widget: ZoneWidget = superview as? ZoneWidget, let zone = widget.widgetZone {
             if isToggle {
                 gEditingManager.toggleDotActionOnZone(zone, recursively: false)
             } else {
-                gSelectionManager.deselect()
+                let priorDot = gWidgetsManager.widgetForZone(gSelectionManager.firstGrabbableZone)?.dragDot.innerDot
+
                 zone.grab()
+
+                priorDot?.needsDisplay = true
+
                 signalFor(zone, regarding: .datum)
             }
         }
@@ -152,6 +144,15 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func dragEvent(_ iGesture: ZGestureRecognizer?) {
+        if iGesture?.state == .began {
+            let priorDot = gWidgetsManager.widgetForZone(gSelectionManager.firstGrabbableZone)?.dragDot.innerDot
+
+            widgetZone?.grab()
+
+            priorDot?.needsDisplay = true
+            innerDot?.needsDisplay = true
+        }
+
         if widgetZone != gTravelManager.hereZone {
             gSelectionManager.zoneBeingDragged = widgetZone
 

@@ -522,7 +522,7 @@ class Zone : ZRecord {
 
 
     func isProgenyOf(_ iZone: Zone) -> Bool {
-        if let p = parentZone {
+        if  let p = parentZone, !p.isProgenyOf(self) {
             return p == iZone || p.isProgenyOf(iZone)
         }
 

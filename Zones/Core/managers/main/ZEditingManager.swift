@@ -690,7 +690,6 @@ class ZEditingManager: NSObject {
             } else if zone == hereZone || parent == nil {
                 revealParentAndSiblingsOf(zone) {
                     if  let here = self.hereZone.parentZone {
-
                         here.grab()
                         self.revealSiblingsOf(self.hereZone, toHere: here)
                     }
@@ -956,8 +955,10 @@ class ZEditingManager: NSObject {
                 }
 
                 if let from = zone.parentZone {
+                    let index = zone.siblingIndex
+
                     self.UNDO(self) { iUndoSelf in
-                        iUndoSelf.moveZone(zone, into: from, orphan: orphan) { onCompletion?() }
+                        iUndoSelf.moveZone(zone, into: from, at: index, orphan: orphan) { onCompletion?() }
                     }
                 }
 
