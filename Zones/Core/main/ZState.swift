@@ -71,6 +71,7 @@ var     grabbedTextColor: ZColor { get { return gZoneColor    .darker(by: 1.8) }
 let         zoneColorKey = "zone color"
 let     bookmarkColorKey = "bookmark color"
 let   backgroundColorKey = "background color"
+let  dragTargetsColorKey = "drag targets color"
 let graphAlteringModeKey = "graph altering mode"
 let       storageModeKey = "current storage mode"
 let     settingsStateKey = "current settings state"
@@ -112,6 +113,12 @@ var gBookmarkColor: ZColor {
 var gBackgroundColor: ZColor {
     set { setColor(newValue, key: backgroundColorKey) }
     get { return   getColorForKey(backgroundColorKey, defaultColor: ZColor(hue: 0.6, saturation: 0.0, brightness: unselectBrightness, alpha: 1)) }
+}
+
+
+var gDragTargetsColor: ZColor {
+    set { setColor(newValue, key: dragTargetsColorKey) }
+    get { return   getColorForKey(dragTargetsColorKey, defaultColor: ZColor.red) }
 }
 
 

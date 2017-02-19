@@ -480,10 +480,10 @@ CQ
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="139" width="222" height="1132"/>
+                                <rect key="frame" x="0.0" y="112" width="222" height="1159"/>
                                 <subviews>
                                     <customView identifier="information" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1018" width="222" height="114"/>
+                                        <rect key="frame" x="0.0" y="1045" width="222" height="114"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="95" width="222" height="19"/>
@@ -597,7 +597,7 @@ CQ
                                         </connections>
                                     </customView>
                                     <customView identifier="favorites" translatesAutoresizingMaskIntoConstraints="NO" id="47v-DX-fSo" userLabel="Favorites View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="978" width="222" height="39"/>
+                                        <rect key="frame" x="0.0" y="1005" width="222" height="39"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="DdL-Cp-gGl" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="20" width="222" height="19"/>
@@ -700,10 +700,10 @@ CQ
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="600" width="222" height="377"/>
+                                        <rect key="frame" x="0.0" y="600" width="222" height="404"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="358" width="222" height="19"/>
+                                                <rect key="frame" x="0.0" y="385" width="222" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gUX-Sv-09B">
                                                         <rect key="frame" x="0.0" y="1" width="222" height="17"/>
@@ -741,10 +741,10 @@ CQ
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="BBZ-rq-7h8" userLabel="Hideable View">
-                                                <rect key="frame" x="0.0" y="0.0" width="222" height="358"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="222" height="385"/>
                                                 <subviews>
                                                     <box borderType="line" title="line thickness" translatesAutoresizingMaskIntoConstraints="NO" id="ZKf-5G-qWF">
-                                                        <rect key="frame" x="5" y="311" width="212" height="39"/>
+                                                        <rect key="frame" x="5" y="338" width="212" height="39"/>
                                                         <view key="contentView" id="XhY-V9-QQ8">
                                                             <rect key="frame" x="1" y="1" width="210" height="23"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -766,7 +766,7 @@ CQ
                                                         </view>
                                                     </box>
                                                     <box borderType="line" title="vertical spacing" translatesAutoresizingMaskIntoConstraints="NO" id="6y7-tU-8gG" userLabel="vertical spacing">
-                                                        <rect key="frame" x="5" y="272" width="212" height="39"/>
+                                                        <rect key="frame" x="5" y="299" width="212" height="39"/>
                                                         <view key="contentView" id="egb-z0-1ch">
                                                             <rect key="frame" x="1" y="1" width="210" height="23"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -788,7 +788,7 @@ CQ
                                                         </view>
                                                     </box>
                                                     <box borderType="line" title="horizontal spacing" translatesAutoresizingMaskIntoConstraints="NO" id="Qns-tb-akX" userLabel="horizontal spacing">
-                                                        <rect key="frame" x="5" y="233" width="212" height="39"/>
+                                                        <rect key="frame" x="5" y="260" width="212" height="39"/>
                                                         <view key="contentView" id="yxJ-ve-YZE">
                                                             <rect key="frame" x="1" y="1" width="210" height="23"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -810,13 +810,13 @@ CQ
                                                         </view>
                                                     </box>
                                                     <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="KMy-vH-Jfb">
-                                                        <rect key="frame" x="5" y="128" width="212" height="105"/>
+                                                        <rect key="frame" x="5" y="128" width="212" height="132"/>
                                                         <view key="contentView" id="VZX-ic-xER">
-                                                            <rect key="frame" x="1" y="1" width="210" height="89"/>
+                                                            <rect key="frame" x="1" y="1" width="210" height="116"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7kB-i9-BLu">
-                                                                    <rect key="frame" x="6" y="65" width="102" height="17"/>
+                                                                    <rect key="frame" x="6" y="92" width="102" height="17"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="17" id="Nlz-uA-ju4"/>
                                                                     </constraints>
@@ -827,7 +827,7 @@ CQ
                                                                     </textFieldCell>
                                                                 </textField>
                                                                 <colorWell identifier="zones" translatesAutoresizingMaskIntoConstraints="NO" id="zkL-Cs-OSE">
-                                                                    <rect key="frame" x="114" y="62" width="88" height="23"/>
+                                                                    <rect key="frame" x="114" y="89" width="88" height="23"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="88" id="P3i-t2-sNo"/>
                                                                         <constraint firstAttribute="height" constant="23" id="xJo-hF-2Rf"/>
@@ -838,7 +838,7 @@ CQ
                                                                     </connections>
                                                                 </colorWell>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="G6J-cF-m9H">
-                                                                    <rect key="frame" x="41" y="38" width="67" height="17"/>
+                                                                    <rect key="frame" x="41" y="65" width="67" height="17"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="17" id="aXY-lZ-XaB"/>
                                                                     </constraints>
@@ -849,7 +849,7 @@ CQ
                                                                     </textFieldCell>
                                                                 </textField>
                                                                 <colorWell identifier="bookmarks" translatesAutoresizingMaskIntoConstraints="NO" id="Eae-G1-GtF">
-                                                                    <rect key="frame" x="114" y="35" width="88" height="23"/>
+                                                                    <rect key="frame" x="114" y="62" width="88" height="23"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="88" id="Qqo-CC-k0K"/>
                                                                         <constraint firstAttribute="height" constant="23" id="Vf2-kE-P3L"/>
@@ -857,6 +857,17 @@ CQ
                                                                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                                     <connections>
                                                                         <action selector="colorBoxAction:" target="YaQ-0g-PCb" id="4m3-G6-bHI"/>
+                                                                    </connections>
+                                                                </colorWell>
+                                                                <colorWell identifier="drag targets" translatesAutoresizingMaskIntoConstraints="NO" id="sUt-yz-hfw" userLabel="drag targets color box">
+                                                                    <rect key="frame" x="114" y="35" width="88" height="23"/>
+                                                                    <constraints>
+                                                                        <constraint firstAttribute="width" constant="88" id="iim-cU-t4Y"/>
+                                                                        <constraint firstAttribute="height" constant="23" id="zhL-ly-JU5"/>
+                                                                    </constraints>
+                                                                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                                    <connections>
+                                                                        <action selector="colorBoxAction:" target="YaQ-0g-PCb" id="9jj-Ab-Tiu"/>
                                                                     </connections>
                                                                 </colorWell>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sJw-uT-bsV">
@@ -881,22 +892,38 @@ CQ
                                                                         <action selector="colorBoxAction:" target="YaQ-0g-PCb" id="xnr-5Y-PRt"/>
                                                                     </connections>
                                                                 </colorWell>
+                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Agr-p0-ToK" userLabel="drag targets">
+                                                                    <rect key="frame" x="6" y="38" width="102" height="17"/>
+                                                                    <constraints>
+                                                                        <constraint firstAttribute="height" constant="17" id="eDE-a2-GTY"/>
+                                                                    </constraints>
+                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="drag targets" id="acp-1U-EQQ">
+                                                                        <font key="font" metaFont="cellTitle"/>
+                                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                </textField>
                                                             </subviews>
                                                             <constraints>
                                                                 <constraint firstItem="zkL-Cs-OSE" firstAttribute="top" secondItem="VZX-ic-xER" secondAttribute="top" constant="4" id="2FU-3p-EpN"/>
                                                                 <constraint firstAttribute="trailing" secondItem="iLH-vJ-oIt" secondAttribute="trailing" constant="8" id="80l-17-NdI"/>
                                                                 <constraint firstAttribute="trailing" secondItem="zkL-Cs-OSE" secondAttribute="trailing" constant="8" id="997-5y-Uod"/>
+                                                                <constraint firstItem="Agr-p0-ToK" firstAttribute="centerY" secondItem="sUt-yz-hfw" secondAttribute="centerY" id="FqG-hO-uUh"/>
                                                                 <constraint firstItem="7kB-i9-BLu" firstAttribute="centerY" secondItem="zkL-Cs-OSE" secondAttribute="centerY" id="KM0-vf-yjC"/>
                                                                 <constraint firstItem="zkL-Cs-OSE" firstAttribute="leading" secondItem="7kB-i9-BLu" secondAttribute="trailing" constant="8" id="LZj-pp-H1Q"/>
+                                                                <constraint firstItem="sUt-yz-hfw" firstAttribute="leading" secondItem="Agr-p0-ToK" secondAttribute="trailing" constant="8" id="MQT-Fb-Tar"/>
                                                                 <constraint firstItem="Eae-G1-GtF" firstAttribute="leading" secondItem="G6J-cF-m9H" secondAttribute="trailing" constant="8" id="Nc5-ml-BNr"/>
                                                                 <constraint firstItem="iLH-vJ-oIt" firstAttribute="leading" secondItem="sJw-uT-bsV" secondAttribute="trailing" constant="8" id="NdS-2W-Qul"/>
                                                                 <constraint firstItem="sJw-uT-bsV" firstAttribute="centerY" secondItem="iLH-vJ-oIt" secondAttribute="centerY" id="P8z-OT-YvF"/>
                                                                 <constraint firstAttribute="bottom" secondItem="iLH-vJ-oIt" secondAttribute="bottom" constant="8" id="TVB-mZ-pGT"/>
                                                                 <constraint firstAttribute="trailing" secondItem="Eae-G1-GtF" secondAttribute="trailing" constant="8" id="Wh3-B3-1CZ"/>
-                                                                <constraint firstItem="iLH-vJ-oIt" firstAttribute="top" secondItem="Eae-G1-GtF" secondAttribute="bottom" constant="4" id="YW1-1Y-4AD"/>
+                                                                <constraint firstItem="sUt-yz-hfw" firstAttribute="top" secondItem="Eae-G1-GtF" secondAttribute="bottom" constant="4" id="YI9-DZ-xPJ"/>
                                                                 <constraint firstItem="7kB-i9-BLu" firstAttribute="leading" secondItem="VZX-ic-xER" secondAttribute="leading" constant="8" id="dCG-GH-Bx4"/>
                                                                 <constraint firstItem="Eae-G1-GtF" firstAttribute="top" secondItem="zkL-Cs-OSE" secondAttribute="bottom" constant="4" id="jzR-GX-RRH"/>
+                                                                <constraint firstItem="iLH-vJ-oIt" firstAttribute="top" secondItem="sUt-yz-hfw" secondAttribute="bottom" constant="4" id="mdt-4e-HVT"/>
+                                                                <constraint firstItem="Agr-p0-ToK" firstAttribute="leading" secondItem="VZX-ic-xER" secondAttribute="leading" constant="8" id="rzL-AP-hQd"/>
                                                                 <constraint firstItem="G6J-cF-m9H" firstAttribute="centerY" secondItem="Eae-G1-GtF" secondAttribute="centerY" id="tuW-q7-tW1"/>
+                                                                <constraint firstAttribute="trailing" secondItem="sUt-yz-hfw" secondAttribute="trailing" constant="8" id="v9z-Mh-lDP"/>
                                                             </constraints>
                                                         </view>
                                                     </box>
@@ -1234,6 +1261,7 @@ other KEYS:
                     <connections>
                         <outlet property="backgroundColorBox" destination="iLH-vJ-oIt" id="M4g-b9-bl7"/>
                         <outlet property="bookmarkColorBox" destination="Eae-G1-GtF" id="hKi-kq-08B"/>
+                        <outlet property="dragTargetsColorBox" destination="sUt-yz-hfw" id="nC4-pZ-vAq"/>
                         <outlet property="favoritesTableHeight" destination="exv-2U-zqb" id="TlZ-NY-U7t"/>
                         <outlet property="favoritesTableView" destination="ISa-Gu-otf" id="Exf-WV-kN0"/>
                         <outlet property="fractionInMemory" destination="dmI-b1-Z0D" id="aDQ-oC-iLc"/>

@@ -1008,7 +1008,8 @@ class ZEditingManager: NSObject {
 
     func moveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool) {
         let         zone = gSelectionManager.firstGrabbableZone
-        if  let    there = zone.parentZone, let index = there.children.index(of: zone) {
+        let       isHere = zone == hereZone
+        if  let    there = zone.parentZone, !isHere, let index = zone.siblingIndex {
             var newIndex = index + (moveUp ? -1 : 1)
 
             if extreme {
@@ -1035,8 +1036,16 @@ class ZEditingManager: NSObject {
             }
         } else if !zone.isRoot {
             revealParentAndSiblingsOf(zone) {
-                if zone.parentZone != nil && zone.parentZone!.count > 1 {
-                    self.moveUp(moveUp, selectionOnly: selectionOnly, extreme: extreme)
+                if let parent = zone.parentZone {
+                    if isHere {
+                        self.hereZone = parent
+
+                        self.signalFor(nil, regarding: .redraw)
+                    }
+
+                    if parent.count > 1 {
+                        self.moveUp(moveUp, selectionOnly: selectionOnly, extreme: extreme)
+                    }
                 }
             }
         }

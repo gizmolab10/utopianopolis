@@ -24,9 +24,10 @@ enum ZSliderKind: String {
 
 
 enum ZColorBoxKind: String {
-    case Zones      = "zones"
-    case Bookmarks  = "bookmarks"
-    case Background = "background"
+    case Zones       = "zones"
+    case Bookmarks   = "bookmarks"
+    case Background  = "background"
+    case DragTargets = "drag targets"
 }
 
 
@@ -48,6 +49,7 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
     @IBOutlet var             zoneColorBox: NSColorWell?
     @IBOutlet var         bookmarkColorBox: NSColorWell?
     @IBOutlet var       backgroundColorBox: NSColorWell?
+    @IBOutlet var      dragTargetsColorBox: NSColorWell?
     @IBOutlet var        horizontalSpacing: NSSlider?
     @IBOutlet var          verticalSpacing: NSSlider?
     @IBOutlet var                thickness: NSSlider?
@@ -89,6 +91,7 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
         thickness?                   .doubleValue = gLineThickness
         verticalSpacing?             .doubleValue = Double(gGenericOffset.height)
         horizontalSpacing?           .doubleValue = Double(gGenericOffset.width)
+        dragTargetsColorBox?               .color = gDragTargetsColor
         backgroundColorBox?                .color = gBackgroundColor
         bookmarkColorBox?                  .color = gBookmarkColor
         zoneColorBox?                      .color = gZoneColor
@@ -133,9 +136,10 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
         if let kind = ZColorBoxKind(rawValue: iColorBox.identifier!) {
             switch (kind) {
-            case .Background: gBackgroundColor = color; break
-            case  .Bookmarks:   gBookmarkColor = color; break
-            case      .Zones:       gZoneColor = color; break
+            case .DragTargets: gDragTargetsColor = color
+            case .Background:   gBackgroundColor = color
+            case  .Bookmarks:     gBookmarkColor = color
+            case      .Zones:         gZoneColor = color
             }
 
             signalFor(nil, regarding: .redraw)

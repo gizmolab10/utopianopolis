@@ -111,7 +111,7 @@ class ZoneCurve: ZView {
             let             zone = child?.widgetZone
             let toggleHalfHeight = (parent?.toggleDot.innerDot?.bounds.size.height)! / 2.0
             let    dragHalfWidth = (child?   .dragDot.innerDot?.bounds.size.width )! / 2.0
-            let            color = (zone?.isBookmark)! ? gBookmarkColor : isDropTarget ? ZColor.red : gZoneColor
+            let            color = (zone?.isBookmark)! ? gBookmarkColor : isDropTarget ? gDragTargetsColor : gZoneColor
             var y: CGFloat
 
             switch kind {
