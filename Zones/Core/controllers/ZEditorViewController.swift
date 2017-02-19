@@ -129,34 +129,29 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
             let            done = [NSGestureRecognizerState.ended, NSGestureRecognizerState.cancelled].contains(iGesture!.state)
             let             dot = iGesture?.target as! ZoneDot
             let           match = nearest?.widgetZone
+            let          isHere = match == gTravelManager.hereZone
             let           mover = dot.widgetZone
             let            same = mover == match
             let        useMatch = relate == .upon || match == gTravelManager.hereZone
             let          target = same ? nil : useMatch ? match : match?.parentZone
-            let               s = gSelectionManager
-            let      sameParent = target == s.zoneBeingDragged?.parentZone
+            let      sameParent = target == mover?.parentZone
             let      matchIndex = match?.siblingIndex
-            let            bump = (sameParent && matchIndex != nil && s.zoneBeingDragged!.siblingIndex! <= matchIndex!) ? 1 : 0
-            let           index = ((useMatch  || matchIndex == nil) ? ((asTask || same) ? 0 : target?.count) : (matchIndex! + relate.rawValue))!
+            let            bump = (sameParent && matchIndex != nil && mover!.siblingIndex! <= matchIndex!) ? 1 : 0
+            let           index = (isHere ? (relate != .below ? 0 : target?.count) : (useMatch  || matchIndex == nil) ? ((asTask || same) ? 0 : target?.count) : (matchIndex! + relate.rawValue))!
+            let               s = gSelectionManager
             let           prior = gWidgetsManager.widgetForZone(s.targetDropZone)
             s.targetLineIndices = NSMutableIndexSet(index: index)
             s.targetDropZone    = done ? nil : target
 
-            if relate != .upon && index > 0 { // target != nil && index < target!.count {
-                // let delta = relate == .above ? 1 : -1
-
-                s.targetLineIndices?.add(index - 1) // + delta)
+            if relate != .upon && index > 0 {
+                s.targetLineIndices?.add(index - 1)
             }
 
             prior?  .displayForDrag()
             nearest?.displayForDrag()
 
-            if index == 4 {
-                report("!!!")
-            }
-
             if done {
-                let                             prior = gWidgetsManager.widgetForZone(s.zoneBeingDragged)
+                let                             prior = gWidgetsManager.widgetForZone(mover)
                 s.zoneBeingDragged                    = nil
                 prior?.dragDot.innerDot?.needsDisplay = true
 
