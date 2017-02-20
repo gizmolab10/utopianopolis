@@ -39,6 +39,7 @@ public typealias ZTableViewDelegate         = NSTableViewDelegate
 public typealias ZTableViewDataSource       = NSTableViewDataSource
 public typealias ZSearchFieldDelegate       = NSSearchFieldDelegate
 public typealias ZApplicationDelegate       = NSApplicationDelegate
+public typealias ZGestureRecognizerState    = NSGestureRecognizerState
 public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 
 
@@ -95,6 +96,12 @@ extension NSColor {
 }
 
 
+extension NSBezierPath {
+    public convenience init(roundedRect rect: CGRect, cornerRadius: CGFloat) {
+        self.init(roundedRect: rect, xRadius: cornerRadius, yRadius: cornerRadius)
+    }
+}
+
 
 extension NSView {
     var      zlayer:                CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
@@ -103,6 +110,11 @@ extension NSView {
 
     func clear() {
         zlayer.backgroundColor = ZColor.clear.cgColor
+    }
+
+
+    func setNeedsDisplay() {
+        needsDisplay = true
     }
 
 

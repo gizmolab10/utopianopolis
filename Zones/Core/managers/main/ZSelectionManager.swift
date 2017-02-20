@@ -90,8 +90,8 @@ class ZSelectionManager: NSObject {
 
         for zone in zones {
             if zone != currentlyEditingZone, let widget = gWidgetsManager.widgetForZone(zone) {
-                widget.dragDot.innerDot?.needsDisplay = true
-                widget                  .needsDisplay = true
+                widget.dragDot.innerDot?.setNeedsDisplay()
+                widget                  .setNeedsDisplay()
             }
         }
     }
@@ -106,7 +106,7 @@ class ZSelectionManager: NSObject {
         let      editingZone = currentlyEditingZone
         currentlyEditingZone = nil
         let           widget = gWidgetsManager.widgetForZone(editingZone)
-        widget?.needsDisplay = true
+        widget?.setNeedsDisplay()
 
         if editingZone != nil && editingZone != gTravelManager.hereZone {
             widget?.textWidget.captureText()
@@ -117,9 +117,18 @@ class ZSelectionManager: NSObject {
     }
 
 
+    func updateWidgetFor(_ zone: Zone?) {
+        if zone != nil, let widget = gWidgetsManager.widgetForZone(zone!) {
+            widget                  .setNeedsDisplay()
+            widget.dragDot.innerDot?.setNeedsDisplay()
+        }
+    }
+
+
     func ungrab(_ zone: Zone?) {
         if zone != nil, let index = currentlyGrabbedZones.index(of: zone!) {
             currentlyGrabbedZones.remove(at: index)
+            updateWidgetFor(zone)
         }
     }
 
@@ -127,10 +136,7 @@ class ZSelectionManager: NSObject {
     func addToGrab(_ zone: Zone?) {
         if zone != nil {
             currentlyGrabbedZones.append(zone!)
-
-            let                             widget = gWidgetsManager.widgetForZone(zone!)
-            widget?                  .needsDisplay = true
-            widget?.dragDot.innerDot?.needsDisplay = true
+            updateWidgetFor(zone)
         }
     }
 

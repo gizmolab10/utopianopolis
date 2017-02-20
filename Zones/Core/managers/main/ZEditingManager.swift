@@ -89,16 +89,18 @@ class ZEditingManager: NSObject {
 
 
     func handleMenuItem(_ iItem: ZMenuItem?) {
-        var flags = (iItem?.keyEquivalentModifierMask)!
-        var   key = (iItem?.keyEquivalent)!
+        #if os(OSX)
+            var flags = (iItem?.keyEquivalentModifierMask)!
+            var   key = (iItem?.keyEquivalent)!
 
-        if key != key.lowercased() {
-            flags.insert(.shift)    // add isShift to flags
+            if key != key.lowercased() {
+                flags.insert(.shift)    // add isShift to flags
 
-            key = key.lowercased()
-        }
+                key = key.lowercased()
+            }
 
-        handleKey(key, flags: flags, isWindow: true)
+            handleKey(key, flags: flags, isWindow: true)
+        #endif
     }
 
 
@@ -1028,7 +1030,9 @@ class ZEditingManager: NSObject {
                 if selectionOnly {
                     there.children[newIndex].grab()
                 } else {
+                    gSelectionManager.deselectGrabs()
                     there.moveChild(from: index, to: newIndex)
+                    there.children[newIndex].grab()
                     there.recomputeOrderingUponInsertionAt(newIndex)
                     gControllersManager.syncToCloudAndSignalFor(there, regarding: .redraw) {}
                 }

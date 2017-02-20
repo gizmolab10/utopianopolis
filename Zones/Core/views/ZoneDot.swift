@@ -150,7 +150,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 gSelectionManager.zoneBeingDragged = widgetZone
             }
 
-            widget?.needsDisplay = true
+            widget?.setNeedsDisplay()
         }
 
         if !isHere {

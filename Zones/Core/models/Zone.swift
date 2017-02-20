@@ -292,10 +292,6 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    var hasZonesBelow: Bool { return hasAnyZonesAbove(false) }
-    var hasZonesAbove: Bool { return hasAnyZonesAbove(true) }
-
-
     private func hasAnyZonesAbove(_ iAbove: Bool) -> Bool {
         let here = gTravelManager.hereZone
 
@@ -313,14 +309,12 @@ class Zone : ZRecord {
     // MARK:-
 
 
-
-    var  isEditing: Bool { get { return gSelectionManager .isEditing(self) } }
-    var  isGrabbed: Bool { get { return gSelectionManager .isGrabbed(self) } }
-    var isSelected: Bool { get { return gSelectionManager.isSelected(self) } }
-    
-
-    func      grab() { gSelectionManager     .grab(self) }
-    func addToGrab() { gSelectionManager.addToGrab(self) }
+    var hasZonesAbove: Bool       { return hasAnyZonesAbove(true) }
+    var hasZonesBelow: Bool       { return hasAnyZonesAbove(false) }
+    var     isEditing: Bool { get { return gSelectionManager .isEditing(self) } }
+    var     isGrabbed: Bool { get { return gSelectionManager .isGrabbed(self) } }
+    var    isSelected: Bool { get { return gSelectionManager.isSelected(self) } }
+    func        grab()                   { gSelectionManager      .grab(self) }
 
 
     static func == ( left: Zone, right: Zone) -> Bool {

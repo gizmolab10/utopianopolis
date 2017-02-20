@@ -126,8 +126,8 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         if  iGesture    != nil, let location = iGesture?.location (in: view) {
             let         nearest = hereWidget.widgetNearestTo(   location, in: view)
             let          relate = relationOf(location, to: nearest?.textWidget)
-            let            done = [NSGestureRecognizerState.ended, NSGestureRecognizerState.cancelled].contains(iGesture!.state)
-            let             dot = iGesture?.target as! ZoneDot
+            let            done = [ZGestureRecognizerState.ended, ZGestureRecognizerState.cancelled].contains(iGesture!.state)
+            let             dot = iGesture?.view as! ZoneDot
             let           match = nearest?.widgetZone
             let          isHere = match == gTravelManager.hereZone
             let           mover = dot.widgetZone
@@ -151,9 +151,10 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
             nearest?.displayForDrag()
 
             if done {
-                let                             prior = gWidgetsManager.widgetForZone(mover)
-                s.zoneBeingDragged                    = nil
-                prior?.dragDot.innerDot?.needsDisplay = true
+                let          prior = gWidgetsManager.widgetForZone(mover)
+                s.zoneBeingDragged = nil
+
+                prior?.dragDot.innerDot?.setNeedsDisplay()
 
                 if !same && mover != nil && target != nil && index >= 0 {
                     gEditingManager.moveZone(mover!, into: target!, at: index - bump, orphan: true) {

@@ -25,7 +25,7 @@ class ZoneWidget: ZView {
     private var       _textWidget:  ZoneTextWidget!
     private var     _childrenView:  ZView!
     private var      siblingLines = [ZoneCurve] ()
-    private var   childrenWidgets = [ZoneWidget?] ()
+    private var   childrenWidgets = [ZoneWidget] ()
     let                 toggleDot = ZoneDot()
     let                   dragDot = ZoneDot()
     var                widgetZone:  Zone!
@@ -82,36 +82,6 @@ class ZoneWidget: ZView {
     }
 
 
-    // MARK:- draw
-    // MARK:-
-
-
-    override func draw(_ dirtyRect: CGRect) {
-        super.draw(dirtyRect)
-
-        let        isGrabbed = widgetZone.isGrabbed
-        textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor : ZColor.black
-
-        if isGrabbed && !widgetZone.isEditing {
-            let     thickness = dragDot.width / 2.5
-            var          rect = textWidget.frame.insetBy(dx: -13.0, dy: 0.0)
-            rect.size .width += 1.0
-            rect.size.height -= 3.0
-            let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
-            let         color = widgetZone.isBookmark ? gBookmarkColor : gZoneColor
-            let     fillColor = color.withAlphaComponent(0.02)
-            let   strokeColor = color.withAlphaComponent(0.2)
-            let          path = ZBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius)
-            path   .lineWidth = thickness
-            path    .flatness = 0.0001
-
-            fillColor.setFill()
-            strokeColor.setStroke()
-            path.stroke()
-        }
-    }
-
-
     // MARK:- layout
     // MARK:-
 
@@ -133,12 +103,14 @@ class ZoneWidget: ZView {
         gWidgetsManager.registerWidget(self)
 
         if recursing {
+            prepareChildren()
             layoutChildren(kind)
             layoutLines(kind)
         }
 
         layoutText()
         layoutDots()
+        setNeedsDisplay()
     }
 
 
@@ -187,56 +159,65 @@ class ZoneWidget: ZView {
     }
 
 
-    func layoutChildren(_ kind: ZSignalKind) {
-        let count = widgetZone.count
+    func prepareChildren() {
+        if !widgetZone.includeChildren {
+            for child in childrenWidgets {
+                gWidgetsManager.unregisterWidget(child)
+            }
 
-        if (!widgetZone.includeChildren || childrenWidgets.count != count) && _childrenView != nil {
             childrenWidgets.removeAll()
             clearChildrenView()
 
-           _childrenView = nil
-        }
+            _childrenView = nil
+        } else {
+            for (_, child) in childrenWidgets.enumerated() {
+                if !widgetZone.children.contains(child.widgetZone) {
+                    gWidgetsManager.unregisterWidget(child)
+                    child.removeFromSuperview()
 
-        if widgetZone.includeChildren {
-
-            while childrenWidgets.count < count {
-                childrenWidgets.append(ZoneWidget())
+                    if let index = childrenWidgets.index(of: child) {
+                        childrenWidgets.remove(at: index)
+                    }
+                }
             }
 
-            var            index = count
+            while childrenWidgets.count < widgetZone.count {
+                childrenWidgets.append(ZoneWidget())
+            }
+        }
+    }
+
+
+    func layoutChildren(_ kind: ZSignalKind) {
+        if widgetZone.includeChildren {
+            var            index = widgetZone.count
             var previous: ZView? = nil
 
             while index > 0 {
-                index          -= 1 // go backwards down the arrays, constraint making expect it, below
-                let childZone   = widgetZone     [index]
-                let childWidget = childrenWidgets[index]
+                index                 -= 1 // go backwards down the arrays, constraint making expects it, below
+                let childWidget        = childrenWidgets[index]
+                childWidget.widgetZone = widgetZone     [index]
 
-                if  widgetZone == childZone {
-                    childrenWidgets[index] = nil // when?????
-                } else {
-                    childWidget?.widgetZone = childZone
-
-                    childWidget?.layoutInView(childrenView, atIndex: index, recursing: true, kind: kind)
-                    childWidget?.snp.removeConstraints()
-                    childWidget?.snp.makeConstraints { (make: ConstraintMaker) in
-                        if previous != nil {
-                            make.bottom.equalTo((previous?.snp.top)!)
-                        } else {
-                            make.bottom.equalTo(childrenView)
-                        }
-
-                        if index == 0 {
-                            make.top.equalTo(childrenView)
-                        }
-
-                        make.left.equalTo(childrenView)
-                        make.right.height.lessThanOrEqualTo(childrenView)
+                childWidget.layoutInView(childrenView, atIndex: index, recursing: true, kind: kind)
+                childWidget.snp.removeConstraints()
+                childWidget.snp.makeConstraints { (make: ConstraintMaker) in
+                    if previous != nil {
+                        make.bottom.equalTo((previous?.snp.top)!)
+                    } else {
+                        make.bottom.equalTo(childrenView)
                     }
 
-                    childWidget?.layoutText()
+                    if index == 0 {
+                        make.top.equalTo(childrenView)
+                    }
 
-                    previous = childWidget
+                    make.left.equalTo(childrenView)
+                    make.right.height.lessThanOrEqualTo(childrenView)
                 }
+
+                childWidget.layoutText()
+
+                previous = childWidget
             }
         }
     }
@@ -336,14 +317,14 @@ class ZoneWidget: ZView {
 
 
     func displayForDrag() {
-        toggleDot.innerDot?         .needsDisplay = true
+        toggleDot.innerDot?        .setNeedsDisplay()
 
         for line in siblingLines {
-            line                    .needsDisplay = true
+            line                   .setNeedsDisplay()
         }
 
         for child in childrenWidgets {
-            child?.dragDot.innerDot?.needsDisplay = true
+            child.dragDot.innerDot?.setNeedsDisplay()
         }
     }
 
@@ -382,5 +363,35 @@ class ZoneWidget: ZView {
         }
 
         return nil
+    }
+
+
+    // MARK:- draw
+    // MARK:-
+
+
+    override func draw(_ dirtyRect: CGRect) {
+        super.draw(dirtyRect)
+
+        let        isGrabbed = widgetZone.isGrabbed
+        textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor : ZColor.black
+
+        if isGrabbed && !widgetZone.isEditing {
+            let     thickness = dragDot.width / 2.5
+            var          rect = textWidget.frame.insetBy(dx: -13.0, dy: 0.0)
+            rect.size .width += 1.0
+            rect.size.height -= 3.0
+            let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
+            let         color = widgetZone.isBookmark ? gBookmarkColor : gZoneColor
+            let     fillColor = color.withAlphaComponent(0.02)
+            let   strokeColor = color.withAlphaComponent(0.2)
+            let          path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
+            path   .lineWidth = thickness
+            path    .flatness = 0.0001
+
+            fillColor.setFill()
+            strokeColor.setStroke()
+            path.stroke()
+        }
     }
 }

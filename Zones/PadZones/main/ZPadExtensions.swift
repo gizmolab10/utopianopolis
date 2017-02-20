@@ -38,6 +38,7 @@ public typealias ZTableViewDelegate         = UITableViewDelegate
 public typealias ZSearchFieldDelegate       = UISearchBarDelegate
 public typealias ZTableViewDataSource       = UITableViewDataSource
 public typealias ZApplicationDelegate       = UIApplicationDelegate
+public typealias ZGestureRecognizerState    = UIGestureRecognizerState
 public typealias ZGestureRecognizerDelegate = UIGestureRecognizerDelegate
 
 
@@ -97,6 +98,16 @@ extension UIView {
 
         addGestureRecognizer(gesture)
 
+        return gesture
+    }
+
+
+    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZGestureRecognizer {
+        let      gesture = UIPanGestureRecognizer(target: target, action: action)
+        gesture.delegate = target
+
+        addGestureRecognizer(gesture)
+        
         return gesture
     }
 }
