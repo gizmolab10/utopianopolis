@@ -140,7 +140,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func dragEvent(_ iGesture: ZGestureRecognizer?) {
-        let isHere = widgetZone == gTravelManager.hereZone
+        let isHere = widgetZone == gHere
 
         if iGesture?.state == .began {
             gSelectionManager.deselect()

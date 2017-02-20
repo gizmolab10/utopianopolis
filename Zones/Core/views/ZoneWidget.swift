@@ -115,16 +115,10 @@ class ZoneWidget: ZView {
 
 
     func layoutText() {
-        textWidget.widget   = self
-        let      isSelected = widgetZone.isSelected
-        textWidget.font     = isSelected ? gGrabbedWidgetFont : gWidgetFont
+        textWidget.widget = self
+        textWidget.font   = widgetZone.isSelected ? gGrabbedWidgetFont : gWidgetFont
 
-        if textWidget.text == "" && widgetZone.zoneName == nil {
-            textWidget.text = "empty"
-        } else if widgetZone.zoneName != nil {
-            textWidget.text = widgetZone.zoneName
-        }
-
+        textWidget.updateText()
         layoutTextField()
     }
 
@@ -148,17 +142,6 @@ class ZoneWidget: ZView {
     }
 
 
-    func clearChildrenView() {
-        if let view = _childrenView {
-            for view in view.subviews {
-                view.removeFromSuperview()
-            }
-
-            view.removeFromSuperview()
-        }
-    }
-
-
     func prepareChildren() {
         if !widgetZone.includeChildren {
             for child in childrenWidgets {
@@ -166,9 +149,16 @@ class ZoneWidget: ZView {
             }
 
             childrenWidgets.removeAll()
-            clearChildrenView()
 
-            _childrenView = nil
+            if _childrenView != nil {
+                for view in _childrenView.subviews {
+                    view.removeFromSuperview()
+                }
+
+                _childrenView.removeFromSuperview()
+
+                _childrenView = nil
+            }
         } else {
             for (_, child) in childrenWidgets.enumerated() {
                 if !widgetZone.children.contains(child.widgetZone) {
@@ -214,8 +204,6 @@ class ZoneWidget: ZView {
                     make.left.equalTo(childrenView)
                     make.right.height.lessThanOrEqualTo(childrenView)
                 }
-
-                childWidget.layoutText()
 
                 previous = childWidget
             }
@@ -330,7 +318,7 @@ class ZoneWidget: ZView {
 
 
     var dragTargetFrame: CGRect {
-        let isHere = widgetZone == gTravelManager.hereZone
+        let isHere = widgetZone == gHere
         let cFrame = convert(childrenView.frame, to: controllerView)
         let  right =                                                   controllerView.bounds .maxX
         let    top = ((!isHere && widgetZone.hasZonesAbove) ? cFrame : controllerView.bounds).maxY

@@ -41,7 +41,7 @@ class ZSelectionManager: NSObject {
             }
 
             if grabbable == nil || grabbable?.record == nil {
-                grabbable = gTravelManager.hereZone
+                grabbable = gHere
             }
 
             return grabbable!
@@ -60,7 +60,7 @@ class ZSelectionManager: NSObject {
             }
 
             if movable == nil || (movable?.parentZone != nil && gStorageMode != movable?.parentZone?.storageMode) {
-                movable = gTravelManager.hereZone
+                movable = gHere
             }
             
             return movable!
@@ -108,7 +108,7 @@ class ZSelectionManager: NSObject {
         let           widget = gWidgetsManager.widgetForZone(editingZone)
         widget?.setNeedsDisplay()
 
-        if editingZone != nil && editingZone != gTravelManager.hereZone {
+        if editingZone != nil && editingZone != gHere {
             widget?.textWidget.captureText()
         }
 

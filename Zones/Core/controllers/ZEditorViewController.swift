@@ -52,9 +52,9 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         var specificView:        ZView? = view
         var specificindex:         Int? = nil
         var recursing:             Bool = [.data, .redraw].contains(kind)
-        hereWidget.widgetZone           = gTravelManager.hereZone
+        hereWidget.widgetZone           = gHere
 
-        if zone == nil || zone == gTravelManager.hereZone {
+        if zone == nil || zone == gHere {
             recursing = true
 
             toConsole("all")
@@ -123,16 +123,16 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
 
     func handleDragEvent(_ iGesture: ZGestureRecognizer?) {
-        if  iGesture    != nil, let location = iGesture?.location (in: view) {
+        if  let        location = iGesture?.location (in: view), iGesture != nil {
             let         nearest = hereWidget.widgetNearestTo(   location, in: view)
             let          relate = relationOf(location, to: nearest?.textWidget)
             let            done = [ZGestureRecognizerState.ended, ZGestureRecognizerState.cancelled].contains(iGesture!.state)
             let             dot = iGesture?.view as! ZoneDot
             let           match = nearest?.widgetZone
-            let          isHere = match == gTravelManager.hereZone
+            let          isHere = match == gHere
             let           mover = dot.widgetZone
             let            same = mover == match
-            let        useMatch = relate == .upon || match == gTravelManager.hereZone
+            let        useMatch = relate == .upon || match == gHere
             let          target = same ? nil : useMatch ? match : match?.parentZone
             let      sameParent = target == mover?.parentZone
             let      matchIndex = match?.siblingIndex

@@ -33,14 +33,15 @@ class ZoneCurve: ZView {
 
 
     var isDropTarget: Bool {
-        let   index = child?.widgetZone.siblingIndex
-        let isIndex = gSelectionManager.targetLineIndices?.contains(index!)
-        let  isDrop = parent?.widgetZone == gSelectionManager.targetDropZone
+        if  let   index = child?.widgetZone.siblingIndex {
+            let isIndex = gSelectionManager.targetLineIndices?.contains(index)
+            let  isDrop = parent?.widgetZone == gSelectionManager.targetDropZone
 
-        if isDrop && isIndex! {
-            return true
+            if isDrop && isIndex! {
+                return true
+            }
         }
-
+        
         return false
     }
 

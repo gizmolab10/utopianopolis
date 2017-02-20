@@ -38,19 +38,20 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     abortEditing()
 
                     if grab {
-                        gSelectionManager.currentlyEditingZone  = nil
+                        gSelectionManager.currentlyEditingZone = nil
 
                         zone?.grab()
                     }
                 } else {
-                    gSelectionManager.currentlyEditingZone  = zone
+                    gSelectionManager.currentlyEditingZone = zone
                     textColor                              = widget.widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor
                     font                                   = gGrabbedWidgetFont
 
                     gSelectionManager.clearGrab()
+                    updateText()
 
                     #if os(OSX)
-                    monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {(event) -> ZEvent? in
+                    monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { (event) -> ZEvent? in
                         if self.isTextEditing, !event.modifierFlags.isNumericPad {
                             gEditingManager.handleEvent(event, isWindow: false)
                         }
@@ -63,6 +64,13 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 signalFor(nil, regarding: .data)
             }
         }
+    }
+
+
+    func updateText() {
+        let    name = widget.widgetZone.zoneName
+        let hasName = name != nil
+        text        = hasName ? name : "empty"
     }
 
 

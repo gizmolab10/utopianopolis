@@ -48,3 +48,5 @@ let      showChildrenKey = "showChildren"
 let      manifestTypeKey = "ZManifest"
 let      manifestNameKey = "manifest"
 let favoritesRootNameKey = "favoritesRoot"
+
+var gHere: Zone { get { return gTravelManager.hereZone } set { gTravelManager.hereZone = newValue } }

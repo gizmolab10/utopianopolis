@@ -293,9 +293,7 @@ class Zone : ZRecord {
 
 
     private func hasAnyZonesAbove(_ iAbove: Bool) -> Bool {
-        let here = gTravelManager.hereZone
-
-        if self != here, let i = siblingIndex {
+        if self != gHere, let i = siblingIndex {
             let hasZone = i != (iAbove ? 0 : (parentZone!.count - 1))
 
             return hasZone || parentZone!.hasAnyZonesAbove(iAbove)

@@ -223,8 +223,7 @@ class ZCloudManager: ZRecordsManager {
                 if iHereRecord == nil || iHereRecord?[zoneNameKey] == nil {
                     self.establishRootAsHere(storageMode, onCompletion)
                 } else {
-                    let               here = self.zoneForRecord(iHereRecord!)
-                    gTravelManager.hereZone = here
+                    gHere = self.zoneForRecord(iHereRecord!)
 
                     gTravelManager.manifest.needUpdateSave()
 

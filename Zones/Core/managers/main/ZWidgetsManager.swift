@@ -45,7 +45,7 @@ class ZWidgetsManager: NSObject {
         if zone != nil {
             return widgets[(zone?.hash)!]
         } else {
-            return widgetForZone(gTravelManager.hereZone)
+            return widgetForZone(gHere)
         }
     }
 }

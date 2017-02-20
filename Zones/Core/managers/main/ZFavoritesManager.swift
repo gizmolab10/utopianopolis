@@ -238,7 +238,7 @@ class ZFavoritesManager: NSObject {
                 gStorageMode = mode
 
                 gTravelManager.travel {
-                    gTravelManager.hereZone.grab()
+                    gHere.grab()
                     atArrival()
                 }
             } else {
