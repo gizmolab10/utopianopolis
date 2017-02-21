@@ -100,13 +100,13 @@ func setColor(_ iColor: ZColor, key: String) {
 
 var gZoneColor: ZColor {
     set { setColor(newValue, key: zoneColorKey) }
-    get { return   getColorForKey(zoneColorKey, defaultColor: ZColor.purple) }
+    get { return   getColorForKey(zoneColorKey, defaultColor: ZColor.blue) }
 }
 
 
 var gBookmarkColor: ZColor {
     set { setColor(newValue, key: bookmarkColorKey) }
-    get { return   getColorForKey(bookmarkColorKey, defaultColor: ZColor.blue) }
+    get { return   getColorForKey(bookmarkColorKey, defaultColor: ZColor.green) }
 }
 
 
@@ -135,8 +135,8 @@ var gGenericOffset: CGSize {
             return CGSizeFromString(string)
         }
 
-        let defaultValue = CGSize(width: 12.0, height: 4.0)
-        let string = NSStringFromSize(defaultValue)
+        let defaultValue = CGSize(width: 33.0, height: 8.0)
+        let       string = NSStringFromSize(defaultValue)
 
         UserDefaults.standard.set(string, forKey: genericOffsetKey)
         UserDefaults.standard.synchronize()

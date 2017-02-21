@@ -105,7 +105,6 @@ class ZoneWidget: ZView {
         if recursing {
             prepareChildren()
             layoutChildren(kind)
-            layoutLines(kind)
         }
 
         layoutText()
@@ -211,69 +210,6 @@ class ZoneWidget: ZView {
     }
 
 
-    func layoutLines(_ kind: ZSignalKind) {
-        let         show = widgetZone.showChildren
-        let  redrawLines = kind == .redraw
-
-        if !show || redrawLines {
-            for line in siblingLines {
-                line.removeFromSuperview()
-            }
-
-            siblingLines.removeAll()
-        }
-
-        if show {
-            var needUpdate = IndexSet()
-            let   children = widgetZone.children
-            let      count = children.count
-
-            if count > 0 {
-                for index in 0...count - 1 {
-                    needUpdate.insert(index)
-                }
-            }
-
-            for line in siblingLines {
-                var found = false
-
-                for (index, child) in children.enumerated() {
-                    if show && child == line.child?.widgetZone {
-                        if !redrawLines {
-                            needUpdate.remove(index)
-                        }
-
-                        found = true
-                    }
-                }
-
-                if !show || !found {
-                    line.removeFromSuperview()
-                }
-            }
-
-            if show && needUpdate.count > 0 {
-                for (index, childWidget) in childrenWidgets.enumerated() {
-                    if needUpdate.contains(index) {
-                        let siblingLine    = ZoneCurve()
-                        siblingLine.child  = childWidget
-                        siblingLine.parent = self
-
-                        siblingLines.insert(siblingLine, at:index)
-                        addSubview(siblingLine)
-
-                        siblingLine.snp.makeConstraints { (make: ConstraintMaker) in
-                            make.width.height.equalTo(gLineThickness)
-                            make.centerX.equalTo(textWidget.snp.right).offset(6.0)
-                            make.centerY.equalTo(textWidget).offset(1.5)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
     func layoutDots() {
         if !subviews.contains(dragDot) {
             addSubview(dragDot)
@@ -354,8 +290,129 @@ class ZoneWidget: ZView {
     }
 
 
+    func isDropIndex(_ iIndex: Int?) -> Bool {
+        if  iIndex != nil {
+            let isIndex = gSelectionManager.targetLineIndices?.contains(iIndex!)
+            let  isDrop = widgetZone == gSelectionManager.targetDropZone
+
+            if isDrop && isIndex! {
+                return true
+            }
+        }
+
+        return false
+    }
+    
+
     // MARK:- draw
     // MARK:-
+
+
+    func lineRect(_ rightWidget: ZoneWidget?) -> CGRect {
+        var frame = CGRect ()
+
+        if  rightWidget          != nil, let leftDot = toggleDot.innerDot, let rightDot = rightWidget!.dragDot.innerDot {
+            let         leftFrame =  leftDot.convert( leftDot.bounds, to: self)
+            let        rightFrame = rightDot.convert(rightDot.bounds, to: self)
+            let         thickness = CGFloat(gLineThickness)
+            let     thinThickness = thickness / 2.0
+            let    thickThickness = thickness * 1.5
+            let         rightMidY = rightFrame.midY
+            let          leftMidY = leftFrame .midY
+            let             right = rightFrame.midX + thinThickness
+            frame.origin       .x = leftFrame .minX
+
+            switch lineKindOf(rightWidget) {
+            case .above:
+                frame.origin   .y =       rightMidY + thickThickness
+                frame.size.height = fabs(  leftMidY -  thinThickness - frame.minY)
+            case .below:
+                frame.origin   .y =        leftMidY +  thinThickness
+                frame.size.height = fabs( rightMidY - thickThickness - frame.minY)
+            case .straight:
+                frame.origin   .y =       rightMidY +  thinThickness - 0.5
+                frame.origin   .x = rightFrame.maxX - 1.0
+                frame.size.height = thickness
+            }
+
+            frame.size     .width = fabs(right                       - frame.minX)
+        }
+        
+        return frame
+    }
+    
+
+    func lineKindOf(_ widget: ZoneWidget?) -> ZLineKind {
+        if  widgetZone.count > 1 {
+            let           dragDot = widget?.dragDot.innerDot
+            let    dragDotCenterY =   dragDot?.convert((  dragDot?.bounds)!, to: self).center.y
+            let textWidgetCenterY = textWidget.convert((textWidget.bounds),  to: self).center.y
+            let             delta = Double(dragDotCenterY! - textWidgetCenterY)
+            let         threshold = gDotHeight / 2.0
+
+            if delta > threshold {
+                return .above
+            } else if delta < -threshold {
+                return .below
+            }
+        }
+
+        return .straight
+    }
+
+
+    func drawLines() {
+        let             halfHeight = (toggleDot     .innerDot?.bounds.size.height)! / 2.0
+
+        for child in childrenWidgets {
+            let               zone = child.widgetZone!
+            let               kind = lineKindOf(child)
+            let         strokeRect = lineRect(child)
+            var               path = ZBezierPath(rect: strokeRect)
+
+            if kind != .straight {
+                path.setClip()
+
+                let      halfWidth = child.dragDot.innerDot!.bounds.size.width / 2.0
+                var           rect = strokeRect
+
+                if kind == .above {
+                    rect.origin.y -= rect.size.height
+                }
+
+                rect.size   .width =  rect.size.width * 2.0 + halfWidth
+                rect.size  .height = (rect.size.height      + halfHeight) * 2.0
+                path               = ZBezierPath(ovalIn: rect)
+            }
+
+            path        .lineWidth = CGFloat(gLineThickness)
+            path         .flatness = 0.0001
+            let              color = zone.isBookmark ? gBookmarkColor : isDropIndex(zone.siblingIndex) ? gDragTargetsColor : gZoneColor
+
+            ZColor.clear.setFill()
+            color.setStroke()
+            path.stroke()
+        }
+    }
+
+
+    func drawDragHighlight() {
+        let     thickness = dragDot.width / 2.5
+        var          rect = textWidget.frame.insetBy(dx: -13.0, dy: 0.0)
+        rect.size .width += 1.0
+        rect.size.height -= 3.0
+        let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
+        let         color = widgetZone.isBookmark ? gBookmarkColor : gZoneColor
+        let     fillColor = color.withAlphaComponent(0.02)
+        let   strokeColor = color.withAlphaComponent(0.2)
+        let          path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
+        path   .lineWidth = thickness
+        path    .flatness = 0.0001
+
+        fillColor.setFill()
+        strokeColor.setStroke()
+        path.stroke()
+    }
 
 
     override func draw(_ dirtyRect: CGRect) {
@@ -365,21 +422,9 @@ class ZoneWidget: ZView {
         textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor : ZColor.black
 
         if isGrabbed && !widgetZone.isEditing {
-            let     thickness = dragDot.width / 2.5
-            var          rect = textWidget.frame.insetBy(dx: -13.0, dy: 0.0)
-            rect.size .width += 1.0
-            rect.size.height -= 3.0
-            let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
-            let         color = widgetZone.isBookmark ? gBookmarkColor : gZoneColor
-            let     fillColor = color.withAlphaComponent(0.02)
-            let   strokeColor = color.withAlphaComponent(0.2)
-            let          path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
-            path   .lineWidth = thickness
-            path    .flatness = 0.0001
-
-            fillColor.setFill()
-            strokeColor.setStroke()
-            path.stroke()
+            drawDragHighlight()
         }
+
+        drawLines()
     }
 }

@@ -108,26 +108,29 @@ class ZoneCurve: ZView {
 
 
     func drawCurveIn(_ dirtyRect: CGRect) {
-        if dirtyRect.size.width > 1.0 {
+        if dirtyRect.size.width > CGFloat(gLineThickness) {
             let             zone = child?.widgetZone
+            let     name: String = zone?.zoneName ?? "---"
             let toggleHalfHeight = (parent?.toggleDot.innerDot?.bounds.size.height)! / 2.0
             let    dragHalfWidth = (child?   .dragDot.innerDot?.bounds.size.width )! / 2.0
             let            color = (zone?.isBookmark)! ? gBookmarkColor : isDropTarget ? gDragTargetsColor : gZoneColor
             var y: CGFloat
 
+            report("\(dirtyRect.size.height) \(name)")
+
             switch kind {
-            case .above: y = -dirtyRect.maxY - toggleHalfHeight * 2.0; break
-            case .below: y =  dirtyRect.minY;                          break
-            case .straight: zlayer.backgroundColor = color.cgColor;   return
+            case .below: y =  dirtyRect.minY
+            case .above: y = -dirtyRect.maxY - toggleHalfHeight * 2.0
+            case .straight: zlayer.backgroundColor = color.cgColor; return
             }
 
-            let rect = CGRect(x: dirtyRect.minX, y: y, width: dirtyRect.size.width * 2.0 + dragHalfWidth , height: (dirtyRect.size.height + toggleHalfHeight) * 2.0 )
-            let path = ZBezierPath(ovalIn: rect)
+            let       rect = CGRect(x: dirtyRect.minX, y: y, width: dirtyRect.size.width * 2.0 + dragHalfWidth , height: (dirtyRect.size.height + toggleHalfHeight) * 2.0 )
+            let       path = ZBezierPath(ovalIn: rect)
+            path.lineWidth = CGFloat(gLineThickness)
+            path .flatness = 0.0001
 
             ZColor.clear.setFill()
             color.setStroke()
-            path.lineWidth = CGFloat(gLineThickness)
-            path.flatness = 0.0001
             path.stroke()
         }
     }
