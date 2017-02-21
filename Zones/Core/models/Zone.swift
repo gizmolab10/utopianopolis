@@ -489,7 +489,7 @@ class Zone : ZRecord {
 
     var siblingIndex: Int? {
         get {
-            if let siblings: [Zone] = parentZone?.children, let index = siblings.index(of: self) {
+            if let siblings = parentZone?.children, let index = siblings.index(of: self) {
                 return index
             }
 

@@ -935,9 +935,6 @@ class ZEditingManager: NSObject {
                 completedYet     = true
                 var insert: Int? = zone.parentZone?.siblingIndex
 
-                zone.needUpdateSave()
-                outTo.needUpdateSave()
-
                 if outTo.storageMode == .favorites {
                     insert = gFavoritesManager.nextFavoritesIndex(forward: !asTask)
                 } else if zone.parentZone?.parentZone == outTo {
@@ -957,7 +954,7 @@ class ZEditingManager: NSObject {
                     }
                 }
 
-                if let from = zone.parentZone {
+                if  let  from = zone.parentZone {
                     let index = zone.siblingIndex
 
                     self.UNDO(self) { iUndoSelf in
@@ -970,11 +967,12 @@ class ZEditingManager: NSObject {
                 }
 
                 if  insert != nil && insert! > outTo.count {
-                    insert = nil
+                    insert  = nil
                 }
 
                 outTo.addAndReorderChild(zone, at: insert)
-
+                outTo.needUpdateSave()
+                zone .needUpdateSave()
                 onCompletion?()
             }
         }
@@ -982,8 +980,8 @@ class ZEditingManager: NSObject {
 
 
     func moveZone(_ zone: Zone, into: Zone, at iIndex: Int?, orphan: Bool, onCompletion: Closure?) {
-        if let parent = zone.parentZone {
-            let index = zone.siblingIndex
+        if  let parent = zone.parentZone {
+            let  index = zone.siblingIndex
 
             UNDO(self) { iUndoSelf in
                 iUndoSelf.moveZone(zone, into: parent, at: index, orphan: orphan) { onCompletion?() }
@@ -1029,6 +1027,7 @@ class ZEditingManager: NSObject {
 
                 if selectionOnly {
                     there.children[newIndex].grab()
+                    signalFor(there, regarding: .redraw)
                 } else {
                     gSelectionManager.deselectGrabs()
                     there.moveChild(from: index, to: newIndex)

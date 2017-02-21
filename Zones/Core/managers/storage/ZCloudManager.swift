@@ -369,8 +369,8 @@ class ZCloudManager: ZRecordsManager {
                                 child.needChildren()
                             }
 
-                            if let parent = child.parentZone {
-                                if parent != child {
+                            if let parent  = child.parentZone {
+                                if parent != child && !parent.children.contains(child) {
                                     parent.addChild(child)
 
                                     if !parentsNeedingResort.contains(parent) {
