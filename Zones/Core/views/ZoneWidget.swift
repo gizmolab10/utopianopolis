@@ -32,10 +32,11 @@ class ZoneWidget: ZView {
     private var       _textWidget:  ZoneTextWidget!
     private var     _childrenView:  ZView!
     private var   childrenWidgets = [ZoneWidget] ()
-    let                 toggleDot = ZoneDot()
-    let                   dragDot = ZoneDot()
+    let                 toggleDot = ZoneDot ()
+    let                   dragDot = ZoneDot ()
     var                widgetZone:  Zone!
     var               hasChildren:  Bool { return widgetZone.hasChildren || widgetZone.count > 0 }
+    var           needsSecondDraw = true
 
 
     var controllerView: ZView {
@@ -104,6 +105,7 @@ class ZoneWidget: ZView {
         }
 
         inView?.zlayer.backgroundColor = ZColor.clear.cgColor
+        needsSecondDraw                = true
 
         clear()
         gWidgetsManager.registerWidget(self)
@@ -115,7 +117,6 @@ class ZoneWidget: ZView {
 
         layoutText()
         layoutDots()
-        setNeedsDisplay()
     }
 
 
@@ -219,6 +220,10 @@ class ZoneWidget: ZView {
     func layoutDots() {
         if !subviews.contains(dragDot) {
             addSubview(dragDot)
+        }
+
+        if widgetZone.parentZone?.zoneName == "bugs" && widgetZone.zoneName == "drag and toggle dots not aligned" {
+            report("layoutDots")
         }
 
         dragDot.innerDot?.snp.removeConstraints()
@@ -423,6 +428,10 @@ class ZoneWidget: ZView {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
+        if widgetZone.zoneName == "bugs" {
+            report("draw lines")
+        }
+
         let        isGrabbed = widgetZone.isGrabbed
         textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor : ZColor.black
 
@@ -432,6 +441,14 @@ class ZoneWidget: ZView {
 
         for child in childrenWidgets {
             drawLine(to: child)
+        }
+
+        if           needsSecondDraw {
+            dispatchAsyncInForeground {
+                self.needsSecondDraw = false
+
+                self.setNeedsDisplay()
+            }
         }
     }
 }
