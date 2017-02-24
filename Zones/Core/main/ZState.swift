@@ -55,6 +55,7 @@ var     gTextCapturing = false
 var    gShowsSearching = false
 var gRecursivelyFetch = false
 var         gDotHeight = 12.0
+var          gDotWidth = gDotHeight * 0.75
 var          gWorkMode = ZWorkMode.editMode
 var          gFileMode = ZFileMode.cloud
 

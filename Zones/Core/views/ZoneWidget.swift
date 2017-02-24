@@ -16,6 +16,13 @@ import SnapKit
 #endif
 
 
+enum ZLineKind: Int {
+    case below    = -1
+    case straight =  0
+    case above    =  1
+}
+
+
 let dragTarget = false
 
 
@@ -24,7 +31,6 @@ class ZoneWidget: ZView {
 
     private var       _textWidget:  ZoneTextWidget!
     private var     _childrenView:  ZView!
-    private var      siblingLines = [ZoneCurve] ()
     private var   childrenWidgets = [ZoneWidget] ()
     let                 toggleDot = ZoneDot()
     let                   dragDot = ZoneDot()
@@ -241,14 +247,12 @@ class ZoneWidget: ZView {
 
 
     func displayForDrag() {
-        toggleDot.innerDot?        .setNeedsDisplay()
-
-        for line in siblingLines {
-            line                   .setNeedsDisplay()
-        }
+        toggleDot        .innerDot?.setNeedsDisplay()
+        self                       .setNeedsDisplay()
 
         for child in childrenWidgets {
             child.dragDot.innerDot?.setNeedsDisplay()
+            child                  .setNeedsDisplay()
         }
     }
 
@@ -308,40 +312,6 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    func lineRect(_ rightWidget: ZoneWidget?) -> CGRect {
-        var frame = CGRect ()
-
-        if  rightWidget          != nil, let leftDot = toggleDot.innerDot, let rightDot = rightWidget!.dragDot.innerDot {
-            let         leftFrame =  leftDot.convert( leftDot.bounds, to: self)
-            let        rightFrame = rightDot.convert(rightDot.bounds, to: self)
-            let         thickness = CGFloat(gLineThickness)
-            let     thinThickness = thickness / 2.0
-            let    thickThickness = thickness * 1.5
-            let         rightMidY = rightFrame.midY
-            let          leftMidY = leftFrame .midY
-            let             right = rightFrame.midX + thinThickness
-            frame.origin       .x = leftFrame .minX
-
-            switch lineKindOf(rightWidget) {
-            case .above:
-                frame.origin   .y =       rightMidY + thickThickness
-                frame.size.height = fabs(  leftMidY -  thinThickness - frame.minY)
-            case .below:
-                frame.origin   .y =        leftMidY +  thinThickness
-                frame.size.height = fabs( rightMidY - thickThickness - frame.minY)
-            case .straight:
-                frame.origin   .y =       rightMidY +  thinThickness - 0.5
-                frame.origin   .x = rightFrame.maxX - 1.0
-                frame.size.height = thickness
-            }
-
-            frame.size     .width = fabs(right                       - frame.minX)
-        }
-        
-        return frame
-    }
-    
-
     func lineKindOf(_ widget: ZoneWidget?) -> ZLineKind {
         if  widgetZone.count > 1 {
             let           dragDot = widget?.dragDot.innerDot
@@ -361,38 +331,73 @@ class ZoneWidget: ZView {
     }
 
 
-    func drawLines() {
-        let             halfHeight = (toggleDot     .innerDot?.bounds.size.height)! / 2.0
+    func rectForLine(to rightWidget: ZoneWidget?) -> CGRect {
+        var frame = CGRect ()
 
-        for child in childrenWidgets {
-            let               zone = child.widgetZone!
-            let               kind = lineKindOf(child)
-            let         strokeRect = lineRect(child)
-            var               path = ZBezierPath(rect: strokeRect)
+        if  rightWidget          != nil, let leftDot = toggleDot.innerDot, let rightDot = rightWidget!.dragDot.innerDot {
+            let         leftFrame =  leftDot.convert( leftDot.bounds, to: self)
+            let        rightFrame = rightDot.convert(rightDot.bounds, to: self)
+            let         thickness = CGFloat(gLineThickness)
+            let     halfDotHeight = CGFloat(gDotHeight / 2.0)
+            let     thinThickness = thickness / 2.0
+            let         rightMidY = rightFrame.midY
+            let          leftMidY = leftFrame .midY
+            frame.origin       .x = leftFrame .midX
 
-            if kind != .straight {
-                path.setClip()
-
-                let      halfWidth = child.dragDot.innerDot!.bounds.size.width / 2.0
-                var           rect = strokeRect
-
-                if kind == .above {
-                    rect.origin.y -= rect.size.height
-                }
-
-                rect.size   .width =  rect.size.width * 2.0 + halfWidth
-                rect.size  .height = (rect.size.height      + halfHeight) * 2.0
-                path               = ZBezierPath(ovalIn: rect)
+            switch lineKindOf(rightWidget) {
+            case .above:
+                frame.origin   .y = leftFrame .maxY - thinThickness
+                frame.size.height = fabs( rightMidY + thinThickness - frame.minY)
+            case .below:
+                frame.origin   .y = rightFrame.minY
+                frame.size.height = fabs(  leftMidY + thinThickness - frame.minY - halfDotHeight)
+            case .straight:
+                frame.origin   .y =       rightMidY - thinThickness / 8.0
+                frame.origin   .x = leftFrame .maxX
+                frame.size.height =                   thinThickness / 4.0
             }
 
-            path        .lineWidth = CGFloat(gLineThickness)
-            path         .flatness = 0.0001
-            let              color = zone.isBookmark ? gBookmarkColor : isDropIndex(zone.siblingIndex) ? gDragTargetsColor : gZoneColor
-
-            ZColor.clear.setFill()
-            color.setStroke()
-            path.stroke()
+            frame.size     .width = fabs(rightFrame.minX - frame.minX)
         }
+        
+        return frame
+    }
+
+
+    func drawLine(to child: ZoneWidget) {
+        let      lineThickness = CGFloat(gLineThickness)
+        let      halfDotHeight = CGFloat(gDotHeight / 2.0)
+        let       halfDotWidth = CGFloat(gDotWidth  / 2.0)
+        let         strokeRect = rectForLine(to: child)
+        var               path = ZBezierPath(rect: strokeRect)
+        let               kind = lineKindOf(child)
+
+        if kind == .straight {
+            ZBezierPath(rect: bounds).setClip()
+        } else {
+            ZColor.clear.setFill()
+            path.setClip()
+
+            var           rect = strokeRect
+
+            if kind == .below {
+                rect.origin.y += halfDotHeight
+            } else {
+                rect.origin.y -= rect.size.height       + lineThickness
+            }
+
+            rect.size   .width = rect.size.width  * 2.0 + halfDotWidth
+            rect.size  .height = rect.size.height * 2.0 + lineThickness
+            path               = ZBezierPath(ovalIn: rect)
+        }
+
+        let               zone = child.widgetZone!
+        let              color = zone.isBookmark ? gBookmarkColor : isDropIndex(zone.siblingIndex) ? gDragTargetsColor : gZoneColor
+        path        .lineWidth = lineThickness
+        path         .flatness = 0.0001
+
+        color.setStroke()
+        path.stroke()
     }
 
 
@@ -425,6 +430,8 @@ class ZoneWidget: ZView {
             drawDragHighlight()
         }
 
-        drawLines()
+        for child in childrenWidgets {
+            drawLine(to: child)
+        }
     }
 }

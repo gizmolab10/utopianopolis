@@ -108,14 +108,9 @@ extension NSView {
     var recognizers: [NSGestureRecognizer]? { get { return gestureRecognizers } }
 
 
-    func clear() {
-        zlayer.backgroundColor = ZColor.clear.cgColor
-    }
-
-
-    func setNeedsDisplay() {
-        needsDisplay = true
-    }
+    func clear() { zlayer.backgroundColor = ZColor.clear.cgColor }
+    func setNeedsDisplay() { needsDisplay = true }
+    func setNeedsLayout () { needsLayout  = true }
 
 
     @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> NSGestureRecognizer {
