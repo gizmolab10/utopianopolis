@@ -607,7 +607,7 @@ CQ
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="RLV-US-bib"/>
                                                         </constraints>
-                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Favorites" drawsBackground="YES" id="d9E-51-w6L">
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Favorites (click to use)" drawsBackground="YES" id="d9E-51-w6L">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="highlightColor" catalog="System" colorSpace="catalog"/>

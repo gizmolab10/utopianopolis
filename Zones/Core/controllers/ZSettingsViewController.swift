@@ -211,7 +211,7 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
         var        value = ""
 
-        if  let     text = row == 0 ? "edit these items" : gFavoritesManager.textAtIndex(row - 1) {
+        if  let     text = row == 0 ? "Edit these items ..." : gFavoritesManager.textAtIndex(row - 1) {
             let needsDot = gFavoritesManager.favoritesIndex == row - 1
             let   prefix = needsDot ? "•" : "  "
             value        = " \(prefix) \(text)"

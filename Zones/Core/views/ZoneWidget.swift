@@ -35,7 +35,8 @@ class ZoneWidget: ZView {
     let                 toggleDot = ZoneDot ()
     let                   dragDot = ZoneDot ()
     var                widgetZone:  Zone!
-    var               hasChildren:  Bool { return widgetZone.hasChildren || widgetZone.count > 0 }
+    var                widgetFont:  ZFont { return widgetZone.isSelected ? gSelectedWidgetFont : gWidgetFont }
+    var               hasChildren:  Bool  { return widgetZone.hasChildren || widgetZone.count > 0 }
     var           needsSecondDraw = true
 
 
@@ -122,7 +123,7 @@ class ZoneWidget: ZView {
 
     func layoutText() {
         textWidget.widget = self
-        textWidget.font   = widgetZone.isSelected ? gGrabbedWidgetFont : gWidgetFont
+        textWidget.font   = widgetFont
 
         textWidget.updateText()
         layoutTextField()
@@ -132,7 +133,7 @@ class ZoneWidget: ZView {
     func layoutTextField() {
         textWidget.snp.removeConstraints()
         textWidget.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let  font = widgetZone.isSelected ? gGrabbedWidgetFont : gWidgetFont
+            let  font = widgetFont
             let width = textWidget.text!.widthForFont(font) + 5.0
 
             make  .width.equalTo(width)
@@ -220,10 +221,6 @@ class ZoneWidget: ZView {
     func layoutDots() {
         if !subviews.contains(dragDot) {
             addSubview(dragDot)
-        }
-
-        if widgetZone.parentZone?.zoneName == "bugs" && widgetZone.zoneName == "drag and toggle dots not aligned" {
-            report("layoutDots")
         }
 
         dragDot.innerDot?.snp.removeConstraints()
@@ -428,10 +425,6 @@ class ZoneWidget: ZView {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        if widgetZone.zoneName == "bugs" {
-            report("draw lines")
-        }
-
         let        isGrabbed = widgetZone.isGrabbed
         textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor : ZColor.black
 
@@ -442,6 +435,12 @@ class ZoneWidget: ZView {
         for child in childrenWidgets {
             drawLine(to: child)
         }
+
+        // lines are drawn wrongly until dots are redrawn
+        // but dots are drawn AFTER lines are drawn
+        // so tell the os to redraw this widget (a second time)
+        // because then the dots' constraints will have been correctly applied
+        // and thus the lines' rects will be correct
 
         if           needsSecondDraw {
             dispatchAsyncInForeground {

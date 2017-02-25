@@ -58,10 +58,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        if widget?.widgetZone.zoneName == "drag and toggle dots not aligned" {
-            report("draw drag dot")
-        }
-
         if isInnerDot, let zone = widgetZone {
             let      isBookmark = zone.isBookmark || zone.isRootOfFavorites
             let        isTarget = isToggleTarget || isDropTarget

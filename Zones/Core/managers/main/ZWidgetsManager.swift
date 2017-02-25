@@ -35,7 +35,7 @@ class ZWidgetsManager: NSObject {
 
 
     func unregisterWidget(_ widget: ZoneWidget) {
-        if let zone = widget.widgetZone {
+        if let zone = widget.widgetZone, widgets[zone.hash] == widget {
             widgets[zone.hash] = nil
         }
     }
@@ -43,7 +43,7 @@ class ZWidgetsManager: NSObject {
 
     func widgetForZone(_ zone: Zone?) -> ZoneWidget? {
         if zone != nil {
-            return widgets[(zone?.hash)!]
+            return widgets[zone!.hash]
         } else {
             return widgetForZone(gHere)
         }

@@ -45,7 +45,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 } else {
                     gSelectionManager.currentlyEditingZone = zone
                     textColor                              = widget.widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor
-                    font                                   = gGrabbedWidgetFont
+                    font                                   = gSelectedWidgetFont
 
                     gSelectionManager.clearGrab()
                     updateText()
