@@ -47,7 +47,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     textColor                              = widget.widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor
                     font                                   = gSelectedWidgetFont
 
-                    gSelectionManager.clearGrab()
+                    gSelectionManager.deselectGrabs()
                     updateText()
 
                     #if os(OSX)

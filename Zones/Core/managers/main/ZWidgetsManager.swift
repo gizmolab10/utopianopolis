@@ -14,9 +14,7 @@ import CloudKit
 class ZWidgetsManager: NSObject {
 
 
-    var widgets = [Int : ZoneWidget] ()
-
-
+    var      widgets = [Int : ZoneWidget] ()
     var currentEditingWidget: ZoneWidget? { return widgetForZone(gSelectionManager.currentlyEditingZone) }
     var currentMovableWidget: ZoneWidget? { return widgetForZone(gSelectionManager.currentlyMovableZone) }
     var firstGrabbableWidget: ZoneWidget? { return widgetForZone(gSelectionManager.firstGrabbableZone) }
@@ -35,6 +33,9 @@ class ZWidgetsManager: NSObject {
 
 
     func unregisterWidget(_ widget: ZoneWidget) {
+
+        // only unlink the zone from its current widget
+
         if let zone = widget.widgetZone, widgets[zone.hash] == widget {
             widgets[zone.hash] = nil
         }
@@ -42,10 +43,6 @@ class ZWidgetsManager: NSObject {
 
 
     func widgetForZone(_ zone: Zone?) -> ZoneWidget? {
-        if zone != nil {
-            return widgets[zone!.hash]
-        } else {
-            return widgetForZone(gHere)
-        }
+        return zone == nil ? nil : widgets[zone!.hash]
     }
 }
