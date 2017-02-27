@@ -37,7 +37,7 @@ class ZoneWidget: ZView {
     var                widgetZone:  Zone!
     var                widgetFont:  ZFont { return widgetZone.isSelected ? gSelectedWidgetFont : gWidgetFont }
     var               hasChildren:  Bool  { return widgetZone.hasChildren || widgetZone.count > 0 }
-    var           needsSecondDraw = true
+    var          isSecondDrawPass = false
 
 
     var controllerView: ZView {
@@ -106,7 +106,7 @@ class ZoneWidget: ZView {
         }
 
         inView?.zlayer.backgroundColor = ZColor.clear.cgColor
-        needsSecondDraw                = true
+        isSecondDrawPass               = false
 
         clear()
         gWidgetsManager.registerWidget(self)
@@ -191,7 +191,7 @@ class ZoneWidget: ZView {
             var previous: ZView? = nil
 
             while index > 0 {
-                index                 -= 1 // go backwards down the arrays, constraint making expects it, below
+                index                 -= 1 // go backwards down the arrays, constraint making expects it, above
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone = widgetZone     [index]
 
@@ -313,6 +313,96 @@ class ZoneWidget: ZView {
     // MARK:- draw
     // MARK:-
 
+    #if os(OSX)
+
+    func lineKindOf(_ widget: ZoneWidget?) -> ZLineKind {
+        if  widgetZone.count > 1 {
+            let           dragDot = widget?.dragDot.innerDot
+            let    dragDotCenterY =   dragDot?.convert((  dragDot?.bounds)!, to: self).center.y
+            let textWidgetCenterY = textWidget.convert((textWidget.bounds),  to: self).center.y
+            let             delta = Double(dragDotCenterY! - textWidgetCenterY)
+            let         threshold = gDotHeight / 2.0
+
+            if delta > threshold {
+                return .above
+            } else if delta < -threshold {
+                return .below
+            }
+        }
+        
+        return .straight
+    }
+
+
+    func rectForLine(to rightWidget: ZoneWidget?) -> CGRect {
+        var frame = CGRect ()
+
+        if  rightWidget          != nil, let leftDot = toggleDot.innerDot, let rightDot = rightWidget!.dragDot.innerDot {
+            let         leftFrame =  leftDot.convert( leftDot.bounds, to: self)
+            let        rightFrame = rightDot.convert(rightDot.bounds, to: self)
+            let         thickness = CGFloat(gLineThickness)
+            let         dotHeight = CGFloat(gDotHeight)
+            let     halfDotHeight = dotHeight / 2.0
+            let     thinThickness = thickness / 2.0
+            let         rightMidY = rightFrame.midY
+            let          leftMidY = leftFrame .midY
+            frame.origin       .x = leftFrame .midX
+
+            switch lineKindOf(rightWidget) {
+            case .above:
+                frame.origin   .y = leftFrame .maxY - thinThickness
+                frame.size.height = fabs( rightMidY + thinThickness - frame.minY)
+            case .below:
+                frame.origin   .y = rightFrame.minY + halfDotHeight
+                frame.size.height = fabs(  leftMidY + thinThickness - frame.minY - halfDotHeight)
+            case .straight:
+                frame.origin   .y =       rightMidY - thinThickness / 8.0
+                frame.origin   .x = leftFrame .maxX
+                frame.size.height =                   thinThickness / 4.0
+            }
+
+            frame.size     .width = fabs(rightFrame.minX - frame.minX)
+        }
+        
+        return frame
+    }
+
+
+    func drawLine(to child: ZoneWidget) {
+        let      lineThickness = CGFloat(gLineThickness)
+        let          dotHeight = CGFloat(gDotHeight)
+        let       halfDotWidth = CGFloat(gDotWidth) / 2.0
+        let      halfDotHeight = dotHeight / 2.0
+        var               rect = rectForLine(to: child)
+        var               path = ZBezierPath(rect: rect)
+        let               kind = lineKindOf(child)
+        let            isAbove = kind == .above
+
+        ZBezierPath(rect: bounds).setClip()
+
+        if kind != .straight {
+            ZColor.clear.setFill()
+            path.setClip()
+
+            if isAbove {
+                rect.origin.y -= rect.height + halfDotHeight
+            }
+
+            rect.size   .width = rect.width  * 2.0 + halfDotWidth
+            rect.size  .height = rect.height * 2.0 + (isAbove ? halfDotHeight : dotHeight)
+            path               = ZBezierPath(ovalIn: rect)
+        }
+
+        let               zone = child.widgetZone!
+        let              color = zone.isBookmark ? gBookmarkColor : isDropIndex(zone.siblingIndex) ? gDragTargetsColor : gZoneColor
+        path        .lineWidth = lineThickness
+        path         .flatness = 0.0001
+        
+        color.setStroke()
+        path.stroke()
+    }
+
+    #elseif os(iOS)
 
     func lineKindOf(_ widget: ZoneWidget?) -> ZLineKind {
         if  widgetZone.count > 1 {
@@ -340,18 +430,18 @@ class ZoneWidget: ZView {
             let         leftFrame =  leftDot.convert( leftDot.bounds, to: self)
             let        rightFrame = rightDot.convert(rightDot.bounds, to: self)
             let         thickness = CGFloat(gLineThickness)
-            let     halfDotHeight = CGFloat(gDotHeight / 2.0)
+            let     halfDotHeight = CGFloat(gDotHeight) / 2.0
             let     thinThickness = thickness / 2.0
             let         rightMidY = rightFrame.midY
             let          leftMidY = leftFrame .midY
             frame.origin       .x = leftFrame .midX
 
             switch lineKindOf(rightWidget) {
-            case .above:
-                frame.origin   .y = leftFrame .maxY - thinThickness
-                frame.size.height = fabs( rightMidY + thinThickness - frame.minY)
             case .below:
-                frame.origin   .y = rightFrame.minY
+                frame.origin   .y = leftFrame .minY - thinThickness
+                frame.size.height = fabs( rightMidY + thinThickness - frame.minY)
+            case .above:
+                frame.origin   .y = rightFrame.maxY + halfDotHeight
                 frame.size.height = fabs(  leftMidY + thinThickness - frame.minY - halfDotHeight)
             case .straight:
                 frame.origin   .y =       rightMidY - thinThickness / 8.0
@@ -368,39 +458,36 @@ class ZoneWidget: ZView {
 
     func drawLine(to child: ZoneWidget) {
         let      lineThickness = CGFloat(gLineThickness)
-        let      halfDotHeight = CGFloat(gDotHeight / 2.0)
-        let       halfDotWidth = CGFloat(gDotWidth  / 2.0)
-        let         strokeRect = rectForLine(to: child)
-        var               path = ZBezierPath(rect: strokeRect)
+        let               rect = rectForLine(to: child)
+        let               path = ZBezierPath(rect: rect)
         let               kind = lineKindOf(child)
-
-        if kind == .straight {
-            ZBezierPath(rect: bounds).setClip()
-        } else {
-            ZColor.clear.setFill()
-            path.setClip()
-
-            var           rect = strokeRect
-
-            if kind == .below {
-                rect.origin.y += halfDotHeight
-            } else {
-                rect.origin.y -= rect.size.height       + lineThickness
-            }
-
-            rect.size   .width = rect.size.width  * 2.0 + halfDotWidth
-            rect.size  .height = rect.size.height * 2.0 + lineThickness
-            path               = ZBezierPath(ovalIn: rect)
-        }
+        let            isBelow = kind == .above
+//
+//        if kind != .straight {
+//            let     startAngle = CGFloat(M_PI)
+//            let     deltaAngle = CGFloat(M_PI_2)
+//            let     multiplier = CGFloat(isBelow ? -1.0 : 1.0)
+//            let       endAngle = startAngle + (multiplier * deltaAngle)
+//            let        centerY = isBelow ? rect.minY : rect.maxY
+//            let         center = CGPoint(x: rect.maxX, y: centerY)
+//            path               = ZBezierPath(arcCenter: center, radius: rect.width, startAngle: startAngle, endAngle: endAngle, clockwise: !isBelow)
+//
+//            path.apply(CGAffineTransform(scaleX: 1.0, y: (rect.height / rect.width)))
+//        }
 
         let               zone = child.widgetZone!
         let              color = zone.isBookmark ? gBookmarkColor : isDropIndex(zone.siblingIndex) ? gDragTargetsColor : gZoneColor
         path        .lineWidth = lineThickness
         path         .flatness = 0.0001
-
+        
         color.setStroke()
-        path.stroke()
+
+        if isBelow {
+            path.stroke()
+        }
     }
+
+    #endif
 
 
     func drawDragHighlight() {
@@ -422,29 +509,42 @@ class ZoneWidget: ZView {
     }
 
 
+    func drawLinest() {
+
+//    for child in childrenWidgets {
+//        drawLine(to: child)
+//    }
+
+        var index = childrenWidgets.count
+
+        while index > 0 {
+            index    -= 1
+            let child = childrenWidgets[index]
+
+            drawLine(to: child)
+        }
+    }
+
+
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
         let        isGrabbed = widgetZone.isGrabbed
         textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor : ZColor.black
 
-        if isGrabbed && !widgetZone.isEditing {
-            drawDragHighlight()
-        }
+        // lines need CHILD dots drawn first.
+        // two passes through entire hierarchy:
+        // dots, then lines
 
-        for child in childrenWidgets {
-            drawLine(to: child)
-        }
+        if isSecondDrawPass {
+            drawLinest()
+        } else {
+            if isGrabbed && !widgetZone.isEditing {
+                drawDragHighlight()
+            }
 
-        // lines are drawn wrongly until dots are redrawn
-        // but dots are drawn AFTER lines are drawn
-        // so tell the os to redraw this widget (a second time)
-        // because then the dots' constraints will have been correctly applied
-        // and thus the lines' rects will be correct
-
-        if           needsSecondDraw {
             dispatchAsyncInForeground {
-                self.needsSecondDraw = false
+                self.isSecondDrawPass = true
 
                 self.setNeedsDisplay()
             }

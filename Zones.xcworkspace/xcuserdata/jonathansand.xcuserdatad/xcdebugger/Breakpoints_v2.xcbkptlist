@@ -12,15 +12,6 @@
             symbolName = "LAYOUT_CONSTRAINTS_NOT_SATISFIABLE"
             moduleName = "">
             <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "LAYOUT_CONSTRAINTS_NOT_SATISFIABLE"
-                  moduleName = "AppKit"
-                  usesParentBreakpointCondition = "Yes"
-                  offsetFromSymbolStart = "0">
-               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>

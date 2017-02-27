@@ -51,9 +51,12 @@ func NSStringFromSize(_ size: CGSize) -> String {
 
 
 extension NSObject {
-    func assignAsFirstResponder(_ responder: UIResponder?) {
-        responder?.becomeFirstResponder()
-    }
+    func assignAsFirstResponder(_ responder: UIResponder?) { responder?.becomeFirstResponder() }
+}
+
+
+extension UIBezierPath {
+    func setClip() { addClip() }
 }
 
 
