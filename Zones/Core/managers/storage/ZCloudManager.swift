@@ -357,9 +357,7 @@ class ZCloudManager: ZRecordsManager {
                         parent.respectOrder()
                     }
 
-                    // self.signalFor(nil, regarding: .redraw)
-
-                    self.fetchChildren(storageMode, onCompletion) // recurse: try another fetch
+                    self.fetchChildren(storageMode, onCompletion) // recurse to grab children of received children
                 } else {
                     self.invokeWithMode(storageMode) {
                         let child = self.zoneForRecord(iRecord!)

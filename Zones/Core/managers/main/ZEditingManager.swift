@@ -465,7 +465,7 @@ class ZEditingManager: NSObject {
             if zone!.isBookmark {
                 travelThroughBookmark(zone!)
             } else {
-                let show = zone!.showChildren == false
+                let show = !zone!.showChildren
 
                 showToggleDot(show, zone: zone!, recursively: recursively) {
                     self.syncAndRedraw()

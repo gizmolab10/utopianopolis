@@ -64,13 +64,13 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             isHidden            = !zone.hasChildren && !zone.isBookmark && isToggle && !isToggleTarget
             let     strokeColor = isBookmark ? gBookmarkColor : gZoneColor
             let shouldHighlight = isToggle ? (!(zone.showChildren) || isBookmark || isToggleTarget) : (zone.isSelected || isDropTarget)
-            let       fillColor = shouldHighlight ? isTarget ? gDragTargetsColor : strokeColor : ZColor.clear
-            let       thickness = CGFloat(gLineThickness)
+            let       fillColor = shouldHighlight ? isTarget ? gDragTargetsColor : strokeColor : gBackgroundColor
+            let       thickness = CGFloat(gLineThickness / 2.0)
             let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
 
             fillColor.setFill()
             strokeColor.setStroke()
-            path.lineWidth = thickness
+            path.lineWidth = thickness * 2.0
             path.flatness = 0.0001
             path.stroke()
             path.fill()
@@ -85,7 +85,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
         if isInnerDot {
             snp.makeConstraints { (make: ConstraintMaker) in
-                let width = CGFloat(asToggle ? gDotHeight : gDotHeight * 0.75)
+                let width = CGFloat(asToggle ? gDotHeight : gDotWidth)
                 let  size = CGSize(width: width, height: CGFloat(gDotHeight))
 
                 make.size.equalTo(size)
@@ -121,6 +121,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         #endif
 
         updateConstraints()
+        setNeedsDisplay()
     }
 
 

@@ -16,6 +16,13 @@ import SnapKit
 #endif
 
 
+enum ZLineKind: Int {
+    case below    = -1
+    case straight =  0
+    case above    =  1
+}
+
+
 let dragTarget = false
 
 
@@ -24,12 +31,13 @@ class ZoneWidget: ZView {
 
     private var       _textWidget:  ZoneTextWidget!
     private var     _childrenView:  ZView!
-    private var      siblingLines = [ZoneCurve] ()
     private var   childrenWidgets = [ZoneWidget] ()
-    let                 toggleDot = ZoneDot()
-    let                   dragDot = ZoneDot()
+    let                 toggleDot = ZoneDot ()
+    let                   dragDot = ZoneDot ()
     var                widgetZone:  Zone!
-    var               hasChildren:  Bool { return widgetZone.hasChildren || widgetZone.count > 0 }
+    var                widgetFont:  ZFont { return widgetZone.isSelected ? gSelectedWidgetFont : gWidgetFont }
+    var               hasChildren:  Bool  { return widgetZone.hasChildren || widgetZone.count > 0 }
+    var          isSecondDrawPass = false
 
 
     var controllerView: ZView {
@@ -98,6 +106,7 @@ class ZoneWidget: ZView {
         }
 
         inView?.zlayer.backgroundColor = ZColor.clear.cgColor
+        isSecondDrawPass               = false
 
         clear()
         gWidgetsManager.registerWidget(self)
@@ -105,18 +114,16 @@ class ZoneWidget: ZView {
         if recursing {
             prepareChildren()
             layoutChildren(kind)
-            layoutLines(kind)
         }
 
         layoutText()
         layoutDots()
-        setNeedsDisplay()
     }
 
 
     func layoutText() {
         textWidget.widget = self
-        textWidget.font   = widgetZone.isSelected ? gGrabbedWidgetFont : gWidgetFont
+        textWidget.font   = widgetFont
 
         textWidget.updateText()
         layoutTextField()
@@ -126,7 +133,7 @@ class ZoneWidget: ZView {
     func layoutTextField() {
         textWidget.snp.removeConstraints()
         textWidget.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let  font = widgetZone.isSelected ? gGrabbedWidgetFont : gWidgetFont
+            let  font = widgetFont
             let width = textWidget.text!.widthForFont(font) + 5.0
 
             make  .width.equalTo(width)
@@ -184,7 +191,7 @@ class ZoneWidget: ZView {
             var previous: ZView? = nil
 
             while index > 0 {
-                index                 -= 1 // go backwards down the arrays, constraint making expects it, below
+                index                 -= 1 // go backwards down the arrays, constraint making expects it, above
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone = widgetZone     [index]
 
@@ -206,69 +213,6 @@ class ZoneWidget: ZView {
                 }
 
                 previous = childWidget
-            }
-        }
-    }
-
-
-    func layoutLines(_ kind: ZSignalKind) {
-        let         show = widgetZone.showChildren
-        let  redrawLines = kind == .redraw
-
-        if !show || redrawLines {
-            for line in siblingLines {
-                line.removeFromSuperview()
-            }
-
-            siblingLines.removeAll()
-        }
-
-        if show {
-            var needUpdate = IndexSet()
-            let   children = widgetZone.children
-            let      count = children.count
-
-            if count > 0 {
-                for index in 0...count - 1 {
-                    needUpdate.insert(index)
-                }
-            }
-
-            for line in siblingLines {
-                var found = false
-
-                for (index, child) in children.enumerated() {
-                    if show && child == line.child?.widgetZone {
-                        if !redrawLines {
-                            needUpdate.remove(index)
-                        }
-
-                        found = true
-                    }
-                }
-
-                if !show || !found {
-                    line.removeFromSuperview()
-                }
-            }
-
-            if show && needUpdate.count > 0 {
-                for (index, childWidget) in childrenWidgets.enumerated() {
-                    if needUpdate.contains(index) {
-                        let siblingLine    = ZoneCurve()
-                        siblingLine.child  = childWidget
-                        siblingLine.parent = self
-
-                        siblingLines.insert(siblingLine, at:index)
-                        addSubview(siblingLine)
-
-                        siblingLine.snp.makeConstraints { (make: ConstraintMaker) in
-                            make.width.height.equalTo(gLineThickness)
-                            make.centerX.equalTo(textWidget.snp.right).offset(6.0)
-                            make.centerY.equalTo(textWidget).offset(1.5)
-                        }
-                    }
-                }
             }
         }
     }
@@ -305,14 +249,12 @@ class ZoneWidget: ZView {
 
 
     func displayForDrag() {
-        toggleDot.innerDot?        .setNeedsDisplay()
-
-        for line in siblingLines {
-            line                   .setNeedsDisplay()
-        }
+        toggleDot        .innerDot?.setNeedsDisplay()
+        self                       .setNeedsDisplay()
 
         for child in childrenWidgets {
             child.dragDot.innerDot?.setNeedsDisplay()
+            child                  .setNeedsDisplay()
         }
     }
 
@@ -354,8 +296,58 @@ class ZoneWidget: ZView {
     }
 
 
+    func isDropIndex(_ iIndex: Int?) -> Bool {
+        if  iIndex != nil {
+            let isIndex = gSelectionManager.targetLineIndices?.contains(iIndex!)
+            let  isDrop = widgetZone == gSelectionManager.targetDropZone
+
+            if isDrop && isIndex! {
+                return true
+            }
+        }
+
+        return false
+    }
+    
+
     // MARK:- draw
     // MARK:-
+
+
+    func drawDragHighlight() {
+        let     thickness = dragDot.width / 2.5
+        var          rect = textWidget.frame.insetBy(dx: -13.0, dy: 0.0)
+        rect.size .width += 1.0
+        rect.size.height -= 3.0
+        let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
+        let         color = widgetZone.isBookmark ? gBookmarkColor : gZoneColor
+        let     fillColor = color.withAlphaComponent(0.02)
+        let   strokeColor = color.withAlphaComponent(0.2)
+        let          path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
+        path   .lineWidth = thickness
+        path    .flatness = 0.0001
+
+        fillColor.setFill()
+        strokeColor.setStroke()
+        path.stroke()
+    }
+
+
+    func drawLinest() {
+
+//    for child in childrenWidgets {
+//        drawLine(to: child)
+//    }
+
+        var index = childrenWidgets.count
+
+        while index > 0 {
+            index    -= 1
+            let child = childrenWidgets[index]
+
+            drawLine(to: child)
+        }
+    }
 
 
     override func draw(_ dirtyRect: CGRect) {
@@ -364,22 +356,22 @@ class ZoneWidget: ZView {
         let        isGrabbed = widgetZone.isGrabbed
         textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor : ZColor.black
 
-        if isGrabbed && !widgetZone.isEditing {
-            let     thickness = dragDot.width / 2.5
-            var          rect = textWidget.frame.insetBy(dx: -13.0, dy: 0.0)
-            rect.size .width += 1.0
-            rect.size.height -= 3.0
-            let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
-            let         color = widgetZone.isBookmark ? gBookmarkColor : gZoneColor
-            let     fillColor = color.withAlphaComponent(0.02)
-            let   strokeColor = color.withAlphaComponent(0.2)
-            let          path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
-            path   .lineWidth = thickness
-            path    .flatness = 0.0001
+        // lines need CHILD dots drawn first.
+        // two passes through entire hierarchy:
+        // dots, then lines
 
-            fillColor.setFill()
-            strokeColor.setStroke()
-            path.stroke()
+        if isSecondDrawPass {
+            drawLinest()
+        } else {
+            if isGrabbed && !widgetZone.isEditing {
+                drawDragHighlight()
+            }
+
+            dispatchAsyncInForeground {
+                self.isSecondDrawPass = true
+
+                self.setNeedsDisplay()
+            }
         }
     }
 }

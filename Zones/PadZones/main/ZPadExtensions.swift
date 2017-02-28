@@ -51,9 +51,12 @@ func NSStringFromSize(_ size: CGSize) -> String {
 
 
 extension NSObject {
-    func assignAsFirstResponder(_ responder: UIResponder?) {
-        responder?.becomeFirstResponder()
-    }
+    func assignAsFirstResponder(_ responder: UIResponder?) { responder?.becomeFirstResponder() }
+}
+
+
+extension UIBezierPath {
+    func setClip() { addClip() }
 }
 
 
@@ -199,5 +202,94 @@ extension UIApplication {
     func action(command: UIKeyCommand) {
         gEditingManager.handleEvent(command, isWindow: true)
     }
+}
 
+
+extension ZoneWidget {
+
+    func lineKindOf(_ widget: ZoneWidget?) -> ZLineKind {
+        if  widgetZone.count > 1 {
+            let           dragDot = widget?.dragDot.innerDot
+            let    dragDotCenterY =   dragDot?.convert((  dragDot?.bounds)!, to: self).center.y
+            let textWidgetCenterY = textWidget.convert((textWidget.bounds),  to: self).center.y
+            let             delta = Double(dragDotCenterY! - textWidgetCenterY)
+            let         threshold = gDotHeight / 2.0
+
+            if delta > threshold {
+                return .below
+            } else if delta < -threshold {
+                return .above
+            }
+        }
+
+        return .straight
+    }
+
+
+    func rectForLine(to rightWidget: ZoneWidget?) -> CGRect {
+        var frame = CGRect ()
+
+        if  rightWidget          != nil, let leftDot = toggleDot.innerDot, let rightDot = rightWidget!.dragDot.innerDot {
+            let         leftFrame =  leftDot.convert( leftDot.bounds, to: self)
+            let        rightFrame = rightDot.convert(rightDot.bounds, to: self)
+            let         thickness = CGFloat(gLineThickness)
+            let         dotHeight = CGFloat(gDotHeight)
+            let     halfDotHeight = dotHeight / 2.0
+            let     thinThickness = thickness / 2.0
+            let         rightMidY = rightFrame.midY
+            let          leftMidY = leftFrame .midY
+            frame.origin       .x = leftFrame .midX
+
+            switch lineKindOf(rightWidget) {
+            case .below:
+                frame.origin   .y = leftFrame .minY + thinThickness + halfDotHeight
+                frame.size.height = fabs( rightMidY + thinThickness - frame.minY)
+            case .above:
+                frame.origin   .y = rightFrame.maxY - halfDotHeight
+                frame.size.height = fabs(  leftMidY - thinThickness - frame.minY)
+            case .straight:
+                frame.origin   .y =       rightMidY - thinThickness / 8.0
+                frame.origin   .x = leftFrame .maxX
+                frame.size.height =                   thinThickness / 4.0
+            }
+
+            frame.size     .width = fabs(rightFrame.midX - frame.minX)
+        }
+
+        return frame
+    }
+
+
+    func drawLine(to child: ZoneWidget) {
+        let      lineThickness = CGFloat(gLineThickness)
+        let               rect = rectForLine(to: child)
+        #if false
+        let               path = ZBezierPath(rect: rect)
+        #else
+        var               path = ZBezierPath(rect: rect)
+        let               kind = lineKindOf(child)
+        let            isBelow = kind == .below
+
+        if kind != .straight {
+            let     startAngle = CGFloat(M_PI)
+            let     deltaAngle = CGFloat(M_PI_2)
+            let     multiplier = CGFloat(isBelow ? -1.0 : 1.0)
+            let       endAngle = startAngle + (multiplier * deltaAngle)
+            let         scaleY = rect.height / rect.width
+            let        centerY = isBelow ? rect.minY : rect.maxY
+            let         center = CGPoint(x: rect.maxX, y: centerY / scaleY)
+            path               = ZBezierPath(arcCenter: center, radius: rect.width, startAngle: startAngle, endAngle: endAngle, clockwise: !isBelow)
+
+            path.apply(CGAffineTransform(scaleX: 1.0, y: scaleY))
+        }
+        #endif
+
+        let               zone = child.widgetZone!
+        let              color = zone.isBookmark ? gBookmarkColor : isDropIndex(zone.siblingIndex) ? gDragTargetsColor : gZoneColor
+        path        .lineWidth = lineThickness
+        path         .flatness = 0.0001
+        
+        color.setStroke()
+        path.stroke()
+    }
 }
