@@ -136,7 +136,7 @@ var gGenericOffset: CGSize {
             return CGSizeFromString(string)
         }
 
-        let defaultValue = CGSize(width: 33.0, height: 8.0)
+        let defaultValue = CGSize(width: 24.0, height: 12.0)
         let       string = NSStringFromSize(defaultValue)
 
         UserDefaults.standard.set(string, forKey: genericOffsetKey)

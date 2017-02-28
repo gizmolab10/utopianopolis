@@ -64,7 +64,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             isHidden            = !zone.hasChildren && !zone.isBookmark && isToggle && !isToggleTarget
             let     strokeColor = isBookmark ? gBookmarkColor : gZoneColor
             let shouldHighlight = isToggle ? (!(zone.showChildren) || isBookmark || isToggleTarget) : (zone.isSelected || isDropTarget)
-            let       fillColor = shouldHighlight ? isTarget ? gDragTargetsColor : strokeColor : ZColor.clear
+            let       fillColor = shouldHighlight ? isTarget ? gDragTargetsColor : strokeColor : gBackgroundColor
             let       thickness = CGFloat(gLineThickness / 2.0)
             let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
 
