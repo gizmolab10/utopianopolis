@@ -329,7 +329,7 @@ class ZRecordsManager: NSObject {
 
         if zone != nil, let recordID = zone?.record?.recordID {
             for bookmark in bookmarks {
-                if recordID == bookmark.crossLink?.record?.recordID {
+                if let identifier = bookmark.crossLink?.record?.recordID, recordID == identifier {
                     zoneBookmarks.append(bookmark)
                 }
             }

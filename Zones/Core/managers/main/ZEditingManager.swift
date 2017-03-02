@@ -789,6 +789,59 @@ class ZEditingManager: NSObject {
     }
 
 
+    func moveZone(_ zone: Zone, _ toThere: Zone) {
+        if !toThere.isBookmark {
+            let parent = zone.parentZone
+
+            moveZone(zone, into: toThere, orphan: true){
+                gControllersManager.syncToCloudAndSignalFor(parent, regarding: .redraw) {}
+            }
+        } else if !gTravelManager.isZone(zone, ancestorOf: toThere) {
+
+            ///////////////////////////////
+            // move zone through a bookmark
+            ///////////////////////////////
+
+            var         mover = zone
+            let    targetLink = toThere.crossLink
+            let     sameGraph = zone.storageMode == targetLink?.storageMode
+            mover .isFavorite = false
+            let grabAndTravel = {
+                gTravelManager.travelThrough(toThere) { object, kind in
+                    let there = object as! Zone
+
+                    if !sameGraph {
+                        self.applyModeRecursivelyTo(mover)
+                    }
+
+                    self.moveZone(mover, into: there, orphan: false) {
+                        self.syncAndRedraw()
+                    }
+                }
+            }
+
+            if sameGraph {
+                mover.orphan()
+
+                grabAndTravel()
+            } else {
+
+                if mover.isBookmark && mover.crossLink?.record != nil && !(mover.crossLink?.isRoot)! {
+                    mover.orphan()
+                } else {
+                    mover = zone.deepCopy()
+
+                    mover.grab()
+                }
+
+                gOperationsManager.sync {
+                    grabAndTravel()
+                }
+            }
+        }
+    }
+
+
     func actuallyMoveZone(_ zone: Zone) {
         if  var         toThere = zone.parentZone {
             let        siblings = toThere.children
@@ -799,56 +852,7 @@ class ZEditingManager: NSObject {
                 if cousinIndex >= 0 && cousinIndex < siblings.count {
                     toThere     = siblings[cousinIndex]
 
-                    if !toThere.isBookmark {
-                        let parent = zone.parentZone
-
-                        moveZone(zone, into: toThere, orphan: true){
-                            gControllersManager.syncToCloudAndSignalFor(parent, regarding: .redraw) {}
-                        }
-                    } else if !gTravelManager.isZone(zone, ancestorOf: toThere) {
-
-                        ///////////////////////////////
-                        // move zone through a bookmark
-                        ///////////////////////////////
-
-                        var         mover = zone
-                        let    targetLink = toThere.crossLink
-                        let     sameGraph = zone.storageMode == targetLink?.storageMode
-                        mover .isFavorite = false
-                        let grabAndTravel = {
-                            gTravelManager.travelThrough(toThere) { object, kind in
-                                let there = object as! Zone
-
-                                if !sameGraph {
-                                    self.applyModeRecursivelyTo(mover)
-                                }
-
-                                self.report("at arrival")
-                                self.moveZone(mover, into: there, orphan: false) {
-                                    self.syncAndRedraw()
-                                }
-                            }
-                        }
-
-                        if sameGraph {
-                            mover.orphan()
-
-                            grabAndTravel()
-                        } else {
-
-                            if mover.isBookmark && mover.crossLink?.record != nil && !(mover.crossLink?.isRoot)! {
-                                mover.orphan()
-                            } else {
-                                mover = zone.deepCopy()
-
-                                mover.grab()
-                            }
-
-                            gOperationsManager.sync {
-                                grabAndTravel()
-                            }
-                        }
-                    }
+                    moveZone(zone, toThere)
                 }
             }
         }

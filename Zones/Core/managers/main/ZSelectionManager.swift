@@ -21,6 +21,7 @@ class ZSelectionManager: NSObject {
 
 
     var               hasGrab:  Bool { return currentlyGrabbedZones.count > 0 }
+    var            isDragging:  Bool { return zoneBeingDragged != nil }
     var     targetLineIndices:  NSMutableIndexSet?
     var  currentlyEditingZone:  Zone?
     var      zoneBeingDragged:  Zone?

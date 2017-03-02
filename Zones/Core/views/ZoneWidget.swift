@@ -37,7 +37,6 @@ class ZoneWidget: ZView {
     var                widgetZone:  Zone!
     var                widgetFont:  ZFont { return widgetZone.isSelected ? gSelectedWidgetFont : gWidgetFont }
     var               hasChildren:  Bool  { return widgetZone.hasChildren || widgetZone.count > 0 }
-    var          isSecondDrawPass = false
 
 
     var controllerView: ZView {
@@ -106,7 +105,6 @@ class ZoneWidget: ZView {
         }
 
         inView?.zlayer.backgroundColor = ZColor.clear.cgColor
-        isSecondDrawPass               = false
 
         clear()
         gWidgetsManager.registerWidget(self)
@@ -238,25 +236,14 @@ class ZoneWidget: ZView {
         toggleDot.setupForWidget(self, asToggle: true)
         toggleDot.innerDot?.snp.makeConstraints { (make: ConstraintMaker) in
             make.left.equalTo(textWidget.snp.right).offset(-1.0)
-            make.centerY.equalTo(textWidget).offset(1.5)
             make.right.lessThanOrEqualToSuperview().offset(-1.0)
+            make.centerY.equalTo(textWidget).offset(1.5)
         }
     }
 
 
     // MARK:- drag
     // MARK:-
-
-
-    func displayForDrag() {
-        toggleDot        .innerDot?.setNeedsDisplay()
-        self                       .setNeedsDisplay()
-
-        for child in childrenWidgets {
-            child.dragDot.innerDot?.setNeedsDisplay()
-            child                  .setNeedsDisplay()
-        }
-    }
 
 
     var dragTargetFrame: CGRect {
@@ -280,7 +267,7 @@ class ZoneWidget: ZView {
 
 
     func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView) -> ZoneWidget? {
-        if dragContainsPoint(iPoint) && !widgetZone.isProgenyOf(gSelectionManager.zoneBeingDragged!) {
+        if dragContainsPoint(iPoint) && widgetZone.isDescendantOf(gSelectionManager.zoneBeingDragged!) == .none {
             if widgetZone.showChildren {
                 for child in widgetZone.children {
                     if let childWidget = gWidgetsManager.widgetForZone(child), let found = childWidget.widgetNearestTo(iPoint, in: self) {
@@ -296,6 +283,17 @@ class ZoneWidget: ZView {
     }
 
 
+    func displayForDrag() {
+        toggleDot        .innerDot?.setNeedsDisplay()
+        self                       .setNeedsDisplay()
+
+        for child in childrenWidgets {
+            child.dragDot.innerDot?.setNeedsDisplay()
+            child                  .setNeedsDisplay()
+        }
+    }
+
+
     func isDropIndex(_ iIndex: Int?) -> Bool {
         if  iIndex != nil {
             let isIndex = gSelectionManager.targetLineIndices?.contains(iIndex!)
@@ -308,17 +306,17 @@ class ZoneWidget: ZView {
 
         return false
     }
-    
+
 
     // MARK:- draw
     // MARK:-
 
 
-    func drawDragHighlight() {
-        let     thickness = dragDot.width / 2.5
+    func drawSelectionHighlight() {
+        let     thickness = CGFloat(gDotWidth) / 2.5
         var          rect = textWidget.frame.insetBy(dx: -13.0, dy: 0.0)
-        rect.size .width += 1.0
-        rect.size.height -= 3.0
+        rect.size .width += 2.0
+        rect.size.height += highlightHeightOffset
         let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
         let         color = widgetZone.isBookmark ? gBookmarkColor : gZoneColor
         let     fillColor = color.withAlphaComponent(0.02)
@@ -333,44 +331,47 @@ class ZoneWidget: ZView {
     }
 
 
-    func drawLinest() {
+    func drawLine(to child: ZoneWidget) {
+        let          path = pathFor(child)
+        let          zone = child.widgetZone!
+        let         color = isDropIndex(zone.siblingIndex) ? gDragTargetsColor : zone.isBookmark ? gBookmarkColor : gZoneColor
+        let lineThickness = CGFloat(gLineThickness)
+        path   .lineWidth = lineThickness / lineThicknessDivisor
+        path    .flatness = 0.0001
 
-//    for child in childrenWidgets {
-//        drawLine(to: child)
-//    }
-
-        var index = childrenWidgets.count
-
-        while index > 0 {
-            index    -= 1
-            let child = childrenWidgets[index]
-
-            drawLine(to: child)
-        }
+        color.setStroke()
+        path.stroke()
     }
+
+
+    // lines need CHILD dots drawn first.
+    // extra pass through hierarchy to do lines
+
+    var childrenPass = false
 
 
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
         let        isGrabbed = widgetZone.isGrabbed
+        let       isDragging = gSelectionManager.isDragging
         textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor : ZColor.black
 
-        // lines need CHILD dots drawn first.
-        // two passes through entire hierarchy:
-        // dots, then lines
+        if isGrabbed && !widgetZone.isEditing && !isDragging {
+            drawSelectionHighlight()
+        }
 
-        if isSecondDrawPass {
-            drawLinest()
-        } else {
-            if isGrabbed && !widgetZone.isEditing {
-                drawDragHighlight()
-            }
+        if widgetZone.includeChildren {
+            if  childrenPass || isDragging {
+                childrenPass          = false
 
-            dispatchAsyncInForeground {
-                self.isSecondDrawPass = true
+                for child in childrenWidgets { drawLine(to: child) }
+            } else {
+                dispatchAsyncInForeground {
+                    self.childrenPass = true
 
-                self.setNeedsDisplay()
+                    self.setNeedsDisplay()
+                }
             }
         }
     }

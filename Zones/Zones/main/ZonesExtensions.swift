@@ -55,6 +55,8 @@ func CGSizeFromString(_ string: String) -> CGSize {
 
 
 extension NSObject {
+    var  lineThicknessDivisor: CGFloat { return  1.0 }
+    var highlightHeightOffset: CGFloat { return -3.0 }
     func assignAsFirstResponder(_ responder: NSResponder?) {
         mainWindow.makeFirstResponder(responder)
     }
@@ -204,7 +206,22 @@ public extension NSImage {
 }
 
 
+extension Zone {
+
+
+    func hasZoneAbove(_ iAbove: Bool) -> Bool {
+        if  let index = siblingIndex {
+            return index != (iAbove ? 0 : (parentZone!.count - 1))
+        }
+
+        return false
+    }
+    
+}
+
+
 extension ZoneWidget {
+
 
     func lineKindOf(_ widget: ZoneWidget?) -> ZLineKind {
         if  widgetZone.count > 1 {
@@ -259,8 +276,7 @@ extension ZoneWidget {
     }
 
 
-    func drawLine(to child: ZoneWidget) {
-        let      lineThickness = CGFloat(gLineThickness)
+    func pathFor(_ child: ZoneWidget) -> ZBezierPath {
         let          dotHeight = CGFloat(gDotHeight)
         let       halfDotWidth = CGFloat(gDotWidth) / 2.0
         let      halfDotHeight = dotHeight / 2.0
@@ -283,14 +299,8 @@ extension ZoneWidget {
             rect.size  .height = rect.height * 2.0 + (isAbove ? halfDotHeight : dotHeight)
             path               = ZBezierPath(ovalIn: rect)
         }
-
-        let               zone = child.widgetZone!
-        let              color = zone.isBookmark ? gBookmarkColor : isDropIndex(zone.siblingIndex) ? gDragTargetsColor : gZoneColor
-        path        .lineWidth = lineThickness
-        path         .flatness = 0.0001
         
-        color.setStroke()
-        path.stroke()
+        return path
     }
 
 }

@@ -293,10 +293,12 @@ class Zone : ZRecord {
 
 
     private func hasAnyZonesAbove(_ iAbove: Bool) -> Bool {
-        if self != gHere, let i = siblingIndex {
-            let hasZone = i != (iAbove ? 0 : (parentZone!.count - 1))
+        if self != gHere {
+            if !hasZoneAbove(iAbove), let parent = parentZone {
+                return parent.hasAnyZonesAbove(iAbove)
+            }
 
-            return hasZone || parentZone!.hasAnyZonesAbove(iAbove)
+            return true
         }
         
         return false
@@ -405,7 +407,7 @@ class Zone : ZRecord {
             child!.parentZone = self
             var      insertAt = index ?? count
 
-            if index != nil && index! < count {
+            if index != nil && index! >= 0 && index! < count {
                 children.insert(child!, at: insertAt)
             } else {
                 insertAt = count
@@ -498,12 +500,15 @@ class Zone : ZRecord {
     }
 
 
+    // FUBAR occasional infinite loop
+    // when child of child == self
+
     @discardableResult func traverseApply(_ block: ZoneToBooleanClosure) -> Bool {
         var stop = block(self)
 
         if !stop {
             for child in children {
-                if self.isProgenyOf(child) || child.traverseApply(block) {
+                if self.isDescendantOf(child) == .none || child.traverseApply(block) {
                     stop = true
 
                     break
@@ -515,14 +520,43 @@ class Zone : ZRecord {
     }
 
 
-    func isProgenyOf(_ iZone: Zone) -> Bool {
-        if  let p = parentZone, !p.isProgenyOf(self) {
-            return p == iZone || p.isProgenyOf(iZone)
+
+    enum ZCycleType: Int {
+        case cycle
+        case found
+        case none
+    }
+
+
+    // FUBAR occasional infinite loop
+    // when parent of parent == self
+
+    var cycleDetectorArray = [Zone] ()
+
+
+    func isDescendantOf(_ iZone: Zone) -> ZCycleType {
+        var array = iZone.cycleDetectorArray
+        var flag: ZCycleType? = nil
+
+        if iZone == self {
+            flag = .found
+        } else if array.contains(self) {
+            flag = .cycle
         }
 
-        return false
+        if flag != nil {
+            iZone.cycleDetectorArray.removeAll()
+
+            return flag!
+        } else if let parent = parentZone {
+            array.append(self)
+
+            return parent.isDescendantOf(iZone)
+        }
+        
+        return .none
     }
-    
+
 
     func spawned(_ iChild: Zone) -> Bool {
         traverseApply { iZone -> Bool in

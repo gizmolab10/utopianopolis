@@ -148,7 +148,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 gTextCapturing = true
 
                 let assignText = { (iText: String?, toZone: Zone?) in
-                    if toZone != nil, iText != nil {
+                    if  toZone != nil, iText != nil {
                         toZone!.zoneName = iText!
 
                         toZone!.needUpdateSave()

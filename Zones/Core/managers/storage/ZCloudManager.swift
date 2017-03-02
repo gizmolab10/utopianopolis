@@ -216,8 +216,10 @@ class ZCloudManager: ZRecordsManager {
 
 
     func establishHere(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
-        if gTravelManager.manifest.here != nil {
-            let recordID = (gTravelManager.manifest.here?.recordID)!
+        if gTravelManager.manifest.here == nil {
+            self.establishRootAsHere(storageMode, onCompletion)
+        } else {
+            let recordID = gTravelManager.manifest.here!.recordID
 
             self.assureRecordExists(withRecordID: recordID, storageMode: storageMode, recordType: zoneTypeKey) { (iHereRecord: CKRecord?) in
                 if iHereRecord == nil || iHereRecord?[zoneNameKey] == nil {
@@ -230,8 +232,6 @@ class ZCloudManager: ZRecordsManager {
                     onCompletion?(0)
                 }
             }
-        } else {
-            self.establishRootAsHere(storageMode, onCompletion)
         }
     }
 
@@ -241,9 +241,9 @@ class ZCloudManager: ZRecordsManager {
 
         self.assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
             if iRecord != nil {
-                let               root = self.zoneForRecord(iRecord!)
+                let                root = self.zoneForRecord(iRecord!)
                 gTravelManager.rootZone = root
-                root.level             = 0
+                root.level              = 0
 
                 gTravelManager.manifest.needUpdateSave()
             }

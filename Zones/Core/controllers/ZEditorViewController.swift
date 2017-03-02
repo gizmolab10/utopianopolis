@@ -151,14 +151,21 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
             nearest?.displayForDrag()
 
             if done {
+                let              e = gEditingManager
                 let          prior = gWidgetsManager.widgetForZone(mover)
                 s.zoneBeingDragged = nil
 
                 prior?.dragDot.innerDot?.setNeedsDisplay()
 
-                if !same && mover != nil && target != nil && index >= 0 {
-                    gEditingManager.moveZone(mover!, into: target!, at: index - bump, orphan: true) {
+                if let t = target, let m = mover {
+                    if t.isBookmark {
+                        e.moveZone(m, t)
+
                         self.signalFor(nil, regarding: .redraw)
+                    } else if !same, index >= 0 {
+                        e.moveZone(m, into: t, at: index - bump, orphan: true) {
+                            e.syncAndRedraw()
+                        }
                     }
                 }
             }

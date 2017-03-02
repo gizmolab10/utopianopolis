@@ -29,13 +29,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var singleGesture: ZGestureRecognizer?
 
 
-    var width: CGFloat {
-        get {
-            return innerDot!.bounds.width
-        }
-    }
-
-
     var isToggleTarget: Bool {
         return isToggle && widgetZone == gSelectionManager.targetDropZone
     }
@@ -62,11 +55,12 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             let      isBookmark = zone.isBookmark || zone.isRootOfFavorites
             let        isTarget = isToggleTarget || isDropTarget
             isHidden            = !zone.hasChildren && !zone.isBookmark && isToggle && !isToggleTarget
-            let     strokeColor = isBookmark ? gBookmarkColor : gZoneColor
-            let shouldHighlight = isToggle ? (!(zone.showChildren) || isBookmark || isToggleTarget) : (zone.isSelected || isDropTarget)
-            let       fillColor = shouldHighlight ? isTarget ? gDragTargetsColor : strokeColor : gBackgroundColor
-            let       thickness = CGFloat(gLineThickness / 2.0)
-            let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
+            let     strokeColor = isTarget ? gDragTargetsColor : isBookmark ? gBookmarkColor : gZoneColor
+            let shouldHighlight = isToggle ? (!zone.showChildren || isBookmark || isToggleTarget) : (zone.isSelected || isDropTarget)
+            let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
+            let       thickness = CGFloat(gLineThickness)
+            let           inset = thickness / lineThicknessDivisor
+            let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
 
             fillColor.setFill()
             strokeColor.setStroke()
