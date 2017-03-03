@@ -38,8 +38,9 @@ class Zone : ZRecord {
     var          children      = [Zone] ()
     var       _parentZone:        Zone?
     var        _crossLink:     ZRecord?
-    var        isBookmark:         Bool { get { return crossLink != nil } }
-    var isRootOfFavorites:         Bool { get { return record != nil && record.recordID.recordName == favoritesRootNameKey } }
+    var        isBookmark:         Bool { return crossLink != nil }
+    var isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
+    var            widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
 
 
 

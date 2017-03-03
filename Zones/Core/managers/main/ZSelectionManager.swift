@@ -26,6 +26,7 @@ class ZSelectionManager: NSObject {
     var  currentlyEditingZone:  Zone?
     var      zoneBeingDragged:  Zone?
     var        targetDropZone:  Zone?
+    var       targetDragPoint: CGPoint?
     var       pasteableZones = [Zone] ()
     var currentlyGrabbedZones: [Zone] {
         get { return gTravelManager.manifest.currentlyGrabbedZones }
@@ -90,7 +91,7 @@ class ZSelectionManager: NSObject {
         clearGrab()
 
         for zone in zones {
-            if zone != currentlyEditingZone, let widget = gWidgetsManager.widgetForZone(zone) {
+            if  zone != currentlyEditingZone, let widget = zone.widget {
                 widget.dragDot.innerDot?.setNeedsDisplay()
                 widget                  .setNeedsDisplay()
             }
@@ -106,7 +107,7 @@ class ZSelectionManager: NSObject {
     func deselect() {
         let      editingZone = currentlyEditingZone
         currentlyEditingZone = nil
-        let           widget = gWidgetsManager.widgetForZone(editingZone)
+        let           widget = editingZone?.widget
         widget?.setNeedsDisplay()
 
         if editingZone != nil && editingZone != gHere {
@@ -119,7 +120,7 @@ class ZSelectionManager: NSObject {
 
 
     func updateWidgetFor(_ zone: Zone?) {
-        if zone != nil, let widget = gWidgetsManager.widgetForZone(zone!) {
+        if  zone != nil, let widget = zone!.widget {
             widget                  .setNeedsDisplay()
             widget.dragDot.innerDot?.setNeedsDisplay()
         }

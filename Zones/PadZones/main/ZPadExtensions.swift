@@ -221,40 +221,33 @@ extension Zone {
 extension ZoneWidget {
 
 
-    func lineKindOf(_ widget: ZoneWidget?) -> ZLineKind {
-        if  widgetZone.count > 1 {
-            let           dragDot = widget?.dragDot.innerDot
-            let    dragDotCenterY =   dragDot?.convert((  dragDot?.bounds)!, to: self).center.y
-            let textWidgetCenterY = textWidget.convert((textWidget.bounds),  to: self).center.y
-            let             delta = Double(dragDotCenterY! - textWidgetCenterY)
-            let         threshold = gDotHeight / 2.0
+    func lineKindFor(_ delta: Double) -> ZLineKind {
+        let threshold = gDotHeight / 2.0
 
-            if delta > threshold {
-                return .below
-            } else if delta < -threshold {
-                return .above
-            }
+        if delta > threshold {
+            return .below
+        } else if delta < -threshold {
+            return .above
         }
 
         return .straight
     }
 
 
-    func rectForLine(to rightWidget: ZoneWidget?) -> CGRect {
+    func rectForLine(to rightFrame: CGRect, kind: ZLineKind) -> CGRect {
         var frame = CGRect ()
 
-        if  rightWidget          != nil, let leftDot = toggleDot.innerDot, let rightDot = rightWidget!.dragDot.innerDot {
-            let         leftFrame =  leftDot.convert( leftDot.bounds, to: self)
-            let        rightFrame = rightDot.convert(rightDot.bounds, to: self)
-            let         thickness = CGFloat(gLineThickness)
-            let         dotHeight = CGFloat(gDotHeight)
-            let     halfDotHeight = dotHeight / 2.0
-            let     thinThickness = thickness / 2.0
-            let         rightMidY = rightFrame.midY
-            let          leftMidY = leftFrame .midY
-            frame.origin       .x = leftFrame .midX
+        if  let       leftDot = toggleDot.innerDot {
+            let     leftFrame = leftDot.convert( leftDot.bounds, to: self)
+            let     thickness = CGFloat(gLineThickness)
+            let     dotHeight = CGFloat(gDotHeight)
+            let halfDotHeight = dotHeight / 2.0
+            let thinThickness = thickness / 2.0
+            let     rightMidY = rightFrame.midY
+            let      leftMidY = leftFrame .midY
+            frame.origin   .x = leftFrame .midX
 
-            switch lineKindOf(rightWidget) {
+            switch kind {
             case .below:
                 frame.origin   .y = leftFrame .minY + thinThickness + halfDotHeight
                 frame.size.height = fabs( rightMidY + thinThickness - frame.minY)
@@ -274,21 +267,24 @@ extension ZoneWidget {
     }
 
 
-    func pathFor(_ child: ZoneWidget) -> ZBezierPath {
-        let           rect = rectForLine(to: child)
-        let           kind = lineKindOf(child)
-        var           path = ZBezierPath(rect: rect)
+    func path(from target: Zone, to dotPoint: CGPoint) -> ZBezierPath? {
+        return nil
+    }
 
-        if kind != .straight {
-            let    isBelow = kind == .below
+
+    func path(in iRect: CGRect, iKind: ZLineKind) -> ZBezierPath {
+        var path = ZBezierPath(rect: iRect)
+
+        if iKind != .straight {
+            let    isBelow = iKind == .below
             let startAngle = CGFloat(M_PI)
             let deltaAngle = CGFloat(M_PI_2)
             let multiplier = CGFloat(isBelow ? -1.0 : 1.0)
             let   endAngle = startAngle + (multiplier * deltaAngle)
-            let     scaleY = rect.height / rect.width
-            let    centerY = isBelow ? rect.minY : rect.maxY
-            let     center = CGPoint(x: rect.maxX, y: centerY / scaleY)
-            path           = ZBezierPath(arcCenter: center, radius: rect.width, startAngle: startAngle, endAngle: endAngle, clockwise: !isBelow)
+            let     scaleY = iRect.height / iRect.width
+            let    centerY = isBelow ? iRect.minY : iRect.maxY
+            let     center = CGPoint(x: iRect.maxX, y: centerY / scaleY)
+            path           = ZBezierPath(arcCenter: center, radius: iRect.width, startAngle: startAngle, endAngle: endAngle, clockwise: !isBelow)
 
             path.apply(CGAffineTransform(scaleX: 1.0, y: scaleY))
         }

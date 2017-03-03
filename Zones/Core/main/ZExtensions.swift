@@ -234,22 +234,14 @@ extension ZView {
             view.applyToAllSubviews(closure)
         }
     }
+
+
+    func stroke(_ path: ZBezierPath?) {
+        if  path != nil {
+            path!.lineWidth = CGFloat(gLineThickness) / lineThicknessDivisor
+            path! .flatness = 0.0001
+
+            path!.stroke()
+        }
+    }
 }
-
-
-//extension NSAttributedString {
-//    func heightWithConstrainedWidth(width: CGFloat) -> CGFloat {
-//        let constraint = CGSize(width: width, height: .greatestFiniteMagnitude)
-//        let boundingBox = boundingRect(with: constraint, options: .usesLineFragmentOrigin, context: nil)
-//
-//        return boundingBox.height
-//    }
-//
-//    func widthWithConstrainedHeight(height: CGFloat) -> CGFloat {
-//        let constraint = CGSize(width: .greatestFiniteMagnitude, height: height)
-//        let boundingBox = boundingRect(with: constraint, options: .usesLineFragmentOrigin, context: nil)
-//
-//        return boundingBox.width
-//    }
-//}
-

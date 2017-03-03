@@ -1166,10 +1166,10 @@ CQ
                                                             <font key="font" metaFont="cellTitle"/>
                                                             <string key="title">ARROWS change selection
 +OPTION move selected zone
-+COMMAND all the way
 +SHIFT
      RIGHT expands
      LEFT collapses
++COMMAND all the way
 
 when editing text
      RETURN ends editing

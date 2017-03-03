@@ -49,7 +49,7 @@ class ZEditingManager: NSObject {
 
     var isEditing: Bool {
         get {
-            if let editedZone = gSelectionManager.currentlyEditingZone, let editedWidget = gWidgetsManager.widgetForZone(editedZone) {
+            if let editedZone = gSelectionManager.currentlyEditingZone, let editedWidget = editedZone.widget {
                 return editedWidget.textWidget.isTextEditing
             }
 
@@ -244,7 +244,7 @@ class ZEditingManager: NSObject {
     func printHere() {
         #if os(OSX)
 
-        if  let         view = gWidgetsManager.widgetForZone(hereZone) {
+        if  let         view = hereZone.widget {
             let    printInfo = NSPrintInfo.shared()
             let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
             let      isWider = view.bounds.size.width > view.bounds.size.height
@@ -504,7 +504,7 @@ class ZEditingManager: NSObject {
                     beenHereBefore             = true
                     gOperationsManager.isReady = true
 
-                    gWidgetsManager.widgetForZone(iZone)?.textWidget.becomeFirstResponder()
+                    iZone.widget?.textWidget.becomeFirstResponder()
                     self.signalFor(nil, regarding: .redraw)
                 }
             }
@@ -519,20 +519,20 @@ class ZEditingManager: NSObject {
                 let  child = Zone(record: record, storageMode: gStorageMode)
 
                 child.needCreate()
-                gWidgetsManager.widgetForZone(zone!)?.textWidget.resignFirstResponder()
-                zone?.addAndReorderChild(child, at: asTask ? 0 : nil)
+                zone!.widget?.textWidget.resignFirstResponder()
+                zone!.addAndReorderChild(child, at: asTask ? 0 : nil)
 
                 gTravelManager.manifest.total += 1
 
                 onCompletion?(child)
             }
 
-            zone?.showChildren = true // needed for logic internal to needChildren
+            zone!.showChildren = true // needed for logic internal to needChildren
 
-            if zone?.count != 0 {
+            if zone!.count != 0 {
                 addNewClosure()
             } else {
-                zone?.needChildren()
+                zone!.needChildren()
 
                 gOperationsManager.children(recursively: false) {
                     addNewClosure()

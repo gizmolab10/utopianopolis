@@ -223,71 +223,119 @@ extension Zone {
 extension ZoneWidget {
 
 
-    func lineKindOf(_ widget: ZoneWidget?) -> ZLineKind {
-        if  widgetZone.count > 1 {
-            let           dragDot = widget?.dragDot.innerDot
-            let    dragDotCenterY =   dragDot?.convert((  dragDot?.bounds)!, to: self).center.y
-            let textWidgetCenterY = textWidget.convert((textWidget.bounds),  to: self).center.y
-            let             delta = Double(dragDotCenterY! - textWidgetCenterY)
-            let         threshold = gDotHeight / 2.0
+    func targetDot(at index: Int) -> ZoneDot? {
+        if index < widgetZone.count {
+            let    target = widgetZone.children[index]
 
-            if delta > threshold {
-                return .above
-            } else if delta < -threshold {
-                return .below
+            return target.widget?.dragDot.innerDot
+        }
+
+        return nil
+    }
+
+
+    var fakeTargetDotRect: CGRect {
+        var rect = CGRect()
+
+        if let indices = gSelectionManager.targetLineIndices, indices.count > 0 {
+            if !widgetZone.includeChildren {
+
+                /////////////////////////
+                // dot is straight out //
+                /////////////////////////
+
+            } else if let firstDot = targetDot(at: indices.firstIndex) {
+                let      firstRect = firstDot.convert(firstDot.bounds, to: self)
+
+                if indices.count == 1 {
+
+                    ///////////////////////////
+                    // dot is above or below //
+                    ///////////////////////////
+
+                    let    isAbove = indices.firstIndex == 0
+                    let      delta = gGenericOffset.height + CGFloat(gDotHeight)
+                    rect           = firstRect
+                    rect.origin.y += isAbove ? delta : -delta
+
+                } else if indices.lastIndex < widgetZone.count, let secondDot = targetDot(at: indices.lastIndex) {
+
+                    //////////////////
+                    // dot is tween //
+                    //////////////////
+
+                    let isReversed = indices.lastIndex < indices.firstIndex
+                    let secondRect = secondDot.convert(secondDot.bounds, to: self)
+                    let      delta = (firstRect.midY - secondRect.midY) / 2.0
+                    rect           = isReversed ? firstRect : secondRect
+                    rect.origin.y += delta
+                }
+
+                rect = rect.insetBy(dx: 1.0, dy: 2.0)
             }
+        }
+
+        return rect
+    }
+
+
+    func lineKindFor(_ delta: Double) -> ZLineKind {
+        let threshold = gDotHeight / 2.0
+
+        if delta > threshold {
+            return .above
+        } else if delta < -threshold {
+            return .below
         }
 
         return .straight
     }
 
 
-    func rectForLine(to rightWidget: ZoneWidget?) -> CGRect {
+    func rectForLine(to targetFrame: CGRect, kind: ZLineKind) -> CGRect {
         var frame = CGRect ()
 
-        if  rightWidget          != nil, let leftDot = toggleDot.innerDot, let rightDot = rightWidget!.dragDot.innerDot {
-            let         leftFrame =  leftDot.convert( leftDot.bounds, to: self)
-            let        rightFrame = rightDot.convert(rightDot.bounds, to: self)
-            let         thickness = CGFloat(gLineThickness)
-            let         dotHeight = CGFloat(gDotHeight)
-            let     halfDotHeight = dotHeight / 2.0
-            let     thinThickness = thickness / 2.0
-            let         rightMidY = rightFrame.midY
-            let          leftMidY = leftFrame .midY
-            frame.origin       .x = leftFrame .midX
+        if  let     sourceDot = toggleDot.innerDot {
+            let   sourceFrame = sourceDot.convert( sourceDot.bounds, to: self)
+            let     thickness = CGFloat(gLineThickness)
+            let     dotHeight = CGFloat(gDotHeight)
+            let halfDotHeight = dotHeight / 2.0
+            let thinThickness = thickness / 2.0
+            let    targetMidY = targetFrame.midY
+            let    sourceMidY = sourceFrame  .midY
+            frame.origin   .x = sourceFrame  .midX
 
-            switch lineKindOf(rightWidget) {
+            switch kind {
             case .above:
-                frame.origin   .y = leftFrame .maxY - thinThickness
-                frame.size.height = fabs( rightMidY + thinThickness - frame.minY)
+                frame.origin   .y = sourceFrame.maxY - thinThickness
+                frame.size.height = fabs( targetMidY + thinThickness - frame.minY)
             case .below:
-                frame.origin   .y = rightFrame.minY + halfDotHeight
-                frame.size.height = fabs(  leftMidY + thinThickness - frame.minY - halfDotHeight)
+                frame.origin   .y = targetFrame.minY + halfDotHeight
+                frame.size.height = fabs( sourceMidY + thinThickness - frame.minY - halfDotHeight)
             case .straight:
-                frame.origin   .y =       rightMidY - thinThickness / 8.0
-                frame.origin   .x = leftFrame .maxX
-                frame.size.height =                   thinThickness / 4.0
+                frame.origin   .y =       targetMidY - thinThickness / 8.0
+                frame.origin   .x = sourceFrame.maxX
+                frame.size.height =                    thinThickness / 4.0
             }
 
-            frame.size     .width = fabs(rightFrame.minX - frame.minX)
+            frame.size     .width = fabs(targetFrame.minX - frame.minX)
         }
-
+        
         return frame
     }
 
 
-    func pathFor(_ child: ZoneWidget) -> ZBezierPath {
+    func path(in iRect: CGRect, iKind: ZLineKind) -> ZBezierPath {
         let          dotHeight = CGFloat(gDotHeight)
         let       halfDotWidth = CGFloat(gDotWidth) / 2.0
         let      halfDotHeight = dotHeight / 2.0
-        var               rect = rectForLine(to: child)
+        var               rect = iRect
         var               path = ZBezierPath(rect: rect)
-        let               kind = lineKindOf(child)
-        let            isAbove = kind == .above
+        let            isAbove = iKind == .above
 
         ZBezierPath(rect: bounds).setClip()
 
-        if kind != .straight {
+        if iKind != .straight {
             ZColor.clear.setFill()
             path.setClip()
 

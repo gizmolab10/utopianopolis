@@ -54,20 +54,20 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         var recursing:             Bool = [.data, .redraw].contains(kind)
         hereWidget.widgetZone           = gHere
 
-        if zone == nil || zone == gHere {
-            recursing = true
-
-            toConsole("all")
-        } else {
-            specificWidget = gWidgetsManager.widgetForZone(zone!)
-            specificView   = specificWidget?.superview
+        if zone != nil {
+            specificWidget = zone!.widget
             specificindex  = zone!.siblingIndex
+            specificView   = specificWidget?.superview
 
             if zone!.isSelected {
                 zone!.grab()
             }
 
             toConsole(zone?.zoneName)
+        } else if zone == gHere {
+            recursing = true
+
+            toConsole("all")
         }
 
         specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind)
@@ -124,7 +124,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
     func handleDragEvent(_ iGesture: ZGestureRecognizer?) {
         if  let        location = iGesture?.location (in: view), iGesture != nil {
-            let         nearest = hereWidget.widgetNearestTo(   location, in: view)
+            let         nearest = hereWidget.widgetNearestTo(location, in: view)
             let          relate = relationOf(location, to: nearest?.textWidget)
             let            done = [ZGestureRecognizerState.ended, ZGestureRecognizerState.cancelled].contains(iGesture!.state)
             let             dot = iGesture?.view as! ZoneDot
@@ -139,9 +139,10 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
             let            bump = (sameParent && matchIndex != nil && mover!.siblingIndex! <= matchIndex!) ? 1 : 0
             let           index = (isHere ? (relate != .below ? 0 : target?.count) : (useMatch  || matchIndex == nil) ? ((asTask || same) ? 0 : target?.count) : (matchIndex! + relate.rawValue))!
             let               s = gSelectionManager
-            let           prior = gWidgetsManager.widgetForZone(s.targetDropZone)
+            let           prior = s.targetDropZone?.widget
             s.targetLineIndices = NSMutableIndexSet(index: index)
-            s.targetDropZone    = done ? nil : target
+            s   .targetDropZone = done ? nil : target
+            s  .targetDragPoint = location
 
             if relate != .upon && index > 0 {
                 s.targetLineIndices?.add(index - 1)
@@ -152,7 +153,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
             if done {
                 let              e = gEditingManager
-                let          prior = gWidgetsManager.widgetForZone(mover)
+                let          prior = mover?.widget
                 s.zoneBeingDragged = nil
 
                 prior?.dragDot.innerDot?.setNeedsDisplay()

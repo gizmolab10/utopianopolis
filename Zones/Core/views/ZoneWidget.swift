@@ -69,6 +69,8 @@ class ZoneWidget: ZView {
         if  _childrenView == nil {
             _childrenView  = ZView()
 
+            _childrenView.zlayer.backgroundColor = ZColor.clear.cgColor
+
             addSubview(_childrenView)
 
             _childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
@@ -270,7 +272,7 @@ class ZoneWidget: ZView {
         if dragContainsPoint(iPoint) && widgetZone.isDescendantOf(gSelectionManager.zoneBeingDragged!) == .none {
             if widgetZone.showChildren {
                 for child in widgetZone.children {
-                    if let childWidget = gWidgetsManager.widgetForZone(child), let found = childWidget.widgetNearestTo(iPoint, in: self) {
+                    if let childWidget = child.widget, let found = childWidget.widgetNearestTo(iPoint, in: self) {
                         return found
                     }
                 }
@@ -312,6 +314,48 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
+    var pathToDragPoint: ZBezierPath? {
+        var path: ZBezierPath? = nil
+
+        if  let   dot = toggleDot.innerDot {
+            let frame = dot.convert(dot.bounds, to: self)
+            let  fake = fakeTargetDotRect
+            let delta = Double(fake.midY - frame.midY)
+            let  kind = lineKindFor(delta)
+            let  rect = rectForLine(to: fake, kind: kind)
+            path      = self.path(in: rect,  iKind: kind)
+        }
+
+        return path
+    }
+
+
+    func lineKindTo(_ widget: ZoneWidget?) -> ZLineKind {
+        if  let           dragDot = widget?.dragDot.innerDot, widgetZone.count > 1 {
+            let    dragDotCenterY =    dragDot.convert(   dragDot.bounds, to: self).center.y
+            let textWidgetCenterY = textWidget.convert(textWidget.bounds, to: self).center.y
+            let             delta = Double(dragDotCenterY - textWidgetCenterY)
+
+            return lineKindFor(delta)
+        }
+
+        return .straight
+    }
+
+
+    func rectForLine(to rightWidget: ZoneWidget?) -> CGRect {
+        var    frame = CGRect ()
+
+        if  let  dot = rightWidget?.dragDot.innerDot {
+            let kind = lineKindTo(rightWidget)
+            frame    = dot.convert(dot.bounds, to: self)
+            frame    = rectForLine(to: frame, kind: kind)
+        }
+
+        return frame
+    }
+
+
     func drawSelectionHighlight() {
         let     thickness = CGFloat(gDotWidth) / 2.5
         var          rect = textWidget.frame.insetBy(dx: -13.0, dy: 0.0)
@@ -331,16 +375,27 @@ class ZoneWidget: ZView {
     }
 
 
+    func drawDragLine() {
+        if self == gSelectionManager.targetDropZone?.widget {
+            let dotPath = ZBezierPath(ovalIn: fakeTargetDotRect)
+
+            gDragTargetsColor.setStroke()
+            gDragTargetsColor.setFill()
+            stroke(pathToDragPoint)
+            stroke(dotPath)
+            dotPath.fill()
+        }
+    }
+
+
     func drawLine(to child: ZoneWidget) {
-        let          path = pathFor(child)
-        let          zone = child.widgetZone!
-        let         color = isDropIndex(zone.siblingIndex) ? gDragTargetsColor : zone.isBookmark ? gBookmarkColor : gZoneColor
-        let lineThickness = CGFloat(gLineThickness)
-        path   .lineWidth = lineThickness / lineThicknessDivisor
-        path    .flatness = 0.0001
+        let  zone = child.widgetZone!
+        // let color = isDropIndex(zone.siblingIndex) ? gDragTargetsColor : zone.isBookmark ? gBookmarkColor : gZoneColor
+        let color = zone.isBookmark ? gBookmarkColor : gZoneColor
+        let  path = self.path(in: rectForLine(to: child), iKind: lineKindTo(child))
 
         color.setStroke()
-        path.stroke()
+        stroke(path)
     }
 
 
@@ -359,11 +414,13 @@ class ZoneWidget: ZView {
 
         if isGrabbed && !widgetZone.isEditing && !isDragging {
             drawSelectionHighlight()
+        } else {
+            drawDragLine()
         }
 
         if widgetZone.includeChildren {
             if  childrenPass || isDragging {
-                childrenPass          = false
+                childrenPass = false
 
                 for child in childrenWidgets { drawLine(to: child) }
             } else {
