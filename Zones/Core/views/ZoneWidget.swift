@@ -314,21 +314,32 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    var pathToDragPoint: ZBezierPath? {
+    func path(to dragRect: CGRect) -> ZBezierPath? {
         var path: ZBezierPath? = nil
 
         if  let   dot = toggleDot.innerDot {
             let frame = dot.convert(dot.bounds, to: self)
-            let  fake = fakeTargetDotRect
-            let delta = Double(fake.midY - frame.midY)
+            let delta = Double(dragRect.midY - frame.midY)
             let  kind = lineKindFor(delta)
-            let  rect = rectForLine(to: fake, kind: kind)
-            path      = self.path(in: rect,  iKind: kind)
+            let  rect = rectForLine(to: dragRect, kind: kind)
+            path      = self.path(in: rect,      iKind: kind)
         }
 
         return path
     }
 
+
+    func drawDragLine() {
+        let linePath = path(to:            floatingDropDotRect)
+        let  dotPath = ZBezierPath(ovalIn: floatingDropDotRect)
+
+        gDragTargetsColor.setStroke()
+        gDragTargetsColor.setFill()
+        linePath?.append(dotPath)
+        thinStroke(linePath)
+        dotPath.fill()
+    }
+    
 
     func lineKindTo(_ widget: ZoneWidget?) -> ZLineKind {
         if  let           dragDot = widget?.dragDot.innerDot, widgetZone.count > 1 {
@@ -375,27 +386,16 @@ class ZoneWidget: ZView {
     }
 
 
-    func drawDragLine() {
-        if self == gSelectionManager.targetDropZone?.widget {
-            let dotPath = ZBezierPath(ovalIn: fakeTargetDotRect)
-
-            gDragTargetsColor.setStroke()
-            gDragTargetsColor.setFill()
-            stroke(pathToDragPoint)
-            stroke(dotPath)
-            dotPath.fill()
-        }
-    }
-
-
     func drawLine(to child: ZoneWidget) {
         let  zone = child.widgetZone!
-        // let color = isDropIndex(zone.siblingIndex) ? gDragTargetsColor : zone.isBookmark ? gBookmarkColor : gZoneColor
-        let color = zone.isBookmark ? gBookmarkColor : gZoneColor
+        // draw drag lines above and below (old style)
+        let color = isDropIndex(zone.siblingIndex) ? gDragTargetsColor : zone.isBookmark ? gBookmarkColor : gZoneColor
+        // comment this back in for only drawing the dot at the end of the drag line
+        // let color = zone.isBookmark ? gBookmarkColor : gZoneColor
         let  path = self.path(in: rectForLine(to: child), iKind: lineKindTo(child))
 
         color.setStroke()
-        stroke(path)
+        thinStroke(path)
     }
 
 
@@ -410,11 +410,11 @@ class ZoneWidget: ZView {
 
         let        isGrabbed = widgetZone.isGrabbed
         let       isDragging = gSelectionManager.isDragging
-        textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor : ZColor.black
+        textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? gGrabbedBookmarkColor : gGrabbedTextColor : ZColor.black
 
         if isGrabbed && !widgetZone.isEditing && !isDragging {
             drawSelectionHighlight()
-        } else {
+        } else if self == gSelectionManager.targetDropZone?.widget {
             drawDragLine()
         }
 

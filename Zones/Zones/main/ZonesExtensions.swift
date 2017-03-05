@@ -234,7 +234,7 @@ extension ZoneWidget {
     }
 
 
-    var fakeTargetDotRect: CGRect {
+    var floatingDropDotRect: CGRect {
         var rect = CGRect()
 
         if let indices = gSelectionManager.targetLineIndices, indices.count > 0 {
@@ -244,6 +244,12 @@ extension ZoneWidget {
                 // dot is straight out //
                 /////////////////////////
 
+                if  let        dot = toggleDot.innerDot {
+                    let      inset = CGFloat(gDotHeight / 4.0)
+                    rect           = dot.bounds
+                    rect           = dot.convert(rect, to: self).insetBy(dx: inset, dy: inset)
+                    rect.origin.x += gGenericOffset.width
+                }
             } else if let firstDot = targetDot(at: indices.firstIndex) {
                 let      firstRect = firstDot.convert(firstDot.bounds, to: self)
 
@@ -254,9 +260,10 @@ extension ZoneWidget {
                     ///////////////////////////
 
                     let    isAbove = indices.firstIndex == 0
-                    let      delta = gGenericOffset.height + CGFloat(gDotHeight)
+                    let multiplier = CGFloat(isAbove ? 1.0 : -1.0)
+                    let      delta = (gGenericOffset.height + CGFloat(gDotHeight)) * multiplier
                     rect           = firstRect
-                    rect.origin.y += isAbove ? delta : -delta
+                    rect.origin.y += delta
 
                 } else if indices.lastIndex < widgetZone.count, let secondDot = targetDot(at: indices.lastIndex) {
 
@@ -271,7 +278,7 @@ extension ZoneWidget {
                     rect.origin.y += delta
                 }
 
-                rect = rect.insetBy(dx: 1.0, dy: 2.0)
+                rect = rect.insetBy(dx: rect.width / 6.0, dy: rect.height / 4.0)
             }
         }
 
@@ -280,7 +287,7 @@ extension ZoneWidget {
 
 
     func lineKindFor(_ delta: Double) -> ZLineKind {
-        let threshold = gDotHeight / 2.0
+        let threshold = gDotHeight / 3.0
 
         if delta > threshold {
             return .above

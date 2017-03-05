@@ -60,9 +60,9 @@ var          gWorkMode = ZWorkMode.editMode
 var          gFileMode = ZFileMode.cloud
 
 
-var               asTask:   Bool { get { return gGraphAlteringMode == .task    } }
-var grabbedBookmarkColor: ZColor { get { return gBookmarkColor.darker(by: 1.5) } }
-var     grabbedTextColor: ZColor { get { return gZoneColor    .darker(by: 1.8) } }
+var                asTask:   Bool { get { return gGraphAlteringMode == .task    } }
+var gGrabbedBookmarkColor: ZColor { get { return gBookmarkColor.darker(by: 1.5) } }
+var     gGrabbedTextColor: ZColor { get { return gZoneColor    .darker(by: 1.8) } }
 
 
 // MARK:- persistence

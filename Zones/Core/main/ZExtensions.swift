@@ -236,7 +236,7 @@ extension ZView {
     }
 
 
-    func stroke(_ path: ZBezierPath?) {
+    func thinStroke(_ path: ZBezierPath?) {
         if  path != nil {
             path!.lineWidth = CGFloat(gLineThickness) / lineThicknessDivisor
             path! .flatness = 0.0001

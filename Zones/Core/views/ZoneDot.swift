@@ -53,10 +53,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
         if isInnerDot, let zone = widgetZone {
             let      isBookmark = zone.isBookmark || zone.isRootOfFavorites
-            let        isTarget = isToggleTarget // || isDropTarget
+            let        isTarget = isToggleTarget || isDropTarget
             isHidden            = !zone.hasChildren && !zone.isBookmark && isToggle && !isToggleTarget
             let     strokeColor = isTarget ? gDragTargetsColor : isBookmark ? gBookmarkColor : gZoneColor
-            let shouldHighlight = isToggle ? (!zone.showChildren || isBookmark || isToggleTarget) : (zone.isSelected) // || isDropTarget)
+            let shouldHighlight = isToggle ? (!zone.showChildren || isBookmark || isToggleTarget) : (zone.isSelected || isDropTarget)
             let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
             let       thickness = CGFloat(gLineThickness)
             let           inset = thickness / lineThicknessDivisor

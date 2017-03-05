@@ -44,7 +44,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     }
                 } else {
                     gSelectionManager.currentlyEditingZone = zone
-                    textColor                              = widget.widgetZone.isBookmark ? grabbedBookmarkColor : grabbedTextColor
+                    textColor                              = widget.widgetZone.isBookmark ? gGrabbedBookmarkColor : gGrabbedTextColor
                     font                                   = gSelectedWidgetFont
 
                     gSelectionManager.deselectGrabs()
