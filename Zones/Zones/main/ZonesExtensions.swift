@@ -251,9 +251,9 @@ extension ZoneWidget {
                     rect.origin.x += gGenericOffset.width
                 }
             } else if let firstDot = targetDot(at: indices.firstIndex) {
-                let      firstRect = firstDot.convert(firstDot.bounds, to: self)
+                rect               = firstDot.convert(firstDot.bounds, to: self)
 
-                if indices.count == 1 {
+                if indices.count == 1 || indices.lastIndex >= widgetZone.count {
 
                     ///////////////////////////
                     // dot is above or below //
@@ -262,7 +262,6 @@ extension ZoneWidget {
                     let    isAbove = indices.firstIndex == 0
                     let multiplier = CGFloat(isAbove ? 1.0 : -1.0)
                     let      delta = (gGenericOffset.height + CGFloat(gDotHeight)) * multiplier
-                    rect           = firstRect
                     rect.origin.y += delta
 
                 } else if indices.lastIndex < widgetZone.count, let secondDot = targetDot(at: indices.lastIndex) {
@@ -271,14 +270,14 @@ extension ZoneWidget {
                     // dot is tween //
                     //////////////////
 
-                    let isReversed = indices.lastIndex < indices.firstIndex
                     let secondRect = secondDot.convert(secondDot.bounds, to: self)
-                    let      delta = (firstRect.midY - secondRect.midY) / 2.0
-                    rect           = isReversed ? firstRect : secondRect
-                    rect.origin.y += delta
+                    let    isAbove = rect.midY > bounds.midY
+                    let multiplier = CGFloat(isAbove ? 1.0 : 1.3)
+                    let      delta = (rect.minY - secondRect.minY) / 2.0 * multiplier
+                    rect.origin.y -= delta
                 }
 
-                rect = rect.insetBy(dx: rect.width / 6.0, dy: rect.height / 4.0)
+                rect = rect.insetBy(dx: rect.width / 6.0, dy: rect.height / 4.0) // make rect a square, shrunk a bit
             }
         }
 
