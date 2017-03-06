@@ -220,7 +220,7 @@ class ZoneWidget: ZView {
 
     func layoutDots() {
         if !subviews.contains(dragDot) {
-            addSubview(dragDot)
+            addSubview(dragDot, positioned: .below, relativeTo: textWidget)
         }
 
         dragDot.innerDot?.snp.removeConstraints()
@@ -231,7 +231,7 @@ class ZoneWidget: ZView {
         }
 
         if !subviews.contains(toggleDot) {
-            addSubview(toggleDot)
+            addSubview(toggleDot, positioned: .below, relativeTo: textWidget)
         }
 
         toggleDot.innerDot?.snp.removeConstraints()
@@ -380,9 +380,10 @@ class ZoneWidget: ZView {
         path   .lineWidth = thickness
         path    .flatness = 0.0001
 
-        fillColor.setFill()
         strokeColor.setStroke()
+        fillColor.setFill()
         path.stroke()
+        path.fill()
     }
 
 
@@ -416,7 +417,7 @@ class ZoneWidget: ZView {
             drawSelectionHighlight()
         }
 
-        if self == s.targetDropZone?.widget {
+        if self.widgetZone == s.targetDropZone {
             drawDragLine()
         }
 

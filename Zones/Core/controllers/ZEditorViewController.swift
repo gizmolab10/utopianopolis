@@ -123,7 +123,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
 
     func handleDragEvent(_ iGesture: ZGestureRecognizer?) {
-        if  let        location = iGesture?.location (in: view), iGesture != nil {
+        if  let        location = iGesture?.location (in: view) {
             let         nearest = hereWidget.widgetNearestTo(location, in: view)
             let          relate = relationOf(location, to: nearest?.textWidget)
             let            done = [ZGestureRecognizerState.ended, ZGestureRecognizerState.cancelled].contains(iGesture!.state)
@@ -163,7 +163,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
                         e.moveZone(m, t)
 
                         self.signalFor(nil, regarding: .redraw)
-                    } else if !same, index >= 0 {
+                    } else if !same, index >= bump {
                         e.moveZone(m, into: t, at: index - bump, orphan: true) {
                             e.syncAndRedraw()
                         }

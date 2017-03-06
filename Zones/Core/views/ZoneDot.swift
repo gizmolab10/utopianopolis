@@ -51,7 +51,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        if isInnerDot, let zone = widgetZone {
+        if  let            zone = widgetZone, isInnerDot {
             let      isBookmark = zone.isBookmark || zone.isRootOfFavorites
             let        isTarget = isToggleTarget || isDropTarget
             isHidden            = !zone.hasChildren && !zone.isBookmark && isToggle && !isToggleTarget
