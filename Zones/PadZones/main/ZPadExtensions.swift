@@ -42,7 +42,8 @@ public typealias ZGestureRecognizerState    = UIGestureRecognizerState
 public typealias ZGestureRecognizerDelegate = UIGestureRecognizerDelegate
 
 
-let zapplication = UIApplication.shared
+let    zapplication = UIApplication.shared
+let gVerticalWeight = -1.0
 
 
 func NSStringFromSize(_ size: CGSize) -> String {
@@ -221,19 +222,6 @@ extension Zone {
 extension ZoneWidget {
 
 
-    func lineKindFor(_ delta: Double) -> ZLineKind {
-        let threshold = gDotHeight / 2.0
-
-        if delta > threshold {
-            return .below
-        } else if delta < -threshold {
-            return .above
-        }
-
-        return .straight
-    }
-
-
     func rectForLine(to rightFrame: CGRect, kind: ZLineKind) -> CGRect {
         var frame = CGRect ()
 
@@ -264,11 +252,6 @@ extension ZoneWidget {
         }
 
         return frame
-    }
-
-
-    func path(from target: Zone, to dotPoint: CGPoint) -> ZBezierPath? {
-        return nil
     }
 
 

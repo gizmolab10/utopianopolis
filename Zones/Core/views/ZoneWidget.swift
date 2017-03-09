@@ -29,65 +29,21 @@ let dragTarget = false
 class ZoneWidget: ZView {
 
 
-    private var       _textWidget:  ZoneTextWidget!
-    private var     _childrenView:  ZView!
+    private var      childrenView = ZView()
     private var   childrenWidgets = [ZoneWidget] ()
+    let                textWidget = ZoneTextWidget()
     let                 toggleDot = ZoneDot ()
     let                   dragDot = ZoneDot ()
     var                widgetZone:  Zone!
-    var                widgetFont:  ZFont { return widgetZone.isSelected ? gSelectedWidgetFont : gWidgetFont }
     var               hasChildren:  Bool  { return widgetZone.hasChildren || widgetZone.count > 0 }
-
-
-    var controllerView: ZView {
-        return gControllersManager.controllerForID(.editor)?.view ?? self
-    }
-
-
-    var textWidget: ZoneTextWidget {
-        if _textWidget == nil {
-            _textWidget = ZoneTextWidget()
-
-            _textWidget.setup()
-            addSubview(_textWidget)
-
-            _textWidget.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-                make.width.equalTo(200.0)
-            }
-
-            snp.makeConstraints { (make: ConstraintMaker) -> Void in
-                make.centerY.equalTo(_textWidget).offset(1.5)
-                make.size.greaterThanOrEqualTo(_textWidget)
-            }
-        }
-
-        return _textWidget
-    }
-
-
-    var childrenView: ZView {
-        if  _childrenView == nil {
-            _childrenView  = ZView()
-
-            _childrenView.zlayer.backgroundColor = ZColor.clear.cgColor
-
-            addSubview(_childrenView)
-
-            _childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-                make.top.bottom.right.equalTo(self)
-            }
-        }
-
-        return _childrenView
-    }
+    var                widgetFont:  ZFont { return widgetZone.isSelected ? gSelectedWidgetFont : gWidgetFont }
+    var            controllerView:  ZView { return gControllersManager.controllerForID(.editor)?.view ?? self }
 
 
     deinit {
         childrenWidgets.removeAll()
 
-        _childrenView = nil
-        _textWidget   = nil
-        widgetZone    = nil
+        widgetZone = nil
     }
 
 
@@ -110,6 +66,7 @@ class ZoneWidget: ZView {
 
         clear()
         gWidgetsManager.registerWidget(self)
+        prepareSubviews()
 
         if recursing {
             prepareChildren()
@@ -121,29 +78,22 @@ class ZoneWidget: ZView {
     }
 
 
-    func layoutText() {
-        textWidget.widget = self
-        textWidget.font   = widgetFont
+    func prepareSubviews() {
+        if !subviews.contains(textWidget) {
+            textWidget.setup()
+            addSubview(textWidget)
+            snp.makeConstraints { (make: ConstraintMaker) -> Void in
+                make.centerY.equalTo(textWidget).offset(1.5)
+                make.size.greaterThanOrEqualTo(textWidget)
+            }
+        }
 
-        textWidget.updateText()
-        layoutTextField()
-    }
+        if !subviews.contains(childrenView) {
+            childrenView.zlayer.backgroundColor = ZColor.clear.cgColor
 
-
-    func layoutTextField() {
-        textWidget.snp.removeConstraints()
-        textWidget.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let  font = widgetFont
-            let width = textWidget.text!.widthForFont(font) + 5.0
-
-            make  .width.equalTo(width)
-            make.centerY.equalTo(self).offset(-1.5)
-            make   .left.equalTo(self).offset(Double(gGenericOffset.width))
-            make  .right.lessThanOrEqualTo(self).offset(-29.0)
-            make .height.lessThanOrEqualTo(self).offset(-gGenericOffset.height)
-
-            if hasChildren {
-                make.right.equalTo(childrenView.snp.left).offset(-8.0)
+            insertSubview(childrenView, belowSubview: textWidget)
+            childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
+                make.top.bottom.right.equalTo(self)
             }
         }
     }
@@ -157,17 +107,11 @@ class ZoneWidget: ZView {
 
             childrenWidgets.removeAll()
 
-            if _childrenView != nil {
-                for view in _childrenView.subviews {
-                    view.removeFromSuperview()
-                }
-
-                _childrenView.removeFromSuperview()
-
-                _childrenView = nil
+            for view in childrenView.subviews {
+                view.removeFromSuperview()
             }
         } else {
-            for (_, child) in childrenWidgets.enumerated() {
+            for child in childrenWidgets {
                 if !widgetZone.children.contains(child.widgetZone) {
                     gWidgetsManager.unregisterWidget(child)
                     child.removeFromSuperview()
@@ -199,7 +143,7 @@ class ZoneWidget: ZView {
                 childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints { (make: ConstraintMaker) in
                     if previous != nil {
-                        make.bottom.equalTo((previous?.snp.top)!)
+                        make.bottom.equalTo(previous!.snp.top)
                     } else {
                         make.bottom.equalTo(childrenView)
                     }
@@ -209,7 +153,7 @@ class ZoneWidget: ZView {
                     }
 
                     make.left.equalTo(childrenView)
-                    make.right.height.lessThanOrEqualTo(childrenView)
+                    make.right.lessThanOrEqualTo(childrenView)
                 }
 
                 previous = childWidget
@@ -218,9 +162,37 @@ class ZoneWidget: ZView {
     }
 
 
+    func layoutText() {
+        textWidget.widget = self
+        textWidget.font   = widgetFont
+
+        textWidget.updateText()
+        layoutTextField()
+    }
+
+
+    func layoutTextField() {
+        textWidget.snp.removeConstraints()
+        textWidget.snp.makeConstraints { (make: ConstraintMaker) -> Void in
+            let  font = widgetFont
+            let width = textWidget.text!.widthForFont(font) + 5.0
+
+            make  .width.equalTo(width)
+            make.centerY.equalTo(self).offset(-1.5)
+            make   .left.equalTo(self).offset(Double(gGenericOffset.width))
+            make  .right.lessThanOrEqualTo(self).offset(-29.0)
+            make .height.lessThanOrEqualTo(self).offset(-gGenericOffset.height)
+
+            if hasChildren {
+                make.right.equalTo(childrenView.snp.left).offset(-8.0)
+            }
+        }
+    }
+
+
     func layoutDots() {
         if !subviews.contains(dragDot) {
-            addSubview(dragDot, positioned: .below, relativeTo: textWidget)
+            insertSubview(dragDot, belowSubview: textWidget)
         }
 
         dragDot.innerDot?.snp.removeConstraints()
@@ -231,7 +203,7 @@ class ZoneWidget: ZView {
         }
 
         if !subviews.contains(toggleDot) {
-            addSubview(toggleDot, positioned: .below, relativeTo: textWidget)
+            insertSubview(toggleDot, belowSubview: textWidget)
         }
 
         toggleDot.innerDot?.snp.removeConstraints()
@@ -248,7 +220,7 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    var dragTargetFrame: CGRect {
+    var dragHitFrame: CGRect {
         let isHere = widgetZone == gHere
         let cFrame = convert(childrenView.frame, to: controllerView)
         let  right =                                                   controllerView.bounds .maxX
@@ -261,8 +233,78 @@ class ZoneWidget: ZView {
     }
 
 
+    var floatingDropDotRect: CGRect {
+        var rect = CGRect()
+
+        if let indices = gSelectionManager.targetLineIndices, indices.count > 0 {
+            if !widgetZone.includeChildren {
+
+                /////////////////////////
+                // dot is straight out //
+                /////////////////////////
+
+                if  let        dot = toggleDot.innerDot {
+                    let     insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
+                    rect           = dot.convert(dot.bounds, to: self).insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
+                }
+            } else if let firstDot = targetDot(at: indices.firstIndex) {
+                rect               = firstDot.convert(firstDot.bounds, to: self)
+
+                if indices.count == 1 || indices.lastIndex >= widgetZone.count {
+
+                    ///////////////////////////
+                    // dot is above or below //
+                    ///////////////////////////
+
+                    let    isAbove = indices.firstIndex == 0
+                    let multiplier = CGFloat((isAbove ? 1.0 : -1.0) * gVerticalWeight)
+                    let      delta = (gGenericOffset.height + CGFloat(gDotHeight)) * multiplier
+                    rect           = rect.offsetBy(dx: 0.0, dy: delta)
+
+                } else if indices.lastIndex < widgetZone.count, let secondDot = targetDot(at: indices.lastIndex) {
+
+                    //////////////////
+                    // dot is tween //
+                    //////////////////
+
+                    let secondRect = secondDot.convert(secondDot.bounds, to: self)
+                    let      delta = (rect.minY - secondRect.minY) / CGFloat(2.0)
+                    rect           = rect.offsetBy(dx: 0.0, dy: -delta)
+                }
+            }
+        }
+
+        return rect
+    }
+
+
+    func lineKindFor(_ delta: Double) -> ZLineKind {
+        let threshold = gDotHeight / 3.0 * gVerticalWeight
+        let  adjusted = delta * gVerticalWeight
+        
+        if adjusted > threshold {
+            return .above
+        } else if adjusted < -threshold {
+            return .below
+        }
+        
+        return .straight
+    }
+
+
+    func targetDot(at index: Int) -> ZoneDot? {
+        if index < widgetZone.count {
+            let    target = widgetZone.children[index]
+
+            return target.widget?.dragDot.innerDot
+        }
+
+        return nil
+    }
+
+
     func dragContainsPoint(_ iPoint: CGPoint) -> Bool {
-        let rect = dragTargetFrame
+        let rect = dragHitFrame
 
         return rect.minX <= iPoint.x && rect.minY <= iPoint.y && rect.maxY >= iPoint.y
     }
@@ -330,14 +372,15 @@ class ZoneWidget: ZView {
 
 
     func drawDragLine() {
-        let linePath = path(to:            floatingDropDotRect)
-        let  dotPath = ZBezierPath(ovalIn: floatingDropDotRect)
+        let     rect = floatingDropDotRect
+        let  dotPath = ZBezierPath(ovalIn: rect)
+        // let linePath = path(to:            rect)
 
         gDragTargetsColor.setStroke()
         gDragTargetsColor.setFill()
-        linePath?.append(dotPath)
-        thinStroke(linePath)
         dotPath.fill()
+        ZColor.clear.setFill()
+        // thinStroke(linePath)
     }
     
 
@@ -390,9 +433,9 @@ class ZoneWidget: ZView {
     func drawLine(to child: ZoneWidget) {
         let  zone = child.widgetZone!
         // draw drag lines above and below (old style)
-        let color = isDropIndex(zone.siblingIndex) ? gDragTargetsColor : zone.isBookmark ? gBookmarkColor : gZoneColor
+        // let color = isDropIndex(zone.siblingIndex) ? gDragTargetsColor : zone.isBookmark ? gBookmarkColor : gZoneColor
         // comment this back in for only drawing the dot at the end of the drag line
-        // let color = zone.isBookmark ? gBookmarkColor : gZoneColor
+        let color = zone.isBookmark ? gBookmarkColor : gZoneColor
         let  path = self.path(in: rectForLine(to: child), iKind: lineKindTo(child))
 
         color.setStroke()

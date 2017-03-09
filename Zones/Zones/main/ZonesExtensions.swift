@@ -43,8 +43,9 @@ public typealias ZGestureRecognizerState    = NSGestureRecognizerState
 public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 
 
-let zapplication = NSApplication.shared()
-let   mainWindow = ZoneWindow.window!
+let gVerticalWeight = 1.0
+let    zapplication = NSApplication.shared()
+let      mainWindow = ZoneWindow.window!
 
 
 func CGSizeFromString(_ string: String) -> CGSize {
@@ -99,6 +100,27 @@ extension NSColor {
 
 
 extension NSBezierPath {
+    public var cgPath: CGPath {
+        let   path = CGMutablePath()
+        var points = [CGPoint](repeating: .zero, count: 3)
+
+        for i in 0 ..< self.elementCount {
+            let type = self.element(at: i, associatedPoints: &points)
+
+            switch type {
+            case .closePathBezierPathElement: path.closeSubpath()
+            case .moveToBezierPathElement:    path.move    (to: CGPoint(x: points[0].x, y: points[0].y) )
+            case .lineToBezierPathElement:    path.addLine (to: CGPoint(x: points[0].x, y: points[0].y) )
+            case .curveToBezierPathElement:   path.addCurve(to: CGPoint(x: points[2].x, y: points[2].y),
+                                                      control1: CGPoint(x: points[0].x, y: points[0].y),
+                                                      control2: CGPoint(x: points[1].x, y: points[1].y) )
+            }
+        }
+
+        return path
+    }
+
+
     public convenience init(roundedRect rect: CGRect, cornerRadius: CGFloat) {
         self.init(roundedRect: rect, xRadius: cornerRadius, yRadius: cornerRadius)
     }
@@ -113,6 +135,8 @@ extension NSView {
     func clear() { zlayer.backgroundColor = ZColor.clear.cgColor }
     func setNeedsDisplay() { needsDisplay = true }
     func setNeedsLayout () { needsLayout  = true }
+    func insertSubview(_ view: ZView, belowSubview siblingSubview: ZView) { addSubview(view, positioned: .below, relativeTo: siblingSubview) }
+
 
 
     @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> NSGestureRecognizer {
@@ -221,81 +245,6 @@ extension Zone {
 
 
 extension ZoneWidget {
-
-
-    func targetDot(at index: Int) -> ZoneDot? {
-        if index < widgetZone.count {
-            let    target = widgetZone.children[index]
-
-            return target.widget?.dragDot.innerDot
-        }
-
-        return nil
-    }
-
-
-    var floatingDropDotRect: CGRect {
-        var rect = CGRect()
-
-        if let indices = gSelectionManager.targetLineIndices, indices.count > 0 {
-            if !widgetZone.includeChildren {
-
-                /////////////////////////
-                // dot is straight out //
-                /////////////////////////
-
-                if  let        dot = toggleDot.innerDot {
-                    let      inset = CGFloat(gDotHeight / 4.0)
-                    rect           = dot.bounds
-                    rect           = dot.convert(rect, to: self).insetBy(dx: inset, dy: inset)
-                    rect.origin.x += gGenericOffset.width
-                }
-            } else if let firstDot = targetDot(at: indices.firstIndex) {
-                rect               = firstDot.convert(firstDot.bounds, to: self)
-
-                if indices.count == 1 || indices.lastIndex >= widgetZone.count {
-
-                    ///////////////////////////
-                    // dot is above or below //
-                    ///////////////////////////
-
-                    let    isAbove = indices.firstIndex == 0
-                    let multiplier = CGFloat(isAbove ? 1.0 : -1.0)
-                    let      delta = (gGenericOffset.height + CGFloat(gDotHeight)) * multiplier
-                    rect.origin.y += delta
-
-                } else if indices.lastIndex < widgetZone.count, let secondDot = targetDot(at: indices.lastIndex) {
-
-                    //////////////////
-                    // dot is tween //
-                    //////////////////
-
-                    let secondRect = secondDot.convert(secondDot.bounds, to: self)
-                    let    isAbove = rect.midY > bounds.midY
-                    let multiplier = CGFloat(isAbove ? 1.0 : 1.3)
-                    let      delta = (rect.minY - secondRect.minY) / 2.0 * multiplier
-                    rect.origin.y -= delta
-                }
-
-                rect = rect.insetBy(dx: rect.width / 6.0, dy: rect.height / 4.0) // make rect a square, shrunk a bit
-            }
-        }
-
-        return rect
-    }
-
-
-    func lineKindFor(_ delta: Double) -> ZLineKind {
-        let threshold = gDotHeight / 3.0
-
-        if delta > threshold {
-            return .above
-        } else if delta < -threshold {
-            return .below
-        }
-
-        return .straight
-    }
 
 
     func rectForLine(to targetFrame: CGRect, kind: ZLineKind) -> CGRect {
