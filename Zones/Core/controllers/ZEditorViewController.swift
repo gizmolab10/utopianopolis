@@ -105,7 +105,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
 
     func relationOf(_ iPoint: CGPoint, to iView: ZView?) -> ZRelation {
-        if     iView != nil {
+        if  iView    != nil {
             let point = view.convert(iPoint, to: iView)
             let frame = iView!.bounds
             let delta = point.x - frame.minX
@@ -114,8 +114,6 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
                 if frame.midY +   8.0 < point.y { return .below }
                 if frame.midY -   8.0 > point.y { return .above }
             }
-
-            // report("\(delta)")
         }
 
         return .upon
@@ -148,8 +146,9 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
                 s.targetLineIndices?.add(index - 1)
             }
 
-            prior?  .displayForDrag()
-            nearest?.displayForDrag()
+            prior?      .displayForDrag()
+            nearest?    .displayForDrag()
+            gEditorView?.setNeedsDisplay()
 
             if done {
                 let              e = gEditingManager

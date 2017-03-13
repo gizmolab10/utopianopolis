@@ -23,7 +23,7 @@ typealias ZStorageDict = [String : NSObject]
 extension NSObject {
     var settingsController: ZSettingsViewController? { return gControllersManager.controllerForID(.settings) as? ZSettingsViewController }
     var   editorController:   ZEditorViewController? { return gControllersManager.controllerForID(.editor)   as? ZEditorViewController }
-
+    var        gEditorView:           ZonesDrawView? { return editorController?.view                         as? ZonesDrawView }
 
 
     func toConsole(_ iMessage: Any?) {
@@ -202,7 +202,7 @@ extension Character {
 
 extension ZView {
 
-
+    
     func clearGestures() {
         if recognizers != nil {
             for recognizer in recognizers! {
