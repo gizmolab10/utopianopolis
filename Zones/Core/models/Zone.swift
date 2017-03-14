@@ -305,6 +305,11 @@ class Zone : ZRecord {
         return false
     }
 
+
+    func isSibling(of iSibling: Zone?) -> Bool {
+        return iSibling != nil && parentZone == iSibling!.parentZone
+    }
+
     
     // MARK:- convenience
     // MARK:-
@@ -520,6 +525,10 @@ class Zone : ZRecord {
         return stop
     }
 
+
+    func isChild(of iParent: Zone?) -> Bool {
+        return iParent != nil && iParent == parentZone
+    }
 
 
     enum ZCycleType: Int {

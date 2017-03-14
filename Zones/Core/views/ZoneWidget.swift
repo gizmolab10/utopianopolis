@@ -240,7 +240,7 @@ class ZoneWidget: ZView {
     var floatingDropDotRect: CGRect {
         var rect = CGRect()
 
-        if let indices = gSelectionManager.targetLineIndices, indices.count > 0 {
+        if let indices = gSelectionManager.dragDropIndices, indices.count > 0 {
             if !widgetZone.includeChildren {
 
                 /////////////////////////
@@ -251,7 +251,7 @@ class ZoneWidget: ZView {
                     let     insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
                     rect           = dot.convert(dot.bounds, to: self).insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
                 }
-            } else if let firstDot = targetDot(at: indices.firstIndex) {
+            } else if let firstDot = dot(at: indices.firstIndex) {
                 rect               = firstDot.convert(firstDot.bounds, to: self)
 
                 if indices.count == 1 || indices.lastIndex >= widgetZone.count {
@@ -265,7 +265,7 @@ class ZoneWidget: ZView {
                     let      delta = (gGenericOffset.height + CGFloat(gDotHeight * 0.75)) * multiplier
                     rect           = rect.offsetBy(dx: 0.0, dy: delta)
 
-                } else if indices.lastIndex < widgetZone.count, let secondDot = targetDot(at: indices.lastIndex) {
+                } else if indices.lastIndex < widgetZone.count, let secondDot = dot(at: indices.lastIndex) {
 
                     //////////////////
                     // dot is tween //
@@ -296,7 +296,7 @@ class ZoneWidget: ZView {
     }
 
 
-    func targetDot(at index: Int) -> ZoneDot? {
+    func dot(at index: Int) -> ZoneDot? {
         if index < widgetZone.count {
             let    target = widgetZone.children[index]
 
@@ -344,8 +344,8 @@ class ZoneWidget: ZView {
 
     func isDropIndex(_ iIndex: Int?) -> Bool {
         if  iIndex != nil {
-            let isIndex = gSelectionManager.targetLineIndices?.contains(iIndex!)
-            let  isDrop = widgetZone == gSelectionManager.targetDropZone
+            let isIndex = gSelectionManager.dragDropIndices?.contains(iIndex!)
+            let  isDrop = widgetZone == gSelectionManager.dragDropZone
 
             if isDrop && isIndex! {
                 return true
@@ -361,33 +361,20 @@ class ZoneWidget: ZView {
 
 
     func path(to dragRect: CGRect, in iView: ZView) -> ZBezierPath? {
-        var path: ZBezierPath? = nil
+        var linePath: ZBezierPath? = nil
 
         if  let   dot = toggleDot.innerDot {
             let frame = dot.convert(dot.bounds,     to: self)
             let delta = Double(dragRect.midY - frame.midY)
             let  kind = lineKindFor(delta)
             var  rect = rectForLine(to: dragRect, kind: kind)
-            rect      = self.convert(rect,         to: iView)
-            path      = self.path(in: rect,      iKind: kind)
+            rect      = convert(rect,               to: iView)
+            linePath  = path(in: rect,           iKind: kind)
         }
 
-        return path
+        return linePath
     }
 
-
-    func drawDragLine() {
-        let     rect = floatingDropDotRect
-        let  dotPath = ZBezierPath(ovalIn: rect)
-        // let linePath = path(to:            rect)
-
-        gDragTargetsColor.setStroke()
-        gDragTargetsColor.setFill()
-        dotPath.fill()
-        ZColor.clear.setFill()
-        // thinStroke(linePath)
-    }
-    
 
     func lineKindTo(_ widget: ZoneWidget?) -> ZLineKind {
         if  let           dragDot = widget?.dragDot.innerDot, widgetZone.count > 1 {

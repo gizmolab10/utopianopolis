@@ -30,14 +30,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     var isToggleTarget: Bool {
-        return isToggle && widgetZone == gSelectionManager.targetDropZone
+        return isToggle && widgetZone == gSelectionManager.dragDropZone
     }
 
 
     var isDropTarget: Bool {
         if  let   index = widgetZone?.siblingIndex, !isToggle {
-            let isIndex = gSelectionManager.targetLineIndices?.contains(index)
-            let  isDrop = widgetZone?.parentZone == gSelectionManager.targetDropZone
+            let isIndex = gSelectionManager.dragDropIndices?.contains(index)
+            let  isDrop = widgetZone?.parentZone == gSelectionManager.dragDropZone
 
             if isDrop && isIndex! {
                 return true

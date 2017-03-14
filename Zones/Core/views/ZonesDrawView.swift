@@ -21,15 +21,13 @@ class ZonesDrawView: ZView {
 
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
-        erasePriorDragLine()
 
-        let s              = gSelectionManager
+        let s            = gSelectionManager
 
-        if  let       zone = s.targetDropZone, let widget = gWidgetsManager.widgetForZone(zone) {
-            let   floating = widget.floatingDropDotRect
-            let       rect = widget.convert(floating, to: self)
-            let    dotPath = ZBezierPath(ovalIn: rect)
-            s.priorDotPath = dotPath
+        if  let     zone = s.dragDropZone, let widget = zone.widget {
+            let floating = widget.floatingDropDotRect
+            let     rect = widget.convert(floating, to: self)
+            let  dotPath = ZBezierPath(ovalIn: rect)
 
             gDragTargetsColor.setStroke()
             gDragTargetsColor.setFill()
@@ -37,20 +35,7 @@ class ZonesDrawView: ZView {
 
             let linePath = widget.path(to: floating, in: self)
 
-            ZColor.clear.setFill()
             thinStroke(linePath)
-        }
-    }
-
-
-    func erasePriorDragLine() {
-        let s              = gSelectionManager
-
-        if  let       path = s.priorDotPath {
-            s.priorDotPath = nil
-
-            ZColor.clear.setFill()
-            path.fill()
         }
     }
 }
