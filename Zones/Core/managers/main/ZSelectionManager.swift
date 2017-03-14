@@ -27,12 +27,13 @@ class ZSelectionManager: NSObject {
 
 
     var               hasGrab:  Bool { return currentlyGrabbedZones.count > 0 }
-    var            isDragging:  Bool { return zoneBeingDragged != nil }
+    var            isDragging:  Bool { return draggedZone != nil }
     var       dragDropIndices:  NSMutableIndexSet? = nil
     var  currentlyEditingZone:  Zone?              = nil
-    var      zoneBeingDragged:  Zone?              = nil
     var          dragDropZone:  Zone?              = nil
+    var           draggedZone:  Zone?              = nil
     var             dragPoint:  CGPoint?           = nil
+    var          dragRelation:  ZRelation?         = nil
     var       pasteableZones = [Zone] ()
     var currentlyGrabbedZones: [Zone] {
         get { return gTravelManager.manifest.currentlyGrabbedZones }

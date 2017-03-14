@@ -549,7 +549,8 @@ class Zone : ZRecord {
         var flag: ZCycleType? = nil
 
         if iZone == self {
-            flag = .found
+            let isEmpty = array.count == 0
+            flag = isEmpty ? .none : .found
         } else if array.contains(self) {
             flag = .cycle
         }

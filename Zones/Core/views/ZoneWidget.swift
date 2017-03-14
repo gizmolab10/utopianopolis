@@ -240,8 +240,7 @@ class ZoneWidget: ZView {
     var floatingDropDotRect: CGRect {
         var rect = CGRect()
 
-        if let indices = gSelectionManager.dragDropIndices, indices.count > 0 {
-            if !widgetZone.includeChildren {
+        if !widgetZone.includeChildren {
 
                 /////////////////////////
                 // dot is straight out //
@@ -251,16 +250,19 @@ class ZoneWidget: ZView {
                     let     insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
                     rect           = dot.convert(dot.bounds, to: self).insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
                 }
-            } else if let firstDot = dot(at: indices.firstIndex) {
+        } else if let      indices = gSelectionManager.dragDropIndices, indices.count > 0 {
+            let         firstindex = indices.firstIndex
+
+            if  let       firstDot = dot(at: firstindex) {
                 rect               = firstDot.convert(firstDot.bounds, to: self)
 
-                if indices.count == 1 || indices.lastIndex >= widgetZone.count {
+                if  indices.count == 1 || indices.lastIndex >= widgetZone.count {
 
                     ///////////////////////////
                     // dot is above or below //
                     ///////////////////////////
 
-                    let    isAbove = indices.firstIndex == 0
+                    let    isAbove = gSelectionManager.dragRelation == .above
                     let multiplier = CGFloat((isAbove ? 1.0 : -1.0) * gVerticalWeight)
                     let      delta = (gGenericOffset.height + CGFloat(gDotHeight * 0.75)) * multiplier
                     rect           = rect.offsetBy(dx: 0.0, dy: delta)
@@ -315,7 +317,7 @@ class ZoneWidget: ZView {
 
 
     func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView) -> ZoneWidget? {
-        if dragContainsPoint(iPoint) && widgetZone.isDescendantOf(gSelectionManager.zoneBeingDragged!) == .none {
+        if dragContainsPoint(iPoint) && widgetZone.isDescendantOf(gSelectionManager.draggedZone!) == .none {
             if widgetZone.showChildren {
                 for child in widgetZone.children {
                     if let childWidget = child.widget, let found = childWidget.widgetNearestTo(iPoint, in: self) {

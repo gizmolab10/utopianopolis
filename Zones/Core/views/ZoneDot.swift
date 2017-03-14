@@ -99,7 +99,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             if !isToggle {
                 dragGesture = createDragGestureRecognizer(self, action: #selector(ZoneDot.dragEvent))
-                gSelectionManager.zoneBeingDragged = nil
+                gSelectionManager.draggedZone = nil
             }
 
             innerDot?.setupForWidget(iWidget, asToggle: isToggle)
@@ -141,7 +141,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             widgetZone?.grab()
 
             if !isHere {
-                gSelectionManager.zoneBeingDragged = widgetZone
+                gSelectionManager.draggedZone = widgetZone
             }
         }
 
