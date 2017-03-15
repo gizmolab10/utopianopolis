@@ -247,6 +247,24 @@ extension Zone {
 extension ZoneWidget {
 
 
+    var dragHitFrame: CGRect {
+        var hitRect = CGRect()
+
+        if  let   view = gEditorView, let dot = dragDot.innerDot {
+            let isHere = widgetZone == gHere
+            let cFrame =     convert(childrenView.frame, to: view)
+            let dFrame = dot.convert(        dot.bounds, to: view)
+            let bottom =  (!isHere && widgetZone.hasZonesBelow) ? cFrame.minY : 0.0
+            let    top = ((!isHere && widgetZone.hasZonesAbove) ? cFrame      : view.bounds).maxY
+            let  right =                                                        view.bounds .maxX
+            let   left =    isHere ? 0.0 : dFrame.minX
+            hitRect    = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
+        }
+
+        return hitRect
+    }
+
+
     func rectForLine(to targetFrame: CGRect, kind: ZLineKind) -> CGRect {
         var frame = CGRect ()
 
@@ -262,10 +280,10 @@ extension ZoneWidget {
 
             switch kind {
             case .above:
-                frame.origin   .y = sourceFrame.maxY - thinThickness
+                frame.origin   .y = sourceFrame.maxY - halfDotHeight + thickness
                 frame.size.height = fabs( targetMidY + thinThickness - frame.minY)
             case .below:
-                frame.origin   .y = targetFrame.minY + halfDotHeight
+                frame.origin   .y = targetFrame.minY + halfDotHeight - thickness
                 frame.size.height = fabs( sourceMidY + thinThickness - frame.minY - halfDotHeight)
             case .straight:
                 frame.origin   .y =       targetMidY - thinThickness / 8.0

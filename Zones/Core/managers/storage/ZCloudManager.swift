@@ -83,7 +83,7 @@ class ZCloudManager: ZRecordsManager {
     func royalFlush(_ onCompletion: @escaping Closure) {
         for zone in zones.values {
             if !zone.isMarkedForStates([.needsFetch, .needsSave, .needsCreate]) {
-                zone.normalizeOrdering()
+                zone.updateOrdering()
                 zone.updateCloudProperties()
             }
         }

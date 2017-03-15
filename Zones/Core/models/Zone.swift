@@ -431,19 +431,9 @@ class Zone : ZRecord {
 
 
     func addAndReorderChild(_ child: Zone?, at iIndex: Int?) {
-        if let index = addChild(child, at: iIndex) {
-            recomputeOrderingUponInsertionAt(index)
+        if addChild(child, at: iIndex) != nil {
+            updateOrdering()
         }
-    }
-
-
-    func recomputeOrderingUponInsertionAt(_ index: Int) {
-        let  orderLarger = orderAt(index + 1) ?? 1.0
-        let orderSmaller = orderAt(index - 1) ?? 0.0
-        let        child = children[index]
-        child.order      = (orderLarger + orderSmaller) / 2.0
-
-        child.needUpdateSave()
     }
 
 
@@ -486,7 +476,7 @@ class Zone : ZRecord {
     }
 
 
-    func normalizeOrdering() {
+    func updateOrdering() {
         let increment = 1.0 / Double(count + 2)
 
         for (index, child) in children.enumerated() {

@@ -52,7 +52,9 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         var specificView:        ZView? = view
         var specificindex:         Int? = nil
         var recursing:             Bool = [.data, .redraw].contains(kind)
+        gTextCapturing                  = false
         hereWidget.widgetZone           = gHere
+        view    .zlayer.backgroundColor = gBackgroundColor.cgColor
 
         if zone != nil {
             specificWidget = zone!.widget
@@ -73,9 +75,6 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind)
         specificWidget?.updateConstraints()
         specificWidget?.display()
-
-        view.zlayer.backgroundColor = gBackgroundColor.cgColor
-        gTextCapturing              = false
     }
 
 
@@ -152,9 +151,10 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
                 s.dragDropIndices?.add(index - 1)
             }
 
-            prior?           .displayForDrag() // erase  children lines
-            dropZone?.widget?.displayForDrag() // redraw children lines
-            gEditorView?    .setNeedsDisplay() // redraw dragline and dot
+            prior?              .displayForDrag() // erase  child lines
+            dropZone?  .widget? .displayForDrag() // redraw child lines
+            draggedZone.widget?.setNeedsDisplay() // redraw parent's child lines
+            gEditorView?       .setNeedsDisplay() // redraw dragline and dot
 
             if done {
                 let     editor = gEditingManager
@@ -168,8 +168,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
                 if let t = dropZone, !isNoop {
                     if t.isBookmark {
                         editor.moveZone(draggedZone, t)
-
-                        self.signalFor(nil, regarding: .redraw)
+                        editor.syncAndRedraw()
                     } else if !same, index >= bump {
                         editor.moveZone(draggedZone, into: t, at: index - bump, orphan: true) {
                             editor.syncAndRedraw()

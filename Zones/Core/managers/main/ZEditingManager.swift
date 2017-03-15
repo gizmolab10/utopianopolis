@@ -267,7 +267,7 @@ class ZEditingManager: NSObject {
 
 
     func syncAndRedraw() {
-        gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+        gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw, onCompletion: nil)
     }
 
 
@@ -1010,14 +1010,14 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool) {
+    func moveUp(_ iMoveUp: Bool, selectionOnly: Bool, extreme: Bool) {
         let         zone = gSelectionManager.firstGrabbableZone
         let       isHere = zone == hereZone
         if  let    there = zone.parentZone, !isHere, let index = zone.siblingIndex {
-            var newIndex = index + (moveUp ? -1 : 1)
+            var newIndex = index + (iMoveUp ? -1 : 1)
 
             if extreme {
-                newIndex = moveUp ? 0 : there.count - 1
+                newIndex = iMoveUp ? 0 : there.count - 1
             }
 
             if newIndex >= 0 && newIndex < there.count {
@@ -1026,7 +1026,7 @@ class ZEditingManager: NSObject {
                 }
 
                 UNDO(self) { iUndoSelf in
-                    iUndoSelf.moveUp(!moveUp, selectionOnly: selectionOnly, extreme: extreme)
+                    iUndoSelf.moveUp(!iMoveUp, selectionOnly: selectionOnly, extreme: extreme)
                 }
 
                 if selectionOnly {
@@ -1036,7 +1036,7 @@ class ZEditingManager: NSObject {
                     gSelectionManager.deselectGrabs()
                     there.moveChild(from: index, to: newIndex)
                     there.children[newIndex].grab()
-                    there.recomputeOrderingUponInsertionAt(newIndex)
+                    there.updateOrdering()
                     gControllersManager.syncToCloudAndSignalFor(there, regarding: .redraw) {}
                 }
 
@@ -1051,7 +1051,7 @@ class ZEditingManager: NSObject {
                     }
 
                     if parent.count > 1 {
-                        self.moveUp(moveUp, selectionOnly: selectionOnly, extreme: extreme)
+                        self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme)
                     }
                 }
             }

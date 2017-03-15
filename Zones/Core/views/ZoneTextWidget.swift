@@ -190,6 +190,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     override func controlTextDidChange(_ obj: Notification) {
         widget.layoutTextField()
+        widget.setNeedsDisplay()
     }
 
 

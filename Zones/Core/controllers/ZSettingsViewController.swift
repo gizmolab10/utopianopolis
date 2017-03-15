@@ -174,9 +174,11 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
     @IBAction func restoreZoneButtonAction(_ button: ZButton) {
         // similar to gEditingManager.moveInto
-        let zone = gSelectionManager.firstGrabbableZone
-        let root = gTravelManager.rootZone!
-        gHere    = root
+        let       zone = gSelectionManager.firstGrabbableZone
+        let       root = gTravelManager.rootZone!
+        gHere          = root
+        zone.isDeleted = false
+
 
         root.needChildren()
         gOperationsManager.children(recursively: true) {

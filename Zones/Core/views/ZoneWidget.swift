@@ -29,7 +29,7 @@ let dragTarget = false
 class ZoneWidget: ZView {
 
 
-    private var      childrenView = ZView()
+    var              childrenView = ZView()
     private var   childrenWidgets = [ZoneWidget] ()
     let                textWidget = ZoneTextWidget()
     let                 toggleDot = ZoneDot ()
@@ -220,23 +220,6 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    var dragHitFrame: CGRect {
-        var result = CGRect()
-
-        if  let   view = gEditorView {
-            let isHere = widgetZone == gHere
-            let cFrame = convert(childrenView.frame, to: view)
-            let  right =                                                   view.bounds .maxX
-            let    top = ((!isHere && widgetZone.hasZonesAbove) ? cFrame : view.bounds).maxY
-            let bottom =  (!isHere && widgetZone.hasZonesBelow) ? cFrame.minY : 0.0
-            let   left =    isHere ? 0.0 : convert(dragDot.innerDot!.frame, to: view).minX
-            result     = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
-        }
-
-        return result
-    }
-
-
     var floatingDropDotRect: CGRect {
         var rect = CGRect()
 
@@ -334,12 +317,13 @@ class ZoneWidget: ZView {
 
 
     func displayForDrag() {
-        toggleDot        .innerDot?.setNeedsDisplay()
-        self                       .setNeedsDisplay()
+        widgetZone.parentZone?.widget?.setNeedsDisplay()
+        toggleDot           .innerDot?.setNeedsDisplay()
+        self                          .setNeedsDisplay()
 
         for child in childrenWidgets {
-            child.dragDot.innerDot?.setNeedsDisplay()
-            child                  .setNeedsDisplay()
+            child   .dragDot.innerDot?.setNeedsDisplay()
+            child                     .setNeedsDisplay()
         }
     }
 
@@ -371,7 +355,7 @@ class ZoneWidget: ZView {
     }
 
 
-    func path(in iRect: CGRect, iKind: ZLineKind) -> ZBezierPath {
+    func linePath(in iRect: CGRect, iKind: ZLineKind) -> ZBezierPath {
         switch iKind {
         case .straight: return straightPathFor(iRect)
         default:        return   curvedPathFor(iRect, iKind: iKind)
@@ -379,8 +363,8 @@ class ZoneWidget: ZView {
     }
 
 
-    func path(to dragRect: CGRect, in iView: ZView) -> ZBezierPath? {
-        var linePath: ZBezierPath? = nil
+    func linePath(to dragRect: CGRect, in iView: ZView) -> ZBezierPath? {
+        var path: ZBezierPath? = nil
 
         if  let   dot = toggleDot.innerDot {
             let frame = dot.convert(dot.bounds,     to: self)
@@ -388,31 +372,32 @@ class ZoneWidget: ZView {
             let  kind = lineKindFor(delta)
             var  rect = rectForLine(to: dragRect, kind: kind)
             rect      = convert(rect,               to: iView)
-            linePath  = path(in: rect,           iKind: kind)
+            path      = linePath(in: rect,           iKind: kind)
         }
 
-        return linePath
+        return path
     }
 
 
-    func lineKindTo(_ widget: ZoneWidget?) -> ZLineKind {
+    func lineKind(to widget: ZoneWidget?) -> ZLineKind {
+        var       kind: ZLineKind = .straight
+
         if  let           dragDot = widget?.dragDot.innerDot, widgetZone.count > 1 {
             let    dragDotCenterY =    dragDot.convert(   dragDot.bounds, to: self).center.y
             let textWidgetCenterY = textWidget.convert(textWidget.bounds, to: self).center.y
             let             delta = Double(dragDotCenterY - textWidgetCenterY)
-
-            return lineKindFor(delta)
+            kind                  = lineKindFor(delta)
         }
 
-        return .straight
+        return kind
     }
 
 
-    func rectForLine(to rightWidget: ZoneWidget?) -> CGRect {
+    func lineRect(to childWidget: ZoneWidget?) -> CGRect {
         var    frame = CGRect ()
 
-        if  let  dot = rightWidget?.dragDot.innerDot {
-            let kind = lineKindTo(rightWidget)
+        if  let  dot = childWidget?.dragDot.innerDot {
+            let kind = lineKind(to: childWidget)
             frame    = dot.convert(dot.bounds, to: self)
             frame    = rectForLine(to: frame, kind: kind)
         }
@@ -442,14 +427,13 @@ class ZoneWidget: ZView {
 
 
     func drawLine(to child: ZoneWidget) {
-        let  zone = child.widgetZone!
-        let color = zone.isBookmark ? gBookmarkColor : gZoneColor
-        let  rect = rectForLine(to: child)
-        let  kind = lineKindTo(child)
-        let  line = path(in: rect, iKind: kind)
+        let color = child.widgetZone.isBookmark ? gBookmarkColor : gZoneColor
+        let  rect = lineRect(to: child)
+        let  kind = lineKind(to: child)
+        let  path = linePath(in: rect, iKind: kind)
 
         color.setStroke()
-        thinStroke(line)
+        thinStroke(path)
     }
 
 
