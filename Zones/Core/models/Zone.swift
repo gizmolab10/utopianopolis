@@ -545,27 +545,24 @@ class Zone : ZRecord {
 
 
     func isDescendantOf(_ iZone: Zone) -> ZCycleType {
-        var array = iZone.cycleDetectorArray
-        var flag: ZCycleType? = nil
+        let         detector = iZone.cycleDetectorArray
+        var flag: ZCycleType = .none
 
         if iZone == self {
-            let isEmpty = array.count == 0
-            flag = isEmpty ? .none : .found
-        } else if array.contains(self) {
+            if detector.count > 0 {
+                flag = .found
+            }
+        } else if detector.contains(self) {
             flag = .cycle
-        }
-
-        if flag != nil {
-            iZone.cycleDetectorArray.removeAll()
-
-            return flag!
         } else if let parent = parentZone {
-            array.append(self)
+            iZone.cycleDetectorArray.append(self)
 
             return parent.isDescendantOf(iZone)
         }
-        
-        return .none
+
+        iZone.cycleDetectorArray.removeAll()
+
+        return flag
     }
 
 

@@ -362,6 +362,14 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
+    func path(in iRect: CGRect, iKind: ZLineKind) -> ZBezierPath {
+        switch iKind {
+        case .straight: return straightPathFor(iRect)
+        default:        return   curvedPathFor(iRect, iKind: iKind)
+        }
+    }
+
+
     func path(to dragRect: CGRect, in iView: ZView) -> ZBezierPath? {
         var linePath: ZBezierPath? = nil
 
@@ -426,16 +434,13 @@ class ZoneWidget: ZView {
 
     func drawLine(to child: ZoneWidget) {
         let  zone = child.widgetZone!
-            // draw drag lines above and below (old style)
-            // let color = isDropIndex(zone.siblingIndex) ? gDragTargetsColor : zone.isBookmark ? gBookmarkColor : gZoneColor
-            // comment this back in for only drawing the dot at the end of the drag line
         let color = zone.isBookmark ? gBookmarkColor : gZoneColor
         let  rect = rectForLine(to: child)
         let  kind = lineKindTo(child)
-        let  path = self.path(in: rect, iKind: kind)
+        let  line = path(in: rect, iKind: kind)
 
         color.setStroke()
-        thinStroke(path)
+        thinStroke(line)
     }
 
 

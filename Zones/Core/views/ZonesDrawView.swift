@@ -22,20 +22,14 @@ class ZonesDrawView: ZView {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        let s            = gSelectionManager
-
-        if  let     zone = s.dragDropZone, let widget = zone.widget {
+        if  let     zone = gSelectionManager.dragDropZone, let widget = zone.widget {
             let floating = widget.floatingDropDotRect
             let     rect = widget.convert(floating, to: self)
-            let  dotPath = ZBezierPath(ovalIn: rect)
 
             gDragTargetsColor.setStroke()
             gDragTargetsColor.setFill()
-            dotPath.fill()
-
-            let linePath = widget.path(to: floating, in: self)
-
-            thinStroke(linePath)
+            ZBezierPath(ovalIn: rect).fill()
+            thinStroke(widget.path(to: floating, in: self))
         }
     }
 }
