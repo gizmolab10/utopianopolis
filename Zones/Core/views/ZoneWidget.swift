@@ -362,6 +362,15 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
+    func straightPathFor(_ iRect: CGRect) -> ZBezierPath {
+        if widgetZone.count > 1 && !gSelectionManager.isDragging {
+            ZBezierPath(rect: bounds).setClip()
+        }
+
+        return ZBezierPath(rect: iRect)
+    }
+
+
     func path(in iRect: CGRect, iKind: ZLineKind) -> ZBezierPath {
         switch iKind {
         case .straight: return straightPathFor(iRect)

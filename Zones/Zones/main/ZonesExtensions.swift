@@ -298,26 +298,4 @@ extension ZoneWidget {
 
         return ZBezierPath(ovalIn: rect)
     }
-
-
-    func straightPathFor(_ iRect: CGRect) -> ZBezierPath {
-        if widgetZone.count > 1 && !gSelectionManager.isDragging {
-            ZBezierPath(rect: bounds).setClip()
-        }
-
-        let pointA = CGPoint(x: iRect.maxX, y: iRect.minY)
-        let pointB = CGPoint(x: iRect.maxX, y: iRect.maxY)
-        let pointC = CGPoint(x: iRect.minX, y: iRect.maxY)
-        let origin = iRect.origin
-        let   path = ZBezierPath()
-
-        path.move(to: origin)
-        path.line(to: pointA)
-        path.line(to: pointB)
-        path.line(to: pointC)
-        path.line(to: origin)
-        path.close()
-
-        return path
-    }
 }

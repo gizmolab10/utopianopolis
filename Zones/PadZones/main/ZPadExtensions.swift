@@ -270,10 +270,4 @@ extension ZoneWidget {
 
         return path
     }
-
-
-    func straightPathFor(_ iRect: CGRect) -> ZBezierPath {
-        return ZBezierPath(rect: iRect)
-    }
-
 }
