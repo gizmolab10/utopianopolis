@@ -280,30 +280,44 @@ extension ZoneWidget {
     }
 
 
-    func path(in iRect: CGRect, iKind: ZLineKind) -> ZBezierPath {
-        let          dotHeight = CGFloat(gDotHeight)
-        let       halfDotWidth = CGFloat(gDotWidth) / 2.0
-        let      halfDotHeight = dotHeight / 2.0
-        var               rect = iRect
-        var               path = ZBezierPath(rect: rect)
-        let            isAbove = iKind == .above
+    func curvedPathFor(_ iRect: CGRect, iKind: ZLineKind) -> ZBezierPath {
+        ZBezierPath(rect: iRect).setClip()
 
-        ZBezierPath(rect: bounds).setClip()
+        let      dotHeight = CGFloat(gDotHeight)
+        let   halfDotWidth = CGFloat(gDotWidth) / 2.0
+        let  halfDotHeight = dotHeight / 2.0
+        let        isAbove = iKind == .above
+        var           rect = iRect
 
-        if iKind != .straight {
-            ZColor.clear.setFill()
-            path.setClip()
-
-            if isAbove {
-                rect.origin.y -= rect.height + halfDotHeight
-            }
-
-            rect.size   .width = rect.width  * 2.0 + halfDotWidth
-            rect.size  .height = rect.height * 2.0 + (isAbove ? halfDotHeight : dotHeight)
-            path               = ZBezierPath(ovalIn: rect)
+        if isAbove {
+            rect.origin.y -= rect.height + halfDotHeight
         }
-        
-        return path
+
+        rect.size   .width = rect.width  * 2.0 + halfDotWidth
+        rect.size  .height = rect.height * 2.0 + (isAbove ? halfDotHeight : dotHeight)
+
+        return ZBezierPath(ovalIn: rect)
     }
 
+
+    func straightPathFor(_ iRect: CGRect) -> ZBezierPath {
+        if widgetZone.count > 1 && !gSelectionManager.isDragging {
+            ZBezierPath(rect: bounds).setClip()
+        }
+
+        let pointA = CGPoint(x: iRect.maxX, y: iRect.minY)
+        let pointB = CGPoint(x: iRect.maxX, y: iRect.maxY)
+        let pointC = CGPoint(x: iRect.minX, y: iRect.maxY)
+        let origin = iRect.origin
+        let   path = ZBezierPath()
+
+        path.move(to: origin)
+        path.line(to: pointA)
+        path.line(to: pointB)
+        path.line(to: pointC)
+        path.line(to: origin)
+        path.close()
+
+        return path
+    }
 }

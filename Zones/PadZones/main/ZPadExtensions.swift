@@ -255,24 +255,25 @@ extension ZoneWidget {
     }
 
 
-    func path(in iRect: CGRect, iKind: ZLineKind) -> ZBezierPath {
-        var path = ZBezierPath(rect: iRect)
+    func curvedPathFor(_ iRect: CGRect, iKind: ZLineKind) -> ZBezierPath {
+        let    isBelow = iKind == .below
+        let startAngle = CGFloat(M_PI)
+        let deltaAngle = CGFloat(M_PI_2)
+        let multiplier = CGFloat(isBelow ? -1.0 : 1.0)
+        let   endAngle = startAngle + (multiplier * deltaAngle)
+        let     scaleY = iRect.height / iRect.width
+        let    centerY = isBelow ? iRect.minY : iRect.maxY
+        let     center = CGPoint(x: iRect.maxX, y: centerY / scaleY)
+        path           = ZBezierPath(arcCenter: center, radius: iRect.width, startAngle: startAngle, endAngle: endAngle, clockwise: !isBelow)
 
-        if iKind != .straight {
-            let    isBelow = iKind == .below
-            let startAngle = CGFloat(M_PI)
-            let deltaAngle = CGFloat(M_PI_2)
-            let multiplier = CGFloat(isBelow ? -1.0 : 1.0)
-            let   endAngle = startAngle + (multiplier * deltaAngle)
-            let     scaleY = iRect.height / iRect.width
-            let    centerY = isBelow ? iRect.minY : iRect.maxY
-            let     center = CGPoint(x: iRect.maxX, y: centerY / scaleY)
-            path           = ZBezierPath(arcCenter: center, radius: iRect.width, startAngle: startAngle, endAngle: endAngle, clockwise: !isBelow)
-
-            path.apply(CGAffineTransform(scaleX: 1.0, y: scaleY))
-        }
+        path.apply(CGAffineTransform(scaleX: 1.0, y: scaleY))
 
         return path
+    }
+
+
+    func straightPathFor(_ iRect: CGRect) -> ZBezierPath {
+        return ZBezierPath(rect: iRect)
     }
 
 }
