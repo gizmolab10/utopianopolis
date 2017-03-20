@@ -119,7 +119,7 @@ class ZCloudManager: ZRecordsManager {
 
             clearStates([.needsSave]) // clear BEFORE looking at manifest
 
-            if (operation.recordsToSave?.count)! > 0 {
+            if operation.recordsToSave!.count > 0 {
 
                 toConsole("saving \((operation.recordsToSave?.count)!)")
 
@@ -154,7 +154,7 @@ class ZCloudManager: ZRecordsManager {
                                     description    = "\(description): \(name)"
                                 }
 
-                                self.reportError(description)
+                                self.report(description)
                             }
                         }
                     }
@@ -375,11 +375,9 @@ class ZCloudManager: ZRecordsManager {
                                         parentsNeedingResort.append(parent)
                                     }
                                 }
-
-                                return
+                            } else {
+                                self.report(child.zoneName)
                             }
-                            
-                            self.reportError(child.zoneName)
                         }
                     }
                 }
@@ -523,7 +521,6 @@ class ZCloudManager: ZRecordsManager {
                 let            root = gFavoritesManager.favoritesRootZone
                 bookmark.parentZone = root
 
-                // self.report("fetching \(bookmark.zoneName!) order \(bookmark.order)")
                 root.addChild(bookmark)
             }
         }
@@ -594,9 +591,9 @@ class ZCloudManager: ZRecordsManager {
                     } else {
                         self.invokeWithMode(storageMode) {
                             for subscription: CKSubscription in iSubscriptions! {
-                                self.currentDB?.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (iSubscription: String?, iDeleteError: Error?) in
-                                    if iDeleteError != nil {
-                                        self.reportError(iDeleteError)
+                                self.currentDB?.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (iSubscription: String?, iUnsubscribeError: Error?) in
+                                    if iUnsubscribeError != nil {
+                                        self.reportError(iUnsubscribeError)
                                     }
 
                                     count -= 1
@@ -630,10 +627,10 @@ class ZCloudManager: ZRecordsManager {
                 information.shouldSendContentAvailable = true
                 subscription.notificationInfo          = information
 
-                currentDB?.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iSaveError: Error?) in
-                    if iSaveError != nil {
-                        self.signalFor(iSaveError as NSObject?, regarding: .error)
-                        self.reportError(iSaveError)
+                currentDB?.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iSubscribeError: Error?) in
+                    if iSubscribeError != nil {
+                        self.signalFor(iSubscribeError as NSObject?, regarding: .error)
+                        self.reportError(iSubscribeError)
                     }
 
                     count -= 1

@@ -238,19 +238,22 @@ class ZoneWidget: ZView {
 
             if  let       firstDot = dot(at: firstindex) {
                 rect               = firstDot.convert(firstDot.bounds, to: self)
+                let      lastIndex = indices.lastIndex
 
-                if  indices.count == 1 || indices.lastIndex >= widgetZone.count {
+                if  indices.count == 1 || lastIndex >= widgetZone.count {
 
                     ///////////////////////////
                     // dot is above or below //
                     ///////////////////////////
 
-                    let    isAbove = gSelectionManager.dragRelation == .above
-                    let multiplier = CGFloat((isAbove ? 1.0 : -1.0) * gVerticalWeight)
-                    let      delta = (gGenericOffset.height + CGFloat(gDotHeight * 0.75)) * multiplier
-                    rect           = rect.offsetBy(dx: 0.0, dy: delta)
+                    let   relation = gSelectionManager.dragRelation
+                    let    isAbove = relation == .above || (asTask && (lastIndex == 0 || relation == .upon))
+                    let multiplier = (isAbove ? 1.0 : -1.0) * gVerticalWeight
+                    let    gHeight = Double(gGenericOffset.height)
+                    let      delta = (gHeight + (gDotHeight * 0.75)) * multiplier
+                    rect           = rect.offsetBy(dx: 0.0, dy: CGFloat(delta))
 
-                } else if indices.lastIndex < widgetZone.count, let secondDot = dot(at: indices.lastIndex) {
+                } else if lastIndex < widgetZone.count, let secondDot = dot(at: lastIndex) {
 
                     //////////////////
                     // dot is tween //
@@ -268,7 +271,7 @@ class ZoneWidget: ZView {
 
 
     func lineKindFor(_ delta: Double) -> ZLineKind {
-        let threshold = gDotHeight / 3.0 * gVerticalWeight
+        let threshold = 2.0   * gVerticalWeight
         let  adjusted = delta * gVerticalWeight
         
         if adjusted > threshold {
@@ -281,14 +284,11 @@ class ZoneWidget: ZView {
     }
 
 
-    func dot(at index: Int) -> ZoneDot? {
-        if index < widgetZone.count {
-            let    target = widgetZone.children[index]
+    func dot(at iIndex: Int) -> ZoneDot? {
+        let  index = min(iIndex, widgetZone.count - 1)
+        let target = widgetZone.children[index]
 
-            return target.widget?.dragDot.innerDot
-        }
-
-        return nil
+        return target.widget?.dragDot.innerDot
     }
 
 

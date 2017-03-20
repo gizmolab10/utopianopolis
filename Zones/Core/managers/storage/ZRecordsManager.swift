@@ -366,13 +366,13 @@ class ZRecordsManager: NSObject {
     func zoneForRecord(_ record: CKRecord) -> Zone {
         var zone = zones[record.recordID.recordName]
 
-        if zone == nil {
+        if  zone == nil {
             zone = Zone(record: record, storageMode: gStorageMode)
         } else if !(zone?.isDeleted ?? false) {
             zone?.record = record
         }
 
-        if  zone!.showChildren || zone!.hasChildren {
+        if  zone!.showChildren || zone!.hasChildren || zone!.count == 0 {
             zone!.needChildren()
         }
 

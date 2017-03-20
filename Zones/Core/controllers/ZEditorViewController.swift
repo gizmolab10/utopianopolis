@@ -104,14 +104,19 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
 
     func relationOf(_ iPoint: CGPoint, to iView: ZView?) -> ZRelation {
-        if  iView    != nil {
-            let point = view.convert(iPoint, to: iView)
-            let frame = iView!.bounds
-            let delta = point.x - frame.minX
+        if  iView     != nil {
+            let margin = CGFloat(5.0)
+            let weight = CGFloat(gVerticalWeight)
+            let  point = view.convert(iPoint, to: iView)
+            let   rect = iView!.bounds
+            let      y = weight * point.y
 
-            if     delta      > -10.0 {
-                if frame.midY +   8.0 < point.y { return .below }
-                if frame.midY -   8.0 > point.y { return .above }
+            if y > ((weight * rect.maxY) - margin) {
+                return .below
+            }
+
+            if y < ((weight * rect.minY) + margin) {
+                return .above
             }
         }
 
@@ -121,40 +126,39 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
     func handleDragEvent(_ iGesture: ZGestureRecognizer?) {
         if  let       location = iGesture?.location (in: view) {
+            let           done = [ZGestureRecognizerState.ended, ZGestureRecognizerState.cancelled].contains(iGesture!.state)
+            let            dot = iGesture?.view as! ZoneDot
+            let    draggedZone = dot.widgetZone!
             let    dropNearest = hereWidget.widgetNearestTo(location, in: view)
             var       dropZone = dropNearest?.widgetZone
             let      dropIndex = dropZone?.siblingIndex
             let       dropHere = dropZone == gHere
-            let         relate = relationOf(location, to: dropNearest?.textWidget)
-            let           done = [ZGestureRecognizerState.ended, ZGestureRecognizerState.cancelled].contains(iGesture!.state)
-            let            dot = iGesture?.view as! ZoneDot
-            let    draggedZone = dot.widgetZone!
-            let           same = draggedZone == dropZone
-            let      dragIndex = draggedZone.siblingIndex!
-            let  useDropParent = relate != .upon && !dropHere
+            let           same = dropZone == draggedZone
+            let       relation = relationOf(location, to: dropNearest?.textWidget)
+            let  useDropParent = relation != .upon && !dropHere
             ;         dropZone = same ? nil : useDropParent ? dropZone?.parentZone : dropZone
-            let     childCount = dropZone != nil ? dropZone!.count - 1 : 0
-            let   dropIsParent = draggedZone.isChild(of: dropZone)
-            let           bump = (dropIsParent && dropIndex != nil && dragIndex <= dropIndex!) ? 1 : 0
-            var          index = useDropParent && dropIndex != nil ? (dropIndex! + relate.rawValue) : ((asTask || same) ? 0 : childCount)
-            ;            index = !dropHere ? index : relate == .above ? 0 : childCount
+            let  lastDropIndex = dropZone == nil ? 0 : dropZone!.count
+            var          index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((asTask || same) ? 0 : lastDropIndex)
+            ;            index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
+            let      dragIndex = draggedZone.siblingIndex!
             let      sameIndex = dragIndex == index || dragIndex == index - 1
-            let         isNoop = same || (sameIndex && dropIsParent)
+            let   dropIsParent = draggedZone.isChild(of: dropZone)
+            let         isNoop = same || (sameIndex && dropIsParent) || index < 0
             let              s = gSelectionManager
             let          prior = s.dragDropZone?.widget
             s .dragDropIndices = isNoop ? nil : NSMutableIndexSet(index: index)
             s    .dragDropZone = isNoop ? nil : done ? nil : dropZone
-            s    .dragRelation = isNoop ? nil : relate
+            s    .dragRelation = isNoop ? nil : relation
             s       .dragPoint = isNoop ? nil : location
 
-            if !isNoop && index > 0 && relate != .upon {
+            if !isNoop && !dropHere && index > 0 {
                 s.dragDropIndices?.add(index - 1)
             }
 
-            prior?              .displayForDrag() // erase  child lines
-            dropZone?  .widget? .displayForDrag() // redraw child lines
-            draggedZone.widget?.setNeedsDisplay() // redraw parent's child lines
-            gEditorView?       .setNeedsDisplay() // redraw dragline and dot
+            report("index \(index)")
+            prior?             .displayForDrag() // erase  child lines
+            dropZone?  .widget?.displayForDrag() // redraw child lines
+            gEditorView?      .setNeedsDisplay() // redraw dragline and dot
 
             if done {
                 let     editor = gEditingManager
@@ -169,8 +173,8 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
                     if t.isBookmark {
                         editor.moveZone(draggedZone, t)
                         editor.syncAndRedraw()
-                    } else if !same, index >= bump {
-                        editor.moveZone(draggedZone, into: t, at: index - bump, orphan: true) {
+                    } else if !same {
+                        editor.moveZone(draggedZone, into: t, at: index, orphan: true) {
                             editor.syncAndRedraw()
                         }
                     }

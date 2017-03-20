@@ -606,6 +606,7 @@ class ZEditingManager: NSObject {
             deleteZones(zone.children, in: zone) // recurse
             deleteZones(bookmarks,     in: zone) // recurse
             zone.orphan()
+            zone    .needUpdateSave()
             manifest.needUpdateSave()
         }
 

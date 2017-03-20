@@ -185,6 +185,10 @@ class Zone : ZRecord {
     }
 
 
+    // MARK:- properties
+    // MARK:-
+
+
     override func debug(_  iMessage: String) {
         // report("\(iMessage) children \(count) parent \(parent != nil) isDeleted \(isDeleted) mode \(storageMode!) \(zoneName ?? "unknown")")
     }
@@ -421,6 +425,8 @@ class Zone : ZRecord {
                 children.append(child!)
             }
 
+            needUpdateSave()
+            child?.needUpdateSave()
             child?.updateLevel()
 
             return insertAt
