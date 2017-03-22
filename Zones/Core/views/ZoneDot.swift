@@ -58,8 +58,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             let     strokeColor = isToggleTarget ? gDragTargetsColor :  isBookmark  ? gBookmarkColor : gZoneColor
             let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
             let       thickness = CGFloat(gLineThickness)
-            let           inset = thickness / lineThicknessDivisor
-            let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
+            let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
 
             fillColor.setFill()
             strokeColor.setStroke()
@@ -127,7 +126,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         if isToggle {
             gEditingManager.toggleDotActionOnZone(widgetZone, recursively: false)
         } else {
-            gSelectionManager.deselect()
             widgetZone?.grab()
         }
     }

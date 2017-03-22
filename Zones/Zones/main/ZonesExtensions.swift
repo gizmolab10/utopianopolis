@@ -56,7 +56,6 @@ func CGSizeFromString(_ string: String) -> CGSize {
 
 
 extension NSObject {
-    var  lineThicknessDivisor: CGFloat { return  1.0 }
     var highlightHeightOffset: CGFloat { return -3.0 }
     func assignAsFirstResponder(_ responder: NSResponder?) {
         mainWindow.makeFirstResponder(responder)
@@ -265,10 +264,10 @@ extension ZoneWidget {
     }
 
 
-    func rectForLine(to targetFrame: CGRect, kind: ZLineKind) -> CGRect {
+    func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
         var frame = CGRect ()
 
-        if  let     sourceDot = toggleDot.innerDot {
+        if  let     sourceDot = toggleDot.innerDot, kind != nil {
             let   sourceFrame = sourceDot.convert( sourceDot.bounds, to: self)
             let     thickness = CGFloat(gLineThickness)
             let     dotHeight = CGFloat(gDotHeight)
@@ -278,7 +277,7 @@ extension ZoneWidget {
             let    sourceMidY = sourceFrame  .midY
             frame.origin   .x = sourceFrame  .midX
 
-            switch kind {
+            switch kind! {
             case .above:
                 frame.origin   .y = sourceFrame.maxY - halfDotHeight + thickness
                 frame.size.height = fabs( targetMidY + thinThickness - frame.minY)
@@ -286,9 +285,9 @@ extension ZoneWidget {
                 frame.origin   .y = targetFrame.minY + halfDotHeight - thickness
                 frame.size.height = fabs( sourceMidY + thinThickness - frame.minY - halfDotHeight)
             case .straight:
-                frame.origin   .y =       targetMidY - thinThickness / 8.0
+                frame.origin   .y =       targetMidY - thinThickness / 2.0
                 frame.origin   .x = sourceFrame.maxX
-                frame.size.height =                    thinThickness / 4.0
+                frame.size.height =                    thinThickness
             }
 
             frame.size     .width = fabs(targetFrame.minX - frame.minX)
@@ -298,7 +297,7 @@ extension ZoneWidget {
     }
 
 
-    func curvedPathFor(_ iRect: CGRect, iKind: ZLineKind) -> ZBezierPath {
+    func curvedPath(in iRect: CGRect, kind iKind: ZLineKind) -> ZBezierPath {
         ZBezierPath(rect: iRect).setClip()
 
         let      dotHeight = CGFloat(gDotHeight)

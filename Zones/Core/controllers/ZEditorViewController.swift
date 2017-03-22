@@ -99,7 +99,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
     }
 
 
-    // MARK:- dragon droppings
+    // MARK:- drag and drop
     // MARK:-
 
 
@@ -146,39 +146,33 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
             let         isNoop = same || (sameIndex && dropIsParent) || index < 0
             let              s = gSelectionManager
             let          prior = s.dragDropZone?.widget
-            s .dragDropIndices = isNoop ? nil : NSMutableIndexSet(index: index)
-            s    .dragDropZone = isNoop ? nil : done ? nil : dropZone
-            s    .dragRelation = isNoop ? nil : relation
-            s       .dragPoint = isNoop ? nil : location
+            s .dragDropIndices = isNoop || done ? nil : NSMutableIndexSet(index: index)
+            s    .dragDropZone = isNoop || done ? nil : dropZone
+            s    .dragRelation = isNoop || done ? nil : relation
+            s       .dragPoint = isNoop || done ? nil : location
 
-            if !isNoop && !dropHere && index > 0 {
+            if !isNoop && !done && !dropHere && index > 0 {
                 s.dragDropIndices?.add(index - 1)
             }
 
-            report("index \(index)")
             prior?             .displayForDrag() // erase  child lines
-            dropZone?  .widget?.displayForDrag() // redraw child lines
+            dropZone?.widget?  .displayForDrag() // redraw child lines
             gEditorView?      .setNeedsDisplay() // redraw dragline and dot
 
             if done {
-                let     editor = gEditingManager
-                let      prior = draggedZone.widget
-                s.dragDropZone = nil
-                s .draggedZone = nil
-                s   .dragPoint = nil
+                draggedZone.widget?.dragDot.innerDot?.setNeedsDisplay()
 
-                prior?.dragDot.innerDot?.setNeedsDisplay()
-
-                if let t = dropZone, !isNoop {
-                    if t.isBookmark {
-                        editor.moveZone(draggedZone, t)
-                        editor.syncAndRedraw()
-                    } else if !same {
-                        editor.moveZone(draggedZone, into: t, at: index, orphan: true) {
-                            editor.syncAndRedraw()
+                if !isNoop && dropZone != nil {
+                    if dropZone!.isBookmark {
+                        gEditingManager.moveZone(draggedZone, dropZone!)
+                    } else {
+                        gEditingManager.moveZone(draggedZone, into: dropZone!, at: index, orphan: true) {
+                            gEditingManager.syncAndRedraw()
                         }
                     }
                 }
+
+                gEditingManager.syncAndRedraw()
             }
         }
     }

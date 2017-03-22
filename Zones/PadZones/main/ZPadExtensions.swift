@@ -222,10 +222,10 @@ extension Zone {
 extension ZoneWidget {
 
 
-    func rectForLine(to rightFrame: CGRect, kind: ZLineKind) -> CGRect {
+    func lineRect(to rightFrame: CGRect, kind: ZLineKind?) -> CGRect {
         var frame = CGRect ()
 
-        if  let       leftDot = toggleDot.innerDot {
+        if  let       leftDot = toggleDot.innerDot, kind != nil {
             let     leftFrame = leftDot.convert( leftDot.bounds, to: self)
             let     thickness = CGFloat(gLineThickness)
             let     dotHeight = CGFloat(gDotHeight)
@@ -235,7 +235,7 @@ extension ZoneWidget {
             let      leftMidY = leftFrame .midY
             frame.origin   .x = leftFrame .midX
 
-            switch kind {
+            switch kind! {
             case .below:
                 frame.origin   .y = leftFrame .minY + thinThickness + halfDotHeight
                 frame.size.height = fabs( rightMidY + thinThickness - frame.minY)
@@ -255,7 +255,7 @@ extension ZoneWidget {
     }
 
 
-    func curvedPathFor(_ iRect: CGRect, iKind: ZLineKind) -> ZBezierPath {
+    func curvedPath(in iRect: CGRect, kind iKind: ZLineKind) -> ZBezierPath {
         let    isBelow = iKind == .below
         let startAngle = CGFloat(M_PI)
         let deltaAngle = CGFloat(M_PI_2)

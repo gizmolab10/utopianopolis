@@ -23,7 +23,7 @@ typealias ZStorageDict = [String : NSObject]
 extension NSObject {
     var settingsController: ZSettingsViewController? { return gControllersManager.controllerForID(.settings) as? ZSettingsViewController }
     var   editorController:   ZEditorViewController? { return gControllersManager.controllerForID(.editor)   as? ZEditorViewController }
-    var        gEditorView:           ZonesDrawView? { return editorController?.view                         as? ZonesDrawView }
+    var        gEditorView:           ZDragDrawView? { return editorController?.view                         as? ZDragDrawView }
 
 
     func toConsole(_ iMessage: Any?) {
@@ -238,7 +238,7 @@ extension ZView {
 
     func thinStroke(_ path: ZBezierPath?) {
         if  path != nil {
-            path!.lineWidth = CGFloat(gLineThickness) / lineThicknessDivisor
+            path!.lineWidth = CGFloat(gLineThickness)
 
             path!.stroke()
         }

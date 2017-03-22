@@ -352,7 +352,7 @@ CQ
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ZEditorViewController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="m2S-Jp-Qdl" customClass="ZonesDrawView" customModule="Zones" customModuleProvider="target">
+                    <view key="view" id="m2S-Jp-Qdl" customClass="ZDragDrawView" customModule="Zones" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="396" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>

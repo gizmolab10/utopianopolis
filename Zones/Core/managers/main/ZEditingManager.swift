@@ -176,17 +176,16 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
+    func syncAndRedraw() { gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw, onCompletion: nil) }
+    func         paste() { pasteInto(gSelectionManager.firstGrabbableZone) }
+
+
     func copyToPaste() {
         gSelectionManager.clearPaste()
 
         for zone in gSelectionManager.currentlyGrabbedZones {
             addToPasteCopyOf(zone)
         }
-    }
-
-
-    func paste() {
-        pasteInto(gSelectionManager.firstGrabbableZone)
     }
 
 
@@ -264,11 +263,6 @@ class ZEditingManager: NSObject {
 
     // MARK:- other
     // MARK:-
-
-
-    func syncAndRedraw() {
-        gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw, onCompletion: nil)
-    }
 
 
     func doFavorites(_ isShift: Bool, _ isOption: Bool) {
@@ -700,7 +694,7 @@ class ZEditingManager: NSObject {
                 }
             } else if parent != nil {
                 parent!.grab()
-                signalFor(parent!, regarding: .data)
+                signalFor(parent, regarding: .redraw)
             }
         } else if gStorageMode != .favorites {
             parent?.needUpdateSave() // for when zone is orphaned

@@ -1,5 +1,5 @@
 //
-//  ZonesDrawView.swift
+//  ZDragDrawView.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 3/12/17.
@@ -16,22 +16,20 @@ import SnapKit
 #endif
 
 
-class ZonesDrawView: ZView {
+class ZDragDrawView: ZView {
 
 
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
         if  let      zone = gSelectionManager.dragDropZone, let widget = zone.widget {
-            let floatRect = widget.floatingDropDotRect
-            let  ovalRect = widget.convert(floatRect, to: self)
-            let   hitRect = widget.dragHitFrame
+            let   dotRect = widget.floatingDropDotRect
+            let localRect = widget.convert(dotRect, to: self)
 
             gDragTargetsColor.setFill()
             gDragTargetsColor.setStroke()
-            thinStroke(ZBezierPath(rect: hitRect))
-            ZBezierPath(ovalIn: ovalRect).fill()
-            thinStroke(widget.linePath(to: floatRect, in: self))
+            ZBezierPath(ovalIn: localRect).fill()
+            widget.drawDragLine(to: dotRect, in: self)
         }
     }
 }
