@@ -47,6 +47,35 @@ class ZoneWidget: ZView {
     }
 
 
+    // MARK:- view hierarchy
+    // MARK:-
+
+
+    func addTextView() {
+        if !subviews.contains(textWidget) {
+            textWidget.setup()
+            addSubview(textWidget)
+            snp.makeConstraints { (make: ConstraintMaker) -> Void in
+                make.centerY.equalTo(textWidget).offset(1.5)
+                make.size.greaterThanOrEqualTo(textWidget)
+            }
+        }
+    }
+
+
+    func addChildrenView() {
+        if !subviews.contains(childrenView) {
+            childrenView.clearBackground()
+
+            insertSubview(childrenView, belowSubview: textWidget)
+            childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
+                make.left.equalTo(textWidget.snp.right).offset(gDotWidth)
+                make.bottom.top.right.equalTo(self)
+            }
+        }
+    }
+
+
     // MARK:- layout
     // MARK:-
 
@@ -62,41 +91,21 @@ class ZoneWidget: ZView {
             }
         }
 
-        inView?.zlayer.backgroundColor = ZColor.clear.cgColor
-        zlayer        .backgroundColor = ZColor.clear.cgColor
-
-        clear()
         gWidgetsManager.registerWidget(self)
-        prepareSubviews()
+        inView?.clearBackground()
+        clearBackground()
+        addTextView()
+        layoutText()
+        layoutDots()
+        addChildrenView()
 
         if recursing {
             prepareChildren()
             layoutChildren(kind)
         }
 
-        layoutText()
-        layoutDots()
-    }
-
-
-    func prepareSubviews() {
-        if !subviews.contains(textWidget) {
-            textWidget.setup()
-            addSubview(textWidget)
-            snp.makeConstraints { (make: ConstraintMaker) -> Void in
-                make.centerY.equalTo(textWidget).offset(1.5)
-                make.size.greaterThanOrEqualTo(textWidget)
-            }
-        }
-
-        if !subviews.contains(childrenView) {
-            childrenView.zlayer.backgroundColor = ZColor.clear.cgColor
-
-            insertSubview(childrenView, belowSubview: textWidget)
-            childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-                make.bottom.top.right.equalTo(self)
-            }
-        }
+        updateConstraints()
+        display()
     }
 
 
@@ -180,13 +189,9 @@ class ZoneWidget: ZView {
 
             make  .width.equalTo(width)
             make.centerY.equalTo(self).offset(-1.5)
-            make   .left.equalTo(self).offset(Double(gGenericOffset.width))
+            make   .left.equalTo(self).offset(gGenericOffset.width)
             make  .right.lessThanOrEqualTo(self).offset(-29.0)
             make .height.lessThanOrEqualTo(self).offset(-gGenericOffset.height)
-
-            if hasChildren {
-                make.right.equalTo(childrenView.snp.left).offset(-8.0)
-            }
         }
     }
 

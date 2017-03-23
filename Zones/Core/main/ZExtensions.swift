@@ -27,7 +27,9 @@ extension NSObject {
 
 
     func toConsole(_ iMessage: Any?) {
-//        print(iMessage)
+        if iMessage != nil {
+            // print(iMessage!)
+        }
     }
 
 

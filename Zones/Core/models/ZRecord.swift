@@ -162,7 +162,7 @@ class ZRecord: NSObject {
         }
 
         if type != nil && name != nil {
-            record      = CKRecord(recordType: type!, recordID: CKRecordID(recordName: name!))
+            record = CKRecord(recordType: type!, recordID: CKRecordID(recordName: name!))
 
             self.updateCloudProperties()
 

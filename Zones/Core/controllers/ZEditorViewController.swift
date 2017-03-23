@@ -73,8 +73,6 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         }
 
         specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind)
-        specificWidget?.updateConstraints()
-        specificWidget?.display()
     }
 
 

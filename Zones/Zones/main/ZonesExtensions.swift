@@ -131,7 +131,7 @@ extension NSView {
     var recognizers: [NSGestureRecognizer]? { get { return gestureRecognizers } }
 
 
-    func clear() { zlayer.backgroundColor = ZColor.clear.cgColor }
+    func clearBackground() { zlayer.backgroundColor = ZColor.clear.cgColor }
     func setNeedsDisplay() { needsDisplay = true }
     func setNeedsLayout () { needsLayout  = true }
     func insertSubview(_ view: ZView, belowSubview siblingSubview: ZView) { addSubview(view, positioned: .below, relativeTo: siblingSubview) }
@@ -256,7 +256,7 @@ extension ZoneWidget {
             let bottom =  (!isHere && widgetZone.hasZonesBelow) ? cFrame.minY : 0.0
             let    top = ((!isHere && widgetZone.hasZonesAbove) ? cFrame      : view.bounds).maxY
             let  right =                                                        view.bounds .maxX
-            let   left =    isHere ? 0.0 : dFrame.minX
+            let   left =    isHere ? 0.0 : dFrame.minX - gGenericOffset.width
             hitRect    = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
         }
 

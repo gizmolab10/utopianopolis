@@ -90,7 +90,7 @@ extension UIView {
     var recognizers: [ZGestureRecognizer]? { get { return gestureRecognizers } }
 
 
-    func clear() { zlayer.isOpaque = false }
+    func clearBackground() { zlayer.isOpaque = false }
     func display() {}
 
 

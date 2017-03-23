@@ -98,10 +98,10 @@ class ZCloudManager: ZRecordsManager {
 
             clearState(.needsCreate)
 
-            if (operation.recordsToSave?.count)! > 0 {
+            if let count = operation.recordsToSave?.count, count > 0 {
                 operation.completionBlock = { onCompletion?(0) }
 
-                toConsole("creating \((operation.recordsToSave?.count)!)")
+                toConsole("creating \(count)")
 
                 operation.start()
 

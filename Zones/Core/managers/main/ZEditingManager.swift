@@ -390,8 +390,8 @@ class ZEditingManager: NSObject {
 
 
     func showToggleDot(_ show: Bool, zone: Zone, recursively: Bool, onCompletion: Closure?) {
-        var       isChildless = zone.count == 0
-        let noVisibleChildren = !zone.showChildren || isChildless
+        var       hasChildren = zone.count != 0
+        let noVisibleChildren = !zone.showChildren || !hasChildren
 
         if !show && noVisibleChildren && zone.isGrabbed {
             zone.showChildren = false
@@ -416,16 +416,16 @@ class ZEditingManager: NSObject {
 
                 if !show {
                     gSelectionManager.deselectDragWithin(zone);
-                } else if isChildless {
+                } else if !hasChildren {
                     zone.needChildren()
                 }
             }
 
             let recurseMaybe = {
-                isChildless = zone.count == 0
+                hasChildren = zone.count != 0
 
-                if  zone.hasChildren == isChildless {
-                    zone.hasChildren = !isChildless
+                if  zone.hasChildren != hasChildren {
+                    zone.hasChildren  = hasChildren
 
                     zone.needUpdateSave()
                 }
@@ -443,7 +443,7 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            if !show || !isChildless {
+            if !show || hasChildren {
                 recurseMaybe()
             } else {
                 gOperationsManager.children(recursively: recursively) {
@@ -538,9 +538,9 @@ class ZEditingManager: NSObject {
 
     func addToPasteCopyOf(_ zone: Zone) {
         let        copy = zone.deepCopy()
-        copy.isDeleted  = false
         copy.parentZone = nil
 
+        copy.recursivelyMarkAsDeleted(true)
         gSelectionManager.pasteableZones.append(copy)
     }
 
@@ -771,15 +771,13 @@ class ZEditingManager: NSObject {
     func moveSelectionInto(_ zone: Zone) {
         let  showChildren = zone.showChildren
         zone.showChildren = true
-
-        gSelectionManager.grab(asTask ? zone.children.first! : zone.children.last!)
+        zone .hasChildren = zone.count != 0
 
         if showChildren {
-            zone.hasChildren = zone.count != 0
-
             zone.needUpdateSave()
         }
-
+        
+        gSelectionManager.grab(asTask ? zone.children.first! : zone.children.last!)
         syncAndRedraw()
     }
 
@@ -892,6 +890,7 @@ class ZEditingManager: NSObject {
 
                 originals.append(pasteThis)
                 pasteThis.orphan() // disable undo inside moveZone
+                pasteThis.recursivelyMarkAsDeleted(false)
                 moveZone(pasteThis, into: zone, orphan: false) {
                     count -= 1
 

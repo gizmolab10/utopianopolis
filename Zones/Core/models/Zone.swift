@@ -491,6 +491,15 @@ class Zone : ZRecord {
     }
 
 
+    func recursivelyMarkAsDeleted(_ iDeleted: Bool) {
+        isDeleted = iDeleted
+
+        for child in children {
+            child.recursivelyMarkAsDeleted(iDeleted)
+        }
+    }
+
+
     var siblingIndex: Int? {
         get {
             if let siblings = parentZone?.children, let index = siblings.index(of: self) {
