@@ -207,7 +207,6 @@ class ZOperationsManager: NSObject {
             dispatchAsyncInForeground {
                 closure()
 
-                // self.report("unspin")
                 gEditingManager.handleStalledEvents()
             }
         }

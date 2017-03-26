@@ -174,7 +174,7 @@ class ZCloudManager: ZRecordsManager {
         let   predicate = NSPredicate(format: "zoneState <= %d", ZoneState.IsDeleted.rawValue)
         var toBeDeleted = [CKRecordID] ()
 
-        self.cloudQueryUsingPredicate(predicate) { (iRecord: CKRecord?) in
+        self.queryWith(predicate) { (iRecord: CKRecord?) in
             if iRecord != nil {
                 self.report("deleting \(iRecord![zoneNameKey])")
                 toBeDeleted.append((iRecord?.recordID)!)
@@ -283,7 +283,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func cloudQueryUsingPredicate(_ predicate: NSPredicate, onCompletion: RecordClosure?) {
+    func queryWith(_ predicate: NSPredicate, onCompletion: RecordClosure?) {
         if  let                operation = configure(CKQueryOperation()) as? CKQueryOperation {
             operation             .query = CKQuery(recordType: zoneTypeKey, predicate: predicate)
             operation       .desiredKeys = Zone.cloudProperties()
@@ -327,7 +327,7 @@ class ZCloudManager: ZRecordsManager {
         let predicate = searchPredicateFrom(searchFor)
         var   records = [CKRecord] ()
 
-        cloudQueryUsingPredicate(predicate) { iRecord in
+        queryWith(predicate) { iRecord in
             if iRecord != nil {
                 records.append(iRecord!)
             } else {
@@ -351,7 +351,7 @@ class ZCloudManager: ZRecordsManager {
             onCompletion?(childrenNeeded.count)
             clearState(.needsChildren)
             toConsole("fetching children of \(zones)")
-            cloudQueryUsingPredicate(predicate) { (iRecord: CKRecord?) in
+            queryWith(predicate) { (iRecord: CKRecord?) in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                     for parent in parentsNeedingResort {
                         parent.respectOrder()
@@ -486,7 +486,7 @@ class ZCloudManager: ZRecordsManager {
     func undelete(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         let predicate = NSPredicate(format: "zoneState >= %d", ZoneState.IsDeleted.rawValue) // "parent = nil")
 
-        self.cloudQueryUsingPredicate(predicate) { (iRecord: CKRecord?) in
+        self.queryWith(predicate) { (iRecord: CKRecord?) in
             if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                 onCompletion?(0)
             } else {
@@ -511,7 +511,7 @@ class ZCloudManager: ZRecordsManager {
     func fetchFavorites(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         let predicate = NSPredicate(format: "zoneState >= %d AND zoneState < %d", ZoneState.IsFavorite.rawValue, ZoneState.IsDeleted.rawValue)
 
-        self.cloudQueryUsingPredicate(predicate) { (iRecord: CKRecord?) in
+        self.queryWith(predicate) { (iRecord: CKRecord?) in
             if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                 gFavoritesManager.update()
                 gFavoritesManager.favoritesRootZone.respectOrder()
@@ -537,7 +537,7 @@ class ZCloudManager: ZRecordsManager {
 
             onCompletion?(needed.count)
 
-            self.cloudQueryUsingPredicate(predicate) { (iRecord: CKRecord?) in
+            self.queryWith(predicate) { (iRecord: CKRecord?) in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                     onCompletion?(0)
                 } else {

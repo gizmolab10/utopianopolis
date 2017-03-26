@@ -519,7 +519,7 @@ class Zone : ZRecord {
 
         if !stop {
             for child in children {
-                if self.isDescendantOf(child) == .none || child.traverseApply(block) {
+                if self.isDescendantOf(child) != .none || child.traverseApply(block) {
                     stop = true
 
                     break

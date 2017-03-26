@@ -73,6 +73,9 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         }
 
         specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind)
+        view.applyToAllSubviews { (iView) -> (Void) in
+            iView.display()
+        }
     }
 
 
@@ -158,19 +161,21 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
             gEditorView?      .setNeedsDisplay() // redraw dragline and dot
 
             if done {
+                let editor = gEditingManager
+
                 draggedZone.widget?.dragDot.innerDot?.setNeedsDisplay()
 
                 if !isNoop && dropZone != nil {
                     if dropZone!.isBookmark {
-                        gEditingManager.moveZone(draggedZone, dropZone!)
+                        editor.moveZone(draggedZone, dropZone!)
                     } else {
-                        gEditingManager.moveZone(draggedZone, into: dropZone!, at: index, orphan: true) {
-                            gEditingManager.syncAndRedraw()
+                        editor.moveZone(draggedZone, into: dropZone!, at: index, orphan: true) {
+                            editor.syncAndRedraw()
                         }
                     }
                 }
 
-                gEditingManager.syncAndRedraw()
+                editor.syncAndRedraw()
             }
         }
     }

@@ -105,7 +105,6 @@ class ZoneWidget: ZView {
         }
 
         updateConstraints()
-        display()
     }
 
 

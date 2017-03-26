@@ -456,6 +456,14 @@ class ZEditingManager: NSObject {
 
     func toggleDotActionOnZone(_ zone: Zone?, recursively: Bool) {
         if zone != nil {
+            let s = gSelectionManager
+
+            for grabbed: Zone in s.currentlyGrabbedZones {
+                if zone!.spawned(grabbed) {
+                    s.ungrab(grabbed)
+                }
+            }
+
             if zone!.isBookmark {
                 travelThroughBookmark(zone!)
             } else {
@@ -986,14 +994,16 @@ class ZEditingManager: NSObject {
             }
         }
 
+        into.showChildren = true
+
+        into.needChildren()
+
         gOperationsManager.children(recursively: false) {
             zone.needUpdateSave()
             into.needUpdateSave()
             into.needChildren()
             zone.grab()
 
-            into.showChildren = true
-            
             if orphan {
                 zone.orphan()
             }
