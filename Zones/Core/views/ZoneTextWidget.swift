@@ -140,6 +140,13 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
+    func selectAllText() {
+        if text != nil, let editor = currentEditor() {
+            select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: text!.characters.count)
+        }
+    }
+
+
     func captureText() {
         let zone = widget.widgetZone
 
@@ -147,9 +154,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             if  zone!.zoneName != text! {
                 gTextCapturing = true
 
-                let assignText = { (iText: String?, toZone: Zone?) in
-                    if  toZone != nil, iText != nil {
-                        toZone!.zoneName = iText!
+                let assignText = { (toZone: Zone?) in
+                    if  toZone != nil,     self.text != nil {
+                        toZone!.zoneName = self.text!
 
                         toZone!.needUpdateSave()
                         toZone!.unmarkForStates([.needsMerge])
@@ -162,18 +169,18 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 //                    iUndoSelf.captureText()
 //                }
 
-                assignText(text, zone)
+                assignText(zone)
 
                 if  zone!.isBookmark {
                     invokeWithMode(zone?.crossLink?.storageMode) {
                         if let target = gCloudManager.zoneForRecordID(zone?.crossLink?.record.recordID) {
-                            assignText(text, target)
+                            assignText(target)
                         }
                     }
                 }
 
                 for bookmark in gCloudManager.bookmarksFor(zone) {
-                    assignText(text, bookmark)
+                    assignText(bookmark)
                 }
 
                 gOperationsManager.sync {}

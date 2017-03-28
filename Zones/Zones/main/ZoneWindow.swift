@@ -39,24 +39,26 @@ class ZoneWindow: ZWindow {
 
 
     override func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
+        enum ZMenuType: Int {
+            case Grab  = 1
+            case Paste = 2
+            case Undo  = 3
+            case Redo  = 4
+            case All   = 5
+        }
+
         var valid = !gEditingManager.isEditing
-
-        if valid {
-
-            enum ZMenuType: Int {
-                case Grab   = 1
-                case Paste  = 2
-                case Undo   = 3
-                case Redo   = 4
-            }
-
-            let tag = menuItem.tag
-            if  tag <= 4, tag > 0, let type = ZMenuType(rawValue: tag) {
+        let tag = menuItem.tag
+        if  tag <= 5, tag > 0, let type = ZMenuType(rawValue: tag) {
+            if !valid {
+                valid = type == .All
+            } else {
                 switch type {
+                case .All:   valid = false
+                case .Undo:  valid = gUndoManager.canUndo
+                case .Redo:  valid = gUndoManager.canRedo
                 case .Grab:  valid = gSelectionManager.currentlyGrabbedZones.count != 0
                 case .Paste: valid = gSelectionManager       .pasteableZones.count != 0
-                case .Undo:  valid = gUndoManager.canUndo 
-                case .Redo:  valid = gUndoManager.canRedo 
                 }
             }
         }

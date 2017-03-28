@@ -92,9 +92,17 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Delete" tag="1" id="pa3-QI-u2k">
+                                            <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="delete:" target="Ady-hI-5gd" id="0Mk-Ml-PaM"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Select All" tag="5" keyEquivalent="a" id="e7d-fc-BJq">
+                                            <connections>
+                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="cGk-wO-6w9"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="uyl-h8-XO2"/>

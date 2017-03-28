@@ -105,8 +105,12 @@ class ZEditingManager: NSObject {
 
 
     func handleKey(_ key: String?, flags: ZEventFlags, isWindow: Bool) {
-        if  !isEditing &&   key != nil {
-            if  let     arrow = key?.arrow, isWindow {
+        if  key != nil {
+            if  isEditing {
+                if key == "a" && flags.isCommand {
+                    gSelectionManager.currentlyEditingZone?.widget?.textWidget.selectAllText()
+                }
+            } else if   let arrow = key?.arrow, isWindow {
                 handleArrow(arrow, flags: flags)
             } else {
                 let    widget = gWidgetsManager.currentMovableWidget
