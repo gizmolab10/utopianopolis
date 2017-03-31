@@ -11,6 +11,13 @@ import Foundation;
 import CloudKit
 
 
+enum ZTraverseStatus: Int {
+    case eStop
+    case eAscend
+    case eDescend
+}
+
+
 typealias Closure                 = ()          -> (Void)
 typealias ZoneClosure             = (Zone)      -> (Void)
 typealias ViewClosure             = (ZView)     -> (Void)
@@ -22,7 +29,7 @@ typealias IntegerClosure          = (Int)       -> (Void)
 typealias BooleanClosure          = (Bool)      -> ()
 typealias ToObjectClosure         = (Void)      -> (NSObject)
 typealias ToBooleanClosure        = ()          -> (Bool)
-typealias ZoneToBooleanClosure    = (Zone)      -> (Bool)
+typealias ZoneToStatusClosure     = (Zone)      -> (ZTraverseStatus)
 typealias ObjectToObjectClosure   = (NSObject)  -> (NSObject)
 typealias ObjectToStringClosure   = (NSObject)  -> (String)
 typealias BooleanToBooleanClosure = (ObjCBool)  -> (ObjCBool)

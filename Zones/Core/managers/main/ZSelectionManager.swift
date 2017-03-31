@@ -172,12 +172,12 @@ class ZSelectionManager: NSObject {
 
 
     func deselectDragWithin(_ zone: Zone) {
-        zone.traverseApply { iZone -> Bool in
+        zone.traverseApply { iZone -> ZTraverseStatus in
             if iZone != zone && currentlyGrabbedZones.contains(iZone), let index = currentlyGrabbedZones.index(of: iZone) {
                 currentlyGrabbedZones.remove(at: index)
             }
 
-            return false
+            return .eDescend
         }
     }
 }

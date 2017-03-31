@@ -181,7 +181,7 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
 
         root.needChildren()
-        gOperationsManager.children(recursively: true) {
+        gOperationsManager.children(recursiveGoal: 1) {
             root.addAndReorderChild(zone, at: 0)
             gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
         }

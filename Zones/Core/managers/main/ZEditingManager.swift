@@ -162,7 +162,6 @@ class ZEditingManager: NSObject {
             case .up:    moveUp(true,  selectionOnly: !isOption, extreme: isCommand)
             }
         } else {
-
             let zone = gSelectionManager.firstGrabbableZone
             var show = true
 
@@ -172,7 +171,17 @@ class ZEditingManager: NSObject {
             default:     return
             }
 
-            showToggleDot(show, zone: zone, recursively: isCommand) { self.syncAndRedraw() };
+            var goal: Int? = nil
+
+            if !show {
+                goal = isCommand ? zone.level - 1 : zone.highestExposed - 1
+            } else if isCommand {
+                goal = Int.max
+            } else if let lowest = zone.lowestExposed {
+                goal = lowest + 1
+            }
+
+            toggleDotUpdate(show, zone, to: goal) { self.syncAndRedraw() };
         }
     }
 
@@ -333,7 +342,7 @@ class ZEditingManager: NSObject {
         if parent != nil && parent?.zoneName != nil {
             parent?.needChildren()
 
-            gOperationsManager.children(recursively: false) {
+            gOperationsManager.children(recursiveGoal: iZone.level) {
                 onCompletion?()
             }
         } else {
@@ -376,81 +385,73 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func levelFor(_ show: Bool, zone: Zone) -> Int {
-        var level = gUnlevel
-
-        zone.traverseApply { iZone -> Bool in
-            let zoneLevel = iZone.level
-
-            if (!show && level < zoneLevel) || (show && iZone.hasChildren && !iZone.showChildren && level > zoneLevel) {
-                level = zoneLevel
-            }
-
-            return false
-        }
-
-        return level
-    }
-
-
-    func showToggleDot(_ show: Bool, zone: Zone, recursively: Bool, onCompletion: Closure?) {
-        var       hasChildren = zone.count != 0
-        let noVisibleChildren = !zone.showChildren || !hasChildren
+    func toggleDotUpdate(_ show: Bool, _ zone: Zone, to iGoal: Int?, onCompletion: Closure?) {
+        var hasFetchedChildren = zone.count != 0
+        let  noVisibleChildren = !zone.showChildren || !hasFetchedChildren
 
         if !show && noVisibleChildren && zone.isGrabbed {
+
+            //////////////////////////
+            // COLLAPSE INTO PARENT //
+            //////////////////////////
+
             zone.showChildren = false
 
             zone.needUpdateSave()
 
             revealParentAndSiblingsOf(zone) {
-                if let parent = zone.parentZone {
+                if let          parent = zone.parentZone {
                     if  self.hereZone == zone {
-                        self.hereZone = parent
+                        self.hereZone  = parent
                     }
 
                     parent.grab()
-                    self.showToggleDot(show, zone: parent, recursively: recursively, onCompletion: onCompletion)
+                    self.toggleDotUpdate(show, parent, to: iGoal, onCompletion: onCompletion)
                 }
             }
         } else {
-            if  zone.showChildren != show {
-                zone.showChildren  = show
 
-                zone.needUpdateSave()
+            ////////////////////
+            // ALTER CHILDREN //
+            ////////////////////
 
-                if !show {
-                    gSelectionManager.deselectDragWithin(zone);
-                } else if !hasChildren {
-                    zone.needChildren()
-                }
-            }
+            let       recurseMaybe = {
+                hasFetchedChildren = zone.count != 0
 
-            let recurseMaybe = {
-                hasChildren = zone.count != 0
-
-                if  zone.hasChildren != hasChildren {
-                    zone.hasChildren  = hasChildren
-
-                    zone.needUpdateSave()
+                if (show || hasFetchedChildren) && zone.hasChildren != hasFetchedChildren {
+                    if hasFetchedChildren {
+                        zone.hasChildren = true
+                        zone.needUpdateSave()
+                    }
                 }
 
                 if gOperationsManager.isReady {
                     onCompletion?()
                 }
 
-                if recursively {
+                if iGoal != nil {
                     for child: Zone in zone.children {
                         if child != zone {
-                            self.showToggleDot(show, zone: child, recursively: true, onCompletion: nil)
+                            self.toggleDotUpdate(show, child, to: iGoal, onCompletion: onCompletion)
                         }
                     }
                 }
             }
 
-            if !show || hasChildren {
+            zone.showChildren = show ? (iGoal == nil || zone.level < iGoal!) : (iGoal != nil && zone.level < iGoal!)
+
+            zone.needUpdateSave()
+
+            if !show {
+                gSelectionManager.deselectDragWithin(zone);
+            } else if !hasFetchedChildren {
+                zone.needChildren()
+            }
+
+            if !show || hasFetchedChildren {
                 recurseMaybe()
             } else {
-                gOperationsManager.children(recursively: recursively) {
+                gOperationsManager.children(recursiveGoal: iGoal) {
                     recurseMaybe()
                 }
             }
@@ -458,7 +459,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func toggleDotActionOnZone(_ zone: Zone?, recursively: Bool) {
+    func toggleDotActionOnZone(_ zone: Zone?) {
         if zone != nil {
             let s = gSelectionManager
 
@@ -473,7 +474,7 @@ class ZEditingManager: NSObject {
             } else {
                 let show = !zone!.showChildren
 
-                showToggleDot(show, zone: zone!, recursively: recursively) {
+                toggleDotUpdate(show, zone!, to: nil) {
                     self.syncAndRedraw()
                 }
             }
@@ -540,7 +541,7 @@ class ZEditingManager: NSObject {
             } else {
                 zone!.needChildren()
 
-                gOperationsManager.children(recursively: false) {
+                gOperationsManager.children(recursiveGoal: nil) {
                     addNewClosure()
                 }
             }
@@ -771,7 +772,7 @@ class ZEditingManager: NSObject {
 
             zone.needChildren()
 
-            gOperationsManager.children(recursively: false) {
+            gOperationsManager.children(recursiveGoal: nil) {
                 if zone.count > 0 {
                     self.moveSelectionInto(zone)
                 }
@@ -1002,7 +1003,7 @@ class ZEditingManager: NSObject {
 
         into.needChildren()
 
-        gOperationsManager.children(recursively: false) {
+        gOperationsManager.children(recursiveGoal: nil) {
             zone.needUpdateSave()
             into.needUpdateSave()
             into.needChildren()

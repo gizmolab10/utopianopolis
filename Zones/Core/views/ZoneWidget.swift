@@ -480,7 +480,6 @@ class ZoneWidget: ZView {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        let                s = gSelectionManager
         let        isGrabbed = widgetZone.isGrabbed
         textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? gGrabbedBookmarkColor : gGrabbedTextColor : ZColor.black
 
@@ -489,7 +488,7 @@ class ZoneWidget: ZView {
         }
 
         if widgetZone.includeChildren {
-            if  childrenPass || s.isDragging {
+            if  childrenPass || gSelectionManager.isDragging {
                 childrenPass = false
 
                 for child in childrenWidgets { drawLine(to: child) }

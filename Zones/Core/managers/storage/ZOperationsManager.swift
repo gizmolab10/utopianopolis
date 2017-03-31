@@ -74,11 +74,12 @@ class ZOperationsManager: NSObject {
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                          ]) { onCompletion() } }
 
 
-    func children(recursively: Bool, onCompletion: @escaping Closure) {
-        gRecursivelyFetch     = recursively
+    func children(recursiveGoal: Int?, onCompletion: @escaping Closure) {
+        let          saved = gRecursiveGoal
+        gRecursiveGoal     =  recursiveGoal
         
         setupAndRun([.children]) {
-            gRecursivelyFetch = false
+            gRecursiveGoal = saved
 
             onCompletion()
         }

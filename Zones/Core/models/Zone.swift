@@ -185,6 +185,28 @@ class Zone : ZRecord {
     }
 
 
+    var lowestExposed: Int? { return exposed(upTo: highestExposed) }
+
+
+    var highestExposed: Int {
+        get {
+            var highest = level
+
+            traverseApply { iZone -> ZTraverseStatus in
+                let traverseLevel = iZone.level
+
+                if  highest < traverseLevel {
+                    highest = traverseLevel
+                }
+
+                return iZone.includeChildren ? .eDescend : .eAscend
+            }
+
+            return highest
+        }
+    }
+
+
     // MARK:- properties
     // MARK:-
 
@@ -514,20 +536,26 @@ class Zone : ZRecord {
     // FUBAR occasional infinite loop
     // when child of child == self
 
-    @discardableResult func traverseApply(_ block: ZoneToBooleanClosure) -> Bool {
-        var stop = block(self)
+    @discardableResult func traverseApply(_ block: ZoneToStatusClosure) -> ZTraverseStatus {
+        var status = block(self)
 
-        if !stop {
+        if status == .eDescend {
             for child in children {
-                if self.isDescendantOf(child) != .none || child.traverseApply(block) {
-                    stop = true
+                if self.isDescendantOf(child) != .none {
+                    status = .eStop
 
+                    break
+                }
+
+                status = child.traverseApply(block)
+
+                if status == .eStop {
                     break
                 }
             }
         }
 
-        return stop
+        return status
     }
 
 
@@ -572,22 +600,79 @@ class Zone : ZRecord {
 
 
     func spawned(_ iChild: Zone) -> Bool {
-        traverseApply { iZone -> Bool in
-            return iZone == iChild
+        var isSpawn = false
+
+        traverseApply { iZone -> ZTraverseStatus in
+            if iZone == iChild {
+                isSpawn = true
+
+                return .eStop
+            }
+
+            return .eDescend
         }
 
-        return false
+        return isSpawn
     }
 
 
     func updateLevel() {
-        traverseApply { iZone -> Bool in
+        traverseApply { iZone -> ZTraverseStatus in
             if let parentLevel = iZone.parentZone?.level, parentLevel != gUnlevel {
                 iZone.level = parentLevel + 1
             }
 
-            return false
+            return .eDescend
         }
+    }
+
+
+    func exposedProgeny(at iLevel: Int) -> [Zone] {
+        var     progeny = [Zone]()
+        var begun: Bool = false
+
+        traverseApply { iZone -> ZTraverseStatus in
+            if begun {
+                if iZone.level > iLevel || iZone == self {
+                    return .eAscend
+                } else if iZone.level == iLevel && iZone != self && (iZone.parentZone == nil || iZone.parentZone!.showChildren) {
+                    progeny.append(iZone)
+                }
+            }
+
+            begun = true
+
+            return .eDescend
+        }
+
+        return progeny
+    }
+
+
+    func exposed(upTo highestLevel: Int) -> Int? {
+        if !hasChildren {
+            return nil
+        }
+
+        var   exposedLevel = level
+
+        while exposedLevel <= highestLevel {
+            let progeny = exposedProgeny(at: exposedLevel + 1)
+
+            if  progeny.count == 0 {
+                return exposedLevel
+            }
+
+            exposedLevel += 1
+
+            for child: Zone in progeny {
+                if !child.showChildren && (child.hasChildren || child.count != 0) {
+                    return exposedLevel
+                }
+            }
+        }
+
+        return level
     }
 
 

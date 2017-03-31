@@ -51,13 +51,13 @@ struct ZSettingsViewID: OptionSet {
 }
 
 
-var     gTextCapturing = false
-var    gShowsSearching = false
-var gRecursivelyFetch = false
-var         gDotHeight = 12.0
-var          gDotWidth = gDotHeight * 0.75
-var          gWorkMode = ZWorkMode.editMode
-var          gFileMode = ZFileMode.cloud
+var       gTextCapturing = false
+var      gShowsSearching = false
+var gRecursiveGoal: Int? = nil
+var           gDotHeight = 12.0
+var            gDotWidth = gDotHeight * 0.75
+var            gWorkMode = ZWorkMode.editMode
+var            gFileMode = ZFileMode.cloud
 
 
 var                asTask:   Bool { get { return gGraphAlteringMode == .task    } }

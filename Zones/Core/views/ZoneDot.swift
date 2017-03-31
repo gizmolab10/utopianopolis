@@ -124,7 +124,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
     func singleEvent(_ iGesture: ZGestureRecognizer?) {
         if isToggle {
-            gEditingManager.toggleDotActionOnZone(widgetZone, recursively: false)
+            gEditingManager.toggleDotActionOnZone(widgetZone)
         } else {
             widgetZone?.grab()
         }

@@ -67,7 +67,7 @@ class ZCloudManager: ZRecordsManager {
                 self.dispatchAsyncInForeground {
                     self.signalFor(parent, regarding: .redraw)
 
-                    gOperationsManager.children(recursively: false) {
+                    gOperationsManager.children(recursiveGoal: nil) {
                         self.signalFor(parent, regarding: .redraw)
                     }
                 }
@@ -363,7 +363,7 @@ class ZCloudManager: ZRecordsManager {
                         let child = self.zoneForRecord(iRecord!)
 
                         if !child.isDeleted {
-                            if gRecursivelyFetch {
+                            if gRecursiveGoal != nil && gRecursiveGoal! > child.level {
                                 child.needChildren()
                             }
 
