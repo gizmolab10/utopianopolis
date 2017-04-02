@@ -541,7 +541,7 @@ class ZEditingManager: NSObject {
             } else {
                 zone!.needChildren()
 
-                gOperationsManager.children(recursiveGoal: nil) {
+                gOperationsManager.children() {
                     addNewClosure()
                 }
             }
@@ -772,7 +772,7 @@ class ZEditingManager: NSObject {
 
             zone.needChildren()
 
-            gOperationsManager.children(recursiveGoal: nil) {
+            gOperationsManager.children() {
                 if zone.count > 0 {
                     self.moveSelectionInto(zone)
                 }
@@ -1003,7 +1003,7 @@ class ZEditingManager: NSObject {
 
         into.needChildren()
 
-        gOperationsManager.children(recursiveGoal: nil) {
+        gOperationsManager.children() {
             zone.needUpdateSave()
             into.needUpdateSave()
             into.needChildren()

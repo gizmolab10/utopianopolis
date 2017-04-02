@@ -210,7 +210,13 @@ class ZRecord: NSObject {
     func needFetch()      { markForStates([.needsFetch]) }
     func needCreate()     { markForStates([.needsCreate]) }
     func needParent()     { markForStates([.needsParent]) }
-    func needChildren()   { markForStates([.needsChildren]) }
+
+
+    func needChildren() {
+        if !isMarkedForStates([.fetchedChildren]) {
+            markForStates([.needsChildren, .fetchedChildren])
+        }
+    }
 
 
     func maybeNeedMerge() {

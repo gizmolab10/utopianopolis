@@ -74,15 +74,8 @@ class ZOperationsManager: NSObject {
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                          ]) { onCompletion() } }
 
 
-    func children(recursiveGoal: Int?, onCompletion: @escaping Closure) {
-        let          saved = gRecursiveGoal
-        gRecursiveGoal     =  recursiveGoal
-        
-        setupAndRun([.children]) {
-            gRecursiveGoal = saved
-
-            onCompletion()
-        }
+    func children(recursiveGoal: Int? = nil, onCompletion: @escaping Closure) {
+        setupAndRun([.children], optional: recursiveGoal) { onCompletion() }
     }
 
 
@@ -102,7 +95,7 @@ class ZOperationsManager: NSObject {
     }
 
 
-    private func setupAndRun(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
+    private func setupAndRun(_ operationIDs: [ZOperationID], optional: Int? = nil, onCompletion: @escaping Closure) {
         var identifiers   = operationIDs
         isReady           = false;
         queue.isSuspended = true
@@ -128,7 +121,7 @@ class ZOperationsManager: NSObject {
 
                     closure = { (index: Int) in
                         if index < modes.count {
-                            self.invoke(identifier, mode: modes[index]) {
+                            self.invoke(identifier, mode: modes[index], optional) {
                                 closure?(index + 1)
                             }
                         } else {
@@ -164,7 +157,7 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func invoke(_ identifier: ZOperationID, mode: ZStorageMode, _ onCompletion: Closure?) {
+    func invoke(_ identifier: ZOperationID, mode: ZStorageMode, _ optional: Int? = nil, _ onCompletion: Closure?) {
         gStorageMode = mode
 
         let report = { (iCount: Int) -> Void in
@@ -181,7 +174,7 @@ class ZOperationsManager: NSObject {
         case .manifest:    gCloudManager.fetchManifest      (mode, report); break
         case .favorites:   gCloudManager.fetchFavorites     (mode, report); break
         case .here:       gTravelManager.establishHere      (mode, report); break // TODO: BROKEN
-        case .children:    gCloudManager.fetchChildren      (mode, report); break
+        case .children:    gCloudManager.fetchChildren      (mode, optional, report); break
         case .parent:      gCloudManager.fetchParents       (mode, report); break
         case .unsubscribe: gCloudManager.unsubscribe        (mode, report); break
         case .cloud:       gCloudManager.cloudLogic         (mode, report); break

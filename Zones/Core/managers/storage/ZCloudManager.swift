@@ -67,7 +67,7 @@ class ZCloudManager: ZRecordsManager {
                 self.dispatchAsyncInForeground {
                     self.signalFor(parent, regarding: .redraw)
 
-                    gOperationsManager.children(recursiveGoal: nil) {
+                    gOperationsManager.children() {
                         self.signalFor(parent, regarding: .redraw)
                     }
                 }
@@ -337,7 +337,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    @discardableResult func fetchChildren(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) -> Bool {
+    @discardableResult func fetchChildren(_ storageMode: ZStorageMode, _ recursiveGoal: Int? = nil, _ onCompletion: IntegerClosure?) -> Bool {
         let childrenNeeded = referencesWithMatchingStates([.needsChildren])
         let noMoreChildren = childrenNeeded.count == 0
 
@@ -355,15 +355,16 @@ class ZCloudManager: ZRecordsManager {
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                     for parent in parentsNeedingResort {
                         parent.respectOrder()
+                        parent.updateLevel()
                     }
 
-                    self.fetchChildren(storageMode, onCompletion) // recurse to grab children of received children
+                    self.fetchChildren(storageMode, recursiveGoal, onCompletion) // recurse to grab children of received children
                 } else {
                     self.invokeWithMode(storageMode) {
                         let child = self.zoneForRecord(iRecord!)
 
                         if !child.isDeleted {
-                            if gRecursiveGoal != nil && gRecursiveGoal! > child.level {
+                            if recursiveGoal != nil && recursiveGoal! > child.level {
                                 child.needChildren()
                             }
 
@@ -466,6 +467,10 @@ class ZCloudManager: ZRecordsManager {
                                 }
                             }
                         }
+
+                        if parent != nil {
+                            parent?.updateLevel()
+                        }
                     }
                 }
 
@@ -546,6 +551,10 @@ class ZCloudManager: ZRecordsManager {
                             record.unmarkForStates([.needsFetch])    // deferred to make sure fetch worked before clearing fetch flag
 
                             record.record = iRecord
+
+                            if let zone = record as? Zone {
+                                zone.updateLevel()
+                            }
                         }
                     }
                 }

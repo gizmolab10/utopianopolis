@@ -126,56 +126,61 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
 
     func handleDragEvent(_ iGesture: ZGestureRecognizer?) {
-        if  let       location = iGesture?.location (in: view) {
-            let           done = [ZGestureRecognizerState.ended, ZGestureRecognizerState.cancelled].contains(iGesture!.state)
-            let            dot = iGesture?.view as! ZoneDot
-            let    draggedZone = dot.widgetZone!
-            let    dropNearest = hereWidget.widgetNearestTo(location, in: view)
-            var       dropZone = dropNearest?.widgetZone
-            let      dropIndex = dropZone?.siblingIndex
-            let       dropHere = dropZone == gHere
-            let           same = dropZone == draggedZone
-            let       relation = relationOf(location, to: dropNearest?.textWidget)
-            let  useDropParent = relation != .upon && !dropHere
-            ;         dropZone = same ? nil : useDropParent ? dropZone?.parentZone : dropZone
-            let  lastDropIndex = dropZone == nil ? 0 : dropZone!.count
-            var          index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((asTask || same) ? 0 : lastDropIndex)
-            ;            index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
-            let      dragIndex = draggedZone.siblingIndex!
-            let      sameIndex = dragIndex == index || dragIndex == index - 1
-            let   dropIsParent = draggedZone.isChild(of: dropZone)
-            let         isNoop = same || (sameIndex && dropIsParent) || index < 0
-            let              s = gSelectionManager
-            let          prior = s.dragDropZone?.widget
-            s .dragDropIndices = isNoop || done ? nil : NSMutableIndexSet(index: index)
-            s    .dragDropZone = isNoop || done ? nil : dropZone
-            s    .dragRelation = isNoop || done ? nil : relation
-            s       .dragPoint = isNoop || done ? nil : location
+        if  let           location = iGesture?.location (in: view) {
+            let               done = [ZGestureRecognizerState.ended, ZGestureRecognizerState.cancelled].contains(iGesture!.state)
+            let                dot = iGesture?.view as! ZoneDot
+            let        draggedZone = dot.widgetZone!
+            if  let    dropNearest = hereWidget.widgetNearestTo(location, in: view) {
+                var       dropZone = dropNearest.widgetZone
+                let      dropIndex = dropZone?.siblingIndex
+                let       dropHere = dropZone == gHere
+                let           same = dropZone == draggedZone
+                let       relation = relationOf(location, to: dropNearest.textWidget)
+                let  useDropParent = relation != .upon && !dropHere
+                ;         dropZone = same ? nil : useDropParent ? dropZone?.parentZone : dropZone
+                let  lastDropIndex = dropZone == nil ? 0 : dropZone!.count
+                var          index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((asTask || same) ? 0 : lastDropIndex)
+                ;            index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
+                let      dragIndex = draggedZone.siblingIndex!
+                let      sameIndex = dragIndex == index || dragIndex == index - 1
+                let   dropIsParent = draggedZone.isChild(of: dropZone)
+                let         isNoop = same || (sameIndex && dropIsParent) || index < 0
+                let              s = gSelectionManager
+                let          prior = s.dragDropZone?.widget
+                s .dragDropIndices = isNoop || done ? nil : NSMutableIndexSet(index: index)
+                s    .dragDropZone = isNoop || done ? nil : dropZone
+                s    .dragRelation = isNoop || done ? nil : relation
+                s       .dragPoint = isNoop || done ? nil : location
 
-            if !isNoop && !done && !dropHere && index > 0 {
-                s.dragDropIndices?.add(index - 1)
-            }
-
-            prior?             .displayForDrag() // erase  child lines
-            dropZone?.widget?  .displayForDrag() // redraw child lines
-            gEditorView?      .setNeedsDisplay() // redraw dragline and dot
-
-            if done {
-                let editor = gEditingManager
-
-                draggedZone.widget?.dragDot.innerDot?.setNeedsDisplay()
-
-                if !isNoop && dropZone != nil {
-                    if dropZone!.isBookmark {
-                        editor.moveZone(draggedZone, dropZone!)
-                    } else {
-                        editor.moveZone(draggedZone, into: dropZone!, at: index, orphan: true) {
-                            editor.syncAndRedraw()
-                        }
-                    }
+                if !isNoop && !done && !dropHere && index > 0 {
+                    s.dragDropIndices?.add(index - 1)
                 }
 
-                editor.syncAndRedraw()
+                prior?             .displayForDrag() // erase  child lines
+                dropZone?.widget?  .displayForDrag() // redraw child lines
+                gEditorView?      .setNeedsDisplay() // redraw dragline and dot
+
+                if done {
+                    let editor = gEditingManager
+
+                    draggedZone.widget?.dragDot.innerDot?.setNeedsDisplay()
+
+                    if !isNoop && dropZone != nil {
+                        if dropZone!.isBookmark {
+                            editor.moveZone(draggedZone, dropZone!)
+                        } else {
+                            if dropIsParent && dragIndex <= index {
+                                index -= 1
+                            }
+
+                            editor.moveZone(draggedZone, into: dropZone!, at: index, orphan: true) {
+                                editor.syncAndRedraw()
+                            }
+                        }
+                    }
+                    
+                    editor.syncAndRedraw()
+                }
             }
         }
     }

@@ -18,6 +18,7 @@ enum ZRecordState: Int {
     case needsCreate
     case needsParent
     case needsChildren
+    case fetchedChildren
 }
 
 
