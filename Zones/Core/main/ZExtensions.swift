@@ -61,7 +61,7 @@ extension NSObject {
     }
 
 
-    func detectWithMode(_ mode: ZStorageMode, block: ToBooleanClosure) -> Bool {
+    @discardableResult func detectWithMode(_ mode: ZStorageMode, block: ToBooleanClosure) -> Bool {
         let savedMode = gStorageMode
         gStorageMode  = mode
         let    result = block()
@@ -72,15 +72,10 @@ extension NSObject {
 
 
     func invokeWithMode(_ mode: ZStorageMode?, block: Closure) {
-        if  mode == nil || mode == gStorageMode {
-            block()
+        if  mode != nil && mode != gStorageMode {
+            detectWithMode(mode!) { block(); return false }
         } else {
-            let savedMode = gStorageMode
-            gStorageMode  = mode!
-
             block()
-
-            gStorageMode  = savedMode
         }
     }
 

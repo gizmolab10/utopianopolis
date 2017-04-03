@@ -1,6 +1,4 @@
 
 *.xcuserstate
-
 *.xcbkptlist
-
-Zones/PadZones/.DS_Store
+*.DS_Store

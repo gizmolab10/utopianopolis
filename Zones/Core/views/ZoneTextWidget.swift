@@ -140,13 +140,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-    func selectAllText() {
-        if text != nil, let editor = currentEditor() {
-            select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: text!.characters.count)
-        }
-    }
-
-
     func captureText() {
         let zone = widget.widgetZone
 

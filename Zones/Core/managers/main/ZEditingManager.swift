@@ -520,7 +520,7 @@ class ZEditingManager: NSObject {
 
 
     func addNewChildTo(_ zone: Zone?, onCompletion: ZoneClosure?) {
-        if zone != nil && gStorageMode != .favorites {
+        if zone != nil && zone!.storageMode != .favorites {
             let addNewClosure = {
                 let record = CKRecord(recordType: zoneTypeKey)
                 let  child = Zone(record: record, storageMode: gStorageMode)
@@ -655,7 +655,7 @@ class ZEditingManager: NSObject {
                 if next != nil {
                     next!.grab()
                 }
-            } else if gStorageMode != .favorites {
+            } else if zone.storageMode != .favorites {
                 parentZone.children.remove(at: index)
                 parentZone.children.insert(zone, at:newIndex)
             }
@@ -709,7 +709,7 @@ class ZEditingManager: NSObject {
                 parent!.grab()
                 signalFor(parent, regarding: .redraw)
             }
-        } else if gStorageMode != .favorites {
+        } else if zone.storageMode != .favorites {
             parent?.needUpdateSave() // for when zone is orphaned
 
             ////////////

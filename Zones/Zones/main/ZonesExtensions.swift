@@ -161,6 +161,63 @@ extension NSView {
 }
 
 
+extension NSWindow {
+
+    override open var acceptsFirstResponder: Bool { get { return true } }
+
+
+    // MARK:- menu validation
+    // MARK:-
+
+
+    override open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
+        enum ZMenuType: Int {
+            case Grab  = 1
+            case Paste = 2
+            case Undo  = 3
+            case Redo  = 4
+            case All   = 5
+        }
+
+        var valid = !gEditingManager.isEditing
+        let tag = menuItem.tag
+        if  tag <= 5, tag > 0, let type = ZMenuType(rawValue: tag) {
+            if !valid {
+                valid = type == .All
+            } else {
+                switch type {
+                case .All:   valid = false
+                case .Undo:  valid = gUndoManager.canUndo
+                case .Redo:  valid = gUndoManager.canRedo
+                case .Grab:  valid = gSelectionManager.currentlyGrabbedZones.count != 0
+                case .Paste: valid = gSelectionManager       .pasteableZones.count != 0
+                }
+            }
+        }
+
+        return valid
+    }
+
+
+    // MARK:- actions
+    // MARK:-
+
+
+    @IBAction func displayPreferences     (_ sender: Any?) { settingsController?.displayViewFor(id: .Preferences) }
+    @IBAction func displayHelp            (_ sender: Any?) { settingsController?.displayViewFor(id: .Help) }
+    @IBAction func printHere              (_ sender: Any?) { gEditingManager.printHere() }
+    @IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gEditingManager.handleMenuItem(iItem) }
+    @IBAction func copy              (_ iItem: ZMenuItem?) { gEditingManager.copyToPaste() }
+    @IBAction func cut               (_ iItem: ZMenuItem?) { gEditingManager.delete() }
+    @IBAction func delete            (_ iItem: ZMenuItem?) { gEditingManager.delete() }
+    @IBAction func paste             (_ iItem: ZMenuItem?) { gEditingManager.paste() }
+    @IBAction func toggleSearch      (_ iItem: ZMenuItem?) { gEditingManager.find() }
+    @IBAction func undo              (_ iItem: ZMenuItem?) { gUndoManager.undo() }
+    @IBAction func redo              (_ iItem: ZMenuItem?) { gUndoManager.redo() }
+
+}
+
+
 extension NSButton {
     var isCircular: Bool {
         get { return true }
@@ -178,6 +235,13 @@ extension NSTextField {
     var text: String? {
         get { return stringValue }
         set { stringValue = newValue! }
+    }
+
+
+    func selectAllText() {
+        if text != nil, let editor = currentEditor() {
+            select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: text!.characters.count)
+        }
     }
 }
 

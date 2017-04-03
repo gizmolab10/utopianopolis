@@ -59,7 +59,8 @@ extension NSObject {
 
 
 extension UIBezierPath {
-    func setClip() { addClip() }
+    func setClip()         { addClip() }
+    func line(to: CGPoint) { addLine(to: to) }
 }
 
 
@@ -119,6 +120,11 @@ extension UIView {
 }
 
 
+extension UIWindow {
+    override open var canBecomeFirstResponder: Bool { return true }
+}
+
+
 extension UISegmentedControl {
     var selectedSegment: Int { get { return selectedSegmentIndex } }
 }
@@ -127,6 +133,7 @@ extension UISegmentedControl {
 extension UITextField {
     var isBordered : Bool { get { return borderStyle != .none } set { borderStyle = (newValue ? .line : .none) } }
     func abortEditing() {}
+    func selectAllText() {}
 }
 
 
@@ -222,6 +229,24 @@ extension Zone {
 extension ZoneWidget {
 
 
+    var dragHitFrame: CGRect {
+        var hitRect = CGRect()
+
+        if  let   view = gEditorView, let dot = dragDot.innerDot {
+            let isHere = widgetZone == gHere
+            let cFrame =     convert(childrenView.frame, to: view)
+            let dFrame = dot.convert(        dot.bounds, to: view)
+            let bottom =  (!isHere && widgetZone.hasZonesBelow) ? cFrame.minY : 0.0
+            let    top = ((!isHere && widgetZone.hasZonesAbove) ? cFrame      : view.bounds).maxY
+            let  right =                                                        view.bounds .maxX
+            let   left =    isHere ? 0.0 : dFrame.minX - gGenericOffset.width
+            hitRect    = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
+        }
+
+        return hitRect
+    }
+
+
     func lineRect(to rightFrame: CGRect, kind: ZLineKind?) -> CGRect {
         var frame = CGRect ()
 
@@ -264,7 +289,7 @@ extension ZoneWidget {
         let     scaleY = iRect.height / iRect.width
         let    centerY = isBelow ? iRect.minY : iRect.maxY
         let     center = CGPoint(x: iRect.maxX, y: centerY / scaleY)
-        path           = ZBezierPath(arcCenter: center, radius: iRect.width, startAngle: startAngle, endAngle: endAngle, clockwise: !isBelow)
+        let       path = ZBezierPath(arcCenter: center, radius: iRect.width, startAngle: startAngle, endAngle: endAngle, clockwise: !isBelow)
 
         path.apply(CGAffineTransform(scaleX: 1.0, y: scaleY))
 
