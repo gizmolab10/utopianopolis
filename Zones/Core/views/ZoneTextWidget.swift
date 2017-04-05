@@ -49,16 +49,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
                     gSelectionManager.deselectGrabs()
                     updateText()
-
-                    #if os(OSX)
-                    monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { (event) -> ZEvent? in
-                        if self.isTextEditing, !event.modifierFlags.isNumericPad {
-                            gEditingManager.handleEvent(event, isWindow: false)
-                        }
-
-                        return event
-                    })
-                    #endif
+                    addMonitor()
                 }
 
                 signalFor(nil, regarding: .data)
@@ -96,19 +87,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         removeMonitorAsync()
 
         widget = nil
-    }
-
-
-    func removeMonitorAsync() {
-#if os(OSX)
-        if let save = monitor {
-            monitor = nil
-
-            dispatchAsyncInForegroundAfter(0.001, closure: {
-                ZEvent.removeMonitor(save)
-            })
-        }
-#endif
     }
 
 
@@ -180,41 +158,4 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             }
         }
     }
-
-
-#if os(OSX)
-
-    // fix a bug where root zone is editing on launch
-    override var acceptsFirstResponder: Bool { get { return gOperationsManager.isReady } }
-
-
-    override func controlTextDidChange(_ obj: Notification) {
-        widget.layoutTextField()
-        widget.setNeedsDisplay()
-    }
-
-
-    override func textDidEndEditing(_ notification: Notification) {
-        resignFirstResponder()
-
-        if let value = notification.userInfo?["NSTextMovement"] as! NSNumber?, value == NSNumber(value: 17) {
-            dispatchAsyncInForeground {
-                gEditingManager.handleKey("\t", flags: ZEventFlags(), isWindow: true)
-            }
-        }
-    }
-
-#elseif os(iOS)
-
-    // fix a bug where root zone is editing on launch
-    override var canBecomeFirstResponder: Bool { get { return gOperationsManager.isReady } }
-    
-
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        resignFirstResponder()
-
-        return true
-    }
-
-#endif
 }

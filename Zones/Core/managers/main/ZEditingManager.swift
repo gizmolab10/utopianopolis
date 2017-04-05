@@ -17,14 +17,6 @@ import CloudKit
 #endif
 
 
-enum ZArrowKey: CChar {
-    case up    = -128
-    case down
-    case left
-    case right
-}
-
-
 class ZEditingManager: NSObject {
 
 
@@ -77,11 +69,7 @@ class ZEditingManager: NSObject {
                 stalledEvents.append(ZoneEvent(iEvent, iIsWindow: isWindow))
             }
         } else if !isEditing, iEvent != previousEvent, gWorkMode == .editMode {
-            let string = iEvent.input
-            let  flags = iEvent.modifierFlags
-            let    key = string[string.startIndex].description
-
-            handleKey(key, flags: flags, isWindow: isWindow)
+            handleKey(iEvent.key, flags: iEvent.modifierFlags, isWindow: isWindow)
         }
 
         return true
@@ -110,7 +98,7 @@ class ZEditingManager: NSObject {
                 if key == "a" && flags.isCommand {
                     gSelectionManager.currentlyEditingZone?.widget?.textWidget.selectAllText()
                 }
-            } else if   let arrow = key?.arrow, isWindow {
+            } else if let arrow = key?.arrow, isWindow {
                 handleArrow(arrow, flags: flags)
             } else {
                 let    widget = gWidgetsManager.currentMovableWidget
@@ -126,7 +114,8 @@ class ZEditingManager: NSObject {
                 case "b":       createBookmark()
                 case "'":       doFavorites(isShift, isOption)
                 case "\"":      doFavorites(true,    isOption)
-                case "\u{7F}":  if isSpecial { delete() } // delete
+                case "\u{8}",
+                     "\u{7F}":  if isSpecial { delete() } // delete
                 case "\t":      if hasWidget { addSibling() } // tab
                 case "/":       focusOnZone(gSelectionManager.firstGrabbableZone)
                 case " ":
@@ -782,11 +771,11 @@ class ZEditingManager: NSObject {
 
 
     func moveSelectionInto(_ zone: Zone) {
-        let  showChildren = zone.showChildren
+        let    wasShowing = zone.showChildren
         zone.showChildren = true
         zone .hasChildren = zone.count != 0
 
-        if showChildren {
+        if !wasShowing {
             zone.needUpdateSave()
         }
         

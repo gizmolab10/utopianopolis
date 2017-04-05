@@ -11,6 +11,14 @@ import Foundation
 import Cocoa
 
 
+enum ZArrowKey: CChar {
+    case up    = -128
+    case down
+    case left
+    case right
+}
+
+
 public typealias ZFont                      = NSFont
 public typealias ZView                      = NSView
 public typealias ZEvent                     = NSEvent
@@ -48,18 +56,40 @@ let    zapplication = NSApplication.shared()
 let      mainWindow = ZoneWindow.window!
 
 
-func CGSizeFromString(_ string: String) -> CGSize {
-    let size = NSSizeFromString(string)
-
-    return CGSize(width: size.width, height: size.height)
-}
-
-
 extension NSObject {
     var highlightHeightOffset: CGFloat { return -3.0 }
     func assignAsFirstResponder(_ responder: NSResponder?) {
         mainWindow.makeFirstResponder(responder)
     }
+}
+
+
+extension String {
+    var arrow: ZArrowKey? {
+        if containsNonAscii {
+            let character = utf8CString[2]
+
+            for arrowKey in ZArrowKey.up.rawValue...ZArrowKey.right.rawValue {
+                if arrowKey == character {
+                    return ZArrowKey(rawValue: character)
+                }
+            }
+        }
+
+        return nil
+    }
+
+
+    var cgSize: CGSize {
+        let size = NSSizeFromString(self)
+
+        return CGSize(width: size.width, height: size.height)
+    }
+}
+
+
+extension NSEvent {
+    var key: String { return input.character(at: 0) }
 }
 
 
@@ -80,13 +110,11 @@ extension NSEventModifierFlags {
 
 extension NSEvent {
     var input: String {
-        get {
-            if let result = charactersIgnoringModifiers {
-                return result as String
-            }
-
-            return ""
+        if let result = charactersIgnoringModifiers {
+            return result as String
         }
+
+        return ""
     }
 }
 
@@ -231,16 +259,57 @@ extension NSButton {
 
 
 extension NSTextField {
+    var text: String? { get { return stringValue } set { stringValue = newValue! } }
+}
+
+
+extension ZoneTextWidget {
     var textAlignment : NSTextAlignment { get { return alignment } set { alignment = newValue } }
-    var text: String? {
-        get { return stringValue }
-        set { stringValue = newValue! }
+    override open var acceptsFirstResponder: Bool { get { return gOperationsManager.isReady } }    // fix a bug where root zone is editing on launch
+
+
+    override func controlTextDidChange(_ obj: Notification) {
+        widget.layoutTextField()
+        widget.setNeedsDisplay()
+    }
+
+
+    override func textDidEndEditing(_ notification: Notification) {
+        resignFirstResponder()
+
+        if let value = notification.userInfo?["NSTextMovement"] as! NSNumber?, value == NSNumber(value: 17) {
+            dispatchAsyncInForeground {
+                gEditingManager.handleKey("\t", flags: ZEventFlags(), isWindow: true)
+            }
+        }
     }
 
 
     func selectAllText() {
         if text != nil, let editor = currentEditor() {
             select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: text!.characters.count)
+        }
+    }
+
+
+    func addMonitor() {
+        monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { (event) -> ZEvent? in
+            if self.isTextEditing, !event.modifierFlags.isNumericPad {
+                gEditingManager.handleEvent(event, isWindow: false)
+            }
+
+            return event
+        })
+    }
+
+
+    func removeMonitorAsync() {
+        if let save = monitor {
+            monitor = nil
+
+            dispatchAsyncInForegroundAfter(0.001, closure: {
+                ZEvent.removeMonitor(save)
+            })
         }
     }
 }

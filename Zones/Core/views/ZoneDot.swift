@@ -25,7 +25,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var        widget: ZoneWidget?
     var    widgetZone: Zone?
     var   dragGesture: ZGestureRecognizer?
-    var doubleGesture: ZGestureRecognizer?
     var singleGesture: ZGestureRecognizer?
 
 
@@ -116,11 +115,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         setNeedsDisplay()
     }
 
-
-    func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: ZGestureRecognizer) -> Bool {
-        return isToggle ? false : gestureRecognizer == singleGesture && otherGestureRecognizer == doubleGesture
-    }
-    
 
     func singleEvent(_ iGesture: ZGestureRecognizer?) {
         if isToggle {

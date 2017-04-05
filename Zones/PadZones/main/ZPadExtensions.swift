@@ -12,6 +12,14 @@ import CloudKit
 import UIKit
 
 
+enum ZArrowKey: CChar {
+    case up    = 85 // U
+    case down  = 68 // D
+    case left  = 76 // L
+    case right = 82 // R
+}
+
+
 public typealias ZFont                      = UIFont
 public typealias ZView                      = UIView
 public typealias ZImage                     = UIImage
@@ -55,6 +63,34 @@ extension NSObject {
     var highlightHeightOffset: CGFloat { return 3.0 }
     var  lineThicknessDivisor: CGFloat { return 1.0 }
     func assignAsFirstResponder(_ responder: UIResponder?) { responder?.becomeFirstResponder() }
+}
+
+
+extension UIKeyCommand {
+    var key: String {
+
+        if input.hasPrefix("UIKeyInput") {
+            return input.character(at: 10)
+        }
+
+        return input.character(at: 0)
+    }
+}
+
+
+extension String {
+    var cgSize: CGSize { return CGSizeFromString(self) }
+    var arrow: ZArrowKey? {
+        let value = utf8CString[0]
+
+        for arrowKey in [ZArrowKey.up.rawValue, ZArrowKey.down.rawValue, ZArrowKey.left.rawValue, ZArrowKey.right.rawValue] {
+            if arrowKey == value {
+                return ZArrowKey(rawValue: value)
+            }
+        }
+
+        return nil
+    }
 }
 
 
@@ -120,20 +156,81 @@ extension UIView {
 }
 
 
+var windowKeys: [UIKeyCommand]? = nil
+
+
 extension UIWindow {
     override open var canBecomeFirstResponder: Bool { return true }
-}
 
 
-extension UISegmentedControl {
-    var selectedSegment: Int { get { return selectedSegmentIndex } }
+    override open var keyCommands: [UIKeyCommand]? {
+        if gSelectionManager.currentlyEditingZone != nil {
+            return nil
+        }
+
+        if  windowKeys                              == nil {
+            windowKeys                               = [UIKeyCommand] ()
+            let                              handler = #selector(UIWindow.keyHandler)
+            let                               noMods = UIKeyModifierFlags(rawValue: 0)
+            let                             shiftAlt = UIKeyModifierFlags(rawValue: UIKeyModifierFlags.shift.rawValue + UIKeyModifierFlags.alternate.rawValue)
+            let mods: [String : UIKeyModifierFlags] = [""              :  noMods,
+                                                       "option "       : .alternate,
+                                                       "option shift " :  shiftAlt,
+                                                       "command "      : .command,
+                                                       "shift "        : .shift]
+            let pairs:             [String: String] = [UIKeyInputUpArrow    :    "up arrow",
+                                                       UIKeyInputDownArrow  :  "down arrow",
+                                                       UIKeyInputLeftArrow  :  "left arrow",
+                                                       UIKeyInputRightArrow : "right arrow"]
+
+            for (prefix, flags) in mods {
+                for (input, title) in pairs {
+                    windowKeys?.append(UIKeyCommand(input: input, modifierFlags: flags,  action: handler, discoverabilityTitle: prefix + title))
+                }
+
+                for character in "abcdefghijklmnopqrstuvwxyz/ '\t\r\u{8}".characters {
+                    let input = String(character)
+
+                    windowKeys?.append(UIKeyCommand(input: input, modifierFlags: flags,  action: handler, discoverabilityTitle: prefix + input))
+                }
+            }
+        }
+
+        return windowKeys
+    }
+
+
+    func keyHandler(command: UIKeyCommand) {
+        var event = command
+
+        if  let title = command.discoverabilityTitle, title.contains(" arrow") { // flags need a .numericPad option added
+            let flags = UIKeyModifierFlags(rawValue: command.modifierFlags.rawValue + UIKeyModifierFlags.numericPad.rawValue)
+            event     = UIKeyCommand(input: command.input, modifierFlags: flags, action: #selector(UIWindow.keyHandler), discoverabilityTitle: command.discoverabilityTitle!)
+        }
+
+        gEditingManager.handleEvent(event, isWindow: true)
+    }
 }
 
 
 extension UITextField {
     var isBordered : Bool { get { return borderStyle != .none } set { borderStyle = (newValue ? .line : .none) } }
-    func abortEditing() {}
+    override open var canBecomeFirstResponder: Bool { return gOperationsManager.isReady }    // fix a bug where root zone is editing on launch
+    func removeMonitorAsync() {}
     func selectAllText() {}
+    func addMonitor() {}
+
+
+    func abortEditing() {
+        resignFirstResponder()
+    }
+
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        resignFirstResponder()
+
+        return true
+    }
 }
 
 
@@ -142,6 +239,11 @@ public extension UISlider {
         get { return Double(value) }
         set { value = Float(newValue) }
     }
+}
+
+
+extension UISegmentedControl {
+    var selectedSegment: Int { get { return selectedSegmentIndex } }
 }
 
 
@@ -165,9 +267,6 @@ extension UIButton {
 }
 
 
-var _keyCommands: [UIKeyCommand]? = nil
-
-
 extension UIApplication {
 
     func presentError(_ error: NSError) {}
@@ -178,39 +277,6 @@ extension UIApplication {
         applicationIconBadgeNumber  = 0
 
         cancelAllLocalNotifications()
-    }
-
-
-    override open var keyCommands: [UIKeyCommand]? {
-        get {
-            if gSelectionManager.currentlyEditingZone != nil {
-                return nil
-            }
-
-            if  _keyCommands == nil {
-                _keyCommands = [UIKeyCommand] ()
-                let   action = #selector(UIApplication.action)
-
-                for character in "abcdefghijklmnopqrstuvwxyz '\t\r/".characters {
-                    _keyCommands?.append(UIKeyCommand(input: String(character),    modifierFlags: .init(rawValue: 0), action: action))
-                    _keyCommands?.append(UIKeyCommand(input: String(character),    modifierFlags: .alternate,         action: action))
-                    _keyCommands?.append(UIKeyCommand(input: String(character),    modifierFlags: .command,           action: action))
-                    _keyCommands?.append(UIKeyCommand(input: String(character),    modifierFlags: .shift,             action: action))
-                }
-
-                _keyCommands?.append    (UIKeyCommand(input: UIKeyInputUpArrow,    modifierFlags: .numericPad,        action: action))
-                _keyCommands?.append    (UIKeyCommand(input: UIKeyInputDownArrow,  modifierFlags: .numericPad,        action: action))
-                _keyCommands?.append    (UIKeyCommand(input: UIKeyInputLeftArrow,  modifierFlags: .numericPad,        action: action))
-                _keyCommands?.append    (UIKeyCommand(input: UIKeyInputRightArrow, modifierFlags: .numericPad,        action: action))
-            }
-
-            return _keyCommands
-        }
-    }
-
-
-    func action(command: UIKeyCommand) {
-        gEditingManager.handleEvent(command, isWindow: true)
     }
 }
 

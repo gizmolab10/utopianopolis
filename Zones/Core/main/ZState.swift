@@ -132,7 +132,7 @@ var gGenericOffset: CGSize {
 
     get {
         if let string = UserDefaults.standard.object(forKey: genericOffsetKey) as? String {
-            return CGSizeFromString(string)
+            return string.cgSize
         }
 
         let defaultValue = CGSize(width: 24.0, height: 12.0)

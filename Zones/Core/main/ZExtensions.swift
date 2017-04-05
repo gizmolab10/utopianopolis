@@ -123,21 +123,6 @@ extension String {
     }
 
 
-    var arrow: ZArrowKey? {
-        if containsNonAscii {
-            let character = utf8CString[2]
-
-            for arrowKey in ZArrowKey.up.rawValue...ZArrowKey.right.rawValue {
-                if arrowKey == character {
-                    return ZArrowKey(rawValue: character)
-                }
-            }
-        }
-
-        return nil
-    }
-
-
     func heightForFont(_ font: ZFont) -> CGFloat {
         return sizeWithFont(font).height
     }
@@ -186,6 +171,13 @@ extension String {
         let   endIndex = index(at: r.upperBound)
 
         return substring(with: startIndex..<endIndex)
+    }
+
+
+    func character(at iOffset: Int) -> String {
+        let index = self.index(startIndex, offsetBy: iOffset)
+
+        return self[index].description
     }
 }
 
