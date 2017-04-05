@@ -53,13 +53,12 @@ public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 
 let gVerticalWeight = 1.0
 let    zapplication = NSApplication.shared()
-let      mainWindow = ZoneWindow.window!
 
 
 extension NSObject {
     var highlightHeightOffset: CGFloat { return -3.0 }
     func assignAsFirstResponder(_ responder: NSResponder?) {
-        mainWindow.makeFirstResponder(responder)
+        ZoneWindow.window?.makeFirstResponder(responder)
     }
 }
 

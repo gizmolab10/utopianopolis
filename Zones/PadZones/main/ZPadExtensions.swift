@@ -168,23 +168,27 @@ extension UIWindow {
             return nil
         }
 
-        if  windowKeys                              == nil {
-            windowKeys                               = [UIKeyCommand] ()
-            let                              handler = #selector(UIWindow.keyHandler)
-            let                               noMods = UIKeyModifierFlags(rawValue: 0)
-            let                             shiftAlt = UIKeyModifierFlags(rawValue: UIKeyModifierFlags.shift.rawValue + UIKeyModifierFlags.alternate.rawValue)
-            let mods: [String : UIKeyModifierFlags] = [""              :  noMods,
-                                                       "option "       : .alternate,
-                                                       "option shift " :  shiftAlt,
-                                                       "command "      : .command,
-                                                       "shift "        : .shift]
-            let pairs:             [String: String] = [UIKeyInputUpArrow    :    "up arrow",
-                                                       UIKeyInputDownArrow  :  "down arrow",
-                                                       UIKeyInputLeftArrow  :  "left arrow",
-                                                       UIKeyInputRightArrow : "right arrow"]
+        if  windowKeys                             == nil {
+            windowKeys                              = [UIKeyCommand] ()
+            let                             handler = #selector(UIWindow.keyHandler)
+            let                              noMods = UIKeyModifierFlags(rawValue: 0)
+            let                         shiftOption = UIKeyModifierFlags(rawValue: UIKeyModifierFlags.alternate.rawValue + UIKeyModifierFlags.shift.rawValue)
+            let                       commandOption = UIKeyModifierFlags(rawValue: UIKeyModifierFlags.alternate.rawValue + UIKeyModifierFlags.command.rawValue)
+            let                        commandShift = UIKeyModifierFlags(rawValue: UIKeyModifierFlags    .shift.rawValue + UIKeyModifierFlags.command.rawValue)
+            let mods: [String : UIKeyModifierFlags] = [""                :  noMods,
+                                                       "option "         : .alternate,
+                                                       "option shift "   :  shiftOption,
+                                                       "command shift "  :  commandShift,
+                                                       "command option " :  commandOption,
+                                                       "command "        : .command,
+                                                       "shift "          : .shift]
+            let pairs:             [String: String] = ["up arrow"        : UIKeyInputUpArrow,
+                                                       "down arrow"      : UIKeyInputDownArrow,
+                                                       "left arrow"      : UIKeyInputLeftArrow,
+                                                       "right arrow"     : UIKeyInputRightArrow]
 
             for (prefix, flags) in mods {
-                for (input, title) in pairs {
+                for (title, input) in pairs {
                     windowKeys?.append(UIKeyCommand(input: input, modifierFlags: flags,  action: handler, discoverabilityTitle: prefix + title))
                 }
 
@@ -216,8 +220,8 @@ extension UIWindow {
 extension UITextField {
     var isBordered : Bool { get { return borderStyle != .none } set { borderStyle = (newValue ? .line : .none) } }
     override open var canBecomeFirstResponder: Bool { return gOperationsManager.isReady }    // fix a bug where root zone is editing on launch
+    func selectAllText() { selectAll(self) }
     func removeMonitorAsync() {}
-    func selectAllText() {}
     func addMonitor() {}
 
 
@@ -228,6 +232,18 @@ extension UITextField {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         resignFirstResponder()
+
+        return true
+    }
+}
+
+
+extension ZoneTextWidget {
+    @objc(textField:shouldChangeCharactersInRange:replacementString:) func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        widget.layoutTextField()
+        gEditorView?.applyToAllSubviews { iView in
+            iView.setNeedsDisplay()
+        }
 
         return true
     }

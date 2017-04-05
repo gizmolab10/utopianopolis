@@ -217,9 +217,9 @@ extension ZView {
 
 
     func applyToAllSubviews(_ closure: ViewClosure) {
-        for view in subviews {
-            closure(view)
+        closure(self)
 
+        for view in subviews {
             view.applyToAllSubviews(closure)
         }
     }

@@ -76,72 +76,7 @@ class ZoneWidget: ZView {
     }
 
 
-    // MARK:- layout
-    // MARK:-
-
-
-    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, kind: ZSignalKind) {
-        if inView != nil && !(inView?.subviews.contains(self))! {
-            inView?.addSubview(self)
-
-            if atIndex == nil {
-                snp.remakeConstraints { (make: ConstraintMaker) -> Void in
-                    make.center.equalTo(inView!)
-                }
-            }
-        }
-
-        gWidgetsManager.registerWidget(self)
-        inView?.clearBackground()
-        clearBackground()
-        addTextView()
-        layoutText()
-        layoutDots()
-        addChildrenView()
-
-        if recursing {
-            prepareChildren()
-            layoutChildren(kind)
-        }
-
-        updateConstraints()
-    }
-
-
-    func layoutChildren(_ kind: ZSignalKind) {
-        if widgetZone.includeChildren {
-            var                 index = widgetZone.count
-            var previous: ZoneWidget? = nil
-
-            while index > 0 {
-                index                 -= 1 // go backwards down the arrays, constraint making expects it, above
-                let childWidget        = childrenWidgets[index]
-                childWidget.widgetZone = widgetZone     [index]
-
-                childWidget.layoutInView(childrenView, atIndex: index, recursing: true, kind: kind)
-                childWidget.snp.removeConstraints()
-                childWidget.snp.makeConstraints { (make: ConstraintMaker) in
-                    if previous == nil {
-                        make.bottom.equalTo(childrenView)
-                    } else {
-                        make.bottom.equalTo(previous!.snp.top)
-                    }
-
-                    if index == 0 {
-                        make.top.equalTo(childrenView)
-                    }
-
-                    make.left.equalTo(childrenView)
-                    make.right.lessThanOrEqualTo(childrenView)
-                }
-                
-                previous = childWidget
-            }
-        }
-    }
-
-
-    func prepareChildren() {
+    func prepareChildrenWidgets() {
         if !widgetZone.includeChildren {
             for child in childrenWidgets {
                 gWidgetsManager.unregisterWidget(child)
@@ -166,6 +101,71 @@ class ZoneWidget: ZView {
 
             while childrenWidgets.count < widgetZone.count {
                 childrenWidgets.append(ZoneWidget())
+            }
+        }
+    }
+
+
+    // MARK:- layout
+    // MARK:-
+
+
+    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, kind signalKind: ZSignalKind) {
+        if inView != nil && !(inView?.subviews.contains(self))! {
+            inView?.addSubview(self)
+
+            if atIndex == nil {
+                snp.remakeConstraints { (make: ConstraintMaker) -> Void in
+                    make.center.equalTo(inView!)
+                }
+            }
+        }
+
+        gWidgetsManager.registerWidget(self)
+        inView?.clearBackground()
+        clearBackground()
+        addTextView()
+        layoutText()
+        layoutDots()
+        addChildrenView()
+
+        if recursing {
+            prepareChildrenWidgets()
+            layoutChildren(signalKind)
+        }
+
+        updateConstraints()
+    }
+
+
+    func layoutChildren(_ kind: ZSignalKind) {
+        if widgetZone.includeChildren {
+            var                 index = widgetZone.count
+            var previous: ZoneWidget? = nil
+
+            while index > 0 {
+                index                 -= 1 // go backwards down the arrays, constraint making expects it
+                let childWidget        = childrenWidgets[index]
+                childWidget.widgetZone = widgetZone     [index]
+
+                childWidget.layoutInView(childrenView, atIndex: index, recursing: true, kind: kind)
+                childWidget.snp.removeConstraints()
+                childWidget.snp.makeConstraints { (make: ConstraintMaker) in
+                    if previous == nil {
+                        make.bottom.equalTo(childrenView)
+                    } else {
+                        make.bottom.equalTo(previous!.snp.top)
+                    }
+
+                    if index == 0 {
+                        make.top.equalTo(childrenView)
+                    }
+
+                    make.left.equalTo(childrenView)
+                    make.right.lessThanOrEqualTo(childrenView)
+                }
+                
+                previous = childWidget
             }
         }
     }

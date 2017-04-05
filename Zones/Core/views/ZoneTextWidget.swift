@@ -50,6 +50,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     gSelectionManager.deselectGrabs()
                     updateText()
                     addMonitor()
+                    selectAllText()
                 }
 
                 signalFor(nil, regarding: .data)
@@ -71,6 +72,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         textAlignment          = .center
         backgroundColor        = ZColor.clear
         zlayer.backgroundColor = ZColor.clear.cgColor
+        autocapitalizationType = .none
     }
 
 

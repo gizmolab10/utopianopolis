@@ -48,33 +48,30 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
         }
 
         let                        zone = object as? Zone
+        var                   recursing = true
         var specificWidget: ZoneWidget? = hereWidget
         var specificView:        ZView? = view
         var specificindex:         Int? = nil
-        var recursing:             Bool = [.data, .redraw].contains(kind)
         gTextCapturing                  = false
         hereWidget.widgetZone           = gHere
         view    .zlayer.backgroundColor = gBackgroundColor.cgColor
 
-        if zone != nil {
+        if zone != nil && zone != gHere {
             specificWidget = zone!.widget
             specificindex  = zone!.siblingIndex
             specificView   = specificWidget?.superview
+            recursing      = [.data, .redraw].contains(kind)
 
             if zone!.isSelected {
                 zone!.grab()
             }
 
             toConsole(zone?.zoneName)
-        } else if zone == gHere {
-            recursing = true
-
-            toConsole("all")
         }
 
         specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind)
-        view.applyToAllSubviews { (iView) -> (Void) in
-            iView.display()
+        view.applyToAllSubviews { iView in
+            iView.setNeedsDisplay()
         }
     }
 
