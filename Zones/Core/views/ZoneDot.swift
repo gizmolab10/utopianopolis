@@ -138,7 +138,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         }
 
         if !isHere {
-            editorController?.handleDragEvent(iGesture)
+            gEditor?.handleDragEvent(iGesture)
         }
     }
 }

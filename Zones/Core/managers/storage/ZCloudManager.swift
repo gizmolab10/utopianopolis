@@ -140,18 +140,18 @@ class ZCloudManager: ZRecordsManager {
                 operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
 
                     // mark failed records as needing fetch
-                    if  let error:         CKError = iError as? CKError {
-                        let info                   = error.errorUserInfo
-                        var description:    String = info["ServerErrorDescription"] as! String
+                    if  let error:      CKError = iError as? CKError {
+                        let info                = error.errorUserInfo
+                        var description: String = info["ServerErrorDescription"] as! String
 
-                        if  description           != "record to insert already exists" {
+                        if  description        != "record to insert already exists" {
                             self.invokeWithMode(storageMode) {
-                                if let record      = self.recordForRecordID((iRecord?.recordID)!) {
-                                    record.needFetch()
+                                if let record   = self.recordForRecordID((iRecord?.recordID)!) {
+                                    record.needFetch() // perhaps delete?
                                 }
 
-                                if let name        = iRecord?["zoneName"] as! String? {
-                                    description    = "\(description): \(name)"
+                                if  let    name = iRecord?["zoneName"] as! String? {
+                                    description = "\(description): \(name)"
                                 }
 
                                 self.report(description)
@@ -206,8 +206,7 @@ class ZCloudManager: ZRecordsManager {
 
         assureRecordExists(withRecordID: recordID, storageMode: .mine, recordType: manifestTypeKey) { (iManifestRecord: CKRecord?) in
             if iManifestRecord != nil {
-                let    manifest = gTravelManager.manifest
-                manifest.record = iManifestRecord
+                gManifest.record = iManifestRecord
             }
 
             onCompletion?(0)
@@ -216,10 +215,10 @@ class ZCloudManager: ZRecordsManager {
 
 
     func establishHere(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
-        if gTravelManager.manifest.here == nil {
+        if gManifest.here == nil {
             self.establishRootAsHere(storageMode, onCompletion)
         } else {
-            let recordID = gTravelManager.manifest.here!.recordID
+            let recordID = gManifest.here!.recordID
 
             self.assureRecordExists(withRecordID: recordID, storageMode: storageMode, recordType: zoneTypeKey) { (iHereRecord: CKRecord?) in
                 if iHereRecord == nil || iHereRecord?[zoneNameKey] == nil {
@@ -227,7 +226,7 @@ class ZCloudManager: ZRecordsManager {
                 } else {
                     gHere = self.zoneForRecord(iHereRecord!)
 
-                    gTravelManager.manifest.needUpdateSave()
+                    gManifest.needUpdateSave()
 
                     onCompletion?(0)
                 }
@@ -245,7 +244,7 @@ class ZCloudManager: ZRecordsManager {
                 gTravelManager.rootZone = root
                 root.level              = 0
 
-                gTravelManager.manifest.needUpdateSave()
+                gManifest.needUpdateSave()
             }
 
             onCompletion?(0)
@@ -365,7 +364,7 @@ class ZCloudManager: ZRecordsManager {
 
                         if !child.isDeleted {
                             if recursiveGoal != nil && recursiveGoal! > child.level {
-                                child.needChildren()
+                                child.maybeNeedChildren()
                             }
 
                             if let parent  = child.parentZone {

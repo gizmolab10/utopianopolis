@@ -28,69 +28,92 @@ class ZSelectionManager: NSObject {
 
     var               hasGrab:  Bool { return currentlyGrabbedZones.count > 0 }
     var            isDragging:  Bool { return draggedZone != nil }
+    var inResponderTransition:  Bool               = false
     var       dragDropIndices:  NSMutableIndexSet? = nil
+    var          dragRelation:  ZRelation?         = nil
+    var             dragPoint:  CGPoint?           = nil
     var  currentlyEditingZone:  Zone?              = nil
     var          dragDropZone:  Zone?              = nil
     var           draggedZone:  Zone?              = nil
-    var             dragPoint:  CGPoint?           = nil
-    var          dragRelation:  ZRelation?         = nil
     var       pasteableZones = [Zone] ()
+
+
     var currentlyGrabbedZones: [Zone] {
-        get { return gTravelManager.manifest.currentlyGrabbedZones }
-        set { gTravelManager.manifest.currentlyGrabbedZones = newValue }
+        get { return gManifest.currentlyGrabbedZones            }
+        set {        gManifest.currentlyGrabbedZones = newValue }
     }
 
 
-    var firstGrabbableZone: Zone {
-        get {
-            var grabbable: Zone? = nil
+    var firstGrabbedZone: Zone {
+        var grabbed: Zone? = nil
 
-            if currentlyGrabbedZones.count > 0 {
-                grabbable = currentlyGrabbedZones[0]
-            }
-
-            if grabbable == nil || grabbable?.record == nil {
-                grabbable = gHere
-            }
-
-            return grabbable!
+        if  currentlyGrabbedZones.count > 0 {
+            grabbed = currentlyGrabbedZones[0]
         }
+
+        if  grabbed == nil || grabbed!.record == nil {
+            grabbed = gHere
+        }
+
+        return grabbed!
     }
 
 
     var currentlyMovableZone: Zone {
-        get {
-            var movable: Zone? = nil
+        var movable: Zone? = nil
 
-            if currentlyGrabbedZones.count > 0 {
-                movable = currentlyGrabbedZones[0]
-            } else if currentlyEditingZone != nil {
-                movable = currentlyEditingZone
-            }
+        if currentlyGrabbedZones.count > 0 {
+            movable = firstGrabbedZone
+        } else if currentlyEditingZone != nil {
+            movable = currentlyEditingZone
+        }
 
-            if movable == nil || (movable?.parentZone != nil && gStorageMode != movable?.parentZone?.storageMode) {
-                movable = gHere
-            }
-            
-            return movable!
+        if  movable == nil || (movable?.parentZone != nil && gStorageMode != movable?.parentZone?.storageMode) {
+            movable = gHere
+        }
+
+        return movable!
+    }
+
+
+    func clear()       { currentlyEditingZone  = nil }
+    func clearGrab()   { currentlyGrabbedZones = [] }
+    func clearPaste()  { pasteableZones        = [] }
+    func fullResign()  { assignAsFirstResponder (nil) } // ios broken
+    func editCurrent() { edit(currentlyMovableZone) }
+    func isEditing (_ zone: Zone) -> Bool { return currentlyEditingZone == zone }
+    func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || isEditing(zone) }
+    func isGrabbed (_ zone: Zone) -> Bool { return currentlyGrabbedZones.contains(zone) }
+
+
+    func deferResponderChanges() {
+        inResponderTransition          = true
+
+        dispatchAsyncInForegroundAfter(0.2) {
+            self.inResponderTransition = false
         }
     }
 
 
-    func clear() {
-        currentlyEditingZone = nil
+    func edit(_ iZone: Zone) {
+        if !inResponderTransition {
+            currentlyEditingZone = iZone
+
+            assignAsFirstResponder(iZone.widget?.textWidget)
+            deferResponderChanges()
+        }
     }
+    
 
+    func stopEdit(for iZone: Zone) {
+        if !inResponderTransition {
+            currentlyEditingZone = nil
 
-    func clearGrab() {
-        currentlyGrabbedZones = []
+            fullResign()
+            deferResponderChanges()
+        }
     }
-
-
-    func clearPaste() {
-        pasteableZones = []
-    }
-
+    
 
     func deselectGrabs() {
         let zones = currentlyGrabbedZones
@@ -103,11 +126,6 @@ class ZSelectionManager: NSObject {
                 widget                  .setNeedsDisplay()
             }
         }
-    }
-
-
-    func fullResign() {
-        assignAsFirstResponder(nil) // ios broken
     }
 
 
@@ -153,21 +171,6 @@ class ZSelectionManager: NSObject {
     func grab(_ zone: Zone?) {
         deselectGrabs()
         addToGrab(zone!)
-    }
-
-
-    func isEditing(_ zone: Zone) -> Bool {
-        return currentlyEditingZone == zone
-    }
-
-
-    func isSelected(_ zone: Zone) -> Bool {
-        return isGrabbed(zone) || isEditing(zone)
-    }
-
-
-    func isGrabbed(_ zone: Zone) -> Bool {
-        return currentlyGrabbedZones.contains(zone)
     }
 
 

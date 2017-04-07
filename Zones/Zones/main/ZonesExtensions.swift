@@ -193,10 +193,6 @@ extension NSWindow {
     override open var acceptsFirstResponder: Bool { get { return true } }
 
 
-    // MARK:- menu validation
-    // MARK:-
-
-
     override open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
         enum ZMenuType: Int {
             case Grab  = 1
@@ -226,10 +222,6 @@ extension NSWindow {
     }
 
 
-    // MARK:- actions
-    // MARK:-
-
-
     @IBAction func displayPreferences     (_ sender: Any?) { settingsController?.displayViewFor(id: .Preferences) }
     @IBAction func displayHelp            (_ sender: Any?) { settingsController?.displayViewFor(id: .Help) }
     @IBAction func printHere              (_ sender: Any?) { gEditingManager.printHere() }
@@ -241,7 +233,6 @@ extension NSWindow {
     @IBAction func toggleSearch      (_ iItem: ZMenuItem?) { gEditingManager.find() }
     @IBAction func undo              (_ iItem: ZMenuItem?) { gUndoManager.undo() }
     @IBAction func redo              (_ iItem: ZMenuItem?) { gUndoManager.redo() }
-
 }
 
 
@@ -259,12 +250,12 @@ extension NSButton {
 
 extension NSTextField {
     var text: String? { get { return stringValue } set { stringValue = newValue! } }
+    var textAlignment : NSTextAlignment { get { return alignment } set { alignment = newValue } }
 }
 
 
 extension ZoneTextWidget {
-    var textAlignment : NSTextAlignment { get { return alignment } set { alignment = newValue } }
-    override open var acceptsFirstResponder: Bool { get { return gOperationsManager.isReady } }    // fix a bug where root zone is editing on launch
+    override open var acceptsFirstResponder: Bool { return gOperationsManager.isReady }    // fix a bug where root zone is editing on launch
 
 
     override func controlTextDidChange(_ obj: Notification) {

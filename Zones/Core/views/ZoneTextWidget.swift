@@ -50,7 +50,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     gSelectionManager.deselectGrabs()
                     updateText()
                     addMonitor()
-                    selectAllText()
+
+                    #if os(iOS)
+                        selectAllText()
+                    #endif
                 }
 
                 signalFor(nil, regarding: .data)
@@ -72,7 +75,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         textAlignment          = .center
         backgroundColor        = ZColor.clear
         zlayer.backgroundColor = ZColor.clear.cgColor
-        autocapitalizationType = .none
+
+        #if os(iOS)
+            autocapitalizationType = .none
+        #endif
     }
 
 
@@ -93,15 +99,19 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     @discardableResult override func resignFirstResponder() -> Bool {
-        captureText()
+        var result = false
 
-        let result = super.resignFirstResponder()
+        if !gSelectionManager.inResponderTransition {
+            captureText()
 
-        if result && isTextEditing {
-            gSelectionManager.clearGrab()
+            result = super.resignFirstResponder()
 
-            dispatchAsyncInForeground { // avoid state garbling
-                self.isTextEditing = false
+            if result && isTextEditing {
+                gSelectionManager.clearGrab()
+
+                dispatchAsyncInForeground { // avoid state garbling
+                    self.isTextEditing = false
+                }
             }
         }
 
@@ -111,6 +121,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     @discardableResult override func becomeFirstResponder() -> Bool {
         let result = super.becomeFirstResponder()
+
+        gSelectionManager.deferResponderChanges()
 
         if result {
             isTextEditing = true

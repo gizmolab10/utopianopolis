@@ -301,18 +301,15 @@ class ZRecordsManager: NSObject {
             let identifier = record.recordID.recordName
 
             if registered == nil {
-                zones[identifier]  = zone
-                let       manifest = gTravelManager.manifest
-                let          total = zones.count
+                zones[identifier]   = zone
+                let           total = zones.count
 
-                if  manifest.total < total {
-                    manifest.total = total
-
-                    manifest.needUpdateSave()
+                if  gManifest.total < total {
+                    gManifest.total = total
                 }
-            } else if registered! != identifier {
-                zones[registered!] = nil
-                zones[identifier]  = zone
+            } else if registered!  != identifier {
+                zones[registered!]  = nil
+                zones[identifier]   = zone
             }
         }
     }
@@ -343,10 +340,8 @@ class ZRecordsManager: NSObject {
     func recordForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
         var record = zoneForRecordID(recordID) as ZRecord?
 
-        if record == nil {
-            if gTravelManager.manifest.record?.recordID.recordName == recordID?.recordName {
-                record = gTravelManager.manifest
-            }
+        if  record == nil && gManifest.record?.recordID.recordName == recordID?.recordName {
+            record  = gManifest
         }
 
         return record
@@ -374,7 +369,7 @@ class ZRecordsManager: NSObject {
         }
 
         if  zone!.showChildren || zone!.hasChildren || zone!.count == 0 {
-            zone!.needChildren()
+            zone!.maybeNeedChildren()
         }
 
         return zone!

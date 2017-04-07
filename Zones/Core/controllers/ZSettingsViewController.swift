@@ -64,7 +64,7 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         let                     count = gCloudManager.zones.count
-        let                     total = gTravelManager.manifest.total
+        let                     total = gManifest.total
         totalCountLabel?        .text = "of \(total), retrieved: \(count)"
         graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
         levelLabel?             .text = "level: \(gHere.level)"
@@ -174,14 +174,16 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
     @IBAction func restoreZoneButtonAction(_ button: ZButton) {
         // similar to gEditingManager.moveInto
-        let       zone = gSelectionManager.firstGrabbableZone
+        let       zone = gSelectionManager.firstGrabbedZone
         let       root = gTravelManager.rootZone!
         gHere          = root
         zone.isDeleted = false
 
 
-        root.needChildren()
+        root.maybeNeedChildren()
         gOperationsManager.children(recursiveGoal: 1) {
+            gManifest.total += 1
+
             root.addAndReorderChild(zone, at: 0)
             gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
         }

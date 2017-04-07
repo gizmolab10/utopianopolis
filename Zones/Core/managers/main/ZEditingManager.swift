@@ -34,7 +34,6 @@ class ZEditingManager: NSObject {
 
 
     var rootZone: Zone { get { return gTravelManager.rootZone! } set { gTravelManager.rootZone = newValue } }
-    var hereZone: Zone { get { return gTravelManager.hereZone  } set { gTravelManager.hereZone = newValue } }
     var stalledEvents = [ZoneEvent] ()
     var previousEvent: ZEvent?
 
@@ -117,18 +116,15 @@ class ZEditingManager: NSObject {
                 case "\u{8}",
                      "\u{7F}":  if isSpecial { delete() } // delete
                 case "\t":      if hasWidget { addSibling() } // tab
-                case "/":       focusOnZone(gSelectionManager.firstGrabbableZone)
+                case "/":       focusOnZone(gSelectionManager.firstGrabbedZone)
+                case "z":       if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
                 case " ":
                     if hasWidget && isSpecial && !(widget?.widgetZone.isBookmark)! {
                         addNewChildTo(widget?.widgetZone)
                     }
                 case "\r":
-                    if hasWidget && gSelectionManager.hasGrab {
-                        gSelectionManager.deselect()
-
-                        if !isCommand {
-                            widget?.textWidget.becomeFirstResponder()
-                        }
+                    if hasWidget && gSelectionManager.hasGrab && !isCommand {
+                        gSelectionManager.editCurrent()
                     }
                 default:
                     break
@@ -151,7 +147,7 @@ class ZEditingManager: NSObject {
             case .up:    moveUp(true,  selectionOnly: !isOption, extreme: isCommand)
             }
         } else {
-            let zone = gSelectionManager.firstGrabbableZone
+            let zone = gSelectionManager.firstGrabbedZone
             var show = true
 
             switch arrow {
@@ -179,7 +175,7 @@ class ZEditingManager: NSObject {
 
 
     func syncAndRedraw() { gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw, onCompletion: nil) }
-    func         paste() { pasteInto(gSelectionManager.firstGrabbableZone) }
+    func         paste() { pasteInto(gSelectionManager.firstGrabbedZone) }
 
 
     func copyToPaste() {
@@ -214,7 +210,7 @@ class ZEditingManager: NSObject {
 
 
     func createBookmark() {
-        let zone = gSelectionManager.firstGrabbableZone
+        let zone = gSelectionManager.firstGrabbedZone
 
         if gStorageMode != .favorites, !zone.isRoot {
             let closure = {
@@ -229,11 +225,11 @@ class ZEditingManager: NSObject {
                 gOperationsManager.sync {}
             }
 
-            if hereZone != zone {
+            if gHere != zone {
                 closure()
             } else {
                 self.revealParentAndSiblingsOf(zone) {
-                    self.hereZone = zone.parentZone ?? self.hereZone
+                    gHere = zone.parentZone ?? gHere
 
                     closure()
                 }
@@ -245,7 +241,7 @@ class ZEditingManager: NSObject {
     func printHere() {
         #if os(OSX)
 
-        if  let         view = hereZone.widget {
+        if  let         view = gHere.widget {
             let    printInfo = NSPrintInfo.shared()
             let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
             let      isWider = view.bounds.size.width > view.bounds.size.height
@@ -273,7 +269,7 @@ class ZEditingManager: NSObject {
 
             gFavoritesManager.switchToNext(!backward) { self.syncAndRedraw() }
         } else {
-            gFavoritesManager.showFavoritesAndGrab(gSelectionManager.firstGrabbableZone) { object, kind in
+            gFavoritesManager.showFavoritesAndGrab(gSelectionManager.firstGrabbedZone) { object, kind in
                 self.syncAndRedraw()
             }
         }
@@ -290,7 +286,7 @@ class ZEditingManager: NSObject {
 
     func focusOnZone(_ iZone: Zone) {
         let focusOn = { (zone: Zone, kind: ZSignalKind) in
-            self.hereZone = zone
+            gHere = zone
 
             gSelectionManager.deselect()
             zone.grab()
@@ -329,7 +325,7 @@ class ZEditingManager: NSObject {
         parent?.showChildren = true
 
         if parent != nil && parent?.zoneName != nil {
-            parent?.needChildren()
+            parent?.maybeNeedChildren()
 
             gOperationsManager.children(recursiveGoal: iZone.level) {
                 onCompletion?()
@@ -360,9 +356,9 @@ class ZEditingManager: NSObject {
     func revealSiblingsOf(_ descendent: Zone, toHere: Zone) {
         recursivelyRevealSiblingsOf(descendent, toZone: toHere) { (iZone: Zone) in
             if iZone == toHere {
-                self.hereZone = toHere
+                gHere = toHere
 
-                gTravelManager.manifest.needUpdateSave()
+                gManifest.needUpdateSave()
             }
 
             self.syncAndRedraw()
@@ -389,9 +385,9 @@ class ZEditingManager: NSObject {
             zone.needUpdateSave()
 
             revealParentAndSiblingsOf(zone) {
-                if let          parent = zone.parentZone {
-                    if  self.hereZone == zone {
-                        self.hereZone  = parent
+                if let  parent = zone.parentZone {
+                    if  gHere == zone {
+                        gHere  = parent
                     }
 
                     parent.grab()
@@ -434,7 +430,7 @@ class ZEditingManager: NSObject {
             if !show {
                 gSelectionManager.deselectDragWithin(zone);
             } else if !hasFetchedChildren {
-                zone.needChildren()
+                zone.maybeNeedChildren()
             }
 
             if !show || hasFetchedChildren {
@@ -476,13 +472,13 @@ class ZEditingManager: NSObject {
 
 
     func addSibling() {
-        let widget = gWidgetsManager.currentMovableWidget
+        let zone = gSelectionManager.currentlyMovableZone
 
-        widget?.textWidget.resignFirstResponder()
+        gSelectionManager.stopEdit(for: zone)
 
-        if let parent = widget?.widgetZone.parentZone {
-            if widget?.widgetZone == hereZone {
-                hereZone            = parent
+        if  let              parent = zone.parentZone {
+            if  zone               == gHere {
+                gHere               = parent
                 parent.showChildren = true
             }
 
@@ -492,17 +488,11 @@ class ZEditingManager: NSObject {
 
 
     func addNewChildTo(_ parentZone: Zone?) {
-        addNewChildTo(parentZone) { (iZone: Zone) in
-            var beenHereBefore = false
-
+        addNewChildTo(parentZone) { iChild in
             gControllersManager.syncToCloudAndSignalFor(parentZone, regarding: .redraw) {
-                if !beenHereBefore {
-                    beenHereBefore             = true
-                    gOperationsManager.isReady = true
+                self.signalFor(nil, regarding: .redraw)
 
-                    iZone.widget?.textWidget.becomeFirstResponder()
-                    self.signalFor(nil, regarding: .redraw)
-                }
+                gSelectionManager.edit(iChild)
             }
         }
     }
@@ -510,28 +500,33 @@ class ZEditingManager: NSObject {
 
     func addNewChildTo(_ zone: Zone?, onCompletion: ZoneClosure?) {
         if zone != nil && zone!.storageMode != .favorites {
-            let addNewClosure = {
-                let record = CKRecord(recordType: zoneTypeKey)
-                let  child = Zone(record: record, storageMode: gStorageMode)
+            let createAndAdd = {
+                let       record = CKRecord(recordType: zoneTypeKey)
+                let        child = Zone(record: record, storageMode: gStorageMode)
+                gManifest.total += 1
 
                 child.needCreate()
-                zone!.widget?.textWidget.resignFirstResponder()
+                gSelectionManager.stopEdit(for: zone!)
                 zone!.addAndReorderChild(child, at: asTask ? 0 : nil)
-
-                gTravelManager.manifest.total += 1
-
+                zone!.ungrab()
                 onCompletion?(child)
             }
 
-            zone!.showChildren = true // needed for logic internal to needChildren
+            zone!.showChildren = true
 
-            if zone!.count != 0 {
-                addNewClosure()
+            if zone!.count != 0 || !zone!.hasChildren {
+                createAndAdd()
             } else {
                 zone!.needChildren()
 
+                var     beenHereBefore = false
+
                 gOperationsManager.children() {
-                    addNewClosure()
+                    if !beenHereBefore {
+                        beenHereBefore = true
+
+                        createAndAdd()
+                    }
                 }
             }
         }
@@ -570,9 +565,9 @@ class ZEditingManager: NSObject {
 
         if deleteMe {
             if grabThisZone != nil {
-                if zone == hereZone { // this can only happen once during recursion (multiple places, below)
+                if zone == gHere { // this can only happen once during recursion (multiple places, below)
                     revealParentAndSiblingsOf(zone) {
-                        self.hereZone = grabThisZone!
+                        gHere = grabThisZone!
 
                         self.deleteZone(zone) // recurse
                     }
@@ -602,8 +597,11 @@ class ZEditingManager: NSObject {
             deleteZones(zone.children, in: zone) // recurse
             deleteZones(bookmarks,     in: zone) // recurse
             zone.orphan()
-            zone    .needUpdateSave()
-            manifest.needUpdateSave()
+            zone.needUpdateSave()
+
+            if let g = grabThisZone, g.count == 0 {
+                g.hasChildren = false
+            }
         }
 
         return grabThisZone
@@ -636,7 +634,7 @@ class ZEditingManager: NSObject {
 
 
     func newmoveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool) {
-        let                  zone: Zone = gSelectionManager.firstGrabbableZone
+        let                  zone: Zone = gSelectionManager.firstGrabbedZone
         if  let              parentZone = zone.parentZone {
             let (next, index, newIndex) = nextUpward(moveUp, extreme: extreme, zone: parentZone)
 
@@ -659,7 +657,7 @@ class ZEditingManager: NSObject {
 
 
     func moveOut(selectionOnly: Bool, extreme: Bool) {
-        let zone: Zone = gSelectionManager.firstGrabbableZone
+        let zone: Zone = gSelectionManager.firstGrabbedZone
         let     parent = zone.parentZone
 
         if selectionOnly {
@@ -673,8 +671,8 @@ class ZEditingManager: NSObject {
                     self.syncAndRedraw()
                 }
             } else if extreme {
-                if !hereZone.isRoot {
-                    let here = hereZone // revealRoot changes hereZone, so nab it first
+                if !gHere.isRoot {
+                    let here = gHere // revealRoot changes gHere, so nab it first
 
                     zone.grab()
 
@@ -682,16 +680,16 @@ class ZEditingManager: NSObject {
                         self.revealSiblingsOf(here, toHere: self.rootZone)
                     }
                 } else if !zone.isRoot {
-                    hereZone = zone
+                    gHere = zone
 
-                    gTravelManager.manifest.needUpdateSave()
+                    gManifest.needUpdateSave()
                     gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
                 }
-            } else if zone == hereZone || parent == nil {
+            } else if zone == gHere || parent == nil {
                 revealParentAndSiblingsOf(zone) {
-                    if  let here = self.hereZone.parentZone {
+                    if  let here = gHere.parentZone {
                         here.grab()
-                        self.revealSiblingsOf(self.hereZone, toHere: here)
+                        self.revealSiblingsOf(gHere, toHere: here)
                     }
                 }
             } else if parent != nil {
@@ -709,9 +707,9 @@ class ZEditingManager: NSObject {
 
             let moveIntoHere = { (iHere: Zone?) in
                 if iHere != nil {
-                    self.hereZone = iHere!
+                    gHere = iHere!
 
-                    gTravelManager.manifest.needUpdateSave()
+                    gManifest.needUpdateSave()
                     self.moveZone(zone, outTo: iHere!, orphan: true) {
                         self.syncAndRedraw()
                     }
@@ -719,14 +717,14 @@ class ZEditingManager: NSObject {
             }
 
             if extreme {
-                if hereZone.isRoot {
+                if gHere.isRoot {
                     moveIntoHere(grandparent)
                 } else {
                     revealRoot {
                         moveIntoHere(self.rootZone)
                     }
                 }
-            } else if hereZone != zone && hereZone != parent && grandparent != nil {
+            } else if gHere != zone && gHere != parent && grandparent != nil {
                 moveZone(zone, outTo: grandparent!, orphan: true){
                     gControllersManager.syncToCloudAndSignalFor(grandparent!, regarding: .redraw) {}
                 }
@@ -737,7 +735,7 @@ class ZEditingManager: NSObject {
                     moveIntoHere(gFavoritesManager.favoritesRootZone)
                 }
             } else {
-                revealParentAndSiblingsOf(hereZone) {
+                revealParentAndSiblingsOf(gHere) {
                     if let grandparent = parent?.parentZone {
                         moveIntoHere(grandparent)
                     }
@@ -748,39 +746,33 @@ class ZEditingManager: NSObject {
 
 
     func moveInto(selectionOnly: Bool, extreme: Bool) {
-        let zone: Zone = gSelectionManager.firstGrabbableZone
+        let zone: Zone = gSelectionManager.firstGrabbedZone
 
         if !selectionOnly {
             actuallyMoveZone(zone)
         } else if zone.isBookmark {
             travelThroughBookmark(zone)
         } else if zone.count > 0 {
-            moveSelectionInto(zone)
+            grabChild(of: zone)
         } else {
-            zone.showChildren = true
-
             zone.needChildren()
 
             gOperationsManager.children() {
-                if zone.count > 0 {
-                    self.moveSelectionInto(zone)
-                }
+                self.grabChild(of: zone)
             }
         }
     }
 
 
-    func moveSelectionInto(_ zone: Zone) {
-        let    wasShowing = zone.showChildren
-        zone.showChildren = true
-        zone .hasChildren = zone.count != 0
+    func grabChild(of zone: Zone) {
+        if zone.count != 0 {
+            zone.showChildren = true
+            zone .hasChildren = true
 
-        if !wasShowing {
             zone.needUpdateSave()
+            gSelectionManager.grab(asTask ? zone.children.first! : zone.children.last!)
+            syncAndRedraw()
         }
-        
-        gSelectionManager.grab(asTask ? zone.children.first! : zone.children.last!)
-        syncAndRedraw()
     }
 
 
@@ -995,7 +987,6 @@ class ZEditingManager: NSObject {
         gOperationsManager.children() {
             zone.needUpdateSave()
             into.needUpdateSave()
-            into.needChildren()
             zone.grab()
 
             if orphan {
@@ -1009,8 +1000,8 @@ class ZEditingManager: NSObject {
 
 
     func moveUp(_ iMoveUp: Bool, selectionOnly: Bool, extreme: Bool) {
-        let         zone = gSelectionManager.firstGrabbableZone
-        let       isHere = zone == hereZone
+        let         zone = gSelectionManager.firstGrabbedZone
+        let       isHere = zone == gHere
         if  let    there = zone.parentZone, !isHere, let index = zone.siblingIndex {
             var newIndex = index + (iMoveUp ? -1 : 1)
 
@@ -1019,8 +1010,8 @@ class ZEditingManager: NSObject {
             }
 
             if newIndex >= 0 && newIndex < there.count {
-                if zone == hereZone {
-                    hereZone = there
+                if  zone == gHere {
+                    gHere = there
                 }
 
                 UNDO(self) { iUndoSelf in
@@ -1031,7 +1022,6 @@ class ZEditingManager: NSObject {
                     there.children[newIndex].grab()
                     signalFor(there, regarding: .redraw)
                 } else {
-                    gSelectionManager.deselectGrabs()
                     there.moveChild(from: index, to: newIndex)
                     there.children[newIndex].grab()
                     there.updateOrdering()
@@ -1043,7 +1033,7 @@ class ZEditingManager: NSObject {
             revealParentAndSiblingsOf(zone) {
                 if let parent = zone.parentZone {
                     if isHere {
-                        self.hereZone = parent
+                        gHere = parent
 
                         self.signalFor(nil, regarding: .redraw)
                     }

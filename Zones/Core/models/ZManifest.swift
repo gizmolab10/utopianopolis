@@ -57,10 +57,6 @@ class ZManifest: ZRecord {
 
             if count == nil {
                 count = NSNumber(value: 0)
-//            } else {
-//                count = NSNumber(value: 189)
-//
-//                needUpdateSave()
             }
 
             return (count?.intValue)!

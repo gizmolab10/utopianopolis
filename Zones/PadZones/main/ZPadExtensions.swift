@@ -220,14 +220,10 @@ extension UIWindow {
 extension UITextField {
     var isBordered : Bool { get { return borderStyle != .none } set { borderStyle = (newValue ? .line : .none) } }
     override open var canBecomeFirstResponder: Bool { return gOperationsManager.isReady }    // fix a bug where root zone is editing on launch
+    func abortEditing() { resignFirstResponder() }
     func selectAllText() { selectAll(self) }
     func removeMonitorAsync() {}
     func addMonitor() {}
-
-
-    func abortEditing() {
-        resignFirstResponder()
-    }
 
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

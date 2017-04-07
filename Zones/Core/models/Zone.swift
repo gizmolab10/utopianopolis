@@ -296,7 +296,7 @@ class Zone : ZRecord {
                 _parentZone = gCloudManager.zoneForReference(parent!)
 
                 if  _parentZone?.showChildren ?? false {
-                    _parentZone?.needChildren()
+                    _parentZone?.maybeNeedChildren()
                 }
             }
 
@@ -346,6 +346,7 @@ class Zone : ZRecord {
     var     isEditing: Bool { get { return gSelectionManager .isEditing(self) } }
     var     isGrabbed: Bool { get { return gSelectionManager .isGrabbed(self) } }
     var    isSelected: Bool { get { return gSelectionManager.isSelected(self) } }
+    func      ungrab()                   { gSelectionManager    .ungrab(self) }
     func        grab()                   { gSelectionManager      .grab(self) }
 
 
@@ -394,9 +395,9 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    override func needChildren() {
+    func maybeNeedChildren() {
         if count <= 1 && showChildren {
-            super.needChildren()
+            needChildren()
         }
     }
 

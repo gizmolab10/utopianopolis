@@ -36,7 +36,7 @@ class ZOperationsManager: NSObject {
 
     var    onReady: Closure?
     var    isReady = false
-    var      debug = false
+    var      debug = true
     var waitingOps = [ZOperationID : BlockOperation] ()
     let      queue = OperationQueue()
 
@@ -163,7 +163,9 @@ class ZOperationsManager: NSObject {
         let report = { (iCount: Int) -> Void in
             if iCount == 0 {
                 onCompletion?()
-            } else if self.debug {
+            }
+
+            if self.debug {
                 self.report("\(String(describing: identifier)) \(iCount) \(mode)")
             }
         }

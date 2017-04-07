@@ -14,10 +14,11 @@ import CloudKit
 class ZTravelManager: NSObject {
 
 
-    var manifestByStorageMode = [ZStorageMode : ZManifest] ()
+    var      storageModeStack = [ZStorageMode] ()
     var     rootByStorageMode = [ZStorageMode : Zone] ()
-    var        hereZone: Zone  { get { return manifest.hereZone } set { manifest.hereZone = newValue } }
-    var        rootZone: Zone? {
+    var manifestByStorageMode = [ZStorageMode : ZManifest] ()
+    var manifest: ZManifest { return manifestForMode(gStorageMode) }
+    var rootZone: Zone? {
         get {
             switch gStorageMode {
             case .favorites: return gFavoritesManager.favoritesRootZone
@@ -34,18 +35,12 @@ class ZTravelManager: NSObject {
     }
 
 
-    var manifest: ZManifest {
-        get {
-            return manifestForMode(gStorageMode)
-        }
-    }
-
-
     func manifestForMode(_ mode: ZStorageMode) -> ZManifest {
         var found = manifestByStorageMode[mode]
 
         if found == nil {
             found                       = ZManifest(record: nil, storageMode: .mine)
+            found?         .storageMode = mode
             manifestByStorageMode[mode] = found
         }
 
@@ -63,10 +58,10 @@ class ZTravelManager: NSObject {
 
     func establishHere(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         if storageMode == .favorites {
-            hereZone = gFavoritesManager.favoritesRootZone
-        } else if hereZone.record != nil && hereZone.zoneName != nil {
-            hereZone.needChildren()
-            hereZone.needFetch()
+            gHere = gFavoritesManager.favoritesRootZone
+        } else if gHere.record != nil && gHere.zoneName != nil {
+            gHere.maybeNeedChildren()
+            gHere.needFetch()
         } else {
             gCloudManager.establishHere((storageMode, onCompletion))
 
@@ -76,6 +71,20 @@ class ZTravelManager: NSObject {
         onCompletion?(0)
     }
 
+
+    func pushMode(_ mode: ZStorageMode) {
+        storageModeStack.append(gStorageMode)
+
+        gStorageMode = mode
+    }
+    
+
+    func popMode() {
+        if storageModeStack.count != 0 {
+            gStorageMode = storageModeStack.popLast()!
+        }
+    }
+    
 
     // MARK:- travel
     // MARK:-
@@ -99,16 +108,16 @@ class ZTravelManager: NSObject {
 
 
     func createUndoForTravelBackTo(_ zone: Zone, atArrival: @escaping Closure) {
-        let        here = hereZone
         let restoreMode = gStorageMode
+        let restoreHere = gHere
 
-        self.UNDO(self) { iUndoSelf in
+        UNDO(self) { iUndoSelf in
             iUndoSelf.createUndoForTravelBackTo(gSelectionManager.currentlyMovableZone, atArrival: atArrival)
 
             gStorageMode = restoreMode
 
             iUndoSelf.travel {
-                iUndoSelf.hereZone = here
+                gHere = restoreHere
 
                 zone.grab()
                 atArrival()
@@ -140,17 +149,17 @@ class ZTravelManager: NSObject {
 
                 if crossLink.isRoot { // e.g., default root favorite
                     travel {
-                        atArrival(self.hereZone, .redraw)
+                        atArrival(gHere, .redraw)
                     }
                 } else {
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: mode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
                         if iRecord != nil {
-                            self.hereZone = gCloudManager.zoneForRecord(iRecord!)
+                            gHere = gCloudManager.zoneForRecord(iRecord!)
 
-                            self.hereZone.grab()
+                            gHere.grab()
                             self.manifest.needUpdateSave()
                             self.travel {
-                                atArrival(self.hereZone, .redraw)
+                                atArrival(gHere, .redraw)
                             }
                         }
                     }
@@ -162,34 +171,36 @@ class ZTravelManager: NSObject {
                 ////////////////////
 
                 there = gCloudManager.zoneForRecordID(recordIDOfLink)
-                let grabbed = gSelectionManager.firstGrabbableZone
-                let    here = hereZone
+                let grabbed = gSelectionManager.firstGrabbedZone
+                let    here = gHere
 
-                self.UNDO(self) { iUndoSelf in
+                UNDO(self) { iUndoSelf in
                     iUndoSelf.UNDO(iUndoSelf) { iRedoSelf in
                         iRedoSelf.travelThrough(bookmark, atArrival: atArrival)
                     }
 
-                    iUndoSelf.hereZone = here
+                    gHere = here
 
                     grabbed.grab()
-                    atArrival(iUndoSelf.hereZone, .redraw)
+                    atArrival(here, .redraw)
                 }
 
-                if there != nil {
-                    self.hereZone = there!
+                let grab = {
+                    gHere.grab()
+                    gHere.maybeNeedChildren()
+                    gManifest.needUpdateSave()
+                    atArrival(gHere, .redraw)
+                }
 
-                    there?.needChildren()
-                    there?.grab()
-                    atArrival(self.hereZone, .redraw)
+                if  there != nil {
+                    gHere = there!
+
+                    grab()
                 } else {
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: gStorageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
-                        self.hereZone = gCloudManager.zoneForRecord(iRecord!)
+                        gHere = gCloudManager.zoneForRecord(iRecord!)
 
-                        there?.grab()
-                        self.manifest.needUpdateSave()
-                        self.hereZone.needChildren()
-                        atArrival(self.hereZone, .redraw)
+                        grab()
                     }
                 }
             }

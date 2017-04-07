@@ -22,13 +22,13 @@ typealias ZStorageDict = [String : NSObject]
 
 extension NSObject {
     var settingsController: ZSettingsViewController? { return gControllersManager.controllerForID(.settings) as? ZSettingsViewController }
-    var   editorController:   ZEditorViewController? { return gControllersManager.controllerForID(.editor)   as? ZEditorViewController }
-    var        gEditorView:           ZDragDrawView? { return editorController?.view                         as? ZDragDrawView }
+    var            gEditor:   ZEditorViewController? { return gControllersManager.controllerForID(.editor)   as? ZEditorViewController }
+    var        gEditorView:           ZDragDrawView? { return gEditor?.view                                  as? ZDragDrawView }
 
 
     func toConsole(_ iMessage: Any?) {
         if iMessage != nil {
-            // print(iMessage!)
+            print(iMessage!)
         }
     }
 
@@ -62,11 +62,12 @@ extension NSObject {
 
 
     @discardableResult func detectWithMode(_ mode: ZStorageMode, block: ToBooleanClosure) -> Bool {
-        let savedMode = gStorageMode
-        gStorageMode  = mode
-        let    result = block()
-        gStorageMode  = savedMode
+        gTravelManager.pushMode(mode)
 
+        let result = block()
+
+        gTravelManager.popMode()
+        
         return result
     }
 
