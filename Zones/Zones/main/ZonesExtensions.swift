@@ -100,10 +100,10 @@ extension NSApplication {
 
 
 extension NSEventModifierFlags {
-    var isNumericPad: Bool { get { return contains(.numericPad) } }
-    var isCommand:    Bool { get { return contains(.command) } }
-    var isOption:     Bool { get { return contains(.option) } }
-    var isShift:      Bool { get { return contains(.shift) } }
+    var isNumericPad: Bool { return contains(.numericPad) }
+    var isCommand:    Bool { return contains(.command) }
+    var isOption:     Bool { return contains(.option) }
+    var isShift:      Bool { return contains(.shift) }
 }
 
 
@@ -155,7 +155,7 @@ extension NSBezierPath {
 
 extension NSView {
     var      zlayer:                CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
-    var recognizers: [NSGestureRecognizer]? { get { return gestureRecognizers } }
+    var recognizers: [NSGestureRecognizer]? { return gestureRecognizers }
 
 
     func clearBackground() { zlayer.backgroundColor = ZColor.clear.cgColor }
@@ -190,7 +190,7 @@ extension NSView {
 
 extension NSWindow {
 
-    override open var acceptsFirstResponder: Bool { get { return true } }
+    override open var acceptsFirstResponder: Bool { return true }
 
 
     override open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
@@ -249,8 +249,8 @@ extension NSButton {
 
 
 extension NSTextField {
-    var text: String? { get { return stringValue } set { stringValue = newValue! } }
-    var textAlignment : NSTextAlignment { get { return alignment } set { alignment = newValue } }
+    var          text:         String? { get { return stringValue } set { stringValue = newValue! } }
+    var textAlignment: NSTextAlignment { get { return alignment }   set { alignment = newValue } }
 }
 
 

@@ -18,18 +18,23 @@ class ZTravelManager: NSObject {
     var     rootByStorageMode = [ZStorageMode : Zone] ()
     var manifestByStorageMode = [ZStorageMode : ZManifest] ()
     var manifest: ZManifest { return manifestForMode(gStorageMode) }
-    var rootZone: Zone? {
+    var rootZone: Zone {
         get {
             switch gStorageMode {
             case .favorites: return gFavoritesManager.favoritesRootZone
-            default:         return rootByStorageMode[gStorageMode]
+            default:
+                if rootByStorageMode[gStorageMode] == nil {
+                    establishRoot()
+                }
+
+                return rootByStorageMode[gStorageMode]!
             }
         }
 
         set {
             switch gStorageMode {
             case .favorites: break
-            default:         rootByStorageMode[gStorageMode] = newValue; break
+            default:         rootByStorageMode[gStorageMode] = newValue;
             }
         }
     }
@@ -38,7 +43,7 @@ class ZTravelManager: NSObject {
     func manifestForMode(_ mode: ZStorageMode) -> ZManifest {
         var found = manifestByStorageMode[mode]
 
-        if found == nil {
+        if  found == nil {
             found                       = ZManifest(record: nil, storageMode: .mine)
             found?         .storageMode = mode
             manifestByStorageMode[mode] = found
@@ -80,8 +85,8 @@ class ZTravelManager: NSObject {
     
 
     func popMode() {
-        if storageModeStack.count != 0 {
-            gStorageMode = storageModeStack.popLast()!
+        if storageModeStack.count != 0, let mode = storageModeStack.popLast() {
+            gStorageMode = mode
         }
     }
     
@@ -143,9 +148,9 @@ class ZTravelManager: NSObject {
             if  gStorageMode != mode {
                 gStorageMode  = mode
 
-                //////////////////////////////
-                // travel to a different graph
-                //////////////////////////////
+                /////////////////////////////////
+                // TRAVEL TO A DIFFERENT GRAPH //
+                /////////////////////////////////
 
                 if crossLink.isRoot { // e.g., default root favorite
                     travel {
@@ -166,17 +171,17 @@ class ZTravelManager: NSObject {
                 }
             } else {
 
-                ////////////////////
-                // stay within graph
-                ////////////////////
+                ///////////////////////
+                // STAY WITHIN GRAPH //
+                ///////////////////////
 
                 there = gCloudManager.zoneForRecordID(recordIDOfLink)
                 let grabbed = gSelectionManager.firstGrabbedZone
                 let    here = gHere
 
                 UNDO(self) { iUndoSelf in
-                    iUndoSelf.UNDO(iUndoSelf) { iRedoSelf in
-                        iRedoSelf.travelThrough(bookmark, atArrival: atArrival)
+                    self.UNDO(self) { iRedoSelf in
+                        self.travelThrough(bookmark, atArrival: atArrival)
                     }
 
                     gHere = here
@@ -185,7 +190,7 @@ class ZTravelManager: NSObject {
                     atArrival(here, .redraw)
                 }
 
-                let grab = {
+                let grabHere = {
                     gHere.grab()
                     gHere.maybeNeedChildren()
                     gManifest.needUpdateSave()
@@ -195,12 +200,12 @@ class ZTravelManager: NSObject {
                 if  there != nil {
                     gHere = there!
 
-                    grab()
+                    grabHere()
                 } else {
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: gStorageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
                         gHere = gCloudManager.zoneForRecord(iRecord!)
 
-                        grab()
+                        grabHere()
                     }
                 }
             }

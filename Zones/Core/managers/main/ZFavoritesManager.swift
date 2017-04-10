@@ -16,8 +16,8 @@ class ZFavoritesManager: NSObject {
 
     let favoritesRootZone = Zone(record: nil, storageMode: .favorites)
     let defaultFavorites  = Zone(record: nil, storageMode: .favorites)
-    var favoritesIndex    = 0
-    var       count: Int { get { return favoritesRootZone.count } }
+    var   favoritesIndex  = 0
+    var            count: Int { return favoritesRootZone.count }
 
 
     // MARK:- init

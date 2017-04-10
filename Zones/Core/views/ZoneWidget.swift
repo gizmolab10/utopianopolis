@@ -231,7 +231,7 @@ class ZoneWidget: ZView {
         if !widgetZone.includeChildren {
 
                 /////////////////////////
-                // dot is straight out //
+                // DOT IS STRAIGHT OUT //
                 /////////////////////////
 
                 if  let        dot = toggleDot.innerDot {
@@ -248,7 +248,7 @@ class ZoneWidget: ZView {
                 if  indices.count == 1 || lastIndex >= widgetZone.count {
 
                     ///////////////////////////
-                    // dot is above or below //
+                    // DOT IS ABOVE OR BELOW //
                     ///////////////////////////
 
                     let   relation = gSelectionManager.dragRelation
@@ -261,7 +261,7 @@ class ZoneWidget: ZView {
                 } else if lastIndex < widgetZone.count, let secondDot = dot(at: lastIndex) {
 
                     //////////////////
-                    // dot is tween //
+                    // DOT IS TWEEN //
                     //////////////////
 
                     let secondRect = secondDot.convert(secondDot.bounds, to: self)
@@ -436,7 +436,7 @@ class ZoneWidget: ZView {
         rect.size .width += 2.0
         rect.size.height += highlightHeightOffset
         let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
-        let         color = widgetZone.isBookmark ? gBookmarkColor : gZoneColor
+        let         color = widgetZone.isBookmark || widgetZone.isRootOfFavorites ? gBookmarkColor : gZoneColor
         let     fillColor = color.withAlphaComponent(0.02)
         let   strokeColor = color.withAlphaComponent(0.2)
         let          path = ZBezierPath(roundedRect: rect, cornerRadius: radius)

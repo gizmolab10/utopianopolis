@@ -29,8 +29,7 @@ class ZStackableView: ZView {
     
 
     var identity: ZSettingsViewID {
-        get {
-            #if os(OSX)
+        #if os(OSX)
             if let kind = identifier {
                 switch kind {
                 case        "help": return .Help
@@ -42,10 +41,9 @@ class ZStackableView: ZView {
                 default:            return .All
                 }
             }
-            #endif
+        #endif
 
-            return .All
-        }
+        return .All
     }
 
 

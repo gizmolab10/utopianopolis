@@ -33,6 +33,8 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
         if needsSetup {
             zapplication.registerForRemoteNotifications(matching: .badge)
             gOperationsManager.startup {
+                gHere.grab()
+
                 self.signalFor(nil, regarding: .redraw)
             }
 

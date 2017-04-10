@@ -115,16 +115,16 @@ extension UIColor {
 
 
 extension UIKeyModifierFlags {
-    var isNumericPad: Bool { get { return contains(.numericPad) } }
-    var isCommand:    Bool { get { return contains(.command) } }
-    var isOption:     Bool { get { return contains(.alternate) } }
-    var isShift:      Bool { get { return contains(.shift) } }
+    var isNumericPad: Bool { return contains(.numericPad) }
+    var isCommand:    Bool { return contains(.command) }
+    var isOption:     Bool { return contains(.alternate) }
+    var isShift:      Bool { return contains(.shift) }
 }
 
 
 extension UIView {
-    var      zlayer:               CALayer { get { return layer } }
-    var recognizers: [ZGestureRecognizer]? { get { return gestureRecognizers } }
+    var      zlayer:               CALayer { return layer }
+    var recognizers: [ZGestureRecognizer]? { return gestureRecognizers }
 
 
     func clearBackground() { zlayer.isOpaque = false }
@@ -255,7 +255,7 @@ public extension UISlider {
 
 
 extension UISegmentedControl {
-    var selectedSegment: Int { get { return selectedSegmentIndex } }
+    var selectedSegment: Int { return selectedSegmentIndex }
 }
 
 
@@ -263,18 +263,13 @@ extension UIButton {
     @objc func nuttin() {}
 
 
-    var onHit: Selector { get { return #selector(nuttin) } set { } }
+    var      onHit: Selector { get { return #selector(nuttin) } set { } }
+    var isCircular:     Bool { get { return true }              set { } }
 
 
     var title: String? {
         get { return title(for: .normal) }
         set { setTitle(newValue, for: .normal) }
-    }
-
-
-    var isCircular: Bool {
-        get { return true }
-        set { }
     }
 }
 

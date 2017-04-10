@@ -33,7 +33,6 @@ class ZEditingManager: NSObject {
     }
 
 
-    var rootZone: Zone { get { return gTravelManager.rootZone! } set { gTravelManager.rootZone = newValue } }
     var stalledEvents = [ZoneEvent] ()
     var previousEvent: ZEvent?
 
@@ -147,6 +146,11 @@ class ZEditingManager: NSObject {
             case .up:    moveUp(true,  selectionOnly: !isOption, extreme: isCommand)
             }
         } else {
+
+            //////////////////
+            // GENERATIONAL //
+            //////////////////
+
             let zone = gSelectionManager.firstGrabbedZone
             var show = true
 
@@ -310,7 +314,7 @@ class ZEditingManager: NSObject {
 
 
     func revealRoot(_ onCompletion: Closure?) {
-        if rootZone.record != nil {
+        if gRoot.record != nil {
             onCompletion?()
         } else {
             gOperationsManager.root {
@@ -490,8 +494,6 @@ class ZEditingManager: NSObject {
     func addNewChildTo(_ parentZone: Zone?) {
         addNewChildTo(parentZone) { iChild in
             gControllersManager.syncToCloudAndSignalFor(parentZone, regarding: .redraw) {
-                self.signalFor(nil, regarding: .redraw)
-
                 gSelectionManager.edit(iChild)
             }
         }
@@ -501,9 +503,8 @@ class ZEditingManager: NSObject {
     func addNewChildTo(_ zone: Zone?, onCompletion: ZoneClosure?) {
         if zone != nil && zone!.storageMode != .favorites {
             let createAndAdd = {
-                let       record = CKRecord(recordType: zoneTypeKey)
-                let        child = Zone(record: record, storageMode: gStorageMode)
-                gManifest.total += 1
+                let record = CKRecord(recordType: zoneTypeKey)
+                let  child = Zone(record: record, storageMode: gStorageMode)
 
                 child.needCreate()
                 gSelectionManager.stopEdit(for: zone!)
@@ -589,15 +590,12 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            let  bookmarks  = gCloudManager.bookmarksFor(zone)
-            let   manifest  = gTravelManager.manifestForMode(zone.storageMode!)
-            zone.isDeleted  = true // will be saved, then ignored after next launch
-            manifest.total -= 1
+            let  bookmarks = gCloudManager.bookmarksFor(zone)
+            zone.isDeleted = true // will be saved, then ignored after next launch
 
             deleteZones(zone.children, in: zone) // recurse
             deleteZones(bookmarks,     in: zone) // recurse
             zone.orphan()
-            zone.needUpdateSave()
 
             if let g = grabThisZone, g.count == 0 {
                 g.hasChildren = false
@@ -662,9 +660,9 @@ class ZEditingManager: NSObject {
 
         if selectionOnly {
 
-            /////////////////
-            // move selection
-            /////////////////
+            ////////////////////
+            // MOVE SELECTION //
+            ////////////////////
 
             if zone.isRoot {
                 gFavoritesManager.showFavoritesAndGrab(zone) { object, kind in
@@ -677,7 +675,7 @@ class ZEditingManager: NSObject {
                     zone.grab()
 
                     revealRoot {
-                        self.revealSiblingsOf(here, toHere: self.rootZone)
+                        self.revealSiblingsOf(here, toHere: gRoot)
                     }
                 } else if !zone.isRoot {
                     gHere = zone
@@ -699,9 +697,9 @@ class ZEditingManager: NSObject {
         } else if zone.storageMode != .favorites {
             parent?.needUpdateSave() // for when zone is orphaned
 
-            ////////////
-            // move zone
-            ////////////
+            ///////////////
+            // MOVE ZONE //
+            ///////////////
 
             let grandparent = parent?.parentZone
 
@@ -721,7 +719,7 @@ class ZEditingManager: NSObject {
                     moveIntoHere(grandparent)
                 } else {
                     revealRoot {
-                        moveIntoHere(self.rootZone)
+                        moveIntoHere(gRoot)
                     }
                 }
             } else if gHere != zone && gHere != parent && grandparent != nil {
@@ -765,12 +763,12 @@ class ZEditingManager: NSObject {
 
 
     func grabChild(of zone: Zone) {
-        if zone.count != 0 {
+        if zone.count != 0, let child = asTask ? zone.children.first : zone.children.last {
             zone.showChildren = true
             zone .hasChildren = true
 
             zone.needUpdateSave()
-            gSelectionManager.grab(asTask ? zone.children.first! : zone.children.last!)
+            child.grab()
             syncAndRedraw()
         }
     }
@@ -785,9 +783,9 @@ class ZEditingManager: NSObject {
             }
         } else if !gTravelManager.isZone(zone, ancestorOf: toThere) {
 
-            ///////////////////////////////
-            // move zone through a bookmark
-            ///////////////////////////////
+            //////////////////////////////////
+            // MOVE ZONE THROUGH A BOOKMARK //
+            //////////////////////////////////
 
             var         mover = zone
             let    targetLink = toThere.crossLink

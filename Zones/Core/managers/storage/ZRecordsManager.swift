@@ -30,10 +30,6 @@ class ZRecordsManager: NSObject {
 
 
     var recordsByState: [ZRecordState : [ZRecord]] {
-        set {
-            statesByMode[gStorageMode] = newValue
-        }
-
         get {
             if statesByMode[gStorageMode] == nil {
                 self.recordsByState = [:]
@@ -41,14 +37,14 @@ class ZRecordsManager: NSObject {
 
             return statesByMode[gStorageMode]!
         }
+
+        set {
+            statesByMode[gStorageMode] = newValue
+        }
     }
 
 
     var zones: [String : Zone] {
-        set {
-            zoneRegistry[gStorageMode] = newValue
-        }
-
         get {
             var registry: [String : Zone]? = zoneRegistry[gStorageMode]
 
@@ -58,6 +54,10 @@ class ZRecordsManager: NSObject {
             }
 
             return registry!
+        }
+
+        set {
+            zoneRegistry[gStorageMode] = newValue
         }
     }
 
@@ -302,11 +302,6 @@ class ZRecordsManager: NSObject {
 
             if registered == nil {
                 zones[identifier]   = zone
-                let           total = zones.count
-
-                if  gManifest.total < total {
-                    gManifest.total = total
-                }
             } else if registered!  != identifier {
                 zones[registered!]  = nil
                 zones[identifier]   = zone

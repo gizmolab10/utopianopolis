@@ -11,18 +11,10 @@ import Foundation
 import CloudKit
 
 
-enum ZStorageMode: String {     ///// move this to cloud manager  //////////
-    case favorites = "favorites"
-    case everyone  = "everyone"
-    case shared    = "group"
-    case mine      = "mine"
-}
-
-
 class ZCloudManager: ZRecordsManager {
     var cloudZonesByID = [CKRecordZoneID : CKRecordZone] ()
     var        container: CKContainer!
-    var        currentDB: CKDatabase? { get { return databaseForMode(gStorageMode) } }
+    var        currentDB: CKDatabase? { return databaseForMode(gStorageMode) }
 
 
     func databaseForMode(_ mode: ZStorageMode) -> CKDatabase? {
@@ -240,9 +232,8 @@ class ZCloudManager: ZRecordsManager {
 
         self.assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
             if iRecord != nil {
-                let                root = self.zoneForRecord(iRecord!)
-                gTravelManager.rootZone = root
-                root.level              = 0
+                gRoot       = self.zoneForRecord(iRecord!)
+                gRoot.level = 0
 
                 gManifest.needUpdateSave()
             }
@@ -494,14 +485,14 @@ class ZCloudManager: ZRecordsManager {
             if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                 onCompletion?(0)
             } else {
-                let           root = gTravelManager.rootZone
+                let           root = gRoot
                 let        deleted = self.recordForRecordID(iRecord?.recordID) as? Zone ?? Zone(record: iRecord, storageMode: storageMode)
                 deleted .isDeleted = false
 
                 if deleted.parent == nil {
                     deleted.parentZone = root
 
-                    root?.needFetch()
+                    root.needFetch()
                 } else {
                     deleted.needParent()
                 }
@@ -552,6 +543,7 @@ class ZCloudManager: ZRecordsManager {
                             record.record = iRecord
 
                             if let zone = record as? Zone {
+                                zone.updateProgenyCounts()
                                 zone.updateLevel()
                             }
                         }

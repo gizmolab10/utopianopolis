@@ -30,7 +30,7 @@ class ZFileManager: NSObject {
     func save() {
         if !isSaving && gFileMode == .local && gStorageMode != .favorites && gOperationsManager.isReady {
             isSaving               = true
-            let dict: NSDictionary = gTravelManager.rootZone!.storageDict as NSDictionary
+            let dict: NSDictionary = gRoot.storageDict as NSDictionary
             let  url:          URL = pathToCurrentZoneFile()
 
             dict.write(to: url, atomically: false)
@@ -45,8 +45,8 @@ class ZFileManager: NSObject {
 
         if gFileMode == .local && gStorageMode != .favorites {
             if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
-                gTravelManager.rootZone = Zone(dict: raw as! ZStorageDict)
-                gHere                   = gTravelManager.rootZone!
+                gRoot = Zone(dict: raw as! ZStorageDict)
+                gHere = gRoot
 
                 signalFor(nil, regarding: .redraw)
             }
@@ -59,13 +59,11 @@ class ZFileManager: NSObject {
 
 
     var currentZoneFileName: String {
-        get {
-            switch gStorageMode {
-            case .favorites: return "favorites.storage"
-            case .everyone:  return "everyone.storage"
-            case .shared:    return "shared.storage"
-            case .mine:      return "mine.storage"
-            }
+        switch gStorageMode {
+        case .favorites: return "favorites.storage"
+        case .everyone:  return "everyone.storage"
+        case .shared:    return "shared.storage"
+        case .mine:      return "mine.storage"
         }
     }
 

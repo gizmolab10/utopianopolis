@@ -36,7 +36,7 @@ class ZOperationsManager: NSObject {
 
     var    onReady: Closure?
     var    isReady = false
-    var      debug = true
+    var      debug = false
     var waitingOps = [ZOperationID : BlockOperation] ()
     let      queue = OperationQueue()
 

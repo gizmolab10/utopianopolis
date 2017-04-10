@@ -28,19 +28,20 @@ struct ZoneState: OptionSet {
 class Zone : ZRecord {
 
 
-    dynamic var  zoneName:      String?
-    dynamic var  zoneLink:      String?
-    dynamic var    parent: CKReference?
-    dynamic var zoneOrder:    NSNumber?
-    dynamic var zoneState:    NSNumber?
-    dynamic var zoneLevel:    NSNumber?
-    var         bookmarks      = [Zone] ()
-    var          children      = [Zone] ()
-    var       _parentZone:        Zone?
-    var        _crossLink:     ZRecord?
-    var        isBookmark:         Bool { return crossLink != nil }
-    var isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
-    var            widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
+    dynamic var    zoneName:      String?
+    dynamic var    zoneLink:      String?
+    dynamic var      parent: CKReference?
+    dynamic var   zoneOrder:    NSNumber?
+    dynamic var   zoneState:    NSNumber?
+    dynamic var   zoneLevel:    NSNumber?
+    dynamic var zoneProgeny:    NSNumber?
+    var         _parentZone:        Zone?
+    var          _crossLink:     ZRecord?
+    var           bookmarks      = [Zone] ()
+    var            children      = [Zone] ()
+    var              widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
+    var          isBookmark:         Bool { return crossLink != nil }
+    var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
 
 
 
@@ -54,7 +55,8 @@ class Zone : ZRecord {
                 #keyPath(zoneLink),
                 #keyPath(zoneOrder),
                 #keyPath(zoneState),
-                #keyPath(zoneLevel)]
+                #keyPath(zoneLevel),
+                #keyPath(zoneProgeny)]
     }
 
 
@@ -63,19 +65,17 @@ class Zone : ZRecord {
 
 
     var bookmarkTarget: Zone? {
-        get {
-            if  let link = crossLink {
-                var target: Zone? = nil
+        if  let link = crossLink {
+            var target: Zone? = nil
 
-                invokeWithMode(link.storageMode) {
-                    target = gCloudManager.zoneForRecordID(link.record.recordID)
-                }
-
-                return target
+            invokeWithMode(link.storageMode) {
+                target = gCloudManager.zoneForRecordID(link.record.recordID)
             }
 
-            return nil
+            return target
         }
+
+        return nil
     }
 
 
@@ -161,6 +161,40 @@ class Zone : ZRecord {
     }
 
 
+    var progenyCount: Int {
+        get {
+            if zoneProgeny == nil {
+                updateZoneProperties()
+
+                if zoneProgeny == nil {
+                    zoneProgeny = NSNumber(value: currentProgenyCount)
+                }
+            }
+
+            return (zoneProgeny?.intValue)!
+        }
+
+        set {
+            if newValue != progenyCount {
+                zoneProgeny = NSNumber(value: newValue)
+
+                self.needJustSave()
+            }
+        }
+    }
+
+
+    var currentProgenyCount: Int {
+        var currentCount = count
+
+        for child in children {
+            currentCount += child.progenyCount
+        }
+
+        return currentCount
+    }
+
+
     var state: ZoneState {
         get {
             if zoneState == nil {
@@ -189,21 +223,19 @@ class Zone : ZRecord {
 
 
     var highestExposed: Int {
-        get {
-            var highest = level
+        var highest = level
 
-            traverseApply { iZone -> ZTraverseStatus in
-                let traverseLevel = iZone.level
+        traverseApply { iZone -> ZTraverseStatus in
+            let traverseLevel = iZone.level
 
-                if  highest < traverseLevel {
-                    highest = traverseLevel
-                }
-
-                return iZone.includeChildren ? .eDescend : .eAscend
+            if  highest < traverseLevel {
+                highest = traverseLevel
             }
 
-            return highest
+            return iZone.includeChildren ? .eDescend : .eAscend
         }
+
+        return highest
     }
 
 
@@ -216,72 +248,10 @@ class Zone : ZRecord {
     }
 
 
-    var isDeleted: Bool {
-        get {
-            return state.contains(.IsDeleted)
-        }
-
-        set {
-            if newValue != isDeleted {
-                if newValue {
-                    state.insert(.IsDeleted)
-                } else {
-                    state.remove(.IsDeleted)
-                }
-            }
-        }
-    }
-
-
-    var isFavorite: Bool {
-        get {
-            return state.contains(.IsFavorite)
-        }
-
-        set {
-            if newValue != isFavorite {
-                if newValue {
-                    state.insert(.IsFavorite)
-                } else {
-                    state.remove(.IsFavorite)
-                }
-            }
-        }
-    }
-
-
-    var hasChildren: Bool {
-        get {
-            return state.contains(.HasChildren)
-        }
-
-        set {
-            if newValue != hasChildren {
-                if newValue {
-                    state.insert(.HasChildren)
-                } else {
-                    state.remove(.HasChildren)
-                }
-            }
-        }
-    }
-
-
-    var showChildren: Bool {
-        get {
-            return state.contains(.ShowsChildren)
-        }
-
-        set {
-            if newValue != showChildren {
-                if newValue {
-                    state.insert(.ShowsChildren)
-                } else {
-                    state.remove(.ShowsChildren)
-                }
-            }
-        }
-    }
+    var    isDeleted: Bool { get { return getState(for:     .IsDeleted) } set { setState(newValue, for: .IsDeleted) } }
+    var   isFavorite: Bool { get { return getState(for:    .IsFavorite) } set { setState(newValue, for: .IsFavorite) } }
+    var  hasChildren: Bool { get { return getState(for:   .HasChildren) } set { setState(newValue, for: .HasChildren) } }
+    var showChildren: Bool { get { return getState(for: .ShowsChildren) } set { setState(newValue, for: .ShowsChildren) } }
 
     
     var parentZone: Zone? {
@@ -315,25 +285,29 @@ class Zone : ZRecord {
     }
 
 
-    // MARK:- siblings
-    // MARK:-
-
-
-    private func hasAnyZonesAbove(_ iAbove: Bool) -> Bool {
-        if self != gHere {
-            if !hasZoneAbove(iAbove), let parent = parentZone {
-                return parent.hasAnyZonesAbove(iAbove)
-            }
-
-            return true
+    var siblingIndex: Int? {
+        if let siblings = parentZone?.children, let index = siblings.index(of: self) {
+            return index
         }
-        
-        return false
+
+        return nil
     }
 
 
-    func isSibling(of iSibling: Zone?) -> Bool {
-        return iSibling != nil && parentZone == iSibling!.parentZone
+    func getState(for iState: ZoneState) -> Bool {
+        return state.contains(iState)
+
+    }
+
+
+    func setState(_ iValue: Bool, for iState: ZoneState) {
+        if iValue != getState(for: iState) {
+            if iValue {
+                state.insert(iState)
+            } else {
+                state.remove(iState)
+            }
+        }
     }
 
     
@@ -341,13 +315,13 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    var hasZonesAbove: Bool       { return hasAnyZonesAbove(true) }
-    var hasZonesBelow: Bool       { return hasAnyZonesAbove(false) }
-    var     isEditing: Bool { get { return gSelectionManager .isEditing(self) } }
-    var     isGrabbed: Bool { get { return gSelectionManager .isGrabbed(self) } }
-    var    isSelected: Bool { get { return gSelectionManager.isSelected(self) } }
-    func      ungrab()                   { gSelectionManager    .ungrab(self) }
-    func        grab()                   { gSelectionManager      .grab(self) }
+    var hasZonesAbove: Bool { return hasAnyZonesAbove(true) }
+    var hasZonesBelow: Bool { return hasAnyZonesAbove(false) }
+    var     isEditing: Bool { return gSelectionManager .isEditing(self) }
+    var     isGrabbed: Bool { return gSelectionManager .isGrabbed(self) }
+    var    isSelected: Bool { return gSelectionManager.isSelected(self) }
+    func      ungrab()             { gSelectionManager    .ungrab(self) }
+    func        grab()             { gSelectionManager      .grab(self) }
 
 
     static func == ( left: Zone, right: Zone) -> Bool {
@@ -370,17 +344,6 @@ class Zone : ZRecord {
     }
 
 
-    override func deepCopy() -> Zone {
-        let zone = super.deepCopy()
-
-        for child in children {
-            zone.addChild(child.deepCopy())
-        }
-
-        return zone
-    }
-
-
     override func register() {
         gCloudManager.registerZone(self)
     }
@@ -390,16 +353,9 @@ class Zone : ZRecord {
         return super.cloudProperties() + Zone.cloudProperties()
     }
 
-    
-    // MARK:- offspring
+
+    // MARK:- parents
     // MARK:-
-
-
-    func maybeNeedChildren() {
-        if count <= 1 && showChildren {
-            needChildren()
-        }
-    }
 
 
     func orphan() {
@@ -408,6 +364,51 @@ class Zone : ZRecord {
         parentZone = nil
 
         needUpdateSave()
+    }
+
+
+    func updateProgenyCounts() {
+        let currentCount = currentProgenyCount
+
+        if  progenyCount != currentCount {
+            progenyCount  = currentCount
+
+            needUpdateSave()
+            parentZone?.updateProgenyCounts()
+        }
+    }
+
+
+    // MARK:- siblings
+    // MARK:-
+
+
+    private func hasAnyZonesAbove(_ iAbove: Bool) -> Bool {
+        if self != gHere {
+            if !hasZoneAbove(iAbove), let parent = parentZone {
+                return parent.hasAnyZonesAbove(iAbove)
+            }
+
+            return true
+        }
+
+        return false
+    }
+
+
+    func isSibling(of iSibling: Zone?) -> Bool {
+        return iSibling != nil && parentZone == iSibling!.parentZone
+    }
+
+    
+    // MARK:- offspring
+    // MARK:-
+
+
+    func maybeNeedChildren() {
+        if count <= 1 && showChildren && hasChildren {
+            needChildren()
+        }
     }
 
 
@@ -448,9 +449,9 @@ class Zone : ZRecord {
                 children.append(child!)
             }
 
-            needUpdateSave()
             child?.needUpdateSave()
             child?.updateLevel()
+            updateProgenyCounts()
 
             return insertAt
         }
@@ -469,11 +470,10 @@ class Zone : ZRecord {
     func removeChild(_ child: Zone?) {
         if child != nil, let index = children.index(of: child!) {
             children.remove(at: index)
+            updateProgenyCounts()
 
             if count == 0 {
                 hasChildren = false
-
-                needUpdateSave()
             }
         }
     }
@@ -505,6 +505,33 @@ class Zone : ZRecord {
     }
 
 
+    func isChild(of iParent: Zone?) -> Bool {
+        return iParent != nil && iParent == parentZone
+    }
+
+
+    enum ZCycleType: Int {
+        case cycle
+        case found
+        case none
+    }
+
+
+    // MARK:- recursion
+    // MARK:-
+
+
+    override func deepCopy() -> Zone {
+        let zone = super.deepCopy()
+
+        for child in children {
+            zone.addChild(child.deepCopy())
+        }
+
+        return zone
+    }
+    
+
     func updateOrdering() {
         let increment = 1.0 / Double(count + 2)
 
@@ -519,17 +546,6 @@ class Zone : ZRecord {
 
         for child in children {
             child.recursivelyMarkAsDeleted(iDeleted)
-        }
-    }
-
-
-    var siblingIndex: Int? {
-        get {
-            if let siblings = parentZone?.children, let index = siblings.index(of: self) {
-                return index
-            }
-
-            return nil
         }
     }
 
@@ -557,18 +573,6 @@ class Zone : ZRecord {
         }
 
         return status
-    }
-
-
-    func isChild(of iParent: Zone?) -> Bool {
-        return iParent != nil && iParent == parentZone
-    }
-
-
-    enum ZCycleType: Int {
-        case cycle
-        case found
-        case none
     }
 
 

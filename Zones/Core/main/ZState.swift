@@ -35,6 +35,14 @@ enum ZWorkMode: Int {
 }
 
 
+enum ZStorageMode: String {
+    case favorites = "favorites"
+    case everyone  = "everyone"
+    case shared    = "group"
+    case mine      = "mine"
+}
+
+
 struct ZSettingsViewID: OptionSet {
     let rawValue: Int
 
@@ -59,9 +67,9 @@ var       gDotWidth = gDotHeight * 0.75
 var       gWorkMode = ZWorkMode.editMode
 
 
-var                asTask:   Bool { get { return gGraphAlteringMode == .task    } }
-var gGrabbedBookmarkColor: ZColor { get { return gBookmarkColor.darker(by: 1.5) } }
-var     gGrabbedTextColor: ZColor { get { return gZoneColor    .darker(by: 1.8) } }
+var                asTask:   Bool { return gGraphAlteringMode == .task    }
+var gGrabbedBookmarkColor: ZColor { return gBookmarkColor.darker(by: 1.5) }
+var     gGrabbedTextColor: ZColor { return gZoneColor    .darker(by: 1.8) }
 
 
 // MARK:- persistence
@@ -99,37 +107,30 @@ func setColor(_ iColor: ZColor, key: String) {
 
 
 var gZoneColor: ZColor {
-    set { setColor(newValue, key: zoneColorKey) }
     get { return   getColorForKey(zoneColorKey, defaultColor: ZColor.blue) }
+    set { setColor(newValue, key: zoneColorKey) }
 }
 
 
 var gBookmarkColor: ZColor {
-    set { setColor(newValue, key: bookmarkColorKey) }
     get { return   getColorForKey(bookmarkColorKey, defaultColor: ZColor.green) }
+    set { setColor(newValue, key: bookmarkColorKey) }
 }
 
 
 var gBackgroundColor: ZColor {
-    set { setColor(newValue, key: backgroundColorKey) }
     get { return   getColorForKey(backgroundColorKey, defaultColor: ZColor(hue: 0.6, saturation: 0.0, brightness: unselectBrightness, alpha: 1)) }
+    set { setColor(newValue, key: backgroundColorKey) }
 }
 
 
 var gDragTargetsColor: ZColor {
-    set { setColor(newValue, key: dragTargetsColorKey) }
     get { return   getColorForKey(dragTargetsColorKey, defaultColor: ZColor.red) }
+    set { setColor(newValue, key: dragTargetsColorKey) }
 }
 
 
 var gGenericOffset: CGSize {
-    set {
-        let string = NSStringFromSize(newValue)
-
-        UserDefaults.standard.set(string, forKey: genericOffsetKey)
-        UserDefaults.standard.synchronize()
-    }
-
     get {
         if let string = UserDefaults.standard.object(forKey: genericOffsetKey) as? String {
             return string.cgSize
@@ -143,15 +144,17 @@ var gGenericOffset: CGSize {
 
         return defaultValue
     }
+
+    set {
+        let string = NSStringFromSize(newValue)
+
+        UserDefaults.standard.set(string, forKey: genericOffsetKey)
+        UserDefaults.standard.synchronize()
+    }
 }
 
 
 var gLineThickness: Double {
-    set {
-        UserDefaults.standard.set(newValue, forKey:lineThicknessKey)
-        UserDefaults.standard.synchronize()
-    }
-
     get {
         var value: Double? = UserDefaults.standard.object(forKey: lineThicknessKey) as? Double
 
@@ -164,15 +167,15 @@ var gLineThickness: Double {
 
         return value!
     }
+
+    set {
+        UserDefaults.standard.set(newValue, forKey:lineThicknessKey)
+        UserDefaults.standard.synchronize()
+    }
 }
 
 
 var gGraphAlteringMode: ZGraphAlteringMode {
-    set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:graphAlteringModeKey)
-        UserDefaults.standard.synchronize()
-    }
-
     get {
         var mode: ZGraphAlteringMode? = nil
 
@@ -189,15 +192,15 @@ var gGraphAlteringMode: ZGraphAlteringMode {
 
         return mode!
     }
+
+    set {
+        UserDefaults.standard.set(newValue.rawValue, forKey:graphAlteringModeKey)
+        UserDefaults.standard.synchronize()
+    }
 }
 
 
 var gStorageMode: ZStorageMode {
-    set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:storageModeKey)
-        UserDefaults.standard.synchronize()
-    }
-
     get {
         var mode: ZStorageMode? = nil
 
@@ -214,15 +217,15 @@ var gStorageMode: ZStorageMode {
 
         return mode!
     }
+
+    set {
+        UserDefaults.standard.set(newValue.rawValue, forKey:storageModeKey)
+        UserDefaults.standard.synchronize()
+    }
 }
 
 
 var gSettingsViewIDs: ZSettingsViewID {
-    set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:settingsStateKey)
-        UserDefaults.standard.synchronize()
-    }
-
     get {
         var state: ZSettingsViewID? = nil
 
@@ -238,5 +241,10 @@ var gSettingsViewIDs: ZSettingsViewID {
         }
 
         return state!
+    }
+
+    set {
+        UserDefaults.standard.set(newValue.rawValue, forKey:settingsStateKey)
+        UserDefaults.standard.synchronize()
     }
 }

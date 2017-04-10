@@ -51,5 +51,6 @@ let      manifestTypeKey = "ZManifest"
 let      manifestNameKey = "manifest"
 let favoritesRootNameKey = "favoritesRoot"
 
-var     gHere:      Zone { get { return gManifest.hereZone } set { gManifest.hereZone = newValue } }
+var     gRoot:      Zone { get { return gTravelManager.rootZone } set { gTravelManager.rootZone = newValue } }
+var     gHere:      Zone { get { return gManifest.hereZone }      set { gManifest.hereZone      = newValue } }
 var gManifest: ZManifest { return gTravelManager.manifest }

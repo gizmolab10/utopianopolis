@@ -17,7 +17,7 @@ class ZRecord: NSObject {
     var storageMode: ZStorageMode?
     var  kvoContext: UInt8 = 1
     var     _record: CKRecord?
-    var      isRoot: Bool { get { return record != nil && record.recordID.recordName == rootNameKey } }
+    var      isRoot: Bool { return record != nil && record.recordID.recordName == rootNameKey }
 
 
     var record: CKRecord! {

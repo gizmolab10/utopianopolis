@@ -153,9 +153,9 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
                     s.dragDropIndices?.add(index - 1)
                 }
 
-                prior?             .displayForDrag() // erase  child lines
-                dropZone?.widget?  .displayForDrag() // redraw child lines
-                gEditorView?      .setNeedsDisplay() // redraw dragline and dot
+                prior?           .displayForDrag() // erase  child lines
+                dropZone?.widget?.displayForDrag() // redraw child lines
+                view            .setNeedsDisplay() // redraw dragline and dot
 
                 if done {
                     let editor = gEditingManager
