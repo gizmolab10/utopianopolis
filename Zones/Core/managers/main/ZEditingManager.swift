@@ -170,9 +170,10 @@ class ZEditingManager: NSObject {
                 goal = lowest + 1
             }
 
-            toggleDotUpdate(show, zone, to: goal) { self.syncAndRedraw() };
+            toggleDotUpdate(show: show, zone: zone, to: goal)
         }
     }
+
 
     // MARK:- API
     // MARK:-
@@ -374,7 +375,25 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func toggleDotUpdate(_ show: Bool, _ zone: Zone, to iGoal: Int?, onCompletion: Closure?) {
+    func toggleDotUpdate(show: Bool, zone: Zone, to iGoal: Int? = nil) {
+        toggleDotComplete(show, zone, to: iGoal) {
+
+            ////////////////////////////////////////////////////////
+            // delay executing this until the last time it is called
+            ////////////////////////////////////////////////////////
+
+            if !show {
+                self.signalFor(zone, regarding: .redraw)
+            } else {
+                gOperationsManager.children {
+                    self.signalFor(zone, regarding: .redraw)
+                }
+            }
+        };
+    }
+    
+
+    func toggleDotComplete(_ show: Bool, _ zone: Zone, to iGoal: Int?, onCompletion: Closure?) {
         var hasFetchedChildren = zone.count != 0
         let  noVisibleChildren = !zone.showChildren || !hasFetchedChildren
 
@@ -395,7 +414,7 @@ class ZEditingManager: NSObject {
                     }
 
                     parent.grab()
-                    self.toggleDotUpdate(show, parent, to: iGoal, onCompletion: onCompletion)
+                    self.toggleDotComplete(show, parent, to: iGoal, onCompletion: onCompletion)
                 }
             }
         } else {
@@ -419,8 +438,8 @@ class ZEditingManager: NSObject {
 
                 if iGoal != nil && zone.level < iGoal! {
                     for child: Zone in zone.children {
-                        if child != zone {
-                            self.toggleDotUpdate(show, child, to: iGoal, onCompletion: onCompletion)
+                        if child != zone, let last = zone.children.last {
+                            self.toggleDotComplete(show, child, to: iGoal, onCompletion: last != child ? nil : onCompletion)
                         }
                     }
                 }
@@ -433,7 +452,7 @@ class ZEditingManager: NSObject {
             if !show {
                 gSelectionManager.deselectDragWithin(zone);
             } else if !hasFetchedChildren {
-                zone.maybeNeedChildren()
+                zone.needChildren()
             }
 
             if !show || hasFetchedChildren {
@@ -447,24 +466,22 @@ class ZEditingManager: NSObject {
     }
 
 
-    func toggleDotActionOnZone(_ zone: Zone?) {
-        if zone != nil {
+    func toggleDotActionOnZone(_ iZone: Zone?) {
+        if let zone = iZone {
             let s = gSelectionManager
 
             for grabbed: Zone in s.currentlyGrabbedZones {
-                if zone!.spawned(grabbed) {
+                if zone.spawned(grabbed) {
                     s.ungrab(grabbed)
                 }
             }
 
-            if zone!.isBookmark {
-                travelThroughBookmark(zone!)
+            if zone.isBookmark {
+                travelThroughBookmark(zone)
             } else {
-                let show = !zone!.showChildren
+                let show = !zone.showChildren
 
-                toggleDotUpdate(show, zone!, to: nil) {
-                    self.syncAndRedraw()
-                }
+                toggleDotUpdate(show: show, zone: zone)
             }
         }
     }

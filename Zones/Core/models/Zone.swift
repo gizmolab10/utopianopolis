@@ -41,7 +41,7 @@ class Zone : ZRecord {
     var              widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var          isBookmark:         Bool { return crossLink != nil }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
-    var         hasProgeny:         Bool { return progenyCount != 0 }
+    var         hasProgeny:          Bool { return progenyCount != 0 }
 
 
 
@@ -417,7 +417,7 @@ class Zone : ZRecord {
 
 
     func maybeNeedChildren() {
-        if count <= 1 && includeChildren {
+        if count == 0 && includeChildren {
             needChildren()
         }
     }
