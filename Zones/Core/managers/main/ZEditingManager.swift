@@ -330,7 +330,7 @@ class ZEditingManager: NSObject {
         parent?.showChildren = true
 
         if parent != nil && parent?.zoneName != nil {
-            parent?.maybeNeedChildren()
+            parent?.needChildren()
 
             gOperationsManager.children(recursiveGoal: iZone.level) {
                 onCompletion?()
@@ -376,24 +376,24 @@ class ZEditingManager: NSObject {
 
 
     func toggleDotUpdate(show: Bool, zone: Zone, to iGoal: Int? = nil) {
-        toggleDotComplete(show, zone, to: iGoal) {
+        toggleDotRecurse(show, zone, to: iGoal) {
 
             ////////////////////////////////////////////////////////
             // delay executing this until the last time it is called
             ////////////////////////////////////////////////////////
 
             if !show {
-                self.signalFor(zone, regarding: .redraw)
+                self.signalFor(nil, regarding: .redraw)
             } else {
                 gOperationsManager.children {
-                    self.signalFor(zone, regarding: .redraw)
+                    self.signalFor(nil, regarding: .redraw)
                 }
             }
         };
     }
     
 
-    func toggleDotComplete(_ show: Bool, _ zone: Zone, to iGoal: Int?, onCompletion: Closure?) {
+    func toggleDotRecurse(_ show: Bool, _ zone: Zone, to iGoal: Int?, onCompletion: Closure?) {
         var hasFetchedChildren = zone.count != 0
         let  noVisibleChildren = !zone.showChildren || !hasFetchedChildren
 
@@ -414,7 +414,7 @@ class ZEditingManager: NSObject {
                     }
 
                     parent.grab()
-                    self.toggleDotComplete(show, parent, to: iGoal, onCompletion: onCompletion)
+                    self.toggleDotRecurse(show, parent, to: iGoal, onCompletion: onCompletion)
                 }
             }
         } else {
@@ -423,7 +423,7 @@ class ZEditingManager: NSObject {
             // ALTER CHILDREN //
             ////////////////////
 
-            let       recurseMaybe = {
+            let            recurse = {
                 hasFetchedChildren = zone.count != 0
 
                 if (show || hasFetchedChildren) && zone.hasProgeny != hasFetchedChildren {
@@ -436,11 +436,21 @@ class ZEditingManager: NSObject {
                     onCompletion?()
                 }
 
-                if iGoal != nil && zone.level < iGoal! {
-                    for child: Zone in zone.children {
-                        if child != zone, let last = zone.children.last {
-                            self.toggleDotComplete(show, child, to: iGoal, onCompletion: last != child ? nil : onCompletion)
+                if iGoal != nil {
+                    if zone.level < iGoal! {
+                        for child: Zone in zone.children {
+                            if child != zone, let last = zone.children.last {
+                                let completion = last != child ? nil : onCompletion
+
+                                self.toggleDotRecurse(show, child, to: iGoal, onCompletion: completion)
+                            }
                         }
+                    } else if !show {
+                        zone.traverseApply({ iZone -> ZTraverseStatus in
+                            iZone.showChildren = false
+
+                            return .eDescend
+                        })
                     }
                 }
             }
@@ -456,10 +466,10 @@ class ZEditingManager: NSObject {
             }
 
             if !show || hasFetchedChildren {
-                recurseMaybe()
+                recurse()
             } else {
                 gOperationsManager.children(recursiveGoal: iGoal) {
-                    recurseMaybe()
+                    recurse()
                 }
             }
         }
@@ -534,7 +544,7 @@ class ZEditingManager: NSObject {
             if zone.count != 0 || !zone.hasProgeny {
                 createAndAdd()
             } else {
-                zone.maybeNeedChildren()
+                zone.needChildren()
 
                 var     beenHereBefore = false
 
@@ -765,7 +775,7 @@ class ZEditingManager: NSObject {
         } else if zone.count > 0 {
             grabChild(of: zone)
         } else {
-            zone.maybeNeedChildren()
+            zone.needChildren()
 
             gOperationsManager.children() {
                 self.grabChild(of: zone)
@@ -991,7 +1001,7 @@ class ZEditingManager: NSObject {
 
         into.showChildren = true
 
-        into.maybeNeedChildren()
+        into.needChildren()
 
         gOperationsManager.children() {
             zone.needUpdateSave()
