@@ -3,7 +3,7 @@
 //  Zones
 //
 //  Created by Jonathan Sand on 11/21/16.
-//  Copyright © 2016 Zones. All rights reserved.
+//  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
 
@@ -69,6 +69,7 @@ class ZOperationsManager: NSObject {
 
     func       sync(_ onCompletion: @escaping Closure) { setupAndRun([.create,   .fetch, .parent, .children, .merge, .flush]) { onCompletion() } }
     func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                      .children,         .flush]) { onCompletion() } }
+    func     parent(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent                           ]) { onCompletion() } }
     func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent, .children                ]) { onCompletion() } }
     func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent, .children,         .flush]) { onCompletion() } }
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                          ]) { onCompletion() } }
@@ -171,23 +172,23 @@ class ZOperationsManager: NSObject {
         }
 
         switch identifier {
-        case .file:         gfileManager.restore();              report(0); break
-        case .root:        gCloudManager.establishRootAsHere(mode, report); break
-        case .manifest:    gCloudManager.fetchManifest      (mode, report); break
-        case .favorites:   gCloudManager.fetchFavorites     (mode, report); break
-        case .here:       gTravelManager.establishHere      (mode, report); break // TODO: BROKEN
-        case .children:    gCloudManager.fetchChildren      (mode, optional, report); break
-        case .parent:      gCloudManager.fetchParents       (mode, report); break
-        case .unsubscribe: gCloudManager.unsubscribe        (mode, report); break
-        case .cloud:       gCloudManager.cloudLogic         (mode, report); break
-        case .emptyTrash:  gCloudManager.emptyTrash         (mode, report); break
-        case .subscribe:   gCloudManager.subscribe          (mode, report); break
-        case .undelete:    gCloudManager.undelete           (mode, report); break
-        case .create:      gCloudManager.create             (mode, report); break
-        case .fetch:       gCloudManager.fetch              (mode, report); break
-        case .merge:       gCloudManager.merge              (mode, report); break
-        case .flush:       gCloudManager.flush              (mode, report); break
-        case .ready:                     becomeReady        (mode, report); break
+        case .file:         gfileManager.restore();                          report(0); break
+        case .root:        gCloudManager.establishRootAsHere(mode,           report);   break
+        case .manifest:    gCloudManager.fetchManifest      (mode,           report);   break
+        case .favorites:   gCloudManager.fetchFavorites     (mode,           report);   break
+        case .here:       gTravelManager.establishHere      (mode,           report);   break // TODO: BROKEN
+        case .children:    gCloudManager.fetchChildren      (mode, optional, report);   break
+        case .parent:      gCloudManager.fetchParents       (mode,           report);   break
+        case .unsubscribe: gCloudManager.unsubscribe        (mode,           report);   break
+        case .cloud:       gCloudManager.cloudLogic         (mode,           report);   break
+        case .emptyTrash:  gCloudManager.emptyTrash         (mode,           report);   break
+        case .subscribe:   gCloudManager.subscribe          (mode,           report);   break
+        case .undelete:    gCloudManager.undelete           (mode,           report);   break
+        case .create:      gCloudManager.create             (mode,           report);   break
+        case .fetch:       gCloudManager.fetch              (mode,           report);   break
+        case .merge:       gCloudManager.merge              (mode,           report);   break
+        case .flush:       gCloudManager.flush              (mode,           report);   break
+        case .ready:                     becomeReady        (mode,           report);   break
         }
     }
 

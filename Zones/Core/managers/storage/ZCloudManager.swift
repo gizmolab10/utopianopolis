@@ -3,7 +3,7 @@
 //  Zones
 //
 //  Created by Jonathan Sand on 9/18/16.
-//  Copyright © 2016 Zones. All rights reserved.
+//  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
 
@@ -327,11 +327,10 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    @discardableResult func fetchChildren(_ storageMode: ZStorageMode, _ recursiveGoal: Int? = nil, _ onCompletion: IntegerClosure?) -> Bool {
+    func fetchChildren(_ storageMode: ZStorageMode, _ recursiveGoal: Int? = nil, _ onCompletion: IntegerClosure?) {
         let childrenNeeded = referencesWithMatchingStates([.needsChildren])
-        let noMoreChildren = childrenNeeded.count == 0
 
-        if noMoreChildren {
+        if childrenNeeded.count == 0 {
             onCompletion?(0)
         } else {
             var parentsNeedingResort = [Zone] ()
@@ -374,8 +373,6 @@ class ZCloudManager: ZRecordsManager {
                 }
             }
         }
-        
-        return noMoreChildren
     }
 
 

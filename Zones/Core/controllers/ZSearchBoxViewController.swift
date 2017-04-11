@@ -3,7 +3,7 @@
 //  Zones
 //
 //  Created by Jonathan Sand on 12/15/16.
-//  Copyright © 2016 Zones. All rights reserved.
+//  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
 

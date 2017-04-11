@@ -3,7 +3,7 @@
 //  Zones
 //
 //  Created by Jonathan Sand on 8/28/16.
-//  Copyright © 2016 Zones. All rights reserved.
+//  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
 
@@ -19,7 +19,6 @@ struct ZoneState: OptionSet {
     }
 
     static let ShowsChildren = ZoneState(rawValue: 1 <<  0)
-    static let   HasChildren = ZoneState(rawValue: 1 <<  1)
     static let    IsFavorite = ZoneState(rawValue: 1 << 29)
     static let     IsDeleted = ZoneState(rawValue: 1 << 30)
 }
@@ -42,6 +41,7 @@ class Zone : ZRecord {
     var              widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var          isBookmark:         Bool { return crossLink != nil }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
+    var         hasProgeny:         Bool { return progenyCount != 0 }
 
 
 
@@ -61,7 +61,7 @@ class Zone : ZRecord {
 
 
     var           count: Int  { return children.count }
-    var includeChildren: Bool { return showChildren && hasChildren }
+    var includeChildren: Bool { return showChildren && hasProgeny }
 
 
     var bookmarkTarget: Zone? {
@@ -171,7 +171,7 @@ class Zone : ZRecord {
                 }
             }
 
-            return (zoneProgeny?.intValue)!
+            return zoneProgeny!.intValue
         }
 
         set {
@@ -250,7 +250,6 @@ class Zone : ZRecord {
 
     var    isDeleted: Bool { get { return getState(for:     .IsDeleted) } set { setState(newValue, for: .IsDeleted) } }
     var   isFavorite: Bool { get { return getState(for:    .IsFavorite) } set { setState(newValue, for: .IsFavorite) } }
-    var  hasChildren: Bool { get { return getState(for:   .HasChildren) } set { setState(newValue, for: .HasChildren) } }
     var showChildren: Bool { get { return getState(for: .ShowsChildren) } set { setState(newValue, for: .ShowsChildren) } }
 
     
@@ -374,7 +373,19 @@ class Zone : ZRecord {
             progenyCount  = currentCount
 
             needUpdateSave()
-            parentZone?.updateProgenyCounts()
+
+            if !isRoot {
+                if parentZone != nil {
+                    parentZone?.updateProgenyCounts()
+                } else {
+                    markForStates([.needsParent])
+
+                    gOperationsManager.parent {
+                        self.updateZoneProperties()
+                        self.parentZone?.updateProgenyCounts()
+                    }
+                }
+            }
         }
     }
 
@@ -406,7 +417,7 @@ class Zone : ZRecord {
 
 
     func maybeNeedChildren() {
-        if count <= 1 && showChildren && hasChildren {
+        if count <= 1 && includeChildren {
             needChildren()
         }
     }
@@ -419,7 +430,6 @@ class Zone : ZRecord {
 
     @discardableResult func addChild(_ child: Zone?, at index: Int?) -> Int? {
         if child != nil {
-            hasChildren = true
 
             // make sure it's not already been added
             // NOTE: both must have a record for this to be effective
@@ -471,10 +481,6 @@ class Zone : ZRecord {
         if child != nil, let index = children.index(of: child!) {
             children.remove(at: index)
             updateProgenyCounts()
-
-            if count == 0 {
-                hasChildren = false
-            }
         }
     }
 
@@ -655,7 +661,7 @@ class Zone : ZRecord {
 
 
     func exposed(upTo highestLevel: Int) -> Int? {
-        if !hasChildren {
+        if !hasProgeny {
             return nil
         }
 
@@ -671,7 +677,7 @@ class Zone : ZRecord {
             exposedLevel += 1
 
             for child: Zone in progeny {
-                if !child.showChildren && (child.hasChildren || child.count != 0) {
+                if !child.showChildren && (child.hasProgeny || child.count != 0) {
                     return exposedLevel
                 }
             }

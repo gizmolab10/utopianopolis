@@ -3,7 +3,7 @@
 //  Zones
 //
 //  Created by Jonathan Sand on 10/7/16.
-//  Copyright © 2016 Zones. All rights reserved.
+//  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
 
@@ -35,7 +35,7 @@ class ZoneWidget: ZView {
     let              childrenView = ZView          ()
     private var   childrenWidgets = [ZoneWidget]   ()
     var              parentWidget:  ZoneWidget? { return widgetZone.parentZone?.widget }
-    var               hasChildren:  Bool        { return widgetZone.hasChildren || widgetZone.count > 0 }
+    var                hasProgeny:  Bool        { return widgetZone.hasProgeny }
     var                widgetFont:  ZFont       { return widgetZone.isSelected ? gSelectedWidgetFont : gWidgetFont }
     var                widgetZone:  Zone!
 

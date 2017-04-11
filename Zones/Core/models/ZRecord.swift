@@ -3,7 +3,7 @@
 //  Zones
 //
 //  Created by Jonathan Sand on 9/19/16.
-//  Copyright © 2016 Zones. All rights reserved.
+//  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
 
@@ -213,8 +213,13 @@ class ZRecord: NSObject {
 
 
     func needChildren() {
-        if !isMarkedForStates([.fetchedChildren]) {
-            markForStates([.needsChildren, .fetchedChildren])
+        if !isMarkedForStates([.needsChildren, .fetchedChildren]) {
+            markForStates    ([.needsChildren, .fetchedChildren])
+
+            if let zone = self as? Zone {
+                toConsole("need children for \(zone.zoneName ?? "NO NAME")")
+
+            }
         }
     }
 

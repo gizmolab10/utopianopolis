@@ -3,7 +3,7 @@
 //  Zones
 //
 //  Created by Jonathan Sand on 10/29/16.
-//  Copyright © 2016 Zones. All rights reserved.
+//  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
 
@@ -407,9 +407,8 @@ class ZEditingManager: NSObject {
             let       recurseMaybe = {
                 hasFetchedChildren = zone.count != 0
 
-                if (show || hasFetchedChildren) && zone.hasChildren != hasFetchedChildren {
+                if (show || hasFetchedChildren) && zone.hasProgeny != hasFetchedChildren {
                     if hasFetchedChildren {
-                        zone.hasChildren = true
                         zone.needUpdateSave()
                     }
                 }
@@ -418,7 +417,7 @@ class ZEditingManager: NSObject {
                     onCompletion?()
                 }
 
-                if iGoal != nil {
+                if iGoal != nil && zone.level < iGoal! {
                     for child: Zone in zone.children {
                         if child != zone {
                             self.toggleDotUpdate(show, child, to: iGoal, onCompletion: onCompletion)
@@ -500,25 +499,25 @@ class ZEditingManager: NSObject {
     }
 
 
-    func addNewChildTo(_ zone: Zone?, onCompletion: ZoneClosure?) {
-        if zone != nil && zone!.storageMode != .favorites {
+    func addNewChildTo(_ iZone: Zone?, onCompletion: ZoneClosure?) {
+        if  let         zone = iZone, zone.storageMode != .favorites {
             let createAndAdd = {
-                let record = CKRecord(recordType: zoneTypeKey)
-                let  child = Zone(record: record, storageMode: gStorageMode)
+                let   record = CKRecord(recordType: zoneTypeKey)
+                let    child = Zone(record: record, storageMode: gStorageMode)
 
+                zone.ungrab()
                 child.needCreate()
-                gSelectionManager.stopEdit(for: zone!)
-                zone!.addAndReorderChild(child, at: asTask ? 0 : nil)
-                zone!.ungrab()
+                gSelectionManager.stopEdit(for: zone)
+                zone.addAndReorderChild(child, at: asTask ? 0 : nil)
                 onCompletion?(child)
             }
 
-            zone!.showChildren = true
+            zone.showChildren = true
 
-            if zone!.count != 0 || !zone!.hasChildren {
+            if zone.count != 0 || !zone.hasProgeny {
                 createAndAdd()
             } else {
-                zone!.needChildren()
+                zone.maybeNeedChildren()
 
                 var     beenHereBefore = false
 
@@ -596,10 +595,6 @@ class ZEditingManager: NSObject {
             deleteZones(zone.children, in: zone) // recurse
             deleteZones(bookmarks,     in: zone) // recurse
             zone.orphan()
-
-            if let g = grabThisZone, g.count == 0 {
-                g.hasChildren = false
-            }
         }
 
         return grabThisZone
@@ -753,7 +748,7 @@ class ZEditingManager: NSObject {
         } else if zone.count > 0 {
             grabChild(of: zone)
         } else {
-            zone.needChildren()
+            zone.maybeNeedChildren()
 
             gOperationsManager.children() {
                 self.grabChild(of: zone)
@@ -765,7 +760,6 @@ class ZEditingManager: NSObject {
     func grabChild(of zone: Zone) {
         if zone.count != 0, let child = asTask ? zone.children.first : zone.children.last {
             zone.showChildren = true
-            zone .hasChildren = true
 
             zone.needUpdateSave()
             child.grab()
@@ -980,7 +974,7 @@ class ZEditingManager: NSObject {
 
         into.showChildren = true
 
-        into.needChildren()
+        into.maybeNeedChildren()
 
         gOperationsManager.children() {
             zone.needUpdateSave()

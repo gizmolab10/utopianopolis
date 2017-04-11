@@ -3,7 +3,7 @@
 //  Zones
 //
 //  Created by Jonathan Sand on 10/10/16.
-//  Copyright © 2016 Zones. All rights reserved.
+//  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
 
@@ -181,8 +181,6 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
         gRoot.maybeNeedChildren()
         gOperationsManager.children(recursiveGoal: 1) {
-            gManifest.total += 1
-
             gRoot.addAndReorderChild(zone, at: 0)
             gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
         }

@@ -3,7 +3,7 @@
 //  Zones
 //
 //  Created by Jonathan Sand on 10/27/16.
-//  Copyright © 2016 Zones. All rights reserved.
+//  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
 
@@ -52,7 +52,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
         if  let            zone = widgetZone, isInnerDot {
             let      isBookmark = zone.isBookmark || zone.isRootOfFavorites
-            isHidden            = isToggle && !(zone.hasChildren     || isBookmark || isToggleTarget)
+            isHidden            = isToggle && !(zone.hasProgeny      || isBookmark || isToggleTarget)
             let shouldHighlight = isToggle ?  (!zone.showChildren    || isBookmark || isToggleTarget) : zone.isSelected
             let     strokeColor = isToggleTarget ? gDragTargetsColor :  isBookmark  ? gBookmarkColor : gZoneColor
             let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor

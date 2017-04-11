@@ -3,7 +3,7 @@
 //  Zones
 //
 //  Created by Jonathan Sand on 12/3/16.
-//  Copyright © 2016 Zones. All rights reserved.
+//  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
 
@@ -14,14 +14,13 @@ import CloudKit
 class ZManifest: ZRecord {
 
 
-    dynamic var count:      NSNumber?
     dynamic var here:    CKReference?
     var        _hereZone:       Zone?
     var         currentlyGrabbedZones = [Zone] ()
 
 
     override func cloudProperties() -> [String] {
-        return super.cloudProperties() + [#keyPath(here), #keyPath(count)]
+        return super.cloudProperties() + [#keyPath(here)]
     }
 
 
@@ -45,27 +44,6 @@ class ZManifest: ZRecord {
 
                 needUpdateSave()
             }
-        }
-    }
-
-
-    var total: Int {
-        get {
-            if count == nil {
-                updateZoneProperties()
-            }
-
-            if count == nil {
-                count = NSNumber(value: 0)
-            }
-
-            return (count?.intValue)!
-        }
-
-        set {
-            count = NSNumber(value: newValue)
-
-            needUpdateSave()
         }
     }
 }

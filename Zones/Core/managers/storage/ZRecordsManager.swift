@@ -3,7 +3,7 @@
 //  Zones
 //
 //  Created by Jonathan Sand on 12/4/16.
-//  Copyright © 2016 Zones. All rights reserved.
+//  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
 
@@ -363,9 +363,7 @@ class ZRecordsManager: NSObject {
             zone?.record = record
         }
 
-        if  zone!.showChildren || zone!.hasChildren || zone!.count == 0 {
-            zone!.maybeNeedChildren()
-        }
+        zone!.maybeNeedChildren()
 
         return zone!
     }
