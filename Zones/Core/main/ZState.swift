@@ -43,22 +43,6 @@ enum ZStorageMode: String {
 }
 
 
-struct ZSettingsViewID: OptionSet {
-    let rawValue: Int
-
-    init(rawValue: Int) {
-        self.rawValue = rawValue
-    }
-
-    static let        Help = ZSettingsViewID(rawValue: 1 << 0)
-    static let Preferences = ZSettingsViewID(rawValue: 1 << 1)
-    static let Information = ZSettingsViewID(rawValue: 1 << 2)
-    static let  CloudTools = ZSettingsViewID(rawValue: 1 << 3)
-    static let   Favorites = ZSettingsViewID(rawValue: 1 << 4)
-    static let         All = ZSettingsViewID(rawValue: 0xFFFF)
-}
-
-
 var  gTextCapturing = false
 var gShowsSearching = false
 var      gDotHeight = 12.0

@@ -52,15 +52,17 @@ class ZCloudManager: ZRecordsManager {
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
         assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey) { iRecord in
-            let   zone = self.zoneForRecord(iRecord!)
-            let parent = zone.parentZone
+            if iRecord != nil {
+                let   zone = self.zoneForRecord(iRecord!)
+                let parent = zone.parentZone
 
-            if  zone.showChildren {
-                self.dispatchAsyncInForeground {
-                    self.signalFor(parent, regarding: .redraw)
-
-                    gOperationsManager.children() {
+                if  zone.showChildren {
+                    self.dispatchAsyncInForeground {
                         self.signalFor(parent, regarding: .redraw)
+
+                        gOperationsManager.children() {
+                            self.signalFor(parent, regarding: .redraw)
+                        }
                     }
                 }
             }
@@ -235,6 +237,7 @@ class ZCloudManager: ZRecordsManager {
                 gRoot       = self.zoneForRecord(iRecord!)
                 gRoot.level = 0
 
+                gRoot.needChildren()
                 gManifest.needUpdateSave()
             }
 

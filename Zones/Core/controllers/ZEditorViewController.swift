@@ -102,23 +102,22 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
 
     func relationOf(_ iPoint: CGPoint, to iView: ZView?) -> ZRelation {
+        var relation: ZRelation = .upon
+
         if  iView     != nil {
             let margin = CGFloat(5.0)
-            let weight = CGFloat(gVerticalWeight)
             let  point = view.convert(iPoint, to: iView)
             let   rect = iView!.bounds
-            let      y = weight * point.y
+            let      y = point.y
 
-            if y > ((weight * rect.maxY) - margin) {
-                return .below
-            }
-
-            if y < ((weight * rect.minY) + margin) {
-                return .above
+            if y < rect.minY + margin {
+                relation = .above
+            } else if y > rect.maxY - margin {
+                relation = .below
             }
         }
 
-        return .upon
+        return relation
     }
 
 
@@ -156,6 +155,8 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
                 prior?           .displayForDrag() // erase  child lines
                 dropZone?.widget?.displayForDrag() // redraw child lines
                 view            .setNeedsDisplay() // redraw dragline and dot
+
+                // report("\(relation) \(dropZone?.zoneName ?? "no name")")
 
                 if done {
                     let editor = gEditingManager

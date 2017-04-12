@@ -14,10 +14,10 @@ import CloudKit
 class ZFavoritesManager: NSObject {
 
 
-    let favoritesRootZone = Zone(record: nil, storageMode: .favorites)
-    let defaultFavorites  = Zone(record: nil, storageMode: .favorites)
-    var   favoritesIndex  = 0
-    var            count: Int { return favoritesRootZone.count }
+    let favoritesRootZone  = Zone(record: nil, storageMode: .favorites)
+    let  defaultFavorites  = Zone(record: nil, storageMode: .favorites)
+    var    favoritesIndex  = 0
+    var             count: Int { return favoritesRootZone.count }
 
 
     // MARK:- init
@@ -28,10 +28,13 @@ class ZFavoritesManager: NSObject {
         favoritesRootZone.level        = 0
         favoritesRootZone.showChildren = true
         favoritesRootZone.zoneName     = "favorites"
-        favoritesRootZone.record       = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
 
-        setupDefaultFavorites()
-        update()
+        invokeWithMode(.favorites) {
+            favoritesRootZone.record   = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
+
+            setupDefaultFavorites()
+            update()
+        }
     }
 
 
@@ -184,6 +187,8 @@ class ZFavoritesManager: NSObject {
                         return updateForZone(zone)
                     }
                 }
+
+                iGrabClosure?(nil)
             }
         }
     }

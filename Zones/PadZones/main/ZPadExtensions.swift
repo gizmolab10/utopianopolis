@@ -290,8 +290,9 @@ extension UIApplication {
 
 extension Zone {
     func hasZoneAbove(_ iAbove: Bool) -> Bool {
-        if  let    index  = siblingIndex {
-            return index != (!iAbove ? 0 : (parentZone!.count - 1))
+        if  let     index  = siblingIndex {
+            let compareTo  = !iAbove ? 0 : (parentZone!.count - 1)
+            return  index != compareTo
         }
 
         return false
@@ -369,3 +370,4 @@ extension ZoneWidget {
         return path
     }
 }
+

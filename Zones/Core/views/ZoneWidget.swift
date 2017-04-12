@@ -305,7 +305,7 @@ class ZoneWidget: ZView {
 
 
     func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView) -> ZoneWidget? {
-        if dragContainsPoint(iPoint) && widgetZone.isDescendantOf(gSelectionManager.draggedZone!) == .none {
+        if dragContainsPoint(iPoint) && widgetZone.isDescendantOf(gSelectionManager.draggedZone) == .none {
             if widgetZone.showChildren {
                 for child in widgetZone.children {
                     if let childWidget = child.widget, let found = childWidget.widgetNearestTo(iPoint, in: self) {
