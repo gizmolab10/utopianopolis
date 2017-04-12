@@ -497,7 +497,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    // MARK:- creation
+    // MARK:- create
     // MARK:-
 
 
@@ -567,6 +567,10 @@ class ZEditingManager: NSObject {
         copy.recursivelyMarkAsDeleted(true)
         gSelectionManager.pasteableZones.append(copy)
     }
+
+
+    // MARK:- destroy
+    // MARK:-
 
 
     @discardableResult private func deleteZones(_ zones: [Zone], in parent: Zone?) -> Zone? {

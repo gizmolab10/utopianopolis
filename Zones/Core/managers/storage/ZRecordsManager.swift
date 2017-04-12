@@ -62,6 +62,26 @@ class ZRecordsManager: NSObject {
     }
 
 
+    var undeletedCount: Int {
+        var       count = zones.count
+        var identifiers = [CKRecordID] ()
+
+        for zone in zones.values {
+            let isDeleted = zone.isDeleted
+
+            if isDeleted || identifiers.contains(zone.record.recordID) {
+                count -= 1
+
+                if isDeleted, let link = zone.crossLink?.record.recordID {
+                    identifiers.append(link)
+                }
+            }
+        }
+
+        return count
+    }
+
+
     var allStates: [ZRecordState] {
         get {
             var states = [ZRecordState] ()

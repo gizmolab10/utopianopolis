@@ -20,11 +20,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HQJ-zK-x6P">
-                                <connections>
-                                    <segue destination="hg4-4k-bWE" kind="embed" id="9gx-n2-Hga"/>
-                                </connections>
-                            </containerView>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HQJ-zK-x6P"/>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PVe-Yq-zKg">
                                 <connections>
                                     <segue destination="BYZ-38-t0r" kind="embed" id="udK-HA-zL1"/>
@@ -80,24 +76,6 @@
                 <tapGestureRecognizer id="g7O-Ne-Y03"/>
             </objects>
             <point key="canvasLocation" x="-272" y="801"/>
-        </scene>
-        <!--Settings View Controller-->
-        <scene sceneID="EFi-vN-wHw">
-            <objects>
-                <viewController id="hg4-4k-bWE" customClass="ZSettingsViewController" customModule="PadZones" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="qCp-aW-Kfa"/>
-                        <viewControllerLayoutGuide type="bottom" id="RLc-mT-izr"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="CzG-ST-OXx">
-                        <rect key="frame" x="0.0" y="0.0" width="256" height="768"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Wuy-fy-J2b" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1071" y="802"/>
         </scene>
     </scenes>
 </document>

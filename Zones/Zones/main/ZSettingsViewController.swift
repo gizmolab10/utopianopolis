@@ -8,12 +8,7 @@
 
 
 import SnapKit
-
-#if os(OSX)
-    import Cocoa
-#elseif os(iOS)
-    import UIKit
-#endif
+import Cocoa
 
 
 enum ZSliderKind: String {
@@ -47,12 +42,6 @@ struct ZSettingsViewID: OptionSet {
 }
 
 
-#if os(iOS)
-
-class ZSettingsViewController: ZGenericViewController {}
-
-#elseif os(OSX)
-
 class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTableViewDataSource {
 
     @IBOutlet var         fractionInMemory: ZProgressIndicator?
@@ -79,7 +68,7 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-        let                     count = gCloudManager.zones.count
+        let                     count = gCloudManager.undeletedCount
         let                     total = gRoot.progenyCount + 1
         totalCountLabel?        .text = "of \(total), retrieved: \(count)"
         graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
@@ -264,5 +253,3 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
     }
 
 }
-
-#endif

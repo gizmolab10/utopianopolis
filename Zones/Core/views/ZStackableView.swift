@@ -20,8 +20,8 @@ class ZStackableView: ZView {
 
 
     @IBOutlet var hideableView: ZView?
-    @IBOutlet var   titleLabel: ZTextField?
     @IBOutlet var toggleButton: ZButton?
+    @IBOutlet var   titleLabel: ZTextField?
 
 
     // MARK:- identity
