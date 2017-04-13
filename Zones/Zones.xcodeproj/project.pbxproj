@@ -37,6 +37,8 @@
 		0C4DCD8B1EA028C0000B2210 /* ZPreferencesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4DCD891EA01AB3000B2210 /* ZPreferencesController.swift */; };
 		0C4DCD8D1EA02B06000B2210 /* ZCloudToolsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4DCD8C1EA02B06000B2210 /* ZCloudToolsController.swift */; };
 		0C4DCD8E1EA02B06000B2210 /* ZCloudToolsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4DCD8C1EA02B06000B2210 /* ZCloudToolsController.swift */; };
+		0C4DCD901EA033AB000B2210 /* ZFavoritesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4DCD8F1EA033AB000B2210 /* ZFavoritesController.swift */; };
+		0C4DCD911EA033AB000B2210 /* ZFavoritesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4DCD8F1EA033AB000B2210 /* ZFavoritesController.swift */; };
 		0C58C37C1D45805400CAB387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C58C36F1D45805400CAB387 /* Assets.xcassets */; };
 		0C58C37D1D45805400CAB387 /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C58C3711D45805400CAB387 /* ZAppDelegate.swift */; };
 		0C58C3821D45815A00CAB387 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B561D2ECF41001892E5 /* LaunchScreen.storyboard */; };
@@ -233,6 +235,7 @@
 		0C4CB4871E1A19490018B2C9 /* ZStackableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZStackableView.swift; path = views/ZStackableView.swift; sourceTree = "<group>"; };
 		0C4DCD891EA01AB3000B2210 /* ZPreferencesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZPreferencesController.swift; sourceTree = "<group>"; };
 		0C4DCD8C1EA02B06000B2210 /* ZCloudToolsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZCloudToolsController.swift; sourceTree = "<group>"; };
+		0C4DCD8F1EA033AB000B2210 /* ZFavoritesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFavoritesController.swift; sourceTree = "<group>"; };
 		0C58C36F1D45805400CAB387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C58C3711D45805400CAB387 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
 		0C58C3761D45805400CAB387 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -602,6 +605,7 @@
 			isa = PBXGroup;
 			children = (
 				0C4DCD8C1EA02B06000B2210 /* ZCloudToolsController.swift */,
+				0C4DCD8F1EA033AB000B2210 /* ZFavoritesController.swift */,
 				0CA1C7371EA0011D006BA725 /* ZInformationController.swift */,
 				0C4DCD891EA01AB3000B2210 /* ZPreferencesController.swift */,
 				0CA1C7341EA000D8006BA725 /* ZSettingsController.swift */,
@@ -984,6 +988,7 @@
 				0CD1EAD01DB725A800A096E4 /* NegatedCondition.swift in Sources */,
 				0C371C741DE26FE10030253D /* ZEditingManager.swift in Sources */,
 				0CD1EAE81DB725A800A096E4 /* NSLock+Operations.swift in Sources */,
+				0C4DCD911EA033AB000B2210 /* ZFavoritesController.swift in Sources */,
 				0C4C51811E340A8C00BCF39E /* ZFavoritesManager.swift in Sources */,
 				0CD1EAD81DB725A800A096E4 /* PassbookCondition.swift in Sources */,
 				0CA1C72D1EA0009F006BA725 /* ZGenericController.swift in Sources */,
@@ -1075,6 +1080,7 @@
 				0CD1EACF1DB725A800A096E4 /* NegatedCondition.swift in Sources */,
 				0C371C731DE26FE10030253D /* ZEditingManager.swift in Sources */,
 				0CD1EAE71DB725A800A096E4 /* NSLock+Operations.swift in Sources */,
+				0C4DCD901EA033AB000B2210 /* ZFavoritesController.swift in Sources */,
 				0C4C51801E340A8C00BCF39E /* ZFavoritesManager.swift in Sources */,
 				0CD1EAD71DB725A800A096E4 /* PassbookCondition.swift in Sources */,
 				0CA1C72C1EA0009F006BA725 /* ZGenericController.swift in Sources */,
