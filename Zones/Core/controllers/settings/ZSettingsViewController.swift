@@ -8,7 +8,12 @@
 
 
 import SnapKit
-import Cocoa
+
+#if os(OSX)
+    import Cocoa
+#elseif os(iOS)
+    import UIKit
+#endif
 
 
 enum ZSliderKind: String {
@@ -44,13 +49,9 @@ struct ZSettingsViewID: OptionSet {
 
 class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTableViewDataSource {
 
-    @IBOutlet var         fractionInMemory: ZProgressIndicator?
     @IBOutlet var     favoritesTableHeight: NSLayoutConstraint?
     @IBOutlet var graphAlteringModeControl: ZSegmentedControl?
     @IBOutlet var       favoritesTableView: ZTableView?
-    @IBOutlet var          totalCountLabel: ZTextField?
-    @IBOutlet var           graphNameLabel: ZTextField?
-    @IBOutlet var               levelLabel: ZTextField?
     @IBOutlet var             zoneColorBox: NSColorWell?
     @IBOutlet var         bookmarkColorBox: NSColorWell?
     @IBOutlet var       backgroundColorBox: NSColorWell?
@@ -68,15 +69,6 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-        let                     count = gCloudManager.undeletedCount
-        let                     total = gRoot.progenyCount + 1
-        totalCountLabel?        .text = "of \(total), retrieved: \(count)"
-        graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
-        levelLabel?             .text = "level: \(gHere.level)"
-        view  .zlayer.backgroundColor = gBackgroundColor.cgColor
-        fractionInMemory?   .maxValue = Double(total)
-        fractionInMemory?.doubleValue = Double(count)
-
         if  let tableView = favoritesTableView {
             gFavoritesManager.updateIndexFor(gHere) { object in
                 gFavoritesManager.update()
@@ -89,7 +81,6 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
 
 
     override func awakeFromNib() {
-        fractionInMemory?               .minValue = 0
         graphAlteringModeControl?.selectedSegment = gGraphAlteringMode.rawValue
         thickness?                   .doubleValue = gLineThickness
         verticalSpacing?             .doubleValue = Double(gGenericOffset.height)

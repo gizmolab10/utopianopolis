@@ -20,7 +20,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HQJ-zK-x6P"/>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HQJ-zK-x6P">
+                                <connections>
+                                    <segue destination="aF3-Ly-doU" kind="embed" id="Xtc-xS-Jgg"/>
+                                </connections>
+                            </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PVe-Yq-zKg">
                                 <connections>
                                     <segue destination="BYZ-38-t0r" kind="embed" id="udK-HA-zL1"/>
@@ -77,5 +81,79 @@
             </objects>
             <point key="canvasLocation" x="-272" y="801"/>
         </scene>
+        <!--Settings View Controller-->
+        <scene sceneID="DhE-si-isi">
+            <objects>
+                <viewController id="aF3-Ly-doU" customClass="ZSettingsViewController" customModule="PadZones" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="uYJ-Al-1BS"/>
+                        <viewControllerLayoutGuide type="bottom" id="XxL-pE-luv"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="nKe-3S-Ile">
+                        <rect key="frame" x="0.0" y="0.0" width="256" height="768"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="xkA-gK-7Ek">
+                                <frame key="frameInset" width="256" height="160"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wn1-mQ-Zm2" customClass="ZStackableView" customModule="PadZones" customModuleProvider="target">
+                                        <frame key="frameInset" width="256" height="160"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hdt-K9-0h9">
+                                                <frame key="frameInset" width="256" height="24"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BBQ-qC-SFy">
+                                                <frame key="frameInset" minX="214" width="29" height="24"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="22" id="LEQ-Z8-bCk"/>
+                                                    <constraint firstAttribute="width" constant="18" id="aQO-FC-VhD"/>
+                                                </constraints>
+                                                <state key="normal" image="yangle"/>
+                                            </button>
+                                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kfz-tQ-559">
+                                                <frame key="frameInset" minY="23" width="256" height="137"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstItem="BBQ-qC-SFy" firstAttribute="top" secondItem="Wn1-mQ-Zm2" secondAttribute="top" id="1ZI-Uo-H6g"/>
+                                            <constraint firstAttribute="trailing" secondItem="BBQ-qC-SFy" secondAttribute="trailing" constant="8" id="9s2-zd-wPn"/>
+                                            <constraint firstItem="Kfz-tQ-559" firstAttribute="top" secondItem="hdt-K9-0h9" secondAttribute="bottom" id="9uj-VG-n7D"/>
+                                            <constraint firstAttribute="trailing" secondItem="Kfz-tQ-559" secondAttribute="trailing" id="Ftd-S5-erT"/>
+                                            <constraint firstAttribute="trailing" secondItem="hdt-K9-0h9" secondAttribute="trailing" id="RFz-Oy-rXm"/>
+                                            <constraint firstItem="hdt-K9-0h9" firstAttribute="leading" secondItem="Wn1-mQ-Zm2" secondAttribute="leading" id="VCX-tp-6KP"/>
+                                            <constraint firstItem="Kfz-tQ-559" firstAttribute="leading" secondItem="Wn1-mQ-Zm2" secondAttribute="leading" id="bKX-rZ-B4F"/>
+                                            <constraint firstItem="Kfz-tQ-559" firstAttribute="top" secondItem="BBQ-qC-SFy" secondAttribute="bottom" id="cR6-CX-OOf"/>
+                                            <constraint firstAttribute="bottom" secondItem="Kfz-tQ-559" secondAttribute="bottom" id="jHG-id-T9x"/>
+                                            <constraint firstItem="hdt-K9-0h9" firstAttribute="top" secondItem="Wn1-mQ-Zm2" secondAttribute="top" id="of8-RQ-qxt"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="hideableView" destination="Kfz-tQ-559" id="FCt-W4-F5D"/>
+                                            <outlet property="titleLabel" destination="hdt-K9-0h9" id="Cry-mi-UIu"/>
+                                            <outlet property="toggleButton" destination="BBQ-qC-SFy" id="9uS-oD-12x"/>
+                                        </connections>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="Wn1-mQ-Zm2" firstAttribute="leading" secondItem="xkA-gK-7Ek" secondAttribute="leading" id="5kC-lV-Iki"/>
+                                    <constraint firstItem="Wn1-mQ-Zm2" firstAttribute="top" secondItem="xkA-gK-7Ek" secondAttribute="top" id="UXs-Oo-P11"/>
+                                    <constraint firstAttribute="trailing" secondItem="Wn1-mQ-Zm2" secondAttribute="trailing" id="wUu-9h-Pvg"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rwk-7q-ms7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="988.79999999999995" y="800.59970014992507"/>
+        </scene>
     </scenes>
+    <resources>
+        <image name="yangle" width="395" height="395"/>
+    </resources>
 </document>

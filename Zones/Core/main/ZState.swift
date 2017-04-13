@@ -60,36 +60,6 @@ var     gGrabbedTextColor: ZColor { return gZoneColor    .darker(by: 1.8) }
 // MARK:-
 
 
-let         zoneColorKey = "zone color"
-let     bookmarkColorKey = "bookmark color"
-let   backgroundColorKey = "background color"
-let  dragTargetsColorKey = "drag targets color"
-let graphAlteringModeKey = "graph altering mode"
-let       storageModeKey = "current storage mode"
-let     settingsStateKey = "current settings state"
-let     lineThicknessKey = "line thickness"
-let     genericOffsetKey = "generick offset"
-
-
-func getColorForKey(_ key: String, defaultColor: ZColor) -> ZColor {
-    if let data = UserDefaults.standard.object(forKey: key) as? Data, let color = NSKeyedUnarchiver.unarchiveObject(with: data) as? ZColor {
-        return color
-    }
-
-    setColor(defaultColor, key: key)
-
-    return defaultColor
-}
-
-
-func setColor(_ iColor: ZColor, key: String) {
-    let data: Data = NSKeyedArchiver.archivedData(withRootObject: iColor)
-
-    UserDefaults.standard.set(data, forKey: key)
-    UserDefaults.standard.synchronize()
-}
-
-
 var gZoneColor: ZColor {
     get { return   getColorForKey(zoneColorKey, defaultColor: ZColor.blue) }
     set { setColor(newValue, key: zoneColorKey) }
@@ -231,4 +201,38 @@ var gSettingsViewIDs: ZSettingsViewID {
         UserDefaults.standard.set(newValue.rawValue, forKey:settingsStateKey)
         UserDefaults.standard.synchronize()
     }
+}
+
+
+// MARK:- user default -- keys and methods
+// MARK:-
+
+
+let         zoneColorKey = "zone color"
+let     bookmarkColorKey = "bookmark color"
+let   backgroundColorKey = "background color"
+let  dragTargetsColorKey = "drag targets color"
+let graphAlteringModeKey = "graph altering mode"
+let       storageModeKey = "current storage mode"
+let     settingsStateKey = "current settings state"
+let     lineThicknessKey = "line thickness"
+let     genericOffsetKey = "generick offset"
+
+
+func getColorForKey(_ key: String, defaultColor: ZColor) -> ZColor {
+    if let data = UserDefaults.standard.object(forKey: key) as? Data, let color = NSKeyedUnarchiver.unarchiveObject(with: data) as? ZColor {
+        return color
+    }
+
+    setColor(defaultColor, key: key)
+
+    return defaultColor
+}
+
+
+func setColor(_ iColor: ZColor, key: String) {
+    let data: Data = NSKeyedArchiver.archivedData(withRootObject: iColor)
+
+    UserDefaults.standard.set(data, forKey: key)
+    UserDefaults.standard.synchronize()
 }

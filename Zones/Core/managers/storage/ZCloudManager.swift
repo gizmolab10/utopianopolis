@@ -13,15 +13,15 @@ import CloudKit
 
 class ZCloudManager: ZRecordsManager {
     var cloudZonesByID = [CKRecordZoneID : CKRecordZone] ()
-    var        container: CKContainer!
-    var        currentDB: CKDatabase? { return databaseForMode(gStorageMode) }
+    var      currentDB:   CKDatabase? { return databaseForMode(gStorageMode) }
+    var      container:   CKContainer?
 
 
     func databaseForMode(_ mode: ZStorageMode) -> CKDatabase? {
         switch mode {
-        case .everyone: return container.publicCloudDatabase
-        case .shared:   return container.sharedCloudDatabase
-        case .mine:     return container.privateCloudDatabase
+        case .everyone: return container?.publicCloudDatabase
+        case .shared:   return container?.sharedCloudDatabase
+        case .mine:     return container?.privateCloudDatabase
         default:        return nil
         }
     }
@@ -559,7 +559,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func resetBadgeCounter() {
-        container.accountStatus { (iStatus, iError) in
+        container?.accountStatus { (iStatus, iError) in
             if iStatus == .available {
                 let badgeResetOperation = CKModifyBadgeOperation(badgeValue: 0)
 
@@ -569,7 +569,7 @@ class ZCloudManager: ZRecordsManager {
                     }
                 }
 
-                self.container.add(badgeResetOperation)
+                self.container?.add(badgeResetOperation)
             }
         }
     }

@@ -32,6 +32,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
     func applicationDidBecomeActive(_ notification: Notification) {
         if needsSetup {
             zapplication.registerForRemoteNotifications(matching: .badge)
+            signalFor(nil, regarding: .startup)
             gOperationsManager.startup {
                 gHere.grab()
 

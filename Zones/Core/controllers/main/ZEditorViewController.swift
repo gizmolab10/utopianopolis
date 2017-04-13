@@ -38,7 +38,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-        if [.search, .found].contains(kind) {
+        if [.search, .found, .startup].contains(kind) {
             return
         } else if gWorkMode != .editMode {
             view.snp.removeConstraints()
