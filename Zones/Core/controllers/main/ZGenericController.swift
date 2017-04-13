@@ -1,5 +1,5 @@
 //
-//  ZGenericViewController.swift
+//  ZGenericController.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 10/10/16.
@@ -16,7 +16,7 @@ import Foundation
 #endif
 
 
-protocol ZGenericViewControllerProtocol {
+protocol ZGenericControllerProtocol {
 
     func handleSignal(_ object: Any?, kind: ZSignalKind)
     func identifier() -> ZControllerID
@@ -25,7 +25,7 @@ protocol ZGenericViewControllerProtocol {
 }
 
 
-class ZGenericViewController: ZViewController, ZGenericViewControllerProtocol {
+class ZGenericController: ZController, ZGenericControllerProtocol {
     func identifier() -> ZControllerID { return .undefined }
 
 

@@ -21,8 +21,8 @@ typealias ZStorageDict = [String : NSObject]
 
 
 extension NSObject {
-    var settingsController: ZSettingsViewController? { return gControllersManager.controllerForID(.settings) as? ZSettingsViewController }
-    var            gEditor:   ZEditorViewController? { return gControllersManager.controllerForID(.editor)   as? ZEditorViewController }
+    var settingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
+    var            gEditor:   ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
     var        gEditorView:           ZDragDrawView? { return gEditor?.view                                  as? ZDragDrawView }
 
 

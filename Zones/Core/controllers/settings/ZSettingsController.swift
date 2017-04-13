@@ -1,5 +1,5 @@
 //
-//  ZSettingsViewController.swift
+//  ZSettingsController.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 10/10/16.
@@ -47,18 +47,10 @@ struct ZSettingsViewID: OptionSet {
 }
 
 
-class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTableViewDataSource {
+class ZSettingsController: ZGenericController, ZTableViewDelegate, ZTableViewDataSource {
 
     @IBOutlet var     favoritesTableHeight: NSLayoutConstraint?
-    @IBOutlet var graphAlteringModeControl: ZSegmentedControl?
     @IBOutlet var       favoritesTableView: ZTableView?
-    @IBOutlet var             zoneColorBox: NSColorWell?
-    @IBOutlet var         bookmarkColorBox: NSColorWell?
-    @IBOutlet var       backgroundColorBox: NSColorWell?
-    @IBOutlet var      dragTargetsColorBox: NSColorWell?
-    @IBOutlet var        horizontalSpacing: NSSlider?
-    @IBOutlet var          verticalSpacing: NSSlider?
-    @IBOutlet var                thickness: NSSlider?
 
 
     // MARK:- generic methods
@@ -80,18 +72,6 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
     }
 
 
-    override func awakeFromNib() {
-        graphAlteringModeControl?.selectedSegment = gGraphAlteringMode.rawValue
-        thickness?                   .doubleValue = gLineThickness
-        verticalSpacing?             .doubleValue = Double(gGenericOffset.height)
-        horizontalSpacing?           .doubleValue = Double(gGenericOffset.width)
-        dragTargetsColorBox?               .color = gDragTargetsColor
-        backgroundColorBox?                .color = gBackgroundColor
-        bookmarkColorBox?                  .color = gBookmarkColor
-        zoneColorBox?                      .color = gZoneColor
-    }
-
-
     func displayViewFor(id: ZSettingsViewID) {
         let type = ZStackableView.self.className()
 
@@ -101,46 +81,6 @@ class ZSettingsViewController: ZGenericViewController, ZTableViewDelegate, ZTabl
                 stackView.update()
             }
         }
-    }
-
-
-    // MARK:- preference actions
-    // MARK:-
-
-
-    @IBAction func sliderAction(_ iSlider: ZSlider) {
-        let value = CGFloat(iSlider.doubleValue)
-
-        if let kind = ZSliderKind(rawValue: iSlider.identifier!) {
-            switch (kind) {
-            case  .Thickness: gLineThickness = Double(value);                                       break
-            case .Horizontal: gGenericOffset = CGSize(width: value, height: gGenericOffset.height); break
-            case   .Vertical: gGenericOffset = CGSize(width: gGenericOffset.width, height: value);  break
-            }
-
-            signalFor(nil, regarding: .redraw)
-        }
-    }
-
-
-    @IBAction func colorBoxAction(_ iColorBox: NSColorWell) {
-        let color = iColorBox.color
-
-        if let kind = ZColorBoxKind(rawValue: iColorBox.identifier!) {
-            switch (kind) {
-            case .DragTargets: gDragTargetsColor = color
-            case .Background:   gBackgroundColor = color
-            case  .Bookmarks:     gBookmarkColor = color
-            case      .Zones:         gZoneColor = color
-            }
-
-            signalFor(nil, regarding: .redraw)
-        }
-    }
-
-
-    @IBAction func graphAlteringModeAction(_ control: ZSegmentedControl) {
-        gGraphAlteringMode = ZGraphAlteringMode(rawValue: control.selectedSegment)!
     }
 
 

@@ -1,5 +1,5 @@
 //
-//  ZEditorViewController.swift
+//  ZEditorController.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 7/2/16.
@@ -16,7 +16,7 @@ import SnapKit
 #endif
 
 
-class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate {
+class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
 
     var        hereWidget = ZoneWidget()
@@ -28,7 +28,7 @@ class ZEditorViewController: ZGenericViewController, ZGestureRecognizerDelegate 
 
     override func setup() {
         view.clearGestures()
-        view.createPointGestureRecognizer(self, action: #selector(ZEditorViewController.oneClick), clicksRequired: 1)
+        view.createPointGestureRecognizer(self, action: #selector(ZEditorController.oneClick), clicksRequired: 1)
         super.setup()
     }
 

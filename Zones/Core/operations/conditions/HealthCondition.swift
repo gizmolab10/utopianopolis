@@ -106,7 +106,7 @@ private class HealthPermissionOperation: Operation {
         super.init()
 
         addCondition(MutuallyExclusive<HealthPermissionOperation>())
-        addCondition(MutuallyExclusive<UIViewController>())
+        addCondition(MutuallyExclusive<UIController>())
         addCondition(AlertPresentation())
     }
     

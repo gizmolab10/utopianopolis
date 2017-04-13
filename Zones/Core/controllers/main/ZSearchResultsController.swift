@@ -1,5 +1,5 @@
 //
-//  ZSearchResultsViewController.swift
+//  ZSearchResultsController.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 12/15/16.
@@ -17,7 +17,7 @@ import CloudKit
 #endif
 
 
-class ZSearchResultsViewController: ZGenericViewController, ZTableViewDataSource, ZTableViewDelegate {
+class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTableViewDelegate {
 
 
     @IBOutlet var tableView: ZTableView?

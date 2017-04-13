@@ -13,9 +13,13 @@ enum ZControllerID: Int {
     case undefined
     case searchResults
     case information
+    case preferences
+    case favorites
     case searchBox
     case settings
     case editor
+    case cloud
+    case help
     case main
 }
 
@@ -39,16 +43,16 @@ class ZControllersManager: NSObject {
 
     class ZSignalObject {
         let    closure: SignalClosure!
-        let controller: ZGenericViewController!
+        let controller: ZGenericController!
 
-        init(_ iClosure: @escaping SignalClosure, forController iController: ZGenericViewController) {
+        init(_ iClosure: @escaping SignalClosure, forController iController: ZGenericController) {
             controller = iController
             closure    = iClosure
         }
     }
 
 
-    func controllerForID(_ iID: ZControllerID) -> ZGenericViewController? {
+    func controllerForID(_ iID: ZControllerID) -> ZGenericController? {
         if let object = signalObjectsByControllerID[iID] {
             return object.controller
         }
@@ -61,7 +65,7 @@ class ZControllersManager: NSObject {
     // MARK:-
 
 
-    func register(_ iController: ZGenericViewController, iID: ZControllerID, closure: @escaping SignalClosure) {
+    func register(_ iController: ZGenericController, iID: ZControllerID, closure: @escaping SignalClosure) {
         signalObjectsByControllerID[iID] = ZSignalObject(closure, forController: iController)
     }
 

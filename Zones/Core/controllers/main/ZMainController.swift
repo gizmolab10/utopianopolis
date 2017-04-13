@@ -1,5 +1,5 @@
 //
-//  ZMainViewController.swift
+//  ZMainController.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 10/8/16.
@@ -16,7 +16,7 @@ import SnapKit
 #endif
 
 
-class ZMainViewController: ZGenericViewController {
+class ZMainController: ZGenericController {
 
 
     @IBOutlet var searchBoxHeight:   NSLayoutConstraint?

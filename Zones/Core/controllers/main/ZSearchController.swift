@@ -1,5 +1,5 @@
 //
-//  ZSearchBoxViewController.swift
+//  ZSearchController.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 12/15/16.
@@ -17,7 +17,7 @@ import CloudKit
 #endif
 
 
-class ZSearchBoxViewController: ZGenericViewController, ZSearchFieldDelegate {
+class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
 
     @IBOutlet var searchBox: ZSearchField?

@@ -1,5 +1,5 @@
 //
-//  ZInformationViewController.swift
+//  ZInformationController.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 4/13/17.
@@ -15,7 +15,7 @@ import Foundation
 #endif
 
 
-class ZInformationViewController: ZGenericViewController {
+class ZInformationController: ZGenericController {
 
 
     @IBOutlet var fractionInMemory: ZProgressIndicator?
