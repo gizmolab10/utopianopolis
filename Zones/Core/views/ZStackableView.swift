@@ -110,6 +110,8 @@ class ZStackableView: ZView {
                 make.top.equalTo((self.toggleButton?.snp.bottom)!)
                 make.left.right.bottom.equalTo(self)
             }
+
+            signalFor(nil, regarding: .datum)
         }
     }
 }

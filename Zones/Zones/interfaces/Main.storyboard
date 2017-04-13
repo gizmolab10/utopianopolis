@@ -563,6 +563,76 @@ CQ
             </objects>
             <point key="canvasLocation" x="-189.5" y="1235.5"/>
         </scene>
+        <!--Cloud Tools Controller-->
+        <scene sceneID="OQa-jH-o6A">
+            <objects>
+                <viewController id="M1d-6V-b2Q" customClass="ZCloudToolsController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="vKP-HI-kOy">
+                        <rect key="frame" x="0.0" y="0.0" width="225" height="124"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ngI-ar-5Pt">
+                                <rect key="frame" x="14" y="88" width="197" height="32"/>
+                                <buttonCell key="cell" type="push" title="Push to Cloud" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zKm-nu-uit">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="pushToCloudButtonAction:" target="M1d-6V-b2Q" id="MBV-im-5Vf"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5N2-DZ-4UX">
+                                <rect key="frame" x="14" y="59" width="197" height="32"/>
+                                <buttonCell key="cell" type="push" title="Restore Zone" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Z39-eg-fDr">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="restoreZoneButtonAction:" target="M1d-6V-b2Q" id="PTT-bj-hpu"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="m2Y-u6-Urc" userLabel="Restore from Trash">
+                                <rect key="frame" x="14" y="30" width="197" height="32"/>
+                                <buttonCell key="cell" type="push" title="Restore from Trash" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zxX-lX-cD8">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="restoreFromTrashButtonAction:" target="M1d-6V-b2Q" id="MJ2-Ys-HQE"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0kE-Oh-3Gh">
+                                <rect key="frame" x="14" y="1" width="197" height="32"/>
+                                <buttonCell key="cell" type="push" title="Empty Trash" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pXH-Xu-wHh">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="emptyTrashButtonAction:" target="M1d-6V-b2Q" id="y5A-RB-j0e"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="ngI-ar-5Pt" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="42B-Vj-5nH"/>
+                            <constraint firstAttribute="trailing" secondItem="m2Y-u6-Urc" secondAttribute="trailing" constant="20" id="4Fe-Oj-zfQ"/>
+                            <constraint firstItem="5N2-DZ-4UX" firstAttribute="top" secondItem="ngI-ar-5Pt" secondAttribute="bottom" constant="8" id="5EP-ny-sdw"/>
+                            <constraint firstItem="0kE-Oh-3Gh" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="6z6-vB-CKQ"/>
+                            <constraint firstItem="ngI-ar-5Pt" firstAttribute="top" secondItem="vKP-HI-kOy" secondAttribute="top" constant="8" id="BOP-2t-ZI4"/>
+                            <constraint firstItem="0kE-Oh-3Gh" firstAttribute="top" secondItem="m2Y-u6-Urc" secondAttribute="bottom" constant="8" id="BQK-Vo-qxT"/>
+                            <constraint firstItem="5N2-DZ-4UX" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="GGT-EU-kcT"/>
+                            <constraint firstItem="m2Y-u6-Urc" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="KLL-Xw-y32"/>
+                            <constraint firstAttribute="trailing" secondItem="0kE-Oh-3Gh" secondAttribute="trailing" constant="20" id="YZv-gH-PE9"/>
+                            <constraint firstAttribute="bottom" secondItem="0kE-Oh-3Gh" secondAttribute="bottom" constant="8" id="eIx-7k-bnp"/>
+                            <constraint firstAttribute="trailing" secondItem="ngI-ar-5Pt" secondAttribute="trailing" constant="20" id="iqR-9I-aNd"/>
+                            <constraint firstAttribute="trailing" secondItem="5N2-DZ-4UX" secondAttribute="trailing" constant="20" id="iv6-hj-fX3"/>
+                            <constraint firstItem="m2Y-u6-Urc" firstAttribute="top" secondItem="5N2-DZ-4UX" secondAttribute="bottom" constant="8" id="sVT-7g-a4w"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="yrI-wS-bc9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-190.5" y="1854"/>
+        </scene>
         <!--Settings Controller-->
         <scene sceneID="Tae-az-4mZ">
             <objects>
@@ -803,10 +873,10 @@ CQ
                                             <outlet property="toggleButton" destination="aCk-9D-lHI" id="lcf-J5-cK6"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="cloud" translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Cloud View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
+                                    <customView identifier="cloud" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Cloud View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="412" width="223" height="143"/>
                                         <subviews>
-                                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="Dnz-Gb-8cH" userLabel="Title and Toggle">
+                                            <customView ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dnz-Gb-8cH" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="124" width="223" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UIC-Be-bJk" userLabel="Tools">
@@ -844,78 +914,24 @@ CQ
                                                     <constraint firstItem="bee-ew-HYp" firstAttribute="centerY" secondItem="Dnz-Gb-8cH" secondAttribute="centerY" id="yN2-VH-qCK"/>
                                                 </constraints>
                                             </customView>
-                                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="OHK-l5-oba">
-                                                <rect key="frame" x="0.0" y="0.0" width="223" height="124"/>
-                                                <subviews>
-                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aWz-bS-GxA">
-                                                        <rect key="frame" x="14" y="88" width="195" height="32"/>
-                                                        <buttonCell key="cell" type="push" title="Push to Cloud" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="324-fU-oAx">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
-                                                        </buttonCell>
-                                                        <connections>
-                                                            <action selector="pushToCloudButtonAction:" target="YaQ-0g-PCb" id="JXp-gI-kfx"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ld9-i6-RLR">
-                                                        <rect key="frame" x="14" y="59" width="195" height="32"/>
-                                                        <buttonCell key="cell" type="push" title="Restore Zone" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="dws-fj-27m">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
-                                                        </buttonCell>
-                                                        <connections>
-                                                            <action selector="restoreZoneButtonAction:" target="YaQ-0g-PCb" id="uFp-Zy-5l5"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nmG-JO-RQs" userLabel="Restore from Trash">
-                                                        <rect key="frame" x="14" y="30" width="195" height="32"/>
-                                                        <buttonCell key="cell" type="push" title="Restore from Trash" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Qre-nm-6rC">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
-                                                        </buttonCell>
-                                                        <connections>
-                                                            <action selector="restoreFromTrashButtonAction:" target="YaQ-0g-PCb" id="RgZ-xJ-Tnm"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="m6t-D6-cP0">
-                                                        <rect key="frame" x="14" y="1" width="195" height="32"/>
-                                                        <buttonCell key="cell" type="push" title="Empty Trash" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2MN-ZG-DWJ">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
-                                                        </buttonCell>
-                                                        <connections>
-                                                            <action selector="emptyTrashButtonAction:" target="YaQ-0g-PCb" id="aTE-Ea-Fn4"/>
-                                                        </connections>
-                                                    </button>
-                                                </subviews>
-                                                <constraints>
-                                                    <constraint firstItem="ld9-i6-RLR" firstAttribute="top" secondItem="aWz-bS-GxA" secondAttribute="bottom" constant="8" id="0fJ-Ds-57K"/>
-                                                    <constraint firstAttribute="trailing" secondItem="aWz-bS-GxA" secondAttribute="trailing" constant="20" id="7Yn-sP-Gf8"/>
-                                                    <constraint firstAttribute="trailing" secondItem="nmG-JO-RQs" secondAttribute="trailing" constant="20" id="Bp2-wW-tfI"/>
-                                                    <constraint firstItem="ld9-i6-RLR" firstAttribute="leading" secondItem="OHK-l5-oba" secondAttribute="leading" constant="20" id="J22-OQ-xsa"/>
-                                                    <constraint firstItem="aWz-bS-GxA" firstAttribute="leading" secondItem="OHK-l5-oba" secondAttribute="leading" constant="20" id="Mch-gP-NXS"/>
-                                                    <constraint firstItem="nmG-JO-RQs" firstAttribute="leading" secondItem="OHK-l5-oba" secondAttribute="leading" constant="20" id="Ojo-Lg-xJA"/>
-                                                    <constraint firstItem="m6t-D6-cP0" firstAttribute="top" secondItem="nmG-JO-RQs" secondAttribute="bottom" constant="8" id="VJX-B3-KIC"/>
-                                                    <constraint firstItem="nmG-JO-RQs" firstAttribute="top" secondItem="ld9-i6-RLR" secondAttribute="bottom" constant="8" id="i83-2m-BnM"/>
-                                                    <constraint firstAttribute="trailing" secondItem="ld9-i6-RLR" secondAttribute="trailing" constant="20" id="inY-el-4sh"/>
-                                                    <constraint firstItem="aWz-bS-GxA" firstAttribute="top" secondItem="OHK-l5-oba" secondAttribute="top" constant="8" id="nI5-1e-TfM"/>
-                                                    <constraint firstAttribute="trailing" secondItem="m6t-D6-cP0" secondAttribute="trailing" constant="20" id="vkg-9J-Y73"/>
-                                                    <constraint firstAttribute="bottom" secondItem="m6t-D6-cP0" secondAttribute="bottom" constant="8" id="yIG-cV-61X"/>
-                                                    <constraint firstItem="m6t-D6-cP0" firstAttribute="leading" secondItem="OHK-l5-oba" secondAttribute="leading" constant="20" id="z2l-1n-10b"/>
-                                                </constraints>
-                                            </customView>
+                                            <containerView ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XUr-go-ovY" userLabel="Cloud">
+                                                <rect key="frame" x="0.0" y="0.0" width="223" height="123"/>
+                                                <connections>
+                                                    <segue destination="M1d-6V-b2Q" kind="embed" id="B7U-nN-bjh"/>
+                                                </connections>
+                                            </containerView>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="bottom" secondItem="OHK-l5-oba" secondAttribute="bottom" id="0fm-Fh-7Wl"/>
-                                            <constraint firstItem="OHK-l5-oba" firstAttribute="top" secondItem="Dnz-Gb-8cH" secondAttribute="bottom" id="Cno-12-b9J"/>
-                                            <constraint firstAttribute="trailing" secondItem="OHK-l5-oba" secondAttribute="trailing" id="IEi-EH-WFx"/>
                                             <constraint firstItem="Dnz-Gb-8cH" firstAttribute="leading" secondItem="q69-Nq-Tsm" secondAttribute="leading" id="UCI-ET-KKd"/>
-                                            <constraint firstItem="OHK-l5-oba" firstAttribute="leading" secondItem="q69-Nq-Tsm" secondAttribute="leading" id="aQ1-It-KBg"/>
+                                            <constraint firstItem="XUr-go-ovY" firstAttribute="top" secondItem="Dnz-Gb-8cH" secondAttribute="bottom" id="b6X-vp-ihT"/>
                                             <constraint firstItem="Dnz-Gb-8cH" firstAttribute="top" secondItem="q69-Nq-Tsm" secondAttribute="top" id="cpb-i7-nNc"/>
+                                            <constraint firstItem="XUr-go-ovY" firstAttribute="leading" secondItem="q69-Nq-Tsm" secondAttribute="leading" id="ehU-3k-boe"/>
                                             <constraint firstAttribute="trailing" secondItem="Dnz-Gb-8cH" secondAttribute="trailing" id="h5E-Mj-iAZ"/>
+                                            <constraint firstAttribute="trailing" secondItem="XUr-go-ovY" secondAttribute="trailing" id="m4T-pT-459"/>
+                                            <constraint firstAttribute="bottom" secondItem="XUr-go-ovY" secondAttribute="bottom" id="rFI-5e-S8W"/>
                                         </constraints>
                                         <connections>
-                                            <outlet property="hideableView" destination="OHK-l5-oba" id="QCZ-1j-bVl"/>
+                                            <outlet property="hideableView" destination="XUr-go-ovY" id="cHW-H0-aCt"/>
                                             <outlet property="titleLabel" destination="UIC-Be-bJk" id="6FS-Ew-sxj"/>
                                             <outlet property="toggleButton" destination="bee-ew-HYp" id="EpT-0c-ZLw"/>
                                         </connections>
@@ -1089,7 +1105,7 @@ other KEYS
                                             <rect key="frame" x="6" y="6" width="199" height="19"/>
                                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="1" maxValue="2.5" doubleValue="1.25" tickMarkPosition="above" sliderType="linear" id="whI-vU-fzO"/>
                                             <connections>
-                                                <action selector="sliderAction:" target="YaQ-0g-PCb" id="dBh-tb-Uyp"/>
+                                                <action selector="sliderAction:" target="Naq-se-Exq" id="2bw-KX-vd8"/>
                                             </connections>
                                         </slider>
                                     </subviews>
@@ -1111,7 +1127,7 @@ other KEYS
                                             <rect key="frame" x="6" y="6" width="199" height="19"/>
                                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="2" maxValue="20" doubleValue="6" tickMarkPosition="above" sliderType="linear" id="qGt-br-s4B"/>
                                             <connections>
-                                                <action selector="sliderAction:" target="YaQ-0g-PCb" id="l0t-Jd-1Mb"/>
+                                                <action selector="sliderAction:" target="Naq-se-Exq" id="NZr-P4-M7Y"/>
                                             </connections>
                                         </slider>
                                     </subviews>
@@ -1133,7 +1149,7 @@ other KEYS
                                             <rect key="frame" x="6" y="6" width="199" height="19"/>
                                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="13" maxValue="40" doubleValue="22" tickMarkPosition="above" sliderType="linear" id="j5S-Yr-54O"/>
                                             <connections>
-                                                <action selector="sliderAction:" target="YaQ-0g-PCb" id="XQs-FQ-zFS"/>
+                                                <action selector="sliderAction:" target="Naq-se-Exq" id="BHm-V9-lFh"/>
                                             </connections>
                                         </slider>
                                     </subviews>
@@ -1276,7 +1292,7 @@ other KEYS
                                     </segments>
                                 </segmentedCell>
                                 <connections>
-                                    <action selector="graphAlteringModeAction:" target="YaQ-0g-PCb" id="hcd-Bz-JKQ"/>
+                                    <action selector="graphAlteringModeAction:" target="Naq-se-Exq" id="8cr-Ru-eOh"/>
                                 </connections>
                             </segmentedControl>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="G3k-dZ-ajm">
@@ -1286,10 +1302,10 @@ other KEYS
                                 </constraints>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="D5g-9u-Kj0">
                                     <font key="font" metaFont="cellTitle"/>
-                                    <string key="title">New and arriving children and sibling zones insert at
+                                    <string key="title">New + arriving children + sibling zones build ...
 
-   top of TASK LISTS
-   bottom of COMPOSITIONS</string>
+   • upward for TASK LISTS
+   • downward for COMPOSITIONS</string>
                                     <color key="textColor" name="selectedMenuItemColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>

@@ -84,48 +84,6 @@ class ZSettingsController: ZGenericController, ZTableViewDelegate, ZTableViewDat
     }
 
 
-    // MARK:- cloud tool actions
-    // MARK:-
-    
-
-    @IBAction func emptyTrashButtonAction(_ button: ZButton) {
-
-        // needs elaborate gui, like search results, but with checkboxes and [de]select all checkbox
-
-        //gOperationsManager.emptyTrash {
-        //    self.toConsole("eliminated")
-        //}
-    }
-
-
-    @IBAction func restoreFromTrashButtonAction(_ button: ZButton) {
-        gOperationsManager.undelete {
-            self.signalFor(nil, regarding: .redraw)
-        }
-        
-    }
-
-
-    @IBAction func restoreZoneButtonAction(_ button: ZButton) {
-        // similar to gEditingManager.moveInto
-        let       zone = gSelectionManager.firstGrabbedZone
-        gHere          = gRoot
-        zone.isDeleted = false
-
-
-        gRoot.maybeNeedChildren()
-        gOperationsManager.children(recursiveGoal: 1) {
-            gRoot.addAndReorderChild(zone, at: 0)
-            gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
-        }
-    }
-
-
-    @IBAction func pushToCloudButtonAction(_ button: ZButton) {
-        gCloudManager.royalFlush {}
-    }
-
-
     // MARK:- favorites table
     // MARK:-
 
