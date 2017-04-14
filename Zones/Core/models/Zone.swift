@@ -118,7 +118,7 @@ class Zone : ZRecord {
     var order: Double {
         get {
             if zoneOrder == nil {
-                updateZoneProperties()
+                updateClassProperties()
 
                 if zoneOrder == nil {
                     zoneOrder = NSNumber(value: 0.0)
@@ -131,8 +131,6 @@ class Zone : ZRecord {
         set {
             if newValue != order {
                 zoneOrder = NSNumber(value: newValue)
-
-                self.needUpdateSave()
             }
         }
     }
@@ -141,7 +139,7 @@ class Zone : ZRecord {
     var level: Int {
         get {
             if zoneLevel == nil {
-                updateZoneProperties()
+                updateClassProperties()
 
                 if zoneLevel == nil {
                     zoneLevel = NSNumber(value: gUnlevel)
@@ -155,7 +153,7 @@ class Zone : ZRecord {
             if newValue != level {
                 zoneLevel = NSNumber(value: newValue)
 
-                self.needJustSave()
+                updateClassProperties()
             }
         }
     }
@@ -164,7 +162,7 @@ class Zone : ZRecord {
     var progenyCount: Int {
         get {
             if zoneProgeny == nil {
-                updateZoneProperties()
+                updateClassProperties()
 
                 if zoneProgeny == nil {
                     zoneProgeny = NSNumber(value: currentProgenyCount)
@@ -178,7 +176,7 @@ class Zone : ZRecord {
             if newValue != progenyCount {
                 zoneProgeny = NSNumber(value: newValue)
 
-                self.needJustSave()
+                updateClassProperties()
             }
         }
     }
@@ -198,7 +196,7 @@ class Zone : ZRecord {
     var state: ZoneState {
         get {
             if zoneState == nil {
-                updateZoneProperties()
+                updateClassProperties()
 
                 if zoneState == nil {
                     zoneState = NSNumber(value: 1)
@@ -212,8 +210,7 @@ class Zone : ZRecord {
             if newValue != state {
                 zoneState = NSNumber(integerLiteral: newValue.rawValue)
 
-                debug(" state")
-                needJustSave()
+                updateClassProperties()
             }
         }
     }
@@ -255,10 +252,8 @@ class Zone : ZRecord {
     
     var parentZone: Zone? {
         get {
-            if parent == nil && _parentZone?.record != nil {
-                needUpdateSave()
-
-                parent      = CKReference(record: (_parentZone?.record)!, action: .none)
+            if  parent == nil && _parentZone?.record != nil {
+                parent  = CKReference(record: (_parentZone?.record)!, action: .none)
             }
 
             if parent != nil && _parentZone == nil {
@@ -361,8 +356,6 @@ class Zone : ZRecord {
         parentZone?.removeChild(self)
 
         parentZone = nil
-
-        needUpdateSave()
     }
 
 
@@ -372,16 +365,14 @@ class Zone : ZRecord {
         if  progenyCount != currentCount {
             progenyCount  = currentCount
 
-            needUpdateSave()
-
             if !isRoot {
                 if parentZone != nil {
                     parentZone?.updateProgenyCounts()
                 } else {
-                    markForStates([.needsParent])
+                    needParent()
 
                     gOperationsManager.parent {
-                        self.updateZoneProperties()
+                        self.updateClassProperties()
                         self.parentZone?.updateProgenyCounts()
                     }
                 }
@@ -423,6 +414,10 @@ class Zone : ZRecord {
     }
 
 
+    func displayChildren() { showChildren = true  }
+    func    hideChildren() { showChildren = false }
+
+
     @discardableResult func addChild(_ child: Zone?) -> Int? {
         return addChild(child, at: 0)
     }
@@ -459,7 +454,6 @@ class Zone : ZRecord {
                 children.append(child!)
             }
 
-            child?.needUpdateSave()
             child?.updateLevel()
             updateProgenyCounts()
 
@@ -564,7 +558,7 @@ class Zone : ZRecord {
 
         if status == .eDescend {
             for child in children {
-                if self.isDescendantOf(child) != .none {
+                if isDescendantOf(child) != .none {
                     status = .eStop
 
                     break

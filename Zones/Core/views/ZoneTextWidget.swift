@@ -144,7 +144,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     if  toZone != nil,     self.text != nil {
                         toZone!.zoneName = self.text!
 
-                        toZone!.needUpdateSave()
                         toZone!.unmarkForStates([.needsMerge])
                     }
                 }

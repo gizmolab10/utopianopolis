@@ -44,8 +44,7 @@ class ZTravelManager: NSObject {
         var found = manifestByStorageMode[mode]
 
         if  found == nil {
-            found                       = ZManifest(record: nil, storageMode: .mine)
-            found?         .storageMode = mode
+            found                       = ZManifest(record: nil, storageMode: .mine) // N.B. do not alter storageMode ... MUST be .mine
             manifestByStorageMode[mode] = found
         }
 
@@ -162,7 +161,6 @@ class ZTravelManager: NSObject {
                             gHere = gCloudManager.zoneForRecord(iRecord!)
 
                             gHere.grab()
-                            self.manifest.needUpdateSave()
                             self.travel {
                                 atArrival(gHere, .redraw)
                             }
@@ -193,7 +191,6 @@ class ZTravelManager: NSObject {
                 let grabHere = {
                     gHere.grab()
                     gHere.maybeNeedChildren()
-                    gManifest.needUpdateSave()
                     atArrival(gHere, .redraw)
                 }
 

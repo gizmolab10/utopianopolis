@@ -30,7 +30,7 @@ class ZRecord: NSObject {
                 _record = newValue
 
                 register()
-                updateZoneProperties()
+                updateClassProperties()
             }
         }
     }
@@ -90,7 +90,7 @@ class ZRecord: NSObject {
     // MARK:-
 
 
-    func updateZoneProperties() {
+    func updateClassProperties() {
         if record != nil {
             for keyPath in cloudProperties() {
                 if let cloudValue = record[keyPath] as! NSObject? {
@@ -128,7 +128,7 @@ class ZRecord: NSObject {
             copy.record[keyPath] = record[keyPath]
         }
 
-        copy.updateZoneProperties()
+        copy.updateClassProperties()
 
         return copy
     }
@@ -213,8 +213,8 @@ class ZRecord: NSObject {
 
 
     func needChildren() {
-        if !isMarkedForStates([.needsChildren, .fetchedChildren]) {
-            markForStates    ([.needsChildren, .fetchedChildren])
+        if !isMarkedForStates([.needsChildren, .hasChildren]) {
+            markForStates    ([.needsChildren, .hasChildren])
 
             if let zone = self as? Zone {
                 toConsole("need children for \(zone.zoneName ?? "NO NAME")")

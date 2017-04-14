@@ -20,7 +20,7 @@ class ZFavoritesController: ZGenericController, ZTableViewDelegate, ZTableViewDa
 
     
     @IBOutlet var favoritesTableHeight: NSLayoutConstraint?
-    @IBOutlet var   favoritesTableView: NSTableView?
+    @IBOutlet var   favoritesTableView: ZTableView?
 
 
     override func identifier() -> ZControllerID { return .favorites }

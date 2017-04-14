@@ -107,6 +107,21 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
+    func stringFor(_ records: [CKRecord]?) -> String {
+        var string = ""
+
+        if records != nil {
+            for record in records! {
+                let value = record[zoneNameKey] as? String ?? record.recordID.recordName
+
+                string.append("\n          \(value)")
+            }
+        }
+
+        return string
+    }
+
+
     func flush(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         if  let           operation = configure(CKModifyRecordsOperation(), using: storageMode) as? CKModifyRecordsOperation {
             operation.recordsToSave = recordsWithMatchingStates([.needsSave])
@@ -115,7 +130,7 @@ class ZCloudManager: ZRecordsManager {
 
             if operation.recordsToSave!.count > 0 {
 
-                toConsole("saving \((operation.recordsToSave?.count)!)")
+                report("saving \((operation.recordsToSave?.count)!) into \(storageMode)\(stringFor(operation.recordsToSave))")
 
                 operation.completionBlock          = {
                     self.invokeWithMode(storageMode) {
@@ -136,7 +151,7 @@ class ZCloudManager: ZRecordsManager {
                     // mark failed records as needing fetch
                     if  let error:      CKError = iError as? CKError {
                         let info                = error.errorUserInfo
-                        var description: String = info["ServerErrorDescription"] as! String
+                        var description: String = info["CKErrorDescription"] as! String
 
                         if  description        != "record to insert already exists" {
                             self.invokeWithMode(storageMode) {
@@ -220,8 +235,6 @@ class ZCloudManager: ZRecordsManager {
                 } else {
                     gHere = self.zoneForRecord(iHereRecord!)
 
-                    gManifest.needUpdateSave()
-
                     onCompletion?(0)
                 }
             }
@@ -238,7 +251,6 @@ class ZCloudManager: ZRecordsManager {
                 gRoot.level = 0
 
                 gRoot.needChildren()
-                gManifest.needUpdateSave()
             }
 
             onCompletion?(0)
@@ -496,8 +508,6 @@ class ZCloudManager: ZRecordsManager {
                 } else {
                     deleted.needParent()
                 }
-
-                deleted.needUpdateSave()
             }
         }
     }

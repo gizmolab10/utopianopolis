@@ -105,8 +105,10 @@ class ZOperationsManager: NSObject {
 
         if let prior = onReady {
             onReady = {
-                prior()
-                self.setupAndRun(operationIDs) { onCompletion() }
+                self.dispatchAsyncInForeground { // prevent recursion pile-up on stack
+                    prior()
+                    self.setupAndRun(operationIDs) { onCompletion() }
+                }
             }
         } else {
             onReady    = onCompletion
@@ -115,17 +117,17 @@ class ZOperationsManager: NSObject {
 
             for identifier in identifiers {
                 let  operation = BlockOperation {
-                    var  closure: IntegerClosure? = nil // allow this closure to call itself
+                    var  closure: IntegerClosure? = nil     // allow this closure to recurse
                     let                      full = [.root, .favorites].contains(identifier)
                     let forCurrentStorageModeOnly = [.file, .ready, .cloud, .parent, .children, .subscribe, .unsubscribe].contains(identifier)
                     let     modes: [ZStorageMode] = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : [.mine, .everyone, .favorites]
 
                     closure = { (index: Int) in
                         if index >= modes.count {
-                            self.finish(identifier, mode: saved)
+                            self.finishOperation(for: identifier, mode: saved)
                         } else {
                             self.invoke(identifier, mode: modes[index], optional) {
-                                closure?(index + 1)
+                                closure?(index + 1)         // recurse
                             }
                         }
                     }
@@ -147,7 +149,7 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func finish(_ identifier: ZOperationID, mode: ZStorageMode) {
+    func finishOperation(for identifier: ZOperationID, mode: ZStorageMode) {
         gStorageMode = mode
 
         if let operation = waitingOps[identifier] {
@@ -207,7 +209,7 @@ class ZOperationsManager: NSObject {
                 gEditingManager.handleStalledEvents()
             }
         }
-
+        
         onCompletion?(0)
     }
 }

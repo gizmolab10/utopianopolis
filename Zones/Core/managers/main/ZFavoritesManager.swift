@@ -25,12 +25,12 @@ class ZFavoritesManager: NSObject {
 
 
     func setup() {
-        favoritesRootZone.level        = 0
-        favoritesRootZone.showChildren = true
-        favoritesRootZone.zoneName     = "favorites"
+        favoritesRootZone.level      = 0
+        favoritesRootZone.zoneName   = "favorites"
 
+        favoritesRootZone.displayChildren()
         invokeWithMode(.favorites) {
-            favoritesRootZone.record   = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
+            favoritesRootZone.record = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
 
             setupDefaultFavorites()
             update()

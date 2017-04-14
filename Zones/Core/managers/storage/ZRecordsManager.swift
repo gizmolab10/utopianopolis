@@ -17,22 +17,22 @@ enum ZRecordState: Int {
     case needsFetch
     case needsCreate
     case needsParent
+    case hasChildren
     case needsChildren
-    case fetchedChildren
 }
 
 
 class ZRecordsManager: NSObject {
 
 
-    var statesByMode = [ZStorageMode : [ZRecordState : [ZRecord]]] ()
-    var zoneRegistry = [ZStorageMode : [String       :      Zone]] ()
+    var statesByMode = [ZStorageMode : [ZRecordState : [ZRecord]]] ()    // dictionary of dictionaries
+    var zoneRegistry = [ZStorageMode : [String       :      Zone]] ()    // dictionary of dictionaries
 
 
     var recordsByState: [ZRecordState : [ZRecord]] {
         get {
-            if statesByMode[gStorageMode] == nil {
-                self.recordsByState = [:]
+            if  statesByMode[gStorageMode] == nil {
+                statesByMode[gStorageMode]  = [:]
             }
 
             return statesByMode[gStorageMode]!
@@ -48,9 +48,9 @@ class ZRecordsManager: NSObject {
         get {
             var registry: [String : Zone]? = zoneRegistry[gStorageMode]
 
-            if registry == nil {
-                registry   = [:]
-                self.zones = registry!
+            if  registry                  == nil {
+                registry                   = [:]
+                zoneRegistry[gStorageMode] = registry!
             }
 
             return registry!
@@ -119,7 +119,7 @@ class ZRecordsManager: NSObject {
 
 
     func recordsForState(_ state: ZRecordState) -> [ZRecord] {
-        let    dict = recordsByState    // note: statesByMode is a dictionary of dictionaries
+        let    dict = recordsByState
         var records = dict[state]       // swift's terse nature has confused me, here
 
         if records == nil {
