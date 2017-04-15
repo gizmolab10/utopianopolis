@@ -44,11 +44,7 @@ class ZMainController: ZGenericController {
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         switch kind {
         case .found:
-            let isSearching = gWorkMode == .searchMode
-
-            // show(false, view: <#T##ZView#>)
-            show( isSearching, view: searchResultsView!)
-            show(!isSearching, view: editorView!)
+            showAsSearching(gWorkMode == .searchMode)
 
             break
         case .search:
@@ -59,6 +55,7 @@ class ZMainController: ZGenericController {
 
             if !gShowsSearching {
                 assignAsFirstResponder(nil)
+                showAsSearching(false)
             }
 
             break
@@ -66,6 +63,14 @@ class ZMainController: ZGenericController {
 
             break
         }
+    }
+
+
+    func showAsSearching(_ iSearching: Bool) {
+        gWorkMode = iSearching ? .searchMode : .editMode
+
+        show( iSearching, view: searchResultsView!)
+        show(!iSearching, view: editorView!)
     }
 
 

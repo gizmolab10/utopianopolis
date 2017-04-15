@@ -114,7 +114,7 @@ class ZCloudManager: ZRecordsManager {
             for record in records! {
                 let value = record[zoneNameKey] as? String ?? record.recordID.recordName
 
-                string.append("\n          \(value)")
+                string.append("\n         \(value)")
             }
         }
 
@@ -130,7 +130,7 @@ class ZCloudManager: ZRecordsManager {
 
             if operation.recordsToSave!.count > 0 {
 
-                report("saving \((operation.recordsToSave?.count)!) into \(storageMode)\(stringFor(operation.recordsToSave))")
+                report("saving \((operation.recordsToSave?.count)!) ==> \(storageMode)\(stringFor(operation.recordsToSave))")
 
                 operation.completionBlock          = {
                     self.invokeWithMode(storageMode) {

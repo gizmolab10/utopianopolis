@@ -102,7 +102,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     @discardableResult override func resignFirstResponder() -> Bool {
         var result = false
 
-        if !gSelectionManager.inResponderTransition {
+        if !gSelectionManager.isEditingStateChanging {
             captureText()
 
             result = super.resignFirstResponder()
@@ -123,7 +123,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     @discardableResult override func becomeFirstResponder() -> Bool {
         let result = super.becomeFirstResponder()
 
-        gSelectionManager.deferResponderChanges()
+        gSelectionManager.deferEditingStateChange()
 
         if result {
             isTextEditing = true

@@ -26,16 +26,16 @@ enum ZRelation: Int {
 class ZSelectionManager: NSObject {
 
 
-    var               hasGrab:  Bool { return currentlyGrabbedZones.count > 0 }
-    var            isDragging:  Bool { return draggedZone != nil }
-    var inResponderTransition:  Bool               = false
-    var       dragDropIndices:  NSMutableIndexSet? = nil
-    var          dragRelation:  ZRelation?         = nil
-    var             dragPoint:  CGPoint?           = nil
-    var  currentlyEditingZone:  Zone?              = nil
-    var          dragDropZone:  Zone?              = nil
-    var           draggedZone:  Zone?              = nil
-    var       pasteableZones = [Zone] ()
+    var                hasGrab:   Bool { return currentlyGrabbedZones.count > 0 }
+    var             isDragging:   Bool { return draggedZone != nil }
+    var isEditingStateChanging:   Bool               = false
+    var        dragDropIndices:   NSMutableIndexSet? = nil
+    var           dragRelation:   ZRelation?         = nil
+    var              dragPoint:   CGPoint?           = nil
+    var   currentlyEditingZone:   Zone?              = nil
+    var           dragDropZone:   Zone?              = nil
+    var            draggedZone:   Zone?              = nil
+    var         pasteableZones = [Zone] ()
 
 
     var currentlyGrabbedZones: [Zone] {
@@ -86,31 +86,28 @@ class ZSelectionManager: NSObject {
     func isGrabbed (_ zone: Zone) -> Bool { return currentlyGrabbedZones.contains(zone) }
 
 
-    func deferResponderChanges() {
-        inResponderTransition          = true
+    func deferEditingStateChange() {
+        isEditingStateChanging          = true
 
         dispatchAsyncInForegroundAfter(0.2) {
-            self.inResponderTransition = false
+            self.isEditingStateChanging = false
         }
     }
 
 
     func edit(_ iZone: Zone) {
-        if !inResponderTransition {
-            currentlyEditingZone = iZone
+        currentlyEditingZone = iZone
 
-            assignAsFirstResponder(iZone.widget?.textWidget)
-            deferResponderChanges()
-        }
+        assignAsFirstResponder(iZone.widget?.textWidget)
+        deferEditingStateChange()
     }
-    
+
 
     func stopEdit(for iZone: Zone) {
-        if !inResponderTransition {
+        if !isEditingStateChanging {
             currentlyEditingZone = nil
 
             fullResign()
-            deferResponderChanges()
         }
     }
     

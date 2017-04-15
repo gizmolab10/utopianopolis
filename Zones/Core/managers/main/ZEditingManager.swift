@@ -517,7 +517,7 @@ class ZEditingManager: NSObject {
 
     func addNewChildTo(_ parentZone: Zone?) {
         addNewChildTo(parentZone) { iChild in
-            gControllersManager.syncToCloudAndSignalFor(parentZone, regarding: .redraw) {
+            gControllersManager.signalFor(nil, regarding: .redraw) {
                 gSelectionManager.edit(iChild)
             }
         }
@@ -530,6 +530,7 @@ class ZEditingManager: NSObject {
                 let   record = CKRecord(recordType: zoneTypeKey)
                 let    child = Zone(record: record, storageMode: gStorageMode)
 
+                child .grab()
                 zone.ungrab()
                 child.needCreate()
                 gSelectionManager.stopEdit(for: zone)

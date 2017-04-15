@@ -35,7 +35,19 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     }
 
 
+    func endSearching() {
+        gShowsSearching = false
+
+        signalFor(nil, regarding: .search)
+    }
+
+
     #if os(OSX)
+    func searchFieldDidEndSearching(_ sender: NSSearchField) {
+        endSearching()
+    }
+
+
     func control(_ control: ZControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
         report(searchBox?.text)
         searchBox?.resignFirstResponder()
@@ -43,9 +55,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         let find = (searchBox?.text)!
 
         if find == "" {
-            gShowsSearching = false
-
-            signalFor(nil, regarding: .search)
+            endSearching()
         } else {
             gCloudManager.searchFor(find) { iObject in
                 let hasResults = ((iObject as? [Any])?.count)! != 0

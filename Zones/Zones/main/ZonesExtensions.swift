@@ -278,6 +278,7 @@ extension ZoneTextWidget {
 
     func selectAllText() {
         if text != nil, let editor = currentEditor() {
+            gSelectionManager.deferEditingStateChange()
             select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: text!.characters.count)
         }
     }
