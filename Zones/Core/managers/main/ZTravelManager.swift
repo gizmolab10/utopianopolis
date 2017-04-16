@@ -24,7 +24,7 @@ class ZTravelManager: NSObject {
             case .favorites: return gFavoritesManager.favoritesRootZone
             default:
                 if rootByStorageMode[gStorageMode] == nil {
-                    establishRoot()
+                    establishModeSpecificRoot()
                 }
 
                 return rootByStorageMode[gStorageMode]!
@@ -52,7 +52,7 @@ class ZTravelManager: NSObject {
     }
 
 
-    func establishRoot() {
+    func establishModeSpecificRoot() {
         switch gStorageMode {
         case .favorites: rootZone = gFavoritesManager.favoritesRootZone
         default:         rootZone = Zone(record: nil, storageMode: gStorageMode)
@@ -103,7 +103,7 @@ class ZTravelManager: NSObject {
                 return true
             }
 
-            let    zone = gCloudManager.zoneForRecordID(targetID)
+            let    zone = gCloudManager.modeSpecificZoneForRecordID(targetID)
             targetID    = zone?.parent?.recordID
         }
 
@@ -158,7 +158,7 @@ class ZTravelManager: NSObject {
                 } else {
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: mode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
                         if iRecord != nil {
-                            gHere = gCloudManager.zoneForRecord(iRecord!)
+                            gHere = gCloudManager.modeSpecificZoneForRecord(iRecord!)
 
                             gHere.grab()
                             self.travel {
@@ -173,7 +173,7 @@ class ZTravelManager: NSObject {
                 // STAY WITHIN GRAPH //
                 ///////////////////////
 
-                there = gCloudManager.zoneForRecordID(recordIDOfLink)
+                there = gCloudManager.modeSpecificZoneForRecordID(recordIDOfLink)
                 let grabbed = gSelectionManager.firstGrabbedZone
                 let    here = gHere
 
@@ -200,7 +200,7 @@ class ZTravelManager: NSObject {
                     grabHere()
                 } else {
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: gStorageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
-                        gHere = gCloudManager.zoneForRecord(iRecord!)
+                        gHere = gCloudManager.modeSpecificZoneForRecord(iRecord!)
 
                         grabHere()
                     }

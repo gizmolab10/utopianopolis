@@ -132,7 +132,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
 
     func resolveRecord(_ record: CKRecord) {
-        var zone = gCloudManager.zoneForRecordID(record.recordID)
+        var zone = gCloudManager.modeSpecificZoneForRecordID(record.recordID)
 
         if zone == nil {
             zone = Zone(record: record, storageMode: gStorageMode)

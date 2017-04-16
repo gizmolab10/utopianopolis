@@ -52,8 +52,9 @@ class ZCloudManager: ZRecordsManager {
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
         assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey) { iRecord in
-            if iRecord != nil {
-                let   zone = self.zoneForRecord(iRecord!)
+            if iRecord != nil { // NEED TODO storage mode, i.e., the database
+                // get from the record id's cloud zone
+                let   zone = self.modeSpecificZoneForRecord(iRecord!)
                 let parent = zone.parentZone
 
                 if  zone.showChildren {
@@ -137,7 +138,7 @@ class ZCloudManager: ZRecordsManager {
 
                         // deal with saved records marked as deleted
                         for record: CKRecord in operation.recordsToSave! {
-                            if let zone = self.zoneForRecordID(record.recordID), zone.isDeleted {
+                            if let zone = self.modeSpecificZoneForRecordID(record.recordID), zone.isDeleted {
                                 self.unregisterZone(zone)
                             }
                         }
@@ -155,7 +156,7 @@ class ZCloudManager: ZRecordsManager {
 
                         if  description        != "record to insert already exists" {
                             self.invokeWithMode(storageMode) {
-                                if let record   = self.recordForRecordID((iRecord?.recordID)!) {
+                                if let record   = self.modeSpecificRecordForRecordID(iRecord?.recordID) {
                                     record.needFetch() // perhaps delete?
                                 }
 
@@ -215,7 +216,9 @@ class ZCloudManager: ZRecordsManager {
 
         assureRecordExists(withRecordID: recordID, storageMode: .mine, recordType: manifestTypeKey) { (iManifestRecord: CKRecord?) in
             if iManifestRecord != nil {
-                gManifest.record = iManifestRecord
+                self.invokeWithMode(storageMode) {
+                    gManifest.record = iManifestRecord
+                }
             }
 
             onCompletion?(0)
@@ -223,17 +226,46 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
+    func fetchScaffold(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
+        // fetch all zones between here and root
+        var    zone:    Zone? = gHere
+        var closure: Closure? = nil
+
+        zone?.needParent()
+
+        closure = {
+            self.fetchParents(storageMode) { (iResult: Int) in
+                let parent = zone?.parentZone
+
+                if  parent == nil {
+                    gRoot = zone!
+
+                    gHere.updateProgenyCounts()
+                    onCompletion?(0)
+                } else {
+                    zone = parent
+
+                    zone?.needParent()
+                    closure?()
+                }
+            }
+        }
+
+        closure?()
+    }
+
+
     func establishHere(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         if gManifest.here == nil {
-            self.establishRootAsHere(storageMode, onCompletion)
+            self.establishRoot(storageMode, onCompletion)
         } else {
             let recordID = gManifest.here!.recordID
 
             self.assureRecordExists(withRecordID: recordID, storageMode: storageMode, recordType: zoneTypeKey) { (iHereRecord: CKRecord?) in
                 if iHereRecord == nil || iHereRecord?[zoneNameKey] == nil {
-                    self.establishRootAsHere(storageMode, onCompletion)
+                    self.establishRoot(storageMode, onCompletion)
                 } else {
-                    gHere = self.zoneForRecord(iHereRecord!)
+                    gHere = self.modeSpecificZoneForRecord(iHereRecord!)
 
                     onCompletion?(0)
                 }
@@ -242,12 +274,13 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func establishRootAsHere(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
+    func establishRoot(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         let recordID = CKRecordID(recordName: rootNameKey)
 
         self.assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
-            if iRecord != nil {
-                gRoot       = self.zoneForRecord(iRecord!)
+            if iRecord != nil { // NEED TODO storage mode, i.e., the database
+                // get from the record id's cloud zone
+                gRoot       = self.modeSpecificZoneForRecord(iRecord!)
                 gRoot.level = 0
 
                 gRoot.needChildren()
@@ -266,22 +299,26 @@ class ZCloudManager: ZRecordsManager {
         } else {
             database?.fetch(withRecordID: recordID) { (fetched: CKRecord?, fetchError: Error?) in
                 if (fetchError == nil) {
-                    if let zone = self.zoneForRecordID(fetched?.recordID), zone.zoneName == nil {
-                        zone.record = fetched
-                    }
+                    self.invokeWithMode(storageMode) {
+                        if let zone = self.modeSpecificZoneForRecordID(fetched?.recordID), zone.zoneName == nil {
+                            zone.record = fetched
+                        }
 
-                    onCompletion(fetched!)
+                        onCompletion(fetched!)
+                    }
                 } else {
                     let created: CKRecord = CKRecord(recordType: recordType, recordID: recordID)
 
-                    database?.save(created, completionHandler: { (saved: CKRecord?, saveError: Error?) in
-                        if (saveError != nil) {
-                            onCompletion(nil)
-                        } else {
-                            onCompletion(saved!)
-                            gfileManager.save()
+                    database?.save(created) { (saved: CKRecord?, saveError: Error?) in
+                        self.invokeWithMode(storageMode) {
+                            if (saveError != nil) {
+                                onCompletion(nil)
+                            } else {
+                                onCompletion(saved!)
+                                gfileManager.save()
+                            }
                         }
-                    })
+                    }
                 }
             }
         }
@@ -365,7 +402,7 @@ class ZCloudManager: ZRecordsManager {
                     self.fetchChildren(storageMode, recursiveGoal, onCompletion) // recurse to grab children of received children
                 } else {
                     self.invokeWithMode(storageMode) {
-                        let child = self.zoneForRecord(iRecord!)
+                        let child = self.modeSpecificZoneForRecord(iRecord!)
 
                         if !child.isDeleted {
                             if recursiveGoal != nil && recursiveGoal! > child.level {
@@ -430,7 +467,7 @@ class ZCloudManager: ZRecordsManager {
                 self.invokeWithMode(storageMode) {
                     if let error: CKError = iError as? CKError {
                         self.reportError(error)
-                    } else if let record = self.recordForRecordID(iID) {
+                    } else if let record = self.modeSpecificRecordForRecordID(iID) {
                         record.mergeIntoAndTake(iRecord!)
                     }
                 }
@@ -454,17 +491,17 @@ class ZCloudManager: ZRecordsManager {
                 operation.completionBlock = { onCompletion?(0) }
                 operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
                     self.invokeWithMode(storageMode) {
-                        var parent = self.zoneForRecordID(iID)
+                        var parent = self.modeSpecificZoneForRecordID(iID)
 
                         if parent != nil && iRecord != nil {
                             parent?.mergeIntoAndTake(iRecord!) // BROKEN: likely this does not do what's needed here
                         } else if let error: CKError = iError as? CKError {
                             self.reportError(error)
                         } else {
-                            parent = self.zoneForRecord(iRecord!)
+                            parent = self.modeSpecificZoneForRecord(iRecord!)
 
                             for orphan in orphans {
-                                if let child = self.zoneForRecordID(orphan), let parentID = child.parentZone?.record.recordID, parentID == parent?.record.recordID {
+                                if let child = self.modeSpecificZoneForRecordID(orphan), let parentID = child.parentZone?.record.recordID, parentID == parent?.record.recordID {
                                     parent?.children.append(child)
                                 }
                             }
@@ -497,16 +534,20 @@ class ZCloudManager: ZRecordsManager {
             if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                 onCompletion?(0)
             } else {
-                let           root = gRoot
-                let        deleted = self.recordForRecordID(iRecord?.recordID) as? Zone ?? Zone(record: iRecord, storageMode: storageMode)
-                deleted .isDeleted = false
+                self.invokeWithMode(storageMode) {
+                    let            root = gRoot
+                    let         deleted = self.modeSpecificRecordForRecordID(iRecord?.recordID) as? Zone ?? Zone(record: iRecord, storageMode: storageMode)
+                    deleted  .isDeleted = false
 
-                if deleted.parent == nil {
-                    deleted.parentZone = root
+                    if  deleted.parent == nil {
+                        deleted.parentZone = root
 
-                    root.needFetch()
-                } else {
-                    deleted.needParent()
+                        root.needFetch()
+                    } else {
+                        deleted.needParent()
+                    }
+
+                    deleted.needUpdateSave()
                 }
             }
         }
@@ -547,7 +588,7 @@ class ZCloudManager: ZRecordsManager {
                     onCompletion?(0)
                 } else {
                     self.invokeWithMode(storageMode) {
-                        if let record = self.recordForRecordID(iRecord?.recordID) {
+                        if let record = self.modeSpecificRecordForRecordID(iRecord?.recordID) {
                             record.unmarkForStates([.needsFetch])    // deferred to make sure fetch worked before clearing fetch flag
 
                             record.record = iRecord

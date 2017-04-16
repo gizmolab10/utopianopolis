@@ -29,6 +29,11 @@ class ZInformationController: ZGenericController {
     override func identifier() -> ZControllerID { return .information }
 
 
+    override func awakeFromNib() {
+        fractionInMemory?.minValue = 0
+    }
+
+
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         let                     count = gCloudManager.undeletedCount
         let                     total = gRoot.progenyCount + 1
@@ -36,17 +41,11 @@ class ZInformationController: ZGenericController {
         graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
         levelLabel?             .text = "level: \(gHere.level)"
         view  .zlayer.backgroundColor = gBackgroundColor.cgColor
-        fractionInMemory?   .maxValue = Double(total)
         fractionInMemory?.doubleValue = Double(count)
+        fractionInMemory?   .maxValue = Double(total)
 
         if let                version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
             versionLabel?       .text = "Focus version \(version)"
         }
     }
-
-
-    override func awakeFromNib() {
-        fractionInMemory?.minValue = 0
-    }
-
 }

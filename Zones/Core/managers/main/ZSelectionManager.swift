@@ -113,11 +113,11 @@ class ZSelectionManager: NSObject {
     
 
     func deselectGrabs() {
-        let zones = currentlyGrabbedZones
+        let grabbed = currentlyGrabbedZones
 
         clearGrab()
 
-        for zone in zones {
+        for zone in grabbed {
             if  zone != currentlyEditingZone, let widget = zone.widget {
                 widget.dragDot.innerDot?.setNeedsDisplay()
                 widget                  .setNeedsDisplay()

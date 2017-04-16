@@ -218,7 +218,7 @@ class ZFavoritesManager: NSObject {
     func nextFavorite(forward: Bool) -> Zone? {
         let index = nextFavoritesIndex(forward: forward)
 
-        return favoritesRootZone.count <= index ? nil :favoritesRootZone[index]
+        return favoritesRootZone.count <= index ? nil : favoritesRootZone[index]
     }
 
 

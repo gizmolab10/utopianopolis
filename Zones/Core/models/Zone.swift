@@ -69,7 +69,7 @@ class Zone : ZRecord {
             var target: Zone? = nil
 
             invokeWithMode(link.storageMode) {
-                target = gCloudManager.zoneForRecordID(link.record.recordID)
+                target = gCloudManager.modeSpecificZoneForRecordID(link.record.recordID)
             }
 
             return target
@@ -131,6 +131,8 @@ class Zone : ZRecord {
         set {
             if newValue != order {
                 zoneOrder = NSNumber(value: newValue)
+
+                needUpdateSave()
             }
         }
     }
@@ -153,7 +155,7 @@ class Zone : ZRecord {
             if newValue != level {
                 zoneLevel = NSNumber(value: newValue)
 
-                updateClassProperties()
+                needUpdateSave()
             }
         }
     }
@@ -176,7 +178,7 @@ class Zone : ZRecord {
             if newValue != progenyCount {
                 zoneProgeny = NSNumber(value: newValue)
 
-                updateClassProperties()
+                needUpdateSave()
             }
         }
     }
@@ -210,7 +212,7 @@ class Zone : ZRecord {
             if newValue != state {
                 zoneState = NSNumber(integerLiteral: newValue.rawValue)
 
-                updateClassProperties()
+                needUpdateSave()
             }
         }
     }
@@ -257,7 +259,9 @@ class Zone : ZRecord {
             }
 
             if parent != nil && _parentZone == nil {
-                _parentZone = gCloudManager.zoneForReference(parent!)
+                invokeWithMode(storageMode) {
+                    _parentZone = gCloudManager.modeSpecificZoneForReference(parent!)
+                }
 
                 if  _parentZone?.showChildren ?? false {
                     _parentZone?.maybeNeedChildren()
@@ -356,6 +360,8 @@ class Zone : ZRecord {
         parentZone?.removeChild(self)
 
         parentZone = nil
+
+        needUpdateSave()
     }
 
 
@@ -365,6 +371,8 @@ class Zone : ZRecord {
         if  progenyCount != currentCount {
             progenyCount  = currentCount
 
+            self.updateClassProperties()
+
             if !isRoot {
                 if parentZone != nil {
                     parentZone?.updateProgenyCounts()
@@ -372,7 +380,6 @@ class Zone : ZRecord {
                     needParent()
 
                     gOperationsManager.parent {
-                        self.updateClassProperties()
                         self.parentZone?.updateProgenyCounts()
                     }
                 }

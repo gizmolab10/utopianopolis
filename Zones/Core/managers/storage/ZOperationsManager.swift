@@ -12,12 +12,13 @@ import Foundation
 
 enum ZOperationID: Int {
     case ready
+    case root
     case cloud
     case manifest
-    case root
     case favorites
     case file
     case here
+    case scaffold
     case fetch
     case flush // zones, manifests, favorites
     case children
@@ -175,10 +176,11 @@ class ZOperationsManager: NSObject {
 
         switch identifier {
         case .file:         gfileManager.restore();                          report(0); break
-        case .root:        gCloudManager.establishRootAsHere(mode,           report);   break
+        case .root:        gCloudManager.establishRoot(mode,           report);   break
         case .manifest:    gCloudManager.fetchManifest      (mode,           report);   break
         case .favorites:   gCloudManager.fetchFavorites     (mode,           report);   break
         case .here:       gTravelManager.establishHere      (mode,           report);   break // TODO: BROKEN
+        case .scaffold:    gCloudManager.fetchScaffold      (mode,           report);   break
         case .children:    gCloudManager.fetchChildren      (mode, optional, report);   break
         case .parent:      gCloudManager.fetchParents       (mode,           report);   break
         case .unsubscribe: gCloudManager.unsubscribe        (mode,           report);   break

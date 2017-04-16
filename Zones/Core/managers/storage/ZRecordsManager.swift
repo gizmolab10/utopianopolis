@@ -95,25 +95,6 @@ class ZRecordsManager: NSObject {
     }
 
 
-    var bookmarks: [Zone] {
-        get {
-            var bookmarks = [Zone] ()
-
-            for mode: ZStorageMode in [.mine, .everyone, .favorites] {
-                invokeWithMode(mode) {
-                    for zone in zones.values {
-                        if zone.isBookmark {
-                            bookmarks.append(zone)
-                        }
-                    }
-                }
-            }
-
-            return bookmarks
-        }
-    }
-
-
     // MARK:- record state
     // MARK:-
 
@@ -337,13 +318,24 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func applyToAllZones(_ closure: ZoneClosure) {
+        for mode: ZStorageMode in [.mine, .everyone, .favorites] {
+            invokeWithMode(mode) {
+                for zone in zones.values {
+                    closure(zone)
+                }
+            }
+        }
+    }
+
+
     func bookmarksFor(_ zone: Zone?) -> [Zone] {
         var zoneBookmarks = [Zone] ()
 
         if zone != nil, let recordID = zone?.record?.recordID {
-            for bookmark in bookmarks {
-                if let identifier = bookmark.crossLink?.record?.recordID, recordID == identifier {
-                    zoneBookmarks.append(bookmark)
+            applyToAllZones { iZone in
+                if let link = iZone.crossLink, recordID == link.record?.recordID {
+                    zoneBookmarks.append(iZone)
                 }
             }
         }
@@ -352,8 +344,8 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func recordForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
-        var record = zoneForRecordID(recordID) as ZRecord?
+    func modeSpecificRecordForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
+        var record = modeSpecificZoneForRecordID(recordID) as ZRecord?
 
         if  record == nil && gManifest.record?.recordID.recordName == recordID?.recordName {
             record  = gManifest
@@ -363,10 +355,10 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func zoneForReference(_ reference: CKReference) -> Zone? {
+    func modeSpecificZoneForReference(_ reference: CKReference) -> Zone? {
         var zone = zones[reference.recordID.recordName]
 
-        if  zone == nil, let record = recordForRecordID(reference.recordID)?.record {
+        if  zone == nil, let record = modeSpecificRecordForRecordID(reference.recordID)?.record {
             zone = Zone(record: record, storageMode: gStorageMode)
         }
 
@@ -374,7 +366,7 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func zoneForRecord(_ record: CKRecord) -> Zone {
+    func modeSpecificZoneForRecord(_ record: CKRecord) -> Zone {
         var zone = zones[record.recordID.recordName]
 
         if  zone == nil {
@@ -389,7 +381,7 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func zoneForRecordID(_ recordID: CKRecordID?) -> Zone? {
+    func modeSpecificZoneForRecordID(_ recordID: CKRecordID?) -> Zone? {
         if recordID == nil {
             return nil
         }

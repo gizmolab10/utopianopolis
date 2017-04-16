@@ -489,8 +489,6 @@ class ZoneWidget: ZView {
 
         if widgetZone.includeChildren {
             if  childrenPass || gSelectionManager.isDragging {
-                childrenPass = false
-
                 for child in childrenWidgets { drawLine(to: child) }
             } else {
                 dispatchAsyncInForeground {
@@ -500,5 +498,7 @@ class ZoneWidget: ZView {
                 }
             }
         }
+
+        childrenPass = false
     }
 }
