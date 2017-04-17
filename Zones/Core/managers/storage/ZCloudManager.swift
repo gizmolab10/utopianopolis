@@ -186,7 +186,7 @@ class ZCloudManager: ZRecordsManager {
 
         self.queryWith(predicate) { (iRecord: CKRecord?) in
             if iRecord != nil {
-                self.report("deleting \(iRecord![zoneNameKey])")
+                self.report("deleting \(String(describing: iRecord![zoneNameKey]))")
                 toBeDeleted.append((iRecord?.recordID)!)
 
             } else { // iRecord == nil means: end of response to this particular query
@@ -671,7 +671,7 @@ class ZCloudManager: ZRecordsManager {
 
             for className: String in classNames {
                 let    predicate:          NSPredicate = NSPredicate(value: true)
-                let subscription:       CKSubscription = CKSubscription(recordType: className, predicate: predicate, options: [.firesOnRecordUpdate])
+                let subscription:       CKSubscription = CKQuerySubscription(recordType: className, predicate: predicate, options: [.firesOnRecordUpdate])
                 let  information:   CKNotificationInfo = CKNotificationInfo()
                 information.alertLocalizationKey       = "somthing has changed, hah!";
                 information.shouldBadge                = true

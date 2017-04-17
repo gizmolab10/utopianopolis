@@ -7,8 +7,6 @@
 //
 
 
-import SnapKit
-
 #if os(OSX)
     import Cocoa
 #elseif os(iOS)

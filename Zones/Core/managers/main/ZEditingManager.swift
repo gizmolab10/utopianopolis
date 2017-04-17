@@ -20,7 +20,7 @@ import CloudKit
 class ZEditingManager: NSObject {
 
 
-    class ZoneEvent: NSObject {
+    class ZStalledEvent: NSObject {
         var event: ZEvent?
         var isWindow: Bool = true
 
@@ -33,8 +33,8 @@ class ZEditingManager: NSObject {
     }
 
 
-    var stalledEvents = [ZoneEvent] ()
-    var previousEvent: ZEvent?
+    var stalledEvents = [ZStalledEvent] ()
+    var previousEvent:          ZEvent?
 
 
     var isEditing: Bool {
@@ -64,7 +64,7 @@ class ZEditingManager: NSObject {
     @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
         if !gOperationsManager.isReady {
             if stalledEvents.count < 1 {
-                stalledEvents.append(ZoneEvent(iEvent, iIsWindow: isWindow))
+                stalledEvents.append(ZStalledEvent(iEvent, iIsWindow: isWindow))
             }
         } else if !isEditing, iEvent != previousEvent, gWorkMode == .editMode {
             handleKey(iEvent.key, flags: iEvent.modifierFlags, isWindow: isWindow)
@@ -452,7 +452,7 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            zone.showChildren = show ? (iGoal == nil || zone.level < iGoal!) : (iGoal != nil && zone.level < iGoal!)
+            zone.showChildren = show ? (iGoal == nil || zone.level < iGoal!) : (iGoal != nil && zone.level < iGoal! && zone.showChildren)
 
             if show && !hasLocalChildren {
                 zone.needChildren()
