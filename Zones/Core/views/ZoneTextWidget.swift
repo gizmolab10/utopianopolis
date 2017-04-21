@@ -121,12 +121,16 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-        let result = super.becomeFirstResponder()
+        var result = false
 
-        gSelectionManager.deferEditingStateChange()
+        if !gSelectionManager.isEditingStateChanging {
+            result = super.becomeFirstResponder()
 
-        if result {
-            isTextEditing = true
+            if result {
+                gSelectionManager.deferEditingStateChange()
+
+                isTextEditing = true
+            }
         }
 
         return result
@@ -134,39 +138,29 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func captureText() {
-        let zone = widget.widgetZone
+        if !gTextCapturing, let zone = widget.widgetZone, zone.zoneName != text! {
+            gTextCapturing = true
 
-        if  gTextCapturing    == false, zone != nil {
-            if  zone!.zoneName != text! {
-                gTextCapturing = true
-
-                let assignText = { (toZone: Zone?) in
-                    if  toZone != nil,     self.text != nil {
-                        toZone!.zoneName = self.text!
-
-                        toZone!.unmarkForStates([.needsMerge])
-                    }
+            let assignText = { (toZone: Zone?) in
+                if  toZone != nil,     self.text != nil {
+                    toZone!.zoneName = self.text!
                 }
+            }
 
-//                UNDO(self) { iUndoSelf in
-//                    iUndoSelf.text = priorName
+//            UNDO(self) { iUndoSelf in
+//                iUndoSelf.text = priorName
 //
-//                    iUndoSelf.captureText()
-//                }
+//                iUndoSelf.captureText()
+//            }
 
-                assignText(zone)
+            assignText(zone)
 
-                if  zone!.isBookmark {
-                    if  let link = zone?.crossLink, let mode = link.storageMode, let target = gCloudManager.zoneForRecordID(link.record.recordID, in: mode) {
-                        assignText(target)
-                    }
-                }
+            if  zone.isBookmark, let link = zone.crossLink, let mode = link.storageMode, let target = gCloudManager.zoneForRecordID(link.record.recordID, in: mode) {
+                assignText(target)
+            }
 
-                for bookmark in gCloudManager.bookmarksFor(zone) {
-                    assignText(bookmark)
-                }
-
-                gOperationsManager.sync {}
+            for bookmark in gCloudManager.bookmarksFor(zone) {
+                assignText(bookmark)
             }
         }
     }

@@ -207,6 +207,13 @@ class ZRecord: NSObject {
     func needParent() { markForStates([.needsParent]) }
 
 
+    func maybeNeedMerge() {
+        if !isMarkedForStates([.needsCreate]) {
+            markForStates([.needsMerge])
+        }
+    }
+
+
     func needChildren() {
         if !isMarkedForStates([.needsChildren, .hasChildren]) {
             markForStates    ([.needsChildren, .hasChildren])
@@ -215,13 +222,6 @@ class ZRecord: NSObject {
                 toConsole("need children for \(zone.zoneName ?? "NO NAME")")
 
             }
-        }
-    }
-
-
-    func maybeNeedMerge() {
-        if !isMarkedForStates([.needsCreate]) {
-            markForStates([.needsMerge])
         }
     }
 

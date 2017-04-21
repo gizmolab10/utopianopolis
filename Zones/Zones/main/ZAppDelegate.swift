@@ -70,7 +70,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
     
 
     func applicationWillTerminate(aNotification: NSNotification) {
-        gfileManager.save()
+        gfileManager.save(to: gStorageMode)
         
         // Insert code here to tear down your application
     }

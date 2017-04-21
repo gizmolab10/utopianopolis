@@ -108,7 +108,7 @@ class ZControllersManager: NSObject {
 
         gOperationsManager.sync {
             onCompletion?()
-            gfileManager.save()
+            gfileManager.save(to: zone?.storageMode)
         }
     }
 }

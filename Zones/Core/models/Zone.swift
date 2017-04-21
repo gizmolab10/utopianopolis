@@ -125,9 +125,6 @@ class Zone : ZRecord {
         set {
             if newValue != order {
                 zoneOrder = NSNumber(value: newValue)
-
-                needSave()
-                updateCloudProperties()
             }
         }
     }
@@ -149,9 +146,6 @@ class Zone : ZRecord {
         set {
             if newValue != level {
                 zoneLevel = NSNumber(value: newValue)
-
-                needSave()
-                updateCloudProperties()
             }
         }
     }
@@ -173,9 +167,6 @@ class Zone : ZRecord {
         set {
             if newValue != progenyCount {
                 zoneProgeny = NSNumber(value: newValue)
-
-                needSave()
-                updateCloudProperties()
             }
         }
     }
@@ -208,9 +199,6 @@ class Zone : ZRecord {
         set {
             if newValue != state {
                 zoneState = NSNumber(integerLiteral: newValue.rawValue)
-
-                needSave()
-                updateCloudProperties()
             }
         }
     }

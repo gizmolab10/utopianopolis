@@ -291,10 +291,7 @@ class ZCloudManager: ZRecordsManager {
                             onCompletion(nil)
                         } else {
                             onCompletion(saved!)
-
-                            self.invokeWithMode(storageMode) {
-                                gfileManager.save()
-                            }
+                            gfileManager.save(to: storageMode)
                         }
                     }
                 }

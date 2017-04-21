@@ -89,17 +89,19 @@ class ZSelectionManager: NSObject {
     func deferEditingStateChange() {
         isEditingStateChanging          = true
 
-        dispatchAsyncInForegroundAfter(0.5) {
+        dispatchAsyncInForegroundAfter(0.1) {
             self.isEditingStateChanging = false
         }
     }
 
 
     func edit(_ iZone: Zone) {
-        currentlyEditingZone = iZone
+        if !isEditingStateChanging {
+            currentlyEditingZone = iZone
 
-        assignAsFirstResponder(iZone.widget?.textWidget)
-        deferEditingStateChange()
+            assignAsFirstResponder(iZone.widget?.textWidget)
+            deferEditingStateChange()
+        }
     }
 
 
@@ -127,13 +129,13 @@ class ZSelectionManager: NSObject {
 
 
     func deselect() {
-        let      editingZone = currentlyEditingZone
-        currentlyEditingZone = nil
-        let           widget = editingZone?.widget
-        widget?.setNeedsDisplay()
+        if  let      editingZone = currentlyEditingZone {
+            currentlyEditingZone = nil
 
-        if editingZone != nil && editingZone != gHere {
-            widget?.textWidget.captureText()
+            if  let       widget = editingZone.widget {
+                widget.setNeedsDisplay()
+                widget.textWidget.captureText()
+            }
         }
 
         fullResign()

@@ -27,11 +27,11 @@ class ZFileManager: NSObject {
     // MARK:-
 
 
-    func save() {
-        if !isSaving && gFileMode == .local && gStorageMode != .favorites && gOperationsManager.isReady {
+    func save(to storageMode: ZStorageMode?) {
+        if !isSaving && gFileMode == .local && storageMode != nil && storageMode != .favorites && gOperationsManager.isReady {
             isSaving               = true
             let dict: NSDictionary = gRoot.storageDict as NSDictionary
-            let  url:          URL = pathToCurrentZoneFile()
+            let  url:          URL = pathToFile(for: storageMode!)
 
             dict.write(to: url, atomically: false)
 
@@ -40,11 +40,11 @@ class ZFileManager: NSObject {
     }
 
 
-    func restore() {
-        gCloudManager.clear(gStorageMode)
+    func restore(from storageMode: ZStorageMode) {
+        gCloudManager.clear(storageMode)
 
-        if gFileMode == .local && gStorageMode != .favorites {
-            if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {
+        if gFileMode == .local && storageMode != .favorites {
+            if let raw = NSDictionary(contentsOf: pathToFile(for: storageMode)) {
                 gRoot = Zone(dict: raw as! ZStorageDict)
                 gHere = gRoot
 
@@ -58,22 +58,17 @@ class ZFileManager: NSObject {
     // MARK:-
 
 
-    var currentZoneFileName: String {
-        switch gStorageMode {
+    func pathToFile(for storageMode: ZStorageMode) -> URL { return pathForZoneNamed(fileName(for: storageMode)) }
+    func pathForZoneNamed(_ iName: String)         -> URL { return createFolderNamed("zones/\(iName)"); }
+
+
+    func fileName(for storageMode: ZStorageMode) -> String {
+        switch storageMode {
         case .favorites: return "favorites.storage"
         case .everyone:  return "everyone.storage"
         case .shared:    return "shared.storage"
         case .mine:      return "mine.storage"
         }
-    }
-
-    func pathToCurrentZoneFile() -> URL {
-        return pathForZoneNamed(currentZoneFileName)
-    }
-
-
-    func pathForZoneNamed(_ iName: String) -> URL {
-        return createFolderNamed("zones/\(iName)");
     }
 
 
