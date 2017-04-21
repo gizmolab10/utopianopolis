@@ -57,9 +57,4 @@ class ZCloudToolsController: ZGenericController {
             gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
         }
     }
-
-
-    @IBAction func pushToCloudButtonAction(_ button: NSButton) {
-        gCloudManager.royalFlush {}
-    }
 }

@@ -26,7 +26,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     override func identifier() -> ZControllerID { return .searchBox }
 
 
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         if kind == .search {
             if gShowsSearching {
                 assignAsFirstResponder(searchBox!)
@@ -57,7 +57,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         if find == "" {
             endSearching()
         } else {
-            gCloudManager.searchFor(find) { iObject in
+            gCloudManager.searchFor(find, storageMode: gStorageMode) { iObject in
                 let hasResults = ((iObject as? [Any])?.count)! != 0
                 gWorkMode       = hasResults && gShowsSearching ? .searchMode : .editMode
 

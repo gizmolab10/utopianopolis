@@ -89,7 +89,7 @@ class ZSelectionManager: NSObject {
     func deferEditingStateChange() {
         isEditingStateChanging          = true
 
-        dispatchAsyncInForegroundAfter(0.2) {
+        dispatchAsyncInForegroundAfter(0.5) {
             self.isEditingStateChanging = false
         }
     }

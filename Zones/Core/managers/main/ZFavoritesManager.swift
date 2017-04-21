@@ -25,16 +25,13 @@ class ZFavoritesManager: NSObject {
 
 
     func setup() {
-        favoritesRootZone.level      = 0
-        favoritesRootZone.zoneName   = "favorites"
+        favoritesRootZone.level    = 0
+        favoritesRootZone.zoneName = "favorites"
+        favoritesRootZone.record   = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
 
         favoritesRootZone.displayChildren()
-        invokeWithMode(.favorites) {
-            favoritesRootZone.record = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
-
-            setupDefaultFavorites()
-            update()
-        }
+        setupDefaultFavorites()
+        update()
     }
 
 
@@ -310,7 +307,8 @@ class ZFavoritesManager: NSObject {
         bookmark            = create(withBookmark: bookmark, isFavorite, parent: parent, atIndex: index, zone.storageMode, zone.zoneName)
 
         if !isFavorite {
-            parent.needUpdateSave()
+            parent.maybeNeedMerge()
+            parent.updateCloudProperties()
         }
 
         if !zone.isBookmark {

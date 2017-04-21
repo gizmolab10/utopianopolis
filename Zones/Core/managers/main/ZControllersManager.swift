@@ -42,10 +42,10 @@ class ZControllersManager: NSObject {
 
 
     class ZSignalObject {
-        let    closure: SignalClosure!
+        let    closure: ModeAndSignalClosure!
         let controller: ZGenericController!
 
-        init(_ iClosure: @escaping SignalClosure, forController iController: ZGenericController) {
+        init(_ iClosure: @escaping ModeAndSignalClosure, forController iController: ZGenericController) {
             controller = iController
             closure    = iClosure
         }
@@ -65,7 +65,7 @@ class ZControllersManager: NSObject {
     // MARK:-
 
 
-    func register(_ iController: ZGenericController, iID: ZControllerID, closure: @escaping SignalClosure) {
+    func register(_ iController: ZGenericController, iID: ZControllerID, closure: @escaping ModeAndSignalClosure) {
         signalObjectsByControllerID[iID] = ZSignalObject(closure, forController: iController)
     }
 
@@ -89,9 +89,11 @@ class ZControllersManager: NSObject {
 
 
     func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
+        let mode = gStorageMode
+
         dispatchAsyncInForeground {
             for signalObject: ZSignalObject in self.signalObjectsByControllerID.values {
-                signalObject.closure(object, regarding)
+                signalObject.closure(object, mode, regarding)
             }
 
             if onCompletion != nil {

@@ -37,7 +37,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     // MARK:-
 
 
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         if [.search, .found, .startup].contains(kind) {
             return
         } else if gWorkMode != .editMode {

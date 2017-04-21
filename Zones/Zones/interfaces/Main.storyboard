@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16B2555" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16B2555" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
         <capability name="box content view" minToolsVersion="7.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
     </dependencies>
     <scenes>
@@ -568,19 +569,9 @@ CQ
             <objects>
                 <viewController id="M1d-6V-b2Q" customClass="ZCloudToolsController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="vKP-HI-kOy">
-                        <rect key="frame" x="0.0" y="0.0" width="225" height="124"/>
+                        <rect key="frame" x="0.0" y="0.0" width="225" height="95"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ngI-ar-5Pt">
-                                <rect key="frame" x="14" y="88" width="197" height="32"/>
-                                <buttonCell key="cell" type="push" title="Push to Cloud" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zKm-nu-uit">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="pushToCloudButtonAction:" target="M1d-6V-b2Q" id="MBV-im-5Vf"/>
-                                </connections>
-                            </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5N2-DZ-4UX">
                                 <rect key="frame" x="14" y="59" width="197" height="32"/>
                                 <buttonCell key="cell" type="push" title="Restore Zone" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Z39-eg-fDr">
@@ -613,17 +604,14 @@ CQ
                             </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="ngI-ar-5Pt" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="42B-Vj-5nH"/>
                             <constraint firstAttribute="trailing" secondItem="m2Y-u6-Urc" secondAttribute="trailing" constant="20" id="4Fe-Oj-zfQ"/>
-                            <constraint firstItem="5N2-DZ-4UX" firstAttribute="top" secondItem="ngI-ar-5Pt" secondAttribute="bottom" constant="8" id="5EP-ny-sdw"/>
                             <constraint firstItem="0kE-Oh-3Gh" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="6z6-vB-CKQ"/>
-                            <constraint firstItem="ngI-ar-5Pt" firstAttribute="top" secondItem="vKP-HI-kOy" secondAttribute="top" constant="8" id="BOP-2t-ZI4"/>
                             <constraint firstItem="0kE-Oh-3Gh" firstAttribute="top" secondItem="m2Y-u6-Urc" secondAttribute="bottom" constant="8" id="BQK-Vo-qxT"/>
                             <constraint firstItem="5N2-DZ-4UX" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="GGT-EU-kcT"/>
                             <constraint firstItem="m2Y-u6-Urc" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="KLL-Xw-y32"/>
                             <constraint firstAttribute="trailing" secondItem="0kE-Oh-3Gh" secondAttribute="trailing" constant="20" id="YZv-gH-PE9"/>
                             <constraint firstAttribute="bottom" secondItem="0kE-Oh-3Gh" secondAttribute="bottom" constant="8" id="eIx-7k-bnp"/>
-                            <constraint firstAttribute="trailing" secondItem="ngI-ar-5Pt" secondAttribute="trailing" constant="20" id="iqR-9I-aNd"/>
+                            <constraint firstItem="5N2-DZ-4UX" firstAttribute="top" secondItem="vKP-HI-kOy" secondAttribute="top" constant="8" id="f0p-QT-DQQ"/>
                             <constraint firstAttribute="trailing" secondItem="5N2-DZ-4UX" secondAttribute="trailing" constant="20" id="iv6-hj-fX3"/>
                             <constraint firstItem="m2Y-u6-Urc" firstAttribute="top" secondItem="5N2-DZ-4UX" secondAttribute="bottom" constant="8" id="sVT-7g-a4w"/>
                         </constraints>
@@ -638,16 +626,16 @@ CQ
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZSettingsController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="223" height="1115"/>
+                        <rect key="frame" x="0.0" y="0.0" width="223" height="1126"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" misplaced="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="-11" width="223" height="1126"/>
+                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
+                                <rect key="frame" x="0.0" y="0.0" width="223" height="1126"/>
                                 <subviews>
                                     <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="1012" width="223" height="114"/>
                                         <subviews>
-                                            <customView ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="95" width="223" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ce9-hv-nUx" userLabel="Information">
@@ -710,7 +698,7 @@ CQ
                                     <customView identifier="favorites" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="47v-DX-fSo" userLabel="Favorites View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="961" width="223" height="50"/>
                                         <subviews>
-                                            <customView ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DdL-Cp-gGl" userLabel="Title and Toggle">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DdL-Cp-gGl" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="31" width="223" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hl5-AS-GCf">
@@ -748,8 +736,8 @@ CQ
                                                     <constraint firstItem="Rej-x2-EK2" firstAttribute="centerY" secondItem="DdL-Cp-gGl" secondAttribute="centerY" id="gAl-2e-HVH"/>
                                                 </constraints>
                                             </customView>
-                                            <containerView ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JLI-sK-Rpb" userLabel="Favorites">
-                                                <rect key="frame" x="0.0" y="13" width="223" height="17"/>
+                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JLI-sK-Rpb" userLabel="Favorites">
+                                                <rect key="frame" x="0.0" y="0.0" width="223" height="17"/>
                                                 <connections>
                                                     <segue destination="JfR-Ay-CUa" kind="embed" id="hw1-6Q-XQc"/>
                                                 </connections>
@@ -773,7 +761,7 @@ CQ
                                     <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="556" width="223" height="404"/>
                                         <subviews>
-                                            <customView ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="385" width="223" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gUX-Sv-09B">
@@ -811,7 +799,7 @@ CQ
                                                     <constraint firstAttribute="trailing" secondItem="gUX-Sv-09B" secondAttribute="trailing" id="tPT-03-TsN"/>
                                                 </constraints>
                                             </customView>
-                                            <containerView ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="btT-FF-Ema" userLabel="Preferences">
+                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="btT-FF-Ema" userLabel="Preferences">
                                                 <rect key="frame" x="0.0" y="0.0" width="223" height="384"/>
                                                 <connections>
                                                     <segue destination="Naq-se-Exq" kind="embed" id="Pht-fq-dCw"/>
@@ -836,7 +824,7 @@ CQ
                                     <customView identifier="cloud" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Cloud View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="412" width="223" height="143"/>
                                         <subviews>
-                                            <customView ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dnz-Gb-8cH" userLabel="Title and Toggle">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dnz-Gb-8cH" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="124" width="223" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UIC-Be-bJk" userLabel="Tools">
@@ -874,7 +862,7 @@ CQ
                                                     <constraint firstItem="bee-ew-HYp" firstAttribute="centerY" secondItem="Dnz-Gb-8cH" secondAttribute="centerY" id="yN2-VH-qCK"/>
                                                 </constraints>
                                             </customView>
-                                            <containerView ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XUr-go-ovY" userLabel="Cloud">
+                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XUr-go-ovY" userLabel="Cloud">
                                                 <rect key="frame" x="0.0" y="0.0" width="223" height="123"/>
                                                 <connections>
                                                     <segue destination="M1d-6V-b2Q" kind="embed" id="B7U-nN-bjh"/>

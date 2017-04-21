@@ -11,7 +11,6 @@ import Foundation
 
 
 enum ZOperationID: Int {
-    case ready
     case root
     case cloud
     case manifest
@@ -24,11 +23,13 @@ enum ZOperationID: Int {
     case children
     case unsubscribe
     case subscribe
+
     case emptyTrash
     case undelete
     case create
     case parent
     case merge
+    case ready
 }
 
 

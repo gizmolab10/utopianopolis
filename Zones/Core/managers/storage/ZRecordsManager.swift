@@ -29,40 +29,12 @@ class ZRecordsManager: NSObject {
     var zoneRegistry = [ZStorageMode : [String       :      Zone]] ()    // dictionary of dictionaries
 
 
-    var recordsByState: [ZRecordState : [ZRecord]] {
-        get {
-            if  statesByMode[gStorageMode] == nil {
-                statesByMode[gStorageMode]  = [:]
-            }
-
-            return statesByMode[gStorageMode]!
-        }
-
-        set {
-            statesByMode[gStorageMode] = newValue
-        }
-    }
+    // MARK:- record state
+    // MARK:-
 
 
-    var zones: [String : Zone] {
-        get {
-            var registry: [String : Zone]? = zoneRegistry[gStorageMode]
-
-            if  registry                  == nil {
-                registry                   = [:]
-                zoneRegistry[gStorageMode] = registry!
-            }
-
-            return registry!
-        }
-
-        set {
-            zoneRegistry[gStorageMode] = newValue
-        }
-    }
-
-
-    var undeletedCount: Int {
+    func undeletedCount(for storageMode: ZStorageMode) -> Int {
+        let       zones = self.zones(for: storageMode)
         var       count = zones.count
         var identifiers = [CKRecordID] ()
 
@@ -82,46 +54,69 @@ class ZRecordsManager: NSObject {
     }
 
 
-    var allStates: [ZRecordState] {
-        get {
-            var states = [ZRecordState] ()
+    func allStates(for storageMode: ZStorageMode) -> [ZRecordState] {
+        var states = [ZRecordState] ()
 
-            for state in recordsByState.keys {
-                states.append(state)
-            }
-
-            return states
+        for state in recordsByState(for: storageMode).keys {
+            states.append(state)
         }
+
+        return states
     }
 
 
-    // MARK:- record state
-    // MARK:-
+    func recordsByState(for storageMode: ZStorageMode) -> [ZRecordState : [ZRecord]] {
+            if  statesByMode[storageMode] == nil {
+                statesByMode[storageMode]  = [:]
+            }
+
+            return statesByMode[storageMode]!
+        }
 
 
-    func recordsForState(_ state: ZRecordState) -> [ZRecord] {
-        let    dict = recordsByState
-        var records = dict[state]       // swift's terse nature has confused me, here
+    func zones(for storageMode: ZStorageMode) -> [String : Zone] {
+        var registry: [String : Zone]? = zoneRegistry[storageMode]
 
-        if records == nil {
-            records = []
+        if  registry                 == nil {
+            registry                  = [:]
+            zoneRegistry[storageMode] = registry!
+        }
 
-            recordsByState[state] = records
+        return registry!
+    }
+
+
+    func setRecords(_ records: [ZRecord], for state: ZRecordState, in storageMode: ZStorageMode) {
+        var                  dict = recordsByState(for: storageMode)
+        dict[state]               = records
+        statesByMode[storageMode] = dict
+    }
+
+
+    func recordsForState(_ state: ZRecordState, in storageMode: ZStorageMode) -> [ZRecord] {
+        var        dict = recordsByState(for: storageMode)
+        var     records = dict[state]
+
+        if records     == nil {
+            records     = []
+            dict[state] = records
         }
 
         return records!
     }
 
 
-    func clear() {
-        recordsByState = [:]
+    func clear(_ storageMode: ZStorageMode) {
+        var byMode = recordsByState(for: storageMode)
+
+        byMode.removeAll()
     }
 
 
-    func findRecordByRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState], onEach: StateRecordClosure?) {
+    func findRecordByRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState], in storageMode: ZStorageMode, onEach: StateRecordClosure?) {
         if iRecordID != nil {
             for state in forStates {
-                for record in recordsForState(state) {
+                for record in recordsForState(state, in: storageMode) {
                     if record.record != nil && record.record.recordID.recordName == iRecordID?.recordName {
                         onEach?(state, record)
                     }
@@ -134,61 +129,70 @@ class ZRecordsManager: NSObject {
     func hasRecord(_ iRecord: ZRecord, forStates: [ZRecordState]) -> Bool {
         var found = false
 
-        findRecordByRecordID(iRecord.record?.recordID, forStates: forStates, onEach: { (state: ZRecordState, record: ZRecord) in
-            found = true
-        })
+        if let mode = iRecord.storageMode {
+            findRecordByRecordID(iRecord.record?.recordID, forStates: forStates, in: mode, onEach: { (state: ZRecordState, record: ZRecord) in
+                found = true
+            })
+        }
 
         return found
     }
 
 
-    func addRecord(_ iRecord: ZRecord, forStates: [ZRecordState]) {
-        for state in forStates {
-            if !hasRecord(iRecord, forStates: [state]) {
-                var records = recordsForState(state)
+    func addRecord(_ iRecord: ZRecord, for state: ZRecordState, in storageMode: ZStorageMode) {
+        if !hasRecord(iRecord, forStates: [state]) {
+            var records = recordsForState(state, in: storageMode)
 
-                records.append(iRecord)
-
-                recordsByState[state] = records
-            }
+            records.append(iRecord)
+            setRecords(records, for: state, in: storageMode)
         }
-
     }
 
-    func removeRecordByRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState]) {
-        findRecordByRecordID(iRecordID, forStates: forStates, onEach: { (state: ZRecordState, record: ZRecord) in
-            var records = self.recordsForState(state)
+
+    func addRecord(_ iRecord: ZRecord, for states: [ZRecordState]) {
+        if let mode = iRecord.storageMode {
+            for state in states {
+                addRecord(iRecord, for: state, in: mode)
+            }
+        }
+    }
+
+    func removeRecordByRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState], in storageMode: ZStorageMode) {
+        findRecordByRecordID(iRecordID, forStates: forStates, in: storageMode, onEach: { (state: ZRecordState, record: ZRecord) in
+            var records = self.recordsForState(state, in: storageMode)
 
             if let index = records.index(of: record) {
                 records.remove(at: index)
 
-                self.recordsByState[state] = records
+                self.setRecords(records, for: state, in: storageMode)
             }
         })
     }
 
 
     func clearRecord(_ iRecord: ZRecord) {
-        removeRecordByRecordID(iRecord.record?.recordID, forStates: allStates)
-    }
-
-
-    func clearStates(_ states: [ZRecordState]) {
-        for state in states {
-            clearState(state)
+        if let mode = iRecord.storageMode {
+            removeRecordByRecordID(iRecord.record?.recordID, forStates: allStates(for: mode), in: mode)
         }
     }
 
 
-    func clearState(_ state: ZRecordState) {
-        recordsByState[state] = nil
+    func clearStates(_ states: [ZRecordState], in storageMode: ZStorageMode) {
+        for state in states {
+            clearState(state, in: storageMode)
+        }
     }
 
 
-    func zoneNamesWithMatchingStates(_ states: [ZRecordState]) -> String {
+    func clearState(_ state: ZRecordState, in storageMode: ZStorageMode) {
+        setRecords([], for: state, in: storageMode)
+    }
+
+
+    func zoneNamesWithMatchingStates(_ states: [ZRecordState], in storageMode: ZStorageMode) -> String {
         var names = [String] ()
 
-        findRecordsWithMatchingStates(states) { object in
+        findRecordsWithMatchingStates(states, in: storageMode) { object in
             let zone: Zone = object as! Zone
 
             if let name = zone.zoneName, !names.contains(name) {
@@ -200,10 +204,10 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func recordIDsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecordID] {
+    func recordIDsWithMatchingStates(_ states: [ZRecordState], in storageMode: ZStorageMode) -> [CKRecordID] {
         var identifiers = [CKRecordID] ()
 
-        findRecordsWithMatchingStates(states) { object in
+        findRecordsWithMatchingStates(states, in: storageMode) { object in
             let zone: ZRecord = object as! ZRecord
 
             if let record = zone.record, !identifiers.contains(record.recordID) {
@@ -215,10 +219,10 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func parentIDsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecordID] {
+    func parentIDsWithMatchingStates(_ states: [ZRecordState], in storageMode: ZStorageMode) -> [CKRecordID] {
         var parents = [CKRecordID] ()
 
-        findRecordsWithMatchingStates(states) { object in
+        findRecordsWithMatchingStates(states, in: storageMode) { object in
             let zone: Zone = object as! Zone
 
             if let reference = zone.parent {
@@ -234,27 +238,27 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func recordsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecord] {
-        var objects = [CKRecord] ()
+    func recordsWithMatchingStates(_ states: [ZRecordState], in storageMode: ZStorageMode) -> [CKRecord] {
+        var results = [CKRecord] ()
 
-        findRecordsWithMatchingStates(states) { object in
-            let  zone: ZRecord = object as! ZRecord
+        findRecordsWithMatchingStates(states, in: storageMode) { object in
+            let zone: ZRecord = object as! ZRecord
 
-            if let      record = zone.record, !objects.contains(record) {
+            if let     record = zone.record, !results.contains(record) {
                 zone.debug("saving")
 
-                objects.append(record)
+                results.append(record)
             }
         }
 
-        return objects
+        return results
     }
 
 
-    func referencesWithMatchingStates(_ states: [ZRecordState]) -> [CKReference] {
+    func referencesWithMatchingStates(_ states: [ZRecordState], in storageMode: ZStorageMode) -> [CKReference] {
         var references = [CKReference] ()
 
-        findRecordsWithMatchingStates(states) { object in
+        findRecordsWithMatchingStates(states, in: storageMode) { object in
             if  let    record:     ZRecord = object as? ZRecord, record.record != nil {
                 let reference: CKReference = CKReference(recordID: record.record.recordID, action: .none)
 
@@ -266,9 +270,9 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func findRecordsWithMatchingStates(_ states: [ZRecordState], onEach: ObjectClosure) {
+    func findRecordsWithMatchingStates(_ states: [ZRecordState], in storageMode: ZStorageMode, onEach: ObjectClosure) {
         for state in states {
-            let records = recordsForState(state)
+            let records = recordsForState(state, in: storageMode)
 
             for record in records {
                 onEach(record)
@@ -282,6 +286,8 @@ class ZRecordsManager: NSObject {
 
 
     func isRegistered(_ zone: Zone) -> String? {
+        var zones = self.zones(for: zone.storageMode!)
+
         if zones.values.contains(zone) {
             for name in zones.keys {
                 let examined = zones[name]
@@ -296,23 +302,30 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func setZone(_ zone: Zone?, for id: String, in storageMode: ZStorageMode) {
+        zoneRegistry[storageMode]?[id] = zone
+    }
+
+
     func registerZone(_ zone: Zone?) {
-        if  let     record = zone?.record {
-            let registered = isRegistered(zone!)
+        if zone != nil, let record = zone!.record, let mode = zone!.storageMode {
             let identifier = record.recordID.recordName
+            let registered = isRegistered(zone!)
 
             if registered == nil {
-                zones[identifier]   = zone
+                setZone(zone, for: identifier,  in: mode)
             } else if registered!  != identifier {
-                zones[registered!]  = nil
-                zones[identifier]   = zone
+                setZone(nil,  for: registered!, in: mode)
+                setZone(zone, for: identifier,  in: mode)
             }
         }
     }
 
 
     func unregisterZone(_ zone: Zone?) {
-        if let record = zone?.record {
+        if zone != nil, let record = zone!.record {
+            var zones = self.zones(for: zone!.storageMode!)
+
             zones[record.recordID.recordName] = nil
         }
     }
@@ -320,10 +333,10 @@ class ZRecordsManager: NSObject {
 
     func applyToAllZones(_ closure: ZoneClosure) {
         for mode: ZStorageMode in [.mine, .everyone, .favorites] {
-            invokeWithMode(mode) {
-                for zone in zones.values {
-                    closure(zone)
-                }
+            let zones = self.zones(for: mode)
+
+            for zone in zones.values {
+                closure(zone)
             }
         }
     }
@@ -344,35 +357,49 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func modeSpecificRecordForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
-        var record = modeSpecificZoneForRecordID(recordID) as ZRecord?
+    func recordForCKRecord(_ record: CKRecord?, in storageMode: ZStorageMode) -> ZRecord? {
+        var result: ZRecord? = nil
 
-        if  record == nil && gManifest.record?.recordID.recordName == recordID?.recordName {
-            record  = gManifest
+        if let recordID = record?.recordID {
+            result      = recordForRecordID(recordID, in: storageMode)
+        }
+
+        return result
+    }
+
+
+    func recordForRecordID(_ recordID: CKRecordID?, in storageMode: ZStorageMode) -> ZRecord? {
+        var   record = zoneForRecordID(recordID, in: storageMode) as ZRecord?
+        let manifest = gTravelManager.manifest(for:  storageMode)
+
+        if  record  == nil && manifest.record?.recordID.recordName == recordID?.recordName {
+            record   = manifest
         }
 
         return record
     }
 
 
-    func modeSpecificZoneForReference(_ reference: CKReference) -> Zone? {
-        var zone = zones[reference.recordID.recordName]
+    func zoneForReference(_ reference: CKReference, in storageMode: ZStorageMode) -> Zone? {
+        let zones = self.zones(for: storageMode)
+        var  zone = zones[reference.recordID.recordName]
 
-        if  zone == nil, let record = modeSpecificRecordForRecordID(reference.recordID)?.record {
-            zone = Zone(record: record, storageMode: gStorageMode)
+        if  zone == nil, let record = recordForRecordID(reference.recordID, in: storageMode)?.record {
+            zone  = Zone(record: record, storageMode: gStorageMode)
         }
 
         return zone
     }
 
 
-    func modeSpecificZoneForRecord(_ record: CKRecord) -> Zone {
-        var zone = zones[record.recordID.recordName]
+    func zoneForRecord(_ record: CKRecord, in storageMode: ZStorageMode) -> Zone {
+        let zones = self.zones(for: storageMode)
+        var  zone = zones[record.recordID.recordName]
 
         if  zone == nil {
-            zone = Zone(record: record, storageMode: gStorageMode)
+            zone  = Zone(record: record, storageMode: gStorageMode)
         } else if !(zone?.isDeleted ?? false) {
-            zone?.record = record
+            zone!.record = record
         }
 
         zone!.maybeNeedChildren()
@@ -381,11 +408,13 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func modeSpecificZoneForRecordID(_ recordID: CKRecordID?) -> Zone? {
+    func zoneForRecordID(_ recordID: CKRecordID?, in storageMode: ZStorageMode) -> Zone? {
         if recordID == nil {
             return nil
         }
-        
+
+        let zones = self.zones(for: storageMode)
+
         return zones[recordID!.recordName]
     }
 }

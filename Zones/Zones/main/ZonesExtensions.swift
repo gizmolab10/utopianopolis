@@ -159,7 +159,6 @@ extension NSView {
     var recognizers: [NSGestureRecognizer]? { return gestureRecognizers }
 
 
-    func clearBackground() { zlayer.backgroundColor = ZColor.clear.cgColor }
     func setNeedsDisplay() { needsDisplay = true }
     func setNeedsLayout () { needsLayout  = true }
     func insertSubview(_ view: ZView, belowSubview siblingSubview: ZView) { addSubview(view, positioned: .below, relativeTo: siblingSubview) }
@@ -191,6 +190,7 @@ extension NSView {
 
 extension NSWindow {
 
+    
     override open var acceptsFirstResponder: Bool { return true }
 
 

@@ -18,7 +18,7 @@ import Foundation
 
 protocol ZGenericControllerProtocol {
 
-    func handleSignal(_ object: Any?, kind: ZSignalKind)
+    func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind)
     func identifier() -> ZControllerID
     func displayActivity()
     func setup()
@@ -32,15 +32,15 @@ class ZGenericController: ZController, ZGenericControllerProtocol {
     func setup() {
         let identity = identifier()
 
-        gControllersManager.register(self, iID: identity) { object, kind in
+        gControllersManager.register(self, iID: identity) { object, mode, kind in
             if kind != .error {
-                self.handleSignal(object, kind: kind)
+                self.handleSignal(object, in: mode, kind: kind)
             }
         }
     }
 
 
-    func handleSignal(_ object: Any?, kind: ZSignalKind) {}
+    func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {}
     func displayActivity() {}
 
 

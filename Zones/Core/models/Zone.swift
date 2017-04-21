@@ -65,14 +65,8 @@ class Zone : ZRecord {
 
 
     var bookmarkTarget: Zone? {
-        if  let link = crossLink {
-            var target: Zone? = nil
-
-            invokeWithMode(link.storageMode) {
-                target = gCloudManager.modeSpecificZoneForRecordID(link.record.recordID)
-            }
-
-            return target
+        if  let link = crossLink, let mode = link.storageMode {
+            return gCloudManager.zoneForRecordID(link.record.recordID, in: mode)
         }
 
         return nil
@@ -132,7 +126,8 @@ class Zone : ZRecord {
             if newValue != order {
                 zoneOrder = NSNumber(value: newValue)
 
-                needUpdateSave()
+                needSave()
+                updateCloudProperties()
             }
         }
     }
@@ -155,7 +150,8 @@ class Zone : ZRecord {
             if newValue != level {
                 zoneLevel = NSNumber(value: newValue)
 
-                needUpdateSave()
+                needSave()
+                updateCloudProperties()
             }
         }
     }
@@ -178,7 +174,8 @@ class Zone : ZRecord {
             if newValue != progenyCount {
                 zoneProgeny = NSNumber(value: newValue)
 
-                needUpdateSave()
+                needSave()
+                updateCloudProperties()
             }
         }
     }
@@ -212,7 +209,8 @@ class Zone : ZRecord {
             if newValue != state {
                 zoneState = NSNumber(integerLiteral: newValue.rawValue)
 
-                needUpdateSave()
+                needSave()
+                updateCloudProperties()
             }
         }
     }
@@ -258,10 +256,8 @@ class Zone : ZRecord {
                 parent  = CKReference(record: (_parentZone?.record)!, action: .none)
             }
 
-            if parent != nil && _parentZone == nil {
-                invokeWithMode(storageMode) {
-                    _parentZone = gCloudManager.modeSpecificZoneForReference(parent!)
-                }
+            if parent != nil && _parentZone == nil && storageMode != nil {
+                _parentZone = gCloudManager.zoneForReference(parent!, in: storageMode!)
 
                 if  _parentZone?.showChildren ?? false {
                     _parentZone?.maybeNeedChildren()
@@ -361,7 +357,8 @@ class Zone : ZRecord {
 
         parentZone = nil
 
-        needUpdateSave()
+        needSave()
+        updateCloudProperties()
     }
 
 
@@ -592,22 +589,22 @@ class Zone : ZRecord {
     func isDescendantOf(_ iZone: Zone?) -> ZCycleType {
         var flag: ZCycleType = .none
 
-        if let          zone = iZone {
-            let     detector = zone.cycleDetectorArray
+        if  let babyZone = iZone {
+            let detector = babyZone.cycleDetectorArray
 
-            if zone == self {
+            if babyZone == self {
                 if detector.count > 0 {
                     flag = .found
                 }
             } else if detector.contains(self) {
                 flag = .cycle
             } else if let parent = parentZone {
-                zone.cycleDetectorArray.append(self)
+                babyZone.cycleDetectorArray.append(self)
 
-                return parent.isDescendantOf(zone)
+                return parent.isDescendantOf(babyZone) // continue with parent
             }
             
-            zone.cycleDetectorArray.removeAll()
+            babyZone.cycleDetectorArray.removeAll()
         }
 
         return flag

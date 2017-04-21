@@ -122,6 +122,7 @@ class ZRecord: NSObject {
     func deepCopy() -> Zone {
         let copy = Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: gStorageMode)
 
+        copy.needCreate() // so KVO won't call set needsMerge state bit
         updateCloudProperties()
 
         for keyPath: String in cloudProperties() {
@@ -141,8 +142,9 @@ class ZRecord: NSObject {
             }
         }
 
+        needSave()
+        updateCloudProperties()
         unmarkForStates([.needsMerge])
-        needUpdateSave()
 
         record = iRecord
     }
@@ -183,33 +185,26 @@ class ZRecord: NSObject {
 
 
     func isMarkedForStates(_ states: [ZRecordState]) -> Bool {
-        return detectWithMode(storageMode!) {
-            gCloudManager.hasRecord(self, forStates:states)
-        }
+        return gCloudManager.hasRecord(self, forStates:states)
     }
 
 
     func markForStates(_ states: [ZRecordState]) {
-        invokeWithMode(storageMode) {
-            gCloudManager.addRecord(self, forStates:states)
-        }
+        gCloudManager.addRecord(self, for: states)
     }
-    
+
 
     func unmarkForStates(_ states: [ZRecordState]) {
-        if let identifier = self.record?.recordID {
-            invokeWithMode(storageMode) {
-                gCloudManager.removeRecordByRecordID(identifier, forStates:states)
-            }
+        if let identifier = self.record?.recordID, let mode = storageMode {
+            gCloudManager.removeRecordByRecordID(identifier, forStates:states, in: mode)
         }
     }
 
 
-    func needUpdateSave() { markForStates([.needsSave]); updateCloudProperties() }
-    func needJustSave()   { markForStates([.needsSave]) }
-    func needFetch()      { markForStates([.needsFetch]) }
-    func needCreate()     { markForStates([.needsCreate]) }
-    func needParent()     { markForStates([.needsParent]) }
+    func needSave()   { markForStates([.needsSave]) }
+    func needFetch()  { markForStates([.needsFetch]) }
+    func needCreate() { markForStates([.needsCreate]) }
+    func needParent() { markForStates([.needsParent]) }
 
 
     func needChildren() {

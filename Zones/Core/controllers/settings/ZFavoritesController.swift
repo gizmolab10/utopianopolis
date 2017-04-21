@@ -26,7 +26,7 @@ class ZFavoritesController: ZGenericController, ZTableViewDelegate, ZTableViewDa
     override func identifier() -> ZControllerID { return .favorites }
 
 
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         if  let tableView = favoritesTableView {
             gFavoritesManager.updateIndexFor(gHere) { object in
                 gFavoritesManager.update()

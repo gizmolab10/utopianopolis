@@ -22,7 +22,7 @@ class ZDragDrawView: ZView {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        if  let      zone = gSelectionManager.dragDropZone, let widget = zone.widget {
+        if  let    widget = gSelectionManager.dragDropZone?.widget {
             let   dotRect = widget.floatingDropDotRect
             let localRect = widget.convert(dotRect, to: self)
 

@@ -65,8 +65,6 @@ class ZoneWidget: ZView {
 
     func addChildrenView() {
         if !subviews.contains(childrenView) {
-            childrenView.clearBackground()
-
             insertSubview(childrenView, belowSubview: textWidget)
             childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
                 make.left.equalTo(textWidget.snp.right).offset(gDotWidth)
@@ -122,8 +120,6 @@ class ZoneWidget: ZView {
         }
 
         gWidgetsManager.registerWidget(self)
-        inView?.clearBackground()
-        clearBackground()
         addTextView()
         layoutText()
         layoutDots()
@@ -483,7 +479,8 @@ class ZoneWidget: ZView {
         let        isGrabbed = widgetZone.isGrabbed
         textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? gGrabbedBookmarkColor : gGrabbedTextColor : ZColor.black
 
-        if isGrabbed && !widgetZone.isEditing {
+        if isGrabbed && !widgetZone.isEditing { // && !childrenPass {  CLUE! ... adding this to the logic makes highlight disappear for zones with children shown
+            //report("highlighting \(widgetZone.zoneName ?? "--------")")
             drawSelectionHighlight()
         }
 

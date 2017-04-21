@@ -29,7 +29,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     override func identifier() -> ZControllerID { return .searchResults }
 
 
-    override func handleSignal(_ iObject: Any?, kind: ZSignalKind) {
+    override func handleSignal(_ iObject: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         if kind == .found {
             resultsAreVisible = false
             
@@ -37,7 +37,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
                 let count = records.count
 
                 if count == 1 {
-                    self.resolveRecord(records[0])
+                    self.resolveRecord(records[0], in: storageMode)
                 } else if count > 0 {
                     foundRecords = records
 
@@ -111,7 +111,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     #endif
 
 
-    func resolve() -> Bool {
+    func resolve(in storageMode: ZStorageMode) -> Bool {
         #if os(iOS)
             return false
         #else
@@ -122,7 +122,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         if resolved {
             let record = self.foundRecords[index!]
 
-            resolveRecord(record)
+            resolveRecord(record, in: storageMode)
         }
 
         return resolved
@@ -131,11 +131,11 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     }
 
 
-    func resolveRecord(_ record: CKRecord) {
-        var zone = gCloudManager.modeSpecificZoneForRecordID(record.recordID)
+    func resolveRecord(_ record: CKRecord, in storageMode: ZStorageMode) {
+        var zone = gCloudManager.zoneForRecordID(record.recordID, in: storageMode)
 
         if zone == nil {
-            zone = Zone(record: record, storageMode: gStorageMode)
+            zone = Zone(record: record, storageMode: storageMode)
 
             zone?.needChildren()
         }
@@ -180,15 +180,15 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
                     if !event.modifierFlags.isNumericPad {
                         switch key {
-                        case    "f":    self.reset();    return nil
-                        case   "\r": if self.resolve() { return nil }; break
-                        default:                         break
+                        case    "f":    self.reset();                    return nil
+                        case   "\r": if self.resolve(in: gStorageMode) { return nil }; break
+                        default:                                         break
                         }
                     } else if let arrow = key.arrow {
                         switch arrow {
-                        case  .left:    self.clear();    return nil
-                        case .right: if self.resolve() { return nil }; break
-                        default:                         break
+                        case  .left:    self.clear();                    return nil
+                        case .right: if self.resolve(in: gStorageMode) { return nil }; break
+                        default:                                         break
                         }
                     }
 

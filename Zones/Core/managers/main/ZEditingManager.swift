@@ -217,7 +217,7 @@ class ZEditingManager: NSObject {
     func createBookmark() {
         let zone = gSelectionManager.firstGrabbedZone
 
-        if gStorageMode != .favorites, !zone.isRoot {
+        if zone.storageMode != .favorites, !zone.isRoot {
             let closure = {
                 var bookmark: Zone? = nil
 
@@ -425,7 +425,8 @@ class ZEditingManager: NSObject {
 
                 if (show || hasLocalChildren) && zone.hasProgeny != hasLocalChildren {
                     if hasLocalChildren {
-                        zone.needUpdateSave()
+                        zone.maybeNeedMerge()
+                        zone.updateCloudProperties()
                     }
                 }
 
@@ -528,7 +529,7 @@ class ZEditingManager: NSObject {
         if  let         zone = iZone, zone.storageMode != .favorites {
             let createAndAdd = {
                 let   record = CKRecord(recordType: zoneTypeKey)
-                let    child = Zone(record: record, storageMode: gStorageMode)
+                let    child = Zone(record: record, storageMode: zone.storageMode)
 
                 child .grab()
                 zone.ungrab()
@@ -788,7 +789,7 @@ class ZEditingManager: NSObject {
         if zone.count != 0, let child = asTask ? zone.children.first : zone.children.last {
             zone.displayChildren()
             child.grab()
-            syncAndRedraw()
+            signalFor(nil, regarding: .redraw)
         }
     }
 

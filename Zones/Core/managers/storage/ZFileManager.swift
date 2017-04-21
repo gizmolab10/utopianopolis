@@ -41,7 +41,7 @@ class ZFileManager: NSObject {
 
 
     func restore() {
-        gCloudManager.clear()
+        gCloudManager.clear(gStorageMode)
 
         if gFileMode == .local && gStorageMode != .favorites {
             if let raw = NSDictionary(contentsOf: pathToCurrentZoneFile()) {

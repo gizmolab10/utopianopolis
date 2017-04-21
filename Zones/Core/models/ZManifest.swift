@@ -17,6 +17,7 @@ class ZManifest: ZRecord {
     dynamic var here:    CKReference?
     var        _hereZone:       Zone?
     var         currentlyGrabbedZones = [Zone] ()
+    var   manifestMode: ZStorageMode?
 
 
     override func cloudProperties() -> [String] {
@@ -28,7 +29,7 @@ class ZManifest: ZRecord {
         get {
             if _hereZone == nil {
                 let hereRecord: CKRecord? = (here == nil) ? nil : CKRecord(recordType: zoneTypeKey, recordID: (here?.recordID)!)
-                _hereZone                 = Zone(record: hereRecord, storageMode: gStorageMode)
+                _hereZone                 = Zone(record: hereRecord, storageMode: manifestMode)
             }
 
             return _hereZone!
@@ -42,7 +43,7 @@ class ZManifest: ZRecord {
             if let record = _hereZone?.record, record.recordID.recordName != here?.recordID.recordName {
                 here = CKReference(record: record, action: .none)
 
-                needJustSave()
+                needSave()
             }
         }
     }
