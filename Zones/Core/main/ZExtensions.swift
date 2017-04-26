@@ -23,7 +23,7 @@ typealias ZStorageDict = [String : NSObject]
 extension NSObject {
     var settingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
     var            gEditor:   ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
-    var        gEditorView:           ZDragDrawView? { return gEditor?.view                                  as? ZDragDrawView }
+    var        gEditorView:       ZDragDrawView? { return gEditor?.view                                  as? ZDragDrawView }
 
 
     func toConsole(_ iMessage: Any?) {

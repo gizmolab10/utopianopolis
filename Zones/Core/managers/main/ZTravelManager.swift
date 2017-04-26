@@ -139,8 +139,8 @@ class ZTravelManager: NSObject {
     func travel(_ atArrival: @escaping Closure) {
         createUndoForTravelBackTo(gSelectionManager.currentlyMovableZone, atArrival: atArrival)
 
-        gWidgetsManager   .clear()
-        gSelectionManager .clear()
+        gWidgetsManager   .clearWidgets()
+        gSelectionManager .clearEdit()
         gOperationsManager.travel(atArrival)
     }
 

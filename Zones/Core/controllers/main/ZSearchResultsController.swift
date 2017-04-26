@@ -137,7 +137,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         if zone == nil {
             zone = Zone(record: record, storageMode: storageMode)
 
-            zone?.needChildren()
+            zone!.needChildren()
         }
 
         gHere = zone!

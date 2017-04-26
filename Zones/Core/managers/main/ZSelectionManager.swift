@@ -76,7 +76,7 @@ class ZSelectionManager: NSObject {
     }
 
 
-    func clear()       { currentlyEditingZone  = nil }
+    func clearEdit()   { currentlyEditingZone  = nil }
     func clearGrab()   { currentlyGrabbedZones = [] }
     func clearPaste()  { pasteableZones        = [] }
     func fullResign()  { assignAsFirstResponder (nil) } // ios broken

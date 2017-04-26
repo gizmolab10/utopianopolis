@@ -105,6 +105,7 @@ class ZEditingManager: NSObject {
                 let   isShift = flags.isShift
                 let hasWidget = widget != nil
                 let isSpecial = isWindow || isOption
+                let  hasFlags = isCommand || isOption || isShift
 
                 switch key! {
                 case "f":       find()
@@ -115,7 +116,7 @@ class ZEditingManager: NSObject {
                 case "\u{8}",
                      "\u{7F}":  if isSpecial { delete() } // delete
                 case "\t":      if hasWidget { addSibling() } // tab
-                case "/":       focusOnZone(gSelectionManager.firstGrabbedZone)
+                case "/", "?":  onZone(gSelectionManager.firstGrabbedZone, focus: !hasFlags)
                 case "z":       if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
                 case " ":
                     if hasWidget && isSpecial && !(widget?.widgetZone.isBookmark)! {
@@ -222,7 +223,7 @@ class ZEditingManager: NSObject {
                 var bookmark: Zone? = nil
 
                 self.invokeWithMode(.mine) {
-                    bookmark = gFavoritesManager.createBookmarkFor(zone, isFavorite: false)
+                    bookmark = gFavoritesManager.createBookmark(for: zone, isFavorite: false)
                 }
 
                 bookmark?.grab()
@@ -289,23 +290,25 @@ class ZEditingManager: NSObject {
     }
 
 
-    func focusOnZone(_ iZone: Zone) {
-        let focusOn = { (zone: Zone, kind: ZSignalKind) in
+    func onZone(_ iZone: Zone, focus: Bool) {
+        let focusOn = { (zone: Zone) in
             gHere = zone
 
-            gSelectionManager.deselect()
             zone.grab()
-            gControllersManager.syncToCloudAndSignalFor(nil, regarding: kind) {}
+            gControllersManager.syncToCloudAndSignalFor(zone, regarding: .redraw) {}
         }
 
-        if iZone.isBookmark {
-            gTravelManager.travelThrough(iZone) { object, kind in
-                focusOn((object as! Zone), .redraw)
-            }
+        if !focus {
+            gFavoritesManager.deleteFavorite(for: iZone)
+            self.syncAndRedraw()
+        } else if !iZone.isBookmark {
+            gFavoritesManager.createBookmark(for: iZone, isFavorite: true)
+            focusOn(iZone)
         } else {
-            gFavoritesManager.createBookmarkFor(iZone, isFavorite: true)
-            focusOn(iZone, .redraw)
-
+            gTravelManager.travelThrough(iZone) { object, kind in
+                gSelectionManager.deselect()
+                focusOn(object as! Zone)
+            }
         }
     }
 
@@ -378,18 +381,18 @@ class ZEditingManager: NSObject {
     func toggleDotUpdate(show: Bool, zone: Zone, to iGoal: Int? = nil) {
         toggleDotRecurse(show, zone, to: iGoal) {
 
-            ////////////////////////////////////////////////////////
-            // delay executing this until the last time it is called
-            ////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////
+            // delay executing this until the last time it is called //
+            ///////////////////////////////////////////////////////////
 
             if !show {
-                self.signalFor(nil, regarding: .redraw)
+                self.syncAndRedraw()
             } else {
                 gOperationsManager.children {
-                    self.signalFor(nil, regarding: .redraw)
+                    self.syncAndRedraw()
                 }
             }
-        };
+        }
     }
     
 

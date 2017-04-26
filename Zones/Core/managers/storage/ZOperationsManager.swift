@@ -121,12 +121,12 @@ class ZOperationsManager: NSObject {
                 let  operation = BlockOperation {
                     var  closure: IntegerClosure? = nil     // allow this closure to recurse
                     let                      full = [.root, .favorites].contains(identifier)
-                    let forCurrentStorageModeOnly = [.file, .ready, .cloud, .parent, .children, .subscribe, .unsubscribe].contains(identifier)
+                    let forCurrentStorageModeOnly = [.here, .file, .ready, .cloud, .parent, .children, .subscribe, .unsubscribe].contains(identifier)
                     let     modes: [ZStorageMode] = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : [.mine, .everyone, .favorites]
 
                     closure = { (index: Int) in
                         if index >= modes.count {
-                            self.finishOperation(for: identifier, mode: saved)
+                            self.finishOperation(for: identifier)
                         } else {
                             self.invoke(identifier, mode: modes[index], optional) {
                                 closure?(index + 1)         // recurse
@@ -151,9 +151,7 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func finishOperation(for identifier: ZOperationID, mode: ZStorageMode) {
-        gStorageMode = mode
-
+    func finishOperation(for identifier: ZOperationID) {
         if let operation = waitingOps[identifier] {
             waitingOps[identifier] = nil
 
@@ -163,8 +161,6 @@ class ZOperationsManager: NSObject {
 
 
     func invoke(_ identifier: ZOperationID, mode: ZStorageMode, _ optional: Int? = nil, _ onCompletion: Closure?) {
-        gStorageMode = mode
-
         let report = { (iCount: Int) -> Void in
             if iCount == 0 {
                 onCompletion?()

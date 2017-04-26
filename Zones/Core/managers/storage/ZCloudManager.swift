@@ -27,7 +27,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func configure(_ operation: CKDatabaseOperation, using mode: ZStorageMode) -> CKDatabaseOperation? {
-        if let database = databaseForMode(mode) {
+        if  let               database = databaseForMode(mode) {
             operation.qualityOfService = .background
             operation.container        = container
             operation.database         = database
@@ -90,14 +90,54 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
+    func stringForZones(_ zones: [Zone]?) -> String {
+        var string = ""
+
+        if zones != nil {
+            for zone in zones! {
+                let name = zone.zoneName ?? "---"
+
+                string.append("\n         \(name)")
+            }
+        }
+
+        return string
+    }
+
+
+    func applyTo(_ array: [NSObject]?, closure: ObjectToStringClosure) -> String {
+        var string = ""
+
+        if array != nil {
+            for object in array! {
+                let computed = closure(object)
+                string.append("\n             \(computed)")
+            }
+        }
+
+        return string
+    }
+
+
+    func stringForRecordIDs(_ recordIDs: [CKRecordID], in storageMode: ZStorageMode) -> String {
+        return applyTo(recordIDs)  { identifier -> (String) in
+            if let recordID = identifier as? CKRecordID, let record = self.recordForRecordID(recordID, in: storageMode), let name = record.record.object(forKey: zoneNameKey) as? String {
+                return name
+            }
+
+            return "---"
+        }
+    }
+
+
     func stringFor(_ records: [CKRecord]?) -> String {
         var string = ""
 
         if records != nil {
             for record in records! {
-                let value = record[zoneNameKey] as? String ?? record.recordID.recordName
+                let name = record[zoneNameKey] as? String ?? record.recordID.recordName
 
-                string.append("\n         \(value)")
+                string.append("\n             \(name)")
             }
         }
 
@@ -113,7 +153,7 @@ class ZCloudManager: ZRecordsManager {
 
             if operation.recordsToSave!.count > 0 {
 
-                toConsole("saving \((operation.recordsToSave?.count)!) ==> \(storageMode)\(stringFor(operation.recordsToSave))")
+                report("SAVE \((operation.recordsToSave?.count)!) ==> \(storageMode)\(stringFor(operation.recordsToSave))")
 
                 operation.completionBlock          = {
 
@@ -143,7 +183,7 @@ class ZCloudManager: ZRecordsManager {
                                 description     = "\(description): \(name)"
                             }
 
-                            self.report(description)
+                            self.report("SAVE ==> \(storageMode) \(description)")
                         }
                     }
                 }
@@ -162,9 +202,9 @@ class ZCloudManager: ZRecordsManager {
         let   predicate = NSPredicate(format: "zoneState <= %d", ZoneState.IsDeleted.rawValue)
         var toBeDeleted = [CKRecordID] ()
 
-        self.queryWith(predicate, storageMode: gStorageMode) { (iRecord: CKRecord?) in
+        self.queryWith(predicate, storageMode: storageMode) { (iRecord: CKRecord?) in
             if iRecord != nil {
-                self.report("deleting \(String(describing: iRecord![zoneNameKey]))")
+                self.report("DELETE \(String(describing: iRecord![zoneNameKey]))")
                 toBeDeleted.append((iRecord?.recordID)!)
 
             } else { // iRecord == nil means: end of response to this particular query
@@ -256,7 +296,7 @@ class ZCloudManager: ZRecordsManager {
     func establishRoot(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         let recordID = CKRecordID(recordName: rootNameKey)
 
-        self.assureRecordExists(withRecordID: recordID, storageMode: gStorageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
+        self.assureRecordExists(withRecordID: recordID, storageMode: storageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
             if iRecord != nil { // NEED TODO storage mode, i.e., the database
                 // get from the record id's cloud zone
                 gRoot       = self.zoneForRecord(iRecord!, in: storageMode)
@@ -366,7 +406,7 @@ class ZCloudManager: ZRecordsManager {
 
             onCompletion?(childrenNeeded.count)
             clearState(.needsChildren, in: storageMode)
-            toConsole("fetching children of \(zones)")
+            report("CHILDREN of \(zones)")
             queryWith(predicate, storageMode: storageMode) { (iRecord: CKRecord?) in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                     for parent in parentsNeedingResort {
@@ -392,7 +432,7 @@ class ZCloudManager: ZRecordsManager {
                                 }
                             }
                         } else {
-                            self.report(child.zoneName)
+                            self.report("CHILD \(child.zoneName ?? "---"))")
                         }
                     }
                 }
@@ -434,13 +474,21 @@ class ZCloudManager: ZRecordsManager {
         if  recordIDs.count > 0, let operation = configure(CKFetchRecordsOperation(), using: storageMode) as? CKFetchRecordsOperation {
             onCompletion?(recordIDs.count)
 
+            self.report("MERGE ==> \(storageMode) \(stringForRecordIDs(recordIDs, in: storageMode))")
+
             operation.recordIDs                = recordIDs
             operation.completionBlock          = { onCompletion?(0) }
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
-                if let error: CKError = iError as? CKError {
-                    self.reportError(error)
-                } else if let record = self.recordForRecordID(iID, in: storageMode) {
-                    record.mergeIntoAndTake(iRecord!)
+                if let record = self.recordForRecordID(iID, in: storageMode) {
+                    let name = record.record[zoneNameKey] as? String ?? "---"
+
+                    if let error: CKError = iError as? CKError {
+                        self.reportError("MERGE ==> \(storageMode) \(error) \(name)")
+                    } else {
+                        record.mergeIntoAndTake(iRecord!)
+                    }
+
+                    record.unmarkForStates([.needsMerge])
                 }
             }
 
@@ -481,16 +529,12 @@ class ZCloudManager: ZRecordsManager {
                 }
             }
 
-            clearState(.needsParent, in: storageMode)
-
             toConsole("fetching parents \(missingParents.count)")
-
+            clearState(.needsParent, in: storageMode)
             operation.start()
-
-            return
+        } else {
+            onCompletion?(0)
         }
-        
-        onCompletion?(0)
     }
 
 
@@ -523,17 +567,44 @@ class ZCloudManager: ZRecordsManager {
     func fetchFavorites(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         let predicate = NSPredicate(format: "zoneState >= %d AND zoneState < %d", ZoneState.IsFavorite.rawValue, ZoneState.IsDeleted.rawValue)
 
-        self.queryWith(predicate, storageMode: gStorageMode) { (iRecord: CKRecord?) in
+        self.queryWith(predicate, storageMode: storageMode) { (iRecord: CKRecord?) in
             if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                 gFavoritesManager.update()
                 gFavoritesManager.favoritesRootZone.respectOrder()
                 onCompletion?(0)
             } else {
-                let        bookmark = Zone(record: iRecord, storageMode: storageMode)
+                let        favorite = Zone(record: iRecord, storageMode: storageMode)
                 let            root = gFavoritesManager.favoritesRootZone
-                bookmark.parentZone = root
+                favorite.parentZone = root
+                var           found = false
 
-                root.addChild(bookmark)
+                // avoid adding a duplicate (which was created by a bug)
+
+                if  let        name = favorite.zoneName {
+                    for zone: Zone in root.children {
+                        if  let link  = favorite.zoneLink {
+                            if  link == zone.zoneLink {
+                                found = true
+
+                                break
+                            }
+                        }
+
+                        if name == zone.zoneName {
+                            found   = true
+
+                            break
+                        }
+                    }
+                }
+
+                if !found {
+                    root.addChild(favorite)
+                } else {
+                    favorite.isDeleted = true
+
+                    favorite.needSave()
+                }
             }
         }
     }
@@ -549,7 +620,7 @@ class ZCloudManager: ZRecordsManager {
 
             onCompletion?(needed.count)
 
-            self.queryWith(predicate, storageMode: gStorageMode) { (iRecord: CKRecord?) in
+            self.queryWith(predicate, storageMode: storageMode) { (iRecord: CKRecord?) in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                     onCompletion?(0)
                 } else {
@@ -657,23 +728,21 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func setIntoObject(_ object: ZRecord, value: NSObject?, forPropertyName: String) {
-        if  databaseForMode(gStorageMode)  != nil {
-            if  let                  record = object.record {
-                let                oldValue = record[forPropertyName] as? NSObject
+    func setIntoObject(_ object: ZRecord, value: NSObject?, for property: String) {
+        if  let     mode = object.storageMode, databaseForMode(mode) != nil, let record = object.record {
+            let oldValue = record[property] as? NSObject
 
-                if oldValue                != value {
-                    record[forPropertyName] = value as! CKRecordValue?
+            if oldValue         != value {
+                record[property] = value as! CKRecordValue?
 
-                    object.maybeNeedMerge()
-                }
+                object.maybeNeedMerge()
             }
         }
     }
 
 
     func getFromObject(_ object: ZRecord, valueForPropertyName: String) {
-        if  let db = databaseForMode(gStorageMode), object.record != nil, gOperationsManager.isReady {
+        if  let mode = object.storageMode, let db = databaseForMode(mode), object.record != nil, gOperationsManager.isReady {
             let      predicate = NSPredicate(value: true)
             let  type: String  = NSStringFromClass(type(of: object)) as String
             let query: CKQuery = CKQuery(recordType: type, predicate: predicate)

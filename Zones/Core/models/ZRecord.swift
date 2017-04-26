@@ -56,7 +56,7 @@ class ZRecord: NSObject {
     override init() {
         super.init()
 
-        gCloudManager.clearRecord(self)
+        gCloudManager.clearAllStatesForRecord(self)
 
         self.storageMode = nil
         self.record      = nil
@@ -144,7 +144,6 @@ class ZRecord: NSObject {
 
         needSave()
         updateCloudProperties()
-        unmarkForStates([.needsMerge])
 
         record = iRecord
     }
@@ -184,19 +183,14 @@ class ZRecord: NSObject {
     // MARK:-
 
 
-    func isMarkedForStates(_ states: [ZRecordState]) -> Bool {
-        return gCloudManager.hasRecord(self, forStates:states)
-    }
-
-
-    func markForStates(_ states: [ZRecordState]) {
-        gCloudManager.addRecord(self, for: states)
-    }
+    func isMarkedForStates(_ states: [ZRecordState]) -> Bool { return gCloudManager.hasRecord(self, forStates:states) }
+    func markForStates    (_ states: [ZRecordState])         {        gCloudManager.addRecord(self, for: states) }
+    func clearAllStates()                                    {        gCloudManager.clearAllStatesForRecord(self) }
 
 
     func unmarkForStates(_ states: [ZRecordState]) {
         if let identifier = self.record?.recordID, let mode = storageMode {
-            gCloudManager.removeRecordByRecordID(identifier, forStates:states, in: mode)
+            gCloudManager.clearStatesForRecordID(identifier, forStates:states, in: mode)
         }
     }
 
@@ -208,7 +202,7 @@ class ZRecord: NSObject {
 
 
     func maybeNeedMerge() {
-        if !isMarkedForStates([.needsCreate]) {
+        if !isMarkedForStates([.needsCreate, .needsSave]) {
             markForStates([.needsMerge])
         }
     }
@@ -230,8 +224,8 @@ class ZRecord: NSObject {
     // MARK:-
 
 
-    func setValue(_ value: NSObject, forPropertyName: String) {
-        gCloudManager.setIntoObject(self, value: value, forPropertyName: forPropertyName)
+    func setValue(_ value: NSObject, for property: String) {
+        gCloudManager.setIntoObject(self, value: value, for: property)
     }
 
 
@@ -259,7 +253,7 @@ class ZRecord: NSObject {
             let observer = iObject as! NSObject
 
             if let value: NSObject = observer.value(forKey: keyPath!) as! NSObject? {
-                setValue(value, forPropertyName: keyPath!)
+                setValue(value, for: keyPath!)
             }
         }
     }

@@ -20,7 +20,7 @@ class ZWidgetsManager: NSObject {
     var firstGrabbableWidget: ZoneWidget? { return widgetForZone(gSelectionManager.firstGrabbedZone) }
 
 
-    func clear() {
+    func clearWidgets() {
         widgets.removeAll()
     }
 

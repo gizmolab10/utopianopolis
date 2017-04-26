@@ -415,38 +415,34 @@ class Zone : ZRecord {
     }
 
 
-    @discardableResult func addChild(_ child: Zone?, at index: Int?) -> Int? {
-        if child != nil {
+    @discardableResult func addChild(_ iChild: Zone?, at index: Int?) -> Int? {
+        if  let child = iChild {
 
             // make sure it's not already been added
             // NOTE: both must have a record for this to be effective
 
-            if children.contains(child!) {
-                return children.index(of: child!)
-            }
-
-            if child?.record != nil {
-                let identifier = child?.record.recordID.recordName
+            if  let     record = child.record {
+                let identifier = record.recordID.recordName
 
                 for sibling in children {
                     if sibling.record != nil && sibling.record.recordID.recordName == identifier {
-                        return children.index(of: child!)
+                        return children.index(of: child)
                     }
                 }
             }
 
-            child!.parentZone = self
-            var      insertAt = index ?? count
+            child.parentZone = self
+            var     insertAt = index ?? count
 
             if index != nil && index! >= 0 && index! < count {
-                children.insert(child!, at: insertAt)
+                children.insert(child, at: insertAt)
             } else {
                 insertAt = count
 
-                children.append(child!)
+                children.append(child)
             }
 
-            child?.updateLevel()
+            child.updateLevel()
             updateProgenyCounts()
 
             return insertAt

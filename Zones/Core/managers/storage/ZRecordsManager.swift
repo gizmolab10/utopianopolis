@@ -106,7 +106,7 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func clear(_ storageMode: ZStorageMode) {
+    func clearAllStatesForRecords(for storageMode: ZStorageMode) {
         var byMode = recordsByState(for: storageMode)
 
         byMode.removeAll()
@@ -139,25 +139,20 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func addRecord(_ iRecord: ZRecord, for state: ZRecordState, in storageMode: ZStorageMode) {
-        if !hasRecord(iRecord, forStates: [state]) {
-            var records = recordsForState(state, in: storageMode)
-
-            records.append(iRecord)
-            setRecords(records, for: state, in: storageMode)
-        }
-    }
-
-
     func addRecord(_ iRecord: ZRecord, for states: [ZRecordState]) {
         if let mode = iRecord.storageMode {
             for state in states {
-                addRecord(iRecord, for: state, in: mode)
+                if !hasRecord(iRecord, forStates: [state]) {
+                    var records = recordsForState(state, in: mode)
+
+                    records.append(iRecord)
+                    setRecords(records, for: state, in: mode)
+                }
             }
         }
     }
 
-    func removeRecordByRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState], in storageMode: ZStorageMode) {
+    func clearStatesForRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState], in storageMode: ZStorageMode) {
         findRecordByRecordID(iRecordID, forStates: forStates, in: storageMode, onEach: { (state: ZRecordState, record: ZRecord) in
             var records = self.recordsForState(state, in: storageMode)
 
@@ -170,9 +165,9 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func clearRecord(_ iRecord: ZRecord) {
+    func clearAllStatesForRecord(_ iRecord: ZRecord) {
         if let mode = iRecord.storageMode {
-            removeRecordByRecordID(iRecord.record?.recordID, forStates: allStates(for: mode), in: mode)
+            clearStatesForRecordID(iRecord.record?.recordID, forStates: allStates(for: mode), in: mode)
         }
     }
 
@@ -200,7 +195,7 @@ class ZRecordsManager: NSObject {
             }
         }
 
-        return names.joined(separator: ", ")
+        return names.joined(separator: "\n            ")
     }
 
 
