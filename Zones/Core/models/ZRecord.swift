@@ -202,7 +202,7 @@ class ZRecord: NSObject {
 
 
     func maybeNeedMerge() {
-        if !isMarkedForStates([.needsCreate, .needsSave]) {
+        if !isMarkedForStates([.needsCreate, .needsSave, .needsMerge]) {
             markForStates([.needsMerge])
         }
     }
@@ -213,7 +213,7 @@ class ZRecord: NSObject {
             markForStates    ([.needsChildren, .hasChildren])
 
             if let zone = self as? Zone {
-                toConsole("need children for \(zone.zoneName ?? "NO NAME")")
+                note("need children for \(zone.zoneName ?? "NO NAME")")
 
             }
         }

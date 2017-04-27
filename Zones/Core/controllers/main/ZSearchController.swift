@@ -49,7 +49,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
 
     func control(_ control: ZControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
-        report(searchBox?.text)
+        performance(searchBox?.text)
         searchBox?.resignFirstResponder()
 
         let find = (searchBox?.text)!

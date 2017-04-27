@@ -38,7 +38,7 @@ class ZOperationsManager: NSObject {
 
     var    onReady: Closure?
     var    isReady = false
-    var      debug = false
+    var      debug = true
     var waitingOps = [ZOperationID : BlockOperation] ()
     let      queue = OperationQueue()
 
@@ -161,35 +161,35 @@ class ZOperationsManager: NSObject {
 
 
     func invoke(_ identifier: ZOperationID, mode: ZStorageMode, _ optional: Int? = nil, _ onCompletion: Closure?) {
-        let report = { (iCount: Int) -> Void in
+        let complete = { (iCount: Int) -> Void in
             if iCount == 0 {
                 onCompletion?()
             }
 
-            if self.debug {
+            if self.debug && identifier != ZOperationID.ready {
                 self.report("\(String(describing: identifier)) \(iCount) \(mode)")
             }
         }
 
         switch identifier {
-        case .file:         gfileManager.restore  (from: mode);          report(0); break
-        case .root:        gCloudManager.establishRoot  (mode,           report);   break
-        case .manifest:    gCloudManager.fetchManifest  (mode,           report);   break
-        case .favorites:   gCloudManager.fetchFavorites (mode,           report);   break
-        case .here:       gTravelManager.establishHere  (mode,           report);   break // TODO: BROKEN
-        case .scaffold:    gCloudManager.fetchScaffold  (mode,           report);   break
-        case .children:    gCloudManager.fetchChildren  (mode, optional, report);   break
-        case .parent:      gCloudManager.fetchParents   (mode,           report);   break
-        case .unsubscribe: gCloudManager.unsubscribe    (mode,           report);   break
-        case .cloud:       gCloudManager.cloudLogic     (mode,           report);   break
-        case .emptyTrash:  gCloudManager.emptyTrash     (mode,           report);   break
-        case .subscribe:   gCloudManager.subscribe      (mode,           report);   break
-        case .undelete:    gCloudManager.undelete       (mode,           report);   break
-        case .create:      gCloudManager.create         (mode,           report);   break
-        case .fetch:       gCloudManager.fetch          (mode,           report);   break
-        case .merge:       gCloudManager.merge          (mode,           report);   break
-        case .flush:       gCloudManager.flush          (mode,           report);   break
-        case .ready:                     becomeReady    (mode,           report);   break
+        case .file:         gfileManager.restore  (from: mode);          complete(0); break
+        case .root:        gCloudManager.establishRoot  (mode,           complete);   break
+        case .manifest:    gCloudManager.fetchManifest  (mode,           complete);   break
+        case .favorites:   gCloudManager.fetchFavorites (mode,           complete);   break
+        case .here:       gTravelManager.establishHere  (mode,           complete);   break // TODO: BROKEN
+        case .scaffold:    gCloudManager.fetchScaffold  (mode,           complete);   break
+        case .children:    gCloudManager.fetchChildren  (mode, optional, complete);   break
+        case .parent:      gCloudManager.fetchParents   (mode,           complete);   break
+        case .unsubscribe: gCloudManager.unsubscribe    (mode,           complete);   break
+        case .cloud:       gCloudManager.cloudLogic     (mode,           complete);   break
+        case .emptyTrash:  gCloudManager.emptyTrash     (mode,           complete);   break
+        case .subscribe:   gCloudManager.subscribe      (mode,           complete);   break
+        case .undelete:    gCloudManager.undelete       (mode,           complete);   break
+        case .create:      gCloudManager.create         (mode,           complete);   break
+        case .fetch:       gCloudManager.fetch          (mode,           complete);   break
+        case .merge:       gCloudManager.merge          (mode,           complete);   break
+        case .flush:       gCloudManager.flush          (mode,           complete);   break
+        case .ready:                     becomeReady    (mode,           complete);   break
         }
     }
 

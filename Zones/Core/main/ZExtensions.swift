@@ -26,16 +26,10 @@ extension NSObject {
     var        gEditorView:       ZDragDrawView? { return gEditor?.view                                  as? ZDragDrawView }
 
 
-    func toConsole(_ iMessage: Any?) {
-        if iMessage != nil {
-            // print(iMessage!)
-        }
-    }
-
-
-    func debugCheck() {
-        gTravelManager.debugCheck()
-    }
+    func        note(_ iMessage: Any?)                            { } // report(iMessage) }
+    func performance(_ iMessage: Any?)                            {      report(iMessage) }
+    func   signalFor(_ object: NSObject?, regarding: ZSignalKind) { gControllersManager.signalFor(object, regarding: regarding, onCompletion: nil) }
+    func  debugCheck()                                            { gTravelManager.debugCheck() }
 
 
     func report(_ iMessage: Any?) {
@@ -53,11 +47,6 @@ extension NSObject {
         } else if iError != nil {
             print(iError!)
         }
-    }
-
-
-    func signalFor(_ object: NSObject?, regarding: ZSignalKind) {
-        gControllersManager.signalFor(object, regarding: regarding, onCompletion: nil)
     }
 
 
@@ -104,34 +93,16 @@ extension CGRect {
 
 
 extension String {
-    var asciiArray: [UInt32] {
-        return unicodeScalars.filter{$0.isASCII}.map{$0.value}
-    }
+    var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
+    var          isDigit: Bool { return "0123456789.+-=*/".characters.contains(self[startIndex]) }
+    var          isAscii: Bool { return unicodeScalars.filter{$0.isASCII}.count > 0 }
+    var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
 
 
-    var isDigit: Bool {
-        return "0123456789.+-=*/".characters.contains(self[startIndex])
-    }
-
-
-    var isAscii: Bool {
-        return unicodeScalars.filter{$0.isASCII}.count > 0
-    }
-
-
-    var containsNonAscii: Bool {
-        return unicodeScalars.filter{!$0.isASCII}.count > 0
-    }
-
-
-    func heightForFont(_ font: ZFont) -> CGFloat {
-        return sizeWithFont(font).height
-    }
-
-
-    func widthForFont(_ font: ZFont) -> CGFloat {
-        return sizeWithFont(font).width + 4.0
-    }
+    func substring(from:         Int) -> String   { return substring(from: index(at: from)) }
+    func substring(to:           Int) -> String  { return substring(to: index(at: to)) }
+    func heightForFont(_ font: ZFont) -> CGFloat { return sizeWithFont(font).height }
+    func widthForFont(_  font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
 
 
     func sizeWithFont(_ font: ZFont) -> CGSize {
@@ -154,16 +125,6 @@ extension String {
         } while position > 0
 
         return startIndex
-    }
-
-
-    func substring(from: Int) -> String {
-        return substring(from: index(at: from))
-    }
-
-
-    func substring(to: Int) -> String {
-        return substring(to: index(at: to))
     }
 
 

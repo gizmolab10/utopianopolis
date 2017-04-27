@@ -66,7 +66,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                 zone!.grab()
             }
 
-            toConsole(zone?.zoneName)
+            note(zone?.zoneName)
         }
 
         specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind)
@@ -156,7 +156,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                 dropZone?.widget?.displayForDrag() // redraw child lines
                 view            .setNeedsDisplay() // redraw dragline and dot
 
-                // report("\(relation) \(dropZone?.zoneName ?? "no name")")
+                // performance("\(relation) \(dropZone?.zoneName ?? "no name")")
 
                 if done {
                     let editor = gEditingManager

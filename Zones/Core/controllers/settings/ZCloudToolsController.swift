@@ -31,7 +31,7 @@ class ZCloudToolsController: ZGenericController {
         // needs elaborate gui, like search results, but with checkboxes and [de]select all checkbox
 
         //gOperationsManager.emptyTrash {
-        //    self.toConsole("eliminated")
+        //    self.note("eliminated")
         //}
     }
 

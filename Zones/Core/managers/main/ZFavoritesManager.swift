@@ -244,9 +244,9 @@ class ZFavoritesManager: NSObject {
                 return switchToNext(forward) { atArrival() }
             }
             
-            // report(bookmark.zoneName)
+            // performance(bookmark.zoneName)
         } else {
-            report("oops!")
+            performance("oops!")
         }
     }
 

@@ -229,7 +229,7 @@ class Zone : ZRecord {
 
 
     override func debug(_  iMessage: String) {
-        // report("\(iMessage) children \(count) parent \(parent != nil) isDeleted \(isDeleted) mode \(storageMode!) \(zoneName ?? "unknown")")
+        // performance("\(iMessage) children \(count) parent \(parent != nil) isDeleted \(isDeleted) mode \(storageMode!) \(zoneName ?? "unknown")")
     }
 
 
@@ -358,10 +358,10 @@ class Zone : ZRecord {
 
             self.updateClassProperties()
 
-            if !isRoot {
+            if !isRoot && !isRootOfFavorites {
                 if parentZone != nil {
                     parentZone?.updateProgenyCounts()
-                } else {
+                } else if record != nil {
                     needParent()
 
                     gOperationsManager.parent {

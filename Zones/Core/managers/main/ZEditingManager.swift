@@ -188,7 +188,13 @@ class ZEditingManager: NSObject {
         gSelectionManager.clearPaste()
 
         for zone in gSelectionManager.currentlyGrabbedZones {
-            addToPasteCopyOf(zone)
+            zone.needChildren()
+        }
+
+        gOperationsManager.children(recursiveGoal: -1) {
+            for zone in gSelectionManager.currentlyGrabbedZones {
+                self.addToPasteCopyOf(zone)
+            }
         }
     }
 
@@ -929,11 +935,11 @@ class ZEditingManager: NSObject {
         gSelectionManager.clearPaste()
 
         for zone in gSelectionManager.currentlyGrabbedZones {
-            if let into = zone.parentZone {
+            if let parent = zone.parentZone {
                 addToPasteCopyOf(zone)
 
                 UNDO(self) { iUndoSelf in
-                    iUndoSelf.pasteInto(into)
+                    iUndoSelf.pasteInto(parent)
                 }
             }
         }

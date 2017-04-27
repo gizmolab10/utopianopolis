@@ -56,7 +56,7 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
 
 
     public func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        report("cloud registration error: \(error)")
+        performance("cloud registration error: \(error)")
     }
 }
 

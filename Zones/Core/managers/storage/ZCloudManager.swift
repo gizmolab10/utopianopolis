@@ -78,7 +78,7 @@ class ZCloudManager: ZRecordsManager {
             if let count = operation.recordsToSave?.count, count > 0 {
                 operation.completionBlock = { onCompletion?(0) }
 
-                toConsole("creating \(count)")
+                note("creating \(count)")
 
                 operation.start()
 
@@ -111,7 +111,7 @@ class ZCloudManager: ZRecordsManager {
         if array != nil {
             for object in array! {
                 let computed = closure(object)
-                string.append("\n             \(computed)")
+                string.append("\n            \(computed)")
             }
         }
 
@@ -153,7 +153,7 @@ class ZCloudManager: ZRecordsManager {
 
             if operation.recordsToSave!.count > 0 {
 
-                report("SAVE \((operation.recordsToSave?.count)!) ==> \(storageMode)\(stringFor(operation.recordsToSave))")
+                performance("SAVE \((operation.recordsToSave?.count)!) ==> \(storageMode)\(stringFor(operation.recordsToSave))")
 
                 operation.completionBlock          = {
 
@@ -183,7 +183,7 @@ class ZCloudManager: ZRecordsManager {
                                 description     = "\(description): \(name)"
                             }
 
-                            self.report("SAVE ==> \(storageMode) \(description)")
+                            self.performance("SAVE ==> \(storageMode) \(description)")
                         }
                     }
                 }
@@ -204,7 +204,7 @@ class ZCloudManager: ZRecordsManager {
 
         self.queryWith(predicate, storageMode: storageMode) { (iRecord: CKRecord?) in
             if iRecord != nil {
-                self.report("DELETE \(String(describing: iRecord![zoneNameKey]))")
+                self.performance("DELETE \(String(describing: iRecord![zoneNameKey]))")
                 toBeDeleted.append((iRecord?.recordID)!)
 
             } else { // iRecord == nil means: end of response to this particular query
@@ -406,7 +406,7 @@ class ZCloudManager: ZRecordsManager {
 
             onCompletion?(childrenNeeded.count)
             clearState(.needsChildren, in: storageMode)
-            report("CHILDREN of \(zones)")
+            performance("CHILDREN of \(zones)")
             queryWith(predicate, storageMode: storageMode) { (iRecord: CKRecord?) in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                     for parent in parentsNeedingResort {
@@ -419,8 +419,12 @@ class ZCloudManager: ZRecordsManager {
                     let child = self.zoneForRecord(iRecord!, in: storageMode)
 
                     if !child.isDeleted {
-                        if recursiveGoal != nil && recursiveGoal! > child.level {
-                            child.maybeNeedChildren()
+                        if recursiveGoal != nil {
+                            if recursiveGoal! > child.level {
+                                child.maybeNeedChildren()
+                            } else if recursiveGoal! < 0 {
+                                child.needChildren()
+                            }
                         }
 
                         if let parent  = child.parentZone {
@@ -432,7 +436,7 @@ class ZCloudManager: ZRecordsManager {
                                 }
                             }
                         } else {
-                            self.report("CHILD \(child.zoneName ?? "---"))")
+                            self.performance("CHILD \(child.zoneName ?? "---"))")
                         }
                     }
                 }
@@ -474,22 +478,22 @@ class ZCloudManager: ZRecordsManager {
         if  recordIDs.count > 0, let operation = configure(CKFetchRecordsOperation(), using: storageMode) as? CKFetchRecordsOperation {
             onCompletion?(recordIDs.count)
 
-            self.report("MERGE ==> \(storageMode) \(stringForRecordIDs(recordIDs, in: storageMode))")
+            self.performance("MERGE ==> \(storageMode) \(stringForRecordIDs(recordIDs, in: storageMode))")
 
             operation.recordIDs                = recordIDs
             operation.completionBlock          = { onCompletion?(0) }
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
-                if let record = self.recordForRecordID(iID, in: storageMode) {
-                    let name = record.record[zoneNameKey] as? String ?? "---"
+                if  let record = self.recordForRecordID(iID, in: storageMode) {
+                    let   name = record.record[zoneNameKey] as? String ?? "---"
 
                     if let error: CKError = iError as? CKError {
                         self.reportError("MERGE ==> \(storageMode) \(error) \(name)")
                     } else {
                         record.mergeIntoAndTake(iRecord!)
                     }
-
-                    record.unmarkForStates([.needsMerge])
                 }
+
+                self.clearStatesForRecordID(iID, forStates:[.needsMerge], in: storageMode)
             }
 
             operation.start()
@@ -529,7 +533,7 @@ class ZCloudManager: ZRecordsManager {
                 }
             }
 
-            toConsole("fetching parents \(missingParents.count)")
+            note("fetching parents \(missingParents.count)")
             clearState(.needsParent, in: storageMode)
             operation.start()
         } else {
