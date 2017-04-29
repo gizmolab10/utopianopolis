@@ -226,6 +226,13 @@ class ZFavoritesManager: NSObject {
     func switchToNext(_ forward: Bool, atArrival: @escaping Closure) {
         favoritesIndex = nextFavoritesIndex(forward: forward)
 
+        if !refocus(atArrival) {
+            switchToNext(forward, atArrival: atArrival)
+        }
+    }
+
+
+    func refocus(_ atArrival: @escaping Closure) -> Bool {
         if favoritesRootZone.count > favoritesIndex {
             let bookmark = favoritesRootZone[favoritesIndex]!
 
@@ -233,6 +240,8 @@ class ZFavoritesManager: NSObject {
                 gTravelManager.travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
                     atArrival()
                 }
+
+                return true
             } else if let mode = bookmark.crossLink?.storageMode {
                 gStorageMode = mode
 
@@ -240,16 +249,16 @@ class ZFavoritesManager: NSObject {
                     gHere.grab()
                     atArrival()
                 }
-            } else {
-                return switchToNext(forward) { atArrival() }
-            }
-            
-            // performance(bookmark.zoneName)
-        } else {
-            performance("oops!")
-        }
-    }
 
+                return true
+            }
+
+        }
+
+        performance("oops!")
+
+        return false
+    }
 
     // MARK:- create
     // MARK:-

@@ -111,8 +111,8 @@ class ZEditingManager: NSObject {
                 case "f":       find()
                 case "p":       printHere()
                 case "b":       createBookmark()
-                case "'":       doFavorites(isShift, isOption)
-                case "\"":      doFavorites(true,    isOption)
+                case "'":       doFavorites(isShift, isOption, isCommand)
+                case "\"":      doFavorites(true,    isOption, isCommand)
                 case "\u{8}",
                      "\u{7F}":  if isSpecial { delete() } // delete
                 case "\t":      if hasWidget { addSibling() } // tab
@@ -275,11 +275,17 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func doFavorites(_ isShift: Bool, _ isOption: Bool) {
-        if                !isShift || !isOption {
+    func doFavorites(_ isShift: Bool, _ isOption: Bool, _ isCommand: Bool) {
+        if isCommand {
+            gFavoritesManager.refocus() {
+                self.syncAndRedraw()
+            }
+        } else if         !isShift || !isOption {
             let backward = isShift ||  isOption
 
-            gFavoritesManager.switchToNext(!backward) { self.syncAndRedraw() }
+            gFavoritesManager.switchToNext(!backward) {
+                self.syncAndRedraw()
+            }
         } else {
             gFavoritesManager.showFavoritesAndGrab(gSelectionManager.firstGrabbedZone) { object, kind in
                 self.syncAndRedraw()

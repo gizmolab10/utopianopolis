@@ -17,7 +17,7 @@ enum ZOperationID: Int {
     case favorites
     case file
     case here
-    case scaffold
+    case toRoot
     case fetch
     case flush // zones, manifests, favorites
     case children
@@ -118,13 +118,13 @@ class ZOperationsManager: NSObject {
             let isMine = [.mine].contains(saved)
 
             for identifier in identifiers {
-                let  operation = BlockOperation {
+                let                     operation = BlockOperation {
                     var  closure: IntegerClosure? = nil     // allow this closure to recurse
-                    let                      full = [.root, .favorites].contains(identifier)
+                    let                      full = [.favorites, .root]                                                         .contains(identifier)
                     let forCurrentStorageModeOnly = [.here, .file, .ready, .cloud, .parent, .children, .subscribe, .unsubscribe].contains(identifier)
-                    let     modes: [ZStorageMode] = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : [.mine, .everyone, .favorites]
+                    let     modes: [ZStorageMode] = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : [.mine, .everyone]
 
-                    closure = { (index: Int) in
+                    closure = { index in
                         if index >= modes.count {
                             self.finishOperation(for: identifier)
                         } else {
@@ -177,11 +177,11 @@ class ZOperationsManager: NSObject {
         case .manifest:    gCloudManager.fetchManifest  (mode,           complete);   break
         case .favorites:   gCloudManager.fetchFavorites (mode,           complete);   break
         case .here:       gTravelManager.establishHere  (mode,           complete);   break // TODO: BROKEN
-        case .scaffold:    gCloudManager.fetchScaffold  (mode,           complete);   break
+        case .toRoot:      gCloudManager.fetchToRoot    (mode,           complete);   break
         case .children:    gCloudManager.fetchChildren  (mode, optional, complete);   break
         case .parent:      gCloudManager.fetchParents   (mode,           complete);   break
         case .unsubscribe: gCloudManager.unsubscribe    (mode,           complete);   break
-        case .cloud:       gCloudManager.cloudLogic     (mode,           complete);   break
+        case .cloud:       gCloudManager.fetchCloudZones(mode,           complete);   break
         case .emptyTrash:  gCloudManager.emptyTrash     (mode,           complete);   break
         case .subscribe:   gCloudManager.subscribe      (mode,           complete);   break
         case .undelete:    gCloudManager.undelete       (mode,           complete);   break

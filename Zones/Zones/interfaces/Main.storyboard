@@ -234,9 +234,14 @@ CA
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem title="Editor" keyEquivalent="'" id="2od-ln-crd">
-                                                        <modifierMask key="keyEquivalentModifierMask" shift="YES" option="YES" command="YES"/>
+                                                        <modifierMask key="keyEquivalentModifierMask" shift="YES" option="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="0YO-LL-6oo"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Refocus" keyEquivalent="'" id="tpQ-4P-p2y">
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="c9g-W5-Xac"/>
                                                         </connections>
                                                     </menuItem>
                                                 </items>

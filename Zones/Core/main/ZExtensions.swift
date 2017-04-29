@@ -82,6 +82,66 @@ extension NSObject {
             // gUndoManager.endUndoGrouping()
         })
     }
+
+
+    func applyTo(_ array: [NSObject]?, closure: ObjectToStringClosure) -> String {
+        var separator = ""
+        var    string = ""
+
+        if array != nil {
+            for object in array! {
+                let computed = closure(object)
+                string.append("\(separator) \(computed)")
+                separator = "\n            "
+            }
+        }
+
+        return string
+    }
+
+
+    func stringForZones(_ zones: [Zone]?) -> String {
+        return applyTo(zones)  { object -> (String) in
+            if let zone = object as? Zone, let name = zone.zoneName {
+                return name
+            }
+
+            return "---"
+        }
+    }
+
+
+    func stringForRecords(_ records: [CKRecord]?) -> String {
+        return applyTo(records)  { object -> (String) in
+            if let record = object as? CKRecord {
+                return record[zoneNameKey] as? String ?? record.recordID.recordName
+            }
+            
+            return "---"
+        }
+    }
+
+
+    func stringForReferences(_ references: [CKReference]?, in storageMode: ZStorageMode) -> String {
+        return applyTo(references)  { object -> (String) in
+            if let reference = object as? CKReference, let zone = gCloudManager.zoneForReference(reference, in: storageMode), let name = zone.zoneName {
+                return name
+            }
+
+            return "---"
+        }
+    }
+
+
+    func stringForRecordIDs(_ recordIDs: [CKRecordID]?, in storageMode: ZStorageMode) -> String {
+        return applyTo(recordIDs)  { object -> (String) in
+            if let recordID = object as? CKRecordID, let record = gCloudManager.recordForRecordID(recordID, in: storageMode), let name = record.record.object(forKey: zoneNameKey) as? String {
+                return name
+            }
+
+            return "---"
+        }
+    }
 }
 
 

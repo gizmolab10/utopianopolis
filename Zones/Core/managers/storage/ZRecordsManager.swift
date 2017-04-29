@@ -184,21 +184,6 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func zoneNamesWithMatchingStates(_ states: [ZRecordState], in storageMode: ZStorageMode) -> String {
-        var names = [String] ()
-
-        findRecordsWithMatchingStates(states, in: storageMode) { object in
-            let zone: Zone = object as! Zone
-
-            if let name = zone.zoneName, !names.contains(name) {
-                names.append(name)
-            }
-        }
-
-        return names.joined(separator: "\n            ")
-    }
-
-
     func recordIDsWithMatchingStates(_ states: [ZRecordState], in storageMode: ZStorageMode) -> [CKRecordID] {
         var identifiers = [CKRecordID] ()
 
