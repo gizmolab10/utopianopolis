@@ -63,13 +63,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-    func updateText() {
-        let    name = widget.widgetZone.zoneName
-        let hasName = name != nil
-        text        = hasName ? name : "empty"
-    }
-
-
     func setup() {
         delegate               = self
         isBordered             = false
@@ -137,13 +130,23 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
+    func updateText() {
+        if  let   zone = widget.widgetZone {
+            let   name = zone.zoneName ?? "empty"
+            let  count = zone.progenyCount - 1
+            let suffix = (isTextEditing || (count < 1)) ? "" : "  (\(count))"
+            text       = "\(name)\(suffix)"
+        }
+    }
+
+
     func captureText() {
         if !gTextCapturing, let zone = widget.widgetZone, zone.zoneName != text! {
             gTextCapturing = true
 
-            let assignText = { (toZone: Zone?) in
-                if  toZone != nil,     self.text != nil {
-                    toZone!.zoneName = self.text!
+            let        assignText = { (toZone: Zone?) in
+                if  let      zone = toZone, let components = self.text?.components(separatedBy: "  (") {
+                    zone.zoneName = components[0]
                 }
             }
 

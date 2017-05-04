@@ -34,7 +34,7 @@ class ZRecordsManager: NSObject {
 
 
     func undeletedCount(for storageMode: ZStorageMode) -> Int {
-        let       zones = self.zones(for: storageMode)
+        let       zones = zonesRegistry(for: storageMode)
         var       count = zones.count
         var identifiers = [CKRecordID] ()
 
@@ -74,7 +74,7 @@ class ZRecordsManager: NSObject {
         }
 
 
-    func zones(for storageMode: ZStorageMode) -> [String : Zone] {
+    func zonesRegistry(for storageMode: ZStorageMode) -> [String : Zone] {
         var registry: [String : Zone]? = zoneRegistry[storageMode]
 
         if  registry                 == nil {
@@ -266,7 +266,7 @@ class ZRecordsManager: NSObject {
 
 
     func isRegistered(_ zone: Zone) -> String? {
-        var zones = self.zones(for: zone.storageMode!)
+        var zones = zonesRegistry(for: zone.storageMode!)
 
         if zones.values.contains(zone) {
             for name in zones.keys {
@@ -304,7 +304,7 @@ class ZRecordsManager: NSObject {
 
     func unregisterZone(_ zone: Zone?) {
         if zone != nil, let record = zone!.record {
-            var zones = self.zones(for: zone!.storageMode!)
+            var zones = zonesRegistry(for: zone!.storageMode!)
 
             zones[record.recordID.recordName] = nil
         }
@@ -313,7 +313,7 @@ class ZRecordsManager: NSObject {
 
     func applyToAllZones(_ closure: ZoneClosure) {
         for mode: ZStorageMode in [.mine, .everyone, .favorites] {
-            let zones = self.zones(for: mode)
+            let zones = zonesRegistry(for: mode)
 
             for zone in zones.values {
                 closure(zone)
@@ -361,7 +361,7 @@ class ZRecordsManager: NSObject {
 
 
     func zoneForReference(_ reference: CKReference, in storageMode: ZStorageMode) -> Zone? {
-        let zones = self.zones(for: storageMode)
+        let zones = zonesRegistry(for: storageMode)
         var  zone = zones[reference.recordID.recordName]
 
         if  zone == nil, let record = recordForRecordID(reference.recordID, in: storageMode)?.record {
@@ -373,7 +373,7 @@ class ZRecordsManager: NSObject {
 
 
     func zoneForRecord(_ record: CKRecord, in storageMode: ZStorageMode) -> Zone {
-        let zones = self.zones(for: storageMode)
+        let zones = zonesRegistry(for: storageMode)
         var  zone = zones[record.recordID.recordName]
 
         if  zone == nil {
@@ -393,7 +393,7 @@ class ZRecordsManager: NSObject {
             return nil
         }
 
-        let zones = self.zones(for: storageMode)
+        let zones = zonesRegistry(for: storageMode)
 
         return zones[recordID!.recordName]
     }

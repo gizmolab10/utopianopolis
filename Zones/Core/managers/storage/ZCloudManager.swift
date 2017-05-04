@@ -334,7 +334,7 @@ class ZCloudManager: ZRecordsManager {
                         record.record = iRecord
 
                         if let zone = record as? Zone {
-                            zone.updateProgenyCounts()
+                            zone.incrementProgenyCount(by: 0)
                             zone.updateLevel()
                         }
                     }
@@ -408,26 +408,27 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchToRoot(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
-        var getParentOf: ZoneClosure? = nil
-
-        getParentOf = { iZone in
-            iZone.needParent()
-
-            self.fetchParents(storageMode) { iResult in
-                if iResult == 0 {
-                    if  let parent = iZone.parentZone {
-                        getParentOf?(parent)    // continue
-                    } else {
-                        gRoot = iZone           // got root
-
-                        gHere.updateProgenyCounts()
-                        onCompletion?(0)
-                    }
-                }
-            }
-        }
-        
-        getParentOf?(gHere)
+        onCompletion?(0)
+//        var getParentOf: ZoneClosure? = nil
+//
+//        getParentOf = { iZone in
+//            iZone.needParent()
+//
+//            self.fetchParents(storageMode) { iResult in
+//                if iResult == 0 {
+//                    if  let parent = iZone.parentZone {
+//                        getParentOf?(parent)    // continue
+//                    } else {
+//                        gRoot = iZone           // got root
+//
+//                        gHere.incrementProgenyCount(by: 0)
+//                        onCompletion?(0)
+//                    }
+//                }
+//            }
+//        }
+//        
+//        getParentOf?(gHere)
     }
 
 
@@ -503,6 +504,7 @@ class ZCloudManager: ZRecordsManager {
                         if let parent  = child.parentZone {
                             if parent != child && !parent.children.contains(child) {
                                 parent.addChild(child)
+                                child.incrementProgenyCount(by: 0)
 
                                 if !parentsNeedingResort.contains(parent) {
                                     parentsNeedingResort.append(parent)

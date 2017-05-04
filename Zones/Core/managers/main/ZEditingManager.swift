@@ -435,7 +435,7 @@ class ZEditingManager: NSObject {
             // ALTER CHILDREN //
             ////////////////////
 
-            let     recurse = {
+            let recurse = {
                 hasLocalChildren = zone.count != 0
 
                 if (show || hasLocalChildren) && zone.hasProgeny != hasLocalChildren {
@@ -906,8 +906,7 @@ class ZEditingManager: NSObject {
 
     func pasteInto(_ zone: Zone) {
         let pastables = gSelectionManager.pasteableZones
-
-        var count = pastables.count
+        var     count = pastables.count
 
         if count > 0, !zone.isBookmark {
             var originals = [Zone] ()

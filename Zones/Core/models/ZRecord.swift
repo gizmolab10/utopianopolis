@@ -129,6 +129,8 @@ class ZRecord: NSObject {
             copy.record[keyPath] = record[keyPath]
         }
 
+        copy.progenyCount = 0
+
         copy.updateClassProperties()
 
         return copy

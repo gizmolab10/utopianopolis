@@ -61,7 +61,7 @@ class ZOperationsManager: NSObject {
     func travel(_ onCompletion: @escaping Closure) {
         var operationIDs: [ZOperationID] = []
 
-        for sync in ZOperationID.here.rawValue...ZOperationID.subscribe.rawValue {
+        for sync in ZOperationID.here.rawValue...ZOperationID.children.rawValue {
             operationIDs.append(ZOperationID(rawValue: sync)!)
         }
 
@@ -120,8 +120,8 @@ class ZOperationsManager: NSObject {
             for identifier in identifiers {
                 let                     operation = BlockOperation {
                     var  closure: IntegerClosure? = nil     // allow this closure to recurse
-                    let                      full = [.favorites, .root]                                                         .contains(identifier)
-                    let forCurrentStorageModeOnly = [.here, .file, .ready, .cloud, .parent, .children, .subscribe, .unsubscribe].contains(identifier)
+                    let                      full = [.favorites, .manifest, .toRoot, .cloud, .root].contains(identifier)
+                    let forCurrentStorageModeOnly = [.here, .file, .ready, .parent, .children]     .contains(identifier)
                     let     modes: [ZStorageMode] = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : [.mine, .everyone]
 
                     closure = { index in
@@ -164,27 +164,29 @@ class ZOperationsManager: NSObject {
         let complete = { (iCount: Int) -> Void in
             if iCount == 0 {
                 onCompletion?()
-            }
+            } else if self.debug && identifier != ZOperationID.ready {
+                let   count = iCount < 0 ? "" : "\(iCount)"
+                var message = "\(String(describing: identifier)) \(count)"
 
-            if self.debug && identifier != ZOperationID.ready {
-                self.report("\(String(describing: identifier)) \(iCount) \(mode)")
+                message.appendSpacesToLength(13)
+                self.report("\(message)• \(mode)")
             }
         }
 
         switch identifier {
         case .file:         gfileManager.restore  (from: mode);          complete(0); break
-        case .root:        gCloudManager.establishRoot  (mode,           complete);   break
-        case .manifest:    gCloudManager.fetchManifest  (mode,           complete);   break
+        case .cloud:       gCloudManager.fetchCloudZones(mode,           complete);   break
         case .favorites:   gCloudManager.fetchFavorites (mode,           complete);   break
         case .here:       gTravelManager.establishHere  (mode,           complete);   break // TODO: BROKEN
-        case .toRoot:      gCloudManager.fetchToRoot    (mode,           complete);   break
+        case .root:        gCloudManager.establishRoot  (mode,           complete);   break
+        case .manifest:    gCloudManager.fetchManifest  (mode,           complete);   break
         case .children:    gCloudManager.fetchChildren  (mode, optional, complete);   break
         case .parent:      gCloudManager.fetchParents   (mode,           complete);   break
         case .unsubscribe: gCloudManager.unsubscribe    (mode,           complete);   break
-        case .cloud:       gCloudManager.fetchCloudZones(mode,           complete);   break
+        case .toRoot:      gCloudManager.fetchToRoot    (mode,           complete);   break
+        case .undelete:    gCloudManager.undelete       (mode,           complete);   break
         case .emptyTrash:  gCloudManager.emptyTrash     (mode,           complete);   break
         case .subscribe:   gCloudManager.subscribe      (mode,           complete);   break
-        case .undelete:    gCloudManager.undelete       (mode,           complete);   break
         case .create:      gCloudManager.create         (mode,           complete);   break
         case .fetch:       gCloudManager.fetch          (mode,           complete);   break
         case .merge:       gCloudManager.merge          (mode,           complete);   break

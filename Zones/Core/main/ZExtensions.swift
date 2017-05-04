@@ -90,9 +90,14 @@ extension NSObject {
 
         if array != nil {
             for object in array! {
-                let computed = closure(object)
-                string.append("\(separator) \(computed)")
-                separator = "\n            "
+                let message = closure(object)
+                string.append("\(separator) \(message)")
+
+                if  separator.length == 0 {
+                    separator.appendSpacesToLength(14)
+
+                    separator = "\n\(separator)"
+                }
             }
         }
 
@@ -157,7 +162,7 @@ extension String {
     var          isDigit: Bool { return "0123456789.+-=*/".characters.contains(self[startIndex]) }
     var          isAscii: Bool { return unicodeScalars.filter{$0.isASCII}.count > 0 }
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
-
+    var           length: Int  { return unicodeScalars.count }
 
     func substring(from:         Int) -> String   { return substring(from: index(at: from)) }
     func substring(to:           Int) -> String  { return substring(to: index(at: to)) }
@@ -200,6 +205,15 @@ extension String {
         let index = self.index(startIndex, offsetBy: iOffset)
 
         return self[index].description
+    }
+
+
+    mutating func appendSpacesToLength(_ iLength: Int) {
+        if 0 < iLength {
+            while length < iLength {
+                append(" ")
+            }
+        }
     }
 }
 

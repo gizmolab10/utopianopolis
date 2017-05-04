@@ -232,7 +232,7 @@ class ZFavoritesManager: NSObject {
     }
 
 
-    func refocus(_ atArrival: @escaping Closure) -> Bool {
+    @discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
         if favoritesRootZone.count > favoritesIndex {
             let bookmark = favoritesRootZone[favoritesIndex]!
 
@@ -280,6 +280,7 @@ class ZFavoritesManager: NSObject {
         let  insertAt: Int? = atIndex == count ? nil : atIndex
 
         parent.addChild(bookmark, at: insertAt)
+        parent.incrementProgenyCount(by: 1)
         bookmark.updateCloudProperties() // is this needed?
 
         return bookmark
