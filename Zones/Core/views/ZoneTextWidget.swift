@@ -165,6 +165,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             for bookmark in gCloudManager.bookmarksFor(zone) {
                 assignText(bookmark)
             }
+
+            gOperationsManager.sync {}
         }
     }
 }
