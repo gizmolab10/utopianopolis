@@ -59,7 +59,10 @@ class ZTravelManager: NSObject {
     func establishRoot(for storageMode: ZStorageMode) {
         switch gStorageMode {
         case .favorites: rootZone = gFavoritesManager.favoritesRootZone
-        default:         rootZone = Zone(record: nil, storageMode: gStorageMode)
+        default:
+            let identifier = CKRecordID(recordName: rootNameKey)
+            let     record = CKRecord(recordType: zoneTypeKey, recordID: identifier)
+            rootZone       = Zone(record: record, storageMode: gStorageMode)
         }
     }
 

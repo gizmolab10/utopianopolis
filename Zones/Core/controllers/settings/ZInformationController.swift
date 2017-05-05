@@ -36,7 +36,7 @@ class ZInformationController: ZGenericController {
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         let                     count = gCloudManager.undeletedCount(for: storageMode)
-        let                     total = gRoot.progenyCount + 1
+        let                     total = 0 // gRoot.progenyCount + 1
         totalCountLabel?        .text = "of \(total), retrieved: \(count)"
         graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
         levelLabel?             .text = "level: \(gHere.level)"

@@ -408,27 +408,29 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchToRoot(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
-        onCompletion?(0)
-//        var getParentOf: ZoneClosure? = nil
-//
-//        getParentOf = { iZone in
-//            iZone.needParent()
-//
-//            self.fetchParents(storageMode) { iResult in
-//                if iResult == 0 {
-//                    if  let parent = iZone.parentZone {
-//                        getParentOf?(parent)    // continue
-//                    } else {
-//                        gRoot = iZone           // got root
-//
-//                        gHere.incrementProgenyCount(by: 0)
-//                        onCompletion?(0)
-//                    }
-//                }
-//            }
-//        }
-//        
-//        getParentOf?(gHere)
+        var getParentOf: ZoneClosure? = nil
+
+        getParentOf = { iZone in
+            iZone.needParent()
+
+            self.fetchParents(storageMode) { iResult in
+                if iResult == 0 { // zero means no more parents to fetch for this batch
+                    if  let parent = iZone.parentZone {
+                        getParentOf?(parent)    // continue
+                    } else {
+                        if let name = iZone.record?.recordID.recordName, name == rootNameKey {
+                            gRoot = iZone           // got root
+
+                            gHere.incrementProgenyCount(by: 0)
+                        }
+
+                        onCompletion?(0)
+                    }
+                }
+            }
+        }
+        
+        getParentOf?(gHere)
     }
 
 

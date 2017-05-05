@@ -351,23 +351,30 @@ class Zone : ZRecord {
 
 
     func incrementProgenyCount(by delta: Int) {
-        var increment = delta
+        safeIncrementProgenyCount(by: delta, [])
+    }
 
-        if progenyCount == 0 {
-            increment += 1
-        }
 
-        if  increment != 0 {
-            progenyCount += increment
+    func safeIncrementProgenyCount(by delta: Int, _ visited: [Zone]) {
+        if !visited.contains(self) {
+            var increment = delta
 
-            if !isRoot && !isRootOfFavorites {
-                if parentZone != nil {
-                    parentZone?.incrementProgenyCount(by: increment)
-                } else if record != nil {
-                    needParent()
+            if progenyCount == 0 {
+                increment += 1
+            }
 
-                    gOperationsManager.parent {
-                        self.parentZone?.incrementProgenyCount(by: increment)
+            if  increment != 0 {
+                progenyCount += increment
+
+                if !isRoot && !isRootOfFavorites {
+                    if parentZone != nil {
+                        parentZone?.safeIncrementProgenyCount(by: increment, visited + [self])
+                    } else if record != nil {
+                        needParent()
+
+                        gOperationsManager.parent {
+                            self.parentZone?.safeIncrementProgenyCount(by: increment, visited + [self])
+                        }
                     }
                 }
             }
@@ -555,20 +562,26 @@ class Zone : ZRecord {
 
 
     // FUBAR occasional infinite loop
-    // when child of child == self
 
     @discardableResult func traverseApply(_ block: ZoneToStatusClosure) -> ZTraverseStatus {
+        return safeTraverseApply(block, visited: [])
+    }
+
+
+    // FUBAR occasional infinite loop
+
+    @discardableResult func safeTraverseApply(_ block: ZoneToStatusClosure, visited: [Zone]) -> ZTraverseStatus {
         var status = block(self)
 
         if status == .eDescend {
             for child in children {
-                if isDescendantOf(child) != .none {
+                if visited.contains(self) {
                     status = .eStop
 
                     break
                 }
 
-                status = child.traverseApply(block)
+                status = child.safeTraverseApply(block, visited: visited + [self])
 
                 if status == .eStop {
                     break
