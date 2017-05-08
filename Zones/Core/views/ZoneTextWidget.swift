@@ -144,8 +144,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         if !gTextCapturing, let zone = widget.widgetZone, zone.zoneName != text! {
             gTextCapturing = true
 
-            let        assignText = { (toZone: Zone?) in
-                if  let      zone = toZone, let components = self.text?.components(separatedBy: "  (") {
+            let      assignTextTo = { (iZone: Zone?) in
+                if  let      zone = iZone, let components = self.text?.components(separatedBy: "  (") {
                     zone.zoneName = components[0]
                 }
             }
@@ -156,14 +156,14 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 //                iUndoSelf.captureText()
 //            }
 
-            assignText(zone)
+            assignTextTo(zone)
 
             if  zone.isBookmark, let link = zone.crossLink, let mode = link.storageMode, let target = gCloudManager.zoneForRecordID(link.record.recordID, in: mode) {
-                assignText(target)
+                assignTextTo(target)
             }
 
             for bookmark in gCloudManager.bookmarksFor(zone) {
-                assignText(bookmark)
+                assignTextTo(bookmark)
             }
 
             gOperationsManager.sync {}

@@ -397,9 +397,9 @@ class ZCloudManager: ZRecordsManager {
         let recordID: CKRecordID = CKRecordID(recordName: manifestName)
 
         assureRecordExists(withRecordID: recordID, storageMode: .mine, recordType: manifestTypeKey) { (iManifestRecord: CKRecord?) in
-            if iManifestRecord != nil {
-                let    manifest = gTravelManager.manifest(for: storageMode)
-                manifest.record = iManifestRecord
+            if  iManifestRecord != nil {
+                let     manifest = gTravelManager.manifest(for: storageMode)
+                manifest.record  = iManifestRecord
             }
 
             onCompletion?(0)
@@ -419,9 +419,8 @@ class ZCloudManager: ZRecordsManager {
                         getParentOf?(parent)    // continue
                     } else {
                         if let name = iZone.record?.recordID.recordName, name == rootNameKey {
-                            gRoot = iZone           // got root
-
-                            gHere.incrementProgenyCount(by: 0)
+                            gTravelManager.setRoot(iZone, for: storageMode) // got root
+                            iZone.incrementProgenyCount(by: 0)
                         }
 
                         onCompletion?(0)
@@ -430,7 +429,10 @@ class ZCloudManager: ZRecordsManager {
             }
         }
         
-        getParentOf?(gHere)
+        let manifest = gTravelManager.manifest(for: storageMode)
+        let     here = manifest.hereZone
+
+        getParentOf?(here)
     }
 
 
@@ -496,10 +498,10 @@ class ZCloudManager: ZRecordsManager {
 
                     if !child.isDeleted {
                         if recursiveGoal != nil {
-                            if recursiveGoal! > child.level {
-                                child.maybeNeedChildren()
-                            } else if recursiveGoal! < 0 {
+                            if recursiveGoal! < 0 {
                                 child.needChildren()
+                            } else if recursiveGoal! > child.level {
+                                child.maybeNeedChildren()
                             }
                         }
 
@@ -546,7 +548,7 @@ class ZCloudManager: ZRecordsManager {
         let manifest = gTravelManager.manifest(for: storageMode)
 
         if manifest.here == nil {
-            self.establishRoot(storageMode, onCompletion)
+            establishRoot(storageMode, onCompletion)
         } else {
             let recordID = manifest.here!.recordID
 
@@ -554,7 +556,7 @@ class ZCloudManager: ZRecordsManager {
                 if iHereRecord == nil || iHereRecord?[zoneNameKey] == nil {
                     self.establishRoot(storageMode, onCompletion)
                 } else {
-                    gHere = self.zoneForRecord(iHereRecord!, in: storageMode)
+                    manifest.hereZone = self.zoneForRecord(iHereRecord!, in: storageMode)
 
                     onCompletion?(0)
                 }
@@ -567,14 +569,18 @@ class ZCloudManager: ZRecordsManager {
         let recordID = CKRecordID(recordName: rootNameKey)
 
         self.assureRecordExists(withRecordID: recordID, storageMode: storageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
-            if iRecord != nil { // NEED TODO storage mode, i.e., the database
-                // get from the record id's cloud zone
-                gRoot       = self.zoneForRecord(iRecord!, in: storageMode)
-                gRoot.level = 0
+            let record = iRecord ?? CKRecord(recordType: zoneNameKey, recordID: recordID)
+            let   root = self.zoneForRecord(record, in: storageMode)
+            root.level = 0
 
-                gRoot.needChildren()
+            gTravelManager.setRoot(root, for: storageMode)
+            root.clearAllStates()
+            root.needChildren()
+
+            if iRecord == nil {
+                root.needCreate()
             }
-            
+
             onCompletion?(0)
         }
     }

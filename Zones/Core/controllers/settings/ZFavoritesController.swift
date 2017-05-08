@@ -28,7 +28,9 @@ class ZFavoritesController: ZGenericController, ZTableViewDelegate, ZTableViewDa
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         if  let tableView = favoritesTableView {
-            gFavoritesManager.updateIndexFor(gHere) { object in
+            let      here = gTravelManager.manifest(for: storageMode).hereZone
+
+            gFavoritesManager.updateIndexFor(here) { object in
                 gFavoritesManager.update()
                 tableView.reloadData()
 

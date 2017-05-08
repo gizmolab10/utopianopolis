@@ -11,8 +11,8 @@ import Foundation
 
 
 enum ZOperationID: Int {
-    case root
     case cloud
+    case root
     case manifest
     case favorites
     case file
@@ -177,7 +177,7 @@ class ZOperationsManager: NSObject {
         case .file:         gfileManager.restore  (from: mode);          complete(0); break
         case .cloud:       gCloudManager.fetchCloudZones(mode,           complete);   break
         case .favorites:   gCloudManager.fetchFavorites (mode,           complete);   break
-        case .here:       gTravelManager.establishHere  (mode,           complete);   break // TODO: BROKEN
+        case .here:       gTravelManager.establishHere  (mode,           complete);   break
         case .root:        gCloudManager.establishRoot  (mode,           complete);   break
         case .manifest:    gCloudManager.fetchManifest  (mode,           complete);   break
         case .children:    gCloudManager.fetchChildren  (mode, optional, complete);   break

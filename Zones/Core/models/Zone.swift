@@ -41,7 +41,7 @@ class Zone : ZRecord {
     var              widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var          isBookmark:         Bool { return crossLink != nil }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
-    var          hasProgeny:         Bool { return progenyCount > 1 }
+    var          hasProgeny:         Bool { return  count > 0 || progenyCount > 1 }
 
 
 
@@ -350,6 +350,25 @@ class Zone : ZRecord {
     }
 
 
+    func progenyCountUpdate() {
+        progenyCount = 1
+
+        for child in self.children {
+            child.progenyCountUpdate()
+
+            progenyCount += child.progenyCount
+        }
+    }
+
+
+    func fullProgenyCountUpdate() {
+        needChildren()
+        gOperationsManager.children(recursiveGoal: -1) {
+            self.progenyCountUpdate()
+        }
+    }
+
+
     func incrementProgenyCount(by delta: Int) {
         safeIncrementProgenyCount(by: delta, [])
     }
@@ -359,7 +378,7 @@ class Zone : ZRecord {
         if !visited.contains(self) {
             var increment = delta
 
-            if progenyCount == 0 {
+            if progenyCount < count + 1 {
                 increment += 1
             }
 
@@ -386,10 +405,15 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    private func hasAnyZonesAbove(_ iAbove: Bool) -> Bool {
-        if self != gHere {
+    private func hasAnyZonesAbove(_ iAbove: Bool) -> Bool { // TODO: needs recursion protection
+        return safeHasAnyZonesAbove(iAbove, [])
+    }
+
+
+    private func safeHasAnyZonesAbove(_ iAbove: Bool, _ visited: [Zone]) -> Bool { // TODO: needs recursion protection
+        if self != gHere && !visited.contains(self) {
             if !hasZoneAbove(iAbove), let parent = parentZone {
-                return parent.hasAnyZonesAbove(iAbove)
+                return parent.safeHasAnyZonesAbove(iAbove, visited + [self])
             }
 
             return true
@@ -561,14 +585,10 @@ class Zone : ZRecord {
     }
 
 
-    // FUBAR occasional infinite loop
-
     @discardableResult func traverseApply(_ block: ZoneToStatusClosure) -> ZTraverseStatus {
         return safeTraverseApply(block, visited: [])
     }
 
-
-    // FUBAR occasional infinite loop
 
     @discardableResult func safeTraverseApply(_ block: ZoneToStatusClosure, visited: [Zone]) -> ZTraverseStatus {
         var status = block(self)

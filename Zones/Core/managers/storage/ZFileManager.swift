@@ -30,7 +30,8 @@ class ZFileManager: NSObject {
     func save(to storageMode: ZStorageMode?) {
         if !isSaving && gFileMode == .local && storageMode != nil && storageMode != .favorites && gOperationsManager.isReady {
             isSaving               = true
-            let dict: NSDictionary = gRoot.storageDict as NSDictionary
+            let               root = gTravelManager.rootZone(for: storageMode!)
+            let dict: NSDictionary = root.storageDict as NSDictionary
             let  url:          URL = pathToFile(for: storageMode!)
 
             dict.write(to: url, atomically: false)
@@ -45,9 +46,11 @@ class ZFileManager: NSObject {
 
         if gFileMode == .local && storageMode != .favorites {
             if let raw = NSDictionary(contentsOf: pathToFile(for: storageMode)) {
-                gRoot = Zone(dict: raw as! ZStorageDict)
-                gHere = gRoot
+                let      manifest = gTravelManager.manifest(for: storageMode)
+                let          root = Zone(dict: raw as! ZStorageDict) // broken, ignores mode
+                manifest.hereZone = root
 
+                gTravelManager.setRoot(root, for: storageMode)
                 signalFor(nil, regarding: .redraw)
             }
         }

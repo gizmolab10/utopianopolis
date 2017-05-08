@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16B2555" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16B2555" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
@@ -574,7 +574,7 @@ CQ
             <objects>
                 <viewController id="M1d-6V-b2Q" customClass="ZCloudToolsController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="vKP-HI-kOy">
-                        <rect key="frame" x="0.0" y="0.0" width="225" height="95"/>
+                        <rect key="frame" x="0.0" y="0.0" width="225" height="124"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5N2-DZ-4UX">
@@ -607,24 +607,37 @@ CQ
                                     <action selector="emptyTrashButtonAction:" target="M1d-6V-b2Q" id="y5A-RB-j0e"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XVw-WY-IDX">
+                                <rect key="frame" x="14" y="88" width="197" height="32"/>
+                                <buttonCell key="cell" type="push" title="Recount" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="I6g-wr-TpV">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="recountButtonAction:" target="M1d-6V-b2Q" id="0rs-YC-MW2"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="5N2-DZ-4UX" firstAttribute="top" secondItem="XVw-WY-IDX" secondAttribute="bottom" constant="8" id="0mO-po-iZU"/>
                             <constraint firstAttribute="trailing" secondItem="m2Y-u6-Urc" secondAttribute="trailing" constant="20" id="4Fe-Oj-zfQ"/>
                             <constraint firstItem="0kE-Oh-3Gh" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="6z6-vB-CKQ"/>
+                            <constraint firstItem="XVw-WY-IDX" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="7uM-cE-vFX"/>
                             <constraint firstItem="0kE-Oh-3Gh" firstAttribute="top" secondItem="m2Y-u6-Urc" secondAttribute="bottom" constant="8" id="BQK-Vo-qxT"/>
                             <constraint firstItem="5N2-DZ-4UX" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="GGT-EU-kcT"/>
                             <constraint firstItem="m2Y-u6-Urc" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="KLL-Xw-y32"/>
                             <constraint firstAttribute="trailing" secondItem="0kE-Oh-3Gh" secondAttribute="trailing" constant="20" id="YZv-gH-PE9"/>
+                            <constraint firstAttribute="trailing" secondItem="XVw-WY-IDX" secondAttribute="trailing" constant="20" id="bUD-ca-PNb"/>
                             <constraint firstAttribute="bottom" secondItem="0kE-Oh-3Gh" secondAttribute="bottom" constant="8" id="eIx-7k-bnp"/>
-                            <constraint firstItem="5N2-DZ-4UX" firstAttribute="top" secondItem="vKP-HI-kOy" secondAttribute="top" constant="8" id="f0p-QT-DQQ"/>
                             <constraint firstAttribute="trailing" secondItem="5N2-DZ-4UX" secondAttribute="trailing" constant="20" id="iv6-hj-fX3"/>
+                            <constraint firstItem="XVw-WY-IDX" firstAttribute="top" secondItem="vKP-HI-kOy" secondAttribute="top" constant="8" id="lp3-f0-nH8"/>
                             <constraint firstItem="m2Y-u6-Urc" firstAttribute="top" secondItem="5N2-DZ-4UX" secondAttribute="bottom" constant="8" id="sVT-7g-a4w"/>
                         </constraints>
                     </view>
                 </viewController>
                 <customObject id="yrI-wS-bc9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-188.5" y="2121"/>
+            <point key="canvasLocation" x="-188.5" y="2141.5"/>
         </scene>
         <!--Settings Controller-->
         <scene sceneID="Tae-az-4mZ">
