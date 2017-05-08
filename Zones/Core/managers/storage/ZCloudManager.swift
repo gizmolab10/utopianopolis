@@ -569,13 +569,14 @@ class ZCloudManager: ZRecordsManager {
         let recordID = CKRecordID(recordName: rootNameKey)
 
         self.assureRecordExists(withRecordID: recordID, storageMode: storageMode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
-            let record = iRecord ?? CKRecord(recordType: zoneNameKey, recordID: recordID)
+            let record = iRecord ?? CKRecord(recordType: zoneTypeKey, recordID: recordID)
             let   root = self.zoneForRecord(record, in: storageMode)
             root.level = 0
 
             gTravelManager.setRoot(root, for: storageMode)
             root.clearAllStates()
             root.needChildren()
+            root.needSave()
 
             if iRecord == nil {
                 root.needCreate()

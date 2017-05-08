@@ -365,7 +365,7 @@ class ZRecordsManager: NSObject {
         var  zone = zones[reference.recordID.recordName]
 
         if  zone == nil, let record = recordForRecordID(reference.recordID, in: storageMode)?.record {
-            zone  = Zone(record: record, storageMode: gStorageMode)
+            zone  = Zone(record: record, storageMode: storageMode)
         }
 
         return zone
@@ -377,7 +377,7 @@ class ZRecordsManager: NSObject {
         var  zone = zones[record.recordID.recordName]
 
         if  zone == nil {
-            zone  = Zone(record: record, storageMode: gStorageMode)
+            zone  = Zone(record: record, storageMode: storageMode)
         } else if !(zone?.isDeleted ?? false) {
             zone!.record = record
         }

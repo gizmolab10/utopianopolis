@@ -59,10 +59,10 @@ class ZTravelManager: NSObject {
     }
 
 
-    func establishRoot(for storageMode: ZStorageMode) {
+    func establishRoot(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         switch storageMode {
-        case .favorites: rootZone = gFavoritesManager.favoritesRootZone
-        default:         gCloudManager.establishRoot(storageMode) { iResult in }
+        case .favorites: rootZone = gFavoritesManager.favoritesRootZone; onCompletion?(0)
+        default:         gCloudManager.establishRoot(storageMode, onCompletion)
         }
     }
 

@@ -178,7 +178,7 @@ class ZOperationsManager: NSObject {
         case .cloud:       gCloudManager.fetchCloudZones(mode,           complete);   break
         case .favorites:   gCloudManager.fetchFavorites (mode,           complete);   break
         case .here:       gTravelManager.establishHere  (mode,           complete);   break
-        case .root:        gCloudManager.establishRoot  (mode,           complete);   break
+        case .root:       gTravelManager.establishRoot  (mode,           complete);   break
         case .manifest:    gCloudManager.fetchManifest  (mode,           complete);   break
         case .children:    gCloudManager.fetchChildren  (mode, optional, complete);   break
         case .parent:      gCloudManager.fetchParents   (mode,           complete);   break
