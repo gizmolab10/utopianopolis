@@ -316,29 +316,29 @@ class ZCloudManager: ZRecordsManager {
             } else {
                 let        favorite = Zone(record: iRecord, storageMode: self.storageMode)
                 favorite.parentZone = root
-                var           found = false
+                var    isDuplicated = false
 
                 // avoid adding a duplicate (which was created by a bug)
 
-                if  let          name = favorite.zoneName, root != nil {
+                if  let                 name  = favorite.zoneName, root != nil {
                     for zone: Zone in root!.children {
-                        if  let link  = favorite.zoneLink {
-                            if  link == zone.zoneLink {
-                                found = true
+                        if  let         link  = favorite.zoneLink {
+                            if          link == zone.zoneLink {
+                                isDuplicated  = true
 
                                 break
                             }
                         }
 
                         if name == zone.zoneName {
-                            found   = true
+                            isDuplicated   = true
 
                             break
                         }
                     }
                 }
 
-                if !found {
+                if !isDuplicated {
                     root?.addChild(favorite)
                 } else {
                     favorite.isDeleted = true

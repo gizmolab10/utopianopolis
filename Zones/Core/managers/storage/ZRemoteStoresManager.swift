@@ -37,18 +37,18 @@ class ZRemoteStoresManager: NSObject {
 
 
     func manifest(for mode: ZStorageMode) -> ZManifest {
-        var found = manifestByStorageMode[mode]
+        var manifest = manifestByStorageMode[mode]
 
-        if  found == nil {
+        if  manifest == nil {
             let            manifestName = manifestNameForMode(mode)
             let    recordID: CKRecordID = CKRecordID(recordName: manifestName)
             let    record:   CKRecord   = CKRecord(recordType: manifestTypeKey, recordID: recordID)
-            found                       = ZManifest(record: record, storageMode: .mine)
-            found!        .manifestMode = mode
-            manifestByStorageMode[mode] = found
+            manifest                    = ZManifest(record: record, storageMode: .mine) // every manifest gets stored in .mine
+            manifest!     .manifestMode = mode
+            manifestByStorageMode[mode] = manifest
         }
 
-        return found!
+        return manifest!
     }
 
 
@@ -140,8 +140,8 @@ class ZRemoteStoresManager: NSObject {
     }
     
 
-    func applyToAllZones(_ closure: ZoneClosure) {
-        for mode: ZStorageMode in [.mine, .everyone, .favorites] {
+    func applyToAllZones(in modes: [ZStorageMode], _ closure: ZoneClosure) {
+        for mode: ZStorageMode in modes {
             let cloud = cloudManagerFor(mode)
             let zones = cloud.zonesByID
 
@@ -156,7 +156,7 @@ class ZRemoteStoresManager: NSObject {
         var zoneBookmarks = [Zone] ()
 
         if zone != nil, let recordID = zone?.record?.recordID {
-            applyToAllZones { iZone in
+            applyToAllZones(in: [.mine, .everyone]) { iZone in
                 if let link = iZone.crossLink, recordID == link.record?.recordID {
                     zoneBookmarks.append(iZone)
                 }

@@ -117,9 +117,10 @@ class ZOperationsManager: NSObject {
             for identifier in identifiers {
                 let                     operation = BlockOperation {
                     var  closure: IntegerClosure? = nil     // allow this closure to recurse
+                    let             skipFavorites = identifier != .here
                     let                      full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .root, .here].contains(identifier)
                     let forCurrentStorageModeOnly = [.file, .ready, .parent, .children]                                             .contains(identifier)
-                    let     modes: [ZStorageMode] = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : [.mine, .everyone]
+                    let     modes: [ZStorageMode] = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : skipFavorites ? [.mine, .everyone] : [.mine, .everyone, .favorites]
 
                     closure = { index in
                         if index >= modes.count {
@@ -160,8 +161,7 @@ class ZOperationsManager: NSObject {
     func invoke(_ identifier: ZOperationID, mode: ZStorageMode, _ optional: Int? = nil, _ onCompletion: Closure?) {
         if identifier == .ready {
             becomeReady()
-        } else if mode != .favorites {
-            let    cloudManager = gRemoteStoresManager.cloudManagerFor(mode)
+        } else if mode != .favorites || identifier == .here {
             let        complete = { (iCount: Int) -> Void in
                 if iCount      == 0 {
                     onCompletion?()
@@ -174,26 +174,30 @@ class ZOperationsManager: NSObject {
                 }
             }
             
-
             switch identifier {
-            case .file:        gfileManager.restore       (from: mode);    complete(0)
-            case .here:       gRemoteStoresManager.establishHere(mode,     complete)
-            case .root:       gRemoteStoresManager.establishRoot(mode,     complete)
-            case .cloud:       cloudManager.fetchCloudZones     (          complete)
-            case .favorites:   cloudManager.fetchFavorites      (          complete)
-            case .manifest:    cloudManager.fetchManifest       (          complete)
-            case .children:    cloudManager.fetchChildren       (optional, complete)
-            case .parent:      cloudManager.fetchParents        (          complete)
-            case .unsubscribe: cloudManager.unsubscribe         (          complete)
-            case .toRoot:      cloudManager.fetchToRoot         (          complete)
-            case .undelete:    cloudManager.undeleteAll         (          complete)
-            case .emptyTrash:  cloudManager.emptyTrash          (          complete)
-            case .subscribe:   cloudManager.subscribe           (          complete)
-            case .create:      cloudManager.create              (          complete)
-            case .fetch:       cloudManager.fetch               (          complete)
-            case .merge:       cloudManager.merge               (          complete)
-            case .flush:       cloudManager.flush               (          complete)
-            default: break
+            case .file:            gfileManager.restore       (from: mode);    complete(0)
+            case .here:           gRemoteStoresManager.establishHere(mode,     complete)
+            case .root:           gRemoteStoresManager.establishRoot(mode,     complete)
+            default:
+                let cloudManager = gRemoteStoresManager.cloudManagerFor(mode)
+
+                switch identifier {
+                case .cloud:       cloudManager.fetchCloudZones     (          complete)
+                case .favorites:   cloudManager.fetchFavorites      (          complete)
+                case .manifest:    cloudManager.fetchManifest       (          complete)
+                case .children:    cloudManager.fetchChildren       (optional, complete)
+                case .parent:      cloudManager.fetchParents        (          complete)
+                case .unsubscribe: cloudManager.unsubscribe         (          complete)
+                case .toRoot:      cloudManager.fetchToRoot         (          complete)
+                case .undelete:    cloudManager.undeleteAll         (          complete)
+                case .emptyTrash:  cloudManager.emptyTrash          (          complete)
+                case .subscribe:   cloudManager.subscribe           (          complete)
+                case .create:      cloudManager.create              (          complete)
+                case .fetch:       cloudManager.fetch               (          complete)
+                case .merge:       cloudManager.merge               (          complete)
+                case .flush:       cloudManager.flush               (          complete)
+                default: break
+                }
             }
 
             return
