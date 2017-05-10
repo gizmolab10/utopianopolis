@@ -42,6 +42,8 @@
 		0C58C37C1D45805400CAB387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C58C36F1D45805400CAB387 /* Assets.xcassets */; };
 		0C58C37D1D45805400CAB387 /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C58C3711D45805400CAB387 /* ZAppDelegate.swift */; };
 		0C58C3821D45815A00CAB387 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B561D2ECF41001892E5 /* LaunchScreen.storyboard */; };
+		0C5D3D831EC159460075A456 /* ZRemoteStoresManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5D3D821EC159460075A456 /* ZRemoteStoresManager.swift */; };
+		0C5D3D841EC159460075A456 /* ZRemoteStoresManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5D3D821EC159460075A456 /* ZRemoteStoresManager.swift */; };
 		0C5FEA1E1DADBB7200CAF4B5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CA04B4F1D2ECF41001892E5 /* Main.storyboard */; };
 		0C60B6731DBDB8A0005D99F9 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C60B6761DBDB8DB005D99F9 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -239,6 +241,7 @@
 		0C58C36F1D45805400CAB387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C58C3711D45805400CAB387 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
 		0C58C3761D45805400CAB387 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0C5D3D821EC159460075A456 /* ZRemoteStoresManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZRemoteStoresManager.swift; sourceTree = "<group>"; };
 		0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/SnapKit.framework; sourceTree = "<group>"; };
 		0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/SnapKit.framework; sourceTree = "<group>"; };
 		0C73485A1DF35F8700E5E23B /* ZManifest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZManifest.swift; sourceTree = "<group>"; };
@@ -376,6 +379,7 @@
 				0C371C571DE259700030253D /* ZFileManager.swift */,
 				0C2456171DE3227900EBCCDD /* ZOperationsManager.swift */,
 				0C73485D1DF4C8B400E5E23B /* ZRecordsManager.swift */,
+				0C5D3D821EC159460075A456 /* ZRemoteStoresManager.swift */,
 			);
 			path = storage;
 			sourceTree = "<group>";
@@ -1004,6 +1008,7 @@
 				0CD1EAE61DB725A800A096E4 /* Dictionary+Operations.swift in Sources */,
 				0CD1EAC81DB725A800A096E4 /* CloudCondition.swift in Sources */,
 				0CEAAB511DA19B1C00EBF88A /* ZAppDelegate.swift in Sources */,
+				0C5D3D841EC159460075A456 /* ZRemoteStoresManager.swift in Sources */,
 				0C2456191DE3227900EBCCDD /* ZOperationsManager.swift in Sources */,
 				0CD1EAD21DB725A800A096E4 /* NoCancelledDependencies.swift in Sources */,
 				0C4DCD8B1EA028C0000B2210 /* ZPreferencesController.swift in Sources */,
@@ -1096,6 +1101,7 @@
 				0CA6B8301E4179D200A49F1D /* ZPadExtensions.swift in Sources */,
 				0CD1EAE51DB725A800A096E4 /* Dictionary+Operations.swift in Sources */,
 				0CB1A7DB1D73F87B00283F7B /* ZAction.swift in Sources */,
+				0C5D3D831EC159460075A456 /* ZRemoteStoresManager.swift in Sources */,
 				0CD1EAC71DB725A800A096E4 /* CloudCondition.swift in Sources */,
 				0CD1EAD11DB725A800A096E4 /* NoCancelledDependencies.swift in Sources */,
 				0C4DCD8A1EA01AB3000B2210 /* ZPreferencesController.swift in Sources */,

@@ -66,7 +66,7 @@ class Zone : ZRecord {
 
     var bookmarkTarget: Zone? {
         if  let link = crossLink, let mode = link.storageMode {
-            return gCloudManager.zoneForRecordID(link.record.recordID, in: mode)
+            return gRemoteStoresManager.cloudManagerFor(mode).zoneForRecordID(link.record.recordID)
         }
 
         return nil
@@ -245,7 +245,7 @@ class Zone : ZRecord {
             }
 
             if parent != nil && _parentZone == nil && storageMode != nil {
-                _parentZone = gCloudManager.zoneForReference(parent!, in: storageMode!)
+                _parentZone = cloudManager?.zoneForReference(parent!)
 
                 if  _parentZone?.showChildren ?? false {
                     _parentZone?.maybeNeedChildren()
@@ -327,7 +327,7 @@ class Zone : ZRecord {
 
 
     override func register() {
-        gCloudManager.registerZone(self)
+        cloudManager?.registerZone(self)
     }
 
 

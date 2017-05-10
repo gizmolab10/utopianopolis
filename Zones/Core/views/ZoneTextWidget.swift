@@ -158,11 +158,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
             assignTextTo(zone)
 
-            if  zone.isBookmark, let link = zone.crossLink, let mode = link.storageMode, let target = gCloudManager.zoneForRecordID(link.record.recordID, in: mode) {
+            if  zone.isBookmark, let link = zone.crossLink, let mode = link.storageMode, let target = gRemoteStoresManager.cloudManagerFor(mode).zoneForRecordID(link.record.recordID) {
                 assignTextTo(target)
             }
 
-            for bookmark in gCloudManager.bookmarksFor(zone) {
+            for bookmark in gRemoteStoresManager.bookmarksFor(zone) {
                 assignTextTo(bookmark)
             }
 

@@ -40,7 +40,7 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
         if note.notificationType == .query {
             let queryNote: CKQueryNotification = note as! CKQueryNotification
 
-            gCloudManager.receivedUpdateFor(queryNote.recordID!)
+            gRemoteStoresManager.receivedUpdateFor(queryNote.recordID!)
         }
     }
 

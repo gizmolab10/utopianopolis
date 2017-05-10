@@ -14,10 +14,12 @@ import CloudKit
 class ZRecord: NSObject {
     
 
-    var storageMode: ZStorageMode?
-    var  kvoContext: UInt8 = 1
-    var     _record: CKRecord?
-    var      isRoot: Bool { return record != nil && record.recordID.recordName == rootNameKey }
+    var    storageMode: ZStorageMode?
+    var     kvoContext: UInt8 = 1
+    var        _record: CKRecord?
+    var         isRoot: Bool            { return record != nil && record.recordID.recordName == rootNameKey }
+    var recordsManager: ZRecordsManager { return gRemoteStoresManager.recordsManagerFor(storageMode!) }
+    var   cloudManager: ZCloudManager?  { return recordsManager as? ZCloudManager }
 
 
     var record: CKRecord! {
@@ -55,8 +57,6 @@ class ZRecord: NSObject {
 
     override init() {
         super.init()
-
-        gCloudManager.clearAllStatesForRecord(self)
 
         self.storageMode = nil
         self.record      = nil
@@ -185,14 +185,14 @@ class ZRecord: NSObject {
     // MARK:-
 
 
-    func isMarkedForStates(_ states: [ZRecordState]) -> Bool { return gCloudManager.hasRecord(self, forStates:states) }
-    func markForStates    (_ states: [ZRecordState])         {        gCloudManager.addRecord(self, for: states) }
-    func clearAllStates()                                    {        gCloudManager.clearAllStatesForRecord(self) }
+    func isMarkedForStates(_ states: [ZRecordState]) -> Bool { return recordsManager.hasRecord(self, forStates:states) }
+    func markForStates    (_ states: [ZRecordState])         {        recordsManager.addRecord(self, for: states) }
+    func clearAllStates()                                    {        recordsManager.clearAllStatesForRecord(self) }
 
 
     func unmarkForStates(_ states: [ZRecordState]) {
-        if let identifier = self.record?.recordID, let mode = storageMode {
-            gCloudManager.clearStatesForRecordID(identifier, forStates:states, in: mode)
+        if let identifier = self.record?.recordID {
+            recordsManager.clearStatesForRecordID(identifier, forStates:states)
         }
     }
 
@@ -227,12 +227,12 @@ class ZRecord: NSObject {
 
 
     func setValue(_ value: NSObject, for property: String) {
-        gCloudManager.setIntoObject(self, value: value, for: property)
+        cloudManager?.setIntoObject(self, value: value, for: property)
     }
 
 
     func get(propertyName: String) {
-        gCloudManager.getFromObject(self, valueForPropertyName: propertyName)
+        cloudManager?.getFromObject(self, valueForPropertyName: propertyName)
     }
 
 

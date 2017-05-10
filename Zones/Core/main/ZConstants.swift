@@ -31,11 +31,10 @@ let  gSelectedWidgetFont = ZFont.systemFont(ofSize: fontSize) // .boldSystemFont
 let  gControllersManager = ZControllersManager()
 let   gOperationsManager = ZOperationsManager()
 let    gSelectionManager = ZSelectionManager()
-let    gFavoritesManager = ZFavoritesManager()
+let    gFavoritesManager = ZFavoritesManager(.favorites)
 let      gWidgetsManager = ZWidgetsManager()
 let      gEditingManager = ZEditingManager()
 let       gTravelManager = ZTravelManager()
-let        gCloudManager = ZCloudManager()
 let         gfileManager = ZFileManager()
 let         gUndoManager = UndoManager()
 let              cloudID = "iCloud.com.zones.Zones"
@@ -50,7 +49,3 @@ let      showChildrenKey = "showChildren"
 let      manifestTypeKey = "ZManifest"
 let      manifestNameKey = "manifest"
 let favoritesRootNameKey = "favoritesRoot"
-
-var     gRoot:      Zone { get { return gTravelManager.rootZone } set { gTravelManager.rootZone = newValue } }
-var     gHere:      Zone { get { return gManifest.hereZone }      set { gManifest.hereZone      = newValue } }
-var gManifest: ZManifest { return gTravelManager.manifest }

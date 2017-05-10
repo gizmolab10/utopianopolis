@@ -45,26 +45,28 @@ class ZCloudToolsController: ZGenericController {
 
 
     @IBAction func recountButtonAction(_ button: NSButton) {
-        gRoot.fullProgenyCountUpdate()
+        gRoot?.fullProgenyCountUpdate()
     }
 
 
     @IBAction func restoreZoneButtonAction(_ button: NSButton) {
         // similar to gEditingManager.moveInto
-        let zone = gSelectionManager.firstGrabbedZone
-        gHere    = gRoot
+        if  let root = gRoot {
+            let zone = gSelectionManager.firstGrabbedZone
+            gHere    = root
 
-        gRoot.maybeNeedChildren()
-        gOperationsManager.children(recursiveGoal: 1) {
-            gRoot.addAndReorderChild(zone, at: 0)
+            root.maybeNeedChildren()
+            gOperationsManager.children(recursiveGoal: 1) {
+                root.addAndReorderChild(zone, at: 0)
 
-            zone.traverseApply { (iChild: Zone) -> (ZTraverseStatus) in
-                iChild.isDeleted = false
+                zone.traverseApply { (iChild: Zone) -> (ZTraverseStatus) in
+                    iChild.isDeleted = false
 
-                return .eDescend
+                    return .eDescend
+                }
+
+                gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
             }
-
-            gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
         }
     }
 }

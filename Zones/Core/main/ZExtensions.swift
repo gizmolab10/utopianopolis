@@ -51,11 +51,11 @@ extension NSObject {
 
 
     @discardableResult func detectWithMode(_ mode: ZStorageMode, block: ToBooleanClosure) -> Bool {
-        gTravelManager.pushMode(mode)
+        gRemoteStoresManager.pushMode(mode)
 
         let result = block()
 
-        gTravelManager.popMode()
+        gRemoteStoresManager.popMode()
         
         return result
     }
@@ -129,7 +129,7 @@ extension NSObject {
 
     func stringForReferences(_ references: [CKReference]?, in storageMode: ZStorageMode) -> String {
         return applyTo(references)  { object -> (String) in
-            if let reference = object as? CKReference, let zone = gCloudManager.zoneForReference(reference, in: storageMode), let name = zone.zoneName {
+            if let reference = object as? CKReference, let zone = gRemoteStoresManager.recordsManagerFor(storageMode).zoneForReference(reference), let name = zone.zoneName {
                 return name
             }
 
@@ -140,7 +140,7 @@ extension NSObject {
 
     func stringForRecordIDs(_ recordIDs: [CKRecordID]?, in storageMode: ZStorageMode) -> String {
         return applyTo(recordIDs)  { object -> (String) in
-            if let recordID = object as? CKRecordID, let record = gCloudManager.recordForRecordID(recordID, in: storageMode), let name = record.record.object(forKey: zoneNameKey) as? String {
+            if let recordID = object as? CKRecordID, let record = gRemoteStoresManager.recordsManagerFor(storageMode).recordForRecordID(recordID), let name = record.record.object(forKey: zoneNameKey) as? String {
                 return name
             }
 

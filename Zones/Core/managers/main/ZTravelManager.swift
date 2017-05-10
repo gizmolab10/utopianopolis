@@ -14,92 +14,6 @@ import CloudKit
 class ZTravelManager: NSObject {
 
 
-    var      storageModeStack = [ZStorageMode] ()
-    var     rootByStorageMode = [ZStorageMode : Zone] ()
-    var manifestByStorageMode = [ZStorageMode : ZManifest] ()
-    var rootProgenyCount: Int { return hasRootZone ? rootZone.progenyCount : 0 }
-    var     hasRootZone: Bool { return rootByStorageMode.keys.contains(gStorageMode) }
-    var   manifest: ZManifest { return manifest(for: gStorageMode) }
-    var        rootZone: Zone {
-        get { return rootZone(for: gStorageMode) }
-
-        set {
-            switch gStorageMode {
-            case .favorites: break
-            default:         setRoot(newValue, for: gStorageMode)
-            }
-        }
-    }
-
-
-    func setRoot(_ iRoot: Zone, for mode: ZStorageMode) { iRoot.level = 0; rootByStorageMode[mode] = iRoot }
-
-
-    func rootZone(for mode: ZStorageMode) -> Zone {
-        switch mode {
-        case .favorites: return gFavoritesManager.favoritesRootZone
-        default:
-            assert(hasRootZone, "root zone not yet established")
-
-            return rootByStorageMode[mode]!
-        }
-    }
-
-
-    func manifest(for mode: ZStorageMode) -> ZManifest {
-        var found = manifestByStorageMode[mode]
-
-        if  found == nil {
-            found                       = ZManifest(record: nil, storageMode: .mine)
-            found!        .manifestMode = mode
-            manifestByStorageMode[mode] = found
-        }
-
-        return found!
-    }
-
-
-    func establishRoot(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
-        switch storageMode {
-        case .favorites: rootZone = gFavoritesManager.favoritesRootZone; onCompletion?(0)
-        default:         gCloudManager.establishRoot(storageMode, onCompletion)
-        }
-    }
-
-
-    func establishHere(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
-        let manifest = self.manifest(for: storageMode)
-        let     here = manifest.hereZone
-
-        if storageMode == .favorites {
-            manifest.hereZone = gFavoritesManager.favoritesRootZone
-        } else if here.record != nil && here.zoneName != nil {
-            here.maybeNeedChildren()
-            here.needFetch()
-        } else {
-            gCloudManager.establishHere((storageMode, onCompletion))
-
-            return
-        }
-
-        onCompletion?(0)
-    }
-
-
-    func pushMode(_ mode: ZStorageMode) {
-        storageModeStack.append(gStorageMode)
-
-        gStorageMode = mode
-    }
-    
-
-    func popMode() {
-        if storageModeStack.count != 0, let mode = storageModeStack.popLast() {
-            gStorageMode = mode
-        }
-    }
-    
-
     // MARK:- travel
     // MARK:-
 
@@ -114,7 +28,7 @@ class ZTravelManager: NSObject {
                     return true
                 }
 
-                let zone = gCloudManager.zoneForRecordID(targetID, in: mode)
+                let zone = gRemoteStoresManager.recordsManagerFor(mode).zoneForRecordID(targetID)
                 targetID = zone?.parent?.recordID
             }
         }
@@ -170,9 +84,10 @@ class ZTravelManager: NSObject {
                         atArrival(gHere, .redraw)
                     }
                 } else {
-                    gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: mode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
+                    gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
                         if iRecord != nil {
-                            gHere = gCloudManager.zoneForRecord(iRecord!, in: mode)
+                            gHere = gCloudManager.zoneForRecord(iRecord!)
+                            gHere.record = iRecord!
 
                             gHere.grab()
                             self.travel {
@@ -187,7 +102,7 @@ class ZTravelManager: NSObject {
                 // STAY WITHIN GRAPH //
                 ///////////////////////
 
-                there = gCloudManager.zoneForRecordID(recordIDOfLink, in: mode)
+                there = gCloudManager.zoneForRecordID(recordIDOfLink)
                 let grabbed = gSelectionManager.firstGrabbedZone
                 let    here = gHere
 
@@ -213,8 +128,9 @@ class ZTravelManager: NSObject {
 
                     grabHere()
                 } else {
-                    gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, storageMode: mode, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
-                        gHere = gCloudManager.zoneForRecord(iRecord!, in: mode)
+                    gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
+                        gHere        = gCloudManager.zoneForRecord(iRecord!)
+                        gHere.record = iRecord!
 
                         grabHere()
                     }

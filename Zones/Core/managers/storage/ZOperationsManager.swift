@@ -99,12 +99,6 @@ class ZOperationsManager: NSObject {
 
 
     private func setupAndRun(_ operationIDs: [ZOperationID], optional: Int? = nil, onCompletion: @escaping Closure) {
-        var identifiers   = operationIDs
-        isReady           = false;
-        queue.isSuspended = true
-
-        identifiers.append(.ready)
-
         if let prior = onReady {
             onReady = {
                 self.dispatchAsyncInForeground { // prevent recursion pile-up on stack
@@ -113,15 +107,18 @@ class ZOperationsManager: NSObject {
                 }
             }
         } else {
-            onReady    = onCompletion
-            let  saved = gStorageMode
-            let isMine = [.mine].contains(saved)
+            let identifiers   = operationIDs + [.ready]
+            isReady           = false;
+            queue.isSuspended = true
+            onReady           = onCompletion
+            let         saved = gStorageMode
+            let        isMine = [.mine].contains(saved)
 
             for identifier in identifiers {
                 let                     operation = BlockOperation {
                     var  closure: IntegerClosure? = nil     // allow this closure to recurse
-                    let                      full = [.favorites, .manifest, .toRoot, .cloud, .root].contains(identifier)
-                    let forCurrentStorageModeOnly = [.here, .file, .ready, .parent, .children]     .contains(identifier)
+                    let                      full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .root, .here].contains(identifier)
+                    let forCurrentStorageModeOnly = [.file, .ready, .parent, .children]                                             .contains(identifier)
                     let     modes: [ZStorageMode] = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : [.mine, .everyone]
 
                     closure = { index in
@@ -141,12 +138,12 @@ class ZOperationsManager: NSObject {
                 
                 addOperation(operation)
             }
-        }
 
-        queue.isSuspended = false
+            queue.isSuspended = false
 
-        dispatchAsyncInForegroundAfter(0.5) {
-            gControllersManager.displayActivity()
+            dispatchAsyncInForegroundAfter(0.5) {
+                gControllersManager.displayActivity()
+            }
         }
     }
 
@@ -161,42 +158,52 @@ class ZOperationsManager: NSObject {
 
 
     func invoke(_ identifier: ZOperationID, mode: ZStorageMode, _ optional: Int? = nil, _ onCompletion: Closure?) {
-        let complete = { (iCount: Int) -> Void in
-            if iCount == 0 {
-                onCompletion?()
-            } else if self.debug && identifier != ZOperationID.ready {
-                let   count = iCount < 0 ? "" : "\(iCount)"
-                var message = "\(String(describing: identifier)) \(count)"
+        if identifier == .ready {
+            becomeReady()
+        } else if mode != .favorites {
+            let    cloudManager = gRemoteStoresManager.cloudManagerFor(mode)
+            let        complete = { (iCount: Int) -> Void in
+                if iCount      == 0 {
+                    onCompletion?()
+                } else if self.debug && identifier != ZOperationID.ready {
+                    let   count = iCount < 0 ? "" : "\(iCount)"
+                    var message = "\(String(describing: identifier)) \(count)"
 
-                message.appendSpacesToLength(13)
-                self.report("\(message)• \(mode)")
+                    message.appendSpacesToLength(13)
+                    self.report("\(message)• \(mode)")
+                }
             }
+            
+
+            switch identifier {
+            case .file:        gfileManager.restore       (from: mode);    complete(0)
+            case .here:       gRemoteStoresManager.establishHere(mode,     complete)
+            case .root:       gRemoteStoresManager.establishRoot(mode,     complete)
+            case .cloud:       cloudManager.fetchCloudZones     (          complete)
+            case .favorites:   cloudManager.fetchFavorites      (          complete)
+            case .manifest:    cloudManager.fetchManifest       (          complete)
+            case .children:    cloudManager.fetchChildren       (optional, complete)
+            case .parent:      cloudManager.fetchParents        (          complete)
+            case .unsubscribe: cloudManager.unsubscribe         (          complete)
+            case .toRoot:      cloudManager.fetchToRoot         (          complete)
+            case .undelete:    cloudManager.undeleteAll         (          complete)
+            case .emptyTrash:  cloudManager.emptyTrash          (          complete)
+            case .subscribe:   cloudManager.subscribe           (          complete)
+            case .create:      cloudManager.create              (          complete)
+            case .fetch:       cloudManager.fetch               (          complete)
+            case .merge:       cloudManager.merge               (          complete)
+            case .flush:       cloudManager.flush               (          complete)
+            default: break
+            }
+
+            return
         }
 
-        switch identifier {
-        case .file:         gfileManager.restore  (from: mode);          complete(0); break
-        case .cloud:       gCloudManager.fetchCloudZones(mode,           complete);   break
-        case .favorites:   gCloudManager.fetchFavorites (mode,           complete);   break
-        case .here:       gTravelManager.establishHere  (mode,           complete);   break
-        case .root:       gTravelManager.establishRoot  (mode,           complete);   break
-        case .manifest:    gCloudManager.fetchManifest  (mode,           complete);   break
-        case .children:    gCloudManager.fetchChildren  (mode, optional, complete);   break
-        case .parent:      gCloudManager.fetchParents   (mode,           complete);   break
-        case .unsubscribe: gCloudManager.unsubscribe    (mode,           complete);   break
-        case .toRoot:      gCloudManager.fetchToRoot    (mode,           complete);   break
-        case .undelete:    gCloudManager.undelete       (mode,           complete);   break
-        case .emptyTrash:  gCloudManager.emptyTrash     (mode,           complete);   break
-        case .subscribe:   gCloudManager.subscribe      (mode,           complete);   break
-        case .create:      gCloudManager.create         (mode,           complete);   break
-        case .fetch:       gCloudManager.fetch          (mode,           complete);   break
-        case .merge:       gCloudManager.merge          (mode,           complete);   break
-        case .flush:       gCloudManager.flush          (mode,           complete);   break
-        case .ready:                     becomeReady    (mode,           complete);   break
-        }
+        onCompletion?()
     }
 
 
-    func becomeReady(_ mode: ZStorageMode, _ onCompletion: IntegerClosure?) {
+    func becomeReady() {
         isReady = true;
 
         gControllersManager.displayActivity()
@@ -210,7 +217,5 @@ class ZOperationsManager: NSObject {
                 gEditingManager.handleStalledEvents()
             }
         }
-        
-        onCompletion?(0)
     }
 }

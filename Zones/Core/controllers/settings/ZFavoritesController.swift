@@ -28,13 +28,13 @@ class ZFavoritesController: ZGenericController, ZTableViewDelegate, ZTableViewDa
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         if  let tableView = favoritesTableView {
-            let      here = gTravelManager.manifest(for: storageMode).hereZone
+            let      here = gRemoteStoresManager.manifest(for: storageMode).hereZone
 
             gFavoritesManager.updateIndexFor(here) { object in
                 gFavoritesManager.update()
                 tableView.reloadData()
 
-                self.favoritesTableHeight?.constant = CGFloat((gFavoritesManager.count + 1) * 19)
+                self.favoritesTableHeight?.constant = CGFloat(self.numberOfRows(in: tableView) * 19)
             }
         }
     }
@@ -45,15 +45,11 @@ class ZFavoritesController: ZGenericController, ZTableViewDelegate, ZTableViewDa
 
 
     func numberOfRows(in tableView: ZTableView) -> Int {
-        var count = 1
-
-        for zone in gFavoritesManager.favoritesRootZone.children {
-            if zone.isBookmark {
-                count += 1
-            }
+        if  let    root = gFavoritesManager.rootZone {
+            return root.count + 1
         }
 
-        return count
+        return 1
     }
 
 

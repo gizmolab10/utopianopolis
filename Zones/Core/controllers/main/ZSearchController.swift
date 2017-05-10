@@ -57,7 +57,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         if find == "" {
             endSearching()
         } else {
-            gCloudManager.searchFor(find, storageMode: gStorageMode) { iObject in
+            gCloudManager.searchFor(find) { iObject in
                 let hasResults = ((iObject as? [Any])?.count)! != 0
                 gWorkMode       = hasResults && gShowsSearching ? .searchMode : .editMode
 

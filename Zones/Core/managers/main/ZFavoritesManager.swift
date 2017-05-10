@@ -11,13 +11,12 @@ import Foundation
 import CloudKit
 
 
-class ZFavoritesManager: NSObject {
+class ZFavoritesManager: ZRecordsManager {
 
 
-    let favoritesRootZone  = Zone(record: nil, storageMode: .favorites)
     let  defaultFavorites  = Zone(record: nil, storageMode: .favorites)
     var    favoritesIndex  = 0
-    var             count: Int { return favoritesRootZone.count }
+    var             count: Int { return rootZone!.count }
 
 
     // MARK:- init
@@ -25,12 +24,16 @@ class ZFavoritesManager: NSObject {
 
 
     func setup() {
-        favoritesRootZone.level    = 0
-        favoritesRootZone.zoneName = "favorites"
-        favoritesRootZone.record   = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
+        if  rootZone          == nil {
+            rootZone           = Zone(record: nil, storageMode: .favorites)
+            rootZone?.level    = 0
+            rootZone?.zoneName = "favorites"
+            rootZone?.record   = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
 
-        favoritesRootZone.displayChildren()
-        setupDefaultFavorites()
+            rootZone?.displayChildren()
+            setupDefaultFavorites()
+        }
+
         update()
     }
 
@@ -64,12 +67,12 @@ class ZFavoritesManager: NSObject {
         // end of handleKey in editor
 
         for index in [0, 1] {
-            favoritesRootZone.removeChild(defaultFavorites[index])
+            rootZone?.removeChild(defaultFavorites[index])
         }
 
         var found = [Int] ()
 
-        for favorite in favoritesRootZone.children {
+        for favorite in rootZone!.children {
             if favorite.isFavorite, let mode = favorite.crossLink?.storageMode {
 
                 switch mode {
@@ -83,7 +86,7 @@ class ZFavoritesManager: NSObject {
         for index in [0, 1] {
             if !found.contains(index), let favorite = defaultFavorites[index] {
 
-                favoritesRootZone.addChild(favorite)
+                rootZone?.addChild(favorite)
                 favorite.clearAllStates()
             }
         }
@@ -91,7 +94,7 @@ class ZFavoritesManager: NSObject {
 
 
     func zoneAtIndex(_ index: Int) -> Zone? {
-        return favoritesRootZone[index]
+        return rootZone?[index]
     }
     
 
@@ -122,16 +125,16 @@ class ZFavoritesManager: NSObject {
 
 
     var rotatedEnumeration: EnumeratedSequence<Array<Zone>> {
-        let enumeration = favoritesRootZone.children.enumerated()
+        let enumeration = rootZone?.children.enumerated()
         var     rotated = [Zone] ()
 
-        for (index, favorite) in enumeration {
+        for (index, favorite) in enumeration! {
             if  index >= favoritesIndex {
                 rotated.append(favorite)
             }
         }
 
-        for (index, favorite) in enumeration {
+        for (index, favorite) in enumeration! {
             if  index < favoritesIndex {
                 rotated.append(favorite)
             }
@@ -142,7 +145,7 @@ class ZFavoritesManager: NSObject {
 
 
     func updateIndexFor(_ iZone: Zone, iGrabClosure: ObjectClosure?) {
-        update()
+        setup()
 
         let        traveler = !iZone.isBookmark ? iZone : iZone.bookmarkTarget
 
@@ -153,7 +156,7 @@ class ZFavoritesManager: NSObject {
                 let          mode = traveler!.storageMode
                 let   enumeration = rotatedEnumeration
                 let updateForZone = { (iZoneToMatch: Zone) in
-                    for (index, zone) in self.favoritesRootZone.children.enumerated() {
+                    for (index, zone) in self.rootZone!.children.enumerated() {
                         if zone == iZoneToMatch {
                             self.favoritesIndex = index
 
@@ -184,6 +187,8 @@ class ZFavoritesManager: NSObject {
 
                 iGrabClosure?(nil)
             }
+        } else {
+            iGrabClosure?(nil)
         }
     }
 
@@ -197,7 +202,7 @@ class ZFavoritesManager: NSObject {
 
         let increment = (forward ? 1 : -1)
         var     index = favoritesIndex + increment
-        let     count = favoritesRootZone.count
+        let     count = rootZone!.count
 
         if index >= count {
             index = 0
@@ -212,7 +217,7 @@ class ZFavoritesManager: NSObject {
     func nextFavorite(forward: Bool) -> Zone? {
         let index = nextFavoritesIndex(forward: forward)
 
-        return favoritesRootZone.count <= index ? nil : favoritesRootZone[index]
+        return rootZone!.count <= index ? nil : rootZone![index]
     }
 
 
@@ -233,9 +238,7 @@ class ZFavoritesManager: NSObject {
 
 
     @discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
-        if favoritesRootZone.count > favoritesIndex {
-            let bookmark = favoritesRootZone[favoritesIndex]!
-
+        if rootZone!.count > favoritesIndex, let bookmark = rootZone?[favoritesIndex] {
             if bookmark.isFavorite {
                 gTravelManager.travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
                     atArrival()
@@ -292,14 +295,14 @@ class ZFavoritesManager: NSObject {
             let basis: ZRecord = !zone.isBookmark ? zone : zone.crossLink!
             let     recordName = basis.record.recordID.recordName
 
-            for bookmark in favoritesRootZone.children {
+            for bookmark in rootZone!.children {
                 if recordName == bookmark.crossLink?.record.recordID.recordName {
                     return bookmark
                 }
             }
         }
 
-        let    parent: Zone = isFavorite ? favoritesRootZone : zone.parentZone ?? favoritesRootZone
+        let    parent: Zone = isFavorite ? rootZone! : zone.parentZone ?? rootZone!
         let           count = parent.count
         var bookmark: Zone? = zone.isBookmark ? zone.deepCopy() : nil
         var           index = parent.children.index(of: zone) ?? count
@@ -330,9 +333,9 @@ class ZFavoritesManager: NSObject {
     func deleteFavorite(for zone: Zone) {
         let recordID = zone.record.recordID
 
-        for (index, favorite) in favoritesRootZone.children.enumerated() {
+        for (index, favorite) in rootZone!.children.enumerated() {
             if  favorite.crossLink?.record.recordID == recordID {
-                favoritesRootZone.children.remove(at: index)
+                rootZone?.children.remove(at: index)
 
                 break
             }

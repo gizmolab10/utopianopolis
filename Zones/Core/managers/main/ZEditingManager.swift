@@ -330,7 +330,7 @@ class ZEditingManager: NSObject {
 
 
     func revealRoot(_ onCompletion: Closure?) {
-        if gRoot.record != nil {
+        if gRoot?.record != nil {
             onCompletion?()
         } else {
             gOperationsManager.root {
@@ -635,7 +635,7 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            let  bookmarks = gCloudManager.bookmarksFor(zone)
+            let  bookmarks = gRemoteStoresManager.bookmarksFor(zone)
             zone.isDeleted = true // will be saved, then ignored after next launch
 
             deleteZones(zone.children, in: zone) // recurse
@@ -727,7 +727,7 @@ class ZEditingManager: NSObject {
                 zone.grab()
 
                 revealRoot {
-                    self.revealSiblingsOf(here, untilReaching: gRoot)
+                    self.revealSiblingsOf(here, untilReaching: gRoot!)
                 }
             } else if !zone.isRoot {
                 gHere = zone
@@ -768,7 +768,7 @@ class ZEditingManager: NSObject {
                 gFavoritesManager.showFavoritesAndGrab(nil) { object, kind in
                     zone.isFavorite = true
 
-                    moveIntoHere(gFavoritesManager.favoritesRootZone)
+                    moveIntoHere(gFavoritesManager.rootZone)
                 }
             } else {
                 revealParentAndSiblingsOf(gHere) {

@@ -30,7 +30,9 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
 
     func applicationDidBecomeActive(_ notification: Notification) {
-        if needsSetup {
+        if  needsSetup {
+            needsSetup = false
+
             zapplication.registerForRemoteNotifications(matching: .badge)
             signalFor(nil, regarding: .startup)
             gOperationsManager.startup {
@@ -38,8 +40,6 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
                 self.signalFor(nil, regarding: .redraw)
             }
-
-            needsSetup = false
         }
     }
 
@@ -50,7 +50,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
         if note.notificationType == .query {
             let queryNote: CKQueryNotification = note as! CKQueryNotification
 
-            gCloudManager.receivedUpdateFor(queryNote.recordID!)
+            gRemoteStoresManager.receivedUpdateFor(queryNote.recordID!)
         }
     }
 
