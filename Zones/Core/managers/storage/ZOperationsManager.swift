@@ -170,7 +170,7 @@ class ZOperationsManager: NSObject {
                     var message = "\(String(describing: identifier)) \(count)"
 
                     message.appendSpacesToLength(13)
-                    self.report("\(message)• \(mode)")
+                    self.note("\(message)• \(mode)")
                 }
             }
             

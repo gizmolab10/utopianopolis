@@ -44,7 +44,6 @@ class Zone : ZRecord {
     var          hasProgeny:         Bool { return  count > 0 || progenyCount > 1 }
 
 
-
     // MARK:- properties
     // MARK:-
 
@@ -350,13 +349,15 @@ class Zone : ZRecord {
     }
 
 
-    func progenyCountUpdate() {
-        progenyCount = 1
+    func progenyCountUpdate( _ visited: [Zone]) {
+        if !visited.contains(self) {
+            progenyCount = 1
 
-        for child in self.children {
-            child.progenyCountUpdate()
+            for child in self.children {
+                child.progenyCountUpdate(visited + [self])
 
-            progenyCount += child.progenyCount
+                progenyCount += child.progenyCount
+            }
         }
     }
 
@@ -364,12 +365,17 @@ class Zone : ZRecord {
     func fullProgenyCountUpdate() {
         needChildren()
         gOperationsManager.children(recursiveGoal: -1) {
-            self.progenyCountUpdate()
+            self.progenyCountUpdate([])
+            self.signalFor(nil, regarding: .redraw)
         }
     }
 
 
     func incrementProgenyCount(by delta: Int) {
+        if delta != 0 {
+            report("\(delta) \(zoneName ?? "---")")
+        }
+
         safeIncrementProgenyCount(by: delta, [])
     }
 
@@ -378,7 +384,7 @@ class Zone : ZRecord {
         if !visited.contains(self) {
             var increment = delta
 
-            if progenyCount < count + 1 {
+            if zoneProgeny == nil || progenyCount + increment < count + 1 {
                 increment += 1
             }
 
@@ -484,12 +490,11 @@ class Zone : ZRecord {
     }
 
 
-    func progenyCountIncrement() -> Int {
-//        let priorCount = progenyCount
+    var progenyCountIncrement: Int {
         var  increment = 0
 
         for child in children {
-            increment += child.progenyCountIncrement()
+            increment += child.progenyCountIncrement
         }
 
         return increment
@@ -498,7 +503,12 @@ class Zone : ZRecord {
 
     func addAndReorderChild(_ iChild: Zone?, at iIndex: Int?) {
         if  let child = iChild, addChild(child, at: iIndex) != nil {
-            incrementProgenyCount(by: 1)
+            if  child.zoneProgeny == nil {
+                child.incrementProgenyCount(by: 0)
+            } else {
+                incrementProgenyCount(by: child.progenyCount)
+            }
+
             updateOrdering()
         }
     }
@@ -507,7 +517,7 @@ class Zone : ZRecord {
     func removeChild(_ child: Zone?) {
         if child != nil, let index = children.index(of: child!) {
             children.remove(at: index)
-            incrementProgenyCount(by: -1)
+            incrementProgenyCount(by: -child!.progenyCount)
         }
     }
 

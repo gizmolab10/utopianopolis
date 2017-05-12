@@ -283,7 +283,7 @@ class ZFavoritesManager: ZRecordsManager {
         let  insertAt: Int? = atIndex == count ? nil : atIndex
 
         parent.addChild(bookmark, at: insertAt)
-        parent.incrementProgenyCount(by: 1)
+        bookmark.incrementProgenyCount(by: 0)
         bookmark.updateCloudProperties() // is this needed?
 
         return bookmark

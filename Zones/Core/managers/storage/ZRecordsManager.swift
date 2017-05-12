@@ -41,18 +41,11 @@ class ZRecordsManager: NSObject {
 
 
     var undeletedCount: Int {
-        var       count = zonesByID.count
-        var identifiers = [CKRecordID] ()
+        var count = zonesByID.count
 
         for zone in zonesByID.values {
-            let isDeleted = zone.isDeleted
-
-            if isDeleted || identifiers.contains(zone.record.recordID) {
+            if zone.isDeleted {
                 count -= 1
-
-                if isDeleted, let link = zone.crossLink?.record.recordID {
-                    identifiers.append(link)
-                }
             }
         }
 

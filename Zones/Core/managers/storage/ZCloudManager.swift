@@ -291,7 +291,6 @@ class ZCloudManager: ZRecordsManager {
                         record.record = iRecord
 
                         if let zone = record as? Zone {
-                            zone.incrementProgenyCount(by: 0)
                             zone.updateLevel()
                         }
                     }
@@ -387,7 +386,6 @@ class ZCloudManager: ZRecordsManager {
                         } else {
                             self.rootZone = iZone   // got root
 
-                            manifest.hereZone.incrementProgenyCount(by: 0)
                             onCompletion?(0)
                         }
                     }

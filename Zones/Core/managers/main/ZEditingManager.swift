@@ -545,6 +545,7 @@ class ZEditingManager: NSObject {
             let createAndAdd = {
                 let   record = CKRecord(recordType: zoneTypeKey)
                 let    child = Zone(record: record, storageMode: zone.storageMode)
+                child.progenyCount = 1 // so add and reorder will correctly propagate count
 
                 child .grab()
                 zone.ungrab()
@@ -635,8 +636,8 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            let  bookmarks = gRemoteStoresManager.bookmarksFor(zone)
-            zone.isDeleted = true // will be saved, then ignored after next launch
+            let     bookmarks = gRemoteStoresManager.bookmarksFor(zone)
+            zone   .isDeleted = true // will be saved, then ignored after next launch
 
             deleteZones(zone.children, in: zone) // recurse
             deleteZones(bookmarks,     in: zone) // recurse
