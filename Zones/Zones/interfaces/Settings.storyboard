@@ -160,7 +160,7 @@
                 </viewController>
                 <customObject id="yrI-wS-bc9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-188.5" y="2141.5"/>
+            <point key="canvasLocation" x="-190" y="2187"/>
         </scene>
         <!--Settings Controller-->
         <scene sceneID="Tae-az-4mZ">
@@ -577,11 +577,11 @@ other KEYS
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Zones" sceneMemberID="viewController">
                     <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="225" height="377"/>
+                        <rect key="frame" x="0.0" y="0.0" width="225" height="415"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box borderType="line" title="line thickness" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
-                                <rect key="frame" x="5" y="328" width="215" height="41"/>
+                                <rect key="frame" x="5" y="366" width="215" height="41"/>
                                 <view key="contentView" id="npe-oq-zV9">
                                     <rect key="frame" x="1" y="1" width="213" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -603,7 +603,7 @@ other KEYS
                                 </view>
                             </box>
                             <box borderType="line" title="vertical spacing" translatesAutoresizingMaskIntoConstraints="NO" id="QMR-K4-bC6" userLabel="vertical spacing">
-                                <rect key="frame" x="5" y="289" width="215" height="41"/>
+                                <rect key="frame" x="5" y="327" width="215" height="41"/>
                                 <view key="contentView" id="vWX-cG-juA">
                                     <rect key="frame" x="1" y="1" width="213" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -625,7 +625,7 @@ other KEYS
                                 </view>
                             </box>
                             <box borderType="line" title="horizontal spacing" translatesAutoresizingMaskIntoConstraints="NO" id="hoN-dH-smR" userLabel="horizontal spacing">
-                                <rect key="frame" x="5" y="250" width="215" height="41"/>
+                                <rect key="frame" x="5" y="288" width="215" height="41"/>
                                 <view key="contentView" id="fXT-pM-zio">
                                     <rect key="frame" x="1" y="1" width="213" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -647,7 +647,7 @@ other KEYS
                                 </view>
                             </box>
                             <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="mS1-t0-150">
-                                <rect key="frame" x="5" y="120" width="215" height="132"/>
+                                <rect key="frame" x="5" y="158" width="215" height="132"/>
                                 <view key="contentView" id="rb6-oU-fw8">
                                     <rect key="frame" x="1" y="1" width="213" height="116"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -765,7 +765,7 @@ other KEYS
                                 </view>
                             </box>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i0m-vf-1Of">
-                                <rect key="frame" x="34" y="96" width="158" height="20"/>
+                                <rect key="frame" x="33" y="96" width="158" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="18" id="sur-0v-evK"/>
                                 </constraints>
@@ -780,6 +780,36 @@ other KEYS
                                     <action selector="graphAlteringModeAction:" target="Naq-se-Exq" id="8cr-Ru-eOh"/>
                                 </connections>
                             </segmentedControl>
+                            <box autoresizesSubviews="NO" borderType="line" title="decorations" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT">
+                                <rect key="frame" x="5" y="120" width="215" height="40"/>
+                                <view key="contentView" id="5gJ-xh-VlV">
+                                    <rect key="frame" x="1" y="1" width="213" height="24"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <button translatesAutoresizingMaskIntoConstraints="NO" id="bwa-u8-WwC">
+                                            <rect key="frame" x="6" y="2" width="201" height="24"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="20" id="WcP-J9-Wc8"/>
+                                            </constraints>
+                                            <buttonCell key="cell" type="check" title="counters" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="VMp-WN-8Y6">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="buttonAction:" target="Naq-se-Exq" id="RAp-ml-Q06"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="bwa-u8-WwC" secondAttribute="trailing" constant="8" id="GpD-Pl-HDX"/>
+                                        <constraint firstItem="bwa-u8-WwC" firstAttribute="leading" secondItem="5gJ-xh-VlV" secondAttribute="leading" constant="8" id="Sjk-CO-3uq"/>
+                                        <constraint firstAttribute="centerY" secondItem="bwa-u8-WwC" secondAttribute="centerY" constant="2" id="aSS-Dm-K5u"/>
+                                    </constraints>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="height" secondItem="bwa-u8-WwC" secondAttribute="height" constant="16" id="Vjt-J0-Nyr"/>
+                                </constraints>
+                            </box>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="G3k-dZ-ajm">
                                 <rect key="frame" x="6" y="0.0" width="213" height="90"/>
                                 <constraints>
@@ -801,13 +831,16 @@ other KEYS
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="9a4-Qq-RLi"/>
                             <constraint firstAttribute="trailing" secondItem="G3k-dZ-ajm" secondAttribute="trailing" constant="8" id="Arx-wR-61m"/>
                             <constraint firstItem="QMR-K4-bC6" firstAttribute="top" secondItem="1dG-7h-ePD" secondAttribute="bottom" constant="2" id="Ior-2h-b5V"/>
-                            <constraint firstItem="i0m-vf-1Of" firstAttribute="top" secondItem="mS1-t0-150" secondAttribute="bottom" constant="8" id="Nwt-lB-ER8"/>
+                            <constraint firstItem="ay3-pv-TvT" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="L8F-B3-k88"/>
                             <constraint firstAttribute="trailing" secondItem="QMR-K4-bC6" secondAttribute="trailing" constant="8" id="QZ8-xe-YwK"/>
+                            <constraint firstItem="i0m-vf-1Of" firstAttribute="top" secondItem="ay3-pv-TvT" secondAttribute="bottom" constant="8" id="Shi-vW-S8A"/>
                             <constraint firstAttribute="bottom" secondItem="G3k-dZ-ajm" secondAttribute="bottom" id="TOX-3e-Uvc"/>
                             <constraint firstItem="QMR-K4-bC6" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="U2J-wt-iaK"/>
                             <constraint firstItem="G3k-dZ-ajm" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="ZjN-qJ-NYT"/>
                             <constraint firstAttribute="trailing" secondItem="1dG-7h-ePD" secondAttribute="trailing" constant="8" id="aFt-c9-QQn"/>
+                            <constraint firstAttribute="trailing" secondItem="ay3-pv-TvT" secondAttribute="trailing" constant="8" id="dfi-pb-wOI"/>
                             <constraint firstItem="hoN-dH-smR" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="g6L-Yp-gum"/>
+                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="mS1-t0-150" secondAttribute="bottom" constant="2" id="i1p-pz-LBF"/>
                             <constraint firstAttribute="trailing" secondItem="mS1-t0-150" secondAttribute="trailing" constant="8" id="m1Q-hz-0Mf"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="top" secondItem="Ngb-Ew-NGG" secondAttribute="top" constant="8" id="oR6-58-oMM"/>
                             <constraint firstAttribute="trailing" secondItem="hoN-dH-smR" secondAttribute="trailing" constant="8" id="old-gK-vf2"/>
@@ -823,6 +856,7 @@ other KEYS
                         <outlet property="dragTargetsColorBox" destination="j0f-8D-Ds5" id="FRZ-SF-WJ1"/>
                         <outlet property="graphAlteringModeControl" destination="i0m-vf-1Of" id="jBO-mu-sni"/>
                         <outlet property="horizontalSpacing" destination="OmD-gF-PvR" id="DN6-Os-oDZ"/>
+                        <outlet property="showCountersButton" destination="bwa-u8-WwC" id="Nf7-np-uzF"/>
                         <outlet property="thickness" destination="gh7-LP-7IV" id="ox5-Ei-ZE6"/>
                         <outlet property="verticalSpacing" destination="X28-Kf-ltl" id="bZA-x3-VXU"/>
                         <outlet property="zoneColorBox" destination="UMY-8c-tep" id="vq3-82-A2w"/>
@@ -830,7 +864,7 @@ other KEYS
                 </viewController>
                 <customObject id="JO0-BM-25B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-189.5" y="1809.5"/>
+            <point key="canvasLocation" x="-189.5" y="1829"/>
         </scene>
         <!--Favorites Controller-->
         <scene sceneID="45A-WG-zgj">

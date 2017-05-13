@@ -108,6 +108,27 @@ var gGenericOffset: CGSize {
 }
 
 
+var gShowCounterDecorations: Bool {
+    get {
+        var value: Bool? = UserDefaults.standard.object(forKey: showCounterDecorationsKey) as? Bool
+
+        if value == nil {
+            value = false
+
+            UserDefaults.standard.set(value, forKey:showCounterDecorationsKey)
+            UserDefaults.standard.synchronize()
+        }
+
+        return value!
+    }
+
+    set {
+        UserDefaults.standard.set(newValue, forKey:showCounterDecorationsKey)
+        UserDefaults.standard.synchronize()
+    }
+}
+
+
 var gLineThickness: Double {
     get {
         var value: Double? = UserDefaults.standard.object(forKey: lineThicknessKey) as? Double
@@ -208,15 +229,16 @@ var gSettingsViewIDs: ZSettingsViewID {
 // MARK:-
 
 
-let         zoneColorKey = "zone color"
-let     bookmarkColorKey = "bookmark color"
-let   backgroundColorKey = "background color"
-let  dragTargetsColorKey = "drag targets color"
-let graphAlteringModeKey = "graph altering mode"
-let       storageModeKey = "current storage mode"
-let     settingsStateKey = "current settings state"
-let     lineThicknessKey = "line thickness"
-let     genericOffsetKey = "generick offset"
+let              zoneColorKey = "zone color"
+let          bookmarkColorKey = "bookmark color"
+let        backgroundColorKey = "background color"
+let       dragTargetsColorKey = "drag targets color"
+let      graphAlteringModeKey = "graph altering mode"
+let            storageModeKey = "current storage mode"
+let          settingsStateKey = "current settings state"
+let          lineThicknessKey = "line thickness"
+let          genericOffsetKey = "generick offset"
+let showCounterDecorationsKey = "show counter decorations"
 
 
 func getColorForKey(_ key: String, defaultColor: ZColor) -> ZColor {

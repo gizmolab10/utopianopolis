@@ -134,7 +134,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         if  let   zone = widget.widgetZone {
             let   name = zone.zoneName ?? "empty"
             let  count = zone.progenyCount - 1
-            let suffix = (isTextEditing || (count < 1)) ? "" : "  (\(count))"
+            let suffix = (!gShowCounterDecorations || isTextEditing || (count < 1)) ? "" : "  (\(count))"
             text       = "\(name)\(suffix)"
         }
     }
