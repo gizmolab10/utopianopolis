@@ -372,10 +372,6 @@ class Zone : ZRecord {
 
 
     func incrementProgenyCount(by delta: Int) {
-        if delta != 0 {
-            report("\(delta) \(zoneName ?? "---")")
-        }
-
         safeIncrementProgenyCount(by: delta, [])
     }
 
@@ -384,17 +380,18 @@ class Zone : ZRecord {
         if !visited.contains(self) {
             var increment = delta
 
-            if zoneProgeny == nil || progenyCount + increment < count + 1 {
+            if  increment >= 0 && (zoneProgeny == nil || progenyCount + increment < count + 1) {
                 increment += 1
             }
 
             if  increment != 0 {
                 progenyCount += increment
+                report("\(increment) \(zoneName ?? "---")")
 
                 if !isRoot && !isRootOfFavorites {
                     if parentZone != nil {
                         parentZone?.safeIncrementProgenyCount(by: increment, visited + [self])
-                    } else if record != nil {
+                    } else if record != nil && !isDeleted {
                         needParent()
 
                         gOperationsManager.parent {
@@ -565,11 +562,13 @@ class Zone : ZRecord {
 
 
     override func deepCopy() -> Zone {
-        let zone = super.deepCopy()
+        let        zone = super.deepCopy()
+        zone.parentZone = nil
 
         for child in children {
             let newChild = child.deepCopy()
             zone.addChild(newChild)
+
             newChild.incrementProgenyCount(by: 0)
         }
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C0FC0151EC64E330032D90C /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C0FC0141EC64E330032D90C /* Settings.storyboard */; };
 		0C19EFA51E3EC07000913B1E /* ZReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C19EFA41E3EC07000913B1E /* ZReachability.swift */; };
 		0C19EFA61E3EC07000913B1E /* ZReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C19EFA41E3EC07000913B1E /* ZReachability.swift */; };
 		0C2456181DE3227900EBCCDD /* ZOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2456171DE3227900EBCCDD /* ZOperationsManager.swift */; };
@@ -222,6 +223,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0C0FC0141EC64E330032D90C /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
 		0C19EFA41E3EC07000913B1E /* ZReachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZReachability.swift; sourceTree = "<group>"; };
 		0C2456171DE3227900EBCCDD /* ZOperationsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZOperationsManager.swift; sourceTree = "<group>"; };
 		0C2456321DE6FB7D00EBCCDD /* ZState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZState.swift; sourceTree = "<group>"; };
@@ -578,6 +580,7 @@
 			children = (
 				0CA04B961D2ED079001892E5 /* Assets.xcassets */,
 				0CB1A7FE1D740EC500283F7B /* Main.storyboard */,
+				0C0FC0141EC64E330032D90C /* Settings.storyboard */,
 			);
 			path = interfaces;
 			sourceTree = "<group>";
@@ -930,6 +933,7 @@
 				0CB1A7FF1D740EC500283F7B /* Main.storyboard in Resources */,
 				0CA04B9F1D2ED079001892E5 /* Zones.entitlements in Resources */,
 				0CA04B9C1D2ED079001892E5 /* Assets.xcassets in Resources */,
+				0C0FC0151EC64E330032D90C /* Settings.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
