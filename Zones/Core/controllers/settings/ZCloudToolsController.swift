@@ -22,6 +22,11 @@ class ZCloudToolsController: ZGenericController {
     override func identifier() -> ZControllerID { return .cloudTools }
 
 
+    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
+        view.zlayer.backgroundColor = CGColor.clear
+    }
+
+
     // MARK:- actions
     // MARK:-
 

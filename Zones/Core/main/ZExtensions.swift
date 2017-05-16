@@ -39,13 +39,19 @@ extension NSObject {
     }
 
 
-    func reportError(_ iError: Any?) {
-        if let error: NSError = iError as? NSError, let waitForIt = error.userInfo[CKErrorRetryAfterKey] {
-            print(waitForIt)
+    func reportError(_ iError: Any? = nil, _ message: String? = nil) {
+        let text = message ?? ""
+
+        if let error: NSError = iError as? NSError {
+            let waitForIt = (error.userInfo[CKErrorRetryAfterKey] as? String) ?? ""
+
+            print(waitForIt + text)
         } else if let error: CKError = iError as? CKError {
-            print(error.localizedDescription)
-        } else if iError != nil {
-            print(iError!)
+            print(error.localizedDescription + text)
+        } else {
+            let error = iError as? String ?? ""
+
+            print(error + text)
         }
     }
 

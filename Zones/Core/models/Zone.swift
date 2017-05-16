@@ -340,7 +340,9 @@ class Zone : ZRecord {
 
 
     func orphan() {
-        parentZone?.removeChild(self)
+        if let zone = parentZone, zone.removeChild(self) {
+            zone.incrementProgenyCount(by: -progenyCount)
+        }
 
         parentZone = nil
 
@@ -362,8 +364,21 @@ class Zone : ZRecord {
     }
 
 
+    func extendNeedForChildrenToInfinity( _ visited: [Zone]) {
+        if !visited.contains(self) {
+            if count == 0 {
+                markForStates([.needsChildren])
+            } else {
+                for child in children {
+                    child.extendNeedForChildrenToInfinity(visited + [self])
+                }
+            }
+        }
+    }
+
+
     func fullProgenyCountUpdate() {
-        needChildren()
+        extendNeedForChildrenToInfinity([])
         gOperationsManager.children(recursiveGoal: -1) {
             self.progenyCountUpdate([])
             self.signalFor(nil, regarding: .redraw)
@@ -511,11 +526,14 @@ class Zone : ZRecord {
     }
 
 
-    func removeChild(_ child: Zone?) {
+    @discardableResult func removeChild(_ child: Zone?) -> Bool {
         if child != nil, let index = children.index(of: child!) {
             children.remove(at: index)
-            incrementProgenyCount(by: -child!.progenyCount)
+
+            return true
         }
+
+        return false
     }
 
 

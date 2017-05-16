@@ -14,21 +14,6 @@
 #endif
 
 
-enum ZSliderKind: String {
-    case Vertical   = "vertical"
-    case Thickness  = "thickness"
-    case Horizontal = "horizontal"
-}
-
-
-enum ZColorBoxKind: String {
-    case Zones       = "zones"
-    case Bookmarks   = "bookmarks"
-    case Background  = "background"
-    case DragTargets = "drag targets"
-}
-
-
 struct ZSettingsViewID: OptionSet {
     let rawValue: Int
 
@@ -49,6 +34,11 @@ class ZSettingsController: ZGenericController {
 
     
     override func identifier() -> ZControllerID { return .settings }
+
+
+    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
+        view.zlayer.backgroundColor = gBackgroundColor.cgColor
+    }
 
 
     func displayViewFor(id: ZSettingsViewID) {

@@ -192,7 +192,7 @@ class ZCloudManager: ZRecordsManager {
 
             operation.queryCompletionBlock = { (cursor, error) in
                 if error != nil {
-                    self.reportError(error)
+                    self.reportError(error, predicate.description)
                 }
 
                 onCompletion?(nil)
@@ -459,12 +459,14 @@ class ZCloudManager: ZRecordsManager {
                 } else {
                     let child = self.zoneForRecord(iRecord!)
 
+                    child.markForStates([.hasChildren])
+
                     if !child.isDeleted {
                         if recursiveGoal != nil {
                             if recursiveGoal! > child.level {
                                 child.maybeNeedChildren()
                             } else if recursiveGoal! < 0 {
-                                child.needChildren()
+                                child.markForStates([.needsChildren])
                             }
                         }
 

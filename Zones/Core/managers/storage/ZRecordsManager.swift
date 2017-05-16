@@ -74,7 +74,7 @@ class ZRecordsManager: NSObject {
         var        dict = recordsByState
         var     records = dict[state]
 
-        if records     == nil {
+        if  records    == nil {
             records     = []
             dict[state] = records
         }
@@ -85,19 +85,6 @@ class ZRecordsManager: NSObject {
 
     func clearAllStatesForRecords() {
         recordsByState.removeAll()
-    }
-
-
-    func findRecordByRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState], onEach: StateRecordClosure?) {
-        if iRecordID != nil {
-            for state in forStates {
-                for record in recordsForState(state) {
-                    if record.record != nil && record.record.recordID.recordName == iRecordID?.recordName {
-                        onEach?(state, record)
-                    }
-                }
-            }
-        }
     }
 
 
@@ -157,11 +144,9 @@ class ZRecordsManager: NSObject {
     func recordIDsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecordID] {
         var identifiers = [CKRecordID] ()
 
-        findRecordsWithMatchingStates(states) { object in
-            let zone: ZRecord = object as! ZRecord
-
-            if let record = zone.record, !identifiers.contains(record.recordID) {
-                identifiers.append(record.recordID)
+        findRecordsWithMatchingStates(states) { state, record in
+            if let identifier = record.record?.recordID, !identifiers.contains(identifier) {
+                identifiers.append(identifier)
             }
         }
 
@@ -172,8 +157,8 @@ class ZRecordsManager: NSObject {
     func parentIDsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecordID] {
         var parents = [CKRecordID] ()
 
-        findRecordsWithMatchingStates(states) { object in
-            let zone: Zone = object as! Zone
+        findRecordsWithMatchingStates(states) { state, record in
+            let zone: Zone = record as! Zone
 
             if let reference = zone.parent {
                 let parentID = reference.recordID
@@ -191,13 +176,11 @@ class ZRecordsManager: NSObject {
     func recordsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecord] {
         var results = [CKRecord] ()
 
-        findRecordsWithMatchingStates(states) { object in
-            let zone: ZRecord = object as! ZRecord
+        findRecordsWithMatchingStates(states) { state, record in
+            if !results.contains(record.record) {
+                record.debug("saving")
 
-            if let     record = zone.record, !results.contains(record) {
-                zone.debug("saving")
-
-                results.append(record)
+                results.append(record.record)
             }
         }
 
@@ -208,9 +191,9 @@ class ZRecordsManager: NSObject {
     func referencesWithMatchingStates(_ states: [ZRecordState]) -> [CKReference] {
         var references = [CKReference] ()
 
-        findRecordsWithMatchingStates(states) { object in
-            if  let    record:     ZRecord = object as? ZRecord, record.record != nil {
-                let reference: CKReference = CKReference(recordID: record.record.recordID, action: .none)
+        findRecordsWithMatchingStates(states) { state, record in
+            if references.count < 250, let identifier = record.record?.recordID {
+                let reference: CKReference = CKReference(recordID: identifier, action: .none)
 
                 references.append(reference)
             }
@@ -220,12 +203,21 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func findRecordsWithMatchingStates(_ states: [ZRecordState], onEach: ObjectClosure) {
-        for state in states {
-            let records = recordsForState(state)
+    func findRecordByRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState], onEach: StateRecordClosure?) {
+        if let soughtName = iRecordID?.recordName {
+            findRecordsWithMatchingStates(forStates) { state, record in
+                if let name = record.record?.recordID.recordName, name == soughtName {
+                    onEach?(state, record)
+                }
+            }
+        }
+    }
 
-            for record in records {
-                onEach(record)
+
+    func findRecordsWithMatchingStates(_ states: [ZRecordState], onEach: StateRecordClosure) {
+        for state in states {
+            for record in recordsForState(state) {
+                onEach(state, record)
             }
         }
     }
