@@ -26,9 +26,12 @@ class ZFavoritesController: ZGenericController, ZTableViewDelegate, ZTableViewDa
     override func identifier() -> ZControllerID { return .favorites }
 
 
-    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
+    override func awakeFromNib() {
         view.zlayer.backgroundColor = CGColor.clear
+    }
+    
 
+    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         if  let tableView = favoritesTableView {
             let      here = gRemoteStoresManager.manifest(for: storageMode).hereZone
 

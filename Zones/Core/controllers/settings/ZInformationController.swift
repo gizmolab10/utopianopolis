@@ -30,7 +30,8 @@ class ZInformationController: ZGenericController {
 
 
     override func awakeFromNib() {
-        fractionInMemory?.minValue = 0
+        view.zlayer.backgroundColor = CGColor.clear
+        fractionInMemory? .minValue = 0
     }
 
 
@@ -40,7 +41,6 @@ class ZInformationController: ZGenericController {
         totalCountLabel?        .text = "of \(total), retrieved: \(count)"
         graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
         levelLabel?             .text = "level: \(gHere.level)"
-        view  .zlayer.backgroundColor = gBackgroundColor.cgColor
         fractionInMemory?.doubleValue = Double(count)
         fractionInMemory?   .maxValue = Double(total)
 

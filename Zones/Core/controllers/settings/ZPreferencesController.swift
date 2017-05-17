@@ -50,6 +50,7 @@ class ZPreferencesController: ZGenericController {
 
     override func awakeFromNib() {
         graphAlteringModeControl?.selectedSegment = gGraphAlteringMode.rawValue
+        view              .zlayer.backgroundColor = CGColor.clear
         thickness?                   .doubleValue = gLineThickness
         verticalSpacing?             .doubleValue = Double(gGenericOffset.height)
         horizontalSpacing?           .doubleValue = Double(gGenericOffset.width)
@@ -58,11 +59,6 @@ class ZPreferencesController: ZGenericController {
         backgroundColorBox?                .color = gBackgroundColor
         bookmarkColorBox?                  .color = gBookmarkColor
         zoneColorBox?                      .color = gZoneColor
-    }
-
-
-    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
-        view.zlayer.backgroundColor = CGColor.clear
     }
 
 

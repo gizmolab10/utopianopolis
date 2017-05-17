@@ -583,11 +583,13 @@ class Zone : ZRecord {
         let        zone = super.deepCopy()
         zone.parentZone = nil
 
+        if progenyCount == 0 {
+            zone.progenyCount = 1
+        }
+
         for child in children {
             let newChild = child.deepCopy()
             zone.addChild(newChild)
-
-            newChild.incrementProgenyCount(by: 0)
         }
 
         return zone

@@ -420,9 +420,6 @@ CQ
                             </containerView>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="cjt-2h-f03">
                                 <rect key="frame" x="211" y="253" width="239" height="5"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="1" id="f4r-Vi-zXL"/>
-                                </constraints>
                             </box>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="E7h-Pg-qLQ" userLabel="Main View">
                                 <rect key="frame" x="211" y="0.0" width="239" height="255"/>

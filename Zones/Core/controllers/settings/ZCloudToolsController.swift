@@ -22,10 +22,10 @@ class ZCloudToolsController: ZGenericController {
     override func identifier() -> ZControllerID { return .cloudTools }
 
 
-    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
+    override func awakeFromNib() {
         view.zlayer.backgroundColor = CGColor.clear
     }
-
+    
 
     // MARK:- actions
     // MARK:-
