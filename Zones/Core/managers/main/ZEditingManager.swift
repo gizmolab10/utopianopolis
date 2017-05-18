@@ -34,17 +34,19 @@ class ZEditingManager: NSObject {
 
 
     var stalledEvents = [ZStalledEvent] ()
-    var previousEvent:          ZEvent?
+    var    previousEvent:          ZEvent?
+    var editedTextWidget:  ZoneTextWidget? { return gSelectionManager.currentlyEditingZone?.widget?.textWidget }
+    var        isEditing:            Bool  { return editedTextWidget == nil ? false : editedTextWidget!.isTextEditing }
 
 
-    var isEditing: Bool {
-        get {
-            if let editedZone = gSelectionManager.currentlyEditingZone, let editedWidget = editedZone.widget {
-                return editedWidget.textWidget.isTextEditing
-            }
+    var undoManager: UndoManager {
+        var manager = gUndoManager
 
-            return false
+        if editedTextWidget != nil && editedTextWidget!.undoManager != nil {
+            manager = editedTextWidget!.undoManager!
         }
+
+        return manager
     }
 
 

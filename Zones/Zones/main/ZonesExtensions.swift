@@ -204,15 +204,16 @@ extension NSWindow {
         }
 
         var valid = !gEditingManager.isEditing
-        let tag = menuItem.tag
+        let   tag = menuItem.tag
+
         if  tag <= 5, tag > 0, let type = ZMenuType(rawValue: tag) {
-            if !valid {
+            if gEditingManager.isEditing && type != .Undo && type != .Redo {
                 valid = type == .All
             } else {
                 switch type {
                 case .All:   valid = false
-                case .Undo:  valid = gUndoManager.canUndo
-                case .Redo:  valid = gUndoManager.canRedo
+                case .Undo:  valid = gEditingManager.undoManager.canUndo
+                case .Redo:  valid = gEditingManager.undoManager.canRedo
                 case .Grab:  valid = gSelectionManager.currentlyGrabbedZones.count != 0
                 case .Paste: valid = gSelectionManager       .pasteableZones.count != 0
                 }
@@ -232,8 +233,8 @@ extension NSWindow {
     @IBAction func delete            (_ iItem: ZMenuItem?) { gEditingManager.delete() }
     @IBAction func paste             (_ iItem: ZMenuItem?) { gEditingManager.paste() }
     @IBAction func toggleSearch      (_ iItem: ZMenuItem?) { gEditingManager.find() }
-    @IBAction func undo              (_ iItem: ZMenuItem?) { gUndoManager.undo() }
-    @IBAction func redo              (_ iItem: ZMenuItem?) { gUndoManager.redo() }
+    @IBAction func undo              (_ iItem: ZMenuItem?) { gEditingManager.undoManager.undo() }
+    @IBAction func redo              (_ iItem: ZMenuItem?) { gEditingManager.undoManager.redo() }
 }
 
 
@@ -259,9 +260,22 @@ extension ZoneTextWidget {
     override open var acceptsFirstResponder: Bool { return gOperationsManager.isReady }    // fix a bug where root zone is editing on launch
 
 
-    override func controlTextDidChange(_ obj: Notification) {
+    func updateGUI() {
         widget.layoutTextField()
         widget.setNeedsDisplay()
+    }
+
+
+    override func controlTextDidChange(_ iNote: Notification) {
+        undoManager?.registerUndo(withTarget:self) { iTarget in
+            let       newText = self.text ?? ""
+            self        .text = self.originalText
+            self.originalText = newText
+
+            self.controlTextDidChange(iNote)
+        }
+
+        updateGUI()
     }
 
 

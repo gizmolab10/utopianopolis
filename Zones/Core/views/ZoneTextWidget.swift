@@ -19,8 +19,9 @@ import Foundation
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
-    var monitor: Any?
-    var widget: ZoneWidget!
+    var  widget: ZoneWidget!
+    var monitor:        Any?
+    var    originalText = ""
     var _isTextEditing  = false
 
 
@@ -45,8 +46,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     }
                 } else {
                     gSelectionManager.currentlyEditingZone = zone
+                    cell?                      .allowsUndo = true
                     font                                   = gSelectedWidgetFont
                     textColor                              = ZColor.black
+                    originalText                           = zone?.zoneName ?? ""
 
                     gSelectionManager.deselectGrabs()
                     updateText()
@@ -147,14 +150,17 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             let      assignTextTo = { (iZone: Zone?) in
                 if  let      zone = iZone, let components = self.text?.components(separatedBy: "  (") {
                     zone.zoneName = components[0]
+
+                    self.UNDO(self) { iUndoSelf in
+                        let            newText = iUndoSelf.text ?? ""
+                        iUndoSelf        .text = iUndoSelf.originalText
+                        iUndoSelf.originalText = newText
+
+                        iUndoSelf.captureText()
+                        iUndoSelf.signalFor(nil, regarding: .redraw)
+                    }
                 }
             }
-
-//            UNDO(self) { iUndoSelf in
-//                iUndoSelf.text = priorName
-//
-//                iUndoSelf.captureText()
-//            }
 
             assignTextTo(zone)
 
