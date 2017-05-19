@@ -218,11 +218,12 @@ extension NSWindow {
                 valid = [.All, .Zone, .Child].contains(type)
             } else {
                 switch type {
+                case .Child,
+                     .Zone:  valid = true
                 case .Undo:  valid = gEditingManager.undoManager.canUndo
                 case .Redo:  valid = gEditingManager.undoManager.canRedo
                 case .Grab:  valid = gSelectionManager.currentlyGrabbedZones.count != 0
                 case .Paste: valid = gSelectionManager       .pasteableZones.count != 0
-                case .Child: valid = true
                 default:     valid = false
                 }
             }

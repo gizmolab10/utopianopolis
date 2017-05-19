@@ -39,7 +39,7 @@ class ZFavoritesController: ZGenericController, ZTableViewDelegate, ZTableViewDa
                 gFavoritesManager.update()
                 tableView.reloadData()
 
-                self.favoritesTableHeight?.constant = CGFloat(self.numberOfRows(in: tableView) * 19)
+                self.favoritesTableHeight?.constant = CGFloat(self.numberOfRows(in: tableView) * 20)
             }
         }
     }
