@@ -92,44 +92,48 @@ class ZEditingManager: NSObject {
     }
 
 
-    func handleKey(_ key: String?, flags: ZEventFlags, isWindow: Bool) {
-        if  key != nil {
-            if  isEditing {
-                if key == "a" && flags.isCommand {
-                    gSelectionManager.currentlyEditingZone?.widget?.textWidget.selectAllText()
+    func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) {
+        if  let         key = iKey {
+            let      widget = gWidgetsManager.currentMovableWidget
+            let   isControl = flags.isControl
+            let   isCommand = flags.isCommand
+            let    isOption = flags.isOption
+            let     isShift = flags.isShift
+            let   hasWidget = widget != nil
+            let   isSpecial = isOption || isWindow
+            let    hasFlags = isOption || isCommand || isShift
+            let     spaceDo = {
+                if hasWidget && !(widget?.widgetZone.isBookmark)! {
+                    self.addNewChildTo(widget?.widgetZone)
                 }
-            } else if let arrow = key?.arrow, isWindow {
+            }
+
+            if  isEditing {
+                switch key {
+                case "a":         if isCommand { gSelectionManager.currentlyEditingZone?.widget?.textWidget.selectAllText() }
+                case gSpaceKey:   if isControl { spaceDo() }
+                default:          break
+                }
+            } else if isWindow, let arrow = key.arrow {
                 handleArrow(arrow, flags: flags)
             } else {
-                let    widget = gWidgetsManager.currentMovableWidget
-                let isCommand = flags.isCommand
-                let  isOption = flags.isOption
-                let   isShift = flags.isShift
-                let hasWidget = widget != nil
-                let isSpecial = isWindow || isOption
-                let  hasFlags = isCommand || isOption || isShift
-
-                switch key! {
-                case "f":       find()
-                case "p":       printHere()
-                case "b":       createBookmark()
-                case "'":       doFavorites(isShift, isOption, isCommand)
-                case "\"":      doFavorites(true,    isOption, isCommand)
-                case "\u{8}",
-                     "\u{7F}":  if isSpecial { delete() } // delete
-                case "\t":      if hasWidget { addSibling() } // tab
-                case "/", "?":  onZone(gSelectionManager.firstGrabbedZone, focus: !hasFlags)
-                case "z":       if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
-                case " ":
-                    if hasWidget && isSpecial && !(widget?.widgetZone.isBookmark)! {
-                        addNewChildTo(widget?.widgetZone)
-                    }
+                switch key {
+                case "f":         find()
+                case "p":         printHere()
+                case "b":         createBookmark()
+                case "'":         doFavorites(isShift, isOption, isCommand)
+                case "\"":        doFavorites(true,    isOption, isCommand)
+                case gBackspaceKey,
+                     gDeleteKey:  if isSpecial { delete() } // delete
+                case gTabKey:     if hasWidget { addSibling() } // tab
+                case "/", "?":    onZone(gSelectionManager.firstGrabbedZone, focus: !hasFlags)
+                case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
+                case gSpaceKey:   if isSpecial { spaceDo() }
                 case "\r":
                     if hasWidget && gSelectionManager.hasGrab && !isCommand {
                         gSelectionManager.editCurrent()
                     }
-                default:
-                    break
+                default:          break
                 }
             }
         }

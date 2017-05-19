@@ -99,7 +99,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         var result = false
 
         if !gSelectionManager.isEditingStateChanging {
-            captureText()
+            captureText(force: false)
 
             result = super.resignFirstResponder()
 
@@ -143,23 +143,32 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-    func captureText() {
-        if !gTextCapturing, let zone = widget.widgetZone, zone.zoneName != text! {
+    func prepareUndoForTextChange(_ manager: UndoManager?,_ onUndo: @escaping Closure) {
+        if originalText != text {
+            manager?.registerUndo(withTarget:self) { iUndoSelf in
+                let            newText = iUndoSelf.text ?? ""
+                iUndoSelf        .text = iUndoSelf.originalText
+                iUndoSelf.originalText = newText
+
+                onUndo()
+            }
+        }
+    }
+
+
+    func captureText(force: Bool) {
+        if !gTextCapturing || force, let zone = widget.widgetZone, zone.zoneName != text! {
             gTextCapturing = true
 
             let      assignTextTo = { (iZone: Zone?) in
                 if  let      zone = iZone, let components = self.text?.components(separatedBy: "  (") {
                     zone.zoneName = components[0]
-
-                    self.UNDO(self) { iUndoSelf in
-                        let            newText = iUndoSelf.text ?? ""
-                        iUndoSelf        .text = iUndoSelf.originalText
-                        iUndoSelf.originalText = newText
-
-                        iUndoSelf.captureText()
-                        iUndoSelf.signalFor(nil, regarding: .redraw)
-                    }
                 }
+            }
+
+            prepareUndoForTextChange(gUndoManager) {
+                self.captureText(force: true)
+                self.updateGUI()
             }
 
             assignTextTo(zone)
@@ -170,9 +179,12 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
             for bookmark in gRemoteStoresManager.bookmarksFor(zone) {
                 assignTextTo(bookmark)
+                signalFor(bookmark, regarding: .datum)
             }
 
-            gOperationsManager.sync {}
+            gOperationsManager.sync {
+                gTextCapturing = false
+            }
         }
     }
 }

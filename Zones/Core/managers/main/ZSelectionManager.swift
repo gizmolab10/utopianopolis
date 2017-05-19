@@ -134,7 +134,7 @@ class ZSelectionManager: NSObject {
 
             if  let       widget = editingZone.widget {
                 widget.setNeedsDisplay()
-                widget.textWidget.captureText()
+                widget.textWidget.captureText(force: false)
             }
         }
 

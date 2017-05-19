@@ -54,6 +54,10 @@ public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 
 let gVerticalWeight = 1.0
 let    zapplication = NSApplication.shared()
+let   gBackspaceKey = "\u{8}"
+let      gDeleteKey = "\u{7F}"
+let       gSpaceKey = " "
+let         gTabKey = "\t"
 
 
 extension NSObject {
@@ -102,6 +106,7 @@ extension NSApplication {
 
 extension NSEventModifierFlags {
     var isNumericPad: Bool { return contains(.numericPad) }
+    var isControl:    Bool { return contains(.control) }
     var isCommand:    Bool { return contains(.command) }
     var isOption:     Bool { return contains(.option) }
     var isShift:      Bool { return contains(.shift) }
@@ -201,23 +206,30 @@ extension NSWindow {
             case Undo  = 3
             case Redo  = 4
             case All   = 5
+            case Child = 6
+            case Zone  = 7
         }
 
         var valid = !gEditingManager.isEditing
         let   tag = menuItem.tag
 
-        if  tag <= 5, tag > 0, let type = ZMenuType(rawValue: tag) {
+        if  tag <= 7, tag > 0, let type = ZMenuType(rawValue: tag) {
             if gEditingManager.isEditing && type != .Undo && type != .Redo {
-                valid = type == .All
+                valid = [.All, .Zone, .Child].contains(type)
             } else {
                 switch type {
-                case .All:   valid = false
                 case .Undo:  valid = gEditingManager.undoManager.canUndo
                 case .Redo:  valid = gEditingManager.undoManager.canRedo
                 case .Grab:  valid = gSelectionManager.currentlyGrabbedZones.count != 0
                 case .Paste: valid = gSelectionManager       .pasteableZones.count != 0
+                case .Child: valid = true
+                default:     valid = false
                 }
             }
+        }
+
+        if valid && tag != 7 {
+            report("")
         }
 
         return valid
@@ -267,11 +279,7 @@ extension ZoneTextWidget {
 
 
     override func controlTextDidChange(_ iNote: Notification) {
-        undoManager?.registerUndo(withTarget:self) { iTarget in
-            let       newText = self.text ?? ""
-            self        .text = self.originalText
-            self.originalText = newText
-
+        prepareUndoForTextChange(undoManager) {
             self.controlTextDidChange(iNote)
         }
 
@@ -282,9 +290,17 @@ extension ZoneTextWidget {
     override func textDidEndEditing(_ notification: Notification) {
         resignFirstResponder()
 
-        if let value = notification.userInfo?["NSTextMovement"] as! NSNumber?, value == NSNumber(value: 17) {
+        if  let        value = notification.userInfo?["NSTextMovement"] as? NSNumber {
+            var key: String? = nil
+
+            switch value.intValue {
+            case NSTabTextMovement:     key = gTabKey
+            case NSBacktabTextMovement: key = gSpaceKey
+            default:                    return
+            }
+
             dispatchAsyncInForeground {
-                gEditingManager.handleKey("\t", flags: ZEventFlags(), isWindow: true)
+                gEditingManager.handleKey(key, flags: ZEventFlags(), isWindow: true)
             }
         }
     }
