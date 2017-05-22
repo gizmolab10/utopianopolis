@@ -159,9 +159,10 @@ class ZSelectionManager: NSObject {
     }
 
 
-    func addToGrab(_ zone: Zone?) {
-        if zone != nil {
-            currentlyGrabbedZones.append(zone!)
+    func addToGrab(_ iZone: Zone?) {
+        if let zone = iZone {
+            stopEdit(for: zone)
+            currentlyGrabbedZones.append(zone)
             updateWidgetFor(zone)
         }
     }

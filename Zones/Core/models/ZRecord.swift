@@ -185,28 +185,29 @@ class ZRecord: NSObject {
     // MARK:-
 
 
-    func isMarkedForStates(_ states: [ZRecordState]) -> Bool { return recordsManager.hasRecord(self, forStates:states) }
-    func markForStates    (_ states: [ZRecordState])         {        recordsManager.addRecord(self, for: states) }
+    func isMarkedForAnyOfStates(_ states: [ZRecordState]) -> Bool { return recordsManager.hasRecord(self, forStates:states) }
+    func markForAllOfStates    (_ states: [ZRecordState])         {        recordsManager.addRecord(self, for: states) }
     func clearAllStates()                                    {        recordsManager.clearAllStatesForRecord(self) }
 
 
-    func unmarkForStates(_ states: [ZRecordState]) {
+    func unmarkForAllOfStates(_ states: [ZRecordState]) {
         if let identifier = self.record?.recordID {
             recordsManager.clearStatesForRecordID(identifier, forStates:states)
         }
     }
 
 
-    func needSave()     { markForStates([.needsSave]) }
-    func needFetch()    { markForStates([.needsFetch]) }
-    func needCreate()   { markForStates([.needsCreate]) }
-    func needParent()   { markForStates([.needsParent]) }
-    func needChildren() { markForStates([.needsChildren]) }
+    func needFetch()    { markForAllOfStates([.needsFetch]) }
+    func needParent()   { markForAllOfStates([.needsParent]) }
+    func needProgeny()  { markForAllOfStates([.needsProgeny]) }
+    func needChildren() { markForAllOfStates([.needsChildren]) }
+    func needCreate()   { markForAllOfStates([.needsCreate]); unmarkForAllOfStates([.needsMerge]) }
+    func needSave()     { markForAllOfStates([.needsSave]);   unmarkForAllOfStates([.needsMerge]) }
 
 
     func maybeNeedMerge() {
-        if !isMarkedForStates([.needsCreate, .needsSave, .needsMerge]) {
-            markForStates([.needsMerge])
+        if !isMarkedForAnyOfStates([.needsCreate, .needsSave, .needsMerge]) {
+            markForAllOfStates([.needsMerge])
         }
     }
 

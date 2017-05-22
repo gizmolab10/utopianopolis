@@ -286,7 +286,7 @@ class ZCloudManager: ZRecordsManager {
                     onCompletion?(0)
                 } else {
                     if let record = self.recordForCKRecord(iRecord) {
-                        record.unmarkForStates([.needsFetch])    // deferred to make sure fetch worked before clearing fetch flag
+                        record.unmarkForAllOfStates([.needsFetch])    // deferred to make sure fetch worked before clearing fetch flag
 
                         record.record = iRecord
 
@@ -437,7 +437,8 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchChildren(_ recursiveGoal: Int? = nil, _ onCompletion: IntegerClosure?) {
-        let childrenNeeded = referencesWithMatchingStates([.needsChildren])
+        let  progenyNeeded = referencesWithMatchingStates([.needsProgeny])
+        let childrenNeeded = referencesWithMatchingStates([.needsChildren]) + progenyNeeded
         let          count = childrenNeeded.count
 
         onCompletion?(count)
@@ -446,7 +447,7 @@ class ZCloudManager: ZRecordsManager {
             var parentsNeedingResort = [Zone] ()
             let            predicate = NSPredicate(format: "zoneState < %d AND parent IN %@", ZoneState.IsFavorite.rawValue, childrenNeeded)
 
-            clearState(.needsChildren)
+            clearStates([.needsChildren, .needsProgeny])
             performance("CHILDREN of   \(stringForReferences(childrenNeeded, in: storageMode))")
             queryWith(predicate) { (iRecord: CKRecord?) in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
@@ -459,18 +460,16 @@ class ZCloudManager: ZRecordsManager {
                 } else {
                     let child = self.zoneForRecord(iRecord!)
 
-                    child.markForStates([.hasChildren])
-
                     if !child.isDeleted {
-                        if recursiveGoal != nil {
-                            if recursiveGoal! > child.level {
-                                child.maybeNeedChildren()
-                            } else if recursiveGoal! < 0 {
-                                child.markForStates([.needsChildren])
-                            }
+                        if recursiveGoal != nil && child.includeChildren && child.count == 0 && (recursiveGoal! < 0 || recursiveGoal! > child.level) {
+                            child.needChildren()
                         }
 
-                        if let parent  = child.parentZone {
+                        if let parent = child.parentZone {
+                            if progenyNeeded.contains(child.parent!) && child.includeChildren {
+                                child.needProgeny()
+                            }
+
                             if parent != child && !parent.children.contains(child) {
                                 parent.addChild(child)
 
@@ -510,19 +509,28 @@ class ZCloudManager: ZRecordsManager {
     func establishHere(_ onCompletion: IntegerClosure?) {
         let manifest = gRemoteStoresManager.manifest(for: storageMode)
 
+        let rootCompletion: IntegerClosure = { iValue in
+            if iValue == 0 {
+                self.rootZone?.needProgeny()
+            }
+
+            onCompletion?(iValue)
+        }
+
         if manifest.here == nil {
-            self.establishRoot(onCompletion)
+            self.establishRoot(rootCompletion)
         } else {
             let recordID = manifest.here!.recordID
 
             self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey) { (iHereRecord: CKRecord?) in
                 if iHereRecord == nil || iHereRecord?[zoneNameKey] == nil {
-                    self.establishRoot(onCompletion)
+                    self.establishRoot(rootCompletion)
                 } else {
                     let          here = self.zoneForRecord(iHereRecord!)
                     here      .record = iHereRecord
                     manifest.hereZone = here
 
+                    here.needProgeny()
                     onCompletion?(0)
                 }
             }

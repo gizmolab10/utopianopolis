@@ -60,7 +60,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     #endif
                 }
 
-                signalFor(nil, regarding: .data)
+                signalFor(zone, regarding: .data)
             }
         }
     }

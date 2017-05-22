@@ -17,7 +17,7 @@ enum ZRecordState: Int {
     case needsFetch
     case needsCreate
     case needsParent
-    case hasChildren
+    case needsProgeny
     case needsChildren
 }
 
@@ -303,15 +303,13 @@ class ZRecordsManager: NSObject {
 
 
     func zoneForRecord(_ record: CKRecord) -> Zone {
-        var zone = zonesByID[record.recordID.recordName]
+        var zone  = zonesByID[record.recordID.recordName]
 
         if  zone == nil {
             zone  = Zone(record: record, storageMode: storageMode)
         } else if !(zone?.isDeleted ?? false) {
             zone!.record = record
         }
-
-        zone!.maybeNeedChildren()
 
         return zone!
     }

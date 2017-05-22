@@ -38,40 +38,36 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
-        if [.search, .found, .startup].contains(kind) {
-            return
-        } else if gWorkMode != .editMode {
-            view.snp.removeConstraints()
-            hereWidget.removeFromSuperview()
+        if ![.search, .found, .startup].contains(kind) {
+            if gWorkMode != .editMode {
+                view.snp.removeConstraints()
+                hereWidget.removeFromSuperview()
+            } else if !gEditingManager.isEditing {
+                var                   recursing = true
+                var specificWidget: ZoneWidget? = hereWidget
+                var        specificView: ZView? = view
+                var         specificindex: Int? = nil
+                gTextCapturing                  = false
+                hereWidget          .widgetZone = gHere
 
-            return
-        }
+                if  let       zone = object as? Zone, zone != gHere {
+                    specificWidget = zone.widget
+                    specificindex  = zone.siblingIndex
+                    specificView   = specificWidget?.superview
+                    recursing      = [.data, .redraw].contains(kind)
 
+                    if zone.isSelected {
+                        zone.grab()
+                    }
 
-        var                   recursing = true
-        var specificWidget: ZoneWidget? = hereWidget
-        var        specificView: ZView? = view
-        var         specificindex: Int? = nil
-        gTextCapturing                  = false
-        hereWidget          .widgetZone = gHere
-        view    .zlayer.backgroundColor = gBackgroundColor.cgColor
+                    note(zone.zoneName)
+                }
 
-        if  let       zone = object as? Zone, zone != gHere {
-            specificWidget = zone.widget
-            specificindex  = zone.siblingIndex
-            specificView   = specificWidget?.superview
-            recursing      = [.data, .redraw].contains(kind)
-
-            if zone.isSelected {
-                zone.grab()
+                specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind)
+                view.applyToAllSubviews { iView in
+                    iView.setNeedsDisplay()
+                }
             }
-
-            note(zone.zoneName)
-        }
-
-        specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind)
-        view.applyToAllSubviews { iView in
-            iView.setNeedsDisplay()
         }
     }
 

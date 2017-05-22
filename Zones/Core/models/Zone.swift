@@ -19,6 +19,7 @@ struct ZoneState: OptionSet {
     }
 
     static let ShowsChildren = ZoneState(rawValue: 1 <<  0)
+    static let   HasChildren = ZoneState(rawValue: 1 <<  1)
     static let    IsFavorite = ZoneState(rawValue: 1 << 29)
     static let     IsDeleted = ZoneState(rawValue: 1 << 30)
 }
@@ -41,7 +42,9 @@ class Zone : ZRecord {
     var              widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var          isBookmark:         Bool { return crossLink != nil }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
-    var          hasProgeny:         Bool { return  count > 0 || progenyCount > 1 }
+    var          hasProgeny:         Bool { return hasChildren || count > 0 || progenyCount > 1 }
+    var     includeChildren:         Bool { return showChildren && hasProgeny }
+    var               count:          Int { return children.count }
 
 
     // MARK:- properties
@@ -57,10 +60,6 @@ class Zone : ZRecord {
                 #keyPath(zoneLevel),
                 #keyPath(zoneProgeny)]
     }
-
-
-    var           count: Int  { return children.count }
-    var includeChildren: Bool { return showChildren && hasProgeny }
 
 
     var bookmarkTarget: Zone? {
@@ -234,6 +233,7 @@ class Zone : ZRecord {
 
     var    isDeleted: Bool { get { return getState(for:     .IsDeleted) } set { setState(newValue, for: .IsDeleted) } }
     var   isFavorite: Bool { get { return getState(for:    .IsFavorite) } set { setState(newValue, for: .IsFavorite) } }
+    var  hasChildren: Bool { get { return getState(for:   .HasChildren) } set { setState(newValue, for: .HasChildren) } }
     var showChildren: Bool { get { return getState(for: .ShowsChildren) } set { setState(newValue, for: .ShowsChildren) } }
 
     
@@ -244,11 +244,9 @@ class Zone : ZRecord {
             }
 
             if parent != nil && _parentZone == nil && storageMode != nil {
-                _parentZone = cloudManager?.zoneForReference(parent!)
+                _parentZone = gRemoteStoresManager.cloudManagerFor(storageMode!).zoneForReference(parent!)
 
-                if  _parentZone?.showChildren ?? false {
-                    _parentZone?.maybeNeedChildren()
-                }
+                // _parentZone?.maybeNeedChildren()
             }
 
             return _parentZone
@@ -367,7 +365,7 @@ class Zone : ZRecord {
     func extendNeedForChildrenToInfinity( _ visited: [Zone]) {
         if !visited.contains(self) {
             if count == 0 {
-                markForStates([.needsChildren])
+                markForAllOfStates([.needsChildren])
             } else {
                 for child in children {
                     child.extendNeedForChildrenToInfinity(visited + [self])
@@ -401,7 +399,7 @@ class Zone : ZRecord {
 
             if  increment != 0 {
                 progenyCount += increment
-                report("\(increment) \(zoneName ?? "---")")
+                // report("\(increment) \(zoneName ?? "---")")
 
                 if !isRoot && !isRootOfFavorites {
                     if parentZone != nil {
@@ -423,12 +421,12 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    private func hasAnyZonesAbove(_ iAbove: Bool) -> Bool { // TODO: needs recursion protection
+    private func hasAnyZonesAbove(_ iAbove: Bool) -> Bool {
         return safeHasAnyZonesAbove(iAbove, [])
     }
 
 
-    private func safeHasAnyZonesAbove(_ iAbove: Bool, _ visited: [Zone]) -> Bool { // TODO: needs recursion protection
+    private func safeHasAnyZonesAbove(_ iAbove: Bool, _ visited: [Zone]) -> Bool {
         if self != gHere && !visited.contains(self) {
             if !hasZoneAbove(iAbove), let parent = parentZone {
                 return parent.safeHasAnyZonesAbove(iAbove, visited + [self])
@@ -451,7 +449,7 @@ class Zone : ZRecord {
 
 
     func maybeNeedChildren() {
-        if count == 0 && includeChildren {
+        if count == 0 && includeChildren && !isMarkedForAnyOfStates([.needsProgeny]) {
             needChildren()
         }
     }
@@ -484,6 +482,7 @@ class Zone : ZRecord {
 
             child.parentZone = self
             var     insertAt = index ?? count
+            hasChildren      = true
 
             if index != nil && index! >= 0 && index! < count {
                 children.insert(child, at: insertAt)
@@ -529,6 +528,8 @@ class Zone : ZRecord {
     @discardableResult func removeChild(_ child: Zone?) -> Bool {
         if child != nil, let index = children.index(of: child!) {
             children.remove(at: index)
+
+            hasChildren = count > 0
 
             return true
         }

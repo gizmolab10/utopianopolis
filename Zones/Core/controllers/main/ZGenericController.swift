@@ -30,7 +30,8 @@ class ZGenericController: ZController, ZGenericControllerProtocol {
 
 
     func setup() {
-        let identity = identifier()
+        let                identity = identifier()
+        view.zlayer.backgroundColor = gBackgroundColor.cgColor
 
         gControllersManager.register(self, iID: identity) { object, mode, kind in
             if kind != .error {

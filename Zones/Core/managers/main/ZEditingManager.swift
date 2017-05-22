@@ -103,8 +103,8 @@ class ZEditingManager: NSObject {
             let   isSpecial = isOption || isWindow
             let    hasFlags = isOption || isCommand || isShift
             let     spaceDo = {
-                if hasWidget && !(widget?.widgetZone.isBookmark)! {
-                    self.addNewChildTo(widget?.widgetZone)
+                if let zone = widget?.widgetZone, !zone.isBookmark {
+                    self.addNewChildTo(zone)
                 }
             }
 
@@ -539,7 +539,7 @@ class ZEditingManager: NSObject {
 
     func addNewChildTo(_ parentZone: Zone?) {
         addNewChildTo(parentZone) { iChild in
-            gControllersManager.signalFor(nil, regarding: .redraw) {
+            gControllersManager.signalFor(parentZone, regarding: .redraw) {
                 gSelectionManager.edit(iChild)
             }
         }

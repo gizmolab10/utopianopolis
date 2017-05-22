@@ -36,11 +36,6 @@ class ZSettingsController: ZGenericController {
     override func identifier() -> ZControllerID { return .settings }
 
 
-    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
-        view.zlayer.backgroundColor = gBackgroundColor.cgColor
-    }
-
-
     func displayViewFor(id: ZSettingsViewID) {
         let type = ZStackableView.self.className()
 

@@ -229,10 +229,6 @@ extension NSWindow {
             }
         }
 
-        if valid && tag != 7 {
-            report("")
-        }
-
         return valid
     }
 
