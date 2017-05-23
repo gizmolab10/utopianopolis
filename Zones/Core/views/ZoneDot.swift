@@ -19,18 +19,14 @@ import SnapKit
 class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
-    var      innerDot: ZoneDot?
-    var    isInnerDot: Bool = false
-    var      isToggle: Bool = true
-    var        widget: ZoneWidget?
-    var    widgetZone: Zone?
-    var   dragGesture: ZGestureRecognizer?
-    var singleGesture: ZGestureRecognizer?
-
-
-    var isToggleTarget: Bool {
-        return isToggle && widgetZone == gSelectionManager.dragDropZone
-    }
+    var         widget: ZoneWidget?
+    var       innerDot: ZoneDot?
+    var       isToggle: Bool = true
+    var     isInnerDot: Bool = false
+    var     widgetZone: Zone?
+    var    dragGesture: ZGestureRecognizer?
+    var  singleGesture: ZGestureRecognizer?
+    var   isDragTarget: Bool { return widgetZone == gSelectionManager.dragDropZone }
 
 
     var isDropTarget: Bool {
@@ -51,10 +47,15 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         super.draw(dirtyRect)
 
         if  let            zone = widgetZone, isInnerDot {
-            let      isBookmark = zone.isBookmark || zone.isRootOfFavorites
-            isHidden            = isToggle && !(zone.hasProgeny      || isBookmark || isToggleTarget)
-            let shouldHighlight = isToggle ?  (!zone.showChildren    || isBookmark || isToggleTarget) : zone.isSelected
-            let     strokeColor = isToggleTarget ? gDragTargetsColor :  isBookmark  ? gBookmarkColor : gZoneColor
+
+            if zone.zoneName == "zones" {
+                report("")
+            }
+
+            let  showAsBookmark = zone.isBookmark || zone.isRootOfFavorites
+            isHidden            = isToggle && !(zone.hasProgeny       || showAsBookmark || isDragTarget)
+            let shouldHighlight = isToggle   ? (zone.indicateChildren || showAsBookmark || isDragTarget) : zone.isSelected
+            let     strokeColor = isDragTarget ? gDragTargetsColor     : showAsBookmark  ? gBookmarkColor : gZoneColor
             let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
             let       thickness = CGFloat(gLineThickness)
             let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))

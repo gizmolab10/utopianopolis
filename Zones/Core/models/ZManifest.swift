@@ -47,4 +47,12 @@ class ZManifest: ZRecord {
             }
         }
     }
+
+
+    override func markForAllOfStates (_ states: [ZRecordState]) {
+        if manifestMode != .favorites {
+            super.markForAllOfStates(states)
+        }
+    }
+
 }

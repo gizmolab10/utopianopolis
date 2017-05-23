@@ -349,9 +349,9 @@ class ZEditingManager: NSObject {
     func revealParentAndSiblingsOf(_ iZone: Zone, onCompletion: Closure?) {
         if let parent = iZone.parentZone, parent.zoneName != nil {
             parent.displayChildren()
-            parent.needChildren()
+            parent.needProgeny()
 
-            gOperationsManager.children(recursiveGoal: iZone.level) {
+            gOperationsManager.children() {
                 onCompletion?()
             }
         } else {

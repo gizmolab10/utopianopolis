@@ -59,7 +59,10 @@ class ZCloudManager: ZRecordsManager {
             clearStates([.needsSave]) // clear BEFORE looking at manifest
 
             if let count = operation.recordsToSave?.count, count > 0 {
-                performance("SAVE \(count)        \(stringForRecords(operation.recordsToSave))")
+                var prefix = "SAVE \(count)"
+
+                prefix.appendSpacesToLength(14)
+                performance("\(prefix)\(stringForRecords(operation.recordsToSave))")
 
                 operation.completionBlock = {
                     // deal with saved records marked as deleted
@@ -74,17 +77,17 @@ class ZCloudManager: ZRecordsManager {
 
                 operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
                     // mark failed records as needing merge
-                    if  let error:      CKError = iError as? CKError {
-                        let info                = error.errorUserInfo
-                        var description: String = info["CKErrorDescription"] as! String
+                    if  let error:  CKError = iError as? CKError {
+                        let info            = error.errorUserInfo
+                        var description     = info["CKErrorDescription"] as! String
 
-                        if  description        != "record to insert already exists" {
-                            if  let      record = self.recordForCKRecord(iRecord) {
+                        if  description    != "record to insert already exists" {
+                            if  let  record = self.recordForCKRecord(iRecord) {
                                 record.maybeNeedMerge()
                             }
 
-                            if  let        name = iRecord?["zoneName"] as! String? {
-                                description     = "\(description): \(name)"
+                            if  let    name = iRecord?[zoneNameKey] as? String {
+                                description = "\(description): \(name)"
                             }
 
                             self.performance("SAVE ==> \(self.storageMode) \(description)")
@@ -159,20 +162,26 @@ class ZCloudManager: ZRecordsManager {
 
 
     func assureRecordExists(withRecordID recordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
+        let closure: RecordClosure = { (record: CKRecord?) in
+            self.dispatchAsyncInForeground {
+                onCompletion(record)
+            }
+        }
+
         if  database == nil {
-            onCompletion(nil)
+            closure(nil)
         } else {
             database?.fetch(withRecordID: recordID) { (fetchedRecord: CKRecord?, fetchError: Error?) in
                 if  fetchError == nil && fetchedRecord != nil {
-                    onCompletion(fetchedRecord)
+                    closure(fetchedRecord)
                 } else {
                     let created: CKRecord = CKRecord(recordType: recordType, recordID: recordID)
 
                     self.database?.save(created) { (savedRecord: CKRecord?, saveError: Error?) in
                         if (saveError != nil) {
-                            onCompletion(nil)
+                            closure(nil)
                         } else {
-                            onCompletion(savedRecord!)
+                            closure(savedRecord!)
                             gfileManager.save(to: self.storageMode)
                         }
                     }
@@ -461,12 +470,12 @@ class ZCloudManager: ZRecordsManager {
                     let child = self.zoneForRecord(iRecord!)
 
                     if !child.isDeleted {
-                        if recursiveGoal != nil && child.includeChildren && child.count == 0 && (recursiveGoal! < 0 || recursiveGoal! > child.level) {
+                        if recursiveGoal != nil && child.exposeChildren && (child.count == 0 || child.count != child.fetchableChildren) && (recursiveGoal! < 0 || recursiveGoal! > child.level) {
                             child.needChildren()
                         }
 
                         if let parent = child.parentZone {
-                            if progenyNeeded.contains(child.parent!) && child.includeChildren {
+                            if progenyNeeded.contains(child.parent!) && child.exposeChildren {
                                 child.needProgeny()
                             }
 
