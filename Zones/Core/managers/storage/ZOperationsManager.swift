@@ -175,7 +175,7 @@ class ZOperationsManager: NSObject {
             }
             
             switch identifier {
-            case .file:            gfileManager.restore       (from: mode);    complete(0)
+            case .file:           gfileManager.restore (from:        mode   ); complete(0)
             case .here:           gRemoteStoresManager.establishHere(mode,     complete)
             case .root:           gRemoteStoresManager.establishRoot(mode,     complete)
             default:
