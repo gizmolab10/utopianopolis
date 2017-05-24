@@ -28,6 +28,8 @@
 		0C371C761DE26FE10030253D /* ZSelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C6F1DE26FE10030253D /* ZSelectionManager.swift */; };
 		0C371C771DE26FE10030253D /* ZWidgetsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C701DE26FE10030253D /* ZWidgetsManager.swift */; };
 		0C371C781DE26FE10030253D /* ZWidgetsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C701DE26FE10030253D /* ZWidgetsManager.swift */; };
+		0C3A0EE71ED5372C002B3D21 /* ZRecursionLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3A0EE61ED5372C002B3D21 /* ZRecursionLogic.swift */; };
+		0C3A0EE81ED5372C002B3D21 /* ZRecursionLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3A0EE61ED5372C002B3D21 /* ZRecursionLogic.swift */; };
 		0C4C51801E340A8C00BCF39E /* ZFavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C517E1E340A8C00BCF39E /* ZFavoritesManager.swift */; };
 		0C4C51811E340A8C00BCF39E /* ZFavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C517E1E340A8C00BCF39E /* ZFavoritesManager.swift */; };
 		0C4C51821E340A8C00BCF39E /* ZTravelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C517F1E340A8C00BCF39E /* ZTravelManager.swift */; };
@@ -238,6 +240,7 @@
 		0C371C6E1DE26FE10030253D /* ZEditingManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEditingManager.swift; sourceTree = "<group>"; };
 		0C371C6F1DE26FE10030253D /* ZSelectionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSelectionManager.swift; sourceTree = "<group>"; };
 		0C371C701DE26FE10030253D /* ZWidgetsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZWidgetsManager.swift; sourceTree = "<group>"; };
+		0C3A0EE61ED5372C002B3D21 /* ZRecursionLogic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZRecursionLogic.swift; sourceTree = "<group>"; };
 		0C4C517E1E340A8C00BCF39E /* ZFavoritesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFavoritesManager.swift; sourceTree = "<group>"; };
 		0C4C517F1E340A8C00BCF39E /* ZTravelManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTravelManager.swift; sourceTree = "<group>"; };
 		0C4CB4871E1A19490018B2C9 /* ZStackableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZStackableView.swift; path = views/ZStackableView.swift; sourceTree = "<group>"; };
@@ -387,6 +390,7 @@
 				0C371C571DE259700030253D /* ZFileManager.swift */,
 				0C2456171DE3227900EBCCDD /* ZOperationsManager.swift */,
 				0C73485D1DF4C8B400E5E23B /* ZRecordsManager.swift */,
+				0C3A0EE61ED5372C002B3D21 /* ZRecursionLogic.swift */,
 				0C5D3D821EC159460075A456 /* ZRemoteStoresManager.swift */,
 			);
 			path = storage;
@@ -1054,6 +1058,7 @@
 				0C4CB4891E1A19490018B2C9 /* ZStackableView.swift in Sources */,
 				0CD1EADA1DB725A800A096E4 /* PhotosCondition.swift in Sources */,
 				0CC8F8571DC2CEF600E25985 /* ZConstants.swift in Sources */,
+				0C3A0EE81ED5372C002B3D21 /* ZRecursionLogic.swift in Sources */,
 				0CD1EB021DB725A800A096E4 /* OperationQueue.swift in Sources */,
 				0C4DCD8E1EA02B06000B2210 /* ZCloudToolsController.swift in Sources */,
 				0CA1C72F1EA0009F006BA725 /* ZMainController.swift in Sources */,
@@ -1149,6 +1154,7 @@
 				0CD1EAF91DB725A800A096E4 /* LocationOperation.swift in Sources */,
 				0CD1EAEF1DB725A800A096E4 /* OperationObserver.swift in Sources */,
 				0CD1EAD91DB725A800A096E4 /* PhotosCondition.swift in Sources */,
+				0C3A0EE71ED5372C002B3D21 /* ZRecursionLogic.swift in Sources */,
 				0CD258DB1E930FF30077A70F /* ZoneWindow.swift in Sources */,
 				0C4CB4881E1A19490018B2C9 /* ZStackableView.swift in Sources */,
 				0C4DCD8D1EA02B06000B2210 /* ZCloudToolsController.swift in Sources */,
