@@ -83,7 +83,7 @@ class ZFavoritesController: ZGenericController, ZTableViewDelegate, ZTableViewDa
         } else if let zone: Zone = gFavoritesManager.zoneAtIndex(row - 1) {
             gFavoritesManager.favoritesIndex = row - 1
 
-            gEditingManager.onZone(zone, focus: true)
+            gEditingManager.onZone(zone, favorite: true)
         }
     }
 

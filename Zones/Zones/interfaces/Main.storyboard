@@ -265,7 +265,7 @@ CQ
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem title="Favorite" keyEquivalent="/" id="wDs-1b-toe">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Os1-X8-xe2"/>
                                                         </connections>

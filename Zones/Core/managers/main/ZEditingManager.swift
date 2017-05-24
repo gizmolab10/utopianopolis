@@ -126,7 +126,7 @@ class ZEditingManager: NSObject {
                 case gBackspaceKey,
                      gDeleteKey:  if isSpecial { delete() } // delete
                 case gTabKey:     if hasWidget { addSibling() } // tab
-                case "/", "?":    onZone(gSelectionManager.firstGrabbedZone, focus: !hasFlags)
+                case "/", "?":    onZone(gSelectionManager.firstGrabbedZone, favorite: hasFlags)
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
                 case gSpaceKey:   if isSpecial { spaceDo() }
                 case "\r":
@@ -308,7 +308,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func onZone(_ iZone: Zone, focus: Bool) {
+    func onZone(_ iZone: Zone, favorite: Bool) {
         let focusOn = { (zone: Zone) in
             gHere = zone
 
@@ -316,9 +316,9 @@ class ZEditingManager: NSObject {
             gControllersManager.syncToCloudAndSignalFor(zone, regarding: .redraw) {}
         }
 
-        if !focus {
+        if !favorite {
             gFavoritesManager.deleteFavorite(for: iZone)
-            self.syncAndRedraw()
+            focusOn(iZone)
         } else if !iZone.isBookmark {
             gFavoritesManager.createBookmark(for: iZone, isFavorite: true)
             focusOn(iZone)
