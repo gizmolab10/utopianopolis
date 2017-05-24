@@ -61,8 +61,9 @@ class ZCloudToolsController: ZGenericController {
             gHere    = root
 
             root.maybeNeedChildren()
-            gOperationsManager.children(recursiveGoal: 1) {
+            gOperationsManager.children(.expand, 1) {
                 root.addAndReorderChild(zone, at: 0)
+                zone.hideChildren()
 
                 zone.traverseApply { (iChild: Zone) -> (ZTraverseStatus) in
                     iChild.isDeleted = false

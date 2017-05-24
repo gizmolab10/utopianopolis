@@ -188,7 +188,7 @@ class ZRemoteStoresManager: NSObject {
                     self.dispatchAsyncInForeground {
                         self.signalFor(parent, regarding: .redraw)
 
-                        gOperationsManager.children() {
+                        gOperationsManager.children(.restore) {
                             self.signalFor(parent, regarding: .redraw)
                         }
                     }

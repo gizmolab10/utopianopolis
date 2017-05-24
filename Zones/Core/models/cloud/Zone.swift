@@ -400,7 +400,7 @@ class Zone : ZRecord {
 
     func fullProgenyCountUpdate() {
         extendNeedForChildrenToInfinity([])
-        gOperationsManager.children(recursiveGoal: -1) {
+        gOperationsManager.children(.update) {
             self.progenyCountUpdate([])
             self.signalFor(nil, regarding: .redraw)
         }

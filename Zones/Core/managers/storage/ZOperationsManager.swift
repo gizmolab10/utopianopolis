@@ -77,8 +77,10 @@ class ZOperationsManager: NSObject {
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                          ]) { onCompletion() } }
 
 
-    func children(recursiveGoal: Int? = nil, onCompletion: @escaping Closure) {
-        setupAndRun([.children], optional: recursiveGoal) { onCompletion() }
+    func children(_ recursing: ZRecursionType, _ iRecursiveGoal: Int? = nil, onCompletion: @escaping Closure) {
+        let logic = ZRecursionLogic(recursing, iRecursiveGoal)
+
+        setupAndRun([.children], optional: logic) { onCompletion() }
     }
 
 
@@ -98,7 +100,7 @@ class ZOperationsManager: NSObject {
     }
 
 
-    private func setupAndRun(_ operationIDs: [ZOperationID], optional: Int? = nil, onCompletion: @escaping Closure) {
+    private func setupAndRun(_ operationIDs: [ZOperationID], optional: ZRecursionLogic? = nil, onCompletion: @escaping Closure) {
         if let prior = onReady {
             onReady = {
                 self.dispatchAsyncInForeground { // prevent recursion pile-up on stack
@@ -116,7 +118,7 @@ class ZOperationsManager: NSObject {
 
             for identifier in identifiers {
                 let                     operation = BlockOperation {
-                    var  closure: IntegerClosure? = nil     // allow this closure to recurse
+                    var  closure: IntegerClosure? = nil     // declare closure first, so compiler will let it recurse
                     let             skipFavorites = identifier != .here
                     let                      full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .root, .here].contains(identifier)
                     let forCurrentStorageModeOnly = [.file, .ready, .parent, .children]                                             .contains(identifier)
@@ -158,7 +160,7 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func invoke(_ identifier: ZOperationID, mode: ZStorageMode, _ optional: Int? = nil, _ onCompletion: Closure?) {
+    func invoke(_ identifier: ZOperationID, mode: ZStorageMode, _ optional: ZRecursionLogic? = nil, _ onCompletion: Closure?) {
         if identifier == .ready {
             becomeReady()
         } else if mode != .favorites || identifier == .here {

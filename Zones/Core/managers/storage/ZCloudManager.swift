@@ -445,9 +445,10 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetchChildren(_ recursiveGoal: Int? = nil, _ onCompletion: IntegerClosure?) {
+    func fetchChildren(_ iLogic: ZRecursionLogic? = ZRecursionLogic(.restore), _ onCompletion: IntegerClosure?) {
         let  progenyNeeded = referencesWithMatchingStates([.needsProgeny])
         let childrenNeeded = referencesWithMatchingStates([.needsChildren]) + progenyNeeded
+        let          logic = iLogic ?? ZRecursionLogic(.restore)
         let          count = childrenNeeded.count
 
         onCompletion?(count)
@@ -462,23 +463,16 @@ class ZCloudManager: ZRecordsManager {
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                     for parent in parentsNeedingResort {
                         parent.respectOrder()
-                        parent.updateLevel()
                     }
 
-                    self.fetchChildren(recursiveGoal, onCompletion) // recurse to grab children of received children
+                    self.fetchChildren(logic, onCompletion) // recurse to grab children of received children
                 } else {
                     let child = self.zoneForRecord(iRecord!)
 
                     if !child.isDeleted {
-                        if recursiveGoal != nil && child.exposeChildren && (child.count == 0 || child.count != child.fetchableChildren) && (recursiveGoal! < 0 || recursiveGoal! > child.level) {
-                            child.needChildren()
-                        }
+                        logic.applyChildLogic(to: child, progenyNeeded)
 
                         if let parent = child.parentZone {
-                            if progenyNeeded.contains(child.parent!) && child.exposeChildren {
-                                child.needProgeny()
-                            }
-
                             if parent != child && !parent.children.contains(child) {
                                 parent.addChild(child)
 

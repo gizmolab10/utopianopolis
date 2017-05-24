@@ -130,6 +130,7 @@ class ZRecord: NSObject {
         }
 
         copy.progenyCount = 0
+        copy.isUpToDate   = false
 
         copy.updateClassProperties()
 

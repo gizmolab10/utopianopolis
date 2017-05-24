@@ -197,7 +197,7 @@ class ZEditingManager: NSObject {
             zone.needChildren()
         }
 
-        gOperationsManager.children(recursiveGoal: -1) {
+        gOperationsManager.children(.deep) {
             for zone in gSelectionManager.currentlyGrabbedZones {
                 self.addToPasteCopyOf(zone)
             }
@@ -351,7 +351,7 @@ class ZEditingManager: NSObject {
             parent.displayChildren()
             parent.needProgeny()
 
-            gOperationsManager.children() {
+            gOperationsManager.children(.restore) {
                 onCompletion?()
             }
         } else {
@@ -406,7 +406,7 @@ class ZEditingManager: NSObject {
             if !show {
                 self.syncAndRedraw()
             } else {
-                gOperationsManager.children {
+                gOperationsManager.children(.expand) {
                     self.syncAndRedraw()
                 }
             }
@@ -479,7 +479,7 @@ class ZEditingManager: NSObject {
             if show && !hasLocalChildren {
                 zone.needChildren()
 
-                gOperationsManager.children(recursiveGoal: iGoal) {
+                gOperationsManager.children(.expand, iGoal) {
                     recurse()
                 }
 
@@ -570,7 +570,7 @@ class ZEditingManager: NSObject {
 
                 var     beenHereBefore = false
 
-                gOperationsManager.children() {
+                gOperationsManager.children(.restore) {
                     if !beenHereBefore {
                         beenHereBefore = true
 
@@ -800,7 +800,7 @@ class ZEditingManager: NSObject {
         } else {
             zone.needChildren()
 
-            gOperationsManager.children() {
+            gOperationsManager.children(.restore) {
                 self.grabChild(of: zone)
             }
         }
@@ -1020,7 +1020,7 @@ class ZEditingManager: NSObject {
         into.displayChildren()
         into.needChildren()
 
-        gOperationsManager.children() {
+        gOperationsManager.children(.restore) {
             zone.grab()
 
             if orphan {
