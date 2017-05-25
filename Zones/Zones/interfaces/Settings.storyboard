@@ -470,7 +470,7 @@
                                                 <rect key="frame" x="0.0" y="-8" width="223" height="456"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="749" horizontalCompressionResistancePriority="250" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IT7-2L-PqU" userLabel="Help Text">
-                                                        <rect key="frame" x="6" y="20" width="211" height="448"/>
+                                                        <rect key="frame" x="6" y="15" width="211" height="432"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="432" id="Vbt-r3-FA8"/>
                                                         </constraints>

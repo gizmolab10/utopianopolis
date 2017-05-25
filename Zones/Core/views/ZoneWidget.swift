@@ -221,6 +221,15 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
+    var hitRect: CGRect? {
+        if  let start = dragDot.innerOrigin, let end = toggleDot.innerExtent {
+            return CGRect(start: dragDot.convert(start, to: self), end: toggleDot.convert(end, to: self))
+        }
+
+        return nil
+    }
+
+
     var floatingDropDotRect: CGRect {
         var rect = CGRect()
 

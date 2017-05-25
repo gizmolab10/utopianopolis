@@ -107,8 +107,7 @@ class ZSelectionManager: NSObject {
 
     func stopEdit(for iZone: Zone) {
         if !isEditingStateChanging {
-            currentlyEditingZone = nil
-
+            clearEdit()
             fullResign()
         }
     }
@@ -129,13 +128,13 @@ class ZSelectionManager: NSObject {
 
 
     func deselect() {
-        if  let      editingZone = currentlyEditingZone {
-            currentlyEditingZone = nil
-
-            if  let       widget = editingZone.widget {
+        if  let editingZone = currentlyEditingZone {
+            if  let  widget = editingZone.widget {
                 widget.setNeedsDisplay()
                 widget.textWidget.captureText(force: false)
             }
+
+            clearEdit()
         }
 
         fullResign()

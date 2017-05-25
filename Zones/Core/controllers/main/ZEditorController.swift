@@ -20,6 +20,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
 
     var        hereWidget = ZoneWidget()
+    var   rubberbandStart = CGPoint.zero
+    var          dragView:  ZDragDrawView { return view as! ZDragDrawView }
     @IBOutlet var spinner:  ZProgressIndicator?
 
 
@@ -28,6 +30,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
     override func setup() {
         view.clearGestures()
+        view.createDragGestureRecognizer (self, action: #selector(ZEditorController.rubberbandEvent))
         view.createPointGestureRecognizer(self, action: #selector(ZEditorController.oneClick), clicksRequired: 1)
         super.setup()
     }
@@ -85,11 +88,64 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     }
 
     
-    func oneClick(_ sender: ZGestureRecognizer?) {
-        gShowsSearching = false
+    func oneClick(_ iGesture: ZGestureRecognizer?) {
+        gShowsSearching      = false
 
-        gSelectionManager.deselect()
-        signalFor(nil, regarding: .search)
+        if  let      gesture = iGesture {
+            var onTextWidget = false
+
+            if  let   widget = gEditingManager.editedTextWidget {
+                let     rect = widget.convert(widget.bounds, to: view)
+                let location = gesture.location (in: view)
+                onTextWidget = rect.contains(location)
+            }
+
+            if !onTextWidget {
+                gSelectionManager.deselect()
+                signalFor(nil, regarding: .search)
+            }
+        }
+    }
+
+
+    // MARK:- rubberbanding
+    // MARK:-
+
+
+    func rubberbandEvent(_ iGesture: ZGestureRecognizer?) {
+        if  let  gesture = iGesture, !gEditingManager.isEditing {
+            let location = gesture.location (in: view)
+
+            switch gesture.state {
+            case .began:    rubberbandStart = location; gSelectionManager.deselect()
+            case .changed:  updateRubberband(rect: CGRect(start: rubberbandStart, end: location))
+            case .ended:    updateRubberband(rect: NSZeroRect)
+            default:        updateRubberband(rect: NSZeroRect)
+            }
+
+            view.setNeedsDisplay()
+        }
+    }
+
+
+    func updateRubberband(rect: CGRect) {
+        if !rect.isEmpty {
+            gSelectionManager.deselectGrabs()
+
+            for widget in gWidgetsManager.widgets.values {
+                if  let    hitRect = widget.hitRect {
+                    let widgetRect = widget.convert(hitRect, to: view)
+
+                    if  widgetRect.intersects(rect) {
+                        gSelectionManager.addToGrab(widget.widgetZone)
+                    }
+                }
+            }
+            
+            hereWidget.setNeedsDisplay()
+        }
+
+        dragView.rubberbandRect = rect
     }
 
 

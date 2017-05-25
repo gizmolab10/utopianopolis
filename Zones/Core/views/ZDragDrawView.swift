@@ -19,6 +19,9 @@ import SnapKit
 class ZDragDrawView: ZView {
 
 
+    var rubberbandRect: CGRect?
+
+
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
@@ -30,6 +33,12 @@ class ZDragDrawView: ZView {
             gDragTargetsColor.setStroke()
             ZBezierPath(ovalIn: localRect).fill()
             widget.drawDragLine(to: dotRect, in: self)
+        }
+
+        if  let rect = rubberbandRect {
+            ZColor.clear.setFill()
+            gDragTargetsColor.lighter(by: 2.0).setStroke()
+            ZBezierPath(rect: rect).stroke()
         }
     }
 }

@@ -29,6 +29,28 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var   isDragTarget: Bool { return widgetZone == gSelectionManager.dragDropZone }
 
 
+    var innerOrigin: CGPoint? {
+        if  let inner = innerDot {
+            let  rect = inner.convert(inner.frame, to: self)
+
+            return rect.origin
+        }
+
+        return nil
+    }
+
+
+    var innerExtent: CGPoint? {
+        if  let inner = innerDot {
+            let  rect = inner.convert(inner.frame, to: self)
+
+            return rect.extent
+        }
+
+        return nil
+    }
+
+
     var isDropTarget: Bool {
         if  let   index = widgetZone?.siblingIndex, !isToggle {
             let isIndex = gSelectionManager.dragDropIndices?.contains(index)
@@ -47,11 +69,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         super.draw(dirtyRect)
 
         if  let            zone = widgetZone, isInnerDot {
-
-            if zone.zoneName == "zones" {
-                report("")
-            }
-
             let  showAsBookmark = zone.isBookmark || zone.isRootOfFavorites
             isHidden            = isToggle && !(zone.hasProgeny       || showAsBookmark || isDragTarget)
             let shouldHighlight = isToggle   ? (zone.indicateChildren || showAsBookmark || isDragTarget) : zone.isSelected

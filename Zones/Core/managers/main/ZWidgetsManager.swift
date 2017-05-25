@@ -45,4 +45,10 @@ class ZWidgetsManager: NSObject {
     func widgetForZone(_ zone: Zone?) -> ZoneWidget? {
         return zone == nil ? nil : widgets[zone!.hash]
     }
+
+
+    func zonesHit(by rect: CGRect) -> [Zone] {
+        return [gHere]
+    }
+
 }

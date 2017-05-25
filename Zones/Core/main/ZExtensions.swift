@@ -156,9 +156,31 @@ extension NSObject {
 }
 
 
+extension CGPoint {
+    static func - ( left: CGPoint, right: CGPoint) -> CGSize {
+        return CGSize(width: left.x - right.x, height: left.y - right.y)
+    }
+}
+
+
 extension CGRect {
-    var center : CGPoint {
-        return CGPoint(x: midX, y: midY)
+
+    var center : CGPoint { return CGPoint(x: midX, y: midY) }
+    var extent : CGPoint { return CGPoint(x: maxX, y: maxY) }
+
+    public init(start: CGPoint, end: CGPoint) {
+        size   = end - start
+        origin = start
+
+        if  size .width < 0 {
+            size .width = -size.width
+            origin   .x = end.x
+        }
+
+        if  size.height < 0 {
+            size.height = -size.height
+            origin   .y = end.y
+        }
     }
 }
 
@@ -166,7 +188,7 @@ extension CGRect {
 extension String {
     var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
     var          isDigit: Bool { return "0123456789.+-=*/".characters.contains(self[startIndex]) }
-    var          isAscii: Bool { return unicodeScalars.filter{$0.isASCII}.count > 0 }
+    var          isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
     var           length: Int  { return unicodeScalars.count }
 
@@ -252,7 +274,7 @@ extension ZView {
 
     func addBorderRelative(thickness: CGFloat, radius: CGFloat, color: CGColor) {
         let            size = self.bounds.size
-        let radius: CGFloat = min(size.width, size.height) * radius
+        let radius: CGFloat = min(size.height, size.width) * radius
 
         self.addBorder(thickness: thickness, radius: radius, color: color)
     }
