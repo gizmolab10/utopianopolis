@@ -29,6 +29,6 @@ class ZGenericTableController: ZGenericController, ZTableViewDelegate, ZTableVie
 
     func genericTableUpdate() {
         tableView.reloadData()
-        tableHeight?.constant = CGFloat(numberOfRows(in: tableView) * 20)
+        tableHeight?.constant = CGFloat(numberOfRows(in: tableView)) * tableView.rowHeight
     }
 }
