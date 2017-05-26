@@ -119,16 +119,17 @@ class ZEditingManager: NSObject {
             } else {
                 switch key {
                 case "f":         find()
+                case "r":         reverse()
                 case "p":         printHere()
                 case "b":         createBookmark()
                 case "'":         doFavorites(isShift, isOption, isCommand)
                 case "\"":        doFavorites(true,    isOption, isCommand)
-                case gBackspaceKey,
-                     gDeleteKey:  if isSpecial { delete() } // delete
-                case gTabKey:     if hasWidget { addSibling(containing: isOption) } // tab
                 case "/", "?":    onZone(gSelectionManager.firstGrab, favorite: hasFlags)
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
+                case gTabKey:     if hasWidget { addSibling(containing: isOption) } // tab
                 case gSpaceKey:   if isSpecial { spaceDo() }
+                case gBackspaceKey,
+                     gDeleteKey:  if isSpecial { delete() } // delete
                 case "\r":
                     if hasWidget && gSelectionManager.hasGrab && !isCommand {
                         gSelectionManager.editCurrent()
@@ -257,6 +258,43 @@ class ZEditingManager: NSObject {
 
 
     func reverse() {
+        if  var commonParent = gSelectionManager.firstGrab.parentZone {
+            var        zones = gSelectionManager.currentGrabs
+            for zone in zones {
+                if let parent = zone.parentZone, parent != commonParent {
+                    return
+                }
+            }
+
+            if zones.count == 1 {
+                zones        = gSelectionManager.firstGrab.children
+                commonParent = gSelectionManager.firstGrab
+            }
+
+            if zones.count > 1 {
+                UNDO(self) { iUndoSelf in
+                    iUndoSelf.reverse()
+                }
+
+                zones.sort { (a, b) -> Bool in
+                    return a.order < b.order
+                }
+
+                let   max = zones.count - 1
+                let range = 0 ... max / 2
+
+                for index in range {
+                    let a = zones[index]
+                    let b = zones[max - index]
+                    let o = a.order
+                    a.order = b.order
+                    b.order = o
+                }
+                
+                commonParent.respectOrder()
+                syncAndRedraw()
+            }
+        }
     }
 
 
