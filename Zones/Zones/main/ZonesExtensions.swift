@@ -227,7 +227,7 @@ extension NSWindow {
                      .Zone:  valid = true
                 case .Undo:  valid = gEditingManager.undoManager.canUndo
                 case .Redo:  valid = gEditingManager.undoManager.canRedo
-                case .Grab:  valid = gSelectionManager.currentlyGrabbedZones.count != 0
+                case .Grab:  valid = gSelectionManager.currentGrabs.count != 0
                 case .Paste: valid = gSelectionManager       .pasteableZones.count != 0
                 default:     valid = false
                 }

@@ -47,11 +47,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/Core/managers/main/ZSelectionManager.swift"
-            timestampString = "517386649.189079"
+            timestampString = "517452752.770173"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "79"
-            endingLineNumber = "79"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
             landmarkName = "ZSelectionManager"
             landmarkType = "3">
          </BreakpointContent>

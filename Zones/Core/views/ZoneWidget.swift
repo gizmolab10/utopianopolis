@@ -108,7 +108,7 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, kind signalKind: ZSignalKind) {
+    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, kind signalKind: ZSignalKind, visited: [Zone]) {
         if inView != nil && !(inView?.subviews.contains(self))! {
             inView?.addSubview(self)
 
@@ -125,16 +125,16 @@ class ZoneWidget: ZView {
         layoutDots()
         addChildrenView()
 
-        if recursing {
+        if recursing && !visited.contains(widgetZone) {
             prepareChildrenWidgets()
-            layoutChildren(signalKind)
+            layoutChildren(signalKind, visited: visited + [widgetZone])
         }
 
         updateConstraints()
     }
 
 
-    func layoutChildren(_ kind: ZSignalKind) {
+    func layoutChildren(_ kind: ZSignalKind, visited: [Zone]) {
         if widgetZone.exposeChildren {
             var                 index = widgetZone.count
             var previous: ZoneWidget? = nil
@@ -144,7 +144,7 @@ class ZoneWidget: ZView {
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone = widgetZone     [index]
 
-                childWidget.layoutInView(childrenView, atIndex: index, recursing: true, kind: kind)
+                childWidget.layoutInView(childrenView, atIndex: index, recursing: true, kind: kind, visited: visited)
                 childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints { (make: ConstraintMaker) in
                     if previous == nil {

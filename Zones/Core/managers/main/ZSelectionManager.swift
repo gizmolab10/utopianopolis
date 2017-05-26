@@ -26,7 +26,7 @@ enum ZRelation: Int {
 class ZSelectionManager: NSObject {
 
 
-    var                hasGrab:   Bool { return currentlyGrabbedZones.count > 0 }
+    var                hasGrab:   Bool { return currentGrabs.count > 0 }
     var             isDragging:   Bool { return draggedZone != nil }
     var isEditingStateChanging:   Bool               = false
     var        dragDropIndices:   NSMutableIndexSet? = nil
@@ -38,17 +38,17 @@ class ZSelectionManager: NSObject {
     var         pasteableZones = [Zone] ()
 
 
-    var currentlyGrabbedZones: [Zone] {
-        get { return gManifest.currentlyGrabbedZones            }
-        set {        gManifest.currentlyGrabbedZones = newValue }
+    var currentGrabs: [Zone] {
+        get { return gManifest.currentGrabs            }
+        set {        gManifest.currentGrabs = newValue }
     }
 
 
-    var firstGrabbedZone: Zone {
+    var firstGrab: Zone {
         var grabbed: Zone? = nil
 
-        if  currentlyGrabbedZones.count > 0 {
-            grabbed = currentlyGrabbedZones[0]
+        if  currentGrabs.count > 0 {
+            grabbed = currentGrabs[0]
         }
 
         if  grabbed == nil || grabbed!.record == nil {
@@ -59,11 +59,24 @@ class ZSelectionManager: NSObject {
     }
 
 
-    var currentlyMovableZone: Zone {
+    var rootMostMoveable: Zone {
+        var candidate = currentMoveable
+
+        for grabbed in currentGrabs {
+            if grabbed.level < candidate.level {
+                candidate = grabbed
+            }
+        }
+
+        return candidate
+    }
+
+
+    var currentMoveable: Zone {
         var movable: Zone? = nil
 
-        if currentlyGrabbedZones.count > 0 {
-            movable = firstGrabbedZone
+        if currentGrabs.count > 0 {
+            movable = firstGrab
         } else if currentlyEditingZone != nil {
             movable = currentlyEditingZone
         }
@@ -77,13 +90,13 @@ class ZSelectionManager: NSObject {
 
 
     func clearEdit()   { currentlyEditingZone  = nil }
-    func clearGrab()   { currentlyGrabbedZones = [] }
+    func clearGrab()   { currentGrabs = [] }
     func clearPaste()  { pasteableZones        = [] }
     func fullResign()  { assignAsFirstResponder (nil) } // ios broken
-    func editCurrent() { edit(currentlyMovableZone) }
+    func editCurrent() { edit(currentMoveable) }
     func isEditing (_ zone: Zone) -> Bool { return currentlyEditingZone == zone }
     func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || isEditing(zone) }
-    func isGrabbed (_ zone: Zone) -> Bool { return currentlyGrabbedZones.contains(zone) }
+    func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
 
 
     func deferEditingStateChange() {
@@ -105,6 +118,13 @@ class ZSelectionManager: NSObject {
     }
 
 
+    func stopCurrentEdit() {
+        if currentlyEditingZone != nil {
+            stopEdit(for: currentlyEditingZone!)
+        }
+    }
+
+
     func stopEdit(for iZone: Zone) {
         if !isEditingStateChanging {
             clearEdit()
@@ -114,7 +134,7 @@ class ZSelectionManager: NSObject {
     
 
     func deselectGrabs() {
-        let grabbed = currentlyGrabbedZones
+        let grabbed = currentGrabs
 
         clearGrab()
 
@@ -151,8 +171,8 @@ class ZSelectionManager: NSObject {
 
 
     func ungrab(_ zone: Zone?) {
-        if zone != nil, let index = currentlyGrabbedZones.index(of: zone!) {
-            currentlyGrabbedZones.remove(at: index)
+        if zone != nil, let index = currentGrabs.index(of: zone!) {
+            currentGrabs.remove(at: index)
             updateWidgetFor(zone)
         }
     }
@@ -161,7 +181,7 @@ class ZSelectionManager: NSObject {
     func addToGrab(_ iZone: Zone?) {
         if let zone = iZone {
             stopEdit(for: zone)
-            currentlyGrabbedZones.append(zone)
+            currentGrabs.append(zone)
             updateWidgetFor(zone)
         }
     }
@@ -175,8 +195,8 @@ class ZSelectionManager: NSObject {
 
     func deselectDragWithin(_ zone: Zone) {
         zone.traverseApply { iZone -> ZTraverseStatus in
-            if iZone != zone && currentlyGrabbedZones.contains(iZone), let index = currentlyGrabbedZones.index(of: iZone) {
-                currentlyGrabbedZones.remove(at: index)
+            if iZone != zone && currentGrabs.contains(iZone), let index = currentGrabs.index(of: iZone) {
+                currentGrabs.remove(at: index)
             }
 
             return .eDescend

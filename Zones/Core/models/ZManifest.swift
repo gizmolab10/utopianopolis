@@ -16,7 +16,7 @@ class ZManifest: ZRecord {
 
     dynamic var here:    CKReference?
     var        _hereZone:       Zone?
-    var         currentlyGrabbedZones = [Zone] ()
+    var         currentGrabs = [Zone] ()
     var   manifestMode: ZStorageMode?
 
 

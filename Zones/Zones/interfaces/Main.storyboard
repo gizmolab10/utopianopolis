@@ -264,6 +264,15 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Xte-u6-NHv"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="Sibling containing" id="E0i-4W-ZZI">
+                                                        <string key="keyEquivalent" base64-UTF8="YES">
+CQ
+</string>
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="bsP-FQ-jyh"/>
+                                                        </connections>
+                                                    </menuItem>
                                                     <menuItem title="Favorite" keyEquivalent="/" id="wDs-1b-toe">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                         <connections>

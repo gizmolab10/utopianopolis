@@ -66,7 +66,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                     note(zone.zoneName)
                 }
 
-                specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind)
+                specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, visited: [])
                 view.applyToAllSubviews { iView in
                     iView.setNeedsDisplay()
                 }

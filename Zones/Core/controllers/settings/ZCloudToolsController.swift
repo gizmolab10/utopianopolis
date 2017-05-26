@@ -57,7 +57,7 @@ class ZCloudToolsController: ZGenericController {
     @IBAction func restoreZoneButtonAction(_ button: NSButton) {
         // similar to gEditingManager.moveInto
         if  let root = gRoot {
-            let zone = gSelectionManager.firstGrabbedZone
+            let zone = gSelectionManager.firstGrab
             gHere    = root
 
             root.maybeNeedChildren()

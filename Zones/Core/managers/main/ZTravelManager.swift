@@ -42,7 +42,7 @@ class ZTravelManager: NSObject {
         let restoreHere = gHere
 
         UNDO(self) { iUndoSelf in
-            iUndoSelf.createUndoForTravelBackTo(gSelectionManager.currentlyMovableZone, atArrival: atArrival)
+            iUndoSelf.createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
 
             gStorageMode = restoreMode
 
@@ -57,7 +57,7 @@ class ZTravelManager: NSObject {
 
 
     func travel(_ atArrival: @escaping Closure) {
-        createUndoForTravelBackTo(gSelectionManager.currentlyMovableZone, atArrival: atArrival)
+        createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
 
         gWidgetsManager   .clearWidgets()
         gSelectionManager .clearEdit()
@@ -103,7 +103,7 @@ class ZTravelManager: NSObject {
                 ///////////////////////
 
                 there = gCloudManager.zoneForRecordID(recordIDOfLink)
-                let grabbed = gSelectionManager.firstGrabbedZone
+                let grabbed = gSelectionManager.firstGrab
                 let    here = gHere
 
                 UNDO(self) { iUndoSelf in
