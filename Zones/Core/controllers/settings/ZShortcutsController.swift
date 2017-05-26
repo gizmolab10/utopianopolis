@@ -42,7 +42,18 @@ class ZShortcutsController: ZGenericTableController {
 
 
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        return shortcutStrings[row]
+        let      paragraphStyle = NSMutableParagraphStyle()
+        let                text = shortcutStrings[row]
+        var               stops = [NSTextTab]()
+
+        for value in [18, 40, 52] {
+            stops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
+        }
+
+        paragraphStyle.tabStops = stops
+        let              string = NSAttributedString(string: text, attributes: [NSParagraphStyleAttributeName: paragraphStyle])
+
+        return string
     }
 
 
