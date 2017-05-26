@@ -16,31 +16,18 @@ import Foundation
 #endif
 
 
-class ZFavoritesController: ZGenericController, ZTableViewDelegate, ZTableViewDataSource {
-
-    
-    @IBOutlet var favoritesTableHeight: NSLayoutConstraint?
-    @IBOutlet var   favoritesTableView: ZTableView?
+class ZFavoritesController: ZGenericTableController {
 
 
     override func identifier() -> ZControllerID { return .favorites }
 
 
-    override func awakeFromNib() {
-        view.zlayer.backgroundColor = CGColor.clear
-    }
-    
-
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
-        if  let tableView = favoritesTableView {
-            let      here = gRemoteStoresManager.manifest(for: storageMode).hereZone
+        let  here = gRemoteStoresManager.manifest(for: storageMode).hereZone
 
-            gFavoritesManager.updateIndexFor(here) { object in
-                gFavoritesManager.update()
-                tableView.reloadData()
-
-                self.favoritesTableHeight?.constant = CGFloat(self.numberOfRows(in: tableView) * 20)
-            }
+        gFavoritesManager.updateIndexFor(here) { object in
+            gFavoritesManager.update()
+            self.genericTableUpdate()
         }
     }
 
@@ -49,7 +36,7 @@ class ZFavoritesController: ZGenericController, ZTableViewDelegate, ZTableViewDa
     // MARK:-
 
 
-    func numberOfRows(in tableView: ZTableView) -> Int {
+    override func numberOfRows(in tableView: ZTableView) -> Int {
         if  let    root = gFavoritesManager.rootZone {
             return root.count + 1
         }

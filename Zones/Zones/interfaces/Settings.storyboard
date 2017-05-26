@@ -931,8 +931,8 @@ other KEYS
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="favoritesTableHeight" destination="nL5-5G-VWP" id="Pg3-6O-vMB"/>
-                        <outlet property="favoritesTableView" destination="deC-6k-Xt0" id="WDF-xX-Wm3"/>
+                        <outlet property="tableHeight" destination="nL5-5G-VWP" id="Pg3-6O-vMB"/>
+                        <outlet property="tableView" destination="deC-6k-Xt0" id="WDF-xX-Wm3"/>
                     </connections>
                 </viewController>
                 <customObject id="rFs-5G-ygd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
