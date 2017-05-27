@@ -119,9 +119,7 @@ class ZRecord: NSObject {
     }
 
 
-    func deepCopy() -> Zone {
-        let copy = Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: gStorageMode)
-
+    func copy(into copy: ZRecord) {
         copy.needCreate() // so KVO won't call set needsMerge state bit
         updateCloudProperties()
 
@@ -129,12 +127,7 @@ class ZRecord: NSObject {
             copy.record[keyPath] = record[keyPath]
         }
 
-        copy.progenyCount = 0
-        copy.isUpToDate   = false
-
         copy.updateClassProperties()
-
-        return copy
     }
 
 

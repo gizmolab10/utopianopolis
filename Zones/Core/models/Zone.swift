@@ -372,14 +372,16 @@ class Zone : ZRecord {
     }
 
 
-    func progenyCountUpdate( _ visited: [Zone]) {
+    func progenyCountUpdate(_ recursing: ZRecursionType, _ visited: [Zone]) {
         if !visited.contains(self) {
-            progenyCount = 1
+            if !isUpToDate || recursing == .deep {
+                progenyCount = 1
 
-            for child in self.children {
-                child.progenyCountUpdate(visited + [self])
+                for child in self.children {
+                    child.progenyCountUpdate(recursing, visited + [self])
 
-                progenyCount += child.progenyCount
+                    progenyCount += child.progenyCount
+                }
             }
         }
     }
@@ -398,10 +400,10 @@ class Zone : ZRecord {
     }
 
 
-    func fullProgenyCountUpdate() {
+    func fullProgenyCountUpdate(_ recursing: ZRecursionType) {
         extendNeedForChildrenToInfinity([])
-        gOperationsManager.children(.update) {
-            self.progenyCountUpdate([])
+        gOperationsManager.children(recursing) {
+            gRoot?.progenyCountUpdate(recursing, [])
             self.signalFor(nil, regarding: .redraw)
         }
     }
@@ -606,17 +608,16 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    override func deepCopy() -> Zone {
-        let        zone = super.deepCopy()
-        zone.parentZone = nil
+    func deepCopy() -> Zone {
+        let zone = Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: storageMode)
 
-        if progenyCount == 0 {
-            zone.progenyCount = 1
-        }
+        copy(into: zone)
+
+        zone.parentZone = nil
+        zone.isUpToDate = false
 
         for child in children {
-            let newChild = child.deepCopy()
-            zone.addChild(newChild)
+            zone.addChild(child.deepCopy())
         }
 
         return zone

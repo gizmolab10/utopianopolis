@@ -16,16 +16,13 @@ import Foundation
 #endif
 
 
-class ZCloudToolsController: ZGenericController {
+class ZCloudToolsController: ZGenericTableController {
 
 
     override func identifier() -> ZControllerID { return .cloudTools }
+    override func numberOfRows(in tableView: ZTableView) -> Int { return 3 }
+    override func genericTableUpdate() {}
 
-
-    override func awakeFromNib() {
-        view.zlayer.backgroundColor = CGColor.clear
-    }
-    
 
     // MARK:- actions
     // MARK:-
@@ -50,7 +47,7 @@ class ZCloudToolsController: ZGenericController {
 
 
     @IBAction func recountButtonAction(_ button: NSButton) {
-        gRoot?.fullProgenyCountUpdate()
+        gRoot?.fullProgenyCountUpdate(.deep)
     }
 
 

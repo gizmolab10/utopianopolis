@@ -22,16 +22,6 @@ class ZShortcutsController: ZGenericTableController {
     override func identifier() -> ZControllerID { return .shortuts }
 
 
-    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
-        let  here = gRemoteStoresManager.manifest(for: storageMode).hereZone
-
-        gFavoritesManager.updateIndexFor(here) { object in
-            gFavoritesManager.update()
-            self.genericTableUpdate()
-        }
-    }
-
-
     // MARK:- shortcuts table
     // MARK:-
 
@@ -46,7 +36,7 @@ class ZShortcutsController: ZGenericTableController {
         let                text = shortcutStrings[row]
         var               stops = [NSTextTab]()
 
-        for value in [18, 40, 52] {
+        for value in [18, 40, 52, 83] {
             stops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
         }
 
@@ -58,16 +48,11 @@ class ZShortcutsController: ZGenericTableController {
 
 
     let shortcutStrings: [String] = [
-        "ARROWS change selection",
+        "ARROWS navigate around",
         "  +\tOPTION moves selected zone",
         "  +\tSHIFT\t+ RIGHT expands",
         "   \t \t  \t+ LEFT collapses",
         "  +\tCOMMAND all the way",
-        "",
-        "when editing text",
-        "   \tRETURN ends editing",
-        "   \tTAB creates sibling",
-        "   \tCONTROL SPACE creates child",
         "",
         "other KEYS",
         "   \tB creates bookmark",
@@ -86,5 +71,10 @@ class ZShortcutsController: ZGenericTableController {
         "   \tCOMMAND ' refocuses",
         "   \tCOMMAND / adds to favorites",
         "   \tCOMMAND RETURN deselects",
+        "",
+        "when editing a zone's text",
+        "   \tRETURN ends editing",
+        "   \tTAB creates sibling",
+        "   \tCONTROL SPACE creates child",
     ]
 }

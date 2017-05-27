@@ -27,6 +27,11 @@ class ZGenericTableController: ZGenericController, ZTableViewDelegate, ZTableVie
     func numberOfRows(in tableView: ZTableView) -> Int { return 1 }
 
 
+    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
+        self.genericTableUpdate()
+    }
+    
+
     func genericTableUpdate() {
         tableView.reloadData()
         tableHeight?.constant = CGFloat(numberOfRows(in: tableView)) * tableView.rowHeight
