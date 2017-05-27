@@ -381,7 +381,7 @@ class ZCloudManager: ZRecordsManager {
         var getParentOf: ZoneClosure? = nil
 
         getParentOf = { iZone in
-            if visited.contains(iZone) {
+            if visited.contains(iZone) || iZone.isRoot || iZone.isRootOfFavorites {
                 onCompletion?(0)
             } else {
                 iZone.needParent()

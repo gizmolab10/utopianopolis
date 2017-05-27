@@ -47,7 +47,7 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     @IBAction func recountButtonAction(_ button: NSButton) {
-        gRoot?.fullProgenyCountUpdate(.deep)
+        gRoot?.progenyCountUpdate(.deep)
     }
 
 

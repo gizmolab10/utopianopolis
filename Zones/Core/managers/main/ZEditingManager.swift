@@ -126,10 +126,10 @@ class ZEditingManager: NSObject {
                 case "\"":        doFavorites(true,    isOption, isCommand)
                 case "/", "?":    onZone(gSelectionManager.firstGrab, favorite: hasFlags)
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
-                case gTabKey:     if hasWidget { addSibling(containing: isOption) } // tab
+                case gTabKey:     if hasWidget { addSibling(containing: isOption) }
                 case gSpaceKey:   if isSpecial { spaceDo() }
                 case gBackspaceKey,
-                     gDeleteKey:  if isSpecial { delete() } // delete
+                     gDeleteKey:  if isSpecial { delete(preserveChildren: isOption && isWindow) }
                 case "\r":
                     if hasWidget && gSelectionManager.hasGrab && !isCommand {
                         gSelectionManager.editCurrent()
@@ -206,12 +206,37 @@ class ZEditingManager: NSObject {
     }
 
 
-    func delete() {
+    func delete(preserveChildren: Bool = false) {
         prepareUndoForDelete()
 
-        let last = deleteZones(gSelectionManager.currentGrabs, in: nil)
+        let candidate = gSelectionManager.rootMostMoveable
+        let  zones = gSelectionManager.currentGrabs
+        let action = {
+            let last = self.deleteZones(zones, preserveChildren: preserveChildren, in: nil)
 
-        last?.grab()
+            last?.grab()
+        }
+
+        if !preserveChildren {
+            action()
+        } else if let parent = candidate.parentZone,
+            var        index = parent.children.index(of: candidate) {
+            var    preserve = [Zone]()
+
+            for zone in zones {
+                for child in zone.children {
+                    preserve.append(child.deepCopy())
+                }
+            }
+
+            action()
+
+            for child in preserve {
+                parent.addChild(child, at: index)
+
+                index += 1
+            }
+        }
 
         gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
             self.signalFor(nil, regarding: .redraw)
@@ -661,7 +686,7 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    @discardableResult private func deleteZones(_ zones: [Zone], in parent: Zone?) -> Zone? {
+    @discardableResult private func deleteZones(_ zones: [Zone], preserveChildren: Bool = false, in parent: Zone?) -> Zone? {
         var last: Zone? = nil
 
         for zone in zones {

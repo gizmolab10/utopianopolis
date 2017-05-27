@@ -812,7 +812,7 @@
                                     <action selector="graphAlteringModeAction:" target="Naq-se-Exq" id="8cr-Ru-eOh"/>
                                 </connections>
                             </segmentedControl>
-                            <box autoresizesSubviews="NO" borderType="line" title="information" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT">
+                            <box autoresizesSubviews="NO" borderType="line" title="meta data" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT">
                                 <rect key="frame" x="5" y="120" width="216" height="40"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
                                     <rect key="frame" x="1" y="1" width="214" height="24"/>

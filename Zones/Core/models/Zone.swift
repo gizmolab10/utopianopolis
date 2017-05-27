@@ -256,15 +256,6 @@ class Zone : ZRecord {
     }
 
 
-    // MARK:- properties
-    // MARK:-
-
-
-    override func debug(_  iMessage: String) {
-        // performance("\(iMessage) children \(count) parent \(parent != nil) isDeleted \(isDeleted) mode \(storageMode!) \(zoneName ?? "unknown")")
-    }
-
-    
     var parentZone: Zone? {
         get {
             if  parent == nil && _parentZone?.record != nil {
@@ -356,9 +347,14 @@ class Zone : ZRecord {
     }
 
 
-    // MARK:- parents
+    // MARK:- progeny
     // MARK:-
 
+
+    override func debug(_  iMessage: String) {
+        // performance("\(iMessage) children \(count) parent \(parent != nil) isDeleted \(isDeleted) mode \(storageMode!) \(zoneName ?? "unknown")")
+    }
+    
 
     func orphan() {
         if let zone = parentZone, zone.removeChild(self) {
@@ -369,76 +365,6 @@ class Zone : ZRecord {
 
         needSave()
         updateCloudProperties()
-    }
-
-
-    func progenyCountUpdate(_ recursing: ZRecursionType, _ visited: [Zone]) {
-        if !visited.contains(self) {
-            if !isUpToDate || recursing == .deep {
-                progenyCount = 1
-
-                for child in self.children {
-                    child.progenyCountUpdate(recursing, visited + [self])
-
-                    progenyCount += child.progenyCount
-                }
-            }
-        }
-    }
-
-
-    func extendNeedForChildrenToInfinity( _ visited: [Zone]) {
-        if !visited.contains(self) {
-            if count == 0 {
-                markForAllOfStates([.needsChildren])
-            } else {
-                for child in children {
-                    child.extendNeedForChildrenToInfinity(visited + [self])
-                }
-            }
-        }
-    }
-
-
-    func fullProgenyCountUpdate(_ recursing: ZRecursionType) {
-        extendNeedForChildrenToInfinity([])
-        gOperationsManager.children(recursing) {
-            gRoot?.progenyCountUpdate(recursing, [])
-            self.signalFor(nil, regarding: .redraw)
-        }
-    }
-
-
-    func incrementProgenyCount(by delta: Int) {
-        safeIncrementProgenyCount(by: delta, [])
-    }
-
-
-    func safeIncrementProgenyCount(by delta: Int, _ visited: [Zone]) {
-        if !visited.contains(self) {
-            var increment = delta
-
-            if  increment >= 0 && (zoneProgeny == nil || progenyCount + increment < count + 1) {
-                increment += 1
-            }
-
-            if  increment != 0 {
-                progenyCount += increment
-                // report("\(increment) \(zoneName ?? "---")")
-
-                if !isRoot && !isRootOfFavorites {
-                    if parentZone != nil {
-                        parentZone?.safeIncrementProgenyCount(by: increment, visited + [self])
-                    } else if record != nil && !isDeleted {
-                        needParent()
-
-                        gOperationsManager.parent {
-                            self.parentZone?.safeIncrementProgenyCount(by: increment, visited + [self])
-                        }
-                    }
-                }
-            }
-        }
     }
 
 
@@ -597,15 +523,94 @@ class Zone : ZRecord {
     }
 
 
+    // MARK:- progeny
+    // MARK:-
+    
+
+    func extendNeedForChildrenToInfinity( _ visited: [Zone]) {
+        if !visited.contains(self) {
+            if count == 0 {
+                needChildren()
+            } else {
+                for child in children {
+                    child.extendNeedForChildrenToInfinity(visited + [self])
+                }
+            }
+        }
+    }
+
+
+    func progenyCountUpdate(_ recursing: ZRecursionType) {
+        extendNeedForChildrenToInfinity([])
+        gOperationsManager.children(recursing) {
+            gRoot?.safeProgenyCountUpdate(recursing, [])
+            self.signalFor(nil, regarding: .redraw)
+        }
+    }
+
+
+    func safeProgenyCountUpdate(_ recursing: ZRecursionType, _ visited: [Zone]) {
+        if !visited.contains(self) && (!isUpToDate || recursing == .deep) {
+            var  allTrue = true
+            progenyCount = 1
+
+            for child in self.children {
+                child.safeProgenyCountUpdate(recursing, visited + [self])
+
+                progenyCount += child.progenyCount
+
+                if !child.isUpToDate {
+                    allTrue = false
+                }
+            }
+
+            isUpToDate = allTrue
+        }
+    }
+
+
+    func incrementProgenyCount(by delta: Int) {
+        safeIncrementProgenyCount(by: delta, [])
+    }
+
+
+    func safeIncrementProgenyCount(by delta: Int, _ visited: [Zone]) {
+        if !visited.contains(self) {
+            var increment = delta
+
+            if  increment >= 0 && (zoneProgeny == nil || progenyCount + increment < count + 1) {
+                increment += 1
+            }
+
+            if  increment != 0 {
+                progenyCount += increment
+                // report("\(increment) \(zoneName ?? "---")")
+
+                if !isRoot && !isRootOfFavorites {
+                    if parentZone != nil {
+                        parentZone?.safeIncrementProgenyCount(by: increment, visited + [self])
+                    } else if record != nil && parent != nil && !isDeleted {
+                        needParent()
+
+                        gOperationsManager.parent {
+                            self.parentZone?.safeIncrementProgenyCount(by: increment, visited + [self])
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+
+    // MARK:- recursion
+    // MARK:-
+    
+
     enum ZCycleType: Int {
         case cycle
         case found
         case none
     }
-
-
-    // MARK:- recursion
-    // MARK:-
 
 
     func deepCopy() -> Zone {
