@@ -14,21 +14,20 @@ import CloudKit
 enum ZRecursionType: Int {
     case deep       // always recurse
     case update     // controlled by is up to date
-    case expand     // controlled by expose children, level
+    case expand     // controlled by expose children, level, count
     case restore    // controlled by expose children
 }
 
 
 // for each zone, determine whether or not to recurse, AND if so,
-// whether or not to add it [in next fetch operation] to references
-
+// whether or not to extensively recurse [add to references, in next fetch operation)
 
 
 class ZRecursionLogic: NSObject {
 
 
+    var        type: ZRecursionType?
     var targetLevel: Int?
-    var type: ZRecursionType?
 
 
     init(_ iType: ZRecursionType = .restore, _ iLevel: Int? = nil) {
@@ -39,18 +38,19 @@ class ZRecursionLogic: NSObject {
     }
 
 
-    func applyChildLogic(to iZone: Zone, _ iReferences: [CKReference]?) {
-        if iZone.exposeChildren, let references = iReferences, references.count > 0, let parentRef = iZone.parent, references.contains(parentRef) {
-            iZone.needProgeny()
+    func updateNeeds(for iChild: Zone, _ iProgenyNeeded: [CKReference]?) {
+        if iChild.exposeChildren, let progenyNeeded = iProgenyNeeded, progenyNeeded.count > 0, let parentRef = iChild.parent, progenyNeeded.contains(parentRef) {
+            iChild.needProgeny()
         } else if type != nil {
+            let updated = iChild.isUpToDate
+            let  expose = iChild.exposeChildren
+            let  expand = targetLevel != nil && expose && (iChild.count == 0 || iChild.count != iChild.fetchableChildren) && (targetLevel! < 0 || targetLevel! > iChild.level)
+
             switch type! {
-            case .deep:                               iZone.needProgeny()
-            case .update:  if !iZone.isUpToDate     { iZone.needProgeny() }
-            case .restore: if  iZone.exposeChildren { iZone.needChildren() }
-            default:
-                if targetLevel != nil && iZone.exposeChildren && (iZone.count == 0 || iZone.count != iZone.fetchableChildren) && (targetLevel! < 0 || targetLevel! > iZone.level) {
-                    iZone.needChildren()
-                }
+            case .expand:  if   expand { iChild.needChildren() }
+            case .restore: if   expose { iChild.needChildren() }
+            case .update:  if !updated { iChild.needProgeny()  }
+            case .deep:                  iChild.needProgeny()
             }
         }
     }

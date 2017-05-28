@@ -125,14 +125,19 @@ class ZEditingManager: NSObject {
                 case "'":         doFavorites(isShift, isOption, isCommand)
                 case "\"":        doFavorites(true,    isOption, isCommand)
                 case "/", "?":    onZone(gSelectionManager.firstGrab, favorite: hasFlags)
+                case "-":         addSibling(containing: false, with: "-------------------------") { iChild in iChild.grab() }
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
                 case gTabKey:     if hasWidget { addSibling(containing: isOption) }
                 case gSpaceKey:   if isSpecial { spaceDo() }
                 case gBackspaceKey,
                      gDeleteKey:  if isSpecial { delete(preserveChildren: isOption && isWindow) }
                 case "\r":
-                    if hasWidget && gSelectionManager.hasGrab && !isCommand {
-                        gSelectionManager.editCurrent()
+                    if hasWidget && gSelectionManager.hasGrab {
+                        if isCommand {
+                            gSelectionManager.deselect()
+                        } else {
+                            gSelectionManager.editCurrent()
+                        }
                     }
                 default:          break
                 }
@@ -597,6 +602,13 @@ class ZEditingManager: NSObject {
 
 
     func addSibling(containing: Bool) {
+        addSibling(containing: containing) { iChild in
+            gSelectionManager.edit(iChild)
+        }
+    }
+
+
+    func addSibling(containing: Bool, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
         let       zone = gSelectionManager.rootMostMoveable
 
         if  var parent = zone.parentZone {
@@ -622,14 +634,18 @@ class ZEditingManager: NSObject {
             }
 
             addNewChildTo(parent) { iChild in
+                if name != nil {
+                    iChild.zoneName = name
+                }
+
                 if !containing {
                     gControllersManager.signalFor(parent, regarding: .redraw) {
-                        gSelectionManager.edit(iChild)
+                        onCompletion?(iChild)
                     }
                 } else {
                     self.moveZones(zones, into: iChild, at: nil, orphan: true) {
                         gControllersManager.syncToCloudAndSignalFor(parent, regarding: .redraw) {
-                            gSelectionManager.edit(iChild)
+                            onCompletion?(iChild)
                         }
                     }
                 }

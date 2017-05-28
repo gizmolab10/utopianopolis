@@ -19,7 +19,17 @@ import Foundation
 class ZShortcutsController: ZGenericTableController {
 
 
+    var tabStops = [NSTextTab]()
+
+
     override func identifier() -> ZControllerID { return .shortuts }
+
+
+    override func awakeFromNib() {
+        for value in [18, 40, 52, 83] {
+            tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
+        }
+    }
 
 
     // MARK:- shortcuts table
@@ -32,18 +42,11 @@ class ZShortcutsController: ZGenericTableController {
 
 
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        let      paragraphStyle = NSMutableParagraphStyle()
-        let                text = shortcutStrings[row]
-        var               stops = [NSTextTab]()
+        let      style = NSMutableParagraphStyle()
+        let       text = shortcutStrings[row]
+        style.tabStops = tabStops
 
-        for value in [18, 40, 52, 83] {
-            stops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
-        }
-
-        paragraphStyle.tabStops = stops
-        let              string = NSAttributedString(string: text, attributes: [NSParagraphStyleAttributeName: paragraphStyle])
-
-        return string
+        return NSAttributedString(string: text, attributes: [NSParagraphStyleAttributeName: style])
     }
 
 
@@ -59,6 +62,7 @@ class ZShortcutsController: ZGenericTableController {
         "   \tF find in cloud",
         "   \tP prints the graph",
         "   \tR reverses order",
+        "   \t- add horizontal line",
         "   \t/ focuses on selected zone",
         "   \t' shows next favorite",
         "   \t\" shows previous favorite",
@@ -67,7 +71,7 @@ class ZShortcutsController: ZGenericTableController {
         "   \tDELETE deletes zone",
         "   \tRETURN begins editing",
         "   \tOPTION \" shows favorites",
-        "   \tOPTION TAB sibling containing",
+        "   \tOPTION TAB sibling enclosing",
         "   \tCOMMAND ' refocuses",
         "   \tCOMMAND / adds to favorites",
         "   \tCOMMAND RETURN deselects",
