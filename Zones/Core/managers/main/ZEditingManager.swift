@@ -540,7 +540,7 @@ class ZEditingManager: NSObject {
                         zone.traverseApply({ iZone -> ZTraverseStatus in
                             iZone.hideChildren()
 
-                            return .eDescend
+                            return .eContinue
                         })
                     }
                 }

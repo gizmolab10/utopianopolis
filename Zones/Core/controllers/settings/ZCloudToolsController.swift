@@ -65,7 +65,7 @@ class ZCloudToolsController: ZGenericTableController {
                 zone.traverseApply { (iChild: Zone) -> (ZTraverseStatus) in
                     iChild.isDeleted = false
 
-                    return .eDescend
+                    return .eContinue
                 }
 
                 gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}

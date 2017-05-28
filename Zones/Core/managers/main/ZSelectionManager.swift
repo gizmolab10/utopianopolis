@@ -199,7 +199,7 @@ class ZSelectionManager: NSObject {
                 currentGrabs.remove(at: index)
             }
 
-            return .eDescend
+            return .eContinue
         }
     }
 }

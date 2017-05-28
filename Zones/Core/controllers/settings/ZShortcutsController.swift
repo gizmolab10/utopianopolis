@@ -26,7 +26,7 @@ class ZShortcutsController: ZGenericTableController {
 
 
     override func awakeFromNib() {
-        for value in [18, 40, 52, 83] {
+        for value in [18, 38, 52, 83] {
             tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
         }
     }
@@ -58,27 +58,27 @@ class ZShortcutsController: ZGenericTableController {
         "  +\tCOMMAND all the way",
         "",
         "other KEYS",
-        "   \tB creates bookmark",
-        "   \tF find in cloud",
-        "   \tP prints the graph",
-        "   \tR reverses order",
-        "   \t- add horizontal line",
-        "   \t/ focuses on selected zone",
-        "   \t' shows next favorite",
-        "   \t\" shows previous favorite",
-        "   \tTAB adds a sibling zone",
-        "   \tSPACE adds a child zone",
-        "   \tDELETE deletes zone",
-        "   \tRETURN begins editing",
-        "   \tOPTION \" shows favorites",
-        "   \tOPTION TAB sibling enclosing",
-        "   \tCOMMAND ' refocuses",
-        "   \tCOMMAND / adds to favorites",
-        "   \tCOMMAND RETURN deselects",
+        "   \tB\tcreates bookmark",
+        "   \tF\tfind in cloud",
+        "   \tP\tprints the graph",
+        "   \tR\treverses order",
+        "   \t-\tadd horizontal line",
+        "   \tSPACE\tadds a child zone",
+        "   \tDELETE\tdeletes zone",
+        "   \tRETURN\tbegins editing",
+        "   \t   +\tCOMMAND deselects",
+        "   \t/\tfocuses on selected zone",
+        "   \t   +\tCOMMAND adds to favorites",
+        "   \tTAB\tadds a sibling zone",
+        "   \t   +\tOPTION sibling enclosing",
+        "   \t'\tshows next favorite",
+        "   \t   +\tCOMMAND refocuses",
+        "   \t\"\tshows previous favorite",
+        "   \t   +\tOPTION shows favorites",
         "",
         "when editing a zone's text",
-        "   \tRETURN ends editing",
-        "   \tTAB creates sibling",
-        "   \tCONTROL SPACE creates child",
+        "   \tRETURN\tends editing",
+        "   \tTAB\tcreates sibling",
+        "   \tCONTROL + SPACE creates child",
     ]
 }

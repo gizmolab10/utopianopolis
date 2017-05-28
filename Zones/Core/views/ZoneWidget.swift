@@ -228,6 +228,14 @@ class ZoneWidget: ZView {
 
         return nil
     }
+    
+
+    var hitOuterRect: CGRect {
+        let start = dragDot.bounds.origin
+        let end = toggleDot.bounds.extent
+
+        return CGRect(start: dragDot.convert(start, to: self), end: toggleDot.convert(end, to: self))
+    }
 
 
     var floatingDropDotRect: CGRect {

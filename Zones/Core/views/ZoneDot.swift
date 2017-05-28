@@ -31,7 +31,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
     var innerOrigin: CGPoint? {
         if  let inner = innerDot {
-            let  rect = inner.convert(inner.frame, to: self)
+            let  rect = inner.convert(inner.bounds, to: self)
 
             return rect.origin
         }
@@ -42,7 +42,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
     var innerExtent: CGPoint? {
         if  let inner = innerDot {
-            let  rect = inner.convert(inner.frame, to: self)
+            let  rect = inner.convert(inner.bounds, to: self)
 
             return rect.extent
         }

@@ -249,7 +249,7 @@ class Zone : ZRecord {
                 highest = traverseLevel
             }
 
-            return iZone.exposeChildren ? .eDescend : .eAscend
+            return iZone.exposeChildren ? .eContinue : .eSkip
         }
 
         return highest
@@ -655,7 +655,7 @@ class Zone : ZRecord {
     @discardableResult func safeTraverseApply(_ block: ZoneToStatusClosure, visited: [Zone]) -> ZTraverseStatus {
         var status = block(self)
 
-        if status == .eDescend {
+        if status == .eContinue {
             for child in children {
                 if visited.contains(self) {
                     status = .eStop
@@ -716,7 +716,7 @@ class Zone : ZRecord {
                 return .eStop
             }
 
-            return .eDescend
+            return .eContinue
         }
 
         return isSpawn
@@ -729,7 +729,7 @@ class Zone : ZRecord {
                 iZone.level = parentLevel + 1
             }
 
-            return .eDescend
+            return .eContinue
         }
     }
 
@@ -741,7 +741,7 @@ class Zone : ZRecord {
         traverseApply { iZone -> ZTraverseStatus in
             if begun {
                 if iZone.level > iLevel || iZone == self {
-                    return .eAscend
+                    return .eSkip
                 } else if iZone.level == iLevel && iZone != self && (iZone.parentZone == nil || iZone.parentZone!.showChildren) {
                     progeny.append(iZone)
                 }
@@ -749,7 +749,7 @@ class Zone : ZRecord {
 
             begun = true
 
-            return .eDescend
+            return .eContinue
         }
 
         return progeny

@@ -253,6 +253,14 @@ extension Character {
 }
 
 
+extension ZGestureRecognizer {
+    func cancel() {
+        isEnabled = false
+        isEnabled = true
+    }
+}
+
+
 extension ZView {
 
     

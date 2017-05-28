@@ -12,9 +12,9 @@ import CloudKit
 
 
 enum ZTraverseStatus: Int {
+    case eContinue
+    case eSkip
     case eStop
-    case eAscend
-    case eDescend
 }
 
 
