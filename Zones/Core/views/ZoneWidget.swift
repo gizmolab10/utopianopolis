@@ -75,7 +75,7 @@ class ZoneWidget: ZView {
 
 
     func prepareChildrenWidgets() {
-        if !widgetZone.exposeChildren {
+        if !widgetZone.canRevealChildren {
             for child in childrenWidgets {
                 gWidgetsManager.unregisterWidget(child)
             }
@@ -135,7 +135,7 @@ class ZoneWidget: ZView {
 
 
     func layoutChildren(_ kind: ZSignalKind, visited: [Zone]) {
-        if widgetZone.exposeChildren {
+        if widgetZone.canRevealChildren {
             var                 index = widgetZone.count
             var previous: ZoneWidget? = nil
 
@@ -241,7 +241,7 @@ class ZoneWidget: ZView {
     var floatingDropDotRect: CGRect {
         var rect = CGRect()
 
-        if !widgetZone.exposeChildren {
+        if !widgetZone.canRevealChildren {
 
                 /////////////////////////
                 // DOT IS STRAIGHT OUT //
@@ -504,7 +504,7 @@ class ZoneWidget: ZView {
             drawSelectionHighlight()
         }
 
-        if widgetZone.exposeChildren {
+        if widgetZone.canRevealChildren {
             if  childrenPass || gSelectionManager.isDragging {
                 for child in childrenWidgets { drawLine(to: child) }
             } else {

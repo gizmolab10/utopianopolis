@@ -26,7 +26,7 @@ class ZShortcutsController: ZGenericTableController {
 
 
     override func awakeFromNib() {
-        for value in [18, 38, 52, 83] {
+        for value in [20, 38, 52, 72] {
             tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
         }
     }
@@ -51,34 +51,39 @@ class ZShortcutsController: ZGenericTableController {
 
 
     let shortcutStrings: [String] = [
-        "ARROWS navigate around",
-        "  +\tOPTION moves selected zone",
-        "  +\tSHIFT\t+ RIGHT expands",
-        "   \t \t  \t+ LEFT collapses",
-        "  +\tCOMMAND all the way",
+        "while editing a zone's text",
+        "     \tRETURN \tends editing",
+        "     \tTAB    \tcreates sibling",
+        "     \tSPACE+CONTROL creates child",
         "",
-        "other KEYS",
-        "   \tB\tcreates bookmark",
-        "   \tF\tfind in cloud",
-        "   \tP\tprints the graph",
-        "   \tR\treverses order",
-        "   \t-\tadd horizontal line",
-        "   \tSPACE\tadds a child zone",
-        "   \tDELETE\tdeletes zone",
-        "   \tRETURN\tbegins editing",
-        "   \t   +\tCOMMAND deselects",
-        "   \t/\tfocuses on selected zone",
-        "   \t   +\tCOMMAND adds to favorites",
-        "   \tTAB\tadds a sibling zone",
-        "   \t   +\tOPTION sibling enclosing",
-        "   \t'\tshows next favorite",
-        "   \t   +\tCOMMAND refocuses",
-        "   \t\"\tshows previous favorite",
-        "   \t   +\tOPTION shows favorites",
+        "while not editing a zone",
+        "     \tRETURN \tbegins editing",
+        "     \tARROWS \tnavigate around",
+        "     \tDELETE \tselected zone",
+        "     \tSPACE  \tcreates child",
+        "     \tTAB    \tcreates sibling",
+        "     \tB  \tcreates bookmark",
+        "     \tF  \tfind in cloud",
+        "     \tP  \tprints the graph",
+        "     \tR  \treverses order",
+        "     \t-  \tadd horizontal line",
+        "     \t/  \tfocuses on selected zone",
+        "     \t'  \tshows next favorite",
+        "     \t\" \tshows previous favorite",
         "",
-        "when editing a zone's text",
-        "   \tRETURN\tends editing",
-        "   \tTAB\tcreates sibling",
-        "   \tCONTROL + SPACE creates child",
+        "SHIFT+ARROW keys",
+        "     \tRIGHT  \texpands",
+        "     \tLEFT   \tcollapses",
+        "",
+        "OPTION keys",
+        "     \t\" \t  \tshows favorites",
+        "     \tTAB \tcreates a sibling enclosing",
+        "     \tARROWS \tmove selected zone",
+        "",
+        "COMMAND keys",
+        "     \t/\tadd/remove favorite",
+        "     \t'\trefocuses on current favorite",
+        "     \tRETURN \tdeselects",
+        "     \tARROWS \tall the way",
     ]
 }

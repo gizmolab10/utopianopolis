@@ -124,7 +124,7 @@ class ZEditingManager: NSObject {
                 case "b":         createBookmark()
                 case "'":         doFavorites(isShift, isOption, isCommand)
                 case "\"":        doFavorites(true,    isOption, isCommand)
-                case "/", "?":    onZone(gSelectionManager.firstGrab, favorite: hasFlags)
+                case "/", "?":    onZone(gSelectionManager.firstGrab, toggleFavorite: hasFlags)
                 case "-":         addSibling(containing: false, with: "-------------------------") { iChild in iChild.grab() }
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
                 case gTabKey:     if hasWidget { addSibling(containing: isOption) }
@@ -380,7 +380,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func onZone(_ iZone: Zone, favorite: Bool) {
+    func onZone(_ iZone: Zone, toggleFavorite: Bool) {
         let focusOn = { (zone: Zone) in
             gHere = zone
 
@@ -388,18 +388,18 @@ class ZEditingManager: NSObject {
             gControllersManager.syncToCloudAndSignalFor(zone, regarding: .redraw) {}
         }
 
-        if !favorite {
-            gFavoritesManager.deleteFavorite(for: iZone)
-            focusOn(iZone)
-        } else if !iZone.isBookmark {
-            gFavoritesManager.createBookmark(for: iZone, isFavorite: true)
-            focusOn(iZone)
-        } else {
+        if iZone.isBookmark {
             gTravelManager.travelThrough(iZone) { object, kind in
                 gSelectionManager.deselect()
                 focusOn(object as! Zone)
             }
+
+            return
+        } else if toggleFavorite {
+            gFavoritesManager.toggleFavorite(for: iZone)
         }
+
+        focusOn(iZone)
     }
 
 
@@ -475,13 +475,7 @@ class ZEditingManager: NSObject {
             // delay executing this until the last time it is called //
             ///////////////////////////////////////////////////////////
 
-            if !show {
-                self.syncAndRedraw()
-            } else {
-                gOperationsManager.children(.expand) {
-                    self.syncAndRedraw()
-                }
-            }
+            self.syncAndRedraw()
         }
     }
     
@@ -513,11 +507,12 @@ class ZEditingManager: NSObject {
             // ALTER CHILDREN //
             ////////////////////
 
-            let recurse = {
+            let goodGoal = iGoal != nil && zone.level < iGoal!
+            let  recurse = {
                 hasLocalChildren = zone.count != 0
 
                 if (show || hasLocalChildren) && zone.hasProgeny != hasLocalChildren {
-                    if hasLocalChildren {
+                    if  hasLocalChildren {
                         zone.maybeNeedMerge()
                         zone.updateCloudProperties()
                     }
@@ -546,23 +541,28 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            zone.showChildren = show ? (iGoal == nil || zone.level < iGoal!) : (iGoal != nil && zone.level < iGoal! && zone.showChildren)
-
-            if show && !hasLocalChildren {
-                zone.needChildren()
-
-                gOperationsManager.children(.expand, iGoal) {
-                    recurse()
+            if !show {
+                if  zone.showChildren {
+                    zone.showChildren = goodGoal && zone.showChildren
                 }
 
-                return
-            }
-
-            if !show {
                 gSelectionManager.deselectDragWithin(zone);
-            }
+                recurse()
+            } else {
+                if !zone.showChildren {
+                    zone.showChildren = goodGoal || iGoal == nil
+                }
 
-            recurse()
+                if  zone.canRevealChildren {
+                    recurse()
+                } else {
+                    zone.needChildren()
+
+                    gOperationsManager.children(.expand, iGoal) {
+                        recurse()
+                    }
+                }
+            }
         }
     }
 

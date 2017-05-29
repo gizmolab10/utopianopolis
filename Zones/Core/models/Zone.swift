@@ -46,7 +46,7 @@ class Zone : ZRecord {
     var          isBookmark:         Bool { return crossLink != nil }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
     var          hasProgeny:         Bool { return hasChildren || count > 0 || progenyCount > 1 }
-    var      exposeChildren:         Bool { return hasProgeny &&  showChildren }
+    var   canRevealChildren:         Bool { return hasProgeny &&  showChildren }
     var    indicateChildren:         Bool { return hasProgeny && !showChildren }
     var       hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var       hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
@@ -249,7 +249,7 @@ class Zone : ZRecord {
                 highest = traverseLevel
             }
 
-            return iZone.exposeChildren ? .eContinue : .eSkip
+            return iZone.canRevealChildren ? .eContinue : .eSkip
         }
 
         return highest
@@ -400,7 +400,7 @@ class Zone : ZRecord {
 
 
     func maybeNeedChildren() {
-        if count == 0 && exposeChildren && !isMarkedForAnyOfStates([.needsProgeny]) {
+        if count == 0 && canRevealChildren && !isMarkedForAnyOfStates([.needsProgeny]) {
             needChildren()
         }
     }

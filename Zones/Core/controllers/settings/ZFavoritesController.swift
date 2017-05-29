@@ -67,10 +67,18 @@ class ZFavoritesController: ZGenericTableController {
             gTravelManager.travel {
                 self.signalFor(nil, regarding: .redraw)
             }
-        } else if let zone: Zone = gFavoritesManager.zoneAtIndex(row - 1) {
+        } else if let favorite: Zone = gFavoritesManager.zoneAtIndex(row - 1) {
             gFavoritesManager.favoritesIndex = row - 1
 
-            gEditingManager.onZone(zone, favorite: true)
+            gTravelManager.travelThrough(favorite) { object, kind in
+                if  let here = object as? Zone {
+                    gHere    = here
+
+                    gSelectionManager.deselect()
+                    here.grab()
+                    gControllersManager.syncToCloudAndSignalFor(here, regarding: kind) {}
+                }
+            }
         }
     }
 

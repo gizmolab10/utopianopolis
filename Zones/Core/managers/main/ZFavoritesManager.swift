@@ -330,6 +330,30 @@ class ZFavoritesManager: ZRecordsManager {
     }
 
 
+    func isChildOfFavoritesRoot(_ zone: Zone) -> Bool {
+        let name = zone.record.recordID.recordName
+
+        if  let children = rootZone?.children {
+            for child in children {
+                if child.crossLink?.record.recordID.recordName == name {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+
+    func toggleFavorite(for zone: Zone) {
+        if isChildOfFavoritesRoot(zone) {
+            gFavoritesManager.deleteFavorite(for: zone)
+        } else {
+            gFavoritesManager.createBookmark(for: zone, isFavorite: true)
+        }
+    }
+
+
     func deleteFavorite(for zone: Zone) {
         let recordID = zone.record.recordID
 

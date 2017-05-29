@@ -475,7 +475,7 @@ class ZCloudManager: ZRecordsManager {
                     let child = self.zoneForRecord(iRecord!)
 
                     if !child.isDeleted {
-                        logic.updateNeeds(for: child, progenyNeeded)
+                        logic.propagateNeeds(to: child, progenyNeeded)
 
                         if let parent = child.parentZone {
                             if parent != child && !parent.children.contains(child) {
