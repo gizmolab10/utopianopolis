@@ -205,7 +205,7 @@ class Zone : ZRecord {
 
 
     var currentProgenyCount: Int {
-        var currentCount = count
+        var currentCount = count + 1
 
         for child in children {
             currentCount += child.progenyCount
@@ -541,30 +541,39 @@ class Zone : ZRecord {
 
 
     func progenyCountUpdate(_ recursing: ZRecursionType) {
-        extendNeedForChildrenToInfinity([])
+        needProgeny()
         gOperationsManager.children(recursing) {
             gRoot?.safeProgenyCountUpdate(recursing, [])
-            self.signalFor(nil, regarding: .redraw)
+            gOperationsManager.save {
+                self.signalFor(nil, regarding: .redraw)
+            }
         }
     }
 
 
     func safeProgenyCountUpdate(_ recursing: ZRecursionType, _ visited: [Zone]) {
-        if !visited.contains(self) && (!isUpToDate || recursing == .deep) {
-            var  allTrue = true
-            progenyCount = 1
+        let isDeep = recursing == .deep
+
+        if !visited.contains(self) && (!isUpToDate || isDeep ) {
+            var allTrue = true
+            var   total = 1
 
             for child in self.children {
                 child.safeProgenyCountUpdate(recursing, visited + [self])
 
-                progenyCount += child.progenyCount
+                total += child.progenyCount
 
                 if !child.isUpToDate {
                     allTrue = false
                 }
             }
 
-            isUpToDate = allTrue
+            if isDeep {
+                fetchableChildren = count
+            }
+
+            progenyCount = total
+            isUpToDate   = allTrue
         }
     }
 

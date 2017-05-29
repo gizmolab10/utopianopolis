@@ -28,24 +28,6 @@ class ZCloudToolsController: ZGenericTableController {
     // MARK:-
 
 
-    @IBAction func emptyTrashButtonAction(_ button: NSButton) {
-
-        // needs elaborate gui, like search results, but with checkboxes and [de]select all checkbox
-
-        //gOperationsManager.emptyTrash {
-        //    self.note("eliminated")
-        //}
-    }
-
-
-    @IBAction func restoreFromTrashButtonAction(_ button: NSButton) {
-        gOperationsManager.undelete {
-            self.signalFor(nil, regarding: .redraw)
-        }
-
-    }
-
-
     @IBAction func recountButtonAction(_ button: NSButton) {
         gRoot?.progenyCountUpdate(.deep)
     }
@@ -71,5 +53,23 @@ class ZCloudToolsController: ZGenericTableController {
                 gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
             }
         }
+    }
+
+
+    @IBAction func restoreFromTrashButtonAction(_ button: NSButton) {
+        gOperationsManager.undelete {
+            self.signalFor(nil, regarding: .redraw)
+        }
+
+    }
+
+
+    @IBAction func emptyTrashButtonAction(_ button: NSButton) {
+
+        // needs elaborate gui, like search results, but with checkboxes and [de]select all checkbox
+
+        //gOperationsManager.emptyTrash {
+        //    self.note("eliminated")
+        //}
     }
 }

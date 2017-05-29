@@ -132,16 +132,17 @@ class ZRecord: NSObject {
 
 
     func mergeIntoAndTake(_ iRecord: CKRecord) {
+        updateCloudProperties()
+
         if record != nil {
             for keyPath: String in cloudProperties() {
                 iRecord[keyPath] = record[keyPath]
             }
         }
 
-        needSave()
-        updateCloudProperties()
-
         record = iRecord
+
+        needSave()
     }
 
 

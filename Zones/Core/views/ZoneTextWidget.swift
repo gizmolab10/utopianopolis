@@ -69,7 +69,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     func setup() {
         delegate               = self
         isBordered             = false
-        textAlignment          = .center
+        textAlignment          = .left
         backgroundColor        = ZColor.clear
         zlayer.backgroundColor = ZColor.clear.cgColor
 

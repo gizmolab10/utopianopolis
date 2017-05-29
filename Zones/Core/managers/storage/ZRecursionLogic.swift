@@ -39,9 +39,7 @@ class ZRecursionLogic: NSObject {
 
 
     func updateNeeds(for iChild: Zone, _ iProgenyNeeded: [CKReference]?) {
-        if iChild.exposeChildren, let progenyNeeded = iProgenyNeeded, progenyNeeded.count > 0, let parentRef = iChild.parent, progenyNeeded.contains(parentRef) {
-            iChild.needProgeny()
-        } else if type != nil {
+        if type != nil {
             let updated = iChild.isUpToDate
             let  expose = iChild.exposeChildren
             let  expand = targetLevel != nil && expose && (iChild.count == 0 || iChild.count != iChild.fetchableChildren) && (targetLevel! < 0 || targetLevel! > iChild.level)
@@ -52,6 +50,8 @@ class ZRecursionLogic: NSObject {
             case .update:  if !updated { iChild.needProgeny()  }
             case .deep:                  iChild.needProgeny()
             }
+        } else if iChild.exposeChildren, let progenyNeeded = iProgenyNeeded, progenyNeeded.count > 0, let parentRef = iChild.parent, progenyNeeded.contains(parentRef) {
+            iChild.needProgeny()
         }
     }
 

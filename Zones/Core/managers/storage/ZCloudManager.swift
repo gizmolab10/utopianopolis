@@ -35,12 +35,13 @@ class ZCloudManager: ZRecordsManager {
 
     func create(_ onCompletion: IntegerClosure?) {
         if  let           operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
-            operation.recordsToSave = recordsWithMatchingStates([.needsCreate])
-
-            clearState(.needsCreate)
+            operation.recordsToSave = pullRecordsWithMatchingStates([.needsCreate])
 
             if let count = operation.recordsToSave?.count, count > 0 {
-                operation.completionBlock = { onCompletion?(0) }
+                operation.completionBlock = {
+                    self.create(onCompletion)
+                }
+
                 onCompletion?(count)
                 operation.start()
 
@@ -54,16 +55,9 @@ class ZCloudManager: ZRecordsManager {
 
     func flush(_ onCompletion: IntegerClosure?) {
         if  let           operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
-            operation.recordsToSave = recordsWithMatchingStates([.needsSave])
-
-            clearStates([.needsSave]) // clear BEFORE looking at manifest
+            operation.recordsToSave = pullRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
 
             if let count = operation.recordsToSave?.count, count > 0 {
-                var prefix = "SAVE \(count)"
-
-                prefix.appendSpacesToLength(14)
-                performance("\(prefix)\(stringForRecords(operation.recordsToSave))")
-
                 operation.completionBlock = {
                     // deal with saved records marked as deleted
                     for record: CKRecord in operation.recordsToSave! {
@@ -72,7 +66,7 @@ class ZCloudManager: ZRecordsManager {
                         }
                     }
 
-                    onCompletion?(0)
+                    self.flush(onCompletion)
                 }
 
                 operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
@@ -95,6 +89,11 @@ class ZCloudManager: ZRecordsManager {
                     }
                 }
 
+                var prefix = "SAVE \(count)"
+
+                prefix.appendSpacesToLength(14)
+                performance("\(prefix)\(stringForRecords(operation.recordsToSave))")
+                
                 operation.start()
 
                 return
@@ -249,11 +248,13 @@ class ZCloudManager: ZRecordsManager {
         let recordIDs = recordIDsWithMatchingStates([.needsMerge])
         let     count = recordIDs.count
 
-        if  count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            self.performance("MERGE         \(stringForRecordIDs(recordIDs, in: storageMode))")
+        if  count > 0, let  operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
+            operation.recordIDs       = recordIDs
+            operation.completionBlock = {
+                self.clearRecordIDs(recordIDs, for: [.needsMerge])
+                self.merge(onCompletion)
+            }
 
-            operation.recordIDs                = recordIDs
-            operation.completionBlock          = { onCompletion?(0) }
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
                 if  let record = self.recordForRecordID(iID) {
                     let   name = record.record[zoneNameKey] as? String ?? "---"
@@ -268,6 +269,7 @@ class ZCloudManager: ZRecordsManager {
                 self.clearStatesForRecordID(iID, forStates:[.needsMerge])
             }
 
+            self.performance("MERGE         \(stringForRecordIDs(recordIDs, in: storageMode))")
             operation.start()
         } else {
             onCompletion?(0)
@@ -280,7 +282,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetch(_ onCompletion: IntegerClosure?) {
-        let needed = referencesWithMatchingStates([.needsFetch])
+        let needed = pullReferencesWithMatchingStates([.needsFetch])
         let  count = needed.count
 
         onCompletion?(count)
@@ -292,7 +294,7 @@ class ZCloudManager: ZRecordsManager {
 
             self.queryWith(predicate) { (iRecord: CKRecord?) in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
-                    onCompletion?(0)
+                    self.fetch(onCompletion)
                 } else {
                     if let record = self.recordForCKRecord(iRecord) {
                         record.unmarkForAllOfStates([.needsFetch])    // deferred to make sure fetch worked before clearing fetch flag
@@ -413,7 +415,11 @@ class ZCloudManager: ZRecordsManager {
 
         if  missingParents.count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
             operation.recordIDs       = missingParents
-            operation.completionBlock = { onCompletion?(0) }
+            operation.completionBlock = {
+                self.clearRecordIDs(missingParents, for: [.needsParent])
+                self.fetchParents(onCompletion)
+            }
+
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
                 var parent = self.zoneForRecordID(iID)
 
@@ -446,8 +452,8 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchChildren(_ iLogic: ZRecursionLogic? = ZRecursionLogic(.restore), _ onCompletion: IntegerClosure?) {
-        let  progenyNeeded = referencesWithMatchingStates([.needsProgeny])
-        let childrenNeeded = referencesWithMatchingStates([.needsChildren]) + progenyNeeded
+        let  progenyNeeded = pullReferencesWithMatchingStates([.needsProgeny])
+        let childrenNeeded = pullReferencesWithMatchingStates([.needsChildren]) + progenyNeeded
         let          logic = iLogic ?? ZRecursionLogic(.restore)
         let          count = childrenNeeded.count
 
@@ -457,7 +463,6 @@ class ZCloudManager: ZRecordsManager {
             var parentsNeedingResort = [Zone] ()
             let            predicate = NSPredicate(format: "zoneState < %d AND parent IN %@", ZoneState.IsFavorite.rawValue, childrenNeeded)
 
-            clearStates([.needsChildren, .needsProgeny])
             performance("CHILDREN of   \(stringForReferences(childrenNeeded, in: storageMode))")
             queryWith(predicate) { (iRecord: CKRecord?) in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch

@@ -22,6 +22,9 @@ enum ZRecordState: Int {
 }
 
 
+let batchSize = 250
+
+
 class ZRecordsManager: NSObject {
 
 
@@ -88,6 +91,27 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func clearReferences(_ references: [CKReference], for states: [ZRecordState]) {
+        for reference in references {
+            clearStatesForRecordID(reference.recordID, forStates:states)
+        }
+    }
+
+
+    func clearRecordIDs(_ recordIDs: [CKRecordID], for states: [ZRecordState]) {
+        for recordID in recordIDs {
+            clearStatesForRecordID(recordID, forStates:states)
+        }
+    }
+
+
+    func clearRecords(_ records: [CKRecord], for states: [ZRecordState]) {
+        for record in records {
+            clearStatesForRecordID(record.recordID, forStates:states)
+        }
+    }
+
+
     func hasRecord(_ iRecord: ZRecord, forStates: [ZRecordState]) -> Bool {
         var found = false
 
@@ -145,7 +169,7 @@ class ZRecordsManager: NSObject {
         var identifiers = [CKRecordID] ()
 
         findRecordsWithMatchingStates(states) { state, record in
-            if let identifier = record.record?.recordID, !identifiers.contains(identifier) {
+            if  let identifier = record.record?.recordID, identifiers.count <= batchSize, !identifiers.contains(identifier) {
                 identifiers.append(identifier)
             }
         }
@@ -158,13 +182,15 @@ class ZRecordsManager: NSObject {
         var parents = [CKRecordID] ()
 
         findRecordsWithMatchingStates(states) { state, record in
-            let zone: Zone = record as! Zone
+            if parents.count <= batchSize {
+                let zone: Zone = record as! Zone
 
-            if let reference = zone.parent {
-                let parentID = reference.recordID
+                if  let reference = zone.parent {
+                    let  parentID = reference.recordID
 
-                if !parents.contains(parentID) {
-                    parents.append(parentID)
+                    if !parents.contains(parentID) {
+                        parents.append(parentID)
+                    }
                 }
             }
         }
@@ -173,34 +199,42 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func recordsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecord] {
+    func pullRecordsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecord] {
         var results = [CKRecord] ()
 
         findRecordsWithMatchingStates(states) { state, record in
-            if !results.contains(record.record) {
-                record.debug("saving")
-
+            if  results.count <= batchSize && !results.contains(record.record) {
                 results.append(record.record)
+
+                record.debug("saving")
             }
         }
 
+        clearRecords(results, for: states)
+        
         return results
     }
 
 
-    func referencesWithMatchingStates(_ states: [ZRecordState]) -> [CKReference] {
+    func pullReferencesWithMatchingStates(_ states: [ZRecordState]) -> [CKReference] {
         var references = [CKReference] ()
 
         findRecordsWithMatchingStates(states) { state, record in
-            if references.count < 250, let identifier = record.record?.recordID {
+            if references.count < batchSize, let identifier = record.record?.recordID {
                 let reference: CKReference = CKReference(recordID: identifier, action: .none)
 
                 references.append(reference)
             }
         }
 
+        clearReferences(references, for: states)
+
         return references
     }
+
+
+    // MARK:- batch lookup
+    // MARK:-
 
 
     func findRecordByRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState], onEach: StateRecordClosure?) {

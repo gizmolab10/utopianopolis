@@ -70,6 +70,7 @@ class ZOperationsManager: NSObject {
 
 
     func       sync(_ onCompletion: @escaping Closure) { setupAndRun([.create,   .fetch, .parent, .children, .merge, .flush]) { onCompletion() } }
+    func       save(_ onCompletion: @escaping Closure) { setupAndRun([.create,                               .merge, .flush]) { onCompletion() } }
     func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                      .children,         .flush]) { onCompletion() } }
     func     parent(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent                           ]) { onCompletion() } }
     func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent, .children                ]) { onCompletion() } }
