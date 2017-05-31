@@ -220,8 +220,6 @@ class ZOperationsManager: NSObject {
 
             dispatchAsyncInForeground {
                 closure()
-
-                gEditingManager.handleStalledEvents()
             }
         }
     }

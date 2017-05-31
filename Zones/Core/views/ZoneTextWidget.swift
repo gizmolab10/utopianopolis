@@ -137,7 +137,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         if  let   zone = widget.widgetZone {
             let   name = zone.zoneName ?? "empty"
             let  count = zone.fetchableCount
-            let suffix = (!gShowCounterDecorations || isTextEditing || (count < 1)) ? "" : "  (\(count))"
+            let   hide = !gShowCounterDecorations || isTextEditing || (count < 1) || zone.showChildren
+            let suffix = hide ? "" : "  (\(count))"
             text       = "\(name)\(suffix)"
         }
     }

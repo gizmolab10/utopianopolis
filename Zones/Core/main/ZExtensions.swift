@@ -22,8 +22,8 @@ typealias ZStorageDict = [String : NSObject]
 
 extension NSObject {
     var settingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
-    var            gEditor:   ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
-    var        gEditorView:       ZDragDrawView? { return gEditor?.view                                  as? ZDragDrawView }
+    var  gEditorController:   ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
+    var        gEditorView:       ZDragDrawView? { return gEditorController?.view                                  as? ZDragDrawView }
 
 
     func        note(_ iMessage: Any?)                            { } // report(iMessage) }
@@ -31,7 +31,7 @@ extension NSObject {
     func   signalFor(_ object: NSObject?, regarding: ZSignalKind) { gControllersManager.signalFor(object, regarding: regarding, onCompletion: nil) }
     func  debugCheck()                                            { gTravelManager.debugCheck() }
 
-
+    
     func report(_ iMessage: Any?) {
         if iMessage != nil {
             print(iMessage!)

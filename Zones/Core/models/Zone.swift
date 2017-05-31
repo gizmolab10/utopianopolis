@@ -189,7 +189,7 @@ class Zone : ZRecord {
                 updateClassProperties()
 
                 if zoneProgeny == nil {
-                    zoneProgeny = NSNumber(value: currentProgenyCount)
+                    zoneProgeny = NSNumber(value: count + 1)
                 }
             }
 
@@ -201,17 +201,6 @@ class Zone : ZRecord {
                 zoneProgeny = NSNumber(value: newValue)
             }
         }
-    }
-
-
-    var currentProgenyCount: Int {
-        var currentCount = count + 1
-
-        for child in children {
-            currentCount += child.progenyCount
-        }
-
-        return currentCount
     }
 
 

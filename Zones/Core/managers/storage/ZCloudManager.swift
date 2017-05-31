@@ -161,26 +161,26 @@ class ZCloudManager: ZRecordsManager {
 
 
     func assureRecordExists(withRecordID recordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
-        let closure: RecordClosure = { (record: CKRecord?) in
+        let done: RecordClosure = { (record: CKRecord?) in
             self.dispatchAsyncInForeground {
                 onCompletion(record)
             }
         }
 
         if  database == nil {
-            closure(nil)
+            done(nil)
         } else {
             database?.fetch(withRecordID: recordID) { (fetchedRecord: CKRecord?, fetchError: Error?) in
                 if  fetchError == nil && fetchedRecord != nil {
-                    closure(fetchedRecord)
+                    done(fetchedRecord)
                 } else {
                     let created: CKRecord = CKRecord(recordType: recordType, recordID: recordID)
 
                     self.database?.save(created) { (savedRecord: CKRecord?, saveError: Error?) in
                         if (saveError != nil) {
-                            closure(nil)
+                            done(nil)
                         } else {
-                            closure(savedRecord!)
+                            done(savedRecord!)
                             gfileManager.save(to: self.storageMode)
                         }
                     }
@@ -517,22 +517,24 @@ class ZCloudManager: ZRecordsManager {
     func establishHere(_ onCompletion: IntegerClosure?) {
         let manifest = gRemoteStoresManager.manifest(for: storageMode)
 
-        let rootCompletion: IntegerClosure = { iValue in
-            if iValue == 0 {
-                self.rootZone?.needProgeny()
-            }
+        let rootCompletion = {
+            self.establishRoot { iValue in
+                if iValue == 0 {
+                    self.rootZone?.needProgeny()
+                }
 
-            onCompletion?(iValue)
+                onCompletion?(iValue)
+            }
         }
 
         if manifest.here == nil {
-            self.establishRoot(rootCompletion)
+            rootCompletion()
         } else {
             let recordID = manifest.here!.recordID
 
             self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey) { (iHereRecord: CKRecord?) in
                 if iHereRecord == nil || iHereRecord?[zoneNameKey] == nil {
-                    self.establishRoot(rootCompletion)
+                    rootCompletion()
                 } else {
                     let          here = self.zoneForRecord(iHereRecord!)
                     here      .record = iHereRecord

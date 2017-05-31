@@ -33,7 +33,6 @@ class ZEditingManager: NSObject {
     }
 
 
-    var stalledEvents = [ZStalledEvent] ()
     var    previousEvent:          ZEvent?
     var editedTextWidget:  ZoneTextWidget? { return gSelectionManager.currentlyEditingZone?.widget?.textWidget }
     var        isEditing:            Bool  { return editedTextWidget == nil ? false : editedTextWidget!.isTextEditing }
@@ -54,21 +53,8 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func handleStalledEvents() {
-        while stalledEvents.count != 0 && gOperationsManager.isReady {
-            let event = stalledEvents.remove(at: 0)
-
-            handleEvent(event.event!, isWindow: event.isWindow)
-        }
-    }
-
-
     @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
-        if !gOperationsManager.isReady {
-            if stalledEvents.count < 1 {
-                stalledEvents.append(ZStalledEvent(iEvent, iIsWindow: isWindow))
-            }
-        } else if !isEditing, iEvent != previousEvent, gWorkMode == .editMode {
+        if !isEditing, iEvent != previousEvent, gWorkMode == .editMode {
             handleKey(iEvent.key, flags: iEvent.modifierFlags, isWindow: isWindow)
         }
 
@@ -320,7 +306,7 @@ class ZEditingManager: NSObject {
                     a.order = b.order
                     b.order = o
                 }
-                
+
                 commonParent.respectOrder()
                 syncAndRedraw()
             }
@@ -331,19 +317,19 @@ class ZEditingManager: NSObject {
     func printHere() {
         #if os(OSX)
 
-        if  let         view = gHere.widget {
-            let    printInfo = NSPrintInfo.shared()
-            let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
-            let      isWider = view.bounds.size.width > view.bounds.size.height
-            let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
-            let       length = Double(isWider ? view.bounds.size.width : view.bounds.size.height)
-            let        scale = 46800.0 / length // 72 dpi * 6.5 inches * 100 percent
+            if  let         view = gHere.widget {
+                let    printInfo = NSPrintInfo.shared()
+                let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
+                let      isWider = view.bounds.size.width > view.bounds.size.height
+                let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
+                let       length = Double(isWider ? view.bounds.size.width : view.bounds.size.height)
+                let        scale = 46800.0 / length // 72 dpi * 6.5 inches * 100 percent
 
-            PMSetScale(pmPageFormat, scale)
-            PMSetOrientation(pmPageFormat, orientation, false)
-            printInfo.updateFromPMPageFormat()
-            NSPrintOperation(view: view, printInfo: printInfo).run()
-        }
+                PMSetScale(pmPageFormat, scale)
+                PMSetOrientation(pmPageFormat, orientation, false)
+                printInfo.updateFromPMPageFormat()
+                NSPrintOperation(view: view, printInfo: printInfo).run()
+            }
 
         #endif
     }
@@ -478,7 +464,7 @@ class ZEditingManager: NSObject {
             self.syncAndRedraw()
         }
     }
-    
+
 
     func toggleDotRecurse(_ show: Bool, _ zone: Zone, to iGoal: Int?, onCompletion: Closure?) {
         if !show && (zone.count == 0 || !zone.showChildren) && zone.isGrabbed {
@@ -993,7 +979,7 @@ class ZEditingManager: NSObject {
 
                 into.addAndReorderChild(zone, at: iIndex)
             }
-            
+
             onCompletion?()
         }
     }
@@ -1103,47 +1089,47 @@ class ZEditingManager: NSObject {
     func moveZone(_ zone: Zone, into: Zone, at iIndex: Int?, orphan: Bool, onCompletion: Closure?) {
         if  let parent = zone.parentZone {
             let  index = zone.siblingIndex
-
+            
             UNDO(self) { iUndoSelf in
                 iUndoSelf.moveZone(zone, into: parent, at: index, orphan: orphan) { onCompletion?() }
             }
         }
-
+        
         into.displayChildren()
         into.needChildren()
-
+        
         gOperationsManager.children(.restore) {
             zone.grab()
-
+            
             if orphan {
                 zone.orphan()
             }
-
+            
             into.addAndReorderChild(zone, at: iIndex)
             onCompletion?()
         }
     }
-
-
+    
+    
     func moveUp(_ iMoveUp: Bool, selectionOnly: Bool, extreme: Bool) {
         let         zone = gSelectionManager.firstGrab
         let       isHere = zone == gHere
         if  let    there = zone.parentZone, !isHere, let index = zone.siblingIndex {
             var newIndex = index + (iMoveUp ? -1 : 1)
-
+            
             if extreme {
                 newIndex = iMoveUp ? 0 : there.count - 1
             }
-
+            
             if newIndex >= 0 && newIndex < there.count {
                 if  zone == gHere {
                     gHere = there
                 }
-
+                
                 UNDO(self) { iUndoSelf in
                     iUndoSelf.moveUp(!iMoveUp, selectionOnly: selectionOnly, extreme: extreme)
                 }
-
+                
                 if selectionOnly {
                     there.children[newIndex].grab()
                     signalFor(there, regarding: .redraw)
@@ -1153,17 +1139,17 @@ class ZEditingManager: NSObject {
                     there.updateOrdering()
                     gControllersManager.syncToCloudAndSignalFor(there, regarding: .redraw) {}
                 }
-
+                
             }
         } else if !zone.isRoot {
             revealParentAndSiblingsOf(zone) {
                 if let parent = zone.parentZone {
                     if isHere {
                         gHere = parent
-
+                        
                         self.signalFor(nil, regarding: .redraw)
                     }
-
+                    
                     if parent.count > 1 {
                         self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme)
                     }
