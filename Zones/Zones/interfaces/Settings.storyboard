@@ -238,20 +238,20 @@
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZSettingsController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="223" height="765"/>
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="765"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="0.0" width="223" height="765"/>
+                                <rect key="frame" x="0.0" y="0.0" width="226" height="765"/>
                                 <subviews>
                                     <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="651" width="223" height="114"/>
+                                        <rect key="frame" x="0.0" y="651" width="226" height="114"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="95" width="223" height="19"/>
+                                                <rect key="frame" x="0.0" y="95" width="226" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ce9-hv-nUx" userLabel="Information">
-                                                        <rect key="frame" x="0.0" y="1" width="223" height="17"/>
+                                                        <rect key="frame" x="0.0" y="1" width="226" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="c6d-cF-0Bg"/>
                                                         </constraints>
@@ -262,7 +262,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="hIy-eV-7gW" userLabel="Triangle Button">
-                                                        <rect key="frame" x="201" y="3" width="14" height="14"/>
+                                                        <rect key="frame" x="204" y="3" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="Btc-fY-AcD"/>
                                                             <constraint firstAttribute="width" constant="14" id="j0n-Bq-iHU"/>
@@ -285,8 +285,8 @@
                                                     <constraint firstItem="ce9-hv-nUx" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="xJH-i0-UpX"/>
                                                 </constraints>
                                             </customView>
-                                            <containerView ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Information">
-                                                <rect key="frame" x="-1" y="0.0" width="225" height="94"/>
+                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Information">
+                                                <rect key="frame" x="0.0" y="0.0" width="226" height="94"/>
                                                 <connections>
                                                     <segue destination="fxO-Qj-JeN" kind="embed" id="w7B-Py-09b"/>
                                                 </connections>
@@ -308,13 +308,13 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="favorites" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="47v-DX-fSo" userLabel="Favorites View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="600" width="223" height="50"/>
+                                        <rect key="frame" x="0.0" y="600" width="226" height="50"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DdL-Cp-gGl" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="31" width="223" height="19"/>
+                                                <rect key="frame" x="0.0" y="31" width="226" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hl5-AS-GCf">
-                                                        <rect key="frame" x="0.0" y="1" width="223" height="17"/>
+                                                        <rect key="frame" x="0.0" y="1" width="226" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="RLV-US-bib"/>
                                                         </constraints>
@@ -325,7 +325,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="Rej-x2-EK2" userLabel="Triangle Button">
-                                                        <rect key="frame" x="201" y="3" width="14" height="14"/>
+                                                        <rect key="frame" x="204" y="3" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="14" id="Buz-h6-NJ0"/>
                                                             <constraint firstAttribute="height" constant="14" id="ucP-3K-5dL"/>
@@ -349,7 +349,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JLI-sK-Rpb" userLabel="Favorites">
-                                                <rect key="frame" x="0.0" y="0.0" width="223" height="17"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="226" height="17"/>
                                                 <connections>
                                                     <segue destination="WJQ-Hc-Frf" kind="embed" id="WPe-tx-t0D"/>
                                                 </connections>
@@ -371,13 +371,13 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="195" width="223" height="404"/>
+                                        <rect key="frame" x="0.0" y="195" width="226" height="404"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="385" width="223" height="19"/>
+                                                <rect key="frame" x="0.0" y="385" width="226" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gUX-Sv-09B">
-                                                        <rect key="frame" x="0.0" y="1" width="223" height="17"/>
+                                                        <rect key="frame" x="0.0" y="1" width="226" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="jiJ-DE-IDs"/>
                                                         </constraints>
@@ -388,7 +388,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aCk-9D-lHI" userLabel="Triangle Button">
-                                                        <rect key="frame" x="201" y="3" width="14" height="14"/>
+                                                        <rect key="frame" x="204" y="3" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="14" id="hAG-lD-Wcz"/>
                                                             <constraint firstAttribute="height" constant="14" id="pOY-vw-MiT"/>
@@ -412,7 +412,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="btT-FF-Ema" userLabel="Preferences">
-                                                <rect key="frame" x="0.0" y="0.0" width="223" height="384"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="226" height="384"/>
                                                 <connections>
                                                     <segue destination="Naq-se-Exq" kind="embed" id="Pht-fq-dCw"/>
                                                 </connections>
@@ -434,13 +434,13 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="cloud" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Cloud View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="51" width="223" height="143"/>
+                                        <rect key="frame" x="0.0" y="51" width="226" height="143"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dnz-Gb-8cH" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="124" width="223" height="19"/>
+                                                <rect key="frame" x="0.0" y="124" width="226" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UIC-Be-bJk" userLabel="Tools">
-                                                        <rect key="frame" x="0.0" y="1" width="223" height="17"/>
+                                                        <rect key="frame" x="0.0" y="1" width="226" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="c3Z-ep-PLR"/>
                                                         </constraints>
@@ -451,7 +451,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bee-ew-HYp" userLabel="Triangle Button">
-                                                        <rect key="frame" x="201" y="3" width="14" height="14"/>
+                                                        <rect key="frame" x="204" y="3" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="14" id="Nae-JY-A71"/>
                                                             <constraint firstAttribute="height" constant="14" id="Z50-Tb-GiY"/>
@@ -475,7 +475,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XUr-go-ovY" userLabel="Cloud">
-                                                <rect key="frame" x="0.0" y="0.0" width="223" height="123"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="226" height="123"/>
                                                 <connections>
                                                     <segue destination="M1d-6V-b2Q" kind="embed" id="B7U-nN-bjh"/>
                                                 </connections>
@@ -497,13 +497,13 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="help" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E5h-DF-X3i" userLabel="Cheat Sheet View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="223" height="50"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="226" height="50"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GnQ-iS-bgR" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="31" width="223" height="19"/>
+                                                <rect key="frame" x="0.0" y="31" width="226" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ds2-S9-Udj">
-                                                        <rect key="frame" x="0.0" y="1" width="223" height="17"/>
+                                                        <rect key="frame" x="0.0" y="1" width="226" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="Umo-fQ-duv"/>
                                                         </constraints>
@@ -514,7 +514,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kYb-ao-3Mw" userLabel="Triangle Button">
-                                                        <rect key="frame" x="201" y="3" width="14" height="14"/>
+                                                        <rect key="frame" x="204" y="3" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="L2e-Gp-cDO"/>
                                                             <constraint firstAttribute="width" constant="14" id="ih1-UQ-s1f"/>
@@ -538,19 +538,19 @@
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EaL-XF-QhW" userLabel="Shortcuts">
-                                                <rect key="frame" x="6" y="13" width="209" height="17"/>
+                                                <rect key="frame" x="0.0" y="13" width="226" height="17"/>
                                                 <connections>
                                                     <segue destination="JfR-Ay-CUa" kind="embed" id="097-RW-51X"/>
                                                 </connections>
                                             </containerView>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstItem="EaL-XF-QhW" firstAttribute="leading" secondItem="E5h-DF-X3i" secondAttribute="leading" constant="6" id="625-aX-kgI"/>
-                                            <constraint firstAttribute="bottom" secondItem="EaL-XF-QhW" secondAttribute="bottom" constant="8" id="OlU-Rw-9Pn"/>
-                                            <constraint firstAttribute="trailing" secondItem="EaL-XF-QhW" secondAttribute="trailing" constant="8" id="QOT-TJ-LR1"/>
+                                            <constraint firstItem="EaL-XF-QhW" firstAttribute="leading" secondItem="E5h-DF-X3i" secondAttribute="leading" id="625-aX-kgI"/>
+                                            <constraint firstAttribute="bottom" secondItem="EaL-XF-QhW" secondAttribute="bottom" id="OlU-Rw-9Pn"/>
+                                            <constraint firstAttribute="trailing" secondItem="EaL-XF-QhW" secondAttribute="trailing" id="QOT-TJ-LR1"/>
                                             <constraint firstAttribute="trailing" secondItem="GnQ-iS-bgR" secondAttribute="trailing" id="UBd-1u-Pb3"/>
                                             <constraint firstItem="GnQ-iS-bgR" firstAttribute="leading" secondItem="E5h-DF-X3i" secondAttribute="leading" id="VBX-rO-x3w"/>
-                                            <constraint firstItem="EaL-XF-QhW" firstAttribute="top" secondItem="GnQ-iS-bgR" secondAttribute="bottom" constant="8" id="g51-ZQ-iiB"/>
+                                            <constraint firstItem="EaL-XF-QhW" firstAttribute="top" secondItem="GnQ-iS-bgR" secondAttribute="bottom" id="g51-ZQ-iiB"/>
                                             <constraint firstItem="GnQ-iS-bgR" firstAttribute="top" secondItem="E5h-DF-X3i" secondAttribute="top" id="ogG-h3-kQt"/>
                                         </constraints>
                                         <connections>

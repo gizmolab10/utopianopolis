@@ -45,9 +45,8 @@ class Zone : ZRecord {
     var              widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var          isBookmark:         Bool { return crossLink != nil }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
-    var          hasProgeny:         Bool { return hasChildren || count > 0 || progenyCount > 1 }
-    var   canRevealChildren:         Bool { return hasProgeny &&  showChildren }
-    var    indicateChildren:         Bool { return hasProgeny && !showChildren }
+    var   canRevealChildren:         Bool { return hasChildren &&  showChildren }
+    var    indicateChildren:         Bool { return hasChildren && !showChildren }
     var       hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var       hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var           isEditing:         Bool { return gSelectionManager .isEditing(self) }
@@ -69,6 +68,7 @@ class Zone : ZRecord {
                 #keyPath(zoneName),
                 #keyPath(zoneLink),
                 #keyPath(zoneOrder),
+                #keyPath(zoneCount),
                 #keyPath(zoneState),
                 #keyPath(zoneLevel),
                 #keyPath(zoneProgeny)]
@@ -162,7 +162,7 @@ class Zone : ZRecord {
     }
 
 
-    var fetchableChildren: Int {
+    var fetchableCount: Int {
         get {
             if zoneCount == nil {
                 updateClassProperties()
@@ -176,7 +176,7 @@ class Zone : ZRecord {
         }
 
         set {
-            if newValue != fetchableChildren {
+            if newValue != fetchableCount {
                 zoneCount = NSNumber(value: newValue)
             }
         }
@@ -443,7 +443,6 @@ class Zone : ZRecord {
 
             child.parentZone  = self
             hasChildren       = true
-            fetchableChildren = count
 
             child.updateLevel()
 
@@ -473,6 +472,7 @@ class Zone : ZRecord {
                 incrementProgenyCount(by: child.progenyCount)
             }
 
+            updateCount()
             updateOrdering()
         }
     }
@@ -481,9 +481,7 @@ class Zone : ZRecord {
     @discardableResult func removeChild(_ child: Zone?) -> Bool {
         if child != nil, let index = children.index(of: child!) {
             children.remove(at: index)
-
-            hasChildren       = count > 0
-            fetchableChildren = count
+            updateCount()
 
             return true
         }
@@ -527,13 +525,13 @@ class Zone : ZRecord {
     // MARK:-
     
 
-    func extendNeedForChildrenToInfinity( _ visited: [Zone]) {
-        if !visited.contains(self) {
+    func extendNeedForChildren(to iLevel: Int,  _ visited: [Zone]) {
+        if !visited.contains(self) && iLevel >= level {
             if count == 0 {
                 needChildren()
-            } else {
+            } else if iLevel > level {
                 for child in children {
-                    child.extendNeedForChildrenToInfinity(visited + [self])
+                    child.extendNeedForChildren(to: iLevel, visited + [self])
                 }
             }
         }
@@ -569,7 +567,7 @@ class Zone : ZRecord {
             }
 
             if isDeep {
-                fetchableChildren = count
+                updateCount()
             }
 
             progenyCount = total
@@ -636,7 +634,20 @@ class Zone : ZRecord {
 
         return zone
     }
-    
+
+
+    func updateCount() {
+        if  storageMode   != .favorites {
+
+            if count > fetchableCount {
+                report("\(count) \(zoneName ?? "---")")
+            }
+
+            hasChildren    =  count > 0
+            fetchableCount =  count
+        }
+    }
+
 
     func updateOrdering() {
         let increment = 1.0 / Double(count + 2)
@@ -766,7 +777,7 @@ class Zone : ZRecord {
 
 
     func exposed(upTo highestLevel: Int) -> Int? {
-        if !hasProgeny {
+        if !hasChildren {
             return nil
         }
 
@@ -782,7 +793,7 @@ class Zone : ZRecord {
             exposedLevel += 1
 
             for child: Zone in progeny {
-                if !child.showChildren && (child.hasProgeny || child.count != 0) {
+                if  child.indicateChildren {
                     return exposedLevel
                 }
             }

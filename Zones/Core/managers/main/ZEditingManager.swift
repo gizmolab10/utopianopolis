@@ -481,9 +481,7 @@ class ZEditingManager: NSObject {
     
 
     func toggleDotRecurse(_ show: Bool, _ zone: Zone, to iGoal: Int?, onCompletion: Closure?) {
-        var hasLocalChildren = zone.count != 0
-
-        if  zone.isGrabbed && !show && (!zone.showChildren || !hasLocalChildren) {
+        if !show && (zone.count == 0 || !zone.showChildren) && zone.isGrabbed {
 
             //////////////////////////
             // COLLAPSE INTO PARENT //
@@ -498,7 +496,7 @@ class ZEditingManager: NSObject {
                     }
 
                     parent.grab()
-                    self.toggleDotRecurse(show, parent, to: iGoal, onCompletion: onCompletion)
+                    self.toggleDotRecurse(false, parent, to: iGoal, onCompletion: onCompletion)
                 }
             }
         } else {
@@ -507,60 +505,28 @@ class ZEditingManager: NSObject {
             // ALTER CHILDREN //
             ////////////////////
 
-            let goodGoal = iGoal != nil && zone.level < iGoal!
-            let  recurse = {
-                hasLocalChildren = zone.count != 0
-
-                if (show || hasLocalChildren) && zone.hasProgeny != hasLocalChildren {
-                    if  hasLocalChildren {
-                        zone.maybeNeedMerge()
-                        zone.updateCloudProperties()
+            let  goal = iGoal ?? zone.level + (show ? 1 : -1)
+            let apply = {
+                zone.traverseApply() { iZone in
+                    if !show && iZone.level >= goal {
+                        iZone.hideChildren()
+                    } else if show && iZone.level < goal {
+                        iZone.displayChildren()
                     }
+
+                    return .eContinue
                 }
 
-                if gOperationsManager.isReady {
-                    onCompletion?()
-                }
-
-                if iGoal != nil {
-                    if zone.level < iGoal! {
-                        for child: Zone in zone.children {
-                            if child != zone, let last = zone.children.last {
-                                let completion = last != child ? nil : onCompletion
-
-                                self.toggleDotRecurse(show, child, to: iGoal, onCompletion: completion)
-                            }
-                        }
-                    } else if !show {
-                        zone.traverseApply({ iZone -> ZTraverseStatus in
-                            iZone.hideChildren()
-
-                            return .eContinue
-                        })
-                    }
-                }
+                onCompletion?()
             }
 
             if !show {
-                if  zone.showChildren {
-                    zone.showChildren = goodGoal && zone.showChildren
-                }
-
                 gSelectionManager.deselectDragWithin(zone);
-                recurse()
+                apply()
             } else {
-                if !zone.showChildren {
-                    zone.showChildren = goodGoal || iGoal == nil
-                }
-
-                if  zone.canRevealChildren {
-                    recurse()
-                } else {
-                    zone.needChildren()
-
-                    gOperationsManager.children(.expand, iGoal) {
-                        recurse()
-                    }
+                zone.extendNeedForChildren(to: goal, [])
+                gOperationsManager.children(.expand, iGoal) {
+                    apply()
                 }
             }
         }
@@ -593,7 +559,7 @@ class ZEditingManager: NSObject {
 
 
     func addNewChildTo(_ parentZone: Zone?) {
-        addNewChildTo(parentZone) { iChild in
+        addNewChildTo(parentZone, at: asTask ? 0 : nil) { iChild in
             gControllersManager.signalFor(parentZone, regarding: .redraw) {
                 gSelectionManager.edit(iChild)
             }
@@ -615,7 +581,7 @@ class ZEditingManager: NSObject {
             var  zones = gSelectionManager.currentGrabs
 
             if containing {
-                if zones.count < 2 {
+                if  zones.count < 2 {
                     zones  = zone.children
                     parent = zone
                 }
@@ -633,7 +599,13 @@ class ZEditingManager: NSObject {
                 parent.displayChildren()
             }
 
-            addNewChildTo(parent) { iChild in
+            var index   = zone.siblingIndex
+
+            if  index  != nil {
+                index! += asTask ? 0 : 1
+            }
+
+            addNewChildTo(parent, at: index) { iChild in
                 if name != nil {
                     iChild.zoneName = name
                 }
@@ -654,23 +626,23 @@ class ZEditingManager: NSObject {
     }
 
 
-    func addNewChildTo(_ iZone: Zone?, onCompletion: ZoneClosure?) {
-        if  let         zone = iZone, zone.storageMode != .favorites {
-            let createAndAdd = {
-                let   record = CKRecord(recordType: zoneTypeKey)
-                let    child = Zone(record: record, storageMode: zone.storageMode)
+    func addNewChildTo(_ iZone: Zone?, at iIndex: Int?, onCompletion: ZoneClosure?) {
+        if  let               zone = iZone, zone.storageMode != .favorites {
+            let       createAndAdd = {
+                let         record = CKRecord(recordType: zoneTypeKey)
+                let          child = Zone(record: record, storageMode: zone.storageMode)
                 child.progenyCount = 1 // so add and reorder will correctly propagate count
 
                 zone.ungrab()
                 child.needCreate()
-                zone.addAndReorderChild(child, at: asTask ? 0 : nil)
+                zone.addAndReorderChild(child, at: iIndex)
                 onCompletion?(child)
             }
 
             zone.displayChildren()
             gSelectionManager.stopCurrentEdit()
 
-            if zone.count != 0 || !zone.hasProgeny {
+            if zone.count != 0 || !zone.hasChildren {
                 createAndAdd()
             } else {
                 zone.needChildren()

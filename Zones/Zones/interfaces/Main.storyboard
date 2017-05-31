@@ -407,19 +407,19 @@ CQ
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Settings View">
-                                <rect key="frame" x="0.0" y="0.0" width="210" height="300"/>
+                                <rect key="frame" x="0.0" y="0.0" width="226" height="300"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="210" id="us8-K9-IEo"/>
+                                    <constraint firstAttribute="width" constant="226" id="us8-K9-IEo"/>
                                 </constraints>
                                 <connections>
                                     <segue destination="yWa-SA-l1V" kind="embed" id="ndc-SO-JG6"/>
                                 </connections>
                             </containerView>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="oY0-De-wof">
-                                <rect key="frame" x="208" y="0.0" width="5" height="300"/>
+                                <rect key="frame" x="224" y="0.0" width="5" height="300"/>
                             </box>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Box View">
-                                <rect key="frame" x="211" y="256" width="239" height="44"/>
+                                <rect key="frame" x="227" y="256" width="223" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="lGr-3g-ayh"/>
                                 </constraints>
@@ -428,19 +428,19 @@ CQ
                                 </connections>
                             </containerView>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="cjt-2h-f03">
-                                <rect key="frame" x="211" y="253" width="239" height="5"/>
+                                <rect key="frame" x="227" y="253" width="223" height="5"/>
                             </box>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="E7h-Pg-qLQ" userLabel="Main View">
-                                <rect key="frame" x="211" y="0.0" width="239" height="255"/>
+                                <rect key="frame" x="227" y="0.0" width="223" height="255"/>
                                 <subviews>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
-                                        <rect key="frame" x="0.0" y="0.0" width="239" height="255"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="223" height="255"/>
                                         <connections>
                                             <segue destination="Hxl-Pi-4li" kind="embed" id="VOo-Sq-lQs"/>
                                         </connections>
                                     </containerView>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
-                                        <rect key="frame" x="0.0" y="0.0" width="239" height="255"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="223" height="255"/>
                                         <connections>
                                             <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
                                         </connections>

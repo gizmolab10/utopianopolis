@@ -35,7 +35,7 @@ class ZoneWidget: ZView {
     let              childrenView = ZView          ()
     private var   childrenWidgets = [ZoneWidget]   ()
     var              parentWidget:  ZoneWidget? { return widgetZone.parentZone?.widget }
-    var                hasProgeny:  Bool        { return widgetZone.hasProgeny }
+    var               hasChildren:  Bool        { return widgetZone.hasChildren }
     var                widgetFont:  ZFont       { return widgetZone.isSelected ? gSelectedWidgetFont : gWidgetFont }
     var                widgetZone:  Zone!
 

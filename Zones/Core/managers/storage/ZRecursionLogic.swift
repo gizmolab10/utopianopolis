@@ -42,7 +42,7 @@ class ZRecursionLogic: NSObject {
         if type != nil {
             let update = !iChild.isUpToDate
             let reveal =  iChild.canRevealChildren
-            let expand =  targetLevel != nil && reveal && (iChild.count == 0 || iChild.count != iChild.fetchableChildren) && (targetLevel! < 0 || targetLevel! > iChild.level)
+            let expand =  targetLevel != nil && reveal && (iChild.count == 0 || iChild.count != iChild.fetchableCount) && (targetLevel! < 0 || targetLevel! > iChild.level)
 
             switch type! {
             case .expand:  if expand { iChild.needChildren() }
