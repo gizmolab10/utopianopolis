@@ -37,7 +37,6 @@ class ZOperationsManager: NSObject {
 
 
     var    onReady: Closure?
-    var    isReady = false
     var      debug = true
     var waitingOps = [ZOperationID : BlockOperation] ()
     let      queue = OperationQueue()
@@ -102,6 +101,8 @@ class ZOperationsManager: NSObject {
 
 
     private func setupAndRun(_ operationIDs: [ZOperationID], optional: ZRecursionLogic? = nil, onCompletion: @escaping Closure) {
+        gLockManager.unlock(for: .user)
+
         if let prior = onReady {
             onReady = {
                 self.dispatchAsyncInForeground { // prevent recursion pile-up on stack
@@ -111,7 +112,6 @@ class ZOperationsManager: NSObject {
             }
         } else {
             let identifiers   = operationIDs + [.ready]
-            isReady           = false;
             queue.isSuspended = true
             onReady           = onCompletion
             let         saved = gStorageMode
@@ -144,10 +144,6 @@ class ZOperationsManager: NSObject {
             }
 
             queue.isSuspended = false
-
-            dispatchAsyncInForegroundAfter(0.5) {
-                gControllersManager.displayActivity()
-            }
         }
     }
 
@@ -166,6 +162,8 @@ class ZOperationsManager: NSObject {
             becomeReady()
         } else if mode != .favorites || identifier == .here {
             let        complete = { (iCount: Int) -> Void in
+                gLockManager.unlock(for: .cloud)
+
                 if iCount      == 0 {
                     onCompletion?()
                 } else if self.debug && identifier != ZOperationID.ready {
@@ -176,9 +174,11 @@ class ZOperationsManager: NSObject {
                     self.note("\(message)• \(mode)")
                 }
             }
-            
+
+            gLockManager.lock(for: .cloud)
+
             switch identifier {
-            case .file:           gfileManager.restore (from:        mode   ); complete(0)
+            case .file:           gFileManager.restore (from:        mode   ); complete(0)
             case .here:           gRemoteStoresManager.establishHere(mode,     complete)
             case .root:           gRemoteStoresManager.establishRoot(mode,     complete)
             default:
@@ -211,14 +211,12 @@ class ZOperationsManager: NSObject {
 
 
     func becomeReady() {
-        isReady = true;
-
-        gControllersManager.displayActivity()
-
-        if let closure = onReady {
-            onReady = nil
+        if  let closure = onReady {
+            onReady     = nil
 
             dispatchAsyncInForeground {
+                gLockManager.unlock(for: .cloud)
+
                 closure()
             }
         }

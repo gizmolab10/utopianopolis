@@ -389,7 +389,7 @@ class Zone : ZRecord {
 
 
     func maybeNeedChildren() {
-        if count == 0 && canRevealChildren && !isMarkedForAnyOfStates([.needsProgeny]) {
+        if count != fetchableCount && canRevealChildren && !isMarkedForAnyOfStates([.needsProgeny]) {
             needChildren()
         }
     }
@@ -629,7 +629,9 @@ class Zone : ZRecord {
         if  storageMode   != .favorites {
 
             if count > fetchableCount {
-                report("\(count) \(zoneName ?? "---")")
+                var prefix = "count is \(count)"
+                prefix.appendSpacesToLength(14)
+                report("\(prefix) \(zoneName ?? "---")")
             }
 
             hasChildren    =  count > 0

@@ -80,10 +80,10 @@ class ZControllersManager: NSObject {
     // MARK:-
 
 
-    func displayActivity() {
+    func displayActivity(_ show: Bool) {
         dispatchAsyncInForeground {
             for signalObject in self.signalObjectsByControllerID.values {
-                signalObject.controller.displayActivity()
+                signalObject.controller.displayActivity(show)
             }
         }
     }
@@ -93,12 +93,12 @@ class ZControllersManager: NSObject {
         let mode = gStorageMode
 
         dispatchAsyncInForeground {
-            for signalObject: ZSignalObject in self.signalObjectsByControllerID.values {
-                signalObject.closure(object, mode, regarding)
-            }
+            gLockManager.borrowLock(for: .user) {
+                for signalObject: ZSignalObject in self.signalObjectsByControllerID.values {
+                    signalObject.closure(object, mode, regarding)
+                }
 
-            if onCompletion != nil {
-                onCompletion!()
+                onCompletion?()
             }
         }
     }
@@ -108,8 +108,10 @@ class ZControllersManager: NSObject {
         signalFor(zone, regarding: regarding, onCompletion: onCompletion)
 
         gOperationsManager.sync {
-            onCompletion?()
-            gfileManager.save(to: zone?.storageMode)
+            gLockManager.borrowLock(for: .user) {
+                onCompletion?()
+                gFileManager.save(to: zone?.storageMode)
+            }
         }
     }
 }

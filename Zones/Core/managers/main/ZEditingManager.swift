@@ -80,6 +80,8 @@ class ZEditingManager: NSObject {
 
     func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) {
         if  let         key = iKey {
+            gLockManager.lock(for: .user)
+
             let      widget = gWidgetsManager.currentMovableWidget
             let   isControl = flags.isControl
             let   isCommand = flags.isCommand
@@ -511,6 +513,7 @@ class ZEditingManager: NSObject {
                 apply()
             } else {
                 zone.extendNeedForChildren(to: goal, [])
+                
                 gOperationsManager.children(.expand, iGoal) {
                     apply()
                 }
@@ -862,7 +865,7 @@ class ZEditingManager: NSObject {
             travelThroughBookmark(zone)
         } else if zone.count > 0 {
             grabChild(of: zone)
-        } else {
+        } else if zone.hasChildren {
             zone.needChildren()
 
             gOperationsManager.children(.restore) {

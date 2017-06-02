@@ -22,12 +22,6 @@ enum ZGraphAlteringMode: Int {
 }
 
 
-enum ZFileMode: Int {
-    case local
-    case cloud
-}
-
-
 enum ZWorkMode: Int {
     case searchMode
     case essayMode

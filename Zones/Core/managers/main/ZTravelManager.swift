@@ -133,6 +133,7 @@ class ZTravelManager: NSObject {
                         gHere.record = iRecord!
 
                         grabHere()
+                        gLockManager.unlock(for: .cloud)
                     }
                 }
             }
