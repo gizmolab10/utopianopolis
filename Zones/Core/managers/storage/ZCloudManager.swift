@@ -29,12 +29,6 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func start(_ operation: CKOperation) {
-        gLockManager.unlock(for: .cloud)
-        operation.start()
-    }
-
-
     // MARK:- push to cloud
     // MARK:-
 
@@ -45,12 +39,11 @@ class ZCloudManager: ZRecordsManager {
 
             if let count = operation.recordsToSave?.count, count > 0 {
                 operation.completionBlock = {
-                    gLockManager.lock(for: .cloud)
                     self.create(onCompletion)
                 }
 
                 onCompletion?(count)
-                start(operation)
+                operation.start()
 
                 return
             }
@@ -66,7 +59,6 @@ class ZCloudManager: ZRecordsManager {
 
             if let count = operation.recordsToSave?.count, count > 0 {
                 operation.completionBlock = {
-                    gLockManager.lock(for: .cloud)
                     // deal with saved records marked as deleted
                     for record: CKRecord in operation.recordsToSave! {
                         if let zone = self.zoneForRecordID(record.recordID), zone.isDeleted {
@@ -101,7 +93,8 @@ class ZCloudManager: ZRecordsManager {
 
                 prefix.appendSpacesToLength(14)
                 performance("\(prefix)\(stringForRecords(operation.recordsToSave))")
-                start(operation)
+                
+                operation.start()
 
                 return
             }
@@ -116,21 +109,20 @@ class ZCloudManager: ZRecordsManager {
         var toBeDeleted = [CKRecordID] ()
 
         self.queryWith(predicate) { (iRecord: CKRecord?) in
-            // iRecord == nil means: end of response to this particular query
-
             if iRecord != nil {
                 self.performance("DELETE \(String(describing: iRecord![zoneNameKey]))")
                 toBeDeleted.append((iRecord?.recordID)!)
 
-            } else if (toBeDeleted.count) > 0, let operation = self.configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
-                operation.recordIDsToDelete = toBeDeleted   // delete them
-                operation.completionBlock   = {
+            } else { // iRecord == nil means: end of response to this particular query
+
+                if (toBeDeleted.count) > 0, let operation = self.configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
+                    operation.completionBlock   = { onCompletion?(0) }
+                    operation.recordIDsToDelete = toBeDeleted   // delete them
+
+                    operation.start()
+                } else {
                     onCompletion?(0)
                 }
-
-                self.start(operation)
-            } else {
-                onCompletion?(0)
             }
         }
     }
@@ -145,22 +137,20 @@ class ZCloudManager: ZRecordsManager {
             if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                 onCompletion?(0)
             } else {
-                gLockManager.borrowLock(for: .cloud) {
-                    let            root = gRemoteStoresManager.rootZone(for: self.storageMode)
-                    let         deleted = self.recordForCKRecord(iRecord) as? Zone ?? Zone(record: iRecord, storageMode: self.storageMode)
-                    deleted  .isDeleted = false
+                let            root = gRemoteStoresManager.rootZone(for: self.storageMode)
+                let         deleted = self.recordForCKRecord(iRecord) as? Zone ?? Zone(record: iRecord, storageMode: self.storageMode)
+                deleted  .isDeleted = false
 
-                    if  deleted.parent != nil {
-                        deleted.needParent()
-                    } else {
-                        deleted.parentZone = root
+                if  deleted.parent != nil {
+                    deleted.needParent()
+                } else {
+                    deleted.parentZone = root
 
-                        root?.needFetch()
-                    }
-
-                    deleted.maybeNeedMerge()
-                    deleted.updateCloudProperties()
+                    root?.needFetch()
                 }
+
+                deleted.maybeNeedMerge()
+                deleted.updateCloudProperties()
             }
         }
     }
@@ -173,7 +163,6 @@ class ZCloudManager: ZRecordsManager {
     func assureRecordExists(withRecordID recordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
         let done: RecordClosure = { (record: CKRecord?) in
             self.dispatchAsyncInForeground {
-                gLockManager.lock(for: .cloud)
                 onCompletion(record)
             }
         }
@@ -181,7 +170,6 @@ class ZCloudManager: ZRecordsManager {
         if  database == nil {
             done(nil)
         } else {
-            gLockManager.unlock(for: .cloud)
             database?.fetch(withRecordID: recordID) { (fetchedRecord: CKRecord?, fetchError: Error?) in
                 if  fetchError == nil && fetchedRecord != nil {
                     done(fetchedRecord)
@@ -193,7 +181,7 @@ class ZCloudManager: ZRecordsManager {
                             done(nil)
                         } else {
                             done(savedRecord!)
-                            gFileManager.save(to: self.storageMode)
+                            gfileManager.save(to: self.storageMode)
                         }
                     }
                 }
@@ -203,11 +191,6 @@ class ZCloudManager: ZRecordsManager {
 
 
     func queryWith(_ predicate: NSPredicate, onCompletion: RecordClosure?) {
-        let nilCompletion = {
-            gLockManager.lock(for: .cloud)
-            onCompletion?(nil)
-        }
-
         if  let                operation = configure(CKQueryOperation()) as? CKQueryOperation {
             operation             .query = CKQuery(recordType: zoneTypeKey, predicate: predicate)
             operation       .desiredKeys = Zone.cloudProperties()
@@ -220,12 +203,12 @@ class ZCloudManager: ZRecordsManager {
                     self.reportError(error, predicate.description)
                 }
 
-                nilCompletion()
+                onCompletion?(nil)
             }
 
-            start(operation)
+            operation.start()
         } else {
-            nilCompletion()
+            onCompletion?(nil)
         }
     }
 
@@ -268,7 +251,6 @@ class ZCloudManager: ZRecordsManager {
         if  count > 0, let  operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
             operation.recordIDs       = recordIDs
             operation.completionBlock = {
-                gLockManager.lock(for: .cloud)
                 self.clearRecordIDs(recordIDs, for: [.needsMerge])
                 self.merge(onCompletion)
             }
@@ -288,7 +270,7 @@ class ZCloudManager: ZRecordsManager {
             }
 
             self.performance("MERGE         \(stringForRecordIDs(recordIDs, in: storageMode))")
-            start(operation)
+            operation.start()
         } else {
             onCompletion?(0)
         }
@@ -396,40 +378,34 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchToRoot(_ onCompletion: IntegerClosure?) {
-        let manifest = gRemoteStoresManager.manifest(for: self.storageMode)
-        let     here = manifest.hereZone
+        let                  manifest = gRemoteStoresManager.manifest(for: self.storageMode)
+        var           visited: [Zone] = []
+        var getParentOf: ZoneClosure? = nil
 
-        if rootZone != nil && here.isDescendantOf(rootZone) == .found {
-            onCompletion?(0)
-        } else {
-            var           visited: [Zone] = []
-            var getParentOf: ZoneClosure? = nil
+        getParentOf = { iZone in
+            if visited.contains(iZone) || iZone.isRoot || iZone.isRootOfFavorites {
+                onCompletion?(0)
+            } else {
+                iZone.needParent()
 
-            getParentOf = { iZone in
-                if visited.contains(iZone) || iZone.isRoot || iZone.isRootOfFavorites {
-                    onCompletion?(0)
-                } else {
-                    iZone.needParent()
+                self.fetchParents() { iResult in
+                    if iResult == 0 {
+                        if  let parent = iZone.parentZone {
+                            visited    = visited + [iZone]
 
-                    self.fetchParents() { iResult in
-                        if iResult == 0 {
-                            if  let parent = iZone.parentZone {
-                                visited    = visited + [iZone]
+                            getParentOf?(parent)    // continue
+                        } else {
+                            self.rootZone = iZone   // got root
 
-                                getParentOf?(parent)    // continue
-                            } else {
-                                self.rootZone = iZone   // got root
-
-                                onCompletion?(0)
-                            }
+                            onCompletion?(0)
                         }
                     }
                 }
             }
-            
-            onCompletion?(-1)
-            getParentOf?(here)
         }
+        
+        onCompletion?(-1)
+        getParentOf?(manifest.hereZone)
     }
 
 
@@ -440,10 +416,7 @@ class ZCloudManager: ZRecordsManager {
         if  missingParents.count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
             operation.recordIDs       = missingParents
             operation.completionBlock = {
-                gLockManager.borrowLock(for: .cloud) {
-                    self.clearRecordIDs(missingParents, for: [.needsParent])
-                }
-
+                self.clearRecordIDs(missingParents, for: [.needsParent])
                 self.fetchParents(onCompletion)
             }
 
@@ -471,7 +444,7 @@ class ZCloudManager: ZRecordsManager {
 
             performance("PARENTS of    \(stringForRecordIDs(orphans, in: storageMode))")
             clearState(.needsParent)
-            start(operation)
+            operation.start()
         } else {
             onCompletion?(0)
         }
@@ -534,7 +507,7 @@ class ZCloudManager: ZRecordsManager {
                 onCompletion?(0)
             }
 
-            start(operation)
+            operation.start()
         } else {
             onCompletion?(0)
         }
@@ -682,7 +655,9 @@ class ZCloudManager: ZRecordsManager {
 
 
     func getFromObject(_ object: ZRecord, valueForPropertyName: String) {
-        if  database != nil && object.record != nil {
+        if  database != nil &&
+            object.record != nil &&
+            gOperationsManager.isReady {
             let      predicate = NSPredicate(value: true)
             let  type: String  = NSStringFromClass(type(of: object)) as String
             let query: CKQuery = CKQuery(recordType: type, predicate: predicate)

@@ -31,7 +31,7 @@ extension NSObject {
     func   signalFor(_ object: NSObject?, regarding: ZSignalKind) { gControllersManager.signalFor(object, regarding: regarding, onCompletion: nil) }
     func  debugCheck()                                            { gTravelManager.debugCheck() }
 
-
+    
     func report(_ iMessage: Any?) {
         if iMessage != nil {
             print(iMessage!)

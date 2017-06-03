@@ -84,8 +84,12 @@ class ZFavoritesController: ZGenericTableController {
 
 
     func tableView(_ tableView: ZTableView, shouldSelectRow row: Int) -> Bool {
-        actOnSelection(row)
-
+        let select = gOperationsManager.isReady
+        
+        if  select {
+            actOnSelection(row)
+        }
+        
         return false
     }
 }

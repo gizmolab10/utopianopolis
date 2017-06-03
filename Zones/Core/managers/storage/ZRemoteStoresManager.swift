@@ -98,6 +98,7 @@ class ZRemoteStoresManager: NSObject {
             manifest.hereZone = gFavoritesManager.rootZone!
         } else if here.record != nil && here.zoneName != nil {
             here.maybeNeedChildren()
+            here.needFetch()
         } else {
             cloudManagerFor(storageMode).establishHere(onCompletion)
 
@@ -185,7 +186,6 @@ class ZRemoteStoresManager: NSObject {
 
                 if  zone.showChildren {
                     self.dispatchAsyncInForeground {
-                        gLockManager.unlock(for: .cloud)
                         self.signalFor(parent, regarding: .redraw)
 
                         gOperationsManager.children(.restore) {

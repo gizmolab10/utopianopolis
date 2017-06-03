@@ -17,12 +17,6 @@ import CoreFoundation
 #endif
 
 
-enum ZFileMode: Int {
-    case local
-    case cloud
-}
-
-
 class ZFileManager: NSObject {
 
 
@@ -34,7 +28,7 @@ class ZFileManager: NSObject {
 
 
     func save(to storageMode: ZStorageMode?) {
-        if !isSaving && gFileMode == .local && storageMode != nil && storageMode != .favorites {
+        if !isSaving && gFileMode == .local && storageMode != nil && storageMode != .favorites && gOperationsManager.isReady {
             isSaving               = true
             let               root = gRemoteStoresManager.rootZone(for: storageMode!)
             let dict: NSDictionary = root!.storageDict as NSDictionary

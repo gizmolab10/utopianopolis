@@ -40,7 +40,6 @@ struct TimeoutObserver: OperationObserver {
                 let error = NSError(code: .executionFailed, userInfo: [
                     type(of: self).timeoutKey: self.timeout
                 ])
-                
 
                 operation.cancelWithError(error)
             }

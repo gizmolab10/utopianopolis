@@ -75,13 +75,15 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     }
 
 
-    override func displayActivity(_ show: Bool) {
-        spinner?.isHidden = !show
+    override func displayActivity() {
+        let isReady = gOperationsManager.isReady
 
-        if show {
-            spinner?.startAnimating()
-        } else {
+        spinner?.isHidden = isReady
+
+        if isReady {
             spinner?.stopAnimating()
+        } else {
+            spinner?.startAnimating()
         }
     }
 

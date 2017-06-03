@@ -35,11 +35,9 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
             zapplication.registerForRemoteNotifications(matching: .badge)
             signalFor(nil, regarding: .startup)
-            gControllersManager.displayActivity(true)
             gOperationsManager.startup {
                 gHere.grab()
 
-                gControllersManager.displayActivity(false)
                 self.signalFor(nil, regarding: .redraw)
             }
         }
@@ -72,7 +70,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
     
 
     func applicationWillTerminate(aNotification: NSNotification) {
-        gFileManager.save(to: gStorageMode)
+        gfileManager.save(to: gStorageMode)
         
         // Insert code here to tear down your application
     }
