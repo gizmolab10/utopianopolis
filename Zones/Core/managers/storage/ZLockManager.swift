@@ -10,54 +10,49 @@
 import Foundation
 
 
-enum ZOwner: Int {
-    case storage
-    case user
-}
-
-
 class ZLockManager: NSObject {
 
 
-    var owner: ZOwner? = nil
-    let semaphore      = DispatchSemaphore(value: 0)
+    var current: Foundation.OperationQueue? { return Foundation.OperationQueue.current }
+    var queue:   Foundation.OperationQueue? = nil
+    let semaphore                           = DispatchSemaphore(value: 0)
 
 
-    func borrowLock(for iOwner: ZOwner, block: Closure) {
-        lock(for: iOwner)
+    func borrow(block: Closure) {
+        wait()
         block()
-        unlock(for: iOwner)
+        proceed()
     }
 
 
-    @discardableResult func lock(for iOwner: ZOwner) -> Bool {
-        let previous = owner
+    @discardableResult func wait() -> Bool {
+        let forcedToWait = queue != nil
 
-        if  iOwner  != owner {
-            if owner != nil {
+        if  current     != queue {
+            if forcedToWait {
                 semaphore.wait()
             }
 
-            owner = iOwner
-
-            if previous != nil {
-                report("\(previous!) =======> \(iOwner)")
+            if queue != nil {
+                report("\(queue!) =======> \(current!)")
             }
+
+            queue = current
         }
 
-        return previous != nil
+        return forcedToWait
     }
 
 
-    func unlock(for iOwner: ZOwner) {
-        if  owner == iOwner {
+    func proceed() {
+        if  queue == current {
             let result = semaphore.signal()
 
             if result < 0 {
                 report("unlock failed: \(result)")
             }
 
-            owner = nil
+            queue = nil
         }
     }
 }

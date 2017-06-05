@@ -98,7 +98,6 @@ class ZRemoteStoresManager: NSObject {
             manifest.hereZone = gFavoritesManager.rootZone!
         } else if here.record != nil && here.zoneName != nil {
             here.maybeNeedChildren()
-            here.needFetch()
         } else {
             cloudManagerFor(storageMode).establishHere(onCompletion)
 
@@ -177,7 +176,7 @@ class ZRemoteStoresManager: NSObject {
 
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
-        currentCloudManager.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey) { iRecord in
+        gCloudManager.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey) { iRecord in
             if iRecord != nil {
                 // get from the record id's cloud zone
                 let    zone = self.currentCloudManager.zoneForRecord(iRecord!)

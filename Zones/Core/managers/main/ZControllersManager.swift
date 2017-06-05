@@ -80,10 +80,10 @@ class ZControllersManager: NSObject {
     // MARK:-
 
 
-    func displayActivity() {
+    func displayActivity(_ show: Bool) {
         dispatchAsyncInForeground {
             for signalObject in self.signalObjectsByControllerID.values {
-                signalObject.controller.displayActivity()
+                signalObject.controller.displayActivity(show)
             }
         }
     }
@@ -108,8 +108,9 @@ class ZControllersManager: NSObject {
         signalFor(zone, regarding: regarding, onCompletion: onCompletion)
 
         gOperationsManager.sync {
+            self.signalFor(zone, regarding: regarding, onCompletion: onCompletion)
             onCompletion?()
-            gfileManager.save(to: zone?.storageMode)
+            gFileManager.save(to: zone?.storageMode)
         }
     }
 }

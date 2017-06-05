@@ -76,7 +76,7 @@ class ZFavoritesController: ZGenericTableController {
 
                     gSelectionManager.deselect()
                     here.grab()
-                    gControllersManager.syncToCloudAndSignalFor(here, regarding: kind) {}
+                    gControllersManager.syncToCloudAndSignalFor(nil, regarding: kind) {}
                 }
             }
         }
@@ -84,12 +84,8 @@ class ZFavoritesController: ZGenericTableController {
 
 
     func tableView(_ tableView: ZTableView, shouldSelectRow row: Int) -> Bool {
-        let select = gOperationsManager.isReady
-        
-        if  select {
-            actOnSelection(row)
-        }
-        
+        actOnSelection(row)
+
         return false
     }
 }

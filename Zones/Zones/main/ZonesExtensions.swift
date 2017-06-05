@@ -271,7 +271,7 @@ extension NSTextField {
 
 
 extension ZoneTextWidget {
-    override open var acceptsFirstResponder: Bool { return gOperationsManager.isReady }    // fix a bug where root zone is editing on launch
+    // override open var acceptsFirstResponder: Bool { return gOperationsManager.isReady }    // fix a bug where root zone is editing on launch
 
 
     func updateGUI() {
@@ -301,7 +301,7 @@ extension ZoneTextWidget {
             default:                    return
             }
 
-            dispatchAsyncInForeground {
+            dispatchAsyncInForeground { // execute on next cycle of runloop
                 gEditingManager.handleKey(key, flags: ZEventFlags(), isWindow: true)
             }
         }

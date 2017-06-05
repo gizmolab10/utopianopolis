@@ -511,6 +511,7 @@ class ZEditingManager: NSObject {
                 apply()
             } else {
                 zone.extendNeedForChildren(to: goal, [])
+                
                 gOperationsManager.children(.expand, iGoal) {
                     apply()
                 }
@@ -773,9 +774,9 @@ class ZEditingManager: NSObject {
 
         if selectionOnly {
 
-            ////////////////////
-            // MOVE SELECTION //
-            ////////////////////
+            ///////////////
+            // MOVE GRAB //
+            ///////////////
 
             if zone.isRoot {
                 gFavoritesManager.showFavoritesAndGrab(zone) { object, kind in
@@ -862,7 +863,7 @@ class ZEditingManager: NSObject {
             travelThroughBookmark(zone)
         } else if zone.count > 0 {
             grabChild(of: zone)
-        } else {
+        } else if zone.hasChildren {
             zone.needChildren()
 
             gOperationsManager.children(.restore) {

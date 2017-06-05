@@ -62,9 +62,9 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                     if zone.isSelected {
                         zone.grab()
                     }
-
-                    note(zone.zoneName)
                 }
+
+                report(".  .  .  .  .  \(specificWidget?.widgetZone.zoneName ?? "---")")
 
                 specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, visited: [])
                 view.applyToAllSubviews { iView in
@@ -75,15 +75,13 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     }
 
 
-    override func displayActivity() {
-        let isReady = gOperationsManager.isReady
+    override func displayActivity(_ show: Bool) {
+        spinner?.isHidden = !show
 
-        spinner?.isHidden = isReady
-
-        if isReady {
-            spinner?.stopAnimating()
-        } else {
+        if show {
             spinner?.startAnimating()
+        } else {
+            spinner?.stopAnimating()
         }
     }
 

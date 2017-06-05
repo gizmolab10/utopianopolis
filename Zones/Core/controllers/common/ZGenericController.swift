@@ -20,7 +20,7 @@ protocol ZGenericControllerProtocol {
 
     func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind)
     func identifier() -> ZControllerID
-    func displayActivity()
+    func displayActivity(_ show: Bool)
     func setup()
 }
 
@@ -42,7 +42,7 @@ class ZGenericController: ZController, ZGenericControllerProtocol {
 
 
     func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {}
-    func displayActivity() {}
+    func displayActivity(_ show: Bool) {}
 
 
 #if os(OSX)

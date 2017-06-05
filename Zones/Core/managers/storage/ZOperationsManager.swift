@@ -37,7 +37,6 @@ class ZOperationsManager: NSObject {
 
 
     var    onReady: Closure?
-    var    isReady = false
     var      debug = true
     var waitingOps = [ZOperationID : BlockOperation] ()
     let      queue = OperationQueue()
@@ -111,7 +110,6 @@ class ZOperationsManager: NSObject {
             }
         } else {
             let identifiers   = operationIDs + [.ready]
-            isReady           = false;
             queue.isSuspended = true
             onReady           = onCompletion
             let         saved = gStorageMode
@@ -144,10 +142,6 @@ class ZOperationsManager: NSObject {
             }
 
             queue.isSuspended = false
-
-            dispatchAsyncInForegroundAfter(0.5) {
-                gControllersManager.displayActivity()
-            }
         }
     }
 
@@ -176,9 +170,9 @@ class ZOperationsManager: NSObject {
                     self.note("\(message)• \(mode)")
                 }
             }
-            
+
             switch identifier {
-            case .file:           gfileManager.restore (from:        mode   ); complete(0)
+            case .file:           gFileManager.restore (from:        mode   ); complete(0)
             case .here:           gRemoteStoresManager.establishHere(mode,     complete)
             case .root:           gRemoteStoresManager.establishRoot(mode,     complete)
             default:
@@ -211,12 +205,8 @@ class ZOperationsManager: NSObject {
 
 
     func becomeReady() {
-        isReady = true;
-
-        gControllersManager.displayActivity()
-
-        if let closure = onReady {
-            onReady = nil
+        if  let closure = onReady {
+            onReady     = nil
 
             dispatchAsyncInForeground {
                 closure()
