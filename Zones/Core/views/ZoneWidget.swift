@@ -499,6 +499,8 @@ class ZoneWidget: ZView {
         let        isGrabbed = widgetZone.isGrabbed
         textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? gGrabbedBookmarkColor : gGrabbedTextColor : ZColor.black
 
+        report("      .        \(widgetZone.zoneName ?? "---")")
+
         if isGrabbed && !widgetZone.isEditing { // && !childrenPass {  CLUE! ... adding this to the logic makes highlight disappear for zones with children shown
             //performance("highlighting \(widgetZone.zoneName ?? "--------")")
             drawSelectionHighlight()

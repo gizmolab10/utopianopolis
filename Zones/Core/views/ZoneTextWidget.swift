@@ -29,8 +29,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         get { return _isTextEditing }
         set {
             if _isTextEditing != newValue {
-                _isTextEditing = newValue
                 let       zone = widget.widgetZone
+
+                //signalFor(zone, regarding: .data)
+
+                _isTextEditing = newValue
 
                 if !_isTextEditing {
                     let  grab = gSelectionManager.currentlyEditingZone == zone
@@ -39,7 +42,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     removeMonitorAsync()
                     abortEditing()
 
-                    if grab {
+                    if  !grab {
+                        textColor                              = ZColor.black
+                    } else {
                         gSelectionManager.currentlyEditingZone = nil
 
                         zone?.grab()
@@ -59,8 +64,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                         selectAllText()
                     #endif
                 }
-
-                signalFor(zone, regarding: .data)
             }
         }
     }
