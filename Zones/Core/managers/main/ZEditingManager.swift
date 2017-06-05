@@ -197,59 +197,6 @@ class ZEditingManager: NSObject {
     }
 
 
-    func delete(preserveChildren: Bool = false) {
-        prepareUndoForDelete()
-
-        let candidate = gSelectionManager.rootMostMoveable
-        let     zones = gSelectionManager.currentGrabs
-        let    action = {
-            let last = self.deleteZones(zones, preserveChildren: preserveChildren, in: nil)
-
-            last?.grab()
-        }
-
-        if !preserveChildren {
-            action()
-
-            gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
-                self.signalFor(nil, regarding: .redraw)
-            }
-        } else if let parent = candidate.parentZone,
-            var        index = parent.children.index(of: candidate) {
-            let     preserve = {
-                var children = [Zone]()
-
-                for zone in zones {
-                    for child in zone.children {
-                        children.append(child.deepCopy())
-                    }
-                }
-
-                action()
-
-                for child in children {
-                    parent.addChild(child, at: index)
-                    
-                    index += 1
-                }
-
-                gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
-                    self.signalFor(nil, regarding: .redraw)
-                }
-            }
-
-            if candidate.fetchableCount == candidate.count {
-                preserve()
-            } else {
-                candidate.needProgeny()
-                gOperationsManager.children(.deep) {
-                    preserve()
-                }
-            }
-        }
-    }
-
-
     func find() {
         if gStorageMode != .favorites {
             gShowsSearching = !gShowsSearching
@@ -644,7 +591,7 @@ class ZEditingManager: NSObject {
             zone.displayChildren()
             gSelectionManager.stopCurrentEdit()
 
-            if zone.count != 0 || !zone.hasChildren {
+            if zone.count > 0 || !zone.hasChildren {
                 createAndAdd()
             } else {
                 zone.needChildren()
@@ -674,6 +621,67 @@ class ZEditingManager: NSObject {
 
     // MARK:- destroy
     // MARK:-
+
+
+    func delete(preserveChildren: Bool = false) {
+        prepareUndoForDelete()
+
+        let candidate = gSelectionManager.rootMostMoveable
+        let     zones = gSelectionManager.currentGrabs
+        let    action = {
+            let last = self.deleteZones(zones, preserveChildren: preserveChildren, in: nil)
+
+            last?.grab()
+        }
+
+        if !preserveChildren {
+            action()
+
+            gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
+                self.signalFor(nil, regarding: .redraw)
+            }
+        } else if let parent = candidate.parentZone,
+            var        index = parent.children.index(of: candidate) {
+            let     preserve = {
+                var children = [Zone]()
+
+                for zone in zones {
+                    for child in zone.children {
+                        let copy = child.deepCopy()
+
+                        copy.traverseApply() { (iZone) -> (ZTraverseStatus) in
+                            iZone.isDeleted = false
+
+                            return .eContinue
+                        }
+
+                        children.append(copy)
+                    }
+                }
+
+                action()
+
+                for child in children {
+                    parent.addChild(child, at: index)
+
+                    index += 1
+                }
+
+                gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
+                    self.signalFor(nil, regarding: .redraw)
+                }
+            }
+
+            if !candidate.hasChildren || candidate.count > 0 {
+                preserve()
+            } else {
+                candidate.needChildren()
+                gOperationsManager.children(.deep) {
+                    preserve()
+                }
+            }
+        }
+    }
 
 
     @discardableResult private func deleteZones(_ zones: [Zone], preserveChildren: Bool = false, in parent: Zone?) -> Zone? {
@@ -889,7 +897,7 @@ class ZEditingManager: NSObject {
 
 
     func grabChild(of zone: Zone) {
-        if zone.count != 0, let child = asTask ? zone.children.first : zone.children.last {
+        if  zone.count > 0, let child = asTask ? zone.children.first : zone.children.last {
             zone.displayChildren()
             child.grab()
             signalFor(nil, regarding: .redraw)

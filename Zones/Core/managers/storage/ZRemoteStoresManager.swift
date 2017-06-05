@@ -116,7 +116,7 @@ class ZRemoteStoresManager: NSObject {
 
 
     func popMode() {
-        if storageModeStack.count != 0, let mode = storageModeStack.popLast() {
+        if storageModeStack.count > 0, let mode = storageModeStack.popLast() {
             gStorageMode = mode
         }
     }

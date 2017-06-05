@@ -614,8 +614,9 @@ class Zone : ZRecord {
 
         copy(into: zone)
 
-        zone.parentZone = nil
-        zone.isUpToDate = false
+        zone.progenyCount = 1
+        zone  .parentZone = nil
+        zone  .isUpToDate = false
 
         for child in children {
             zone.addChild(child.deepCopy())
