@@ -109,10 +109,10 @@ class ZSelectionManager: NSObject {
 
 
     func edit(_ iZone: Zone) {
-        if !isEditingStateChanging {
+        if  let textWidget = iZone.widget?.textWidget, !textWidget.isTextEditing, !isEditingStateChanging {
             currentlyEditingZone = iZone
 
-            assignAsFirstResponder(iZone.widget?.textWidget)
+            assignAsFirstResponder(textWidget)
             deferEditingStateChange()
         }
     }
@@ -126,7 +126,7 @@ class ZSelectionManager: NSObject {
 
 
     func stopEdit(for iZone: Zone) {
-        if !isEditingStateChanging {
+        if  let textWidget = iZone.widget?.textWidget, textWidget.isTextEditing, !isEditingStateChanging {
             clearEdit()
             fullResign()
         }

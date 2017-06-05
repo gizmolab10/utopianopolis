@@ -49,33 +49,8 @@ class ZEditingManager: NSObject {
     }
 
 
-    // MARK:- user input event handlers
+    // MARK:- events
     // MARK:-
-
-
-    @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
-        if !isEditing, iEvent != previousEvent, gWorkMode == .editMode {
-            handleKey(iEvent.key, flags: iEvent.modifierFlags, isWindow: isWindow)
-        }
-
-        return true
-    }
-
-
-    func handleMenuItem(_ iItem: ZMenuItem?) {
-        #if os(OSX)
-            var flags = (iItem?.keyEquivalentModifierMask)!
-            var   key = (iItem?.keyEquivalent)!
-
-            if key != key.lowercased() {
-                flags.insert(.shift)    // add isShift to flags
-
-                key = key.lowercased()
-            }
-
-            handleKey(key, flags: flags, isWindow: true)
-        #endif
-    }
 
 
     func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) {
@@ -86,7 +61,7 @@ class ZEditingManager: NSObject {
             let    isOption = flags.isOption
             let     isShift = flags.isShift
             let   hasWidget = widget != nil
-            let   isSpecial = isOption || isWindow
+            let       force = isOption || isWindow
             let    hasFlags = isOption || isCommand || isShift
             let     spaceDo = {
                 if let zone = widget?.widgetZone, !zone.isBookmark {
@@ -114,9 +89,9 @@ class ZEditingManager: NSObject {
                 case "-":         addSibling(containing: false, with: "-------------------------") { iChild in iChild.grab() }
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
                 case gTabKey:     if hasWidget { addSibling(containing: isOption) }
-                case gSpaceKey:   if isSpecial { spaceDo() }
+                case gSpaceKey:   if force { spaceDo() }
                 case gBackspaceKey,
-                     gDeleteKey:  if isSpecial { delete(preserveChildren: isOption && isWindow) }
+                     gDeleteKey:  if force { delete(preserveChildren: isOption && isWindow) }
                 case "\r":
                     if hasWidget && gSelectionManager.hasGrab {
                         if isCommand {
@@ -174,6 +149,31 @@ class ZEditingManager: NSObject {
     }
 
 
+    @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
+        if !isEditing, iEvent != previousEvent, gWorkMode == .editMode {
+            handleKey(iEvent.key, flags: iEvent.modifierFlags, isWindow: isWindow)
+        }
+
+        return true
+    }
+
+
+    func handleMenuItem(_ iItem: ZMenuItem?) {
+        #if os(OSX)
+            var flags = (iItem?.keyEquivalentModifierMask)!
+            var   key = (iItem?.keyEquivalent)!
+
+            if key != key.lowercased() {
+                flags.insert(.shift)    // add isShift to flags
+
+                key = key.lowercased()
+            }
+
+            handleKey(key, flags: flags, isWindow: true)
+        #endif
+    }
+
+
     // MARK:- API
     // MARK:-
 
@@ -201,8 +201,8 @@ class ZEditingManager: NSObject {
         prepareUndoForDelete()
 
         let candidate = gSelectionManager.rootMostMoveable
-        let  zones = gSelectionManager.currentGrabs
-        let action = {
+        let     zones = gSelectionManager.currentGrabs
+        let    action = {
             let last = self.deleteZones(zones, preserveChildren: preserveChildren, in: nil)
 
             last?.grab()
@@ -210,27 +210,42 @@ class ZEditingManager: NSObject {
 
         if !preserveChildren {
             action()
+
+            gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
+                self.signalFor(nil, regarding: .redraw)
+            }
         } else if let parent = candidate.parentZone,
             var        index = parent.children.index(of: candidate) {
-            var    preserve = [Zone]()
+            let     preserve = {
+                var children = [Zone]()
 
-            for zone in zones {
-                for child in zone.children {
-                    preserve.append(child.deepCopy())
+                for zone in zones {
+                    for child in zone.children {
+                        children.append(child.deepCopy())
+                    }
+                }
+
+                action()
+
+                for child in children {
+                    parent.addChild(child, at: index)
+                    
+                    index += 1
+                }
+
+                gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
+                    self.signalFor(nil, regarding: .redraw)
                 }
             }
 
-            action()
-
-            for child in preserve {
-                parent.addChild(child, at: index)
-
-                index += 1
+            if candidate.fetchableCount == candidate.count {
+                preserve()
+            } else {
+                candidate.needProgeny()
+                gOperationsManager.children(.deep) {
+                    preserve()
+                }
             }
-        }
-
-        gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
-            self.signalFor(nil, regarding: .redraw)
         }
     }
 

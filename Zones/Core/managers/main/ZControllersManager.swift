@@ -17,8 +17,8 @@ enum ZControllerID: Int {
     case cloudTools
     case favorites
     case searchBox
+    case shortcuts
     case settings
-    case shortuts
     case editor
     case help
     case main
@@ -97,9 +97,7 @@ class ZControllersManager: NSObject {
                 signalObject.closure(object, mode, regarding)
             }
 
-            if onCompletion != nil {
-                onCompletion!()
-            }
+            onCompletion?()
         }
     }
 
@@ -108,7 +106,6 @@ class ZControllersManager: NSObject {
         signalFor(zone, regarding: regarding, onCompletion: onCompletion)
 
         gOperationsManager.sync {
-            self.signalFor(zone, regarding: regarding, onCompletion: onCompletion)
             onCompletion?()
             gFileManager.save(to: zone?.storageMode)
         }

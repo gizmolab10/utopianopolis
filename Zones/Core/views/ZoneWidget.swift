@@ -494,6 +494,10 @@ class ZoneWidget: ZView {
 
 
     override func draw(_ dirtyRect: CGRect) {
+        if textWidget.isTextEditing {
+            return
+        }
+
         super.draw(dirtyRect)
 
         let        isGrabbed = widgetZone.isGrabbed
@@ -501,7 +505,11 @@ class ZoneWidget: ZView {
 
         report("      .        \(widgetZone.zoneName ?? "---")")
 
-        if isGrabbed && !widgetZone.isEditing { // && !childrenPass {  CLUE! ... adding this to the logic makes highlight disappear for zones with children shown
+        if let name = textWidget.text, name == "empty" {
+            report("")
+        }
+
+        if isGrabbed { // && !childrenPass {  CLUE! ... adding this to the logic makes highlight disappear for zones with children shown
             //performance("highlighting \(widgetZone.zoneName ?? "--------")")
             drawSelectionHighlight()
         }
