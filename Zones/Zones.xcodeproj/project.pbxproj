@@ -48,8 +48,6 @@
 		0C3A0F011ED7C78D002B3D21 /* ZGenericTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3A0EFD1ED7C78D002B3D21 /* ZGenericTableController.swift */; };
 		0C3B41831EDF6F1E00E7F1C9 /* ZFavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3B41821EDF6F1E00E7F1C9 /* ZFavoritesManager.swift */; };
 		0C3B41841EDF6F1E00E7F1C9 /* ZFavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3B41821EDF6F1E00E7F1C9 /* ZFavoritesManager.swift */; };
-		0C3B41891EE34B0000E7F1C9 /* ZLockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3B41881EE34B0000E7F1C9 /* ZLockManager.swift */; };
-		0C3B418A1EE34B0000E7F1C9 /* ZLockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3B41881EE34B0000E7F1C9 /* ZLockManager.swift */; };
 		0C3B418C1EE6036200E7F1C9 /* ZTravelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3B418B1EE6036200E7F1C9 /* ZTravelManager.swift */; };
 		0C3B418D1EE6036200E7F1C9 /* ZTravelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3B418B1EE6036200E7F1C9 /* ZTravelManager.swift */; };
 		0C4CB4881E1A19490018B2C9 /* ZStackableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4CB4871E1A19490018B2C9 /* ZStackableView.swift */; };
@@ -254,7 +252,6 @@
 		0C3A0EFC1ED7C78D002B3D21 /* ZGenericController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGenericController.swift; sourceTree = "<group>"; };
 		0C3A0EFD1ED7C78D002B3D21 /* ZGenericTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGenericTableController.swift; sourceTree = "<group>"; };
 		0C3B41821EDF6F1E00E7F1C9 /* ZFavoritesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFavoritesManager.swift; sourceTree = "<group>"; };
-		0C3B41881EE34B0000E7F1C9 /* ZLockManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZLockManager.swift; sourceTree = "<group>"; };
 		0C3B418B1EE6036200E7F1C9 /* ZTravelManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTravelManager.swift; sourceTree = "<group>"; };
 		0C4CB4871E1A19490018B2C9 /* ZStackableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZStackableView.swift; path = views/ZStackableView.swift; sourceTree = "<group>"; };
 		0C4DCD891EA01AB3000B2210 /* ZPreferencesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZPreferencesController.swift; sourceTree = "<group>"; };
@@ -395,7 +392,6 @@
 				0C371C561DE259700030253D /* ZCloudManager.swift */,
 				0C3B41821EDF6F1E00E7F1C9 /* ZFavoritesManager.swift */,
 				0C371C571DE259700030253D /* ZFileManager.swift */,
-				0C3B41881EE34B0000E7F1C9 /* ZLockManager.swift */,
 				0C2456171DE3227900EBCCDD /* ZOperationsManager.swift */,
 				0C73485D1DF4C8B400E5E23B /* ZRecordsManager.swift */,
 				0C3A0EE61ED5372C002B3D21 /* ZRecursionLogic.swift */,
@@ -1025,7 +1021,6 @@
 				0CD1EAE81DB725A800A096E4 /* NSLock+Operations.swift in Sources */,
 				0C3A0EF71ED5381D002B3D21 /* ZTrait.swift in Sources */,
 				0C4DCD911EA033AB000B2210 /* ZFavoritesController.swift in Sources */,
-				0C3B418A1EE34B0000E7F1C9 /* ZLockManager.swift in Sources */,
 				0CD1EAD81DB725A800A096E4 /* PassbookCondition.swift in Sources */,
 				0CD1EAE41DB725A800A096E4 /* CKContainer+Operations.swift in Sources */,
 				0C3A0EF51ED5381D002B3D21 /* ZRecord.swift in Sources */,
@@ -1123,7 +1118,6 @@
 				0C371C731DE26FE10030253D /* ZEditingManager.swift in Sources */,
 				0C3A0EF61ED5381D002B3D21 /* ZTrait.swift in Sources */,
 				0CD1EAE71DB725A800A096E4 /* NSLock+Operations.swift in Sources */,
-				0C3B41891EE34B0000E7F1C9 /* ZLockManager.swift in Sources */,
 				0C4DCD901EA033AB000B2210 /* ZFavoritesController.swift in Sources */,
 				0CD1EAD71DB725A800A096E4 /* PassbookCondition.swift in Sources */,
 				0C3A0EF41ED5381D002B3D21 /* ZRecord.swift in Sources */,

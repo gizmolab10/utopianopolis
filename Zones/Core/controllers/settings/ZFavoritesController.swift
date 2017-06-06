@@ -76,7 +76,9 @@ class ZFavoritesController: ZGenericTableController {
 
                     gSelectionManager.deselect()
                     here.grab()
-                    gControllersManager.syncToCloudAndSignalFor(nil, regarding: kind) {}
+                    gControllersManager.syncToCloudAndSignalFor(nil, regarding: kind) {
+                        self.signalFor(nil, regarding: .redraw)
+                    }
                 }
             }
         }

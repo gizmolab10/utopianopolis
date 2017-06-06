@@ -35,7 +35,6 @@ let    gFavoritesManager = ZFavoritesManager(.favorites)
 let      gWidgetsManager = ZWidgetsManager()
 let      gEditingManager = ZEditingManager()
 let       gTravelManager = ZTravelManager()
-let         gLockManager = ZLockManager()
 let         gFileManager = ZFileManager()
 let         gUndoManager = UndoManager()
 let              cloudID = "iCloud.com.zones.Zones"
