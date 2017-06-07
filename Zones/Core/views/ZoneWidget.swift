@@ -302,11 +302,12 @@ class ZoneWidget: ZView {
     }
 
 
-    func dot(at index: Int) -> ZoneDot? {
-        if widgetZone.count == 0 || index >= widgetZone.count || index < 0 {
+    func dot(at iIndex: Int) -> ZoneDot? {
+        if widgetZone.count == 0 || iIndex < 0 {
             return nil
         }
 
+        let  index = min(iIndex, widgetZone.count - 1)
         let target = widgetZone.children[index]
 
         return target.widget?.dragDot.innerDot

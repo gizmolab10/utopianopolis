@@ -100,7 +100,7 @@ extension NSObject {
                 string.append("\(separator) \(message)")
 
                 if  separator.length == 0 {
-                    separator.appendSpacesToLength(14)
+                    separator.appendSpacesToLength(gLogTabStop - 1)
 
                     separator = "\n\(separator)"
                 }

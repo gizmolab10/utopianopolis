@@ -166,7 +166,7 @@ class ZOperationsManager: NSObject {
                     let   count = iCount < 0 ? "" : "\(iCount)"
                     var message = "\(String(describing: identifier)) \(count)"
 
-                    message.appendSpacesToLength(13)
+                    message.appendSpacesToLength(gLogTabStop - 2)
                     self.note("\(message)• \(mode)")
                 }
             }

@@ -640,7 +640,7 @@ class Zone : ZRecord {
             if count != fetchableCount {
                 var prefix = "fetchable: \(count)"
 
-                prefix.appendSpacesToLength(14)
+                prefix.appendSpacesToLength(gLogTabStop - 1)
                 report("\(prefix) \(zoneName ?? "---")")
             }
 

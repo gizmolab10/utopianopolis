@@ -25,6 +25,7 @@ let unselectBrightness: CGFloat = 0.98
 
 
 let             gUnlevel = -1
+let          gLogTabStop = 15
 let       gFingerBreadth = CGFloat(33.0)
 let          gWidgetFont = ZFont.systemFont(ofSize: fontSize)
 let  gSelectedWidgetFont = ZFont.systemFont(ofSize: fontSize) // .boldSystemFont(ofSize: fontSize * 0.93)
