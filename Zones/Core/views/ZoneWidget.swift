@@ -503,7 +503,7 @@ class ZoneWidget: ZView {
         let        isGrabbed = widgetZone.isGrabbed
         textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? gGrabbedBookmarkColor : gGrabbedTextColor : ZColor.black
 
-        report("      .        \(widgetZone.zoneName ?? "---")")
+        note("      .        \(widgetZone.zoneName ?? "---")")
 
         if let name = textWidget.text, name == "empty" {
             report("")

@@ -369,7 +369,7 @@ class ZEditingManager: NSObject {
     func revealParentAndSiblingsOf(_ iZone: Zone, onCompletion: Closure?) {
         if let parent = iZone.parentZone, parent.zoneName != nil {
             parent.displayChildren()
-            parent.needProgeny()
+            parent.maybeNeedProgeny()
 
             gOperationsManager.children(.restore) {
                 onCompletion?()
@@ -712,6 +712,7 @@ class ZEditingManager: NSObject {
                         gHere = grabThisZone!
 
                         self.deleteZone(zone) // recurse
+                        self.signalFor(nil, regarding: .redraw)
                     }
 
                     return grabThisZone
@@ -1120,8 +1121,8 @@ class ZEditingManager: NSObject {
         }
         
         into.displayChildren()
-        into.needChildren()
-        
+        into.maybeNeedProgeny()
+
         gOperationsManager.children(.restore) {
             zone.grab()
             

@@ -47,8 +47,10 @@ class ZRecordsManager: NSObject {
         var count = zonesByID.count
 
         for zone in zonesByID.values {
-            if zone.isDeleted {
-                count -= 1
+            if !zone.isRoot {
+                if  zone.isDeleted || zone.parentZone?.storageMode != zone.storageMode {
+                    count -= 1
+                }
             }
         }
 

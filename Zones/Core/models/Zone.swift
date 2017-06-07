@@ -47,6 +47,7 @@ class Zone : ZRecord {
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
     var   canRevealChildren:         Bool { return hasChildren &&  showChildren }
     var    indicateChildren:         Bool { return hasChildren && !showChildren }
+    var  hasMissingChildren:         Bool { return count == 0 || count != fetchableCount }
     var       hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var       hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var           isEditing:         Bool { return gSelectionManager .isEditing(self) }
@@ -388,8 +389,15 @@ class Zone : ZRecord {
     // MARK:-
 
 
+    func maybeNeedProgeny() {
+        if canRevealChildren && hasMissingChildren {
+            needProgeny()
+        }
+    }
+    
+
     func maybeNeedChildren() {
-        if count == 0 && canRevealChildren && !isMarkedForAnyOfStates([.needsProgeny]) {
+        if  canRevealChildren && hasMissingChildren && !isMarkedForAnyOfStates([.needsProgeny]) {
             needChildren()
         }
     }
@@ -516,7 +524,7 @@ class Zone : ZRecord {
 
     func extendNeedForChildren(to iLevel: Int,  _ visited: [Zone]) {
         if !visited.contains(self) && iLevel >= level {
-            if count == 0 {
+            if hasMissingChildren {
                 needChildren()
             } else if iLevel > level {
                 for child in children {
@@ -629,8 +637,11 @@ class Zone : ZRecord {
     func updateCount() {
         if  storageMode   != .favorites {
 
-            if count > fetchableCount {
-                report("\(count) \(zoneName ?? "---")")
+            if count != fetchableCount {
+                var prefix = "fetchable: \(count)"
+
+                prefix.appendSpacesToLength(14)
+                report("\(prefix) \(zoneName ?? "---")")
             }
 
             hasChildren    =  count > 0
