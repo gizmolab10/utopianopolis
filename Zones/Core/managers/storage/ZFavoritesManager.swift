@@ -11,7 +11,7 @@ import Foundation
 import CloudKit
 
 
-class ZFavoritesManager: ZRecordsManager {
+class ZFavoritesManager: ZCloudManager {
 
 
     let  defaultFavorites  = Zone(record: nil, storageMode: .favorites)
@@ -62,32 +62,35 @@ class ZFavoritesManager: ZRecordsManager {
 
 
     func update() {
-        // assure at least one favorite per db
-        // call every time favorites MIGHT be altered
-        // end of handleKey in editor
+        if rootZone != nil {
 
-        for index in [0, 1] {
-            rootZone?.removeChild(defaultFavorites[index])
-        }
+            // assure at least one favorite per db
+            // call every time favorites MIGHT be altered
+            // end of handleKey in editor
 
-        var found = [Int] ()
+            for index in [0, 1] {
+                rootZone?.removeChild(defaultFavorites[index])
+            }
 
-        for favorite in rootZone!.children {
-            if favorite.isFavorite, let mode = favorite.crossLink?.storageMode {
+            var found = [Int] ()
 
-                switch mode {
-                case .everyone: found.append(0); break
-                case .mine:     found.append(1); break
-                default:                         break
+            for favorite in rootZone!.children {
+                if favorite.isFavorite, let mode = favorite.crossLink?.storageMode {
+
+                    switch mode {
+                    case .everyone: found.append(0); break
+                    case .mine:     found.append(1); break
+                    default:                         break
+                    }
                 }
             }
-        }
 
-        for index in [0, 1] {
-            if !found.contains(index), let favorite = defaultFavorites[index] {
-
-                rootZone?.addChild(favorite)
-                favorite.clearAllStates()
+            for index in [0, 1] {
+                if !found.contains(index), let favorite = defaultFavorites[index] {
+                    
+                    rootZone?.addChild(favorite)
+                    favorite.clearAllStates()
+                }
             }
         }
     }
@@ -153,23 +156,40 @@ class ZFavoritesManager: ZRecordsManager {
             if  identifier == favoritesRootNameKey {
                 iGrabClosure?(iZone)
             } else {
-                let    mode = traveler!.storageMode
+                let          mode = traveler!.storageMode
+                let   enumeration = rotatedEnumeration
+                let updateForZone = { (iZoneToMatch: Zone) in
+                    for (index, zone) in self.rootZone!.children.enumerated() {
+                        if zone == iZoneToMatch {
+                            self.favoritesIndex = index
 
-                for (_, zone) in rotatedEnumeration {
-                    if    zone == iZone ||
-                        ( zone.isFavorite && zone.bookmarkTarget != nil && (zone.bookmarkTarget!.spawned(traveler!) || traveler!.spawned(zone.bookmarkTarget!))) ||
-                        ( zone.isFavorite && zone.crossLink?.record.recordID.recordName == identifier && zone.crossLink?.storageMode == mode) ||
-                        (!zone.isFavorite && zone.isBookmark && zone.crossLink?.storageMode == mode) {
+                            iGrabClosure?(zone)
 
-                        for (index, child) in self.rootZone!.children.enumerated() {
-                            if child == zone {
-                                self.favoritesIndex = index
-
-                                iGrabClosure?(child)
-
-                                return
-                            }
+                            return
                         }
+                    }
+                }
+
+                // must go through enumerations three times, so will match 
+                // first against identifer
+                // second against target
+                // third against non-favorite ???
+
+                for (_, zone) in enumeration {
+                    if zone == iZone || (zone.isFavorite && zone.crossLink?.record.recordID.recordName == identifier && zone.crossLink?.storageMode == mode) {
+                        return updateForZone(zone)
+                    }
+                }
+
+                for (_, zone) in enumeration {
+                    if zone.isFavorite, let target = zone.bookmarkTarget, (target.spawned(traveler!) || traveler!.spawned(target)) {
+                        return updateForZone(zone)
+                    }
+                }
+
+                for (_, zone) in enumeration {
+                    if !zone.isFavorite, zone.isBookmark, zone.crossLink?.storageMode == mode {
+                        return updateForZone(zone)
                     }
                 }
 

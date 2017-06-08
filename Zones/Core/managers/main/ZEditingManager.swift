@@ -486,7 +486,7 @@ class ZEditingManager: NSObject {
         if let zone = iZone {
             let s = gSelectionManager
 
-            for grabbed: Zone in s.currentGrabs {
+            for grabbed in s.currentGrabs {
                 if zone.spawned(grabbed) {
                     s.ungrab(grabbed)
                 }
@@ -495,6 +495,10 @@ class ZEditingManager: NSObject {
             if zone.isBookmark {
                 travelThroughBookmark(zone)
             } else {
+                if isEditing {
+                    s.stopCurrentEdit()
+                }
+
                 let show = !zone.showChildren
 
                 toggleDotUpdate(show: show, zone: zone)

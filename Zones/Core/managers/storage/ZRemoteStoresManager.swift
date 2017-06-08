@@ -94,8 +94,8 @@ class ZRemoteStoresManager: NSObject {
         let manifest = self.manifest(for: storageMode)
         let     here = manifest.hereZone
 
-        if storageMode == .favorites {
-            manifest.hereZone = gFavoritesManager.rootZone!
+        if storageMode == .favorites, let root = gFavoritesManager.rootZone {
+            manifest.hereZone = root
         } else if here.record != nil && here.zoneName != nil {
             here.maybeNeedChildren()
         } else {
