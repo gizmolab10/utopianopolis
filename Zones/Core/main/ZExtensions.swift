@@ -56,6 +56,18 @@ extension NSObject {
     }
 
 
+    func redrawAndSync(_ iZone: Zone? = nil, _ onCompletion: Closure? = nil) {
+        gControllersManager.syncToCloudAndSignalFor(iZone, regarding: .redraw, onCompletion: onCompletion)
+    }
+
+
+    func redrawAndSyncAndRedraw(_ iZone: Zone? = nil) {
+        redrawAndSync(iZone) {
+            self.signalFor(iZone, regarding: .redraw)
+        }
+    }
+
+
     @discardableResult func detectWithMode(_ mode: ZStorageMode, block: ToBooleanClosure) -> Bool {
         gRemoteStoresManager.pushMode(mode)
 

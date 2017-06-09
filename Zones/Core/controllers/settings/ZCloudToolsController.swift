@@ -50,7 +50,7 @@ class ZCloudToolsController: ZGenericTableController {
                     return .eContinue
                 }
 
-                gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                self.redrawAndSync()
             }
         }
     }

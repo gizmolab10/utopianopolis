@@ -507,7 +507,7 @@ class ZoneWidget: ZView {
         note("      .        \(widgetZone.zoneName ?? "---")")
 
         if let name = textWidget.text, name == "empty" {
-            report("")
+            report("============== drawing unnamed widget")
         }
 
         if isGrabbed { // && !childrenPass {  CLUE! ... adding this to the logic makes highlight disappear for zones with children shown

@@ -41,6 +41,11 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
                 gControllersManager.displayActivity(false)
                 self.signalFor(nil, regarding: .redraw)
+
+                gOperationsManager.finishUp {
+                    self.signalFor(nil, regarding: .redraw)
+                }
+
             }
         }
     }

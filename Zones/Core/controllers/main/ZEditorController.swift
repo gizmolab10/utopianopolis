@@ -282,12 +282,12 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                             }
 
                             editor.moveZone(draggedZone, into: dropZone!, at: index, orphan: true) {
-                                editor.syncAndRedraw()
+                                editor.redrawAndSync()
                             }
                         }
                     }
                     
-                    editor.syncAndRedraw()
+                    editor.redrawAndSync()
                 }
 
                 return

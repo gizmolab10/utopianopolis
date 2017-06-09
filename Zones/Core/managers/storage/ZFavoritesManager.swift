@@ -62,35 +62,33 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func update() {
-        if rootZone != nil {
 
-            // assure at least one favorite per db
-            // call every time favorites MIGHT be altered
-            // end of handleKey in editor
+        // assure at least one favorite per db
+        // call every time favorites MIGHT be altered
+        // end of handleKey in editor
 
-            for index in [0, 1] {
-                rootZone?.removeChild(defaultFavorites[index])
-            }
+        for index in [0, 1] {
+            rootZone?.removeChild(defaultFavorites[index])
+        }
 
-            var found = [Int] ()
+        var found = [Int] ()
 
-            for favorite in rootZone!.children {
-                if favorite.isFavorite, let mode = favorite.crossLink?.storageMode {
+        for favorite in rootZone!.children {
+            if favorite.isFavorite, let mode = favorite.crossLink?.storageMode {
 
-                    switch mode {
-                    case .everyone: found.append(0); break
-                    case .mine:     found.append(1); break
-                    default:                         break
-                    }
+                switch mode {
+                case .everyone: found.append(0); break
+                case .mine:     found.append(1); break
+                default:                         break
                 }
             }
+        }
 
-            for index in [0, 1] {
-                if !found.contains(index), let favorite = defaultFavorites[index] {
-                    
-                    rootZone?.addChild(favorite)
-                    favorite.clearAllStates()
-                }
+        for index in [0, 1] {
+            if !found.contains(index), let favorite = defaultFavorites[index] {
+
+                rootZone?.addChild(favorite)
+                favorite.clearAllStates()
             }
         }
     }

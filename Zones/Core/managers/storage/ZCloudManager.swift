@@ -328,23 +328,21 @@ class ZCloudManager: ZRecordsManager {
         let predicate = NSPredicate(format: "zoneState >= %d AND zoneState < %d", ZoneState.IsFavorite.rawValue, ZoneState.IsDeleted.rawValue)
 
         onCompletion?(-1)
+        gFavoritesManager.setup()
 
         self.queryWith(predicate) { (iRecord: CKRecord?) in
-            let root = gFavoritesManager.rootZone
-
             if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
-                gFavoritesManager.update()
-                root?.respectOrder()
+                gFavoritesManager.rootZone?.respectOrder()
                 onCompletion?(0)
             } else {
                 let        favorite = Zone(record: iRecord, storageMode: self.storageMode)
-                favorite.parentZone = root
+                favorite.parentZone = gFavoritesManager.rootZone
                 var    isDuplicated = false
 
                 // avoid adding a duplicate (which was created by a bug)
 
-                if  let                 name  = favorite.zoneName, root != nil {
-                    for zone: Zone in root!.children {
+                if  let                 name  = favorite.zoneName, let root = gFavoritesManager.rootZone {
+                    for zone: Zone in root.children {
                         if  let         link  = favorite.zoneLink {
                             if          link == zone.zoneLink {
                                 isDuplicated  = true
@@ -362,7 +360,7 @@ class ZCloudManager: ZRecordsManager {
                 }
 
                 if !isDuplicated {
-                    root?.addChild(favorite)
+                    gFavoritesManager.rootZone?.addChild(favorite)
                 } else {
                     favorite.isDeleted = true
                     

@@ -17,10 +17,10 @@ enum ZOperationID: Int {
     case favorites
     case file
     case here
-    case toRoot
     case fetch
-    case flush // zones, manifests, favorites
     case children
+    case toRoot
+    case flush // zones, manifests, favorites
     case unsubscribe
     case subscribe
 
@@ -49,18 +49,29 @@ class ZOperationsManager: NSObject {
     func startup(_ onCompletion: @escaping Closure) {
         var operationIDs: [ZOperationID] = []
 
-        for sync in ZOperationID.cloud.rawValue...ZOperationID.subscribe.rawValue {
+        for sync in ZOperationID.cloud.rawValue...ZOperationID.children.rawValue {
             operationIDs.append(ZOperationID(rawValue: sync)!)
         }
 
         setupAndRun(operationIDs) { onCompletion() }
     }
+    
 
+    func finishUp(_ onCompletion: @escaping Closure) {
+        var operationIDs: [ZOperationID] = []
+
+        for sync in ZOperationID.toRoot.rawValue...ZOperationID.subscribe.rawValue {
+            operationIDs.append(ZOperationID(rawValue: sync)!)
+        }
+
+        setupAndRun(operationIDs) { onCompletion() }
+    }
+    
 
     func travel(_ onCompletion: @escaping Closure) {
         var operationIDs: [ZOperationID] = []
 
-        for sync in ZOperationID.here.rawValue...ZOperationID.children.rawValue {
+        for sync in ZOperationID.here.rawValue...ZOperationID.flush.rawValue {
             operationIDs.append(ZOperationID(rawValue: sync)!)
         }
 
@@ -159,17 +170,23 @@ class ZOperationsManager: NSObject {
         if identifier == .ready {
             becomeReady()
         } else if mode != .favorites || identifier == .here {
+            let shout = { (iCount: Int) in
+                let   count = iCount <= 0 ? "" : "\(iCount)"
+                var message = "\(String(describing: identifier)) \(count)"
+
+                message.appendSpacesToLength(gLogTabStop - 2)
+                self.report("\(message)• \(mode)")
+            }
+
             let        complete = { (iCount: Int) -> Void in
                 if iCount      == 0 {
                     onCompletion?()
-                } else if self.debug && identifier != ZOperationID.ready {
-                    let   count = iCount < 0 ? "" : "\(iCount)"
-                    var message = "\(String(describing: identifier)) \(count)"
-
-                    message.appendSpacesToLength(gLogTabStop - 2)
-                    self.note("\(message)• \(mode)")
+//                } else if self.debug && identifier != ZOperationID.ready {
+//                    shout(iCount)
                 }
             }
+
+            shout(0)
 
             switch identifier {
             case .file:           gFileManager.restore (from:        mode   ); complete(0)

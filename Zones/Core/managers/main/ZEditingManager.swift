@@ -178,8 +178,7 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func syncAndRedraw() { gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw, onCompletion: nil) }
-    func         paste() { pasteInto(gSelectionManager.firstGrab) }
+    func paste() { pasteInto(gSelectionManager.firstGrab) }
 
 
     func copyToPaste() {
@@ -270,7 +269,7 @@ class ZEditingManager: NSObject {
                 }
 
                 commonParent.respectOrder()
-                syncAndRedraw()
+                redrawAndSync()
             }
         }
     }
@@ -304,17 +303,17 @@ class ZEditingManager: NSObject {
     func doFavorites(_ isShift: Bool, _ isOption: Bool, _ isCommand: Bool) {
         if isCommand {
             gFavoritesManager.refocus() {
-                self.syncAndRedraw()
+                self.redrawAndSync()
             }
         } else if         !isShift || !isOption {
             let backward = isShift ||  isOption
 
             gFavoritesManager.switchToNext(!backward) {
-                self.syncAndRedraw()
+                self.redrawAndSync()
             }
         } else {
             gFavoritesManager.showFavoritesAndGrab(gSelectionManager.firstGrab) { object, kind in
-                self.syncAndRedraw()
+                self.redrawAndSync()
             }
         }
     }
@@ -323,7 +322,7 @@ class ZEditingManager: NSObject {
     func travelThroughBookmark(_ bookmark: Zone) {
         gFavoritesManager.updateGrabAndIndexFor(bookmark)
         gTravelManager.travelThrough(bookmark) { object, kind in
-            self.syncAndRedraw()
+            self.redrawAndSync()
         }
     }
 
@@ -333,7 +332,7 @@ class ZEditingManager: NSObject {
             gHere = zone
 
             zone.grab()
-            gControllersManager.syncToCloudAndSignalFor(zone, regarding: .redraw) {}
+            self.redrawAndSync(zone)
         }
 
         if iZone.isBookmark {
@@ -407,7 +406,7 @@ class ZEditingManager: NSObject {
                 gHere.grab()
             }
 
-            self.syncAndRedraw()
+            self.redrawAndSync()
         }
     }
 
@@ -423,7 +422,7 @@ class ZEditingManager: NSObject {
             // delay executing this until the last time it is called //
             ///////////////////////////////////////////////////////////
 
-            self.syncAndRedraw()
+            self.redrawAndSync()
         }
     }
 
@@ -641,9 +640,7 @@ class ZEditingManager: NSObject {
         if !preserveChildren {
             action()
 
-            gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
-                self.signalFor(nil, regarding: .redraw)
-            }
+            self.redrawAndSyncAndRedraw()
         } else if let parent = candidate.parentZone,
             var        index = parent.children.index(of: candidate) {
             let     preserve = {
@@ -671,9 +668,7 @@ class ZEditingManager: NSObject {
                     index += 1
                 }
 
-                gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
-                    self.signalFor(nil, regarding: .redraw)
-                }
+                self.redrawAndSyncAndRedraw()
             }
 
             if !candidate.hasChildren || candidate.count > 0 {
@@ -808,7 +803,7 @@ class ZEditingManager: NSObject {
 
             if zone.isRoot {
                 gFavoritesManager.showFavoritesAndGrab(zone) { object, kind in
-                    self.syncAndRedraw()
+                    self.redrawAndSync()
                 }
             } else if !extreme {
                 if zone == gHere || parent == nil {
@@ -833,7 +828,7 @@ class ZEditingManager: NSObject {
             } else if !zone.isRoot {
                 gHere = zone
 
-                gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+                self.redrawAndSync()
             }
         } else if zone.storageMode != .favorites {
 
@@ -848,7 +843,7 @@ class ZEditingManager: NSObject {
                     gHere = iHere!
 
                     self.moveZone(zone, outTo: iHere!, orphan: true) {
-                        self.syncAndRedraw()
+                        self.redrawAndSync()
                     }
                 }
             }
@@ -863,7 +858,7 @@ class ZEditingManager: NSObject {
                 }
             } else if gHere != zone && gHere != parent && grandparent != nil {
                 moveZone(zone, outTo: grandparent!, orphan: true){
-                    gControllersManager.syncToCloudAndSignalFor(grandparent!, regarding: .redraw) {}
+                    self.redrawAndSync(grandparent)
                 }
             } else if parent != nil && parent!.isRoot {
                 gFavoritesManager.showFavoritesAndGrab(nil) { object, kind in
@@ -915,7 +910,7 @@ class ZEditingManager: NSObject {
             let parent = zone.parentZone
 
             moveZone(zone, into: toThere, at: asTask ? 0 : nil, orphan: true){
-                gControllersManager.syncToCloudAndSignalFor(parent, regarding: .redraw) {}
+                self.redrawAndSync(parent)
             }
         } else if !gTravelManager.isZone(zone, ancestorOf: toThere) {
 
@@ -936,7 +931,7 @@ class ZEditingManager: NSObject {
                     }
 
                     self.moveZone(mover, into: there, at: asTask ? 0 : nil, orphan: false) {
-                        self.syncAndRedraw()
+                        self.redrawAndSync()
                     }
                 }
             }
@@ -1035,7 +1030,7 @@ class ZEditingManager: NSObject {
                     count -= 1
 
                     if count == 0 {
-                        self.syncAndRedraw()
+                        self.redrawAndSync()
                     }
                 }
             }
@@ -1044,7 +1039,7 @@ class ZEditingManager: NSObject {
                 iUndoSelf.prepareUndoForDelete()
                 iUndoSelf.deleteZones(originals, in: nil)
                 zone.grab()
-                iUndoSelf.syncAndRedraw()
+                iUndoSelf.redrawAndSync()
             }
         }
     }
@@ -1166,7 +1161,7 @@ class ZEditingManager: NSObject {
                     there.moveChild(from: index, to: newIndex)
                     there.children[newIndex].grab()
                     there.updateOrdering()
-                    gControllersManager.syncToCloudAndSignalFor(there, regarding: .redraw) {}
+                    self.redrawAndSync(there)
                 }
                 
             }

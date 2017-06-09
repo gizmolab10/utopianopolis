@@ -28,6 +28,10 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
         application.registerForRemoteNotifications()
         gOperationsManager.startup {
             self.signalFor(nil, regarding: .redraw)
+
+            gOperationsManager.finishUp {
+                self.signalFor(nil, regarding: .redraw)
+            }
         }
 
         return true
