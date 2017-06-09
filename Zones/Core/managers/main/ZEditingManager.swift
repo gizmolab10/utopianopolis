@@ -182,14 +182,16 @@ class ZEditingManager: NSObject {
 
 
     func copyToPaste() {
+        let grabs = gSelectionManager.currentGrabs
+
         gSelectionManager.clearPaste()
 
-        for zone in gSelectionManager.currentGrabs {
+        for zone in grabs {
             zone.needChildren()
         }
 
         gOperationsManager.children(.deep) {
-            for zone in gSelectionManager.currentGrabs {
+            for zone in grabs {
                 self.addToPasteCopyOf(zone)
             }
         }
@@ -1018,12 +1020,12 @@ class ZEditingManager: NSObject {
         var     count = pastables.count
 
         if count > 0, !zone.isBookmark {
-            var originals = [Zone] ()
+            var forUndo = [Zone] ()
 
             for pastable in pastables {
                 let pasteThis = pastable.deepCopy()
 
-                originals.append(pasteThis)
+                forUndo.append(pasteThis)
                 pasteThis.orphan() // disable undo inside moveZone
                 pasteThis.recursivelyMarkAsDeleted(false)
                 moveZone(pasteThis, into: zone, at: asTask ? 0 : nil, orphan: false) {
@@ -1037,7 +1039,7 @@ class ZEditingManager: NSObject {
 
             UNDO(self) { iUndoSelf in
                 iUndoSelf.prepareUndoForDelete()
-                iUndoSelf.deleteZones(originals, in: nil)
+                iUndoSelf.deleteZones(forUndo, in: nil)
                 zone.grab()
                 iUndoSelf.redrawAndSync()
             }

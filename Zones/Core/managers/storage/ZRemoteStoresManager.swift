@@ -156,7 +156,7 @@ class ZRemoteStoresManager: NSObject {
 
         if zone != nil, let recordID = zone?.record?.recordID {
             applyToAllZones(in: [.mine, .everyone]) { iZone in
-                if let link = iZone.crossLink, recordID == link.record?.recordID {
+                if let link = iZone.crossLink, let record = link.record, recordID == record.recordID {
                     zoneBookmarks.append(iZone)
                 }
             }

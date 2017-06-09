@@ -186,7 +186,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 signalFor(bookmark, regarding: .datum)
             }
 
-            gOperationsManager.sync {
+            redrawAndSync() {
                 gTextCapturing = false
             }
         }

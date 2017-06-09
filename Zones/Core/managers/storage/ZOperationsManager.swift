@@ -37,7 +37,7 @@ class ZOperationsManager: NSObject {
 
 
     var    onReady: Closure?
-    var      debug = true
+    var      debug = false
     var waitingOps = [ZOperationID : BlockOperation] ()
     let      queue = OperationQueue()
 
@@ -170,23 +170,25 @@ class ZOperationsManager: NSObject {
         if identifier == .ready {
             becomeReady()
         } else if mode != .favorites || identifier == .here {
-            let shout = { (iCount: Int) in
-                let   count = iCount <= 0 ? "" : "\(iCount)"
-                var message = "\(String(describing: identifier)) \(count)"
+            let report          = { (iCount: Int) in
+                if  self.debug {
+                    let   count = iCount <= 0 ? "" : "\(iCount)"
+                    var message = "\(String(describing: identifier)) \(count)"
 
-                message.appendSpacesToLength(gLogTabStop - 2)
-                self.report("\(message)• \(mode)")
-            }
-
-            let        complete = { (iCount: Int) -> Void in
-                if iCount      == 0 {
-                    onCompletion?()
-//                } else if self.debug && identifier != ZOperationID.ready {
-//                    shout(iCount)
+                    message.appendSpacesToLength(gLogTabStop - 2)
+                    self.report("\(message)• \(mode)")
                 }
             }
 
-            shout(0)
+            let complete        = { (iCount: Int) -> Void in
+                if iCount      == 0 {
+                    onCompletion?()
+                } else if identifier != ZOperationID.ready {
+                    report(iCount)
+                }
+            }
+
+            report(0)
 
             switch identifier {
             case .file:           gFileManager.restore (from:        mode   ); complete(0)
