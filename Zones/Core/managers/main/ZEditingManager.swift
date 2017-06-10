@@ -174,28 +174,8 @@ class ZEditingManager: NSObject {
     }
 
 
-    // MARK:- API
+    // MARK:- miscellaneous features
     // MARK:-
-
-
-    func paste() { pasteInto(gSelectionManager.firstGrab) }
-
-
-    func copyToPaste() {
-        let grabs = gSelectionManager.currentGrabs
-
-        gSelectionManager.clearPaste()
-
-        for zone in grabs {
-            zone.needChildren()
-        }
-
-        gOperationsManager.children(.deep) {
-            for zone in grabs {
-                self.addToPasteCopyOf(zone)
-            }
-        }
-    }
 
 
     func find() {
@@ -203,35 +183,6 @@ class ZEditingManager: NSObject {
             gShowsSearching = !gShowsSearching
 
             signalFor(nil, regarding: .search)
-        }
-    }
-
-
-    func createBookmark() {
-        let zone = gSelectionManager.firstGrab
-
-        if zone.storageMode != .favorites, !zone.isRoot {
-            let closure = {
-                var bookmark: Zone? = nil
-
-                self.invokeWithMode(.mine) {
-                    bookmark = gFavoritesManager.createBookmark(for: zone, isFavorite: false)
-                }
-
-                bookmark?.grab()
-                self.signalFor(nil, regarding: .redraw)
-                gOperationsManager.sync {}
-            }
-
-            if gHere != zone {
-                closure()
-            } else {
-                self.revealParentAndSiblingsOf(zone) {
-                    gHere = zone.parentZone ?? gHere
-
-                    closure()
-                }
-            }
         }
     }
 
@@ -614,6 +565,59 @@ class ZEditingManager: NSObject {
         }
     }
 
+
+    func createBookmark() {
+        let zone = gSelectionManager.firstGrab
+
+        if zone.storageMode != .favorites, !zone.isRoot {
+            let closure = {
+                var bookmark: Zone? = nil
+
+                self.invokeWithMode(.mine) {
+                    bookmark = gFavoritesManager.createBookmark(for: zone, isFavorite: false)
+                }
+
+                bookmark?.grab()
+                self.signalFor(nil, regarding: .redraw)
+                gOperationsManager.sync {}
+            }
+
+            if gHere != zone {
+                closure()
+            } else {
+                self.revealParentAndSiblingsOf(zone) {
+                    gHere = zone.parentZone ?? gHere
+
+                    closure()
+                }
+            }
+        }
+    }
+    
+
+    // MARK:- copy and paste
+    // MARK:-
+    
+
+    func paste() { pasteInto(gSelectionManager.firstGrab) }
+
+
+    func copyToPaste() {
+        let grabs = gSelectionManager.currentGrabs
+
+        gSelectionManager.clearPaste()
+
+        for zone in grabs {
+            zone.needChildren()
+        }
+
+        gOperationsManager.children(.deep) {
+            for zone in grabs {
+                self.addToPasteCopyOf(zone)
+            }
+        }
+    }
+    
 
     func addToPasteCopyOf(_ zone: Zone) {
         let        copy = zone.deepCopy()

@@ -48,8 +48,8 @@ class ZRecursionLogic: NSObject {
             switch type! {
             case .expand:  if expand { iChild.needChildren() }
             case .restore: if reveal { iChild.needChildren() }
-            case .update:  if update { iChild.needChildren() }
-            case .deep:                iChild.needChildren()
+            case .update:  if update { iChild.needProgeny() }
+            case .deep:                iChild.needProgeny()
             }
         } else if iChild.canRevealChildren, let parentRef = iChild.parent, let progenyNeeded = iProgenyNeeded, progenyNeeded.count > 0, progenyNeeded.contains(parentRef) {
             iChild.needProgeny()

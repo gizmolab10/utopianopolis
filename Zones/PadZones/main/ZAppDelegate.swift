@@ -20,19 +20,17 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
     var window: UIWindow?
 
 
+    // MARK:- delegation
+    // MARK:-
+    
+
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         let     type = UIUserNotificationType.badge
         let settings = UIUserNotificationSettings(types: type, categories: nil)
 
         application.registerUserNotificationSettings(settings)
         application.registerForRemoteNotifications()
-        gOperationsManager.startup {
-            self.signalFor(nil, regarding: .redraw)
-
-            gOperationsManager.finishUp {
-                self.signalFor(nil, regarding: .redraw)
-            }
-        }
+        gControllersManager.startupDataAndUI()
 
         return true
     }

@@ -45,8 +45,8 @@ class Zone : ZRecord {
     var              widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var          isBookmark:         Bool { return crossLink != nil }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
-    var   canRevealChildren:         Bool { return hasChildren &&  showChildren }
-    var    indicateChildren:         Bool { return hasChildren && !showChildren }
+    var   canRevealChildren:         Bool { return hasChildren &&   showChildren }
+    var    indicateChildren:         Bool { return hasChildren && (!showChildren || count == 0) }
     var  hasMissingChildren:         Bool { return count == 0 || count != fetchableCount }
     var       hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var       hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
@@ -539,9 +539,8 @@ class Zone : ZRecord {
         needProgeny()
         gOperationsManager.children(recursing) {
             gRoot?.safeProgenyCountUpdate(recursing, [])
-            gOperationsManager.save {
-                self.signalFor(nil, regarding: .redraw)
-            }
+            self.signalFor(nil, regarding: .redraw)
+            gOperationsManager.save {}
         }
     }
 
@@ -635,13 +634,9 @@ class Zone : ZRecord {
 
 
     func updateCount() {
-        if  storageMode   != .favorites {
-
-            if count != fetchableCount {
-                var prefix = "fetchable: \(count)"
-
-                prefix.appendSpacesToLength(gLogTabStop - 1)
-                report("\(prefix) \(zoneName ?? "---")")
+        if  storageMode != .favorites {
+            if  count   != fetchableCount {
+                columnarReport("fetchable: \(count)", zoneName ?? "---")
             }
 
             hasChildren    =  count > 0

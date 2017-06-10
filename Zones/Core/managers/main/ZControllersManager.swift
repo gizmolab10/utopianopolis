@@ -76,6 +76,24 @@ class ZControllersManager: NSObject {
     }
 
 
+    // MARK:- startup
+    // MARK:-
+    
+
+    func startupDataAndUI() {
+        signalFor(nil, regarding: .startup)
+        displayActivity(true)
+        gOperationsManager.startup {
+            self.displayActivity(false)
+            gHere.grab()
+            self.signalFor(nil, regarding: .redraw)
+            gOperationsManager.finishUp {
+                self.signalFor(nil, regarding: .redraw)
+            }
+        }
+    }
+    
+
     // MARK:- signals
     // MARK:-
 

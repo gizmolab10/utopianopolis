@@ -66,7 +66,7 @@ class ZOperationsManager: NSObject {
 
         setupAndRun(operationIDs) { onCompletion() }
     }
-    
+
 
     func travel(_ onCompletion: @escaping Closure) {
         var operationIDs: [ZOperationID] = []
@@ -91,7 +91,7 @@ class ZOperationsManager: NSObject {
     func children(_ recursing: ZRecursionType, _ iRecursiveGoal: Int? = nil, onCompletion: @escaping Closure) {
         let logic = ZRecursionLogic(recursing, iRecursiveGoal)
 
-        setupAndRun([.children], optional: logic) { onCompletion() }
+        setupAndRun([.children], logic: logic) { onCompletion() }
     }
 
 
@@ -111,7 +111,7 @@ class ZOperationsManager: NSObject {
     }
 
 
-    private func setupAndRun(_ operationIDs: [ZOperationID], optional: ZRecursionLogic? = nil, onCompletion: @escaping Closure) {
+    private func setupAndRun(_ operationIDs: [ZOperationID], logic: ZRecursionLogic? = nil, onCompletion: @escaping Closure) {
         if let prior = onReady {
             onReady = {
                 self.dispatchAsyncInForeground { // prevent recursion pile-up on stack
@@ -138,7 +138,7 @@ class ZOperationsManager: NSObject {
                         if index >= modes.count {
                             self.finishOperation(for: identifier)
                         } else {
-                            self.invoke(identifier, mode: modes[index], optional) {
+                            self.invoke(identifier, mode: modes[index], logic) {
                                 closure?(index + 1)         // recurse
                             }
                         }
@@ -166,7 +166,7 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func invoke(_ identifier: ZOperationID, mode: ZStorageMode, _ optional: ZRecursionLogic? = nil, _ onCompletion: Closure?) {
+    func invoke(_ identifier: ZOperationID, mode: ZStorageMode, _ logic: ZRecursionLogic? = nil, _ onCompletion: Closure?) {
         if identifier == .ready {
             becomeReady()
         } else if mode != .favorites || identifier == .here {
@@ -191,27 +191,25 @@ class ZOperationsManager: NSObject {
             report(0)
 
             switch identifier {
-            case .file:           gFileManager.restore (from:        mode   ); complete(0)
-            case .here:           gRemoteStoresManager.establishHere(mode,     complete)
-            case .root:           gRemoteStoresManager.establishRoot(mode,     complete)
-            default:
-                let cloudManager = gRemoteStoresManager.cloudManagerFor(mode)
-
+            case .file:                 gFileManager.restore (from:          mode); complete(0)
+            case .here:                 gRemoteStoresManager.establishHere  (mode,  complete)
+            case .root:                 gRemoteStoresManager.establishRoot  (mode,  complete)
+            default: let cloudManager = gRemoteStoresManager.cloudManagerFor(mode)
                 switch identifier {
-                case .cloud:       cloudManager.fetchCloudZones     (          complete)
-                case .favorites:   cloudManager.fetchFavorites      (          complete)
-                case .manifest:    cloudManager.fetchManifest       (          complete)
-                case .children:    cloudManager.fetchChildren       (optional, complete)
-                case .parent:      cloudManager.fetchParents        (          complete)
-                case .unsubscribe: cloudManager.unsubscribe         (          complete)
-                case .toRoot:      cloudManager.fetchToRoot         (          complete)
-                case .undelete:    cloudManager.undeleteAll         (          complete)
-                case .emptyTrash:  cloudManager.emptyTrash          (          complete)
-                case .subscribe:   cloudManager.subscribe           (          complete)
-                case .create:      cloudManager.create              (          complete)
-                case .fetch:       cloudManager.fetch               (          complete)
-                case .merge:       cloudManager.merge               (          complete)
-                case .flush:       cloudManager.flush               (          complete)
+                case .cloud:       cloudManager.fetchCloudZones             (       complete)
+                case .favorites:   cloudManager.fetchFavorites              (       complete)
+                case .manifest:    cloudManager.fetchManifest               (       complete)
+                case .children:    cloudManager.fetchChildren               (logic, complete)
+                case .parent:      cloudManager.fetchParents                (       complete)
+                case .unsubscribe: cloudManager.unsubscribe                 (       complete)
+                case .toRoot:      cloudManager.fetchToRoot                 (       complete)
+                case .undelete:    cloudManager.undeleteAll                 (       complete)
+                case .emptyTrash:  cloudManager.emptyTrash                  (       complete)
+                case .subscribe:   cloudManager.subscribe                   (       complete)
+                case .create:      cloudManager.create                      (       complete)
+                case .fetch:       cloudManager.fetch                       (       complete)
+                case .merge:       cloudManager.merge                       (       complete)
+                case .flush:       cloudManager.flush                       (       complete)
                 default: break
                 }
             }

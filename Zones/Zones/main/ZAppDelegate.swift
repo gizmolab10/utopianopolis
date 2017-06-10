@@ -7,13 +7,8 @@
 //
 
 
+import Cocoa
 import CloudKit
-
-#if os(OSX)
-    import Cocoa
-#elseif os(iOS)
-    import UIKit
-#endif
 
 
 @NSApplicationMain
@@ -34,19 +29,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
             needsSetup = false
 
             zapplication.registerForRemoteNotifications(matching: .badge)
-            signalFor(nil, regarding: .startup)
-            gControllersManager.displayActivity(true)
-            gOperationsManager.startup {
-                gHere.grab()
-
-                gControllersManager.displayActivity(false)
-                self.signalFor(nil, regarding: .redraw)
-
-                gOperationsManager.finishUp {
-                    self.signalFor(nil, regarding: .redraw)
-                }
-
-            }
+            gControllersManager.startupDataAndUI()
         }
     }
 
