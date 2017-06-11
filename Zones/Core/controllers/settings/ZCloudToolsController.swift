@@ -35,8 +35,9 @@ class ZCloudToolsController: ZGenericTableController {
 
     @IBAction func restoreZoneButtonAction(_ button: NSButton) {
         // similar to gEditingManager.moveInto
-        if  let root = gRoot {
-            let zone = gSelectionManager.firstGrab
+        let zone = gSelectionManager.firstGrab
+
+        if  let root = gRoot, !zone.isRoot {
             gHere    = root
 
             root.maybeNeedChildren()

@@ -538,7 +538,7 @@ class Zone : ZRecord {
     func progenyCountUpdate(_ recursing: ZRecursionType) {
         needProgeny()
         gOperationsManager.children(recursing) {
-            gRoot?.safeProgenyCountUpdate(recursing, [])
+            self.safeProgenyCountUpdate(recursing, [])
             self.signalFor(nil, regarding: .redraw)
             gOperationsManager.save {}
         }

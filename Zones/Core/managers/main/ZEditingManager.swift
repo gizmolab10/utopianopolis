@@ -677,10 +677,10 @@ class ZEditingManager: NSObject {
                 self.redrawAndSyncAndRedraw()
             }
 
-            if !candidate.hasChildren || candidate.count > 0 {
+            if  candidate.count > 0 && candidate.count == candidate.fetchableCount {
                 preserve()
             } else {
-                candidate.needChildren()
+                candidate.needProgeny()
                 gOperationsManager.children(.deep) {
                     preserve()
                 }
@@ -1146,12 +1146,22 @@ class ZEditingManager: NSObject {
         let       isHere = zone == gHere
         if  let    there = zone.parentZone, !isHere, let index = zone.siblingIndex {
             var newIndex = index + (iMoveUp ? -1 : 1)
-            
-            if extreme {
-                newIndex = iMoveUp ? 0 : there.count - 1
+            let indexMax = there.count
+
+            ///////////////////////////////////
+            // vertical wrap around behavior //
+            ///////////////////////////////////
+
+            if         iMoveUp && newIndex < 0 {
+                newIndex = indexMax - 1
+            } else if !iMoveUp && newIndex >= indexMax {
+                newIndex = 0
+            } else if extreme {
+                newIndex = iMoveUp ? 0 : indexMax - 1
             }
-            
-            if newIndex >= 0 && newIndex < there.count {
+
+
+            if newIndex >= 0 && newIndex < indexMax {
                 if  zone == gHere {
                     gHere = there
                 }

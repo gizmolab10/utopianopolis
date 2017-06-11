@@ -491,10 +491,10 @@ class ZCloudManager: ZRecordsManager {
                 } else {
                     let child = self.zoneForRecord(iRecord!)
 
-                    if !child.isDeleted {
+                    if !child.isDeleted && !child.isRoot {
                         logic.propagateNeeds(to: child, progenyNeeded)
 
-                        if let parent = child.parentZone {
+                        if let parent  = child.parentZone {
                             if parent != child && !parent.children.contains(child) {
                                 parent.addChild(child)
 
