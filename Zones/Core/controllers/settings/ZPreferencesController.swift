@@ -34,12 +34,12 @@ enum ZColorBoxKind: String {
 class ZPreferencesController: ZGenericController {
 
 
+    @IBOutlet var        countsModeControl: ZSegmentedControl?
     @IBOutlet var graphAlteringModeControl: ZSegmentedControl?
     @IBOutlet var             zoneColorBox: ZColorWell?
     @IBOutlet var         bookmarkColorBox: ZColorWell?
     @IBOutlet var       backgroundColorBox: ZColorWell?
     @IBOutlet var      dragTargetsColorBox: ZColorWell?
-    @IBOutlet var       showCountersButton: ZButton?
     @IBOutlet var        horizontalSpacing: ZSlider?
     @IBOutlet var          verticalSpacing: ZSlider?
     @IBOutlet var                thickness: ZSlider?
@@ -50,11 +50,11 @@ class ZPreferencesController: ZGenericController {
 
     override func awakeFromNib() {
         graphAlteringModeControl?.selectedSegment = gGraphAlteringMode.rawValue
+        countsModeControl?       .selectedSegment = gCountsMode.rawValue
         view              .zlayer.backgroundColor = CGColor.clear
         thickness?                   .doubleValue = gLineThickness
         verticalSpacing?             .doubleValue = Double(gGenericOffset.height)
         horizontalSpacing?           .doubleValue = Double(gGenericOffset.width)
-        showCountersButton?                .state = gShowCounterDecorations ? 1 : 0
         dragTargetsColorBox?               .color = gDragTargetsColor
         backgroundColorBox?                .color = gBackgroundColor
         bookmarkColorBox?                  .color = gBookmarkColor
@@ -64,12 +64,6 @@ class ZPreferencesController: ZGenericController {
 
     // MARK:- actions
     // MARK:-
-
-    @IBAction func buttonAction(_ iButton: ZButton) {
-        gShowCounterDecorations = iButton.state == 1 ? true : false
-
-        signalFor(nil, regarding: .redraw)
-    }
 
 
     @IBAction func sliderAction(_ iSlider: ZSlider) {
@@ -100,6 +94,12 @@ class ZPreferencesController: ZGenericController {
 
             signalFor(nil, regarding: .redraw)
         }
+    }
+
+
+    @IBAction func countsModeAction(_ control: ZSegmentedControl) {
+        gCountsMode = ZCountsMode(rawValue: control.selectedSegment)!
+        signalFor(nil, regarding: .data)
     }
 
 

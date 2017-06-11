@@ -30,16 +30,19 @@ enum ZOperationID: Int {
     case parent
     case merge
     case ready
+    case none
 }
 
 
 class ZOperationsManager: NSObject {
 
 
-    var    onReady: Closure?
-    var      debug = false
-    var waitingOps = [ZOperationID : BlockOperation] ()
-    let      queue = OperationQueue()
+    var     onReady:        Closure?
+    var currentMode:   ZStorageMode? = nil
+    var   currentOp:   ZOperationID = .none
+    var  waitingOps = [ZOperationID : BlockOperation] ()
+    var       debug = false
+    let       queue = OperationQueue()
 
 
     // MARK:- API
@@ -126,19 +129,22 @@ class ZOperationsManager: NSObject {
             let         saved = gStorageMode
             let        isMine = [.mine].contains(saved)
 
-            for identifier in identifiers {
+            for operationID in identifiers {
                 let                     operation = BlockOperation {
+                    self               .currentOp = operationID // if hung, it happened inside this op
                     var  closure: IntegerClosure? = nil     // declare closure first, so compiler will let it recurse
-                    let             skipFavorites = identifier != .here
-                    let                      full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .root, .here].contains(identifier)
-                    let forCurrentStorageModeOnly = [.file, .ready, .parent, .children]                                             .contains(identifier)
+                    let             skipFavorites = operationID != .here
+                    let                      full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .root, .here].contains(operationID)
+                    let forCurrentStorageModeOnly = [.file, .ready, .parent, .children]                                             .contains(operationID)
                     let     modes: [ZStorageMode] = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : skipFavorites ? [.mine, .everyone] : [.mine, .everyone, .favorites]
 
                     closure = { index in
                         if index >= modes.count {
-                            self.finishOperation(for: identifier)
+                            self.finishOperation(for: operationID)
                         } else {
-                            self.invoke(identifier, mode: modes[index], logic) {
+                            let mode = modes[index]
+                            self.currentMode = mode         // if hung, it happened in this mode
+                            self.invoke(operationID, mode, logic) {
                                 closure?(index + 1)         // recurse
                             }
                         }
@@ -147,7 +153,7 @@ class ZOperationsManager: NSObject {
                     closure?(0)
                 }
 
-                waitingOps[identifier] = operation
+                waitingOps[operationID] = operation
                 
                 addOperation(operation)
             }
@@ -166,7 +172,7 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func invoke(_ identifier: ZOperationID, mode: ZStorageMode, _ logic: ZRecursionLogic? = nil, _ onCompletion: Closure?) {
+    func invoke(_ identifier: ZOperationID, _ mode: ZStorageMode, _ logic: ZRecursionLogic? = nil, _ onCompletion: Closure?) {
         if identifier == .ready {
             becomeReady()
         } else if mode != .favorites || identifier == .here {
@@ -222,9 +228,11 @@ class ZOperationsManager: NSObject {
 
 
     func becomeReady() {
+        currentMode     = nil
+        currentOp       = .ready
+
         if  let closure = onReady {
             onReady     = nil
-
             dispatchAsyncInForeground {
                 closure()
             }

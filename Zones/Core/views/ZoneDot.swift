@@ -66,20 +66,20 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawTinyDots(_ dirtyRect: CGRect) {
-        if  let          count = widgetZone?.fetchableCount, count > 0, innerDot != nil, isToggle, !widgetZone!.showChildren  {
+        if  let          count = widgetZone?.fetchableCount, count > 0, innerDot != nil, isToggle, gCountsMode == .dots, (!widgetZone!.showChildren || widgetZone!.isBookmark) {
+            let     startAngle = Double.pi
+            let incrementAngle = Double.pi / Double(count)
             let         center = innerDot!.frame.center
             let      dotRadius = gDotHeight / 2.0
-            let     tinyRadius =  dotRadius / 4.0
+            let     tinyRadius =  dotRadius / 5.0
             let   tinyDiameter = tinyRadius * 2.0
-            let     startAngle =  Double.pi
-            let incrementAngle =  Double.pi / Double(count)
-            let      translate = CGFloat(dotRadius + tinyDiameter)
+            let    orbitRadius = CGFloat(dotRadius + tinyRadius * 1.5)
 
             for index in 1 ... count {
                 let  increment = Double(index * 2 - 1)
                 let      angle = startAngle - incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
-                let          x = center.x + translate * CGFloat(cos(angle)) - CGFloat(tinyRadius)
-                let          y = center.y + translate * CGFloat(sin(angle)) - CGFloat(tinyRadius)
+                let          x = center.x + orbitRadius * CGFloat(cos(angle)) - CGFloat(tinyRadius)
+                let          y = center.y + orbitRadius * CGFloat(sin(angle)) - CGFloat(tinyRadius)
                 let       rect = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
                 let       path = ZBezierPath(ovalIn: rect)
                 let asBookmark = widgetZone != nil && (widgetZone!.isBookmark || widgetZone!.isRootOfFavorites)

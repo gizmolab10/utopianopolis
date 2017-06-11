@@ -636,9 +636,9 @@ class ZEditingManager: NSObject {
         prepareUndoForDelete()
 
         let candidate = gSelectionManager.rootMostMoveable
-        let     zones = gSelectionManager.currentGrabs
+        let     grabs = gSelectionManager.currentGrabs
         let    action = {
-            let last = self.deleteZones(zones, preserveChildren: preserveChildren, in: nil)
+            let last = self.deleteZones(grabs, preserveChildren: preserveChildren, in: nil)
 
             last?.grab()
         }
@@ -652,7 +652,7 @@ class ZEditingManager: NSObject {
             let     preserve = {
                 var children = [Zone]()
 
-                for zone in zones {
+                for zone in grabs {
                     for child in zone.children {
                         let copy = child.deepCopy()
 
@@ -892,7 +892,7 @@ class ZEditingManager: NSObject {
             travelThroughBookmark(zone)
         } else if zone.count > 0 {
             grabChild(of: zone)
-        } else if zone.hasChildren {
+        } else {
             zone.needChildren()
 
             gOperationsManager.children(.restore) {

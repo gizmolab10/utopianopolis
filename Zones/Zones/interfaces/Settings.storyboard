@@ -538,7 +538,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EaL-XF-QhW" userLabel="Shortcuts">
-                                                <rect key="frame" x="0.0" y="13" width="226" height="17"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="226" height="17"/>
                                                 <connections>
                                                     <segue destination="JfR-Ay-CUa" kind="embed" id="097-RW-51X"/>
                                                 </connections>
@@ -609,11 +609,11 @@
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Zones" sceneMemberID="viewController">
                     <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="415"/>
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="329"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box borderType="line" title="line thickness" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
-                                <rect key="frame" x="5" y="366" width="216" height="41"/>
+                                <rect key="frame" x="5" y="280" width="216" height="41"/>
                                 <view key="contentView" id="npe-oq-zV9">
                                     <rect key="frame" x="1" y="1" width="214" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -635,7 +635,7 @@
                                 </view>
                             </box>
                             <box borderType="line" title="vertical spacing" translatesAutoresizingMaskIntoConstraints="NO" id="QMR-K4-bC6" userLabel="vertical spacing">
-                                <rect key="frame" x="5" y="327" width="216" height="41"/>
+                                <rect key="frame" x="5" y="241" width="216" height="41"/>
                                 <view key="contentView" id="vWX-cG-juA">
                                     <rect key="frame" x="1" y="1" width="214" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -657,7 +657,7 @@
                                 </view>
                             </box>
                             <box borderType="line" title="horizontal spacing" translatesAutoresizingMaskIntoConstraints="NO" id="hoN-dH-smR" userLabel="horizontal spacing">
-                                <rect key="frame" x="5" y="288" width="216" height="41"/>
+                                <rect key="frame" x="5" y="202" width="216" height="41"/>
                                 <view key="contentView" id="fXT-pM-zio">
                                     <rect key="frame" x="1" y="1" width="214" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -678,8 +678,74 @@
                                     </constraints>
                                 </view>
                             </box>
+                            <box autoresizesSubviews="NO" borderType="line" title="counts" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="children counts">
+                                <rect key="frame" x="5" y="168" width="216" height="36"/>
+                                <view key="contentView" id="5gJ-xh-VlV">
+                                    <rect key="frame" x="1" y="1" width="214" height="20"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hRI-S8-ys7">
+                                            <rect key="frame" x="1" y="1" width="213" height="22"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="20" id="IcD-O8-4He"/>
+                                            </constraints>
+                                            <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="AOk-RI-tLe">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <segments>
+                                                    <segment label="hidden" width="54"/>
+                                                    <segment label="dots" width="47" selected="YES" tag="1"/>
+                                                    <segment label="children" width="68"/>
+                                                    <segment label="all" width="35"/>
+                                                </segments>
+                                            </segmentedCell>
+                                            <connections>
+                                                <action selector="countsModeAction:" target="Naq-se-Exq" id="nD5-Z6-Vp8"/>
+                                            </connections>
+                                        </segmentedControl>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="hRI-S8-ys7" firstAttribute="centerX" secondItem="5gJ-xh-VlV" secondAttribute="centerX" id="G63-aA-Xl2"/>
+                                        <constraint firstAttribute="centerY" secondItem="hRI-S8-ys7" secondAttribute="centerY" constant="3" id="h83-pb-w7Y"/>
+                                    </constraints>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="32" id="Oqg-X2-PkA"/>
+                                </constraints>
+                            </box>
+                            <box autoresizesSubviews="NO" borderType="line" title="new zones insert" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
+                                <rect key="frame" x="5" y="134" width="216" height="36"/>
+                                <view key="contentView" id="qnC-vV-W8u">
+                                    <rect key="frame" x="1" y="1" width="214" height="20"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i0m-vf-1Of">
+                                            <rect key="frame" x="1" y="1" width="213" height="22"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="20" id="sur-0v-evK"/>
+                                            </constraints>
+                                            <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="spU-aj-Ylf">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <segments>
+                                                    <segment label="above" width="103" selected="YES"/>
+                                                    <segment label="below" width="103" tag="1"/>
+                                                </segments>
+                                            </segmentedCell>
+                                            <connections>
+                                                <action selector="graphAlteringModeAction:" target="Naq-se-Exq" id="8cr-Ru-eOh"/>
+                                            </connections>
+                                        </segmentedControl>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="centerY" secondItem="i0m-vf-1Of" secondAttribute="centerY" constant="3" id="0xU-ZC-tzd"/>
+                                        <constraint firstItem="i0m-vf-1Of" firstAttribute="centerX" secondItem="qnC-vV-W8u" secondAttribute="centerX" id="tbk-0S-QQy"/>
+                                    </constraints>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="32" id="9eg-3P-j9J"/>
+                                </constraints>
+                            </box>
                             <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="mS1-t0-150">
-                                <rect key="frame" x="5" y="158" width="216" height="132"/>
+                                <rect key="frame" x="5" y="4" width="216" height="132"/>
                                 <view key="contentView" id="rb6-oU-fw8">
                                     <rect key="frame" x="1" y="1" width="214" height="116"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -796,99 +862,36 @@
                                     </constraints>
                                 </view>
                             </box>
-                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i0m-vf-1Of">
-                                <rect key="frame" x="34" y="96" width="158" height="20"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="18" id="sur-0v-evK"/>
-                                </constraints>
-                                <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="spU-aj-Ylf">
-                                    <font key="font" metaFont="smallSystem"/>
-                                    <segments>
-                                        <segment label="Task Lists" selected="YES"/>
-                                        <segment label="Composition" tag="1"/>
-                                    </segments>
-                                </segmentedCell>
-                                <connections>
-                                    <action selector="graphAlteringModeAction:" target="Naq-se-Exq" id="8cr-Ru-eOh"/>
-                                </connections>
-                            </segmentedControl>
-                            <box autoresizesSubviews="NO" borderType="line" title="meta data" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT">
-                                <rect key="frame" x="5" y="120" width="216" height="40"/>
-                                <view key="contentView" id="5gJ-xh-VlV">
-                                    <rect key="frame" x="1" y="1" width="214" height="24"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <button translatesAutoresizingMaskIntoConstraints="NO" id="bwa-u8-WwC">
-                                            <rect key="frame" x="6" y="2" width="202" height="24"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="WcP-J9-Wc8"/>
-                                            </constraints>
-                                            <buttonCell key="cell" type="check" title="counts" bezelStyle="regularSquare" imagePosition="right" alignment="center" state="on" inset="2" id="VMp-WN-8Y6">
-                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                <font key="font" metaFont="system"/>
-                                            </buttonCell>
-                                            <connections>
-                                                <action selector="buttonAction:" target="Naq-se-Exq" id="RAp-ml-Q06"/>
-                                            </connections>
-                                        </button>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstAttribute="trailing" secondItem="bwa-u8-WwC" secondAttribute="trailing" constant="8" id="GpD-Pl-HDX"/>
-                                        <constraint firstItem="bwa-u8-WwC" firstAttribute="leading" secondItem="5gJ-xh-VlV" secondAttribute="leading" constant="8" id="Sjk-CO-3uq"/>
-                                        <constraint firstAttribute="centerY" secondItem="bwa-u8-WwC" secondAttribute="centerY" constant="2" id="aSS-Dm-K5u"/>
-                                    </constraints>
-                                </view>
-                                <constraints>
-                                    <constraint firstAttribute="height" secondItem="bwa-u8-WwC" secondAttribute="height" constant="16" id="Vjt-J0-Nyr"/>
-                                </constraints>
-                            </box>
-                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="G3k-dZ-ajm">
-                                <rect key="frame" x="6" y="0.0" width="214" height="90"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="90" id="ewb-Rk-38o"/>
-                                </constraints>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="D5g-9u-Kj0">
-                                    <font key="font" metaFont="cellTitle"/>
-                                    <string key="title">New + arriving children + sibling zones build ...
-
-   • upward for TASK LISTS
-   • downward for COMPOSITIONS</string>
-                                    <color key="textColor" name="selectedMenuItemColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="i0m-vf-1Of" firstAttribute="centerX" secondItem="Ngb-Ew-NGG" secondAttribute="centerX" id="4p1-Di-VZP"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="9a4-Qq-RLi"/>
-                            <constraint firstAttribute="trailing" secondItem="G3k-dZ-ajm" secondAttribute="trailing" constant="8" id="Arx-wR-61m"/>
+                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="hoN-dH-smR" secondAttribute="bottom" constant="2" id="D1l-No-A8x"/>
+                            <constraint firstItem="anJ-MD-zAh" firstAttribute="top" secondItem="ay3-pv-TvT" secondAttribute="bottom" constant="2" id="FMv-Ed-0b3"/>
                             <constraint firstItem="QMR-K4-bC6" firstAttribute="top" secondItem="1dG-7h-ePD" secondAttribute="bottom" constant="2" id="Ior-2h-b5V"/>
+                            <constraint firstAttribute="bottom" secondItem="mS1-t0-150" secondAttribute="bottom" constant="8" id="K2t-gL-v3V"/>
                             <constraint firstItem="ay3-pv-TvT" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="L8F-B3-k88"/>
+                            <constraint firstItem="anJ-MD-zAh" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="Lcr-4J-M0E"/>
                             <constraint firstAttribute="trailing" secondItem="QMR-K4-bC6" secondAttribute="trailing" constant="8" id="QZ8-xe-YwK"/>
-                            <constraint firstItem="i0m-vf-1Of" firstAttribute="top" secondItem="ay3-pv-TvT" secondAttribute="bottom" constant="8" id="Shi-vW-S8A"/>
-                            <constraint firstAttribute="bottom" secondItem="G3k-dZ-ajm" secondAttribute="bottom" id="TOX-3e-Uvc"/>
                             <constraint firstItem="QMR-K4-bC6" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="U2J-wt-iaK"/>
-                            <constraint firstItem="G3k-dZ-ajm" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="ZjN-qJ-NYT"/>
                             <constraint firstAttribute="trailing" secondItem="1dG-7h-ePD" secondAttribute="trailing" constant="8" id="aFt-c9-QQn"/>
                             <constraint firstAttribute="trailing" secondItem="ay3-pv-TvT" secondAttribute="trailing" constant="8" id="dfi-pb-wOI"/>
                             <constraint firstItem="hoN-dH-smR" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="g6L-Yp-gum"/>
-                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="mS1-t0-150" secondAttribute="bottom" constant="2" id="i1p-pz-LBF"/>
                             <constraint firstAttribute="trailing" secondItem="mS1-t0-150" secondAttribute="trailing" constant="8" id="m1Q-hz-0Mf"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="top" secondItem="Ngb-Ew-NGG" secondAttribute="top" constant="8" id="oR6-58-oMM"/>
                             <constraint firstAttribute="trailing" secondItem="hoN-dH-smR" secondAttribute="trailing" constant="8" id="old-gK-vf2"/>
-                            <constraint firstItem="mS1-t0-150" firstAttribute="top" secondItem="hoN-dH-smR" secondAttribute="bottom" constant="2" id="tGH-8A-uFs"/>
                             <constraint firstItem="mS1-t0-150" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="xTu-eG-2S7"/>
                             <constraint firstItem="hoN-dH-smR" firstAttribute="top" secondItem="QMR-K4-bC6" secondAttribute="bottom" constant="2" id="y7q-Xx-blv"/>
-                            <constraint firstItem="G3k-dZ-ajm" firstAttribute="top" secondItem="i0m-vf-1Of" secondAttribute="bottom" constant="8" id="zPV-uq-lbO"/>
+                            <constraint firstAttribute="trailing" secondItem="anJ-MD-zAh" secondAttribute="trailing" constant="8" id="yIM-eQ-RB8"/>
+                            <constraint firstItem="mS1-t0-150" firstAttribute="top" secondItem="anJ-MD-zAh" secondAttribute="bottom" constant="2" id="zg9-qC-KW9"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="backgroundColorBox" destination="wsy-Dq-H7s" id="lQ4-nS-6Bk"/>
                         <outlet property="bookmarkColorBox" destination="PFW-VA-KPh" id="DxS-IW-xZa"/>
+                        <outlet property="countsModeControl" destination="hRI-S8-ys7" id="7ig-ZZ-v8Z"/>
                         <outlet property="dragTargetsColorBox" destination="j0f-8D-Ds5" id="FRZ-SF-WJ1"/>
                         <outlet property="graphAlteringModeControl" destination="i0m-vf-1Of" id="jBO-mu-sni"/>
                         <outlet property="horizontalSpacing" destination="OmD-gF-PvR" id="DN6-Os-oDZ"/>
-                        <outlet property="showCountersButton" destination="bwa-u8-WwC" id="Nf7-np-uzF"/>
                         <outlet property="thickness" destination="gh7-LP-7IV" id="ox5-Ei-ZE6"/>
                         <outlet property="verticalSpacing" destination="X28-Kf-ltl" id="bZA-x3-VXU"/>
                         <outlet property="zoneColorBox" destination="UMY-8c-tep" id="vq3-82-A2w"/>

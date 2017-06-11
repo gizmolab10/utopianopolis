@@ -35,6 +35,15 @@ enum ZWorkMode: Int {
 }
 
 
+enum ZCountsMode: Int {
+    case none
+    case dots
+    case fetchable
+    case progeny
+}
+
+
+
 enum ZStorageMode: String {
     case favorites = "favorites"
     case everyone  = "everyone"
@@ -108,22 +117,23 @@ var gGenericOffset: CGSize {
 }
 
 
-var gShowCounterDecorations: Bool {
+var gCountsMode: ZCountsMode {
     get {
-        var value: Bool? = UserDefaults.standard.object(forKey: showCounterDecorationsKey) as? Bool
+        var  mode  = ZCountsMode.none
+        let value  = UserDefaults.standard.object(forKey: countsModeKey) as? Int
 
-        if value == nil {
-            value = false
-
-            UserDefaults.standard.set(value, forKey:showCounterDecorationsKey)
+        if  value != nil {
+            mode   = ZCountsMode(rawValue: value!)!
+        } else {
+            UserDefaults.standard.set(mode.rawValue, forKey:countsModeKey)
             UserDefaults.standard.synchronize()
         }
 
-        return value!
+        return mode
     }
 
     set {
-        UserDefaults.standard.set(newValue, forKey:showCounterDecorationsKey)
+        UserDefaults.standard.set(newValue.rawValue, forKey:countsModeKey)
         UserDefaults.standard.synchronize()
     }
 }
@@ -229,16 +239,16 @@ var gSettingsViewIDs: ZSettingsViewID {
 // MARK:-
 
 
-let              zoneColorKey = "zone color"
-let          bookmarkColorKey = "bookmark color"
-let        backgroundColorKey = "background color"
-let       dragTargetsColorKey = "drag targets color"
-let      graphAlteringModeKey = "graph altering mode"
-let            storageModeKey = "current storage mode"
-let          settingsStateKey = "current settings state"
-let          lineThicknessKey = "line thickness"
-let          genericOffsetKey = "generick offset"
-let showCounterDecorationsKey = "show counter decorations"
+let         zoneColorKey = "zone color"
+let     bookmarkColorKey = "bookmark color"
+let   backgroundColorKey = "background color"
+let  dragTargetsColorKey = "drag targets color"
+let graphAlteringModeKey = "graph altering mode"
+let       storageModeKey = "current storage mode"
+let     settingsStateKey = "current settings state"
+let     lineThicknessKey = "line thickness"
+let     genericOffsetKey = "generick offset"
+let        countsModeKey = "counts mode"
 
 
 func getColorForKey(_ key: String, defaultColor: ZColor) -> ZColor {

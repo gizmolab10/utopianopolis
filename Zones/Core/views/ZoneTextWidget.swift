@@ -137,12 +137,19 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func updateText() {
-        if  let   zone = widget.widgetZone {
-            let   name = zone.zoneName ?? "empty"
-            let  count = zone.fetchableCount
-            let   hide = !gShowCounterDecorations || isTextEditing || (count < 1) || zone.showChildren
-            let suffix = hide ? "" : "  (\(count))"
-            text       = "\(name)\(suffix)"
+        if  let  zone = widget.widgetZone {
+            text      = zone.zoneName ?? "empty"
+            var count = 0
+
+            switch gCountsMode {
+            case .fetchable: count = zone.fetchableCount
+            case .progeny:   count = zone.progenyCount - 1
+            default:         return
+            }
+
+            if (count > 0) && !isTextEditing && (!zone.showChildren || (gCountsMode == .progeny)) {
+                text  = text?.appending("  (\(count))")
+            }
         }
     }
 

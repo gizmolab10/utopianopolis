@@ -177,8 +177,12 @@ class Zone : ZRecord {
         }
 
         set {
-            if newValue != fetchableCount {
+            if newValue != fetchableCount && !isBookmark {
                 zoneCount = NSNumber(value: newValue)
+            }
+
+            for bookmark in gRemoteStoresManager.bookmarksFor(self) {
+                bookmark.zoneCount = zoneCount
             }
         }
     }
@@ -536,6 +540,7 @@ class Zone : ZRecord {
 
 
     func progenyCountUpdate(_ recursing: ZRecursionType) {
+        columnarReport("RECOUNT", zoneName ?? "---")
         needProgeny()
         gOperationsManager.children(recursing) {
             self.safeProgenyCountUpdate(recursing, [])
@@ -555,7 +560,7 @@ class Zone : ZRecord {
             for child in self.children {
                 child.safeProgenyCountUpdate(recursing, visited + [self])
 
-                total += child.progenyCount
+                total += child.isBookmark ? 1 : child.progenyCount
 
                 if !child.isUpToDate {
                     allTrue = false
@@ -568,6 +573,8 @@ class Zone : ZRecord {
 
             progenyCount = total
             isUpToDate   = allTrue
+
+            columnarReport("\(isUpToDate ? " " : "•") \(fetchableCount),\(progenyCount)", zoneName ?? "---")
         }
     }
 

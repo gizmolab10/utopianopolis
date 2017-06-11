@@ -29,7 +29,7 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     @IBAction func recountButtonAction(_ button: NSButton) {
-        gRoot?.progenyCountUpdate(.deep)
+        gSelectionManager.currentMoveable.progenyCountUpdate(.deep)
     }
 
 
