@@ -23,7 +23,7 @@ typealias ZStorageDict = [String : NSObject]
 extension NSObject {
     var settingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
     var  gEditorController:   ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
-    var        gEditorView:       ZDragDrawView? { return gEditorController?.view                                  as? ZDragDrawView }
+    var        gEditorView:       ZDragDrawView? { return gEditorController?.view                        as? ZDragDrawView }
 
 
     func        note(_ iMessage: Any?)                            { } // report(iMessage) }
@@ -290,6 +290,16 @@ extension ZView {
                 removeGestureRecognizer(recognizer)
             }
         }
+    }
+
+
+    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeyPanGestureRecognizer {
+        let      gesture = ZKeyPanGestureRecognizer(target: target, action: action)
+        gesture.delegate = target
+
+        addGestureRecognizer(gesture)
+
+        return gesture
     }
 
 

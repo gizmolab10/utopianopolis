@@ -49,6 +49,7 @@ public typealias ZTableViewDelegate         = NSTableViewDelegate
 public typealias ZTableViewDataSource       = NSTableViewDataSource
 public typealias ZSearchFieldDelegate       = NSSearchFieldDelegate
 public typealias ZApplicationDelegate       = NSApplicationDelegate
+public typealias ZPanGestureRecognizer      = NSPanGestureRecognizer
 public typealias ZGestureRecognizerState    = NSGestureRecognizerState
 public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 
@@ -172,17 +173,6 @@ extension NSView {
     func setNeedsDisplay() { needsDisplay = true }
     func setNeedsLayout () { needsLayout  = true }
     func insertSubview(_ view: ZView, belowSubview siblingSubview: ZView) { addSubview(view, positioned: .below, relativeTo: siblingSubview) }
-
-
-
-    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> NSGestureRecognizer {
-        let      gesture = NSPanGestureRecognizer(target: target, action: action)
-        gesture.delegate = target
-
-        addGestureRecognizer(gesture)
-
-        return gesture
-    }
 
 
     @discardableResult func createPointGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> NSGestureRecognizer {

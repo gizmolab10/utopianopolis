@@ -28,6 +28,8 @@
 		0C371C761DE26FE10030253D /* ZSelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C6F1DE26FE10030253D /* ZSelectionManager.swift */; };
 		0C371C771DE26FE10030253D /* ZWidgetsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C701DE26FE10030253D /* ZWidgetsManager.swift */; };
 		0C371C781DE26FE10030253D /* ZWidgetsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C701DE26FE10030253D /* ZWidgetsManager.swift */; };
+		0C37BFA41EEE1EE700D1BCF0 /* ZGestureAndKeyRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C37BFA31EEE1EE700D1BCF0 /* ZGestureAndKeyRecognizer.swift */; };
+		0C37BFA51EEE1EE700D1BCF0 /* ZGestureAndKeyRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C37BFA31EEE1EE700D1BCF0 /* ZGestureAndKeyRecognizer.swift */; };
 		0C3A0EE71ED5372C002B3D21 /* ZRecursionLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3A0EE61ED5372C002B3D21 /* ZRecursionLogic.swift */; };
 		0C3A0EE81ED5372C002B3D21 /* ZRecursionLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3A0EE61ED5372C002B3D21 /* ZRecursionLogic.swift */; };
 		0C3A0EEE1ED5381D002B3D21 /* ZAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3A0EE91ED5381D002B3D21 /* ZAction.swift */; };
@@ -242,6 +244,7 @@
 		0C371C6E1DE26FE10030253D /* ZEditingManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEditingManager.swift; sourceTree = "<group>"; };
 		0C371C6F1DE26FE10030253D /* ZSelectionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSelectionManager.swift; sourceTree = "<group>"; };
 		0C371C701DE26FE10030253D /* ZWidgetsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZWidgetsManager.swift; sourceTree = "<group>"; };
+		0C37BFA31EEE1EE700D1BCF0 /* ZGestureAndKeyRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGestureAndKeyRecognizer.swift; sourceTree = "<group>"; };
 		0C3A0EE61ED5372C002B3D21 /* ZRecursionLogic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZRecursionLogic.swift; sourceTree = "<group>"; };
 		0C3A0EE91ED5381D002B3D21 /* ZAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAction.swift; sourceTree = "<group>"; };
 		0C3A0EEA1ED5381D002B3D21 /* ZManifest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZManifest.swift; sourceTree = "<group>"; };
@@ -473,6 +476,7 @@
 				0CBD002B1D9DBC4200797F21 /* ZClosures.swift */,
 				0CC8F84F1DC2CECF00E25985 /* ZExtensions.swift */,
 				0CC8F8501DC2CECF00E25985 /* ZGCD.swift */,
+				0C37BFA31EEE1EE700D1BCF0 /* ZGestureAndKeyRecognizer.swift */,
 				0C19EFA41E3EC07000913B1E /* ZReachability.swift */,
 				0C2456321DE6FB7D00EBCCDD /* ZState.swift */,
 			);
@@ -1076,6 +1080,7 @@
 				0CA1C72B1EA0009F006BA725 /* ZEditorController.swift in Sources */,
 				0CD1EACC1DB725A800A096E4 /* LocationCondition.swift in Sources */,
 				0C3A0EF31ED5381D002B3D21 /* Zone.swift in Sources */,
+				0C37BFA51EEE1EE700D1BCF0 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0CD1EAD41DB725A800A096E4 /* OperationCondition.swift in Sources */,
 				0C371C761DE26FE10030253D /* ZSelectionManager.swift in Sources */,
 				0C3B418D1EE6036200E7F1C9 /* ZTravelManager.swift in Sources */,
@@ -1173,6 +1178,7 @@
 				0CA1C72A1EA0009F006BA725 /* ZEditorController.swift in Sources */,
 				0CD1EACB1DB725A800A096E4 /* LocationCondition.swift in Sources */,
 				0C3A0EF21ED5381D002B3D21 /* Zone.swift in Sources */,
+				0C37BFA41EEE1EE700D1BCF0 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0CD1EAD31DB725A800A096E4 /* OperationCondition.swift in Sources */,
 				0C371C751DE26FE10030253D /* ZSelectionManager.swift in Sources */,
 				0C3B418C1EE6036200E7F1C9 /* ZTravelManager.swift in Sources */,

@@ -21,6 +21,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
     var        hereWidget = ZoneWidget()
     var   rubberbandStart = CGPoint.zero
+    var   rubberbandGrabs = [Zone] ()
     var          dragView:  ZDragDrawView { return view as! ZDragDrawView }
     @IBOutlet var spinner:  ZProgressIndicator?
 
@@ -160,7 +161,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
 
     func rubberbandGesture(_ iGesture: ZGestureRecognizer?) {
-        if  let  gesture = iGesture {
+        if  let  gesture = iGesture as? ZKeyPanGestureRecognizer {
             let location = gesture.location (in: view)
 
             if gesture.state != .began {
@@ -177,9 +178,16 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                 gesture.cancel() // let dot consume the gesture
                 dot.singleEvent(iGesture)
             } else {
-                rubberbandStart = location
+                rubberbandStart  = location
+
+                if let modifiers = gesture.modifiers, modifiers.contains(.shift) {
+                    rubberbandGrabs.append(contentsOf: gSelectionManager.currentGrabs)
+                } else {
+                    rubberbandGrabs.removeAll()
+                }
 
                 gSelectionManager.deselect()
+                gSelectionManager.currentGrabs.append(contentsOf: rubberbandGrabs)
             }
         }
     }
@@ -190,6 +198,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
         if !rect.isEmpty {
             gSelectionManager.deselectGrabs()
+            gSelectionManager.currentGrabs.append(contentsOf: rubberbandGrabs)
 
             for widget in gWidgetsManager.widgets.values {
                 if  let    hitRect = widget.hitRect {
@@ -200,7 +209,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                     }
                 }
             }
-            
+
             hereWidget.setNeedsDisplay()
         }
     }
