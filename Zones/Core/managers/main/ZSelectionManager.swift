@@ -59,6 +59,22 @@ class ZSelectionManager: NSObject {
     }
 
 
+    var lastGrab: Zone {
+        var grabbed: Zone? = nil
+        let count = currentGrabs.count
+
+        if  count > 0 {
+            grabbed = currentGrabs[count - 1]
+        }
+
+        if  grabbed == nil || grabbed!.record == nil {
+            grabbed = gHere
+        }
+
+        return grabbed!
+    }
+
+
     var rootMostMoveable: Zone {
         var candidate = currentMoveable
 
@@ -133,10 +149,16 @@ class ZSelectionManager: NSObject {
     }
     
 
-    func deselectGrabs() {
-        let grabbed = currentGrabs
+    func deselectGrabs(retaining zones: [Zone]? = nil) {
+        var grabbed = currentGrabs
 
         clearGrab()
+
+        if let more = zones {
+            grabbed += more
+
+            currentGrabs.append(contentsOf: more)
+        }
 
         for zone in grabbed {
             if  zone != currentlyEditingZone, let widget = zone.widget {
@@ -147,7 +169,7 @@ class ZSelectionManager: NSObject {
     }
 
 
-    func deselect() {
+    func deselect(retaining zones: [Zone]? = nil) {
         if  let editingZone = currentlyEditingZone {
             if  let  widget = editingZone.widget {
                 widget.setNeedsDisplay()
@@ -158,7 +180,7 @@ class ZSelectionManager: NSObject {
         }
 
         fullResign()
-        deselectGrabs()
+        deselectGrabs(retaining: zones)
     }
 
 
@@ -178,11 +200,20 @@ class ZSelectionManager: NSObject {
     }
 
 
+    func respectOrder(for zones: [Zone]) -> [Zone] {
+        return zones.sorted { (a, b) -> Bool in
+            return a.order < b.order
+        }
+    }
+
+
     func addToGrab(_ iZone: Zone?) {
         if let zone = iZone {
             stopEdit(for: zone)
             currentGrabs.append(zone)
             updateWidgetFor(zone)
+
+            currentGrabs = respectOrder(for: currentGrabs)
         }
     }
 

@@ -307,8 +307,8 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    func      ungrab()             { gSelectionManager    .ungrab(self) }
-    func        grab()             { gSelectionManager      .grab(self) }
+    func ungrab() { gSelectionManager.ungrab(self) }
+    func   grab() { gSelectionManager  .grab(self) }
 
 
     static func == ( left: Zone, right: Zone) -> Bool {

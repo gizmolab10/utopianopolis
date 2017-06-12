@@ -112,39 +112,43 @@ class ZEditingManager: NSObject {
         let  isOption = flags.isOption
         let   isShift = flags.isShift
 
-        if !isShift {
-            switch arrow {
-            case .right: moveInto(     selectionOnly: !isOption, extreme: isCommand)
-            case .left:  moveOut(      selectionOnly: !isOption, extreme: isCommand)
-            case .down:  moveUp(false, selectionOnly: !isOption, extreme: isCommand)
-            case .up:    moveUp(true,  selectionOnly: !isOption, extreme: isCommand)
+        switch arrow {
+        case .down:     moveUp(false, selectionOnly: !isOption, extreme: isCommand, extend: isShift)
+        case .up:       moveUp(true,  selectionOnly: !isOption, extreme: isCommand, extend: isShift)
+        default:
+            if !isShift {
+                switch arrow {
+                case .right: moveInto(selectionOnly: !isOption, extreme: isCommand)
+                case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand)
+                default: break
+                }
+            } else {
+
+                //////////////////
+                // GENERATIONAL //
+                //////////////////
+
+                let zone = gSelectionManager.firstGrab
+                var show = true
+
+                switch arrow {
+                case .right: break
+                case .left:  show = false
+                default:     return
+                }
+
+                var goal: Int? = nil
+
+                if !show {
+                    goal = isCommand ? zone.level - 1 : zone.highestExposed - 1
+                } else if isCommand {
+                    goal = Int.max
+                } else if let lowest = zone.lowestExposed {
+                    goal = lowest + 1
+                }
+
+                toggleDotUpdate(show: show, zone: zone, to: goal)
             }
-        } else {
-
-            //////////////////
-            // GENERATIONAL //
-            //////////////////
-
-            let zone = gSelectionManager.firstGrab
-            var show = true
-
-            switch arrow {
-            case .left:  show = false
-            case .right: break
-            default:     return
-            }
-
-            var goal: Int? = nil
-
-            if !show {
-                goal = isCommand ? zone.level - 1 : zone.highestExposed - 1
-            } else if isCommand {
-                goal = Int.max
-            } else if let lowest = zone.lowestExposed {
-                goal = lowest + 1
-            }
-
-            toggleDotUpdate(show: show, zone: zone, to: goal)
         }
     }
 
@@ -774,7 +778,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func newmoveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool) {
+    func newmoveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool, extend: Bool) {
         let                  zone: Zone = gSelectionManager.firstGrab
         if  let              parentZone = zone.parentZone {
             let (next, index, newIndex) = nextUpward(moveUp, extreme: extreme, zone: parentZone)
@@ -1141,47 +1145,59 @@ class ZEditingManager: NSObject {
     }
     
     
-    func moveUp(_ iMoveUp: Bool, selectionOnly: Bool, extreme: Bool) {
-        let         zone = gSelectionManager.firstGrab
+    func moveUp(_ iMoveUp: Bool, selectionOnly: Bool, extreme: Bool, extend: Bool) {
+        let         zone = iMoveUp ? gSelectionManager.firstGrab : gSelectionManager.lastGrab
         let       isHere = zone == gHere
         if  let    there = zone.parentZone, !isHere, let index = zone.siblingIndex {
             var newIndex = index + (iMoveUp ? -1 : 1)
             let indexMax = there.count
 
-            ///////////////////////////////////
-            // vertical wrap around behavior //
-            ///////////////////////////////////
+            if !extend {
 
-            if         iMoveUp && newIndex < 0 {
-                newIndex = indexMax - 1
-            } else if !iMoveUp && newIndex >= indexMax {
-                newIndex = 0
-            } else if extreme {
-                newIndex = iMoveUp ? 0 : indexMax - 1
+                ///////////////////////////////////
+                // vertical wrap around behavior //
+                ///////////////////////////////////
+
+                if         iMoveUp && newIndex < 0 {
+                    newIndex = indexMax - 1
+                } else if !iMoveUp && newIndex >= indexMax {
+                    newIndex = 0
+                } else if extreme {
+                    newIndex = iMoveUp ? 0 : indexMax - 1
+                }
             }
 
-
             if newIndex >= 0 && newIndex < indexMax {
+                let grab = there.children[newIndex]
+
                 if  zone == gHere {
                     gHere = there
                 }
                 
                 UNDO(self) { iUndoSelf in
-                    iUndoSelf.moveUp(!iMoveUp, selectionOnly: selectionOnly, extreme: extreme)
+                    iUndoSelf.moveUp(!iMoveUp, selectionOnly: selectionOnly, extreme: extreme, extend: extend)
                 }
                 
-                if selectionOnly {
-                    there.children[newIndex].grab()
-                    signalFor(there, regarding: .redraw)
-                } else {
+                if !selectionOnly {
                     there.moveChild(from: index, to: newIndex)
-                    there.children[newIndex].grab()
+                    grab.grab()
                     there.updateOrdering()
                     self.redrawAndSync(there)
+                } else if !grab.isGrabbed {
+                    if  extend {
+                        gSelectionManager.addToGrab(grab)
+                    } else {
+                        gSelectionManager.deselectGrabs(retaining: [grab])
+                    }
                 }
                 
             }
         } else if !zone.isRoot {
+
+            //////////////////////////////////////////
+            // parent is not yet fetched from cloud //
+            //////////////////////////////////////////
+
             revealParentAndSiblingsOf(zone) {
                 if let parent = zone.parentZone {
                     if isHere {
@@ -1191,7 +1207,7 @@ class ZEditingManager: NSObject {
                     }
                     
                     if parent.count > 1 {
-                        self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme)
+                        self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme, extend: extend)
                     }
                 }
             }

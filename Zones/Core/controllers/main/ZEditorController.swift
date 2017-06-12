@@ -19,11 +19,11 @@ import SnapKit
 class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
 
-    var        hereWidget = ZoneWidget()
-    var   rubberbandStart = CGPoint.zero
-    var   rubberbandGrabs = [Zone] ()
-    var          dragView:  ZDragDrawView { return view as! ZDragDrawView }
-    @IBOutlet var spinner:  ZProgressIndicator?
+    var         hereWidget = ZoneWidget()
+    var    rubberbandStart = CGPoint.zero
+    var rubberbandPreGrabs = [Zone] ()
+    var           dragView:  ZDragDrawView { return view as! ZDragDrawView }
+    @IBOutlet var  spinner:  ZProgressIndicator?
 
 
     override func identifier() -> ZControllerID { return .editor }
@@ -180,14 +180,17 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
             } else {
                 rubberbandStart  = location
 
+                //////////////////////
+                // detect SHIFT key //
+                //////////////////////
+
                 if let modifiers = gesture.modifiers, modifiers.contains(.shift) {
-                    rubberbandGrabs.append(contentsOf: gSelectionManager.currentGrabs)
+                    rubberbandPreGrabs.append(contentsOf: gSelectionManager.currentGrabs)
                 } else {
-                    rubberbandGrabs.removeAll()
+                    rubberbandPreGrabs.removeAll()
                 }
 
-                gSelectionManager.deselect()
-                gSelectionManager.currentGrabs.append(contentsOf: rubberbandGrabs)
+                gSelectionManager.deselect(retaining: rubberbandPreGrabs)
             }
         }
     }
@@ -197,8 +200,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
         dragView.rubberbandRect = rect
 
         if !rect.isEmpty {
-            gSelectionManager.deselectGrabs()
-            gSelectionManager.currentGrabs.append(contentsOf: rubberbandGrabs)
+            gSelectionManager.deselectGrabs(retaining: rubberbandPreGrabs)
 
             for widget in gWidgetsManager.widgets.values {
                 if  let    hitRect = widget.hitRect {
