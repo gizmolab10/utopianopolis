@@ -472,24 +472,31 @@ class ZCloudManager: ZRecordsManager {
         let  progenyNeeded = pullReferencesWithMatchingStates([.needsProgeny])
         let childrenNeeded = pullReferencesWithMatchingStates([.needsChildren]) + progenyNeeded
         let          logic = iLogic ?? ZRecursionLogic(.restore)
-        let          count = childrenNeeded.count
+        var          count = childrenNeeded.count
 
         onCompletion?(count)
 
         if count > 0 {
+            var didDone = false
             var parentsNeedingResort = [Zone] ()
             let            predicate = NSPredicate(format: "zoneState < %d AND parent IN %@", ZoneState.IsFavorite.rawValue, childrenNeeded)
+            let done = {
+                if !didDone {
+                    didDone = true
 
-            performance("CHILDREN of   \(stringForReferences(childrenNeeded, in: storageMode))")
-            queryWith(predicate) { (iRecord: CKRecord?) in
-                if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
                     for parent in parentsNeedingResort {
                         parent.respectOrder()
                     }
 
                     self.fetchChildren(logic, onCompletion) // recurse to grab children of received children
-                } else {
+                }
+            }
+
+            performance("CHILDREN of   \(stringForReferences(childrenNeeded, in: storageMode))")
+            queryWith(predicate) { (iRecord: CKRecord?) in
+                if iRecord != nil { // nil means: we already received full response from cloud for this particular fetch
                     let child = self.zoneForRecord(iRecord!)
+                    count    -= 1
 
                     if !child.isDeleted && !child.isRoot {
                         logic.propagateNeeds(to: child, progenyNeeded)
@@ -506,6 +513,15 @@ class ZCloudManager: ZRecordsManager {
                             self.performance("CHILD \(child.zoneName ?? "---"))")
                         }
                     }
+
+
+                    if count <= 0 {
+                        self.dispatchAsyncInForegroundAfter(1.0) {
+                            done()
+                        }
+                    }
+                } else {
+                    done()
                 }
             }
         }
