@@ -17,8 +17,8 @@ import Foundation
 
 
 enum ZGraphAlteringMode: Int {
-    case task
-    case essay
+    case natural
+    case stackingUp
 }
 
 
@@ -60,7 +60,7 @@ var       gDotWidth = gDotHeight * 0.75
 var       gWorkMode = ZWorkMode.editMode
 
 
-var                asTask:                 Bool { return gGraphAlteringMode == .task    }
+var             naturally:                 Bool { return gGraphAlteringMode == .natural }
 var      gIsRubberbanding:                 Bool { return gEditorView!.rubberbandRect != CGRect.zero  }
 var gGrabbedBookmarkColor:               ZColor { return gBookmarkColor.darker(by: 1.5) }
 var     gGrabbedTextColor:               ZColor { return gZoneColor    .darker(by: 1.8) }
@@ -172,8 +172,8 @@ var gGraphAlteringMode: ZGraphAlteringMode {
             mode      = ZGraphAlteringMode(rawValue: object as! Int)
         }
 
-        if mode == nil {
-            mode      = .task
+        if  mode == nil {
+            mode      = .natural
 
             UserDefaults.standard.set(mode!.rawValue, forKey:graphAlteringModeKey)
             UserDefaults.standard.synchronize()

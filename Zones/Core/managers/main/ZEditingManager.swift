@@ -468,7 +468,7 @@ class ZEditingManager: NSObject {
 
 
     func addNewChildTo(_ parentZone: Zone?) {
-        addNewChildTo(parentZone, at: asTask ? 0 : nil) { iChild in
+        addNewChildTo(parentZone, at: naturally ? nil : 0) { iChild in
             gControllersManager.signalFor(parentZone, regarding: .redraw) {
                 gSelectionManager.edit(iChild)
             }
@@ -511,7 +511,7 @@ class ZEditingManager: NSObject {
             var index   = zone.siblingIndex
 
             if  index  != nil {
-                index! += asTask ? 0 : 1
+                index! += naturally ? 1 : 0
             }
 
             addNewChildTo(parent, at: index) { iChild in
@@ -730,8 +730,8 @@ class ZEditingManager: NSObject {
                 let siblings = grabThisZone!.children
                 let    count = siblings.count
 
-                if count > 1, var index = siblings.index(of: zone) {
-                    if index < count - 1 && (!asTask || index == 0) {
+                if  var index = siblings.index(of: zone), count > 1 {
+                    if  index < count - 1 && (naturally || index == 0) {
                         index += 1
                     } else if index > 0 {
                         index -= 1
@@ -907,7 +907,7 @@ class ZEditingManager: NSObject {
 
 
     func grabChild(of zone: Zone) {
-        if  zone.count > 0, let child = asTask ? zone.children.first : zone.children.last {
+        if  zone.count > 0, let child = naturally ? zone.children.last : zone.children.first {
             zone.displayChildren()
             child.grab()
             signalFor(nil, regarding: .redraw)
@@ -919,7 +919,7 @@ class ZEditingManager: NSObject {
         if !toThere.isBookmark {
             let parent = zone.parentZone
 
-            moveZone(zone, into: toThere, at: asTask ? 0 : nil, orphan: true){
+            moveZone(zone, into: toThere, at: naturally ? nil : 0, orphan: true){
                 self.redrawAndSync(parent)
             }
         } else if !gTravelManager.isZone(zone, ancestorOf: toThere) {
@@ -940,7 +940,7 @@ class ZEditingManager: NSObject {
                         self.applyModeRecursivelyTo(mover)
                     }
 
-                    self.moveZone(mover, into: there, at: asTask ? 0 : nil, orphan: false) {
+                    self.moveZone(mover, into: there, at: naturally ? nil : 0, orphan: false) {
                         self.redrawAndSync()
                     }
                 }
@@ -1036,7 +1036,7 @@ class ZEditingManager: NSObject {
                 forUndo.append(pasteThis)
                 pasteThis.orphan() // disable undo inside moveZone
                 pasteThis.recursivelyMarkAsDeleted(false)
-                moveZone(pasteThis, into: zone, at: asTask ? 0 : nil, orphan: false) {
+                moveZone(pasteThis, into: zone, at: naturally ? nil : 0, orphan: false) {
                     count -= 1
 
                     if count == 0 {
@@ -1079,7 +1079,7 @@ class ZEditingManager: NSObject {
                 var insert: Int? = zone.parentZone?.siblingIndex
 
                 if outTo.storageMode == .favorites {
-                    insert = gFavoritesManager.nextFavoritesIndex(forward: !asTask)
+                    insert = gFavoritesManager.nextFavoritesIndex(forward: naturally)
                 } else if zone.parentZone?.parentZone == outTo {
                     if  insert != nil {
                         insert  = insert! + 1

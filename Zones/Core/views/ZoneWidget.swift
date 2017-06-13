@@ -265,7 +265,7 @@ class ZoneWidget: ZView {
                     ///////////////////////////
 
                     let   relation = gSelectionManager.dragRelation
-                    let    isAbove = relation == .above || (asTask && (lastIndex == 0 || relation == .upon))
+                    let    isAbove = relation == .above || (!naturally && (lastIndex == 0 || relation == .upon))
                     let multiplier = (isAbove ? 1.0 : -1.0) * gVerticalWeight
                     let    gHeight = Double(gGenericOffset.height)
                     let      delta = (gHeight + (gDotHeight * 0.75)) * multiplier
