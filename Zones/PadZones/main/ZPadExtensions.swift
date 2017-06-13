@@ -48,6 +48,8 @@ public typealias ZTableViewDataSource       = UITableViewDataSource
 public typealias ZApplicationDelegate       = UIApplicationDelegate
 public typealias ZPanGestureRecognizer      = UIPanGestureRecognizer
 public typealias ZGestureRecognizerState    = UIGestureRecognizerState
+public typealias ZKeyClickGestureRecognizer = UITapGestureRecognizer
+public typealias ZGestureRecognizerState    = UIGestureRecognizerState
 public typealias ZGestureRecognizerDelegate = UIGestureRecognizerDelegate
 
 
@@ -131,8 +133,8 @@ extension UIView {
     func display() {}
 
 
-    @discardableResult func createPointGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> ZGestureRecognizer {
-        let              gesture = UITapGestureRecognizer(target: target, action: action)
+    @discardableResult func createPointGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> ZKeyClickGestureRecognizer {
+        let              gesture = ZKeyClickGestureRecognizer(target: target, action: action)
         isUserInteractionEnabled = true
 
         if recognizers != nil {

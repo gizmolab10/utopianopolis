@@ -50,6 +50,7 @@ public typealias ZTableViewDataSource       = NSTableViewDataSource
 public typealias ZSearchFieldDelegate       = NSSearchFieldDelegate
 public typealias ZApplicationDelegate       = NSApplicationDelegate
 public typealias ZPanGestureRecognizer      = NSPanGestureRecognizer
+public typealias ZClickGestureRecognizer    = NSClickGestureRecognizer
 public typealias ZGestureRecognizerState    = NSGestureRecognizerState
 public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 
@@ -175,8 +176,8 @@ extension NSView {
     func insertSubview(_ view: ZView, belowSubview siblingSubview: ZView) { addSubview(view, positioned: .below, relativeTo: siblingSubview) }
 
 
-    @discardableResult func createPointGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> NSGestureRecognizer {
-        let                            gesture = NSClickGestureRecognizer(target: target, action: action)
+    @discardableResult func createPointGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> ZKeyClickGestureRecognizer {
+        let                            gesture = ZKeyClickGestureRecognizer(target: target, action: action)
         gesture.numberOfClicksRequired         = clicksRequired
         gesture.delaysPrimaryMouseButtonEvents = false
         gesture.delegate                       = target

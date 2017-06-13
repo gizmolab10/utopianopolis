@@ -48,7 +48,7 @@ class ZFavoritesController: ZGenericTableController {
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
         var        value = ""
 
-        if  let     text = row == 0 ? "Edit ..." : gFavoritesManager.textAtIndex(row - 1) {
+        if  let     text = row == 0 ? "favorites" : gFavoritesManager.textAtIndex(row - 1) {
             let needsDot = gFavoritesManager.favoritesIndex == row - 1
             let   prefix = needsDot ? "•" : "  "
             value        = " \(prefix) \(text)"

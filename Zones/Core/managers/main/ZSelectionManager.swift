@@ -192,10 +192,11 @@ class ZSelectionManager: NSObject {
     }
 
 
-    func ungrab(_ zone: Zone?) {
-        if zone != nil, let index = currentGrabs.index(of: zone!) {
+    func ungrab(_ iZone: Zone?) {
+        if let zone = iZone, let index = currentGrabs.index(of: zone) {
             currentGrabs.remove(at: index)
             updateWidgetFor(zone)
+            columnarReport("ungrab", zone.zoneName ?? "---")
         }
     }
 
@@ -207,13 +208,22 @@ class ZSelectionManager: NSObject {
     }
 
 
+    func addMultipleToGrab(_ iZones: [Zone]) {
+        for zone in iZones {
+            addToGrab(zone)
+        }
+    }
+
+
     func addToGrab(_ iZone: Zone?) {
         if let zone = iZone {
             stopEdit(for: zone)
             currentGrabs.append(zone)
-            updateWidgetFor(zone)
 
             currentGrabs = respectOrder(for: currentGrabs)
+
+            updateWidgetFor(zone)
+            columnarReport("grab", zone.zoneName ?? "---")
         }
     }
 

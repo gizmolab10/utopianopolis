@@ -29,15 +29,15 @@ let dragTarget = false
 class ZoneWidget: ZView {
 
 
-    let                   dragDot = ZoneDot        ()
-    let                 toggleDot = ZoneDot        ()
-    let                textWidget = ZoneTextWidget ()
-    let              childrenView = ZView          ()
-    private var   childrenWidgets = [ZoneWidget]   ()
-    var              parentWidget:  ZoneWidget? { return widgetZone.parentZone?.widget }
-    var               hasChildren:  Bool        { return widgetZone.hasChildren }
-    var                widgetFont:  ZFont       { return widgetZone.isSelected ? gSelectedWidgetFont : gWidgetFont }
-    var                widgetZone:  Zone!
+    let                 dragDot = ZoneDot        ()
+    let               toggleDot = ZoneDot        ()
+    let              textWidget = ZoneTextWidget ()
+    let            childrenView = ZView          ()
+    private var childrenWidgets = [ZoneWidget]   ()
+    var            parentWidget:  ZoneWidget? { return widgetZone.parentZone?.widget }
+    var             hasChildren:  Bool        { return widgetZone.hasChildren }
+    var              widgetFont:  ZFont       { return widgetZone.isSelected ? gSelectedWidgetFont : gWidgetFont }
+    var              widgetZone:  Zone!
 
 
     deinit {

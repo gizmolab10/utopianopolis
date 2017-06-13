@@ -33,3 +33,22 @@ class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
     }
 
 }
+
+
+class ZKeyClickGestureRecognizer: ZClickGestureRecognizer {
+
+
+    var modifiers: NSEventModifierFlags? = nil
+
+
+    override open func reset() {
+        modifiers = nil
+    }
+
+
+    override open func mouseDown (with event: NSEvent) {
+        super.mouseDown (with: event)
+        modifiers = event.modifierFlags
+    }
+    
+}

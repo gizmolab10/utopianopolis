@@ -1081,8 +1081,8 @@ class ZEditingManager: NSObject {
                 if outTo.storageMode == .favorites {
                     insert = gFavoritesManager.nextFavoritesIndex(forward: !asTask)
                 } else if zone.parentZone?.parentZone == outTo {
-                    if insert != nil {
-                        insert = insert! + (asTask ? 1 : -1)
+                    if  insert != nil {
+                        insert  = insert! + 1
 
                         // to compute the insertion index
                         // so that moving back in returns exactly:
@@ -1146,30 +1146,41 @@ class ZEditingManager: NSObject {
     
     
     func moveUp(_ iMoveUp: Bool, selectionOnly: Bool, extreme: Bool, extend: Bool) {
-        let         zone = iMoveUp ? gSelectionManager.firstGrab : gSelectionManager.lastGrab
-        let       isHere = zone == gHere
-        if  let    there = zone.parentZone, !isHere, let index = zone.siblingIndex {
-            var newIndex = index + (iMoveUp ? -1 : 1)
-            let indexMax = there.count
+        let             zone = iMoveUp ? gSelectionManager.firstGrab : gSelectionManager.lastGrab
+        let           isHere = zone == gHere
+        if  let        there = zone.parentZone, !isHere, let index = zone.siblingIndex {
+            var     newIndex = index + (iMoveUp ? -1 : 1)
+            var   allGrabbed = true
+            var multipleGrab = false
+            var      hasGrab = false
+            let     indexMax = there.count
+
+            for child in there.children {
+                if !child.isGrabbed {
+                    allGrabbed   = false
+                } else if hasGrab {
+                    multipleGrab = true
+                } else {
+                    hasGrab      = true
+                }
+            }
 
             if !extend {
+                let    atTop = newIndex < 0
+                let atBottom = newIndex >= indexMax
 
                 ///////////////////////////////////
                 // vertical wrap around behavior //
                 ///////////////////////////////////
 
-                if         iMoveUp && newIndex < 0 {
-                    newIndex = indexMax - 1
-                } else if !iMoveUp && newIndex >= indexMax {
-                    newIndex = 0
-                } else if extreme {
-                    newIndex = iMoveUp ? 0 : indexMax - 1
+                if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && multipleGrab && atBottom))) || ( iMoveUp && !allGrabbed && atTop) {
+                    newIndex = indexMax - 1 // bottom
+                } else if ( iMoveUp && (allGrabbed || extreme || (!allGrabbed && multipleGrab && atTop)))    || (!iMoveUp && !allGrabbed && atBottom) {
+                    newIndex = 0            // top
                 }
             }
 
             if newIndex >= 0 && newIndex < indexMax {
-                let grab = there.children[newIndex]
-
                 if  zone == gHere {
                     gHere = there
                 }
@@ -1180,17 +1191,38 @@ class ZEditingManager: NSObject {
                 
                 if !selectionOnly {
                     there.moveChild(from: index, to: newIndex)
-                    grab.grab()
+                    there.children[newIndex].grab()
                     there.updateOrdering()
                     self.redrawAndSync(there)
-                } else if !grab.isGrabbed {
-                    if  extend {
-                        gSelectionManager.addToGrab(grab)
-                    } else {
-                        gSelectionManager.deselectGrabs(retaining: [grab])
-                    }
-                }
-                
+                } else {
+                    let grab = there.children[newIndex]
+                    
+                    if !grab.isGrabbed || extreme || !extend {
+                        if !extend {
+                            gSelectionManager.deselectGrabs(retaining: [grab])
+                        } else {
+                            var grabs = [grab]
+
+                            if extreme {
+
+                                ///////////////////
+                                // expand to end //
+                                ///////////////////
+
+                                if iMoveUp {
+                                    for i in 0 ..< newIndex {
+                                        grabs.append(there.children[i])
+                                    }
+                                } else {
+                                    for i in newIndex ..< indexMax {
+                                        grabs.append(there.children[i])
+                                    }
+                                }
+                            }
+                            
+                            gSelectionManager.addMultipleToGrab(grabs)
+                        }
+                    }                }
             }
         } else if !zone.isRoot {
 

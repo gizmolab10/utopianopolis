@@ -19,14 +19,15 @@ import SnapKit
 class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
-    var         widget: ZoneWidget?
-    var       innerDot: ZoneDot?
-    var       isToggle: Bool = true
-    var     isInnerDot: Bool = false
-    var     widgetZone: Zone?
-    var    dragGesture: ZGestureRecognizer?
-    var  singleGesture: ZGestureRecognizer?
-    var   isDragTarget: Bool { return widgetZone == gSelectionManager.dragDropZone }
+    var    dragStart: CGPoint? = nil
+    var       widget: ZoneWidget?
+    var     innerDot: ZoneDot?
+    var     isToggle: Bool = true
+    var   isInnerDot: Bool = false
+    var   widgetZone: Zone?
+    var  dragGesture: ZGestureRecognizer?
+    var clickGesture: ZGestureRecognizer?
+    var isDragTarget: Bool { return widgetZone == gSelectionManager.dragDropZone }
 
 
     var innerOrigin: CGPoint? {
@@ -83,7 +84,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 let       rect = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
                 let       path = ZBezierPath(ovalIn: rect)
                 let asBookmark = widgetZone != nil && (widgetZone!.isBookmark || widgetZone!.isRootOfFavorites)
-                let      color = isDragTarget ? gDragTargetsColor : asBookmark  ? gBookmarkColor : gZoneColor
+                let      color = asBookmark  ? gBookmarkColor : gZoneColor
 
                 color.setFill()
                 path.flatness = 0.0001
@@ -140,7 +141,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             clearGestures()
 
-            singleGesture = createPointGestureRecognizer(self, action: #selector(ZoneDot.singleEvent), clicksRequired: 1)
+            clickGesture = createPointGestureRecognizer(self, action: #selector(ZoneDot.clickEvent), clicksRequired: 1)
 
             if !isToggle {
                 dragGesture = createDragGestureRecognizer(self, action: #selector(ZoneDot.dragEvent))
@@ -163,11 +164,19 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func singleEvent(_ iGesture: ZGestureRecognizer?) {
-        if isToggle {
-            gEditingManager.toggleDotActionOnZone(widgetZone)
-        } else {
-            widgetZone?.grab()
+    func clickEvent(_ iGesture: ZGestureRecognizer?) {
+        if let zone = widgetZone {
+            if isToggle {
+                gEditingManager.toggleDotActionOnZone(zone)
+            } else if let gesture = iGesture as? ZKeyClickGestureRecognizer {
+                if  zone.isGrabbed {
+                    zone.ungrab()
+                } else if  let modifiers = gesture.modifiers, modifiers.contains(.shift) {
+                    gSelectionManager.addToGrab(zone)
+                } else {
+                    zone.grab()
+                }
+            }
         }
     }
 
@@ -175,12 +184,25 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     func dragEvent(_ iGesture: ZGestureRecognizer?) {
         let isHere = widgetZone == gHere
 
-        if iGesture?.state == .began {
-            gSelectionManager.deselect()
-            widgetZone?.grab()
+        if let state = iGesture?.state, let location = iGesture?.location(in: self) {
+            switch state {
+            case .began:
+                gSelectionManager.deselect()
+                widgetZone?.grab()
 
-            if !isHere {
-                gSelectionManager.draggedZone = widgetZone
+                if !isHere {
+                    dragStart                     = location
+                    gSelectionManager.draggedZone = widgetZone
+                }
+            case .changed:
+                if  dragStart! -- location < 2.0 {
+                    iGesture?.cancel()
+                    report("cancel")
+
+                    return
+                }
+            default:
+                break
             }
         }
 

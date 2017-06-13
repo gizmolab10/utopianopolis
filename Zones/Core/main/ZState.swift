@@ -60,9 +60,13 @@ var       gDotWidth = gDotHeight * 0.75
 var       gWorkMode = ZWorkMode.editMode
 
 
-var                asTask:   Bool { return gGraphAlteringMode == .task    }
-var gGrabbedBookmarkColor: ZColor { return gBookmarkColor.darker(by: 1.5) }
-var     gGrabbedTextColor: ZColor { return gZoneColor    .darker(by: 1.8) }
+var                asTask:                 Bool { return gGraphAlteringMode == .task    }
+var      gIsRubberbanding:                 Bool { return gEditorView!.rubberbandRect != CGRect.zero  }
+var gGrabbedBookmarkColor:               ZColor { return gBookmarkColor.darker(by: 1.5) }
+var     gGrabbedTextColor:               ZColor { return gZoneColor    .darker(by: 1.8) }
+var    settingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
+var     gEditorController:   ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
+var           gEditorView:       ZDragDrawView? { return gEditorController?.view                        as? ZDragDrawView }
 
 
 // MARK:- persistence
@@ -119,7 +123,7 @@ var gGenericOffset: CGSize {
 
 var gCountsMode: ZCountsMode {
     get {
-        var  mode  = ZCountsMode.none
+        var  mode  = ZCountsMode.dots
         let value  = UserDefaults.standard.object(forKey: countsModeKey) as? Int
 
         if  value != nil {

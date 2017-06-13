@@ -23,6 +23,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     var    rubberbandStart = CGPoint.zero
     var rubberbandPreGrabs = [Zone] ()
     var           dragView:  ZDragDrawView { return view as! ZDragDrawView }
+    var       clickGesture:  ZGestureRecognizer?
+    var  rubberbandGesture:  ZGestureRecognizer?
     @IBOutlet var  spinner:  ZProgressIndicator?
 
 
@@ -31,8 +33,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
     override func setup() {
         view.clearGestures()
-        view.createDragGestureRecognizer (self, action: #selector(ZEditorController.rubberbandGesture))
-        view.createPointGestureRecognizer(self, action: #selector(ZEditorController.oneClick), clicksRequired: 1)
+        rubberbandGesture = view.createDragGestureRecognizer (self, action: #selector(ZEditorController.rubberbandEvent))
+        clickGesture      = view.createPointGestureRecognizer(self, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
         super.setup()
     }
 
@@ -65,7 +67,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                     }
                 }
 
-                report("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")
+                note("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")
 
                 specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, visited: [])
                 view.applyToAllSubviews { iView in
@@ -87,10 +89,10 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     }
 
     
-    func oneClick(_ iGesture: ZGestureRecognizer?) {
+    func clickEvent(_ iGesture: ZGestureRecognizer?) {
         gShowsSearching      = false
 
-        if  let      gesture = iGesture {
+        if  let      gesture = iGesture as? ZKeyClickGestureRecognizer {
             var onTextWidget = false
 
             if  let   widget = gEditingManager.editedTextWidget {
@@ -160,7 +162,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     }
 
 
-    func rubberbandGesture(_ iGesture: ZGestureRecognizer?) {
+    func rubberbandEvent(_ iGesture: ZGestureRecognizer?) {
         if  let  gesture = iGesture as? ZKeyPanGestureRecognizer {
             let location = gesture.location (in: view)
 
@@ -176,7 +178,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                 gesture.cancel() // let text editor consume the gesture
             } else if let dot = hitWidget(location) {
                 gesture.cancel() // let dot consume the gesture
-                dot.singleEvent(iGesture)
+                dot.clickEvent(iGesture)
             } else {
                 rubberbandStart  = location
 

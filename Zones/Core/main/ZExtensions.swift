@@ -21,13 +21,10 @@ typealias ZStorageDict = [String : NSObject]
 
 
 extension NSObject {
-    var settingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
-    var  gEditorController:   ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
-    var        gEditorView:       ZDragDrawView? { return gEditorController?.view                        as? ZDragDrawView }
 
 
     func        note(_ iMessage: Any?)                            { } // report(iMessage) }
-    func performance(_ iMessage: Any?)                            { report(iMessage) }
+    func performance(_ iMessage: Any?)                            { } // report(iMessage) }
     func   signalFor(_ object: NSObject?, regarding: ZSignalKind) { gControllersManager.signalFor(object, regarding: regarding, onCompletion: nil) }
     func  debugCheck()                                            { gTravelManager.debugCheck() }
 
@@ -176,10 +173,23 @@ extension NSObject {
 }
 
 
+infix operator -- : AdditionPrecedence
+
+
 extension CGPoint {
+
     static func - ( left: CGPoint, right: CGPoint) -> CGSize {
         return CGSize(width: left.x - right.x, height: left.y - right.y)
     }
+
+
+    static func -- ( left: CGPoint, right: CGPoint) -> CGFloat {
+        let  width = Double(left.x - right.x)
+        let height = Double(left.y - right.y)
+
+        return CGFloat(sqrt(width * width + height * height))
+    }
+
 }
 
 

@@ -99,7 +99,7 @@ class ZCloudManager: ZRecordsManager {
                 var prefix = "SAVE \(count)"
 
                 prefix.appendSpacesToLength(gLogTabStop - 2)
-                report("\(prefix) \(stringForRecords(operation.recordsToSave))")
+                note("\(prefix) \(stringForRecords(operation.recordsToSave))")
                 start(operation)
 
                 return
