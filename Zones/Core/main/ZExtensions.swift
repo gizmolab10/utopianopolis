@@ -304,8 +304,9 @@ extension ZView {
 
 
     @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeyPanGestureRecognizer {
-        let      gesture = ZKeyPanGestureRecognizer(target: target, action: action)
-        gesture.delegate = target
+        let                            gesture = ZKeyPanGestureRecognizer(target: target, action: action)
+        gesture                      .delegate = target
+        gesture.delaysPrimaryMouseButtonEvents = false
 
         addGestureRecognizer(gesture)
 

@@ -196,7 +196,7 @@ class ZSelectionManager: NSObject {
         if let zone = iZone, let index = currentGrabs.index(of: zone) {
             currentGrabs.remove(at: index)
             updateWidgetFor(zone)
-            columnarReport("ungrab", zone.zoneName ?? "---")
+            columnarReport("grab -", zone.zoneName ?? "---")
         }
     }
 
@@ -217,13 +217,13 @@ class ZSelectionManager: NSObject {
 
     func addToGrab(_ iZone: Zone?) {
         if let zone = iZone {
-            stopEdit(for: zone)
+            stopCurrentEdit()
             currentGrabs.append(zone)
 
             currentGrabs = respectOrder(for: currentGrabs)
 
             updateWidgetFor(zone)
-            columnarReport("grab", zone.zoneName ?? "---")
+            // columnarReport("grab", zone.zoneName ?? "---")
         }
     }
 
