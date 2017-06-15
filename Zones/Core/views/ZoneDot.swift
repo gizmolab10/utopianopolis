@@ -25,8 +25,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var     isToggle: Bool = true
     var   isInnerDot: Bool = false
     var   widgetZone: Zone?
-    var  dragGesture: ZGestureRecognizer?
-    var clickGesture: ZGestureRecognizer?
     var isDragTarget: Bool { return widgetZone == gSelectionManager.dragDropZone }
 
 
@@ -139,15 +137,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 addSubview(innerDot!)
             }
 
-            clearGestures()
-
-            clickGesture = createPointGestureRecognizer(self, action: #selector(ZoneDot.clickEvent), clicksRequired: 1)
-
-            if !isToggle {
-                dragGesture = createDragGestureRecognizer(self, action: #selector(ZoneDot.dragEvent))
-                gSelectionManager.draggedZone = nil
-            }
-
             innerDot?.setupForWidget(iWidget, asToggle: isToggle)
             snp.makeConstraints { (make: ConstraintMaker) in
                 make.size.equalTo(CGSize(width: gFingerBreadth, height: gFingerBreadth))
@@ -183,31 +172,30 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
     func dragEvent(_ iGesture: ZGestureRecognizer?) {
         let isHere = widgetZone == gHere
+        let      s = gSelectionManager
 
-        if let state = iGesture?.state, let location = iGesture?.location(in: self) {
+        if  let    state = iGesture?.state {
             switch state {
             case .began:
-                gSelectionManager.deselect()
+                s.deselect()
                 widgetZone?.grab()
+                report("d --- d")
 
-                if !isHere {
-                    dragStart                     = location
-                    gSelectionManager.draggedZone = widgetZone
-                }
-            case .changed:
-                if  dragStart! -- location < 2.0 {
-                    iGesture?.cancel()
-                    report("cancel")
-
-                    return
+                if  let  location = iGesture?.location(in: self), !isHere {
+                    dragStart     = location
+                    s.draggedZone = widgetZone
                 }
             default:
                 break
             }
         }
 
-        if !isHere {
-            gEditorController?.handleDragEvent(iGesture)
+        if  let        e = gEditorController {
+            if  isHere {
+                e.setup()
+            } else {
+                e.dragEvent(for: self, iGesture)
+            }
         }
     }
 }

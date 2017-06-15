@@ -31,12 +31,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/Core/controllers/main/ZEditorController.swift"
-            timestampString = "518994170.731506"
+            timestampString = "519258812.59284"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "93"
-            endingLineNumber = "93"
-            landmarkName = "clickEvent(_:)"
+            startingLineNumber = "345"
+            endingLineNumber = "345"
+            landmarkName = "dragEvent(for:_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

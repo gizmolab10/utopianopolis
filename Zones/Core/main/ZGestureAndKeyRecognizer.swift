@@ -16,6 +16,9 @@ import Foundation
 #endif
 
 
+#if true
+
+
 class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
 
 
@@ -24,6 +27,8 @@ class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
 
     override open func reset() {
         modifiers = nil
+
+        super.reset()
     }
 
 
@@ -43,6 +48,8 @@ class ZKeyClickGestureRecognizer: ZClickGestureRecognizer {
 
     override open func reset() {
         modifiers = nil
+
+        super.reset()
     }
 
 
@@ -52,3 +59,51 @@ class ZKeyClickGestureRecognizer: ZClickGestureRecognizer {
     }
     
 }
+
+
+#else
+
+
+    typealias ZKeyPanGestureRecognizer   = ZPanGestureRecognizer
+    typealias ZKeyClickGestureRecognizer = ZClickGestureRecognizer
+
+
+    //class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
+    //
+    //
+    //    var modifiers: NSEventModifierFlags? = nil
+    //
+    //
+    //    override open func reset() {
+    //        modifiers = nil
+    //    }
+    //
+    //
+    //    override open func mouseDown (with event: NSEvent) {
+    //        super.mouseDown (with: event)
+    //        modifiers = event.modifierFlags
+    //    }
+    //
+    //}
+    //
+    //
+    //class ZKeyClickGestureRecognizer: ZClickGestureRecognizer {
+    //
+    //
+    //    var modifiers: NSEventModifierFlags? = nil
+    //
+    //
+    //    override open func reset() {
+    //        modifiers = nil
+    //    }
+    //
+    //
+    //    override open func mouseDown (with event: NSEvent) {
+    //        super.mouseDown (with: event)
+    //        modifiers = event.modifierFlags
+    //    }
+    //    
+    //}
+
+
+#endif

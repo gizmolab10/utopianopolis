@@ -609,11 +609,11 @@
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Zones" sceneMemberID="viewController">
                     <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="329"/>
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="347"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box borderType="line" title="line thickness" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
-                                <rect key="frame" x="5" y="280" width="216" height="41"/>
+                                <rect key="frame" x="5" y="298" width="216" height="41"/>
                                 <view key="contentView" id="npe-oq-zV9">
                                     <rect key="frame" x="1" y="1" width="214" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -635,7 +635,7 @@
                                 </view>
                             </box>
                             <box borderType="line" title="vertical spacing" translatesAutoresizingMaskIntoConstraints="NO" id="QMR-K4-bC6" userLabel="vertical spacing">
-                                <rect key="frame" x="5" y="241" width="216" height="41"/>
+                                <rect key="frame" x="5" y="259" width="216" height="41"/>
                                 <view key="contentView" id="vWX-cG-juA">
                                     <rect key="frame" x="1" y="1" width="214" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -657,7 +657,7 @@
                                 </view>
                             </box>
                             <box borderType="line" title="horizontal spacing" translatesAutoresizingMaskIntoConstraints="NO" id="hoN-dH-smR" userLabel="horizontal spacing">
-                                <rect key="frame" x="5" y="202" width="216" height="41"/>
+                                <rect key="frame" x="5" y="220" width="216" height="41"/>
                                 <view key="contentView" id="fXT-pM-zio">
                                     <rect key="frame" x="1" y="1" width="214" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -678,8 +678,8 @@
                                     </constraints>
                                 </view>
                             </box>
-                            <box autoresizesSubviews="NO" borderType="line" title="child count as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="children counts">
-                                <rect key="frame" x="5" y="168" width="216" height="36"/>
+                            <box autoresizesSubviews="NO" borderType="line" title="child counts show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="children counts">
+                                <rect key="frame" x="5" y="180" width="216" height="36"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
                                     <rect key="frame" x="1" y="1" width="214" height="20"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -713,7 +713,7 @@
                                 </constraints>
                             </box>
                             <box autoresizesSubviews="NO" borderType="line" title="new zones insert" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
-                                <rect key="frame" x="5" y="134" width="216" height="36"/>
+                                <rect key="frame" x="5" y="140" width="216" height="36"/>
                                 <view key="contentView" id="qnC-vV-W8u">
                                     <rect key="frame" x="1" y="1" width="214" height="20"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -865,8 +865,8 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="9a4-Qq-RLi"/>
-                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="hoN-dH-smR" secondAttribute="bottom" constant="2" id="D1l-No-A8x"/>
-                            <constraint firstItem="anJ-MD-zAh" firstAttribute="top" secondItem="ay3-pv-TvT" secondAttribute="bottom" constant="2" id="FMv-Ed-0b3"/>
+                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="hoN-dH-smR" secondAttribute="bottom" constant="8" id="D1l-No-A8x"/>
+                            <constraint firstItem="anJ-MD-zAh" firstAttribute="top" secondItem="ay3-pv-TvT" secondAttribute="bottom" constant="8" id="FMv-Ed-0b3"/>
                             <constraint firstItem="QMR-K4-bC6" firstAttribute="top" secondItem="1dG-7h-ePD" secondAttribute="bottom" constant="2" id="Ior-2h-b5V"/>
                             <constraint firstAttribute="bottom" secondItem="mS1-t0-150" secondAttribute="bottom" constant="8" id="K2t-gL-v3V"/>
                             <constraint firstItem="ay3-pv-TvT" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="L8F-B3-k88"/>
@@ -882,7 +882,7 @@
                             <constraint firstItem="mS1-t0-150" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="xTu-eG-2S7"/>
                             <constraint firstItem="hoN-dH-smR" firstAttribute="top" secondItem="QMR-K4-bC6" secondAttribute="bottom" constant="2" id="y7q-Xx-blv"/>
                             <constraint firstAttribute="trailing" secondItem="anJ-MD-zAh" secondAttribute="trailing" constant="8" id="yIM-eQ-RB8"/>
-                            <constraint firstItem="mS1-t0-150" firstAttribute="top" secondItem="anJ-MD-zAh" secondAttribute="bottom" constant="2" id="zg9-qC-KW9"/>
+                            <constraint firstItem="mS1-t0-150" firstAttribute="top" secondItem="anJ-MD-zAh" secondAttribute="bottom" constant="8" id="zg9-qC-KW9"/>
                         </constraints>
                     </view>
                     <connections>
