@@ -70,9 +70,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             let incrementAngle = Double.pi / Double(count)
             let         center = innerDot!.frame.center
             let      dotRadius = gDotHeight / 2.0
-            let     tinyRadius =  dotRadius / 5.0
+            let     tinyRadius =  dotRadius * gTinyDotRatio
             let   tinyDiameter = tinyRadius * 2.0
-            let    orbitRadius = CGFloat(dotRadius + tinyRadius * 1.5)
+            let    orbitRadius = CGFloat(dotRadius + tinyRadius * 1.3)
 
             for index in 1 ... count {
                 let  increment = Double(index * 2 - 1)

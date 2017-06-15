@@ -18,6 +18,7 @@ import Foundation
 
 enum ZSliderKind: String {
     case Vertical   = "vertical"
+    case TinyDots   = "tiny dots"
     case Thickness  = "thickness"
     case Horizontal = "horizontal"
 }
@@ -42,6 +43,7 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var      dragTargetsColorBox: ZColorWell?
     @IBOutlet var        horizontalSpacing: ZSlider?
     @IBOutlet var          verticalSpacing: ZSlider?
+    @IBOutlet var            tinyDotsRatio: NSSlider?
     @IBOutlet var                thickness: ZSlider?
 
 
@@ -53,6 +55,7 @@ class ZPreferencesController: ZGenericController {
         countsModeControl?       .selectedSegment = gCountsMode.rawValue
         view              .zlayer.backgroundColor = CGColor.clear
         thickness?                   .doubleValue = gLineThickness
+        tinyDotsRatio?               .doubleValue = gTinyDotRatio
         verticalSpacing?             .doubleValue = Double(gGenericOffset.height)
         horizontalSpacing?           .doubleValue = Double(gGenericOffset.width)
         dragTargetsColorBox?               .color = gDragTargetsColor
@@ -66,11 +69,12 @@ class ZPreferencesController: ZGenericController {
     // MARK:-
 
 
-    @IBAction func sliderAction(_ iSlider: ZSlider) {
+    @IBAction func sliderAction(_ iSlider: NSSlider) {
         let value = CGFloat(iSlider.doubleValue)
 
         if let kind = ZSliderKind(rawValue: iSlider.identifier!) {
             switch (kind) {
+            case   .TinyDots: gTinyDotRatio  = Double(value);                                       break
             case  .Thickness: gLineThickness = Double(value);                                       break
             case .Horizontal: gGenericOffset = CGSize(width: value, height: gGenericOffset.height); break
             case   .Vertical: gGenericOffset = CGSize(width: gGenericOffset.width, height: value);  break

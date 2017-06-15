@@ -143,6 +143,27 @@ var gCountsMode: ZCountsMode {
 }
 
 
+var gTinyDotRatio: Double {
+    get {
+        var value: Double? = UserDefaults.standard.object(forKey: tinyDotsRatioKey) as? Double
+
+        if value == nil {
+            value = 4.0
+
+            UserDefaults.standard.set(value, forKey:tinyDotsRatioKey)
+            UserDefaults.standard.synchronize()
+        }
+
+        return value!
+    }
+
+    set {
+        UserDefaults.standard.set(newValue, forKey:tinyDotsRatioKey)
+        UserDefaults.standard.synchronize()
+    }
+}
+
+
 var gLineThickness: Double {
     get {
         var value: Double? = UserDefaults.standard.object(forKey: lineThicknessKey) as? Double
@@ -250,6 +271,7 @@ let  dragTargetsColorKey = "drag targets color"
 let graphAlteringModeKey = "graph altering mode"
 let       storageModeKey = "current storage mode"
 let     settingsStateKey = "current settings state"
+let     tinyDotsRatioKey = "tiny dots ratio"
 let     lineThicknessKey = "line thickness"
 let     genericOffsetKey = "generick offset"
 let        countsModeKey = "counts mode"

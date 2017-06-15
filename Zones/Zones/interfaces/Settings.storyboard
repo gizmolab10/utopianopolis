@@ -609,11 +609,11 @@
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Zones" sceneMemberID="viewController">
                     <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="347"/>
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="386"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box borderType="line" title="line thickness" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
-                                <rect key="frame" x="5" y="298" width="216" height="41"/>
+                                <rect key="frame" x="5" y="337" width="216" height="41"/>
                                 <view key="contentView" id="npe-oq-zV9">
                                     <rect key="frame" x="1" y="1" width="214" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -635,7 +635,7 @@
                                 </view>
                             </box>
                             <box borderType="line" title="vertical spacing" translatesAutoresizingMaskIntoConstraints="NO" id="QMR-K4-bC6" userLabel="vertical spacing">
-                                <rect key="frame" x="5" y="259" width="216" height="41"/>
+                                <rect key="frame" x="5" y="298" width="216" height="41"/>
                                 <view key="contentView" id="vWX-cG-juA">
                                     <rect key="frame" x="1" y="1" width="214" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -657,7 +657,7 @@
                                 </view>
                             </box>
                             <box borderType="line" title="horizontal spacing" translatesAutoresizingMaskIntoConstraints="NO" id="hoN-dH-smR" userLabel="horizontal spacing">
-                                <rect key="frame" x="5" y="220" width="216" height="41"/>
+                                <rect key="frame" x="5" y="259" width="216" height="41"/>
                                 <view key="contentView" id="fXT-pM-zio">
                                     <rect key="frame" x="1" y="1" width="214" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -675,6 +675,28 @@
                                         <constraint firstItem="OmD-gF-PvR" firstAttribute="top" secondItem="fXT-pM-zio" secondAttribute="top" constant="2" id="Fxg-P8-6ZT"/>
                                         <constraint firstAttribute="bottom" secondItem="OmD-gF-PvR" secondAttribute="bottom" constant="8" id="Jtk-FB-gFr"/>
                                         <constraint firstItem="OmD-gF-PvR" firstAttribute="leading" secondItem="fXT-pM-zio" secondAttribute="leading" constant="8" id="RS5-p5-3F6"/>
+                                    </constraints>
+                                </view>
+                            </box>
+                            <box borderType="line" title="child dot size" translatesAutoresizingMaskIntoConstraints="NO" id="uz7-7z-lD6">
+                                <rect key="frame" x="5" y="220" width="216" height="41"/>
+                                <view key="contentView" id="7Fq-a8-3im">
+                                    <rect key="frame" x="1" y="1" width="214" height="25"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <slider identifier="tiny dots" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Gvg-9Y-gub">
+                                            <rect key="frame" x="6" y="6" width="202" height="19"/>
+                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.20000000000000001" maxValue="0.40000000000000002" doubleValue="0.29999999999999999" tickMarkPosition="above" sliderType="linear" id="Y0o-6Q-D0T"/>
+                                            <connections>
+                                                <action selector="sliderAction:" target="Naq-se-Exq" id="Ph2-dJ-fzv"/>
+                                            </connections>
+                                        </slider>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="Gvg-9Y-gub" firstAttribute="leading" secondItem="7Fq-a8-3im" secondAttribute="leading" constant="8" id="USp-eC-FeF"/>
+                                        <constraint firstAttribute="bottom" secondItem="Gvg-9Y-gub" secondAttribute="bottom" constant="8" id="coI-ML-hLT"/>
+                                        <constraint firstItem="Gvg-9Y-gub" firstAttribute="top" secondItem="7Fq-a8-3im" secondAttribute="top" constant="2" id="wLJ-E7-HSC"/>
+                                        <constraint firstAttribute="trailing" secondItem="Gvg-9Y-gub" secondAttribute="trailing" constant="8" id="yHu-Hu-QkG"/>
                                     </constraints>
                                 </view>
                             </box>
@@ -864,8 +886,9 @@
                             </box>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="uz7-7z-lD6" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="5AM-Ps-Lsy"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="9a4-Qq-RLi"/>
-                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="hoN-dH-smR" secondAttribute="bottom" constant="8" id="D1l-No-A8x"/>
+                            <constraint firstAttribute="trailing" secondItem="uz7-7z-lD6" secondAttribute="trailing" constant="8" id="Aof-tA-G9R"/>
                             <constraint firstItem="anJ-MD-zAh" firstAttribute="top" secondItem="ay3-pv-TvT" secondAttribute="bottom" constant="8" id="FMv-Ed-0b3"/>
                             <constraint firstItem="QMR-K4-bC6" firstAttribute="top" secondItem="1dG-7h-ePD" secondAttribute="bottom" constant="2" id="Ior-2h-b5V"/>
                             <constraint firstAttribute="bottom" secondItem="mS1-t0-150" secondAttribute="bottom" constant="8" id="K2t-gL-v3V"/>
@@ -874,7 +897,9 @@
                             <constraint firstAttribute="trailing" secondItem="QMR-K4-bC6" secondAttribute="trailing" constant="8" id="QZ8-xe-YwK"/>
                             <constraint firstItem="QMR-K4-bC6" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="U2J-wt-iaK"/>
                             <constraint firstAttribute="trailing" secondItem="1dG-7h-ePD" secondAttribute="trailing" constant="8" id="aFt-c9-QQn"/>
+                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="uz7-7z-lD6" secondAttribute="bottom" constant="8" id="aZd-VK-Byv"/>
                             <constraint firstAttribute="trailing" secondItem="ay3-pv-TvT" secondAttribute="trailing" constant="8" id="dfi-pb-wOI"/>
+                            <constraint firstItem="uz7-7z-lD6" firstAttribute="top" secondItem="hoN-dH-smR" secondAttribute="bottom" constant="2" id="fMd-qE-S7h"/>
                             <constraint firstItem="hoN-dH-smR" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="g6L-Yp-gum"/>
                             <constraint firstAttribute="trailing" secondItem="mS1-t0-150" secondAttribute="trailing" constant="8" id="m1Q-hz-0Mf"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="top" secondItem="Ngb-Ew-NGG" secondAttribute="top" constant="8" id="oR6-58-oMM"/>
