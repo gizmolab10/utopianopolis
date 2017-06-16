@@ -66,10 +66,12 @@ class ZoneWidget: ZView {
     func addChildrenView() {
         if !subviews.contains(childrenView) {
             insertSubview(childrenView, belowSubview: textWidget)
-            childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-                make.left.equalTo(textWidget.snp.right).offset(gDotWidth)
-                make.bottom.top.right.equalTo(self)
-            }
+        }
+
+        childrenView.snp.removeConstraints()
+        childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
+            make.left.equalTo(textWidget.snp.right).offset(gDotWidth + Double(gGenericOffset.height / 2.0))
+            make.bottom.top.right.equalTo(self)
         }
     }
 

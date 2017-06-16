@@ -143,27 +143,6 @@ var gCountsMode: ZCountsMode {
 }
 
 
-var gTinyDotRatio: Double {
-    get {
-        var value: Double? = UserDefaults.standard.object(forKey: tinyDotsRatioKey) as? Double
-
-        if value == nil {
-            value = 4.0
-
-            UserDefaults.standard.set(value, forKey:tinyDotsRatioKey)
-            UserDefaults.standard.synchronize()
-        }
-
-        return value!
-    }
-
-    set {
-        UserDefaults.standard.set(newValue, forKey:tinyDotsRatioKey)
-        UserDefaults.standard.synchronize()
-    }
-}
-
-
 var gLineThickness: Double {
     get {
         var value: Double? = UserDefaults.standard.object(forKey: lineThicknessKey) as? Double

@@ -18,7 +18,6 @@ import Foundation
 
 enum ZSliderKind: String {
     case Vertical   = "vertical"
-    case TinyDots   = "tiny dots"
     case Thickness  = "thickness"
     case Horizontal = "horizontal"
 }
@@ -43,7 +42,6 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var      dragTargetsColorBox: ZColorWell?
     @IBOutlet var        horizontalSpacing: ZSlider?
     @IBOutlet var          verticalSpacing: ZSlider?
-    @IBOutlet var            tinyDotsRatio: NSSlider?
     @IBOutlet var                thickness: ZSlider?
 
 
@@ -54,8 +52,6 @@ class ZPreferencesController: ZGenericController {
         view              .zlayer.backgroundColor = CGColor.clear
         graphAlteringModeControl?.selectedSegment = gGraphAlteringMode.rawValue
         countsModeControl?       .selectedSegment = gCountsMode.rawValue
-        tinyDotsRatio?                 .isEnabled = gCountsMode == .dots
-        tinyDotsRatio?               .doubleValue = gTinyDotRatio
         thickness?                   .doubleValue = gLineThickness
         verticalSpacing?             .doubleValue = Double(gGenericOffset.height)
         horizontalSpacing?           .doubleValue = Double(gGenericOffset.width)
@@ -70,12 +66,11 @@ class ZPreferencesController: ZGenericController {
     // MARK:-
 
 
-    @IBAction func sliderAction(_ iSlider: NSSlider) {
+    @IBAction func sliderAction(_ iSlider: ZSlider) {
         let value = CGFloat(iSlider.doubleValue)
 
         if let kind = ZSliderKind(rawValue: iSlider.identifier!) {
             switch (kind) {
-            case   .TinyDots: gTinyDotRatio  = Double(value);                                       break
             case  .Thickness: gLineThickness = Double(value);                                       break
             case .Horizontal: gGenericOffset = CGSize(width: value, height: gGenericOffset.height); break
             case   .Vertical: gGenericOffset = CGSize(width: gGenericOffset.width, height: value);  break
@@ -92,9 +87,9 @@ class ZPreferencesController: ZGenericController {
         if let kind = ZColorBoxKind(rawValue: iColorBox.identifier!) {
             switch (kind) {
             case .DragTargets: gDragTargetsColor = color
-            case .Background:   gBackgroundColor = color
-            case  .Bookmarks:     gBookmarkColor = color
-            case      .Zones:         gZoneColor = color
+            case  .Background:  gBackgroundColor = color
+            case   .Bookmarks:    gBookmarkColor = color
+            case       .Zones:        gZoneColor = color
             }
 
             signalFor(nil, regarding: .redraw)
@@ -103,8 +98,7 @@ class ZPreferencesController: ZGenericController {
 
 
     @IBAction func countsModeAction(_ control: ZSegmentedControl) {
-        gCountsMode              = ZCountsMode(rawValue: control.selectedSegment)!
-        tinyDotsRatio?.isEnabled = gCountsMode == .dots
+        gCountsMode = ZCountsMode(rawValue: control.selectedSegment)!
 
         signalFor(nil, regarding: .data)
     }

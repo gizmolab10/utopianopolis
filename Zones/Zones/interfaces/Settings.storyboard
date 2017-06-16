@@ -11,7 +11,7 @@
         <!--Information Controller-->
         <scene sceneID="SRV-hs-cwo">
             <objects>
-                <viewController id="fxO-Qj-JeN" customClass="ZInformationController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="fxO-Qj-JeN" customClass="ZInformationController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="mbO-Ma-L1E">
                         <rect key="frame" x="0.0" y="0.0" width="226" height="135"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -95,7 +95,7 @@
         <!--Cloud Tools Controller-->
         <scene sceneID="OQa-jH-o6A">
             <objects>
-                <viewController id="M1d-6V-b2Q" customClass="ZCloudToolsController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="M1d-6V-b2Q" customClass="ZCloudToolsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="vKP-HI-kOy">
                         <rect key="frame" x="0.0" y="0.0" width="226" height="124"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -165,7 +165,7 @@
         <!--Favorites Controller-->
         <scene sceneID="Bla-9d-qST">
             <objects>
-                <viewController id="WJQ-Hc-Frf" customClass="ZFavoritesController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="WJQ-Hc-Frf" customClass="ZFavoritesController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="OQl-Rg-fWx">
                         <rect key="frame" x="0.0" y="0.0" width="225" height="22"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -236,7 +236,7 @@
         <!--Settings Controller-->
         <scene sceneID="Tae-az-4mZ">
             <objects>
-                <viewController id="YaQ-0g-PCb" customClass="ZSettingsController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="YaQ-0g-PCb" customClass="ZSettingsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
                         <rect key="frame" x="0.0" y="0.0" width="226" height="765"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -244,7 +244,7 @@
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
                                 <rect key="frame" x="0.0" y="0.0" width="226" height="765"/>
                                 <subviews>
-                                    <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
+                                    <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="651" width="226" height="114"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
@@ -307,7 +307,7 @@
                                             <outlet property="toggleButton" destination="hIy-eV-7gW" id="Pdh-ir-ANX"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="favorites" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="47v-DX-fSo" userLabel="Favorites View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
+                                    <customView identifier="favorites" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="47v-DX-fSo" userLabel="Favorites View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="600" width="226" height="50"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DdL-Cp-gGl" userLabel="Title and Toggle">
@@ -370,7 +370,7 @@
                                             <outlet property="toggleButton" destination="Rej-x2-EK2" id="dCi-1u-OXh"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
+                                    <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="195" width="226" height="404"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
@@ -433,7 +433,7 @@
                                             <outlet property="toggleButton" destination="aCk-9D-lHI" id="lcf-J5-cK6"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="cloud" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Cloud View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
+                                    <customView identifier="cloud" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Cloud View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="51" width="226" height="143"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dnz-Gb-8cH" userLabel="Title and Toggle">
@@ -496,7 +496,7 @@
                                             <outlet property="toggleButton" destination="bee-ew-HYp" id="EpT-0c-ZLw"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="help" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E5h-DF-X3i" userLabel="Cheat Sheet View" customClass="ZStackableView" customModule="Zones" customModuleProvider="target">
+                                    <customView identifier="help" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E5h-DF-X3i" userLabel="Cheat Sheet View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="226" height="50"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GnQ-iS-bgR" userLabel="Title and Toggle">
@@ -607,13 +607,13 @@
         <!--Preferences Controller-->
         <scene sceneID="n3v-Vu-MZq">
             <objects>
-                <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Zones" sceneMemberID="viewController">
+                <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Focus" sceneMemberID="viewController">
                     <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="386"/>
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="347"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box borderType="line" title="line thickness" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
-                                <rect key="frame" x="5" y="337" width="216" height="41"/>
+                                <rect key="frame" x="5" y="298" width="216" height="41"/>
                                 <view key="contentView" id="npe-oq-zV9">
                                     <rect key="frame" x="1" y="1" width="214" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -635,7 +635,7 @@
                                 </view>
                             </box>
                             <box borderType="line" title="vertical spacing" translatesAutoresizingMaskIntoConstraints="NO" id="QMR-K4-bC6" userLabel="vertical spacing">
-                                <rect key="frame" x="5" y="298" width="216" height="41"/>
+                                <rect key="frame" x="5" y="259" width="216" height="41"/>
                                 <view key="contentView" id="vWX-cG-juA">
                                     <rect key="frame" x="1" y="1" width="214" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -657,14 +657,14 @@
                                 </view>
                             </box>
                             <box borderType="line" title="horizontal spacing" translatesAutoresizingMaskIntoConstraints="NO" id="hoN-dH-smR" userLabel="horizontal spacing">
-                                <rect key="frame" x="5" y="259" width="216" height="41"/>
+                                <rect key="frame" x="5" y="220" width="216" height="41"/>
                                 <view key="contentView" id="fXT-pM-zio">
                                     <rect key="frame" x="1" y="1" width="214" height="25"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <slider identifier="horizontal" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OmD-gF-PvR">
                                             <rect key="frame" x="6" y="6" width="202" height="19"/>
-                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="13" maxValue="40" doubleValue="22" tickMarkPosition="above" sliderType="linear" id="j5S-Yr-54O"/>
+                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="20" maxValue="40" doubleValue="22" tickMarkPosition="above" sliderType="linear" id="j5S-Yr-54O"/>
                                             <connections>
                                                 <action selector="sliderAction:" target="Naq-se-Exq" id="BHm-V9-lFh"/>
                                             </connections>
@@ -675,28 +675,6 @@
                                         <constraint firstItem="OmD-gF-PvR" firstAttribute="top" secondItem="fXT-pM-zio" secondAttribute="top" constant="2" id="Fxg-P8-6ZT"/>
                                         <constraint firstAttribute="bottom" secondItem="OmD-gF-PvR" secondAttribute="bottom" constant="8" id="Jtk-FB-gFr"/>
                                         <constraint firstItem="OmD-gF-PvR" firstAttribute="leading" secondItem="fXT-pM-zio" secondAttribute="leading" constant="8" id="RS5-p5-3F6"/>
-                                    </constraints>
-                                </view>
-                            </box>
-                            <box borderType="line" title="child dot size" translatesAutoresizingMaskIntoConstraints="NO" id="uz7-7z-lD6">
-                                <rect key="frame" x="5" y="220" width="216" height="41"/>
-                                <view key="contentView" id="7Fq-a8-3im">
-                                    <rect key="frame" x="1" y="1" width="214" height="25"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <slider identifier="tiny dots" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Gvg-9Y-gub">
-                                            <rect key="frame" x="6" y="6" width="202" height="19"/>
-                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.20000000000000001" maxValue="0.40000000000000002" doubleValue="0.29999999999999999" tickMarkPosition="above" sliderType="linear" id="Y0o-6Q-D0T"/>
-                                            <connections>
-                                                <action selector="sliderAction:" target="Naq-se-Exq" id="Ph2-dJ-fzv"/>
-                                            </connections>
-                                        </slider>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="Gvg-9Y-gub" firstAttribute="leading" secondItem="7Fq-a8-3im" secondAttribute="leading" constant="8" id="USp-eC-FeF"/>
-                                        <constraint firstAttribute="bottom" secondItem="Gvg-9Y-gub" secondAttribute="bottom" constant="8" id="coI-ML-hLT"/>
-                                        <constraint firstItem="Gvg-9Y-gub" firstAttribute="top" secondItem="7Fq-a8-3im" secondAttribute="top" constant="2" id="wLJ-E7-HSC"/>
-                                        <constraint firstAttribute="trailing" secondItem="Gvg-9Y-gub" secondAttribute="trailing" constant="8" id="yHu-Hu-QkG"/>
                                     </constraints>
                                 </view>
                             </box>
@@ -714,10 +692,10 @@
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="AOk-RI-tLe">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <segments>
-                                                    <segment label="hidden" width="55"/>
-                                                    <segment label="dots" width="45" selected="YES" tag="1"/>
-                                                    <segment label="number" width="62"/>
-                                                    <segment label="total" width="43"/>
+                                                    <segment label="hidden" width="54"/>
+                                                    <segment label="dots" width="43" selected="YES" tag="1"/>
+                                                    <segment label="numbers" width="63"/>
+                                                    <segment label="totals" width="45"/>
                                                 </segments>
                                             </segmentedCell>
                                             <connections>
@@ -886,9 +864,8 @@
                             </box>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="uz7-7z-lD6" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="5AM-Ps-Lsy"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="9a4-Qq-RLi"/>
-                            <constraint firstAttribute="trailing" secondItem="uz7-7z-lD6" secondAttribute="trailing" constant="8" id="Aof-tA-G9R"/>
+                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="hoN-dH-smR" secondAttribute="bottom" constant="8" id="E33-n7-7yg"/>
                             <constraint firstItem="anJ-MD-zAh" firstAttribute="top" secondItem="ay3-pv-TvT" secondAttribute="bottom" constant="8" id="FMv-Ed-0b3"/>
                             <constraint firstItem="QMR-K4-bC6" firstAttribute="top" secondItem="1dG-7h-ePD" secondAttribute="bottom" constant="2" id="Ior-2h-b5V"/>
                             <constraint firstAttribute="bottom" secondItem="mS1-t0-150" secondAttribute="bottom" constant="8" id="K2t-gL-v3V"/>
@@ -897,9 +874,7 @@
                             <constraint firstAttribute="trailing" secondItem="QMR-K4-bC6" secondAttribute="trailing" constant="8" id="QZ8-xe-YwK"/>
                             <constraint firstItem="QMR-K4-bC6" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="U2J-wt-iaK"/>
                             <constraint firstAttribute="trailing" secondItem="1dG-7h-ePD" secondAttribute="trailing" constant="8" id="aFt-c9-QQn"/>
-                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="uz7-7z-lD6" secondAttribute="bottom" constant="8" id="aZd-VK-Byv"/>
                             <constraint firstAttribute="trailing" secondItem="ay3-pv-TvT" secondAttribute="trailing" constant="8" id="dfi-pb-wOI"/>
-                            <constraint firstItem="uz7-7z-lD6" firstAttribute="top" secondItem="hoN-dH-smR" secondAttribute="bottom" constant="2" id="fMd-qE-S7h"/>
                             <constraint firstItem="hoN-dH-smR" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="g6L-Yp-gum"/>
                             <constraint firstAttribute="trailing" secondItem="mS1-t0-150" secondAttribute="trailing" constant="8" id="m1Q-hz-0Mf"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="top" secondItem="Ngb-Ew-NGG" secondAttribute="top" constant="8" id="oR6-58-oMM"/>
@@ -918,7 +893,6 @@
                         <outlet property="graphAlteringModeControl" destination="i0m-vf-1Of" id="jBO-mu-sni"/>
                         <outlet property="horizontalSpacing" destination="OmD-gF-PvR" id="DN6-Os-oDZ"/>
                         <outlet property="thickness" destination="gh7-LP-7IV" id="ox5-Ei-ZE6"/>
-                        <outlet property="tinyDotsRatio" destination="Gvg-9Y-gub" id="mEf-NK-A8G"/>
                         <outlet property="verticalSpacing" destination="X28-Kf-ltl" id="bZA-x3-VXU"/>
                         <outlet property="zoneColorBox" destination="UMY-8c-tep" id="vq3-82-A2w"/>
                     </connections>
@@ -930,7 +904,7 @@
         <!--Shortcuts Controller-->
         <scene sceneID="45A-WG-zgj">
             <objects>
-                <viewController id="JfR-Ay-CUa" customClass="ZShortcutsController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="JfR-Ay-CUa" customClass="ZShortcutsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="sAh-AR-qiN">
                         <rect key="frame" x="0.0" y="0.0" width="226" height="22"/>
                         <autoresizingMask key="autoresizingMask"/>

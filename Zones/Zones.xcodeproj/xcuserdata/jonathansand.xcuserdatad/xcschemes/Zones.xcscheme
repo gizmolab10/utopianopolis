@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0CA04B131D2ECF1A001892E5"
-               BuildableName = "Zones.app"
-               BlueprintName = "Zones"
+               BuildableName = "Focus.app"
+               BlueprintName = "Focus"
                ReferencedContainer = "container:Zones.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -53,8 +53,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0CA04B131D2ECF1A001892E5"
-            BuildableName = "Zones.app"
-            BlueprintName = "Zones"
+            BuildableName = "Focus.app"
+            BlueprintName = "Focus"
             ReferencedContainer = "container:Zones.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -76,8 +76,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0CA04B131D2ECF1A001892E5"
-            BuildableName = "Zones.app"
-            BlueprintName = "Zones"
+            BuildableName = "Focus.app"
+            BlueprintName = "Focus"
             ReferencedContainer = "container:Zones.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -108,8 +108,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0CA04B131D2ECF1A001892E5"
-            BuildableName = "Zones.app"
-            BlueprintName = "Zones"
+            BuildableName = "Focus.app"
+            BlueprintName = "Focus"
             ReferencedContainer = "container:Zones.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

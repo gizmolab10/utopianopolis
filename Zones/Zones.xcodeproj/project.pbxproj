@@ -69,7 +69,7 @@
 		0C60B6731DBDB8A0005D99F9 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C60B6761DBDB8DB005D99F9 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C60B6791DBE84DF005D99F9 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; };
-		0C60B67A1DBE876E005D99F9 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		0C60B67A1DBE876E005D99F9 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		0C73485E1DF4C8B400E5E23B /* ZRecordsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C73485D1DF4C8B400E5E23B /* ZRecordsManager.swift */; };
 		0C73485F1DF4C8B400E5E23B /* ZRecordsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C73485D1DF4C8B400E5E23B /* ZRecordsManager.swift */; };
 		0C9B45721E75E7BD00001BA4 /* ZDragDrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C9B45711E75E7BD00001BA4 /* ZDragDrawView.swift */; };
@@ -268,14 +268,14 @@
 		0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/SnapKit.framework; sourceTree = "<group>"; };
 		0C73485D1DF4C8B400E5E23B /* ZRecordsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZRecordsManager.swift; sourceTree = "<group>"; };
 		0C9B45711E75E7BD00001BA4 /* ZDragDrawView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZDragDrawView.swift; path = views/ZDragDrawView.swift; sourceTree = "<group>"; };
-		0CA04B141D2ECF1A001892E5 /* Zones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zones.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CA04B141D2ECF1A001892E5 /* Focus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Focus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
 		0CA04B2E1D2ECF1B001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0CA04B331D2ECF1B001892E5 /* ZonesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B371D2ECF1B001892E5 /* ZonesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesUITests.swift; sourceTree = "<group>"; };
 		0CA04B391D2ECF1B001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0CA04B491D2ECF41001892E5 /* PadZones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PadZones.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CA04B491D2ECF41001892E5 /* PadFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PadFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B501D2ECF41001892E5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0CA04B571D2ECF41001892E5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0CA04B5E1D2ECF41001892E5 /* PadZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PadZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -448,10 +448,10 @@
 		0C58C3701D45805400CAB387 /* main */ = {
 			isa = PBXGroup;
 			children = (
+				0C58C3761D45805400CAB387 /* Info.plist */,
 				0CD921751D8F4C0B00F80964 /* PadZones.entitlements */,
 				0C58C3711D45805400CAB387 /* ZAppDelegate.swift */,
 				0CA6B82F1E4179D200A49F1D /* ZPadExtensions.swift */,
-				0C58C3761D45805400CAB387 /* Info.plist */,
 			);
 			path = main;
 			sourceTree = "<group>";
@@ -523,10 +523,10 @@
 		0CA04B151D2ECF1A001892E5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0CA04B141D2ECF1A001892E5 /* Zones.app */,
+				0CA04B141D2ECF1A001892E5 /* Focus.app */,
 				0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */,
 				0CA04B331D2ECF1B001892E5 /* ZonesUITests.xctest */,
-				0CA04B491D2ECF41001892E5 /* PadZones.app */,
+				0CA04B491D2ECF41001892E5 /* PadFocus.app */,
 				0CA04B5E1D2ECF41001892E5 /* PadZonesTests.xctest */,
 				0CA04B691D2ECF41001892E5 /* PadZonesUITests.xctest */,
 			);
@@ -759,9 +759,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0CA04B131D2ECF1A001892E5 /* Zones */ = {
+		0CA04B131D2ECF1A001892E5 /* Focus */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Zones" */;
+			buildConfigurationList = 0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Focus" */;
 			buildPhases = (
 				0CA04B101D2ECF1A001892E5 /* Sources */,
 				0CA04B111D2ECF1A001892E5 /* Frameworks */,
@@ -772,9 +772,9 @@
 			);
 			dependencies = (
 			);
-			name = Zones;
+			name = Focus;
 			productName = Zones;
-			productReference = 0CA04B141D2ECF1A001892E5 /* Zones.app */;
+			productReference = 0CA04B141D2ECF1A001892E5 /* Focus.app */;
 			productType = "com.apple.product-type.application";
 		};
 		0CA04B271D2ECF1B001892E5 /* ZonesTests */ = {
@@ -813,9 +813,9 @@
 			productReference = 0CA04B331D2ECF1B001892E5 /* ZonesUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		0CA04B481D2ECF41001892E5 /* PadZones */ = {
+		0CA04B481D2ECF41001892E5 /* PadFocus */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0CA04B701D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadZones" */;
+			buildConfigurationList = 0CA04B701D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadFocus" */;
 			buildPhases = (
 				0CA04B451D2ECF41001892E5 /* Sources */,
 				0CA04B461D2ECF41001892E5 /* Frameworks */,
@@ -826,9 +826,9 @@
 			);
 			dependencies = (
 			);
-			name = PadZones;
+			name = PadFocus;
 			productName = PadZones;
-			productReference = 0CA04B491D2ECF41001892E5 /* PadZones.app */;
+			productReference = 0CA04B491D2ECF41001892E5 /* PadFocus.app */;
 			productType = "com.apple.product-type.application";
 		};
 		0CA04B5D1D2ECF41001892E5 /* PadZonesTests */ = {
@@ -943,10 +943,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0CA04B481D2ECF41001892E5 /* PadZones */,
+				0CA04B481D2ECF41001892E5 /* PadFocus */,
 				0CA04B5D1D2ECF41001892E5 /* PadZonesTests */,
 				0CA04B681D2ECF41001892E5 /* PadZonesUITests */,
-				0CA04B131D2ECF1A001892E5 /* Zones */,
+				0CA04B131D2ECF1A001892E5 /* Focus */,
 				0CA04B271D2ECF1B001892E5 /* ZonesTests */,
 				0CA04B321D2ECF1B001892E5 /* ZonesUITests */,
 			);
@@ -1208,22 +1208,22 @@
 /* Begin PBXTargetDependency section */
 		0CA04B2A1D2ECF1B001892E5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0CA04B131D2ECF1A001892E5 /* Zones */;
+			target = 0CA04B131D2ECF1A001892E5 /* Focus */;
 			targetProxy = 0CA04B291D2ECF1B001892E5 /* PBXContainerItemProxy */;
 		};
 		0CA04B351D2ECF1B001892E5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0CA04B131D2ECF1A001892E5 /* Zones */;
+			target = 0CA04B131D2ECF1A001892E5 /* Focus */;
 			targetProxy = 0CA04B341D2ECF1B001892E5 /* PBXContainerItemProxy */;
 		};
 		0CA04B601D2ECF41001892E5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0CA04B481D2ECF41001892E5 /* PadZones */;
+			target = 0CA04B481D2ECF41001892E5 /* PadFocus */;
 			targetProxy = 0CA04B5F1D2ECF41001892E5 /* PBXContainerItemProxy */;
 		};
 		0CA04B6B1D2ECF41001892E5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0CA04B481D2ECF41001892E5 /* PadZones */;
+			target = 0CA04B481D2ECF41001892E5 /* PadFocus */;
 			targetProxy = 0CA04B6A1D2ECF41001892E5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -1580,7 +1580,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Zones" */ = {
+		0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Focus" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0CA04B3D1D2ECF1B001892E5 /* Debug */,
@@ -1607,7 +1607,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0CA04B701D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadZones" */ = {
+		0CA04B701D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadFocus" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0CA04B711D2ECF41001892E5 /* Debug */,
