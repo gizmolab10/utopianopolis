@@ -51,11 +51,12 @@ class ZPreferencesController: ZGenericController {
 
 
     override func awakeFromNib() {
+        view              .zlayer.backgroundColor = CGColor.clear
         graphAlteringModeControl?.selectedSegment = gGraphAlteringMode.rawValue
         countsModeControl?       .selectedSegment = gCountsMode.rawValue
-        view              .zlayer.backgroundColor = CGColor.clear
-        thickness?                   .doubleValue = gLineThickness
+        tinyDotsRatio?                 .isEnabled = gCountsMode == .dots
         tinyDotsRatio?               .doubleValue = gTinyDotRatio
+        thickness?                   .doubleValue = gLineThickness
         verticalSpacing?             .doubleValue = Double(gGenericOffset.height)
         horizontalSpacing?           .doubleValue = Double(gGenericOffset.width)
         dragTargetsColorBox?               .color = gDragTargetsColor
@@ -102,7 +103,9 @@ class ZPreferencesController: ZGenericController {
 
 
     @IBAction func countsModeAction(_ control: ZSegmentedControl) {
-        gCountsMode = ZCountsMode(rawValue: control.selectedSegment)!
+        gCountsMode              = ZCountsMode(rawValue: control.selectedSegment)!
+        tinyDotsRatio?.isEnabled = gCountsMode == .dots
+
         signalFor(nil, regarding: .data)
     }
 

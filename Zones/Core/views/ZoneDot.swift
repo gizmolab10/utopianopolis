@@ -65,14 +65,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawTinyDots(_ dirtyRect: CGRect) {
-        if  let          count = widgetZone?.fetchableCount, count > 0, innerDot != nil, isToggle, gCountsMode == .dots, (!widgetZone!.showChildren || widgetZone!.isBookmark) {
+        if isToggle, let count = widgetZone?.fetchableCount, count > 0, innerDot != nil, gCountsMode == .dots, let zone = widgetZone, (!zone.showChildren || zone.isBookmark) {
             let     startAngle = Double.pi
             let incrementAngle = Double.pi / Double(count)
             let         center = innerDot!.frame.center
             let      dotRadius = gDotHeight / 2.0
             let     tinyRadius =  dotRadius * gTinyDotRatio
             let   tinyDiameter = tinyRadius * 2.0
-            let    orbitRadius = CGFloat(dotRadius + tinyRadius * 1.3)
+            let    orbitRadius = CGFloat(dotRadius + tinyRadius * 0.5)
 
             for index in 1 ... count {
                 let  increment = Double(index * 2 - 1)
@@ -81,8 +81,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 let          y = center.y + orbitRadius * CGFloat(sin(angle)) - CGFloat(tinyRadius)
                 let       rect = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
                 let       path = ZBezierPath(ovalIn: rect)
-                let asBookmark = widgetZone != nil && (widgetZone!.isBookmark || widgetZone!.isRootOfFavorites)
-                let      color = asBookmark  ? gBookmarkColor : gZoneColor
+                let asBookmark = (zone.isBookmark || zone.isRootOfFavorites)
+                let      color = isDragTarget ? gDragTargetsColor : asBookmark  ? gBookmarkColor : gZoneColor
 
                 color.setFill()
                 path.flatness = 0.0001
@@ -98,9 +98,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
         if  let            zone = widgetZone, isInnerDot {
             let  showAsBookmark = zone.isBookmark || zone.isRootOfFavorites
-            isHidden            = isToggle && !(zone.hasChildren      || showAsBookmark || isDragTarget)
-            let shouldHighlight = isToggle   ? (zone.indicateChildren || showAsBookmark || isDragTarget) : zone.isGrabbed // not highlight when editing
-            let     strokeColor = isDragTarget ? gDragTargetsColor     : showAsBookmark  ? gBookmarkColor : gZoneColor
+            isHidden            = isToggle &&  !(zone.hasChildren             || showAsBookmark || isDragTarget)
+            let shouldHighlight = isToggle    ? (zone.indicateChildren        || showAsBookmark || isDragTarget) : zone.isGrabbed // not highlight when editing
+            let     strokeColor = isToggle && isDragTarget ? gDragTargetsColor : showAsBookmark  ? gBookmarkColor : gZoneColor
             let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
             let       thickness = CGFloat(gLineThickness)
             let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))

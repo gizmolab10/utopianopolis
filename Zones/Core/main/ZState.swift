@@ -54,12 +54,12 @@ enum ZStorageMode: String {
 
 var  gTextCapturing = false
 var gShowsSearching = false
-var      gDotHeight = 12.0
 var       gFileMode = ZFileMode.cloud
-var       gDotWidth = gDotHeight * 0.75
 var       gWorkMode = ZWorkMode.editMode
 
 
+var             gDotWidth:               Double { return gDotHeight * 0.75 }
+var            gDotHeight:               Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var             naturally:                 Bool { return gGraphAlteringMode == .natural }
 var      gIsRubberbanding:                 Bool { return gEditorView!.rubberbandRect != CGRect.zero  }
 var gGrabbedBookmarkColor:               ZColor { return gBookmarkColor.darker(by: 1.5) }
