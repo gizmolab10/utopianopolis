@@ -1152,6 +1152,7 @@ class ZEditingManager: NSObject {
             var     newIndex = index + (iMoveUp ? -1 : 1)
             var   allGrabbed = true
             var multipleGrab = false
+            var   singleGrab = false
             var      hasGrab = false
             let     indexMax = there.count
 
@@ -1160,8 +1161,10 @@ class ZEditingManager: NSObject {
                     allGrabbed   = false
                 } else if hasGrab {
                     multipleGrab = true
+                    singleGrab   = false
                 } else {
                     hasGrab      = true
+                    singleGrab   = true
                 }
             }
 
@@ -1173,9 +1176,9 @@ class ZEditingManager: NSObject {
                 // vertical wrap around behavior //
                 ///////////////////////////////////
 
-                if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && multipleGrab && atBottom))) || ( iMoveUp && !allGrabbed && atTop) {
+                if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && multipleGrab && atBottom))) || ( iMoveUp && singleGrab && atTop) {
                     newIndex = indexMax - 1 // bottom
-                } else if ( iMoveUp && (allGrabbed || extreme || (!allGrabbed && multipleGrab && atTop)))    || (!iMoveUp && !allGrabbed && atBottom) {
+                } else if ( iMoveUp && (allGrabbed || extreme || (!allGrabbed && multipleGrab && atTop)))    || (!iMoveUp && singleGrab && atBottom) {
                     newIndex = 0            // top
                 }
             }
