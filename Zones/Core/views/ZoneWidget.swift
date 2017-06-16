@@ -511,7 +511,7 @@ class ZoneWidget: ZView {
         }
 
         if isGrabbed { // && !childrenPass {  CLUE! ... adding this to the logic makes highlight disappear for zones with children shown
-            //performance("highlighting \(widgetZone.zoneName ?? "--------")")
+            note("highlighting   \(widgetZone.zoneName ?? "--------")")
             drawSelectionHighlight()
         }
 

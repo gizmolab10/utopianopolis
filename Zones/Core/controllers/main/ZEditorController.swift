@@ -34,13 +34,16 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
 
     override func setup() {
+        restartGestures()
+        super.setup()
+    }
+
+    func restartGestures() {
         view.clearGestures()
 
         rubberbandGesture = view.createDragGestureRecognizer (self, action: #selector(ZEditorController.rubberbandEvent))
         clickGesture      = view.createPointGestureRecognizer(self, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
         hitDot            = nil
-
-        super.setup()
     }
 
 
@@ -115,7 +118,66 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
             }
         }
 
-        setup()
+        restartGestures()
+    }
+
+
+    func rubberbandEvent(_ iGesture: ZGestureRecognizer?) {
+        if  let  gesture = iGesture as? ZKeyPanGestureRecognizer {
+            let location = gesture.location (in: view)
+            let    state = gesture.state
+
+            if isTextEditing(at: location) {
+                restartGestures()       // let text editor consume the gesture
+            } else if hitDot != nil {
+                dragAndCleanupEvent(iGesture)
+            } else if state == .changed {
+                updateRubberband(CGRect(start: rubberbandStart, end: location))
+            } else if state != .began {
+                updateRubberband(nil)   // ended
+            } else if let dot = dotHitTest(location) {
+                dragSetupEvent(dot, iGesture)
+            } else {                    // began
+                rubberbandSetupEvent(location, iGesture)
+            }
+        }
+    }
+
+
+    func rubberbandSetupEvent(_ location: CGPoint, _ iGesture: ZGestureRecognizer?) { // began
+        rubberbandStart = location
+        hitDot          = nil
+
+        //////////////////////
+        // detect SHIFT key //
+        //////////////////////
+
+        if let gesture = iGesture as? ZKeyPanGestureRecognizer, let modifiers = gesture.modifiers, modifiers.contains(.shift) {
+            rubberbandPreGrabs.append(contentsOf: gSelectionManager.currentGrabs)
+        } else {
+            rubberbandPreGrabs.removeAll()
+        }
+
+        note("-- R --")
+        gSelectionManager.deselect(retaining: rubberbandPreGrabs)
+    }
+
+
+    func dragSetupEvent(_ dot: ZoneDot, _ iGesture: ZGestureRecognizer?) {
+        if  let zone = dot.widgetZone { // should always be true
+            hitDot   = dot
+
+            gSelectionManager.deselect()
+            zone.grab()
+            note("d --- d")
+
+            if  zone == gHere {
+                restartGestures()
+            } else if let            location = iGesture?.location(in: dot) {
+                dot.dragStart                 = location
+                gSelectionManager.draggedZone = zone
+            }
+        }
     }
 
 
@@ -124,42 +186,40 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
             cleanupAfterDrag()
 
             if doneState.contains(iGesture!.state) {
-                setup()
+                restartGestures()
             }
         }
     }
 
 
     func dragEvent(_ iGesture: ZGestureRecognizer?) -> Bool {
-        let                  s = gSelectionManager
-        let               done = doneState.contains(iGesture!.state)
-        var          isOutside = true
+        if  let      location = iGesture?.location (in: view),
+            let   draggedZone = hitDot?.widgetZone,
+            let   dropNearest = hereWidget.widgetNearestTo(location) {
 
-        if  let       location = iGesture?.location (in: view),
-            let    draggedZone = hitDot?.widgetZone,
-            let    dropNearest = hereWidget.widgetNearestTo(location) {
-            isOutside          = false
-            var       dropZone = dropNearest.widgetZone
-            let      dropIndex = dropZone?.siblingIndex
-            let       dropHere = dropZone == gHere
-            let           same = dropZone == draggedZone
-            let       relation = relationOf(location, to: dropNearest.textWidget)
-            let  useDropParent = relation != .upon && !dropHere
-            ;         dropZone = same ? nil : useDropParent ? dropZone?.parentZone : dropZone
-            let  lastDropIndex = dropZone == nil ? 0 : dropZone!.count
-            var          index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!naturally || same) ? 0 : lastDropIndex)
-            ;            index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
-            let      dragIndex = draggedZone.siblingIndex!
-            let      sameIndex = dragIndex == index || dragIndex == index - 1
-            let   dropIsParent = draggedZone.isChild(of: dropZone)
-            let         isNoop = same || (sameIndex && dropIsParent) || index < 0
-            let          prior = s.dragDropZone?.widget
-            s .dragDropIndices = isNoop || done ? nil : NSMutableIndexSet(index: index)
-            s    .dragDropZone = isNoop || done ? nil : dropZone
-            s    .dragRelation = isNoop || done ? nil : relation
-            s       .dragPoint = isNoop || done ? nil : location
+            var      dropZone = dropNearest.widgetZone
+            let     dropIndex = dropZone?.siblingIndex
+            let      dropHere = dropZone == gHere
+            let          same = dropZone == draggedZone
+            let      relation = relationOf(location, to: dropNearest.textWidget)
+            let useDropParent = relation != .upon && !dropHere
+            ;        dropZone = same ? nil : useDropParent ? dropZone?.parentZone : dropZone
+            let lastDropIndex = dropZone == nil ? 0 : dropZone!.count
+            var         index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!naturally || same) ? 0 : lastDropIndex)
+            ;           index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
+            let     dragIndex = draggedZone.siblingIndex!
+            let     sameIndex = dragIndex == index || dragIndex == index - 1
+            let  dropIsParent = draggedZone.isChild(of: dropZone)
+            let        isNoop = same || (sameIndex && dropIsParent) || index < 0
+            let             s = gSelectionManager
+            let         prior = s.dragDropZone?.widget
+            let       dropNow = doneState.contains(iGesture!.state)
+            s.dragDropIndices = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
+            s   .dragDropZone = isNoop || dropNow ? nil : dropZone
+            s   .dragRelation = isNoop || dropNow ? nil : relation
+            s      .dragPoint = isNoop || dropNow ? nil : location
 
-            if !isNoop && !done && !dropHere && index > 0 {
+            if !isNoop && !dropNow && !dropHere && index > 0 {
                 s.dragDropIndices?.add(index - 1)
             }
 
@@ -169,17 +229,17 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
             // performance("\(relation) \(dropZone?.zoneName ?? "no name")")
 
-            if done {
+            if dropNow {
                 let editor = gEditingManager
                 hitDot     = nil
 
+                restartGestures()
                 draggedZone.widget?.dragDot.innerDot?.setNeedsDisplay()
 
                 if !isNoop && dropZone != nil {
                     if dropZone!.isBookmark {
                         editor.moveZone(draggedZone, dropZone!)
                         redrawAndSync()
-                        setup()
                     } else {
                         if dropIsParent && dragIndex <= index {
                             index -= 1
@@ -191,63 +251,11 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                     }
                 }
             }
+
+            return false
         }
         
-        return isOutside
-    }
-
-
-    func dragSetupEvent(_ dot: ZoneDot, _ iGesture: ZGestureRecognizer?) {
-        if  let zone = dot.widgetZone { // should always be true
-            hitDot   = dot
-
-            gSelectionManager.deselect()
-            zone.grab()
-            report("d --- d")
-
-            if  zone == gHere {
-                setup()
-            } else if let            location = iGesture?.location(in: dot) {
-                dot.dragStart                 = location
-                gSelectionManager.draggedZone = zone
-            }
-        }
-    }
-    
-
-    func rubberbandEvent(_ iGesture: ZGestureRecognizer?) {
-        if  let  gesture = iGesture as? ZKeyPanGestureRecognizer {
-            let location = gesture.location (in: view)
-            let    state = gesture.state
-
-            if isTextEditing(at: location) {
-                setup() // let text editor consume the gesture
-            } else if hitDot != nil {
-                dragAndCleanupEvent(iGesture)
-            } else if state == .changed {
-                updateRubberband(rect: CGRect(start: rubberbandStart, end: location))
-            } else if state != .began {
-                updateRubberband(rect: NSZeroRect)
-            } else if let dot = dotHitTest(location) {
-                dragSetupEvent(dot, iGesture)
-            } else { // began
-                rubberbandStart = location
-                hitDot          = nil
-
-                //////////////////////
-                // detect SHIFT key //
-                //////////////////////
-
-                if let modifiers = gesture.modifiers, modifiers.contains(.shift) {
-                    rubberbandPreGrabs.append(contentsOf: gSelectionManager.currentGrabs)
-                } else {
-                    rubberbandPreGrabs.removeAll()
-                }
-
-                report("-- R --")
-                gSelectionManager.deselect(retaining: rubberbandPreGrabs)
-            }
-        }
+        return true
     }
 
 
@@ -255,7 +263,31 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     // MARK:-
 
 
-    typealias DotToBooleanClosure = (ZoneDot) -> (Bool)
+    func updateRubberband(_ rect: CGRect?) {
+        if  rect == nil {
+            dragView.rubberbandRect = CGRect.zero
+
+            restartGestures()
+        } else {
+            dragView.rubberbandRect = rect
+
+            gSelectionManager.deselectGrabs(retaining: rubberbandPreGrabs)
+
+            for widget in gWidgetsManager.widgets.values {
+                if  let    hitRect = widget.hitRect {
+                    let widgetRect = widget.convert(hitRect, to: view)
+
+                    if  widgetRect.intersects(rect!) {
+                        gSelectionManager.addToGrab(widget.widgetZone)
+                    }
+                }
+            }
+
+            hereWidget.setNeedsDisplay()
+        }
+
+        view.setNeedsDisplay()
+    }
 
 
     func dotHitTest(_ location: CGPoint) -> ZoneDot? {
@@ -301,31 +333,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
         }
 
         return false
-    }
-
-
-    func updateRubberband(rect: CGRect) {
-        dragView.rubberbandRect = rect
-
-        if  rect.isEmpty {
-            setup()
-        } else {
-            gSelectionManager.deselectGrabs(retaining: rubberbandPreGrabs)
-
-            for widget in gWidgetsManager.widgets.values {
-                if  let    hitRect = widget.hitRect {
-                    let widgetRect = widget.convert(hitRect, to: view)
-
-                    if  widgetRect.intersects(rect) {
-                        gSelectionManager.addToGrab(widget.widgetZone)
-                    }
-                }
-            }
-
-            hereWidget.setNeedsDisplay()
-        }
-
-        view.setNeedsDisplay()
     }
 
 
