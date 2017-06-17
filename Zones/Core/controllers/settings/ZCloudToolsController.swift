@@ -45,10 +45,8 @@ class ZCloudToolsController: ZGenericTableController {
                 root.addAndReorderChild(zone, at: 0)
                 zone.hideChildren()
 
-                zone.traverseApply { (iChild: Zone) -> (ZTraverseStatus) in
+                zone.traverseAll { iChild in
                     iChild.isDeleted = false
-
-                    return .eContinue
                 }
 
                 self.redrawAndSync()

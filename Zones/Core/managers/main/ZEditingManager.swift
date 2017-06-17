@@ -268,10 +268,6 @@ class ZEditingManager: NSObject {
             gFavoritesManager.switchToNext(!backward) {
                 self.redrawAndSync()
             }
-        } else {
-            gFavoritesManager.showFavoritesAndGrab(gSelectionManager.firstGrab) { object, kind in
-                self.redrawAndSync()
-            }
         }
     }
 
@@ -411,14 +407,12 @@ class ZEditingManager: NSObject {
 
             let  goal = iGoal ?? zone.level + (show ? 1 : -1)
             let apply = {
-                zone.traverseApply() { iZone in
+                zone.traverseAll() { iZone in
                     if !show && iZone.level >= goal {
                         iZone.hideChildren()
                     } else if show && iZone.level < goal {
                         iZone.displayChildren()
                     }
-
-                    return .eContinue
                 }
 
                 onCompletion?()
@@ -627,10 +621,8 @@ class ZEditingManager: NSObject {
         let        copy = zone.deepCopy()
         copy.parentZone = nil
 
-        copy.traverseApply { (iZone: Zone) -> ZTraverseStatus in
+        copy.traverseAll { iZone in
             iZone.isDeleted = true
-
-            return .eContinue
         }
 
         gSelectionManager.pasteableZones.append(copy)
@@ -665,10 +657,8 @@ class ZEditingManager: NSObject {
                     for child in zone.children {
                         let copy = child.deepCopy()
 
-                        copy.traverseApply() { (iZone) -> (ZTraverseStatus) in
+                        copy.traverseAll() { iZone in
                             iZone.isDeleted = false
-
-                            return .eContinue
                         }
 
                         children.append(copy)
@@ -1039,14 +1029,12 @@ class ZEditingManager: NSObject {
             for pastable in pastables {
                 let pasteThis = pastable.deepCopy()
 
-                pasteThis.traverseApply() { iZone in
+                pasteThis.traverseAll() { iZone in
                     iZone.fetchableCount = iZone.count
                     iZone   .storageMode = storageMode
                     iZone     .isDeleted = false
 
                     iZone.needCreate()
-
-                    return .eContinue
                 }
                 pasteThis.orphan() // disable undo inside moveZone
                 moveZone(pasteThis, into: zone, at: naturally ? nil : 0, orphan: false) {

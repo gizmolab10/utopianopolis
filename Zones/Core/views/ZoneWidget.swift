@@ -232,7 +232,7 @@ class ZoneWidget: ZView {
     }
     
 
-    var hitOuterRect: CGRect {
+    var outerHitRect: CGRect {
         let start = dragDot.bounds.origin
         let end = toggleDot.bounds.extent
 

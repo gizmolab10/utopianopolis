@@ -73,7 +73,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             }
 
             if  count > 0 {
-                let     startAngle = Double.pi
+                let     startAngle = Double(0)
                 let incrementAngle = Double.pi / Double(count)
                 let         center = innerDot!.frame.center
                 let      dotRadius = gDotHeight / 2.0
@@ -104,10 +104,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         super  .draw(dirtyRect)
         drawTinyDots(dirtyRect)
 
-        if  let            zone = widgetZone, isInnerDot {
+        if  let            zone = widgetZone, isInnerDot, let mode = zone.storageMode {
             let  showAsBookmark = zone.isBookmark || zone.isRootOfFavorites
-            isHidden            = isToggle &&  !(zone.hasChildren             ||  showAsBookmark || isDragTarget)
-            let shouldHighlight = isToggle    ? (zone.indicateChildren        || zone.isBookmark || isDragTarget) : zone.isGrabbed // not highlight when editing
+            isHidden            = isToggle && ((!zone.hasChildren             && !showAsBookmark && !isDragTarget) || (mode == .favorites && !zone.isRootOfFavorites))
+            let shouldHighlight = isToggle    ? (zone.indicateChildren        || zone.isBookmark ||  isDragTarget) : zone.isGrabbed // not highlight when editing
             let     strokeColor = isToggle && isDragTarget ? gDragTargetsColor :  showAsBookmark  ? gBookmarkColor : gZoneColor
             let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
             let       thickness = CGFloat(gLineThickness)

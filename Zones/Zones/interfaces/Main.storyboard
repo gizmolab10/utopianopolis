@@ -229,12 +229,6 @@ CA
                                                             <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="uYD-Fv-1AC"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Editor" keyEquivalent="'" id="2od-ln-crd">
-                                                        <modifierMask key="keyEquivalentModifierMask" shift="YES" option="YES"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="0YO-LL-6oo"/>
-                                                        </connections>
-                                                    </menuItem>
                                                     <menuItem title="Refocus" keyEquivalent="'" id="tpQ-4P-p2y">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="c9g-W5-Xac"/>
@@ -344,7 +338,7 @@ CQ
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="ZAppDelegate" customModule="Zones" customModuleProvider="target"/>
+                <customObject id="Voe-Tx-rLC" customClass="ZAppDelegate" customModule="Focus" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="228" y="-435"/>
@@ -353,7 +347,7 @@ CQ
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="Focus" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA" customClass="ZoneWindow" customModule="Zones" customModuleProvider="target">
+                    <window key="window" title="Focus" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA" customClass="ZoneWindow" customModule="Focus" customModuleProvider="target">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="19" width="719" height="491"/>
@@ -370,8 +364,8 @@ CQ
         <!--Editor Controller-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" customClass="ZEditorController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="m2S-Jp-Qdl" customClass="ZDragDrawView" customModule="Zones" customModuleProvider="target">
+                <viewController id="XfG-lQ-9wD" customClass="ZEditorController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="m2S-Jp-Qdl" customClass="ZDragDrawView" customModule="Focus" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="396" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
@@ -399,7 +393,7 @@ CQ
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
             <objects>
-                <viewController id="MXk-17-6Dz" customClass="ZMainController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="MXk-17-6Dz" customClass="ZMainController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="eh7-uz-OG5">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -490,7 +484,7 @@ CQ
         <!--Search Controller-->
         <scene sceneID="Gwm-hS-Ozn">
             <objects>
-                <viewController id="cYL-kx-LTL" customClass="ZSearchController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="cYL-kx-LTL" customClass="ZSearchController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Vov-Ty-huu">
                         <rect key="frame" x="0.0" y="0.0" width="397" height="46"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -524,7 +518,7 @@ CQ
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
             <objects>
-                <viewController id="Hxl-Pi-4li" customClass="ZSearchResultsController" customModule="Zones" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Hxl-Pi-4li" customClass="ZSearchResultsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Yjc-TG-nmv">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>

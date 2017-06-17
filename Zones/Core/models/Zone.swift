@@ -662,6 +662,15 @@ class Zone : ZRecord {
         }
     }
 
+
+    func traverseAll(_ block: ZoneClosure) {
+        traverseApply { iZone -> ZTraverseStatus in
+            block(iZone)
+
+            return .eContinue
+        }
+    }
+
     
     @discardableResult func traverseApply(_ block: ZoneToStatusClosure) -> ZTraverseStatus {
         return safeTraverseApply(block, visited: [])
@@ -740,12 +749,10 @@ class Zone : ZRecord {
 
 
     func updateLevel() {
-        traverseApply { iZone -> ZTraverseStatus in
+        traverseAll { iZone in
             if let parentLevel = iZone.parentZone?.level, parentLevel != gUnlevel {
                 iZone.level = parentLevel + 1
             }
-
-            return .eContinue
         }
     }
 

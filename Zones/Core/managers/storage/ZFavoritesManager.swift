@@ -40,19 +40,15 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func setupDefaultFavorites() {
-        let createDefaultFavoriteAt = { (_ index: Int) in
-            let                mode = self.defaultModes[index]
-            let                name = mode.rawValue
-            let            favorite = self.create(withBookmark: nil, false, parent: self.defaultFavorites, atIndex: index, mode, name)
-            favorite      .zoneLink =  "\(name)::"
-            favorite         .order = Double(index) * 0.0001
-
-            favorite.clearAllStates()
-        }
-
         if defaultFavorites.count == 0 {
             for index in 0 ... 2 {
-                createDefaultFavoriteAt(index)
+                let          mode = self.defaultModes[index]
+                let          name = mode.rawValue
+                let      favorite = self.create(withBookmark: nil, false, parent: self.defaultFavorites, atIndex: index, mode, name)
+                favorite.zoneLink =  "\(name)::"
+                favorite   .order = Double(index) * 0.0001
+
+                favorite.clearAllStates()
             }
         }
     }
@@ -68,27 +64,20 @@ class ZFavoritesManager: ZCloudManager {
         // call every time favorites MIGHT be altered
         // end of handleKey in editor
 
-        for index in 0 ... 2 {
-            rootZone?.removeChild(defaultFavorites[index])
+        for favorite in defaultFavorites.children {
+            rootZone?.removeChild(favorite)
         }
 
-        var found = [Int] ()
+        var found = [ZStorageMode] ()
 
         for favorite in rootZone!.children {
-            if favorite.isFavorite, let mode = favorite.crossLink?.storageMode {
-
-                switch mode {
-                case .favorites: found.append(0)
-                case .everyone:  found.append(1)
-                case .mine:      found.append(2)
-                default:         break
-                }
+            if favorite.isFavorite, let mode = favorite.crossLink?.storageMode, !found.contains(mode) {
+                found.append(mode)
             }
         }
 
-        for index in 0 ... 2 {
-            if !found.contains(index), let favorite = defaultFavorites[index] {
-
+        for favorite in defaultFavorites.children {
+            if let mode = favorite.storageMode, !found.contains(mode) {
                 rootZone?.addChild(favorite)
                 favorite.clearAllStates()
             }
@@ -299,7 +288,7 @@ class ZFavoritesManager: ZCloudManager {
             let     recordName = basis.record.recordID.recordName
 
             for bookmark in rootZone!.children {
-                if recordName == bookmark.crossLink?.record.recordID.recordName {
+                if recordName == bookmark.crossLink?.record.recordID.recordName, !defaultFavorites.children.contains(bookmark) {
                     return bookmark
                 }
             }
@@ -334,11 +323,11 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func isChildOfFavoritesRoot(_ zone: Zone) -> Bool {
-        let name = zone.record.recordID.recordName
+        let   recordName = zone.record.recordID.recordName
 
         if  let children = rootZone?.children {
             for child in children {
-                if child.crossLink?.record.recordID.recordName == name {
+                if  recordName == child.crossLink?.record.recordID.recordName, !defaultFavorites.children.contains(child) {
                     return true
                 }
             }
@@ -350,9 +339,9 @@ class ZFavoritesManager: ZCloudManager {
 
     func toggleFavorite(for zone: Zone) {
         if isChildOfFavoritesRoot(zone) {
-            gFavoritesManager.deleteFavorite(for: zone)
+            deleteFavorite(for: zone)
         } else {
-            gFavoritesManager.createBookmark(for: zone, isFavorite: true)
+            createBookmark(for: zone, isFavorite: true)
         }
     }
 

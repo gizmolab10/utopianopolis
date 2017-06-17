@@ -99,7 +99,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
             }
 
             if !onTextWidget {
-                if  let     dot = dotHitTest(location) {
+                if  let     dot = dotsHitTest(location) {
                     if let zone = dot.widgetZone {
                         if dot.isToggle {
                             gEditingManager.toggleDotActionOnZone(zone)
@@ -135,7 +135,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                 updateRubberband(CGRect(start: rubberbandStart, end: location))
             } else if state != .began {
                 updateRubberband(nil)   // ended
-            } else if let dot = dotHitTest(location) {
+            } else if let dot = dotsHitTest(location) {
                 dragSetupEvent(dot, iGesture)
             } else {                    // began
                 rubberbandSetupEvent(location, iGesture)
@@ -290,29 +290,30 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     }
 
 
-    func dotHitTest(_ location: CGPoint) -> ZoneDot? {
-        var hit: ZoneDot? = nil
+    func dotsHitTest(_ location: CGPoint) -> ZoneDot? {
+        var        hit: ZoneDot? = nil
 
-        gHere.traverseApply { (iZone) -> (ZTraverseStatus) in
-            if  let widget = iZone.widget {
-                var   rect = widget.hitOuterRect
-                rect       = widget.convert(rect, to: view)
+        gHere.traverseApply { iZone -> ZTraverseStatus in
+            if  let       widget = iZone.widget {
+                var         rect = widget.outerHitRect
+                rect             = widget.convert(rect, to: view)
 
                 if rect.contains(location) {
-                    let found: DotToBooleanClosure = { (iDot: ZoneDot) -> Bool in
-                        rect   = iDot.bounds
-                        rect   = iDot.convert(rect, to: self.view)
-                        let found = rect.contains(location)
+                    let hits: DotToBooleanClosure = { (iDot: ZoneDot) -> Bool in
+                        rect     = iDot.bounds
+                        rect     = iDot.convert(rect, to: self.view)
+                        let bang = rect.contains(location)
 
-                        if found {
+                        if bang {
                             hit = iDot
                         }
 
-                        return found
+                        return bang
                     }
 
-                    if found(widget.dragDot)   { return .eStop } else
-                    if found(widget.toggleDot) { return .eStop }
+                    if hits(widget.dragDot) || hits(widget.toggleDot) {
+                        return .eStop
+                    }
                 }
             }
 
