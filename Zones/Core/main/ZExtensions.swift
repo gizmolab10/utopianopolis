@@ -24,15 +24,15 @@ extension NSObject {
 
 
     func        note(_ iMessage: Any?)                            { } // report(iMessage) }
-    func performance(_ iMessage: Any?)                            { } // report(iMessage) }
+    func performance(_ iMessage: Any?)                            { report(iMessage) }
     func   signalFor(_ object: NSObject?, regarding: ZSignalKind) { gControllersManager.signalFor(object, regarding: regarding, onCompletion: nil) }
     func  debugCheck()                                            { gTravelManager.debugCheck() }
 
 
     func columnarReport(_ iFirst: Any?, _ iSecond: Any?) {
         if  var prefix = iFirst as? String {
-            prefix.appendSpacesToLength(gLogTabStop - 1)
-            report("\(prefix) \(iSecond ?? "")")
+            prefix.appendSpacesToLength(gLogTabStop)
+            report("\(prefix)\(iSecond ?? "")")
         }
     }
 
@@ -114,10 +114,11 @@ extension NSObject {
         if array != nil {
             for object in array! {
                 let message = closure(object)
-                string.append("\(separator) \(message)")
+
+                string.append("\(separator)\(message)")
 
                 if  separator.length == 0 {
-                    separator.appendSpacesToLength(gLogTabStop - 1)
+                    separator.appendSpacesToLength(gLogTabStop)
 
                     separator = "\n\(separator)"
                 }

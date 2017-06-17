@@ -14,9 +14,10 @@ import CloudKit
 class ZFavoritesManager: ZCloudManager {
 
 
-    let  defaultFavorites  = Zone(record: nil, storageMode: .favorites)
-    var    favoritesIndex  = 0
-    var             count: Int { return rootZone!.count }
+    let            defaultFavorites  = Zone(record: nil, storageMode: .favorites)
+    let defaultModes: [ZStorageMode] = [.favorites, .everyone, .mine]
+    var              favoritesIndex  = 0
+    var                       count: Int { return rootZone!.count }
 
 
     // MARK:- init
@@ -40,7 +41,7 @@ class ZFavoritesManager: ZCloudManager {
 
     func setupDefaultFavorites() {
         let createDefaultFavoriteAt = { (_ index: Int) in
-            let  mode: ZStorageMode = index == 0 ? .everyone : .mine
+            let                mode = self.defaultModes[index]
             let                name = mode.rawValue
             let            favorite = self.create(withBookmark: nil, false, parent: self.defaultFavorites, atIndex: index, mode, name)
             favorite      .zoneLink =  "\(name)::"
@@ -50,7 +51,7 @@ class ZFavoritesManager: ZCloudManager {
         }
 
         if defaultFavorites.count == 0 {
-            for index in [0, 1] {
+            for index in 0 ... 2 {
                 createDefaultFavoriteAt(index)
             }
         }
@@ -67,7 +68,7 @@ class ZFavoritesManager: ZCloudManager {
         // call every time favorites MIGHT be altered
         // end of handleKey in editor
 
-        for index in [0, 1] {
+        for index in 0 ... 2 {
             rootZone?.removeChild(defaultFavorites[index])
         }
 
@@ -77,14 +78,15 @@ class ZFavoritesManager: ZCloudManager {
             if favorite.isFavorite, let mode = favorite.crossLink?.storageMode {
 
                 switch mode {
-                case .everyone: found.append(0); break
-                case .mine:     found.append(1); break
-                default:                         break
+                case .favorites: found.append(0)
+                case .everyone:  found.append(1)
+                case .mine:      found.append(2)
+                default:         break
                 }
             }
         }
 
-        for index in [0, 1] {
+        for index in 0 ... 2 {
             if !found.contains(index), let favorite = defaultFavorites[index] {
 
                 rootZone?.addChild(favorite)
@@ -148,51 +150,46 @@ class ZFavoritesManager: ZCloudManager {
     func updateIndexFor(_ iZone: Zone, iGrabClosure: ObjectClosure?) {
         setup()
 
-        let        traveler = !iZone.isBookmark ? iZone : iZone.bookmarkTarget
+        let          traveler = !iZone.isBookmark ? iZone : iZone.bookmarkTarget
+        if  let   identifier  = traveler?.record?.recordID.recordName {
+            let          mode = traveler!.storageMode
+            let   enumeration = rotatedEnumeration
+            let updateForZone = { (iZoneToMatch: Zone) in
+                for (index, zone) in self.rootZone!.children.enumerated() {
+                    if zone == iZoneToMatch {
+                        self.favoritesIndex = index
 
-        if  let identifier  = traveler?.record?.recordID.recordName {
-            if  identifier == favoritesRootNameKey {
-                iGrabClosure?(iZone)
-            } else {
-                let          mode = traveler!.storageMode
-                let   enumeration = rotatedEnumeration
-                let updateForZone = { (iZoneToMatch: Zone) in
-                    for (index, zone) in self.rootZone!.children.enumerated() {
-                        if zone == iZoneToMatch {
-                            self.favoritesIndex = index
+                        iGrabClosure?(zone)
 
-                            iGrabClosure?(zone)
-
-                            return
-                        }
+                        return
                     }
                 }
-
-                // must go through enumerations three times, so will match 
-                // first against identifer
-                // second against target
-                // third against non-favorite ???
-
-                for (_, zone) in enumeration {
-                    if zone == iZone || (zone.isFavorite && zone.crossLink?.record.recordID.recordName == identifier && zone.crossLink?.storageMode == mode) {
-                        return updateForZone(zone)
-                    }
-                }
-
-                for (_, zone) in enumeration {
-                    if zone.isFavorite, let target = zone.bookmarkTarget, (target.spawned(traveler!) || traveler!.spawned(target)) {
-                        return updateForZone(zone)
-                    }
-                }
-
-                for (_, zone) in enumeration {
-                    if !zone.isFavorite, zone.isBookmark, zone.crossLink?.storageMode == mode {
-                        return updateForZone(zone)
-                    }
-                }
-
-                iGrabClosure?(nil)
             }
+
+            // must go through enumerations three times, so will match
+            // first against identifer
+            // second against target
+            // third against non-favorite ???
+
+            for (_, zone) in enumeration {
+                if zone == iZone || (zone.isFavorite && zone.crossLink?.record.recordID.recordName == identifier && zone.crossLink?.storageMode == mode) {
+                    return updateForZone(zone)
+                }
+            }
+
+            for (_, zone) in enumeration {
+                if zone.isFavorite, let target = zone.bookmarkTarget, (target.spawned(traveler!) || traveler!.spawned(target)) {
+                    return updateForZone(zone)
+                }
+            }
+
+            for (_, zone) in enumeration {
+                if !zone.isFavorite, zone.isBookmark, zone.crossLink?.storageMode == mode {
+                    return updateForZone(zone)
+                }
+            }
+
+            iGrabClosure?(nil)
         } else {
             iGrabClosure?(nil)
         }

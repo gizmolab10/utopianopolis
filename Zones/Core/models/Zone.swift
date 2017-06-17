@@ -177,12 +177,12 @@ class Zone : ZRecord {
         }
 
         set {
-            if newValue != fetchableCount && !isBookmark {
+            if  newValue != fetchableCount && !isBookmark {
                 zoneCount = NSNumber(value: newValue)
             }
 
             for bookmark in gRemoteStoresManager.bookmarksFor(self) {
-                bookmark.zoneCount = zoneCount
+                bookmark.zoneCount = NSNumber(value: newValue)
             }
         }
     }
@@ -190,10 +190,10 @@ class Zone : ZRecord {
 
     var progenyCount: Int {
         get {
-            if zoneProgeny == nil {
+            if  zoneProgeny == nil {
                 updateClassProperties()
 
-                if zoneProgeny == nil {
+                if  zoneProgeny == nil {
                     zoneProgeny = NSNumber(value: count + 1)
                 }
             }
@@ -444,6 +444,7 @@ class Zone : ZRecord {
 
             child.parentZone  = self
             hasChildren       = true
+            fetchableCount    = count
 
             child.updateLevel()
 
@@ -628,9 +629,10 @@ class Zone : ZRecord {
 
         copy(into: zone)
 
-        zone.progenyCount = 1
-        zone  .parentZone = nil
-        zone  .isUpToDate = false
+        zone.fetchableCount = 0
+        zone  .progenyCount = 1
+        zone    .parentZone = nil
+        zone    .isUpToDate = false
 
         for child in children {
             zone.addChild(child.deepCopy())
@@ -660,16 +662,7 @@ class Zone : ZRecord {
         }
     }
 
-
-    func recursivelyMarkAsDeleted(_ iDeleted: Bool) {
-        isDeleted = iDeleted
-
-        for child in children {
-            child.recursivelyMarkAsDeleted(iDeleted)
-        }
-    }
-
-
+    
     @discardableResult func traverseApply(_ block: ZoneToStatusClosure) -> ZTraverseStatus {
         return safeTraverseApply(block, visited: [])
     }

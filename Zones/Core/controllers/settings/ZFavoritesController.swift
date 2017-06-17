@@ -38,7 +38,7 @@ class ZFavoritesController: ZGenericTableController {
 
     override func numberOfRows(in tableView: ZTableView) -> Int {
         if  let    root = gFavoritesManager.rootZone {
-            return root.count + 1
+            return root.count
         }
 
         return 1
@@ -48,8 +48,8 @@ class ZFavoritesController: ZGenericTableController {
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
         var        value = ""
 
-        if  let     text = row == 0 ? "favorites" : gFavoritesManager.textAtIndex(row - 1) {
-            let needsDot = gFavoritesManager.favoritesIndex == row - 1
+        if  let     text = gFavoritesManager.textAtIndex(row) {
+            let needsDot = gFavoritesManager.favoritesIndex == row
             let   prefix = needsDot ? "•" : "  "
             value        = " \(prefix) \(text)"
         }
@@ -61,14 +61,8 @@ class ZFavoritesController: ZGenericTableController {
     func actOnSelection(_ row: Int) {
         gSelectionManager.fullResign()
 
-        if row == 0 {
-            gStorageMode = .favorites
-
-            gTravelManager.travel {
-                self.signalFor(nil, regarding: .redraw)
-            }
-        } else if let favorite: Zone = gFavoritesManager.zoneAtIndex(row - 1) {
-            gFavoritesManager.favoritesIndex = row - 1
+        if let favorite: Zone = gFavoritesManager.zoneAtIndex(row) {
+            gFavoritesManager.favoritesIndex = row
 
             gTravelManager.travelThrough(favorite) { object, kind in
                 if  let here = object as? Zone {

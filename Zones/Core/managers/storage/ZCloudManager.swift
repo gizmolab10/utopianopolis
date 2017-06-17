@@ -50,6 +50,7 @@ class ZCloudManager: ZRecordsManager {
                 }
 
                 onCompletion?(count)
+                columnarReport("CREATE \(count)", stringForRecords(operation.recordsToSave))
                 start(operation)
 
                 return
@@ -60,7 +61,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func flush(_ onCompletion: IntegerClosure?) {
+    func save(_ onCompletion: IntegerClosure?) {
         if  let           operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
             operation.recordsToSave = pullRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
 
@@ -73,7 +74,7 @@ class ZCloudManager: ZRecordsManager {
                         }
                     }
 
-                    self.flush(onCompletion)
+                    self.save(onCompletion)
                 }
 
                 operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
@@ -91,15 +92,12 @@ class ZCloudManager: ZRecordsManager {
                                 description = "\(description): \(name)"
                             }
 
-                            self.performance("SAVE ==> \(self.storageMode) \(description)")
+                            self.columnarReport("SAVE ERROR", "\(self.storageMode) \(description)")
                         }
                     }
                 }
 
-                var prefix = "SAVE \(count)"
-
-                prefix.appendSpacesToLength(gLogTabStop - 2)
-                note("\(prefix) \(stringForRecords(operation.recordsToSave))")
+                columnarReport("SAVE \(count)", stringForRecords(operation.recordsToSave))
                 start(operation)
 
                 return
@@ -118,7 +116,7 @@ class ZCloudManager: ZRecordsManager {
             // iRecord == nil means: end of response to this particular query
 
             if iRecord != nil {
-                self.performance("DELETE \(String(describing: iRecord![zoneNameKey]))")
+                self.columnarReport("DELETE", String(describing: iRecord![zoneNameKey]))
                 toBeDeleted.append((iRecord?.recordID)!)
 
             } else if (toBeDeleted.count) > 0, let operation = self.configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
@@ -282,7 +280,7 @@ class ZCloudManager: ZRecordsManager {
                 self.clearStatesForRecordID(iID, forStates:[.needsMerge])
             }
 
-            self.performance("MERGE         \(stringForRecordIDs(recordIDs, in: storageMode))")
+            self.columnarReport("MERGE", stringForRecordIDs(recordIDs, in: storageMode))
             start(operation)
         } else {
             onCompletion?(0)
@@ -303,7 +301,7 @@ class ZCloudManager: ZRecordsManager {
         if count > 0 {
             let predicate = NSPredicate(format: "zoneState < %d AND recordID IN %@", ZoneState.IsFavorite.rawValue, needed)
 
-            performance("FETCH         \(stringForReferences(needed, in: storageMode))")
+            columnarReport("FETCH", stringForReferences(needed, in: storageMode))
 
             self.queryWith(predicate) { (iRecord: CKRecord?) in
                 if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
@@ -459,7 +457,7 @@ class ZCloudManager: ZRecordsManager {
                 }
             }
 
-            performance("PARENTS of    \(stringForRecordIDs(orphans, in: storageMode))")
+            columnarReport("PARENTS of", stringForRecordIDs(orphans, in: storageMode))
             clearState(.needsParent)
             start(operation)
         } else {
@@ -492,7 +490,7 @@ class ZCloudManager: ZRecordsManager {
                 }
             }
 
-            performance("CHILDREN of   \(stringForReferences(childrenNeeded, in: storageMode))")
+            columnarReport("CHILDREN of", stringForReferences(childrenNeeded, in: storageMode))
             queryWith(predicate) { (iRecord: CKRecord?) in
                 if iRecord != nil { // nil means: we already received full response from cloud for this particular fetch
                     let child = self.zoneForRecord(iRecord!)
@@ -510,7 +508,7 @@ class ZCloudManager: ZRecordsManager {
                                 }
                             }
                         } else {
-                            self.performance("CHILD \(child.zoneName ?? "---"))")
+                            self.columnarReport("CHILD", child.zoneName ?? "---")
                         }
                     }
 

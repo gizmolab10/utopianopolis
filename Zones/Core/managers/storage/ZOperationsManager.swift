@@ -20,7 +20,7 @@ enum ZOperationID: Int {
     case fetch
     case children
     case toRoot
-    case flush // zones, manifests, favorites
+    case save // zones, manifests, favorites
     case unsubscribe
     case subscribe
 
@@ -74,7 +74,7 @@ class ZOperationsManager: NSObject {
     func travel(_ onCompletion: @escaping Closure) {
         var operationIDs: [ZOperationID] = []
 
-        for sync in ZOperationID.here.rawValue...ZOperationID.flush.rawValue {
+        for sync in ZOperationID.here.rawValue...ZOperationID.save.rawValue {
             operationIDs.append(ZOperationID(rawValue: sync)!)
         }
 
@@ -82,13 +82,13 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func       sync(_ onCompletion: @escaping Closure) { setupAndRun([.create,   .fetch, .parent, .children, .merge, .flush]) { onCompletion() } }
-    func       save(_ onCompletion: @escaping Closure) { setupAndRun([.create,                               .merge, .flush]) { onCompletion() } }
-    func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                      .children,         .flush]) { onCompletion() } }
-    func     parent(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent                           ]) { onCompletion() } }
-    func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent, .children                ]) { onCompletion() } }
-    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent, .children,         .flush]) { onCompletion() } }
-    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                          ]) { onCompletion() } }
+    func       sync(_ onCompletion: @escaping Closure) { setupAndRun([.create,   .fetch, .parent, .children, .merge, .save]) { onCompletion() } }
+    func       save(_ onCompletion: @escaping Closure) { setupAndRun([.create,                               .merge, .save]) { onCompletion() } }
+    func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                      .children,         .save]) { onCompletion() } }
+    func     parent(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent                          ]) { onCompletion() } }
+    func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent, .children               ]) { onCompletion() } }
+    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent, .children,         .save]) { onCompletion() } }
+    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                         ]) { onCompletion() } }
 
 
     func children(_ recursing: ZRecursionType, _ iRecursiveGoal: Int? = nil, onCompletion: @escaping Closure) {
@@ -215,7 +215,7 @@ class ZOperationsManager: NSObject {
                 case .create:      cloudManager.create                      (       complete)
                 case .fetch:       cloudManager.fetch                       (       complete)
                 case .merge:       cloudManager.merge                       (       complete)
-                case .flush:       cloudManager.flush                       (       complete)
+                case .save:        cloudManager.save                        (       complete)
                 default: break
                 }
             }

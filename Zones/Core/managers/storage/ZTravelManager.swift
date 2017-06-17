@@ -129,10 +129,12 @@ class ZTravelManager: NSObject {
                     grabHere()
                 } else {
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
-                        gHere        = gCloudManager.zoneForRecord(iRecord!)
-                        gHere.record = iRecord!
+                        if  let   record = iRecord {
+                            gHere        = gCloudManager.zoneForRecord(record)
+                            gHere.record = record
 
-                        grabHere()
+                            grabHere()
+                        }
                     }
                 }
             }
