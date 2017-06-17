@@ -197,30 +197,37 @@ extension NSWindow {
 
     override open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
         enum ZMenuType: Int {
-            case Grab  = 1
-            case Paste = 2
-            case Undo  = 3
-            case Redo  = 4
-            case All   = 5
-            case Child = 6
-            case Zone  = 7
+            case Grab     = 1
+            case Paste    = 2
+            case Undo     = 3
+            case Redo     = 4
+            case All      = 5
+            case Zone     = 6
+            case Multiple = 7
         }
 
-        var valid = !gEditingManager.isEditing
+        let  edit = gEditingManager.isEditing
+        var valid = !edit
         let   tag = menuItem.tag
 
         if  tag <= 7, tag > 0, let type = ZMenuType(rawValue: tag) {
-            if gEditingManager.isEditing && type != .Undo && type != .Redo {
-                valid = [.All, .Zone, .Child].contains(type)
+            if edit {
+                if  type != .Undo && type != .Redo {
+                    valid = [.All, .Zone].contains(type)
+                }
             } else {
+                let paste = gSelectionManager.pasteableZones.count
+                let count = gSelectionManager.currentGrabs  .count
+                let  undo = gEditingManager.undoManager
+
                 switch type {
-                case .Child,
-                     .Zone:  valid = true
-                case .Undo:  valid = gEditingManager.undoManager.canUndo
-                case .Redo:  valid = gEditingManager.undoManager.canRedo
-                case .Grab:  valid = gSelectionManager.currentGrabs.count > 0
-                case .Paste: valid = gSelectionManager       .pasteableZones.count > 0
-                default:     valid = false
+                case .Zone:     valid = true
+                case .Paste:    valid = paste > 0
+                case .Grab:     valid = count > 0
+                case .Multiple: valid = count > 1
+                case .Undo:     valid = undo.canUndo
+                case .Redo:     valid = undo.canRedo
+                default:        valid = false
                 }
             }
         }

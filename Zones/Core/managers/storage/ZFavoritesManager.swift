@@ -20,6 +20,26 @@ class ZFavoritesManager: ZCloudManager {
     var                       count: Int { return rootZone!.count }
 
 
+    var rotatedEnumeration: EnumeratedSequence<Array<Zone>> {
+        let enumeration = rootZone?.children.enumerated()
+        var     rotated = [Zone] ()
+
+        for (index, favorite) in enumeration! {
+            if  index >= favoritesIndex {
+                rotated.append(favorite)
+            }
+        }
+
+        for (index, favorite) in enumeration! {
+            if  index < favoritesIndex {
+                rotated.append(favorite)
+            }
+        }
+
+        return rotated.enumerated()
+    }
+
+
     // MARK:- init
     // MARK:-
 
@@ -113,26 +133,6 @@ class ZFavoritesManager: ZCloudManager {
                 }
             }
         }
-    }
-
-
-    var rotatedEnumeration: EnumeratedSequence<Array<Zone>> {
-        let enumeration = rootZone?.children.enumerated()
-        var     rotated = [Zone] ()
-
-        for (index, favorite) in enumeration! {
-            if  index >= favoritesIndex {
-                rotated.append(favorite)
-            }
-        }
-
-        for (index, favorite) in enumeration! {
-            if  index < favoritesIndex {
-                rotated.append(favorite)
-            }
-        }
-
-        return rotated.enumerated()
     }
 
 

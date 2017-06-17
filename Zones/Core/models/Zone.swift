@@ -492,11 +492,17 @@ class Zone : ZRecord {
     }
 
 
-    func moveChild(from: Int, to: Int) {
-        if to < count, from < count, let child = self[from] {
+    @discardableResult func moveChild(from: Int, to: Int) -> Bool {
+        var succeeded = false
+
+        if  to < count, from < count, let child = self[from], !gFavoritesManager.defaultFavorites.children.contains(child) {
             children.remove(       at: from)
             children.insert(child, at: to)
+
+            succeeded = true
         }
+
+        return succeeded
     }
 
 

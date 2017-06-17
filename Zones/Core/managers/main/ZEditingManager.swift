@@ -1196,10 +1196,11 @@ class ZEditingManager: NSObject {
                 }
                 
                 if !selectionOnly {
-                    there.moveChild(from: index, to: newIndex)
-                    there.children[newIndex].grab()
-                    there.updateOrdering()
-                    self.redrawAndSync(there)
+                    if  there.moveChild(from: index, to: newIndex) {
+                        there.children[newIndex].grab()
+                        there.updateOrdering()
+                        self.redrawAndSync(there)
+                    }
                 } else {
                     let grab = there.children[newIndex]
                     
