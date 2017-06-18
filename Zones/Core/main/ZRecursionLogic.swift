@@ -38,6 +38,15 @@ class ZRecursionLogic: NSObject {
     }
 
 
+    func propagateDeeply(to iChild: Zone) {
+        iChild.traverseAll() { iZone in
+            if iZone.count != iZone.fetchableCount {
+                iZone.needProgeny()
+            }
+        }
+    }
+
+
     func propagateNeeds(to iChild: Zone, _ iProgenyNeeded: [CKReference]?) {
         if type != nil {
             let    update = !iChild.isUpToDate
@@ -49,7 +58,7 @@ class ZRecursionLogic: NSObject {
             case .expand:  if expand { iChild.needChildren() }
             case .restore: if reveal { iChild.needChildren() }
             case .update:  if update { iChild.needProgeny() }
-            case .deep:                iChild.needProgeny()
+            case .deep:                propagateDeeply(to: iChild)
             }
         } else if iChild.canRevealChildren, let parentRef = iChild.parent, let progenyNeeded = iProgenyNeeded, progenyNeeded.count > 0, progenyNeeded.contains(parentRef) {
             iChild.needProgeny()

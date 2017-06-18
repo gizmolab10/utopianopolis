@@ -90,77 +90,77 @@
                 </viewController>
                 <customObject id="wYh-I6-Wpi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-243" y="1582"/>
+            <point key="canvasLocation" x="-179" y="1557"/>
         </scene>
         <!--Cloud Tools Controller-->
         <scene sceneID="OQa-jH-o6A">
             <objects>
                 <viewController id="M1d-6V-b2Q" customClass="ZCloudToolsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="vKP-HI-kOy">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="124"/>
+                    <view key="view" focusRingType="none" id="vKP-HI-kOy">
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="37"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5N2-DZ-4UX">
-                                <rect key="frame" x="14" y="59" width="198" height="32"/>
-                                <buttonCell key="cell" type="push" title="Restore Zone" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Z39-eg-fDr">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="restoreZoneButtonAction:" target="M1d-6V-b2Q" id="PTT-bj-hpu"/>
-                                </connections>
-                            </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="m2Y-u6-Urc" userLabel="Restore from Trash">
-                                <rect key="frame" x="14" y="30" width="198" height="32"/>
-                                <buttonCell key="cell" type="push" title="Restore from Trash" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zxX-lX-cD8">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="restoreFromTrashButtonAction:" target="M1d-6V-b2Q" id="MJ2-Ys-HQE"/>
-                                </connections>
-                            </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0kE-Oh-3Gh">
-                                <rect key="frame" x="14" y="1" width="198" height="32"/>
-                                <buttonCell key="cell" type="push" title="Empty Trash" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pXH-Xu-wHh">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="emptyTrashButtonAction:" target="M1d-6V-b2Q" id="y5A-RB-j0e"/>
-                                </connections>
-                            </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XVw-WY-IDX">
-                                <rect key="frame" x="14" y="88" width="198" height="32"/>
-                                <buttonCell key="cell" type="push" title="Recount" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="I6g-wr-TpV">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="recountButtonAction:" target="M1d-6V-b2Q" id="0rs-YC-MW2"/>
-                                </connections>
-                            </button>
+                            <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="28" horizontalPageScroll="10" verticalLineScroll="28" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hs9-M3-H9Z">
+                                <rect key="frame" x="20" y="0.0" width="186" height="33"/>
+                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="cXJ-WP-zvc">
+                                    <rect key="frame" x="0.0" y="0.0" width="186" height="33"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="28" id="NKw-JK-K1N">
+                                            <rect key="frame" x="0.0" y="0.0" width="186" height="33"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                            <tableColumns>
+                                                <tableColumn width="186" minWidth="40" maxWidth="1000" id="1IZ-hl-gOo">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                    </tableHeaderCell>
+                                                    <buttonCell key="dataCell" type="push" title="Tool" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="44Y-yM-YMb">
+                                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                        <font key="font" metaFont="system"/>
+                                                    </buttonCell>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                </tableColumn>
+                                            </tableColumns>
+                                            <connections>
+                                                <outlet property="dataSource" destination="M1d-6V-b2Q" id="otf-f5-nyy"/>
+                                                <outlet property="delegate" destination="M1d-6V-b2Q" id="hkn-lp-zyQ"/>
+                                            </connections>
+                                        </tableView>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </clipView>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="33" id="Ljx-ku-EBW"/>
+                                </constraints>
+                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="rbq-ID-znZ">
+                                    <rect key="frame" x="-100" y="-100" width="238" height="15"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="QY4-tf-qLS">
+                                    <rect key="frame" x="-100" y="-100" width="15" height="102"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="5N2-DZ-4UX" firstAttribute="top" secondItem="XVw-WY-IDX" secondAttribute="bottom" constant="8" id="0mO-po-iZU"/>
-                            <constraint firstAttribute="trailing" secondItem="m2Y-u6-Urc" secondAttribute="trailing" constant="20" id="4Fe-Oj-zfQ"/>
-                            <constraint firstItem="0kE-Oh-3Gh" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="6z6-vB-CKQ"/>
-                            <constraint firstItem="XVw-WY-IDX" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="7uM-cE-vFX"/>
-                            <constraint firstItem="0kE-Oh-3Gh" firstAttribute="top" secondItem="m2Y-u6-Urc" secondAttribute="bottom" constant="8" id="BQK-Vo-qxT"/>
-                            <constraint firstItem="5N2-DZ-4UX" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="GGT-EU-kcT"/>
-                            <constraint firstItem="m2Y-u6-Urc" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="KLL-Xw-y32"/>
-                            <constraint firstAttribute="trailing" secondItem="0kE-Oh-3Gh" secondAttribute="trailing" constant="20" id="YZv-gH-PE9"/>
-                            <constraint firstAttribute="trailing" secondItem="XVw-WY-IDX" secondAttribute="trailing" constant="20" id="bUD-ca-PNb"/>
-                            <constraint firstAttribute="bottom" secondItem="0kE-Oh-3Gh" secondAttribute="bottom" constant="8" id="eIx-7k-bnp"/>
-                            <constraint firstAttribute="trailing" secondItem="5N2-DZ-4UX" secondAttribute="trailing" constant="20" id="iv6-hj-fX3"/>
-                            <constraint firstItem="XVw-WY-IDX" firstAttribute="top" secondItem="vKP-HI-kOy" secondAttribute="top" constant="8" id="lp3-f0-nH8"/>
-                            <constraint firstItem="m2Y-u6-Urc" firstAttribute="top" secondItem="5N2-DZ-4UX" secondAttribute="bottom" constant="8" id="sVT-7g-a4w"/>
+                            <constraint firstAttribute="trailing" secondItem="hs9-M3-H9Z" secondAttribute="trailing" constant="20" id="F3U-aa-gOD"/>
+                            <constraint firstAttribute="bottom" secondItem="hs9-M3-H9Z" secondAttribute="bottom" id="Hvi-mX-Ca8"/>
+                            <constraint firstItem="hs9-M3-H9Z" firstAttribute="top" secondItem="vKP-HI-kOy" secondAttribute="top" constant="4" id="JFG-vc-5nu"/>
+                            <constraint firstItem="hs9-M3-H9Z" firstAttribute="leading" secondItem="vKP-HI-kOy" secondAttribute="leading" constant="20" id="PaT-3E-5F4"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="tableHeight" destination="Ljx-ku-EBW" id="cBt-gD-TN0"/>
+                        <outlet property="tableView" destination="NKw-JK-K1N" id="QOU-Gl-zPt"/>
+                    </connections>
                 </viewController>
                 <customObject id="yrI-wS-bc9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-243" y="2183"/>
+            <point key="canvasLocation" x="-179" y="2117"/>
         </scene>
         <!--Favorites Controller-->
         <scene sceneID="Bla-9d-qST">
@@ -231,21 +231,21 @@
                 </viewController>
                 <customObject id="cj3-ef-MhK" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-245" y="1710"/>
+            <point key="canvasLocation" x="-182" y="1685"/>
         </scene>
         <!--Settings Controller-->
         <scene sceneID="Tae-az-4mZ">
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZSettingsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="765"/>
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="681"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="0.0" width="226" height="765"/>
+                                <rect key="frame" x="0.0" y="0.0" width="226" height="681"/>
                                 <subviews>
                                     <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="651" width="226" height="114"/>
+                                        <rect key="frame" x="0.0" y="567" width="226" height="114"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="95" width="226" height="19"/>
@@ -308,7 +308,7 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="favorites" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="47v-DX-fSo" userLabel="Favorites View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="600" width="226" height="50"/>
+                                        <rect key="frame" x="0.0" y="516" width="226" height="50"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DdL-Cp-gGl" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="31" width="226" height="19"/>
@@ -371,10 +371,10 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="195" width="226" height="404"/>
+                                        <rect key="frame" x="0.0" y="195" width="226" height="320"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="385" width="226" height="19"/>
+                                                <rect key="frame" x="0.0" y="301" width="226" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gUX-Sv-09B">
                                                         <rect key="frame" x="0.0" y="1" width="226" height="17"/>
@@ -412,7 +412,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="btT-FF-Ema" userLabel="Preferences">
-                                                <rect key="frame" x="0.0" y="0.0" width="226" height="384"/>
+                                                <rect key="frame" x="0.0" y="-84" width="226" height="384"/>
                                                 <connections>
                                                     <segue destination="Naq-se-Exq" kind="embed" id="Pht-fq-dCw"/>
                                                 </connections>
@@ -602,7 +602,7 @@
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-646" y="1923"/>
+            <point key="canvasLocation" x="-646" y="1870.5"/>
         </scene>
         <!--Preferences Controller-->
         <scene sceneID="n3v-Vu-MZq">
@@ -971,7 +971,7 @@
                 </viewController>
                 <customObject id="JO0-BM-25B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-243" y="1921"/>
+            <point key="canvasLocation" x="-179" y="1896"/>
         </scene>
         <!--Shortcuts Controller-->
         <scene sceneID="45A-WG-zgj">
@@ -987,7 +987,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="226" height="22"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView focusRingType="none" verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="15" id="deC-6k-Xt0">
+                                        <tableView focusRingType="none" verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="15" id="deC-6k-Xt0">
                                             <rect key="frame" x="0.0" y="0.0" width="226" height="22"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="0.0"/>
@@ -1042,7 +1042,7 @@
                 </viewController>
                 <customObject id="rFs-5G-ygd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-243" y="2305"/>
+            <point key="canvasLocation" x="-179" y="2196"/>
         </scene>
     </scenes>
     <resources>

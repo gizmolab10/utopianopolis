@@ -58,7 +58,7 @@ class ZFavoritesController: ZGenericTableController {
     }
 
 
-    func actOnSelection(_ row: Int) {
+    func tableView(_ tableView: ZTableView, shouldSelectRow row: Int) -> Bool {
         gSelectionManager.fullResign()
 
         if let favorite: Zone = gFavoritesManager.zoneAtIndex(row) {
@@ -76,11 +76,6 @@ class ZFavoritesController: ZGenericTableController {
                 }
             }
         }
-    }
-
-
-    func tableView(_ tableView: ZTableView, shouldSelectRow row: Int) -> Bool {
-        actOnSelection(row)
 
         return false
     }

@@ -9,4 +9,6 @@
 import Foundation
 
 
-class ZTableButtonCell : ZTableCellView {}
+class ZTableButtonCell : ZTableCellView {
+    let button: ZButton? = nil
+}

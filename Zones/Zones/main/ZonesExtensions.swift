@@ -250,6 +250,14 @@ extension NSWindow {
 }
 
 
+extension NSButtonCell {
+    override open var objectValue: Any? {
+        get { return title }
+        set { title = newValue as! String }
+    }
+}
+
+
 extension NSButton {
     var isCircular: Bool {
         get { return true }
