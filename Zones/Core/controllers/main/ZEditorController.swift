@@ -293,7 +293,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     func dotsHitTest(_ location: CGPoint) -> ZoneDot? {
         var        hit: ZoneDot? = nil
 
-        gHere.traverseApply { iZone -> ZTraverseStatus in
+        gHere.traverseProgeny { iZone -> ZTraverseStatus in
             if  let       widget = iZone.widget {
                 var         rect = widget.outerHitRect
                 rect             = widget.convert(rect, to: view)

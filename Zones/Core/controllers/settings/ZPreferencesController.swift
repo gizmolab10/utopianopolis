@@ -48,7 +48,7 @@ class ZPreferencesController: ZGenericController {
     override func identifier() -> ZControllerID { return .preferences }
 
 
-    override func awakeFromNib() {
+    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         view              .zlayer.backgroundColor = CGColor.clear
         graphAlteringModeControl?.selectedSegment = gGraphAlteringMode.rawValue
         countsModeControl?       .selectedSegment = gCountsMode.rawValue
@@ -58,7 +58,7 @@ class ZPreferencesController: ZGenericController {
         dragTargetsColorBox?               .color = gDragTargetsColor
         backgroundColorBox?                .color = gBackgroundColor
         bookmarkColorBox?                  .color = gBookmarkColor
-        zoneColorBox?                      .color = gZoneColor
+        zoneColorBox?                      .color = gSelectionManager.firstGrab.color
     }
 
 
@@ -86,10 +86,10 @@ class ZPreferencesController: ZGenericController {
 
         if let kind = ZColorBoxKind(rawValue: iColorBox.identifier!) {
             switch (kind) {
-            case .DragTargets: gDragTargetsColor = color
-            case  .Background:  gBackgroundColor = color
-            case   .Bookmarks:    gBookmarkColor = color
-            case       .Zones:        gZoneColor = color
+            case .DragTargets:                 gDragTargetsColor = color
+            case  .Background:                  gBackgroundColor = color
+            case   .Bookmarks:                    gBookmarkColor = color
+            case       .Zones: gSelectionManager.firstGrab.color = color
             }
 
             signalFor(nil, regarding: .redraw)
@@ -106,6 +106,8 @@ class ZPreferencesController: ZGenericController {
 
     @IBAction func graphAlteringModeAction(_ control: ZSegmentedControl) {
         gGraphAlteringMode = ZGraphAlteringMode(rawValue: control.selectedSegment)!
+
+        signalFor(nil, regarding: .data)
     }
 
 

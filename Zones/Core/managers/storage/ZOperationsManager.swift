@@ -41,7 +41,7 @@ class ZOperationsManager: NSObject {
     var currentMode:   ZStorageMode? = nil
     var   currentOp:   ZOperationID = .none
     var  waitingOps = [ZOperationID : BlockOperation] ()
-    var       debug = false
+    var       debug = true
     let       queue = OperationQueue()
 
 

@@ -29,15 +29,19 @@ struct ZoneState: OptionSet {
 class Zone : ZRecord {
 
 
+    dynamic var      parent: CKReference?
     dynamic var    zoneName:      String?
     dynamic var    zoneLink:      String?
-    dynamic var      parent: CKReference?
+    dynamic var     zoneRed:    NSNumber?
+    dynamic var    zoneBlue:    NSNumber?
+    dynamic var   zoneGreen:    NSNumber?
     dynamic var   zoneOrder:    NSNumber?
     dynamic var   zoneCount:    NSNumber?
     dynamic var   zoneState:    NSNumber?
     dynamic var   zoneLevel:    NSNumber?
     dynamic var zoneProgeny:    NSNumber?
     var         _parentZone:        Zone?
+    var              _color:      ZColor?
     var          _crossLink:     ZRecord?
     var           bookmarks      = [Zone] ()
     var            children      = [Zone] ()
@@ -66,8 +70,11 @@ class Zone : ZRecord {
 
     class func cloudProperties() -> [String] {
         return [#keyPath(parent),
+                #keyPath(zoneRed),
                 #keyPath(zoneName),
                 #keyPath(zoneLink),
+                #keyPath(zoneBlue),
+                #keyPath(zoneGreen),
                 #keyPath(zoneOrder),
                 #keyPath(zoneCount),
                 #keyPath(zoneState),
@@ -82,6 +89,44 @@ class Zone : ZRecord {
         }
 
         return nil
+    }
+
+
+    var color: ZColor {
+        get {
+            if _color == nil {
+                if let red = zoneRed?.floatValue, let blue = zoneBlue?.floatValue, let green = zoneGreen?.floatValue {
+                    _color = ZColor(calibratedRed: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: 1.0)
+                } else {
+                    var value: ZColor = ZColor.blue // default blue
+
+                    traverseAncestors() { iParent -> ZTraverseStatus in
+                        if let parentColor = iParent._color {
+                            value          = parentColor
+
+                            return .eStop
+                        } else if iParent.isRoot {
+                            iParent .color = value
+                        } // else use default blue
+
+                        return .eContinue
+                    }
+
+                    return value
+                }
+            }
+
+            return _color!
+        }
+
+        set {
+            if  _color   != newValue {
+                _color    = newValue
+                zoneRed   = NSNumber(value: Float(newValue  .redComponent))
+                zoneBlue  = NSNumber(value: Float(newValue .blueComponent))
+                zoneGreen = NSNumber(value: Float(newValue.greenComponent))
+            }
+        }
     }
 
 
@@ -236,7 +281,7 @@ class Zone : ZRecord {
     var highestExposed: Int {
         var highest = level
 
-        traverseApply { iZone -> ZTraverseStatus in
+        traverseProgeny { iZone -> ZTraverseStatus in
             let traverseLevel = iZone.level
 
             if  highest < traverseLevel {
@@ -338,6 +383,68 @@ class Zone : ZRecord {
 
     override func cloudProperties() -> [String] {
         return super.cloudProperties() + Zone.cloudProperties()
+    }
+
+
+    // MARK:- traverse
+    // MARK:-
+
+
+    func traverseAncestors(_ block: ZoneToStatusClosure) {
+        safeTraverseAncestors(visited: [], block)
+    }
+
+
+    // skip calling block on self
+    // call block on parent and its ancestors
+
+    func safeTraverseAncestors(visited: [Zone], _ block: ZoneToStatusClosure) {
+        if  let parent  = parentZone {
+            let status  = block(parent)
+
+            if  status == .eContinue {
+                parent.safeTraverseAncestors(visited: visited + [self], block)
+            }
+        }
+    }
+
+
+    func traverseAllProgeny(_ block: ZoneClosure) {
+        safeTraverseProgeny(visited: []) { iZone -> ZTraverseStatus in
+            block(iZone)
+
+            return .eContinue
+        }
+    }
+
+
+    @discardableResult func traverseProgeny(_ block: ZoneToStatusClosure) -> ZTraverseStatus {
+        return safeTraverseProgeny(visited: [], block)
+    }
+
+
+    // first call block on self
+
+    @discardableResult func safeTraverseProgeny(visited: [Zone], _ block: ZoneToStatusClosure) -> ZTraverseStatus {
+        var status = block(self)
+
+        if status == .eContinue {
+            for child in children {
+                if visited.contains(self) {
+                    status = .eStop
+
+                    break
+                }
+
+                status = child.safeTraverseProgeny(visited: visited + [self], block)
+
+                if status == .eStop {
+                    break
+                }
+            }
+        }
+        
+        return status
     }
 
 
@@ -617,11 +724,11 @@ class Zone : ZRecord {
             }
         }
     }
-    
+
 
     // MARK:- recursion
     // MARK:-
-    
+
 
     enum ZCycleType: Int {
         case cycle
@@ -669,43 +776,6 @@ class Zone : ZRecord {
     }
 
 
-    func traverseAll(_ block: ZoneClosure) {
-        traverseApply { iZone -> ZTraverseStatus in
-            block(iZone)
-
-            return .eContinue
-        }
-    }
-
-    
-    @discardableResult func traverseApply(_ block: ZoneToStatusClosure) -> ZTraverseStatus {
-        return safeTraverseApply(block, visited: [])
-    }
-
-
-    @discardableResult func safeTraverseApply(_ block: ZoneToStatusClosure, visited: [Zone]) -> ZTraverseStatus {
-        var status = block(self)
-
-        if status == .eContinue {
-            for child in children {
-                if visited.contains(self) {
-                    status = .eStop
-
-                    break
-                }
-
-                status = child.safeTraverseApply(block, visited: visited + [self])
-
-                if status == .eStop {
-                    break
-                }
-            }
-        }
-
-        return status
-    }
-
-
     // FUBAR occasional infinite loop
     // when parent of parent == self
 
@@ -740,7 +810,7 @@ class Zone : ZRecord {
     func spawned(_ iChild: Zone) -> Bool {
         var isSpawn = false
 
-        traverseApply { iZone -> ZTraverseStatus in
+        traverseProgeny { iZone -> ZTraverseStatus in
             if iZone == iChild {
                 isSpawn = true
 
@@ -755,7 +825,7 @@ class Zone : ZRecord {
 
 
     func updateLevel() {
-        traverseAll { iZone in
+        traverseAllProgeny { iZone in
             if let parentLevel = iZone.parentZone?.level, parentLevel != gUnlevel {
                 iZone.level = parentLevel + 1
             }
@@ -767,7 +837,7 @@ class Zone : ZRecord {
         var     progeny = [Zone]()
         var begun: Bool = false
 
-        traverseApply { iZone -> ZTraverseStatus in
+        traverseProgeny { iZone -> ZTraverseStatus in
             if begun {
                 if iZone.level > iLevel || iZone == self {
                     return .eSkip

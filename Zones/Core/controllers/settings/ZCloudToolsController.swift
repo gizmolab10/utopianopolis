@@ -86,7 +86,7 @@ class ZCloudToolsController: ZGenericTableController {
                 root.addAndReorderChild(zone, at: 0)
                 zone.hideChildren()
 
-                zone.traverseAll { iChild in
+                zone.traverseAllProgeny { iChild in
                     iChild.isDeleted = false
                 }
 

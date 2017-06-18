@@ -91,7 +91,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     let          y = offCenter.y + orbitRadius * CGFloat(sin(angle))
                     rect           = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
                     let asBookmark = (zone.isBookmark || zone.isRootOfFavorites)
-                    color          = isDragTarget ? gDragTargetsColor : asBookmark  ? gBookmarkColor : gZoneColor
+                    color          = isDragTarget ? gDragTargetsColor : asBookmark  ? gBookmarkColor : zone.color
                     let       path = ZBezierPath(ovalIn: rect!)
                     path .flatness = 0.0001
 
@@ -110,7 +110,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             let  showAsBookmark = zone.isBookmark || zone.isRootOfFavorites
             isHidden            = isToggle && ((!zone.hasChildren             && !showAsBookmark && !isDragTarget) || (mode == .favorites && !zone.isRootOfFavorites))
             let shouldHighlight = isToggle    ? (zone.indicateChildren        || zone.isBookmark ||  isDragTarget) : zone.isGrabbed // not highlight when editing
-            let     strokeColor = isToggle && isDragTarget ? gDragTargetsColor :  showAsBookmark  ? gBookmarkColor : gZoneColor
+            let     strokeColor = isToggle && isDragTarget ? gDragTargetsColor :  showAsBookmark  ? gBookmarkColor : zone.color
             let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
             let       thickness = CGFloat(gLineThickness)
             let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))

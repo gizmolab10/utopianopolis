@@ -62,8 +62,8 @@ var             gDotWidth:               Double { return gDotHeight * 0.75 }
 var            gDotHeight:               Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var             naturally:                 Bool { return gGraphAlteringMode == .natural }
 var      gIsRubberbanding:                 Bool { return gEditorView!.rubberbandRect != CGRect.zero  }
-var gGrabbedBookmarkColor:               ZColor { return gBookmarkColor.darker(by: 1.5) }
-var     gGrabbedTextColor:               ZColor { return gZoneColor    .darker(by: 1.8) }
+var gGrabbedBookmarkColor:               ZColor { return gBookmarkColor                   .darker(by: 1.5) }
+var     gGrabbedTextColor:               ZColor { return gSelectionManager.firstGrab.color.darker(by: 1.8) }
 var    settingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
 var     gEditorController:   ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
 var           gEditorView:       ZDragDrawView? { return gEditorController?.view                        as? ZDragDrawView }
@@ -71,12 +71,6 @@ var           gEditorView:       ZDragDrawView? { return gEditorController?.view
 
 // MARK:- persistence
 // MARK:-
-
-
-var gZoneColor: ZColor {
-    get { return   getColorForKey(zoneColorKey, defaultColor: ZColor.blue) }
-    set { setColor(newValue, key: zoneColorKey) }
-}
 
 
 var gBookmarkColor: ZColor {
@@ -243,7 +237,6 @@ var gSettingsViewIDs: ZSettingsViewID {
 // MARK:-
 
 
-let         zoneColorKey = "zone color"
 let     bookmarkColorKey = "bookmark color"
 let   backgroundColorKey = "background color"
 let  dragTargetsColorKey = "drag targets color"
