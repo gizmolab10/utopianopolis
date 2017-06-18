@@ -33,6 +33,7 @@ enum ZSignalKind: Int {
     case search
     case redraw
     case startup
+    case preferences
 }
 
 
@@ -111,8 +112,11 @@ class ZControllersManager: NSObject {
         let mode = gStorageMode
 
         dispatchAsyncInForeground {
-            for signalObject: ZSignalObject in self.signalObjectsByControllerID.values {
-                signalObject.closure(object, mode, regarding)
+            for (identifier, signalObject) in self.signalObjectsByControllerID {
+                switch regarding {
+                case .preferences: if identifier == .preferences { signalObject.closure(object, mode, regarding) }
+                default:                                           signalObject.closure(object, mode, regarding)
+                }
             }
 
             onCompletion?()

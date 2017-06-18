@@ -27,6 +27,9 @@ protocol ZGenericControllerProtocol {
 
 class ZGenericController: ZController, ZGenericControllerProtocol {
     func identifier() -> ZControllerID { return .undefined }
+    override func awakeFromNib() { view.zlayer.backgroundColor = CGColor.clear }
+    func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {}
+    func displayActivity(_ show: Bool) {}
 
 
     func setup() {
@@ -41,8 +44,9 @@ class ZGenericController: ZController, ZGenericControllerProtocol {
     }
 
 
-    func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {}
-    func displayActivity(_ show: Bool) {}
+    func syncToCloudAndSignalFor(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
+        gControllersManager.syncToCloudAndSignalFor(zone, regarding: regarding, onCompletion: onCompletion)
+    }
 
 
 #if os(OSX)

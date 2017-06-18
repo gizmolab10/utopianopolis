@@ -231,7 +231,7 @@
                 </viewController>
                 <customObject id="cj3-ef-MhK" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-182" y="1685"/>
+            <point key="canvasLocation" x="-179" y="1685"/>
         </scene>
         <!--Settings Controller-->
         <scene sceneID="Tae-az-4mZ">
@@ -801,10 +801,10 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="G62-eE-NOU" userLabel="labels">
-                                            <rect key="frame" x="0.0" y="6" width="110" height="92"/>
+                                            <rect key="frame" x="4" y="6" width="106" height="92"/>
                                             <subviews>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g4o-CN-FHf">
-                                                    <rect key="frame" x="-2" y="72" width="114" height="17"/>
+                                                    <rect key="frame" x="-2" y="72" width="110" height="17"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="vRd-P4-pC3"/>
                                                     </constraints>
@@ -815,7 +815,7 @@
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0I8-Re-yMB">
-                                                    <rect key="frame" x="-2" y="49" width="114" height="17"/>
+                                                    <rect key="frame" x="-2" y="49" width="110" height="17"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="slX-PY-ObV"/>
                                                     </constraints>
@@ -826,7 +826,7 @@
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C6V-CX-uWP" userLabel="drag targets">
-                                                    <rect key="frame" x="-2" y="26" width="114" height="17"/>
+                                                    <rect key="frame" x="-2" y="26" width="110" height="17"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="9dI-E4-9GB"/>
                                                     </constraints>
@@ -837,7 +837,7 @@
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fgs-5f-km9">
-                                                    <rect key="frame" x="-2" y="3" width="114" height="17"/>
+                                                    <rect key="frame" x="-2" y="3" width="110" height="17"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="RsG-gF-fWk"/>
                                                     </constraints>
@@ -847,6 +847,20 @@
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
+                                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Qp-4d-Tu8" userLabel="rremove color">
+                                                    <rect key="frame" x="-5" y="65" width="68" height="28"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="18" id="Qdx-4o-Snx"/>
+                                                        <constraint firstAttribute="width" constant="58" id="nGj-dM-TOd"/>
+                                                    </constraints>
+                                                    <buttonCell key="cell" type="push" title="Remove" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Fz8-C9-cQu">
+                                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                    </buttonCell>
+                                                    <connections>
+                                                        <action selector="removeColorAction:" target="Naq-se-Exq" id="JmQ-wJ-uj2"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="trailing" secondItem="C6V-CX-uWP" secondAttribute="trailing" id="3HV-a7-xo0"/>
@@ -855,9 +869,11 @@
                                                 <constraint firstItem="g4o-CN-FHf" firstAttribute="top" secondItem="G62-eE-NOU" secondAttribute="top" constant="3" id="9xm-Zh-Gru"/>
                                                 <constraint firstItem="0I8-Re-yMB" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="H1y-pN-Gai"/>
                                                 <constraint firstItem="g4o-CN-FHf" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="Q1m-nX-Qo9"/>
+                                                <constraint firstItem="0Qp-4d-Tu8" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="TFy-mJ-vED"/>
                                                 <constraint firstAttribute="trailing" secondItem="0I8-Re-yMB" secondAttribute="trailing" id="Vnc-2m-sJZ"/>
                                                 <constraint firstAttribute="bottom" secondItem="fgs-5f-km9" secondAttribute="bottom" constant="3" id="WDX-fm-gxs"/>
                                                 <constraint firstItem="fgs-5f-km9" firstAttribute="top" secondItem="C6V-CX-uWP" secondAttribute="bottom" constant="6" id="Zd2-Fg-uSe"/>
+                                                <constraint firstItem="0Qp-4d-Tu8" firstAttribute="top" secondItem="G62-eE-NOU" secondAttribute="top" constant="3" id="dOT-bX-dRm"/>
                                                 <constraint firstAttribute="trailing" secondItem="g4o-CN-FHf" secondAttribute="trailing" id="gTa-09-iaO"/>
                                                 <constraint firstItem="C6V-CX-uWP" firstAttribute="top" secondItem="0I8-Re-yMB" secondAttribute="bottom" constant="6" id="oqt-Uc-zR2"/>
                                                 <constraint firstAttribute="trailing" secondItem="fgs-5f-km9" secondAttribute="trailing" id="q79-8F-UwO"/>
@@ -935,7 +951,7 @@
                                         <constraint firstAttribute="bottom" secondItem="FDB-6R-I3I" secondAttribute="bottom" constant="6" id="UDU-HU-cgt"/>
                                         <constraint firstAttribute="bottom" secondItem="G62-eE-NOU" secondAttribute="bottom" constant="6" id="ZCc-tS-9XH"/>
                                         <constraint firstItem="G62-eE-NOU" firstAttribute="top" secondItem="rb6-oU-fw8" secondAttribute="top" constant="2" id="lqz-EG-Z3x"/>
-                                        <constraint firstItem="G62-eE-NOU" firstAttribute="leading" secondItem="rb6-oU-fw8" secondAttribute="leading" id="ncU-Mb-xjK"/>
+                                        <constraint firstItem="G62-eE-NOU" firstAttribute="leading" secondItem="rb6-oU-fw8" secondAttribute="leading" constant="4" id="ncU-Mb-xjK"/>
                                         <constraint firstItem="FDB-6R-I3I" firstAttribute="top" secondItem="rb6-oU-fw8" secondAttribute="top" constant="2" id="puD-Qw-Gld"/>
                                     </constraints>
                                 </view>
@@ -964,6 +980,7 @@
                         <outlet property="dragTargetsColorBox" destination="j0f-8D-Ds5" id="FRZ-SF-WJ1"/>
                         <outlet property="graphAlteringModeControl" destination="i0m-vf-1Of" id="jBO-mu-sni"/>
                         <outlet property="horizontalSpacing" destination="OmD-gF-PvR" id="DN6-Os-oDZ"/>
+                        <outlet property="removeColorButton" destination="0Qp-4d-Tu8" id="6Al-nd-9pG"/>
                         <outlet property="thickness" destination="gh7-LP-7IV" id="ox5-Ei-ZE6"/>
                         <outlet property="verticalSpacing" destination="X28-Kf-ltl" id="bZA-x3-VXU"/>
                         <outlet property="zoneColorBox" destination="UMY-8c-tep" id="vq3-82-A2w"/>

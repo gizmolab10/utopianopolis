@@ -1229,7 +1229,10 @@ class ZEditingManager: NSObject {
                             
                             gSelectionManager.addMultipleToGrab(grabs)
                         }
-                    }                }
+                    }
+
+                    signalFor(grab, regarding: .datum)
+                }
             }
         } else if !zone.isRoot {
 

@@ -23,7 +23,6 @@ class ZGenericTableController: ZGenericController, ZTableViewDelegate, ZTableVie
     @IBOutlet var   tableView: ZTableView!
 
 
-    override func awakeFromNib() { view.zlayer.backgroundColor = CGColor.clear }
     func numberOfRows(in tableView: ZTableView) -> Int { return 1 }
 
 

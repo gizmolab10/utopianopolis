@@ -110,6 +110,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                         } else {
                             zone.grab()
                         }
+
+                        signalFor(zone, regarding: .datum)
                     }
                 } else {
                     gSelectionManager.deselect()
@@ -234,7 +236,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                 hitDot     = nil
 
                 restartGestures()
-                draggedZone.widget?.dragDot.innerDot?.setNeedsDisplay()
+                signalFor(draggedZone, regarding: .datum)
 
                 if !isNoop && dropZone != nil {
                     if dropZone!.isBookmark {
@@ -286,6 +288,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
             hereWidget.setNeedsDisplay()
         }
 
+        signalFor(nil, regarding: .preferences)
         view.setNeedsDisplay()
     }
 

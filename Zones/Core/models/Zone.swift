@@ -54,9 +54,10 @@ class Zone : ZRecord {
     var  hasMissingChildren:         Bool { return count == 0 || count != fetchableCount }
     var       hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var       hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
+    var          isSelected:         Bool { return gSelectionManager.isSelected(self) }
     var           isEditing:         Bool { return gSelectionManager .isEditing(self) }
     var           isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
-    var          isSelected:         Bool { return gSelectionManager.isSelected(self) }
+    var            hasColor:         Bool { return _color != nil }
     var           isDeleted:         Bool { get { return getState(for:     .IsDeleted) } set { setState(newValue, for: .IsDeleted) } }
     var          isUpToDate:         Bool { get { return getState(for:    .IsUpToDate) } set { setState(newValue, for: .IsUpToDate) } }
     var          isFavorite:         Bool { get { return getState(for:    .IsFavorite) } set { setState(newValue, for: .IsFavorite) } }
@@ -354,6 +355,16 @@ class Zone : ZRecord {
 
     func ungrab() { gSelectionManager.ungrab(self) }
     func   grab() { gSelectionManager  .grab(self) }
+
+
+    func removeColor() {
+        zoneGreen = nil
+        zoneBlue  = nil
+        zoneRed   = nil
+        _color    = nil
+
+        needSave()
+    }
 
 
     static func == ( left: Zone, right: Zone) -> Bool {

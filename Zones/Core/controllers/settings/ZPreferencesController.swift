@@ -16,21 +16,6 @@ import Foundation
 #endif
 
 
-enum ZSliderKind: String {
-    case Vertical   = "vertical"
-    case Thickness  = "thickness"
-    case Horizontal = "horizontal"
-}
-
-
-enum ZColorBoxKind: String {
-    case Zones       = "zones"
-    case Bookmarks   = "bookmarks"
-    case Background  = "background"
-    case DragTargets = "drag targets"
-}
-
-
 class ZPreferencesController: ZGenericController {
 
 
@@ -43,12 +28,14 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var        horizontalSpacing: ZSlider?
     @IBOutlet var          verticalSpacing: ZSlider?
     @IBOutlet var                thickness: ZSlider?
+    @IBOutlet var        removeColorButton: NSButton?
 
 
     override func identifier() -> ZControllerID { return .preferences }
 
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
+        let                               grabbed = gSelectionManager.firstGrab
         view              .zlayer.backgroundColor = CGColor.clear
         graphAlteringModeControl?.selectedSegment = gGraphAlteringMode.rawValue
         countsModeControl?       .selectedSegment = gCountsMode.rawValue
@@ -58,7 +45,8 @@ class ZPreferencesController: ZGenericController {
         dragTargetsColorBox?               .color = gDragTargetsColor
         backgroundColorBox?                .color = gBackgroundColor
         bookmarkColorBox?                  .color = gBookmarkColor
-        zoneColorBox?                      .color = gSelectionManager.firstGrab.color
+        zoneColorBox?                      .color =  grabbed.color
+        removeColorButton?              .isHidden = !grabbed.hasColor
     }
 
 
@@ -69,11 +57,12 @@ class ZPreferencesController: ZGenericController {
     @IBAction func sliderAction(_ iSlider: ZSlider) {
         let value = CGFloat(iSlider.doubleValue)
 
-        if let kind = ZSliderKind(rawValue: iSlider.identifier!) {
-            switch (kind) {
-            case  .Thickness: gLineThickness = Double(value);                                       break
-            case .Horizontal: gGenericOffset = CGSize(width: value, height: gGenericOffset.height); break
-            case   .Vertical: gGenericOffset = CGSize(width: gGenericOffset.width, height: value);  break
+        if  let     identifier = iSlider.identifier {
+            switch (identifier) {
+            case  "thickness": gLineThickness = Double(value)
+            case "horizontal": gGenericOffset = CGSize(width: value, height: gGenericOffset.height)
+            case   "vertical": gGenericOffset = CGSize(width: gGenericOffset.width, height: value)
+            default:           break
             }
 
             signalFor(nil, regarding: .redraw)
@@ -84,12 +73,13 @@ class ZPreferencesController: ZGenericController {
     @IBAction func colorBoxAction(_ iColorBox: ZColorWell) {
         let color = iColorBox.color
 
-        if let kind = ZColorBoxKind(rawValue: iColorBox.identifier!) {
-            switch (kind) {
-            case .DragTargets:                 gDragTargetsColor = color
-            case  .Background:                  gBackgroundColor = color
-            case   .Bookmarks:                    gBookmarkColor = color
-            case       .Zones: gSelectionManager.firstGrab.color = color
+        if  let     identifier = iColorBox.identifier {
+            switch (identifier) {
+            case "drag targets":                 gDragTargetsColor = color
+            case   "background":                  gBackgroundColor = color
+            case    "bookmarks":                    gBookmarkColor = color
+            case        "zones": gSelectionManager.firstGrab.color = color
+            default:             break
             }
 
             signalFor(nil, regarding: .redraw)
@@ -97,15 +87,23 @@ class ZPreferencesController: ZGenericController {
     }
 
 
-    @IBAction func countsModeAction(_ control: ZSegmentedControl) {
-        gCountsMode = ZCountsMode(rawValue: control.selectedSegment)!
+    @IBAction func removeColorAction(_ button: NSButton) {
+        let grab = gSelectionManager.firstGrab
+
+        grab.removeColor()
+        syncToCloudAndSignalFor(grab, regarding: .redraw) {}
+    }
+
+
+    @IBAction func countsModeAction(_ iControl: ZSegmentedControl) {
+        gCountsMode = ZCountsMode(rawValue: iControl.selectedSegment)!
 
         signalFor(nil, regarding: .data)
     }
 
 
-    @IBAction func graphAlteringModeAction(_ control: ZSegmentedControl) {
-        gGraphAlteringMode = ZGraphAlteringMode(rawValue: control.selectedSegment)!
+    @IBAction func graphAlteringModeAction(_ iControl: ZSegmentedControl) {
+        gGraphAlteringMode = ZGraphAlteringMode(rawValue: iControl.selectedSegment)!
 
         signalFor(nil, regarding: .data)
     }
