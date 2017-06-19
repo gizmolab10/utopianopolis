@@ -96,7 +96,9 @@ class Zone : ZRecord {
     var color: ZColor {
         get {
             if _color == nil {
-                if let red = zoneRed?.floatValue, let blue = zoneBlue?.floatValue, let green = zoneGreen?.floatValue {
+                if isRootOfFavorites || isBookmark {
+                    return gBookmarkColor
+                } else if let red = zoneRed?.floatValue, let blue = zoneBlue?.floatValue, let green = zoneGreen?.floatValue {
                     _color = ZColor(calibratedRed: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: 1.0)
                 } else {
                     var value: ZColor = ZColor.blue // default blue
@@ -357,7 +359,7 @@ class Zone : ZRecord {
     func   grab() { gSelectionManager  .grab(self) }
 
 
-    func removeColor() {
+    func clearColor() {
         zoneGreen = nil
         zoneBlue  = nil
         zoneRed   = nil

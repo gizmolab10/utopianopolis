@@ -46,15 +46,20 @@ class ZFavoritesController: ZGenericTableController {
 
 
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        var        value = ""
-
-        if  let     text = gFavoritesManager.textAtIndex(row) {
+        if  let     zone = gFavoritesManager.zoneAtIndex(row),
+            let     name = zone.zoneName {
             let needsDot = gFavoritesManager.favoritesIndex == row
             let   prefix = needsDot ? "•" : "  "
-            value        = " \(prefix) \(text)"
+            let     text = " \(prefix) \(name)"
+
+            if let color = name == "favorites" ? gBookmarkColor : zone.bookmarkTarget?.color {
+                return NSAttributedString(string: text, attributes: [NSForegroundColorAttributeName: color])
+            }
+
+            return text
         }
 
-        return value
+        return ""
     }
 
 

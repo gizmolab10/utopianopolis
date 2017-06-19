@@ -42,9 +42,9 @@ class ZShortcutsController: ZGenericTableController {
 
 
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        let        style = NSMutableParagraphStyle()
-        let         text = shortcutStrings[row]
-        style  .tabStops = tabStops
+        let      style = NSMutableParagraphStyle()
+        let       text = shortcutStrings[row]
+        style.tabStops = tabStops
 
         return NSAttributedString(string: text, attributes: [NSParagraphStyleAttributeName: style])
     }

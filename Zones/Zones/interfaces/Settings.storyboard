@@ -618,7 +618,7 @@
                                     <rect key="frame" x="1" y="1" width="214" height="20"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i0m-vf-1Of">
+                                        <segmentedControl identifier="direction" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i0m-vf-1Of">
                                             <rect key="frame" x="1" y="1" width="213" height="22"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="sur-0v-evK"/>
@@ -631,7 +631,7 @@
                                                 </segments>
                                             </segmentedCell>
                                             <connections>
-                                                <action selector="graphAlteringModeAction:" target="Naq-se-Exq" id="8cr-Ru-eOh"/>
+                                                <action selector="segmentedControlAction:" target="Naq-se-Exq" id="bRP-gj-WVJ"/>
                                             </connections>
                                         </segmentedControl>
                                     </subviews>
@@ -650,7 +650,7 @@
                                     <rect key="frame" x="1" y="1" width="214" height="20"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hRI-S8-ys7">
+                                        <segmentedControl identifier="counts" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hRI-S8-ys7">
                                             <rect key="frame" x="0.0" y="1" width="214" height="22"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="IcD-O8-4He"/>
@@ -665,7 +665,7 @@
                                                 </segments>
                                             </segmentedCell>
                                             <connections>
-                                                <action selector="countsModeAction:" target="Naq-se-Exq" id="nD5-Z6-Vp8"/>
+                                                <action selector="segmentedControlAction:" target="Naq-se-Exq" id="ajO-VV-Ru0"/>
                                             </connections>
                                         </segmentedControl>
                                     </subviews>
@@ -847,18 +847,18 @@
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
-                                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Qp-4d-Tu8" userLabel="rremove color">
-                                                    <rect key="frame" x="-5" y="65" width="68" height="28"/>
+                                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Qp-4d-Tu8" userLabel="clearColor">
+                                                    <rect key="frame" x="15" y="65" width="54" height="28"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="18" id="Qdx-4o-Snx"/>
-                                                        <constraint firstAttribute="width" constant="58" id="nGj-dM-TOd"/>
+                                                        <constraint firstAttribute="width" constant="44" id="nGj-dM-TOd"/>
                                                     </constraints>
-                                                    <buttonCell key="cell" type="push" title="Remove" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Fz8-C9-cQu">
+                                                    <buttonCell key="cell" type="push" title="Clear" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Fz8-C9-cQu">
                                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                         <font key="font" metaFont="smallSystem"/>
                                                     </buttonCell>
                                                     <connections>
-                                                        <action selector="removeColorAction:" target="Naq-se-Exq" id="JmQ-wJ-uj2"/>
+                                                        <action selector="clearColorAction:" target="Naq-se-Exq" id="JmQ-wJ-uj2"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -869,7 +869,7 @@
                                                 <constraint firstItem="g4o-CN-FHf" firstAttribute="top" secondItem="G62-eE-NOU" secondAttribute="top" constant="3" id="9xm-Zh-Gru"/>
                                                 <constraint firstItem="0I8-Re-yMB" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="H1y-pN-Gai"/>
                                                 <constraint firstItem="g4o-CN-FHf" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="Q1m-nX-Qo9"/>
-                                                <constraint firstItem="0Qp-4d-Tu8" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="TFy-mJ-vED"/>
+                                                <constraint firstItem="0Qp-4d-Tu8" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" constant="20" id="TFy-mJ-vED"/>
                                                 <constraint firstAttribute="trailing" secondItem="0I8-Re-yMB" secondAttribute="trailing" id="Vnc-2m-sJZ"/>
                                                 <constraint firstAttribute="bottom" secondItem="fgs-5f-km9" secondAttribute="bottom" constant="3" id="WDX-fm-gxs"/>
                                                 <constraint firstItem="fgs-5f-km9" firstAttribute="top" secondItem="C6V-CX-uWP" secondAttribute="bottom" constant="6" id="Zd2-Fg-uSe"/>
@@ -976,11 +976,11 @@
                     <connections>
                         <outlet property="backgroundColorBox" destination="wsy-Dq-H7s" id="lQ4-nS-6Bk"/>
                         <outlet property="bookmarkColorBox" destination="PFW-VA-KPh" id="DxS-IW-xZa"/>
+                        <outlet property="clearColorButton" destination="0Qp-4d-Tu8" id="6Al-nd-9pG"/>
                         <outlet property="countsModeControl" destination="hRI-S8-ys7" id="7ig-ZZ-v8Z"/>
                         <outlet property="dragTargetsColorBox" destination="j0f-8D-Ds5" id="FRZ-SF-WJ1"/>
                         <outlet property="graphAlteringModeControl" destination="i0m-vf-1Of" id="jBO-mu-sni"/>
                         <outlet property="horizontalSpacing" destination="OmD-gF-PvR" id="DN6-Os-oDZ"/>
-                        <outlet property="removeColorButton" destination="0Qp-4d-Tu8" id="6Al-nd-9pG"/>
                         <outlet property="thickness" destination="gh7-LP-7IV" id="ox5-Ei-ZE6"/>
                         <outlet property="verticalSpacing" destination="X28-Kf-ltl" id="bZA-x3-VXU"/>
                         <outlet property="zoneColorBox" destination="UMY-8c-tep" id="vq3-82-A2w"/>

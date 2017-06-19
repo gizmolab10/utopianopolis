@@ -28,7 +28,7 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var        horizontalSpacing: ZSlider?
     @IBOutlet var          verticalSpacing: ZSlider?
     @IBOutlet var                thickness: ZSlider?
-    @IBOutlet var        removeColorButton: NSButton?
+    @IBOutlet var         clearColorButton: NSButton?
 
 
     override func identifier() -> ZControllerID { return .preferences }
@@ -46,7 +46,7 @@ class ZPreferencesController: ZGenericController {
         backgroundColorBox?                .color = gBackgroundColor
         bookmarkColorBox?                  .color = gBookmarkColor
         zoneColorBox?                      .color =  grabbed.color
-        removeColorButton?              .isHidden = !grabbed.hasColor
+        clearColorButton?               .isHidden = !grabbed.hasColor
     }
 
 
@@ -87,26 +87,32 @@ class ZPreferencesController: ZGenericController {
     }
 
 
-    @IBAction func removeColorAction(_ button: NSButton) {
-        let grab = gSelectionManager.firstGrab
+    @IBAction func clearColorAction(_ button: NSButton) {
+        let           grab = gSelectionManager.firstGrab
+        if  let      color = grab._color {
+            UNDO(self) { iUndoSelf in
+                grab.color = color
 
-        grab.removeColor()
+                iUndoSelf.syncToCloudAndSignalFor(grab, regarding: .redraw) {}
+            }
+        }
+
+        grab.clearColor()
         syncToCloudAndSignalFor(grab, regarding: .redraw) {}
     }
 
 
-    @IBAction func countsModeAction(_ iControl: ZSegmentedControl) {
-        gCountsMode = ZCountsMode(rawValue: iControl.selectedSegment)!
+    @IBAction func segmentedControlAction(_ iControl: ZSegmentedControl) {
+        let          selection = iControl.selectedSegment
+        if  let     identifier = iControl.identifier {
+            switch (identifier) {
+            case "counts":    gCountsMode        = ZCountsMode       (rawValue: selection)!
+            case "direction": gGraphAlteringMode = ZGraphAlteringMode(rawValue: selection)!
+            default: break
+            }
+        }
 
         signalFor(nil, regarding: .data)
     }
-
-
-    @IBAction func graphAlteringModeAction(_ iControl: ZSegmentedControl) {
-        gGraphAlteringMode = ZGraphAlteringMode(rawValue: iControl.selectedSegment)!
-
-        signalFor(nil, regarding: .data)
-    }
-
 
 }
