@@ -32,9 +32,7 @@ class Zone : ZRecord {
     dynamic var      parent: CKReference?
     dynamic var    zoneName:      String?
     dynamic var    zoneLink:      String?
-    dynamic var     zoneRed:    NSNumber?
-    dynamic var    zoneBlue:    NSNumber?
-    dynamic var   zoneGreen:    NSNumber?
+    dynamic var   zoneColor:      String?
     dynamic var   zoneOrder:    NSNumber?
     dynamic var   zoneCount:    NSNumber?
     dynamic var   zoneState:    NSNumber?
@@ -71,11 +69,9 @@ class Zone : ZRecord {
 
     class func cloudProperties() -> [String] {
         return [#keyPath(parent),
-                #keyPath(zoneRed),
                 #keyPath(zoneName),
                 #keyPath(zoneLink),
-                #keyPath(zoneBlue),
-                #keyPath(zoneGreen),
+                #keyPath(zoneColor),
                 #keyPath(zoneOrder),
                 #keyPath(zoneCount),
                 #keyPath(zoneState),
@@ -98,24 +94,12 @@ class Zone : ZRecord {
             if _color == nil {
                 if isRootOfFavorites || isBookmark {
                     return gBookmarkColor
-                } else if let red = zoneRed?.floatValue, let blue = zoneBlue?.floatValue, let green = zoneGreen?.floatValue {
-                    _color = ZColor(calibratedRed: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: 1.0)
+                } else if let z = zoneColor, z != "" {
+                    _color      = z.color
+                } else if let p = parentZone, hasSafeAncestorPath(toColor: true) {
+                    return p.color // TODO: prevent infinite recursion
                 } else {
-                    var value: ZColor = ZColor.blue // default blue
-
-                    traverseAncestors() { iParent -> ZTraverseStatus in
-                        if let parentColor = iParent._color {
-                            value          = parentColor
-
-                            return .eStop
-                        } else if iParent.isRoot {
-                            iParent .color = value
-                        } // else use default blue
-
-                        return .eContinue
-                    }
-
-                    return value
+                    return ZColor.blue // default is blue
                 }
             }
 
@@ -125,25 +109,37 @@ class Zone : ZRecord {
         set {
             if  _color   != newValue {
                 _color    = newValue
-                zoneRed   = NSNumber(value: Float(newValue  .redComponent))
-                zoneBlue  = NSNumber(value: Float(newValue .blueComponent))
-                zoneGreen = NSNumber(value: Float(newValue.greenComponent))
+                zoneColor = newValue.string
+
+                needSave()
             }
         }
     }
 
 
+    func hasSafeAncestorPath(toColor: Bool = false) -> Bool {
+        var isSafe = false
+
+        traverseAllAncestors { iZone in
+            if iZone.isRoot || (toColor && iZone.hasColor) {
+                isSafe = true
+            }
+        }
+
+        return isSafe
+    }
+
+
     var crossLink: ZRecord? {
         get {
-            if zoneLink == nil || zoneLink == "" {
-                return nil
-            } else if _crossLink == nil {
-                if (zoneLink?.contains("Optional("))! {
-                    zoneLink = zoneLink?.replacingOccurrences(of: "Optional(\"", with: "")
-                    zoneLink = zoneLink?.replacingOccurrences(of:         "\")", with: "")
+            if _crossLink == nil, var link = zoneLink, link != "" {
+                if  link.contains("Optional(") { // repair consequences of an old, but now fixed, bookmark bug
+                    zoneLink = link.replacingOccurrences(of: "Optional(\"", with: "")
+                    zoneLink = link.replacingOccurrences(of:         "\")", with: "")
+                    link     = zoneLink!
                 }
 
-                let components: [String] = (zoneLink?.components(separatedBy: ":"))!
+                let components: [String] = link.components(separatedBy: ":")
                 let refString:   String  = components[2] == "" ? "root" : components[2]
                 let refID:    CKRecordID = CKRecordID(recordName: refString)
                 let refRecord:  CKRecord = CKRecord(recordType: zoneTypeKey, recordID: refID)
@@ -304,10 +300,8 @@ class Zone : ZRecord {
                 parent  = CKReference(record: (_parentZone?.record)!, action: .none)
             }
 
-            if parent != nil && _parentZone == nil && storageMode != nil {
+            if  parent != nil && _parentZone == nil && storageMode != nil {
                 _parentZone = gRemoteStoresManager.cloudManagerFor(storageMode!).zoneForReference(parent!)
-
-                // _parentZone?.maybeNeedChildren()
             }
 
             return _parentZone
@@ -357,12 +351,11 @@ class Zone : ZRecord {
 
     func ungrab() { gSelectionManager.ungrab(self) }
     func   grab() { gSelectionManager  .grab(self) }
+    override func register() { cloudManager?.registerZone(self) }
 
 
     func clearColor() {
-        zoneGreen = nil
-        zoneBlue  = nil
-        zoneRed   = nil
+        zoneColor = ""
         _color    = nil
 
         needSave()
@@ -389,11 +382,6 @@ class Zone : ZRecord {
     }
 
 
-    override func register() {
-        cloudManager?.registerZone(self)
-    }
-
-
     override func cloudProperties() -> [String] {
         return super.cloudProperties() + Zone.cloudProperties()
     }
@@ -403,21 +391,25 @@ class Zone : ZRecord {
     // MARK:-
 
 
+    func traverseAllAncestors(_ block: @escaping ZoneClosure) {
+        safeTraverseAncestors(visited: []) { iZone -> ZTraverseStatus in
+            block(iZone)
+
+            return .eContinue
+        }
+    }
+    
+
     func traverseAncestors(_ block: ZoneToStatusClosure) {
         safeTraverseAncestors(visited: [], block)
     }
 
 
-    // skip calling block on self
-    // call block on parent and its ancestors
-
     func safeTraverseAncestors(visited: [Zone], _ block: ZoneToStatusClosure) {
-        if  let parent  = parentZone {
-            let status  = block(parent)
+        let status  = block(self)
 
-            if  status == .eContinue {
-                parent.safeTraverseAncestors(visited: visited + [self], block)
-            }
+        if  let parent  = parentZone, !visited.contains(self), !isRoot, status == .eContinue {
+            parent.safeTraverseAncestors(visited: visited + [self], block)
         }
     }
 
@@ -612,7 +604,7 @@ class Zone : ZRecord {
     }
 
 
-    @discardableResult func moveChild(from: Int, to: Int) -> Bool {
+    @discardableResult func move(child from: Int, to: Int) -> Bool {
         var succeeded = false
 
         if  to < count, from < count, let child = self[from], !gFavoritesManager.defaultFavorites.children.contains(child) {

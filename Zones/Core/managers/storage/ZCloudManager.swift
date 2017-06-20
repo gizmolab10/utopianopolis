@@ -357,12 +357,22 @@ class ZCloudManager: ZRecordsManager {
                     }
                 }
 
-                if !isDuplicated {
-                    gFavoritesManager.rootZone?.addChild(favorite)
-                } else {
+                if isDuplicated {
                     favorite.isDeleted = true
-                    
+
                     favorite.needSave()
+                } else {
+                    gFavoritesManager.rootZone?.addChild(favorite)
+
+                    if let recordID = favorite.crossLink?.record.recordID, self.zoneForRecordID(recordID) == nil {
+                        self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { iRecord in
+                            let zone = Zone(record: iRecord, storageMode: self.storageMode)
+
+                            zone.needSave()
+                            zone.needRoot()
+                            self.columnarReport("COLOR", zone.zoneName)
+                        })
+                    }
                 }
             }
         }
@@ -387,18 +397,29 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchToRoot(_ onCompletion: IntegerClosure?) {
-        let manifest = gRemoteStoresManager.manifest(for: self.storageMode)
-        let     here = manifest.hereZone
+        let     here = gRemoteStoresManager.manifest(for: storageMode).hereZone
+        let requests = hasRecords(for: [.needsRoot])
+        let goodHere = here.hasSafeAncestorPath()
 
-        if rootZone != nil && here.isDescendantOf(rootZone) == .found {
+        if  rootZone != nil && goodHere && !requests {
             onCompletion?(0)
         } else {
-            var           visited: [Zone] = []
-            var getParentOf: ZoneClosure? = nil
+            onCompletion?(-1)
 
-            getParentOf = { iZone in
-                if visited.contains(iZone) || iZone.isRoot || iZone.isRootOfFavorites {
-                    onCompletion?(0)
+            var           visited: [Zone] = []
+            var getParentOf: ZoneBooleanClosure? = nil
+
+            let recurse = { (iRecurse: Bool) in
+                if iRecurse {
+                    self.dispatchAsyncInBackground { // prevent pileup
+                        self.fetchToRoot(onCompletion) // grab more or make final call to closure
+                    }
+                }
+            }
+
+            getParentOf = { (iZone: Zone, iRecurse: Bool) in
+                if visited.contains(iZone) || iZone.isRoot || iZone.isRootOfFavorites || iZone.hasSafeAncestorPath() {
+                    recurse(iRecurse)
                 } else {
                     iZone.needParent()
 
@@ -407,19 +428,29 @@ class ZCloudManager: ZRecordsManager {
                             if  let parent = iZone.parentZone {
                                 visited    = visited + [iZone]
 
-                                getParentOf?(parent)    // continue
+                                getParentOf?(parent, iRecurse)    // recurse
                             } else {
                                 self.rootZone = iZone   // got root
 
-                                onCompletion?(0)
+                                recurse(iRecurse)
                             }
                         }
                     }
                 }
             }
-            
-            onCompletion?(-1)
-            getParentOf?(here)
+
+            if !goodHere {
+                getParentOf?(here, true)
+            } else if requests {
+                let needRoot = pullRecordsWithMatchingStates([.needsRoot])
+                var    count = needRoot.count
+
+                for need in needRoot {
+                    count   -= 1
+
+                    getParentOf?(zoneForRecord(need), count == 0)
+                }
+            }
         }
     }
 
@@ -590,8 +621,6 @@ class ZCloudManager: ZRecordsManager {
                 root  .record = iRecord!
                 self.rootZone = root
                 root   .level = 0
-
-                root.needChildren()
             }
 
             onCompletion?(0)

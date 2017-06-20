@@ -41,7 +41,7 @@ class ZOperationsManager: NSObject {
     var currentMode:   ZStorageMode? = nil
     var   currentOp:   ZOperationID = .none
     var  waitingOps = [ZOperationID : BlockOperation] ()
-    var       debug = true
+    var       debug = false
     let       queue = OperationQueue()
 
 
@@ -52,7 +52,7 @@ class ZOperationsManager: NSObject {
     func startup(_ onCompletion: @escaping Closure) {
         var operationIDs: [ZOperationID] = []
 
-        for sync in ZOperationID.cloud.rawValue...ZOperationID.children.rawValue {
+        for sync in ZOperationID.cloud.rawValue...ZOperationID.toRoot.rawValue {
             operationIDs.append(ZOperationID(rawValue: sync)!)
         }
 
@@ -63,7 +63,7 @@ class ZOperationsManager: NSObject {
     func finishUp(_ onCompletion: @escaping Closure) {
         var operationIDs: [ZOperationID] = []
 
-        for sync in ZOperationID.toRoot.rawValue...ZOperationID.subscribe.rawValue {
+        for sync in ZOperationID.save.rawValue...ZOperationID.subscribe.rawValue {
             operationIDs.append(ZOperationID(rawValue: sync)!)
         }
 
@@ -136,7 +136,8 @@ class ZOperationsManager: NSObject {
                     let             skipFavorites = operationID != .here
                     let                      full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .root, .here].contains(operationID)
                     let forCurrentStorageModeOnly = [.file, .ready, .parent, .children]                                             .contains(operationID)
-                    let     modes: [ZStorageMode] = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : skipFavorites ? [.mine, .everyone] : [.mine, .everyone, .favorites]
+                    let        cloudModes: ZModes = [.mine, .everyone]
+                    let             modes: ZModes = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : skipFavorites ? cloudModes : cloudModes + [.favorites]
 
                     closure = { index in
                         if index >= modes.count {

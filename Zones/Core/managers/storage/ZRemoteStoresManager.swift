@@ -22,7 +22,7 @@ class ZRemoteStoresManager: NSObject {
 
 
     let             container = CKContainer(identifier: cloudID)
-    var      storageModeStack = [ZStorageMode] ()
+    var      storageModeStack = ZModes ()
     var       recordsManagers = [ZStorageMode : ZCloudManager]()
     var manifestByStorageMode = [ZStorageMode : ZManifest] ()
     var currentRecordsManager: ZRecordsManager { return recordsManagerFor(gStorageMode) }
@@ -139,10 +139,9 @@ class ZRemoteStoresManager: NSObject {
     }
     
 
-    func applyToAllZones(in modes: [ZStorageMode], _ closure: ZoneClosure) {
+    func applyToAllZones(in modes: ZModes, _ closure: ZoneClosure) {
         for mode: ZStorageMode in modes {
-            let cloud = cloudManagerFor(mode)
-            let zones = cloud.zonesByID
+            let zones = cloudManagerFor(mode).zonesByID
 
             for zone in zones.values {
                 closure(zone)

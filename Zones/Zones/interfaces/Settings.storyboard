@@ -412,7 +412,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="btT-FF-Ema" userLabel="Preferences">
-                                                <rect key="frame" x="0.0" y="-84" width="226" height="384"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="226" height="384"/>
                                                 <connections>
                                                     <segue destination="Naq-se-Exq" kind="embed" id="Pht-fq-dCw"/>
                                                 </connections>
@@ -609,17 +609,17 @@
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Focus" sceneMemberID="viewController">
                     <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="302"/>
+                        <rect key="frame" x="0.0" y="0.0" width="228" height="302"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box autoresizesSubviews="NO" borderType="line" title="new zones insert" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
-                                <rect key="frame" x="5" y="258" width="216" height="36"/>
+                                <rect key="frame" x="5" y="258" width="218" height="36"/>
                                 <view key="contentView" id="qnC-vV-W8u">
-                                    <rect key="frame" x="1" y="1" width="214" height="20"/>
+                                    <rect key="frame" x="1" y="1" width="216" height="20"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="direction" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i0m-vf-1Of">
-                                            <rect key="frame" x="1" y="1" width="213" height="22"/>
+                                            <rect key="frame" x="2" y="1" width="213" height="22"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="sur-0v-evK"/>
                                             </constraints>
@@ -645,13 +645,13 @@
                                 </constraints>
                             </box>
                             <box autoresizesSubviews="NO" borderType="line" title="child counts show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="children counts">
-                                <rect key="frame" x="5" y="218" width="216" height="36"/>
+                                <rect key="frame" x="5" y="218" width="218" height="36"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
-                                    <rect key="frame" x="1" y="1" width="214" height="20"/>
+                                    <rect key="frame" x="1" y="1" width="216" height="20"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="counts" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hRI-S8-ys7">
-                                            <rect key="frame" x="0.0" y="1" width="214" height="22"/>
+                                            <rect key="frame" x="1" y="1" width="214" height="22"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="IcD-O8-4He"/>
                                             </constraints>
@@ -679,9 +679,9 @@
                                 </constraints>
                             </box>
                             <box borderType="line" title="layuot" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
-                                <rect key="frame" x="5" y="4" width="216" height="90"/>
+                                <rect key="frame" x="5" y="4" width="218" height="90"/>
                                 <view key="contentView" id="npe-oq-zV9">
-                                    <rect key="frame" x="1" y="1" width="214" height="74"/>
+                                    <rect key="frame" x="1" y="1" width="216" height="74"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="FKt-Xz-j3O" userLabel="labels">
@@ -736,10 +736,10 @@
                                             </constraints>
                                         </customView>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="xWn-hi-oFR" userLabel="sliders">
-                                            <rect key="frame" x="125" y="0.0" width="81" height="74"/>
+                                            <rect key="frame" x="125" y="0.0" width="83" height="74"/>
                                             <subviews>
                                                 <slider identifier="thickness" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gh7-LP-7IV">
-                                                    <rect key="frame" x="-2" y="46" width="85" height="26"/>
+                                                    <rect key="frame" x="-2" y="46" width="87" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="mm0-xX-hLQ"/>
                                                     </constraints>
@@ -749,17 +749,17 @@
                                                     </connections>
                                                 </slider>
                                                 <slider identifier="horizontal" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OmD-gF-PvR">
-                                                    <rect key="frame" x="-2" y="2" width="85" height="26"/>
+                                                    <rect key="frame" x="-2" y="2" width="87" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xc9-eh-z97"/>
                                                     </constraints>
-                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="20" maxValue="40" doubleValue="22" tickMarkPosition="above" sliderType="linear" id="j5S-Yr-54O"/>
+                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="30" maxValue="40" doubleValue="30" tickMarkPosition="above" sliderType="linear" id="j5S-Yr-54O"/>
                                                     <connections>
                                                         <action selector="sliderAction:" target="Naq-se-Exq" id="BHm-V9-lFh"/>
                                                     </connections>
                                                 </slider>
                                                 <slider identifier="vertical" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X28-Kf-ltl">
-                                                    <rect key="frame" x="-2" y="24" width="85" height="26"/>
+                                                    <rect key="frame" x="-2" y="24" width="87" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xX2-we-KBt"/>
                                                     </constraints>
@@ -795,16 +795,16 @@
                                 </view>
                             </box>
                             <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="mS1-t0-150">
-                                <rect key="frame" x="5" y="98" width="216" height="116"/>
+                                <rect key="frame" x="5" y="98" width="218" height="116"/>
                                 <view key="contentView" id="rb6-oU-fw8">
-                                    <rect key="frame" x="1" y="1" width="214" height="100"/>
+                                    <rect key="frame" x="1" y="1" width="216" height="100"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="G62-eE-NOU" userLabel="labels">
-                                            <rect key="frame" x="4" y="6" width="106" height="92"/>
+                                            <rect key="frame" x="8" y="6" width="119" height="92"/>
                                             <subviews>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g4o-CN-FHf">
-                                                    <rect key="frame" x="-2" y="72" width="110" height="17"/>
+                                                    <rect key="frame" x="-2" y="72" width="123" height="17"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="vRd-P4-pC3"/>
                                                     </constraints>
@@ -815,29 +815,29 @@
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0I8-Re-yMB">
-                                                    <rect key="frame" x="-2" y="49" width="110" height="17"/>
+                                                    <rect key="frame" x="-2" y="49" width="123" height="17"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="slX-PY-ObV"/>
                                                     </constraints>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="bookmarks" id="piI-U2-6jJ">
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="favorites, bookmarks" id="piI-U2-6jJ">
                                                         <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C6V-CX-uWP" userLabel="drag targets">
-                                                    <rect key="frame" x="-2" y="26" width="110" height="17"/>
+                                                    <rect key="frame" x="-2" y="26" width="123" height="17"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="9dI-E4-9GB"/>
                                                     </constraints>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="drag targets" id="qjf-lf-hsF">
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="drag, rubberband" id="qjf-lf-hsF">
                                                         <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fgs-5f-km9">
-                                                    <rect key="frame" x="-2" y="3" width="110" height="17"/>
+                                                    <rect key="frame" x="-2" y="3" width="123" height="17"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="RsG-gF-fWk"/>
                                                     </constraints>
@@ -848,7 +848,7 @@
                                                     </textFieldCell>
                                                 </textField>
                                                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Qp-4d-Tu8" userLabel="clearColor">
-                                                    <rect key="frame" x="15" y="65" width="54" height="28"/>
+                                                    <rect key="frame" x="25" y="65" width="54" height="28"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="18" id="Qdx-4o-Snx"/>
                                                         <constraint firstAttribute="width" constant="44" id="nGj-dM-TOd"/>
@@ -869,7 +869,7 @@
                                                 <constraint firstItem="g4o-CN-FHf" firstAttribute="top" secondItem="G62-eE-NOU" secondAttribute="top" constant="3" id="9xm-Zh-Gru"/>
                                                 <constraint firstItem="0I8-Re-yMB" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="H1y-pN-Gai"/>
                                                 <constraint firstItem="g4o-CN-FHf" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="Q1m-nX-Qo9"/>
-                                                <constraint firstItem="0Qp-4d-Tu8" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" constant="20" id="TFy-mJ-vED"/>
+                                                <constraint firstItem="0Qp-4d-Tu8" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" constant="30" id="TFy-mJ-vED"/>
                                                 <constraint firstAttribute="trailing" secondItem="0I8-Re-yMB" secondAttribute="trailing" id="Vnc-2m-sJZ"/>
                                                 <constraint firstAttribute="bottom" secondItem="fgs-5f-km9" secondAttribute="bottom" constant="3" id="WDX-fm-gxs"/>
                                                 <constraint firstItem="fgs-5f-km9" firstAttribute="top" secondItem="C6V-CX-uWP" secondAttribute="bottom" constant="6" id="Zd2-Fg-uSe"/>
@@ -881,12 +881,11 @@
                                             </constraints>
                                         </customView>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="FDB-6R-I3I" userLabel="color wells">
-                                            <rect key="frame" x="118" y="6" width="88" height="92"/>
+                                            <rect key="frame" x="135" y="6" width="73" height="92"/>
                                             <subviews>
                                                 <colorWell identifier="zones" translatesAutoresizingMaskIntoConstraints="NO" id="UMY-8c-tep">
-                                                    <rect key="frame" x="0.0" y="69" width="88" height="23"/>
+                                                    <rect key="frame" x="0.0" y="69" width="73" height="23"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="88" id="2Ec-ID-bQo"/>
                                                         <constraint firstAttribute="height" constant="23" id="i5B-AL-Q9X"/>
                                                     </constraints>
                                                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -895,10 +894,9 @@
                                                     </connections>
                                                 </colorWell>
                                                 <colorWell identifier="bookmarks" translatesAutoresizingMaskIntoConstraints="NO" id="PFW-VA-KPh">
-                                                    <rect key="frame" x="0.0" y="46" width="88" height="23"/>
+                                                    <rect key="frame" x="0.0" y="46" width="73" height="23"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="23" id="AzW-bN-cao"/>
-                                                        <constraint firstAttribute="width" constant="88" id="krF-hi-OZ5"/>
                                                     </constraints>
                                                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                     <connections>
@@ -906,9 +904,8 @@
                                                     </connections>
                                                 </colorWell>
                                                 <colorWell identifier="drag targets" translatesAutoresizingMaskIntoConstraints="NO" id="j0f-8D-Ds5" userLabel="drag targets color box">
-                                                    <rect key="frame" x="0.0" y="23" width="88" height="23"/>
+                                                    <rect key="frame" x="0.0" y="23" width="73" height="23"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="88" id="7mS-9b-bM1"/>
                                                         <constraint firstAttribute="height" constant="23" id="XcF-55-QfT"/>
                                                     </constraints>
                                                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -917,9 +914,8 @@
                                                     </connections>
                                                 </colorWell>
                                                 <colorWell identifier="background" translatesAutoresizingMaskIntoConstraints="NO" id="wsy-Dq-H7s">
-                                                    <rect key="frame" x="0.0" y="0.0" width="88" height="23"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="73" height="23"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="88" id="o8O-9z-Cba"/>
                                                         <constraint firstAttribute="height" constant="23" id="ukQ-KH-zeP"/>
                                                     </constraints>
                                                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -951,7 +947,7 @@
                                         <constraint firstAttribute="bottom" secondItem="FDB-6R-I3I" secondAttribute="bottom" constant="6" id="UDU-HU-cgt"/>
                                         <constraint firstAttribute="bottom" secondItem="G62-eE-NOU" secondAttribute="bottom" constant="6" id="ZCc-tS-9XH"/>
                                         <constraint firstItem="G62-eE-NOU" firstAttribute="top" secondItem="rb6-oU-fw8" secondAttribute="top" constant="2" id="lqz-EG-Z3x"/>
-                                        <constraint firstItem="G62-eE-NOU" firstAttribute="leading" secondItem="rb6-oU-fw8" secondAttribute="leading" constant="4" id="ncU-Mb-xjK"/>
+                                        <constraint firstItem="G62-eE-NOU" firstAttribute="leading" secondItem="rb6-oU-fw8" secondAttribute="leading" constant="8" id="ncU-Mb-xjK"/>
                                         <constraint firstItem="FDB-6R-I3I" firstAttribute="top" secondItem="rb6-oU-fw8" secondAttribute="top" constant="2" id="puD-Qw-Gld"/>
                                     </constraints>
                                 </view>

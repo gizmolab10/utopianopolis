@@ -90,6 +90,7 @@ class ZTravelManager: NSObject {
                             gHere.record = iRecord!
 
                             gHere.grab()
+                            gHere.needRoot()
                             self.travel {
                                 atArrival(gHere, .redraw)
                             }

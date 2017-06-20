@@ -18,6 +18,7 @@ import CloudKit
 
 
 typealias ZStorageDict = [String : NSObject]
+typealias       ZModes = [ZStorageMode]
 
 
 extension NSObject {
@@ -216,6 +217,13 @@ extension CGRect {
 }
 
 
+extension ZColor {
+    var string: String {
+        return "red:\(redComponent),blue:\(blueComponent),green:\(greenComponent)"
+    }
+}
+
+
 extension String {
     var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
     var          isDigit: Bool { return "0123456789.+-=*/".characters.contains(self[startIndex]) }
@@ -226,7 +234,34 @@ extension String {
     func substring(from:         Int) -> String   { return substring(from: index(at: from)) }
     func substring(to:           Int) -> String  { return substring(to: index(at: to)) }
     func heightForFont(_ font: ZFont) -> CGFloat { return sizeWithFont(font).height }
-    func widthForFont(_  font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
+    func widthForFont (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
+
+
+    var color: ZColor? {
+        if self != "" {
+            let pairs = components(separatedBy: ",")
+            var   red = 0.0
+            var  blue = 0.0
+            var green = 0.0
+
+            for pair in pairs {
+                let values = pair.components(separatedBy: ":")
+                let  value = Double(values[1])!
+                let    key = values[0]
+
+                switch key {
+                case   "red":   red = value
+                case  "blue":  blue = value
+                case "green": green = value
+                default:      break
+                }
+            }
+
+            return ZColor(calibratedRed: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: 1.0)
+        }
+
+        return nil
+    }
 
 
     func sizeWithFont(_ font: ZFont) -> CGSize {

@@ -13,6 +13,7 @@ import CloudKit
 
 enum ZRecordState: Int {
     case needsSave
+    case needsRoot
     case needsMerge
     case needsFetch
     case needsCreate
@@ -114,6 +115,19 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func hasRecords(for states: [ZRecordState]) -> Bool {
+        for state in states {
+            let records = recordsForState(state)
+
+            if records.count > 0 {
+                return true
+            }
+        }
+
+        return false
+    }
+
+
     func hasRecord(_ iRecord: ZRecord, forStates: [ZRecordState]) -> Bool {
         var found = false
 
@@ -123,7 +137,7 @@ class ZRecordsManager: NSObject {
 
         return found
     }
-
+    
 
     func addRecord(_ iRecord: ZRecord, for states: [ZRecordState]) {
         for state in states {
@@ -328,7 +342,7 @@ class ZRecordsManager: NSObject {
 
 
     func zoneForReference(_ reference: CKReference) -> Zone? {
-        var zone = zonesByID[reference.recordID.recordName]
+        var zone  = zonesByID[reference.recordID.recordName]
 
         if  zone == nil, let record = recordForRecordID(reference.recordID)?.record {
             zone  = Zone(record: record, storageMode: storageMode)

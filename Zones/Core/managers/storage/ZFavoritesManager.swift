@@ -14,10 +14,10 @@ import CloudKit
 class ZFavoritesManager: ZCloudManager {
 
 
-    let            defaultFavorites  = Zone(record: nil, storageMode: .favorites)
-    let defaultModes: [ZStorageMode] = [.favorites, .everyone, .mine]
-    var              favoritesIndex  = 0
-    var                       count: Int { return rootZone!.count }
+    let     defaultFavorites = Zone(record: nil, storageMode: .favorites)
+    let defaultModes: ZModes = [.favorites, .everyone, .mine]
+    var       favoritesIndex = 0
+    var           count: Int { return rootZone!.count }
 
 
     var rotatedEnumeration: EnumeratedSequence<Array<Zone>> {
@@ -88,7 +88,7 @@ class ZFavoritesManager: ZCloudManager {
             rootZone?.removeChild(favorite)
         }
 
-        var found = [ZStorageMode] ()
+        var found = ZModes ()
 
         for favorite in rootZone!.children {
             if favorite.isFavorite, let mode = favorite.crossLink?.storageMode, !found.contains(mode) {

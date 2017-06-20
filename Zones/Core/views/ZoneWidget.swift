@@ -450,10 +450,11 @@ class ZoneWidget: ZView {
 
 
     func drawSelectionHighlight() {
-        let     thickness = CGFloat(gDotWidth) / 2.5
-        var          rect = textWidget.frame.insetBy(dx: -13.0, dy: 0.0)
-        rect.size .width += 2.0
-        rect.size.height += highlightHeightOffset
+        let     thickness = CGFloat(gDotWidth) / 3.5
+        let         delta = gGenericOffset.height / 3.0
+        var          rect = textWidget.frame.insetBy(dx: -15.0 - delta, dy: -0.5 - delta)
+        rect.size .width += 0.5 + delta * 0.7
+        rect.size.height += highlightHeightOffset - 0.5 + delta / 9.5
         let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
         let         color = widgetZone.isBookmark || widgetZone.isRootOfFavorites ? gBookmarkColor : widgetZone.color
         let     fillColor = color.withAlphaComponent(0.02)
@@ -480,7 +481,7 @@ class ZoneWidget: ZView {
 
 
     func drawLine(to child: ZoneWidget) {
-        let color = child.widgetZone.isBookmark ? gBookmarkColor : widgetZone.color
+        let color = child.widgetZone.isBookmark ? gBookmarkColor : child.widgetZone.color
         let  rect = lineRect(to: child)
         let  kind = lineKind(to: child)
         let  path = linePath(in: rect, kind: kind, isDragLine: false)

@@ -192,6 +192,7 @@ class ZRecord: NSObject {
     }
 
 
+    func needRoot()     { markForAllOfStates([.needsRoot]) }
     func needFetch()    { markForAllOfStates([.needsFetch]) }
     func needParent()   { markForAllOfStates([.needsParent]) }
     func needProgeny()  { markForAllOfStates([.needsProgeny]) }
