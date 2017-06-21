@@ -53,8 +53,9 @@ public typealias ZGestureRecognizerState    = UIGestureRecognizerState
 public typealias ZGestureRecognizerDelegate = UIGestureRecognizerDelegate
 
 
-let    zapplication = UIApplication.shared
-let gVerticalWeight = -1.0
+let gHighlightHeightOffset = CGFloat(3.0)
+let        gVerticalWeight = -1.0
+let           zapplication = UIApplication.shared
 
 
 func NSStringFromSize(_ size: CGSize) -> String {
@@ -63,8 +64,6 @@ func NSStringFromSize(_ size: CGSize) -> String {
 
 
 extension NSObject {
-    var highlightHeightOffset: CGFloat { return 3.0 }
-    var  lineThicknessDivisor: CGFloat { return 1.0 }
     func assignAsFirstResponder(_ responder: UIResponder?) { responder?.becomeFirstResponder() }
 }
 

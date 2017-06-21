@@ -126,10 +126,11 @@ class ZSelectionManager: NSObject {
 
     func edit(_ iZone: Zone) {
         if  let textWidget = iZone.widget?.textWidget, !textWidget.isTextEditing, !isEditingStateChanging {
-            currentlyEditingZone = iZone
-
             assignAsFirstResponder(textWidget)
             deferEditingStateChange()
+            deselectGrabs()
+
+            currentlyEditingZone = iZone
         }
     }
 
@@ -161,7 +162,7 @@ class ZSelectionManager: NSObject {
         }
 
         for zone in grabbed {
-            if  zone != currentlyEditingZone, let widget = zone.widget {
+            if  let widget = zone.widget {
                 widget.dragDot.innerDot?.setNeedsDisplay()
                 widget                  .setNeedsDisplay()
             }

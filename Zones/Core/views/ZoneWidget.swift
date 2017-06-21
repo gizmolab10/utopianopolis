@@ -23,7 +23,7 @@ enum ZLineKind: Int {
 }
 
 
-let dragTarget = false
+let verticalTextOffset = 1.55 // 1.7 gap is above dot, 1.2 gap is below dot
 
 
 class ZoneWidget: ZView {
@@ -56,7 +56,7 @@ class ZoneWidget: ZView {
             textWidget.setup()
             addSubview(textWidget)
             snp.makeConstraints { (make: ConstraintMaker) -> Void in
-                make.centerY.equalTo(textWidget).offset(1.5)
+                make.centerY.equalTo(textWidget).offset(verticalTextOffset)
                 make.size.greaterThanOrEqualTo(textWidget)
             }
         }
@@ -70,7 +70,7 @@ class ZoneWidget: ZView {
 
         childrenView.snp.removeConstraints()
         childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            make.left.equalTo(textWidget.snp.right).offset(gDotWidth + Double(gGenericOffset.height / 2.0))
+            make.left.equalTo(textWidget.snp.right).offset(gDotWidth + Double(gGenericOffset.height / 1.25 - 6.0))
             make.bottom.top.right.equalTo(self)
         }
     }
@@ -185,7 +185,7 @@ class ZoneWidget: ZView {
             let width = textWidget.text!.widthForFont(font) + 5.0
 
             make  .width.equalTo(width)
-            make.centerY.equalTo(self).offset(-1.5)
+            make.centerY.equalTo(self).offset(-verticalTextOffset)
             make   .left.equalTo(self).offset(gGenericOffset.width)
             make  .right.lessThanOrEqualTo(self).offset(-29.0)
             make .height.lessThanOrEqualTo(self).offset(-gGenericOffset.height)
@@ -202,7 +202,7 @@ class ZoneWidget: ZView {
         dragDot.setupForWidget(self, asToggle: false)
         dragDot.innerDot?.snp.makeConstraints { (make: ConstraintMaker) in
             make.right.equalTo(textWidget.snp.left)
-            make.centerY.equalTo(textWidget).offset(1.5)
+            make.centerY.equalTo(textWidget).offset(verticalTextOffset)
         }
 
         if !subviews.contains(toggleDot) {
@@ -214,7 +214,7 @@ class ZoneWidget: ZView {
         toggleDot.innerDot?.snp.makeConstraints { (make: ConstraintMaker) in
             make.left.equalTo(textWidget.snp.right).offset(-1.0)
             make.right.lessThanOrEqualToSuperview().offset(-1.0)
-            make.centerY.equalTo(textWidget).offset(1.5)
+            make.centerY.equalTo(textWidget).offset(verticalTextOffset)
         }
     }
 
@@ -452,9 +452,11 @@ class ZoneWidget: ZView {
     func drawSelectionHighlight() {
         let     thickness = CGFloat(gDotWidth) / 3.5
         let         delta = gGenericOffset.height / 3.0
+        let           dot = toggleDot.innerDot
+        let      dotDelta = dot?.isHidden ?? false ? dot!.bounds.size.width + 3.0 : CGFloat(0.0)
         var          rect = textWidget.frame.insetBy(dx: -15.0 - delta, dy: -0.5 - delta)
-        rect.size .width += 0.5 + delta * 0.7
-        rect.size.height += highlightHeightOffset - 0.5 + delta / 9.5
+        rect.size .width += 0.5 + (delta * 0.7) - dotDelta
+        rect.size.height += gHighlightHeightOffset - 0.5 + delta / 9.5
         let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
         let         color = widgetZone.isBookmark || widgetZone.isRootOfFavorites ? gBookmarkColor : widgetZone.color
         let     fillColor = color.withAlphaComponent(0.02)
@@ -498,10 +500,6 @@ class ZoneWidget: ZView {
 
 
     override func draw(_ dirtyRect: CGRect) {
-        if textWidget.isTextEditing {
-            return
-        }
-
         super.draw(dirtyRect)
 
         let        isGrabbed = widgetZone.isGrabbed
@@ -509,13 +507,13 @@ class ZoneWidget: ZView {
 
         note("      .        \(widgetZone.zoneName ?? "---")")
 
-        if isGrabbed { // && !childrenPass {  CLUE! ... adding this to the logic makes highlight disappear for zones with children shown
+        if isGrabbed && !textWidget.isTextEditing { // && !childrenPass {  CLUE! ... adding this to the logic makes highlight disappear for zones with children shown
             note("highlighting   \(widgetZone.zoneName ?? "--------")")
             drawSelectionHighlight()
         }
 
         if widgetZone.canRevealChildren {
-            if  childrenPass || gSelectionManager.isDragging {
+            if  childrenPass || gSelectionManager.isDragging || gEditorView?.rubberbandRect != nil {
                 for child in childrenWidgets { drawLine(to: child) }
             } else {
                 dispatchAsyncInForeground {

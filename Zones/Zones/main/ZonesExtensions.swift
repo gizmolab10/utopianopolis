@@ -55,16 +55,16 @@ public typealias ZGestureRecognizerState    = NSGestureRecognizerState
 public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 
 
-let gVerticalWeight = 1.0
-let    zapplication = NSApplication.shared()
-let   gBackspaceKey = "\u{8}"
-let      gDeleteKey = "\u{7F}"
-let       gSpaceKey = " "
-let         gTabKey = "\t"
+let gHighlightHeightOffset = CGFloat(-3.0)
+let        gVerticalWeight = 1.0
+let           zapplication = NSApplication.shared()
+let          gBackspaceKey = "\u{8}"
+let             gDeleteKey = "\u{7F}"
+let              gSpaceKey = " "
+let                gTabKey = "\t"
 
 
 extension NSObject {
-    var highlightHeightOffset: CGFloat { return -3.0 }
     func assignAsFirstResponder(_ responder: NSResponder?) {
         ZoneWindow.window?.makeFirstResponder(responder)
     }
