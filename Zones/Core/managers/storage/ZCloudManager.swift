@@ -41,23 +41,21 @@ class ZCloudManager: ZRecordsManager {
 
 
     func create(_ onCompletion: IntegerClosure?) {
-        if  let           operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
-            operation.recordsToSave = pullRecordsWithMatchingStates([.needsCreate])
+        let needSaving = pullRecordsWithMatchingStates([.needsCreate])
+        let      count = needSaving.count
 
-            if let count = operation.recordsToSave?.count, count > 0 {
-                operation.completionBlock = {
-                    self.create(onCompletion)
-                }
+        onCompletion?(count)
 
-                onCompletion?(count)
-                columnarReport("CREATE \(count)", stringForRecords(operation.recordsToSave))
-                start(operation)
-
-                return
+        if  count > 0, let operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
+            operation .recordsToSave = needSaving
+            operation.completionBlock = {
+                self.create(onCompletion)
             }
-        }
 
-        onCompletion?(0)
+            onCompletion?(count)
+            columnarReport("CREATE \(count)", stringForRecords(operation.recordsToSave))
+            start(operation)
+        }
     }
 
 
@@ -65,46 +63,50 @@ class ZCloudManager: ZRecordsManager {
         if  let           operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
             operation.recordsToSave = pullRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
 
-            if let count = operation.recordsToSave?.count, count > 0 {
-                operation.completionBlock = {
-                    // deal with saved records marked as deleted
-                    for record: CKRecord in operation.recordsToSave! {
-                        if let zone = self.zoneForRecordID(record.recordID), zone.isDeleted {
-                            self.unregisterZone(zone)
+            if let count = operation.recordsToSave?.count {
+                onCompletion?(count)
+
+                if count > 0 {
+                    operation.completionBlock = {
+                        // deal with saved records marked as deleted
+                        for record: CKRecord in operation.recordsToSave! {
+                            if let zone = self.zoneForRecordID(record.recordID), zone.isDeleted {
+                                self.unregisterZone(zone)
+                            }
                         }
+
+                        self.save(onCompletion)
                     }
 
-                    self.save(onCompletion)
-                }
+                    operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
+                        // mark failed records as needing merge
+                        if  let error:  CKError = iError as? CKError {
+                            let info            = error.errorUserInfo
+                            var description     = info["CKErrorDescription"] as! String
 
-                operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
-                    // mark failed records as needing merge
-                    if  let error:  CKError = iError as? CKError {
-                        let info            = error.errorUserInfo
-                        var description     = info["CKErrorDescription"] as! String
+                            if  description    != "record to insert already exists" {
+                                if  let  record = self.recordForCKRecord(iRecord) {
+                                    record.maybeNeedMerge()
+                                }
 
-                        if  description    != "record to insert already exists" {
-                            if  let  record = self.recordForCKRecord(iRecord) {
-                                record.maybeNeedMerge()
+                                if  let    name = iRecord?[zoneNameKey] as? String {
+                                    description = "\(description): \(name)"
+                                }
+
+                                self.columnarReport("SAVE ERROR", "\(self.storageMode) \(description)")
                             }
-
-                            if  let    name = iRecord?[zoneNameKey] as? String {
-                                description = "\(description): \(name)"
-                            }
-
-                            self.columnarReport("SAVE ERROR", "\(self.storageMode) \(description)")
                         }
                     }
+                    
+                    columnarReport("SAVE \(count)", stringForRecords(operation.recordsToSave))
+                    start(operation)
+                    
+                    return
                 }
-
-                columnarReport("SAVE \(count)", stringForRecords(operation.recordsToSave))
-                start(operation)
-
-                return
             }
+        } else {
+            onCompletion?(0)
         }
-
-        onCompletion?(0)
     }
 
 

@@ -258,15 +258,17 @@ class ZEditingManager: NSObject {
 
 
     func doFavorites(_ isShift: Bool, _ isOption: Bool, _ isCommand: Bool) {
-        if isCommand {
+        if isCommand || (isShift && isOption) {
             gFavoritesManager.refocus() {
                 self.redrawAndSync()
             }
-        } else if         !isShift || !isOption {
-            let backward = isShift ||  isOption
+        } else {
+            let backward = isShift || isOption
 
             gFavoritesManager.switchToNext(!backward) {
-                self.redrawAndSync()
+                self.redrawAndSync() {
+                    self.signalFor(nil, regarding: .redraw)
+                }
             }
         }
     }

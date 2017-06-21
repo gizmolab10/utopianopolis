@@ -99,7 +99,7 @@ class Zone : ZRecord {
                 } else if let p = parentZone, hasSafeAncestorPath(toColor: true) {
                     return p.color // TODO: prevent infinite recursion
                 } else {
-                    return ZColor.blue // default is blue
+                    return ZColor.black // default is black
                 }
             }
 
@@ -354,6 +354,23 @@ class Zone : ZRecord {
     override func register() { cloudManager?.registerZone(self) }
 
 
+    override func debug(_  iMessage: String) {
+        note("\(iMessage) children \(count) parent \(parent != nil) isDeleted \(isDeleted) mode \(storageMode!) \(zoneName ?? "unknown")")
+    }
+
+
+    func orphan() {
+        if let zone = parentZone, zone.removeChild(self) {
+            zone.incrementProgenyCount(by: -progenyCount)
+        }
+
+        parentZone = nil
+
+        needSave()
+        updateCloudProperties()
+    }
+
+
     func clearColor() {
         zoneColor = ""
         _color    = nil
@@ -453,27 +470,6 @@ class Zone : ZRecord {
     }
 
 
-    // MARK:- progeny
-    // MARK:-
-
-
-    override func debug(_  iMessage: String) {
-        // performance("\(iMessage) children \(count) parent \(parent != nil) isDeleted \(isDeleted) mode \(storageMode!) \(zoneName ?? "unknown")")
-    }
-    
-
-    func orphan() {
-        if let zone = parentZone, zone.removeChild(self) {
-            zone.incrementProgenyCount(by: -progenyCount)
-        }
-
-        parentZone = nil
-
-        needSave()
-        updateCloudProperties()
-    }
-
-
     // MARK:- siblings
     // MARK:-
 
@@ -501,8 +497,15 @@ class Zone : ZRecord {
     }
 
     
-    // MARK:- offspring
+    // MARK:- state
     // MARK:-
+
+
+    override func maybeNeedMerge() {
+        if !gFavoritesManager.defaultFavorites.children.contains(self) {
+            super.maybeNeedMerge()
+        }
+    }
 
 
     func maybeNeedProgeny() {
@@ -517,6 +520,23 @@ class Zone : ZRecord {
             needChildren()
         }
     }
+
+
+    func extendNeedForChildren(to iLevel: Int,  _ visited: [Zone]) {
+        if !visited.contains(self) && iLevel >= level {
+            if hasMissingChildren {
+                needChildren()
+            } else if iLevel > level {
+                for child in children {
+                    child.extendNeedForChildren(to: iLevel, visited + [self])
+                }
+            }
+        }
+    }
+
+
+    // MARK:- children
+    // MARK:-
 
 
     func displayChildren() { showChildren = true  }
@@ -641,21 +661,8 @@ class Zone : ZRecord {
     }
 
 
-    // MARK:- progeny
+    // MARK:- progeny counts
     // MARK:-
-    
-
-    func extendNeedForChildren(to iLevel: Int,  _ visited: [Zone]) {
-        if !visited.contains(self) && iLevel >= level {
-            if hasMissingChildren {
-                needChildren()
-            } else if iLevel > level {
-                for child in children {
-                    child.extendNeedForChildren(to: iLevel, visited + [self])
-                }
-            }
-        }
-    }
 
 
     func progenyCountUpdate(_ recursing: ZRecursionType) {

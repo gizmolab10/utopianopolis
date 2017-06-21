@@ -128,7 +128,7 @@ class ZTravelManager: NSObject {
                     gHere = there!
 
                     grabHere()
-                } else {
+                } else if gCloudManager.storageMode != .favorites { // favorites does not have a cloud database
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
                         if  let   record = iRecord {
                             gHere        = gCloudManager.zoneForRecord(record)
@@ -137,7 +137,7 @@ class ZTravelManager: NSObject {
                             grabHere()
                         }
                     }
-                }
+                } // else ... favorites mode with an unresolvable bookmark target
             }
         }
     }

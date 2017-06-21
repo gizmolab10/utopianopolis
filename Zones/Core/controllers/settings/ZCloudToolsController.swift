@@ -81,16 +81,25 @@ class ZCloudToolsController: ZGenericTableController {
         if  let root = gRoot, !zone.isRoot {
             gHere    = root
 
-            root.maybeNeedChildren()
-            gOperationsManager.children(.expand, 1) {
+            let closure = {
                 root.addAndReorderChild(zone, at: 0)
                 zone.hideChildren()
+                zone.orphan()
 
                 zone.traverseAllProgeny { iChild in
                     iChild.isDeleted = false
                 }
 
                 self.redrawAndSync()
+            }
+
+            if zone.hasSafeAncestorPath() && root.count > 0 {
+                closure()
+            } else {
+                root.maybeNeedChildren()
+                gOperationsManager.children(.expand, 1) {
+                    closure()
+                }
             }
         }
     }

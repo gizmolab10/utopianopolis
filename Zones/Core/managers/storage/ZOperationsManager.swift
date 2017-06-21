@@ -49,7 +49,7 @@ class ZOperationsManager: NSObject {
     // MARK:-
 
 
-    func startup(_ onCompletion: @escaping Closure) {
+    func startUp(_ onCompletion: @escaping Closure) {
         var operationIDs: [ZOperationID] = []
 
         for sync in ZOperationID.cloud.rawValue...ZOperationID.toRoot.rawValue {

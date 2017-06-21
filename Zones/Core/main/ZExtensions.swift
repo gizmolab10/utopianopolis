@@ -26,8 +26,12 @@ extension NSObject {
 
     func        note(_ iMessage: Any?)                            { } // report(iMessage) }
     func performance(_ iMessage: Any?)                            { report(iMessage) }
-    func   signalFor(_ object: NSObject?, regarding: ZSignalKind) { gControllersManager.signalFor(object, regarding: regarding, onCompletion: nil) }
     func  debugCheck()                                            { gTravelManager.debugCheck() }
+
+
+    func   signalFor(_ object: NSObject?, regarding: ZSignalKind) {
+        gControllersManager.signalFor(object, regarding: regarding, onCompletion: nil)
+    }
 
 
     func columnarReport(_ iFirst: Any?, _ iSecond: Any?) {
