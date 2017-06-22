@@ -19,6 +19,10 @@ import SnapKit
 class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
+    // MARK:- properties
+    // MARK:-
+    
+
     var    dragStart: CGPoint? = nil
     var       widget: ZoneWidget?
     var     innerDot: ZoneDot?
@@ -64,6 +68,71 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
+    var showAsBookmark: Bool {
+        if  let zone = widgetZone, isInnerDot {
+            return zone.isBookmark || zone.isRootOfFavorites
+        }
+
+        return false
+    }
+
+
+    var isHiddenToggleDot: Bool {
+        if  let zone = widgetZone, isInnerDot, let mode = zone.storageMode {
+
+            return isToggle && ((!zone.hasChildren && !showAsBookmark && !isDragTarget) || (mode == .favorites && !zone.isRootOfFavorites))
+        }
+        
+        return false
+    }
+
+
+    // MARK:- initialization
+    // MARK:-
+    
+
+    func setupForWidget(_ iWidget: ZoneWidget, asToggle: Bool) {
+        widgetZone = iWidget.widgetZone
+        isToggle   = asToggle
+        widget     = iWidget
+
+        if isInnerDot {
+            snp.makeConstraints { (make: ConstraintMaker) in
+                let width = CGFloat(asToggle ? gDotHeight : gDotWidth)
+                let  size = CGSize(width: width, height: CGFloat(gDotHeight))
+
+                make.size.equalTo(size)
+            }
+
+            setNeedsDisplay(frame)
+        } else {
+            if  innerDot            == nil {
+                innerDot             = ZoneDot()
+                innerDot?.isInnerDot = true
+
+                addSubview(innerDot!)
+            }
+
+            innerDot?.setupForWidget(iWidget, asToggle: isToggle)
+            snp.makeConstraints { (make: ConstraintMaker) in
+                make.size.equalTo(CGSize(width: gFingerBreadth, height: gFingerBreadth))
+                make.center.equalTo(innerDot!)
+            }
+        }
+
+        #if os(iOS)
+            backgroundColor = ZColor.clear
+        #endif
+        
+        updateConstraints()
+        setNeedsDisplay()
+    }
+
+
+    // MARK:- draw
+    // MARK:-
+    
+
     func drawTinyDots(_ dirtyRect: CGRect) {
         if  isToggle, let zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showChildren || zone.isBookmark) {
             var          count = zone.fetchableCount
@@ -106,9 +175,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        if  let            zone = widgetZone, isInnerDot, let mode = zone.storageMode {
-            let  showAsBookmark = zone.isBookmark || zone.isRootOfFavorites
-            isHidden            = isToggle && ((!zone.hasChildren             && !showAsBookmark && !isDragTarget) || (mode == .favorites && !zone.isRootOfFavorites))
+        if  let            zone = widgetZone, isInnerDot {
+            isHidden            = isHiddenToggleDot
             let shouldHighlight = isToggle    ? (zone.indicateChildren        || zone.isBookmark ||  isDragTarget) : zone.isGrabbed // not highlight when editing
             let     strokeColor = isToggle && isDragTarget ? gDragTargetsColor :  showAsBookmark  ? gBookmarkColor : zone.color
             let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
@@ -126,41 +194,4 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         drawTinyDots(dirtyRect)
     }
 
-
-    func setupForWidget(_ iWidget: ZoneWidget, asToggle: Bool) {
-        widgetZone = iWidget.widgetZone
-        isToggle   = asToggle
-        widget     = iWidget
-
-        if isInnerDot {
-            snp.makeConstraints { (make: ConstraintMaker) in
-                let width = CGFloat(asToggle ? gDotHeight : gDotWidth)
-                let  size = CGSize(width: width, height: CGFloat(gDotHeight))
-
-                make.size.equalTo(size)
-            }
-
-            setNeedsDisplay(frame)
-        } else {
-            if  innerDot            == nil {
-                innerDot             = ZoneDot()
-                innerDot?.isInnerDot = true
-
-                addSubview(innerDot!)
-            }
-
-            innerDot?.setupForWidget(iWidget, asToggle: isToggle)
-            snp.makeConstraints { (make: ConstraintMaker) in
-                make.size.equalTo(CGSize(width: gFingerBreadth, height: gFingerBreadth))
-                make.center.equalTo(innerDot!)
-            }
-        }
-
-        #if os(iOS)
-        backgroundColor = ZColor.clear
-        #endif
-
-        updateConstraints()
-        setNeedsDisplay()
-    }
 }

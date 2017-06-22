@@ -14,6 +14,10 @@ import CloudKit
 class ZFavoritesManager: ZCloudManager {
 
 
+    // MARK:- initialization
+    // MARK:-
+
+
     let     defaultFavorites = Zone(record: nil, storageMode: .favorites)
     let defaultModes: ZModes = [.favorites, .everyone, .mine]
     var       favoritesIndex = 0
@@ -38,10 +42,6 @@ class ZFavoritesManager: ZCloudManager {
 
         return rotated.enumerated()
     }
-
-
-    // MARK:- init
-    // MARK:-
 
 
     func setup() {

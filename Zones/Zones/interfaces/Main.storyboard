@@ -168,13 +168,13 @@ CA
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Create" id="GbF-qY-vTh">
                                                 <items>
-                                                    <menuItem title="Child" tag="6" alternate="YES" keyEquivalent=" " id="hu1-W0-ukM">
+                                                    <menuItem title="Subordinate Item" tag="6" alternate="YES" keyEquivalent=" " id="hu1-W0-ukM">
                                                         <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="7ug-ra-lWZ"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Sibling" tag="6" id="8Vw-09-keH">
+                                                    <menuItem title="Sibling Item" tag="6" id="8Vw-09-keH">
                                                         <string key="keyEquivalent" base64-UTF8="YES">
 CQ
 </string>

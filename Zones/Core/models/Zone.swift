@@ -45,13 +45,14 @@ class Zone : ZRecord {
     var            children      = [Zone] ()
     var               count:          Int { return children.count }
     var              widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
-    var          isBookmark:         Bool { return crossLink != nil }
+    var       unwrappedName:       String { return zoneName ?? "empty" }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
     var   canRevealChildren:         Bool { return hasChildren &&   showChildren }
     var    indicateChildren:         Bool { return hasChildren && (!showChildren || count == 0) }
     var  hasMissingChildren:         Bool { return count == 0 || count != fetchableCount }
     var       hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var       hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
+    var          isBookmark:         Bool { return crossLink != nil }
     var          isSelected:         Bool { return gSelectionManager.isSelected(self) }
     var           isEditing:         Bool { return gSelectionManager .isEditing(self) }
     var           isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
@@ -355,7 +356,7 @@ class Zone : ZRecord {
 
 
     override func debug(_  iMessage: String) {
-        note("\(iMessage) children \(count) parent \(parent != nil) isDeleted \(isDeleted) mode \(storageMode!) \(zoneName ?? "unknown")")
+        note("\(iMessage) children \(count) parent \(parent != nil) isDeleted \(isDeleted) mode \(storageMode!) \(unwrappedName)")
     }
 
 
@@ -406,6 +407,42 @@ class Zone : ZRecord {
 
     // MARK:- traverse
     // MARK:-
+
+
+    func wasSpawnedBy(_ iZone: Zone?) -> Bool {
+        var wasSpawned: Bool = false
+
+        if let zone = iZone, let pZone = parentZone {
+            pZone.traverseAncestors { iAncestor -> ZTraverseStatus in
+                if iAncestor == zone {
+                    wasSpawned = true
+
+                    return .eStop
+                }
+
+                return .eContinue
+            }
+        }
+
+        return wasSpawned
+    }
+
+
+    func spawned(_ iChild: Zone) -> Bool {
+        var isSpawn = false
+
+        traverseProgeny { iZone -> ZTraverseStatus in
+            if iZone == iChild {
+                isSpawn = true
+
+                return .eStop
+            }
+            
+            return .eContinue
+        }
+        
+        return isSpawn
+    }
 
 
     func traverseAllAncestors(_ block: @escaping ZoneClosure) {
@@ -666,7 +703,7 @@ class Zone : ZRecord {
 
 
     func progenyCountUpdate(_ recursing: ZRecursionType) {
-        columnarReport("RECOUNT", zoneName ?? "---")
+        columnarReport("RECOUNT", unwrappedName)
         needProgeny()
         gOperationsManager.children(recursing) {
             self.safeProgenyCountUpdate(recursing, [])
@@ -700,7 +737,7 @@ class Zone : ZRecord {
             progenyCount = total
             isUpToDate   = allTrue
 
-            columnarReport("\(isUpToDate ? " " : "•") \(fetchableCount),\(progenyCount)", zoneName ?? "---")
+            columnarReport("\(isUpToDate ? " " : "•") \(fetchableCount),\(progenyCount)", unwrappedName)
         }
     }
 
@@ -720,7 +757,7 @@ class Zone : ZRecord {
 
             if  increment != 0 {
                 progenyCount += increment
-                // report("\(increment) \(zoneName ?? "---")")
+                // report("\(increment) \(unwrappedName)")
 
                 if !isRoot && !isRootOfFavorites {
                     if parentZone != nil {
@@ -770,7 +807,7 @@ class Zone : ZRecord {
     func updateCount() {
         if  storageMode != .favorites {
             if  count   != fetchableCount {
-                columnarReport("fetchable: \(count)", zoneName ?? "---")
+                columnarReport("fetchable: \(count)", unwrappedName)
             }
 
             hasChildren    =  count > 0
@@ -785,54 +822,6 @@ class Zone : ZRecord {
         for (index, child) in children.enumerated() {
             child.order = increment * Double(index + 1)
         }
-    }
-
-
-    // FUBAR occasional infinite loop
-    // when parent of parent == self
-
-    var cycleDetectorArray = [Zone] ()
-
-
-    func isDescendantOf(_ iZone: Zone?) -> ZCycleType {
-        var flag: ZCycleType = .none
-
-        if  let babyZone = iZone {
-            let detector = babyZone.cycleDetectorArray
-
-            if babyZone == self {
-                if detector.count > 0 {
-                    flag = .found
-                }
-            } else if detector.contains(self) {
-                flag = .cycle
-            } else if let parent = parentZone {
-                babyZone.cycleDetectorArray.append(self)
-
-                return parent.isDescendantOf(babyZone) // continue with parent
-            }
-            
-            babyZone.cycleDetectorArray.removeAll()
-        }
-
-        return flag
-    }
-
-
-    func spawned(_ iChild: Zone) -> Bool {
-        var isSpawn = false
-
-        traverseProgeny { iZone -> ZTraverseStatus in
-            if iZone == iChild {
-                isSpawn = true
-
-                return .eStop
-            }
-
-            return .eContinue
-        }
-
-        return isSpawn
     }
 
 

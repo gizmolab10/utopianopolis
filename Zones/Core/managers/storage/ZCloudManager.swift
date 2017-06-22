@@ -541,7 +541,7 @@ class ZCloudManager: ZRecordsManager {
                                 }
                             }
                         } else {
-                            self.columnarReport("CHILD", child.zoneName ?? "---")
+                            self.columnarReport("CHILD", child.unwrappedName)
                         }
                     }
 

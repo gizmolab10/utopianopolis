@@ -316,15 +316,9 @@ class ZoneWidget: ZView {
     }
 
 
-    func dragContainsPoint(_ iPoint: CGPoint) -> Bool {
-        let rect = dragHitFrame
-
-        return rect.minX <= iPoint.x && rect.minY <= iPoint.y && rect.maxY >= iPoint.y
-    }
-
-
     func widgetNearestTo(_ iPoint: CGPoint) -> ZoneWidget? {
-        if dragContainsPoint(iPoint) && widgetZone.isDescendantOf(gSelectionManager.draggedZone) == .none {
+        if dragHitFrame.contains(iPoint) && !widgetZone.wasSpawnedBy(gSelectionManager.draggedZone) {
+
             if widgetZone.showChildren {
                 for child in widgetZone.children {
                     if let childWidget = child.widget, let found = childWidget.widgetNearestTo(iPoint) {
@@ -453,9 +447,9 @@ class ZoneWidget: ZView {
         let     thickness = CGFloat(gDotWidth) / 3.5
         let         delta = gGenericOffset.height / 3.0
         let           dot = toggleDot.innerDot
-        let      dotDelta = dot?.isHidden ?? false ? dot!.bounds.size.width + 3.0 : CGFloat(0.0)
-        var          rect = textWidget.frame.insetBy(dx: -15.0 - delta, dy: -0.5 - delta)
-        rect.size .width += 0.5 + (delta * 0.7) - dotDelta
+        let      dotDelta = dot?.isHiddenToggleDot ?? false ? dot!.bounds.size.width + 3.0 : CGFloat(0.0)
+        var          rect = textWidget.frame.insetBy(dx: -14.0 - delta, dy: -0.5 - delta)
+        rect.size .width += 1.5 + (delta * 0.7) - dotDelta
         rect.size.height += gHighlightHeightOffset - 0.5 + delta / 9.5
         let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
         let         color = widgetZone.isBookmark || widgetZone.isRootOfFavorites ? gBookmarkColor : widgetZone.color
@@ -505,10 +499,10 @@ class ZoneWidget: ZView {
         let        isGrabbed = widgetZone.isGrabbed
         textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? gGrabbedBookmarkColor : gGrabbedTextColor : ZColor.black
 
-        note("      .        \(widgetZone.zoneName ?? "---")")
+        note("      .        \(widgetZone.unwrappedName)")
 
         if isGrabbed && !textWidget.isTextEditing { // && !childrenPass {  CLUE! ... adding this to the logic makes highlight disappear for zones with children shown
-            note("highlighting   \(widgetZone.zoneName ?? "--------")")
+            // columnarReport("highlighting", widgetZone.unwrappedName)
             drawSelectionHighlight()
         }
 

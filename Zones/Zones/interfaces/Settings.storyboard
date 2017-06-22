@@ -612,7 +612,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="228" height="302"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box autoresizesSubviews="NO" borderType="line" title="new zones insert" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
+                            <box autoresizesSubviews="NO" borderType="line" title="new items insert" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
                                 <rect key="frame" x="5" y="258" width="218" height="36"/>
                                 <view key="contentView" id="qnC-vV-W8u">
                                     <rect key="frame" x="1" y="1" width="216" height="20"/>
@@ -644,7 +644,7 @@
                                     <constraint firstAttribute="height" constant="32" id="9eg-3P-j9J"/>
                                 </constraints>
                             </box>
-                            <box autoresizesSubviews="NO" borderType="line" title="child counts show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="children counts">
+                            <box autoresizesSubviews="NO" borderType="line" title="counts show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="children counts">
                                 <rect key="frame" x="5" y="218" width="218" height="36"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
                                     <rect key="frame" x="1" y="1" width="216" height="20"/>
@@ -808,7 +808,7 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="vRd-P4-pC3"/>
                                                     </constraints>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="zones" id="pmv-x4-CVc">
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="items" id="pmv-x4-CVc">
                                                         <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

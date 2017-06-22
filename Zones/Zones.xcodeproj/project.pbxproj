@@ -617,6 +617,7 @@
 				0CA1C7261EA0009F006BA725 /* ZMainController.swift */,
 				0CA1C7271EA0009F006BA725 /* ZSearchController.swift */,
 				0CA1C7281EA0009F006BA725 /* ZSearchResultsController.swift */,
+				0CA1C7291EA0009F006BA725 /* settings */,
 			);
 			path = main;
 			sourceTree = "<group>";
@@ -631,7 +632,8 @@
 				0CA1C7341EA000D8006BA725 /* ZSettingsController.swift */,
 				0C3A0EF81ED7C704002B3D21 /* ZShortcutsController.swift */,
 			);
-			path = settings;
+			name = settings;
+			path = ../settings;
 			sourceTree = "<group>";
 		};
 		0CCF84971ED44A0500D1F4E0 /* models */ = {
@@ -737,7 +739,6 @@
 			children = (
 				0C3A0EFB1ED7C78D002B3D21 /* common */,
 				0CA1C7231EA0009F006BA725 /* main */,
-				0CA1C7291EA0009F006BA725 /* settings */,
 			);
 			path = controllers;
 			sourceTree = "<group>";

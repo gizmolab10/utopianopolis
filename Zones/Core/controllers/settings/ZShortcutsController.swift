@@ -26,7 +26,7 @@ class ZShortcutsController: ZGenericTableController {
 
 
     override func awakeFromNib() {
-        for value in [20, 38, 52, 72] {
+        for value in [20, 72] {
             tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
         }
     }
@@ -52,40 +52,40 @@ class ZShortcutsController: ZGenericTableController {
 
     let shortcutStrings: [String] = [
         "",
-        "  while editing a zone's text",
-        "     \tRETURN \tends editing",
-        "     \tTAB    \tadds sibling",
-        "     \tSPACE+CONTROL creates child",
+        "  while or while not editing text",
+        "     \tRETURN \tbegins/ends editing",
+        "     \tTAB    \tnew sibling item",
         "",
-        "  while not editing a zone",
-        "     \tRETURN \tbegins editing",
+        "  while editing text",
+        "     \tCONTROL+SPACE  new item",
+        "",
+        "  while not editing text",
         "     \tARROWS \tnavigate within graph",
-        "     \tDELETE \tselected zone",
-        "     \tSPACE  \tadds a child",
-        "     \tTAB    \tadds a sibling",
-        "     \tB  \tadds a bookmark",
-        "     \tF  \tfind in cloud",
-        "     \tP  \tprints the graph",
-        "     \tR  \treverses order",
-        "     \t-  \tadds a horizontal line",
-        "     \t/  \tfocuses on selected zone",
-        "     \t'  \tshows next favorite",
-        "     \t\" \tshows previous favorite",
+        "     \tDELETE \tselected item",
+        "     \tSPACE  \tnew item",
+        "     \tB      \tnew bookmark",
+        "     \tF      \tfind in cloud",
+        "     \tP      \tprints the graph",
+        "     \tR      \treverses order",
+        "     \t-      \tnew horizontal line",
+        "     \t/      \tfocuses on selected item",
+        "     \t'      \tshows next favorite",
+        "     \t\"     \tshows previous favorite",
         "",
         "    SHIFT+ARROW key",
         "     \tRIGHT  \texpands",
         "     \tLEFT   \tcollapses",
         "",
         "    OPTION key",
-        "     \tARROWS \trelocate selected zone",
-        "     \tDELETE \tand retain its children",
-        "     \tTAB    \tadds a containing sibling",
+        "     \tARROWS \trelocate selected item",
+        "     \tDELETE \tretaining subordinate items",
+        "     \tTAB    \tnew sibling containing",
         "",
         "    COMMAND key",
-        "     \tRETURN \tdeselects",
         "     \tARROWS \textend all the way",
-        "     \t/\tadds/removes favorite",
-        "     \t'\trefocuses on current favorite",
+        "     \tRETURN \tdeselects",
+        "     \t/      \tadds/removes favorite",
+        "     \t'      \trefocuses current favorite",
         "",
     ]
 }

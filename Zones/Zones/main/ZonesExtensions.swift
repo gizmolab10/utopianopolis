@@ -410,20 +410,19 @@ extension ZoneWidget {
 
 
     var dragHitFrame: CGRect {
-        var hitRect = CGRect()
-
         if  let   view = gEditorView, let dot = dragDot.innerDot {
             let isHere = widgetZone == gHere
             let cFrame =     convert(childrenView.frame, to: view)
             let dFrame = dot.convert(        dot.bounds, to: view)
+            let   left =    isHere ? 0.0 : dFrame.minX - gGenericOffset.width
             let bottom =  (!isHere && widgetZone.hasZonesBelow) ? cFrame.minY : 0.0
             let    top = ((!isHere && widgetZone.hasZonesAbove) ? cFrame      : view.bounds).maxY
             let  right =                                                        view.bounds .maxX
-            let   left =    isHere ? 0.0 : dFrame.minX - gGenericOffset.width
-            hitRect    = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
+
+            return CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
         }
 
-        return hitRect
+        return CGRect.zero
     }
 
 

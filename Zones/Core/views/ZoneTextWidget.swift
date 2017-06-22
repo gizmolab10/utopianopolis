@@ -138,7 +138,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     func updateText() {
         if  let  zone = widget.widgetZone {
-            text      = zone.zoneName ?? "empty"
+            text      = zone.unwrappedName
             var count = 0
 
             switch gCountsMode {
