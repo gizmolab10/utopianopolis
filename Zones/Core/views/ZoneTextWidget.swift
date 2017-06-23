@@ -37,7 +37,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
                 if !_isTextEditing {
                     let  grab = gSelectionManager.currentlyEditingZone == zone
-                    textColor = widget.widgetZone.isBookmark ? gGrabbedBookmarkColor : gGrabbedTextColor
+                    textColor = widget.widgetZone.isBookmark ? gGrabbedBookmarkColor : widget.widgetZone.grabbedTextColor
 
                     removeMonitorAsync()
                     abortEditing()

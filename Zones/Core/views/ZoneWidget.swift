@@ -497,7 +497,7 @@ class ZoneWidget: ZView {
         super.draw(dirtyRect)
 
         let        isGrabbed = widgetZone.isGrabbed
-        textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? gGrabbedBookmarkColor : gGrabbedTextColor : ZColor.black
+        textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? gGrabbedBookmarkColor : widgetZone.grabbedTextColor : ZColor.black
 
         note("      .        \(widgetZone.unwrappedName)")
 

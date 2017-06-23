@@ -103,18 +103,18 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
         // called internally and by gesture system //
         /////////////////////////////////////////////
 
-        gShowsSearching      = false
+        gShowsSearching    = false
 
-        if  let      gesture = iGesture {
-            let     location = gesture.location (in: view)
-            var onTextWidget = false
+        if  let    gesture = iGesture {
+            let   location = gesture.location (in: view)
+            var   onWidget = false
 
-            if  let   widget = gEditingManager.editedTextWidget {
-                let     rect = widget.convert(widget.bounds, to: view)
-                onTextWidget = rect.contains(location)
+            if  let widget = gEditingManager.editedTextWidget {
+                let   rect = widget.convert(widget.bounds, to: view)
+                onWidget   = rect.contains(location)
             }
 
-            if !onTextWidget {
+            if !onWidget {
                 if  let     dot = dotsHitTest(location) {
                     if let zone = dot.widgetZone {
                         if dot.isToggle {
@@ -127,7 +127,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                             zone.grab()
                         }
 
-                        signalFor(zone, regarding: .datum)
+                        signalFor(nil, regarding: .preferences)
                     }
                 } else {
                     gSelectionManager.deselect()

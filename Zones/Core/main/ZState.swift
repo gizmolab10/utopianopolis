@@ -62,8 +62,7 @@ var             gDotWidth:               Double { return gDotHeight * 0.75 }
 var            gDotHeight:               Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var             naturally:                 Bool { return gGraphAlteringMode == .natural }
 var      gIsRubberbanding:                 Bool { return gEditorView!.rubberbandRect != CGRect.zero  }
-var gGrabbedBookmarkColor:               ZColor { return gBookmarkColor                   .darker(by: 1.5) }
-var     gGrabbedTextColor:               ZColor { return gSelectionManager.firstGrab.color.darker(by: 1.8) }
+var gGrabbedBookmarkColor:               ZColor { return gBookmarkColor.darker(by: 1.5) }
 var    settingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
 var     gEditorController:   ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
 var           gEditorView:       ZDragDrawView? { return gEditorController?.view                        as? ZDragDrawView }

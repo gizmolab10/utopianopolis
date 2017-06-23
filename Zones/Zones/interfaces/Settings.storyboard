@@ -848,12 +848,12 @@
                                                     </textFieldCell>
                                                 </textField>
                                                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Qp-4d-Tu8" userLabel="clearColor">
-                                                    <rect key="frame" x="25" y="65" width="54" height="28"/>
+                                                    <rect key="frame" x="25" y="65" width="60" height="28"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="18" id="Qdx-4o-Snx"/>
-                                                        <constraint firstAttribute="width" constant="44" id="nGj-dM-TOd"/>
+                                                        <constraint firstAttribute="width" constant="50" id="nGj-dM-TOd"/>
                                                     </constraints>
-                                                    <buttonCell key="cell" type="push" title="Clear" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Fz8-C9-cQu">
+                                                    <buttonCell key="cell" type="push" title="inherit" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Fz8-C9-cQu">
                                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                         <font key="font" metaFont="smallSystem"/>
                                                     </buttonCell>

@@ -220,11 +220,13 @@ class ZSelectionManager: NSObject {
         if let zone = iZone {
             stopCurrentEdit()
             currentGrabs.append(zone)
+            // columnarReport("grab", zone.unwrappedName)
 
             currentGrabs = respectOrder(for: currentGrabs)
 
-            updateWidgetFor(zone)
-            // columnarReport("grab", zone.unwrappedName)
+            for grab in currentGrabs {
+                updateWidgetFor(grab)
+            }
         }
     }
 

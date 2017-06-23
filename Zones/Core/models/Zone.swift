@@ -46,6 +46,7 @@ class Zone : ZRecord {
     var               count:          Int { return children.count }
     var              widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var       unwrappedName:       String { return zoneName ?? "empty" }
+    var    grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
     var   canRevealChildren:         Bool { return hasChildren &&   showChildren }
     var    indicateChildren:         Bool { return hasChildren && (!showChildren || count == 0) }
@@ -100,7 +101,7 @@ class Zone : ZRecord {
                 } else if let p = parentZone, hasSafeAncestorPath(toColor: true) {
                     return p.color // TODO: prevent infinite recursion
                 } else {
-                    return ZColor.black // default is black
+                    return ZColor.blue // default is blue
                 }
             }
 
