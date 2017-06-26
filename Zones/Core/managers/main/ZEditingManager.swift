@@ -63,16 +63,11 @@ class ZEditingManager: NSObject {
             let   hasWidget = widget != nil
             let       force = isOption || isWindow
             let    hasFlags = isOption || isCommand || isShift
-            let     spaceDo = {
-                if let zone = widget?.widgetZone, !zone.isBookmark {
-                    self.addNewChildTo(zone)
-                }
-            }
 
             if  isEditing {
                 switch key {
                 case "a":         if isCommand { gSelectionManager.currentlyEditingZone?.widget?.textWidget.selectAllText() }
-                case gSpaceKey:   if isControl { spaceDo() }
+                case gSpaceKey:   if isControl { addChild() }
                 default:          break
                 }
             } else if isWindow, let arrow = key.arrow {
@@ -89,7 +84,7 @@ class ZEditingManager: NSObject {
                 case "-":         addSibling(containing: false, with: "-------------------------") { iChild in iChild.grab() }
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
                 case gTabKey:     if hasWidget { addSibling(containing: isOption) }
-                case gSpaceKey:   if force { spaceDo() }
+                case gSpaceKey:   if force { addChild() }
                 case gBackspaceKey,
                      gDeleteKey:  if force { delete(preserveChildren: isOption && isWindow) }
                 case "\r":
@@ -463,10 +458,47 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func addNewChildTo(_ parentZone: Zone?) {
-        addNewChildTo(parentZone, at: naturally ? nil : 0) { iChild in
-            gControllersManager.signalFor(parentZone, regarding: .redraw) {
-                gSelectionManager.edit(iChild)
+    func addChild() {
+        if let parentZone = gWidgetsManager.currentMovableWidget?.widgetZone, !parentZone.isBookmark {
+            addChildTo(parentZone, at: naturally ? nil : 0) { iChild in
+                gControllersManager.signalFor(parentZone, regarding: .redraw) {
+                    gSelectionManager.edit(iChild)
+                }
+            }
+        }
+    }
+
+
+    func addChildTo(_ iZone: Zone?, at iIndex: Int?, onCompletion: ZoneClosure?) {
+        if  let               zone = iZone, zone.storageMode != .favorites {
+            let       createAndAdd = {
+                let         record = CKRecord(recordType: zoneTypeKey)
+                let          child = Zone(record: record, storageMode: zone.storageMode)
+                child.progenyCount = 1 // so add and reorder will correctly propagate count
+
+                zone.ungrab()
+                child.needCreate()
+                zone.addAndReorderChild(child, at: iIndex)
+                onCompletion?(child)
+            }
+
+            zone.displayChildren()
+            gSelectionManager.stopCurrentEdit()
+
+            if zone.count > 0 || !zone.hasChildren {
+                createAndAdd()
+            } else {
+                zone.needChildren()
+
+                var     isFirstTime = true
+
+                gOperationsManager.children(.restore) {
+                    if  isFirstTime {
+                        isFirstTime = false
+
+                        createAndAdd()
+                    }
+                }
             }
         }
     }
@@ -510,7 +542,7 @@ class ZEditingManager: NSObject {
                 index! += naturally ? 1 : 0
             }
 
-            addNewChildTo(parent, at: index) { iChild in
+            addChildTo(parent, at: index) { iChild in
                 if name != nil {
                     iChild.zoneName = name
                 }
@@ -524,41 +556,6 @@ class ZEditingManager: NSObject {
                         gControllersManager.syncToCloudAndSignalFor(parent, regarding: .redraw) {
                             onCompletion?(iChild)
                         }
-                    }
-                }
-            }
-        }
-    }
-
-
-    func addNewChildTo(_ iZone: Zone?, at iIndex: Int?, onCompletion: ZoneClosure?) {
-        if  let               zone = iZone, zone.storageMode != .favorites {
-            let       createAndAdd = {
-                let         record = CKRecord(recordType: zoneTypeKey)
-                let          child = Zone(record: record, storageMode: zone.storageMode)
-                child.progenyCount = 1 // so add and reorder will correctly propagate count
-
-                zone.ungrab()
-                child.needCreate()
-                zone.addAndReorderChild(child, at: iIndex)
-                onCompletion?(child)
-            }
-
-            zone.displayChildren()
-            gSelectionManager.stopCurrentEdit()
-
-            if zone.count > 0 || !zone.hasChildren {
-                createAndAdd()
-            } else {
-                zone.needChildren()
-
-                var     isFirstTime = true
-
-                gOperationsManager.children(.restore) {
-                    if  isFirstTime {
-                        isFirstTime = false
-
-                        createAndAdd()
                     }
                 }
             }
@@ -914,12 +911,10 @@ class ZEditingManager: NSObject {
 
     func moveZone(_ zone: Zone, _ toThere: Zone) {
         if !toThere.isBookmark {
-            let parent = zone.parentZone
-
-            moveZone(zone, into: toThere, at: naturally ? nil : 0, orphan: true){
-                self.redrawAndSync(parent)
+            moveZone(zone, into: toThere, at: naturally ? nil : 0, orphan: true) {
+                self.redrawAndSync(nil)
             }
-        } else if !gTravelManager.isZone(zone, ancestorOf: toThere) {
+        } else if !toThere.isABookmark(spawnedBy: zone) {
 
             //////////////////////////////////
             // MOVE ZONE THROUGH A BOOKMARK //
@@ -1125,15 +1120,68 @@ class ZEditingManager: NSObject {
     }
 
 
+    func moveGrabbedZones(into: Zone, at iIndex: Int?, orphan: Bool, onCompletion: Closure?) {
+
+        ////////////////////////////////////////////
+        // create tuples for UNDO to old location //
+        ////////////////////////////////////////////
+
+        var tuples = [Zone: (Zone, Int?)] ()
+        let  grabs = gSelectionManager.currentGrabs
+
+        for zone in grabs.reversed() {
+            if  let parent = zone.parentZone {
+                let  index = zone.siblingIndex
+
+                tuples[zone] = (parent, index)
+            }
+        }
+
+        UNDO(self) { iUndoSelf in
+            for (zone, (parent, index)) in tuples {
+                zone.orphan()
+                parent.addAndReorderChild(zone, at: index)
+            }
+
+            gSelectionManager.currentGrabs = grabs
+
+            iUndoSelf.UNDO(self) { iUndoUndoSelf in
+                iUndoUndoSelf.moveGrabbedZones(into: into, at: iIndex, orphan: orphan, onCompletion: onCompletion)
+            }
+
+            onCompletion?()
+        }
+
+        ///////////////////////////////////////////////////////////
+        // assure children (of into) are present, then add grabs //
+        ///////////////////////////////////////////////////////////
+
+        into.displayChildren()
+        into.maybeNeedProgeny()
+
+        gOperationsManager.children(.restore) {
+            for zone in grabs.reversed() {
+                if orphan {
+                    zone.orphan()
+                }
+                
+                into.addAndReorderChild(zone, at: iIndex)
+            }
+
+            onCompletion?()
+        }
+    }
+
+
     func moveZone(_ zone: Zone, into: Zone, at iIndex: Int?, orphan: Bool, onCompletion: Closure?) {
-        if  let parent = zone.parentZone {
+        if let parent = zone.parentZone {
             let  index = zone.siblingIndex
-            
+
             UNDO(self) { iUndoSelf in
                 iUndoSelf.moveZone(zone, into: parent, at: index, orphan: orphan) { onCompletion?() }
             }
         }
-        
+
         into.displayChildren()
         into.maybeNeedProgeny()
 

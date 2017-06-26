@@ -2,3 +2,16 @@
 *.xcuserstate
 *.xcbkptlist
 *.DS_Store
+Zones/iOS/frameworks/SnapKit.framework/Info.plist
+Zones/iOS/frameworks/SnapKit.framework/SnapKit
+Zones/iOS/frameworks/SnapKit.framework/Headers/SnapKit-Swift.h
+Zones/iOS/frameworks/SnapKit.framework/Headers/SnapKit.h
+Zones/iOS/frameworks/SnapKit.framework/Modules/module.modulemap
+Zones/iOS/frameworks/SnapKit.framework/Modules/SnapKit.swiftmodule/arm.swiftdoc
+Zones/iOS/frameworks/SnapKit.framework/Modules/SnapKit.swiftmodule/arm.swiftmodule
+Zones/iOS/frameworks/SnapKit.framework/Modules/SnapKit.swiftmodule/arm64.swiftdoc
+Zones/iOS/frameworks/SnapKit.framework/Modules/SnapKit.swiftmodule/arm64.swiftmodule
+Zones/iOS/frameworks/SnapKit.framework/Modules/SnapKit.swiftmodule/i386.swiftdoc
+Zones/iOS/frameworks/SnapKit.framework/Modules/SnapKit.swiftmodule/i386.swiftmodule
+Zones/iOS/frameworks/SnapKit.framework/Modules/SnapKit.swiftmodule/x86_64.swiftdoc
+Zones/iOS/frameworks/SnapKit.framework/Modules/SnapKit.swiftmodule/x86_64.swiftmodule

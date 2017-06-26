@@ -18,25 +18,6 @@ class ZTravelManager: NSObject {
     // MARK:-
 
 
-    func isZone(_ zone: Zone, ancestorOf bookmark: Zone) -> Bool {
-        if  let        link = bookmark.crossLink, let mode = link.storageMode {
-            var    targetID = link.record.recordID as CKRecordID?
-            let  identifier = zone.record.recordID.recordName
-
-            while  targetID != nil {
-                if targetID!.recordName == identifier {
-                    return true
-                }
-
-                let zone = gRemoteStoresManager.recordsManagerFor(mode).zoneForRecordID(targetID)
-                targetID = zone?.parent?.recordID
-            }
-        }
-        
-        return false
-    }
-
-
     func createUndoForTravelBackTo(_ zone: Zone, atArrival: @escaping Closure) {
         let restoreMode = gStorageMode
         let restoreHere = gHere

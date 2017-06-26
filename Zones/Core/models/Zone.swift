@@ -406,10 +406,32 @@ class Zone : ZRecord {
     }
 
 
-    // MARK:- traverse
+    // MARK:- traverse ancestors
     // MARK:-
 
 
+    func isABookmark(spawnedBy zone: Zone) -> Bool {
+        if  let        link = crossLink, let mode = link.storageMode {
+            var     probeID = link.record.recordID as CKRecordID?
+            let  identifier = zone.record.recordID.recordName
+            var     visited = [String] ()
+
+            while let probe = probeID?.recordName, !visited.contains(probe) {
+                visited.append(probe)
+
+                if probe == identifier {
+                    return true
+                }
+
+                let zone = gRemoteStoresManager.recordsManagerFor(mode).zoneForRecordID(probeID)
+                probeID  = zone?.parent?.recordID
+            }
+        }
+
+        return false
+    }
+    
+    
     func wasSpawnedBy(_ iZone: Zone?) -> Bool {
         var wasSpawned: Bool = false
 
@@ -429,6 +451,33 @@ class Zone : ZRecord {
     }
 
 
+    func traverseAllAncestors(_ block: @escaping ZoneClosure) {
+        safeTraverseAncestors(visited: []) { iZone -> ZTraverseStatus in
+            block(iZone)
+
+            return .eContinue
+        }
+    }
+
+
+    func traverseAncestors(_ block: ZoneToStatusClosure) {
+        safeTraverseAncestors(visited: [], block)
+    }
+
+
+    func safeTraverseAncestors(visited: [Zone], _ block: ZoneToStatusClosure) {
+        let status  = block(self)
+
+        if  let parent  = parentZone, !visited.contains(self), !isRoot, status == .eContinue {
+            parent.safeTraverseAncestors(visited: visited + [self], block)
+        }
+    }
+
+
+    // MARK:- traverse progeny
+    // MARK:-
+
+
     func spawned(_ iChild: Zone) -> Bool {
         var isSpawn = false
 
@@ -443,29 +492,6 @@ class Zone : ZRecord {
         }
         
         return isSpawn
-    }
-
-
-    func traverseAllAncestors(_ block: @escaping ZoneClosure) {
-        safeTraverseAncestors(visited: []) { iZone -> ZTraverseStatus in
-            block(iZone)
-
-            return .eContinue
-        }
-    }
-    
-
-    func traverseAncestors(_ block: ZoneToStatusClosure) {
-        safeTraverseAncestors(visited: [], block)
-    }
-
-
-    func safeTraverseAncestors(visited: [Zone], _ block: ZoneToStatusClosure) {
-        let status  = block(self)
-
-        if  let parent  = parentZone, !visited.contains(self), !isRoot, status == .eContinue {
-            parent.safeTraverseAncestors(visited: visited + [self], block)
-        }
     }
 
 
