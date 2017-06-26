@@ -204,7 +204,7 @@ class ZSelectionManager: NSObject {
 
     func respectOrder(for zones: [Zone]) -> [Zone] {
         return zones.sorted { (a, b) -> Bool in
-            return a.order < b.order
+            return a.order < b.order || a.level < b.level // compare levels from multiple parents
         }
     }
 

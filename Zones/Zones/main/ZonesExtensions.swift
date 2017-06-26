@@ -212,9 +212,7 @@ extension NSWindow {
 
         if  tag <= 7, tag > 0, let type = ZMenuType(rawValue: tag) {
             if edit {
-                if  type != .Undo && type != .Redo {
-                    valid = [.All, .Zone].contains(type)
-                }
+                valid = [.All, .Undo, .Redo, .Zone].contains(type)
             } else {
                 let paste = gSelectionManager.pasteableZones.count
                 let count = gSelectionManager.currentGrabs  .count

@@ -97,7 +97,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     func clickEvent(_ iGesture: ZGestureRecognizer?) {
 
         /////////////////////////////////////////////
-        // called internally and by gesture system //
+        // called by controller and gesture system //
         /////////////////////////////////////////////
 
         gShowsSearching    = false
@@ -153,8 +153,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                 dragMaybeStopEvent(iGesture)
             } else if state == .changed {
                 rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
-            } else if state != .began {
-                rubberbandUpdate(nil)   // ended
+            } else if state != .began { // ended
+                rubberbandUpdate(nil)
             } else if let dot = dotsHitTest(location) {
                 if dot.isToggle {
                     clickEvent(iGesture)
@@ -168,9 +168,9 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     }
 
 
-    //////////////////////////////////////////
-    // next four are only called internally //
-    //////////////////////////////////////////
+    /////////////////////////////////////////////
+    // next four are only called by controller //
+    /////////////////////////////////////////////
 
 
     func rubberbandStartEvent(_ location: CGPoint, _ iGesture: ZGestureRecognizer?) {
@@ -242,7 +242,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
             let lastDropIndex = dropZone == nil ? 0 : dropZone!.count
             var         index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!naturally || same) ? 0 : lastDropIndex)
             ;           index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
-            let     dragIndex = draggedZone.siblingIndex!
+            let     dragIndex = draggedZone.siblingIndex
             let     sameIndex = dragIndex == index || dragIndex == index - 1
             let  dropIsParent = dropZone?.children.contains(draggedZone) ?? false
             let        isNoop = same || (sameIndex && dropIsParent) || index < 0
@@ -275,11 +275,11 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
                     if into.isBookmark {
                         at   = naturally ? nil : 0
-                    } else if dropIsParent && dragIndex <= index {
+                    } else if dropIsParent && dragIndex != nil && dragIndex! <= index {
                         at! -= 1
                     }
 
-                    editor.moveGrabbedZones(into: into, at: at, orphan: true) {
+                    editor.moveGrabbedZones(into: into, at: at) {
                         self.redrawAndSync(nil)
                     }
                 }

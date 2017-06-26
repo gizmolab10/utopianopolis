@@ -846,7 +846,7 @@ class ZEditingManager: NSObject {
                 if iHere != nil {
                     gHere = iHere!
 
-                    self.moveZone(zone, outTo: iHere!, orphan: true) {
+                    self.moveOut(to: iHere!) {
                         self.redrawAndSync()
                     }
                 }
@@ -861,7 +861,7 @@ class ZEditingManager: NSObject {
                     }
                 }
             } else if gHere != zone && gHere != parent && grandparent != nil {
-                moveZone(zone, outTo: grandparent!, orphan: true){
+                moveOut(to: grandparent!){
                     self.redrawAndSync(grandparent)
                 }
             } else if parent != nil && parent!.isRoot {
@@ -1070,17 +1070,18 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveZone(_ zone: Zone, outTo: Zone, orphan: Bool, onCompletion: Closure?) {
+    func moveOut(to: Zone, onCompletion: Closure?) {
+        let         zone = gSelectionManager.firstGrab
         var completedYet = false
 
-        recursivelyRevealSiblingsOf(zone, untilReaching: outTo) { (iRevealedZone: Zone) in
-            if !completedYet && iRevealedZone == outTo {
+        recursivelyRevealSiblingsOf(zone, untilReaching: to) { (iRevealedZone: Zone) in
+            if !completedYet && iRevealedZone == to {
                 completedYet     = true
                 var insert: Int? = zone.parentZone?.siblingIndex
 
-                if outTo.storageMode == .favorites {
+                if to.storageMode == .favorites {
                     insert = gFavoritesManager.nextFavoritesIndex(forward: naturally)
-                } else if zone.parentZone?.parentZone == outTo {
+                } else if zone.parentZone?.parentZone == to {
                     if  insert != nil {
                         insert  = insert! + 1
 
@@ -1101,52 +1102,57 @@ class ZEditingManager: NSObject {
                     let index = zone.siblingIndex
 
                     self.UNDO(self) { iUndoSelf in
-                        iUndoSelf.moveZone(zone, into: from, at: index, orphan: orphan) { onCompletion?() }
+                        iUndoSelf.moveZone(zone, into: from, at: index, orphan: true) { onCompletion?() }
                     }
                 }
 
-                if orphan {
-                    zone.orphan()
-                }
+                zone.orphan()
 
-                if  insert != nil && insert! > outTo.count {
+                if  insert != nil && insert! > to.count {
                     insert  = nil
                 }
 
-                outTo.addAndReorderChild(zone, at: insert)
+                to.addAndReorderChild(zone, at: insert)
                 onCompletion?()
             }
         }
     }
 
 
-    func moveGrabbedZones(into: Zone, at iIndex: Int?, orphan: Bool, onCompletion: Closure?) {
+    func moveGrabbedZones(into: Zone, at iIndex: Int?, onCompletion: Closure?) {
 
-        ////////////////////////////////////////////
-        // create tuples for UNDO to old location //
-        ////////////////////////////////////////////
+        /////////////////////////////////////////////
+        // create restore for UNDO to old location //
+        /////////////////////////////////////////////
 
-        var tuples = [Zone: (Zone, Int?)] ()
-        let  grabs = gSelectionManager.currentGrabs
+        var  restore = [Zone: (Zone, Int?)] ()
+        var newIndex = iIndex
+        let    grabs = gSelectionManager.currentGrabs
 
         for zone in grabs.reversed() {
-            if  let parent = zone.parentZone {
-                let  index = zone.siblingIndex
+            if  let    parent = zone.parentZone {
+                let     index = zone.siblingIndex
+                restore[zone] = (parent, index)
 
-                tuples[zone] = (parent, index)
+                zone.orphan()
+
+                if  newIndex  != nil, index != nil, parent == into && index! > 0 && index! <= newIndex! {
+                    newIndex! -= 1
+                }
             }
         }
 
         UNDO(self) { iUndoSelf in
-            for (zone, (parent, index)) in tuples {
+            for zone in restore.keys {
                 zone.orphan()
+            }
+
+            for (zone, (parent, index)) in restore.reversed() {
                 parent.addAndReorderChild(zone, at: index)
             }
 
-            gSelectionManager.currentGrabs = grabs
-
             iUndoSelf.UNDO(self) { iUndoUndoSelf in
-                iUndoUndoSelf.moveGrabbedZones(into: into, at: iIndex, orphan: orphan, onCompletion: onCompletion)
+                iUndoUndoSelf.moveGrabbedZones(into: into, at: newIndex, onCompletion: onCompletion)
             }
 
             onCompletion?()
@@ -1157,15 +1163,11 @@ class ZEditingManager: NSObject {
         ///////////////////////////////////////////////////////////
 
         into.displayChildren()
-        into.maybeNeedProgeny()
+        into.maybeNeedChildren()
 
         gOperationsManager.children(.restore) {
             for zone in grabs.reversed() {
-                if orphan {
-                    zone.orphan()
-                }
-                
-                into.addAndReorderChild(zone, at: iIndex)
+                into.addAndReorderChild(zone, at: newIndex)
             }
 
             onCompletion?()
