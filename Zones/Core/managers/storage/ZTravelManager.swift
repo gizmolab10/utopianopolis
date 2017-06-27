@@ -53,8 +53,8 @@ class ZTravelManager: NSObject {
             let recordIDOfLink = record.recordID
             var   there: Zone? = nil
 
-            if  gStorageMode != mode {
-                gStorageMode  = mode
+            if  gStorageMode  != mode {
+                gStorageMode   = mode
 
                 /////////////////////////////////
                 // TRAVEL TO A DIFFERENT GRAPH //

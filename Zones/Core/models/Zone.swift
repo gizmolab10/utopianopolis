@@ -430,6 +430,25 @@ class Zone : ZRecord {
 
         return false
     }
+
+
+    func wasSpawnedByAGrab() -> Bool {
+        let               grabbed = gSelectionManager.currentGrabs
+        var wasSpawned:      Bool = grabbed.contains(self)
+        if !wasSpawned, let pZone = parentZone {
+            pZone.traverseAncestors { iAncestor -> ZTraverseStatus in
+                if grabbed.contains(iAncestor) {
+                    wasSpawned = true
+
+                    return .eStop
+                }
+
+                return .eContinue
+            }
+        }
+        
+        return wasSpawned
+    }
     
     
     func wasSpawnedBy(_ iZone: Zone?) -> Bool {

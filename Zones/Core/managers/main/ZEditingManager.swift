@@ -81,9 +81,10 @@ class ZEditingManager: NSObject {
                 case "'":         doFavorites(isShift, isOption, isCommand)
                 case "\"":        doFavorites(true,    isOption, isCommand)
                 case "/", "?":    onZone(gSelectionManager.firstGrab, toggleFavorite: hasFlags)
-                case "-":         addSibling(containing: false, with: "-------------------------") { iChild in iChild.grab() }
+                case "-":         addSibling(with: "-------------------------") {   iChild in iChild.grab() }
+                case "=":         addSibling(with: "----------- | -----------") {   iChild in iChild.grab() }
+                case gTabKey:     if hasWidget { addSibling(containing: isOption) { iChild in gSelectionManager.edit(iChild) } }
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
-                case gTabKey:     if hasWidget { addSibling(containing: isOption) }
                 case gSpaceKey:   if force { addChild() }
                 case gBackspaceKey,
                      gDeleteKey:  if force { delete(preserveChildren: isOption && isWindow) }
@@ -504,14 +505,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func addSibling(containing: Bool) {
-        addSibling(containing: containing) { iChild in
-            gSelectionManager.edit(iChild)
-        }
-    }
-
-
-    func addSibling(containing: Bool, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
+    func addSibling(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
         let       zone = gSelectionManager.rootMostMoveable
 
         if  var parent = zone.parentZone {
@@ -637,42 +631,24 @@ class ZEditingManager: NSObject {
 
         let candidate = gSelectionManager.rootMostMoveable
         let     grabs = gSelectionManager.currentGrabs
-        let    action = {
-            let last = self.deleteZones(grabs, preserveChildren: preserveChildren, in: nil)
-
-            last?.grab()
-        }
 
         if !preserveChildren {
-            action()
-
-            self.redrawAndSyncAndRedraw()
-        } else if let parent = candidate.parentZone,
-            var        index = parent.children.index(of: candidate) {
+            deleteZones(grabs, in: nil)?.grab()
+            redrawAndSyncAndRedraw()
+        } else if let parent = candidate.parentZone {
             let     preserve = {
-                var children = [Zone]()
+                var children = [Zone] ()
 
                 for zone in grabs {
                     for child in zone.children {
-                        let copy = child.deepCopy()
-
-                        copy.traverseAllProgeny { iZone in
-                            iZone.isDeleted = false
-                        }
-
-                        children.append(copy)
+                        children.append(child)
                     }
                 }
 
-                action()
-
-                for child in children {
-                    parent.addChild(child, at: index)
-
-                    index += 1
+                self.moveZones(children, into: parent, at: naturally ? nil : 0, orphan: true) {
+                    self.deleteZones(grabs, in: nil)?.grab()
+                    self.redrawAndSyncAndRedraw()
                 }
-
-                self.redrawAndSyncAndRedraw()
             }
 
             if  candidate.count > 0 && candidate.count == candidate.fetchableCount {
@@ -687,7 +663,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    @discardableResult private func deleteZones(_ zones: [Zone], preserveChildren: Bool = false, in parent: Zone?) -> Zone? {
+    @discardableResult private func deleteZones(_ zones: [Zone], in parent: Zone?) -> Zone? {
         var last: Zone? = nil
 
         for zone in zones {
@@ -909,23 +885,23 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveZone(_ zone: Zone, _ toThere: Zone) {
-        if !toThere.isBookmark {
-            moveZone(zone, into: toThere, at: naturally ? nil : 0, orphan: true) {
+    func moveZone(_ zone: Zone, to there: Zone) {
+        if !there.isBookmark {
+            moveZone(zone, into: there, at: naturally ? nil : 0, orphan: true) {
                 self.redrawAndSync(nil)
             }
-        } else if !toThere.isABookmark(spawnedBy: zone) {
+        } else if !there.isABookmark(spawnedBy: zone) {
 
             //////////////////////////////////
             // MOVE ZONE THROUGH A BOOKMARK //
             //////////////////////////////////
 
             var         mover = zone
-            let    targetLink = toThere.crossLink
+            let    targetLink = there.crossLink
             let     sameGraph = zone.storageMode == targetLink?.storageMode
             mover .isFavorite = false
             let grabAndTravel = {
-                gTravelManager.travelThrough(toThere) { object, kind in
+                gTravelManager.travelThrough(there) { object, kind in
                     let there = object as! Zone
 
                     if !sameGraph {
@@ -961,16 +937,16 @@ class ZEditingManager: NSObject {
 
 
     func actuallyMoveZone(_ zone: Zone) {
-        if  var         toThere = zone.parentZone {
-            let        siblings = toThere.children
+        if  var           there = zone.parentZone {
+            let        siblings = there.children
 
             if  let       index = siblings.index(of: zone) {
                 let cousinIndex = index == 0 ? 1 : index - 1
 
                 if cousinIndex >= 0 && cousinIndex < siblings.count {
-                    toThere     = siblings[cousinIndex]
+                    there       = siblings[cousinIndex]
 
-                    moveZone(zone, toThere)
+                    moveZone(zone, to: there)
                 }
             }
         }
@@ -1119,11 +1095,13 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveGrabbedZones(into: Zone, at iIndex: Int?, onCompletion: Closure?) {
+    func moveGrabbedZones(into iInto: Zone, at iIndex: Int?, onCompletion: Closure?) {
+        let toBookmark = iInto.isBookmark
+        let       into = !toBookmark ? iInto : iInto.bookmarkTarget!
 
-        /////////////////////////////////////////////
-        // create restore for UNDO to old location //
-        /////////////////////////////////////////////
+        //////////////////////
+        // prepare for UNDO //
+        //////////////////////
 
         var  restore = [Zone: (Zone, Int?)] ()
         var newIndex = iIndex
@@ -1152,7 +1130,7 @@ class ZEditingManager: NSObject {
             }
 
             iUndoSelf.UNDO(self) { iUndoUndoSelf in
-                iUndoUndoSelf.moveGrabbedZones(into: into, at: newIndex, onCompletion: onCompletion)
+                iUndoUndoSelf.moveGrabbedZones(into: iInto, at: newIndex, onCompletion: onCompletion)
             }
 
             onCompletion?()
@@ -1170,7 +1148,13 @@ class ZEditingManager: NSObject {
                 into.addAndReorderChild(zone, at: newIndex)
             }
 
-            onCompletion?()
+            if !toBookmark {
+                onCompletion?()
+            } else {
+                gTravelManager.travelThrough(iInto, atArrival: { (iAny, iSignalKind) -> (Void) in
+                    onCompletion?()
+                })
+            }
         }
     }
 

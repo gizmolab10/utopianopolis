@@ -231,7 +231,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
         if  let      location = iGesture?.location (in: view),
             let   dropNearest = hereWidget.widgetNearestTo(location) {
 
-            let   draggedZone = s.firstGrab
+            let   draggedZone = s.rootMostMoveable
             var      dropZone = dropNearest.widgetZone
             let     dropIndex = dropZone?.siblingIndex
             let      dropHere = dropZone == gHere
@@ -245,7 +245,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
             let     dragIndex = draggedZone.siblingIndex
             let     sameIndex = dragIndex == index || dragIndex == index - 1
             let  dropIsParent = dropZone?.children.contains(draggedZone) ?? false
-            let        isNoop = same || (sameIndex && dropIsParent) || index < 0
+            let    cycleSpawn = dropZone?.wasSpawnedByAGrab() ?? false
+            let        isNoop = same || cycleSpawn || (sameIndex && dropIsParent) || index < 0
             let         prior = s.dragDropZone?.widget
             let       dropNow = doneState.contains(iGesture!.state)
             s.dragDropIndices = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
@@ -270,16 +271,17 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                 restartGestures()
                 signalFor(draggedZone, regarding: .datum)
 
-                if !isNoop, let into = dropZone {
+                if !isNoop, let drop = dropZone {
+                    let toBookmark = drop.isBookmark
                     var at: Int? = index
 
-                    if into.isBookmark {
+                    if toBookmark {
                         at   = naturally ? nil : 0
                     } else if dropIsParent && dragIndex != nil && dragIndex! <= index {
                         at! -= 1
                     }
 
-                    editor.moveGrabbedZones(into: into, at: at) {
+                    editor.moveGrabbedZones(into: drop, at: at) {
                         self.redrawAndSync(nil)
                     }
                 }
