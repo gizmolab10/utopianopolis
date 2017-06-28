@@ -16,9 +16,9 @@ import Foundation
 #endif
 
 
-enum ZGraphAlteringMode: Int {
-    case natural
-    case stackingUp
+enum ZInsertionMode: Int {
+    case precede
+    case follow
 }
 
 
@@ -60,7 +60,7 @@ var       gWorkMode = ZWorkMode.editMode
 
 var             gDotWidth:               Double { return gDotHeight * 0.75 }
 var            gDotHeight:               Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
-var             naturally:                 Bool { return gGraphAlteringMode == .natural }
+var            willFollow:                 Bool { return gInsertionMode == .follow }
 var      gIsRubberbanding:                 Bool { return gEditorView!.rubberbandRect != CGRect.zero  }
 var gGrabbedBookmarkColor:               ZColor { return gBookmarkColor.darker(by: 1.5) }
 var    settingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
@@ -157,18 +157,18 @@ var gLineThickness: Double {
 }
 
 
-var gGraphAlteringMode: ZGraphAlteringMode {
+var gInsertionMode: ZInsertionMode {
     get {
-        var mode: ZGraphAlteringMode? = nil
+        var mode: ZInsertionMode? = nil
 
-        if let object = UserDefaults.standard.object(forKey:graphAlteringModeKey) {
-            mode      = ZGraphAlteringMode(rawValue: object as! Int)
+        if let object = UserDefaults.standard.object(forKey:insertionModeKey) {
+            mode      = ZInsertionMode(rawValue: object as! Int)
         }
 
         if  mode == nil {
-            mode      = .natural
+            mode      = .follow
 
-            UserDefaults.standard.set(mode!.rawValue, forKey:graphAlteringModeKey)
+            UserDefaults.standard.set(mode!.rawValue, forKey:insertionModeKey)
             UserDefaults.standard.synchronize()
         }
 
@@ -176,7 +176,7 @@ var gGraphAlteringMode: ZGraphAlteringMode {
     }
 
     set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:graphAlteringModeKey)
+        UserDefaults.standard.set(newValue.rawValue, forKey:insertionModeKey)
         UserDefaults.standard.synchronize()
     }
 }
@@ -239,7 +239,7 @@ var gSettingsViewIDs: ZSettingsViewID {
 let     bookmarkColorKey = "bookmark color"
 let   backgroundColorKey = "background color"
 let  dragTargetsColorKey = "drag targets color"
-let graphAlteringModeKey = "graph altering mode"
+let insertionModeKey = "graph altering mode"
 let       storageModeKey = "current storage mode"
 let     settingsStateKey = "current settings state"
 let     tinyDotsRatioKey = "tiny dots ratio"

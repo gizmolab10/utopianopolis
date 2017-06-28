@@ -612,7 +612,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="228" height="302"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box autoresizesSubviews="NO" borderType="line" title="new items insert" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
+                            <box autoresizesSubviews="NO" borderType="line" title="new ideas" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
                                 <rect key="frame" x="5" y="258" width="218" height="36"/>
                                 <view key="contentView" id="qnC-vV-W8u">
                                     <rect key="frame" x="1" y="1" width="216" height="20"/>
@@ -626,8 +626,8 @@
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="spU-aj-Ylf">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <segments>
-                                                    <segment label="naturally" width="103" selected="YES"/>
-                                                    <segment label="stacking up" width="103" tag="1"/>
+                                                    <segment label="precede" width="103" selected="YES"/>
+                                                    <segment label="follow" width="103" tag="1"/>
                                                 </segments>
                                             </segmentedCell>
                                             <connections>
@@ -970,12 +970,12 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="InsertionModeControl" destination="i0m-vf-1Of" id="jBO-mu-sni"/>
                         <outlet property="backgroundColorBox" destination="wsy-Dq-H7s" id="lQ4-nS-6Bk"/>
                         <outlet property="bookmarkColorBox" destination="PFW-VA-KPh" id="DxS-IW-xZa"/>
                         <outlet property="clearColorButton" destination="0Qp-4d-Tu8" id="6Al-nd-9pG"/>
                         <outlet property="countsModeControl" destination="hRI-S8-ys7" id="7ig-ZZ-v8Z"/>
                         <outlet property="dragTargetsColorBox" destination="j0f-8D-Ds5" id="FRZ-SF-WJ1"/>
-                        <outlet property="graphAlteringModeControl" destination="i0m-vf-1Of" id="jBO-mu-sni"/>
                         <outlet property="horizontalSpacing" destination="OmD-gF-PvR" id="DN6-Os-oDZ"/>
                         <outlet property="thickness" destination="gh7-LP-7IV" id="ox5-Ei-ZE6"/>
                         <outlet property="verticalSpacing" destination="X28-Kf-ltl" id="bZA-x3-VXU"/>

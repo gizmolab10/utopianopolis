@@ -240,7 +240,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
             let useDropParent = relation != .upon && !dropHere
             ;        dropZone = same ? nil : useDropParent ? dropZone?.parentZone : dropZone
             let lastDropIndex = dropZone == nil ? 0 : dropZone!.count
-            var         index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!naturally || same) ? 0 : lastDropIndex)
+            var         index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!willFollow || same) ? 0 : lastDropIndex)
             ;           index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
             let     dragIndex = draggedZone.siblingIndex
             let     sameIndex = dragIndex == index || dragIndex == index - 1
@@ -276,7 +276,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                     var at: Int? = index
 
                     if toBookmark {
-                        at   = naturally ? nil : 0
+                        at   = willFollow ? nil : 0
                     } else if dropIsParent && dragIndex != nil && dragIndex! <= index {
                         at! -= 1
                     }

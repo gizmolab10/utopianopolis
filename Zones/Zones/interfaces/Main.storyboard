@@ -168,13 +168,13 @@ CA
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Create" id="GbF-qY-vTh">
                                                 <items>
-                                                    <menuItem title="Subordinate Item" tag="6" alternate="YES" keyEquivalent=" " id="hu1-W0-ukM">
+                                                    <menuItem title="Subordinate idea" tag="6" alternate="YES" keyEquivalent=" " id="hu1-W0-ukM">
                                                         <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="7ug-ra-lWZ"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Sibling Item" tag="6" id="8Vw-09-keH">
+                                                    <menuItem title="Sibling idea" tag="6" id="8Vw-09-keH">
                                                         <string key="keyEquivalent" base64-UTF8="YES">
 CQ
 </string>
@@ -202,6 +202,25 @@ CQ
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Oel-Sg-rlG"/>
                                                         </connections>
+                                                    </menuItem>
+                                                    <menuItem title="New ideas ..." tag="6" id="qrM-Lc-daa">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <menu key="submenu" title="New ideas ..." id="OBR-N9-GY7">
+                                                            <items>
+                                                                <menuItem title="Follow" tag="6" keyEquivalent="." id="VH7-3z-X0C">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="nxe-Rr-q22"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="Precede" tag="6" keyEquivalent="," id="dHQ-7g-fgO">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="rWe-PO-mDa"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                            </items>
+                                                        </menu>
                                                     </menuItem>
                                                 </items>
                                             </menu>

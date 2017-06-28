@@ -20,7 +20,7 @@ class ZPreferencesController: ZGenericController {
 
 
     @IBOutlet var        countsModeControl: ZSegmentedControl?
-    @IBOutlet var graphAlteringModeControl: ZSegmentedControl?
+    @IBOutlet var InsertionModeControl: ZSegmentedControl?
     @IBOutlet var             zoneColorBox: ZColorWell?
     @IBOutlet var         bookmarkColorBox: ZColorWell?
     @IBOutlet var       backgroundColorBox: ZColorWell?
@@ -37,7 +37,7 @@ class ZPreferencesController: ZGenericController {
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         let                               grabbed = gSelectionManager.firstGrab
         view              .zlayer.backgroundColor = CGColor.clear
-        graphAlteringModeControl?.selectedSegment = gGraphAlteringMode.rawValue
+        InsertionModeControl?.selectedSegment = gInsertionMode.rawValue
         countsModeControl?       .selectedSegment = gCountsMode.rawValue
         thickness?                   .doubleValue = gLineThickness
         verticalSpacing?             .doubleValue = Double(gGenericOffset.height)
@@ -106,8 +106,8 @@ class ZPreferencesController: ZGenericController {
         let          selection = iControl.selectedSegment
         if  let     identifier = iControl.identifier {
             switch (identifier) {
-            case "counts":    gCountsMode        = ZCountsMode       (rawValue: selection)!
-            case "direction": gGraphAlteringMode = ZGraphAlteringMode(rawValue: selection)!
+            case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!
+            case "direction": gInsertionMode = ZInsertionMode(rawValue: selection)!
             default: break
             }
         }

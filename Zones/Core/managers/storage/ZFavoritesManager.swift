@@ -302,7 +302,7 @@ class ZFavoritesManager: ZCloudManager {
         if isFavorite {
             updateIndexFor(zone) { object in }
 
-            index           = nextFavoritesIndex(forward: !naturally)
+            index           = nextFavoritesIndex(forward: willFollow)
         }
 
         bookmark            = create(withBookmark: bookmark, isFavorite, parent: parent, atIndex: index, zone.storageMode, zone.zoneName)
