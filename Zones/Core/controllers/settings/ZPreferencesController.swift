@@ -19,34 +19,38 @@ import Foundation
 class ZPreferencesController: ZGenericController {
 
 
-    @IBOutlet var        countsModeControl: ZSegmentedControl?
-    @IBOutlet var InsertionModeControl: ZSegmentedControl?
-    @IBOutlet var             zoneColorBox: ZColorWell?
-    @IBOutlet var         bookmarkColorBox: ZColorWell?
-    @IBOutlet var       backgroundColorBox: ZColorWell?
-    @IBOutlet var      dragTargetsColorBox: ZColorWell?
-    @IBOutlet var        horizontalSpacing: ZSlider?
-    @IBOutlet var          verticalSpacing: ZSlider?
-    @IBOutlet var                thickness: ZSlider?
-    @IBOutlet var         clearColorButton: NSButton?
+    @IBOutlet var    countsModeControl: ZSegmentedControl?
+    @IBOutlet var insertionModeControl: NSSegmentedControl?
+    @IBOutlet var         zoneColorBox: ZColorWell?
+    @IBOutlet var     bookmarkColorBox: ZColorWell?
+    @IBOutlet var   backgroundColorBox: ZColorWell?
+    @IBOutlet var  dragTargetsColorBox: ZColorWell?
+    @IBOutlet var    horizontalSpacing: ZSlider?
+    @IBOutlet var      verticalSpacing: ZSlider?
+    @IBOutlet var            thickness: ZSlider?
+    @IBOutlet var     clearColorButton: ZButton?
+    @IBOutlet var           ideasLabel: ZTextField?
 
 
     override func identifier() -> ZControllerID { return .preferences }
 
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
-        let                               grabbed = gSelectionManager.firstGrab
-        view              .zlayer.backgroundColor = CGColor.clear
-        InsertionModeControl?.selectedSegment = gInsertionMode.rawValue
-        countsModeControl?       .selectedSegment = gCountsMode.rawValue
-        thickness?                   .doubleValue = gLineThickness
-        verticalSpacing?             .doubleValue = Double(gGenericOffset.height)
-        horizontalSpacing?           .doubleValue = Double(gGenericOffset.width)
-        dragTargetsColorBox?               .color = gDragTargetsColor
-        backgroundColorBox?                .color = gBackgroundColor
-        bookmarkColorBox?                  .color = gBookmarkColor
-        zoneColorBox?                      .color =  grabbed.color
-        clearColorButton?               .isHidden = !grabbed.hasColor
+        let                           grabbed = gSelectionManager.firstGrab
+        let                    hideIdeasColor = grabbed.isBookmark || grabbed.isRootOfFavorites
+        view          .zlayer.backgroundColor = CGColor.clear
+        insertionModeControl?.selectedSegment = gInsertionMode.rawValue
+        countsModeControl?   .selectedSegment = gCountsMode.rawValue
+        thickness?               .doubleValue = gLineThickness
+        verticalSpacing?         .doubleValue = Double(gGenericOffset.height)
+        horizontalSpacing?       .doubleValue = Double(gGenericOffset.width)
+        dragTargetsColorBox?           .color = gDragTargetsColor
+        backgroundColorBox?            .color = gBackgroundColor
+        bookmarkColorBox?              .color = gBookmarkColor
+        zoneColorBox?                  .color =  grabbed.color
+        clearColorButton?           .isHidden = !grabbed.hasColor
+        zoneColorBox?               .isHidden =  hideIdeasColor
+        ideasLabel?                 .isHidden =  hideIdeasColor
     }
 
 

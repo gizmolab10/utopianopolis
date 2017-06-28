@@ -351,8 +351,9 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    func ungrab() { gSelectionManager.ungrab(self) }
-    func   grab() { gSelectionManager  .grab(self) }
+    func addToGrab() { gSelectionManager.addToGrab(self) }
+    func    ungrab() { gSelectionManager   .ungrab(self) }
+    func      grab() { gSelectionManager     .grab(self) }
     override func register() { cloudManager?.registerZone(self) }
 
 

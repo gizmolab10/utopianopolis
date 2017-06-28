@@ -623,7 +623,7 @@ class ZEditingManager: NSObject {
     }
     
 
-    func addToPasteCopyOf(_ zone: Zone) {
+    func addToPasteCopyOf(_ zone: Zone, parent: Zone? = nil, at index: Int? = nil) {
         let        copy = zone.deepCopy()
         copy.parentZone = nil
 
@@ -631,7 +631,7 @@ class ZEditingManager: NSObject {
             iZone.isDeleted = true
         }
 
-        gSelectionManager.pasteableZones.append(copy)
+        gSelectionManager.pasteableZones[copy] = (parent, index)
     }
 
 
@@ -640,16 +640,16 @@ class ZEditingManager: NSObject {
 
 
     func delete(preserveChildren: Bool = false) {
-        prepareUndoForDelete()
-
-        let candidate = gSelectionManager.rootMostMoveable
-        let     grabs = gSelectionManager.currentGrabs
-
-        if !preserveChildren {
-            deleteZones(grabs, in: nil)?.grab()
-            redrawAndSyncAndRedraw()
-        } else if let parent = candidate.parentZone {
-            let     preserve = {
+        let    candidate = gSelectionManager.rootMostMoveable
+        let        grabs = gSelectionManager.currentGrabs
+        let haveChildren = candidate.count == candidate.fetchableCount
+        let      closure = {
+            self.prepareUndoForDelete()
+            
+            if !preserveChildren {
+                self.deleteZones(grabs, in: nil)?.grab()
+                self.redrawAndSyncAndRedraw()
+            } else if let parent = candidate.parentZone {
                 var children = [Zone] ()
 
                 for zone in grabs {
@@ -663,14 +663,14 @@ class ZEditingManager: NSObject {
                     self.redrawAndSyncAndRedraw()
                 }
             }
+        }
 
-            if  candidate.count > 0 && candidate.count == candidate.fetchableCount {
-                preserve()
-            } else {
-                candidate.needProgeny()
-                gOperationsManager.children(.deep) {
-                    preserve()
-                }
+        if haveChildren {
+            closure()
+        } else {
+            candidate.needProgeny()
+            gOperationsManager.children(.deep) {
+                closure()
             }
         }
     }
@@ -710,11 +710,11 @@ class ZEditingManager: NSObject {
                     return grabThisZone
                 }
 
-                let siblings = grabThisZone!.children
-                let    count = siblings.count
+                let   siblings = grabThisZone!.children
+                let      count = siblings.count
 
-                if  var index = siblings.index(of: zone), count > 1 {
-                    if  index < count - 1 && (willFollow || index == 0) {
+                if  var index  = siblings.index(of: zone), count > 1 {
+                    if  index  < count - 1 && (willFollow || index == 0) {
                         index += 1
                     } else if index > 0 {
                         index -= 1
@@ -1004,40 +1004,40 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func pasteInto(_ zone: Zone) {
+    func pasteInto(_ zone: Zone?) {
         let         pastables = gSelectionManager.pasteableZones
-        var             count = pastables.count
 
-        if count > 0, !zone.isBookmark {
+        if pastables.count > 0, (zone == nil || !zone!.isBookmark) {
             var       forUndo = [Zone] ()
-            let   storageMode = zone.storageMode
 
-            for pastable in pastables {
+            gSelectionManager.deselectGrabs()
+
+            for (pastable, (parent, index)) in pastables {
                 let pasteThis = pastable.deepCopy()
+                let        at = index  != nil ? index   : willFollow ? nil : 0
+                let      into = parent != nil ? parent! : zone
+                let      mode = into?.storageMode ?? gStorageMode
 
                 pasteThis.traverseAllProgeny { iZone in
                     iZone.fetchableCount = iZone.count
-                    iZone   .storageMode = storageMode
+                    iZone   .storageMode = mode
                     iZone     .isDeleted = false
 
                     iZone.needCreate()
                 }
-                pasteThis.orphan() // disable undo inside moveZone
-                moveZone(pasteThis, into: zone, at: willFollow ? nil : 0, orphan: false) {
-                    count -= 1
 
-                    if count == 0 {
-                        zone.safeProgenyCountUpdate(.deep, [])
-                        self.redrawAndSync()
-                    }
-                }
+                into?.addAndReorderChild(pasteThis, at: at)
+                into?.safeProgenyCountUpdate(.deep, [])
                 forUndo.append(pasteThis)
+                pasteThis.addToGrab()
             }
+
+            redrawAndSync()
 
             UNDO(self) { iUndoSelf in
                 iUndoSelf.prepareUndoForDelete()
                 iUndoSelf.deleteZones(forUndo, in: nil)
-                zone.grab()
+                zone?.grab()
                 iUndoSelf.redrawAndSync()
             }
         }
@@ -1048,13 +1048,13 @@ class ZEditingManager: NSObject {
         gSelectionManager.clearPaste()
 
         for zone in gSelectionManager.currentGrabs {
-            if let parent = zone.parentZone {
-                addToPasteCopyOf(zone)
-
-                UNDO(self) { iUndoSelf in
-                    iUndoSelf.pasteInto(parent)
-                }
+            if let parent = zone.parentZone, let index = zone.siblingIndex {
+                addToPasteCopyOf(zone, parent: parent, at: index)
             }
+        }
+
+        UNDO(self) { iUndoSelf in
+            iUndoSelf.pasteInto(nil)
         }
     }
 

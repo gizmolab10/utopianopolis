@@ -35,7 +35,7 @@ class ZSelectionManager: NSObject {
     var   currentlyEditingZone:   Zone?              = nil
     var           dragDropZone:   Zone?              = nil
     var            draggedZone:   Zone?              = nil
-    var         pasteableZones = [Zone] ()
+    var         pasteableZones = [Zone: (Zone?, Int?)] ()
 
 
     var currentGrabs: [Zone] {
@@ -106,8 +106,8 @@ class ZSelectionManager: NSObject {
 
 
     func clearEdit()   { currentlyEditingZone  = nil }
-    func clearGrab()   { currentGrabs = [] }
-    func clearPaste()  { pasteableZones        = [] }
+    func clearGrab()   { currentGrabs          = [ ] }
+    func clearPaste()  { pasteableZones        = [:] }
     func fullResign()  { assignAsFirstResponder (nil) } // ios broken
     func editCurrent() { edit(currentMoveable) }
     func isEditing (_ zone: Zone) -> Bool { return currentlyEditingZone == zone }

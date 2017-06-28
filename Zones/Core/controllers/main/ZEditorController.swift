@@ -119,7 +119,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                         } else if zone.isGrabbed {
                             zone.ungrab()
                         } else if gesture.isShiftDown {
-                            gSelectionManager.addToGrab(zone)
+                            zone.addToGrab()
                         } else {
                             zone.grab()
                         }
@@ -197,9 +197,9 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
             isDragging = true
 
             if let gesture = iGesture, (gesture.isShiftDown || zone.isGrabbed) {
-                gSelectionManager.addToGrab(zone)
+                zone.addToGrab()
             } else {
-                gSelectionManager.grab(zone)
+                zone.grab()
             }
 
             note("d --- d")
@@ -313,7 +313,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
                     let widgetRect = widget.convert(hitRect, to: view)
 
                     if  widgetRect.intersects(rect!) {
-                        gSelectionManager.addToGrab(widget.widgetZone)
+                        widget.widgetZone.addToGrab()
                     }
                 }
             }
