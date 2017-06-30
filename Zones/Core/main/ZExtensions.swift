@@ -24,9 +24,10 @@ typealias       ZModes = [ZStorageMode]
 extension NSObject {
 
 
-    func        note(_ iMessage: Any?)                            { } // report(iMessage) }
-    func performance(_ iMessage: Any?)                            { report(iMessage) }
-    func  debugCheck()                                            { gTravelManager.debugCheck() }
+    func           note(_ iMessage: Any?)                { } // report(iMessage) }
+    func    performance(_ iMessage: Any?)                { report(iMessage) }
+    func columnarReport(_ iFirst: Any?, _ iSecond: Any?) { } // rawColumnarReport(iFirst, iSecond) }
+    func  debugCheck()                                   { gTravelManager.debugCheck() }
 
 
     func   signalFor(_ object: NSObject?, regarding: ZSignalKind) {
@@ -34,7 +35,7 @@ extension NSObject {
     }
 
 
-    func columnarReport(_ iFirst: Any?, _ iSecond: Any?) {
+    func rawColumnarReport(_ iFirst: Any?, _ iSecond: Any?) {
         if  var prefix = iFirst as? String {
             prefix.appendSpacesToLength(gLogTabStop)
             report("\(prefix)\(iSecond ?? "")")

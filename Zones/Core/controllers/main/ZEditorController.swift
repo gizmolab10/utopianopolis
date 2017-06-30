@@ -240,7 +240,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
             let useDropParent = relation != .upon && !dropHere
             ;        dropZone = same ? nil : useDropParent ? dropZone?.parentZone : dropZone
             let lastDropIndex = dropZone == nil ? 0 : dropZone!.count
-            var         index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!willFollow || same) ? 0 : lastDropIndex)
+            var         index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!insertsWillFollow || same) ? 0 : lastDropIndex)
             ;           index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
             let     dragIndex = draggedZone.siblingIndex
             let     sameIndex = dragIndex == index || dragIndex == index - 1
@@ -260,25 +260,23 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
             prior?           .displayForDrag() // erase  child lines
             dropZone?.widget?.displayForDrag() // redraw child lines
-            view            .setNeedsDisplay() // redraw dragline and dot
+            view            .setNeedsDisplay() // redraw drag (line and dot)
 
             columnarReport(relation, dropZone?.unwrappedName)
 
             if dropNow {
-                let editor = gEditingManager
-                isDragging = false
-
                 restartGestures()
-                signalFor(draggedZone, regarding: .datum)
 
-                if !isNoop, let drop = dropZone {
+                let         editor = gEditingManager
+                isDragging         = false
+                if  let       drop = dropZone, !isNoop {
                     let toBookmark = drop.isBookmark
-                    var at: Int? = index
+                    var   at: Int? = index
 
                     if toBookmark {
-                        at   = willFollow ? nil : 0
-                    } else if dropIsParent && dragIndex != nil && dragIndex! <= index {
-                        at! -= 1
+                        at         = insertsWillFollow ? nil : 0
+                    } else if dragIndex != nil && dragIndex! <= index && dropIsParent {
+                        at!      -= 1
                     }
 
                     editor.moveGrabbedZones(into: drop, at: at) {

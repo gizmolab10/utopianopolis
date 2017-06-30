@@ -462,7 +462,7 @@ class ZEditingManager: NSObject {
 
     func addChild() {
         if let parentZone = gWidgetsManager.currentMovableWidget?.widgetZone, !parentZone.isBookmark {
-            addChildTo(parentZone, at: willFollow ? nil : 0) { iChild in
+            addChildTo(parentZone, at: insertsWillFollow ? nil : 0) { iChild in
                 gControllersManager.signalFor(parentZone, regarding: .redraw) {
                     if let child = iChild {
                         gSelectionManager.edit(child)
@@ -543,7 +543,7 @@ class ZEditingManager: NSObject {
             var index   = zone.siblingIndex
 
             if  index  != nil {
-                index! += willFollow ? 1 : 0
+                index! += insertsWillFollow ? 1 : 0
             }
 
             addChildTo(parent, at: index) { iChild in
@@ -645,7 +645,10 @@ class ZEditingManager: NSObject {
             if let parent = candidate.parentZone {
                 let grabs = gSelectionManager.currentGrabs
                 
-                if preserveChildren {
+                if !preserveChildren {
+                    self.prepareUndoForDelete()
+                    self.deleteZones(grabs, in: nil)?.grab()
+                } else {
                     var children = [Zone] ()
                     let    index = candidate.siblingIndex
 
@@ -664,7 +667,7 @@ class ZEditingManager: NSObject {
                     }
 
                     children.sort { (a, b) -> Bool in
-                        return a.order > b.order      // reversed
+                        return a.order > b.order      // reversed ordering
                     }
 
                     for child in children {
@@ -675,15 +678,6 @@ class ZEditingManager: NSObject {
                     self.UNDO(self) { iUndoSelf in
                         self.deleteZones(children, in: nil)
                         iUndoSelf.pasteInto(parent, ignoreFormerParents: false)
-                    }
-                } else if let index = candidate.siblingIndex {
-                    self.prepareUndoForDelete()
-                    self.deleteZones(grabs, in: nil)
-
-                    if  parent.count == 0 {
-                        parent.grab()
-                    } else {
-                        parent[index]?.grab()
                     }
                 }
             }
@@ -717,7 +711,7 @@ class ZEditingManager: NSObject {
 
     @discardableResult private func deleteZone(_ zone: Zone) -> Zone? {
         var grabThisZone = zone.parentZone
-        var     deleteMe = !zone.isRoot && !zone.isDeleted && zone.parentZone?.record != nil
+        var     deleteMe = !zone.isRoot && !zone.isDeleted && grabThisZone?.record != nil
 
         if !deleteMe && zone.isBookmark, let name = zone.crossLink?.record.recordID.recordName {
             deleteMe = ![rootNameKey, favoritesRootNameKey].contains(name)
@@ -737,12 +731,12 @@ class ZEditingManager: NSObject {
                 }
 
                 let   siblings = grabThisZone!.children
-                let      count = siblings.count
+                let        max = siblings.count - 1
 
-                if  var index  = siblings.index(of: zone), count > 1 {
-                    if  index  < count - 1 && (willFollow || index == 0) {
+                if  var index  = zone.siblingIndex, max > 0 {
+                    if  index  < max    &&  (insertsWillFollow || index == 0) {
                         index += 1
-                    } else if index > 0 {
+                    } else if index > 0 && (!insertsWillFollow || index == max) {
                         index -= 1
                     }
 
@@ -750,8 +744,8 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            let     bookmarks = gRemoteStoresManager.bookmarksFor(zone)
-            zone   .isDeleted = true // will be saved, then ignored after next launch
+            let      bookmarks = gRemoteStoresManager.bookmarksFor(zone)
+            zone    .isDeleted = true // will be saved, ignored after next launch
 
             deleteZones(zone.children, in: zone) // recurse
             deleteZones(bookmarks,     in: zone) // recurse
@@ -916,7 +910,7 @@ class ZEditingManager: NSObject {
 
 
     func grabChild(of zone: Zone) {
-        if  zone.count > 0, let child = willFollow ? zone.children.last : zone.children.first {
+        if  zone.count > 0, let child = insertsWillFollow ? zone.children.last : zone.children.first {
             zone.displayChildren()
             child.grab()
             signalFor(nil, regarding: .redraw)
@@ -926,7 +920,7 @@ class ZEditingManager: NSObject {
 
     func moveZone(_ zone: Zone, to there: Zone) {
         if !there.isBookmark {
-            moveZone(zone, into: there, at: willFollow ? nil : 0, orphan: true) {
+            moveZone(zone, into: there, at: insertsWillFollow ? nil : 0, orphan: true) {
                 self.redrawAndSync(nil)
             }
         } else if !there.isABookmark(spawnedBy: zone) {
@@ -947,7 +941,7 @@ class ZEditingManager: NSObject {
                         self.applyModeRecursivelyTo(mover)
                     }
 
-                    self.moveZone(mover, into: there, at: willFollow ? nil : 0, orphan: false) {
+                    self.moveZone(mover, into: there, at: insertsWillFollow ? nil : 0, orphan: false) {
                         self.redrawAndSync()
                     }
                 }
@@ -1030,41 +1024,57 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func pasteInto(_ zone: Zone? = nil, ignoreFormerParents: Bool = true) {
-        let         pastables = gSelectionManager.pasteableZones
+    func pasteInto(_ iZone: Zone? = nil, ignoreFormerParents: Bool = true) {
+        let    pastables = gSelectionManager.pasteableZones
 
-        if pastables.count > 0, (zone == nil || !zone!.isBookmark) {
-            var       forUndo = [Zone] ()
+        if pastables.count > 0, let zone = iZone {
+            let isBookmark = zone.isBookmark
+            let action = {
+                var  forUndo = [Zone] ()
 
-            gSelectionManager.deselectGrabs()
+                gSelectionManager.deselectGrabs()
 
-            for (pastable, (parent, index)) in pastables {
-                let pasteThis = pastable.deepCopy()
-                let        at = index  != nil ?  index  : willFollow ? nil : 0
-                let      into = parent != nil ? !ignoreFormerParents ? parent! : zone : zone
-                let      mode = into?.storageMode ?? gStorageMode
+                for (pastable, (parent, index)) in pastables {
+                    let copy = pastable.deepCopy()
+                    let   at = index  != nil ?  index  : insertsWillFollow ? nil : 0
+                    let into = parent != nil ? !ignoreFormerParents ? parent! : zone : zone
+                    let mode = into.storageMode ?? gStorageMode
 
-                pasteThis.traverseAllProgeny { iZone in
-                    iZone.fetchableCount = iZone.count
-                    iZone   .storageMode = mode
-                    iZone     .isDeleted = false
+                    copy.traverseAllProgeny { iChild in
+                        iChild.fetchableCount = iChild.count
+                        iChild   .storageMode = mode
+                        iChild     .isDeleted = false
 
-                    iZone.needCreate()
+                        iChild.needCreate()
+                    }
+
+                    into.addAndReorderChild(copy, at: at)
+                    into.safeProgenyCountUpdate(.deep, [])
+                    forUndo.append(copy)
+                    copy.addToGrab()
                 }
 
-                into?.addAndReorderChild(pasteThis, at: at)
-                into?.safeProgenyCountUpdate(.deep, [])
-                forUndo.append(pasteThis)
-                pasteThis.addToGrab()
+                self.UNDO(self) { iUndoSelf in
+                    iUndoSelf.prepareUndoForDelete()
+                    iUndoSelf.deleteZones(forUndo, in: nil)
+                    zone.grab()
+                    iUndoSelf.redrawAndSync()
+                }
+
+                if isBookmark {
+                    self.undoManager.endUndoGrouping()
+                }
+
+                self.redrawAndSync()
             }
 
-            redrawAndSync()
-
-            UNDO(self) { iUndoSelf in
-                iUndoSelf.prepareUndoForDelete()
-                iUndoSelf.deleteZones(forUndo, in: nil)
-                zone?.grab()
-                iUndoSelf.redrawAndSync()
+            if !isBookmark {
+                action()
+            } else {
+                undoManager.beginUndoGrouping()
+                gTravelManager.travelThrough(zone) { (iAny, iSignalKind) in
+                    action()
+                }
             }
         }
     }
@@ -1097,7 +1107,7 @@ class ZEditingManager: NSObject {
                 var insert: Int? = zone.parentZone?.siblingIndex
 
                 if to.storageMode == .favorites {
-                    insert = gFavoritesManager.nextFavoritesIndex(forward: willFollow)
+                    insert = gFavoritesManager.nextFavoritesIndex(forward: insertsWillFollow)
                 } else if zone.parentZone?.parentZone == to {
                     if  insert != nil {
                         insert  = insert! + 1
@@ -1153,8 +1163,6 @@ class ZEditingManager: NSObject {
                 let     index = zone.siblingIndex
                 restore[zone] = (parent, index)
 
-                zone.orphan()
-
                 if  newIndex  != nil, index != nil, parent == into && index! > 0 && index! <= newIndex! {
                     newIndex! -= 1
                 }
@@ -1189,16 +1197,27 @@ class ZEditingManager: NSObject {
         into.maybeNeedChildren()
 
         gOperationsManager.children(.restore) {
-            for zone in grabs.reversed() {
-                into.addAndReorderChild(zone, at: newIndex)
+            let finish = {
+                for zone in grabs {
+                    zone.orphan() // N.B., wait to do this until after returning to the main thread
+                }
+
+                for zone in grabs.reversed() {
+                    into.addAndReorderChild(zone, at: newIndex)
+                }
+
+                if toBookmark {
+                    self.undoManager.endUndoGrouping()
+                }
+
+                onCompletion?()
             }
 
             if !toBookmark {
-                onCompletion?()
+                finish()
             } else {
-                gTravelManager.travelThrough(iInto, atArrival: { (iAny, iSignalKind) -> (Void) in
-                    self.undoManager.endUndoGrouping()
-                    onCompletion?()
+                gTravelManager.travelThrough(iInto, atArrival: { (iAny, iSignalKind) in
+                    finish()
                 })
             }
         }
