@@ -106,7 +106,7 @@ class Zone : ZRecord {
                     return gBookmarkColor
                 } else if let z = zoneColor, z != "" {
                     _color      = z.color
-                } else if let p = parentZone, hasSafeAncestorPath(toColor: true) {
+                } else if let p = parentZone, hasCompleteAncestorPath(toColor: true) {
                     return p.color // TODO: prevent infinite recursion
                 } else {
                     return ZColor.blue // default is blue
@@ -127,11 +127,11 @@ class Zone : ZRecord {
     }
 
 
-    func hasSafeAncestorPath(toColor: Bool = false) -> Bool {
+    func hasCompleteAncestorPath(toColor: Bool = false) -> Bool {
         var isSafe = false
 
         traverseAllAncestors { iZone in
-            if iZone.isRoot || (toColor && iZone.hasColor) {
+            if  iZone.isRoot || (toColor && iZone.hasColor) {
                 isSafe = true
             }
         }

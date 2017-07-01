@@ -399,16 +399,16 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchToRoot(_ onCompletion: IntegerClosure?) {
-        let     here = gRemoteStoresManager.manifest(for: storageMode).hereZone
-        let requests = hasRecords(for: [.needsRoot])
-        let goodHere = here.hasSafeAncestorPath()
+        let            here = gRemoteStoresManager.manifest(for: storageMode).hereZone
+        let        requests = hasRecords(for: [.needsRoot])
+        let hasCompletePath = here.hasCompleteAncestorPath()
 
-        if  rootZone != nil && goodHere && !requests {
+        if  rootZone != nil && hasCompletePath && !requests {
             onCompletion?(0)
         } else {
             onCompletion?(-1)
 
-            var           visited: [Zone] = []
+            var     visited                      = [Zone]()
             var getParentOf: ZoneBooleanClosure? = nil
 
             let recurse = { (iRecurse: Bool) in
@@ -419,8 +419,8 @@ class ZCloudManager: ZRecordsManager {
                 }
             }
 
-            getParentOf = { (iZone: Zone, iRecurse: Bool) in
-                if visited.contains(iZone) || iZone.isRoot || iZone.isRootOfFavorites || iZone.hasSafeAncestorPath() {
+            getParentOf = { (iZone, iRecurse) in
+                if  visited.contains(iZone) || iZone.isRoot || iZone.isRootOfFavorites || iZone.hasCompleteAncestorPath() {
                     recurse(iRecurse)
                 } else {
                     iZone.needParent()
@@ -441,7 +441,7 @@ class ZCloudManager: ZRecordsManager {
                 }
             }
 
-            if !goodHere {
+            if !hasCompletePath {
                 getParentOf?(here, true)
             } else if requests {
                 let needRoot = pullRecordsWithMatchingStates([.needsRoot])
@@ -452,6 +452,8 @@ class ZCloudManager: ZRecordsManager {
 
                     getParentOf?(zoneForRecord(need), count == 0)
                 }
+            } else {
+                onCompletion?(0)
             }
         }
     }

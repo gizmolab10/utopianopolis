@@ -93,7 +93,7 @@ class ZCloudToolsController: ZGenericTableController {
                 self.redrawAndSync()
             }
 
-            if zone.hasSafeAncestorPath() && root.count > 0 {
+            if zone.hasCompleteAncestorPath() && root.count > 0 {
                 closure()
             } else {
                 root.maybeNeedChildren()

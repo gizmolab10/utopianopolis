@@ -1147,23 +1147,18 @@ class ZEditingManager: NSObject {
     func moveGrabbedZones(into iInto: Zone, at iIndex: Int?, onCompletion: Closure?) {
         let toBookmark = iInto.isBookmark
         let       into = !toBookmark ? iInto : iInto.bookmarkTarget!
+        let       same = gSelectionManager.rootMostMoveable.parentZone == iInto
+        var    restore = [Zone: (Zone, Int?)] ()
+        var      grabs = gSelectionManager.currentGrabs
 
         //////////////////////
         // prepare for UNDO //
         //////////////////////
 
-        var  restore = [Zone: (Zone, Int?)] ()
-        var newIndex = iIndex
-        let    grabs = gSelectionManager.currentGrabs
-
-        for zone in grabs.reversed() {
+        for zone in grabs {
             if  let    parent = zone.parentZone {
                 let     index = zone.siblingIndex
                 restore[zone] = (parent, index)
-
-                if  newIndex  != nil, index != nil, parent == into && index! > 0 && index! <= newIndex! {
-                    newIndex! -= 1
-                }
             }
         }
 
@@ -1172,16 +1167,17 @@ class ZEditingManager: NSObject {
         }
 
         UNDO(self) { iUndoSelf in
-            for zone in restore.keys {
-                zone.orphan()
-            }
+//            for zone in restore.keys {
+//                zone.orphan()
+//            }
 
             for (zone, (parent, index)) in restore.reversed() {
+                zone.orphan()
                 parent.addAndReorderChild(zone, at: index)
             }
 
             iUndoSelf.UNDO(self) { iUndoUndoSelf in
-                iUndoUndoSelf.moveGrabbedZones(into: iInto, at: newIndex, onCompletion: onCompletion)
+                iUndoUndoSelf.moveGrabbedZones(into: iInto, at: iIndex, onCompletion: onCompletion)
             }
 
             onCompletion?()
@@ -1196,12 +1192,19 @@ class ZEditingManager: NSObject {
 
         gOperationsManager.children(.restore) {
             let finish = {
+                let fromIndex = gSelectionManager.rootMostMoveable.siblingIndex
+                let backwards = fromIndex != nil && iIndex != nil && fromIndex! > iIndex!
+
+                if !same || backwards {
+                    grabs = grabs.reversed()
+                }
+
                 for zone in grabs {
                     zone.orphan() // N.B., wait to do this until after returning to the main thread
                 }
 
-                for zone in grabs.reversed() {
-                    into.addAndReorderChild(zone, at: newIndex)
+                for zone in grabs {
+                    into.addAndReorderChild(zone, at: iIndex)
                 }
 
                 if toBookmark {
