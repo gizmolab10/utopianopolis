@@ -24,6 +24,7 @@ let unselectBrightness: CGFloat = 0.98
 #endif
 
 
+let  gFirstFavoriteIndex = -1
 let             gUnlevel = -1
 let          gLogTabStop = 15
 let       gFingerBreadth = CGFloat(33.0)

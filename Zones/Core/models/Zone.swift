@@ -82,6 +82,14 @@ class Zone : ZRecord {
     }
 
 
+    convenience init(favoriteNamed: String) {
+        self.init(record: nil, storageMode: .favorites)
+
+        self .zoneName = favoriteNamed
+        self.crossLink = gFavoritesManager.rootZone
+    }
+    
+
     var bookmarkTarget: Zone? {
         if  let link = crossLink, let mode = link.storageMode {
             return gRemoteStoresManager.cloudManagerFor(mode).zoneForRecordID(link.record.recordID)
@@ -354,6 +362,7 @@ class Zone : ZRecord {
     func addToGrab() { gSelectionManager.addToGrab(self) }
     func    ungrab() { gSelectionManager   .ungrab(self) }
     func      grab() { gSelectionManager     .grab(self) }
+    func      edit() { gSelectionManager     .edit(self) }
     override func register() { cloudManager?.registerZone(self) }
 
 

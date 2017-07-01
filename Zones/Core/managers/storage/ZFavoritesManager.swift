@@ -18,10 +18,11 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    let     defaultFavorites = Zone(record: nil, storageMode: .favorites)
-    let defaultModes: ZModes = [.favorites, .everyone, .mine]
-    var       favoritesIndex = 0
-    var           count: Int { return rootZone!.count }
+    var          favoritesIndex = gFirstFavoriteIndex
+    let        defaultFavorites = Zone(record: nil, storageMode: .favorites)
+    let    defaultModes: ZModes = [.everyone, .mine]
+    var favoritesFavorite: Zone { return Zone(favoriteNamed: "favorites") }
+    var              count: Int { return rootZone!.count }
 
 
     var rotatedEnumeration: EnumeratedSequence<Array<Zone>> {
@@ -61,12 +62,11 @@ class ZFavoritesManager: ZCloudManager {
 
     func setupDefaultFavorites() {
         if defaultFavorites.count == 0 {
-            for index in 0 ... 2 {
-                let          mode = self.defaultModes[index]
+            for (index, mode) in defaultModes.enumerated() {
                 let          name = mode.rawValue
                 let      favorite = self.create(withBookmark: nil, false, parent: self.defaultFavorites, atIndex: index, mode, name)
                 favorite.zoneLink =  "\(name)::"
-                favorite   .order = Double(index) * 0.0001
+                favorite   .order = Double(index) * 0.001
 
                 favorite.clearAllStates()
             }
@@ -106,7 +106,11 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func zoneAtIndex(_ index: Int) -> Zone? {
-        return rootZone?[index]
+        if index == gFirstFavoriteIndex {
+            return favoritesFavorite
+        } else {
+            return rootZone?[index]
+        }
     }
     
 
@@ -197,8 +201,8 @@ class ZFavoritesManager: ZCloudManager {
         let     count = rootZone!.count
 
         if index >= count {
-            index = 0
-        } else if index < 0 {
+            index =       gFirstFavoriteIndex
+        } else if index < gFirstFavoriteIndex {
             index = count - 1
         }
 
@@ -230,7 +234,7 @@ class ZFavoritesManager: ZCloudManager {
 
 
     @discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
-        if rootZone!.count > favoritesIndex, let bookmark = rootZone?[favoritesIndex] {
+        if rootZone!.count > favoritesIndex, let bookmark = zoneAtIndex(favoritesIndex) {
             if bookmark.isFavorite {
                 gTravelManager.travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
                     atArrival()

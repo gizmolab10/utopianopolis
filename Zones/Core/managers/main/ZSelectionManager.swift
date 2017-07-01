@@ -105,9 +105,9 @@ class ZSelectionManager: NSObject {
     }
 
 
-    func clearEdit()   { currentlyEditingZone  = nil }
     func clearGrab()   { currentGrabs          = [ ] }
     func clearPaste()  { pasteableZones        = [:] }
+    func clearEdit()   { currentlyEditingZone  = nil }
     func fullResign()  { assignAsFirstResponder (nil) } // ios broken
     func editCurrent() { edit(currentMoveable) }
     func isEditing (_ zone: Zone) -> Bool { return currentlyEditingZone == zone }
