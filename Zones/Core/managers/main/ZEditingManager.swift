@@ -421,7 +421,7 @@ class ZEditingManager: NSObject {
 
     func addChild() {
         if let parentZone = gWidgetsManager.currentMovableWidget?.widgetZone, !parentZone.isBookmark {
-            addChildTo(parentZone, at: insertsWillFollow ? nil : 0) { iChild in
+            addChildTo(parentZone, at: gInsertionsFollow ? nil : 0) { iChild in
                 gControllersManager.signalFor(parentZone, regarding: .redraw) {
                     iChild?.edit()
                 }
@@ -458,7 +458,7 @@ class ZEditingManager: NSObject {
             var index   = zone.siblingIndex
 
             if  index  != nil {
-                index! += insertsWillFollow ? 1 : 0
+                index! += gInsertionsFollow ? 1 : 0
             }
 
             addChildTo(parent, at: index) { iChild in
@@ -617,9 +617,9 @@ class ZEditingManager: NSObject {
                 let        max = siblings.count - 1
 
                 if  var index  = zone.siblingIndex, max > 0 {
-                    if  index  < max    &&  (insertsWillFollow || index == 0) {
+                    if  index  < max    &&  (gInsertionsFollow || index == 0) {
                         index += 1
-                    } else if index > 0 && (!insertsWillFollow || index == max) {
+                    } else if index > 0 && (!gInsertionsFollow || index == max) {
                         index -= 1
                     }
 
@@ -793,7 +793,7 @@ class ZEditingManager: NSObject {
 
 
     func grabChild(of zone: Zone) {
-        if  zone.count > 0, let child = insertsWillFollow ? zone.children.last : zone.children.first {
+        if  zone.count > 0, let child = gInsertionsFollow ? zone.children.last : zone.children.first {
             zone.displayChildren()
             child.grab()
             signalFor(nil, regarding: .redraw)
@@ -803,7 +803,7 @@ class ZEditingManager: NSObject {
 
     func moveZone(_ zone: Zone, to there: Zone) {
         if !there.isBookmark {
-            moveZone(zone, into: there, at: insertsWillFollow ? nil : 0, orphan: true) {
+            moveZone(zone, into: there, at: gInsertionsFollow ? nil : 0, orphan: true) {
                 self.redrawAndSync(nil)
             }
         } else if !there.isABookmark(spawnedBy: zone) {
@@ -824,7 +824,7 @@ class ZEditingManager: NSObject {
                         self.applyModeRecursivelyTo(mover)
                     }
 
-                    self.moveZone(mover, into: there, at: insertsWillFollow ? nil : 0, orphan: false) {
+                    self.moveZone(mover, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
                         self.redrawAndSync()
                     }
                 }
@@ -996,7 +996,7 @@ class ZEditingManager: NSObject {
 
                 for (pastable, (parent, index)) in pastables {
                     let copy = pastable.deepCopy()
-                    let   at = index  != nil ?  index  : insertsWillFollow ? nil : 0
+                    let   at = index  != nil ?  index  : gInsertionsFollow ? nil : 0
                     let into = parent != nil ? !ignoreFormerParents ? parent! : zone : zone
                     let mode = into.storageMode ?? gStorageMode
 
@@ -1105,7 +1105,7 @@ class ZEditingManager: NSObject {
                 var insert: Int? = zone.parentZone?.siblingIndex
 
                 if to.storageMode == .favorites {
-                    insert = gFavoritesManager.nextFavoritesIndex(forward: insertsWillFollow)
+                    insert = gFavoritesManager.nextFavoritesIndex(forward: gInsertionsFollow)
                 } else if zone.parentZone?.parentZone == to {
                     if  insert != nil {
                         insert  = insert! + 1
@@ -1146,8 +1146,6 @@ class ZEditingManager: NSObject {
 
     func moveGrabbedZones(into iInto: Zone, at iIndex: Int?, onCompletion: Closure?) {
         let toBookmark = iInto.isBookmark
-        let       into = !toBookmark ? iInto : iInto.bookmarkTarget!
-        let       same = gSelectionManager.rootMostMoveable.parentZone == iInto
         var    restore = [Zone: (Zone, Int?)] ()
         var      grabs = gSelectionManager.currentGrabs
 
@@ -1167,10 +1165,6 @@ class ZEditingManager: NSObject {
         }
 
         UNDO(self) { iUndoSelf in
-//            for zone in restore.keys {
-//                zone.orphan()
-//            }
-
             for (zone, (parent, index)) in restore.reversed() {
                 zone.orphan()
                 parent.addAndReorderChild(zone, at: index)
@@ -1183,24 +1177,20 @@ class ZEditingManager: NSObject {
             onCompletion?()
         }
 
-        ///////////////////////////////////////////////////////////
-        // assure children (of into) are present, then add grabs //
-        ///////////////////////////////////////////////////////////
-
-        into.displayChildren()
-        into.maybeNeedChildren()
-
-        gOperationsManager.children(.restore) {
-            let finish = {
-                let fromIndex = gSelectionManager.rootMostMoveable.siblingIndex
+        let finish = {
+            let      rootMost = gSelectionManager.rootMostMoveable
+            let     fromIndex = rootMost.siblingIndex
+            let          into = !toBookmark ? iInto : iInto.bookmarkTarget! // grab bookmark AFTER travel
+            let      addGrabs = {
                 let backwards = fromIndex != nil && iIndex != nil && fromIndex! > iIndex!
+                let      same = rootMost.parentZone == iInto
 
                 if !same || backwards {
                     grabs = grabs.reversed()
                 }
 
                 for zone in grabs {
-                    zone.orphan() // N.B., wait to do this until after returning to the main thread
+                    zone.orphan()
                 }
 
                 for zone in grabs {
@@ -1214,13 +1204,33 @@ class ZEditingManager: NSObject {
                 onCompletion?()
             }
 
-            if !toBookmark {
-                finish()
+            ///////////////////////////////////////////////////////////
+            // assure children (of into) are present, then add grabs //
+            ///////////////////////////////////////////////////////////
+
+            into.displayChildren()
+
+            if !into.hasMissingChildren {
+                addGrabs()
             } else {
-                gTravelManager.travelThrough(iInto, atArrival: { (iAny, iSignalKind) in
-                    finish()
-                })
+                into.maybeNeedChildren()
+
+                gOperationsManager.children(.restore) {
+                    addGrabs()
+                }
             }
+        }
+
+        ///////////////////////////////////////
+        // deal with target being a bookmark //
+        ///////////////////////////////////////
+
+        if !toBookmark {
+            finish()
+        } else {
+            gTravelManager.travelThrough(iInto, atArrival: { (iAny, iSignalKind) in
+                finish()
+            })
         }
     }
 

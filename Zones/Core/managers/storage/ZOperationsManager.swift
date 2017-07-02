@@ -29,7 +29,7 @@ enum ZOperationID: Int {
     case create
     case parent
     case merge
-    case ready
+    case available
     case none
 }
 
@@ -37,7 +37,7 @@ enum ZOperationID: Int {
 class ZOperationsManager: NSObject {
 
 
-    var     onReady:        Closure?
+    var onAvailable:        Closure?
     var currentMode:   ZStorageMode? = nil
     var   currentOp:   ZOperationID = .none
     var  waitingOps = [ZOperationID : BlockOperation] ()
@@ -115,17 +115,17 @@ class ZOperationsManager: NSObject {
 
 
     private func setupAndRun(_ operationIDs: [ZOperationID], logic: ZRecursionLogic? = nil, onCompletion: @escaping Closure) {
-        if let prior = onReady {
-            onReady = {
+        if let prior = onAvailable {
+            onAvailable = {
                 self.dispatchAsyncInForeground { // prevent recursion pile-up on stack
                     prior()
                     self.setupAndRun(operationIDs) { onCompletion() }
                 }
             }
         } else {
-            let identifiers   = operationIDs + [.ready]
+            let identifiers   = operationIDs + [.available]
             queue.isSuspended = true
-            onReady           = onCompletion
+            onAvailable       = onCompletion
             let         saved = gStorageMode
             let        isMine = [.mine].contains(saved)
 
@@ -135,7 +135,7 @@ class ZOperationsManager: NSObject {
                     var  closure: IntegerClosure? = nil     // declare closure first, so compiler will let it recurse
                     let             skipFavorites = operationID != .here
                     let                      full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .root, .here].contains(operationID)
-                    let forCurrentStorageModeOnly = [.file, .ready, .parent, .children]                                             .contains(operationID)
+                    let forCurrentStorageModeOnly = [.file, .available, .parent, .children]                                         .contains(operationID)
                     let        cloudModes: ZModes = [.mine, .everyone]
                     let             modes: ZModes = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : skipFavorites ? cloudModes : cloudModes + [.favorites]
 
@@ -174,8 +174,8 @@ class ZOperationsManager: NSObject {
 
 
     func invoke(_ identifier: ZOperationID, _ mode: ZStorageMode, _ logic: ZRecursionLogic? = nil, _ onCompletion: Closure?) {
-        if identifier == .ready {
-            becomeReady()
+        if identifier == .available {
+            becomeAvailable()
         } else if mode != .favorites || identifier == .here {
             let report          = { (iCount: Int) in
                 if  self.debug {
@@ -190,7 +190,7 @@ class ZOperationsManager: NSObject {
             let complete        = { (iCount: Int) -> Void in
                 if iCount      == 0 {
                     onCompletion?()
-                } else if identifier != ZOperationID.ready {
+                } else if identifier != .available {
                     report(iCount)
                 }
             }
@@ -228,12 +228,12 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func becomeReady() {
+    func becomeAvailable() {
         currentMode     = nil
-        currentOp       = .ready
+        currentOp       = .available
 
-        if  let closure = onReady {
-            onReady     = nil
+        if  let closure = onAvailable {
+            onAvailable = nil
             dispatchAsyncInForeground {
                 closure()
             }
