@@ -20,7 +20,7 @@ class ZPreferencesController: ZGenericController {
 
 
     @IBOutlet var    countsModeControl: ZSegmentedControl?
-    @IBOutlet var insertionModeControl: NSSegmentedControl?
+    @IBOutlet var insertionModeControl: ZSegmentedControl?
     @IBOutlet var         zoneColorBox: ZColorWell?
     @IBOutlet var     bookmarkColorBox: ZColorWell?
     @IBOutlet var   backgroundColorBox: ZColorWell?
@@ -91,7 +91,7 @@ class ZPreferencesController: ZGenericController {
     }
 
 
-    @IBAction func clearColorAction(_ button: NSButton) {
+    @IBAction func clearColorAction(_ button: ZButton) {
         let           grab = gSelectionManager.firstGrab
         if  let      color = grab._color {
             UNDO(self) { iUndoSelf in

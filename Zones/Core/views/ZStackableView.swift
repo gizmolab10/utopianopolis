@@ -19,7 +19,7 @@ import SnapKit
 class ZStackableView: ZView {
 
 
-    @IBOutlet var hideableView: NSView?
+    @IBOutlet var hideableView: ZView?
     @IBOutlet var toggleButton: ZButton?
     @IBOutlet var   titleLabel: ZTextField?
 

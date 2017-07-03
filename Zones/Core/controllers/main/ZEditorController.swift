@@ -89,7 +89,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     }
 
 
-    func gestureRecognizer(_ gestureRecognizer: NSGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: NSGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
         return gestureRecognizer == rubberbandGesture && otherGestureRecognizer == clickGesture
     }
 
@@ -358,7 +358,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     }
 
 
-    func isTextEditing(at location: NSPoint) -> Bool {
+    func isTextEditing(at location: CGPoint) -> Bool {
         let e = gEditingManager
 
         if  e.isEditing, let textWidget = e.editedTextWidget {

@@ -58,10 +58,6 @@ public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 let gHighlightHeightOffset = CGFloat(-3.0)
 let        gVerticalWeight = 1.0
 let           zapplication = NSApplication.shared()
-let          gBackspaceKey = "\u{8}"
-let             gDeleteKey = "\u{7F}"
-let              gSpaceKey = " "
-let                gTabKey = "\t"
 
 
 extension NSObject {
@@ -128,6 +124,10 @@ extension NSEvent {
 
 
 extension NSColor {
+    var string: String {
+        return "red:\(redComponent),blue:\(blueComponent),green:\(greenComponent)"
+    }
+
     func darker(by: CGFloat) -> NSColor {
         return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * 1.1, brightness: brightnessComponent / by, alpha: alphaComponent)
     }
@@ -174,6 +174,18 @@ extension NSView {
     func setNeedsDisplay() { needsDisplay = true }
     func setNeedsLayout () { needsLayout  = true }
     func insertSubview(_ view: ZView, belowSubview siblingSubview: ZView) { addSubview(view, positioned: .below, relativeTo: siblingSubview) }
+
+
+    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeyPanGestureRecognizer {
+        let                            gesture = ZKeyPanGestureRecognizer(target: target, action: action)
+        gesture                      .delegate = target
+        gesture               .delaysKeyEvents = false
+        gesture.delaysPrimaryMouseButtonEvents = false
+
+        addGestureRecognizer(gesture)
+
+        return gesture
+    }
 
 
     @discardableResult func createPointGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> ZKeyClickGestureRecognizer {
@@ -271,17 +283,12 @@ extension NSButton {
 extension NSTextField {
     var          text:         String? { get { return stringValue } set { stringValue = newValue! } }
     var textAlignment: NSTextAlignment { get { return alignment }   set { alignment = newValue } }
+    func enableUndo()                  { cell?.allowsUndo = true }
 }
 
 
 extension ZoneTextWidget {
     // override open var acceptsFirstResponder: Bool { return gOperationsManager.isReady }    // fix a bug where root zone is editing on launch
-
-
-    func updateGUI() {
-        widget.layoutTextField()
-        widget.setNeedsDisplay()
-    }
 
 
     override func controlTextDidChange(_ iNote: Notification) {

@@ -52,6 +52,22 @@ enum ZStorageMode: String {
 }
 
 
+struct ZSettingsViewID: OptionSet {
+    let rawValue: Int
+
+    init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+
+    static let Information = ZSettingsViewID(rawValue: 1 << 0)
+    static let Preferences = ZSettingsViewID(rawValue: 1 << 1)
+    static let   Favorites = ZSettingsViewID(rawValue: 1 << 2)
+    static let       Cloud = ZSettingsViewID(rawValue: 1 << 3)
+    static let        Help = ZSettingsViewID(rawValue: 1 << 4)
+    static let         All = ZSettingsViewID(rawValue: 0xFFFF)
+}
+
+
 var  gTextCapturing = false
 var gShowsSearching = false
 var       gFileMode = ZFileMode.cloud
@@ -63,7 +79,7 @@ var            gDotHeight:               Double { return Double(gGenericOffset.h
 var      gIsRubberbanding:                 Bool { return gEditorView!.rubberbandRect != CGRect.zero  }
 var     gInsertionsFollow:                 Bool { return gInsertionMode == .follow }
 var gGrabbedBookmarkColor:               ZColor { return gBookmarkColor.darker(by: 1.5) }
-var    settingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
+//var    settingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
 var     gEditorController:   ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
 var           gEditorView:       ZDragDrawView? { return gEditorController?.view                        as? ZDragDrawView }
 

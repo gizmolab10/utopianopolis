@@ -51,12 +51,12 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     }
                 } else {
                     gSelectionManager.currentlyEditingZone = zone
-                    cell?                      .allowsUndo = true
                     font                                   = gSelectedWidgetFont
                     textColor                              = ZColor.black
                     originalText                           = zone?.zoneName ?? ""
 
                     gSelectionManager.deselectGrabs()
+                    enableUndo()
                     updateText()
                     addMonitor()
 
@@ -166,6 +166,12 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         }
     }
 
+
+    func updateGUI() {
+        widget.layoutTextField()
+        widget.setNeedsDisplay()
+    }
+    
 
     func captureText(force: Bool) {
         if !gTextCapturing || force, let zone = widget.widgetZone, zone.zoneName != text! {

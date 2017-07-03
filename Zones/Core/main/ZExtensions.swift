@@ -220,13 +220,6 @@ extension CGRect {
 }
 
 
-extension ZColor {
-    var string: String {
-        return "red:\(redComponent),blue:\(blueComponent),green:\(greenComponent)"
-    }
-}
-
-
 extension String {
     var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
     var          isDigit: Bool { return "0123456789.+-=*/".characters.contains(self[startIndex]) }
@@ -260,7 +253,7 @@ extension String {
                 }
             }
 
-            return ZColor(calibratedRed: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: 1.0)
+            return ZColor(red: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: 1.0)
         }
 
         return nil
@@ -343,18 +336,6 @@ extension ZView {
                 removeGestureRecognizer(recognizer)
             }
         }
-    }
-
-
-    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeyPanGestureRecognizer {
-        let                            gesture = ZKeyPanGestureRecognizer(target: target, action: action)
-        gesture                      .delegate = target
-        gesture               .delaysKeyEvents = false
-        gesture.delaysPrimaryMouseButtonEvents = false
-
-        addGestureRecognizer(gesture)
-
-        return gesture
     }
 
 
