@@ -50,7 +50,7 @@ class Zone : ZRecord {
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
     var   canRevealChildren:         Bool { return hasChildren &&   showChildren }
     var    indicateChildren:         Bool { return hasChildren && (!showChildren || count == 0) }
-    var  hasMissingChildren:         Bool { return count == 0 || count != fetchableCount }
+    var  hasMissingChildren:         Bool { return count != fetchableCount }
     var       hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var       hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var          isBookmark:         Bool { return crossLink != nil }
@@ -107,7 +107,7 @@ class Zone : ZRecord {
                 } else if let z = zoneColor, z != "" {
                     _color      = z.color
                 } else if let p = parentZone, hasCompleteAncestorPath(toColor: true) {
-                    return p.color // TODO: prevent infinite recursion
+                    return p.color
                 } else {
                     return ZColor.blue // default is blue
                 }
@@ -615,15 +615,15 @@ class Zone : ZRecord {
     }
 
 
-    func extendNeedForChildren(to iLevel: Int,  _ visited: [Zone]) {
-        if !visited.contains(self) && iLevel >= level {
-            if hasMissingChildren {
-                needChildren()
-            } else if iLevel > level {
-                for child in children {
-                    child.extendNeedForChildren(to: iLevel, visited + [self])
-                }
+    func extendNeedForChildren(to iLevel: Int) {
+        traverseProgeny { iZone -> ZTraverseStatus in
+            if iLevel < iZone.level {
+                return .eSkip
+            } else if iZone.hasMissingChildren {
+                iZone.needChildren()
             }
+
+            return .eContinue
         }
     }
 

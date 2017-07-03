@@ -26,7 +26,7 @@ extension NSObject {
 
     func           note(_ iMessage: Any?)                { } // report(iMessage) }
     func    performance(_ iMessage: Any?)                { report(iMessage) }
-    func columnarReport(_ iFirst: Any?, _ iSecond: Any?) { } // rawColumnarReport(iFirst, iSecond) }
+    func columnarReport(_ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(iFirst, iSecond) }
     func  debugCheck()                                   { gTravelManager.debugCheck() }
 
 

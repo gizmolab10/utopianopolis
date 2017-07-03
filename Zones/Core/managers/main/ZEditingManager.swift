@@ -380,7 +380,7 @@ class ZEditingManager: NSObject {
                 gSelectionManager.deselectDragWithin(zone);
                 apply()
             } else {
-                zone.extendNeedForChildren(to: goal, [])
+                zone.extendNeedForChildren(to: goal)
                 
                 gOperationsManager.children(.expand, iGoal) {
                     apply()
