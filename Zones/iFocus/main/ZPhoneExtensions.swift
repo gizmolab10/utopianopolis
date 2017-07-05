@@ -1,5 +1,5 @@
 //
-//  ZPadExtensions.swift
+//  ZPhoneExtensions.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 10/8/16.
@@ -7,6 +7,7 @@
 //
 
 
+import UserNotifications
 import Foundation
 import CloudKit
 import UIKit
@@ -307,7 +308,7 @@ extension UIApplication {
         applicationIconBadgeNumber += 1
         applicationIconBadgeNumber  = 0
 
-        cancelAllLocalNotifications()
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
 }
 

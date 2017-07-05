@@ -52,12 +52,12 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         performance(searchBox?.text)
         searchBox?.resignFirstResponder()
 
-        let find = (searchBox?.text)!
+        let searchString = (searchBox?.text)!
 
-        if find == "" {
+        if searchString == "" {
             endSearching()
         } else {
-            gCloudManager.searchFor(find) { iObject in
+            gCloudManager.search(for: searchString) { iObject in
                 let hasResults = ((iObject as? [Any])?.count)! != 0
                 gWorkMode       = hasResults && gShowsSearching ? .searchMode : .editMode
 

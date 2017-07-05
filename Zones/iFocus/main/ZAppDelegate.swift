@@ -1,6 +1,6 @@
 //
 //  ZAppDelegate.swift
-//  PadZones
+//  iFocus
 //
 //  Created by Jonathan Sand on 7/7/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -9,6 +9,7 @@
 
 import UIKit
 import CloudKit
+import UserNotifications
 
 
 @UIApplicationMain
@@ -25,10 +26,7 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
     
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        let     type = UIUserNotificationType.badge
-        let settings = UIUserNotificationSettings(types: type, categories: nil)
-
-        application.registerUserNotificationSettings(settings)
+        // application.registerUserNotificationSettings(.badgeSetting)
         application.registerForRemoteNotifications()
         gControllersManager.startupDataAndUI()
 
@@ -52,7 +50,7 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
     }
 
 
-    public func application(_ application: UIApplication, didRegister notificationSettings: UIUserNotificationSettings) {
+    @nonobjc public func application(_ application: UIApplication, didRegister notificationSettings: UNNotificationSettings) {
         // print(notificationSettings)
     }
 

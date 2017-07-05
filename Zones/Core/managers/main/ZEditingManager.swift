@@ -125,7 +125,7 @@ class ZEditingManager: NSObject {
                 // GENERATIONAL //
                 //////////////////
 
-                let zone = gSelectionManager.firstGrab
+                let zone = gSelectionManager.rootMostMoveable
                 var show = true
 
                 switch arrow {
@@ -579,7 +579,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    @discardableResult private func deleteZones(_ zones: [Zone], in parent: Zone?) -> Zone? {
+    @discardableResult private func deleteZones(_ zones: [Zone], in parent: Zone? = nil) -> Zone? {
         var last: Zone? = nil
 
         for zone in zones {
@@ -627,15 +627,27 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            let      bookmarks = gRemoteStoresManager.bookmarksFor(zone)
-            zone    .isDeleted = true // will be saved, ignored after next launch
+            zone.isDeleted = true // will be saved, ignored after next launch
 
             deleteZones(zone.children, in: zone) // recurse
-            deleteZones(bookmarks,     in: zone) // recurse
+            deleteAllBookmarks(of: zone)
             zone.orphan()
         }
 
         return grabThisZone
+    }
+
+
+    func deleteAllBookmarks(of iZone: Zone?) {
+        if let zone = iZone {
+            zone.needBookmarks()
+
+            gOperationsManager.bookmarks {
+                let bookmarks = gRemoteStoresManager.bookmarksFor(zone)
+
+                self.deleteZones(bookmarks) // recurse
+            }
+        }
     }
 
 

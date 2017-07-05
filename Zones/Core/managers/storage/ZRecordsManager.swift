@@ -20,6 +20,7 @@ enum ZRecordState: Int {
     case needsParent
     case needsProgeny
     case needsChildren
+    case needsBookmarks
 }
 
 
@@ -70,19 +71,11 @@ class ZRecordsManager: NSObject {
     }
 
 
-
-    func setRecords(_ records: [ZRecord], for state: ZRecordState) {
-        recordsByState[state] = records
-    }
-
-
     func recordsForState(_ state: ZRecordState) -> [ZRecord] {
-        var        dict = recordsByState
-        var     records = dict[state]
-
-        if  records    == nil {
-            records     = []
-            dict[state] = records
+        var records               = recordsByState[state]
+        if  records              == nil {
+            records               = []
+            recordsByState[state] = records
         }
 
         return records!
@@ -145,7 +138,8 @@ class ZRecordsManager: NSObject {
                 var records = recordsForState(state)
 
                 records.append(iRecord)
-                setRecords(records, for: state)
+
+                recordsByState[state] = records
             }
         }
     }
@@ -158,7 +152,7 @@ class ZRecordsManager: NSObject {
             if let index = records.index(of: record) {
                 records.remove(at: index)
 
-                self.setRecords(records, for: state)
+                self.recordsByState[state] = records
             }
         })
     }
@@ -177,17 +171,21 @@ class ZRecordsManager: NSObject {
 
 
     func clearState(_ state: ZRecordState) {
-        setRecords([], for: state)
+        recordsByState[state] = []
     }
 
 
-    func recordIDsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecordID] {
+    func recordIDsWithMatchingStates( _ states: [ZRecordState], pull: Bool = false) -> [CKRecordID] {
         var identifiers = [CKRecordID] ()
 
         findRecordsWithMatchingStates(states) { state, record in
             if  let identifier = record.record?.recordID, identifiers.count <= batchSize, !identifiers.contains(identifier) {
                 identifiers.append(identifier)
             }
+        }
+
+        if pull {
+            clearStates(states)
         }
 
         return identifiers

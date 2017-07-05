@@ -79,7 +79,6 @@ var            gDotHeight:               Double { return Double(gGenericOffset.h
 var      gIsRubberbanding:                 Bool { return gEditorView!.rubberbandRect != CGRect.zero  }
 var     gInsertionsFollow:                 Bool { return gInsertionMode == .follow }
 var gGrabbedBookmarkColor:               ZColor { return gBookmarkColor.darker(by: 1.5) }
-//var    settingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
 var     gEditorController:   ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
 var           gEditorView:       ZDragDrawView? { return gEditorController?.view                        as? ZDragDrawView }
 

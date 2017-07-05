@@ -52,7 +52,6 @@ class ZCloudManager: ZRecordsManager {
                 self.create(onCompletion)
             }
 
-            onCompletion?(count)
             columnarReport("CREATE \(count)", stringForRecords(operation.recordsToSave))
             start(operation)
         }
@@ -100,8 +99,6 @@ class ZCloudManager: ZRecordsManager {
                     
                     columnarReport("SAVE \(count)", stringForRecords(operation.recordsToSave))
                     start(operation)
-                    
-                    return
                 }
             }
         } else {
@@ -232,19 +229,29 @@ class ZCloudManager: ZRecordsManager {
         var    suffix = ""
 
         for token in tokens {
-            if token != "" {
-                suffix = String(format: "%@%@SELF CONTAINS \"%@\"", suffix, separator, token)
+            if  token != "" {
+                suffix = "\(suffix)\(separator)SELF CONTAINS \"\(token)\""
             }
         }
 
-        let format = String(format: "zoneState < %d%@", ZoneState.IsFavorite.rawValue, suffix)
-
-        return NSPredicate(format: format)
+        return NSPredicate(format: "zoneState < \(ZoneState.IsFavorite.rawValue)\(suffix)")
     }
 
 
-    func searchFor(_ searchFor: String, onCompletion: ObjectClosure?) {
-        let predicate = searchPredicateFrom(searchFor)
+    func bookmarkPredicate(from iRecordIDs: [CKRecordID]) -> NSPredicate {
+        let separator = " AND "
+        var    suffix = ""
+
+        for identifier in iRecordIDs {
+            suffix = String(format: "%@%@SELF CONTAINS \"%@\"", suffix, separator, identifier.recordName)
+        }
+
+        return NSPredicate(format: "zoneState <= \(ZoneState.IsUpToDate.rawValue)\(suffix)")
+    }
+
+
+    func search(for searchString: String, onCompletion: ObjectClosure?) {
+        let predicate = searchPredicateFrom(searchString)
         var   records = [CKRecord] ()
 
         queryWith(predicate) { iRecord in
@@ -252,6 +259,26 @@ class ZCloudManager: ZRecordsManager {
                 records.append(iRecord!)
             } else {
                 onCompletion?(records as NSObject)
+            }
+        }
+    }
+
+
+    func bookmarks(_ onCompletion: IntegerClosure?) {
+        let recordIDs = recordIDsWithMatchingStates([.needsMerge], pull: true)
+        let     count = recordIDs.count
+
+        onCompletion?(count)
+
+        if  count > 0 {
+            let predicate = bookmarkPredicate(from: recordIDs)
+
+            queryWith(predicate) { iRecord in
+                if iRecord == nil {
+                    self.bookmarks(onCompletion) // recurse for remaining
+                } else if self.recordForCKRecord(iRecord) == nil {
+                    let _ = Zone(record: iRecord, storageMode: self.storageMode) // register
+                }
             }
         }
     }
@@ -265,14 +292,14 @@ class ZCloudManager: ZRecordsManager {
             operation.recordIDs       = recordIDs
             operation.completionBlock = {
                 self.clearRecordIDs(recordIDs, for: [.needsMerge])
-                self.merge(onCompletion)
+                self.merge(onCompletion) // recurse for remaining
             }
 
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
-                if  let record = self.recordForRecordID(iID) {
-                    let   name = record.record[zoneNameKey] as? String ?? "---"
+                if  let    record = self.recordForRecordID(iID) {
+                    if  let error = iError as? CKError {
+                        let  name = record.record[zoneNameKey] as? String ?? "---"
 
-                    if let error: CKError = iError as? CKError {
                         self.reportError("MERGE ==> \(self.storageMode) \(error) \(name)")
                     } else {
                         record.mergeIntoAndTake(iRecord!)
@@ -430,7 +457,7 @@ class ZCloudManager: ZRecordsManager {
                             if  let parent = iZone.parentZone {
                                 visited    = visited + [iZone]
 
-                                getParentOf?(parent, iRecurse)    // recurse
+                                getParentOf?(parent, iRecurse)    // recurse for remaining
                             } else {
                                 self.rootZone = iZone   // got root
 
@@ -710,7 +737,7 @@ class ZCloudManager: ZRecordsManager {
             let oldValue = record[property] as? NSObject
 
             if oldValue         != value {
-                record[property] = value as! CKRecordValue?
+                record[property] = value as? CKRecordValue
 
                 object.maybeNeedMerge()
             }

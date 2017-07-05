@@ -25,11 +25,12 @@ enum ZOperationID: Int {
     case subscribe
 
     case emptyTrash
+    case available
+    case bookmarks
     case undelete
     case create
     case parent
     case merge
-    case available
     case none
 }
 
@@ -88,6 +89,7 @@ class ZOperationsManager: NSObject {
     func     parent(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent                          ]) { onCompletion() } }
     func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent, .children               ]) { onCompletion() } }
     func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent, .children,         .save]) { onCompletion() } }
+    func  bookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks                                          ]) { onCompletion() } }
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                         ]) { onCompletion() } }
 
 
@@ -132,7 +134,7 @@ class ZOperationsManager: NSObject {
             for operationID in identifiers {
                 let                     operation = BlockOperation {
                     self               .currentOp = operationID // if hung, it happened inside this op
-                    var  closure: IntegerClosure? = nil     // declare closure first, so compiler will let it recurse
+                    var  closure: IntegerClosure? = nil         // declare closure first, so compiler will let it recurse
                     let             skipFavorites = operationID != .here
                     let                      full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .root, .here].contains(operationID)
                     let forCurrentStorageModeOnly = [.file, .available, .parent, .children]                                         .contains(operationID)
@@ -144,9 +146,9 @@ class ZOperationsManager: NSObject {
                             self.finishOperation(for: operationID)
                         } else {
                             let mode = modes[index]
-                            self.currentMode = mode         // if hung, it happened in this mode
+                            self.currentMode = mode             // if hung, it happened in this mode
                             self.invoke(operationID, mode, logic) {
-                                closure?(index + 1)         // recurse
+                                closure?(index + 1)             // recurse
                             }
                         }
                     }
@@ -213,6 +215,7 @@ class ZOperationsManager: NSObject {
                 case .undelete:    cloudManager.undeleteAll                 (       complete)
                 case .emptyTrash:  cloudManager.emptyTrash                  (       complete)
                 case .subscribe:   cloudManager.subscribe                   (       complete)
+                case .bookmarks:   cloudManager.bookmarks                   (       complete)
                 case .create:      cloudManager.create                      (       complete)
                 case .fetch:       cloudManager.fetch                       (       complete)
                 case .merge:       cloudManager.merge                       (       complete)

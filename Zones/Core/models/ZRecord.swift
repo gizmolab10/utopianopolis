@@ -192,13 +192,14 @@ class ZRecord: NSObject {
     }
 
 
-    func needRoot()     { markForAllOfStates([.needsRoot]) }
-    func needFetch()    { markForAllOfStates([.needsFetch]) }
-    func needParent()   { markForAllOfStates([.needsParent]) }
-    func needProgeny()  { markForAllOfStates([.needsProgeny]) }
-    func needChildren() { markForAllOfStates([.needsChildren]) }
-    func needCreate()   { markForAllOfStates([.needsCreate]); unmarkForAllOfStates([.needsMerge]) }
-    func needSave()     { markForAllOfStates([.needsSave]);   unmarkForAllOfStates([.needsMerge]) }
+    func needRoot()      { markForAllOfStates([.needsRoot]) }
+    func needFetch()     { markForAllOfStates([.needsFetch]) }
+    func needParent()    { markForAllOfStates([.needsParent]) }
+    func needProgeny()   { markForAllOfStates([.needsProgeny]) }
+    func needChildren()  { markForAllOfStates([.needsChildren]) }
+    func needBookmarks() { markForAllOfStates([.needsBookmarks]) }
+    func needCreate()    { markForAllOfStates([.needsCreate]); unmarkForAllOfStates([.needsMerge]) }
+    func needSave()      { markForAllOfStates([.needsSave]);   unmarkForAllOfStates([.needsMerge]) }
 
 
     func maybeNeedMerge() {

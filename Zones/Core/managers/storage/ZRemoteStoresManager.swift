@@ -148,7 +148,7 @@ class ZRemoteStoresManager: NSObject {
             }
         }
     }
-
+ 
 
     func bookmarksFor(_ zone: Zone?) -> [Zone] {
         var zoneBookmarks = [Zone] ()
@@ -169,16 +169,11 @@ class ZRemoteStoresManager: NSObject {
     // MARK:-
 
 
-    // TODO extract storage mode from record id (?)
-    // i.e., the database
-    // TODO: currentCloudManager is wrong here
-
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
         gCloudManager.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey) { iRecord in
-            if iRecord != nil {
-                // get from the record id's cloud zone
-                let    zone = self.currentCloudManager.zoneForRecord(iRecord!)
+            if iRecord != nil {                                                 // TODO: extract storage mode from record id, i.e., the database
+                let    zone = self.currentCloudManager.zoneForRecord(iRecord!)  // TODO: currentCloudManager is wrong here
                 zone.record = iRecord
                 let  parent = zone.parentZone
 

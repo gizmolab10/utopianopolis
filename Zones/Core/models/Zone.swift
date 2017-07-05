@@ -41,16 +41,15 @@ class Zone : ZRecord {
     var         _parentZone:        Zone?
     var              _color:      ZColor?
     var          _crossLink:     ZRecord?
-    var           bookmarks      = [Zone] ()
     var            children      = [Zone] ()
     var               count:          Int { return children.count }
     var              widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var       unwrappedName:       String { return zoneName ?? "empty" }
     var    grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
-    var   canRevealChildren:         Bool { return hasChildren &&   showChildren }
-    var    indicateChildren:         Bool { return hasChildren && (!showChildren || count == 0) }
-    var  hasMissingChildren:         Bool { return count != fetchableCount }
+    var   canRevealChildren:         Bool { return  hasChildren &&   showChildren }
+    var    indicateChildren:         Bool { return  hasChildren && (!showChildren || count == 0) }
+    var  hasMissingChildren:         Bool { return (hasChildren && count == 0) || count != fetchableCount }
     var       hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var       hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var          isBookmark:         Bool { return crossLink != nil }
@@ -149,13 +148,13 @@ class Zone : ZRecord {
                     link     = zoneLink!
                 }
 
-                let components: [String] = link.components(separatedBy: ":")
-                let refString:   String  = components[2] == "" ? "root" : components[2]
-                let refID:    CKRecordID = CKRecordID(recordName: refString)
-                let refRecord:  CKRecord = CKRecord(recordType: zoneTypeKey, recordID: refID)
-                let mode:  ZStorageMode? = ZStorageMode(rawValue: components[0])
+                let components:   [String] = link.components(separatedBy: ":")
+                let name:          String  = components[2] == "" ? "root" : components[2]
+                let identifier: CKRecordID = CKRecordID(recordName: name)
+                let record:       CKRecord = CKRecord(recordType: zoneTypeKey, recordID: identifier)
+                let mode:    ZStorageMode? = ZStorageMode(rawValue: components[0])
 
-                _crossLink = ZRecord(record: refRecord, storageMode: mode)
+                _crossLink = ZRecord(record: record, storageMode: mode)
             }
 
             return _crossLink
@@ -165,7 +164,7 @@ class Zone : ZRecord {
             if newValue == nil {
                 zoneLink = nil
             } else {
-                let    hasRef = newValue != nil && newValue!.record != nil
+                let    hasRef = newValue!.record != nil
                 let reference = !hasRef ? "" : newValue!.record.recordID.recordName
                 zoneLink      = "\(newValue!.storageMode!.rawValue)::\(reference)"
             }
@@ -705,8 +704,8 @@ class Zone : ZRecord {
     }
 
 
-    @discardableResult func removeChild(_ child: Zone?) -> Bool {
-        if child != nil, let index = children.index(of: child!) {
+    @discardableResult func removeChild(_ iChild: Zone?) -> Bool {
+        if  let child = iChild, let index = children.index(of: child) {
             children.remove(at: index)
             updateCount()
 
@@ -772,7 +771,7 @@ class Zone : ZRecord {
     func safeProgenyCountUpdate(_ recursing: ZRecursionType, _ visited: [Zone]) {
         let isDeep = recursing == .deep
 
-        if !visited.contains(self) && (!isUpToDate || isDeep ) {
+        if !visited.contains(self) && (!isUpToDate || isDeep) {
             var allTrue = true
             var   total = 1
 
@@ -786,7 +785,7 @@ class Zone : ZRecord {
                 }
             }
 
-            if isDeep {
+            if isDeep && !hasMissingChildren {
                 updateCount()
             }
 

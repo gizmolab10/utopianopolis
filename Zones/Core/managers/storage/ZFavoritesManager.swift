@@ -355,6 +355,8 @@ class ZFavoritesManager: ZCloudManager {
 
         for (index, favorite) in rootZone!.children.enumerated() {
             if  favorite.crossLink?.record.recordID == recordID {
+                favorite.isDeleted = true
+
                 rootZone?.children.remove(at: index)
 
                 break

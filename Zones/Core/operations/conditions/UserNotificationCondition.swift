@@ -9,6 +9,7 @@ This file shows an example of implementing the OperationCondition protocol.
 #if os(iOS)
 
 import UIKit
+import UserNotifications
 
 /**
     A condition for verifying that we can present alerts to the user via
@@ -17,10 +18,10 @@ import UIKit
 struct UserNotificationCondition: OperationCondition {
     
     enum Behavior {
-        /// Merge the new `UIUserNotificationSettings` with the `currentUserNotificationSettings`.
+        /// Merge the new `UNNotificationSettings` with the `currentUserNotificationSettings`.
         case merge
 
-        /// Replace the `currentUserNotificationSettings` with the new `UIUserNotificationSettings`.
+        /// Replace the `currentUserNotificationSettings` with the new `UNNotificationSettings`.
         case replace
     }
     
@@ -29,14 +30,14 @@ struct UserNotificationCondition: OperationCondition {
     static let desiredSettings = "DesiredUserNotificationSettigns"
     static let isMutuallyExclusive = false
     
-    let settings: UIUserNotificationSettings
+    let settings: UNNotificationSettings
     let application: UIApplication
     let behavior: Behavior
     
     /**
         The designated initializer.
         
-        - parameter settings: The `UIUserNotificationSettings` you wish to be
+        - parameter settings: The `UNNotificationSettings` you wish to be
             registered.
 
         - parameter application: The `UIApplication` on which the `settings` should
@@ -48,7 +49,7 @@ struct UserNotificationCondition: OperationCondition {
             `application`. You may also specify `.Replace`, which means the `settings`
             will overwrite the exisiting settings.
     */
-    init(settings: UIUserNotificationSettings, application: UIApplication, behavior: Behavior = .merge) {
+    init(settings: UNNotificationSettings, application: UIApplication, behavior: Behavior = .merge) {
         self.settings = settings
         self.application = application
         self.behavior = behavior
@@ -82,15 +83,15 @@ struct UserNotificationCondition: OperationCondition {
 }
 
 /**
-    A private `Operation` subclass to register a `UIUserNotificationSettings`
+    A private `Operation` subclass to register a `UNNotificationSettings`
     object with a `UIApplication`, prompting the user for permission if necessary.
 */
 private class UserNotificationPermissionOperation: Operation {
-    let settings: UIUserNotificationSettings
+    let settings: UNNotificationSettings
     let application: UIApplication
     let behavior: UserNotificationCondition.Behavior
     
-    init(settings: UIUserNotificationSettings, application: UIApplication, behavior: UserNotificationCondition.Behavior) {
+    init(settings: UNNotificationSettings, application: UIApplication, behavior: UserNotificationCondition.Behavior) {
         self.settings = settings
         self.application = application
         self.behavior = behavior
@@ -104,7 +105,7 @@ private class UserNotificationPermissionOperation: Operation {
         DispatchQueue.main.async {
             let current = self.application.currentUserNotificationSettings
             
-            let settingsToRegister: UIUserNotificationSettings
+            let settingsToRegister: UNNotificationSettings
             
             switch (current, self.behavior) {
                 case (let currentSettings?, .merge):

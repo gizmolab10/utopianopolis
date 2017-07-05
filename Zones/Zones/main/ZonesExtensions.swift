@@ -55,9 +55,10 @@ public typealias ZGestureRecognizerState    = NSGestureRecognizerState
 public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 
 
-let gHighlightHeightOffset = CGFloat(-3.0)
 let        gVerticalWeight = 1.0
+let gHighlightHeightOffset = CGFloat(-3.0)
 let           zapplication = NSApplication.shared()
+var    gSettingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
 
 
 extension NSObject {
@@ -246,8 +247,8 @@ extension NSWindow {
     }
 
 
-    @IBAction func displayPreferences     (_ sender: Any?) { settingsController?.displayViewFor(id: .Preferences) }
-    @IBAction func displayHelp            (_ sender: Any?) { settingsController?.displayViewFor(id: .Help) }
+    @IBAction func displayPreferences     (_ sender: Any?) { gSettingsController?.displayViewFor(id: .Preferences) }
+    @IBAction func displayHelp            (_ sender: Any?) { gSettingsController?.displayViewFor(id: .Help) }
     @IBAction func printHere              (_ sender: Any?) { gEditingManager.printHere() }
     @IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gEditingManager.handleMenuItem(iItem) }
     @IBAction func copy              (_ iItem: ZMenuItem?) { gEditingManager.copyToPaste() }

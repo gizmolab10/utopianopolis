@@ -93,7 +93,6 @@
 		0C69C9AB1F09CD95004D026D /* NoCancelledDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAA81DB725A800A096E4 /* NoCancelledDependencies.swift */; };
 		0C69C9AE1F09CD95004D026D /* ZOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2456171DE3227900EBCCDD /* ZOperationsManager.swift */; };
 		0C69C9AF1F09CD95004D026D /* OperationErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAAA1DB725A800A096E4 /* OperationErrors.swift */; };
-		0C69C9B01F09CD95004D026D /* UserNotificationCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB01DB725A800A096E4 /* UserNotificationCondition.swift */; };
 		0C69C9B21F09CD95004D026D /* ZCloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C371C561DE259700030253D /* ZCloudManager.swift */; };
 		0C69C9B31F09CD95004D026D /* ZReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C19EFA41E3EC07000913B1E /* ZReachability.swift */; };
 		0C69C9B41F09CD95004D026D /* LocationOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EABF1DB725A800A096E4 /* LocationOperation.swift */; };
@@ -105,7 +104,6 @@
 		0C69C9BB1F09CD95004D026D /* ZConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC8F8551DC2CEF600E25985 /* ZConstants.swift */; };
 		0C69C9BC1F09CD95004D026D /* OperationQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAC41DB725A800A096E4 /* OperationQueue.swift */; };
 		0C69C9BD1F09CD95004D026D /* ZGCD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC8F8501DC2CECF00E25985 /* ZGCD.swift */; };
-		0C69C9BE1F09CD95004D026D /* UIUserNotifications+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB61DB725A800A096E4 /* UIUserNotifications+Operations.swift */; };
 		0C69C9BF1F09CD95004D026D /* ZSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA1C7281EA0009F006BA725 /* ZSearchResultsController.swift */; };
 		0C69C9C01F09CD95004D026D /* ZFavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3B41821EDF6F1E00E7F1C9 /* ZFavoritesManager.swift */; };
 		0C69C9C11F09CD95004D026D /* ZClosures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBD002B1D9DBC4200797F21 /* ZClosures.swift */; };
@@ -199,8 +197,6 @@
 		0CD1EADE1DB725A800A096E4 /* RemoteNotificationCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAAE1DB725A800A096E4 /* RemoteNotificationCondition.swift */; };
 		0CD1EADF1DB725A800A096E4 /* SilentCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAAF1DB725A800A096E4 /* SilentCondition.swift */; };
 		0CD1EAE01DB725A800A096E4 /* SilentCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAAF1DB725A800A096E4 /* SilentCondition.swift */; };
-		0CD1EAE11DB725A800A096E4 /* UserNotificationCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB01DB725A800A096E4 /* UserNotificationCondition.swift */; };
-		0CD1EAE21DB725A800A096E4 /* UserNotificationCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB01DB725A800A096E4 /* UserNotificationCondition.swift */; };
 		0CD1EAE31DB725A800A096E4 /* CKContainer+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB21DB725A800A096E4 /* CKContainer+Operations.swift */; };
 		0CD1EAE41DB725A800A096E4 /* CKContainer+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB21DB725A800A096E4 /* CKContainer+Operations.swift */; };
 		0CD1EAE51DB725A800A096E4 /* Dictionary+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB31DB725A800A096E4 /* Dictionary+Operations.swift */; };
@@ -209,8 +205,6 @@
 		0CD1EAE81DB725A800A096E4 /* NSLock+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB41DB725A800A096E4 /* NSLock+Operations.swift */; };
 		0CD1EAE91DB725A800A096E4 /* NSOperation+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB51DB725A800A096E4 /* NSOperation+Operations.swift */; };
 		0CD1EAEA1DB725A800A096E4 /* NSOperation+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB51DB725A800A096E4 /* NSOperation+Operations.swift */; };
-		0CD1EAEB1DB725A800A096E4 /* UIUserNotifications+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB61DB725A800A096E4 /* UIUserNotifications+Operations.swift */; };
-		0CD1EAEC1DB725A800A096E4 /* UIUserNotifications+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB61DB725A800A096E4 /* UIUserNotifications+Operations.swift */; };
 		0CD1EAED1DB725A800A096E4 /* BlockObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB81DB725A800A096E4 /* BlockObserver.swift */; };
 		0CD1EAEE1DB725A800A096E4 /* BlockObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB81DB725A800A096E4 /* BlockObserver.swift */; };
 		0CD1EAEF1DB725A800A096E4 /* OperationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EAB91DB725A800A096E4 /* OperationObserver.swift */; };
@@ -348,7 +342,6 @@
 		0C69C9841F09C705004D026D /* ZAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
 		0C69C9851F09C705004D026D /* ZPhoneExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZPhoneExtensions.swift; sourceTree = "<group>"; };
 		0C69C9DF1F09CD95004D026D /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C69C9E01F09CD95004D026D /* PadFocus copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PadFocus copy-Info.plist"; path = "/Users/jonathansand/GitHub/zones/Zones/PadFocus copy-Info.plist"; sourceTree = "<absolute>"; };
 		0C69C9E71F09CFF3004D026D /* ZPhoneController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZPhoneController.swift; sourceTree = "<group>"; };
 		0C69C9EA1F0AEC53004D026D /* ZGestureAndKeyRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGestureAndKeyRecognizer.swift; sourceTree = "<group>"; };
 		0C69C9EC1F0AED5E004D026D /* ZGestureAndKeyRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGestureAndKeyRecognizer.swift; sourceTree = "<group>"; };
@@ -656,7 +649,6 @@
 				0CA04B151D2ECF1A001892E5 /* Products */,
 				0C401E891D2F6B6D000B9864 /* Tests */,
 				0CA04B161D2ECF1A001892E5 /* Zones */,
-				0C69C9E01F09CD95004D026D /* PadFocus copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1220,7 +1212,6 @@
 				0C69C9AB1F09CD95004D026D /* NoCancelledDependencies.swift in Sources */,
 				0C69C9AE1F09CD95004D026D /* ZOperationsManager.swift in Sources */,
 				0C69C9AF1F09CD95004D026D /* OperationErrors.swift in Sources */,
-				0C69C9B01F09CD95004D026D /* UserNotificationCondition.swift in Sources */,
 				0C69C9B21F09CD95004D026D /* ZCloudManager.swift in Sources */,
 				0C69C9B31F09CD95004D026D /* ZReachability.swift in Sources */,
 				0C69C9B41F09CD95004D026D /* LocationOperation.swift in Sources */,
@@ -1232,7 +1223,6 @@
 				0C69C9BB1F09CD95004D026D /* ZConstants.swift in Sources */,
 				0C69C9BC1F09CD95004D026D /* OperationQueue.swift in Sources */,
 				0C69C9BD1F09CD95004D026D /* ZGCD.swift in Sources */,
-				0C69C9BE1F09CD95004D026D /* UIUserNotifications+Operations.swift in Sources */,
 				0C69C9BF1F09CD95004D026D /* ZSearchResultsController.swift in Sources */,
 				0C69C9C01F09CD95004D026D /* ZFavoritesManager.swift in Sources */,
 				0C69C9C11F09CD95004D026D /* ZClosures.swift in Sources */,
@@ -1297,7 +1287,6 @@
 				0CD1EAD21DB725A800A096E4 /* NoCancelledDependencies.swift in Sources */,
 				0C4DCD8B1EA028C0000B2210 /* ZPreferencesController.swift in Sources */,
 				0CD1EAD61DB725A800A096E4 /* OperationErrors.swift in Sources */,
-				0CD1EAE21DB725A800A096E4 /* UserNotificationCondition.swift in Sources */,
 				0C371C641DE259700030253D /* ZCloudManager.swift in Sources */,
 				0C19EFA61E3EC07000913B1E /* ZReachability.swift in Sources */,
 				0CA1C7391EA0011D006BA725 /* ZInformationController.swift in Sources */,
@@ -1311,7 +1300,6 @@
 				0C4DCD8E1EA02B06000B2210 /* ZCloudToolsController.swift in Sources */,
 				0CA1C72F1EA0009F006BA725 /* ZMainController.swift in Sources */,
 				0CC8F8541DC2CECF00E25985 /* ZGCD.swift in Sources */,
-				0CD1EAEC1DB725A800A096E4 /* UIUserNotifications+Operations.swift in Sources */,
 				0CBD002D1D9DBC4200797F21 /* ZClosures.swift in Sources */,
 				0CA1C7331EA0009F006BA725 /* ZSearchResultsController.swift in Sources */,
 				0C371C661DE259700030253D /* ZFileManager.swift in Sources */,
@@ -1393,7 +1381,6 @@
 				0CD1EAD11DB725A800A096E4 /* NoCancelledDependencies.swift in Sources */,
 				0C2456181DE3227900EBCCDD /* ZOperationsManager.swift in Sources */,
 				0CD1EAD51DB725A800A096E4 /* OperationErrors.swift in Sources */,
-				0CD1EAE11DB725A800A096E4 /* UserNotificationCondition.swift in Sources */,
 				0C371C631DE259700030253D /* ZCloudManager.swift in Sources */,
 				0C19EFA51E3EC07000913B1E /* ZReachability.swift in Sources */,
 				0CD1EAF91DB725A800A096E4 /* LocationOperation.swift in Sources */,
@@ -1405,7 +1392,6 @@
 				0CC8F8561DC2CEF600E25985 /* ZConstants.swift in Sources */,
 				0CD1EB011DB725A800A096E4 /* OperationQueue.swift in Sources */,
 				0CC8F8531DC2CECF00E25985 /* ZGCD.swift in Sources */,
-				0CD1EAEB1DB725A800A096E4 /* UIUserNotifications+Operations.swift in Sources */,
 				0CA1C7321EA0009F006BA725 /* ZSearchResultsController.swift in Sources */,
 				0C3B41831EDF6F1E00E7F1C9 /* ZFavoritesManager.swift in Sources */,
 				0CBD002C1D9DBC4200797F21 /* ZClosures.swift in Sources */,
@@ -1504,7 +1490,7 @@
 					"$(PROJECT_DIR)/PadZones/Frameworks",
 					"$(PROJECT_DIR)/Zones/Frameworks",
 				);
-				INFOPLIST_FILE = "PadFocus copy-Info.plist";
+				INFOPLIST_FILE = iFocus/main/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.ZonesID;
@@ -1533,7 +1519,7 @@
 					"$(PROJECT_DIR)/PadZones/Frameworks",
 					"$(PROJECT_DIR)/Zones/Frameworks",
 				);
-				INFOPLIST_FILE = "PadFocus copy-Info.plist";
+				INFOPLIST_FILE = iFocus/main/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.ZonesID;
