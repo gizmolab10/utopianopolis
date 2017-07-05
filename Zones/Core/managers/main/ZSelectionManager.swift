@@ -44,6 +44,17 @@ class ZSelectionManager: NSObject {
     }
 
 
+    var currentGrabsHaveChildren: Bool {
+        for grab in currentGrabs {
+            if grab.count > 0 {
+                return true
+            }
+        }
+
+        return false
+    }
+
+
     var firstGrab: Zone {
         var grabbed: Zone? = nil
 

@@ -179,9 +179,9 @@ class ZCloudManager: ZRecordsManager {
                     if  fetchError == nil && fetchedRecord != nil {
                         done(fetchedRecord)
                     } else {
-                        let created: CKRecord = CKRecord(recordType: recordType, recordID: recordID)
+                        let brandNew: CKRecord = CKRecord(recordType: recordType, recordID: recordID)
 
-                        self.database?.save(created) { (savedRecord: CKRecord?, saveError: Error?) in
+                        self.database?.save(brandNew) { (savedRecord: CKRecord?, saveError: Error?) in
                             if (saveError != nil) {
                                 done(nil)
                             } else {
@@ -435,10 +435,11 @@ class ZCloudManager: ZRecordsManager {
         } else {
             onCompletion?(-1)
 
-            var     visited                      = [Zone]()
+            typealias         ZoneBooleanClosure = (Zone, Bool) -> (Void)
+            var                          visited = [Zone]()
             var getParentOf: ZoneBooleanClosure? = nil
 
-            let recurse = { (iRecurse: Bool) in
+            let againFetchToRoot = { (iRecurse: Bool) in
                 if iRecurse {
                     self.dispatchAsyncInBackground { // prevent pileup
                         self.fetchToRoot(onCompletion) // grab more or make final call to closure
@@ -448,7 +449,7 @@ class ZCloudManager: ZRecordsManager {
 
             getParentOf = { (iZone, iRecurse) in
                 if  visited.contains(iZone) || iZone.isRoot || iZone.isRootOfFavorites || iZone.hasCompleteAncestorPath() {
-                    recurse(iRecurse)
+                    againFetchToRoot(iRecurse)
                 } else {
                     iZone.needParent()
 
@@ -461,7 +462,7 @@ class ZCloudManager: ZRecordsManager {
                             } else {
                                 self.rootZone = iZone   // got root
 
-                                recurse(iRecurse)
+                                againFetchToRoot(iRecurse)
                             }
                         }
                     }

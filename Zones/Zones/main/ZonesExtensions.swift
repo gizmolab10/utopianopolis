@@ -210,38 +210,47 @@ extension NSWindow {
 
     override open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
         enum ZMenuType: Int {
-            case Grab     = 1
-            case Paste    = 2
-            case Undo     = 3
-            case Redo     = 4
-            case All      = 5
-            case Zone     = 6
-            case Multiple = 7
+            case UseGrabs  = 1
+            case Paste     = 2
+            case Undo      = 3
+            case Redo      = 4
+            case SelectAll = 5
+            case Always    = 6
+            case Multiple  = 7
+            case Copy      = 8
+            case Children  = 9
         }
 
         let  edit = gEditingManager.isEditing
-        var valid = !edit
         let   tag = menuItem.tag
+        var valid = !edit
 
-        if  tag <= 7, tag > 0, let type = ZMenuType(rawValue: tag) {
+        if  tag <= 9, tag > 0, let type = ZMenuType(rawValue: tag) {
             if edit {
-                valid = [.All, .Undo, .Redo, .Zone].contains(type)
+                valid = [.Undo, .Redo, .Copy, .Always, .SelectAll].contains(type)
             } else {
-                let paste = gSelectionManager.pasteableZones.count
-                let count = gSelectionManager.currentGrabs  .count
+                let     s = gSelectionManager
+                let paste = s.pasteableZones.count
+                let grabs = s.currentGrabs  .count
                 let  undo = gEditingManager.undoManager
 
                 switch type {
-                case .Zone:     valid = true
                 case .Paste:    valid = paste > 0
-                case .Grab:     valid = count > 0
-                case .Multiple: valid = count > 1
+                case .UseGrabs: valid = grabs > 0
+                case .Multiple: valid = grabs > 1
+                case .Children: valid = grabs > 1 || s.currentGrabsHaveChildren
                 case .Undo:     valid = undo.canUndo
                 case .Redo:     valid = undo.canRedo
+                case .Always:   valid = true
                 default:        valid = false
                 }
             }
         }
+
+        var         title = menuItem.title
+        if !valid { title = "< \(title) >" }
+
+        rawColumnarReport("   \(tag)", title)
 
         return valid
     }
