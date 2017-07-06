@@ -78,8 +78,8 @@ class ZEditingManager: NSObject {
                 case "r":         reverse()
                 case "p":         printHere()
                 case "b":         createBookmark()
+                case ";":         doFavorites(true,    false,    isCommand)
                 case "'":         doFavorites(isShift, isOption, isCommand)
-                case "\"":        doFavorites(true,    isOption, isCommand)
                 case ",", ".":    gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
                 case "/", "?":    onZone(gSelectionManager.firstGrab, toggleFavorite: hasFlags)
                 case "-":         addSibling  (with: "-------------------------") { iChild in iChild.grab() }
