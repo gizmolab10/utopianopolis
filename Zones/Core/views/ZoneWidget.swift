@@ -120,6 +120,9 @@ class ZoneWidget: ZView {
                 }
             }
         }
+        #if os(iOS)
+            backgroundColor = gClearColor
+        #endif
 
         gWidgetsManager.registerWidget(self)
         addTextView()

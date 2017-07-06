@@ -72,7 +72,7 @@ var  gTextCapturing = false
 var gShowsSearching = false
 var       gFileMode = ZFileMode.cloud
 var       gWorkMode = ZWorkMode.editMode
-
+let     gClearColor = ZColor(white: 1.0, alpha: 0.0)
 
 var             gDotWidth:               Double { return gDotHeight * 0.75 }
 var            gDotHeight:               Double { return Double(gGenericOffset.height / 2.5 + 13.0) }

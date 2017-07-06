@@ -73,8 +73,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         delegate               = self
         isBordered             = false
         textAlignment          = .left
-        backgroundColor        = ZColor.clear
-        zlayer.backgroundColor = ZColor.clear.cgColor
+        backgroundColor        = gClearColor
+        zlayer.backgroundColor = gClearColor.cgColor
 
         #if os(iOS)
             autocapitalizationType = .none

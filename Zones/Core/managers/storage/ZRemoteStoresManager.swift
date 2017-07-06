@@ -80,7 +80,34 @@ class ZRemoteStoresManager: NSObject {
         default:        return nil
         }
     }
-    
+
+
+    func authenticate(_ onCompletion: AnyClosure?) {
+        container.accountStatus { (iStatus, iError) in
+            switch iStatus {
+            case .available: onCompletion?(0)
+            default:         onCompletion?(iError)
+            }
+        }
+
+//        [[CKContainer defaultContainer] accountStatusWithCompletionHandler:^(CKAccountStatus accountStatus, NSError *error) {
+//            if (accountStatus == CKAccountStatusNoAccount) {
+//            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Sign in to iCloud"
+//            message:@"Sign in to your iCloud account to write records. On the Home screen, launch Settings, tap iCloud, and enter your Apple ID. Turn iCloud Drive on. If you don't have an iCloud account, tap Create a new Apple ID."
+//            preferredStyle:UIAlertControllerStyleAlert];
+//            [alert addAction:[UIAlertAction actionWithTitle:@"Okay"
+//            style:UIAlertActionStyleCancel
+//            handler:nil]];
+//            [self presentViewController:alert animated:YES completion:nil];
+//            }
+//            else {
+//            // Insert your just-in-time schema code here
+//            }
+//            }]
+
+
+    }
+
 
     func establishRoot(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         switch storageMode {

@@ -36,7 +36,7 @@ class ZDragDrawView: ZView {
         }
 
         if  let rect = rubberbandRect {
-            ZColor.clear.setFill()
+            gClearColor.setFill()
             gDragTargetsColor.lighter(by: 2.0).setStroke()
             ZBezierPath(rect: rect).stroke()
         }

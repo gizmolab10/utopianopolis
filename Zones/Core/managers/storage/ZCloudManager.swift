@@ -430,7 +430,7 @@ class ZCloudManager: ZRecordsManager {
         let        requests = hasRecords(for: [.needsRoot])
         let hasCompletePath = here.hasCompleteAncestorPath()
 
-        if  rootZone != nil && hasCompletePath && !requests {
+        if  (rootZone != nil && hasCompletePath && !requests) || here.isTemporary {
             onCompletion?(0)
         } else {
             onCompletion?(-1)

@@ -19,6 +19,7 @@ enum ZTraverseStatus: Int {
 
 
 typealias Closure                 = ()                                -> (Void)
+typealias AnyClosure              = (Any?)                            -> (Void)
 typealias ZoneClosure             = (Zone)                            -> (Void)
 typealias ViewClosure             = (ZView)                           -> (Void)
 typealias TimerClosure            = (Timer)                           -> (ObjCBool)

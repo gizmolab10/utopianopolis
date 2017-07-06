@@ -271,6 +271,82 @@ class ZRecordsManager: NSObject {
     }
 
 
+    // MARK:- debug
+    // MARK:-
+
+
+    func applyTo(_ array: [NSObject]?, closure: ObjectToStringClosure) -> String {
+        var separator = ""
+        var    string = ""
+
+        if array != nil {
+            for object in array! {
+                let message = closure(object)
+
+                string.append("\(separator)\(message)")
+
+                if  separator.length == 0 {
+                    separator.appendSpacesToLength(gLogTabStop)
+
+                    separator = "\n\(separator)"
+                }
+            }
+        }
+
+        return string
+    }
+
+
+    func stringForZones(_ zones: [Zone]?) -> String {
+        return applyTo(zones)  { object -> (String) in
+            if let zone = object as? Zone {
+                return zone.decoratedName
+            }
+
+            return "---"
+        }
+    }
+
+
+    func stringForRecords(_ records: [CKRecord]?) -> String {
+        return applyTo(records)  { object -> (String) in
+            if  let record = object as? CKRecord {
+                let   zone = self.zoneForRecord(record)
+
+                return zone.decoratedName
+            }
+
+            return "---"
+        }
+    }
+
+
+    func stringForReferences(_ references: [CKReference]?, in storageMode: ZStorageMode) -> String {
+        return applyTo(references)  { object -> (String) in
+            if let reference = object as? CKReference, let zone = gRemoteStoresManager.recordsManagerFor(storageMode).zoneForReference(reference) {
+                return zone.decoratedName
+            }
+
+            return "---"
+        }
+    }
+
+
+    func stringForRecordIDs(_ recordIDs: [CKRecordID]?, in storageMode: ZStorageMode) -> String {
+        return applyTo(recordIDs)  { object -> (String) in
+            if  let recordID = object as? CKRecordID, let record = gRemoteStoresManager.recordsManagerFor(storageMode).recordForRecordID(recordID) {
+                if  let    zone = record as? Zone {
+                    return zone.decoratedName
+                } else if let name = record.record.object(forKey: zoneNameKey) as? String {
+                    return    name
+                }
+            }
+            
+            return "---"
+        }
+    }
+
+
     // MARK:- zones registry
     // MARK:-
 
@@ -355,7 +431,7 @@ class ZRecordsManager: NSObject {
 
         if  zone == nil {
             zone  = Zone(record: record, storageMode: storageMode)
-        } else if !(zone?.isDeleted ?? false) {
+        } else if !zone!.isDeleted {
             zone!.record = record
         }
 

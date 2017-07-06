@@ -20,6 +20,7 @@ class ZRecord: NSObject {
     var         isRoot: Bool            { return record != nil && record.recordID.recordName == rootNameKey }
     var recordsManager: ZRecordsManager { return gRemoteStoresManager.recordsManagerFor(storageMode!) }
     var   cloudManager: ZCloudManager?  { return recordsManager as? ZCloudManager }
+    var    isTemporary = true
 
 
     var record: CKRecord! {
@@ -28,8 +29,8 @@ class ZRecord: NSObject {
         }
 
         set {
-            if _record != newValue {
-                _record = newValue
+            if  _record != newValue {
+                _record  = newValue
 
                 register()
                 updateClassProperties()

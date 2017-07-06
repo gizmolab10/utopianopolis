@@ -45,7 +45,11 @@
         <scene sceneID="8oD-2G-oNS">
             <objects>
                 <viewController id="7pB-kr-13K" customClass="ZEditorController" customModule="iFocus" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="ns0-YT-rU2" customClass="ZdragDrawView">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="rHb-UV-oCe"/>
+                        <viewControllerLayoutGuide type="bottom" id="Zz1-7K-jcT"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="ns0-YT-rU2" customClass="ZDragDrawView" customModule="iFocus" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

@@ -48,19 +48,18 @@ class ZRecursionLogic: NSObject {
 
 
     func propagateNeeds(to iChild: Zone, _ iProgenyNeeded: [CKReference]?) {
-        if type != nil {
-            let    update = !iChild.isUpToDate
-            let unfetched =  iChild.count != iChild.fetchableCount
-            let    reveal =  iChild.canRevealChildren && (iChild.count == 0 || unfetched)
-            let    expand =  reveal && targetLevel != nil && (targetLevel! < 0 || targetLevel! > iChild.level)
+        if  let course =  type {
+            let update = !iChild.isUpToDate
+            let reveal =  iChild.canRevealChildren && (iChild.count == 0 || iChild.hasMissingChildren)
+            let expand =  reveal && targetLevel != nil && (targetLevel! < 0 || targetLevel! > iChild.level)
 
-            switch type! {
+            switch course {
             case .expand:  if expand { iChild.needChildren() }
             case .restore: if reveal { iChild.needChildren() }
             case .update:  if update { iChild.needProgeny() }
             case .deep:                propagateDeeply(to: iChild)
             }
-        } else if iChild.canRevealChildren, let parentRef = iChild.parent, let progenyNeeded = iProgenyNeeded, progenyNeeded.count > 0, progenyNeeded.contains(parentRef) {
+        } else if iChild.canRevealChildren, let progenyNeeded = iProgenyNeeded, progenyNeeded.count > 0, let parentReference = iChild.parent, progenyNeeded.contains(parentReference) {
             iChild.needProgeny()
         }
     }

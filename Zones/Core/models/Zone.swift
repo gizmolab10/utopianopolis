@@ -45,6 +45,8 @@ class Zone : ZRecord {
     var               count:          Int { return children.count }
     var              widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var       unwrappedName:       String { return zoneName ?? "empty" }
+    var       decoratedName:       String { return "\(unwrappedName)\(decoration)" }
+    var          decoration:       String { return !isDeleted ? !isBookmark ? "" : !isFavorite ? " (B)" : " (F)" : " (D)" }
     var    grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
     var   canRevealChildren:         Bool { return  hasChildren &&   showChildren }
