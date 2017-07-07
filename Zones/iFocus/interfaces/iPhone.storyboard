@@ -21,19 +21,31 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yzZ-hG-rzt">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yzZ-hG-rzt" userLabel="Editor">
+                                <rect key="frame" x="0.0" y="44" width="375" height="623"/>
                                 <connections>
                                     <segue destination="7pB-kr-13K" kind="embed" id="0ec-k1-kk3"/>
+                                </connections>
+                            </containerView>
+                            <containerView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="YJm-q4-CkJ" userLabel="Favorites">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="q1j-Jl-lA5"/>
+                                </constraints>
+                                <connections>
+                                    <segue destination="m8X-mS-exf" kind="embed" id="BR0-v5-03X"/>
                                 </connections>
                             </containerView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="yzZ-hG-rzt" firstAttribute="top" secondItem="ddY-8z-bXX" secondAttribute="bottom" id="12Q-Ns-1MD"/>
+                            <constraint firstItem="YJm-q4-CkJ" firstAttribute="top" secondItem="ECE-O8-JGv" secondAttribute="top" id="1F2-U8-tHx"/>
                             <constraint firstItem="yzZ-hG-rzt" firstAttribute="leading" secondItem="ECE-O8-JGv" secondAttribute="leading" id="IQi-cp-quq"/>
+                            <constraint firstItem="yzZ-hG-rzt" firstAttribute="top" secondItem="YJm-q4-CkJ" secondAttribute="bottom" id="P2j-Km-dUr"/>
                             <constraint firstAttribute="trailing" secondItem="yzZ-hG-rzt" secondAttribute="trailing" id="RXM-Ta-kqC"/>
                             <constraint firstItem="DKm-Wo-lL1" firstAttribute="top" secondItem="yzZ-hG-rzt" secondAttribute="bottom" id="W90-bH-Zoc"/>
+                            <constraint firstItem="YJm-q4-CkJ" firstAttribute="leading" secondItem="ECE-O8-JGv" secondAttribute="leading" id="ioN-o1-l9X"/>
+                            <constraint firstAttribute="trailing" secondItem="YJm-q4-CkJ" secondAttribute="trailing" id="wXD-88-9zZ"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -49,39 +61,15 @@
                         <viewControllerLayoutGuide type="top" id="rHb-UV-oCe"/>
                         <viewControllerLayoutGuide type="bottom" id="Zz1-7K-jcT"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="ns0-YT-rU2">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                    <view key="view" contentMode="scaleToFill" id="ns0-YT-rU2" customClass="ZDragDrawView" customModule="iFocus" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="63s-kV-mrh" customClass="ZDragDrawView" customModule="iFocus" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="44" width="375" height="603"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </view>
-                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YJm-q4-CkJ">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="q1j-Jl-lA5"/>
-                                </constraints>
-                                <connections>
-                                    <segue destination="m8X-mS-exf" kind="embed" id="BR0-v5-03X"/>
-                                </connections>
-                            </containerView>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="YJm-q4-CkJ" secondAttribute="trailing" id="Cxd-la-eJN"/>
-                            <constraint firstAttribute="trailing" secondItem="63s-kV-mrh" secondAttribute="trailing" id="FAv-Q6-YXO"/>
-                            <constraint firstItem="YJm-q4-CkJ" firstAttribute="leading" secondItem="ns0-YT-rU2" secondAttribute="leading" id="SZF-tO-6xu"/>
-                            <constraint firstItem="Zz1-7K-jcT" firstAttribute="top" secondItem="63s-kV-mrh" secondAttribute="bottom" id="dAp-wj-Bqn"/>
-                            <constraint firstItem="63s-kV-mrh" firstAttribute="leading" secondItem="ns0-YT-rU2" secondAttribute="leading" id="huP-io-hez"/>
-                            <constraint firstItem="YJm-q4-CkJ" firstAttribute="top" secondItem="rHb-UV-oCe" secondAttribute="bottom" id="npe-rg-g3u"/>
-                            <constraint firstItem="63s-kV-mrh" firstAttribute="top" secondItem="YJm-q4-CkJ" secondAttribute="bottom" id="v1a-oQ-7AJ"/>
-                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BfO-zQ-2be" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1112.8" y="-27.436281859070466"/>
+            <point key="canvasLocation" x="1255" y="26"/>
         </scene>
         <!--Favorites Controller-->
         <scene sceneID="rc8-IK-x8M">
@@ -91,15 +79,12 @@
                         <viewControllerLayoutGuide type="top" id="k2O-nk-unp"/>
                         <viewControllerLayoutGuide type="bottom" id="47p-6o-pC1"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="0qm-wd-eTj" customClass="UIScrollView">
+                    <view key="view" contentMode="scaleToFill" semanticContentAttribute="spatial" id="0qm-wd-eTj" customClass="UIScrollView">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Aey-jd-vCx">
-                                <rect key="frame" x="8" y="0.0" width="359" height="45"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="a6S-8E-28R"/>
-                                </constraints>
+                                <rect key="frame" x="-1" y="-1" width="377" height="46"/>
                                 <segments>
                                     <segment title="First"/>
                                     <segment title="Second"/>
@@ -111,9 +96,10 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="Aey-jd-vCx" secondAttribute="trailing" constant="8" id="8dj-qe-zmf"/>
-                            <constraint firstItem="Aey-jd-vCx" firstAttribute="centerY" secondItem="0qm-wd-eTj" secondAttribute="centerY" id="FBg-aF-pIs"/>
-                            <constraint firstItem="Aey-jd-vCx" firstAttribute="leading" secondItem="0qm-wd-eTj" secondAttribute="leading" constant="8" id="Fhh-m9-Zii"/>
+                            <constraint firstAttribute="trailing" secondItem="Aey-jd-vCx" secondAttribute="trailing" constant="-1" id="8dj-qe-zmf"/>
+                            <constraint firstItem="Aey-jd-vCx" firstAttribute="leading" secondItem="0qm-wd-eTj" secondAttribute="leading" constant="-1" id="Fhh-m9-Zii"/>
+                            <constraint firstItem="47p-6o-pC1" firstAttribute="top" secondItem="Aey-jd-vCx" secondAttribute="bottom" id="ptF-9S-HN8"/>
+                            <constraint firstItem="Aey-jd-vCx" firstAttribute="top" secondItem="k2O-nk-unp" secondAttribute="bottom" constant="-1" id="zfn-O6-WOD"/>
                         </constraints>
                     </view>
                     <connections>
@@ -122,7 +108,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cop-g2-9aX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1968.8" y="-299.55022488755623"/>
+            <point key="canvasLocation" x="1255" y="-328"/>
         </scene>
     </scenes>
 </document>

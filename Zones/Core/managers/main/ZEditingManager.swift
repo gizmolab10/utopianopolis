@@ -594,7 +594,7 @@ class ZEditingManager: NSObject {
 
     @discardableResult private func deleteZone(_ zone: Zone) -> Zone? {
         var grabThisZone = zone.parentZone
-        var     deleteMe = !zone.isRoot && !zone.isDeleted && grabThisZone?.record != nil
+        var     deleteMe = !zone.isRoot && grabThisZone?.record != nil
 
         if !deleteMe && zone.isBookmark, let name = zone.crossLink?.record.recordID.recordName {
             deleteMe = ![rootNameKey, favoritesRootNameKey].contains(name)
@@ -625,6 +625,10 @@ class ZEditingManager: NSObject {
 
                     grabThisZone = siblings[index]
                 }
+            }
+
+            if zone.isDeleted {
+                rawColumnarReport("double delete", zone.unwrappedName) // sometimes happens, cause undiscovered
             }
 
             zone.isDeleted = true // will be saved, ignored after next launch

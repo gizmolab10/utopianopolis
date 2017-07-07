@@ -312,10 +312,16 @@ CQ
                                             </menu>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="6ns-V4-A3k"/>
-                                        <menuItem title="Reverse" tag="9" keyEquivalent="r" id="dny-v4-Omh">
+                                        <menuItem title="Focus" tag="1" keyEquivalent="/" id="dny-v4-Omh">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="sSN-4o-D6s"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Reverse" tag="9" keyEquivalent="r" id="u6j-MS-BF2">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="iQa-Q8-Wmb"/>
                                             </connections>
                                         </menuItem>
                                     </items>

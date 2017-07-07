@@ -22,7 +22,7 @@ class ZFavoritesManager: ZCloudManager {
     let        defaultFavorites = Zone(record: nil, storageMode: .favorites)
     let    defaultModes: ZModes = [.everyone, .mine]
     var favoritesFavorite: Zone { return Zone(favoriteNamed: "favorites") }
-    var              count: Int { return rootZone!.count }
+    var              count: Int { return rootZone?.count ?? 0 }
 
 
     var rotatedEnumeration: EnumeratedSequence<Array<Zone>> {
