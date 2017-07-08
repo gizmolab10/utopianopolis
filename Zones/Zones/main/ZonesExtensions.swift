@@ -36,6 +36,7 @@ public typealias ZStackView                 = NSStackView
 public typealias ZColorWell                 = NSColorWell
 public typealias ZButtonCell                = NSButtonCell
 public typealias ZBezierPath                = NSBezierPath
+public typealias ZScrollView                = NSScrollView
 public typealias ZController                = NSViewController
 public typealias ZEventFlags                = NSEventModifierFlags
 public typealias ZSearchField               = NSSearchField

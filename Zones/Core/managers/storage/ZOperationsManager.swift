@@ -43,7 +43,7 @@ class ZOperationsManager: NSObject {
     var currentMode:   ZStorageMode? = nil
     var   currentOp:   ZOperationID = .none
     var  waitingOps = [ZOperationID : BlockOperation] ()
-    var       debug = true
+    var       debug = false
     let       queue = OperationQueue()
 
 
@@ -118,21 +118,20 @@ class ZOperationsManager: NSObject {
 
 
     private func setupAndRun(_ operationIDs: [ZOperationID], logic: ZRecursionLogic? = nil, onCompletion: @escaping Closure) {
-        if let prior = onAvailable {
-            onAvailable = {
+        if  let   prior = onAvailable {          // if already set
+            onAvailable = {                      // encapsulate it with subsequent setup for new operation identifiers
                 self.dispatchAsyncInForeground { // prevent recursion pile-up on stack
                     prior()
                     self.setupAndRun(operationIDs) { onCompletion() }
                 }
             }
         } else {
-            let identifiers   = operationIDs + [.available]
             queue.isSuspended = true
             onAvailable       = onCompletion
             let         saved = gStorageMode
             let        isMine = [.mine].contains(saved)
 
-            for operationID in identifiers {
+            for operationID in operationIDs + [.available] {
                 let                     operation = BlockOperation {
                     self               .currentOp = operationID // if hung, it happened inside this op
                     var  closure: IntegerClosure? = nil         // declare closure first, so compiler will let it recurse

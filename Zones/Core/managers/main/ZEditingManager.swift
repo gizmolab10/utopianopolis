@@ -382,7 +382,7 @@ class ZEditingManager: NSObject {
             } else {
                 zone.extendNeedForChildren(to: goal)
                 
-                gOperationsManager.children(.expand, iGoal) {
+                gOperationsManager.children(.expand, goal) {
                     apply()
                 }
             }

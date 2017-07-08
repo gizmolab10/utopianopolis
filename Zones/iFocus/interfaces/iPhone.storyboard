@@ -22,13 +22,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yzZ-hG-rzt" userLabel="Editor">
-                                <rect key="frame" x="0.0" y="44" width="375" height="623"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <connections>
                                     <segue destination="wVv-ZA-i1M" kind="embed" id="Fe9-LU-jaw"/>
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="YJm-q4-CkJ" userLabel="Favorites">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="q1j-Jl-lA5"/>
                                 </constraints>
@@ -39,11 +39,11 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="YJm-q4-CkJ" firstAttribute="top" secondItem="ECE-O8-JGv" secondAttribute="top" id="1F2-U8-tHx"/>
                             <constraint firstItem="yzZ-hG-rzt" firstAttribute="leading" secondItem="ECE-O8-JGv" secondAttribute="leading" id="IQi-cp-quq"/>
                             <constraint firstItem="yzZ-hG-rzt" firstAttribute="top" secondItem="YJm-q4-CkJ" secondAttribute="bottom" id="P2j-Km-dUr"/>
                             <constraint firstAttribute="trailing" secondItem="yzZ-hG-rzt" secondAttribute="trailing" id="RXM-Ta-kqC"/>
                             <constraint firstItem="DKm-Wo-lL1" firstAttribute="top" secondItem="yzZ-hG-rzt" secondAttribute="bottom" id="W90-bH-Zoc"/>
+                            <constraint firstItem="YJm-q4-CkJ" firstAttribute="top" secondItem="ddY-8z-bXX" secondAttribute="bottom" id="bOJ-oJ-paA"/>
                             <constraint firstItem="YJm-q4-CkJ" firstAttribute="leading" secondItem="ECE-O8-JGv" secondAttribute="leading" id="ioN-o1-l9X"/>
                             <constraint firstAttribute="trailing" secondItem="YJm-q4-CkJ" secondAttribute="trailing" id="wXD-88-9zZ"/>
                         </constraints>
@@ -62,12 +62,25 @@
                         <viewControllerLayoutGuide type="bottom" id="jqU-Hy-33R"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="idC-U9-mJR" customClass="UIScrollView">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lbQ-ID-4Qi" customClass="ZDragDrawView" customModule="iFocus" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                                <subviews>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="ort-lh-uaY">
+                                        <rect key="frame" x="87" y="201" width="200" height="200"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="200" id="ahx-dX-6G8"/>
+                                            <constraint firstAttribute="width" constant="200" id="dcU-t5-JyA"/>
+                                        </constraints>
+                                    </activityIndicatorView>
+                                </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="ort-lh-uaY" firstAttribute="centerX" secondItem="lbQ-ID-4Qi" secondAttribute="centerX" id="LL9-gl-cbL"/>
+                                    <constraint firstItem="ort-lh-uaY" firstAttribute="centerY" secondItem="lbQ-ID-4Qi" secondAttribute="centerY" id="YrX-Vx-RvU"/>
+                                </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -78,6 +91,11 @@
                             <constraint firstAttribute="bottom" secondItem="lbQ-ID-4Qi" secondAttribute="bottom" id="tl7-C6-9Er"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="dragView" destination="lbQ-ID-4Qi" id="BGo-nI-FW9"/>
+                        <outlet property="scrollView" destination="idC-U9-mJR" id="KkC-pn-aOe"/>
+                        <outlet property="spinner" destination="ort-lh-uaY" id="o2L-om-CWH"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RYN-wx-Kkr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

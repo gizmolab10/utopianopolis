@@ -80,7 +80,7 @@ var      gIsRubberbanding:                 Bool { return gEditorView!.rubberband
 var     gInsertionsFollow:                 Bool { return gInsertionMode == .follow }
 var gGrabbedBookmarkColor:               ZColor { return gBookmarkColor.darker(by: 1.5) }
 var     gEditorController:   ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
-var           gEditorView:       ZDragDrawView? { return gEditorController?.view                        as? ZDragDrawView }
+var           gEditorView:       ZDragDrawView? { return gEditorController?.dragView }
 
 
 // MARK:- persistence

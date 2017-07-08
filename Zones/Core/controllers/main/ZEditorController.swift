@@ -29,10 +29,11 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     var      rubberbandStart = CGPoint.zero
     var           hereWidget = ZoneWidget()
     let            doneState: [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
-    var             dragView:  ZDragDrawView { return view as! ZDragDrawView }
     var         clickGesture:  ZGestureRecognizer?
     var    rubberbandGesture:  ZGestureRecognizer?
     @IBOutlet var    spinner:  ZProgressIndicator?
+    @IBOutlet var   dragView:  ZDragDrawView?
+    @IBOutlet var scrollView:  ZScrollView?
 
 
     override func identifier() -> ZControllerID { return .editor }
@@ -51,12 +52,12 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         if ![.search, .found, .startup].contains(kind) {
             if gWorkMode != .editMode {
-                view.snp.removeConstraints()
+                dragView?.snp.removeConstraints()
                 hereWidget.removeFromSuperview()
             } else if !gEditingManager.isEditing {
                 var                   recursing = true
                 var specificWidget: ZoneWidget? = hereWidget
-                var        specificView: ZView? = view
+                var        specificView: ZView? = dragView
                 var         specificindex: Int? = nil
                 gTextCapturing                  = false
                 hereWidget          .widgetZone = gHere
@@ -72,7 +73,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
                 specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, visited: [])
 
-                view.applyToAllSubviews { iView in
+                dragView?.applyToAllSubviews { iView in
                     iView.setNeedsDisplay()
                 }
             }
@@ -81,10 +82,10 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
 
     func restartGestures() {
-        view.clearGestures()
+        dragView?.clearGestures()
 
-        rubberbandGesture = view.createDragGestureRecognizer (self, action: #selector(ZEditorController.rubberbandEvent))
-        clickGesture      = view.createPointGestureRecognizer(self, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
+        rubberbandGesture = dragView?.createDragGestureRecognizer (self, action: #selector(ZEditorController.rubberbandEvent))
+        clickGesture      = dragView?.createPointGestureRecognizer(self, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
         isDragging        = false
     }
 
@@ -103,11 +104,11 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
         gShowsSearching    = false
 
         if  let    gesture = iGesture {
-            let   location = gesture.location (in: view)
+            let   location = gesture.location(in: dragView)
             var   onWidget = false
 
             if  let widget = gEditingManager.editedTextWidget {
-                let   rect = widget.convert(widget.bounds, to: view)
+                let   rect = widget.convert(widget.bounds, to: dragView)
                 onWidget   = rect.contains(location)
             }
 
@@ -144,7 +145,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
         ///////////////////////////////////
 
         if  let  gesture = iGesture {
-            let location = gesture.location (in: view)
+            let location = gesture.location(in: dragView)
             let    state = gesture.state
 
             if isTextEditing(at: location) {
@@ -228,7 +229,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
     func dragEvent(_ iGesture: ZGestureRecognizer?) -> Bool {
         let                 s = gSelectionManager
 
-        if  let      location = iGesture?.location (in: view),
+        if  let      location = iGesture?.location(in: dragView),
             let   dropNearest = hereWidget.widgetNearestTo(location) {
 
             let   draggedZone = s.rootMostMoveable
@@ -260,7 +261,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
             prior?           .displayForDrag() // erase  child lines
             dropZone?.widget?.displayForDrag() // redraw child lines
-            view            .setNeedsDisplay() // redraw drag (line and dot)
+            dragView?       .setNeedsDisplay() // redraw drag (line and dot)
 
             columnarReport(relation, dropZone?.unwrappedName)
 
@@ -298,17 +299,17 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
     func rubberbandUpdate(_ rect: CGRect?) {
         if  rect == nil {
-            dragView.rubberbandRect = CGRect.zero
+            dragView?.rubberbandRect = CGRect.zero
 
             restartGestures()
         } else {
-            dragView.rubberbandRect = rect
+            dragView?.rubberbandRect = rect
 
             gSelectionManager.deselectGrabs(retaining: rubberbandPreGrabs)
 
             for widget in gWidgetsManager.widgets.values {
                 if  let    hitRect = widget.hitRect {
-                    let widgetRect = widget.convert(hitRect, to: view)
+                    let widgetRect = widget.convert(hitRect, to: dragView)
 
                     if  widgetRect.intersects(rect!) {
                         widget.widgetZone.addToGrab()
@@ -320,7 +321,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
         }
 
         signalFor(nil, regarding: .preferences)
-        view.setNeedsDisplay()
+        dragView?.setNeedsDisplay()
     }
 
 
@@ -330,12 +331,12 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
         gHere.traverseProgeny { iZone -> ZTraverseStatus in
             if  let       widget = iZone.widget {
                 var         rect = widget.outerHitRect
-                rect             = widget.convert(rect, to: view)
+                rect             = widget.convert(rect, to: dragView)
 
                 if rect.contains(location) {
                     let hits: DotToBooleanClosure = { (iDot: ZoneDot) -> Bool in
                         rect     = iDot.bounds
-                        rect     = iDot.convert(rect, to: self.view)
+                        rect     = iDot.convert(rect, to: self.dragView)
                         let bang = rect.contains(location)
 
                         if bang {
@@ -362,7 +363,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
         let e = gEditingManager
 
         if  e.isEditing, let textWidget = e.editedTextWidget {
-            let rect = textWidget.convert(textWidget.bounds, to: view)
+            let rect = textWidget.convert(textWidget.bounds, to: dragView)
 
             return rect.contains(location)
         }
@@ -383,8 +384,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
         s   .dragRelation = nil
         s      .dragPoint = nil
 
-        dragView.setNeedsDisplay()
-        dot?    .setNeedsDisplay()
+        dragView?.setNeedsDisplay()
+        dot?     .setNeedsDisplay()
     }
 
 
@@ -393,7 +394,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate {
 
         if  iView     != nil {
             let margin = CGFloat(5.0)
-            let  point = view.convert(iPoint, to: iView)
+            let  point = dragView!.convert(iPoint, to: iView)
             let   rect = iView!.bounds
             let      y = point.y
 

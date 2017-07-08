@@ -41,13 +41,13 @@ class ZCloudManager: ZRecordsManager {
 
 
     func create(_ onCompletion: IntegerClosure?) {
-        let needSaving = pullRecordsWithMatchingStates([.needsCreate])
-        let      count = needSaving.count
+        let needCreating = pullRecordsWithMatchingStates([.needsCreate])
+        let        count = needCreating.count
 
         onCompletion?(count)
 
-        if  count > 0, let operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
-            operation .recordsToSave = needSaving
+        if  count > 0, let  operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
+            operation  .recordsToSave = needCreating
             operation.completionBlock = {
                 self.create(onCompletion)
             }

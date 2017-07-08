@@ -189,7 +189,7 @@ class ZoneWidget: ZView {
 
             make  .width.equalTo(width)
             make.centerY.equalTo(self).offset(-verticalTextOffset)
-            make   .left.equalTo(self).offset(gGenericOffset.width)
+            make   .left.equalTo(self).offset(gGenericOffset.width + 4.0)
             make  .right.lessThanOrEqualTo(self).offset(-29.0)
             make .height.lessThanOrEqualTo(self).offset(-gGenericOffset.height)
         }
@@ -204,7 +204,7 @@ class ZoneWidget: ZView {
         dragDot.innerDot?.snp.removeConstraints()
         dragDot.setupForWidget(self, asToggle: false)
         dragDot.innerDot?.snp.makeConstraints { (make: ConstraintMaker) in
-            make.right.equalTo(textWidget.snp.left)
+            make.right.equalTo(textWidget.snp.left).offset(-4.0)
             make.centerY.equalTo(textWidget).offset(verticalTextOffset)
         }
 
@@ -450,8 +450,8 @@ class ZoneWidget: ZView {
         let         delta = gGenericOffset.height / 3.0
         let           dot = toggleDot.innerDot
         let      dotDelta = dot?.isHiddenToggleDot ?? false ? dot!.bounds.size.width + 3.0 : CGFloat(0.0)
-        var          rect = textWidget.frame.insetBy(dx: -14.0 - delta, dy: -0.5 - delta)
-        rect.size .width += 1.5 + (delta * 0.7) - dotDelta
+        var          rect = textWidget.frame.insetBy(dx: -18.0 - delta, dy: -0.5 - delta)
+        rect.size .width += -0.5 + (delta * 0.7) - dotDelta
         rect.size.height += gHighlightHeightOffset - 0.5 + delta / 9.5
         let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
         let         color = widgetZone.isBookmark || widgetZone.isRootOfFavorites ? gBookmarkColor : widgetZone.color
