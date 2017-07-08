@@ -15,6 +15,26 @@ class ZFavoritesController: ZGenericController {
 
 
     @IBOutlet var favoritesSelector: UISegmentedControl?
+    @IBOutlet var        scrollView: UIScrollView?
+
+
+    var selectedRect: CGRect {
+        if  let      selector = favoritesSelector {
+            let selectedIndex = selector.selectedSegmentIndex
+            let         width = selector.widthForSegment(at: selectedIndex)
+            var             x = CGFloat(0.0)
+
+            if selectedIndex > 0 {
+                for index in 0 ... selectedIndex - 1 {
+                    x            += selector.widthForSegment(at: index)
+                }
+            }
+
+            return CGRect(x: x, y: 0.0, width: width, height: 44.0)
+        }
+
+        return CGRect.zero
+    }
 
 
     override func identifier() -> ZControllerID { return .favorites }
@@ -31,24 +51,28 @@ class ZFavoritesController: ZGenericController {
 
 
     func updateSelector() {
-        favoritesSelector?.removeAllSegments()
+        if  let selector = favoritesSelector {
+            selector.removeAllSegments()
 
-        for index in 0 ... gFavoritesManager.count {
-            let title = gFavoritesManager.zoneAtIndex(index - 1)?.zoneName ?? "ACK!"
-            let width = title.widthForFont(UIFont.systemFont(ofSize: 14.0)) + 5.0
+            for index in 0 ... gFavoritesManager.count {
+                let title = gFavoritesManager.zoneAtIndex(index - 1)?.zoneName ?? "ACK!"
+                let width = title.widthForFont(UIFont.systemFont(ofSize: 13.0)) + 10.0
 
-            favoritesSelector?.insertSegment(withTitle: title, at: index, animated: false)
-            favoritesSelector?.setWidth(width, forSegmentAt: index)
+                selector.insertSegment(withTitle: title, at: index, animated: false)
+                selector.setWidth(width, forSegmentAt: index)
+            }
+
+            selector.selectedSegmentIndex = gFavoritesManager.favoritesIndex + 1
+
+            scrollView?.scrollRectToVisible(selectedRect, animated: false)
         }
-
-        favoritesSelector?.selectedSegmentIndex = gFavoritesManager.favoritesIndex + 1
     }
 
 
     @IBAction func selectorAction(_ iControl: UISegmentedControl) {
         gFavoritesManager.favoritesIndex = iControl.selectedSegment - 1
         gFavoritesManager.refocus {
-            self.signalFor(nil, regarding: .redraw)
+            self.redrawAndSync()
         }
     }
 
