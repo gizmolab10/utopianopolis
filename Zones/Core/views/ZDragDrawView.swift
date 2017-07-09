@@ -16,10 +16,11 @@ import SnapKit
 #endif
 
 
-class ZDragDrawView: ZView {
+class ZDragDrawView: ZView, ZGestureRecognizerDelegate {
 
 
-    var rubberbandRect: CGRect?
+    var       rubberbandRect: CGRect?
+    @IBOutlet var controller: ZEditorController?
 
 
     override func draw(_ dirtyRect: CGRect) {
@@ -40,5 +41,12 @@ class ZDragDrawView: ZView {
             gDragTargetsColor.lighter(by: 2.0).setStroke()
             ZBezierPath(rect: rect).stroke()
         }
+    }
+
+
+    func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
+        let e = controller!
+
+        return gestureRecognizer == e.clickGesture && otherGestureRecognizer == e.rubberbandGesture
     }
 }

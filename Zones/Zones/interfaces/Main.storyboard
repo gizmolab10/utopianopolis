@@ -374,33 +374,34 @@ CQ
             </objects>
             <point key="canvasLocation" x="194.5" y="139.5"/>
         </scene>
-        <!--Editor Controller-->
+        <!--Editor-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" customClass="ZEditorController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="XfG-lQ-9wD" userLabel="Editor" customClass="ZEditorController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl" customClass="NSScrollView">
                         <rect key="frame" x="0.0" y="0.0" width="396" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="RHr-ra-wX2" customClass="ZDragDrawView" customModule="Focus" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="396" height="596"/>
-                                <subviews>
-                                    <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
-                                        <rect key="frame" x="98" y="198" width="200" height="200"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="200" id="bAV-En-6Wv"/>
-                                            <constraint firstAttribute="width" constant="200" id="vJp-G5-N5A"/>
-                                        </constraints>
-                                    </progressIndicator>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="uBD-4n-5KN" firstAttribute="centerX" secondItem="RHr-ra-wX2" secondAttribute="centerX" id="9tB-mb-NJA"/>
-                                    <constraint firstItem="uBD-4n-5KN" firstAttribute="centerY" secondItem="RHr-ra-wX2" secondAttribute="centerY" id="iK5-Sc-hQs"/>
-                                </constraints>
+                                <connections>
+                                    <outlet property="controller" destination="XfG-lQ-9wD" id="0cn-dX-oXg"/>
+                                </connections>
                             </customView>
+                            <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
+                                <rect key="frame" x="98" y="198" width="200" height="200"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="bAV-En-6Wv"/>
+                                    <constraint firstAttribute="width" constant="200" id="vJp-G5-N5A"/>
+                                </constraints>
+                            </progressIndicator>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="RHr-ra-wX2" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="31b-QZ-9HC"/>
+                            <constraint firstItem="uBD-4n-5KN" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="3Sj-vf-dk0"/>
+                            <constraint firstItem="RHr-ra-wX2" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="KhB-u8-zmH"/>
                             <constraint firstAttribute="bottom" secondItem="RHr-ra-wX2" secondAttribute="bottom" id="Nln-9H-XJK"/>
+                            <constraint firstItem="uBD-4n-5KN" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="YQv-Nu-4eA"/>
                             <constraint firstItem="RHr-ra-wX2" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="aEZ-y2-Ovy"/>
                             <constraint firstItem="RHr-ra-wX2" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="ac4-LY-Pqd"/>
                             <constraint firstAttribute="trailing" secondItem="RHr-ra-wX2" secondAttribute="trailing" id="hKf-kL-Qmt"/>
@@ -408,6 +409,9 @@ CQ
                     </view>
                     <connections>
                         <outlet property="dragView" destination="RHr-ra-wX2" id="EHv-Zm-Ysf"/>
+                        <outlet property="scrollView" destination="m2S-Jp-Qdl" id="NFM-bZ-tpo"/>
+                        <outlet property="scrollX" destination="31b-QZ-9HC" id="dCg-bk-3WR"/>
+                        <outlet property="scrollY" destination="KhB-u8-zmH" id="728-ZW-txt"/>
                         <outlet property="spinner" destination="uBD-4n-5KN" id="l76-tc-ycD"/>
                     </connections>
                 </viewController>

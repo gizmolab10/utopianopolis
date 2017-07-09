@@ -41,6 +41,7 @@ public typealias ZEventFlags                = UIKeyModifierFlags
 public typealias ZBezierPath                = UIBezierPath
 public typealias ZSearchField               = UISearchBar
 public typealias ZApplication               = UIApplication
+public typealias ZScrollDelegate            = UIScrollViewDelegate
 public typealias ZSegmentedControl          = UISegmentedControl
 public typealias ZGestureRecognizer         = UIGestureRecognizer
 public typealias ZProgressIndicator         = UIActivityIndicatorView
@@ -51,6 +52,7 @@ public typealias ZTableViewDataSource       = UITableViewDataSource
 public typealias ZApplicationDelegate       = UIApplicationDelegate
 public typealias ZPanGestureRecognizer      = UIPanGestureRecognizer
 public typealias ZClickGestureRecognizer    = UITapGestureRecognizer
+public typealias ZSwipeGestureRecognizer    = UISwipeGestureRecognizer
 public typealias ZGestureRecognizerState    = UIGestureRecognizerState
 public typealias ZGestureRecognizerDelegate = UIGestureRecognizerDelegate
 
@@ -159,6 +161,17 @@ extension UIView {
     func display() {}
 
 
+    @discardableResult func createSwipeGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, direction: UISwipeGestureRecognizerDirection) -> ZKeySwipeGestureRecognizer {
+        let       gesture = ZKeySwipeGestureRecognizer(target: target, action: action)
+        gesture .delegate = target
+        gesture.direction = direction
+
+        addGestureRecognizer(gesture)
+
+        return gesture
+    }
+    
+
     @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeyPanGestureRecognizer {
         let      gesture = ZKeyPanGestureRecognizer(target: target, action: action)
         gesture.delegate = target
@@ -180,6 +193,16 @@ extension UIView {
         addGestureRecognizer(gesture)
 
         return gesture
+    }
+
+
+    func restartGestures(handledBy e: ZEditorController) {
+        clearGestures()
+
+        // e.rubberbandGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.rubberbandEvent))
+        e.swipeGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController.swipeEvent), direction: .left)
+        e.clickGesture = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
+        e.isDragging   = false
     }
 }
 

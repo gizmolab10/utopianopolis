@@ -62,6 +62,9 @@ let           zapplication = NSApplication.shared()
 var    gSettingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
 
 
+protocol ZScrollDelegate : NSObjectProtocol {}
+
+
 extension NSObject {
     func assignAsFirstResponder(_ responder: NSResponder?) {
         ZoneWindow.window?.makeFirstResponder(responder)
@@ -93,11 +96,6 @@ extension String {
 }
 
 
-extension NSEvent {
-    var key: String { return input.character(at: 0) }
-}
-
-
 extension NSApplication {
     func clearBadge() {
         dockTile.badgeLabel = ""
@@ -115,6 +113,8 @@ extension NSEventModifierFlags {
 
 
 extension NSEvent {
+    var key: String { return input.character(at: 0) }
+
     var input: String {
         if let result = charactersIgnoringModifiers {
             return result as String
@@ -200,6 +200,15 @@ extension NSView {
 
         return gesture
     }
+
+
+    func restartGestures(handledBy e: ZEditorController) {
+        clearGestures()
+
+        e.rubberbandGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.rubberbandEvent))
+        e.clickGesture      = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
+        e.isDragging = false
+    }
 }
 
 
@@ -251,7 +260,7 @@ extension NSWindow {
         var         title = menuItem.title
         if !valid { title = "< \(title) >" }
 
-        rawColumnarReport("   \(tag)", title)
+        // rawColumnarReport("   \(tag)", title)
 
         return valid
     }

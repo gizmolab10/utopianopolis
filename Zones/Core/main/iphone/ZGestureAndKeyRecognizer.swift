@@ -52,3 +52,22 @@ class ZKeyClickGestureRecognizer: ZClickGestureRecognizer {
     }
     
 }
+
+
+class ZKeySwipeGestureRecognizer : ZSwipeGestureRecognizer {
+
+
+    var modifiers: ZEventFlags? = nil
+    override var isShiftDown: Bool { return modifiers?.contains(.shift) ?? false }
+
+
+    open func reset() {
+        modifiers = nil
+    }
+
+
+    open func mouseDown (with event: ZEvent) {
+        modifiers = event.modifierFlags
+    }
+    
+}

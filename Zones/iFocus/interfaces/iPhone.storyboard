@@ -53,7 +53,7 @@
             </objects>
             <point key="canvasLocation" x="293.60000000000002" y="-26.53673163418291"/>
         </scene>
-        <!--Editor Controller-->
+        <!--Controller-->
         <scene sceneID="9WU-We-u6g">
             <objects>
                 <viewController id="wVv-ZA-i1M" customClass="ZEditorController" customModule="iFocus" customModuleProvider="target" sceneMemberID="viewController">
@@ -67,33 +67,36 @@
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lbQ-ID-4Qi" customClass="ZDragDrawView" customModule="iFocus" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
-                                <subviews>
-                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="ort-lh-uaY">
-                                        <rect key="frame" x="87" y="201" width="200" height="200"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="200" id="ahx-dX-6G8"/>
-                                            <constraint firstAttribute="width" constant="200" id="dcU-t5-JyA"/>
-                                        </constraints>
-                                    </activityIndicatorView>
-                                </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstItem="ort-lh-uaY" firstAttribute="centerX" secondItem="lbQ-ID-4Qi" secondAttribute="centerX" id="LL9-gl-cbL"/>
-                                    <constraint firstItem="ort-lh-uaY" firstAttribute="centerY" secondItem="lbQ-ID-4Qi" secondAttribute="centerY" id="YrX-Vx-RvU"/>
-                                </constraints>
+                                <connections>
+                                    <outlet property="controller" destination="wVv-ZA-i1M" id="ODF-Il-WlD"/>
+                                </connections>
                             </view>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="ort-lh-uaY">
+                                <rect key="frame" x="87" y="201" width="200" height="200"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="ahx-dX-6G8"/>
+                                    <constraint firstAttribute="width" constant="200" id="dcU-t5-JyA"/>
+                                </constraints>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="lbQ-ID-4Qi" firstAttribute="top" secondItem="idC-U9-mJR" secondAttribute="top" id="41E-dT-uEi"/>
-                            <constraint firstItem="lbQ-ID-4Qi" firstAttribute="leading" secondItem="idC-U9-mJR" secondAttribute="leading" id="kF0-zn-py9"/>
-                            <constraint firstAttribute="trailing" secondItem="lbQ-ID-4Qi" secondAttribute="trailing" id="rrM-4x-ybM"/>
-                            <constraint firstAttribute="bottom" secondItem="lbQ-ID-4Qi" secondAttribute="bottom" id="tl7-C6-9Er"/>
+                            <constraint firstItem="lbQ-ID-4Qi" firstAttribute="leading" secondItem="idC-U9-mJR" secondAttribute="leading" id="274-N7-KgY"/>
+                            <constraint firstItem="ort-lh-uaY" firstAttribute="centerY" secondItem="idC-U9-mJR" secondAttribute="centerY" id="JuJ-Ky-Me5"/>
+                            <constraint firstItem="lbQ-ID-4Qi" firstAttribute="centerX" secondItem="idC-U9-mJR" secondAttribute="centerX" id="aaT-2Z-7gi"/>
+                            <constraint firstItem="lbQ-ID-4Qi" firstAttribute="top" secondItem="ceC-hh-Sah" secondAttribute="bottom" id="fe8-Kv-R8N"/>
+                            <constraint firstItem="jqU-Hy-33R" firstAttribute="top" secondItem="lbQ-ID-4Qi" secondAttribute="bottom" id="jYV-oy-5uo"/>
+                            <constraint firstItem="ort-lh-uaY" firstAttribute="centerX" secondItem="idC-U9-mJR" secondAttribute="centerX" id="kMR-qh-822"/>
+                            <constraint firstItem="lbQ-ID-4Qi" firstAttribute="centerY" secondItem="idC-U9-mJR" secondAttribute="centerY" id="yXW-9A-Fpv"/>
+                            <constraint firstAttribute="trailing" secondItem="lbQ-ID-4Qi" secondAttribute="trailing" id="zpO-Tf-dd9"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="dragView" destination="lbQ-ID-4Qi" id="BGo-nI-FW9"/>
                         <outlet property="scrollView" destination="idC-U9-mJR" id="KkC-pn-aOe"/>
+                        <outlet property="scrollX" destination="aaT-2Z-7gi" id="B1H-RN-ldk"/>
+                        <outlet property="scrollY" destination="yXW-9A-Fpv" id="rJe-XJ-NA2"/>
                         <outlet property="spinner" destination="ort-lh-uaY" id="o2L-om-CWH"/>
                     </connections>
                 </viewController>
