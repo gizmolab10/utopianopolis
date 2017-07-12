@@ -14,7 +14,7 @@ class ZonesApplication: NSApplication {
 
 
     override func showHelp(_ sender: Any?) {
-        if !gSettingsViewIDs.contains(.Help), let controller = controllersManager.controllerForID(.settings) as? ZSettingsViewController {
+        if !gSettingsViewIDs.contains(.Help), let controller = gControllersManager.controllerForID(.settings) as? ZSettingsViewController {
             gSettingsViewIDs.insert(.Help)
 
             controller.update()

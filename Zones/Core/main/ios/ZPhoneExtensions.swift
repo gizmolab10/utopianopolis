@@ -1,5 +1,5 @@
 //
-//  ZPadExtensions.swift
+//  ZPhoneExtensions.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 10/8/16.
@@ -7,6 +7,7 @@
 //
 
 
+import UserNotifications
 import Foundation
 import CloudKit
 import UIKit
@@ -33,29 +34,32 @@ public typealias ZMenuItem                  = UIMenuItem
 public typealias ZTextView                  = UITextView
 public typealias ZTextField                 = UITextField
 public typealias ZTableView                 = UITableView
-public typealias ZController                = UIController
+//public typealias ZColorWell                 = UIColorWell
+public typealias ZScrollView                = UIScrollView
+public typealias ZController                = UIViewController
 public typealias ZEventFlags                = UIKeyModifierFlags
 public typealias ZBezierPath                = UIBezierPath
 public typealias ZSearchField               = UISearchBar
 public typealias ZApplication               = UIApplication
+public typealias ZScrollDelegate            = UIScrollViewDelegate
 public typealias ZSegmentedControl          = UISegmentedControl
 public typealias ZGestureRecognizer         = UIGestureRecognizer
-public typealias ZTextFieldDelegate         = UITextFieldDelegate
 public typealias ZProgressIndicator         = UIActivityIndicatorView
+public typealias ZTextFieldDelegate         = UITextFieldDelegate
 public typealias ZTableViewDelegate         = UITableViewDelegate
 public typealias ZSearchFieldDelegate       = UISearchBarDelegate
 public typealias ZTableViewDataSource       = UITableViewDataSource
 public typealias ZApplicationDelegate       = UIApplicationDelegate
 public typealias ZPanGestureRecognizer      = UIPanGestureRecognizer
-public typealias ZGestureRecognizerState    = UIGestureRecognizerState
-public typealias ZKeyClickGestureRecognizer = UITapGestureRecognizer
+public typealias ZClickGestureRecognizer    = UITapGestureRecognizer
+public typealias ZSwipeGestureRecognizer    = UISwipeGestureRecognizer
 public typealias ZGestureRecognizerState    = UIGestureRecognizerState
 public typealias ZGestureRecognizerDelegate = UIGestureRecognizerDelegate
 
 
-let gHighlightHeightOffset = CGFloat(3.0)
-let        gVerticalWeight = -1.0
-let           zapplication = UIApplication.shared
+let      gHighlightHeightOffset = CGFloat(3.0)
+let             gVerticalWeight = -1.0
+let                zapplication = UIApplication.shared
 var windowKeys: [UIKeyCommand]? = nil
 
 
@@ -104,21 +108,44 @@ extension UIBezierPath {
 
 
 extension UIColor {
+    var string: String {
+        var   red: CGFloat = 0.0
+        var  blue: CGFloat = 0.0
+        var green: CGFloat = 0.0
+        var alpha: CGFloat = 0.0
+
+        getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+
+        return "red:\(red),blue:\(blue),green:\(green)"
+    }
+
     func darker(by: CGFloat) -> UIColor {
         var        hue: CGFloat = 0.0
         var      alpha: CGFloat = 0.0
         var saturation: CGFloat = 0.0
         var brightness: CGFloat = 0.0
 
-        self.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+        getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
 
-        return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: alpha)
+        return UIColor(hue: hue, saturation: saturation * 1.1, brightness: brightness / by, alpha: alpha)
+    }
+
+    func lighter(by: CGFloat) -> UIColor {
+        var        hue: CGFloat = 0.0
+        var      alpha: CGFloat = 0.0
+        var saturation: CGFloat = 0.0
+        var brightness: CGFloat = 0.0
+
+        getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+
+        return UIColor(hue: hue, saturation: saturation * 0.9, brightness: brightness * by, alpha: alpha)
     }
 }
 
 
 extension UIKeyModifierFlags {
     var isNumericPad: Bool { return contains(.numericPad) }
+    var isControl:    Bool { return contains(.control) }
     var isCommand:    Bool { return contains(.command) }
     var isOption:     Bool { return contains(.alternate) }
     var isShift:      Bool { return contains(.shift) }
@@ -133,6 +160,27 @@ extension UIView {
     func display() {}
 
 
+    @discardableResult func createSwipeGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, direction: UISwipeGestureRecognizerDirection) -> ZKeySwipeGestureRecognizer {
+        let       gesture = ZKeySwipeGestureRecognizer(target: target, action: action)
+        gesture .delegate = target
+        gesture.direction = direction
+
+        addGestureRecognizer(gesture)
+
+        return gesture
+    }
+    
+
+    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeyPanGestureRecognizer {
+        let      gesture = ZKeyPanGestureRecognizer(target: target, action: action)
+        gesture.delegate = target
+
+        addGestureRecognizer(gesture)
+
+        return gesture
+    }
+    
+
     @discardableResult func createPointGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> ZKeyClickGestureRecognizer {
         let              gesture = ZKeyClickGestureRecognizer(target: target, action: action)
         isUserInteractionEnabled = true
@@ -144,6 +192,16 @@ extension UIView {
         addGestureRecognizer(gesture)
 
         return gesture
+    }
+
+
+    func restartGestures(handledBy e: ZEditorController) {
+        clearGestures()
+
+        // e.rubberbandGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.rubberbandEvent))
+        e.swipeGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController.swipeEvent), direction: .left)
+        e.clickGesture = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
+        e.isDragging   = false
     }
 }
 
@@ -208,7 +266,8 @@ extension UIWindow {
 
 extension UITextField {
     var isBordered : Bool { get { return borderStyle != .none } set { borderStyle = (newValue ? .line : .none) } }
-    override open var canBecomeFirstResponder: Bool { return gOperationsManager.isReady }    // fix a bug where root zone is editing on launch
+    override open var canBecomeFirstResponder: Bool { return true } // gOperationsManager.isAvailable }    // fix a bug where root zone is editing on launch
+    func enableUndo() {}
     func abortEditing() { resignFirstResponder() }
     func selectAllText() { selectAll(self) }
     func removeMonitorAsync() {}
@@ -272,7 +331,7 @@ extension UIApplication {
         applicationIconBadgeNumber += 1
         applicationIconBadgeNumber  = 0
 
-        cancelAllLocalNotifications()
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
 }
 
@@ -345,8 +404,8 @@ extension ZoneWidget {
 
     func curvedPath(in iRect: CGRect, kind iKind: ZLineKind) -> ZBezierPath {
         let    isBelow = iKind == .below
-        let startAngle = CGFloat(M_PI)
-        let deltaAngle = CGFloat(M_PI_2)
+        let startAngle = CGFloat(Double.pi)
+        let deltaAngle = CGFloat(Double.pi / 2.0)
         let multiplier = CGFloat(isBelow ? -1.0 : 1.0)
         let   endAngle = startAngle + (multiplier * deltaAngle)
         let     scaleY = iRect.height / iRect.width

@@ -9,18 +9,23 @@
 
 import Foundation
 
+
 #if os(OSX)
+
     import Cocoa
 
 let isOSX                       = true
 let fontSize:           CGFloat = 17.0
 let unselectBrightness: CGFloat = 0.93
+
 #elseif os(iOS)
+
     import UIKit
 
 let isOSX                       = false
 let fontSize:           CGFloat = 14.0
 let unselectBrightness: CGFloat = 0.98
+
 #endif
 
 

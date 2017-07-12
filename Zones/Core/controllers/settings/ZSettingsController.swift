@@ -16,17 +16,22 @@
 
 class ZSettingsController: ZGenericController {
 
+
+    @IBOutlet var stackView: NSStackView?
+
     
     override func identifier() -> ZControllerID { return .settings }
 
 
     func displayViewFor(id: ZSettingsViewID) {
-        let type = ZStackableView.self
+        let stackableType = ZStackableView.self
 
         gSettingsViewIDs.insert(id)
-        view.applyToAllSubviews { (iView: ZView) in
-            if  type(of: iView) == type, let stackView = iView as? ZStackableView {
-                stackView.update()
+        stackView?.applyToAllSubviews { (iView: ZView) in
+            let viewType  = type(of: iView)
+
+            if  viewType == stackableType, let stackableView = iView as? ZStackableView {
+                stackableView.update()
             }
         }
     }

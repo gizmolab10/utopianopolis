@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16B2555" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="He3-J2-meu">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="He3-J2-meu">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Main View Controller-->
+        <!--Main Controller-->
         <scene sceneID="8Wj-UV-fFN">
             <objects>
-                <viewController id="He3-J2-meu" customClass="ZMainViewController" customModule="PadZones" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="He3-J2-meu" customClass="ZMainController" customModule="PadFocus" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="9x2-Y9-1n8"/>
                         <viewControllerLayoutGuide type="bottom" id="4aP-Nc-aEc"/>
@@ -21,16 +24,19 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HQJ-zK-x6P">
+                                <rect key="frame" x="0.0" y="0.0" width="256" height="768"/>
                                 <connections>
                                     <segue destination="aF3-Ly-doU" kind="embed" id="Xtc-xS-Jgg"/>
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PVe-Yq-zKg">
+                                <rect key="frame" x="257" y="0.0" width="767" height="768"/>
                                 <connections>
                                     <segue destination="BYZ-38-t0r" kind="embed" id="udK-HA-zL1"/>
                                 </connections>
                             </containerView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Grj-er-BXw">
+                                <rect key="frame" x="256" y="0.0" width="1" height="768"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="1" id="UeU-CB-rzQ"/>
@@ -59,15 +65,15 @@
             </objects>
             <point key="canvasLocation" x="376.5625" y="-129.4921875"/>
         </scene>
-        <!--Editor View Controller-->
+        <!--Editor Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ZEditorViewController" customModule="PadZones" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ZEditorController" customModule="PadFocus" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC" customClass="ZDragDrawView" customModule="PadZones" customModuleProvider="target">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC" customClass="ZDragDrawView" customModule="PadFocus" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -81,10 +87,10 @@
             </objects>
             <point key="canvasLocation" x="-272" y="801"/>
         </scene>
-        <!--Settings View Controller-->
+        <!--Generic Controller-->
         <scene sceneID="DhE-si-isi">
             <objects>
-                <viewController id="aF3-Ly-doU" customClass="ZSettingsViewController" customModule="PadZones" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="aF3-Ly-doU" customClass="ZGenericController" customModule="PadFocus" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="uYJ-Al-1BS"/>
                         <viewControllerLayoutGuide type="bottom" id="XxL-pE-luv"/>
@@ -93,28 +99,28 @@
                         <rect key="frame" x="0.0" y="0.0" width="256" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="xkA-gK-7Ek">
-                                <frame key="frameInset" width="256" height="160"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="xkA-gK-7Ek">
+                                <rect key="frame" x="0.0" y="0.0" width="256" height="160"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wn1-mQ-Zm2" customClass="ZStackableView" customModule="PadZones" customModuleProvider="target">
-                                        <frame key="frameInset" width="256" height="160"/>
+                                    <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wn1-mQ-Zm2" customClass="ZStackableView" customModule="PadFocus" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="256" height="160"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hdt-K9-0h9">
-                                                <frame key="frameInset" width="256" height="24"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hdt-K9-0h9">
+                                                <rect key="frame" x="0.0" y="0.0" width="256" height="24"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BBQ-qC-SFy">
-                                                <frame key="frameInset" minX="214" width="29" height="24"/>
+                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BBQ-qC-SFy">
+                                                <rect key="frame" x="214" y="0.0" width="29" height="24"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="22" id="LEQ-Z8-bCk"/>
                                                     <constraint firstAttribute="width" constant="18" id="aQO-FC-VhD"/>
                                                 </constraints>
                                                 <state key="normal" image="yangle"/>
                                             </button>
-                                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kfz-tQ-559">
-                                                <frame key="frameInset" minY="23" width="256" height="137"/>
+                                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kfz-tQ-559">
+                                                <rect key="frame" x="0.0" y="23" width="256" height="137"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             </view>
                                         </subviews>
@@ -150,7 +156,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rwk-7q-ms7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="988.79999999999995" y="800.59970014992507"/>
+            <point key="canvasLocation" x="-965" y="801"/>
         </scene>
     </scenes>
     <resources>

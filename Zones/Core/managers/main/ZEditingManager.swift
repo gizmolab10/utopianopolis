@@ -81,7 +81,8 @@ class ZEditingManager: NSObject {
                 case ";":         doFavorites(true,    false,    isCommand)
                 case "'":         doFavorites(isShift, isOption, isCommand)
                 case ",", ".":    gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
-                case "/", "?":    onZone(gSelectionManager.firstGrab, toggleFavorite: hasFlags)
+                case "/":         onZone(gSelectionManager.firstGrab, toggleFavorite: hasFlags)
+                // case "?":         gSettingsController?.displayViewFor(id: .Help)
                 case "-":         addSibling  (with: "-------------------------") { iChild in iChild.grab() }
                 case "=":         addSibling  (with: "----------- | -----------") { iChild in iChild.edit() }
                 case gTabKey:     if hasWidget { addSibling(containing: isOption) { iChild in iChild.edit() } }
