@@ -430,7 +430,7 @@ class ZCloudManager: ZRecordsManager {
         let        requests = hasRecords(for: [.needsRoot])
         let hasCompletePath = here.hasCompleteAncestorPath()
 
-        if  (rootZone != nil && hasCompletePath && !requests) || here.isTemporary {
+        if  rootZone != nil && hasCompletePath && !requests {
             onCompletion?(0)
         } else {
             onCompletion?(-1)
@@ -441,8 +441,8 @@ class ZCloudManager: ZRecordsManager {
 
             let againFetchToRoot = { (iRecurse: Bool) in
                 if iRecurse {
-                    self.dispatchAsyncInBackground { // prevent pileup
-                        self.fetchToRoot(onCompletion) // grab more or make final call to closure
+                    self.dispatchAsyncInBackground {    // prevent pileup
+                        self.fetchToRoot(onCompletion)  // grab more or make final call to closure
                     }
                 }
             }
@@ -458,11 +458,13 @@ class ZCloudManager: ZRecordsManager {
                             if  let parent = iZone.parentZone {
                                 visited    = visited + [iZone]
 
-                                getParentOf?(parent, iRecurse)    // recurse for remaining
-                            } else {
-                                self.rootZone = iZone   // got root
+                                getParentOf?(parent, iRecurse)  // recurse for remaining
+                            } else if iZone.isRoot {
+                                self.rootZone = iZone           // got root
 
-                                againFetchToRoot(iRecurse)
+                                againFetchToRoot(iRecurse)      // so will call onCompletion
+                            } else {
+                                onCompletion?(0)                // prevent [operations manager] hang
                             }
                         }
                     }
@@ -649,8 +651,7 @@ class ZCloudManager: ZRecordsManager {
 
         assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
             if iRecord != nil {
-                let      root = self.zoneForRecord(iRecord!)    // got root
-                root  .record = iRecord!
+                let      root = self.zoneForRecord(iRecord!)    // get / create root
                 self.rootZone = root
                 root   .level = 0
             }

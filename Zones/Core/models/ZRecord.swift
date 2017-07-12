@@ -20,7 +20,6 @@ class ZRecord: NSObject {
     var         isRoot: Bool            { return record != nil && record.recordID.recordName == rootNameKey }
     var recordsManager: ZRecordsManager { return gRemoteStoresManager.recordsManagerFor(storageMode!) }
     var   cloudManager: ZCloudManager?  { return recordsManager as? ZCloudManager }
-    var    isTemporary = true
 
 
     var record: CKRecord! {
@@ -94,7 +93,7 @@ class ZRecord: NSObject {
     func updateClassProperties() {
         if record != nil {
             for keyPath in cloudProperties() {
-                if let cloudValue = record[keyPath] as! NSObject? {
+                if  let    cloudValue = record[keyPath] as! NSObject? {
                     let propertyValue = value(forKeyPath: keyPath) as! NSObject?
 
                     if propertyValue != cloudValue {

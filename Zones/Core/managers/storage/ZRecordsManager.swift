@@ -426,13 +426,13 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func zoneForRecord(_ record: CKRecord) -> Zone {
-        var zone  = zonesByID[record.recordID.recordName]
+    func zoneForRecord(_ iRecord: CKRecord) -> Zone {
+        var zone  = zonesByID[iRecord.recordID.recordName]
 
         if  zone == nil {
-            zone  = Zone(record: record, storageMode: storageMode)
+            zone  = Zone(record: iRecord, storageMode: storageMode)
         } else if !zone!.isDeleted {
-            zone!.record = record
+            zone!.record = iRecord
         }
 
         return zone!
