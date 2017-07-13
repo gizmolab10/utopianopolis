@@ -225,16 +225,18 @@ class ZCloudManager: ZRecordsManager {
 
     func searchPredicateFrom(_ searchString: String) -> NSPredicate {
         let    tokens = searchString.components(separatedBy: " ")
-        let separator = " AND "
+        var separator = ""
         var    suffix = ""
 
         for token in tokens {
-            if  token != "" {
-                suffix = "\(suffix)\(separator)SELF CONTAINS \"\(token)\""
+            if  token    != "" {
+                suffix    = "\(suffix)\(separator)SELF CONTAINS \"\(token)\""
+                separator = " AND "
             }
         }
 
-        return NSPredicate(format: "zoneState < \(ZoneState.IsFavorite.rawValue)\(suffix)")
+        // return NSPredicate(format: "zoneState < \(ZoneState.IsFavorite.rawValue)\(separator)\(suffix)")
+        return NSPredicate(format: suffix)
     }
 
 

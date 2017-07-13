@@ -11,6 +11,15 @@ import Foundation
 import CloudKit
 
 
+ enum ZIntegerState: Int {
+    case showChildren = 0
+    case  hasChildren = 1
+    case   isUpToDate = 10
+    case   isFavorite = 29
+    case    isDeleted = 30
+ }
+ 
+
 struct ZoneState: OptionSet {
     let rawValue: Int
 
@@ -18,11 +27,21 @@ struct ZoneState: OptionSet {
         self.rawValue = rawValue
     }
 
-    static let ShowsChildren = ZoneState(rawValue: 1 <<  0)
-    static let   HasChildren = ZoneState(rawValue: 1 <<  1)
-    static let    IsUpToDate = ZoneState(rawValue: 1 << 10)
-    static let    IsFavorite = ZoneState(rawValue: 1 << 29)
-    static let     IsDeleted = ZoneState(rawValue: 1 << 30)
+    static let ShowsChildren = ZoneState(rawValue: 1 << ZIntegerState.showChildren.rawValue)
+    static let   HasChildren = ZoneState(rawValue: 1 << ZIntegerState.hasChildren .rawValue)
+    static let    IsUpToDate = ZoneState(rawValue: 1 << ZIntegerState.isUpToDate  .rawValue)
+    static let    IsFavorite = ZoneState(rawValue: 1 << ZIntegerState.isFavorite  .rawValue)
+    static let     IsDeleted = ZoneState(rawValue: 1 << ZIntegerState.isDeleted   .rawValue)
+
+    var decoration: String {
+        let raw = rawValue
+
+        switch raw {
+        case 1 << ZIntegerState.isFavorite.rawValue: return "  (F)"
+        case 1 << ZIntegerState.isDeleted .rawValue: return "  (D)"
+        default:                                     return ""
+        }
+    }
 }
 
 
@@ -46,7 +65,7 @@ class Zone : ZRecord {
     var              widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var       unwrappedName:       String { return zoneName ?? "empty" }
     var       decoratedName:       String { return "\(unwrappedName)\(decoration)" }
-    var          decoration:       String { return !isDeleted ? !isBookmark ? "" : !isFavorite ? " (B)" : " (F)" : " (D)" }
+    var          decoration:       String { return isBookmark ? "  (B)" : state.decoration }
     var    grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
     var   canRevealChildren:         Bool { return  hasChildren &&   showChildren }
@@ -110,7 +129,7 @@ class Zone : ZRecord {
                 } else if let p = parentZone, hasCompleteAncestorPath(toColor: true) {
                     return p.color
                 } else {
-                    return ZColor.blue // default is blue
+                    return gDefaultZoneColor
                 }
             }
 

@@ -112,6 +112,26 @@ extension NSObject {
 }
 
 
+extension CKRecord {
+
+    var  decoratedName: String {
+        if  let         name = self[zoneNameKey] as? String {
+            if  let rawState = self["zoneState"] as? Int {
+                let    state = ZoneState(rawValue: rawState)
+                let   suffix = state.decoration
+
+                return name.appending(suffix)
+            } else {
+                return name
+            }
+        }
+
+        return ""
+    }
+
+}
+
+
 infix operator -- : AdditionPrecedence
 
 

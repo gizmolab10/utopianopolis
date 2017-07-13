@@ -55,10 +55,16 @@ class ZFavoritesController: ZGenericController {
             selector.removeAllSegments()
 
             for index in 0 ... gFavoritesManager.count {
-                let title = gFavoritesManager.zoneAtIndex(index - 1)?.zoneName ?? "ACK!"
-                let width = title.widthForFont(UIFont.systemFont(ofSize: 13.0)) + 10.0
+                let  zone = gFavoritesManager.zoneAtIndex(index - 1)
+                let title = zone?.zoneName ?? "ACK!"
 
                 selector.insertSegment(withTitle: title, at: index, animated: false)
+
+                let     width = title.widthForFont(UIFont.systemFont(ofSize: 13.0)) + 10.0
+//                let   color = zone?.bookmarkTarget?.color ?? gDefaultZoneColor
+//                let       s = selector.subviews[index]
+//                s.tintColor = color // .lighter(by: 5.0)
+
                 selector.setWidth(width, forSegmentAt: index)
             }
 

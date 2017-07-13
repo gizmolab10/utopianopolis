@@ -93,7 +93,7 @@ class Operation: Foundation.Operation {
     fileprivate var _state = State.initialized
     
     /// A lock to guard reads and writes to the `_state` property
-    fileprivate let stateLock = NSLock()
+    fileprivate let stateLock = NSRecursiveLock()
     
     fileprivate var state: State {
         get {

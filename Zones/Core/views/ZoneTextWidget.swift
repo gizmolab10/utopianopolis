@@ -137,18 +137,23 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func updateText() {
-        if  let  zone = widget.widgetZone {
-            text      = zone.unwrappedName
-            var count = 0
+        if  let zone = widget.widgetZone {
+            text     = zone.unwrappedName
 
-            switch gCountsMode {
-            case .fetchable: count = zone.fetchableCount
-            case .progeny:   count = zone.progenyCount - 1
-            default:         return
-            }
+            if zone.isDeleted {
+                text = zone.decoratedName
+            } else {
+                var count = 0
 
-            if (count > 0) && !isTextEditing && (!zone.showChildren || (gCountsMode == .progeny)) {
-                text  = text?.appending("  (\(count))")
+                switch gCountsMode {
+                case .fetchable: count = zone.fetchableCount
+                case .progeny:   count = zone.progenyCount - 1
+                default:         return
+                }
+
+                if (count > 0) && !isTextEditing && (!zone.showChildren || (gCountsMode == .progeny)) {
+                    text = text?.appending("  (\(count))")
+                }
             }
         }
     }

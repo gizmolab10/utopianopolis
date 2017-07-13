@@ -85,11 +85,16 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
 
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        var object = ""
+        var      object = ""
 
         if row < foundRecords.count {
-            let record = foundRecords[row]
-            object     = record[zoneNameKey] as! String
+            let  record = foundRecords[row]
+
+            if let zone = gCloudManager.zoneForRecordID(record.recordID) {
+                object  =   zone.decoratedName
+            } else {
+                object  = record.decoratedName
+            }
         }
 
         return object
@@ -132,10 +137,10 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
 
     func resolveRecord(_ record: CKRecord, in storageMode: ZStorageMode) {
-        var zone = gCloudManager.zoneForRecordID(record.recordID)
+        var zone  = gCloudManager.zoneForRecordID(record.recordID)
 
-        if zone == nil {
-            zone = Zone(record: record, storageMode: storageMode)
+        if  zone == nil {
+            zone  = Zone(record: record, storageMode: storageMode)
 
             zone!.needChildren()
         }

@@ -707,6 +707,7 @@ class ZEditingManager: NSObject {
     func moveOut(selectionOnly: Bool, extreme: Bool) {
         let zone: Zone = gSelectionManager.firstGrab
         let     parent = zone.parentZone
+        let   contains = parent?.children.contains(zone) ?? false
 
         if selectionOnly {
 
@@ -719,15 +720,15 @@ class ZEditingManager: NSObject {
                     self.redrawAndSync()
                 }
             } else if !extreme {
-                if zone == gHere || parent == nil {
+                if (zone == gHere && contains) || parent == nil {
                     revealParentAndSiblingsOf(zone) {
                         if  let ancestor = gHere.parentZone {
                             ancestor.grab()
                             self.revealSiblingsOf(gHere, untilReaching: ancestor)
                         }
                     }
-                } else if parent != nil {
-                    parent!.grab()
+                } else if let p = parent, p.isDeleted == zone.isDeleted, contains {
+                    p.grab()
                     signalFor(parent, regarding: .redraw)
                 }
             } else if !gHere.isRoot {
