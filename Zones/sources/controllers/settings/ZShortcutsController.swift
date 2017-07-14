@@ -1,5 +1,5 @@
 //
-//  ZFavoritesController.swift
+//  ZShortcutsController.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 4/13/17.
@@ -71,7 +71,7 @@ class ZShortcutsController: ZGenericTableController {
         "    \tP        \tprints the graph",
         "    \tR        \treverses order",
         "    \t- =      \tadds a [broken =] line",
-        "    \t/        \tfocuses on selected idea",
+        "    \t/        \tfocuses or toggle favorite",
         "    \t'        \tshows next favorite",
         "    \t\"       \tshows previous favorite",
         "    \t. ,      \tnew ideas follow, precede",
@@ -84,7 +84,6 @@ class ZShortcutsController: ZGenericTableController {
         "   COMMAND",
         "    \tARROWS   \textend all the way",
         "    \tRETURN   \tdeselects",
-        "    \t/        \tadds or removes favorite",
         "    \t'        \trefocuses current favorite",
         "",
         "   SHIFT + ARROW",

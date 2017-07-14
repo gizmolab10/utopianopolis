@@ -19,18 +19,21 @@ class ZFavoritesController: ZGenericController {
 
 
     var selectedRect: CGRect {
-        if  let      selector = favoritesSelector {
-            let selectedIndex = selector.selectedSegmentIndex
-            let         width = selector.widthForSegment(at: selectedIndex)
-            var             x = CGFloat(0.0)
+        if  let          selector = favoritesSelector {
+            let     selectedIndex = selector.selectedSegmentIndex
 
-            if selectedIndex > 0 {
-                for index in 0 ... selectedIndex - 1 {
-                    x            += selector.widthForSegment(at: index)
+            if  selectedIndex     < selector.numberOfSegments {
+                let         width = selector.widthForSegment(at: selectedIndex)
+                var             x = CGFloat(0.0)
+
+                if  selectedIndex > 0 {
+                    for index in 0 ... selectedIndex - 1 {
+                        x        += selector.widthForSegment(at: index)
+                    }
                 }
-            }
 
-            return CGRect(x: x, y: 0.0, width: width, height: 44.0)
+                return CGRect(x: x, y: 0.0, width: width, height: 44.0)
+            }
         }
 
         return CGRect.zero
@@ -68,7 +71,7 @@ class ZFavoritesController: ZGenericController {
                 selector.setWidth(width, forSegmentAt: index)
             }
 
-            selector.selectedSegmentIndex = gFavoritesManager.favoritesIndex + 1
+            selector.selectedSegmentIndex = min(selector.numberOfSegments - 1, gFavoritesManager.favoritesIndex + 1)
 
             scrollView?.scrollRectToVisible(selectedRect, animated: false)
         }

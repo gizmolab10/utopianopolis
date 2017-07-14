@@ -54,15 +54,14 @@ class ZEditingManager: NSObject {
 
 
     func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) {
-        if  let         key = iKey {
-            let      widget = gWidgetsManager.currentMovableWidget
-            let   isControl = flags.isControl
-            let   isCommand = flags.isCommand
-            let    isOption = flags.isOption
-            let     isShift = flags.isShift
-            let   hasWidget = widget != nil
-            let       force = isOption || isWindow
-            let    hasFlags = isOption || isCommand || isShift
+        if  let       key = iKey {
+            let    widget = gWidgetsManager.currentMovableWidget
+            let isControl = flags.isControl
+            let isCommand = flags.isCommand
+            let  isOption = flags.isOption
+            let   isShift = flags.isShift
+            let hasWidget = widget != nil
+            let     force = isOption || isWindow
 
             if  isEditing {
                 switch key {
@@ -81,7 +80,7 @@ class ZEditingManager: NSObject {
                 case ";":         doFavorites(true,    false,    isCommand)
                 case "'":         doFavorites(isShift, isOption, isCommand)
                 case ",", ".":    gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
-                case "/":         onZone(gSelectionManager.firstGrab, toggleFavorite: hasFlags)
+                case "/":         focus(on: gSelectionManager.firstGrab)
                 // case "?":         gSettingsController?.displayViewFor(id: .Help)
                 case "-":         addSibling  (with: "-------------------------") { iChild in iChild.grab() }
                 case "=":         addSibling  (with: "----------- | -----------") { iChild in iChild.edit() }
@@ -239,8 +238,8 @@ class ZEditingManager: NSObject {
     }
 
 
-    func onZone(_ iZone: Zone, toggleFavorite: Bool) {
-        let focusOn = { (zone: Zone) in
+    func focus(on iZone: Zone) {
+        let focusClosure = { (zone: Zone) in
             gHere = zone
 
             zone.grab()
@@ -250,15 +249,14 @@ class ZEditingManager: NSObject {
         if iZone.isBookmark {
             gTravelManager.travelThrough(iZone) { object, kind in
                 gSelectionManager.deselect()
-                focusOn(object as! Zone)
+                focusClosure(object as! Zone)
             }
-
-            return
-        } else if toggleFavorite {
+        } else if iZone == gHere {
             gFavoritesManager.toggleFavorite(for: iZone)
+            redrawAndSync(nil)
+        } else {
+            focusClosure(iZone)
         }
-
-        focusOn(iZone)
     }
 
 
@@ -539,8 +537,8 @@ class ZEditingManager: NSObject {
     
 
     func addToPasteCopyOf(_ zone: Zone, parent: Zone? = nil, at index: Int? = nil) {
-        let        copy = zone.deepCopy()
-        copy.parentZone = nil
+        let            copy = zone.deepCopy()
+        copy    .parentZone = nil
 
         copy.traverseAllProgeny { iZone in
             iZone.isDeleted = true
@@ -720,7 +718,7 @@ class ZEditingManager: NSObject {
                     self.redrawAndSync()
                 }
             } else if !extreme {
-                if (zone == gHere && contains) || parent == nil {
+                if zone == gHere || parent == nil {
                     revealParentAndSiblingsOf(zone) {
                         if  let ancestor = gHere.parentZone {
                             ancestor.grab()

@@ -65,7 +65,6 @@ class Zone : ZRecord {
     var              widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var       unwrappedName:       String { return zoneName ?? "empty" }
     var       decoratedName:       String { return "\(unwrappedName)\(decoration)" }
-    var          decoration:       String { return isBookmark ? "  (B)" : state.decoration }
     var    grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
     var   canRevealChildren:         Bool { return  hasChildren &&   showChildren }
@@ -83,6 +82,17 @@ class Zone : ZRecord {
     var          isFavorite:         Bool { get { return getState(for:    .IsFavorite) } set { setState(newValue, for: .IsFavorite) } }
     var         hasChildren:         Bool { get { return getState(for:   .HasChildren) } set { setState(newValue, for: .HasChildren) } }
     var        showChildren:         Bool { get { return getState(for: .ShowsChildren) } set { setState(newValue, for: .ShowsChildren) } }
+
+
+    var decoration: String {
+        var d = state.decoration
+
+        if  d == "" && isBookmark {
+            d  = "  (B)"
+        }
+
+        return d
+    }
 
 
     // MARK:- properties

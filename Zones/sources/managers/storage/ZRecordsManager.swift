@@ -311,9 +311,7 @@ class ZRecordsManager: NSObject {
     func stringForRecords(_ records: [CKRecord]?) -> String {
         return applyTo(records)  { object -> (String) in
             if  let record = object as? CKRecord {
-                let   zone = self.zoneForRecord(record)
-
-                return zone.decoratedName
+                return record.decoratedName
             }
 
             return "---"
@@ -335,11 +333,7 @@ class ZRecordsManager: NSObject {
     func stringForRecordIDs(_ recordIDs: [CKRecordID]?, in storageMode: ZStorageMode) -> String {
         return applyTo(recordIDs)  { object -> (String) in
             if  let recordID = object as? CKRecordID, let record = gRemoteStoresManager.recordsManagerFor(storageMode).recordForRecordID(recordID) {
-                if  let    zone = record as? Zone {
-                    return zone.decoratedName
-                } else if let name = record.record.object(forKey: zoneNameKey) as? String {
-                    return    name
-                }
+                return record.record.decoratedName
             }
             
             return "---"

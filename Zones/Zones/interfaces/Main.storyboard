@@ -192,11 +192,6 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="bsP-FQ-jyh"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Favorite" keyEquivalent="/" id="wDs-1b-toe">
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Os1-X8-xe2"/>
-                                                        </connections>
-                                                    </menuItem>
                                                     <menuItem title="Bookmark" keyEquivalent="b" id="3wN-52-oXT">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
@@ -225,9 +220,9 @@ CQ
                                                 </items>
                                             </menu>
                                         </menuItem>
-                                        <menuItem title="Navigate" tag="6" id="clA-OQ-TFo">
+                                        <menuItem title="Wander" tag="6" id="clA-OQ-TFo">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Navigate" id="zZj-Kf-4nT">
+                                            <menu key="submenu" title="Wander" id="zZj-Kf-4nT">
                                                 <items>
                                                     <menuItem title="Up" keyEquivalent="" id="Diq-XB-CZ5">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
@@ -256,9 +251,9 @@ CQ
                                                 </items>
                                             </menu>
                                         </menuItem>
-                                        <menuItem title="Relocate" tag="6" id="R8p-gH-Rw0">
+                                        <menuItem title="Move Ideas" tag="6" id="R8p-gH-Rw0">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Relocate" id="mgN-HE-iPa">
+                                            <menu key="submenu" title="Move Ideas" id="mgN-HE-iPa">
                                                 <items>
                                                     <menuItem title="Up" keyEquivalent="" id="Q7K-pQ-hmB">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
@@ -287,17 +282,23 @@ CQ
                                                 </items>
                                             </menu>
                                         </menuItem>
-                                        <menuItem title="Favorites" tag="6" id="lnb-Ni-gF3">
+                                        <menuItem title="Focus" tag="6" id="lnb-Ni-gF3">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Favorites" id="ZXK-72-mgU">
+                                            <menu key="submenu" title="Focus" id="ZXK-72-mgU">
                                                 <items>
-                                                    <menuItem title="Next" keyEquivalent="'" id="EOp-0B-lbw">
+                                                    <menuItem title="Focus, Favorite" keyEquivalent="/" id="dWE-UK-eqO">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="AkO-Cr-b3u"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Next Favorite" keyEquivalent="'" id="EOp-0B-lbw">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="hYt-2W-4Vx"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Previous" keyEquivalent="'" id="KiH-Fi-fiF">
+                                                    <menuItem title="Previous Favorite" keyEquivalent="'" id="KiH-Fi-fiF">
                                                         <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="QHI-d1-ClG"/>
@@ -312,12 +313,6 @@ CQ
                                             </menu>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="6ns-V4-A3k"/>
-                                        <menuItem title="Focus" tag="1" keyEquivalent="/" id="dny-v4-Omh">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="sSN-4o-D6s"/>
-                                            </connections>
-                                        </menuItem>
                                         <menuItem title="Reverse" tag="9" keyEquivalent="r" id="u6j-MS-BF2">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
