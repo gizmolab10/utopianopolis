@@ -136,6 +136,13 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
+    func selectCharacter(in range: NSRange) {
+        if let textInput = currentEditor() {
+            textInput.selectedRange = range
+        }
+    }
+
+
     func updateText() {
         if  let zone = widget.widgetZone {
             text     = zone.unwrappedName

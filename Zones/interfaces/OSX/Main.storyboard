@@ -298,8 +298,8 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="hYt-2W-4Vx"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Previous Favorite" keyEquivalent="'" id="KiH-Fi-fiF">
-                                                        <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                                    <menuItem title="Previous Favorite" keyEquivalent=";" id="KiH-Fi-fiF">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="QHI-d1-ClG"/>
                                                         </connections>

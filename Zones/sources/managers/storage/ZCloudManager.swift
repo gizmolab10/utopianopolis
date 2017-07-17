@@ -393,7 +393,7 @@ class ZCloudManager: ZRecordsManager {
 
                     favorite.needSave()
                 } else {
-                    gFavoritesManager.rootZone?.addChild(favorite)
+                    gFavoritesManager.rootZone?.add(favorite)
 
                     if let recordID = favorite.crossLink?.record.recordID, self.zoneForRecordID(recordID) == nil {
                         self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { iRecord in
@@ -568,7 +568,7 @@ class ZCloudManager: ZRecordsManager {
 
                         if  let parent  = child.parentZone {
                             if  parent != child && !parent.children.contains(child) {
-                                parent.addChild(child)
+                                parent.add(child)
 
                                 if !needsResort.contains(parent) {
                                     needsResort.append(parent)

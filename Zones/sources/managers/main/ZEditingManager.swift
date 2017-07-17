@@ -66,7 +66,7 @@ class ZEditingManager: NSObject {
             if  isEditing {
                 switch key {
                 case "a":         if isCommand { gSelectionManager.currentlyEditingZone?.widget?.textWidget.selectAllText() }
-                case gSpaceKey:   if isControl { addChild() }
+                case gSpaceKey:   if isControl { createIdea() }
                 default:          break
                 }
             } else if isWindow, let arrow = key.arrow {
@@ -82,11 +82,11 @@ class ZEditingManager: NSObject {
                 case ",", ".":    gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
                 case "/":         focus(on: gSelectionManager.firstGrab)
                 // case "?":         gSettingsController?.displayViewFor(id: .Help)
-                case "-":         addSibling  (with: "-------------------------") { iChild in iChild.grab() }
-                case "=":         addSibling  (with: "----------- | -----------") { iChild in iChild.edit() }
-                case gTabKey:     if hasWidget { addSibling(containing: isOption) { iChild in iChild.edit() } }
+                case "-":         createSiblingIdea  (with: "-------------------------") { iChild in iChild.grab() }
+                case "=":         createSiblingIdea  (with: "----------- | -----------") { iChild in iChild.edit(); gWidgetsManager.currentEditingWidget?.textWidget.selectCharacter(in: NSMakeRange(12, 1)) }
+                case gTabKey:     if hasWidget { createSiblingIdea(containing: isOption) { iChild in iChild.edit() } }
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
-                case gSpaceKey:   if force { addChild() }
+                case gSpaceKey:   if force { createIdea() }
                 case gBackspaceKey,
                      gDeleteKey:  if force { delete(preserveChildren: isOption && isWindow) }
                 case "\r":
@@ -418,9 +418,9 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func addChild() {
+    func createIdea() {
         if let parentZone = gWidgetsManager.currentMovableWidget?.widgetZone, !parentZone.isBookmark {
-            addChildTo(parentZone, at: gInsertionsFollow ? nil : 0) { iChild in
+            createIdeaIn(parentZone, at: gInsertionsFollow ? nil : 0) { iChild in
                 gControllersManager.signalFor(parentZone, regarding: .redraw) {
                     iChild?.edit()
                 }
@@ -429,7 +429,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func addSibling(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
+    func createSiblingIdea(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
         let       zone = gSelectionManager.rootMostMoveable
 
         if  var parent = zone.parentZone {
@@ -460,7 +460,7 @@ class ZEditingManager: NSObject {
                 index! += gInsertionsFollow ? 1 : 0
             }
 
-            addChildTo(parent, at: index) { iChild in
+            createIdeaIn(parent, at: index) { iChild in
                 if let child = iChild {
                     if name != nil {
                         child.zoneName = name
@@ -919,7 +919,7 @@ class ZEditingManager: NSObject {
     // MARK:-
     
 
-    func addChildTo(_ iZone: Zone?, at iIndex: Int?, onCompletion: ZoneMaybeClosure?) {
+    func createIdeaIn(_ iZone: Zone?, at iIndex: Int?, onCompletion: ZoneMaybeClosure?) {
         if  let               zone = iZone, zone.storageMode != .favorites {
             let       createAndAdd = {
                 let         record = CKRecord(recordType: zoneTypeKey)
@@ -1165,6 +1165,10 @@ class ZEditingManager: NSObject {
         var    restore = [Zone: (Zone, Int?)] ()
         var      grabs = gSelectionManager.currentGrabs
 
+        grabs.sort { (a, b) -> Bool in
+            return a.order < b.order
+        }
+
         //////////////////////
         // prepare for UNDO //
         //////////////////////
@@ -1174,6 +1178,8 @@ class ZEditingManager: NSObject {
                 let     index = zone.siblingIndex
                 restore[zone] = (parent, index)
             }
+
+            zone.orphan()
         }
 
         if toBookmark {
@@ -1181,9 +1187,9 @@ class ZEditingManager: NSObject {
         }
 
         UNDO(self) { iUndoSelf in
-            for (zone, (parent, index)) in restore.reversed() {
-                zone.orphan()
-                parent.addAndReorderChild(zone, at: index)
+            for (child, (parent, index)) in restore {
+                child.orphan()
+                parent.addAndReorderChild(child, at: index)
             }
 
             iUndoSelf.UNDO(self) { iUndoUndoSelf in
@@ -1194,21 +1200,8 @@ class ZEditingManager: NSObject {
         }
 
         let finish = {
-            let      rootMost = gSelectionManager.rootMostMoveable
-            let     fromIndex = rootMost.siblingIndex
-            let          into = !toBookmark ? iInto : iInto.bookmarkTarget! // grab bookmark AFTER travel
-            let      addGrabs = {
-                let backwards = fromIndex != nil && iIndex != nil && fromIndex! > iIndex!
-                let      same = rootMost.parentZone == iInto
-
-                if !same || backwards {
-                    grabs = grabs.reversed()
-                }
-
-                for zone in grabs {
-                    zone.orphan()
-                }
-
+            let     into = !toBookmark ? iInto : iInto.bookmarkTarget! // grab bookmark AFTER travel
+            let addGrabs = {
                 for zone in grabs {
                     into.addAndReorderChild(zone, at: iIndex)
                 }

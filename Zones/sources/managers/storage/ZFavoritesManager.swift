@@ -98,7 +98,7 @@ class ZFavoritesManager: ZCloudManager {
 
         for favorite in defaultFavorites.children {
             if let mode = favorite.storageMode, !found.contains(mode) {
-                rootZone?.addChild(favorite)
+                rootZone?.add(favorite)
                 favorite.clearAllStates()
             }
         }
@@ -278,7 +278,7 @@ class ZFavoritesManager: ZCloudManager {
         let bookmark:  Zone = create(withBookmark: withBookmark, isFavorite, storageMode, name)
         let  insertAt: Int? = atIndex == count ? nil : atIndex
 
-        parent.addChild(bookmark, at: insertAt)
+        parent.add(bookmark, at: insertAt)
         bookmark.incrementProgenyCount(by: 0)
         bookmark.updateCloudProperties() // is this needed?
 

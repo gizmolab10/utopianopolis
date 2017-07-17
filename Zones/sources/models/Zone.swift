@@ -13,7 +13,6 @@ import CloudKit
 
  enum ZIntegerState: Int {
     case showChildren = 0
-    case  hasChildren = 1
     case   isUpToDate = 10
     case   isFavorite = 29
     case    isDeleted = 30
@@ -28,7 +27,6 @@ struct ZoneState: OptionSet {
     }
 
     static let ShowsChildren = ZoneState(rawValue: 1 << ZIntegerState.showChildren.rawValue)
-    static let   HasChildren = ZoneState(rawValue: 1 << ZIntegerState.hasChildren .rawValue)
     static let    IsUpToDate = ZoneState(rawValue: 1 << ZIntegerState.isUpToDate  .rawValue)
     static let    IsFavorite = ZoneState(rawValue: 1 << ZIntegerState.isFavorite  .rawValue)
     static let     IsDeleted = ZoneState(rawValue: 1 << ZIntegerState.isDeleted   .rawValue)
@@ -67,11 +65,12 @@ class Zone : ZRecord {
     var       decoratedName:       String { return "\(unwrappedName)\(decoration)" }
     var    grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
-    var   canRevealChildren:         Bool { return  hasChildren &&   showChildren }
-    var    indicateChildren:         Bool { return  hasChildren && (!showChildren || count == 0) }
-    var  hasMissingChildren:         Bool { return (hasChildren && count == 0) || count != fetchableCount }
-    var       hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
+    var  hasMissingChildren:         Bool { return count != fetchableCount }
+    var   canRevealChildren:         Bool { return hasChildren &&   showChildren }
+    var    indicateChildren:         Bool { return hasChildren && (!showChildren || count == 0) }
     var       hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
+    var       hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
+    var         hasChildren:         Bool { return fetchableCount > 0 }
     var          isBookmark:         Bool { return crossLink != nil }
     var          isSelected:         Bool { return gSelectionManager.isSelected(self) }
     var           isEditing:         Bool { return gSelectionManager .isEditing(self) }
@@ -80,7 +79,6 @@ class Zone : ZRecord {
     var           isDeleted:         Bool { get { return getState(for:     .IsDeleted) } set { setState(newValue, for: .IsDeleted) } }
     var          isUpToDate:         Bool { get { return getState(for:    .IsUpToDate) } set { setState(newValue, for: .IsUpToDate) } }
     var          isFavorite:         Bool { get { return getState(for:    .IsFavorite) } set { setState(newValue, for: .IsFavorite) } }
-    var         hasChildren:         Bool { get { return getState(for:   .HasChildren) } set { setState(newValue, for: .HasChildren) } }
     var        showChildren:         Bool { get { return getState(for: .ShowsChildren) } set { setState(newValue, for: .ShowsChildren) } }
 
 
@@ -666,12 +664,12 @@ class Zone : ZRecord {
     func    hideChildren() { showChildren = false }
 
 
-    @discardableResult func addChild(_ child: Zone?) -> Int? {
-        return addChild(child, at: 0)
+    @discardableResult func add(_ child: Zone?) -> Int? {
+        return add(child, at: 0)
     }
 
 
-    @discardableResult func addChild(_ iChild: Zone?, at iIndex: Int?) -> Int? {
+    @discardableResult func add(_ iChild: Zone?, at iIndex: Int?) -> Int? {
         if  let child = iChild {
 
             // make sure it's not already been added
@@ -697,9 +695,8 @@ class Zone : ZRecord {
                 children.append(child)
             }
 
-            child.parentZone  = self
-            hasChildren       = true
-            fetchableCount    = count
+            child.parentZone = self
+            fetchableCount   = count
 
             child.updateLevel()
 
@@ -722,14 +719,15 @@ class Zone : ZRecord {
 
 
     func addAndReorderChild(_ iChild: Zone?, at iIndex: Int?) {
-        if  let child = iChild, addChild(child, at: iIndex) != nil {
+        if  let child = iChild, add(child, at: iIndex) != nil {
             if  child.zoneProgeny == nil {
                 child.incrementProgenyCount(by: 0)
             } else {
                 incrementProgenyCount(by: child.progenyCount)
             }
 
-            updateCount()
+            fetchableCount = count
+
             updateOrdering()
         }
     }
@@ -738,7 +736,8 @@ class Zone : ZRecord {
     @discardableResult func removeChild(_ iChild: Zone?) -> Bool {
         if  let child = iChild, let index = children.index(of: child) {
             children.remove(at: index)
-            updateCount()
+
+            fetchableCount = count
 
             return true
         }
@@ -816,10 +815,6 @@ class Zone : ZRecord {
                 }
             }
 
-            if isDeep && !hasMissingChildren {
-                updateCount()
-            }
-
             progenyCount = total
             isUpToDate   = allTrue
 
@@ -883,22 +878,10 @@ class Zone : ZRecord {
         zone    .isUpToDate = false
 
         for child in children {
-            zone.addChild(child.deepCopy())
+            zone.add(child.deepCopy())
         }
 
         return zone
-    }
-
-
-    func updateCount() {
-        if  storageMode != .favorites {
-            if  count   != fetchableCount {
-                columnarReport("fetchable: \(count)", unwrappedName)
-            }
-
-            hasChildren    =  count > 0
-            fetchableCount =  count
-        }
     }
 
 
@@ -988,7 +971,7 @@ class Zone : ZRecord {
             for childStore: ZStorageDict in childrenStore {
                 let child = Zone(dict: childStore)
 
-                addChild(child, at: nil)
+                add(child, at: nil)
             }
 
             respectOrder()

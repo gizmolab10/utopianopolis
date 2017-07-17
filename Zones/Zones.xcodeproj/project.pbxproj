@@ -233,6 +233,7 @@
 		0C39B3B31F1988380091F4D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B39C1F1988380091F4D1 /* Assets.xcassets */; };
 		0C39B3B61F1988380091F4D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B39D1F1988380091F4D1 /* Main.storyboard */; };
 		0C39B3B91F1988380091F4D1 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B39E1F1988380091F4D1 /* Settings.storyboard */; };
+		0C39B3C51F198CB80091F4D1 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C23A94C1F0ED24A00514814 /* CloudKit.framework */; };
 		0C60B6731DBDB8A0005D99F9 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C60B6761DBDB8DB005D99F9 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C60B6791DBE84DF005D99F9 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; };
@@ -413,7 +414,6 @@
 		0C39B3C01F1989830091F4D1 /* Zones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Zones.entitlements; path = Zones/Zones.entitlements; sourceTree = "<group>"; };
 		0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = PadZones/Frameworks/SnapKit.framework; sourceTree = "<group>"; };
 		0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Zones/Frameworks/SnapKit.framework; sourceTree = "<group>"; };
-		0C69C97C1F09C705004D026D /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = iFocus/Frameworks/SnapKit.framework; sourceTree = "<group>"; };
 		0C69C9DF1F09CD95004D026D /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B141D2ECF1A001892E5 /* Focus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Focus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -470,6 +470,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C60B6791DBE84DF005D99F9 /* SnapKit.framework in Frameworks */,
+				0C39B3C51F198CB80091F4D1 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -736,7 +737,7 @@
 			children = (
 				0C39B3931F1988380091F4D1 /* iPad */,
 				0C39B3971F1988380091F4D1 /* iPhone */,
-				0C39B39B1F1988380091F4D1 /* OSX */,
+				0C39B39B1F1988380091F4D1 /* desktop */,
 			);
 			path = interfaces;
 			sourceTree = "<group>";
@@ -761,27 +762,70 @@
 			path = iPhone;
 			sourceTree = "<group>";
 		};
-		0C39B39B1F1988380091F4D1 /* OSX */ = {
+		0C39B39B1F1988380091F4D1 /* desktop */ = {
 			isa = PBXGroup;
 			children = (
 				0C39B39C1F1988380091F4D1 /* Assets.xcassets */,
 				0C39B39D1F1988380091F4D1 /* Main.storyboard */,
 				0C39B39E1F1988380091F4D1 /* Settings.storyboard */,
 			);
+			name = desktop;
 			path = OSX;
 			sourceTree = "<group>";
 		};
 		0C39B3C11F198BAA0091F4D1 /* configuration */ = {
 			isa = PBXGroup;
 			children = (
-				0C39B3BF1F1989830091F4D1 /* Info.plist */,
-				0C39B3C01F1989830091F4D1 /* Zones.entitlements */,
-				0C39B3BD1F1989600091F4D1 /* Info.plist */,
-				0C39B3BE1F1989600091F4D1 /* PadZones.entitlements */,
+				0C39B3C21F198C780091F4D1 /* iPhone */,
+				0C39B3C31F198C830091F4D1 /* iPad */,
+				0C39B3C41F198C8F0091F4D1 /* desktop */,
+			);
+			name = configuration;
+			sourceTree = "<group>";
+		};
+		0C39B3C21F198C780091F4D1 /* iPhone */ = {
+			isa = PBXGroup;
+			children = (
 				0C39B3BA1F1989210091F4D1 /* iFocus.entitlements */,
 				0C39B3BB1F1989210091F4D1 /* Info.plist */,
 			);
-			name = configuration;
+			name = iPhone;
+			sourceTree = "<group>";
+		};
+		0C39B3C31F198C830091F4D1 /* iPad */ = {
+			isa = PBXGroup;
+			children = (
+				0C39B3BE1F1989600091F4D1 /* PadZones.entitlements */,
+				0C39B3BD1F1989600091F4D1 /* Info.plist */,
+			);
+			name = iPad;
+			sourceTree = "<group>";
+		};
+		0C39B3C41F198C8F0091F4D1 /* desktop */ = {
+			isa = PBXGroup;
+			children = (
+				0C39B3C01F1989830091F4D1 /* Zones.entitlements */,
+				0C39B3BF1F1989830091F4D1 /* Info.plist */,
+			);
+			name = desktop;
+			sourceTree = "<group>";
+		};
+		0C39B3C61F198CD00091F4D1 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */,
+				0C23A94C1F0ED24A00514814 /* CloudKit.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		0C39B3C71F198CDC0091F4D1 /* OSX */ = {
+			isa = PBXGroup;
+			children = (
+				0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */,
+				0CD921791D8F4C3200F80964 /* CloudKit.framework */,
+			);
+			name = OSX;
 			sourceTree = "<group>";
 		};
 		0C401E891D2F6B6D000B9864 /* Tests */ = {
@@ -800,8 +844,8 @@
 			children = (
 				0C39B21E1F182EBB0091F4D1 /* sources */,
 				0C39B3C11F198BAA0091F4D1 /* configuration */,
+				0CD921761D8F4C2500F80964 /* frameworks */,
 				0C39B3921F1988380091F4D1 /* interfaces */,
-				0CD921761D8F4C2500F80964 /* Frameworks */,
 				0CA04B151D2ECF1A001892E5 /* Products */,
 				0C401E891D2F6B6D000B9864 /* Tests */,
 			);
@@ -857,16 +901,13 @@
 			path = PadZonesUITests;
 			sourceTree = "<group>";
 		};
-		0CD921761D8F4C2500F80964 /* Frameworks */ = {
+		0CD921761D8F4C2500F80964 /* frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0C69C97C1F09C705004D026D /* SnapKit.framework */,
-				0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */,
-				0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */,
-				0C23A94C1F0ED24A00514814 /* CloudKit.framework */,
-				0CD921791D8F4C3200F80964 /* CloudKit.framework */,
+				0C39B3C61F198CD00091F4D1 /* iOS */,
+				0C39B3C71F198CDC0091F4D1 /* OSX */,
 			);
-			name = Frameworks;
+			name = frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
