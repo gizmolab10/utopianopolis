@@ -76,10 +76,10 @@ class Zone : ZRecord {
     var           isEditing:         Bool { return gSelectionManager .isEditing(self) }
     var           isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
     var            hasColor:         Bool { return _color != nil }
-    var           isDeleted:         Bool { get { return getState(for:     .IsDeleted) } set { setState(newValue, for: .IsDeleted) } }
-    var          isUpToDate:         Bool { get { return getState(for:    .IsUpToDate) } set { setState(newValue, for: .IsUpToDate) } }
-    var          isFavorite:         Bool { get { return getState(for:    .IsFavorite) } set { setState(newValue, for: .IsFavorite) } }
-    var        showChildren:         Bool { get { return getState(for: .ShowsChildren) } set { setState(newValue, for: .ShowsChildren) } }
+    var           isDeleted:         Bool { get { return getValue(for:     .IsDeleted) } set { setValue(newValue, for: .IsDeleted) } }
+    var          isUpToDate:         Bool { get { return getValue(for:    .IsUpToDate) } set { setValue(newValue, for: .IsUpToDate) } }
+    var          isFavorite:         Bool { get { return getValue(for:    .IsFavorite) } set { setValue(newValue, for: .IsFavorite) } }
+    var        showChildren:         Bool { get { return getValue(for: .ShowsChildren) } set { setValue(newValue, for: .ShowsChildren) } }
 
 
     var decoration: String {
@@ -366,14 +366,14 @@ class Zone : ZRecord {
     }
 
 
-    func getState(for iState: ZoneState) -> Bool {
+    func getValue(for iState: ZoneState) -> Bool {
         return state.contains(iState)
 
     }
 
 
-    func setState(_ iValue: Bool, for iState: ZoneState) {
-        if iValue != getState(for: iState) {
+    func setValue(_ iValue: Bool, for iState: ZoneState) {
+        if     iValue != getValue(for: iState) {
             if iValue {
                 state.insert(iState)
             } else {

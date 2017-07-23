@@ -134,14 +134,14 @@ class ZOperationsManager: NSObject {
             for operationID in operationIDs + [.available] {
                 let                     operation = BlockOperation {
                     self               .currentOp = operationID // if hung, it happened inside this op
-                    var  closure: IntegerClosure? = nil         // declare closure first, so compiler will let it recurse
+                    var  recurse: IntegerClosure? = nil         // declare closure first, so compiler will let it recurse
                     let             skipFavorites = operationID != .here
                     let                      full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .root, .here].contains(operationID)
                     let forCurrentStorageModeOnly = [.file, .available, .parent, .children, .authenticate                          ].contains(operationID)
                     let        cloudModes: ZModes = [.mine, .everyone]
                     let             modes: ZModes = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : skipFavorites ? cloudModes : cloudModes + [.favorites]
 
-                    closure = { index in
+                    recurse = { index in
                         if index >= modes.count {
                             self.finishOperation(for: operationID)
                         } else {
@@ -152,13 +152,13 @@ class ZOperationsManager: NSObject {
                                     self.finishOperation(for: operationID)
                                     self.report(error)
                                 } else {
-                                    closure?(index + 1)         // recurse
+                                    recurse?(index + 1)         // recurse
                                 }
                             }
                         }
                     }
 
-                    closure?(0)
+                    recurse?(0)
                 }
 
                 waitingOps[operationID] = operation

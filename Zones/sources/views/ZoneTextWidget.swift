@@ -137,9 +137,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func selectCharacter(in range: NSRange) {
+        #if os(OSX)
         if let textInput = currentEditor() {
             textInput.selectedRange = range
         }
+        #endif
     }
 
 

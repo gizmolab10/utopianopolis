@@ -534,59 +534,41 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchChildren(_ iLogic: ZRecursionLogic? = ZRecursionLogic(.restore), _ onCompletion: IntegerClosure?) {
-        let    progenyNeeded = pullReferencesWithMatchingStates([.needsProgeny])
-        let   childrenNeeded = pullReferencesWithMatchingStates([.needsChildren]) + progenyNeeded
-        let            logic = iLogic ?? ZRecursionLogic(.restore)
-        var            count = childrenNeeded.count
+        let  progenyNeeded = pullReferencesWithMatchingStates([.needsProgeny])
+        let childrenNeeded = pullReferencesWithMatchingStates([.needsChildren]) + progenyNeeded
+        let          logic = iLogic ?? ZRecursionLogic(.restore)
+        let          count = childrenNeeded.count
 
         onCompletion?(count)
 
         if count > 0 {
-            let    predicate = NSPredicate(format: "zoneState < %d AND parent IN %@", ZoneState.IsFavorite.rawValue, childrenNeeded)
-            var  needsResort = [Zone] ()
-            var     finished = false
-            let       finish = {
-                if !finished {
-                    finished = true
-
-                    for parent in needsResort {
-                        parent.respectOrder()
-                    }
-
-                    self.fetchChildren(logic, onCompletion) // recurse to grab remaining children, if any
-                }
-            }
+            let  predicate = NSPredicate(format: "zoneState < %d AND parent IN %@", ZoneState.IsFavorite.rawValue, childrenNeeded)
+            var  retrieved = [Zone] ()
 
             columnarReport("CHILDREN of", stringForReferences(childrenNeeded, in: storageMode))
             queryWith(predicate) { (iRecord: CKRecord?) in
                 if  let record = iRecord { // nil means: we already received full response from cloud for this particular fetch
                     let  child = self.zoneForRecord(record)
-                    count     -= 1
 
                     if !child.isDeleted && !child.isRoot {
                         logic.propagateNeeds(to: child, progenyNeeded)
-
-                        if  let parent  = child.parentZone {
-                            if  parent != child && !parent.children.contains(child) {
-                                parent.add(child)
-
-                                if !needsResort.contains(parent) {
-                                    needsResort.append(parent)
-                                }
-                            }
-                        } else {
-                            self.columnarReport("CHILD", child.unwrappedName)
-                        }
-                    }
-
-
-                    if count <= 0 {
-                        self.dispatchAsyncInForegroundAfter(0.1) {
-                            finish()
-                        }
+                        retrieved.append(child)
                     }
                 } else {
-                    finish()
+                    self.fetchChildren(logic, onCompletion) // recurse to grab remaining children, if any
+
+                    self.dispatchAsyncInForeground() { // mutate graph
+                        for child in retrieved {
+                            if  let parent  = child.parentZone {
+                                if  parent != child && !parent.children.contains(child) {
+                                    parent.add(child)
+                                    parent.respectOrder()
+                                }
+                            } else {
+                                self.columnarReport("DUPLICATE ?", child.unwrappedName)
+                            }
+                        }
+                    }
                 }
             }
         }
