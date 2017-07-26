@@ -159,19 +159,6 @@ class Zone : ZRecord {
     }
 
 
-    func hasCompleteAncestorPath(toColor: Bool = false) -> Bool {
-        var isSafe = false
-
-        traverseAllAncestors { iZone in
-            if  iZone.isRoot || (toColor && iZone.hasColor) {
-                isSafe = true
-            }
-        }
-
-        return isSafe
-    }
-
-
     var crossLink: ZRecord? {
         get {
             if _crossLink == nil, var link = zoneLink, link != "" {
@@ -460,6 +447,19 @@ class Zone : ZRecord {
     // MARK:-
 
 
+    func hasCompleteAncestorPath(toColor: Bool = false) -> Bool {
+        var isSafe = false
+
+        traverseAllAncestors { iZone in
+            if  iZone.isRoot || (toColor && iZone.hasColor) {
+                isSafe = true
+            }
+        }
+
+        return isSafe
+    }
+
+
     func isABookmark(spawnedBy zone: Zone) -> Bool {
         if  let        link = crossLink, let mode = link.storageMode {
             var     probeID = link.record.recordID as CKRecordID?
@@ -641,6 +641,14 @@ class Zone : ZRecord {
     }
 
 
+    func maybeNeedRoot() {
+        if !hasCompleteAncestorPath() {
+            markForAllOfStates([.needsRoot])
+        }
+    }
+
+
+
     func maybeNeedProgeny() {
         if canRevealChildren && hasMissingChildren {
             needProgeny()
@@ -812,9 +820,9 @@ class Zone : ZRecord {
 
 
     func safeProgenyCountUpdate(_ recursing: ZRecursionType, _ visited: [Zone]) {
-        let isDeep = recursing == .deep
+        let isAll = recursing == .all
 
-        if !visited.contains(self) && (!isUpToDate || isDeep) {
+        if !visited.contains(self) && (!isUpToDate || isAll) {
             var allTrue = true
             var   total = 1
 

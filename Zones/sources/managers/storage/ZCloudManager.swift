@@ -405,8 +405,8 @@ class ZCloudManager: ZRecordsManager {
                         self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey, onCompletion: { iRecord in
                             let zone = Zone(record: iRecord, storageMode: self.storageMode)
 
-                            zone.needRoot()
                             zone.needFlush()
+                            zone.maybeNeedRoot()
                             self.columnarReport("COLOR", zone.zoneName)
                         })
                     }
@@ -433,77 +433,14 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetchToRoot(_ onCompletion: IntegerClosure?) {
-        let            here = gRemoteStoresManager.manifest(for: storageMode).hereZone
-        let        requests = hasRecords(for: [.needsRoot])
-        let hasCompletePath = here.hasCompleteAncestorPath()
-
-        if  rootZone != nil && hasCompletePath && !requests {
-            onCompletion?(0)
-        } else {
-            onCompletion?(-1)
-
-            typealias         ZoneBooleanClosure = (Zone, Bool) -> (Void)
-            var                          visited = [Zone]()
-            var getParentOf: ZoneBooleanClosure? = nil
-
-            let againFetchToRoot = { (iRecurse: Bool) in
-                if iRecurse {
-                    self.dispatchAsyncInBackground {    // prevent pileup
-                        self.fetchToRoot(onCompletion)  // grab more or make final call to closure
-                    }
-                }
-            }
-
-            getParentOf = { (iZone, iRecurse) in
-                if  visited.contains(iZone) || iZone.isRoot || iZone.isRootOfFavorites || iZone.hasCompleteAncestorPath() {
-                    againFetchToRoot(iRecurse)
-                } else {
-                    iZone.needParent()
-
-                    self.fetchParents() { iResult in
-                        if iResult == 0 {
-                            if  let parent = iZone.parentZone {
-                                visited    = visited + [iZone]
-
-                                getParentOf?(parent, iRecurse)  // recurse for remaining
-                            } else if iZone.isRoot {
-                                self.rootZone = iZone           // got root
-
-                                againFetchToRoot(iRecurse)      // so will call onCompletion
-                            } else {
-                                onCompletion?(0)                // prevent [operations manager] hang
-                            }
-                        }
-                    }
-                }
-            }
-
-            if !hasCompletePath {
-                getParentOf?(here, true)
-            } else if requests {
-                let needRoot = pullRecordsWithMatchingStates([.needsRoot])
-                var    count = needRoot.count
-
-                for need in needRoot {
-                    count   -= 1
-
-                    getParentOf?(zoneForRecord(need), count == 0)
-                }
-            } else {
-                onCompletion?(0)
-            }
-        }
-    }
-
-
-    func fetchParents(_ onCompletion: IntegerClosure?) {
-        let missingParents = parentIDsWithMatchingStates([.needsParent])
-        let        orphans = recordIDsWithMatchingStates([.needsParent])
+    func fetchParents(_ goal: ZRecursionType, _ onCompletion: IntegerClosure?) {
+        let state: ZRecordState = (goal == .all) ? .needsRoot : .needsParent
+        let      missingParents = parentIDsWithMatchingStates([state])
+        let             orphans = recordIDsWithMatchingStates([state])
 
         if  missingParents.count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            operation.recordIDs = missingParents
             var     recordsByID = [CKRecord : CKRecordID?] ()
+            operation.recordIDs = missingParents
 
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
                 if iRecord != nil {
@@ -516,12 +453,12 @@ class ZCloudManager: ZRecordsManager {
             operation.completionBlock = {
                 self.dispatchAsyncInForeground {
                     for (iRecord, iID) in recordsByID {
-                        var parent = self.zoneForRecordID(iID)
+                        var parent  = self.zoneForRecordID(iID)
 
-                        if parent != nil {
+                        if  parent != nil {
                             parent?.mergeIntoAndTake(iRecord) // BROKEN: likely this does not do what's needed here .... yikes! HUH?
                         } else {
-                            parent = self.zoneForRecord(iRecord)
+                            parent  = self.zoneForRecord(iRecord)
 
                             for orphan in orphans {
                                 if let child = self.zoneForRecordID(orphan), let parentID = child.parentZone?.record.recordID, parentID == parent?.record.recordID {
@@ -532,12 +469,16 @@ class ZCloudManager: ZRecordsManager {
 
                         if parent != nil {
                             parent?.updateLevel()
+
+                            if goal == .all {
+                                parent?.maybeNeedRoot()
+                            }
                         }
                         
                     }
                     
-                    self.clearRecordIDs(missingParents, for: [.needsParent])
-                    onCompletion?(0)
+                    self.clearRecordIDs(orphans, for: [state])
+                    self.fetchParents(goal, onCompletion)
                 }
             }
 

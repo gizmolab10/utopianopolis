@@ -528,7 +528,7 @@ class ZEditingManager: NSObject {
             grab.needProgeny()
         }
 
-        gOperationsManager.children(.deep) {
+        gOperationsManager.children(.all) {
             for grab in grabs {
                 self.addToPaste(grab.deepCopy())
             }
@@ -570,7 +570,7 @@ class ZEditingManager: NSObject {
             closure()
         } else {
             candidate.needProgeny()
-            gOperationsManager.children(.deep) {
+            gOperationsManager.children(.all) {
                 closure()
             }
         }
@@ -1046,7 +1046,7 @@ class ZEditingManager: NSObject {
 
                     into.displayChildren()
                     into.addAndReorderChild(child, at: at)
-                    into.safeProgenyCountUpdate(.deep, [])
+                    into.safeProgenyCountUpdate(.all, [])
                     forUndo.append(child)
                     child.addToGrab()
                 }

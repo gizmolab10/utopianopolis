@@ -70,7 +70,7 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     func recount() {
-        gSelectionManager.currentMoveable.progenyCountUpdate(.deep)
+        gSelectionManager.currentMoveable.progenyCountUpdate(.all)
     }
 
 
