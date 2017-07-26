@@ -311,7 +311,7 @@ class ZFavoritesManager: ZCloudManager {
 
         bookmark            = create(withBookmark: bookmark, isFavorite, parent: parent, atIndex: index, zone.storageMode, zone.zoneName)
 
-        bookmark?.needCreate()
+        bookmark?.needFlush()
 
         if !isFavorite {
             parent.maybeNeedMerge()

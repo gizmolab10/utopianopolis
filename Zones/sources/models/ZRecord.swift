@@ -120,7 +120,7 @@ class ZRecord: NSObject {
 
 
     func copy(into copy: ZRecord) {
-        copy.needCreate() // so KVO won't call set needsMerge state bit
+        copy.needFlush() // so KVO won't call set needsMerge state bit
         updateCloudProperties()
 
         for keyPath: String in cloudProperties() {
@@ -142,7 +142,7 @@ class ZRecord: NSObject {
 
         record = iRecord
 
-        needSave()
+        needFlush()
     }
 
 
@@ -198,8 +198,18 @@ class ZRecord: NSObject {
     func needProgeny()   { markForAllOfStates([.needsProgeny]) }
     func needChildren()  { markForAllOfStates([.needsChildren]) }
     func needBookmarks() { markForAllOfStates([.needsBookmarks]) }
-    func needCreate()    { markForAllOfStates([.needsCreate]); unmarkForAllOfStates([.needsMerge]) }
-    func needSave()      { markForAllOfStates([.needsSave]);   unmarkForAllOfStates([.needsMerge]) }
+
+
+    func needFlush() {
+        var state: ZRecordState = .needsSave
+
+        if record.creationDate == nil {
+            state = .needsCreate
+        }
+
+        markForAllOfStates([state]);
+        unmarkForAllOfStates([.needsMerge])
+    }
 
 
     func maybeNeedMerge() {

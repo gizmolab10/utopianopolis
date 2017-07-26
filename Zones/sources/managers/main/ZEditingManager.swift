@@ -83,7 +83,7 @@ class ZEditingManager: NSObject {
                 case "/":         focus(on: gSelectionManager.firstGrab)
                 // case "?":         gSettingsController?.displayViewFor(id: .Help)
                 case "-":         createSiblingIdea  (with: "-------------------------") { iChild in iChild.grab() }
-                case "=":         createSiblingIdea  (with: "----------- | -----------") { iChild in iChild.edit(); gWidgetsManager.currentEditingWidget?.textWidget.selectCharacter(in: NSMakeRange(12, 1)) }
+                case "=":         createSiblingIdea  (with: "----------- | -----------") { iChild in iChild.editAndSelect(in: NSMakeRange(12, 1)) }
                 case gTabKey:     if hasWidget { createSiblingIdea(containing: isOption) { iChild in iChild.edit() } }
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
                 case gSpaceKey:   if force { createIdea() }
@@ -520,31 +520,30 @@ class ZEditingManager: NSObject {
 
 
     func copyToPaste() {
-        let grabs = gSelectionManager.currentGrabs
+        let grabs = gSelectionManager.simplifiedGrabs
 
         gSelectionManager.clearPaste()
 
-        for zone in grabs {
-            zone.needChildren()
+        for grab in grabs {
+            grab.needProgeny()
         }
 
         gOperationsManager.children(.deep) {
-            for zone in grabs {
-                self.addToPasteCopyOf(zone)
+            for grab in grabs {
+                self.addToPaste(grab.deepCopy())
             }
         }
     }
-    
 
-    func addToPasteCopyOf(_ zone: Zone, parent: Zone? = nil, at index: Int? = nil) {
-        let            copy = zone.deepCopy()
-        copy    .parentZone = nil
 
-        copy.traverseAllProgeny { iZone in
+    func addToPaste(_ zone: Zone) {
+        zone.traverseAllProgeny { iZone in
             iZone.isDeleted = true
         }
 
-        gSelectionManager.pasteableZones[copy] = (parent, index)
+        gSelectionManager.pasteableZones[zone] = (zone.parentZone, zone.siblingIndex)
+
+        zone.orphan()
     }
 
 
@@ -560,7 +559,7 @@ class ZEditingManager: NSObject {
                     self.preserveChildrenOfGrabbedZones()
                 } else {
                     self.prepareUndoForDelete()
-                    self.deleteZones(gSelectionManager.currentGrabs, in: nil)?.grab()
+                    self.deleteZones(gSelectionManager.simplifiedGrabs)?.grab()
                 }
             }
 
@@ -630,11 +629,12 @@ class ZEditingManager: NSObject {
                 rawColumnarReport("double delete", zone.unwrappedName) // sometimes happens, cause undiscovered
             }
 
-            zone.isDeleted = true // will be saved, ignored after next launch
-
-            deleteZones(zone.children, in: zone) // recurse
+            addToPaste(zone)
             deleteAllBookmarks(of: zone)
-            zone.orphan()
+        }
+
+        if let grab = grabThisZone {
+            grab.fetchableCount = grab.count
         }
 
         return grabThisZone
@@ -725,9 +725,9 @@ class ZEditingManager: NSObject {
                             self.revealSiblingsOf(gHere, untilReaching: ancestor)
                         }
                     }
-                } else if let p = parent, p.isDeleted == zone.isDeleted, contains {
+                } else if let p = parent, contains {
                     p.grab()
-                    signalFor(parent, regarding: .redraw)
+                    signalFor(p, regarding: .redraw)
                 }
             } else if !gHere.isRoot {
                 let here = gHere // revealRoot changes gHere, so nab it first
@@ -798,7 +798,7 @@ class ZEditingManager: NSObject {
             travelThroughBookmark(zone)
         } else if zone.count > 0 {
             grabChild(of: zone)
-        } else {
+        } else if !zone.isDeleted {
             zone.needChildren()
 
             gOperationsManager.children(.restore) {
@@ -890,7 +890,7 @@ class ZEditingManager: NSObject {
             iChild.record      = CKRecord(recordType: zoneTypeKey)
             iChild.storageMode = gStorageMode
 
-            iChild.needCreate()
+            iChild.needFlush()
             iChild.updateLevel()
             iChild.updateCloudProperties()
         }
@@ -932,7 +932,7 @@ class ZEditingManager: NSObject {
                 }
 
                 zone.ungrab()
-                child.needCreate()
+                child.needFlush()
                 zone.addAndReorderChild(child, at: iIndex)
                 onCompletion?(child)
             }
@@ -961,7 +961,7 @@ class ZEditingManager: NSObject {
 
     func reverse() {
         if  var commonParent = gSelectionManager.firstGrab.parentZone {
-            var        zones = gSelectionManager.currentGrabs
+            var        zones = gSelectionManager.simplifiedGrabs
             for zone in zones {
                 if let parent = zone.parentZone, parent != commonParent {
                     return
@@ -998,9 +998,30 @@ class ZEditingManager: NSObject {
             }
         }
     }
-    
 
-    func pasteInto(_ iZone: Zone? = nil, ignoreFormerParents: Bool = true) {
+
+    func undoDelete() {
+        gSelectionManager.deselectGrabs()
+
+        for (child, (parent, index)) in gSelectionManager.pasteableZones {
+            parent?.addAndReorderChild(child, at: index)
+            child.addToGrab()
+            child.needFlush()
+
+            child.isDeleted = false
+        }
+
+        gSelectionManager.clearPaste()
+
+        UNDO(self) { iUndoSelf in
+            iUndoSelf.delete()
+        }
+
+        redrawAndSync()
+    }
+
+
+    func pasteInto(_ iZone: Zone? = nil, honorFormerParents: Bool = false) {
         let    pastables = gSelectionManager.pasteableZones
 
         if pastables.count > 0, let zone = iZone {
@@ -1010,24 +1031,24 @@ class ZEditingManager: NSObject {
 
                 gSelectionManager.deselectGrabs()
 
-                for (pastable, (parent, index)) in pastables {
-                    let copy = pastable.deepCopy()
-                    let   at = index  != nil ?  index  : gInsertionsFollow ? nil : 0
-                    let into = parent != nil ? !ignoreFormerParents ? parent! : zone : zone
+                for (child, (parent, index)) in pastables {
+                    let   at = index  != nil ? index : gInsertionsFollow ? nil : 0
+                    let into = parent != nil ? honorFormerParents ? parent! : zone : zone
                     let mode = into.storageMode ?? gStorageMode
 
-                    copy.traverseAllProgeny { iChild in
+                    child.traverseAllProgeny { iChild in
                         iChild.fetchableCount = iChild.count
                         iChild   .storageMode = mode
                         iChild     .isDeleted = false
 
-                        iChild.needCreate()
+                        iChild.needFlush()
                     }
 
-                    into.addAndReorderChild(copy, at: at)
+                    into.displayChildren()
+                    into.addAndReorderChild(child, at: at)
                     into.safeProgenyCountUpdate(.deep, [])
-                    forUndo.append(copy)
-                    copy.addToGrab()
+                    forUndo.append(child)
+                    child.addToGrab()
                 }
 
                 self.UNDO(self) { iUndoSelf in
@@ -1061,7 +1082,7 @@ class ZEditingManager: NSObject {
         if  let    parent = candidate.parentZone {
             var  children = [Zone] ()
             let     index = candidate.siblingIndex
-            let     grabs = gSelectionManager.currentGrabs
+            let     grabs = gSelectionManager.simplifiedGrabs
 
             gSelectionManager.deselectGrabs()
             gSelectionManager.clearPaste()
@@ -1073,8 +1094,7 @@ class ZEditingManager: NSObject {
                     children.append(child)
                 }
 
-                gSelectionManager.pasteableZones[grab] = (grab.parentZone, grab.siblingIndex)
-                grab.orphan()
+                addToPaste(grab)
             }
 
             children.sort { (a, b) -> Bool in
@@ -1087,26 +1107,19 @@ class ZEditingManager: NSObject {
             }
 
             self.UNDO(self) { iUndoSelf in
-                self.deleteZones(children, in: nil)
-                iUndoSelf.pasteInto(parent, ignoreFormerParents: false)
+                iUndoSelf.prepareUndoForDelete()
+                iUndoSelf.deleteZones(children)
+                iUndoSelf.pasteInto(parent, honorFormerParents: true)
             }
         }
     }
-    
+
     
     func prepareUndoForDelete() {
-        let into = gSelectionManager.rootMostMoveable.parentZone
-
         gSelectionManager.clearPaste()
 
-        for zone in gSelectionManager.currentGrabs {
-            if let parent = zone.parentZone, let index = zone.siblingIndex {
-                addToPasteCopyOf(zone, parent: parent, at: index)
-            }
-        }
-
-        UNDO(self) { iUndoSelf in
-            iUndoSelf.pasteInto(into)
+        self.UNDO(self) { iUndoSelf in
+            iUndoSelf.undoDelete()
         }
     }
 

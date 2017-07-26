@@ -85,8 +85,12 @@ class Zone : ZRecord {
     var decoration: String {
         var d = state.decoration
 
-        if  d == "" && isBookmark {
-            d  = "  (B)"
+        if  d == "" {
+            if isBookmark {
+                d = "  (B)"
+            } else if fetchableCount != 0 {
+                d = "  (\(fetchableCount))"
+            }
         }
 
         return d
@@ -149,7 +153,7 @@ class Zone : ZRecord {
                 _color    = newValue
                 zoneColor = newValue.string
 
-                needSave()
+                needFlush()
             }
         }
     }
@@ -399,6 +403,14 @@ class Zone : ZRecord {
     }
 
 
+    func editAndSelect(in range: NSRange) {
+        edit()
+        dispatchAsyncInForeground {
+            self.widget?.textWidget.selectCharacter(in: range)
+        }
+    }
+
+
     func orphan() {
         if let zone = parentZone, zone.removeChild(self) {
             zone.incrementProgenyCount(by: -progenyCount)
@@ -406,7 +418,7 @@ class Zone : ZRecord {
 
         parentZone = nil
 
-        needSave()
+        needFlush()
         updateCloudProperties()
     }
 
@@ -415,7 +427,7 @@ class Zone : ZRecord {
         zoneColor = ""
         _color    = nil
 
-        needSave()
+        needFlush()
     }
 
 
@@ -670,7 +682,8 @@ class Zone : ZRecord {
 
 
     @discardableResult func add(_ iChild: Zone?, at iIndex: Int?) -> Int? {
-        if  let child = iChild {
+        if  let       child = iChild {
+            child.isDeleted = false
 
             // make sure it's not already been added
             // NOTE: both must have a record for this to be effective

@@ -122,10 +122,16 @@ extension CKRecord {
                 let    state = ZoneState(rawValue: rawState)
                 let   suffix = state.decoration
 
-                return name.appending(suffix)
-            } else {
-                return name
+                if suffix != "" {
+                    return name.appending(suffix)
+                }
             }
+
+            if  let fetchable = self["zoneCount"] as? Int {
+                return name.appending("  (\(fetchable))")
+            }
+
+            return name
         }
 
         return ""

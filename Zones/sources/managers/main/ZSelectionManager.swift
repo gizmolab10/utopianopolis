@@ -44,6 +44,32 @@ class ZSelectionManager: NSObject {
     }
 
 
+    var simplifiedGrabs: [Zone] {
+        let current = currentGrabs
+        var   grabs = [Zone] ()
+
+        for grab in current {
+            var found = false
+
+            grab.traverseAncestors() { iZone -> ZTraverseStatus in
+                if  grab != iZone && current.contains(iZone) {
+                    found = true
+
+                    return .eStop
+                }
+
+                return .eContinue
+            }
+
+            if !found {
+                grabs.append(grab)
+            }
+        }
+
+        return grabs
+    }
+
+
     var currentGrabsHaveChildren: Bool {
         for grab in currentGrabs {
             if grab.count > 0 {

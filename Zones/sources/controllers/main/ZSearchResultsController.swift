@@ -155,8 +155,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
     func clear() {
         resultsAreVisible = false
-        gShowsSearching    = false
-        gWorkMode          = .editMode
+        gShowsSearching   = false
+        gWorkMode         = .editMode
 
         self.signalFor(nil, regarding: .search)
         self.signalFor(nil, regarding: .found)
@@ -191,7 +191,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
                         }
                     } else if let arrow = key.arrow {
                         switch arrow {
-                        case  .left:    self.clear();                    return nil
+                        case  .left:    self.reset();                    return nil
                         case .right: if self.resolve(in: gStorageMode) { return nil }; break
                         default:                                         break
                         }
@@ -209,9 +209,9 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             if let save = monitor {
                 monitor = nil
                 
-                dispatchAsyncInForegroundAfter(0.001, closure: {
+                dispatchAsyncInForegroundAfter(0.001) {
                     ZEvent.removeMonitor(save)
-                })
+                }
             }
         #endif
     }
