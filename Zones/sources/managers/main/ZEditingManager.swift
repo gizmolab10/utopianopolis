@@ -633,7 +633,7 @@ class ZEditingManager: NSObject {
             deleteAllBookmarks(of: zone)
         }
 
-        if let grab = grabThisZone {
+        if let             grab = grabThisZone {
             grab.fetchableCount = grab.count
         }
 

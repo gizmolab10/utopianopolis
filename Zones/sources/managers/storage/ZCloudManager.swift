@@ -30,7 +30,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func start(_ operation: CKOperation) {
-        dispatchAsyncInBackground {
+        dispatchAsyncInBackground {     // not stall foreground processor
             operation.start()
         }
     }
@@ -76,7 +76,9 @@ class ZCloudManager: ZRecordsManager {
                                 }
                             }
 
-                            self.save(onCompletion) // process remaining
+                            self.dispatchAsyncInBackground {    // not stall foreground processor
+                                self.save(onCompletion)         // process remaining
+                            }
                         }
                     }
 
@@ -177,7 +179,7 @@ class ZCloudManager: ZRecordsManager {
         if  database == nil {
             done(nil)
         } else {
-            dispatchAsyncInBackground {
+            dispatchAsyncInBackground {     // not stall foreground processor
                 self.database?.fetch(withRecordID: recordID) { (fetchedRecord: CKRecord?, fetchError: Error?) in
                     if  fetchError == nil && fetchedRecord != nil {
                         done(fetchedRecord)
@@ -289,7 +291,9 @@ class ZCloudManager: ZRecordsManager {
                         }
                     }
 
-                    self.bookmarks(onCompletion) // process remaining
+                    self.dispatchAsyncInBackground {    // not stall foreground processor
+                        self.bookmarks(onCompletion)    // process remaining
+                    }
                 }
             }
         }
@@ -310,7 +314,9 @@ class ZCloudManager: ZRecordsManager {
                             record.mergeIntoAndTake(iRecord)
                         }
 
-                        self.merge(onCompletion) // process remaining
+                        self.dispatchAsyncInBackground {    // not stall foreground processor
+                            self.merge(onCompletion)        // process remaining
+                        }
                     }
                 }
             }
@@ -367,7 +373,9 @@ class ZCloudManager: ZRecordsManager {
                             }
                         }
 
-                        self.fetch(onCompletion) // process remaining
+                        self.dispatchAsyncInBackground {    // not stall foreground processor
+                            self.fetch(onCompletion)        // process remaining
+                        }
                     }
                 }
             }
@@ -502,7 +510,10 @@ class ZCloudManager: ZRecordsManager {
                     }
                     
                     self.clearRecordIDs(orphans, for: [state])
-                    self.fetchParents(goal, onCompletion)
+
+                    self.dispatchAsyncInBackground {            // not stall foreground processor
+                        self.fetchParents(goal, onCompletion)   // process remaining
+                    }
                 }
             }
 
@@ -537,10 +548,6 @@ class ZCloudManager: ZRecordsManager {
                         retrieved.append(child)
                     }
                 } else {
-                    self.dispatchAsyncInBackground {    // prevent pileup
-                        self.fetchChildren(logic, onCompletion) // recurse to grab remaining children, if any
-                    }
-
                     self.dispatchAsyncInForeground() { // mutate graph
                         for child in retrieved {
                             if  let parent  = child.parentZone {
@@ -551,6 +558,10 @@ class ZCloudManager: ZRecordsManager {
                             } else {
                                 self.columnarReport("DUPLICATE ?", child.unwrappedName)
                             }
+                        }
+
+                        self.dispatchAsyncInBackground {            // not stall foreground processor
+                            self.fetchChildren(logic, onCompletion) // process remaining
                         }
                     }
                 }

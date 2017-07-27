@@ -65,7 +65,7 @@ class Zone : ZRecord {
     var       decoratedName:       String { return "\(unwrappedName)\(decoration)" }
     var    grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
-    var  hasMissingChildren:         Bool { return count != fetchableCount }
+    var  hasMissingChildren:         Bool { return count < fetchableCount }
     var   canRevealChildren:         Bool { return hasChildren &&   showChildren }
     var    indicateChildren:         Bool { return hasChildren && (!showChildren || count == 0) }
     var       hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
@@ -716,8 +716,11 @@ class Zone : ZRecord {
                 children.append(child)
             }
 
-            child.parentZone = self
-            fetchableCount   = count
+            child.parentZone   = self
+
+            if  fetchableCount < count {
+                fetchableCount = count
+            }
 
             child.updateLevel()
 
