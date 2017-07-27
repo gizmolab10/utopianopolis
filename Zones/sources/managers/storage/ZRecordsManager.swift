@@ -231,6 +231,15 @@ class ZRecordsManager: NSObject {
 
 
     func pullReferencesWithMatchingStates(_ states: [ZRecordState]) -> [CKReference] {
+        let references = referencesWithMatchingStates(states)
+
+        clearReferences(references, for: states)
+
+        return references
+    }
+
+
+    func referencesWithMatchingStates(_ states: [ZRecordState]) -> [CKReference] {
         var references = [CKReference] ()
 
         findRecordsWithMatchingStates(states) { state, record in
@@ -240,8 +249,6 @@ class ZRecordsManager: NSObject {
                 references.append(reference)
             }
         }
-
-        clearReferences(references, for: states)
 
         return references
     }

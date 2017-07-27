@@ -199,6 +199,13 @@ class ZRecord: NSObject {
     func needBookmarks() { markForAllOfStates([.needsBookmarks]) }
 
 
+    func maybeNeedMerge() {
+        if !isMarkedForAnyOfStates([.needsCreate, .needsSave, .needsMerge]) {
+            markForAllOfStates([.needsMerge])
+        }
+    }
+
+
     func needFlush() {
         var state: ZRecordState = .needsSave
 
@@ -208,13 +215,6 @@ class ZRecord: NSObject {
 
         markForAllOfStates([state]);
         unmarkForAllOfStates([.needsMerge])
-    }
-
-
-    func maybeNeedMerge() {
-        if !isMarkedForAnyOfStates([.needsCreate, .needsSave, .needsMerge]) {
-            markForAllOfStates([.needsMerge])
-        }
     }
 
 
