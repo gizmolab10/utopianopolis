@@ -332,7 +332,7 @@ extension ZoneTextWidget {
             default:                    return
             }
 
-            dispatchAsyncInForeground { // execute on next cycle of runloop
+            FOREGROUND { // execute on next cycle of runloop
                 gEditingManager.handleKey(key, flags: ZEventFlags(), isWindow: true)
             }
         }
@@ -362,7 +362,7 @@ extension ZoneTextWidget {
         if let save = monitor {
             monitor = nil
 
-            dispatchAsyncInForegroundAfter(0.001, closure: {
+            FOREGROUND(after: 0.001, closure: {
                 ZEvent.removeMonitor(save)
             })
         }

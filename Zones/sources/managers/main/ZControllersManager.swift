@@ -85,7 +85,7 @@ class ZControllersManager: NSObject {
         signalFor(nil, regarding: .startup)
         displayActivity(true)
         gOperationsManager.startUp {
-            self.dispatchAsyncInForeground {
+            self.FOREGROUND {
                 self.displayActivity(false)
                 gHere.grab()
                 self.signalFor(nil, regarding: .redraw)
@@ -101,7 +101,7 @@ class ZControllersManager: NSObject {
 
 
     func displayActivity(_ show: Bool) {
-        dispatchAsyncInForeground {
+        FOREGROUND {
             for signalObject in self.signalObjectsByControllerID.values {
                 signalObject.controller.displayActivity(show)
             }
@@ -112,7 +112,7 @@ class ZControllersManager: NSObject {
     func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
         let mode = gStorageMode
 
-        dispatchAsyncInForeground {
+        FOREGROUND {
             for (identifier, signalObject) in self.signalObjectsByControllerID {
                 switch regarding {
                 case .preferences: if identifier == .preferences { signalObject.closure(object, mode, regarding) }

@@ -512,7 +512,7 @@ class ZoneWidget: ZView {
             if  childrenPass || gSelectionManager.isDragging || gEditorView?.rubberbandRect != nil {
                 for child in childrenWidgets { drawLine(to: child) }
             } else {
-                dispatchAsyncInForeground {
+                FOREGROUND {
                     self.childrenPass = true
 
                     self.setNeedsDisplay()

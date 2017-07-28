@@ -539,6 +539,8 @@ class ZEditingManager: NSObject {
     func addToPaste(_ zone: Zone) {
         zone.traverseAllProgeny { iZone in
             iZone.isDeleted = true
+
+            iZone.needFlush()
         }
 
         gSelectionManager.pasteableZones[zone] = (zone.parentZone, zone.siblingIndex)

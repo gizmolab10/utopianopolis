@@ -30,7 +30,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func start(_ operation: CKOperation) {
-        dispatchAsyncInBackground {     // not stall foreground processor
+        BACKGROUND {     // not stall foreground processor
             operation.start()
         }
     }
@@ -69,14 +69,14 @@ class ZCloudManager: ZRecordsManager {
                     operation.completionBlock = {
                         // deal with saved records marked as deleted
 
-                        self.dispatchAsyncInForeground {
+                        self.FOREGROUND {
                             for record: CKRecord in operation.recordsToSave! {
                                 if let zone = self.zoneForRecordID(record.recordID), zone.isDeleted {
                                     self.unregisterZone(zone)
                                 }
                             }
 
-                            self.dispatchAsyncInBackground {    // not stall foreground processor
+                            self.BACKGROUND {    // not stall foreground processor
                                 self.save(onCompletion)         // process remaining
                             }
                         }
@@ -171,7 +171,7 @@ class ZCloudManager: ZRecordsManager {
 
     func assureRecordExists(withRecordID recordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
         let done: RecordClosure = { (record: CKRecord?) in
-            self.dispatchAsyncInForeground {
+            self.FOREGROUND {
                 onCompletion(record)
             }
         }
@@ -179,7 +179,7 @@ class ZCloudManager: ZRecordsManager {
         if  database == nil {
             done(nil)
         } else {
-            dispatchAsyncInBackground {     // not stall foreground processor
+            BACKGROUND {     // not stall foreground processor
                 self.database?.fetch(withRecordID: recordID) { (fetchedRecord: CKRecord?, fetchError: Error?) in
                     if  fetchError == nil && fetchedRecord != nil {
                         done(fetchedRecord)
@@ -291,7 +291,7 @@ class ZCloudManager: ZRecordsManager {
                         }
                     }
 
-                    self.dispatchAsyncInBackground {    // not stall foreground processor
+                    self.BACKGROUND {    // not stall foreground processor
                         self.bookmarks(onCompletion)    // process remaining
                     }
                 }
@@ -308,15 +308,15 @@ class ZCloudManager: ZRecordsManager {
             var           recordsByID = [CKRecord : CKRecordID?] ()
             operation.recordIDs       = recordIDs
             operation.completionBlock = {
-                self.dispatchAsyncInForeground {
+                self.FOREGROUND {
                     for (iRecord, iID) in recordsByID {
                         if  let record = self.recordForRecordID(iID) {
                             record.mergeIntoAndTake(iRecord)
                         }
+                    }
 
-                        self.dispatchAsyncInBackground {    // not stall foreground processor
-                            self.merge(onCompletion)        // process remaining
-                        }
+                    self.BACKGROUND {    // not stall foreground processor
+                        self.merge(onCompletion)        // process remaining
                     }
                 }
             }
@@ -362,7 +362,7 @@ class ZCloudManager: ZRecordsManager {
                         records.append(ckRecord)
                     }
                 } else { // nil means: we already received full response from cloud for this particular fetch
-                    self.dispatchAsyncInForeground {
+                    self.FOREGROUND {
                         for ckRecord in records {
                             if let record = self.recordForCKRecord(ckRecord) {
                                 record.record = ckRecord
@@ -373,7 +373,7 @@ class ZCloudManager: ZRecordsManager {
                             }
                         }
 
-                        self.dispatchAsyncInBackground {    // not stall foreground processor
+                        self.BACKGROUND {    // not stall foreground processor
                             self.fetch(onCompletion)        // process remaining
                         }
                     }
@@ -395,7 +395,7 @@ class ZCloudManager: ZRecordsManager {
                 records.append(record)
             } else {
                 // nil means: we already received full response from cloud for this particular fetch
-                self.dispatchAsyncInForeground {
+                self.FOREGROUND {
                     for record in records {
                         let        favorite = Zone(record: record, storageMode: self.storageMode)
                         favorite.parentZone = gFavoritesManager.rootZone
@@ -403,18 +403,14 @@ class ZCloudManager: ZRecordsManager {
 
                         // avoid adding a duplicate (which was created by a bug)
 
-                        if  let                 name  = favorite.zoneName, let root = gFavoritesManager.rootZone {
+                        if  let            name  = favorite.zoneName, let root = gFavoritesManager.rootZone {
                             for zone: Zone in root.children {
-                                if  let         link  = favorite.zoneLink {
-                                    if          link == zone.zoneLink {
-                                        isDuplicated  = true
+                                if  let    link  = favorite.zoneLink, link == zone.zoneLink {
+                                    isDuplicated = true
 
-                                        break
-                                    }
-                                }
-
-                                if name == zone.zoneName {
-                                    isDuplicated   = true
+                                    break
+                                } else if name == zone.zoneName {
+                                    isDuplicated = true
 
                                     break
                                 }
@@ -483,7 +479,7 @@ class ZCloudManager: ZRecordsManager {
             }
 
             operation.completionBlock = {
-                self.dispatchAsyncInForeground {
+                self.FOREGROUND {
                     for (iRecord, iID) in recordsByID {
                         var parent  = self.zoneForRecordID(iID)
 
@@ -511,7 +507,7 @@ class ZCloudManager: ZRecordsManager {
                     
                     self.clearRecordIDs(orphans, for: [state])
 
-                    self.dispatchAsyncInBackground {            // not stall foreground processor
+                    self.BACKGROUND {            // not stall foreground processor
                         self.fetchParents(goal, onCompletion)   // process remaining
                     }
                 }
@@ -548,7 +544,7 @@ class ZCloudManager: ZRecordsManager {
                         retrieved.append(child)
                     }
                 } else {
-                    self.dispatchAsyncInForeground() { // mutate graph
+                    self.FOREGROUND() { // mutate graph
                         for child in retrieved {
                             if  let parent  = child.parentZone {
                                 if  parent != child && !parent.children.contains(child) {
@@ -560,7 +556,7 @@ class ZCloudManager: ZRecordsManager {
                             }
                         }
 
-                        self.dispatchAsyncInBackground {            // not stall foreground processor
+                        self.BACKGROUND {            // not stall foreground processor
                             self.fetchChildren(logic, onCompletion) // process remaining
                         }
                     }

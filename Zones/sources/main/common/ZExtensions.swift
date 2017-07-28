@@ -127,7 +127,7 @@ extension CKRecord {
                 }
             }
 
-            if  let fetchable = self["zoneCount"] as? Int {
+            if  let fetchable = self["zoneCount"] as? Int, fetchable > 1 {
                 return name.appending("  (\(fetchable))")
             }
 

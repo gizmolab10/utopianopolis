@@ -46,7 +46,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
                     monitorKeyEvents()
 
                     #if os(OSX)
-                    dispatchAsyncInForeground {
+                    FOREGROUND {
                         self.assignAsFirstResponder(self.tableView)
                         self.tableView?.selectRowIndexes(NSIndexSet(index: 0) as IndexSet, byExtendingSelection: false)
                     }
@@ -209,7 +209,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             if let save = monitor {
                 monitor = nil
                 
-                dispatchAsyncInForegroundAfter(0.001) {
+                FOREGROUND(after: 0.001) {
                     ZEvent.removeMonitor(save)
                 }
             }

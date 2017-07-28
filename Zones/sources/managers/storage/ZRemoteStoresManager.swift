@@ -205,7 +205,7 @@ class ZRemoteStoresManager: NSObject {
                 let  parent = zone.parentZone
 
                 if  zone.showChildren {
-                    self.dispatchAsyncInForeground {
+                    self.FOREGROUND {
                         self.signalFor(parent, regarding: .redraw)
 
                         gOperationsManager.children(.restore) {

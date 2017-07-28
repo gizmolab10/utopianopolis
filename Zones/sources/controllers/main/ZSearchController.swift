@@ -62,7 +62,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                 gWorkMode       = hasResults && gShowsSearching ? .searchMode : .editMode
 
                 if hasResults {
-                    self.dispatchAsyncInForeground {
+                    self.FOREGROUND {
                         self.searchBox?.text = ""
 
                         self.signalFor(iObject, regarding: .found)

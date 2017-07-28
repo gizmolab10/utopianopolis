@@ -120,7 +120,7 @@ class ZOperationsManager: NSObject {
     private func setupAndRun(_ operationIDs: [ZOperationID], logic: ZRecursionLogic? = nil, onCompletion: @escaping Closure) {
         if  let   prior = onAvailable {          // if already set
             onAvailable = {                      // encapsulate it with subsequent setup for new operation identifiers
-                self.dispatchAsyncInForeground { // prevent recursion pile-up on stack
+                self.FOREGROUND { // prevent recursion pile-up on stack
                     prior()
                     self.setupAndRun(operationIDs) { onCompletion() }
                 }
@@ -250,7 +250,7 @@ class ZOperationsManager: NSObject {
 
         if  let closure = onAvailable {
             onAvailable = nil
-            dispatchAsyncInForeground {
+            FOREGROUND {
                 closure()
             }
         }

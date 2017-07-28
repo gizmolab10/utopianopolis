@@ -392,16 +392,14 @@ class Zone : ZRecord {
 
     func editAndSelect(in range: NSRange) {
         edit()
-        dispatchAsyncInForeground {
+        FOREGROUND {
             self.widget?.textWidget.selectCharacter(in: range)
         }
     }
 
 
     func orphan() {
-        if let zone = parentZone, zone.removeChild(self) {
-            zone.incrementProgenyCount(by: -progenyCount)
-        }
+        parentZone?.removeChild(self)
 
         parentZone = nil
 
@@ -722,6 +720,7 @@ class Zone : ZRecord {
                 fetchableCount = count
             }
 
+            updateProgenyCount()
             child.updateLevel()
 
             return insertAt
@@ -760,6 +759,7 @@ class Zone : ZRecord {
     @discardableResult func removeChild(_ iChild: Zone?) -> Bool {
         if  let child = iChild, let index = children.index(of: child) {
             children.remove(at: index)
+            updateProgenyCount()
 
             fetchableCount = count
 
@@ -811,7 +811,42 @@ class Zone : ZRecord {
     // MARK:-
 
 
+    func updateProgenyCount() {
+        let traverse = {
+            self.traverseAllAncestors { iZone in
+                var counter = 0
+
+                for child in iZone.children {
+                    if !child.isBookmark {
+                        counter   += child.fetchableCount + child.progenyCount
+                    }
+                }
+
+                iZone.progenyCount = counter
+            }
+        }
+
+        if hasMissingChildren {
+            needChildren()
+            gOperationsManager.children(.restore) {
+                traverse()
+            }
+        } else {
+            traverse()
+        }
+    }
+
+
     func progenyCountUpdate(_ recursing: ZRecursionType) {
+        traverseAllProgeny { iZone in
+            if iZone.fetchableCount == 0 {
+                iZone.updateProgenyCount()
+            }
+        }
+    }
+
+
+    func oldProgenyCountUpdate(_ recursing: ZRecursionType) {
         columnarReport("RECOUNT", unwrappedName)
         needProgeny()
         gOperationsManager.children(recursing) {
@@ -848,7 +883,7 @@ class Zone : ZRecord {
 
 
     func incrementProgenyCount(by delta: Int) {
-        safeIncrementProgenyCount(by: delta, [])
+        // safeIncrementProgenyCount(by: delta, [])
     }
 
 

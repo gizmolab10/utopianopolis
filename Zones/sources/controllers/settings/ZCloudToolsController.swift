@@ -49,7 +49,7 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     func tableView(_ tableView: ZTableView, shouldSelectRow row: Int) -> Bool {
-        dispatchAsyncInForeground {
+        FOREGROUND {
             tableView.deselectAll(self)
 
             if  let kind = ZToolKind(rawValue: row) {
@@ -70,7 +70,7 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     func recount() {
-        gSelectionManager.currentMoveable.progenyCountUpdate(.all)
+        gSelectionManager.rootMostMoveable.progenyCountUpdate(.all)
     }
 
 

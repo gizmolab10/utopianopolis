@@ -35,7 +35,7 @@ class ZMainController: ZGenericController {
             make.height.equalTo(0.0)
         }
 
-        dispatchAsyncInForegroundAfter(0.1) { // can't be done during awakeFromNib
+        FOREGROUND(after: 0.1) { // can't be done during awakeFromNib
             self.searchResultsView?.removeFromSuperview()
         }
     }

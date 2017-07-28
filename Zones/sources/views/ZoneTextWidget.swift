@@ -107,7 +107,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             if result && isTextEditing {
                 gSelectionManager.clearGrab()
 
-                dispatchAsyncInForeground { // avoid state garbling
+                FOREGROUND { // avoid state garbling
                     self.isTextEditing = false
                 }
             }
@@ -154,11 +154,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
                 switch gCountsMode {
                 case .fetchable: count = zone.fetchableCount
-                case .progeny:   count = zone.progenyCount - 1
+                case .progeny:   count = zone.fetchableCount + zone.progenyCount
                 default:         return
                 }
 
-                if (count > 0) && !isTextEditing && (!zone.showChildren || (gCountsMode == .progeny)) {
+                if (count > 1) && !isTextEditing && (!zone.showChildren || (gCountsMode == .progeny)) {
                     text = text?.appending("  (\(count))")
                 }
             }
