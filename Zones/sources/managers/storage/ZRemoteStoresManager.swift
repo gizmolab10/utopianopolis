@@ -27,8 +27,7 @@ class ZRemoteStoresManager: NSObject {
     var manifestByStorageMode = [ZStorageMode : ZManifest] ()
     var currentRecordsManager: ZRecordsManager { return recordsManagerFor(gStorageMode) }
     var   currentCloudManager: ZCloudManager   { return cloudManagerFor(gStorageMode) }
-    var      rootProgenyCount: Int             { return hasRootZone ? rootZone!.progenyCount : 0 }
-    var           hasRootZone: Bool            { return rootZone != nil }
+    var      rootProgenyCount: Int             { return rootZone?.progenyCount ?? 0 }
     var              manifest: ZManifest       { return manifest(for: gStorageMode) }
     var              rootZone: Zone?     { get { return currentRecordsManager.rootZone } set { currentRecordsManager.rootZone = newValue } }
 

@@ -530,22 +530,9 @@ class ZEditingManager: NSObject {
 
         gOperationsManager.children(.all) {
             for grab in grabs {
-                self.addToPaste(grab.deepCopy())
+                grab.deepCopy().deleteIntoPaste()
             }
         }
-    }
-
-
-    func addToPaste(_ zone: Zone) {
-        zone.traverseAllProgeny { iZone in
-            iZone.isDeleted = true
-
-            iZone.needFlush()
-        }
-
-        gSelectionManager.pasteableZones[zone] = (zone.parentZone, zone.siblingIndex)
-
-        zone.orphan()
     }
 
 
@@ -631,20 +618,7 @@ class ZEditingManager: NSObject {
                 rawColumnarReport("double delete", zone.unwrappedName) // sometimes happens, cause undiscovered
             }
 
-            addToPaste(zone)
-            deleteAllBookmarks(of: zone)
-        }
-
-        if let             grab = grabThisZone {
-            grab.fetchableCount = grab.count
-        }
-
-        return grabThisZone
-    }
-
-
-    func deleteAllBookmarks(of iZone: Zone?) {
-        if let zone = iZone {
+            zone.deleteIntoPaste()
             zone.needBookmarks()
 
             gOperationsManager.bookmarks {
@@ -653,6 +627,12 @@ class ZEditingManager: NSObject {
                 self.deleteZones(bookmarks) // recurse
             }
         }
+
+        if let             grab = grabThisZone {
+            grab.fetchableCount = grab.count
+        }
+
+        return grabThisZone
     }
 
 
@@ -922,11 +902,10 @@ class ZEditingManager: NSObject {
     
 
     func createIdeaIn(_ iZone: Zone?, at iIndex: Int?, onCompletion: ZoneMaybeClosure?) {
-        if  let               zone = iZone, zone.storageMode != .favorites {
-            let       createAndAdd = {
-                let         record = CKRecord(recordType: zoneTypeKey)
-                let          child = Zone(record: record, storageMode: zone.storageMode)
-                child.progenyCount = 1 // so add and reorder will correctly propagate count
+        if  let         zone = iZone, zone.storageMode != .favorites {
+            let createAndAdd = {
+                let   record = CKRecord(recordType: zoneTypeKey)
+                let    child = Zone(record: record, storageMode: zone.storageMode)
 
                 self.UNDO(self) { iUndoSelf in
                     iUndoSelf.deleteZone(child)
@@ -1048,7 +1027,6 @@ class ZEditingManager: NSObject {
 
                     into.displayChildren()
                     into.addAndReorderChild(child, at: at)
-                    into.safeProgenyCountUpdate(.all, [])
                     forUndo.append(child)
                     child.addToGrab()
                 }
@@ -1096,7 +1074,7 @@ class ZEditingManager: NSObject {
                     children.append(child)
                 }
 
-                addToPaste(grab)
+                grab.deleteIntoPaste()
             }
 
             children.sort { (a, b) -> Bool in

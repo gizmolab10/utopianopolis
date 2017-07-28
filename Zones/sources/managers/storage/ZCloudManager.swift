@@ -113,7 +113,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func emptyTrash(_ onCompletion: IntegerClosure?) {
-        let   predicate = NSPredicate(format: "zoneState <= %d", ZoneState.IsDeleted.rawValue)
+        let   predicate = NSPredicate(format: "zoneState >= %d", ZoneState.IsDeleted.rawValue)
         var toBeDeleted = [CKRecordID] ()
 
         self.queryWith(predicate) { (iRecord: CKRecord?) in
@@ -240,7 +240,6 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        // return NSPredicate(format: "zoneState < \(ZoneState.IsFavorite.rawValue)\(separator)\(suffix)")
         return NSPredicate(format: suffix)
     }
 
@@ -253,19 +252,21 @@ class ZCloudManager: ZRecordsManager {
             suffix = String(format: "%@%@SELF CONTAINS \"%@\"", suffix, separator, identifier.recordName)
         }
 
-        return NSPredicate(format: "zoneState <= \(ZoneState.IsUpToDate.rawValue)\(suffix)")
+        return NSPredicate(format: "zoneState < \(ZoneState.IsFavorite.rawValue)\(suffix)")
     }
 
 
     func search(for searchString: String, onCompletion: ObjectClosure?) {
         let predicate = searchPredicateFrom(searchString)
-        var   records = [CKRecord] ()
+        var retrieved = [CKRecord] ()
 
         queryWith(predicate) { iRecord in
-            if iRecord != nil {
-                records.append(iRecord!)
+            if let ckRecord = iRecord {
+                if !retrieved.contains(ckRecord) {
+                    retrieved.append(ckRecord)
+                }
             } else {
-                onCompletion?(records as NSObject)
+                onCompletion?(retrieved as NSObject)
             }
         }
     }
@@ -279,13 +280,15 @@ class ZCloudManager: ZRecordsManager {
 
         if  count > 0 {
             let predicate = bookmarkPredicate(from: recordIDs)
-            var   records = [CKRecord] ()
+            var retrieved = [CKRecord] ()
 
             queryWith(predicate) { iRecord in
-                if let record = iRecord {
-                    records.append(record)
+                if let ckRecord = iRecord {
+                    if !retrieved.contains(ckRecord) {
+                        retrieved.append(ckRecord)
+                    }
                 } else {
-                    for record in records {
+                    for record in retrieved {
                         if self.recordForCKRecord(record) == nil {
                             let _ = Zone(record: iRecord, storageMode: self.storageMode) // register
                         }
@@ -351,20 +354,23 @@ class ZCloudManager: ZRecordsManager {
 
         if count > 0 {
             let predicate = NSPredicate(format: "zoneState < %d AND recordID IN %@", ZoneState.IsFavorite.rawValue, needed)
-            var records = [CKRecord] ()
+            var retrieved = [CKRecord] ()
 
             columnarReport("FETCH", stringForReferences(needed, in: storageMode))
 
             self.queryWith(predicate) { (iRecord: CKRecord?) in
                 if let ckRecord = iRecord {
-                    if !records.contains(ckRecord), let record = self.recordForCKRecord(ckRecord) {
-                        record.unmarkForAllOfStates([.needsFetch])    // deferred to make sure fetch worked before clearing fetch flag
-                        records.append(ckRecord)
+                    if !retrieved.contains(ckRecord) {
+                        retrieved.append(ckRecord)
                     }
                 } else { // nil means: we already received full response from cloud for this particular fetch
                     self.FOREGROUND {
-                        for ckRecord in records {
-                            if let record = self.recordForCKRecord(ckRecord) {
+                        for ckRecord in retrieved {
+                            if  let record = self.recordForCKRecord(ckRecord),
+                                let  state = ckRecord.state,
+                                state     != ZoneState.IsDeleted {
+                                record.unmarkForAllOfStates([.needsFetch])    // deferred to make sure fetch worked before clearing fetch flag
+
                                 record.record = ckRecord
 
                                 if let zone = record as? Zone {
@@ -385,59 +391,68 @@ class ZCloudManager: ZRecordsManager {
 
     func fetchFavorites(_ onCompletion: IntegerClosure?) {
         let predicate = NSPredicate(format: "zoneState >= %d AND zoneState < %d", ZoneState.IsFavorite.rawValue, ZoneState.IsDeleted.rawValue)
-        var   records = [CKRecord] ()
+        var retrieved = [CKRecord] ()
 
         onCompletion?(-1)
         gFavoritesManager.setup()
 
         self.queryWith(predicate) { (iRecord: CKRecord?) in
-            if let record = iRecord {
-                records.append(record)
+            if let ckRecord = iRecord {
+                if !retrieved.contains(ckRecord) {
+                    retrieved.append(ckRecord)
+                }
             } else {
                 // nil means: we already received full response from cloud for this particular fetch
                 self.FOREGROUND {
-                    for record in records {
-                        let        favorite = Zone(record: record, storageMode: self.storageMode)
-                        favorite.parentZone = gFavoritesManager.rootZone
-                        var    isDuplicated = false
+                    if let root = gFavoritesManager.rootZone {
+                        for record in retrieved {
+                            if let state            = record.state,
+                                state              != ZoneState.IsDeleted {
+                                let        favorite = Zone(record: record, storageMode: self.storageMode)
+                                favorite.parentZone = gFavoritesManager.rootZone
+                                var    isDuplicated = false
 
-                        // avoid adding a duplicate (which was created by a bug)
+                                // avoid adding a duplicate (which was created by a bug)
 
-                        if  let            name  = favorite.zoneName, let root = gFavoritesManager.rootZone {
-                            for zone: Zone in root.children {
-                                if  let    link  = favorite.zoneLink, link == zone.zoneLink {
-                                    isDuplicated = true
+                                if  let            name  = favorite.zoneName {
+                                    for zone: Zone in root.children {
+                                        if  let    link  = favorite.zoneLink, link == zone.zoneLink {
+                                            isDuplicated = true
 
-                                    break
-                                } else if name == zone.zoneName {
-                                    isDuplicated = true
+                                            break
+                                        } else if name == zone.zoneName {
+                                            isDuplicated = true
 
-                                    break
+                                            break
+                                        }
+                                    }
+                                }
+
+                                if isDuplicated {
+                                    favorite.isDeleted = true
+
+                                    favorite.needFlush()
+                                } else if let targetID = favorite.crossLink?.record.recordID, self.zoneForRecordID(targetID) == nil {
+                                    self.assureRecordExists(withRecordID: targetID, recordType: zoneTypeKey) { iAssuredRecord in
+                                        let target = Zone(record: iAssuredRecord, storageMode: self.storageMode)
+
+                                        if target.isDeleted {
+                                            favorite.isDeleted = true
+
+                                            favorite.needFlush()
+                                        } else {
+                                            target.maybeNeedRoot()
+                                            gFavoritesManager.rootZone?.add(favorite)
+                                            self.columnarReport("FAVORITE", target.decoratedName)
+                                        }
+                                    }
                                 }
                             }
                         }
-
-                        if isDuplicated {
-                            favorite.isDeleted = true
-
-                            favorite.needFlush()
-                        } else {
-                            gFavoritesManager.rootZone?.add(favorite)
-
-                            if let targetID = favorite.crossLink?.record.recordID, self.zoneForRecordID(targetID) == nil {
-                                self.assureRecordExists(withRecordID: targetID, recordType: zoneTypeKey, onCompletion: { iAssuredRecord in
-                                    let zone = Zone(record: iAssuredRecord, storageMode: self.storageMode)
-
-                                    zone.needFlush()
-                                    zone.maybeNeedRoot()
-                                    self.columnarReport("FAVORITE", zone.decoratedName)
-                                })
-                            }
-                        }
+                        
+                        gFavoritesManager.rootZone?.respectOrder()
+                        onCompletion?(0)
                     }
-                    
-                    gFavoritesManager.rootZone?.respectOrder()
-                    onCompletion?(0)
                 }
             }
         }
@@ -523,36 +538,39 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchChildren(_ iLogic: ZRecursionLogic? = ZRecursionLogic(.restore), _ onCompletion: IntegerClosure?) {
+        let          logic = iLogic              ?? ZRecursionLogic(.restore)
         let  progenyNeeded = pullReferencesWithMatchingStates([.needsProgeny])
         let childrenNeeded = pullReferencesWithMatchingStates([.needsChildren]) + progenyNeeded
-        let          logic = iLogic ?? ZRecursionLogic(.restore)
         let          count = childrenNeeded.count
 
         onCompletion?(count)
 
         if count > 0 {
             let  predicate = NSPredicate(format: "zoneState < %d AND parent IN %@", ZoneState.IsFavorite.rawValue, childrenNeeded)
-            var  retrieved = [Zone] ()
+            var  retrieved = [CKRecord] ()
 
             columnarReport("CHILDREN of", stringForReferences(childrenNeeded, in: storageMode))
             queryWith(predicate) { (iRecord: CKRecord?) in
-                if  let record = iRecord { // nil means: we already received full response from cloud for this particular fetch
-                    let  child = self.zoneForRecord(record)
-
-                    if !child.isDeleted && !child.isRoot {
-                        logic.propagateNeeds(to: child, progenyNeeded)
-                        retrieved.append(child)
+                if  let ckRecord = iRecord {
+                    if !retrieved.contains(ckRecord) {
+                        retrieved.append(ckRecord)
                     }
-                } else {
+                } else { // nil means: we already received full response from cloud for this particular fetch
                     self.FOREGROUND() { // mutate graph
-                        for child in retrieved {
-                            if  let parent  = child.parentZone {
-                                if  parent != child && !parent.children.contains(child) {
-                                    parent.add(child)
-                                    parent.respectOrder()
+                        for record in retrieved {
+                            let child = self.zoneForRecord(record)
+
+                            if !child.isDeleted && !child.isRoot {
+                                logic.propagateNeeds(to: child, progenyNeeded)
+
+                                if  let parent  = child.parentZone {
+                                    if  parent != child && !parent.children.contains(child) {
+                                        parent.add(child)
+                                        parent.respectOrder()
+                                    }
+                                } else {
+                                    self.columnarReport("DUPLICATE ?", child.unwrappedName)
                                 }
-                            } else {
-                                self.columnarReport("DUPLICATE ?", child.unwrappedName)
                             }
                         }
 

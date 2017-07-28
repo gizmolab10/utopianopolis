@@ -32,13 +32,15 @@ struct ZoneState: OptionSet {
     static let     IsDeleted = ZoneState(rawValue: 1 << ZIntegerState.isDeleted   .rawValue)
 
     var decoration: String {
-        let raw = rawValue
-
-        switch raw {
-        case 1 << ZIntegerState.isFavorite.rawValue: return "  (F)"
-        case 1 << ZIntegerState.isDeleted .rawValue: return "  (D)"
-        default:                                     return ""
+        if  let    raw = ZIntegerState(rawValue: Int(log2(Double(rawValue as Int) + 0.5))) {
+            switch raw {
+            case .isFavorite: return "  (F)"
+            case .isDeleted:  return "  (D)"
+            default:          break
+            }
         }
+
+        return ""
     }
 }
 
@@ -687,6 +689,15 @@ class Zone : ZRecord {
     }
 
 
+    func addAndReorderChild(_ iChild: Zone?, at iIndex: Int?) {
+        if  let child = iChild,
+            add(child, at: iIndex) != nil {
+
+            updateOrdering()
+        }
+    }
+
+
     @discardableResult func add(_ iChild: Zone?, at iIndex: Int?) -> Int? {
         if  let       child = iChild {
             child.isDeleted = false
@@ -727,32 +738,6 @@ class Zone : ZRecord {
         }
 
         return nil
-    }
-
-
-    var progenyCountIncrement: Int {
-        var  increment = 0
-
-        for child in children {
-            increment += child.progenyCountIncrement
-        }
-
-        return increment
-    }
-
-
-    func addAndReorderChild(_ iChild: Zone?, at iIndex: Int?) {
-        if  let child = iChild, add(child, at: iIndex) != nil {
-            if  child.zoneProgeny == nil {
-                child.incrementProgenyCount(by: 0)
-            } else {
-                incrementProgenyCount(by: child.progenyCount)
-            }
-
-            fetchableCount = count
-
-            updateOrdering()
-        }
     }
 
 
@@ -811,105 +796,43 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    func updateProgenyCount() {
-        let traverse = {
-            self.traverseAllAncestors { iZone in
-                var counter = 0
-
-                for child in iZone.children {
-                    if !child.isBookmark {
-                        counter   += child.fetchableCount + child.progenyCount
-                    }
-                }
-
-                iZone.progenyCount = counter
-            }
-        }
-
-        if hasMissingChildren {
-            needChildren()
-            gOperationsManager.children(.restore) {
-                traverse()
-            }
-        } else {
-            traverse()
-        }
-    }
-
-
-    func progenyCountUpdate(_ recursing: ZRecursionType) {
+    func fullUpdateProgenyCount() {
         traverseAllProgeny { iZone in
             if iZone.fetchableCount == 0 {
-                iZone.updateProgenyCount()
+                iZone.fastUpdateProgenyCount()
             }
         }
     }
 
 
-    func oldProgenyCountUpdate(_ recursing: ZRecursionType) {
-        columnarReport("RECOUNT", unwrappedName)
-        needProgeny()
-        gOperationsManager.children(recursing) {
-            self.safeProgenyCountUpdate(recursing, [])
-            self.signalFor(nil, regarding: .redraw)
-            gOperationsManager.save {}
-        }
-    }
+    func fastUpdateProgenyCount() {
+        self.traverseAncestors { iAncestor -> ZTraverseStatus in
+            var      counter = 0
 
-
-    func safeProgenyCountUpdate(_ recursing: ZRecursionType, _ visited: [Zone]) {
-        let isAll = recursing == .all
-
-        if !visited.contains(self) && (!isUpToDate || isAll) {
-            var allTrue = true
-            var   total = 1
-
-            for child in self.children {
-                child.safeProgenyCountUpdate(recursing, visited + [self])
-
-                total += child.isBookmark ? 1 : child.progenyCount
-
-                if !child.isUpToDate {
-                    allTrue = false
+            for child in iAncestor.children {
+                if !child.isBookmark {
+                    counter += child.fetchableCount + child.progenyCount
                 }
             }
 
-            progenyCount = total
-            isUpToDate   = allTrue
+            if counter != 0 && counter == iAncestor.progenyCount {
+                return .eStop
+            }
 
-            columnarReport("\(isUpToDate ? " " : "•") \(fetchableCount),\(progenyCount)", unwrappedName)
+            iAncestor.progenyCount = counter
+
+            return .eContinue
         }
     }
 
 
-    func incrementProgenyCount(by delta: Int) {
-        // safeIncrementProgenyCount(by: delta, [])
-    }
-
-
-    func safeIncrementProgenyCount(by delta: Int, _ visited: [Zone]) {
-        if !visited.contains(self) {
-            var increment = delta
-
-            if  increment >= 0 && (zoneProgeny == nil || progenyCount + increment < count + 1) {
-                increment += 1
-            }
-
-            if  increment != 0 {
-                progenyCount += increment
-                // report("\(increment) \(unwrappedName)")
-
-                if !isRoot && !isRootOfFavorites {
-                    if parentZone != nil {
-                        parentZone?.safeIncrementProgenyCount(by: increment, visited + [self])
-                    } else if record != nil && parent != nil && !isDeleted {
-                        needParent()
-
-                        gOperationsManager.parent {
-                            self.parentZone?.safeIncrementProgenyCount(by: increment, visited + [self])
-                        }
-                    }
-                }
+    func updateProgenyCount() {
+        if !hasMissingChildren {
+            fastUpdateProgenyCount()
+        } else {
+            needChildren()
+            gOperationsManager.children(.restore) {
+                self.fastUpdateProgenyCount()
             }
         }
     }
@@ -927,20 +850,30 @@ class Zone : ZRecord {
 
 
     func deepCopy() -> Zone {
-        let zone = Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: storageMode)
+        let theCopy = Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: storageMode)
 
-        copy(into: zone)
+        copy(into: theCopy)
 
-        zone.fetchableCount = 0
-        zone  .progenyCount = 1
-        zone    .parentZone = nil
-        zone    .isUpToDate = false
+        theCopy.parentZone = nil
 
         for child in children {
-            zone.add(child.deepCopy())
+            theCopy.add(child.deepCopy())
         }
 
-        return zone
+        return theCopy
+    }
+
+
+    func deleteIntoPaste() {
+        traverseAllProgeny { iZone in
+            iZone.isDeleted = true
+
+            iZone.needFlush()
+        }
+
+        gSelectionManager.pasteableZones[self] = (parentZone, siblingIndex)
+
+        orphan()
     }
 
 

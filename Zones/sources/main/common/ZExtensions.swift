@@ -114,15 +114,23 @@ extension NSObject {
 
 extension CKRecord {
 
+    var state: ZoneState? {
+        if  let rawState = self["zoneState"] as? Int {
+            return ZoneState(rawValue: rawState)
+        }
+
+        return nil
+    }
+
+
     var  decoratedName: String {
         if recordType       != zoneTypeKey {
             return recordID.recordName
         } else if let   name = self[zoneNameKey] as? String {
-            if  let rawState = self["zoneState"] as? Int {
-                let    state = ZoneState(rawValue: rawState)
-                let   suffix = state.decoration
+            if  state       != nil {
+                let suffix   = state!.decoration
 
-                if suffix != "" {
+                if  suffix  != "" {
                     return name.appending(suffix)
                 }
             }
