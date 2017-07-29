@@ -1171,8 +1171,6 @@ class ZEditingManager: NSObject {
                 let     index = zone.siblingIndex
                 restore[zone] = (parent, index)
             }
-
-            zone.orphan()
         }
 
         if toBookmark {
@@ -1196,6 +1194,7 @@ class ZEditingManager: NSObject {
             let     into = !toBookmark ? iInto : iInto.bookmarkTarget! // grab bookmark AFTER travel
             let addGrabs = {
                 for zone in grabs {
+                    zone.orphan()
                     into.addAndReorderChild(zone, at: iIndex)
                 }
 

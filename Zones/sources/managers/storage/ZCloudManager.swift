@@ -559,18 +559,23 @@ class ZCloudManager: ZRecordsManager {
                     self.FOREGROUND() { // mutate graph
                         for record in retrieved {
                             let child = self.zoneForRecord(record)
+                            let  name = child.decoratedName
 
-                            if !child.isDeleted && !child.isRoot {
+                            if !child.isRoot,
+                                let        parent = child.parentZone,
+                                parent.isDeleted == child.isDeleted,
+                                parent           != child {
+
                                 logic.propagateNeeds(to: child, progenyNeeded)
 
-                                if  let parent  = child.parentZone {
-                                    if  parent != child && !parent.children.contains(child) {
-                                        parent.add(child)
-                                        parent.respectOrder()
-                                    }
-                                } else {
-                                    self.columnarReport("DUPLICATE ?", child.unwrappedName)
+                                if !parent.children.contains(child) {
+                                    parent.add(child)
+                                    parent.respectOrder()
+//                                } else {
+//                                    self.columnarReport("REFETCHED", name)
                                 }
+                            } else {
+                                self.columnarReport("NOT PROPAGATED", name)
                             }
                         }
 

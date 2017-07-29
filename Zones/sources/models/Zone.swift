@@ -269,7 +269,7 @@ class Zone : ZRecord {
                 updateClassProperties()
 
                 if  zoneProgeny == nil {
-                    zoneProgeny = NSNumber(value: count + 1)
+                    zoneProgeny = NSNumber(value: 0)
                 }
             }
 
@@ -796,10 +796,13 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    func fullUpdateProgenyCount() {
-        traverseAllProgeny { iZone in
-            if iZone.fetchableCount == 0 {
-                iZone.fastUpdateProgenyCount()
+    func updateProgenyCount() {
+        if !hasMissingChildren {
+            fastUpdateProgenyCount()
+        } else {
+            needChildren()
+            gOperationsManager.children(.restore) {
+                self.fastUpdateProgenyCount()
             }
         }
     }
@@ -826,14 +829,26 @@ class Zone : ZRecord {
     }
 
 
-    func updateProgenyCount() {
-        if !hasMissingChildren {
-            fastUpdateProgenyCount()
-        } else {
-            needChildren()
-            gOperationsManager.children(.restore) {
-                self.fastUpdateProgenyCount()
+    func fullUpdateProgenyCount() {
+        safeUpdateProgenyCount([])
+        fastUpdateProgenyCount()
+    }
+
+
+    func safeUpdateProgenyCount(_ iMissing: [Zone]) {
+        if !iMissing.contains(self) {
+            let missing = iMissing + [self]
+            var counter = 0
+
+            for child in children {
+                if !child.isBookmark {
+                    child.safeUpdateProgenyCount(missing)
+
+                    counter += child.fetchableCount + child.progenyCount
+                }
             }
+
+            progenyCount = counter
         }
     }
 
