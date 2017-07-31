@@ -22,7 +22,6 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var    countsModeControl: ZSegmentedControl?
     @IBOutlet var insertionModeControl: ZSegmentedControl?
     @IBOutlet var         zoneColorBox: ZColorWell?
-    @IBOutlet var     bookmarkColorBox: ZColorWell?
     @IBOutlet var   backgroundColorBox: ZColorWell?
     @IBOutlet var  dragTargetsColorBox: ZColorWell?
     @IBOutlet var    horizontalSpacing: ZSlider?
@@ -46,7 +45,6 @@ class ZPreferencesController: ZGenericController {
         horizontalSpacing?       .doubleValue = Double(gGenericOffset.width)
         dragTargetsColorBox?           .color = gDragTargetsColor
         backgroundColorBox?            .color = gBackgroundColor
-        bookmarkColorBox?              .color = gBookmarkColor
         zoneColorBox?                  .color =  grabbed.color
         clearColorButton?           .isHidden = !grabbed.hasColor
         zoneColorBox?               .isHidden =  hideIdeasColor
@@ -81,7 +79,6 @@ class ZPreferencesController: ZGenericController {
             switch (identifier) {
             case "drag targets":                 gDragTargetsColor = color
             case   "background":                  gBackgroundColor = color
-            case    "bookmarks":                    gBookmarkColor = color
             case        "zones": gSelectionManager.firstGrab.color = color
             default:             break
             }

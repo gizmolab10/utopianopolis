@@ -78,19 +78,12 @@ var             gDotWidth:               Double { return gDotHeight * 0.75 }
 var            gDotHeight:               Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var      gIsRubberbanding:                 Bool { return gEditorView!.rubberbandRect != CGRect.zero  }
 var     gInsertionsFollow:                 Bool { return gInsertionMode == .follow }
-var gGrabbedBookmarkColor:               ZColor { return gBookmarkColor.darker(by: 1.5) }
 var     gEditorController:   ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
 var           gEditorView:       ZDragDrawView? { return gEditorController?.dragView }
 
 
 // MARK:- persistence
 // MARK:-
-
-
-var gBookmarkColor: ZColor {
-    get { return   getColorForKey(bookmarkColorKey, defaultColor: ZColor.green) }
-    set { setColor(newValue, key: bookmarkColorKey) }
-}
 
 
 var gBackgroundColor: ZColor {

@@ -136,8 +136,8 @@ class Zone : ZRecord {
     var color: ZColor {
         get {
             if _color == nil {
-                if isRootOfFavorites || isBookmark {
-                    return gBookmarkColor
+                if isBookmark {
+                    return bookmarkTarget?.color ?? gDefaultZoneColor
                 } else if let z = zoneColor, z != "" {
                     _color      = z.color
                 } else if let p = parentZone, hasCompleteAncestorPath(toColor: true) {

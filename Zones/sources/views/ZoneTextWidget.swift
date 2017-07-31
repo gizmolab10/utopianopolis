@@ -19,10 +19,10 @@ import Foundation
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
-    var  widget: ZoneWidget!
-    var monitor:        Any?
-    var    originalText = ""
-    var _isTextEditing  = false
+    var         widget:  ZoneWidget!
+    var        monitor:  Any?
+    var   originalText = ""
+    var _isTextEditing = false
 
 
     var isTextEditing: Bool {
@@ -35,7 +35,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
                 if !_isTextEditing {
                     let  grab = gSelectionManager.currentlyEditingZone == zone
-                    textColor = widget.widgetZone.isBookmark ? gGrabbedBookmarkColor : widget.widgetZone.grabbedTextColor
+                    textColor = widget.widgetZone.grabbedTextColor
 
                     removeMonitorAsync()
                     abortEditing()
@@ -159,7 +159,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 }
 
                 if (count > 1) && !isTextEditing && (!zone.showChildren || (gCountsMode == .progeny)) {
-                    text = text?.appending("  (\(count))")
+                    text?.append("  (\(count))")
                 }
             }
         }
@@ -215,5 +215,21 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 gTextCapturing = false
             }
         }
+    }
+
+
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
+
+        if let zone = widget.widgetZone, zone.isBookmark, !zone.isGrabbed, !isTextEditing {
+            var         rect = dirtyRect.insetBy(dx: 3.0, dy: 0.0)
+            rect.origin.y    = rect.maxY - 1.0
+            rect.size.height = 1.0
+            rect.size.width -= 4.0
+
+            zone.color.setStroke()
+            ZBezierPath(rect: rect).stroke()
+        }
+
     }
 }

@@ -159,8 +159,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     let          x = offCenter.x + orbitRadius * CGFloat(cos(angle))
                     let          y = offCenter.y + orbitRadius * CGFloat(sin(angle))
                     rect           = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
-                    let asBookmark = (zone.isBookmark || zone.isRootOfFavorites)
-                    color          = isDragTarget ? gDragTargetsColor : asBookmark  ? gBookmarkColor : zone.color
+                    color          = isDragTarget ? gDragTargetsColor : zone.color
                     let       path = ZBezierPath(ovalIn: rect!)
                     path .flatness = 0.0001
 
@@ -175,20 +174,32 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        if  let            zone = widgetZone, isInnerDot {
-            isHidden            = isHiddenToggleDot
-            let shouldHighlight = isToggle    ? (zone.indicateChildren        || zone.isBookmark ||  isDragTarget) : zone.isGrabbed // not highlight when editing
-            let     strokeColor = isToggle && isDragTarget ? gDragTargetsColor :  showAsBookmark  ? gBookmarkColor : zone.color
-            let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
-            let       thickness = CGFloat(gLineThickness)
-            let            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
+        if  let                zone = widgetZone, isInnerDot {
+            isHidden                = isHiddenToggleDot
 
-            fillColor.setFill()
-            strokeColor.setStroke()
-            path.lineWidth = thickness * 2.0
-            path.flatness = 0.0001
-            path.stroke()
-            path.fill()
+            if !isHidden {
+                let shouldHighlight = isToggle ? (zone.indicateChildren || zone.isBookmark ||  isDragTarget) : zone.isGrabbed // not highlight when editing
+                let     strokeColor = isToggle && isDragTarget ? gDragTargetsColor : zone.color
+                let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
+                let       thickness = CGFloat(gLineThickness)
+                var            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
+
+                fillColor.setFill()
+                strokeColor.setStroke()
+                path.lineWidth = thickness * 2.0
+                path.flatness = 0.0001
+                path.stroke()
+                path.fill()
+
+                if  showAsBookmark {
+                    let inset = CGFloat(gDotHeight / 3.0)
+                    path      = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
+                    path.flatness = 0.0001
+
+                    gBackgroundColor.setFill()
+                    path.fill()
+                }
+            }
         }
 
         drawTinyDots(dirtyRect)

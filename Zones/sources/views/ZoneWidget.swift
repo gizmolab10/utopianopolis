@@ -454,7 +454,7 @@ class ZoneWidget: ZView {
         rect.size .width += -0.5 + (delta * 0.7) - dotDelta
         rect.size.height += gHighlightHeightOffset - 0.5 + delta / 9.5
         let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
-        let         color = widgetZone.isBookmark || widgetZone.isRootOfFavorites ? gBookmarkColor : widgetZone.color
+        let         color = widgetZone.color
         let     fillColor = color.withAlphaComponent(0.02)
         let   strokeColor = color.withAlphaComponent(0.2)
         let          path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
@@ -479,7 +479,7 @@ class ZoneWidget: ZView {
 
 
     func drawLine(to child: ZoneWidget) {
-        let color = child.widgetZone.isBookmark ? gBookmarkColor : child.widgetZone.color
+        let color = child.widgetZone.color
         let  rect = lineRect(to: child)
         let  kind = lineKind(to: child)
         let  path = linePath(in: rect, kind: kind, isDragLine: false)
@@ -499,7 +499,7 @@ class ZoneWidget: ZView {
         super.draw(dirtyRect)
 
         let        isGrabbed = widgetZone.isGrabbed
-        textWidget.textColor = isGrabbed ? widgetZone.isBookmark ? gGrabbedBookmarkColor : widgetZone.grabbedTextColor : ZColor.black
+        textWidget.textColor = isGrabbed ? widgetZone.grabbedTextColor : ZColor.black
 
         note("      .        \(widgetZone.unwrappedName)")
 

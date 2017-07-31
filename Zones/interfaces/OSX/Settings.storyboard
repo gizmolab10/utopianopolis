@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
@@ -612,11 +612,11 @@
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Focus" sceneMemberID="viewController">
                     <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="228" height="302"/>
+                        <rect key="frame" x="0.0" y="0.0" width="228" height="277"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box autoresizesSubviews="NO" borderType="line" title="new ideas" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
-                                <rect key="frame" x="5" y="258" width="218" height="36"/>
+                                <rect key="frame" x="5" y="233" width="218" height="36"/>
                                 <view key="contentView" id="qnC-vV-W8u">
                                     <rect key="frame" x="1" y="1" width="216" height="20"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -648,7 +648,7 @@
                                 </constraints>
                             </box>
                             <box autoresizesSubviews="NO" borderType="line" title="counts show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="children counts">
-                                <rect key="frame" x="5" y="218" width="218" height="36"/>
+                                <rect key="frame" x="5" y="193" width="218" height="36"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
                                     <rect key="frame" x="1" y="1" width="216" height="20"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -798,16 +798,16 @@
                                 </view>
                             </box>
                             <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="mS1-t0-150">
-                                <rect key="frame" x="5" y="98" width="218" height="116"/>
+                                <rect key="frame" x="5" y="98" width="218" height="91"/>
                                 <view key="contentView" id="rb6-oU-fw8">
-                                    <rect key="frame" x="1" y="1" width="216" height="100"/>
+                                    <rect key="frame" x="1" y="1" width="216" height="75"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="G62-eE-NOU" userLabel="labels">
-                                            <rect key="frame" x="8" y="6" width="119" height="92"/>
+                                            <rect key="frame" x="8" y="6" width="99" height="67"/>
                                             <subviews>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g4o-CN-FHf">
-                                                    <rect key="frame" x="-2" y="72" width="123" height="17"/>
+                                                    <rect key="frame" x="-2" y="47" width="103" height="17"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="vRd-P4-pC3"/>
                                                     </constraints>
@@ -817,19 +817,8 @@
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0I8-Re-yMB">
-                                                    <rect key="frame" x="-2" y="49" width="123" height="17"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="17" id="slX-PY-ObV"/>
-                                                    </constraints>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="favorites, bookmarks" id="piI-U2-6jJ">
-                                                        <font key="font" metaFont="cellTitle"/>
-                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C6V-CX-uWP" userLabel="drag targets">
-                                                    <rect key="frame" x="-2" y="26" width="123" height="17"/>
+                                                    <rect key="frame" x="-2" y="25" width="103" height="17"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="9dI-E4-9GB"/>
                                                     </constraints>
@@ -840,7 +829,7 @@
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fgs-5f-km9">
-                                                    <rect key="frame" x="-2" y="3" width="123" height="17"/>
+                                                    <rect key="frame" x="-2" y="3" width="103" height="17"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="RsG-gF-fWk"/>
                                                     </constraints>
@@ -851,9 +840,9 @@
                                                     </textFieldCell>
                                                 </textField>
                                                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Qp-4d-Tu8" userLabel="clearColor">
-                                                    <rect key="frame" x="25" y="65" width="60" height="28"/>
+                                                    <rect key="frame" x="15" y="40" width="60" height="27"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="18" id="Qdx-4o-Snx"/>
+                                                        <constraint firstAttribute="height" constant="17" id="Qdx-4o-Snx"/>
                                                         <constraint firstAttribute="width" constant="50" id="nGj-dM-TOd"/>
                                                     </constraints>
                                                     <buttonCell key="cell" type="push" title="clear" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Fz8-C9-cQu">
@@ -867,27 +856,24 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="trailing" secondItem="C6V-CX-uWP" secondAttribute="trailing" id="3HV-a7-xo0"/>
-                                                <constraint firstItem="0I8-Re-yMB" firstAttribute="top" secondItem="g4o-CN-FHf" secondAttribute="bottom" constant="6" id="4oG-pX-Vdk"/>
                                                 <constraint firstItem="fgs-5f-km9" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="6nD-Gc-a9b"/>
                                                 <constraint firstItem="g4o-CN-FHf" firstAttribute="top" secondItem="G62-eE-NOU" secondAttribute="top" constant="3" id="9xm-Zh-Gru"/>
-                                                <constraint firstItem="0I8-Re-yMB" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="H1y-pN-Gai"/>
                                                 <constraint firstItem="g4o-CN-FHf" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="Q1m-nX-Qo9"/>
-                                                <constraint firstItem="0Qp-4d-Tu8" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" constant="30" id="TFy-mJ-vED"/>
-                                                <constraint firstAttribute="trailing" secondItem="0I8-Re-yMB" secondAttribute="trailing" id="Vnc-2m-sJZ"/>
+                                                <constraint firstItem="0Qp-4d-Tu8" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" constant="20" id="TFy-mJ-vED"/>
                                                 <constraint firstAttribute="bottom" secondItem="fgs-5f-km9" secondAttribute="bottom" constant="3" id="WDX-fm-gxs"/>
-                                                <constraint firstItem="fgs-5f-km9" firstAttribute="top" secondItem="C6V-CX-uWP" secondAttribute="bottom" constant="6" id="Zd2-Fg-uSe"/>
-                                                <constraint firstItem="0Qp-4d-Tu8" firstAttribute="top" secondItem="G62-eE-NOU" secondAttribute="top" constant="3" id="dOT-bX-dRm"/>
+                                                <constraint firstItem="fgs-5f-km9" firstAttribute="top" secondItem="C6V-CX-uWP" secondAttribute="bottom" constant="5" id="Zd2-Fg-uSe"/>
+                                                <constraint firstItem="0Qp-4d-Tu8" firstAttribute="top" secondItem="G62-eE-NOU" secondAttribute="top" constant="4" id="dOT-bX-dRm"/>
                                                 <constraint firstAttribute="trailing" secondItem="g4o-CN-FHf" secondAttribute="trailing" id="gTa-09-iaO"/>
-                                                <constraint firstItem="C6V-CX-uWP" firstAttribute="top" secondItem="0I8-Re-yMB" secondAttribute="bottom" constant="6" id="oqt-Uc-zR2"/>
                                                 <constraint firstAttribute="trailing" secondItem="fgs-5f-km9" secondAttribute="trailing" id="q79-8F-UwO"/>
+                                                <constraint firstItem="C6V-CX-uWP" firstAttribute="top" secondItem="0Qp-4d-Tu8" secondAttribute="bottom" constant="4" id="uUv-WS-Vsy"/>
                                                 <constraint firstItem="C6V-CX-uWP" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="w0p-E3-Fm3"/>
                                             </constraints>
                                         </customView>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="FDB-6R-I3I" userLabel="color wells">
-                                            <rect key="frame" x="135" y="6" width="73" height="92"/>
+                                            <rect key="frame" x="115" y="4" width="93" height="69"/>
                                             <subviews>
                                                 <colorWell identifier="zones" translatesAutoresizingMaskIntoConstraints="NO" id="UMY-8c-tep">
-                                                    <rect key="frame" x="0.0" y="69" width="73" height="23"/>
+                                                    <rect key="frame" x="0.0" y="46" width="93" height="23"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="23" id="i5B-AL-Q9X"/>
                                                     </constraints>
@@ -896,18 +882,8 @@
                                                         <action selector="colorBoxAction:" target="Naq-se-Exq" id="bv0-p6-A6Y"/>
                                                     </connections>
                                                 </colorWell>
-                                                <colorWell identifier="bookmarks" translatesAutoresizingMaskIntoConstraints="NO" id="PFW-VA-KPh">
-                                                    <rect key="frame" x="0.0" y="46" width="73" height="23"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="23" id="AzW-bN-cao"/>
-                                                    </constraints>
-                                                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <connections>
-                                                        <action selector="colorBoxAction:" target="Naq-se-Exq" id="W6x-aH-7sW"/>
-                                                    </connections>
-                                                </colorWell>
                                                 <colorWell identifier="drag targets" translatesAutoresizingMaskIntoConstraints="NO" id="j0f-8D-Ds5" userLabel="drag targets color box">
-                                                    <rect key="frame" x="0.0" y="23" width="73" height="23"/>
+                                                    <rect key="frame" x="0.0" y="23" width="93" height="23"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="23" id="XcF-55-QfT"/>
                                                     </constraints>
@@ -917,7 +893,7 @@
                                                     </connections>
                                                 </colorWell>
                                                 <colorWell identifier="background" translatesAutoresizingMaskIntoConstraints="NO" id="wsy-Dq-H7s">
-                                                    <rect key="frame" x="0.0" y="0.0" width="73" height="23"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="93" height="23"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="23" id="ukQ-KH-zeP"/>
                                                     </constraints>
@@ -931,14 +907,11 @@
                                                 <constraint firstAttribute="trailing" secondItem="wsy-Dq-H7s" secondAttribute="trailing" id="3wg-Ck-Bry"/>
                                                 <constraint firstAttribute="bottom" secondItem="wsy-Dq-H7s" secondAttribute="bottom" id="Crj-Ax-SLd"/>
                                                 <constraint firstItem="wsy-Dq-H7s" firstAttribute="leading" secondItem="FDB-6R-I3I" secondAttribute="leading" id="J4O-Sy-0Fw"/>
-                                                <constraint firstItem="j0f-8D-Ds5" firstAttribute="top" secondItem="PFW-VA-KPh" secondAttribute="bottom" id="J7g-Tg-Ail"/>
                                                 <constraint firstItem="j0f-8D-Ds5" firstAttribute="leading" secondItem="FDB-6R-I3I" secondAttribute="leading" id="KOg-f9-AhK"/>
                                                 <constraint firstItem="wsy-Dq-H7s" firstAttribute="top" secondItem="j0f-8D-Ds5" secondAttribute="bottom" id="PQ5-A2-9kk"/>
-                                                <constraint firstItem="PFW-VA-KPh" firstAttribute="leading" secondItem="FDB-6R-I3I" secondAttribute="leading" id="Uhy-Za-9m8"/>
-                                                <constraint firstItem="PFW-VA-KPh" firstAttribute="top" secondItem="UMY-8c-tep" secondAttribute="bottom" id="hn3-gB-mbN"/>
+                                                <constraint firstItem="j0f-8D-Ds5" firstAttribute="top" secondItem="UMY-8c-tep" secondAttribute="bottom" id="euq-1E-4vq"/>
                                                 <constraint firstItem="UMY-8c-tep" firstAttribute="leading" secondItem="FDB-6R-I3I" secondAttribute="leading" id="p5o-g3-SMO"/>
                                                 <constraint firstAttribute="trailing" secondItem="UMY-8c-tep" secondAttribute="trailing" id="qvq-m7-2y8"/>
-                                                <constraint firstAttribute="trailing" secondItem="PFW-VA-KPh" secondAttribute="trailing" id="sut-sf-ylP"/>
                                                 <constraint firstItem="UMY-8c-tep" firstAttribute="top" secondItem="FDB-6R-I3I" secondAttribute="top" id="tCA-bf-zBr"/>
                                                 <constraint firstAttribute="trailing" secondItem="j0f-8D-Ds5" secondAttribute="trailing" id="u5u-sn-hSU"/>
                                             </constraints>
@@ -947,7 +920,7 @@
                                     <constraints>
                                         <constraint firstItem="FDB-6R-I3I" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="trailing" constant="8" id="34n-PA-dJM"/>
                                         <constraint firstAttribute="trailing" secondItem="FDB-6R-I3I" secondAttribute="trailing" constant="8" id="E1E-Af-tJc"/>
-                                        <constraint firstAttribute="bottom" secondItem="FDB-6R-I3I" secondAttribute="bottom" constant="6" id="UDU-HU-cgt"/>
+                                        <constraint firstAttribute="bottom" secondItem="FDB-6R-I3I" secondAttribute="bottom" constant="4" id="UDU-HU-cgt"/>
                                         <constraint firstAttribute="bottom" secondItem="G62-eE-NOU" secondAttribute="bottom" constant="6" id="ZCc-tS-9XH"/>
                                         <constraint firstItem="G62-eE-NOU" firstAttribute="top" secondItem="rb6-oU-fw8" secondAttribute="top" constant="2" id="lqz-EG-Z3x"/>
                                         <constraint firstItem="G62-eE-NOU" firstAttribute="leading" secondItem="rb6-oU-fw8" secondAttribute="leading" constant="8" id="ncU-Mb-xjK"/>
@@ -974,7 +947,6 @@
                     </view>
                     <connections>
                         <outlet property="backgroundColorBox" destination="wsy-Dq-H7s" id="lQ4-nS-6Bk"/>
-                        <outlet property="bookmarkColorBox" destination="PFW-VA-KPh" id="DxS-IW-xZa"/>
                         <outlet property="clearColorButton" destination="0Qp-4d-Tu8" id="6Al-nd-9pG"/>
                         <outlet property="countsModeControl" destination="hRI-S8-ys7" id="7ig-ZZ-v8Z"/>
                         <outlet property="dragTargetsColorBox" destination="j0f-8D-Ds5" id="FRZ-SF-WJ1"/>

@@ -44,7 +44,7 @@ class ZFavoritesController: ZGenericTableController {
             let   prefix = needsDot ? "•" : "  "
             let     text = " \(prefix) \(name)"
 
-            if let color = name == "favorites" ? gBookmarkColor : zone.bookmarkTarget?.color {
+            if let color = name == "favorites" ? gDefaultZoneColor : zone.bookmarkTarget?.color {
                 return NSAttributedString(string: text, attributes: [NSForegroundColorAttributeName: color])
             }
 
