@@ -19,8 +19,8 @@ enum ZOperationID: Int {
     case file
     case here
     case fetch
-    case children
     case toRoot
+    case children
     case save // zones, manifests, favorites
     case unsubscribe
     case subscribe
@@ -41,8 +41,8 @@ class ZOperationsManager: NSObject {
 
     var onAvailable:        Closure?
     var currentMode:   ZStorageMode? = nil
-    var   currentOp:   ZOperationID = .none
-    var  waitingOps = [ZOperationID : BlockOperation] ()
+    var   currentOp =  ZOperationID   .none
+    var  waitingOps = [ZOperationID  : BlockOperation] ()
     var       debug = false
     let       queue = OperationQueue()
 
@@ -54,7 +54,7 @@ class ZOperationsManager: NSObject {
     func startUp(_ onCompletion: @escaping Closure) {
         var operationIDs: [ZOperationID] = []
 
-        for sync in ZOperationID.authenticate.rawValue...ZOperationID.toRoot.rawValue {
+        for sync in ZOperationID.authenticate.rawValue...ZOperationID.children.rawValue {
             operationIDs.append(ZOperationID(rawValue: sync)!)
         }
 
@@ -118,12 +118,10 @@ class ZOperationsManager: NSObject {
 
 
     private func setupAndRun(_ operationIDs: [ZOperationID], logic: ZRecursionLogic? = nil, onCompletion: @escaping Closure) {
-        if  let   prior = onAvailable {          // if already set
-            onAvailable = {                      // encapsulate it with subsequent setup for new operation identifiers
-                self.FOREGROUND { // prevent recursion pile-up on stack
-                    prior()
-                    self.setupAndRun(operationIDs) { onCompletion() }
-                }
+        if  let   prior = onAvailable {         // if already set
+            onAvailable = {                     // encapsulate it with subsequent setup for new operation identifiers
+                prior()
+                self.setupAndRun(operationIDs) { onCompletion() }
             }
         } else {
             queue.isSuspended = true

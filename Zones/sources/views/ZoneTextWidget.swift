@@ -221,14 +221,16 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
 
-        if let zone = widget.widgetZone, zone.isBookmark, !zone.isGrabbed, !isTextEditing {
+        if  let         zone = widget.widgetZone, zone.isBookmark, !zone.isGrabbed, !isTextEditing {
             var         rect = dirtyRect.insetBy(dx: 3.0, dy: 0.0)
-            rect.origin.y    = rect.maxY - 1.0
-            rect.size.height = 1.0
+            rect.size.height = 0.0
             rect.size.width -= 4.0
+            rect.origin.y    = dirtyRect.maxY - 1.0
+            let path         = ZBezierPath(rect: rect)
+            path  .lineWidth = 0.7
 
             zone.color.setStroke()
-            ZBezierPath(rect: rect).stroke()
+            path.stroke()
         }
 
     }

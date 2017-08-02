@@ -127,19 +127,24 @@ extension CKRecord {
         if recordType       != zoneTypeKey {
             return recordID.recordName
         } else if let   name = self[zoneNameKey] as? String {
+            var       suffix = ""
             if  state       != nil {
-                let suffix   = state!.decoration
-
-                if  suffix  != "" {
-                    return name.appending(suffix)
-                }
+                suffix       = state!.decoration
             }
 
             if  let fetchable = self["zoneCount"] as? Int, fetchable > 1 {
-                return name.appending("  (\(fetchable))")
+                if  suffix != "" {
+                    suffix.append(" ")
+                }
+
+                suffix.append("\(fetchable)")
             }
 
-            return name
+            if  suffix != "" {
+                suffix  = "  (" + suffix + ")"
+            }
+
+            return name.appending(suffix)
         }
 
         return ""

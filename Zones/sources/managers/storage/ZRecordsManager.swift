@@ -16,8 +16,9 @@ enum ZRecordState: Int {
     case needsRoot
     case needsMerge
     case needsFetch
-    case needsCreate
     case needsParent
+    case needsCreate
+    case needsDestroy
     case needsProgeny
     case needsChildren
     case needsBookmarks

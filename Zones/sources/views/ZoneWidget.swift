@@ -35,7 +35,7 @@ class ZoneWidget: ZView {
     let            childrenView = ZView          ()
     private var childrenWidgets = [ZoneWidget]   ()
     var            parentWidget:  ZoneWidget? { return widgetZone.parentZone?.widget }
-    var             hasChildren:  Bool        { return widgetZone.hasChildren }
+    var             hasChildren:  Bool        { return widgetZone.fetchableCount > 0 }
     var              widgetFont:  ZFont       { return widgetZone.isSelected ? gSelectedWidgetFont : gWidgetFont }
     var              widgetZone:  Zone!
 
@@ -77,7 +77,7 @@ class ZoneWidget: ZView {
 
 
     func prepareChildrenWidgets() {
-        if !widgetZone.canRevealChildren {
+        if !widgetZone.showChildren {
             for child in childrenWidgets {
                 gWidgetsManager.unregisterWidget(child)
             }
@@ -89,7 +89,7 @@ class ZoneWidget: ZView {
             }
         } else {
             for child in childrenWidgets {
-                if !widgetZone.children.contains(child.widgetZone) {
+                if  let zone = child.widgetZone, !widgetZone.children.contains(zone) {
                     gWidgetsManager.unregisterWidget(child)
                     child.removeFromSuperview()
 
@@ -140,7 +140,7 @@ class ZoneWidget: ZView {
 
 
     func layoutChildren(_ kind: ZSignalKind, visited: [Zone]) {
-        if widgetZone.canRevealChildren {
+        if widgetZone.showChildren {
             var                 index = widgetZone.count
             var previous: ZoneWidget? = nil
 
@@ -246,7 +246,7 @@ class ZoneWidget: ZView {
     var floatingDropDotRect: CGRect {
         var rect = CGRect()
 
-        if !widgetZone.canRevealChildren {
+        if !widgetZone.showChildren {
 
                 /////////////////////////
                 // DOT IS STRAIGHT OUT //
@@ -508,7 +508,7 @@ class ZoneWidget: ZView {
             drawSelectionHighlight()
         }
 
-        if widgetZone.canRevealChildren {
+        if widgetZone.showChildren {
             if  childrenPass || gSelectionManager.isDragging || gEditorView?.rubberbandRect != nil {
                 for child in childrenWidgets { drawLine(to: child) }
             } else {

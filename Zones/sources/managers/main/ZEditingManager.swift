@@ -88,7 +88,7 @@ class ZEditingManager: NSObject {
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
                 case gSpaceKey:   if force { createIdea() }
                 case gBackspaceKey,
-                     gDeleteKey:  if force { delete(preserveChildren: isOption && isWindow) }
+                     gDeleteKey:  if force { delete(permanently: isCommand && isControl && isOption && isWindow, preserveChildren: !isCommand && !isControl && isOption && isWindow) }
                 case "\r":
                     if hasWidget && gSelectionManager.hasGrab {
                         if isCommand {
@@ -540,7 +540,7 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func delete(preserveChildren: Bool = false) {
+    func delete(permanently: Bool = false, preserveChildren: Bool = false) {
         let candidate = gSelectionManager.rootMostMoveable
         let   closure = {
             if  candidate.parentZone != nil {
@@ -548,7 +548,7 @@ class ZEditingManager: NSObject {
                     self.preserveChildrenOfGrabbedZones()
                 } else {
                     self.prepareUndoForDelete()
-                    self.deleteZones(gSelectionManager.simplifiedGrabs)?.grab()
+                    self.deleteZones(gSelectionManager.simplifiedGrabs, permanently: permanently)?.grab()
                 }
             }
 
@@ -566,12 +566,12 @@ class ZEditingManager: NSObject {
     }
 
 
-    @discardableResult private func deleteZones(_ zones: [Zone], in parent: Zone? = nil) -> Zone? {
+    @discardableResult private func deleteZones(_ zones: [Zone], permanently: Bool = false, in parent: Zone? = nil) -> Zone? {
         var last: Zone? = nil
 
         for zone in zones {
             if  zone != parent { // detect and avoid infinite recursion
-                last  = deleteZone(zone)
+                last  = deleteZone(zone, permanently: permanently)
             }
         }
 
@@ -579,7 +579,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    @discardableResult private func deleteZone(_ zone: Zone) -> Zone? {
+    @discardableResult private func deleteZone(_ zone: Zone, permanently: Bool = false) -> Zone? {
         var grabThisZone = zone.parentZone
         var     deleteMe = !zone.isRoot && grabThisZone?.record != nil
 
@@ -618,18 +618,27 @@ class ZEditingManager: NSObject {
                 rawColumnarReport("double delete", zone.unwrappedName) // sometimes happens, cause undiscovered
             }
 
-            zone.deleteIntoPaste()
+            if !permanently {
+                zone.deleteIntoPaste()
+            } else {
+                zone.orphan()
+
+                zone.traverseAllProgeny() { iZone in
+                    iZone.needDestroy()
+                }
+            }
+
+            if let             grab = grabThisZone {
+                grab.fetchableCount = grab.count
+            }
+
             zone.needBookmarks()
 
             gOperationsManager.bookmarks {
                 let bookmarks = gRemoteStoresManager.bookmarksFor(zone)
 
-                self.deleteZones(bookmarks) // recurse
+                self.deleteZones(bookmarks, permanently: permanently) // recurse
             }
-        }
-
-        if let             grab = grabThisZone {
-            grab.fetchableCount = grab.count
         }
 
         return grabThisZone
@@ -780,7 +789,7 @@ class ZEditingManager: NSObject {
             travelThroughBookmark(zone)
         } else if zone.count > 0 {
             grabChild(of: zone)
-        } else if !zone.isDeleted {
+        } else if !zone.isDeleted && zone.hasMissingChildren {
             zone.needChildren()
 
             gOperationsManager.children(.restore) {
@@ -873,7 +882,6 @@ class ZEditingManager: NSObject {
             iChild.storageMode = gStorageMode
 
             iChild.needFlush()
-            iChild.updateLevel()
             iChild.updateCloudProperties()
         }
     }
@@ -921,7 +929,7 @@ class ZEditingManager: NSObject {
             zone.displayChildren()
             gSelectionManager.stopCurrentEdit()
 
-            if zone.count > 0 || !zone.hasChildren {
+            if zone.count > 0 || zone.fetchableCount == 0 {
                 createAndAdd()
             } else {
                 zone.needChildren()
@@ -1237,7 +1245,7 @@ class ZEditingManager: NSObject {
 
 
     func moveZone(_ zone: Zone, into: Zone, at iIndex: Int?, orphan: Bool, onCompletion: Closure?) {
-        if let parent = zone.parentZone {
+        if  let parent = zone.parentZone {
             let  index = zone.siblingIndex
 
             UNDO(self) { iUndoSelf in
@@ -1246,16 +1254,17 @@ class ZEditingManager: NSObject {
         }
 
         into.displayChildren()
-        into.maybeNeedProgeny()
+        into.maybeNeedChildren()
 
         gOperationsManager.children(.restore) {
-            zone.grab()
-            
             if orphan {
                 zone.orphan()
             }
-            
+
             into.addAndReorderChild(zone, at: iIndex)
+            into.needFlush()
+            zone.needFlush()
+            zone.grab()
             onCompletion?()
         }
     }

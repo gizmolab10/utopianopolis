@@ -32,12 +32,11 @@ struct ZoneState: OptionSet {
     static let     IsDeleted = ZoneState(rawValue: 1 << ZIntegerState.isDeleted   .rawValue)
 
     var decoration: String {
-        if  let    raw = ZIntegerState(rawValue: Int(log2(Double(rawValue as Int) + 0.5))) {
-            switch raw {
-            case .isFavorite: return "  (F)"
-            case .isDeleted:  return "  (D)"
-            default:          break
-            }
+        let f = contains(.IsFavorite) ? "F" : ""
+        let d = contains(.IsDeleted)  ? "D" : ""
+
+        if f != "" || d != "" {
+            return "\(f)\(d)"
         }
 
         return ""
@@ -55,7 +54,6 @@ class Zone : ZRecord {
     dynamic var   zoneOrder:    NSNumber?
     dynamic var   zoneCount:    NSNumber?
     dynamic var   zoneState:    NSNumber?
-    dynamic var   zoneLevel:    NSNumber?
     dynamic var zoneProgeny:    NSNumber?
     var         _parentZone:        Zone?
     var              _color:      ZColor?
@@ -68,11 +66,8 @@ class Zone : ZRecord {
     var    grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
     var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
     var  hasMissingChildren:         Bool { return count < fetchableCount }
-    var   canRevealChildren:         Bool { return hasChildren &&   showChildren }
-    var    indicateChildren:         Bool { return hasChildren && (!showChildren || count == 0) }
     var       hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var       hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
-    var         hasChildren:         Bool { return fetchableCount > 0 }
     var          isBookmark:         Bool { return crossLink != nil }
     var          isSelected:         Bool { return gSelectionManager.isSelected(self) }
     var           isEditing:         Bool { return gSelectionManager .isEditing(self) }
@@ -87,12 +82,19 @@ class Zone : ZRecord {
     var decoration: String {
         var d = state.decoration
 
-        if  d == "" {
-            if isBookmark {
-                d = "  (B)"
-            } else if fetchableCount != 0 {
-                d = "  (\(fetchableCount))"
-            }
+        if isBookmark {
+            d.append("B")
+        }
+
+        if  fetchableCount != 0 {
+            let s  = d == "" ? "" : " "
+            let c  = s + "\(fetchableCount)"
+
+            d.append(c)
+        }
+
+        if  d != "" {
+            d  = "  (\(d))"
         }
 
         return d
@@ -111,7 +113,6 @@ class Zone : ZRecord {
                 #keyPath(zoneOrder),
                 #keyPath(zoneCount),
                 #keyPath(zoneState),
-                #keyPath(zoneLevel),
                 #keyPath(zoneProgeny)]
     }
 
@@ -130,6 +131,17 @@ class Zone : ZRecord {
         }
 
         return nil
+    }
+
+
+    var level: Int {
+        get {
+            if  !(isRoot || isRootOfFavorites), let p = parentZone {
+                return p.level + 1
+            }
+
+            return 0
+        }
     }
 
 
@@ -217,27 +229,6 @@ class Zone : ZRecord {
     }
 
 
-    var level: Int {
-        get {
-            if zoneLevel == nil {
-                updateClassProperties()
-
-                if zoneLevel == nil {
-                    zoneLevel = NSNumber(value: gUnlevel)
-                }
-            }
-
-            return zoneLevel!.intValue
-        }
-
-        set {
-            if newValue != level {
-                zoneLevel = NSNumber(value: newValue)
-            }
-        }
-    }
-
-
     var fetchableCount: Int {
         get {
             if zoneCount == nil {
@@ -255,10 +246,10 @@ class Zone : ZRecord {
             if  newValue != fetchableCount && !isBookmark {
                 zoneCount = NSNumber(value: newValue)
             }
-
-            for bookmark in gRemoteStoresManager.bookmarksFor(self) {
-                bookmark.zoneCount = NSNumber(value: newValue)
-            }
+//
+//            for bookmark in gRemoteStoresManager.bookmarksFor(self) {
+//                bookmark.zoneCount = NSNumber(value: newValue)
+//            }
         }
     }
     
@@ -318,7 +309,7 @@ class Zone : ZRecord {
                 highest = traverseLevel
             }
 
-            return iZone.canRevealChildren ? .eContinue : .eSkip
+            return iZone.showChildren ? .eContinue : .eSkip
         }
 
         return highest
@@ -448,15 +439,15 @@ class Zone : ZRecord {
 
 
     func hasCompleteAncestorPath(toColor: Bool = false) -> Bool {
-        var isSafe = false
+        var isComplete = false
 
         traverseAllAncestors { iZone in
             if  iZone.isRoot || (toColor && iZone.hasColor) {
-                isSafe = true
+                isComplete = true
             }
         }
 
-        return isSafe
+        return isComplete
     }
 
 
@@ -650,14 +641,14 @@ class Zone : ZRecord {
 
 
     func maybeNeedProgeny() {
-        if canRevealChildren && hasMissingChildren {
+        if showChildren && hasMissingChildren {
             needProgeny()
         }
     }
     
 
     func maybeNeedChildren() {
-        if  canRevealChildren && hasMissingChildren && !isMarkedForAnyOfStates([.needsProgeny]) {
+        if  showChildren && hasMissingChildren && !isMarkedForAnyOfStates([.needsProgeny]) {
             needChildren()
         }
     }
@@ -731,8 +722,9 @@ class Zone : ZRecord {
                 fetchableCount = count
             }
 
-            updateProgenyCount()
-            child.updateLevel()
+            fastUpdateProgenyCount()
+
+            self.columnarReport(" ADDED", child.decoratedName)
 
             return insertAt
         }
@@ -744,9 +736,10 @@ class Zone : ZRecord {
     @discardableResult func removeChild(_ iChild: Zone?) -> Bool {
         if  let child = iChild, let index = children.index(of: child) {
             children.remove(at: index)
-            updateProgenyCount()
 
             fetchableCount = count
+
+            updateProgenyCount()
 
             return true
         }
@@ -901,15 +894,6 @@ class Zone : ZRecord {
     }
 
 
-    func updateLevel() {
-        traverseAllProgeny { iZone in
-            if let parentLevel = iZone.parentZone?.level, parentLevel != gUnlevel {
-                iZone.level = parentLevel + 1
-            }
-        }
-    }
-
-
     func exposedProgeny(at iLevel: Int) -> [Zone] {
         var     progeny = [Zone]()
         var begun: Bool = false
@@ -933,11 +917,11 @@ class Zone : ZRecord {
 
 
     func exposed(upTo highestLevel: Int) -> Int? {
-        if !hasChildren {
+        if  count == 0 {
             return nil
         }
 
-        var   exposedLevel = level
+        var   exposedLevel  = level
 
         while exposedLevel <= highestLevel {
             let progeny = exposedProgeny(at: exposedLevel + 1)
@@ -949,7 +933,7 @@ class Zone : ZRecord {
             exposedLevel += 1
 
             for child: Zone in progeny {
-                if  child.indicateChildren {
+                if  !child.showChildren && child.fetchableCount > 0 {
                     return exposedLevel
                 }
             }

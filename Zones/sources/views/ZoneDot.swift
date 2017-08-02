@@ -78,9 +78,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     var isHiddenToggleDot: Bool {
-        if  let zone = widgetZone, isInnerDot, let mode = zone.storageMode {
+        if  let zone = widgetZone, isInnerDot, isToggle, let mode = zone.storageMode {
 
-            return isToggle && ((!zone.hasChildren && !showAsBookmark && !isDragTarget) || (mode == .favorites && !zone.isRootOfFavorites))
+            return (zone.fetchableCount == 0 && zone.count == 0 && !showAsBookmark && !isDragTarget) || (mode == .favorites && !zone.isRootOfFavorites)
         }
         
         return false
@@ -178,7 +178,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             isHidden                = isHiddenToggleDot
 
             if !isHidden {
-                let shouldHighlight = isToggle ? (zone.indicateChildren || zone.isBookmark ||  isDragTarget) : zone.isGrabbed // not highlight when editing
+                let shouldHighlight = isToggle ? (!zone.showChildren || zone.isBookmark || isDragTarget) : zone.isGrabbed // not highlight when editing
                 let     strokeColor = isToggle && isDragTarget ? gDragTargetsColor : zone.color
                 let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
                 let       thickness = CGFloat(gLineThickness)
@@ -191,7 +191,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 path.stroke()
                 path.fill()
 
-                if  showAsBookmark {
+                if  showAsBookmark && isToggle {
                     let inset = CGFloat(gDotHeight / 3.0)
                     path      = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
                     path.flatness = 0.0001

@@ -48,7 +48,6 @@ class ZFavoritesManager: ZCloudManager {
     func setup() {
         if  rootZone          == nil {
             rootZone           = Zone(record: nil, storageMode: .favorites)
-            rootZone?.level    = 0
             rootZone?.zoneName = "favorites"
             rootZone?.record   = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
 
