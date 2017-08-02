@@ -22,6 +22,7 @@ class ZCloudToolsController: ZGenericTableController {
     enum ZToolKind: Int {
         case eRecount
         case eZone
+        case eConvert
         case eTrash
     }
     
@@ -35,6 +36,7 @@ class ZCloudToolsController: ZGenericTableController {
         case .eRecount: return "Recount"
         case .eZone:    return "Restore Zone"
         case .eTrash:   return "Restore All Trash"
+        case .eConvert: return "Convert to Booleans"
         }
     }
 
@@ -49,7 +51,7 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     func tableView(_ tableView: ZTableView, shouldSelectRow row: Int) -> Bool {
-        FOREGROUND {
+        FOREGROUND { // put on next runloop cycle so button will instantly highlight
             tableView.deselectAll(self)
 
             if  let kind = ZToolKind(rawValue: row) {
@@ -57,6 +59,7 @@ class ZCloudToolsController: ZGenericTableController {
                 case .eRecount: self.recount()
                 case .eZone:    self.restoreZone()
                 case .eTrash:   self.restoreFromTrash()
+                case .eConvert: self.convertToBooleans()
                 }
             }
         }
@@ -71,6 +74,20 @@ class ZCloudToolsController: ZGenericTableController {
 
     func recount() {
         gSelectionManager.rootMostMoveable.fullUpdateProgenyCount()
+    }
+
+
+    func convertToBooleans() {
+        if let root = gRoot {
+            root.needProgeny()
+            gOperationsManager.children(.inclusive) {
+                for zone in gCloudManager.zonesByID.values {
+                    zone.convertToBooleans()
+                }
+
+                self.redrawAndSync()
+            }
+        }
     }
 
 
@@ -93,7 +110,8 @@ class ZCloudToolsController: ZGenericTableController {
             if zone.hasCompleteAncestorPath() && root.count > 0 {
                 closure()
             } else {
-                root.maybeNeedChildren()
+                root.needChildren()
+                root.displayChildren()
                 gOperationsManager.children(.expand, 1) {
                     closure()
                 }

@@ -77,10 +77,10 @@ class ZEditingManager: NSObject {
                 case "r":         reverse()
                 case "p":         printHere()
                 case "b":         createBookmark()
-                case ";":         doFavorites(true,    false,    isCommand)
-                case "'":         doFavorites(isShift, isOption, isCommand)
+                case ";":         doFavorites(true,    false)
+                case "'":         doFavorites(isShift, isOption)
                 case ",", ".":    gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
-                case "/":         focus(on: gSelectionManager.firstGrab)
+                case "/":         focus(on: gSelectionManager.firstGrab, isCommand)
                 // case "?":         gSettingsController?.displayViewFor(id: .Help)
                 case "-":         createSiblingIdea  (with: "-------------------------") { iChild in iChild.grab() }
                 case "=":         createSiblingIdea  (with: "----------- | -----------") { iChild in iChild.editAndSelect(in: NSMakeRange(12, 1)) }
@@ -213,18 +213,12 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func doFavorites(_ isShift: Bool, _ isOption: Bool, _ isCommand: Bool) {
-        if isCommand || (isShift && isOption) {
-            gFavoritesManager.refocus() {
-                self.redrawAndSync()
-            }
-        } else {
-            let backward = isShift || isOption
+    func doFavorites(_ isShift: Bool, _ isOption: Bool) {
+        let backward = isShift || isOption
 
-            gFavoritesManager.switchToNext(!backward) {
-                self.redrawAndSync() {
-                    self.signalFor(nil, regarding: .redraw)
-                }
+        gFavoritesManager.switchToNext(!backward) {
+            self.redrawAndSync() {
+                self.signalFor(nil, regarding: .redraw)
             }
         }
     }
@@ -238,7 +232,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func focus(on iZone: Zone) {
+    func focus(on iZone: Zone, _ isCommand: Bool = false) {
         let focusClosure = { (zone: Zone) in
             gHere = zone
 
@@ -246,7 +240,11 @@ class ZEditingManager: NSObject {
             self.redrawAndSync(zone)
         }
 
-        if iZone.isBookmark {
+        if isCommand{
+            gFavoritesManager.refocus() {
+                self.redrawAndSync()
+            }
+        } else if iZone.isBookmark {
             gTravelManager.travelThrough(iZone) { object, kind in
                 gSelectionManager.deselect()
                 focusClosure(object as! Zone)
@@ -791,9 +789,7 @@ class ZEditingManager: NSObject {
             actuallyMoveZone(zone)
         } else if zone.isBookmark {
             travelThroughBookmark(zone)
-        } else if zone.count > 0 {
-            grabChild(of: zone)
-        } else if !zone.isDeleted && zone.hasMissingChildren {
+        } else {
             zone.needChildren()
 
             gOperationsManager.children(.restore) {

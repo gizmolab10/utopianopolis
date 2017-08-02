@@ -112,7 +112,7 @@ class ZControllersManager: NSObject {
     func updateCounts() {
         var alsoProgenyCounts = false
 
-        gCloudManager.fullUpdateCount() { state, record in
+        gCloudManager.fullUpdate() { state, record in
             if  let            zone = record as? Zone {
                 zone.fetchableCount = zone.count
                 alsoProgenyCounts   = true

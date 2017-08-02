@@ -13,9 +13,9 @@ import CloudKit
 
 enum ZRecursionType: Int {
     case all        // always recurse
-    case update     // controlled by is up to date
     case expand     // controlled by expose children, level, count
     case restore    // controlled by expose children
+    case inclusive  // fetch deleted, too
 }
 
 
@@ -49,15 +49,13 @@ class ZRecursionLogic: NSObject {
 
     func propagateNeeds(to iChild: Zone, _ iProgenyNeeded: [CKReference]?) {
         if  let course =  type {
-            let update = !iChild.isUpToDate
             let reveal =  iChild.showChildren && (iChild.count == 0 && iChild.hasMissingChildren)
             let expand =  reveal && targetLevel != nil && (targetLevel! < 0 || targetLevel! > iChild.level)
 
             switch course {
-            case .expand:  if expand { iChild.needChildren() }
-            case .restore: if reveal { iChild.needChildren() }
-            case .update:  if update { iChild.needProgeny() }
-            case .all:                 propagateDeeply(to: iChild)
+            case .expand:          if expand { iChild.needChildren() }
+            case .restore:         if reveal { iChild.needChildren() }
+            case .all, .inclusive: propagateDeeply(to: iChild)
             }
         } else if iChild.showChildren, let progenyNeeded = iProgenyNeeded, progenyNeeded.count > 0, let parentReference = iChild.parent, progenyNeeded.contains(parentReference) {
             iChild.needProgeny()

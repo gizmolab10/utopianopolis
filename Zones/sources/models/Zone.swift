@@ -11,76 +11,52 @@ import Foundation
 import CloudKit
 
 
- enum ZIntegerState: Int {
-    case showChildren = 0
-    case   isUpToDate = 10
-    case   isFavorite = 29
-    case    isDeleted = 30
- }
- 
-
-struct ZoneState: OptionSet {
-    let rawValue: Int
-
-    init(rawValue: Int) {
-        self.rawValue = rawValue
-    }
-
-    static let ShowsChildren = ZoneState(rawValue: 1 << ZIntegerState.showChildren.rawValue)
-    static let    IsUpToDate = ZoneState(rawValue: 1 << ZIntegerState.isUpToDate  .rawValue)
-    static let    IsFavorite = ZoneState(rawValue: 1 << ZIntegerState.isFavorite  .rawValue)
-    static let     IsDeleted = ZoneState(rawValue: 1 << ZIntegerState.isDeleted   .rawValue)
-
-    var decoration: String {
-        let f = contains(.IsFavorite) ? "F" : ""
-        let d = contains(.IsDeleted)  ? "D" : ""
-
-        if f != "" || d != "" {
-            return "\(f)\(d)"
-        }
-
-        return ""
-    }
-}
-
-
 class Zone : ZRecord {
 
 
-    dynamic var      parent: CKReference?
-    dynamic var    zoneName:      String?
-    dynamic var    zoneLink:      String?
-    dynamic var   zoneColor:      String?
-    dynamic var   zoneOrder:    NSNumber?
-    dynamic var   zoneCount:    NSNumber?
-    dynamic var   zoneState:    NSNumber?
-    dynamic var zoneProgeny:    NSNumber?
-    var         _parentZone:        Zone?
-    var              _color:      ZColor?
-    var          _crossLink:     ZRecord?
-    var            children      = [Zone] ()
-    var               count:          Int { return children.count }
-    var              widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
-    var       unwrappedName:       String { return zoneName ?? "empty" }
-    var       decoratedName:       String { return "\(unwrappedName)\(decoration)" }
-    var    grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
-    var   isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
-    var  hasMissingChildren:         Bool { return count < fetchableCount }
-    var       hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
-    var       hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
-    var          isBookmark:         Bool { return crossLink != nil }
-    var          isSelected:         Bool { return gSelectionManager.isSelected(self) }
-    var           isEditing:         Bool { return gSelectionManager .isEditing(self) }
-    var           isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
-    var            hasColor:         Bool { return _color != nil }
-    var           isDeleted:         Bool { get { return getValue(for:     .IsDeleted) } set { setValue(newValue, for: .IsDeleted) } }
-    var          isUpToDate:         Bool { get { return getValue(for:    .IsUpToDate) } set { setValue(newValue, for: .IsUpToDate) } }
-    var          isFavorite:         Bool { get { return getValue(for:    .IsFavorite) } set { setValue(newValue, for: .IsFavorite) } }
-    var        showChildren:         Bool { get { return getValue(for: .ShowsChildren) } set { setValue(newValue, for: .ShowsChildren) } }
+    dynamic var           parent: CKReference?
+    dynamic var         zoneName:      String?
+    dynamic var         zoneLink:      String?
+    dynamic var        zoneColor:      String?
+    dynamic var        zoneOrder:    NSNumber?
+    dynamic var        zoneCount:    NSNumber?
+    dynamic var      zoneProgeny:    NSNumber?
+    dynamic var    zoneIsDeleted:    NSNumber?
+    dynamic var   zoneIsFavorite:    NSNumber?
+    dynamic var zoneShowChildren:    NSNumber?
+    var              _parentZone:        Zone?
+    var                   _color:      ZColor?
+    var               _crossLink:     ZRecord?
+    var                 children      = [Zone] ()
+    var                    count:          Int { return children.count }
+    var                   widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
+    var            unwrappedName:       String { return zoneName ?? "empty" }
+    var            decoratedName:       String { return "\(unwrappedName)\(decoration)" }
+    var         grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
+    var        isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
+    var       hasMissingChildren:         Bool { return count < fetchableCount }
+    var            hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
+    var            hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
+    var               isBookmark:         Bool { return crossLink != nil }
+    var               isSelected:         Bool { return gSelectionManager.isSelected(self) }
+    var                isEditing:         Bool { return gSelectionManager .isEditing(self) }
+    var                isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
+    var                 hasColor:         Bool { return _color != nil }
+    var                isDeleted:         Bool { get { if let value = zoneIsDeleted?   .boolValue { return value } else { zoneIsDeleted    = NSNumber(value: false); needFlush(); return false } } set { zoneIsDeleted    = NSNumber(value: newValue) } }
+    var               isFavorite:         Bool { get { if let value = zoneIsFavorite?  .boolValue { return value } else { zoneIsFavorite   = NSNumber(value: false); needFlush(); return false } } set { zoneIsFavorite   = NSNumber(value: newValue) } }
+    var             showChildren:         Bool { get { if let value = zoneShowChildren?.boolValue { return value } else { zoneShowChildren = NSNumber(value: false); needFlush(); return false } } set { zoneShowChildren = NSNumber(value: newValue) } }
 
 
     var decoration: String {
-        var d = state.decoration
+        var d = ""
+
+        if isDeleted {
+            d.append("D")
+        }
+
+        if isFavorite {
+            d.append("F")
+        }
 
         if isBookmark {
             d.append("B")
@@ -112,8 +88,10 @@ class Zone : ZRecord {
                 #keyPath(zoneColor),
                 #keyPath(zoneOrder),
                 #keyPath(zoneCount),
-                #keyPath(zoneState),
-                #keyPath(zoneProgeny)]
+                #keyPath(zoneProgeny),
+                #keyPath(zoneIsDeleted),
+                #keyPath(zoneIsFavorite),
+                #keyPath(zoneShowChildren)]
     }
 
 
@@ -231,7 +209,9 @@ class Zone : ZRecord {
 
     var fetchableCount: Int {
         get {
-            if zoneCount == nil {
+            if isBookmark || isFavorite {
+                return bookmarkTarget?.fetchableCount ?? 0
+            } else if zoneCount == nil {
                 updateClassProperties()
 
                 if zoneCount == nil {
@@ -243,7 +223,7 @@ class Zone : ZRecord {
         }
 
         set {
-            if  newValue != fetchableCount && !isBookmark {
+            if  newValue != fetchableCount && !isBookmark && !isFavorite {
                 zoneCount = NSNumber(value: newValue)
             }
 //
@@ -270,27 +250,6 @@ class Zone : ZRecord {
         set {
             if newValue != progenyCount {
                 zoneProgeny = NSNumber(value: newValue)
-            }
-        }
-    }
-
-
-    var state: ZoneState {
-        get {
-            if zoneState == nil {
-                updateClassProperties()
-
-                if zoneState == nil {
-                    zoneState = NSNumber(value: 1)
-                }
-            }
-
-            return ZoneState(rawValue: Int((zoneState?.int64Value)!))
-        }
-
-        set {
-            if newValue != state {
-                zoneState = NSNumber(integerLiteral: newValue.rawValue)
             }
         }
     }
@@ -350,23 +309,6 @@ class Zone : ZRecord {
     }
 
 
-    func getValue(for iState: ZoneState) -> Bool {
-        return state.contains(iState)
-
-    }
-
-
-    func setValue(_ iValue: Bool, for iState: ZoneState) {
-        if     iValue != getValue(for: iState) {
-            if iValue {
-                state.insert(iState)
-            } else {
-                state.remove(iState)
-            }
-        }
-    }
-
-    
     // MARK:- convenience
     // MARK:-
 
@@ -409,6 +351,15 @@ class Zone : ZRecord {
     }
 
 
+    func convertToBooleans() {
+        zoneShowChildren = NSNumber(value: showChildren)
+        zoneIsFavorite   = NSNumber(value: isFavorite)
+        zoneIsDeleted    = NSNumber(value: isDeleted)
+
+        needFlush()
+    }
+
+
     static func == ( left: Zone, right: Zone) -> Bool {
         let unequal = left != right // avoid infinite recursion by using negated version of this infix operator
 
@@ -439,12 +390,17 @@ class Zone : ZRecord {
 
 
     func hasCompleteAncestorPath(toColor: Bool = false) -> Bool {
-        var isComplete = false
+        var   isComplete = false
+        var child: Zone? = nil
 
         traverseAllAncestors { iZone in
-            if  iZone.isRoot || (toColor && iZone.hasColor) {
+            let  isReciprocal  = child == nil  || iZone.children.contains(child!)
+
+            if  (isReciprocal && iZone.isRoot) || (toColor && iZone.hasColor) {
                 isComplete = true
             }
+
+            child = iZone
         }
 
         return isComplete
@@ -720,7 +676,7 @@ class Zone : ZRecord {
 
             needCount()
 
-            self.columnarReport(" ADDED", child.decoratedName)
+            // self.columnarReport(" ADDED", child.decoratedName)
 
             return insertAt
         }

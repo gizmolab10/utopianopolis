@@ -84,7 +84,7 @@ class ZShortcutsController: ZGenericTableController {
         "   COMMAND",
         "    \tARROWS   \textend all the way",
         "    \tRETURN   \tdeselects",
-        "    \t'        \trefocuses current favorite",
+        "    \t/        \trefocuses current favorite",
         "",
         "   SHIFT + ARROW",
         "    \tRIGHT    \treveals subordinates",

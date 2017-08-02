@@ -28,6 +28,7 @@ enum ZOperationID: Int {
     case emptyTrash
     case available
     case bookmarks
+    case inclusive
     case undelete
     case create
     case parent
@@ -227,6 +228,7 @@ class ZOperationsManager: NSObject {
                 case .emptyTrash:   cloudManager.emptyTrash                  (          complete)
                 case .subscribe:    cloudManager.subscribe                   (          complete)
                 case .bookmarks:    cloudManager.bookmarks                   (          complete)
+                case .inclusive:    cloudManager.fetchAll                    (          complete)
                 case .create:       cloudManager.create                      (          complete)
                 case .fetch:        cloudManager.fetch                       (          complete)
                 case .merge:        cloudManager.merge                       (          complete)
