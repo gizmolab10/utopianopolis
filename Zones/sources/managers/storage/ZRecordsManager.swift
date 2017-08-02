@@ -16,6 +16,7 @@ enum ZRecordState: Int {
     case needsRoot
     case needsMerge
     case needsFetch
+    case needsCount
     case needsParent
     case needsCreate
     case needsDestroy
@@ -102,9 +103,16 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func clearRecords(_ records: [CKRecord], for states: [ZRecordState]) {
+    func clearCKRecords(_ records: [CKRecord], for states: [ZRecordState]) {
         for record in records {
             clearStatesForRecordID(record.recordID, forStates:states)
+        }
+    }
+    
+
+    func clearZRecords(_ records: [ZRecord], for states: [ZRecordState]) {
+        for record in records {
+            clearStatesForRecordID(record.record.recordID, forStates:states)
         }
     }
 
@@ -186,7 +194,7 @@ class ZRecordsManager: NSObject {
         }
 
         if pull {
-            clearStates(states)
+            clearRecordIDs(identifiers, for: states)
         }
 
         return identifiers
@@ -225,7 +233,7 @@ class ZRecordsManager: NSObject {
             }
         }
 
-        clearRecords(results, for: states)
+        clearCKRecords(results, for: states)
         
         return results
     }
@@ -257,6 +265,19 @@ class ZRecordsManager: NSObject {
 
     // MARK:- batch lookup
     // MARK:-
+
+
+    func fullUpdateCount(_ onEach: StateRecordClosure) {
+        let  states = [ZRecordState.needsCount]
+        var records = [ZRecord] ()
+
+        findRecordsWithMatchingStates(states) { state, record in
+            records.append(record)
+            onEach(state, record)
+        }
+
+        clearZRecords(records, for: states)
+    }
 
 
     func findRecordByRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState], onEach: StateRecordClosure?) {

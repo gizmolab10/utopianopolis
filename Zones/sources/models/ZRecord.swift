@@ -192,6 +192,7 @@ class ZRecord: NSObject {
     }
 
 
+    func needCount()     { markForAllOfStates([.needsCount]) }
     func needFetch()     { markForAllOfStates([.needsFetch]) }
     func needParent()    { markForAllOfStates([.needsParent]) }
     func needDestroy()   { markForAllOfStates([.needsDestroy]); unmarkForAllOfStates([.needsSave, .needsCreate]) }

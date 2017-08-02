@@ -136,7 +136,7 @@ class Zone : ZRecord {
 
     var level: Int {
         get {
-            if  !(isRoot || isRootOfFavorites), let p = parentZone {
+            if  !isRoot, !isRootOfFavorites, let p = parentZone {
                 return p.level + 1
             }
 
@@ -718,11 +718,7 @@ class Zone : ZRecord {
 
             child.parentZone   = self
 
-            if  fetchableCount < count {
-                fetchableCount = count
-            }
-
-            fastUpdateProgenyCount()
+            needCount()
 
             self.columnarReport(" ADDED", child.decoratedName)
 
@@ -737,9 +733,7 @@ class Zone : ZRecord {
         if  let child = iChild, let index = children.index(of: child) {
             children.remove(at: index)
 
-            fetchableCount = count
-
-            updateProgenyCount()
+            needCount()
 
             return true
         }

@@ -84,12 +84,12 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func       sync(_ onCompletion: @escaping Closure) { setupAndRun([.create,   .fetch, .parent, .children, .merge, .save]) { onCompletion() } }
-    func       save(_ onCompletion: @escaping Closure) { setupAndRun([.create,                               .merge, .save]) { onCompletion() } }
-    func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                      .children,         .save]) { onCompletion() } }
+    func       sync(_ onCompletion: @escaping Closure) { setupAndRun([.create,   .fetch, .parent, .merge, .save, .children]) { onCompletion() } }
+    func       save(_ onCompletion: @escaping Closure) { setupAndRun([.create,                    .merge, .save           ]) { onCompletion() } }
+    func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                              .save, .children]) { onCompletion() } }
     func     parent(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent                          ]) { onCompletion() } }
-    func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent, .children               ]) { onCompletion() } }
-    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent, .children,         .save]) { onCompletion() } }
+    func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent,                .children]) { onCompletion() } }
+    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent,         .save, .children]) { onCompletion() } }
     func  bookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks                                          ]) { onCompletion() } }
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                         ]) { onCompletion() } }
 

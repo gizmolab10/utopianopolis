@@ -109,10 +109,28 @@ class ZControllersManager: NSObject {
     }
 
 
-    func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
-        let mode = gStorageMode
+    func updateCounts() {
+        var alsoProgenyCounts = false
 
+        gCloudManager.fullUpdateCount() { state, record in
+            if  let            zone = record as? Zone {
+                zone.fetchableCount = zone.count
+                alsoProgenyCounts   = true
+            }
+        }
+
+        if alsoProgenyCounts {
+            gRoot?.safeUpdateProgenyCount([])
+        }
+    }
+
+
+    func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
         FOREGROUND {
+            let mode = gStorageMode
+            
+            self.updateCounts() // clean up after fetch children
+
             for (identifier, signalObject) in self.signalObjectsByControllerID {
                 switch regarding {
                 case .preferences: if identifier == .preferences { signalObject.closure(object, mode, regarding) }

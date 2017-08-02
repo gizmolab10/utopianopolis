@@ -506,7 +506,7 @@ class ZCloudManager: ZRecordsManager {
                         if  goal == .all, let p = fetchedParent {
                             p.maybeNeedRoot()
 
-                            if  p.hasMissingChildren && p.count == 0 {
+                            if  p.hasMissingChildren {
                                 p.needChildren()
                             }
                         }
@@ -549,15 +549,11 @@ class ZCloudManager: ZRecordsManager {
                 } else { // nil means: we already received full response from cloud for this particular fetch
                     self.FOREGROUND() { // mutate graph
                         for record in retrieved {
-                            if  let _ = self.zoneForRecordID(record.recordID) {
+                            if  self.zoneForRecordID(record.recordID) != nil {
                                 if destroyedIDs.contains(record.recordID) {
                                     // self.columnarReport(" DESTROYED", child.decoratedName)
 
                                     break
-                                // } else if child.parentZone?.children.contains(child) ?? false {
-                                    // self.columnarReport(" REFETCHED", child.decoratedName)
-
-                                    // break
                                 }
                             }
 
