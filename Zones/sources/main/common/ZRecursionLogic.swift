@@ -15,7 +15,6 @@ enum ZRecursionType: Int {
     case all        // always recurse
     case expand     // controlled by expose children, level, count
     case restore    // controlled by expose children
-    case inclusive  // fetch deleted, too
 }
 
 
@@ -53,9 +52,9 @@ class ZRecursionLogic: NSObject {
             let expand =  reveal && targetLevel != nil && (targetLevel! < 0 || targetLevel! > iChild.level)
 
             switch course {
-            case .expand:          if expand { iChild.needChildren() }
-            case .restore:         if reveal { iChild.needChildren() }
-            case .all, .inclusive: propagateDeeply(to: iChild)
+            case .expand:   if expand { iChild.needChildren() }
+            case .restore:  if reveal { iChild.needChildren() }
+            case .all:      propagateDeeply(to: iChild)
             }
         } else if iChild.showChildren, let progenyNeeded = iProgenyNeeded, progenyNeeded.count > 0, let parentReference = iChild.parent, progenyNeeded.contains(parentReference) {
             iChild.needProgeny()

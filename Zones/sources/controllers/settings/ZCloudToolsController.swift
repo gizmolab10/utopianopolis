@@ -78,15 +78,8 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     func convertToBooleans() {
-        if let root = gRoot {
-            root.needProgeny()
-            gOperationsManager.children(.inclusive) {
-                for zone in gCloudManager.zonesByID.values {
-                    zone.convertToBooleans()
-                }
-
-                self.redrawAndSync()
-            }
+        gOperationsManager.fetchAll() {
+            self.redrawAndSync()
         }
     }
 

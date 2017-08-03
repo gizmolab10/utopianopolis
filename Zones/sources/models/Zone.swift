@@ -779,7 +779,7 @@ class Zone : ZRecord {
 
 
     func safeUpdateProgenyCount(_ iMissing: [Zone]) {
-        if !iMissing.contains(self) {
+        if !iMissing.contains(self) && count != 0 {
             let missing = iMissing + [self]
             var counter = 0
 

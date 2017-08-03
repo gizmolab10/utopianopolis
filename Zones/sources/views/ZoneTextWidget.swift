@@ -218,7 +218,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-    override func draw(_ dirtyRect: NSRect) {
+    override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
         if  let         zone = widget.widgetZone, zone.isBookmark, !zone.isGrabbed, !isTextEditing {

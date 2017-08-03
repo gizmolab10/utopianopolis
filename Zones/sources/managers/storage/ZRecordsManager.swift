@@ -32,8 +32,8 @@ let batchSize = 250
 class ZRecordsManager: NSObject {
 
 
-    var recordsByState = [ZRecordState : [ZRecord]] ()
-    var      zonesByID = [String       :      Zone] ()
+    var recordsByState = [ZRecordState : [CKRecord]] ()
+    var      zonesByID = [String       :       Zone] ()
     var storageMode: ZStorageMode
     var    rootZone: Zone? = nil
 
@@ -73,7 +73,7 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func recordsForState(_ state: ZRecordState) -> [ZRecord] {
+    func recordsForState(_ state: ZRecordState) -> [CKRecord] {
         var records               = recordsByState[state]
         if  records              == nil {
             records               = []
@@ -133,9 +133,18 @@ class ZRecordsManager: NSObject {
 
 
     func hasRecord(_ iRecord: ZRecord, forStates: [ZRecordState]) -> Bool {
+        if let ckRecord = iRecord.record {
+            return hasCKRecord(ckRecord, forStates: forStates)
+        }
+
+        return false
+    }
+
+
+    func hasCKRecord(_ iRecord: CKRecord, forStates: [ZRecordState]) -> Bool {
         var found = false
 
-        findRecordByRecordID(iRecord.record?.recordID, forStates: forStates, onEach: { (state: ZRecordState, record: ZRecord) in
+        findRecordByRecordID(iRecord.recordID, forStates: forStates, onEach: { (state: ZRecordState, record: CKRecord) in
             found = true
         })
 
@@ -148,8 +157,15 @@ class ZRecordsManager: NSObject {
 
 
     func addRecord(_ iRecord: ZRecord, for states: [ZRecordState]) {
+        if  let ckrecord = iRecord.record {
+            addCKRecord(ckrecord, for: states)
+        }
+    }
+
+
+    func addCKRecord(_ iRecord: CKRecord, for states: [ZRecordState]) {
         for state in states {
-            if !hasRecord(iRecord, forStates: [state]) {
+            if !hasCKRecord(iRecord, forStates: [state]) {
                 var records = recordsForState(state)
 
                 records.append(iRecord)
@@ -160,7 +176,7 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func add(_ iReferences: [CKReference], for states: [ZRecordState]) {
+    func add(states: [ZRecordState], to iReferences: [CKReference]) {
         for reference in iReferences {
             if let record = recordForRecordID(reference.recordID) {
                 addRecord(record, for: states)
@@ -174,7 +190,7 @@ class ZRecordsManager: NSObject {
 
 
     func clearStatesForRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState]) {
-        findRecordByRecordID(iRecordID, forStates: forStates, onEach: { (state: ZRecordState, record: ZRecord) in
+        findRecordByRecordID(iRecordID, forStates: forStates, onEach: { (state: ZRecordState, record: CKRecord) in
             var records = self.recordsForState(state)
 
             if let index = records.index(of: record) {
@@ -186,8 +202,8 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func clearAllStatesForRecord(_ iRecord: ZRecord) {
-        clearStatesForRecordID(iRecord.record?.recordID, forStates: allStates)
+    func clearAllStatesForRecord(_ iRecord: CKRecord) {
+        clearStatesForRecordID(iRecord.recordID, forStates: allStates)
     }
 
 
@@ -210,8 +226,10 @@ class ZRecordsManager: NSObject {
     func recordIDsWithMatchingStates( _ states: [ZRecordState], pull: Bool = false) -> [CKRecordID] {
         var identifiers = [CKRecordID] ()
 
-        findRecordsWithMatchingStates(states) { state, record in
-            if  let identifier = record.record?.recordID, identifiers.count < batchSize, !identifiers.contains(identifier) {
+        findRecordsWithMatchingStates(states) { state, ckrecord in
+            let identifier = ckrecord.recordID
+
+            if  identifiers.count < batchSize, !identifiers.contains(identifier) {
                 identifiers.append(identifier)
             }
         }
@@ -227,16 +245,12 @@ class ZRecordsManager: NSObject {
     func parentIDsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecordID] {
         var parents = [CKRecordID] ()
 
-        findRecordsWithMatchingStates(states) { state, record in
-            if parents.count < batchSize {
-                let zone: Zone = record as! Zone
+        findRecordsWithMatchingStates(states) { state, ckrecord in
+            if  parents.count < batchSize, let zone = recordForCKRecord(ckrecord) as? Zone, let reference = zone.parent {
+                let  parentID = reference.recordID
 
-                if  let reference = zone.parent {
-                    let  parentID = reference.recordID
-
-                    if !parents.contains(parentID) {
-                        parents.append(parentID)
-                    }
+                if !parents.contains(parentID) {
+                    parents.append(parentID)
                 }
             }
         }
@@ -248,11 +262,9 @@ class ZRecordsManager: NSObject {
     func pullRecordsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecord] {
         var results = [CKRecord] ()
 
-        findRecordsWithMatchingStates(states) { state, record in
-            if  results.count < batchSize && !results.contains(record.record) {
-                results.append(record.record)
-
-                record.debug("saving")
+        findRecordsWithMatchingStates(states) { state, ckrecord in
+            if  results.count < batchSize && !results.contains(ckrecord) {
+                results.append(ckrecord)
             }
         }
 
@@ -274,9 +286,9 @@ class ZRecordsManager: NSObject {
     func referencesWithMatchingStates(_ states: [ZRecordState]) -> [CKReference] {
         var references = [CKReference] ()
 
-        findRecordsWithMatchingStates(states) { state, record in
-            if references.count < batchSize, let identifier = record.record?.recordID {
-                let reference: CKReference = CKReference(recordID: identifier, action: .none)
+        findRecordsWithMatchingStates(states) { state, ckrecord in
+            if  references.count < batchSize {
+                let reference = CKReference(recordID: ckrecord.recordID, action: .none)
 
                 references.append(reference)
             }
@@ -292,32 +304,37 @@ class ZRecordsManager: NSObject {
 
     func fullUpdate(_ onEach: StateRecordClosure) {
         let  states = [ZRecordState.needsCount]
-        var records = [ZRecord] ()
+        var records = [CKRecord] ()
 
-        findRecordsWithMatchingStates(states) { state, record in
-            records.append(record)
-            onEach(state, record)
+        findRecordsWithMatchingStates(states) { state, ckrecord in
+            if let record = recordForCKRecord(ckrecord) {
+                onEach(state, record)
+            }
+
+            records.append(ckrecord)
         }
 
-        clearZRecords(records, for: states)
+        clearCKRecords(records, for: states)
     }
 
 
-    func findRecordByRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState], onEach: StateRecordClosure?) {
+    func findRecordByRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState], onEach: StateCKRecordClosure?) {
         if let soughtName = iRecordID?.recordName {
-            findRecordsWithMatchingStates(forStates) { state, record in
-                if let name = record.record?.recordID.recordName, name == soughtName {
-                    onEach?(state, record)
+            findRecordsWithMatchingStates(forStates) { state, ckrecord in
+                let name = ckrecord.recordID.recordName
+
+                if  name == soughtName {
+                    onEach?(state, ckrecord)
                 }
             }
         }
     }
 
 
-    func findRecordsWithMatchingStates(_ states: [ZRecordState], onEach: StateRecordClosure) {
+    func findRecordsWithMatchingStates(_ states: [ZRecordState], onEach: StateCKRecordClosure) {
         for state in states {
-            for record in recordsForState(state) {
-                onEach(state, record)
+            for ckrecord in recordsForState(state) {
+                onEach(state, ckrecord)
             }
         }
     }

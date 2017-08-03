@@ -345,7 +345,29 @@ class ZCloudManager: ZRecordsManager {
     // MARK:-
 
 
-    func fetchAll(_ onCompletion: IntegerClosure?) {}
+    func fetchAll(_ onCompletion: IntegerClosure?) {
+        let predicate = NSPredicate(format: "zoneName != \"\"")
+        let       key = "zoneIsDeleted"
+        var retrieved = [CKRecord] ()
+
+        self.queryWith(predicate) { (iRecord: CKRecord?) in
+            if let ckRecord = iRecord {
+                if !retrieved.contains(ckRecord) {
+                    retrieved.append(ckRecord)
+                }
+            } else { // nil means: we already received full response from cloud for this particular fetch
+                self.FOREGROUND {
+                    for ckRecord in retrieved {
+                        if !ckRecord.allKeys().contains(key) {
+                            ckRecord[key] = NSNumber(value: true)
+
+                            self.addCKRecord(ckRecord, for: [.needsSave])
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 
     func fetch(_ onCompletion: IntegerClosure?) {
@@ -541,11 +563,7 @@ class ZCloudManager: ZRecordsManager {
 
         if count > 0 {
             var  retrieved = [CKRecord] ()
-            var  predicate = NSPredicate(format: "zoneIsFavorite = 0 and zoneIsDeleted = 0 AND parent IN %@", childrenNeeded)
-
-            if logic.type == .inclusive {
-                predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
-            }
+            let predicate  = NSPredicate(format: "zoneIsFavorite = 0 AND zoneIsDeleted = 0 AND parent IN %@", childrenNeeded)
 
             columnarReport("CHILDREN of", stringForReferences(childrenNeeded, in: storageMode))
             queryWith(predicate) { (iRecord: CKRecord?) in
@@ -564,13 +582,12 @@ class ZCloudManager: ZRecordsManager {
                                 }
                             }
 
-                            let             child = self.zoneForRecord(record)
+                            let      child = self.zoneForRecord(record)
 
                             logic.propagateNeeds(to: child, progenyNeeded)
 
-                            if  let        parent = child.parentZone,
-                                parent.isDeleted == child.isDeleted,
-                                parent           != child,
+                            if  let parent = child.parentZone,
+                                parent    != child,
                                 !child.isRoot {
 
                                 if !parent.children.contains(child) {
@@ -580,7 +597,7 @@ class ZCloudManager: ZRecordsManager {
                             }
                         }
 
-                        self.add(childrenNeeded, for: [.needsCount])
+                        self.add(states: [.needsCount], to: childrenNeeded)
                         self.fetchChildren(logic, onCompletion) // process remaining
                     }
                 }

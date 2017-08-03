@@ -182,7 +182,7 @@ class ZRecord: NSObject {
 
     func isMarkedForAnyOfStates(_ states: [ZRecordState]) -> Bool { return recordsManager.hasRecord(self, forStates:states) }
     func markForAllOfStates    (_ states: [ZRecordState])         {        recordsManager.addRecord(self, for: states) }
-    func clearAllStates()                                         {        recordsManager.clearAllStatesForRecord(self) }
+    func clearAllStates()                                         {        recordsManager.clearAllStatesForRecord(self.record) }
 
 
     func unmarkForAllOfStates(_ states: [ZRecordState]) {
@@ -211,7 +211,7 @@ class ZRecord: NSObject {
     func needFlush() {
         var state: ZRecordState = .needsSave
 
-        if record.creationDate == nil {
+        if let r = record, r.creationDate == nil {
             state = .needsCreate
         }
 
