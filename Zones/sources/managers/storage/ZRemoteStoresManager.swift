@@ -14,8 +14,9 @@ import CloudKit
 let gRemoteStoresManager = ZRemoteStoresManager()
 var     gManifest: ZManifest     { return gRemoteStoresManager.manifest }
 var gCloudManager: ZCloudManager { return gRemoteStoresManager.currentCloudManager }
-var         gHere: Zone    { get { return gManifest.hereZone }            set { gManifest.hereZone      = newValue } }
-var         gRoot: Zone?   { get { return gRemoteStoresManager.rootZone } set { gRemoteStoresManager.rootZone = newValue } }
+var        gTrash: Zone?   { get { return gRemoteStoresManager.trashZone } set { gRemoteStoresManager.trashZone = newValue } }
+var         gRoot: Zone?   { get { return gRemoteStoresManager.rootZone }  set { gRemoteStoresManager.rootZone  = newValue } }
+var         gHere: Zone    { get { return gManifest.hereZone }             set { gManifest.hereZone             = newValue } }
 
 
 class ZRemoteStoresManager: NSObject {
@@ -29,7 +30,8 @@ class ZRemoteStoresManager: NSObject {
     var   currentCloudManager: ZCloudManager   { return cloudManagerFor(gStorageMode) }
     var      rootProgenyCount: Int             { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
     var              manifest: ZManifest       { return manifest(for: gStorageMode) }
-    var              rootZone: Zone?     { get { return currentRecordsManager.rootZone } set { currentRecordsManager.rootZone = newValue } }
+    var             trashZone: Zone?     { get { return currentRecordsManager.trashZone } set { currentRecordsManager.trashZone = newValue } }
+    var              rootZone: Zone?     { get { return currentRecordsManager.rootZone }  set { currentRecordsManager.rootZone  = newValue } }
 
 
     func rootZone(for mode: ZStorageMode) -> Zone? { return recordsManagerFor(mode).rootZone }
@@ -108,10 +110,10 @@ class ZRemoteStoresManager: NSObject {
     }
 
 
-    func establishRoot(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
+    func establishRoots(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         switch storageMode {
         case .favorites: onCompletion?(0)
-        default:         cloudManagerFor(storageMode).establishRoot(onCompletion)
+        default:         cloudManagerFor(storageMode).establishRoots(onCompletion)
         }
     }
 

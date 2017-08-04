@@ -13,7 +13,7 @@ import Foundation
 enum ZOperationID: Int {
     case authenticate
     case cloud
-    case root
+    case roots
     case manifest
     case favorites
     case file
@@ -33,6 +33,7 @@ enum ZOperationID: Int {
     case create
     case parent
     case merge
+    case trash
     case none
 }
 
@@ -87,13 +88,14 @@ class ZOperationsManager: NSObject {
 
     func       sync(_ onCompletion: @escaping Closure) { setupAndRun([.create,   .fetch, .parent, .merge, .save, .children]) { onCompletion() } }
     func       save(_ onCompletion: @escaping Closure) { setupAndRun([.create,                    .merge, .save           ]) { onCompletion() } }
-    func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                              .save, .children]) { onCompletion() } }
+    func      roots(_ onCompletion: @escaping Closure) { setupAndRun([.roots,                             .save, .children]) { onCompletion() } }
     func     parent(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent                          ]) { onCompletion() } }
     func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent,                .children]) { onCompletion() } }
     func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent,         .save, .children]) { onCompletion() } }
     func   fetchAll(_ onCompletion: @escaping Closure) { setupAndRun([.fetchAll                                           ]) { onCompletion() } }
     func  bookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks                                          ]) { onCompletion() } }
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                         ]) { onCompletion() } }
+    func fetchTrash(_ onCompletion: @escaping Closure) { setupAndRun([.trash                                              ]) { onCompletion() } }
 
 
     func children(_ recursing: ZRecursionType, _ iRecursiveGoal: Int? = nil, onCompletion: @escaping Closure) {
@@ -136,8 +138,8 @@ class ZOperationsManager: NSObject {
                     self               .currentOp = operationID // if hung, it happened inside this op
                     var  recurse: IntegerClosure? = nil         // declare closure first, so compiler will let it recurse
                     let             skipFavorites = operationID != .here
-                    let                      full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .root, .here].contains(operationID)
-                    let forCurrentStorageModeOnly = [.file, .available, .parent, .children, .authenticate                          ].contains(operationID)
+                    let                      full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .roots, .here].contains(operationID)
+                    let forCurrentStorageModeOnly = [.file, .available, .parent, .children, .authenticate                           ].contains(operationID)
                     let        cloudModes: ZModes = [.mine, .everyone]
                     let             modes: ZModes = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : skipFavorites ? cloudModes : cloudModes + [.favorites]
 
@@ -214,7 +216,7 @@ class ZOperationsManager: NSObject {
             switch identifier {
             case .file:                 gFileManager.restore  (from:          mode);    complete(0)
             case .here:                 remote               .establishHere  (mode,     complete)
-            case .root:                 remote               .establishRoot  (mode,     complete)
+            case .roots:                remote               .establishRoots (mode,     complete)
             default: let cloudManager = remote               .cloudManagerFor(mode)
                 switch identifier {
                 case .authenticate: remote.authenticate                      (          signalBack)
@@ -227,6 +229,7 @@ class ZOperationsManager: NSObject {
                 case .unsubscribe:  cloudManager.unsubscribe                 (          complete)
                 case .undelete:     cloudManager.undeleteAll                 (          complete)
                 case .emptyTrash:   cloudManager.emptyTrash                  (          complete)
+                case .trash:        cloudManager.fetchTrash                  (          complete)
                 case .subscribe:    cloudManager.subscribe                   (          complete)
                 case .bookmarks:    cloudManager.bookmarks                   (          complete)
                 case .fetchAll:     cloudManager.fetchAll                    (          complete)

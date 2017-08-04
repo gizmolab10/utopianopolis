@@ -35,6 +35,7 @@ class ZRecordsManager: NSObject {
     var recordsByState = [ZRecordState : [CKRecord]] ()
     var      zonesByID = [String       :       Zone] ()
     var storageMode: ZStorageMode
+    var   trashZone: Zone? = nil
     var    rootZone: Zone? = nil
 
 

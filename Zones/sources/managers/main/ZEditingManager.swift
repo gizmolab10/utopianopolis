@@ -266,7 +266,7 @@ class ZEditingManager: NSObject {
         if gRoot?.record != nil {
             onCompletion?()
         } else {
-            gOperationsManager.root {
+            gOperationsManager.roots {
                 onCompletion?()
             }
         }

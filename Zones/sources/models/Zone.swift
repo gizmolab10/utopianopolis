@@ -735,6 +735,33 @@ class Zone : ZRecord {
     }
 
 
+    func containsCKRecord(_ iCKRecord: CKRecord) -> Bool {
+        let      identifier = iCKRecord.recordID
+        var           found = false
+
+        for child in children {
+            if  let childID = child.record?.recordID, childID == identifier {
+                found       = true
+            }
+        }
+
+        return found
+    }
+
+
+    func addCKRecord(_ iCKRecord: CKRecord) -> Bool {
+        if containsCKRecord(iCKRecord) {
+            return false
+        }
+
+        let child = gCloudManager.zoneForRecord(iCKRecord)
+
+        add(child)
+
+        return true
+    }
+
+
     // MARK:- progeny counts
     // MARK:-
 

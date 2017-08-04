@@ -212,6 +212,7 @@ class ZCloudManager: ZRecordsManager {
         if  let                operation = configure(CKQueryOperation()) as? CKQueryOperation {
             operation             .query = CKQuery(recordType: zoneTypeKey, predicate: predicate)
             operation       .desiredKeys = Zone.cloudProperties()
+            operation      .resultsLimit = 1000
             operation.recordFetchedBlock = { iRecord in
                 onCompletion?(iRecord)
             }
@@ -345,10 +346,50 @@ class ZCloudManager: ZRecordsManager {
     // MARK:-
 
 
+    func fetchTrash(_ onCompletion: IntegerClosure?) {
+        if  let       trash = trashZone {
+            let   predicate = NSPredicate(format: "zoneIsDeleted = 1")
+            var   retrieved = [CKRecord] ()
+
+            self.queryWith(predicate) { (iRecord: CKRecord?) in
+                if let ckRecord = iRecord {
+                    if !retrieved.contains(ckRecord) {
+                        retrieved.append(ckRecord)
+                    }
+                } else { // nil means: we already received full response from cloud for this particular fetch
+                    self.FOREGROUND {
+                        var needMore = false
+
+                        for ckRecord in retrieved {
+                            if !ckRecord.allKeys().contains("parent") && trash.addCKRecord(ckRecord) {
+                                needMore = true
+                            }
+                        }
+
+                        self.trashZone?.needFlush()
+
+                        if needMore {
+                            self.fetchTrash(onCompletion)
+                        } else {
+                            onCompletion?(0)
+                        }
+                    }
+                }
+            }
+        } else {
+            onCompletion?(0)
+        }
+    }
+    
+
     func fetchAll(_ onCompletion: IntegerClosure?) {
-        let predicate = NSPredicate(format: "zoneName != \"\"")
-        let       key = "zoneIsDeleted"
-        var retrieved = [CKRecord] ()
+        let   predicate = NSPredicate(format: "zoneName != \"\"")
+        let   falseBool = NSNumber(value: false)
+        let    trueBool = NSNumber(value: true)
+        let   revealKey = "zoneShowChildren"
+        let favoriteKey = "zoneIsFavorite"
+        let   deleteKey = "zoneIsDeleted"
+        var   retrieved = [CKRecord] ()
 
         self.queryWith(predicate) { (iRecord: CKRecord?) in
             if let ckRecord = iRecord {
@@ -358,12 +399,19 @@ class ZCloudManager: ZRecordsManager {
             } else { // nil means: we already received full response from cloud for this particular fetch
                 self.FOREGROUND {
                     for ckRecord in retrieved {
-                        if !ckRecord.allKeys().contains(key) {
-                            ckRecord[key] = NSNumber(value: true)
-
-                            self.addCKRecord(ckRecord, for: [.needsSave])
+                        if let isDeleted = ckRecord[deleteKey] as? Bool {
+                            if isDeleted {
+                                ckRecord[favoriteKey] = falseBool
+                                ckRecord[  revealKey] = falseBool
+                            }
+                        } else {
+                            ckRecord[deleteKey] = trueBool
                         }
+
+                        self.addCKRecord(ckRecord, for: [.needsSave])
                     }
+
+                    onCompletion?(0)
                 }
             }
         }
@@ -629,7 +677,7 @@ class ZCloudManager: ZRecordsManager {
         let manifest = gRemoteStoresManager.manifest(for: storageMode)
 
         let rootCompletion = {
-            self.establishRoot { iValue in
+            self.establishRoots { iValue in
                 if iValue == 0 {
                     self.rootZone?.needProgeny()
                 }
@@ -660,7 +708,24 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func establishRoot(_ onCompletion: IntegerClosure?) {
+    func establishTrash(_ onCompletion: IntegerClosure?) {
+        let recordID = CKRecordID(recordName: trashNameKey)
+
+        onCompletion?(-1)
+
+        assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
+            if iRecord != nil {
+                let      trash = self.zoneForRecord(iRecord!)    // get / create trash
+                trash.zoneName = "trash"
+                self.trashZone = trash
+            }
+
+            onCompletion?(0)
+        }
+    }
+
+
+    func establishRoots(_ onCompletion: IntegerClosure?) {
         let recordID = CKRecordID(recordName: rootNameKey)
 
         onCompletion?(-1)
@@ -671,7 +736,7 @@ class ZCloudManager: ZRecordsManager {
                 self.rootZone = root
             }
 
-            onCompletion?(0)
+            self.establishTrash(onCompletion)
         }
     }
 
