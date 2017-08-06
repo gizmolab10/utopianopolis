@@ -20,23 +20,25 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     enum ZToolKind: Int {
-        case eRecount
         case eZone
-        case eConvert
         case eTrash
+        case eGather
+        case eRecount
+        case eConvert
     }
     
 
     override func identifier() -> ZControllerID { return .cloudTools }
-    override func numberOfRows(in tableView: ZTableView) -> Int { return 4 }
+    override func numberOfRows(in tableView: ZTableView) -> Int { return 5 }
 
 
     func text(for kind: ZToolKind) -> String {
         switch kind {
+        case .eConvert: return "Convert to Booleans"
         case .eRecount: return "Recount"
+        case .eGather:  return "Gather Trash"
         case .eTrash:   return "Show Trash"
         case .eZone:    return "Restore Zone"
-        case .eConvert: return "Convert to Booleans"
         }
     }
 
@@ -56,10 +58,11 @@ class ZCloudToolsController: ZGenericTableController {
 
             if  let kind = ZToolKind(rawValue: row) {
                 switch kind {
-                case .eRecount: self.recount()
                 case .eZone:    self.restoreZone()
-                case .eTrash:   self.openTrashCan()
+                case .eTrash:   self.showTrashCan()
+                case .eGather:  self.gatherAndShowTrash()
                 case .eConvert: self.convertToBooleans()
+                case .eRecount: self.recount()
                 }
             }
         }
@@ -71,15 +74,44 @@ class ZCloudToolsController: ZGenericTableController {
     // MARK:- actions
     // MARK:-
 
+    func showTrashCan() {
+        if let trash = gTrash {
+            gHere = trash
 
-    func openTrashCan() {
-        gOperationsManager.fetchTrash() {
-            if let count = gTrash?.count {
-                self.columnarReport(" TRASH", "\(count)")
+            gHere.needChildren()
+            gOperationsManager.children(.restore) {
+                self.redrawAndSync()
             }
         }
     }
-    
+
+    func gatherAndShowTrash() {
+        gOperationsManager.fetchTrash() {
+            if let trash = gTrash {
+                gHere = trash
+
+                self.columnarReport(" TRASH", "\(trash.count)")
+
+                trash.needProgeny()
+                trash.displayChildren()
+                gOperationsManager.children(.all) {
+                    self.grabChildless()
+                }
+            }
+        }
+    }
+
+
+    func grabChildless() {
+        for child in gHere.children {
+            if child.count == 0 {
+                child.addToGrab()
+            }
+        }
+
+        redrawAndSync()
+    }
+
 
     func recount() {
         gSelectionManager.rootMostMoveable.fullUpdateProgenyCount()

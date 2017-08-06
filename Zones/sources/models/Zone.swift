@@ -42,9 +42,11 @@ class Zone : ZRecord {
     var                isEditing:         Bool { return gSelectionManager .isEditing(self) }
     var                isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
     var                 hasColor:         Bool { return _color != nil }
-    var                isDeleted:         Bool { get { if let value = zoneIsDeleted?   .boolValue { return value } else { zoneIsDeleted    = NSNumber(value: false); needFlush(); return false } } set { zoneIsDeleted    = NSNumber(value: newValue) } }
-    var               isFavorite:         Bool { get { if let value = zoneIsFavorite?  .boolValue { return value } else { zoneIsFavorite   = NSNumber(value: false); needFlush(); return false } } set { zoneIsFavorite   = NSNumber(value: newValue) } }
-    var             showChildren:         Bool { get { if let value = zoneShowChildren?.boolValue { return value } else { zoneShowChildren = NSNumber(value: false); needFlush(); return false } } set { zoneShowChildren = NSNumber(value: newValue) } }
+    var                isDeleted:         Bool { get { if let value = zoneIsDeleted?   .boolValue { return value } else { zoneIsDeleted    = NSNumber(value: false); needFlush(); return false } } set { zoneIsDeleted    = NSNumber(value: newValue); needFlush() } }
+    var               isFavorite:         Bool { get { if let value = zoneIsFavorite?  .boolValue { return value } else { zoneIsFavorite   = NSNumber(value: false); needFlush(); return false } } set { zoneIsFavorite   = NSNumber(value: newValue); needFlush() } }
+    var             showChildren:         Bool { get { if let value = zoneShowChildren?.boolValue { return value } else { zoneShowChildren = NSNumber(value: false); needFlush(); return false } } set {
+        zoneShowChildren = NSNumber(value: newValue); needFlush()
+        } }
 
 
     var decoration: String {
@@ -846,19 +848,6 @@ class Zone : ZRecord {
         }
 
         return theCopy
-    }
-
-
-    func deleteIntoPaste() {
-        traverseAllProgeny { iZone in
-            iZone.isDeleted = true
-
-            iZone.needFlush()
-        }
-
-        gSelectionManager.pasteableZones[self] = (parentZone, siblingIndex)
-
-        orphan()
     }
 
 

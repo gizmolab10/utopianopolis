@@ -152,10 +152,12 @@ class ZEditingManager: NSObject {
 
     @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
         if !isEditing, iEvent != previousEvent, gWorkMode == .editMode {
-            handleKey(iEvent.key, flags: iEvent.modifierFlags, isWindow: isWindow)
+            handleKey( iEvent.key, flags: iEvent.modifierFlags, isWindow: isWindow)
+
+            return true
         }
 
-        return true
+        return false
     }
 
 
@@ -528,7 +530,7 @@ class ZEditingManager: NSObject {
 
         gOperationsManager.children(.all) {
             for grab in grabs {
-                grab.deepCopy().deleteIntoPaste()
+                self.deleteIntoPaste(grab.deepCopy())
             }
         }
     }
@@ -617,7 +619,7 @@ class ZEditingManager: NSObject {
             }
 
             if !permanently {
-                zone.deleteIntoPaste()
+                deleteIntoPaste(zone)
             } else {
                 zone.orphan()
 
@@ -642,6 +644,21 @@ class ZEditingManager: NSObject {
         return grabThisZone
     }
 
+
+    func deleteIntoPaste(_ zone: Zone) {
+        zone.traverseAllProgeny { iZone in
+            iZone.isDeleted = true
+
+            iZone.needFlush()
+        }
+
+        gSelectionManager.pasteableZones[zone] = (zone.parentZone, zone.siblingIndex)
+
+        if let trash = gTrash {
+            moveZone(zone, to: trash)
+        }
+    }
+    
 
     // MARK:- experimental
     // MARK:-
@@ -791,6 +808,7 @@ class ZEditingManager: NSObject {
             travelThroughBookmark(zone)
         } else {
             zone.needChildren()
+            zone.displayChildren()
 
             gOperationsManager.children(.restore) {
                 self.grabChild(of: zone)
@@ -801,9 +819,9 @@ class ZEditingManager: NSObject {
 
     func grabChild(of zone: Zone) {
         if  zone.count > 0, let child = gInsertionsFollow ? zone.children.last : zone.children.first {
-            zone.displayChildren()
+            zone.needFlush()
             child.grab()
-            signalFor(nil, regarding: .redraw)
+            redrawAndSync()
         }
     }
 
@@ -1082,7 +1100,7 @@ class ZEditingManager: NSObject {
                     children.append(child)
                 }
 
-                grab.deleteIntoPaste()
+                deleteIntoPaste(grab)
             }
 
             children.sort { (a, b) -> Bool in

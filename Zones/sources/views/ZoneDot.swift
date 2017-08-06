@@ -171,10 +171,15 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
+    func isVisible(_ rect: CGRect) -> Bool {
+        return window?.contentView?.bounds.intersects(rect) ?? false
+    }
+
+
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        if  let                zone = widgetZone, isInnerDot {
+        if  let                zone = widgetZone, isInnerDot, isVisible(dirtyRect) {
             isHidden                = isHiddenToggleDot
 
             if !isHidden {

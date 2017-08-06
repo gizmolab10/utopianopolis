@@ -139,6 +139,11 @@ extension CKRecord {
         return ""
     }
 
+
+    func hasKey(_ key: String) -> Bool {
+        return allKeys().contains(key)
+    }
+
 }
 
 

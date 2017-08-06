@@ -348,20 +348,24 @@ class ZCloudManager: ZRecordsManager {
 
     func fetchTrash(_ onCompletion: IntegerClosure?) {
         if  let       trash = trashZone {
-            let   predicate = NSPredicate(format: "zoneIsDeleted = 1")
+            let   predicate = NSPredicate(format: "zoneName != \"\"") // "zoneIsDeleted = 1")
             var   retrieved = [CKRecord] ()
 
             self.queryWith(predicate) { (iRecord: CKRecord?) in
                 if let ckRecord = iRecord {
                     if !retrieved.contains(ckRecord) {
-                        retrieved.append(ckRecord)
+                        if !ckRecord.hasKey(zoneNameKey) {
+                            retrieved.append(ckRecord)
+                        } else if let name = ckRecord[zoneNameKey] as? String, ![rootNameKey, trashNameKey].contains(name) {
+                            retrieved.append(ckRecord)
+                        }
                     }
                 } else { // nil means: we already received full response from cloud for this particular fetch
                     self.FOREGROUND {
                         var needMore = false
 
                         for ckRecord in retrieved {
-                            if !ckRecord.allKeys().contains("parent") && trash.addCKRecord(ckRecord) {
+                            if !ckRecord.hasKey("parent") && trash.addCKRecord(ckRecord) {
                                 needMore = true
                             }
                         }
@@ -401,11 +405,16 @@ class ZCloudManager: ZRecordsManager {
                     for ckRecord in retrieved {
                         if let isDeleted = ckRecord[deleteKey] as? Bool {
                             if isDeleted {
-                                ckRecord[favoriteKey] = falseBool
-                                ckRecord[  revealKey] = falseBool
+                                if !ckRecord.hasKey(revealKey) {
+                                    ckRecord[revealKey] = falseBool
+                                }
+
+                                ckRecord[  favoriteKey] = falseBool
                             }
                         } else {
-                            ckRecord[deleteKey] = trueBool
+                            ckRecord[      favoriteKey] = falseBool
+                            ckRecord[        revealKey] = falseBool
+                            ckRecord[        deleteKey] = trueBool
                         }
 
                         self.addCKRecord(ckRecord, for: [.needsSave])
@@ -504,19 +513,15 @@ class ZCloudManager: ZRecordsManager {
 
                                         favorite.needFlush()
                                     } else {
-                                        target.maybeNeedRoot()
                                         root.add(favorite)
+                                        root.respectOrder()
+                                        target.maybeNeedRoot()
                                         self.columnarReport(" FAVORITE", target.decoratedName)
                                     }
                                 }
                             }
                         }
 
-                        root.traverseAllProgeny() { iZone in
-                            iZone.convertToBooleans()
-                        }
-
-                        root.respectOrder()
                         onCompletion?(0)
                     }
                 }

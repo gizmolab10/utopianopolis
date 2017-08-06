@@ -144,6 +144,10 @@ class ZoneWidget: ZView {
             var                 index = widgetZone.count
             var previous: ZoneWidget? = nil
 
+            if  index > 60 {
+                index = 60
+            }
+
             while index > 0 {
                 index                 -= 1 // go backwards down the arrays, constraint making expects it
                 let childWidget        = childrenWidgets[index]
@@ -479,13 +483,15 @@ class ZoneWidget: ZView {
 
 
     func drawLine(to child: ZoneWidget) {
-        let color = child.widgetZone.color
-        let  rect = lineRect(to: child)
-        let  kind = lineKind(to: child)
-        let  path = linePath(in: rect, kind: kind, isDragLine: false)
+        if  let  zone = child.widgetZone {
+            let color = zone.color
+            let  rect = lineRect(to: child)
+            let  kind = lineKind(to: child)
+            let  path = linePath(in: rect, kind: kind, isDragLine: false)
 
-        color.setStroke()
-        thinStroke(path)
+            color.setStroke()
+            thinStroke(path)
+        }
     }
 
 

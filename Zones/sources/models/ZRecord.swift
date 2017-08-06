@@ -17,7 +17,7 @@ class ZRecord: NSObject {
     var    storageMode: ZStorageMode?
     var     kvoContext: UInt8 = 1
     var        _record: CKRecord?
-    var         isRoot: Bool            { return record != nil && record.recordID.recordName == rootNameKey }
+    var         isRoot: Bool            { return record != nil && [rootNameKey, trashNameKey].contains(record.recordID.recordName) }
     var recordsManager: ZRecordsManager { return gRemoteStoresManager.recordsManagerFor(storageMode!) }
     var   cloudManager: ZCloudManager?  { return recordsManager as? ZCloudManager }
 
