@@ -38,6 +38,15 @@ class ZRecord: NSObject {
     }
 
 
+    var notYetCreated: Bool {
+        if let r = record, r.creationDate == nil {
+            return true
+        }
+
+        return false
+    }
+
+
     var storageDict: ZStorageDict {
         get {
             return storageDictionary()!
@@ -201,22 +210,16 @@ class ZRecord: NSObject {
     func needBookmarks() { markForAllOfStates([.needsBookmarks]) }
 
 
+    func needFlush() {
+        markForAllOfStates([notYetCreated ? .needsCreate : .needsSave]);
+        unmarkForAllOfStates([.needsMerge])
+    }
+
+
     func maybeNeedMerge() {
         if !isMarkedForAnyOfStates([.needsCreate, .needsSave, .needsMerge]) {
             markForAllOfStates([.needsMerge])
         }
-    }
-
-
-    func needFlush() {
-        var state: ZRecordState = .needsSave
-
-        if let r = record, r.creationDate == nil {
-            state = .needsCreate
-        }
-
-        markForAllOfStates([state]);
-        unmarkForAllOfStates([.needsMerge])
     }
 
 

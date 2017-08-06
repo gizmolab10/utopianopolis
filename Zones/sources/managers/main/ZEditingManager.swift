@@ -309,7 +309,7 @@ class ZEditingManager: NSObject {
 
 
     func revealSiblingsOf(_ descendent: Zone, untilReaching ancestor: Zone) {
-        recursivelyRevealSiblingsOf(descendent, untilReaching: ancestor) { (iZone: Zone) in
+        recursivelyRevealSiblingsOf(descendent, untilReaching: ancestor) { iZone in
             if iZone == ancestor {
                 gHere = ancestor
 
@@ -345,6 +345,7 @@ class ZEditingManager: NSObject {
             //////////////////////////
 
             zone.hideChildren()
+            zone.needFlush()
 
             revealParentAndSiblingsOf(zone) {
                 if let  parent = zone.parentZone {
@@ -354,6 +355,8 @@ class ZEditingManager: NSObject {
 
                     parent.grab()
                     self.toggleDotRecurse(false, parent, to: iGoal, onCompletion: onCompletion)
+                } else {
+                    onCompletion?()
                 }
             }
         } else {
@@ -364,11 +367,13 @@ class ZEditingManager: NSObject {
 
             let  goal = iGoal ?? zone.level + (show ? 1 : -1)
             let apply = {
-                zone.traverseAllProgeny { iZone in
-                    if !show && iZone.level >= goal {
-                        iZone.hideChildren()
-                    } else if show && iZone.level < goal {
-                        iZone.displayChildren()
+                zone.traverseAllProgeny { iChild in
+                    if !show && iChild.level >= goal {
+                        iChild.hideChildren()
+                        iChild.needFlush()
+                    } else if show && iChild.level < goal {
+                        iChild.displayChildren()
+                        iChild.needFlush()
                     }
                 }
 
@@ -546,13 +551,16 @@ class ZEditingManager: NSObject {
             if  candidate.parentZone != nil {
                 if preserveChildren {
                     self.preserveChildrenOfGrabbedZones()
+                    self.redrawAndSyncAndRedraw()
                 } else {
                     self.prepareUndoForDelete()
-                    self.deleteZones(gSelectionManager.simplifiedGrabs, permanently: permanently)?.grab()
+                    self.deleteZones(gSelectionManager.simplifiedGrabs, permanently: permanently) { iZone in
+                        iZone?.grab()
+
+                        self.redrawAndSyncAndRedraw()
+                    }
                 }
             }
-
-            self.redrawAndSyncAndRedraw()
         }
 
         if candidate.count == candidate.fetchableCount {
@@ -566,20 +574,36 @@ class ZEditingManager: NSObject {
     }
 
 
-    @discardableResult private func deleteZones(_ zones: [Zone], permanently: Bool = false, in parent: Zone? = nil) -> Zone? {
-        var last: Zone? = nil
+    private func deleteZones(_ zones: [Zone], permanently: Bool = false, in parent: Zone? = nil, onCompletion: ZoneMaybeClosure?) {
+        var count = zones.count
 
-        for zone in zones {
-            if  zone != parent { // detect and avoid infinite recursion
-                last  = deleteZone(zone, permanently: permanently)
+        if count == 0 {
+            onCompletion?(nil)
+
+            return
+        }
+
+        let finished: ZoneMaybeClosure = { iZone in
+            count -= 1
+
+            if count == 0 {
+                onCompletion?(iZone)
             }
         }
 
-        return last
+        for zone in zones {
+            if  zone == parent { // detect and avoid infinite recursion
+                finished(nil)
+            } else {
+                deleteZone(zone, permanently: permanently) { iZone in
+                    finished(iZone)
+                }
+            }
+        }
     }
 
 
-    @discardableResult private func deleteZone(_ zone: Zone, permanently: Bool = false) -> Zone? {
+    private func deleteZone(_ zone: Zone, permanently: Bool = false, onCompletion: ZoneMaybeClosure?) {
         var grabThisZone = zone.parentZone
         var     deleteMe = !zone.isRoot && grabThisZone?.record != nil
 
@@ -587,17 +611,18 @@ class ZEditingManager: NSObject {
             deleteMe = ![rootNameKey, favoritesRootNameKey].contains(name)
         }
 
-        if deleteMe {
+        if !deleteMe {
+            onCompletion?(grabThisZone)
+        } else {
             if grabThisZone != nil {
                 if zone == gHere { // this can only happen once during recursion (multiple places, below)
                     revealParentAndSiblingsOf(zone) {
                         gHere = grabThisZone!
 
-                        self.deleteZone(zone) // recurse
-                        self.signalFor(nil, regarding: .redraw)
+                        self.deleteZone(zone, onCompletion: onCompletion) // recurse
                     }
 
-                    return grabThisZone
+                    return
                 }
 
                 let   siblings = grabThisZone!.children
@@ -637,11 +662,11 @@ class ZEditingManager: NSObject {
             gOperationsManager.bookmarks {
                 let bookmarks = gRemoteStoresManager.bookmarksFor(zone)
 
-                self.deleteZones(bookmarks, permanently: permanently) // recurse
+                self.deleteZones(bookmarks, permanently: permanently) { iZone in // recurse
+                    onCompletion?(grabThisZone)
+                }
             }
         }
-
-        return grabThisZone
     }
 
 
@@ -934,7 +959,7 @@ class ZEditingManager: NSObject {
                 let    child = Zone(record: record, storageMode: zone.storageMode)
 
                 self.UNDO(self) { iUndoSelf in
-                    iUndoSelf.deleteZone(child)
+                    iUndoSelf.deleteZone(child, onCompletion: onCompletion)
                     onCompletion?(nil)
                 }
 
@@ -1059,7 +1084,7 @@ class ZEditingManager: NSObject {
 
                 self.UNDO(self) { iUndoSelf in
                     iUndoSelf.prepareUndoForDelete()
-                    iUndoSelf.deleteZones(forUndo, in: nil)
+                    iUndoSelf.deleteZones(forUndo, in: nil) { iZone in }
                     zone.grab()
                     iUndoSelf.redrawAndSync()
                 }
@@ -1114,7 +1139,7 @@ class ZEditingManager: NSObject {
 
             self.UNDO(self) { iUndoSelf in
                 iUndoSelf.prepareUndoForDelete()
-                iUndoSelf.deleteZones(children)
+                iUndoSelf.deleteZones(children) { iZone in iZone?.grab() }
                 iUndoSelf.pasteInto(parent, honorFormerParents: true)
             }
         }
@@ -1134,7 +1159,7 @@ class ZEditingManager: NSObject {
         let         zone = gSelectionManager.firstGrab
         var completedYet = false
 
-        recursivelyRevealSiblingsOf(zone, untilReaching: to) { (iRevealedZone: Zone) in
+        recursivelyRevealSiblingsOf(zone, untilReaching: to) { iRevealedZone in
             if !completedYet && iRevealedZone == to {
                 completedYet     = true
                 var insert: Int? = zone.parentZone?.siblingIndex

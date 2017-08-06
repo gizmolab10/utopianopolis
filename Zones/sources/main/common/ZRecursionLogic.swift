@@ -39,7 +39,7 @@ class ZRecursionLogic: NSObject {
 
     func propagateDeeply(to iChild: Zone) {
         iChild.traverseAllProgeny { iZone in
-            if iZone.hasMissingChildren {
+            if  iZone.hasMissingChildren {
                 iZone.needProgeny()
             }
         }
