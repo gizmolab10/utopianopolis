@@ -124,18 +124,20 @@ class ZoneWidget: ZView {
             backgroundColor = gClearColor
         #endif
 
-        gWidgetsManager.registerWidget(self)
-        addTextView()
-        layoutText()
-        layoutDots()
-        addChildrenView()
+        // if  gWidgetsManager.widgets.count <= 60 {
+            gWidgetsManager.registerWidget(self)
+            addTextView()
+            layoutText()
+            layoutDots()
+            addChildrenView()
 
-        if recursing && !visited.contains(widgetZone) {
-            prepareChildrenWidgets()
-            layoutChildren(signalKind, visited: visited + [widgetZone])
-        }
-
-        updateConstraints()
+            if recursing && !visited.contains(widgetZone) {
+                prepareChildrenWidgets()
+                layoutChildren(signalKind, visited: visited + [widgetZone])
+            }
+            
+            updateConstraints()
+        // }
     }
 
 

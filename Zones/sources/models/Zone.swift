@@ -44,9 +44,7 @@ class Zone : ZRecord {
     var                 hasColor:         Bool { return _color != nil }
     var                isDeleted:         Bool { get { if let value = zoneIsDeleted?   .boolValue { return value } else { zoneIsDeleted    = NSNumber(value: false); needFlush(); return false } } set { zoneIsDeleted    = NSNumber(value: newValue); needFlush() } }
     var               isFavorite:         Bool { get { if let value = zoneIsFavorite?  .boolValue { return value } else { zoneIsFavorite   = NSNumber(value: false); needFlush(); return false } } set { zoneIsFavorite   = NSNumber(value: newValue); needFlush() } }
-    var             showChildren:         Bool { get { if let value = zoneShowChildren?.boolValue { return value } else { zoneShowChildren = NSNumber(value: false); needFlush(); return false } } set {
-        zoneShowChildren = NSNumber(value: newValue); needFlush()
-        } }
+    var             showChildren:         Bool { return gManifest.showsChildren(self) }
 
 
     var decoration: String {
@@ -629,8 +627,8 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    func displayChildren() { showChildren = true  }
-    func    hideChildren() { showChildren = false }
+    func displayChildren() { gManifest.displayChildren(in: self) }
+    func    hideChildren() { gManifest   .hideChildren(in: self) }
 
 
     @discardableResult func add(_ child: Zone?) -> Int? {
@@ -751,16 +749,17 @@ class Zone : ZRecord {
     }
 
 
-    func addCKRecord(_ iCKRecord: CKRecord) -> Bool {
+    @discardableResult func addCKRecord(_ iCKRecord: CKRecord) -> Zone? {
         if containsCKRecord(iCKRecord) {
-            return false
+            return nil
         }
 
         let child = gCloudManager.zoneForRecord(iCKRecord)
 
         add(child)
+        updateOrdering()
 
-        return true
+        return child
     }
 
 
@@ -922,7 +921,7 @@ class Zone : ZRecord {
     
     override func setStorageDictionary(_ dict: ZStorageDict) {
         if let string = dict[    zoneNameKey] as!   String? { zoneName     = string }
-        if let number = dict[showChildrenKey] as! NSNumber? { showChildren = number.boolValue }
+        // if let number = dict[showChildrenKey] as! NSNumber? { showChildren = number.boolValue }
 
         if let childrenStore: [ZStorageDict] = dict[childrenKey] as! [ZStorageDict]? {
             for childStore: ZStorageDict in childrenStore {

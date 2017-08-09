@@ -116,7 +116,7 @@ class ZSelectionManager: NSObject {
         var candidate = currentMoveable
 
         for grabbed in currentGrabs {
-            if grabbed.level < candidate.level {
+            if  grabbed.parentZone != nil && grabbed.level < candidate.level {
                 candidate = grabbed
             }
         }

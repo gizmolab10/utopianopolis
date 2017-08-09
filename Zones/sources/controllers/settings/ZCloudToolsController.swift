@@ -20,7 +20,7 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     enum ZToolKind: Int {
-        case eZone
+        case eZones
         case eTrash
         case eGather
         case eRecount
@@ -29,7 +29,7 @@ class ZCloudToolsController: ZGenericTableController {
     
 
     override func identifier() -> ZControllerID { return .cloudTools }
-    override func numberOfRows(in tableView: ZTableView) -> Int { return 5 }
+    override func numberOfRows(in tableView: ZTableView) -> Int { return 4 }
 
 
     func text(for kind: ZToolKind) -> String {
@@ -38,7 +38,7 @@ class ZCloudToolsController: ZGenericTableController {
         case .eRecount: return "Recount"
         case .eGather:  return "Gather Trash"
         case .eTrash:   return "Show Trash"
-        case .eZone:    return "Restore Zone"
+        case .eZones:   return "Restore Zones"
         }
     }
 
@@ -58,7 +58,7 @@ class ZCloudToolsController: ZGenericTableController {
 
             if  let kind = ZToolKind(rawValue: row) {
                 switch kind {
-                case .eZone:    self.restoreZone()
+                case .eZones:   self.restoreZones()
                 case .eTrash:   self.showTrashCan()
                 case .eGather:  self.gatherAndShowTrash()
                 case .eConvert: self.convertToBooleans()
@@ -125,7 +125,14 @@ class ZCloudToolsController: ZGenericTableController {
     }
 
 
-    func restoreZone() {
+    func restoreZones() {
+        for zone in gSelectionManager.currentGrabs {
+            restoreZone(zone)
+        }
+    }
+
+
+    func restoreZone(_ zone: Zone) {
         // similar to gEditingManager.moveInto
         let zone = gSelectionManager.firstGrab
 

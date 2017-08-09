@@ -144,6 +144,21 @@ extension CKRecord {
         return allKeys().contains(key)
     }
 
+
+    func index(within iReferences: [CKRecordID]) -> Int? {
+        var index: Int? = nil
+
+        for (i, identifier) in iReferences.enumerated() {
+            if  identifier == recordID {
+                index = i
+
+                break
+            }
+        }
+
+        return index
+    }
+
 }
 
 

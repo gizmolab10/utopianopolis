@@ -345,7 +345,6 @@ class ZEditingManager: NSObject {
             //////////////////////////
 
             zone.hideChildren()
-            zone.needFlush()
 
             revealParentAndSiblingsOf(zone) {
                 if let  parent = zone.parentZone {
@@ -370,10 +369,8 @@ class ZEditingManager: NSObject {
                 zone.traverseAllProgeny { iChild in
                     if !show && iChild.level >= goal {
                         iChild.hideChildren()
-                        iChild.needFlush()
                     } else if show && iChild.level < goal {
                         iChild.displayChildren()
-                        iChild.needFlush()
                     }
                 }
 
@@ -844,7 +841,6 @@ class ZEditingManager: NSObject {
 
     func grabChild(of zone: Zone) {
         if  zone.count > 0, let child = gInsertionsFollow ? zone.children.last : zone.children.first {
-            zone.needFlush()
             child.grab()
             redrawAndSync()
         }
@@ -964,7 +960,6 @@ class ZEditingManager: NSObject {
                 }
 
                 zone.ungrab()
-                child.needFlush()
                 zone.addAndReorderChild(child, at: iIndex)
                 onCompletion?(child)
             }
@@ -1038,7 +1033,6 @@ class ZEditingManager: NSObject {
         for (child, (parent, index)) in gSelectionManager.pasteableZones {
             parent?.addAndReorderChild(child, at: index)
             child.addToGrab()
-            child.needFlush()
 
             child.isDeleted = false
         }

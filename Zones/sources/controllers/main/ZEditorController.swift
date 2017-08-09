@@ -60,8 +60,8 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
     #if os(iOS)
     fileprivate func updateMinZoomScaleForSize(_ size: CGSize) {
         if  let              d = dragView, let s = scrollView {
-            let     widthScale = size.width  / d.bounds.width
             let    heightScale = size.height / d.bounds.height
+            let     widthScale = size.width  / d.bounds.width
             let       minScale = min(widthScale, heightScale)
             s.minimumZoomScale = minScale
             s.zoomScale        = minScale
@@ -82,9 +82,9 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         if ![.search, .found, .startup].contains(kind) {
+
             if gWorkMode != .editMode {
                 dragView?.snp.removeConstraints()
-                hereWidget.removeFromSuperview()
             } else if !gEditingManager.isEditing {
                 var                   recursing = true
                 var specificWidget: ZoneWidget? = hereWidget
@@ -98,6 +98,9 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
                     specificindex  = zone.siblingIndex
                     specificView   = specificWidget?.superview
                     recursing      = [.data, .redraw].contains(kind)
+                } else {
+                    gWidgetsManager.widgets.removeAll()
+                    gWidgetsManager.registerWidget(hereWidget)
                 }
 
                 note("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")
@@ -127,14 +130,14 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
         if  let    gesture = iGesture {
             let   location = gesture.location(in: dragView)
-            var   onWidget = false
+            var     inText = false
 
             if  let widget = gEditingManager.editedTextWidget {
                 let   rect = widget.convert(widget.bounds, to: dragView)
-                onWidget   = rect.contains(location)
+                inText     = rect.contains(location)
             }
 
-            if !onWidget {
+            if !inText {
                 if  let     dot = dotsHitTest(location) {
                     if let zone = dot.widgetZone {
                         if dot.isToggle {

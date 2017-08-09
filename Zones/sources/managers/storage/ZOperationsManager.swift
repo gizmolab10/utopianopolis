@@ -95,7 +95,7 @@ class ZOperationsManager: NSObject {
     func   fetchAll(_ onCompletion: @escaping Closure) { setupAndRun([.fetchAll                                           ]) { onCompletion() } }
     func  bookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks                                          ]) { onCompletion() } }
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                         ]) { onCompletion() } }
-    func fetchTrash(_ onCompletion: @escaping Closure) { setupAndRun([.trash                                              ]) { onCompletion() } }
+    func fetchTrash(_ onCompletion: @escaping Closure) { setupAndRun([.trash,                                        .save]) { onCompletion() } }
 
 
     func children(_ recursing: ZRecursionType, _ iRecursiveGoal: Int? = nil, onCompletion: @escaping Closure) {
