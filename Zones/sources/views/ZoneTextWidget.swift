@@ -30,7 +30,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         set {
             if _isTextEditing != newValue {
                 let       zone = widget.widgetZone
-                let      color = zone?.isDeleted ?? false ? ZColor.red : ZColor.black
                 _isTextEditing = newValue
 
                 if !_isTextEditing {
@@ -41,7 +40,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     abortEditing()
 
                     if  !grab {
-                        textColor                          = color
+                        textColor                          = ZColor.black
                     } else {
                         gSelectionManager.clearEdit()
 
@@ -50,7 +49,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 } else {
                     gSelectionManager.currentlyEditingZone = zone
                     font                                   = gSelectedWidgetFont
-                    textColor                              = color
+                    textColor                              = ZColor.black
                     originalText                           = zone?.zoneName ?? ""
 
                     gSelectionManager.deselectGrabs()

@@ -311,10 +311,11 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    func addToGrab() { gSelectionManager.addToGrab(self) }
-    func    ungrab() { gSelectionManager   .ungrab(self) }
-    func      grab() { gSelectionManager     .grab(self) }
-    func      edit() { gSelectionManager     .edit(self) }
+    func addToPaste() { gSelectionManager.pasteableZones[self] = (parentZone, siblingIndex) }
+    func  addToGrab() { gSelectionManager.addToGrab(self) }
+    func     ungrab() { gSelectionManager   .ungrab(self) }
+    func       grab() { gSelectionManager     .grab(self) }
+    func       edit() { gSelectionManager     .edit(self) }
     override func register() { cloudManager?.registerZone(self) }
 
 

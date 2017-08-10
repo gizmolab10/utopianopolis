@@ -527,7 +527,7 @@ class ZEditingManager: NSObject {
         gSelectionManager.clearPaste()
 
         for grab in grabs {
-            self.deleteIntoPaste(grab.deepCopy())
+            grab.addToPaste()
         }
     }
 
@@ -635,7 +635,8 @@ class ZEditingManager: NSObject {
             }
 
             if !permanently {
-                deleteIntoPaste(zone)
+                zone.addToPaste()
+                moveToTrash(zone)
             } else {
                 zone.orphan()
 
@@ -661,14 +662,12 @@ class ZEditingManager: NSObject {
     }
 
 
-    func deleteIntoPaste(_ zone: Zone) {
-        gSelectionManager.pasteableZones[zone] = (zone.parentZone, zone.siblingIndex)
-
+    func moveToTrash(_ zone: Zone) {
         if let trash = gTrash {
             moveZone(zone, to: trash)
         }
     }
-    
+
 
     // MARK:- experimental
     // MARK:-
@@ -1034,31 +1033,33 @@ class ZEditingManager: NSObject {
 
 
     func pasteInto(_ iZone: Zone? = nil, honorFormerParents: Bool = false) {
-        let    pastables = gSelectionManager.pasteableZones
+        let      pastables = gSelectionManager.pasteableZones
 
         if pastables.count > 0, let zone = iZone {
             let isBookmark = zone.isBookmark
             let action = {
-                var  forUndo = [Zone] ()
+                var forUndo = [Zone] ()
 
                 gSelectionManager.deselectGrabs()
 
                 for (child, (parent, index)) in pastables {
-                    let   at = index  != nil ? index : gInsertionsFollow ? nil : 0
-                    let into = parent != nil ? honorFormerParents ? parent! : zone : zone
-                    let mode = into.storageMode ?? gStorageMode
+                    let pastable = child.isDeleted ? child : child.deepCopy()
+                    let       at = index  != nil ? index : gInsertionsFollow ? nil : 0
+                    let     into = parent != nil ? honorFormerParents ? parent! : zone : zone
+                    let     mode = into.storageMode ?? gStorageMode
 
-                    child.traverseAllProgeny { iChild in
+                    pastable.traverseAllProgeny { iChild in
                         iChild.fetchableCount = iChild.count
                         iChild   .storageMode = mode
 
                         iChild.needFlush()
                     }
 
+                    pastable.orphan()
                     into.displayChildren()
-                    into.addAndReorderChild(child, at: at)
-                    forUndo.append(child)
-                    child.addToGrab()
+                    into.addAndReorderChild(pastable, at: at)
+                    forUndo.append(pastable)
+                    pastable.addToGrab()
                 }
 
                 self.UNDO(self) { iUndoSelf in
@@ -1075,12 +1076,32 @@ class ZEditingManager: NSObject {
                 self.redrawAndSync()
             }
 
+            let prepare = {
+                var need = false
+
+                for child in pastables.keys {
+                    if !child.isDeleted {
+                        child.needProgeny()
+
+                        need = true
+                    }
+                }
+
+                if !need {
+                    action()
+                } else {
+                    gOperationsManager.children(.all) {
+                        action()
+                    }
+                }
+            }
+
             if !isBookmark {
-                action()
+                prepare()
             } else {
                 undoManager.beginUndoGrouping()
                 gTravelManager.travelThrough(zone) { (iAny, iSignalKind) in
-                    action()
+                    prepare()
                 }
             }
         }
@@ -1102,7 +1123,8 @@ class ZEditingManager: NSObject {
                     children.append(child)
                 }
 
-                deleteIntoPaste(grab)
+                grab.addToPaste()
+                moveToTrash(grab)
             }
 
             children.sort { (a, b) -> Bool in
