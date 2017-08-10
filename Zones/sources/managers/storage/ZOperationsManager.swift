@@ -28,7 +28,6 @@ enum ZOperationID: Int {
     case emptyTrash
     case available
     case bookmarks
-    case fetchAll
     case undelete
     case create
     case parent
@@ -92,7 +91,6 @@ class ZOperationsManager: NSObject {
     func     parent(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent                          ]) { onCompletion() } }
     func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent,                .children]) { onCompletion() } }
     func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent,         .save, .children]) { onCompletion() } }
-    func   fetchAll(_ onCompletion: @escaping Closure) { setupAndRun([.fetchAll                                           ]) { onCompletion() } }
     func  bookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks                                          ]) { onCompletion() } }
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                         ]) { onCompletion() } }
     func fetchTrash(_ onCompletion: @escaping Closure) { setupAndRun([.trash,                                        .save]) { onCompletion() } }
@@ -232,7 +230,6 @@ class ZOperationsManager: NSObject {
                 case .trash:        cloudManager.fetchTrash                  (          complete)
                 case .subscribe:    cloudManager.subscribe                   (          complete)
                 case .bookmarks:    cloudManager.bookmarks                   (          complete)
-                case .fetchAll:     cloudManager.fetchAll                    (          complete)
                 case .create:       cloudManager.create                      (          complete)
                 case .fetch:        cloudManager.fetch                       (          complete)
                 case .merge:        cloudManager.merge                       (          complete)

@@ -21,7 +21,6 @@ class Zone : ZRecord {
     dynamic var        zoneOrder:    NSNumber?
     dynamic var        zoneCount:    NSNumber?
     dynamic var      zoneProgeny:    NSNumber?
-    dynamic var    zoneIsDeleted:    NSNumber?
     dynamic var   zoneIsFavorite:    NSNumber?
     dynamic var zoneShowChildren:    NSNumber?
     var              _parentZone:        Zone?
@@ -37,14 +36,14 @@ class Zone : ZRecord {
     var       hasMissingChildren:         Bool { return count < fetchableCount }
     var            hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var            hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
+    var             showChildren:         Bool { return gManifest.showsChildren(self) }
     var               isBookmark:         Bool { return crossLink != nil }
     var               isSelected:         Bool { return gSelectionManager.isSelected(self) }
     var                isEditing:         Bool { return gSelectionManager .isEditing(self) }
     var                isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
+    var                isDeleted:         Bool { return gTrash?.spawned(self) ?? false }
     var                 hasColor:         Bool { return _color != nil }
-    var                isDeleted:         Bool { get { if let value = zoneIsDeleted?   .boolValue { return value } else { zoneIsDeleted    = NSNumber(value: false); needFlush(); return false } } set { zoneIsDeleted    = NSNumber(value: newValue); needFlush() } }
     var               isFavorite:         Bool { get { if let value = zoneIsFavorite?  .boolValue { return value } else { zoneIsFavorite   = NSNumber(value: false); needFlush(); return false } } set { zoneIsFavorite   = NSNumber(value: newValue); needFlush() } }
-    var             showChildren:         Bool { return gManifest.showsChildren(self) }
 
 
     var decoration: String {
@@ -89,7 +88,6 @@ class Zone : ZRecord {
                 #keyPath(zoneOrder),
                 #keyPath(zoneCount),
                 #keyPath(zoneProgeny),
-                #keyPath(zoneIsDeleted),
                 #keyPath(zoneIsFavorite),
                 #keyPath(zoneShowChildren)]
     }
@@ -346,15 +344,6 @@ class Zone : ZRecord {
     func clearColor() {
         zoneColor = ""
         _color    = nil
-
-        needFlush()
-    }
-
-
-    func convertToBooleans() {
-        zoneShowChildren = NSNumber(value: showChildren)
-        zoneIsFavorite   = NSNumber(value: isFavorite)
-        zoneIsDeleted    = NSNumber(value: isDeleted)
 
         needFlush()
     }
@@ -646,8 +635,7 @@ class Zone : ZRecord {
 
 
     @discardableResult func add(_ iChild: Zone?, at iIndex: Int?) -> Int? {
-        if  let       child = iChild {
-            child.isDeleted = false
+        if let child = iChild {
 
             // make sure it's not already been added
             // NOTE: both must have a record for this to be effective

@@ -44,8 +44,8 @@ extension NSObject {
 
 
     func report(_ iMessage: Any?) {
-        if iMessage != nil {
-            print(iMessage!)
+        if  let message = iMessage as? String, message != "" {
+            print(message)
         }
     }
 

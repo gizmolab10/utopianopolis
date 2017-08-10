@@ -527,13 +527,7 @@ class ZEditingManager: NSObject {
         gSelectionManager.clearPaste()
 
         for grab in grabs {
-            grab.needProgeny()
-        }
-
-        gOperationsManager.children(.all) {
-            for grab in grabs {
-                self.deleteIntoPaste(grab.deepCopy())
-            }
+            self.deleteIntoPaste(grab.deepCopy())
         }
     }
 
@@ -668,12 +662,6 @@ class ZEditingManager: NSObject {
 
 
     func deleteIntoPaste(_ zone: Zone) {
-        zone.traverseAllProgeny { iZone in
-            iZone.isDeleted = true
-
-            iZone.needFlush()
-        }
-
         gSelectionManager.pasteableZones[zone] = (zone.parentZone, zone.siblingIndex)
 
         if let trash = gTrash {
@@ -1033,8 +1021,6 @@ class ZEditingManager: NSObject {
         for (child, (parent, index)) in gSelectionManager.pasteableZones {
             parent?.addAndReorderChild(child, at: index)
             child.addToGrab()
-
-            child.isDeleted = false
         }
 
         gSelectionManager.clearPaste()
@@ -1065,7 +1051,6 @@ class ZEditingManager: NSObject {
                     child.traverseAllProgeny { iChild in
                         iChild.fetchableCount = iChild.count
                         iChild   .storageMode = mode
-                        iChild     .isDeleted = false
 
                         iChild.needFlush()
                     }
@@ -1113,8 +1098,6 @@ class ZEditingManager: NSObject {
             gSelectionManager.clearPaste()
 
             for grab in grabs {
-                grab.isDeleted = true
-
                 for child in grab.children {
                     children.append(child)
                 }

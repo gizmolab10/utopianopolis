@@ -116,55 +116,54 @@ class ZCloudManager: ZRecordsManager {
 
 
     func emptyTrash(_ onCompletion: IntegerClosure?) {
-        let   predicate = NSPredicate(format: "zoneIsDeleted = 1")
-        var toBeDeleted = [CKRecordID] ()
-
-        self.queryWith(predicate) { (iRecord: CKRecord?) in
-            // iRecord == nil means: end of response to this particular query
-
-            if iRecord != nil {
-                self.columnarReport("DELETE", String(describing: iRecord![zoneNameKey]))
-                toBeDeleted.append((iRecord?.recordID)!)
-
-            } else if (toBeDeleted.count) > 0, let operation = self.configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
-                operation.recordIDsToDelete = toBeDeleted   // delete them
-                operation.completionBlock   = {
-                    onCompletion?(0)
-                }
-
-                self.start(operation)
-            } else {
-                onCompletion?(0)
-            }
-        }
+//        let   predicate = NSPredicate(format: "zoneIsDeleted = 1")
+//        var toBeDeleted = [CKRecordID] ()
+//
+//        self.queryWith(predicate) { (iRecord: CKRecord?) in
+//            // iRecord == nil means: end of response to this particular query
+//
+//            if iRecord != nil {
+//                self.columnarReport("DELETE", String(describing: iRecord![zoneNameKey]))
+//                toBeDeleted.append((iRecord?.recordID)!)
+//
+//            } else if (toBeDeleted.count) > 0, let operation = self.configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
+//                operation.recordIDsToDelete = toBeDeleted   // delete them
+//                operation.completionBlock   = {
+//                    onCompletion?(0)
+//                }
+//
+//                self.start(operation)
+//            } else {
+//                onCompletion?(0)
+//            }
+//        }
     }
 
 
     func undeleteAll(_ onCompletion: IntegerClosure?) {
-        let predicate = NSPredicate(format: "zoneIsDeleted = 1")
-
-        onCompletion?(-1)
-
-        self.queryWith(predicate) { (iRecord: CKRecord?) in
-            if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
-                onCompletion?(0)
-            } else {
-                let            root = gRemoteStoresManager.rootZone(for: self.storageMode)
-                let         deleted = self.recordForCKRecord(iRecord) as? Zone ?? Zone(record: iRecord, storageMode: self.storageMode)
-                deleted  .isDeleted = false
-
-                if  deleted.parent != nil {
-                    deleted.needParent()
-                } else {
-                    deleted.parentZone = root
-
-                    root?.needFetch()
-                }
-
-                deleted.maybeNeedMerge()
-                deleted.updateCloudProperties()
-            }
-        }
+//        let predicate = NSPredicate(format: "zoneIsDeleted = 1")
+//
+//        onCompletion?(-1)
+//
+//        self.queryWith(predicate) { (iRecord: CKRecord?) in
+//            if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
+//                onCompletion?(0)
+//            } else {
+//                let            root = gRemoteStoresManager.rootZone(for: self.storageMode)
+//                let         deleted = self.recordForCKRecord(iRecord) as? Zone ?? Zone(record: iRecord, storageMode: self.storageMode)
+//
+//                if  deleted.parent != nil {
+//                    deleted.needParent()
+//                } else {
+//                    deleted.parentZone = root
+//
+//                    root?.needFetch()
+//                }
+//
+//                deleted.maybeNeedMerge()
+//                deleted.updateCloudProperties()
+//            }
+//        }
     }
 
 
@@ -212,7 +211,7 @@ class ZCloudManager: ZRecordsManager {
         if  let                operation = configure(CKQueryOperation()) as? CKQueryOperation {
             operation             .query = CKQuery(recordType: zoneTypeKey, predicate: predicate)
             operation       .desiredKeys = Zone.cloudProperties()
-            operation      .resultsLimit = 1000
+            operation      .resultsLimit = 500
             operation.recordFetchedBlock = { iRecord in
                 onCompletion?(iRecord)
             }
@@ -256,7 +255,7 @@ class ZCloudManager: ZRecordsManager {
             suffix = String(format: "%@%@SELF CONTAINS \"%@\"", suffix, separator, identifier.recordName)
         }
 
-        return NSPredicate(format: "zoneIsFavorite = 0 and zoneIsDeleted = 0\(suffix)")
+        return NSPredicate(format: "zoneIsFavorite = 0\(suffix)")
     }
 
 
@@ -347,15 +346,16 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchTrash(_ onCompletion: IntegerClosure?) {
-        if  let       trash = trashZone {
-            let   parentKey = "parent"
-            let   predicate = NSPredicate(format: "zoneName != \"\"")
-            var   retrieved = [CKRecord] ()
+        if  let     trash = trashZone {
+            let parentKey = "parent"
+            let predicate = NSPredicate(format: "zoneName != \"\"")
+            let rootNames = [rootNameKey, trashNameKey, favoritesRootNameKey]
+            var retrieved = [CKRecord] ()
 
             self.queryWith(predicate) { (iRecord: CKRecord?) in
                 if  let ckRecord = iRecord, !retrieved.contains(ckRecord) {
                     if  let name = ckRecord[zoneNameKey] as? String,
-                        ![rootNameKey, trashNameKey].contains(name) {
+                        !rootNames.contains(name) {
                         retrieved.append(ckRecord)
                     }
                 } else { // nil means: we already received full response from cloud for this particular fetch
@@ -366,7 +366,8 @@ class ZCloudManager: ZRecordsManager {
                         for ckRecord in retrieved {
                             if  let parent   = ckRecord[parentKey] as? CKReference {
                                 let parentID = parent.recordID
-                                if  self.recordForRecordID(parent.recordID) == nil {
+                                if  self.recordForRecordID(parent.recordID) == nil,
+                                    !rootNames.contains(parent.recordID.recordName) {
                                     childrenRefs[parentID] = ckRecord
 
                                     parentIDs.append(parent.recordID)
@@ -419,15 +420,13 @@ class ZCloudManager: ZRecordsManager {
                                         }
                                     }
 
-                                    let evokeClosure = parentIDs.count != 0
-
-                                    if  evokeClosure {
-                                        closure?(parentIDs)
-                                    }
-
                                     if missing.count != 0 {
                                         for parent in missing {
-                                            if let child = childrenRefs[parent] {
+                                            if  let    child = childrenRefs[parent] {
+//                                                if  let name = child[zoneNameKey] as? String {
+//                                                    self.columnarReport(" MISSING", name)
+//                                                }
+                                                
                                                 if let added = trash.addCKRecord(child) {
                                                     added.needFlush()
                                                     trash.needFlush()
@@ -436,12 +435,16 @@ class ZCloudManager: ZRecordsManager {
                                         }
                                     }
 
-                                    if destroy.count != 0 {
-//                                      for ckRecord in destroy {}
-                                        self.columnarReport(" DESTROY?", self.stringForRecords(destroy))
-                                    }
+//                                    if destroy.count != 0 {
+//                                        for ckRecord in destroy {}
+//                                        self.columnarReport(" DESTROY?", self.stringForRecords(destroy))
+//                                    }
 
-                                    if !evokeClosure {
+                                    let evokeClosure = parentIDs.count != 0
+
+                                    if  evokeClosure {
+                                        closure?(parentIDs)
+                                    } else {
                                         onCompletion?(0)
                                     }
                                 }
@@ -454,47 +457,6 @@ class ZCloudManager: ZRecordsManager {
             }
         } else {
             onCompletion?(0)
-        }
-    }
-
-
-    func fetchAll(_ onCompletion: IntegerClosure?) {
-        let   predicate = NSPredicate(format: "zoneName != \"\"")
-        let   falseBool = NSNumber(value: false)
-        let    trueBool = NSNumber(value: true)
-        let   revealKey = "zoneShowChildren"
-        let favoriteKey = "zoneIsFavorite"
-        let   deleteKey = "zoneIsDeleted"
-        var   retrieved = [CKRecord] ()
-
-        self.queryWith(predicate) { (iRecord: CKRecord?) in
-            if let ckRecord = iRecord {
-                if !retrieved.contains(ckRecord) {
-                    retrieved.append(ckRecord)
-                }
-            } else { // nil means: we already received full response from cloud for this particular fetch
-                self.FOREGROUND {
-                    for ckRecord in retrieved {
-                        if let isDeleted = ckRecord[deleteKey] as? Bool {
-                            if isDeleted {
-                                if !ckRecord.hasKey(revealKey) {
-                                    ckRecord[revealKey] = falseBool
-                                }
-
-                                ckRecord[  favoriteKey] = falseBool
-                            }
-                        } else {
-                            ckRecord[      favoriteKey] = falseBool
-                            ckRecord[        revealKey] = falseBool
-                            ckRecord[        deleteKey] = trueBool
-                        }
-
-                        self.addCKRecord(ckRecord, for: [.needsSave])
-                    }
-
-                    onCompletion?(0)
-                }
-            }
         }
     }
 
@@ -536,8 +498,8 @@ class ZCloudManager: ZRecordsManager {
                     if !retrieved.contains(ckRecord) {
                         retrieved.append(ckRecord)
                     }
-                } else if let error: CKError = iError as? CKError {
-                    self.reportError(error)
+//                } else if let error: CKError = iError as? CKError {
+//                    self.reportError(error)
                 }
             }
 
@@ -553,7 +515,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchFavorites(_ onCompletion: IntegerClosure?) {
-        let predicate = NSPredicate(format: "zoneIsFavorite = 1 and zoneIsDeleted = 0")
+        let predicate = NSPredicate(format: "zoneIsFavorite = 1")
         var retrieved = [CKRecord] ()
 
         onCompletion?(-1)
@@ -589,18 +551,13 @@ class ZCloudManager: ZRecordsManager {
                                 }
                             }
 
-                            if isDuplicated {
-                                favorite.isDeleted = true
-
-                                favorite.needFlush()
-                            } else if let targetID = favorite.crossLink?.record.recordID, self.zoneForRecordID(targetID) == nil {
+                            if  !isDuplicated, let targetID = favorite.crossLink?.record.recordID, self.zoneForRecordID(targetID) == nil {
                                 self.assureRecordExists(withRecordID: targetID, recordType: zoneTypeKey) { iAssuredRecord in
                                     let target = Zone(record: iAssuredRecord, storageMode: self.storageMode)
 
-                                    if  target  .isDeleted {
-                                        favorite.isDeleted = true
-
-                                        favorite.needFlush()
+                                    if  target.isDeleted {
+                                        favorite.orphan()
+                                        favorite.needDestroy()
                                     } else {
                                         root.add(favorite)
                                         root.respectOrder()

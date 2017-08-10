@@ -24,17 +24,15 @@ class ZCloudToolsController: ZGenericTableController {
         case eTrash
         case eGather
         case eRecount
-        case eConvert
     }
     
 
     override func identifier() -> ZControllerID { return .cloudTools }
-    override func numberOfRows(in tableView: ZTableView) -> Int { return 4 }
+    override func numberOfRows(in tableView: ZTableView) -> Int { return 3 }
 
 
     func text(for kind: ZToolKind) -> String {
         switch kind {
-        case .eConvert: return "Convert to Booleans"
         case .eRecount: return "Recount"
         case .eGather:  return "Gather Trash"
         case .eTrash:   return "Show Trash"
@@ -61,7 +59,6 @@ class ZCloudToolsController: ZGenericTableController {
                 case .eZones:   self.restoreZones()
                 case .eTrash:   self.showTrashCan()
                 case .eGather:  self.gatherAndShowTrash()
-                case .eConvert: self.convertToBooleans()
                 case .eRecount: self.recount()
                 }
             }
@@ -116,13 +113,6 @@ class ZCloudToolsController: ZGenericTableController {
     func recount() {
         gSelectionManager.rootMostMoveable.fullUpdateProgenyCount()
     }
-    
-
-    func convertToBooleans() {
-        gOperationsManager.fetchAll() {
-            self.redrawAndSync()
-        }
-    }
 
 
     func restoreZones() {
@@ -140,10 +130,6 @@ class ZCloudToolsController: ZGenericTableController {
             gHere    = root
 
             let closure = {
-                zone.traverseAllProgeny { iChild in
-                    iChild.isDeleted = false
-                }
-
                 root.addAndReorderChild(zone, at: 0)
                 self.redrawAndSync()
             }
