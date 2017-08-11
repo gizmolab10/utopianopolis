@@ -88,41 +88,6 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func clearAllStatesForRecords() {
-        recordsByState.removeAll()
-    }
-
-
-    func clearReferences(_ references: [CKReference], for states: [ZRecordState]) {
-        for reference in references {
-            clearStatesForRecordID(reference.recordID, forStates:states)
-        }
-    }
-
-
-    func clearRecordIDs(_ recordIDs: [CKRecordID], for states: [ZRecordState]) {
-        for recordID in recordIDs {
-            clearStatesForRecordID(recordID, forStates:states)
-        }
-    }
-
-
-    func clearCKRecords(_ records: [CKRecord], for states: [ZRecordState]) {
-        for record in records {
-            clearStatesForRecordID(record.recordID, forStates:states)
-        }
-    }
-    
-
-    func clearZRecords(_ records: [ZRecord], for states: [ZRecordState]) {
-        for record in records {
-            if let identifier = record.record?.recordID {
-                clearStatesForRecordID(identifier, forStates:states)
-            }
-        }
-    }
-
-
     func hasRecords(for states: [ZRecordState]) -> Bool {
         for state in states {
             let records = recordsForState(state)
@@ -195,6 +160,53 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
+    func clearAllStatesForAllRecords() {
+        recordsByState.removeAll()
+    }
+
+
+    func clearStates(_ states: [ZRecordState]) {
+        for state in states {
+            clearState(state)
+        }
+    }
+
+
+    func clearState(_ state: ZRecordState) {
+        recordsByState[state] = []
+    }
+
+
+    func clearReferences(_ references: [CKReference], for states: [ZRecordState]) {
+        for reference in references {
+            clearStatesForRecordID(reference.recordID, forStates:states)
+        }
+    }
+
+
+    func clearRecordIDs(_ recordIDs: [CKRecordID], for states: [ZRecordState]) {
+        for recordID in recordIDs {
+            clearStatesForRecordID(recordID, forStates:states)
+        }
+    }
+
+
+    func clearCKRecords(_ records: [CKRecord], for states: [ZRecordState]) {
+        for record in records {
+            clearStatesForRecordID(record.recordID, forStates:states)
+        }
+    }
+
+
+    func clearZRecords(_ records: [ZRecord], for states: [ZRecordState]) {
+        for record in records {
+            if let identifier = record.record?.recordID {
+                clearStatesForRecordID(identifier, forStates:states)
+            }
+        }
+    }
+
+
     func clearStatesForRecordID(_ iRecordID: CKRecordID?, forStates: [ZRecordState]) {
         findRecordByRecordID(iRecordID, forAnyOf: forStates, onEach: { (state: ZRecordState, record: CKRecord) in
             var records = self.recordsForState(state)
@@ -210,18 +222,6 @@ class ZRecordsManager: NSObject {
 
     func clearAllStatesForRecord(_ iRecord: CKRecord) {
         clearStatesForRecordID(iRecord.recordID, forStates: allStates)
-    }
-
-
-    func clearStates(_ states: [ZRecordState]) {
-        for state in states {
-            clearState(state)
-        }
-    }
-
-
-    func clearState(_ state: ZRecordState) {
-        recordsByState[state] = []
     }
 
 
