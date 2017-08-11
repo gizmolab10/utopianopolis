@@ -100,7 +100,6 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
                     recursing      = [.data, .redraw].contains(kind)
                 } else {
                     gWidgetsManager.widgets.removeAll()
-                    gWidgetsManager.registerWidget(hereWidget)
                 }
 
                 note("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")

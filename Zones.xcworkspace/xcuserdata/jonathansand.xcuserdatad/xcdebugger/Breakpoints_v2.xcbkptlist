@@ -27,16 +27,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/Core/controllers/main/ZEditorController.swift"
-            timestampString = "521328911.905841"
+            filePath = "Zones/sources/managers/storage/ZRecordsManager.swift"
+            timestampString = "524111308.046763"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "116"
-            endingLineNumber = "116"
-            landmarkName = "swipeEvent(_:)"
+            startingLineNumber = "179"
+            endingLineNumber = "179"
+            landmarkName = "addCKRecord(_:for:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -46,13 +46,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/Core/managers/storage/ZCloudManager.swift"
-            timestampString = "521598713.785691"
+            filePath = "Zones/sources/managers/storage/ZRecordsManager.swift"
+            timestampString = "524111438.732959"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "469"
-            endingLineNumber = "469"
-            landmarkName = "fetchToRoot(_:)"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
+            landmarkName = "clearAllStatesForRecords()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

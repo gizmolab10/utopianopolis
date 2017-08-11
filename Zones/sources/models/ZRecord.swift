@@ -189,7 +189,7 @@ class ZRecord: NSObject {
     // MARK:-
 
 
-    func isMarkedForAnyOfStates(_ states: [ZRecordState]) -> Bool { return recordsManager.hasRecord(self, forStates:states) }
+    func isMarkedForAnyOfStates(_ states: [ZRecordState]) -> Bool { return recordsManager.hasRecord(self, forAnyOf:states) }
     func markForAllOfStates    (_ states: [ZRecordState])         {        recordsManager.addRecord(self, for: states) }
     func clearAllStates()                                         {        recordsManager.clearAllStatesForRecord(self.record) }
 

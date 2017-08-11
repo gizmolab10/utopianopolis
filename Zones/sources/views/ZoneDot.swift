@@ -68,19 +68,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    var showAsBookmark: Bool {
-        if  let zone = widgetZone, isInnerDot {
-            return zone.isBookmark || zone.isRootOfFavorites
-        }
-
-        return false
-    }
-
-
     var isHiddenToggleDot: Bool {
         if  let zone = widgetZone, isInnerDot, isToggle, let mode = zone.storageMode {
 
-            return (zone.fetchableCount == 0 && zone.count == 0 && !showAsBookmark && !isDragTarget) || (mode == .favorites && !zone.isRootOfFavorites)
+            return (zone.fetchableCount == 0 && zone.count == 0 && !zone.isBookmark && !isDragTarget) || (mode == .favorites && !zone.isRootOfFavorites)
         }
         
         return false
@@ -196,7 +187,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 path.stroke()
                 path.fill()
 
-                if  showAsBookmark && isToggle {
+                if  zone.isBookmark && isToggle {
                     let inset = CGFloat(gDotHeight / 3.0)
                     path      = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
                     path.flatness = 0.0001

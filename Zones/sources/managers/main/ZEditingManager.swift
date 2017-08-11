@@ -630,14 +630,10 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            if zone.isDeleted {
-                rawColumnarReport("double delete", zone.unwrappedName) // sometimes happens, cause undiscovered
-            }
-
             if !permanently {
                 zone.addToPaste()
                 moveToTrash(zone)
-            } else {
+            } else if !zone.isDeleted {
                 zone.orphan()
 
                 zone.traverseAllProgeny() { iZone in

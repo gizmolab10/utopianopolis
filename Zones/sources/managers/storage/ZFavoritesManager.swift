@@ -18,11 +18,11 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    var          favoritesIndex = gFirstFavoriteIndex
-    let        defaultFavorites = Zone(record: nil, storageMode: .favorites)
-    let    defaultModes: ZModes = [.everyone, .mine]
-    var favoritesFavorite: Zone { return Zone(favoriteNamed: "favorites") }
-    var              count: Int { return rootZone?.count ?? 0 }
+    var       favoritesIndex = gFirstFavoriteIndex
+    let     defaultFavorites = Zone(record: nil, storageMode: .favorites)
+    let defaultModes: ZModes = [.everyone, .mine]
+    let    favoritesFavorite = Zone(favoriteNamed: "favorites")
+    var           count: Int { return rootZone?.count ?? 0 }
 
 
     var rotatedEnumeration: EnumeratedSequence<Array<Zone>> {

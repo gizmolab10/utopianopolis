@@ -36,7 +36,7 @@ class Zone : ZRecord {
     var       hasMissingChildren:         Bool { return count < fetchableCount }
     var            hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var            hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
-    var             showChildren:         Bool { return gManifest.showsChildren(self) }
+    var             showChildren:         Bool { return isRootOfFavorites || gManifest.showsChildren(self) }
     var               isBookmark:         Bool { return crossLink != nil }
     var               isSelected:         Bool { return gSelectionManager.isSelected(self) }
     var                isEditing:         Bool { return gSelectionManager .isEditing(self) }
@@ -97,7 +97,10 @@ class Zone : ZRecord {
         self.init(record: nil, storageMode: .favorites)
 
         self .zoneName = favoriteNamed
-        self.crossLink = gFavoritesManager.rootZone
+
+        FOREGROUND(after: 0.5) {
+            self.crossLink = gFavoritesManager.rootZone
+        }
     }
     
 

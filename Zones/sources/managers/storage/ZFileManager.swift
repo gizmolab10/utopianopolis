@@ -42,8 +42,6 @@ class ZFileManager: NSObject {
 
 
     func restore(from storageMode: ZStorageMode) {
-        gCloudManager.clearAllStatesForRecords()
-
         if gFileMode == .local && storageMode != .favorites {
             if let raw = NSDictionary(contentsOf: pathToFile(for: storageMode)) {
                 let      manifest = gRemoteStoresManager.manifest(for: storageMode)
