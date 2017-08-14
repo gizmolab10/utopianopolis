@@ -26,6 +26,7 @@ class ZRemoteStoresManager: NSObject {
     var      storageModeStack = ZModes ()
     var       recordsManagers = [ZStorageMode : ZCloudManager]()
     var manifestByStorageMode = [ZStorageMode : ZManifest] ()
+    var          userRecordID: CKRecordID?
     var currentRecordsManager: ZRecordsManager { return recordsManagerFor(gStorageMode) }
     var   currentCloudManager: ZCloudManager   { return cloudManagerFor(gStorageMode) }
     var      rootProgenyCount: Int             { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
@@ -84,10 +85,16 @@ class ZRemoteStoresManager: NSObject {
 
 
     func authenticate(_ onCompletion: AnyClosure?) {
-        container.accountStatus { (iStatus, iError) in
-            switch iStatus {
-            case .available: onCompletion?(0)
-            default:         onCompletion?(iError)
+        fetchUser { iRecordIDs in
+            if iRecordIDs.count > 0 {
+                self.userRecordID = iRecordIDs[0]
+            }
+
+            self.container.accountStatus { (iStatus, iError) in
+                switch iStatus {
+                case .available: onCompletion?(0)
+                default:         onCompletion?(iError)
+                }
             }
         }
 
@@ -109,6 +116,20 @@ class ZRemoteStoresManager: NSObject {
 
     }
 
+
+    func fetchUser(_ onCompletion: @escaping RecordIDsClosure) {
+        container.fetchUserRecordID() {
+            recordID, error in
+
+            if error != nil || recordID == nil {
+                self.columnarReport(" ERROR", error?.localizedDescription ?? "failed to fetch user record id; reason unknown")
+                onCompletion([])
+            } else {
+                onCompletion([recordID!])
+            }
+        }
+    }
+    
 
     func establishRoots(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         switch storageMode {

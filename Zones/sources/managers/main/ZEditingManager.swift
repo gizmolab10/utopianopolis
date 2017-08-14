@@ -599,7 +599,7 @@ class ZEditingManager: NSObject {
         var     deleteMe = !zone.isRoot && grabThisZone?.record != nil
 
         if !deleteMe && zone.isBookmark, let name = zone.crossLink?.record.recordID.recordName {
-            deleteMe = ![rootNameKey, favoritesRootNameKey].contains(name)
+            deleteMe = ![rootNameKey, trashNameKey, favoritesRootNameKey].contains(name)
         }
 
         if !deleteMe {
@@ -630,10 +630,10 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            if !permanently {
+            if !permanently && !zone.isDeleted {
                 zone.addToPaste()
                 moveToTrash(zone)
-            } else if !zone.isDeleted {
+            } else {
                 zone.orphan()
 
                 zone.traverseAllProgeny() { iZone in
