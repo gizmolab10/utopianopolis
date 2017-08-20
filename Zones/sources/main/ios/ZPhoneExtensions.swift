@@ -195,7 +195,7 @@ extension UIView {
     }
 
 
-    func restartGestures(handledBy e: ZEditorController) {
+    func restartClickAndOtherGestureRecognizers(handledBy e: ZEditorController) {
         clearGestures()
 
         // e.rubberbandGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.rubberbandEvent))

@@ -47,65 +47,6 @@ class ZoneWidget: ZView {
     }
 
 
-    // MARK:- view hierarchy
-    // MARK:-
-
-
-    func addTextView() {
-        if !subviews.contains(textWidget) {
-            textWidget.setup()
-            addSubview(textWidget)
-            snp.makeConstraints { (make: ConstraintMaker) -> Void in
-                make.centerY.equalTo(textWidget).offset(verticalTextOffset)
-                make.size.greaterThanOrEqualTo(textWidget)
-            }
-        }
-    }
-
-
-    func addChildrenView() {
-        if !subviews.contains(childrenView) {
-            insertSubview(childrenView, belowSubview: textWidget)
-        }
-
-        childrenView.snp.removeConstraints()
-        childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            make.left.equalTo(textWidget.snp.right).offset(gDotWidth + Double(gGenericOffset.height / 1.25 - 6.0))
-            make.bottom.top.right.equalTo(self)
-        }
-    }
-
-
-    func prepareChildrenWidgets() {
-        if !widgetZone.showChildren {
-            for child in childrenWidgets {
-                gWidgetsManager.unregisterWidget(child)
-            }
-
-            childrenWidgets.removeAll()
-
-            for view in childrenView.subviews {
-                view.removeFromSuperview()
-            }
-        } else {
-            for child in childrenWidgets {
-                if  let zone = child.widgetZone, !widgetZone.children.contains(zone) {
-                    gWidgetsManager.unregisterWidget(child)
-                    child.removeFromSuperview()
-
-                    if let index = childrenWidgets.index(of: child) {
-                        childrenWidgets.remove(at: index)
-                    }
-                }
-            }
-
-            while childrenWidgets.count < widgetZone.count {
-                childrenWidgets.append(ZoneWidget())
-            }
-        }
-    }
-
-
     // MARK:- layout
     // MARK:-
 
@@ -124,20 +65,16 @@ class ZoneWidget: ZView {
             backgroundColor = gClearColor
         #endif
 
-        // if  gWidgetsManager.widgets.count <= 60 {
-            gWidgetsManager.registerWidget(self)
-            addTextView()
-            layoutText()
-            layoutDots()
-            addChildrenView()
+        gWidgetsManager.registerWidget(self)
+        addTextView()
+        layoutText()
+        layoutDots()
+        addChildrenView()
 
-            if recursing && !visited.contains(widgetZone) {
-                prepareChildrenWidgets()
-                layoutChildren(signalKind, visited: visited + [widgetZone])
-            }
-            
-            updateConstraints()
-        // }
+        if recursing && !visited.contains(widgetZone) {
+            prepareChildrenWidgets()
+            layoutChildren(signalKind, visited: visited + [widgetZone])
+        }
     }
 
 
@@ -165,7 +102,7 @@ class ZoneWidget: ZView {
                     }
 
                     if index == 0 {
-                        make.top.equalTo(childrenView)
+                        make.top.equalTo(childrenView).priority(ConstraintPriority(250))
                     }
 
                     make.left.equalTo(childrenView)
@@ -224,6 +161,65 @@ class ZoneWidget: ZView {
             make.left.equalTo(textWidget.snp.right).offset(-1.0)
             make.right.lessThanOrEqualToSuperview().offset(-1.0)
             make.centerY.equalTo(textWidget).offset(verticalTextOffset)
+        }
+    }
+
+
+    // MARK:- view hierarchy
+    // MARK:-
+
+
+    func addTextView() {
+        if !subviews.contains(textWidget) {
+            textWidget.setup()
+            addSubview(textWidget)
+            snp.makeConstraints { (make: ConstraintMaker) -> Void in
+                make.centerY.equalTo(textWidget).offset(verticalTextOffset)
+                make.size.greaterThanOrEqualTo(textWidget)
+            }
+        }
+    }
+
+
+    func addChildrenView() {
+        if !subviews.contains(childrenView) {
+            insertSubview(childrenView, belowSubview: textWidget)
+        }
+
+        childrenView.snp.removeConstraints()
+        childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
+            make.left.equalTo(textWidget.snp.right).offset(gDotWidth + Double(gGenericOffset.height / 1.25 - 6.0))
+            make.bottom.top.right.equalTo(self)
+        }
+    }
+
+
+    func prepareChildrenWidgets() {
+        if !widgetZone.showChildren {
+            for child in childrenWidgets {
+                gWidgetsManager.unregisterWidget(child)
+            }
+
+            childrenWidgets.removeAll()
+
+            for view in childrenView.subviews {
+                view.removeFromSuperview()
+            }
+        } else {
+            for child in childrenWidgets {
+                if  let zone = child.widgetZone, !widgetZone.children.contains(zone) {
+                    gWidgetsManager.unregisterWidget(child)
+                    child.removeFromSuperview()
+
+                    if let index = childrenWidgets.index(of: child) {
+                        childrenWidgets.remove(at: index)
+                    }
+                }
+            }
+
+            while childrenWidgets.count < widgetZone.count {
+                childrenWidgets.append(ZoneWidget())
+            }
         }
     }
 
@@ -475,8 +471,20 @@ class ZoneWidget: ZView {
 
 
     func drawDragLine(to dotRect: CGRect, in iView: ZView) {
-        if  let rect = lineRect(to: dotRect, in:iView) {
-            let kind = lineKind(to: dotRect)
+        if  let rect = lineRect(to: dotRect, in:iView),
+            var kind = lineKind(to: dotRect) {
+
+            // for reasons unknown to me, (grrrrrr!!!)
+            // changing the caller from the drag view to the scroll view,
+            // reverses the senses of up and down
+            // hence ....
+
+            switch kind {
+            case .above: kind = .below
+            case .below: kind = .above
+            default:     break
+            }
+
             let path = linePath(in: rect, kind: kind, isDragLine: true)
 
             thinStroke(path)
@@ -506,28 +514,30 @@ class ZoneWidget: ZView {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        let        isGrabbed = widgetZone.isGrabbed
-        textWidget.textColor = isGrabbed ? widgetZone.grabbedTextColor : ZColor.black
+        if  let             zone = widgetZone {
+            let        isGrabbed = zone.isGrabbed
+            textWidget.textColor = isGrabbed ? zone.grabbedTextColor : ZColor.black
 
-        note("      .        \(widgetZone.unwrappedName)")
+            note("      .        \(zone.unwrappedName)")
 
-        if isGrabbed && !textWidget.isTextEditing { // && !childrenPass {  CLUE! ... adding this to the logic makes highlight disappear for zones with children shown
-            // columnarReport("highlighting", widgetZone.unwrappedName)
-            drawSelectionHighlight()
-        }
+            if isGrabbed && !textWidget.isTextEditing { // && !childrenPass {  CLUE! ... adding this to the logic makes highlight disappear for zones with children shown
+                // columnarReport("highlighting", zone.unwrappedName)
+                drawSelectionHighlight()
+            }
 
-        if widgetZone.showChildren {
-            if  childrenPass || gSelectionManager.isDragging || gEditorView?.rubberbandRect != nil {
-                for child in childrenWidgets { drawLine(to: child) }
-            } else {
-                FOREGROUND {
-                    self.childrenPass = true
+            if zone.showChildren {
+                if  childrenPass || gSelectionManager.isDragging || gEditorDragView?.rubberbandRect != nil {
+                    for child in childrenWidgets { drawLine(to: child) }
+                } else {
+                    FOREGROUND {
+                        self.childrenPass = true
 
-                    self.setNeedsDisplay()
+                        self.setNeedsDisplay()
+                    }
                 }
             }
+            
+            childrenPass = false
         }
-
-        childrenPass = false
     }
 }

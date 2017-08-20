@@ -27,16 +27,17 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
     var draggedDot: ZoneDot? = nil
     var   rubberbandPreGrabs = [Zone] ()
     var      rubberbandStart = CGPoint.zero
-    var           hereWidget = ZoneWidget()
     let            doneState: [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
     var         clickGesture:  ZGestureRecognizer?
     var         swipeGesture:  ZGestureRecognizer?
     var    rubberbandGesture:  ZGestureRecognizer?
-    @IBOutlet var    scrollX:  NSLayoutConstraint?
-    @IBOutlet var    scrollY:  NSLayoutConstraint?
     @IBOutlet var    spinner:  ZProgressIndicator?
-    @IBOutlet var   dragView:  ZDragDrawView?
-    @IBOutlet var scrollView:  ZScrollView?
+    @IBOutlet var   dragView:  ZoneDragView?
+    @IBOutlet var hereWidget:  ZoneWidget?
+    @IBOutlet var editorView:  NSView?
+    @IBOutlet var horizontalConstraint: NSLayoutConstraint?
+    @IBOutlet var   verticalConstraint: NSLayoutConstraint?
+    @IBOutlet var     heightConstraint: NSLayoutConstraint?
 
 
     override func identifier() -> ZControllerID { return .editor }
@@ -44,22 +45,22 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
     // MARK:- gestures
     // MARK:-
-    
+
 
     override func setup() {
-        dragView?.restartGestures(handledBy: self)
+        restartDragHandling()
         super.setup()
     }
 
 
-    func viewForZooming(in scrollView: ZScrollView) -> ZView? {
-        return dragView
+    func restartDragHandling() {
+        dragView?.restartClickAndOtherGestureRecognizers(handledBy: self)
     }
 
-    
+
     #if os(iOS)
     fileprivate func updateMinZoomScaleForSize(_ size: CGSize) {
-        if  let              d = dragView, let s = scrollView {
+        if  let              d = hereWidget, let s = dragView {
             let    heightScale = size.height / d.bounds.height
             let     widthScale = size.width  / d.bounds.width
             let       minScale = min(widthScale, heightScale)
@@ -76,6 +77,32 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
     #endif
 
 
+    func layoutForCurrentScrollOffset() {
+        if  let s = dragView, let x = horizontalConstraint, let y = verticalConstraint {
+            x.constant = s.offset.x
+            y.constant = s.offset.y
+        }
+    }
+
+
+    func updateHeightConstraint() {
+        var     height = CGFloat(0.0)
+        let unitHeight = gGenericOffset.height + 22.0
+
+        gHere.traverseProgeny { iZone -> (ZTraverseStatus) in
+            if iZone.showChildren && iZone.count > 0 {
+                return .eContinue
+            }
+
+            height += unitHeight
+
+            return .eSkip
+        }
+
+        heightConstraint?.constant = height
+    }
+
+
     // MARK:- events
     // MARK:-
 
@@ -84,14 +111,14 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
         if ![.search, .found, .startup].contains(kind) {
 
             if gWorkMode != .editMode {
-                dragView?.snp.removeConstraints()
+                editorView?.snp.removeConstraints()
             } else if !gEditingManager.isEditing {
                 var                   recursing = true
                 var specificWidget: ZoneWidget? = hereWidget
-                var   specificView:      ZView? = dragView
+                var   specificView:      ZView? = editorView
                 var  specificindex:        Int? = nil
                 gTextCapturing                  = false
-                hereWidget          .widgetZone = gHere
+                hereWidget?         .widgetZone = gHere
 
                 if  let       zone = object as? Zone, zone != gHere {
                     specificWidget = zone.widget
@@ -104,15 +131,17 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
                 note("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")
 
+                updateHeightConstraint()
+                layoutForCurrentScrollOffset()
                 specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, visited: [])
 
-                dragView?.applyToAllSubviews { iView in
+                editorView?.applyToAllSubviews { iView in
                     iView.setNeedsDisplay()
                 }
             }
         }
     }
-
+    
 
     func swipeEvent(_ iGesture: ZGestureRecognizer?) {
         report("hah!")
@@ -128,11 +157,11 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
         gShowsSearching    = false
 
         if  let    gesture = iGesture {
-            let   location = gesture.location(in: dragView)
+            let   location = gesture.location(in: editorView)
             var     inText = false
 
             if  let widget = gEditingManager.editedTextWidget {
-                let   rect = widget.convert(widget.bounds, to: dragView)
+                let   rect = widget.convert(widget.bounds, to: editorView)
                 inText     = rect.contains(location)
             }
 
@@ -158,7 +187,7 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
             }
         }
 
-        dragView?.restartGestures(handledBy: self)
+        restartDragHandling()
     }
 
 
@@ -169,11 +198,11 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
         ///////////////////////////////////
 
         if  let  gesture = iGesture {
-            let location = gesture.location(in: dragView)
+            let location = gesture.location(in: editorView)
             let    state = gesture.state
 
             if isTextEditing(at: location) {
-                dragView?.restartGestures(handledBy: self)       // let text editor consume the gesture
+                restartDragHandling()       // let text editor consume the gesture
             } else if isDragging {
                 dragMaybeStopEvent(iGesture)
             } else if state == .changed {
@@ -230,7 +259,7 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
             note("d --- d")
 
             if  zone == gHere {
-                dragView?.restartGestures(handledBy: self)
+                restartDragHandling()
             } else if let            location = iGesture?.location(in: dot) {
                 dot.dragStart                 = location
                 gSelectionManager.draggedZone = zone
@@ -244,7 +273,7 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
             cleanupAfterDrag()
 
             if doneState.contains(iGesture!.state) {
-                dragView?.restartGestures(handledBy: self)
+                restartDragHandling()
             }
         }
     }
@@ -253,8 +282,8 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
     func dragEvent(_ iGesture: ZGestureRecognizer?) -> Bool {
         let                 s = gSelectionManager
 
-        if  let      location = iGesture?.location(in: dragView),
-            let   dropNearest = hereWidget.widgetNearestTo(location) {
+        if  let      location = iGesture?.location(in: editorView),
+            let   dropNearest = hereWidget?.widgetNearestTo(location) {
 
             let   draggedZone = s.rootMostMoveable
             var      dropZone = dropNearest.widgetZone
@@ -285,12 +314,12 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
             prior?           .displayForDrag() // erase  child lines
             dropZone?.widget?.displayForDrag() // redraw child lines
-            dragView?       .setNeedsDisplay() // redraw drag (line and dot)
+            dragView?        .setNeedsDisplay() // redraw drag (line and dot)
 
             columnarReport(relation, dropZone?.unwrappedName)
 
             if dropNow {
-                dragView?.restartGestures(handledBy: self)
+                restartDragHandling()
 
                 let         editor = gEditingManager
                 isDragging         = false
@@ -325,15 +354,15 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
         if  rect == nil {
             dragView?.rubberbandRect = CGRect.zero
 
-            dragView?.restartGestures(handledBy: self)
+            restartDragHandling()
         } else {
-            dragView?.rubberbandRect = rect
+            dragView?.rubberbandRect = editorView?.convert(rect!, to: dragView)
 
             gSelectionManager.deselectGrabs(retaining: rubberbandPreGrabs)
 
             for widget in gWidgetsManager.widgets.values {
                 if  let    hitRect = widget.hitRect {
-                    let widgetRect = widget.convert(hitRect, to: dragView)
+                    let widgetRect = widget.convert(hitRect, to: editorView)
 
                     if  widgetRect.intersects(rect!) {
                         widget.widgetZone.addToGrab()
@@ -341,7 +370,7 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
                 }
             }
 
-            hereWidget.setNeedsDisplay()
+            hereWidget?.setNeedsDisplay()
         }
 
         signalFor(nil, regarding: .preferences)
@@ -355,12 +384,12 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
         gHere.traverseProgeny { iZone -> ZTraverseStatus in
             if  let       widget = iZone.widget {
                 var         rect = widget.outerHitRect
-                rect             = widget.convert(rect, to: dragView)
+                rect             = widget.convert(rect, to: editorView)
 
                 if rect.contains(location) {
                     let hits: DotToBooleanClosure = { (iDot: ZoneDot) -> Bool in
                         rect     = iDot.bounds
-                        rect     = iDot.convert(rect, to: self.dragView)
+                        rect     = iDot.convert(rect, to: self.editorView)
                         let bang = rect.contains(location)
 
                         if bang {
@@ -387,7 +416,7 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
         let e = gEditingManager
 
         if  e.isEditing, let textWidget = e.editedTextWidget {
-            let rect = textWidget.convert(textWidget.bounds, to: dragView)
+            let rect = textWidget.convert(textWidget.bounds, to: editorView)
 
             return rect.contains(location)
         }
@@ -408,7 +437,7 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
         s   .dragRelation = nil
         s      .dragPoint = nil
 
-        dragView?.setNeedsDisplay()
+        editorView?.setNeedsDisplay()
         dot?     .setNeedsDisplay()
     }
 
@@ -418,7 +447,7 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
         if  iView     != nil {
             let margin = CGFloat(5.0)
-            let  point = dragView!.convert(iPoint, to: iView)
+            let  point = editorView!.convert(iPoint, to: iView)
             let   rect = iView!.bounds
             let      y = point.y
 
@@ -431,6 +460,10 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
         return relation
     }
+    
+
+    // MARK:- spinner
+    // MARK:-
     
 
     override func displayActivity(_ show: Bool) {

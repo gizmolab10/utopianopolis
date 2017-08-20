@@ -29,6 +29,7 @@ public typealias ZSlider                    = NSSlider
 public typealias ZWindow                    = NSWindow
 public typealias ZControl                   = NSControl
 public typealias ZMenuItem                  = NSMenuItem
+public typealias ZClipView                  = NSClipView
 public typealias ZTextView                  = NSTextView
 public typealias ZTextField                 = NSTextField
 public typealias ZTableView                 = NSTableView
@@ -202,7 +203,7 @@ extension NSView {
     }
 
 
-    func restartGestures(handledBy e: ZEditorController) {
+    func restartClickAndOtherGestureRecognizers(handledBy e: ZEditorController) {
         clearGestures()
 
         e.rubberbandGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.rubberbandEvent))
