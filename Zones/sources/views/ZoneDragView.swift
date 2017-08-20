@@ -18,7 +18,6 @@ class ZoneDragView: NSView, ZGestureRecognizerDelegate {
 
 
     var rubberbandRect: CGRect?
-    var        offset = CGPoint.zero
     var magnification = CGFloat(1.0)
 
 
@@ -44,11 +43,11 @@ class ZoneDragView: NSView, ZGestureRecognizerDelegate {
 
 
     func updateMagnification(with event: ZEvent) {
-        let     deltaY = event.deltaY
-        let adjustment = exp2(deltaY / 100.0)
-        magnification *= adjustment
-        offset.x      *= adjustment
-        offset.y      *= adjustment
+        let      deltaY  = event.deltaY
+        let  adjustment  = exp2(deltaY / 100.0)
+        magnification   *= adjustment
+        gScrollOffset.x *= adjustment
+        gScrollOffset.y *= adjustment
     }
 
 
@@ -58,16 +57,16 @@ class ZoneDragView: NSView, ZGestureRecognizerDelegate {
         if  isOption {
             updateMagnification(with: event)
         } else {
-            let multiply = 1.5 / magnification
-            offset.x    -= event.deltaX * multiply
-            offset.y    += event.deltaY * multiply
+            let     multiply = 1.5 / magnification
+            gScrollOffset.x -= event.deltaX * multiply
+            gScrollOffset.y += event.deltaY * multiply
         }
 
         gEditorController?.layoutForCurrentScrollOffset()
         gEditorController?.view.setNeedsDisplay()
-        //        contentView.scroll(to: offset)
+        //        contentView.scroll(to: gScrollOffset)
 
-        // columnarReport(" SCROLL", offset)
+        // columnarReport(" SCROLL", gScrollOffset)
     }
 
 

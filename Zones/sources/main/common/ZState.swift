@@ -122,6 +122,30 @@ var gGenericOffset: CGSize {
 }
 
 
+var gScrollOffset: CGPoint {
+    get {
+        if let string = UserDefaults.standard.object(forKey: scrollOffsetKey) as? String {
+            return string.cgPoint
+        }
+
+        let defaultValue = CGPoint(x: 0.0, y: 0.0)
+        let       string = NSStringFromPoint(defaultValue)
+
+        UserDefaults.standard.set(string, forKey: scrollOffsetKey)
+        UserDefaults.standard.synchronize()
+
+        return defaultValue
+    }
+
+    set {
+        let string = NSStringFromPoint(newValue)
+
+        UserDefaults.standard.set(string, forKey: scrollOffsetKey)
+        UserDefaults.standard.synchronize()
+    }
+}
+
+
 var gCountsMode: ZCountsMode {
     get {
         var  mode  = ZCountsMode.dots
@@ -252,7 +276,8 @@ let       storageModeKey = "current storage mode"
 let     settingsStateKey = "current settings state"
 let     tinyDotsRatioKey = "tiny dots ratio"
 let     lineThicknessKey = "line thickness"
-let     genericOffsetKey = "generick offset"
+let     genericOffsetKey = "generic offset"
+let      scrollOffsetKey = "scroll offset"
 let        countsModeKey = "counts mode"
 
 

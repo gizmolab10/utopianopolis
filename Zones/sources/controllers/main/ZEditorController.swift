@@ -78,9 +78,9 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
 
     func layoutForCurrentScrollOffset() {
-        if  let s = dragView, let x = horizontalConstraint, let y = verticalConstraint {
-            x.constant = s.offset.x
-            y.constant = s.offset.y
+        if  let x = horizontalConstraint, let y = verticalConstraint {
+            x.constant = gScrollOffset.x
+            y.constant = gScrollOffset.y
         }
     }
 

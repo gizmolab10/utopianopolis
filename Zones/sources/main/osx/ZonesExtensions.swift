@@ -89,6 +89,13 @@ extension String {
     }
 
 
+    var cgPoint: CGPoint {
+        let point = NSPointFromString(self)
+
+        return CGPoint(x: point.x, y: point.y)
+    }
+
+
     var cgSize: CGSize {
         let size = NSSizeFromString(self)
 

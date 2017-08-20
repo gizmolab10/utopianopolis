@@ -86,7 +86,8 @@ extension UIKeyCommand {
 
 
 extension String {
-    var cgSize: CGSize { return CGSizeFromString(self) }
+    var cgPoint: CGPoint { return CGPointFromString(self) }
+    var cgSize:   CGSize { return  CGSizeFromString(self) }
     var arrow: ZArrowKey? {
         let value = utf8CString[0]
 
