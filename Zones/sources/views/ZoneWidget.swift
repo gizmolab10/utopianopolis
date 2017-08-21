@@ -472,19 +472,7 @@ class ZoneWidget: ZView {
 
     func drawDragLine(to dotRect: CGRect, in iView: ZView) {
         if  let rect = lineRect(to: dotRect, in:iView),
-            var kind = lineKind(to: dotRect) {
-
-            // for reasons unknown to me, (grrrrrr!!!)
-            // changing the caller from the drag view to the scroll view,
-            // reverses the senses of up and down
-            // hence ....
-
-            switch kind {
-            case .above: kind = .below
-            case .below: kind = .above
-            default:     break
-            }
-
+            let kind = lineKind(to: dotRect) {
             let path = linePath(in: rect, kind: kind, isDragLine: true)
 
             thinStroke(path)

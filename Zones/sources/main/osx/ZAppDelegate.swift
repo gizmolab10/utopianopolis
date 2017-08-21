@@ -28,6 +28,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
         if  needsSetup {
             needsSetup = false
 
+            UserDefaults.standard.set(true, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraint‌​s")
             zapplication.registerForRemoteNotifications(matching: .badge)
             gControllersManager.startupDataAndUI()
         }

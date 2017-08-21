@@ -131,7 +131,7 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
                 note("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")
 
-                updateHeightConstraint()
+                // updateHeightConstraint()
                 layoutForCurrentScrollOffset()
                 specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, visited: [])
 
