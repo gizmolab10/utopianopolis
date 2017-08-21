@@ -27,17 +27,14 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
     var draggedDot: ZoneDot? = nil
     var   rubberbandPreGrabs = [Zone] ()
     var      rubberbandStart = CGPoint.zero
+    var           hereWidget = ZoneWidget ()
     let            doneState: [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
     var         clickGesture:  ZGestureRecognizer?
     var         swipeGesture:  ZGestureRecognizer?
     var    rubberbandGesture:  ZGestureRecognizer?
     @IBOutlet var    spinner:  ZProgressIndicator?
     @IBOutlet var   dragView:  ZoneDragView?
-    @IBOutlet var hereWidget:  ZoneWidget?
     @IBOutlet var editorView:  NSView?
-    @IBOutlet var horizontalConstraint: NSLayoutConstraint?
-    @IBOutlet var   verticalConstraint: NSLayoutConstraint?
-    @IBOutlet var     heightConstraint: NSLayoutConstraint?
 
 
     override func identifier() -> ZControllerID { return .editor }
@@ -45,6 +42,13 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
     // MARK:- gestures
     // MARK:-
+
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        editorView?.addSubview(hereWidget)
+    }
 
 
     override func setup() {
@@ -78,28 +82,13 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
 
     func layoutForCurrentScrollOffset() {
-        if  let x = horizontalConstraint, let y = verticalConstraint {
-            x.constant = gScrollOffset.x
-            y.constant = gScrollOffset.y
-        }
-    }
-
-
-    func updateHeightConstraint() {
-        var     height = CGFloat(0.0)
-        let unitHeight = gGenericOffset.height + 22.0
-
-        gHere.traverseProgeny { iZone -> (ZTraverseStatus) in
-            if iZone.showChildren && iZone.count > 0 {
-                return .eContinue
+        if let e = editorView {
+            hereWidget.snp.removeConstraints()
+            hereWidget.snp.makeConstraints { make in
+                make.centerY.equalTo(e).offset(gScrollOffset.y)
+                make.centerX.equalTo(e).offset(gScrollOffset.x)
             }
-
-            height += unitHeight
-
-            return .eSkip
         }
-
-        heightConstraint?.constant = height
     }
 
 
@@ -118,7 +107,7 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
                 var   specificView:      ZView? = editorView
                 var  specificindex:        Int? = nil
                 gTextCapturing                  = false
-                hereWidget?         .widgetZone = gHere
+                hereWidget          .widgetZone = gHere
 
                 if  let       zone = object as? Zone, zone != gHere {
                     specificWidget = zone.widget
@@ -131,7 +120,6 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
                 note("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")
 
-                // updateHeightConstraint()
                 layoutForCurrentScrollOffset()
                 specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, visited: [])
 
@@ -283,7 +271,7 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
         let                 s = gSelectionManager
 
         if  let      location = iGesture?.location(in: editorView),
-            let   dropNearest = hereWidget?.widgetNearestTo(location) {
+            let   dropNearest = hereWidget.widgetNearestTo(location) {
 
             let   draggedZone = s.rootMostMoveable
             var      dropZone = dropNearest.widgetZone
@@ -312,8 +300,8 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
                 s.dragDropIndices?.add(index - 1)
             }
 
-            prior?           .displayForDrag() // erase  child lines
-            dropZone?.widget?.displayForDrag() // redraw child lines
+            prior?           .displayForDrag()  // erase  child lines
+            dropZone?.widget?.displayForDrag()  // redraw child lines
             dragView?        .setNeedsDisplay() // redraw drag (line and dot)
 
             columnarReport(relation, dropZone?.unwrappedName)
@@ -370,7 +358,7 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
                 }
             }
 
-            hereWidget?.setNeedsDisplay()
+            hereWidget.setNeedsDisplay()
         }
 
         signalFor(nil, regarding: .preferences)

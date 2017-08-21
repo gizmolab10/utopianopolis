@@ -378,22 +378,6 @@ CQ
                         <rect key="frame" x="0.0" y="0.0" width="396" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView identifier="editor view" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="4Vs-cC-P08" userLabel="Editor View">
-                                <rect key="frame" x="0.0" y="-2" width="1000" height="600"/>
-                                <subviews>
-                                    <customView identifier="here widget" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Mol-gA-fMS" customClass="ZoneWidget" customModule="Focus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="1000" height="600"/>
-                                    </customView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="Mol-gA-fMS" secondAttribute="bottom" id="Bac-6T-qmh"/>
-                                    <constraint firstAttribute="width" constant="1000" id="Ese-rZ-rUh"/>
-                                    <constraint firstAttribute="trailing" secondItem="Mol-gA-fMS" secondAttribute="trailing" id="Tf4-Gs-ZmT"/>
-                                    <constraint firstItem="Mol-gA-fMS" firstAttribute="top" secondItem="4Vs-cC-P08" secondAttribute="top" id="nTt-fc-4CB"/>
-                                    <constraint firstAttribute="height" constant="600" id="vh5-qB-DB3"/>
-                                    <constraint firstAttribute="leading" secondItem="Mol-gA-fMS" secondAttribute="leading" id="zWx-d9-yao"/>
-                                </constraints>
-                            </customView>
                             <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
                                 <rect key="frame" x="98" y="198" width="200" height="200"/>
                                 <constraints>
@@ -405,18 +389,12 @@ CQ
                         <constraints>
                             <constraint firstItem="uBD-4n-5KN" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="5bc-yZ-QEO"/>
                             <constraint firstItem="uBD-4n-5KN" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="VsQ-sf-Z2d"/>
-                            <constraint firstItem="4Vs-cC-P08" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="f4m-yV-OOu"/>
-                            <constraint firstItem="4Vs-cC-P08" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="jek-fU-qpb"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="dragView" destination="m2S-Jp-Qdl" id="Sr1-YQ-PO4"/>
-                        <outlet property="editorView" destination="4Vs-cC-P08" id="982-Ca-C0R"/>
-                        <outlet property="heightConstraint" destination="vh5-qB-DB3" id="TIM-Rn-Lrk"/>
-                        <outlet property="hereWidget" destination="Mol-gA-fMS" id="vcU-Sm-X1A"/>
-                        <outlet property="horizontalConstraint" destination="zWx-d9-yao" id="0Ii-b7-Zp7"/>
+                        <outlet property="editorView" destination="m2S-Jp-Qdl" id="umk-vN-23n"/>
                         <outlet property="spinner" destination="uBD-4n-5KN" id="l76-tc-ycD"/>
-                        <outlet property="verticalConstraint" destination="f4m-yV-OOu" id="Vw0-hI-kAu"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

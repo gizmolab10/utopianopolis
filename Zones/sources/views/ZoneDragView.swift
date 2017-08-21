@@ -58,7 +58,7 @@ class ZoneDragView: NSView, ZGestureRecognizerDelegate {
             updateMagnification(with: event)
         } else {
             let     multiply = 1.5 / magnification
-            gScrollOffset.x -= event.deltaX * multiply
+            gScrollOffset.x += event.deltaX * multiply
             gScrollOffset.y += event.deltaY * multiply
         }
 
