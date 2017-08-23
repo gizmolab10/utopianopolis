@@ -22,6 +22,7 @@ class ZCloudToolsController: ZGenericTableController {
     enum ZToolKind: Int {
         case eZones
         case eTrash
+        case eCenter
         case eGather
         case eRecount
     }
@@ -34,6 +35,7 @@ class ZCloudToolsController: ZGenericTableController {
     func text(for kind: ZToolKind) -> String {
         switch kind {
         case .eRecount: return "Recount"
+        case .eCenter:  return "Bring to Center"
         case .eGather:  return "Gather Trash"
         case .eTrash:   return "Show Trash"
         case .eZones:   return "Restore Zones"
@@ -59,6 +61,7 @@ class ZCloudToolsController: ZGenericTableController {
                 case .eZones:   self.restoreZones()
                 case .eTrash:   self.showTrashCan()
                 case .eGather:  self.gatherAndShowTrash()
+                case .eCenter:  self.recenter()
                 case .eRecount: self.recount()
                 }
             }
@@ -70,6 +73,15 @@ class ZCloudToolsController: ZGenericTableController {
 
     // MARK:- actions
     // MARK:-
+
+
+    func recenter() {
+        gScrollOffset = CGPoint.zero
+
+        gEditorController?.layoutForCurrentScrollOffset()
+        gEditorView?.setNeedsDisplay()
+    }
+
 
     func showTrashCan() {
         if let trash = gTrash {

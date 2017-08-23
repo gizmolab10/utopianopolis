@@ -78,8 +78,7 @@ var             gDotWidth:             Double { return gDotHeight * 0.75 }
 var            gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var     gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var     gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
-var           gEditorView:             ZView? { return gEditorController?.editorView }
-var       gEditorDragView:      ZoneDragView? { return gEditorController?.dragView }
+var           gEditorView:      ZoneDragView? { return gEditorController?.editorView }
 
 
 // MARK:- persistence

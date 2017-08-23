@@ -229,14 +229,17 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
-    func recordIDsWithMatchingStates( _ states: [ZRecordState], pull: Bool = false) -> [CKRecordID] {
+    func recordIDsWithMatchingStates( _ states: [ZRecordState], pull: Bool = false, onlyFavorites: Bool = false) -> [CKRecordID] {
         var identifiers = [CKRecordID] ()
 
         findAllRecordsWithAnyMatchingStates(states) { state, ckrecord in
+            let   favorite = ckrecord["zoneIsFavorite"] as? NSNumber
             let identifier = ckrecord.recordID
 
             if  identifiers.count < batchSize, !identifiers.contains(identifier) {
-                identifiers.append(identifier)
+                if !onlyFavorites || favorite?.boolValue ?? false {
+                    identifiers.append(identifier)
+                }
             }
         }
 

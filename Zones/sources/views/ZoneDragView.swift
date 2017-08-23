@@ -72,7 +72,7 @@ class ZoneDragView: NSView, ZGestureRecognizerDelegate {
 
     func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
         if  let e = gEditorController {
-            return gestureRecognizer == e.clickGesture && otherGestureRecognizer == e.rubberbandGesture
+            return gestureRecognizer == e.clickGesture && otherGestureRecognizer == e.movementGesture
         }
 
         return false

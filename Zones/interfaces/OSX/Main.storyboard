@@ -392,7 +392,6 @@ CQ
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="dragView" destination="m2S-Jp-Qdl" id="Sr1-YQ-PO4"/>
                         <outlet property="editorView" destination="m2S-Jp-Qdl" id="umk-vN-23n"/>
                         <outlet property="spinner" destination="uBD-4n-5KN" id="l76-tc-ycD"/>
                     </connections>

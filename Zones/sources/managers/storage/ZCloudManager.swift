@@ -59,12 +59,13 @@ class ZCloudManager: ZRecordsManager {
 
 
     func save(_ onCompletion: IntegerClosure?) {
-        if storageMode == .everyone {
-            clearStates([.needsSave, .needsDestroy])
-            onCompletion?(0)
+        let isPublic = storageMode == .everyone
+
+        if  isPublic {
+            clearStates([.needsSave])
         }
 
-        let deletes = recordIDsWithMatchingStates([.needsDestroy], pull: true)
+        let deletes = recordIDsWithMatchingStates([.needsDestroy], pull: true, onlyFavorites: isPublic)
         let   saves = pullRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
         let   count = saves.count + deletes.count
 

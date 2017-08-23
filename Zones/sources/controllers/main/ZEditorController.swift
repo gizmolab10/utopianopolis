@@ -23,18 +23,18 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
     // MARK:-
     
 
-    var           isDragging = false
     var draggedDot: ZoneDot? = nil
+    var           isDragging = false
     var   rubberbandPreGrabs = [Zone] ()
+    var  priorScrollLocation = CGPoint.zero
     var      rubberbandStart = CGPoint.zero
     var           hereWidget = ZoneWidget ()
     let            doneState: [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
     var         clickGesture:  ZGestureRecognizer?
     var         swipeGesture:  ZGestureRecognizer?
-    var    rubberbandGesture:  ZGestureRecognizer?
+    var      movementGesture:  ZGestureRecognizer?
     @IBOutlet var    spinner:  ZProgressIndicator?
-    @IBOutlet var   dragView:  ZoneDragView?
-    @IBOutlet var editorView:  NSView?
+    @IBOutlet var editorView:  ZoneDragView?
 
 
     override func identifier() -> ZControllerID { return .editor }
@@ -58,13 +58,13 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
 
     func restartDragHandling() {
-        dragView?.restartClickAndOtherGestureRecognizers(handledBy: self)
+        editorView?.restartClickAndOtherGestureRecognizers(handledBy: self)
     }
 
 
     #if os(iOS)
     fileprivate func updateMinZoomScaleForSize(_ size: CGSize) {
-        if  let              d = hereWidget, let s = dragView {
+        if  let              d = hereWidget, let s = editorView {
             let    heightScale = size.height / d.bounds.height
             let     widthScale = size.width  / d.bounds.width
             let       minScale = min(widthScale, heightScale)
@@ -135,6 +135,51 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
         report("hah!")
     }
 
+
+    func movementGestureEvent(_ iGesture: ZGestureRecognizer?) {
+
+        ///////////////////////////////////
+        // only called by gesture system //
+        ///////////////////////////////////
+
+        if  let  gesture = iGesture as? ZKeyPanGestureRecognizer {
+            let location = gesture.location(in: editorView)
+            let    state = gesture.state
+
+            if isTextEditing(at: location) {
+                restartDragHandling()     // let text editor consume the gesture
+            } else if let flags = gesture.modifiers, flags.isOption {
+                scrollEvent(move: state == .changed, to: location)
+            } else if isDragging {
+                dragMaybeStopEvent(iGesture)
+            } else if state == .changed { // changed
+                rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
+            } else if state != .began {   // ended
+                rubberbandUpdate(nil)
+            } else if let dot = dotsHitTest(location) {
+                if dot.isToggle {
+                    clickEvent(iGesture)  // no movement
+                } else {
+                    dragStartEvent(dot, iGesture)
+                }
+            } else {                      // began
+                rubberbandStartEvent(location, iGesture)
+            }
+        }
+    }
+
+
+    func scrollEvent(move: Bool, to location: CGPoint) {
+        if move {
+            gScrollOffset   = CGPoint(x: gScrollOffset.x + location.x - priorScrollLocation.x, y: gScrollOffset.y + priorScrollLocation.y - location.y)
+
+            layoutForCurrentScrollOffset()
+            editorView?.setNeedsDisplay()
+        }
+
+        priorScrollLocation = location
+    }
+
     
     func clickEvent(_ iGesture: ZGestureRecognizer?) {
 
@@ -176,37 +221,6 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
         }
 
         restartDragHandling()
-    }
-
-
-    func rubberbandEvent(_ iGesture: ZGestureRecognizer?) {
-
-        ///////////////////////////////////
-        // only called by gesture system //
-        ///////////////////////////////////
-
-        if  let  gesture = iGesture {
-            let location = gesture.location(in: editorView)
-            let    state = gesture.state
-
-            if isTextEditing(at: location) {
-                restartDragHandling()       // let text editor consume the gesture
-            } else if isDragging {
-                dragMaybeStopEvent(iGesture)
-            } else if state == .changed {
-                rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
-            } else if state != .began { // ended
-                rubberbandUpdate(nil)
-            } else if let dot = dotsHitTest(location) {
-                if dot.isToggle {
-                    clickEvent(iGesture)
-                } else {
-                    dragStartEvent(dot, iGesture)
-                }
-            } else {                    // began
-                rubberbandStartEvent(location, iGesture)
-            }
-        }
     }
 
 
@@ -302,7 +316,7 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
             prior?           .displayForDrag()  // erase  child lines
             dropZone?.widget?.displayForDrag()  // redraw child lines
-            dragView?        .setNeedsDisplay() // redraw drag (line and dot)
+            editorView?      .setNeedsDisplay() // redraw drag (line and dot)
 
             columnarReport(relation, dropZone?.unwrappedName)
 
@@ -340,11 +354,11 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
 
     func rubberbandUpdate(_ rect: CGRect?) {
         if  rect == nil {
-            dragView?.rubberbandRect = CGRect.zero
+            editorView?.rubberbandRect = CGRect.zero
 
             restartDragHandling()
         } else {
-            dragView?.rubberbandRect = editorView?.convert(rect!, to: dragView)
+            editorView?.rubberbandRect = rect
 
             gSelectionManager.deselectGrabs(retaining: rubberbandPreGrabs)
 
@@ -362,7 +376,7 @@ class ZEditorController: ZGenericController, ZScrollDelegate, ZGestureRecognizer
         }
 
         signalFor(nil, regarding: .preferences)
-        dragView?.setNeedsDisplay()
+        editorView?.setNeedsDisplay()
     }
 
 

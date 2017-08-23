@@ -213,9 +213,9 @@ extension NSView {
     func restartClickAndOtherGestureRecognizers(handledBy e: ZEditorController) {
         clearGestures()
 
-        e.rubberbandGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.rubberbandEvent))
-        e.clickGesture      = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
-        e.isDragging = false
+        e.movementGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
+        e.clickGesture    = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
+        e.isDragging      = false
     }
 }
 

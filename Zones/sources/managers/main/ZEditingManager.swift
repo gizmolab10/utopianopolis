@@ -586,7 +586,7 @@ class ZEditingManager: NSObject {
             if  zone == parent { // detect and avoid infinite recursion
                 finished(nil)
             } else {
-                deleteZone(zone, permanently: permanently) { iZone in
+                deleteZone(zone, permanently: permanently || zone.isFavorite) { iZone in
                     finished(iZone)
                 }
             }
@@ -650,8 +650,12 @@ class ZEditingManager: NSObject {
             gOperationsManager.bookmarks {
                 let bookmarks = gRemoteStoresManager.bookmarksFor(zone)
 
-                self.deleteZones(bookmarks, permanently: permanently) { iZone in // recurse
+                if bookmarks.count == 0 {
                     onCompletion?(grabThisZone)
+                } else {
+                    self.deleteZones(bookmarks, permanently: permanently) { iZone in // recurse
+                        onCompletion?(grabThisZone)
+                    }
                 }
             }
         }

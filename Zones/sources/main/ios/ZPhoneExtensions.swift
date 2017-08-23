@@ -199,7 +199,7 @@ extension UIView {
     func restartClickAndOtherGestureRecognizers(handledBy e: ZEditorController) {
         clearGestures()
 
-        // e.rubberbandGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.rubberbandEvent))
+        // e.movementGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
         e.swipeGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController.swipeEvent), direction: .left)
         e.clickGesture = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
         e.isDragging   = false
