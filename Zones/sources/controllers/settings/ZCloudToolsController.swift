@@ -76,6 +76,7 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     func recenter() {
+        gScaling      = 1.0
         gScrollOffset = CGPoint.zero
 
         gEditorController?.layoutForCurrentScrollOffset()

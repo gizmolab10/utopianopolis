@@ -160,6 +160,19 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
+    func casify(up: Bool) {
+        if let t = text {
+            if up {
+                text = t.uppercased()
+            } else {
+                text = t.lowercased()
+            }
+
+            updateGUI()
+        }
+    }
+    
+
     func prepareUndoForTextChange(_ manager: UndoManager?,_ onUndo: @escaping Closure) {
         if originalText != text {
             manager?.registerUndo(withTarget:self) { iUndoSelf in

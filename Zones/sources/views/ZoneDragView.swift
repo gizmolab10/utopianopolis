@@ -18,11 +18,13 @@ class ZoneDragView: NSView, ZGestureRecognizerDelegate {
 
 
     var rubberbandRect: CGRect?
-    var magnification = CGFloat(1.0)
 
 
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
+
+//        let        scale = CGFloat(gScaling)
+//        zlayer.transform = CATransform3DMakeScale(scale, scale, 1.0)
 
         if  let rect = rubberbandRect {
             gClearColor.setFill()
@@ -45,28 +47,21 @@ class ZoneDragView: NSView, ZGestureRecognizerDelegate {
     func updateMagnification(with event: ZEvent) {
         let      deltaY  = event.deltaY
         let  adjustment  = exp2(deltaY / 100.0)
-        magnification   *= adjustment
-        gScrollOffset.x *= adjustment
-        gScrollOffset.y *= adjustment
+        gScaling        *= Double(adjustment)
     }
 
 
     override func scrollWheel(with event: ZEvent) {
-        let isOption = event.modifierFlags.contains(.option)
-
-        if  isOption {
+        if  event.modifierFlags.contains(.command) {
             updateMagnification(with: event)
         } else {
-            let     multiply = 1.5 / magnification
+            let     multiply = CGFloat(1.5 * gScaling)
             gScrollOffset.x += event.deltaX * multiply
             gScrollOffset.y += event.deltaY * multiply
         }
 
         gEditorController?.layoutForCurrentScrollOffset()
-        gEditorController?.view.setNeedsDisplay()
-        //        contentView.scroll(to: gScrollOffset)
-
-        // columnarReport(" SCROLL", gScrollOffset)
+        gEditorView?.setNeedsDisplay()
     }
 
 

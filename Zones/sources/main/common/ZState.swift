@@ -167,6 +167,27 @@ var gCountsMode: ZCountsMode {
 }
 
 
+var gScaling: Double {
+    get {
+        var value: Double? = UserDefaults.standard.object(forKey: scalingKey) as? Double
+
+        if value == nil {
+            value = 1.00
+
+            UserDefaults.standard.set(value, forKey:scalingKey)
+            UserDefaults.standard.synchronize()
+        }
+
+        return value!
+    }
+
+    set {
+        UserDefaults.standard.set(newValue, forKey:scalingKey)
+        UserDefaults.standard.synchronize()
+    }
+}
+
+
 var gLineThickness: Double {
     get {
         var value: Double? = UserDefaults.standard.object(forKey: lineThicknessKey) as? Double
@@ -267,17 +288,18 @@ var gSettingsViewIDs: ZSettingsViewID {
 // MARK:-
 
 
-let     bookmarkColorKey = "bookmark color"
-let   backgroundColorKey = "background color"
-let  dragTargetsColorKey = "drag targets color"
-let insertionModeKey = "graph altering mode"
-let       storageModeKey = "current storage mode"
-let     settingsStateKey = "current settings state"
-let     tinyDotsRatioKey = "tiny dots ratio"
-let     lineThicknessKey = "line thickness"
-let     genericOffsetKey = "generic offset"
-let      scrollOffsetKey = "scroll offset"
-let        countsModeKey = "counts mode"
+let dragTargetsColorKey = "drag targets color"
+let  backgroundColorKey = "background color"
+let    settingsStateKey = "current settings state"
+let    insertionModeKey = "graph altering mode"
+let    tinyDotsRatioKey = "tiny dots ratio"
+let    bookmarkColorKey = "bookmark color"
+let    lineThicknessKey = "line thickness"
+let    genericOffsetKey = "generic offset"
+let     scrollOffsetKey = "scroll offset"
+let      storageModeKey = "current storage mode"
+let       countsModeKey = "counts mode"
+let          scalingKey = "scaling"
 
 
 func getColorForKey(_ key: String, defaultColor: ZColor) -> ZColor {

@@ -77,6 +77,7 @@ class ZEditingManager: NSObject {
                 case "r":         reverse()
                 case "p":         printHere()
                 case "b":         createBookmark()
+                case "u", "l":    casify(up: key == "u")
                 case ";":         doFavorites(true,    false)
                 case "'":         doFavorites(isShift, isOption)
                 case ",", ".":    gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
@@ -179,6 +180,15 @@ class ZEditingManager: NSObject {
 
     // MARK:- miscellaneous features
     // MARK:-
+
+
+    func casify(up: Bool) {
+        for grab in gSelectionManager.currentGrabs {
+            if let text = grab.widget?.textWidget {
+                text.casify(up: up)
+            }
+        }
+    }
 
 
     func find() {
