@@ -210,7 +210,7 @@ extension NSView {
     }
 
 
-    func restartClickAndOtherGestureRecognizers(handledBy e: ZEditorController) {
+    func restartClickAndOtherGestureRecognizers(handledBy e: ZGraphController) {
         clearGestures()
 
         e.movementGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))

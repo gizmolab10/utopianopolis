@@ -241,6 +241,9 @@
 		0CA04B631D2ECF41001892E5 /* PadZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */; };
 		0CA04B6E1D2ECF41001892E5 /* PadZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */; };
 		0CD9217A1D8F4C3200F80964 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CD921791D8F4C3200F80964 /* CloudKit.framework */; };
+		0CF6CAB11F54C5EC006AAE6E /* ZGraphController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF6CAB01F54C5EC006AAE6E /* ZGraphController.swift */; };
+		0CF6CAB21F54C5EC006AAE6E /* ZGraphController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF6CAB01F54C5EC006AAE6E /* ZGraphController.swift */; };
+		0CF6CAB31F54C5EC006AAE6E /* ZGraphController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF6CAB01F54C5EC006AAE6E /* ZGraphController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -426,6 +429,7 @@
 		0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PadZonesUITests.swift; sourceTree = "<group>"; };
 		0CA04B6F1D2ECF41001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0CD921791D8F4C3200F80964 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		0CF6CAB01F54C5EC006AAE6E /* ZGraphController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGraphController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -522,6 +526,7 @@
 			isa = PBXGroup;
 			children = (
 				0C39B2231F182EBB0091F4D1 /* ZEditorController.swift */,
+				0CF6CAB01F54C5EC006AAE6E /* ZGraphController.swift */,
 				0C39B2241F182EBB0091F4D1 /* ZMainController.swift */,
 				0C39B2251F182EBB0091F4D1 /* ZSearchController.swift */,
 				0C39B2261F182EBB0091F4D1 /* ZSearchResultsController.swift */,
@@ -1205,6 +1210,7 @@
 				0C39B28C1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
 				0C39B3521F182EBB0091F4D1 /* Dictionary+Operations.swift in Sources */,
 				0C39B2B91F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,
+				0CF6CAB11F54C5EC006AAE6E /* ZGraphController.swift in Sources */,
 				0C39B37C1F182EBB0091F4D1 /* OperationQueue.swift in Sources */,
 				0C39B2AD1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C39B3851F182EBB0091F4D1 /* ZoneTextWidget.swift in Sources */,
@@ -1295,6 +1301,7 @@
 				0C39B3181F182EBB0091F4D1 /* ZManifest.swift in Sources */,
 				0C39B2D91F182EBB0091F4D1 /* ZGenericTableController.swift in Sources */,
 				0C39B3661F182EBB0091F4D1 /* TimeoutObserver.swift in Sources */,
+				0CF6CAB31F54C5EC006AAE6E /* ZGraphController.swift in Sources */,
 				0C39B36F1F182EBB0091F4D1 /* GroupOperation.swift in Sources */,
 				0C39B3571F182EBB0091F4D1 /* NSLock+Operations.swift in Sources */,
 				0C39B3061F182EBB0091F4D1 /* ZTravelManager.swift in Sources */,
@@ -1378,6 +1385,7 @@
 				0C39B28D1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
 				0C39B3531F182EBB0091F4D1 /* Dictionary+Operations.swift in Sources */,
 				0C39B2BA1F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,
+				0CF6CAB21F54C5EC006AAE6E /* ZGraphController.swift in Sources */,
 				0C39B37D1F182EBB0091F4D1 /* OperationQueue.swift in Sources */,
 				0C39B2AE1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C39B3861F182EBB0091F4D1 /* ZoneTextWidget.swift in Sources */,

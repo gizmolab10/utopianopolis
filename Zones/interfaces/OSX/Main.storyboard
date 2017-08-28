@@ -447,6 +447,13 @@ CQ
                                             <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
                                         </connections>
                                     </containerView>
+                                    <containerView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8fA-4k-lrb">
+                                        <rect key="frame" x="0.0" y="146" width="108" height="109"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <connections>
+                                            <segue destination="i29-og-Irn" kind="embed" id="8d5-Fo-5gd"/>
+                                        </connections>
+                                    </containerView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="cYx-gW-vNV" secondAttribute="bottom" id="1Fv-XZ-4RS"/>
@@ -523,7 +530,7 @@ CQ
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="710.5" y="757"/>
+            <point key="canvasLocation" x="798" y="864"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
@@ -599,6 +606,19 @@ CQ
                 <customObject id="j6X-Bm-Ffa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-133" y="1153"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="OT3-fm-FUP">
+            <objects>
+                <viewController id="i29-og-Irn" sceneMemberID="viewController">
+                    <view key="view" id="eLr-xw-Fbe">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="sfF-Ay-uW2" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="797" y="627"/>
         </scene>
     </scenes>
 </document>
