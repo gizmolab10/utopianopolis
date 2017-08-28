@@ -101,7 +101,8 @@ class ZTravelManager: NSObject {
 
                 let grabHere = {
                     gHere.grab()
-                    gHere.maybeNeedChildren()
+                    gHere.needChildren()
+                    gHere.displayChildren()
                     atArrival(gHere, .redraw)
                 }
 

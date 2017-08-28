@@ -128,10 +128,10 @@ class ZFavoritesManager: ZCloudManager {
     }
 
 
-    func updateGrabAndIndexFor(_ iZone: Zone?) {
-        if iZone != nil {
-            updateIndexFor(iZone!) { object in
-                if let zone = object as? Zone {
+    func updateGrabAndIndexFor(_ iGrab: Zone?) {
+        if  let grab = iGrab {
+            updateIndexFor(grab) { object in
+                if  let zone = object as? Zone {
                     zone.grab()
                 }
             }

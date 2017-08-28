@@ -54,14 +54,19 @@ class ZEditingManager: NSObject {
 
 
     func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) {
-        if  let       key = iKey {
+        if  var       key = iKey {
             let    widget = gWidgetsManager.currentMovableWidget
             let isControl = flags.isControl
             let isCommand = flags.isCommand
             let  isOption = flags.isOption
-            let   isShift = flags.isShift
+            var   isShift = flags.isShift
             let hasWidget = widget != nil
             let     force = isOption || isWindow
+
+            if  key      != key.lowercased() {
+                key       = key.lowercased()
+                isShift   = true
+            }
 
             if  isEditing {
                 switch key {
@@ -77,7 +82,7 @@ class ZEditingManager: NSObject {
                 case "r":         reverse()
                 case "p":         printHere()
                 case "b":         createBookmark()
-                case "u", "l":    casify(up: key == "u")
+                case "u", "l":    alterCase(up: key == "u")
                 case ";":         doFavorites(true,    false)
                 case "'":         doFavorites(isShift, isOption)
                 case ",", ".":    gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
@@ -153,7 +158,10 @@ class ZEditingManager: NSObject {
 
     @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
         if !isEditing, iEvent != previousEvent, gWorkMode == .editMode {
-            handleKey( iEvent.key, flags: iEvent.modifierFlags, isWindow: isWindow)
+            let flags = iEvent.modifierFlags
+            let   key = iEvent.key
+
+            handleKey(key, flags: flags, isWindow: isWindow)
 
             return true
         }
@@ -164,14 +172,8 @@ class ZEditingManager: NSObject {
 
     func handleMenuItem(_ iItem: ZMenuItem?) {
         #if os(OSX)
-            var flags = (iItem?.keyEquivalentModifierMask)!
-            var   key = (iItem?.keyEquivalent)!
-
-            if key != key.lowercased() {
-                flags.insert(.shift)    // add isShift to flags
-
-                key = key.lowercased()
-            }
+            let   key = (iItem?.keyEquivalent)!
+            let flags = (iItem?.keyEquivalentModifierMask)!
 
             handleKey(key, flags: flags, isWindow: true)
         #endif
@@ -182,10 +184,10 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func casify(up: Bool) {
+    func alterCase(up: Bool) {
         for grab in gSelectionManager.currentGrabs {
             if let text = grab.widget?.textWidget {
-                text.casify(up: up)
+                text.alterCase(up: up)
             }
         }
     }

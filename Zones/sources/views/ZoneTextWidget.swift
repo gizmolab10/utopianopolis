@@ -160,14 +160,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-    func casify(up: Bool) {
-        if let t = text {
-            if up {
-                text = t.uppercased()
-            } else {
-                text = t.lowercased()
-            }
+    func alterCase(up: Bool) {
+        if  var t = text {
+            t = up ? t.uppercased() : t.lowercased()
 
+            assign(t, to: widget.widgetZone)
             updateGUI()
         }
     }
@@ -190,15 +187,16 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         widget.layoutTextField()
         widget.setNeedsDisplay()
     }
-    
 
-    func captureText(force: Bool) {
-        if !gTextCapturing || force, let zone = widget.widgetZone, zone.zoneName != text! {
-            gTextCapturing = true
 
-            let      assignTextTo = { (iZone: Zone?) in
-                if  let      zone = iZone, let components = self.text?.components(separatedBy: "  (") {
-                    zone.zoneName = components[0]
+    func assign(_ iText: String?, to iZone: Zone?) {
+        if  let t = iText, let zone = iZone {
+            gTextCapturing          = true
+
+            let        assignTextTo = { (iTarget: Zone?) in
+                if  let      target = iTarget {
+                    let  components = t.components(separatedBy: "  (")
+                    target.zoneName = components[0]
                 }
             }
 
@@ -217,10 +215,17 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 assignTextTo(bookmark)
                 signalFor(bookmark, regarding: .datum)
             }
-
+            
             redrawAndSync() {
                 gTextCapturing = false
             }
+        }
+    }
+
+
+    func captureText(force: Bool) {
+        if !gTextCapturing || force, let zone = widget.widgetZone, zone.zoneName != text! {
+            assign(text, to: zone)
         }
     }
 
