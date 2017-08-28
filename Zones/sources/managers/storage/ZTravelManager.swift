@@ -71,7 +71,9 @@ class ZTravelManager: NSObject {
                             gHere.record = iRecord!
 
                             gHere.grab()
+                            gHere.needChildren()
                             gHere.maybeNeedRoot()
+                            gHere.displayChildren()
                             self.travel {
                                 atArrival(gHere, .redraw)
                             }
