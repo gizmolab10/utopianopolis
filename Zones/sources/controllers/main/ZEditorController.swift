@@ -26,12 +26,14 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
     // MARK:-
     
 
-    var  rubberbandPreGrabs = [Zone] ()
-    var priorScrollLocation = CGPoint.zero
-    var     rubberbandStart = CGPoint.zero
-
-
-    override func identifier() -> ZControllerID { return .editor }
+    var        rubberbandPreGrabs = [Zone] ()
+    var       priorScrollLocation = CGPoint.zero
+    var           rubberbandStart = CGPoint.zero
+    override  var            here:  Zone          { return gHere }
+    override  var    controllerID:  ZControllerID { return .editor }
+    @IBOutlet var         spinner:  ZProgressIndicator?
+    @IBOutlet var favoritesWidth :  NSLayoutConstraint?
+    @IBOutlet var favoritesHeight:  NSLayoutConstraint?
 
 
     // MARK:- gestures
@@ -177,6 +179,21 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
 
         signalFor(nil, regarding: .preferences)
         editorView?.setNeedsDisplay()
+    }
+
+
+    // MARK:- spinner
+    // MARK:-
+
+
+    override func displayActivity(_ show: Bool) {
+        spinner?.isHidden = !show
+
+        if show {
+            spinner?.startAnimating()
+        } else {
+            spinner?.stopAnimating()
+        }
     }
 
 }

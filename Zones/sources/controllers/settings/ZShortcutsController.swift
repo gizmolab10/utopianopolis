@@ -19,10 +19,8 @@ import Foundation
 class ZShortcutsController: ZGenericTableController {
 
 
-    var tabStops = [NSTextTab]()
-
-
-    override func identifier() -> ZControllerID { return .shortcuts }
+    var              tabStops = [NSTextTab]()
+    override var controllerID:  ZControllerID { return .shortcuts }
 
 
     override func awakeFromNib() {

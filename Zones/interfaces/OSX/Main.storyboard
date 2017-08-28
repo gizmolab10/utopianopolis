@@ -374,25 +374,40 @@ CQ
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <viewController id="XfG-lQ-9wD" userLabel="Editor" customClass="ZEditorController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" identifier="drag view" id="m2S-Jp-Qdl" userLabel="Drag View" customClass="ZoneDragView" customModule="Focus" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="396" height="596"/>
+                    <view key="view" identifier="drag view" misplaced="YES" id="m2S-Jp-Qdl" userLabel="Drag View" customClass="ZoneDragView" customModule="Focus" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
-                                <rect key="frame" x="98" y="198" width="200" height="200"/>
+                                <rect key="frame" x="100" y="198" width="200" height="200"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="200" id="bAV-En-6Wv"/>
                                     <constraint firstAttribute="width" constant="200" id="vJp-G5-N5A"/>
                                 </constraints>
                             </progressIndicator>
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="8fA-4k-lrb" userLabel="Favorites View">
+                                <rect key="frame" x="0.0" y="396" width="400" height="200"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="400" id="WTf-8J-uOA"/>
+                                    <constraint firstAttribute="height" constant="200" id="xEQ-mS-ruW"/>
+                                </constraints>
+                                <connections>
+                                    <segue destination="i29-og-Irn" kind="embed" id="8d5-Fo-5gd"/>
+                                </connections>
+                            </containerView>
                         </subviews>
                         <constraints>
                             <constraint firstItem="uBD-4n-5KN" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="5bc-yZ-QEO"/>
+                            <constraint firstItem="8fA-4k-lrb" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="6ek-ec-8Tg"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="8fA-4k-lrb" secondAttribute="trailing" id="BHb-NN-qUM"/>
+                            <constraint firstItem="8fA-4k-lrb" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="TwZ-wM-Gkm"/>
                             <constraint firstItem="uBD-4n-5KN" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="VsQ-sf-Z2d"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="editorView" destination="m2S-Jp-Qdl" id="umk-vN-23n"/>
+                        <outlet property="favoritesHeight" destination="xEQ-mS-ruW" id="HV7-Vr-r5h"/>
+                        <outlet property="favoritesWidth" destination="WTf-8J-uOA" id="tIE-GL-pED"/>
                         <outlet property="spinner" destination="uBD-4n-5KN" id="l76-tc-ycD"/>
                     </connections>
                 </viewController>
@@ -445,13 +460,6 @@ CQ
                                         <rect key="frame" x="0.0" y="0.0" width="223" height="255"/>
                                         <connections>
                                             <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
-                                        </connections>
-                                    </containerView>
-                                    <containerView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8fA-4k-lrb">
-                                        <rect key="frame" x="0.0" y="146" width="108" height="109"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <connections>
-                                            <segue destination="i29-og-Irn" kind="embed" id="8d5-Fo-5gd"/>
                                         </connections>
                                     </containerView>
                                 </subviews>
@@ -530,7 +538,7 @@ CQ
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="798" y="864"/>
+            <point key="canvasLocation" x="697" y="757"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
@@ -607,18 +615,21 @@ CQ
             </objects>
             <point key="canvasLocation" x="-133" y="1153"/>
         </scene>
-        <!--View Controller-->
+        <!--Favorites-->
         <scene sceneID="OT3-fm-FUP">
             <objects>
-                <viewController id="i29-og-Irn" sceneMemberID="viewController">
-                    <view key="view" id="eLr-xw-Fbe">
+                <viewController id="i29-og-Irn" userLabel="Favorites" customClass="ZGraphController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="eLr-xw-Fbe" customClass="ZoneDragView" customModule="Focus" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </view>
+                    <connections>
+                        <outlet property="editorView" destination="eLr-xw-Fbe" id="P1b-fl-UwK"/>
+                    </connections>
                 </viewController>
                 <customObject id="sfF-Ay-uW2" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="797" y="627"/>
+            <point key="canvasLocation" x="1216" y="1466"/>
         </scene>
     </scenes>
 </document>

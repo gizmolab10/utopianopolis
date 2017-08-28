@@ -20,10 +20,8 @@ import CloudKit
 class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
 
-    @IBOutlet var searchBox: ZSearchField?
-    
-
-    override func identifier() -> ZControllerID { return .searchBox }
+    @IBOutlet var    searchBox: ZSearchField?
+    override  var controllerID: ZControllerID { return .searchBox }
 
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {

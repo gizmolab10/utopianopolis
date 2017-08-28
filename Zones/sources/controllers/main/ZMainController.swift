@@ -19,14 +19,12 @@ import SnapKit
 class ZMainController: ZGenericController {
 
 
+    override  var controllerID:      ZControllerID { return .main }
     @IBOutlet var searchBoxHeight:   NSLayoutConstraint?
     @IBOutlet var searchResultsView: ZView?
     @IBOutlet var searchBoxView:     ZView?
     @IBOutlet var overlaysView:      ZView?
     @IBOutlet var editorView:        ZView?
-
-
-    override func identifier() -> ZControllerID { return .main }
 
 
     override func awakeFromNib() {

@@ -17,10 +17,8 @@
 class ZSettingsController: ZGenericController {
 
 
-    @IBOutlet var stackView: NSStackView?
-
-    
-    override func identifier() -> ZControllerID { return .settings }
+    @IBOutlet var    stackView: NSStackView?
+    override  var controllerID: ZControllerID { return .settings }
 
 
     func displayViewFor(id: ZSettingsViewID) {

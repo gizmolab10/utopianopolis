@@ -19,14 +19,12 @@ import Foundation
 class ZInformationController: ZGenericController {
 
 
+    override  var     controllerID: ZControllerID { return .information }
     @IBOutlet var fractionInMemory: ZProgressIndicator?
     @IBOutlet var  totalCountLabel: ZTextField?
     @IBOutlet var   graphNameLabel: ZTextField?
     @IBOutlet var     versionLabel: ZTextField?
     @IBOutlet var       levelLabel: ZTextField?
-
-
-    override func identifier() -> ZControllerID { return .information }
 
 
     override func awakeFromNib() {

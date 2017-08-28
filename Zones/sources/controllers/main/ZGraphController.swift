@@ -23,18 +23,16 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
     // MARK:-
     
 
-    var draggedDot: ZoneDot? = nil
-    var           isDragging = false
-    var           hereWidget = ZoneWidget ()
-    let            doneState: [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
-    var         clickGesture:  ZGestureRecognizer?
-    var         swipeGesture:  ZGestureRecognizer?
-    var      movementGesture:  ZGestureRecognizer?
-    @IBOutlet var    spinner:  ZProgressIndicator?
-    @IBOutlet var editorView:  ZoneDragView?
-
-
-    override func identifier() -> ZControllerID { return .basic }
+    var   draggedDot: ZoneDot? = nil
+    var             isDragging = false
+    var             hereWidget = ZoneWidget ()
+    let              doneState: [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
+    var           clickGesture:  ZGestureRecognizer?
+    var           swipeGesture:  ZGestureRecognizer?
+    var        movementGesture:  ZGestureRecognizer?
+    var                   here:  Zone          { return gFavoritesManager.rootZone! }
+    override  var controllerID:  ZControllerID { return .basic }
+    @IBOutlet var   editorView:  ZoneDragView?
 
 
     // MARK:- gestures
@@ -59,7 +57,15 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
     }
 
 
-    func layoutForCurrentScrollOffset() {}
+    func layoutForCurrentScrollOffset() {
+        if let e = editorView {
+            hereWidget.snp.removeConstraints()
+            hereWidget.snp.makeConstraints { make in
+                make.centerY.equalTo(e)
+                make.centerX.equalTo(e)
+            }
+        }
+    }
 
 
     // MARK:- events
@@ -77,15 +83,17 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
                 var   specificView:      ZView? = editorView
                 var  specificindex:        Int? = nil
                 gTextCapturing                  = false
-                hereWidget          .widgetZone = gHere
+                hereWidget          .widgetZone = here
 
-                if  let       zone = object as? Zone, zone != gHere {
-                    specificWidget = zone.widget
-                    specificindex  = zone.siblingIndex
-                    specificView   = specificWidget?.superview
-                    recursing      = [.data, .redraw].contains(kind)
-                } else {
-                    gWidgetsManager.widgets.removeAll()
+                if      controllerID  != .basic {
+                    if  let       zone = object as? Zone, zone != here {
+                        specificWidget = zone.widget
+                        specificindex  = zone.siblingIndex
+                        specificView   = specificWidget?.superview
+                        recursing      = [.data, .redraw].contains(kind)
+                    } else {
+                        gWidgetsManager.widgets.removeAll()
+                    }
                 }
 
                 note("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")
@@ -191,7 +199,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
 
             note("d --- d")
 
-            if  zone == gHere {
+            if  zone == here {
                 restartDragHandling()
             } else if let            location = iGesture?.location(in: dot) {
                 dot.dragStart                 = location
@@ -221,7 +229,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
             let   draggedZone = s.rootMostMoveable
             var      dropZone = dropNearest.widgetZone
             let     dropIndex = dropZone?.siblingIndex
-            let      dropHere = dropZone == gHere
+            let      dropHere = dropZone == here
             let          same = s.currentGrabs.contains(dropZone!)
             let      relation = relationOf(location, to: dropNearest.textWidget)
             let useDropParent = relation != .upon && !dropHere
@@ -286,7 +294,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
     func dotsHitTest(_ location: CGPoint) -> ZoneDot? {
         var        hit: ZoneDot? = nil
 
-        gHere.traverseProgeny { iZone -> ZTraverseStatus in
+        here.traverseProgeny { iZone -> ZTraverseStatus in
             if  let       widget = iZone.widget {
                 var         rect = widget.outerHitRect
                 rect             = widget.convert(rect, to: editorView)
@@ -363,20 +371,5 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
         }
 
         return relation
-    }
-    
-
-    // MARK:- spinner
-    // MARK:-
-    
-
-    override func displayActivity(_ show: Bool) {
-        spinner?.isHidden = !show
-
-        if show {
-            spinner?.startAnimating()
-        } else {
-            spinner?.stopAnimating()
-        }
     }
 }

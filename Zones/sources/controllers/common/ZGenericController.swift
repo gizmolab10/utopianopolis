@@ -19,24 +19,22 @@ import Foundation
 protocol ZGenericControllerProtocol {
 
     func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind)
-    func identifier() -> ZControllerID
     func displayActivity(_ show: Bool)
     func setup()
 }
 
 
 class ZGenericController: ZController, ZGenericControllerProtocol {
-    func identifier() -> ZControllerID { return .undefined }
+    var controllerID:  ZControllerID { return .undefined }
     override func awakeFromNib() { view.zlayer.backgroundColor = gBackgroundColor.cgColor }
     func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {}
     func displayActivity(_ show: Bool) {}
 
 
     func setup() {
-        let                identity = identifier()
         view.zlayer.backgroundColor = gBackgroundColor.cgColor
 
-        gControllersManager.register(self, iID: identity) { object, mode, kind in
+        gControllersManager.register(self, iID: controllerID) { object, mode, kind in
             if kind != .error {
                 self.handleSignal(object, in: mode, kind: kind)
             }

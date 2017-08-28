@@ -40,7 +40,7 @@ class ZFavoritesController: ZGenericController {
     }
 
 
-    override func identifier() -> ZControllerID { return .favorites }
+    override let controllerID = ZControllerID.favorites
 
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {

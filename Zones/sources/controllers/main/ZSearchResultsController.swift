@@ -20,13 +20,11 @@ import CloudKit
 class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTableViewDelegate {
 
 
-    @IBOutlet var tableView: ZTableView?
-    var   resultsAreVisible = false
-    var        foundRecords = [CKRecord] ()
-    var             monitor: Any?
-
-
-    override func identifier() -> ZControllerID { return .searchResults }
+    var      resultsAreVisible = false
+    var           foundRecords = [CKRecord] ()
+    var                monitor: Any?
+    override  var controllerID: ZControllerID { return .searchResults }
+    @IBOutlet var    tableView: ZTableView?
 
 
     override func handleSignal(_ iObject: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {

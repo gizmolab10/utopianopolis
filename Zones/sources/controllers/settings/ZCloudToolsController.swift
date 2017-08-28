@@ -28,7 +28,7 @@ class ZCloudToolsController: ZGenericTableController {
     }
     
 
-    override func identifier() -> ZControllerID { return .cloudTools }
+    override  var controllerID: ZControllerID { return .cloudTools }
     override func numberOfRows(in tableView: ZTableView) -> Int { return 3 }
 
 

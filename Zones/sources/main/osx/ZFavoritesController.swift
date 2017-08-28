@@ -14,7 +14,7 @@ import Cocoa
 class ZFavoritesController: ZGenericTableController {
 
 
-    override func identifier() -> ZControllerID { return .favorites }
+    override var controllerID: ZControllerID { return .favorites }
 
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {

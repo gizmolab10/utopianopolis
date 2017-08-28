@@ -29,9 +29,7 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var            thickness: ZSlider?
     @IBOutlet var     clearColorButton: ZButton?
     @IBOutlet var           ideasLabel: ZTextField?
-
-
-    override func identifier() -> ZControllerID { return .preferences }
+    override  var         controllerID: ZControllerID { return .preferences }
 
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
