@@ -31,7 +31,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
     var           swipeGesture:  ZGestureRecognizer?
     var        movementGesture:  ZGestureRecognizer?
     var                   here:  Zone          { return gFavoritesManager.rootZone! }
-    override  var controllerID:  ZControllerID { return .basic }
+    override  var controllerID:  ZControllerID { return .favorites }
     @IBOutlet var   editorView:  ZoneDragView?
 
 
@@ -85,15 +85,17 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
                 gTextCapturing                  = false
                 hereWidget          .widgetZone = here
 
-                if      controllerID  != .basic {
-                    if  let       zone = object as? Zone, zone != here {
-                        specificWidget = zone.widget
-                        specificindex  = zone.siblingIndex
-                        specificView   = specificWidget?.superview
-                        recursing      = [.data, .redraw].contains(kind)
-                    } else {
-                        gWidgetsManager.widgets.removeAll()
+                if controllerID  == .favorites {
+                    let here = gRemoteStoresManager.manifest(for: storageMode).hereZone
+
+                    gFavoritesManager.updateIndexFor(here) { object in
+                        gFavoritesManager.update()
                     }
+                } else if let zone = object as? Zone, zone != here {
+                    specificWidget = zone.widget
+                    specificindex  = zone.siblingIndex
+                    specificView   = specificWidget?.superview
+                    recursing      = [.data, .redraw].contains(kind)
                 }
 
                 note("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")

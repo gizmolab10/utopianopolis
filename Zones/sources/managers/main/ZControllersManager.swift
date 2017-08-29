@@ -20,7 +20,6 @@ enum ZControllerID: Int {
     case shortcuts
     case settings
     case editor
-    case basic
     case help
     case main
 }

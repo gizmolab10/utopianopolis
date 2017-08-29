@@ -162,77 +162,6 @@
             </objects>
             <point key="canvasLocation" x="-179" y="2117"/>
         </scene>
-        <!--Favorites Controller-->
-        <scene sceneID="Bla-9d-qST">
-            <objects>
-                <viewController id="WJQ-Hc-Frf" customClass="ZFavoritesController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="OQl-Rg-fWx">
-                        <rect key="frame" x="0.0" y="0.0" width="225" height="22"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <scrollView focusRingType="none" borderType="none" autohidesScrollers="YES" horizontalLineScroll="20" horizontalPageScroll="10" verticalLineScroll="20" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="deU-tX-kQ6" userLabel="Favorites Table">
-                                <rect key="frame" x="0.0" y="0.0" width="225" height="22"/>
-                                <clipView key="contentView" focusRingType="none" drawsBackground="NO" copiesOnScroll="NO" id="fOn-Uj-nrL">
-                                    <rect key="frame" x="0.0" y="0.0" width="225" height="22"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" id="c2R-gh-hja">
-                                            <rect key="frame" x="0.0" y="0.0" width="225" height="22"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <size key="intercellSpacing" width="3" height="0.0"/>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                            <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
-                                            <tableColumns>
-                                                <tableColumn width="222" minWidth="40" maxWidth="1000" id="P6K-M0-aGF">
-                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="smallSystem"/>
-                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
-                                                    </tableHeaderCell>
-                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" continuous="YES" sendsActionOnEndEditing="YES" title="Text" id="7TQ-PP-fQO">
-                                                        <font key="font" metaFont="system" size="15"/>
-                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                </tableColumn>
-                                            </tableColumns>
-                                            <connections>
-                                                <outlet property="dataSource" destination="WJQ-Hc-Frf" id="frK-wm-X2p"/>
-                                                <outlet property="delegate" destination="WJQ-Hc-Frf" id="yeV-a9-Dhq"/>
-                                            </connections>
-                                        </tableView>
-                                    </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </clipView>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="22" id="9W0-E2-mpL"/>
-                                </constraints>
-                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="izF-XB-qeb">
-                                    <rect key="frame" x="-100" y="-100" width="223" height="15"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </scroller>
-                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="3RT-Jy-39u">
-                                    <rect key="frame" x="-100" y="-100" width="15" height="102"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </scroller>
-                            </scrollView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="deU-tX-kQ6" secondAttribute="trailing" id="9Lj-gQ-CJ8"/>
-                            <constraint firstAttribute="bottom" secondItem="deU-tX-kQ6" secondAttribute="bottom" id="JK6-H1-Os7"/>
-                            <constraint firstItem="deU-tX-kQ6" firstAttribute="top" secondItem="OQl-Rg-fWx" secondAttribute="top" id="Pqm-49-Qqk"/>
-                            <constraint firstItem="deU-tX-kQ6" firstAttribute="leading" secondItem="OQl-Rg-fWx" secondAttribute="leading" id="Upa-Z1-mIJ"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="tableHeight" destination="9W0-E2-mpL" id="Shw-GW-5H2"/>
-                        <outlet property="tableView" destination="c2R-gh-hja" id="xdd-i7-sGd"/>
-                    </connections>
-                </viewController>
-                <customObject id="cj3-ef-MhK" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-179" y="1685"/>
-        </scene>
         <!--Settings Controller-->
         <scene sceneID="Tae-az-4mZ">
             <objects>
@@ -242,10 +171,10 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="0.0" width="226" height="681"/>
+                                <rect key="frame" x="0.0" y="51" width="226" height="630"/>
                                 <subviews>
                                     <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="567" width="226" height="114"/>
+                                        <rect key="frame" x="0.0" y="516" width="226" height="114"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="95" width="226" height="19"/>
@@ -305,69 +234,6 @@
                                             <outlet property="hideableView" destination="Chx-83-qGo" id="Qre-NM-FhC"/>
                                             <outlet property="titleLabel" destination="ce9-hv-nUx" id="9bP-eX-B0O"/>
                                             <outlet property="toggleButton" destination="hIy-eV-7gW" id="Pdh-ir-ANX"/>
-                                        </connections>
-                                    </customView>
-                                    <customView identifier="favorites" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="47v-DX-fSo" userLabel="Favorites View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="516" width="226" height="50"/>
-                                        <subviews>
-                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DdL-Cp-gGl" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="31" width="226" height="19"/>
-                                                <subviews>
-                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hl5-AS-GCf">
-                                                        <rect key="frame" x="0.0" y="1" width="226" height="17"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="17" id="RLV-US-bib"/>
-                                                        </constraints>
-                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Favorites" drawsBackground="YES" id="d9E-51-w6L">
-                                                            <font key="font" metaFont="system"/>
-                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                            <color key="backgroundColor" name="highlightColor" catalog="System" colorSpace="catalog"/>
-                                                        </textFieldCell>
-                                                    </textField>
-                                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="Rej-x2-EK2" userLabel="Triangle Button">
-                                                        <rect key="frame" x="204" y="3" width="14" height="14"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="14" id="Buz-h6-NJ0"/>
-                                                            <constraint firstAttribute="height" constant="14" id="ucP-3K-5dL"/>
-                                                        </constraints>
-                                                        <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="plJ-dB-QH8">
-                                                            <behavior key="behavior" lightByContents="YES"/>
-                                                            <font key="font" metaFont="cellTitle"/>
-                                                        </buttonCell>
-                                                        <connections>
-                                                            <action selector="toggleAction:" target="47v-DX-fSo" id="djQ-Tq-Vpl"/>
-                                                        </connections>
-                                                    </button>
-                                                </subviews>
-                                                <constraints>
-                                                    <constraint firstItem="hl5-AS-GCf" firstAttribute="centerY" secondItem="DdL-Cp-gGl" secondAttribute="centerY" id="0wK-1g-ruI"/>
-                                                    <constraint firstItem="hl5-AS-GCf" firstAttribute="leading" secondItem="DdL-Cp-gGl" secondAttribute="leading" id="3lh-1G-70e"/>
-                                                    <constraint firstAttribute="trailing" secondItem="hl5-AS-GCf" secondAttribute="trailing" id="N2L-db-Unv"/>
-                                                    <constraint firstAttribute="trailing" secondItem="Rej-x2-EK2" secondAttribute="trailing" constant="8" id="bIP-Ta-0zK"/>
-                                                    <constraint firstAttribute="height" constant="19" id="cMv-2Y-f8n"/>
-                                                    <constraint firstItem="Rej-x2-EK2" firstAttribute="centerY" secondItem="DdL-Cp-gGl" secondAttribute="centerY" id="gAl-2e-HVH"/>
-                                                </constraints>
-                                            </customView>
-                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JLI-sK-Rpb" userLabel="Favorites">
-                                                <rect key="frame" x="0.0" y="0.0" width="226" height="17"/>
-                                                <connections>
-                                                    <segue destination="WJQ-Hc-Frf" kind="embed" id="WPe-tx-t0D"/>
-                                                </connections>
-                                            </containerView>
-                                        </subviews>
-                                        <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="JLI-sK-Rpb" secondAttribute="trailing" id="4Gn-Ls-8Qo"/>
-                                            <constraint firstItem="DdL-Cp-gGl" firstAttribute="top" secondItem="47v-DX-fSo" secondAttribute="top" id="K5V-wM-zPe"/>
-                                            <constraint firstAttribute="trailing" secondItem="DdL-Cp-gGl" secondAttribute="trailing" id="WKS-ZQ-Q9r"/>
-                                            <constraint firstItem="DdL-Cp-gGl" firstAttribute="leading" secondItem="47v-DX-fSo" secondAttribute="leading" id="dTP-MB-88n"/>
-                                            <constraint firstItem="JLI-sK-Rpb" firstAttribute="leading" secondItem="47v-DX-fSo" secondAttribute="leading" id="eK2-mV-2Rz"/>
-                                            <constraint firstAttribute="bottom" secondItem="JLI-sK-Rpb" secondAttribute="bottom" id="td3-Nn-vDP"/>
-                                            <constraint firstItem="JLI-sK-Rpb" firstAttribute="top" secondItem="DdL-Cp-gGl" secondAttribute="bottom" id="vie-kJ-9Kd"/>
-                                        </constraints>
-                                        <connections>
-                                            <outlet property="hideableView" destination="JLI-sK-Rpb" id="nm8-4h-vok"/>
-                                            <outlet property="titleLabel" destination="hl5-AS-GCf" id="Wyq-AT-QLT"/>
-                                            <outlet property="toggleButton" destination="Rej-x2-EK2" id="dCi-1u-OXh"/>
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
@@ -563,17 +429,14 @@
                                 <constraints>
                                     <constraint firstItem="M2W-8y-R0e" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="5vd-TT-dHx"/>
                                     <constraint firstAttribute="trailing" secondItem="M2W-8y-R0e" secondAttribute="trailing" id="CkC-Ah-hqH"/>
-                                    <constraint firstItem="47v-DX-fSo" firstAttribute="top" secondItem="M2W-8y-R0e" secondAttribute="bottom" constant="1" id="Dig-8W-Bhq"/>
-                                    <constraint firstAttribute="trailing" secondItem="47v-DX-fSo" secondAttribute="trailing" id="G15-Zp-pSb"/>
                                     <constraint firstItem="9j5-fI-wCz" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="NFa-oz-tCT"/>
                                     <constraint firstItem="E5h-DF-X3i" firstAttribute="top" secondItem="q69-Nq-Tsm" secondAttribute="bottom" constant="1" id="QeE-0M-0Gx"/>
                                     <constraint firstItem="q69-Nq-Tsm" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="Sns-ea-bR9"/>
                                     <constraint firstAttribute="trailing" secondItem="q69-Nq-Tsm" secondAttribute="trailing" id="ZUC-ce-LOv"/>
                                     <constraint firstItem="E5h-DF-X3i" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="cyO-Ii-0Xy"/>
+                                    <constraint firstItem="9j5-fI-wCz" firstAttribute="top" secondItem="M2W-8y-R0e" secondAttribute="bottom" constant="1" id="jx7-R7-0wq"/>
                                     <constraint firstAttribute="trailing" secondItem="E5h-DF-X3i" secondAttribute="trailing" id="oIo-qu-CvC"/>
-                                    <constraint firstItem="47v-DX-fSo" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="og2-7V-vmf"/>
                                     <constraint firstAttribute="trailing" secondItem="9j5-fI-wCz" secondAttribute="trailing" id="pCn-yA-AaQ"/>
-                                    <constraint firstItem="9j5-fI-wCz" firstAttribute="top" secondItem="47v-DX-fSo" secondAttribute="bottom" constant="1" id="qXd-uI-hKe"/>
                                     <constraint firstItem="q69-Nq-Tsm" firstAttribute="top" secondItem="9j5-fI-wCz" secondAttribute="bottom" constant="1" id="rQ6-e2-FQr"/>
                                 </constraints>
                                 <visibilityPriorities>
@@ -581,10 +444,8 @@
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
-                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
-                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>

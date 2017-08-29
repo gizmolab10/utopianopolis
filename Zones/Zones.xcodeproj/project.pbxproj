@@ -65,7 +65,6 @@
 		0C39B2CE1F182EBB0091F4D1 /* ZPhoneExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B23C1F182EBB0091F4D1 /* ZPhoneExtensions.swift */; };
 		0C39B2CF1F182EBB0091F4D1 /* ZPhoneExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B23C1F182EBB0091F4D1 /* ZPhoneExtensions.swift */; };
 		0C39B2D31F182EBB0091F4D1 /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B23F1F182EBB0091F4D1 /* ZAppDelegate.swift */; };
-		0C39B2D61F182EBB0091F4D1 /* ZFavoritesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2401F182EBB0091F4D1 /* ZFavoritesController.swift */; };
 		0C39B2D91F182EBB0091F4D1 /* ZGenericTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2411F182EBB0091F4D1 /* ZGenericTableController.swift */; };
 		0C39B2DC1F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2421F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift */; };
 		0C39B2E21F182EBB0091F4D1 /* ZonesExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2441F182EBB0091F4D1 /* ZonesExtensions.swift */; };
@@ -340,7 +339,6 @@
 		0C39B23B1F182EBB0091F4D1 /* ZPhoneController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZPhoneController.swift; sourceTree = "<group>"; };
 		0C39B23C1F182EBB0091F4D1 /* ZPhoneExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZPhoneExtensions.swift; sourceTree = "<group>"; };
 		0C39B23F1F182EBB0091F4D1 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
-		0C39B2401F182EBB0091F4D1 /* ZFavoritesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFavoritesController.swift; sourceTree = "<group>"; };
 		0C39B2411F182EBB0091F4D1 /* ZGenericTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGenericTableController.swift; sourceTree = "<group>"; };
 		0C39B2421F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGestureAndKeyRecognizer.swift; sourceTree = "<group>"; };
 		0C39B2441F182EBB0091F4D1 /* ZonesExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZonesExtensions.swift; sourceTree = "<group>"; };
@@ -587,7 +585,6 @@
 			isa = PBXGroup;
 			children = (
 				0C39B23F1F182EBB0091F4D1 /* ZAppDelegate.swift */,
-				0C39B2401F182EBB0091F4D1 /* ZFavoritesController.swift */,
 				0C39B2411F182EBB0091F4D1 /* ZGenericTableController.swift */,
 				0C39B2421F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift */,
 				0C39B2441F182EBB0091F4D1 /* ZonesExtensions.swift */,
@@ -1341,7 +1338,6 @@
 				0C39B3601F182EBB0091F4D1 /* BlockObserver.swift in Sources */,
 				0C39B2AC1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
 				0C39B3511F182EBB0091F4D1 /* CKContainer+Operations.swift in Sources */,
-				0C39B2D61F182EBB0091F4D1 /* ZFavoritesController.swift in Sources */,
 				0C39B32A1F182EBB0091F4D1 /* HealthCondition.swift in Sources */,
 				0C39B3481F182EBB0091F4D1 /* RemoteNotificationCondition.swift in Sources */,
 				0C39B2A31F182EBB0091F4D1 /* ZPreferencesController.swift in Sources */,
