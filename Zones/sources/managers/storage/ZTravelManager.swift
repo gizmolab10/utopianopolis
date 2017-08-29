@@ -40,7 +40,6 @@ class ZTravelManager: NSObject {
     func travel(_ atArrival: @escaping Closure) {
         createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
 
-        gWidgetsManager   .clearWidgets()
         gSelectionManager .clearEdit()
         gOperationsManager.travel(atArrival)
     }

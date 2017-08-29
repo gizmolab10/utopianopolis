@@ -14,20 +14,23 @@ import CloudKit
 class ZWidgetsManager: NSObject {
 
 
-    var      widgets = [Int : ZoneWidget] ()
+    var widgets = [ZStorageMode : [Int : ZoneWidget]] ()
     var currentEditingWidget: ZoneWidget? { return widgetForZone(gSelectionManager.currentlyEditingZone) }
     var currentMovableWidget: ZoneWidget? { return widgetForZone(gSelectionManager.currentMoveable) }
     var firstGrabbableWidget: ZoneWidget? { return widgetForZone(gSelectionManager.firstGrab) }
 
 
-    func clearWidgets() {
-        widgets.removeAll()
-    }
-
-
     func registerWidget(_ widget: ZoneWidget) {
-        if let zone = widget.widgetZone {
-            widgets[zone.hash] = widget
+        if  let                      zone = widget.widgetZone,
+            let                      mode = mode(for: zone) {
+            var dict: [Int : ZoneWidget]? = widgets[mode]
+
+            if dict == nil {
+                dict = [:]
+            }
+
+            dict![zone.hash] = widget
+            widgets[mode]    = dict
         }
     }
 
@@ -36,14 +39,32 @@ class ZWidgetsManager: NSObject {
 
         // only unlink the zone from its current widget
 
-        if let zone = widget.widgetZone, widgets[zone.hash] == widget {
-            widgets[zone.hash] = nil
+        if  let zone = widget.widgetZone, let mode = zone.storageMode, var dict = widgets[mode] {
+            dict[zone.hash] = nil
+            widgets[mode]   = dict
         }
     }
 
 
     func widgetForZone(_ zone: Zone?) -> ZoneWidget? {
-        return zone == nil ? nil : widgets[zone!.hash]
+        if  let mode = mode(for: zone), var dict = widgets[mode] {
+            return dict[zone!.hash]
+        }
+
+        return nil
+    }
+
+
+    func mode(for iZone: Zone?) -> ZStorageMode? {
+        if let zone = iZone {
+            if zone.isFavorite {
+                return .favorites
+            }
+
+            return zone.storageMode
+        }
+
+        return nil
     }
 
 }

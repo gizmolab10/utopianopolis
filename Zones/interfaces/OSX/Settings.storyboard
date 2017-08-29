@@ -90,7 +90,7 @@
                 </viewController>
                 <customObject id="wYh-I6-Wpi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-179" y="1557"/>
+            <point key="canvasLocation" x="-280" y="1619"/>
         </scene>
         <!--Cloud Tools Controller-->
         <scene sceneID="OQa-jH-o6A">
@@ -160,18 +160,18 @@
                 </viewController>
                 <customObject id="yrI-wS-bc9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-179" y="2117"/>
+            <point key="canvasLocation" x="-280" y="2116"/>
         </scene>
         <!--Settings Controller-->
         <scene sceneID="Tae-az-4mZ">
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZSettingsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="681"/>
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="630"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="51" width="226" height="630"/>
+                                <rect key="frame" x="0.0" y="0.0" width="226" height="630"/>
                                 <subviews>
                                     <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="516" width="226" height="114"/>
@@ -427,6 +427,7 @@
                                     </customView>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="E5h-DF-X3i" secondAttribute="bottom" id="5D1-w2-r2e"/>
                                     <constraint firstItem="M2W-8y-R0e" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="5vd-TT-dHx"/>
                                     <constraint firstAttribute="trailing" secondItem="M2W-8y-R0e" secondAttribute="trailing" id="CkC-Ah-hqH"/>
                                     <constraint firstItem="9j5-fI-wCz" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="NFa-oz-tCT"/>
@@ -455,7 +456,7 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="1wo-H2-e9s" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" id="1WF-pU-wVa"/>
-                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="1wo-H2-e9s" secondAttribute="bottom" id="GHX-xZ-f6z"/>
+                            <constraint firstItem="1wo-H2-e9s" firstAttribute="bottom" relation="lessThanOrEqual" secondItem="3tA-Ue-bZS" secondAttribute="bottom" id="GHX-xZ-f6z"/>
                             <constraint firstAttribute="trailing" secondItem="1wo-H2-e9s" secondAttribute="trailing" id="NxT-zU-3MZ"/>
                             <constraint firstItem="1wo-H2-e9s" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" id="zRX-tf-U45"/>
                         </constraints>
@@ -466,7 +467,7 @@
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-646" y="1870.5"/>
+            <point key="canvasLocation" x="-646" y="1842"/>
         </scene>
         <!--Preferences Controller-->
         <scene sceneID="n3v-Vu-MZq">
@@ -701,7 +702,7 @@
                                                     </textFieldCell>
                                                 </textField>
                                                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Qp-4d-Tu8" userLabel="clearColor">
-                                                    <rect key="frame" x="15" y="40" width="60" height="27"/>
+                                                    <rect key="frame" x="4" y="40" width="60" height="27"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="Qdx-4o-Snx"/>
                                                         <constraint firstAttribute="width" constant="50" id="nGj-dM-TOd"/>
@@ -720,7 +721,7 @@
                                                 <constraint firstItem="fgs-5f-km9" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="6nD-Gc-a9b"/>
                                                 <constraint firstItem="g4o-CN-FHf" firstAttribute="top" secondItem="G62-eE-NOU" secondAttribute="top" constant="3" id="9xm-Zh-Gru"/>
                                                 <constraint firstItem="g4o-CN-FHf" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="Q1m-nX-Qo9"/>
-                                                <constraint firstItem="0Qp-4d-Tu8" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" constant="20" id="TFy-mJ-vED"/>
+                                                <constraint firstItem="0Qp-4d-Tu8" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" constant="9" id="TFy-mJ-vED"/>
                                                 <constraint firstAttribute="bottom" secondItem="fgs-5f-km9" secondAttribute="bottom" constant="3" id="WDX-fm-gxs"/>
                                                 <constraint firstItem="fgs-5f-km9" firstAttribute="top" secondItem="C6V-CX-uWP" secondAttribute="bottom" constant="5" id="Zd2-Fg-uSe"/>
                                                 <constraint firstItem="0Qp-4d-Tu8" firstAttribute="top" secondItem="G62-eE-NOU" secondAttribute="top" constant="4" id="dOT-bX-dRm"/>
@@ -821,7 +822,7 @@
                 </viewController>
                 <customObject id="JO0-BM-25B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-179" y="1896"/>
+            <point key="canvasLocation" x="-279" y="1895"/>
         </scene>
         <!--Shortcuts Controller-->
         <scene sceneID="45A-WG-zgj">
@@ -892,7 +893,7 @@
                 </viewController>
                 <customObject id="rFs-5G-ygd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-179" y="2196"/>
+            <point key="canvasLocation" x="-646" y="2267"/>
         </scene>
     </scenes>
     <resources>

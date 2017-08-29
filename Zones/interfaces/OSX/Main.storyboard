@@ -374,7 +374,7 @@ CQ
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <viewController id="XfG-lQ-9wD" userLabel="Editor" customClass="ZEditorController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" identifier="drag view" misplaced="YES" id="m2S-Jp-Qdl" userLabel="Drag View" customClass="ZoneDragView" customModule="Focus" customModuleProvider="target">
+                    <view key="view" identifier="drag view" id="m2S-Jp-Qdl" userLabel="Drag View" customClass="ZoneDragView" customModule="Focus" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
@@ -413,7 +413,7 @@ CQ
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="684" y="1466"/>
+            <point key="canvasLocation" x="684.5" y="1466"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">

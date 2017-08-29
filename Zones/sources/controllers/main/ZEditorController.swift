@@ -161,20 +161,24 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
             restartDragHandling()
         } else {
             editorView?.rubberbandRect = rect
+            let                   mode = gCloudManager.storageMode
 
             gSelectionManager.deselectGrabs(retaining: rubberbandPreGrabs)
 
-            for widget in gWidgetsManager.widgets.values {
-                if  let    hitRect = widget.hitRect {
-                    let widgetRect = widget.convert(hitRect, to: editorView)
+            if let             widgets = gWidgetsManager.widgets[mode]?.values {
 
-                    if  widgetRect.intersects(rect!) {
-                        widget.widgetZone.addToGrab()
+                for widget in widgets {
+                    if  let    hitRect = widget.hitRect {
+                        let widgetRect = widget.convert(hitRect, to: editorView)
+
+                        if  widgetRect.intersects(rect!) {
+                            widget.widgetZone.addToGrab()
+                        }
                     }
                 }
+                
+                hereWidget.setNeedsDisplay()
             }
-
-            hereWidget.setNeedsDisplay()
         }
 
         signalFor(nil, regarding: .preferences)
