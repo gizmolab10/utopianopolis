@@ -739,39 +739,41 @@ class ZEditingManager: NSObject {
             // MOVE GRAB //
             ///////////////
 
-            if zone.isRoot {
-                gFavoritesManager.showFavoritesAndGrab(zone) { object, kind in
-                    self.redrawAndSync()
-                }
-            } else if !extreme {
-                if zone == gHere || parent == nil {
-                    revealParentAndSiblingsOf(zone) {
-                        if  let ancestor = gHere.parentZone {
-                            ancestor.grab()
-                            self.revealSiblingsOf(gHere, untilReaching: ancestor)
+            if !(parent?.isRootOfFavorites ?? false) {
+                if zone.isRoot {
+                    gFavoritesManager.showFavoritesAndGrab(zone) { object, kind in
+                        self.redrawAndSync()
+                    }
+                } else if !extreme {
+                    if zone == gHere || parent == nil {
+                        revealParentAndSiblingsOf(zone) {
+                            if  let ancestor = gHere.parentZone {
+                                ancestor.grab()
+                                self.revealSiblingsOf(gHere, untilReaching: ancestor)
+                            }
+                        }
+                    } else if let p = parent {
+                        p.displayChildren()
+                        p.needChildren()
+
+                        gOperationsManager.children(.restore) {
+                            p.grab()
+                            self.signalFor(p, regarding: .redraw)
                         }
                     }
-                } else if let p = parent {
-                    p.displayChildren()
-                    p.needChildren()
+                } else if !gHere.isRoot {
+                    let here = gHere // revealRoot changes gHere, so nab it first
 
-                    gOperationsManager.children(.restore) {
-                        p.grab()
-                        self.signalFor(p, regarding: .redraw)
+                    zone.grab()
+
+                    revealRoot {
+                        self.revealSiblingsOf(here, untilReaching: gRoot!)
                     }
+                } else if !zone.isRoot {
+                    gHere = zone
+                    
+                    self.redrawAndSync()
                 }
-            } else if !gHere.isRoot {
-                let here = gHere // revealRoot changes gHere, so nab it first
-
-                zone.grab()
-
-                revealRoot {
-                    self.revealSiblingsOf(here, untilReaching: gRoot!)
-                }
-            } else if !zone.isRoot {
-                gHere = zone
-
-                self.redrawAndSync()
             }
         } else if zone.storageMode != .favorites {
 

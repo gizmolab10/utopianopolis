@@ -29,13 +29,14 @@ let unselectBrightness: CGFloat = 0.98
 #endif
 
 
-let  gFirstFavoriteIndex = -1
 let             gUnlevel = -1
 let          gLogTabStop = 15
-let       gFingerBreadth = CGFloat(33.0)
-let    gDefaultZoneColor = ZColor.blue
 let          gWidgetFont = ZFont.systemFont(ofSize: fontSize)
-let  gSelectedWidgetFont = ZFont.systemFont(ofSize: fontSize) // .boldSystemFont(ofSize: fontSize * 0.93)
+let       gFavoritesFont = ZFont.systemFont(ofSize: fontSize * gReductionRatio)
+let       gFingerBreadth = CGFloat(33.0)
+let      gReductionRatio = CGFloat(0.8)
+let    gDefaultZoneColor = ZColor.blue
+
 let  gControllersManager = ZControllersManager()
 let   gOperationsManager = ZOperationsManager()
 let    gSelectionManager = ZSelectionManager()
@@ -45,6 +46,7 @@ let      gEditingManager = ZEditingManager()
 let       gTravelManager = ZTravelManager()
 let         gFileManager = ZFileManager()
 let         gUndoManager = UndoManager()
+
 let              cloudID = "iCloud.com.zones.Zones"
 let             linksKey = "links"
 let          zoneTypeKey = "Zone"
@@ -58,6 +60,7 @@ let      showChildrenKey = "showChildren"
 let      manifestTypeKey = "ZManifest"
 let      manifestNameKey = "manifest"
 let favoritesRootNameKey = "favoritesRoot"
+
 let        gBackspaceKey = "\u{8}"
 let           gDeleteKey = "\u{7F}"
 let            gSpaceKey = " "

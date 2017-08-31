@@ -36,7 +36,6 @@ class ZoneWidget: ZView {
     private var childrenWidgets = [ZoneWidget]   ()
     var            parentWidget:  ZoneWidget? { return widgetZone.parentZone?.widget }
     var             hasChildren:  Bool        { return widgetZone.fetchableCount > 0 }
-    var              widgetFont:  ZFont       { return widgetZone.isSelected ? gSelectedWidgetFont : gWidgetFont }
     var              widgetZone:  Zone!
 
 
@@ -117,7 +116,7 @@ class ZoneWidget: ZView {
 
     func layoutText() {
         textWidget.widget = self
-        textWidget.font   = widgetFont
+        textWidget.font   = textWidget.preferredFont
 
         textWidget.updateText()
         layoutTextField()
@@ -127,8 +126,8 @@ class ZoneWidget: ZView {
     func layoutTextField() {
         textWidget.snp.removeConstraints()
         textWidget.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let  font = widgetFont
-            let width = textWidget.text!.widthForFont(font) + 5.0
+            let  font = textWidget.preferredFont
+            let width = widgetZone.isRootOfFavorites ? 0.0 :textWidget.text!.widthForFont(font) + 5.0
 
             make  .width.equalTo(width)
             make.centerY.equalTo(self).offset(-verticalTextOffset)

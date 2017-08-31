@@ -62,7 +62,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
             hereWidget.snp.removeConstraints()
             hereWidget.snp.makeConstraints { make in
                 make.centerY.equalTo(e)
-                make.centerX.equalTo(e)
+                make.centerX.equalTo(e).offset(-60.0)
             }
         }
     }

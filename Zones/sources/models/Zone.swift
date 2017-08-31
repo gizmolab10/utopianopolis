@@ -34,6 +34,7 @@ class Zone : ZRecord {
     var         grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
     var        isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
     var       hasMissingChildren:         Bool { return count < fetchableCount }
+    var            isInFavorites:         Bool { return isFavorite || isRootOfFavorites || parentZone?.isRootOfFavorites ?? false }
     var            hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var            hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var             showChildren:         Bool { return isRootOfFavorites || gManifest.showsChildren(self) }

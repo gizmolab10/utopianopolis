@@ -23,12 +23,13 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     // MARK:-
     
 
-    var    dragStart: CGPoint? = nil
+    var   widgetZone: Zone?
     var       widget: ZoneWidget?
     var     innerDot: ZoneDot?
-    var     isToggle: Bool = true
-    var   isInnerDot: Bool = false
-    var   widgetZone: Zone?
+    var     isToggle: Bool     = true
+    var    dragStart: CGPoint? = nil
+    var   isInnerDot: Bool     = false
+    var  isInvisible: Bool { return widget?.widgetZone.isRootOfFavorites ?? false }
     var isDragTarget: Bool { return widgetZone == gSelectionManager.dragDropZone }
 
 
@@ -80,7 +81,11 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
     // MARK:- initialization
     // MARK:-
-    
+
+    var         ratio:  CGFloat { return widgetZone?.isInFavorites ?? false ? gReductionRatio : 1.0 }
+    var innerDotWidth:  CGFloat { return CGFloat(isToggle ? gDotHeight : isInvisible ? 0.0 : gDotWidth) * ratio }
+    var innerDotHeight: CGFloat { return CGFloat(gDotHeight * Double(ratio)) }
+
 
     func setupForWidget(_ iWidget: ZoneWidget, asToggle: Bool) {
         widgetZone = iWidget.widgetZone
@@ -89,8 +94,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
         if isInnerDot {
             snp.makeConstraints { (make: ConstraintMaker) in
-                let width = CGFloat(asToggle ? gDotHeight : gDotWidth)
-                let  size = CGSize(width: width, height: CGFloat(gDotHeight))
+                let  size = CGSize(width: innerDotWidth, height: innerDotHeight)
 
                 make.size.equalTo(size)
             }
@@ -106,7 +110,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             innerDot?.setupForWidget(iWidget, asToggle: isToggle)
             snp.makeConstraints { (make: ConstraintMaker) in
-                make.size.equalTo(CGSize(width: gFingerBreadth, height: gFingerBreadth))
+                let width = CGFloat(isInvisible && !isToggle ? 0.0 : gFingerBreadth)
+
+                make.size.equalTo(CGSize(width: width, height: gFingerBreadth))
                 make.center.equalTo(innerDot!)
             }
         }
@@ -133,7 +139,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             }
 
             if  count > 1 {
-                let      dotRadius = gDotHeight / 2.0
+                let      dotRadius = Double(innerDotHeight / 2.0)
                 let     tinyRadius =  dotRadius * gLineThickness / 12.0 + 0.7
                 let   tinyDiameter = tinyRadius * 2.0
                 let         center = innerDot!.frame.center
@@ -188,7 +194,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 path.fill()
 
                 if  zone.isBookmark && isToggle {
-                    let inset = CGFloat(gDotHeight / 3.0)
+                    let inset = CGFloat(innerDotHeight / 3.0)
                     path      = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
                     path.flatness = 0.0001
 

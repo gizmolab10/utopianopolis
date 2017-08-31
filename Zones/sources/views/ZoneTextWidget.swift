@@ -19,6 +19,8 @@ import Foundation
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
+    var     widgetZone:  Zone   { return widget.widgetZone }
+    var  preferredFont:  ZFont  { return widgetZone.isInFavorites ? gFavoritesFont : gWidgetFont }
     var         widget:  ZoneWidget!
     var        monitor:  Any?
     var   originalText = ""
@@ -29,12 +31,13 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         get { return _isTextEditing }
         set {
             if _isTextEditing != newValue {
-                let       zone = widget.widgetZone
                 _isTextEditing = newValue
+                let       zone = widgetZone
+                font           = preferredFont
 
                 if !_isTextEditing {
                     let  grab = gSelectionManager.currentlyEditingZone == zone
-                    textColor = widget.widgetZone.grabbedTextColor
+                    textColor = zone.grabbedTextColor
 
                     removeMonitorAsync()
                     abortEditing()
@@ -44,13 +47,12 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     } else {
                         gSelectionManager.clearEdit()
 
-                        zone?.grab()
+                        zone.grab()
                     }
                 } else {
                     gSelectionManager.currentlyEditingZone = zone
-                    font                                   = gSelectedWidgetFont
                     textColor                              = ZColor.black
-                    originalText                           = zone?.zoneName ?? ""
+                    originalText                           = zone.zoneName ?? ""
 
                     gSelectionManager.deselectGrabs()
                     enableUndo()
@@ -143,19 +145,18 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func updateText() {
-        if  let  zone = widget.widgetZone {
-            text      = zone.unwrappedName
-            var count = 0
+        let  zone = widgetZone
+        text      = zone.unwrappedName
+        var count = 0
 
-            switch gCountsMode {
-            case .fetchable: count = zone.fetchableCount
-            case .progeny:   count = zone.fetchableCount + zone.progenyCount
-            default:         return
-            }
+        switch gCountsMode {
+        case .fetchable: count = zone.fetchableCount
+        case .progeny:   count = zone.fetchableCount + zone.progenyCount
+        default:         return
+        }
 
-            if (count > 1) && !isTextEditing && (!zone.showChildren || (gCountsMode == .progeny)) {
-                text?.append("  (\(count))")
-            }
+        if (count > 1) && !isTextEditing && (!zone.showChildren || (gCountsMode == .progeny)) {
+            text?.append("  (\(count))")
         }
     }
 
@@ -164,7 +165,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         if  var t = text {
             t = up ? t.uppercased() : t.lowercased()
 
-            assign(t, to: widget.widgetZone)
+            assign(t, to: widgetZone)
             updateGUI()
         }
     }
@@ -224,7 +225,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func captureText(force: Bool) {
-        if !gTextCapturing || force, let zone = widget.widgetZone, zone.zoneName != text! {
+        let zone = widgetZone
+
+        if !gTextCapturing || force, zone.zoneName != text! {
             assign(text, to: zone)
         }
     }
@@ -233,7 +236,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        if  let         zone = widget.widgetZone, zone.isBookmark, !zone.isGrabbed, !isTextEditing {
+        let             zone = widgetZone
+
+        if  zone.isBookmark, !zone.isGrabbed, !isTextEditing {
             var         rect = dirtyRect.insetBy(dx: 3.0, dy: 0.0)
             rect.size.height = 0.0
             rect.size.width -= 4.0

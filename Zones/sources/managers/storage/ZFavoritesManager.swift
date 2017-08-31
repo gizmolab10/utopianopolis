@@ -18,7 +18,7 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    var       favoritesIndex = gFirstFavoriteIndex
+    var       favoritesIndex = 0
     let     defaultFavorites = Zone(record: nil, storageMode: .favorites)
     let defaultModes: ZModes = [.everyone, .mine]
     let    favoritesFavorite = Zone(favoriteNamed: "favorites")
@@ -105,11 +105,7 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func zoneAtIndex(_ index: Int) -> Zone? {
-        if index == gFirstFavoriteIndex {
-            return favoritesFavorite
-        } else {
-            return rootZone?[index]
-        }
+        return rootZone?[index]
     }
     
 
@@ -119,12 +115,8 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func showFavoritesAndGrab(_ zone: Zone?, _ atArrival: @escaping SignalClosure) {
-        gStorageMode = .favorites
-
-        gTravelManager.travel {
-            self.updateGrabAndIndexFor(zone)
-            atArrival(zone, .redraw)
-        }
+        self.updateGrabAndIndexFor(zone)
+        atArrival(zone, .redraw)
     }
 
 
@@ -200,8 +192,8 @@ class ZFavoritesManager: ZCloudManager {
         let     count = rootZone!.count
 
         if index >= count {
-            index =       gFirstFavoriteIndex
-        } else if index < gFirstFavoriteIndex {
+            index =       0
+        } else if index < 0 {
             index = count - 1
         }
 
