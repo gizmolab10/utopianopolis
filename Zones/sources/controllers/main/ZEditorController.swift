@@ -96,18 +96,14 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
                 rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
             } else if state != .began {   // ended
                 rubberbandUpdate(nil)
-            } else {
-                let (dot, controller) = dotHitTest(iGesture)
-
-                if dot != nil {
-                    if dot!.isToggle {
-                        clickEvent(iGesture)  // no movement
-                    } else {
-                        controller?.dragStartEvent(dot!, iGesture)
-                    }
-                } else {                      // began
-                    rubberbandStartEvent(location, iGesture)
+            } else if let (dot, controller) = dotHitTest(iGesture) {
+                if dot.isToggle {
+                    clickEvent(iGesture)  // no movement
+                } else {
+                    controller.dragStartEvent(dot, iGesture)
                 }
+            } else {                      // began
+                rubberbandStartEvent(location, iGesture)
             }
         }
     }
@@ -169,14 +165,16 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
     }
     
 
-    override func dotHitTest(_ iGesture: ZGestureRecognizer?) -> (ZoneDot?, ZGraphController?) {
-        let hit  = alternateController?.dotHit(iGesture)
-
-        if  hit == nil {
-            return (dotHit(iGesture), self)
+    override func dotHitTest(_ iGesture: ZGestureRecognizer?) -> (ZoneDot, ZGraphController)? {
+        if  let c = alternateController, let hit  = c.dotHit(iGesture) {
+            return (hit, c)
         }
 
-        return (hit, alternateController)
+        if  let hit  = dotHit(iGesture) {
+            return (hit, self)
+        }
+
+        return nil
     }
 
 

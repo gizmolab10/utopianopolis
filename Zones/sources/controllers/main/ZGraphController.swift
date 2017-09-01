@@ -133,15 +133,12 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
                 restartDragHandling()     // let text editor consume the gesture
             } else if gIsDragging {
                 dragMaybeStopEvent(iGesture)
-            } else if state == .began {
-                let (dot, controller) = dotHitTest(iGesture)
+            } else if state == .began, let (dot, controller) = dotHitTest(iGesture) {
+                if dot.isToggle {
+                    clickEvent(iGesture)  // no movement
+                } else {
+                    controller.dragStartEvent(dot, iGesture)
 
-                if dot != nil {
-                    if dot!.isToggle {
-                        clickEvent(iGesture)  // no movement
-                    } else {
-                        controller?.dragStartEvent(dot!, iGesture)
-                    }
                 }
             }
         }
@@ -166,11 +163,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
             }
 
             if !inText {
-                let (dot, _) = dotHitTest(iGesture)
-
-                if dot != nil {
-                    if let zone = dot!.widgetZone {
-                        if dot!.isToggle {
+                if let (dot, _) = dotHitTest(iGesture) {
+                    if let zone = dot.widgetZone {
+                        if dot.isToggle {
                             gEditingManager.toggleDotActionOnZone(zone)
                         } else if zone.isGrabbed {
                             zone.ungrab()
@@ -275,22 +270,20 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
             columnarReport(relation, dropZone?.unwrappedName)
 
             if dropNow {
-                controller.restartDragHandling()
+                let           editor = gEditingManager
 
-                gDraggedZone       = nil
-                let         editor = gEditingManager
-
-                if  let       drop = dropZone, !isNoop {
-                    let toBookmark = drop.isBookmark
-                    var   at: Int? = index
+                if  let         drop = dropZone, !isNoop {
+                    let   toBookmark = drop.isBookmark
+                    var     at: Int? = index
 
                     if toBookmark {
-                        at         = gInsertionsFollow ? nil : 0
+                        at           = gInsertionsFollow ? nil : 0
                     } else if dragIndex != nil && dragIndex! <= index && dropIsParent {
-                        at!       -= 1
+                        at!         -= 1
                     }
 
                     editor.moveGrabbedZones(into: drop, at: at) {
+                        controller.restartDragHandling()
                         self.redrawAndSync(nil)
                     }
                 }
@@ -343,14 +336,16 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
     }
     
 
-    func dotHitTest(_ iGesture: ZGestureRecognizer?) -> (ZoneDot?, ZGraphController?) {
-        let hit  = dotHit(iGesture)
-
-        if  hit == nil {
-            return (alternateController?.dotHit(iGesture), alternateController)
+    func dotHitTest(_ iGesture: ZGestureRecognizer?) -> (ZoneDot, ZGraphController)? {
+        if  let hit  = dotHit(iGesture) {
+            return (hit, self)
         }
 
-        return (hit, self)
+        if  let c = alternateController, let hit  = c.dotHit(iGesture) {
+            return (hit, c)
+        }
+
+        return nil
     }
 
 

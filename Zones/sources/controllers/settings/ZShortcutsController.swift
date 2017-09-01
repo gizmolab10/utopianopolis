@@ -65,6 +65,7 @@ class ZShortcutsController: ZGenericTableController {
         "    \tDELETE   \tselected idea",
         "    \tSPACE    \tadds a subordinate idea",
         "    \tB        \tadds a bookmark",
+        "    \tC        \trecenter the graph",
         "    \tF        \tfind in cloud",
         "    \tP        \tprints the graph",
         "    \tR        \treverses order",

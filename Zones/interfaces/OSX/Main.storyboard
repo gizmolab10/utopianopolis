@@ -313,6 +313,12 @@ CQ
                                             </menu>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="6ns-V4-A3k"/>
+                                        <menuItem title="Recenter" keyEquivalent="c" id="9QX-od-dwr">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="Uxg-Qr-gFq"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Reverse" tag="9" keyEquivalent="r" id="u6j-MS-BF2">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>

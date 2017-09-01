@@ -80,6 +80,7 @@ class ZEditingManager: NSObject {
                 switch key {
                 case "f":         find()
                 case "r":         reverse()
+                case "c":         recenter()
                 case "p":         printHere()
                 case "b":         createBookmark()
                 case "u", "l":    alterCase(up: key == "u")
@@ -183,6 +184,15 @@ class ZEditingManager: NSObject {
     // MARK:- miscellaneous features
     // MARK:-
 
+
+    func recenter() {
+        gScaling      = 1.0
+        gScrollOffset = CGPoint.zero
+
+        gEditorController?.layoutForCurrentScrollOffset()
+        gEditorView?.setNeedsDisplay()
+    }
+    
 
     func alterCase(up: Bool) {
         for grab in gSelectionManager.currentGrabs {
@@ -1218,11 +1228,30 @@ class ZEditingManager: NSObject {
 
 
     func moveGrabbedZones(into iInto: Zone, at iIndex: Int?, onCompletion: Closure?) {
-        let toBookmark = iInto.isBookmark
-        var    restore = [Zone: (Zone, Int?)] ()
-        var      grabs = gSelectionManager.currentGrabs
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // 1. move a normal zone into another normal zone                                                           //
+        // 2. move a normal zone through a bookmark                                                                 //
+        // 3. move a normal zone into favorites -- create a favorite pointing at normal zone, then add the favorite //
+        // 4. move a favorite into a normal zone -- convert favorite to a bookmark, then move the bookmark          //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        let toFavorites = iInto.isRootOfFavorites   // type 3
+        let  toBookmark = iInto.isBookmark          // type 2
+        var     restore = [Zone: (Zone, Int?)] ()
+        var       grabs = gSelectionManager.currentGrabs
+
+        if  let dragged = gDraggedZone, dragged.isFavorite {
+            dragged.isFavorite = false              // type 4
+            dragged.needFlush()
+        }
 
         grabs.sort { (a, b) -> Bool in
+            if  a.isFavorite {
+                a.isFavorite = false                // type 4
+                a.needFlush()
+            }
+
             return a.order < b.order
         }
 
@@ -1258,8 +1287,17 @@ class ZEditingManager: NSObject {
             let     into = !toBookmark ? iInto : iInto.bookmarkTarget! // grab bookmark AFTER travel
             let addGrabs = {
                 for zone in grabs {
-                    zone.orphan()
-                    into.addAndReorderChild(zone, at: iIndex)
+                    var movable = zone
+
+                    if !toFavorites {
+                        movable.orphan()
+                    } else {
+                        movable = gFavoritesManager.createBookmark(for: zone, isFavorite: true)
+
+                        movable.needFlush()
+                    }
+
+                    into.addAndReorderChild(movable, at: iIndex)
                 }
 
                 if toBookmark {
@@ -1293,9 +1331,9 @@ class ZEditingManager: NSObject {
         if !toBookmark {
             finish()
         } else {
-            gTravelManager.travelThrough(iInto, atArrival: { (iAny, iSignalKind) in
+            gTravelManager.travelThrough(iInto) { (iAny, iSignalKind) in
                 finish()
-            })
+            }
         }
     }
 
