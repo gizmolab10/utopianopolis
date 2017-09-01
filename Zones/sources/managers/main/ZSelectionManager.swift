@@ -27,14 +27,8 @@ class ZSelectionManager: NSObject {
 
 
     var                hasGrab:   Bool { return currentGrabs.count > 0 }
-    var             isDragging:   Bool { return draggedZone != nil }
     var isEditingStateChanging:   Bool               = false
-    var        dragDropIndices:   NSMutableIndexSet? = nil
-    var           dragRelation:   ZRelation?         = nil
-    var              dragPoint:   CGPoint?           = nil
     var   currentlyEditingZone:   Zone?              = nil
-    var           dragDropZone:   Zone?              = nil
-    var            draggedZone:   Zone?              = nil
     var         pasteableZones = [Zone: (Zone?, Int?)] ()
 
 

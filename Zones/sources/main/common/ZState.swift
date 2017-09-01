@@ -68,17 +68,25 @@ struct ZSettingsViewID: OptionSet {
 }
 
 
-var  gTextCapturing = false
-var gShowsSearching = false
-var       gFileMode = ZFileMode.cloud
-var       gWorkMode = ZWorkMode.editMode
-let     gClearColor = ZColor(white: 1.0, alpha: 0.0)
+let          gClearColor                     = ZColor(white: 1.0, alpha: 0.0)
+var            gWorkMode                     = ZWorkMode.editMode
+var            gFileMode                     = ZFileMode.cloud
+var       gTextCapturing                     = false
+var      gShowsSearching                     = false
+var     gDragDropIndices: NSMutableIndexSet? = nil
+var        gDragRelation:         ZRelation? = nil
+var        gDragDropZone:              Zone? = nil
+var         gDraggedZone:              Zone? = nil
+var           gDragPoint:           CGPoint? = nil
 
-var             gDotWidth:             Double { return gDotHeight * 0.75 }
-var            gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
-var     gInsertionsFollow:               Bool { return gInsertionMode == .follow }
-var     gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor)   as? ZEditorController }
-var           gEditorView:      ZoneDragView? { return gEditorController?.editorView }
+var            gDotWidth:             Double { return gDotHeight * 0.75 }
+var           gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
+var          gIsDragging:               Bool { return gDraggedZone != nil }
+var    gInsertionsFollow:               Bool { return gInsertionMode == .follow }
+var gFavoritesController:  ZGraphController? { return gControllersManager.controllerForID(.favorites) as? ZGraphController }
+var    gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor)    as? ZEditorController }
+var       gFavoritesView:      ZoneDragView? { return gFavoritesController?.editorView }
+var          gEditorView:      ZoneDragView? { return gEditorController?.editorView }
 
 
 // MARK:- persistence

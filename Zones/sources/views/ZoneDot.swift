@@ -30,7 +30,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var    dragStart: CGPoint? = nil
     var   isInnerDot: Bool     = false
     var  isInvisible: Bool { return widget?.widgetZone.isRootOfFavorites ?? false }
-    var isDragTarget: Bool { return widgetZone == gSelectionManager.dragDropZone }
+    var isDragTarget: Bool { return widgetZone == gDragDropZone }
 
 
     var innerOrigin: CGPoint? {
@@ -57,8 +57,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
     var isDropTarget: Bool {
         if  let   index = widgetZone?.siblingIndex, !isToggle {
-            let isIndex = gSelectionManager.dragDropIndices?.contains(index)
-            let  isDrop = widgetZone?.parentZone == gSelectionManager.dragDropZone
+            let isIndex = gDragDropIndices?.contains(index)
+            let  isDrop = widgetZone?.parentZone == gDragDropZone
 
             if isDrop && isIndex! {
                 return true

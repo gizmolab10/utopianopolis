@@ -32,7 +32,7 @@ class ZoneDragView: NSView, ZGestureRecognizerDelegate {
             ZBezierPath(rect: rect).stroke()
         }
 
-        if  let    widget = gSelectionManager.dragDropZone?.widget {
+        if  let    widget = gDragDropZone?.widget {
             let   dotRect = widget.floatingDropDotRect
             let localRect = widget.convert(dotRect, to: self)
 

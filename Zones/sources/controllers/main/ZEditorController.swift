@@ -26,14 +26,15 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
     // MARK:-
     
 
-    var        rubberbandPreGrabs = [Zone] ()
-    var       priorScrollLocation = CGPoint.zero
-    var           rubberbandStart = CGPoint.zero
-    override  var            here:  Zone          { return gHere }
-    override  var    controllerID:  ZControllerID { return .editor }
-    @IBOutlet var         spinner:  ZProgressIndicator?
-    @IBOutlet var favoritesWidth :  NSLayoutConstraint?
-    @IBOutlet var favoritesHeight:  NSLayoutConstraint?
+    var            rubberbandPreGrabs = [Zone] ()
+    var           priorScrollLocation = CGPoint.zero
+    var               rubberbandStart = CGPoint.zero
+    override  var                here:  Zone          { return gHere }
+    override  var        controllerID:  ZControllerID { return .editor }
+    override  var alternateController:  ZGraphController? { return gFavoritesController }
+    @IBOutlet var             spinner:  ZProgressIndicator?
+    @IBOutlet var     favoritesWidth :  NSLayoutConstraint?
+    @IBOutlet var     favoritesHeight:  NSLayoutConstraint?
 
 
     // MARK:- gestures
@@ -42,12 +43,13 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
 
     #if os(iOS)
     fileprivate func updateMinZoomScaleForSize(_ size: CGSize) {
-        if  let              d = hereWidget, let s = editorView {
+        if  let              d = graphRootWidget,
+            let              e = editorView {
             let    heightScale = size.height / d.bounds.height
             let     widthScale = size.width  / d.bounds.width
             let       minScale = min(widthScale, heightScale)
-            s.minimumZoomScale = minScale
-            s.zoomScale        = minScale
+            e.minimumZoomScale = minScale
+            e.zoomScale        = minScale
         }
     }
 
@@ -61,8 +63,8 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
 
     override func layoutForCurrentScrollOffset() {
         if let e = editorView {
-            hereWidget.snp.removeConstraints()
-            hereWidget.snp.makeConstraints { make in
+            graphRootWidget.snp.removeConstraints()
+            graphRootWidget.snp.makeConstraints { make in
                 make.centerY.equalTo(e).offset(gScrollOffset.y)
                 make.centerX.equalTo(e).offset(gScrollOffset.x)
             }
@@ -88,20 +90,24 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
                 restartDragHandling()     // let text editor consume the gesture
             } else if let flags = gesture.modifiers, flags.isOption {
                 scrollEvent(move: state == .changed, to: location)
-            } else if isDragging {
+            } else if gIsDragging {
                 dragMaybeStopEvent(iGesture)
             } else if state == .changed { // changed
                 rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
             } else if state != .began {   // ended
                 rubberbandUpdate(nil)
-            } else if let dot = dotsHitTest(location) {
-                if dot.isToggle {
-                    clickEvent(iGesture)  // no movement
-                } else {
-                    dragStartEvent(dot, iGesture)
+            } else {
+                let (dot, controller) = dotHitTest(iGesture)
+
+                if dot != nil {
+                    if dot!.isToggle {
+                        clickEvent(iGesture)  // no movement
+                    } else {
+                        controller?.dragStartEvent(dot!, iGesture)
+                    }
+                } else {                      // began
+                    rubberbandStartEvent(location, iGesture)
                 }
-            } else {                      // began
-                rubberbandStartEvent(location, iGesture)
             }
         }
     }
@@ -126,7 +132,7 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
 
     func rubberbandStartEvent(_ location: CGPoint, _ iGesture: ZGestureRecognizer?) {
         rubberbandStart = location
-        isDragging      = false
+        gDraggedZone    = nil
 
         //////////////////////
         // detect SHIFT key //
@@ -145,6 +151,33 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
 
     // MARK:- internals
     // MARK:-
+
+
+    override func widgetNearest(_ iGesture: ZGestureRecognizer?, recursed : Bool = false) -> (ZGraphController, ZoneWidget, CGPoint)? {
+        if  let (controller, dropNearest, location) = alternateController?.widgetNearest(iGesture, recursed: true) {
+            return (controller, dropNearest, location)
+        }
+
+        if  let    location = iGesture?.location(in: editorView),
+            let dropNearest = graphRootWidget.widgetNearestTo(location, in: editorView, here) {
+                
+            return (self, dropNearest, location)
+        }
+
+        return nil
+
+    }
+    
+
+    override func dotHitTest(_ iGesture: ZGestureRecognizer?) -> (ZoneDot?, ZGraphController?) {
+        let hit  = alternateController?.dotHit(iGesture)
+
+        if  hit == nil {
+            return (dotHit(iGesture), self)
+        }
+
+        return (hit, alternateController)
+    }
 
 
     override func cleanupAfterDrag() {
@@ -177,7 +210,7 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
                     }
                 }
                 
-                hereWidget.setNeedsDisplay()
+                graphRootWidget.setNeedsDisplay()
             }
         }
 

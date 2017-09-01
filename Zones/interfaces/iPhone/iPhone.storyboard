@@ -104,10 +104,10 @@
             </objects>
             <point key="canvasLocation" x="1249" y="-7"/>
         </scene>
-        <!--Favorites Controller-->
+        <!--View Controller-->
         <scene sceneID="ObE-Yd-Clp">
             <objects>
-                <viewController id="Ztf-n2-9Ns" customClass="ZFavoritesController" customModule="iFocus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Ztf-n2-9Ns" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="wZA-Ph-j7T"/>
                         <viewControllerLayoutGuide type="bottom" id="5C8-2v-3q4"/>

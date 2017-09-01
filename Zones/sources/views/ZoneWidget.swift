@@ -257,7 +257,7 @@ class ZoneWidget: ZView {
                     let     insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
                     rect           = dot.convert(dot.bounds, to: self).insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
                 }
-        } else if let      indices = gSelectionManager.dragDropIndices, indices.count > 0 {
+        } else if let      indices = gDragDropIndices, indices.count > 0 {
             let         firstindex = indices.firstIndex
 
             if  let       firstDot = dot(at: firstindex) {
@@ -270,7 +270,7 @@ class ZoneWidget: ZView {
                     // DOT IS ABOVE OR BELOW //
                     ///////////////////////////
 
-                    let   relation = gSelectionManager.dragRelation
+                    let   relation = gDragRelation
                     let    isAbove = relation == .above || (!gInsertionsFollow && (lastIndex == 0 || relation == .upon))
                     let multiplier = (isAbove ? 1.0 : -1.0) * gVerticalWeight
                     let    gHeight = Double(gGenericOffset.height)
@@ -320,11 +320,11 @@ class ZoneWidget: ZView {
     }
 
 
-    func widgetNearestTo(_ iPoint: CGPoint) -> ZoneWidget? {
-        if dragHitFrame.contains(iPoint) && !widgetZone.wasSpawnedBy(gSelectionManager.draggedZone) {
+    func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView?, _ iHere: Zone) -> ZoneWidget? {
+        if dragHitFrame(in: iView, iHere).contains(iPoint) && !widgetZone.wasSpawnedBy(gDraggedZone) {
             if widgetZone.showChildren {
                 for child in widgetZone.children {
-                    if let childWidget = child.widget, let found = childWidget.widgetNearestTo(iPoint) {
+                    if let childWidget = child.widget, let found = childWidget.widgetNearestTo(iPoint, in: iView, iHere) {
                         return found
                     }
                 }
@@ -351,8 +351,8 @@ class ZoneWidget: ZView {
 
     func isDropIndex(_ iIndex: Int?) -> Bool {
         if  iIndex != nil {
-            let isIndex = gSelectionManager.dragDropIndices?.contains(iIndex!)
-            let  isDrop = widgetZone == gSelectionManager.dragDropZone
+            let isIndex = gDragDropIndices?.contains(iIndex!)
+            let  isDrop = widgetZone == gDragDropZone
 
             if isDrop && isIndex! {
                 return true
@@ -513,7 +513,7 @@ class ZoneWidget: ZView {
             }
 
             if zone.showChildren {
-                if  childrenPass || gSelectionManager.isDragging || gEditorView?.rubberbandRect != nil {
+                if  childrenPass || gIsDragging || gEditorView?.rubberbandRect != nil {
                     for child in childrenWidgets { drawLine(to: child) }
                 } else {
                     FOREGROUND {

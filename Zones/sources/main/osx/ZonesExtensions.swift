@@ -215,7 +215,7 @@ extension NSView {
 
         e.movementGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
         e.clickGesture    = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
-        e.isDragging      = false
+        gDraggedZone      = nil
     }
 }
 
@@ -442,9 +442,10 @@ extension Zone {
 extension ZoneWidget {
 
 
-    var dragHitFrame: CGRect {
-        if  let   view = gEditorView, let dot = dragDot.innerDot {
-            let isHere = widgetZone == gHere
+    func dragHitFrame(in iView: ZView?, _ iHere: Zone) -> CGRect {
+        if  let   view = iView,
+            let    dot = dragDot.innerDot {
+            let isHere = widgetZone == iHere
             let cFrame =     convert(childrenView.frame, to: view)
             let dFrame = dot.convert(        dot.bounds, to: view)
             let   left =    isHere ? 0.0 : dFrame.minX - gGenericOffset.width
