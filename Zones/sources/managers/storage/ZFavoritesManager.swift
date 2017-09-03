@@ -172,11 +172,9 @@ class ZFavoritesManager: ZCloudManager {
                     return updateForZone(zone)
                 }
             }
-
-            iGrabClosure?(nil)
-        } else {
-            iGrabClosure?(nil)
         }
+
+        iGrabClosure?(nil)
     }
 
 

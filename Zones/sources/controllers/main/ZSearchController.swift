@@ -52,7 +52,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
         let searchString = (searchBox?.text)!
 
-        if searchString == "" {
+        if [" ", ""].contains(searchString) {
             endSearching()
         } else {
             gCloudManager.search(for: searchString) { iObject in

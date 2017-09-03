@@ -64,8 +64,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
         if let e = editorView {
             graphRootWidget.snp.removeConstraints()
             graphRootWidget.snp.makeConstraints { make in
-                make.centerY.equalTo(e)
-                make.centerX.equalTo(e).offset(-60.0)
+                make .top.equalTo(e).offset(20.0 - Double(gGenericOffset.height /  3.0))
+                make.left.equalTo(e).offset(15.0 - Double(gGenericOffset.width))//  / 20.0))
             }
         }
     }
@@ -86,11 +86,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
                 var   specificView:      ZView? = editorView
                 var  specificindex:        Int? = nil
                 gTextCapturing                  = false
-                graphRootWidget          .widgetZone = here
+                graphRootWidget     .widgetZone = here
 
                 if controllerID  == .favorites {
-                    let here = gRemoteStoresManager.manifest(for: storageMode).hereZone
-
                     gFavoritesManager.updateIndexFor(here) { object in
                         gFavoritesManager.update()
                     }
@@ -203,9 +201,10 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
 
             note("d --- d")
 
-            if  zone == here {
-                restartDragHandling()
-            } else if let location = iGesture?.location(in: dot) {
+//            if  zone == here {
+//                restartDragHandling()
+//            } else
+            if let location = iGesture?.location(in: dot) {
                 dot.dragStart      = location
                 gDraggedZone       = zone
             }
@@ -263,9 +262,10 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
                 gDragDropIndices?.add(index - 1)
             }
 
-            prior?                 .displayForDrag() // erase  child lines
-            dropZone?.widget?      .displayForDrag() // redraw child lines
-            controller.editorView?.setNeedsDisplay() // redraw drag (line and dot)
+            prior?           .displayForDrag() // erase  child lines
+            dropZone?.widget?.displayForDrag() // redraw child lines
+            gFavoritesView? .setNeedsDisplay() // redraw drag (line and dot)
+            gEditorView?    .setNeedsDisplay() // redraw drag (line and dot)
 
             columnarReport(relation, dropZone?.unwrappedName)
 
@@ -289,7 +289,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
                 }
             }
 
-            return false
+            return dropNow
         }
         
         return true
@@ -372,8 +372,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
         gDragRelation    = nil
         gDragPoint       = nil
 
-        editorView?.setNeedsDisplay()
-        dot?       .setNeedsDisplay()
+        gFavoritesView?.setNeedsDisplay()
+        gEditorView?   .setNeedsDisplay()
+        dot?           .setNeedsDisplay()
     }
 
 

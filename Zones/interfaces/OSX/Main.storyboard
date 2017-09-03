@@ -392,10 +392,10 @@ CQ
                                 </constraints>
                             </progressIndicator>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="8fA-4k-lrb" userLabel="Favorites View">
-                                <rect key="frame" x="0.0" y="396" width="400" height="200"/>
+                                <rect key="frame" x="0.0" y="196" width="400" height="400"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="400" id="WTf-8J-uOA"/>
-                                    <constraint firstAttribute="height" constant="200" id="xEQ-mS-ruW"/>
+                                    <constraint firstAttribute="height" constant="400" id="xEQ-mS-ruW"/>
                                 </constraints>
                                 <connections>
                                     <segue destination="i29-og-Irn" kind="embed" id="8d5-Fo-5gd"/>

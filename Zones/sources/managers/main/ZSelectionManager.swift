@@ -248,7 +248,7 @@ class ZSelectionManager: NSObject {
 
 
     func addToGrab(_ iZone: Zone?) {
-        if let zone = iZone {
+        if let zone = iZone, !currentGrabs.contains(zone) {
             stopCurrentEdit()
             currentGrabs.append(zone)
             // columnarReport("grab", zone.unwrappedName)

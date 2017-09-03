@@ -187,7 +187,7 @@ class ZoneWidget: ZView {
 
         childrenView.snp.removeConstraints()
         childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            make.left.equalTo(textWidget.snp.right).offset(gDotWidth + Double(gGenericOffset.height / 1.25 - 6.0))
+            make.left.equalTo(textWidget.snp.right).offset(gDotWidth + Double(gGenericOffset.height * 0.8 - 6.0))
             make.bottom.top.right.equalTo(self)
         }
     }
