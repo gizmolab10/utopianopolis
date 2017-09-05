@@ -59,14 +59,28 @@ class ZCloudManager: ZRecordsManager {
 
 
     func save(_ onCompletion: IntegerClosure?) {
+        var    saves = pullRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
         let isPublic = storageMode == .everyone
 
         if  isPublic {
-            clearStates([.needsSave])
+            var indices = IndexSet()
+
+            for (index, save) in saves.enumerated() {
+                if  let savable = recordForRecordID(save.recordID) as? Zone {
+                    if !savable.isFavorite {
+                        indices.insert(index)
+                    } else {
+                        savable.unmarkForAllOfStates([.needsSave])
+                    }
+                }
+            }
+
+            for index in indices.reversed() {
+                saves.remove(at: index)
+            }
         }
 
         let deletes = recordIDsWithMatchingStates([.needsDestroy], pull: true, onlyFavorites: isPublic)
-        let   saves = pullRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
         let   count = saves.count + deletes.count
 
         onCompletion?(count)
@@ -536,36 +550,35 @@ class ZCloudManager: ZRecordsManager {
                 // nil means: we already received full response from cloud for this particular fetch
                 self.FOREGROUND {
                     if let root = gFavoritesManager.rootZone {
-                        for record in retrieved {
-                            let        favorite = Zone(record: record, storageMode: self.storageMode)
-                            favorite.parentZone = root
-                            var    isDuplicated = false
+                        for retrievedRecord in retrieved {
+                            let retrievedFavorite = Zone(record: retrievedRecord, storageMode: self.storageMode)
+                            let              link = retrievedFavorite.zoneLink
+                            let              name = retrievedFavorite.zoneName
+                            var      isDuplicated = false
 
                             // avoid adding a duplicate (which was created by a bug)
 
-                            if  let            name  = favorite.zoneName {
-                                for zone: Zone in root.children {
-                                    if  let    link  = favorite.zoneLink, link == zone.zoneLink {
-                                        isDuplicated = true
+                            for zone: Zone in root.children {
+                                if  link  != nil, link == zone.zoneLink {
+                                    isDuplicated = true
 
-                                        break
-                                    } else if name == zone.zoneName {
-                                        isDuplicated = true
+                                    break
+                                } else if name != nil, name == zone.zoneName {
+                                    isDuplicated = true
 
-                                        break
-                                    }
+                                    break
                                 }
                             }
 
-                            if  !isDuplicated, let targetID = favorite.crossLink?.record.recordID, self.zoneForRecordID(targetID) == nil {
+                            if  !isDuplicated, let targetID = retrievedFavorite.crossLink?.record.recordID, self.zoneForRecordID(targetID) == nil {
                                 self.assureRecordExists(withRecordID: targetID, recordType: zoneTypeKey) { iAssuredRecord in
                                     let target = Zone(record: iAssuredRecord, storageMode: self.storageMode)
 
                                     if  target.isDeleted {
-                                        favorite.orphan()
-                                        favorite.needDestroy()
+                                        retrievedFavorite.orphan()
+                                        retrievedFavorite.needDestroy()
                                     } else {
-                                        root.add(favorite)
+                                        root.add(retrievedFavorite)
                                         root.respectOrder()
                                         target.maybeNeedRoot()
                                         self.columnarReport(" FAVORITE", target.decoratedName)

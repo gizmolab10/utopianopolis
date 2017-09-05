@@ -44,7 +44,28 @@ class Zone : ZRecord {
     var                isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
     var                isDeleted:         Bool { return gTrash?.spawned(self) ?? false }
     var                 hasColor:         Bool { return _color != nil }
-    var               isFavorite:         Bool { get { if let value = zoneIsFavorite?  .boolValue { return value } else { zoneIsFavorite = NSNumber(value: false); needFlush(); return false } } set { zoneIsFavorite   = NSNumber(value: newValue); needFlush() } }
+
+
+    var isFavorite: Bool {
+        get {
+            var value = zoneIsFavorite?.boolValue
+
+            if  value         == nil {
+                value          = false
+                zoneIsFavorite = NSNumber(value: value!)
+
+                needFlush()
+            }
+
+            return value!
+        }
+
+        set {
+            zoneIsFavorite = NSNumber(value: newValue)
+
+            needFlush()
+        }
+    }
 
 
     var decoration: String {

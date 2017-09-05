@@ -63,7 +63,7 @@ class ZFavoritesManager: ZCloudManager {
         if defaultFavorites.count == 0 {
             for (index, mode) in defaultModes.enumerated() {
                 let          name = mode.rawValue
-                let      favorite = self.create(withBookmark: nil, false, parent: self.defaultFavorites, atIndex: index, mode, name)
+                let      favorite = create(withBookmark: nil, false, parent: defaultFavorites, atIndex: index, mode, name)
                 favorite.zoneLink =  "\(name)::"
                 favorite   .order = Double(index) * 0.001
 
@@ -115,7 +115,7 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func showFavoritesAndGrab(_ zone: Zone?, _ atArrival: @escaping SignalClosure) {
-        self.updateGrabAndIndexFor(zone)
+        updateGrabAndIndexFor(zone)
         atArrival(zone, .redraw)
     }
 
