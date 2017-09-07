@@ -12,5 +12,5 @@ import UIKit
 
 
 class ZPhoneController: ZGenericController {
-    override let controllerID = ZControllerID.main
+    override var controllerID: ZControllerID { return .main }
 }

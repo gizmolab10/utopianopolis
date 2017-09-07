@@ -68,6 +68,11 @@ func NSStringFromSize(_ size: CGSize) -> String {
 }
 
 
+func NSStringFromPoint(_ point: CGPoint) -> String {
+    return NSStringFromCGPoint(point)
+}
+
+
 extension NSObject {
     func assignAsFirstResponder(_ responder: UIResponder?) { responder?.becomeFirstResponder() }
 }
@@ -99,6 +104,7 @@ extension String {
 
         return nil
     }
+
 }
 
 
@@ -196,7 +202,7 @@ extension UIView {
     }
 
 
-    func restartClickAndOtherGestureRecognizers(handledBy e: ZEditorController) {
+    func restartClickAndOtherGestureRecognizers(handledBy e: ZGraphController) {
         clearGestures()
 
         // e.movementGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
@@ -208,6 +214,7 @@ extension UIView {
 
 
 extension UIWindow {
+    var contentView: UIView? { return self }
     override open var canBecomeFirstResponder: Bool { return true }
 
 
@@ -352,7 +359,7 @@ extension Zone {
 extension ZoneWidget {
 
 
-    func dragHitFrame(in iView: ZView, _ iHere: Zone) -> CGRect {
+    func dragHitFrame(in iView: ZView?, _ iHere: Zone) -> CGRect {
         var hitRect = CGRect()
 
         if  let   view = iView,

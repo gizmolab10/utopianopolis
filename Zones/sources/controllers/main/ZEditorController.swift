@@ -43,14 +43,11 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
 
     #if os(iOS)
     fileprivate func updateMinZoomScaleForSize(_ size: CGSize) {
-        if  let              d = graphRootWidget,
-            let              e = editorView {
-            let    heightScale = size.height / d.bounds.height
-            let     widthScale = size.width  / d.bounds.width
-            let       minScale = min(widthScale, heightScale)
-            e.minimumZoomScale = minScale
-            e.zoomScale        = minScale
-        }
+        let           d = graphRootWidget
+        let heightScale = size.height / d.bounds.height
+        let  widthScale = size.width  / d.bounds.width
+        let    minScale = min(widthScale, heightScale)
+        gScaling        = Double(minScale)
     }
 
 

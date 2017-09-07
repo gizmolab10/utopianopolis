@@ -335,6 +335,7 @@ class ZEditingManager: NSObject {
             if iZone == ancestor {
                 gHere = ancestor
 
+                gFavoritesManager.updateGrabAndIndexFor(gHere)
                 gHere.grab()
             }
 

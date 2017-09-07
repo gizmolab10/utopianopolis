@@ -747,12 +747,12 @@ class ZCloudManager: ZRecordsManager {
         let manifest = gRemoteStoresManager.manifest(for: storageMode)
 
         let rootCompletion = {
-            self.establishRoots { iValue in
-                if iValue == 0 {
+            self.establishRoot { iCompletionResult in
+                if iCompletionResult == 0 {
                     self.rootZone?.needProgeny()
                 }
 
-                onCompletion?(iValue)
+                onCompletion?(iCompletionResult)
             }
         }
 
@@ -795,7 +795,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func establishRoots(_ onCompletion: IntegerClosure?) {
+    func establishRoot(_ onCompletion: IntegerClosure?) {
         let recordID = CKRecordID(recordName: rootNameKey)
 
         onCompletion?(-1)

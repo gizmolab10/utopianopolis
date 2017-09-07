@@ -131,10 +131,10 @@ class ZRemoteStoresManager: NSObject {
     }
     
 
-    func establishRoots(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
+    func establishRoot(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         switch storageMode {
         case .favorites: onCompletion?(0)
-        default:         cloudManagerFor(storageMode).establishRoots(onCompletion)
+        default:         cloudManagerFor(storageMode).establishRoot(onCompletion)
         }
     }
 

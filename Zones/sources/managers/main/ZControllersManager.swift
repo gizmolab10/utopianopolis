@@ -88,6 +88,7 @@ class ZControllersManager: NSObject {
             self.FOREGROUND {
                 self.displayActivity(false)
                 gHere.grab()
+                gFavoritesManager.update()
                 self.signalFor(nil, regarding: .redraw)
                 gOperationsManager.finishUp {
                     self.signalFor(nil, regarding: .redraw)

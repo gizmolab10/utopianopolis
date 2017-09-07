@@ -394,7 +394,6 @@ CQ
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="8fA-4k-lrb" userLabel="Favorites View">
                                 <rect key="frame" x="0.0" y="196" width="400" height="400"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="400" id="WTf-8J-uOA"/>
                                     <constraint firstAttribute="height" constant="400" id="xEQ-mS-ruW"/>
                                 </constraints>
                                 <connections>
@@ -405,7 +404,7 @@ CQ
                         <constraints>
                             <constraint firstItem="uBD-4n-5KN" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="5bc-yZ-QEO"/>
                             <constraint firstItem="8fA-4k-lrb" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="6ek-ec-8Tg"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="8fA-4k-lrb" secondAttribute="trailing" id="BHb-NN-qUM"/>
+                            <constraint firstAttribute="trailing" secondItem="8fA-4k-lrb" secondAttribute="trailing" id="BHb-NN-qUM"/>
                             <constraint firstItem="8fA-4k-lrb" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="TwZ-wM-Gkm"/>
                             <constraint firstItem="uBD-4n-5KN" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="VsQ-sf-Z2d"/>
                         </constraints>
@@ -413,7 +412,6 @@ CQ
                     <connections>
                         <outlet property="editorView" destination="m2S-Jp-Qdl" id="umk-vN-23n"/>
                         <outlet property="favoritesHeight" destination="xEQ-mS-ruW" id="HV7-Vr-r5h"/>
-                        <outlet property="favoritesWidth" destination="WTf-8J-uOA" id="tIE-GL-pED"/>
                         <outlet property="spinner" destination="uBD-4n-5KN" id="l76-tc-ycD"/>
                     </connections>
                 </viewController>

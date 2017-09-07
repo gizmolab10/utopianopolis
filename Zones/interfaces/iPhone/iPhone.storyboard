@@ -53,7 +53,7 @@
             </objects>
             <point key="canvasLocation" x="293.60000000000002" y="-26.53673163418291"/>
         </scene>
-        <!--Controller-->
+        <!--Editor Controller-->
         <scene sceneID="9WU-We-u6g">
             <objects>
                 <viewController id="wVv-ZA-i1M" customClass="ZEditorController" customModule="iFocus" customModuleProvider="target" sceneMemberID="viewController">
@@ -65,12 +65,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lbQ-ID-4Qi">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lbQ-ID-4Qi" customClass="ZoneDragView" customModule="iFocus" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <connections>
-                                    <outlet property="controller" destination="wVv-ZA-i1M" id="ODF-Il-WlD"/>
-                                </connections>
                             </view>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="ort-lh-uaY">
                                 <rect key="frame" x="87" y="201" width="200" height="200"/>
@@ -93,10 +90,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="dragView" destination="lbQ-ID-4Qi" id="BGo-nI-FW9"/>
-                        <outlet property="scrollView" destination="idC-U9-mJR" id="KkC-pn-aOe"/>
-                        <outlet property="scrollX" destination="aaT-2Z-7gi" id="B1H-RN-ldk"/>
-                        <outlet property="scrollY" destination="yXW-9A-Fpv" id="rJe-XJ-NA2"/>
+                        <outlet property="editorView" destination="lbQ-ID-4Qi" id="1Qt-mC-p4t"/>
                         <outlet property="spinner" destination="ort-lh-uaY" id="o2L-om-CWH"/>
                     </connections>
                 </viewController>
@@ -138,10 +132,6 @@
                             <constraint firstItem="a2B-3q-Ohr" firstAttribute="leading" secondItem="lBC-jp-tuP" secondAttribute="leading" constant="-1" id="xoC-h4-qUS"/>
                         </constraints>
                     </view>
-                    <connections>
-                        <outlet property="favoritesSelector" destination="a2B-3q-Ohr" id="ODW-n9-lTh"/>
-                        <outlet property="scrollView" destination="lBC-jp-tuP" id="t07-id-pKo"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sgt-jL-L57" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

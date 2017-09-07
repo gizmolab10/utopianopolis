@@ -64,8 +64,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
         if let e = editorView {
             graphRootWidget.snp.removeConstraints()
             graphRootWidget.snp.makeConstraints { make in
-                make .top.equalTo(e).offset(20.0 - Double(gGenericOffset.height /  3.0))
-                make.left.equalTo(e).offset(15.0 - Double(gGenericOffset.width))//  / 20.0))
+                make  .top.equalTo(e).offset(20.0 - Double(gGenericOffset.height /  3.0))
+                make .left.equalTo(e).offset(15.0 - Double(gGenericOffset.width))//  / 20.0))
             }
         }
     }
@@ -88,15 +88,13 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
                 gTextCapturing                  = false
                 graphRootWidget     .widgetZone = here
 
-                if controllerID  == .favorites {
-                    gFavoritesManager.updateIndexFor(here) { object in
-                        gFavoritesManager.update()
+                if let zone = object as? Zone {
+                    if zone == here {
+                        specificWidget = zone.widget
+                        specificindex  = zone.siblingIndex
+                        specificView   = specificWidget?.superview
+                        recursing      = [.data, .redraw].contains(kind)
                     }
-                } else if let zone = object as? Zone, zone != here {
-                    specificWidget = zone.widget
-                    specificindex  = zone.siblingIndex
-                    specificView   = specificWidget?.superview
-                    recursing      = [.data, .redraw].contains(kind)
                 }
 
                 note("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")
@@ -234,6 +232,15 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
     }
 
 
+    func foo(dropZone: Zone?) -> Bool {
+        if let target = dropZone?.bookmarkTarget, let dragged = gDraggedZone, (target == dragged || target.wasSpawnedBy(dragged) || target.children.contains(dragged)) {
+            return true
+        }
+
+        return false
+    }
+
+
     func dragEvent(_ iGesture: ZGestureRecognizer?) -> Bool {
         if  let (controller, dropNearest, location) = widgetNearest(iGesture), let draggedZone = gDraggedZone {
             var      dropZone = dropNearest.widgetZone
@@ -249,8 +256,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
             let     dragIndex = draggedZone.siblingIndex
             let     sameIndex = dragIndex == index || dragIndex == index - 1
             let  dropIsParent = dropZone?.children.contains(draggedZone) ?? false
-            let    cycleSpawn = dropZone?.wasSpawnedByAGrab() ?? false
-            let        isNoop = same || cycleSpawn || (sameIndex && dropIsParent) || index < 0
+            let bookmarkCyclw = foo(dropZone: dropZone)
+            let    spawnCycle = bookmarkCyclw || dropZone?.wasSpawnedByAGrab() ?? false
+            let        isNoop = same || spawnCycle || (sameIndex && dropIsParent) || index < 0
             let         prior = gDragDropZone?.widget
             let       dropNow = doneState.contains(iGesture!.state)
             gDragDropIndices  = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)

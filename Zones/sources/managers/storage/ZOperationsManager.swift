@@ -214,7 +214,7 @@ class ZOperationsManager: NSObject {
             switch identifier {
             case .file:                 gFileManager.restore  (from:          mode);    complete(0)
             case .here:                 remote               .establishHere  (mode,     complete)
-            case .roots:                remote               .establishRoots (mode,     complete)
+            case .roots:                remote               .establishRoot (mode,     complete)
             default: let cloudManager = remote               .cloudManagerFor(mode)
                 switch identifier {
                 case .authenticate: remote.authenticate                      (          signalBack)

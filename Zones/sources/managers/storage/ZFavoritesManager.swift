@@ -25,6 +25,11 @@ class ZFavoritesManager: ZCloudManager {
     var           count: Int { return rootZone?.count ?? 0 }
 
 
+    var currentFavorite: Zone? {
+        return zoneAtIndex(favoritesIndex)
+    }
+
+
     var rotatedEnumeration: EnumeratedSequence<Array<Zone>> {
         let enumeration = rootZone?.children.enumerated()
         var     rotated = [Zone] ()
@@ -54,8 +59,6 @@ class ZFavoritesManager: ZCloudManager {
             rootZone?.displayChildren()
             setupDefaultFavorites()
         }
-
-        update()
     }
 
 
@@ -79,6 +82,10 @@ class ZFavoritesManager: ZCloudManager {
 
     func update() {
 
+        columnarReport(" FAVORITE", "UPDATE")
+
+        let zone = currentFavorite
+
         // assure at least one favorite per db
         // call every time favorites MIGHT be altered
         // end of handleKey in editor
@@ -98,13 +105,19 @@ class ZFavoritesManager: ZCloudManager {
         for favorite in defaultFavorites.children {
             if let mode = favorite.storageMode, !found.contains(mode) {
                 rootZone?.add(favorite)
-                favorite.clearAllStates()
+                favorite.clearAllStates() // erase side-effect of add
             }
         }
+
+        updateForZone(zone, nil)
     }
 
 
     func zoneAtIndex(_ index: Int) -> Zone? {
+        if index < 0 || rootZone == nil || index >= rootZone!.count {
+            return nil
+        }
+
         return rootZone?[index]
     }
     
@@ -131,24 +144,26 @@ class ZFavoritesManager: ZCloudManager {
     }
 
 
-    func updateIndexFor(_ iZone: Zone, iGrabClosure: ObjectClosure?) {
-        setup()
+    func updateForZone(_ iZone: Zone?, _ iGrabClosure: ObjectClosure?) {
+        if  let target = iZone, target.storageMode == gStorageMode {
+            for (index, zone) in self.rootZone!.children.enumerated() {
+                if  zone == target {
+                    self.favoritesIndex = index
 
-        let          traveler = !iZone.isBookmark ? iZone : iZone.bookmarkTarget
-        if  let   identifier  = traveler?.record?.recordID.recordName {
-            let          mode = traveler!.storageMode
-            let   enumeration = rotatedEnumeration
-            let updateForZone = { (iZoneToMatch: Zone) in
-                for (index, zone) in self.rootZone!.children.enumerated() {
-                    if zone == iZoneToMatch {
-                        self.favoritesIndex = index
+                    iGrabClosure?(zone)
 
-                        iGrabClosure?(zone)
-
-                        return
-                    }
+                    return
                 }
             }
+        }
+    }
+
+
+    func updateIndexFor(_ iZone: Zone, iGrabClosure: ObjectClosure?) {
+        let          traveler = !iZone.isBookmark ? iZone : iZone.bookmarkTarget
+        if  let    identifier = traveler?.record?.recordID.recordName {
+            let          mode = traveler!.storageMode
+            let   enumeration = rotatedEnumeration
 
             // must go through enumerations three times, so will match
             // first against identifer
@@ -157,19 +172,19 @@ class ZFavoritesManager: ZCloudManager {
 
             for (_, zone) in enumeration {
                 if zone == iZone || (zone.isFavorite && zone.crossLink?.record.recordID.recordName == identifier && zone.crossLink?.storageMode == mode) {
-                    return updateForZone(zone)
+                    return updateForZone(zone, iGrabClosure)
                 }
             }
 
             for (_, zone) in enumeration {
                 if zone.isFavorite, let target = zone.bookmarkTarget, (target.spawned(traveler!) || traveler!.spawned(target)) {
-                    return updateForZone(zone)
+                    return updateForZone(zone, iGrabClosure)
                 }
             }
 
             for (_, zone) in enumeration {
                 if !zone.isFavorite, zone.isBookmark, zone.crossLink?.storageMode == mode {
-                    return updateForZone(zone)
+                    return updateForZone(zone, iGrabClosure)
                 }
             }
         }
@@ -223,8 +238,8 @@ class ZFavoritesManager: ZCloudManager {
 
 
     @discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
-        if rootZone!.count > favoritesIndex, let bookmark = zoneAtIndex(favoritesIndex) {
-            if bookmark.isFavorite {
+        if  let bookmark = currentFavorite {
+            if  bookmark.isFavorite {
                 gTravelManager.travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
                     atArrival()
                 }
@@ -254,7 +269,6 @@ class ZFavoritesManager: ZCloudManager {
 
     @discardableResult func create(withBookmark: Zone?, _ isFavorite: Bool, _ storageMode: ZStorageMode?, _ name: String?) -> Zone {
         let bookmark:  Zone = withBookmark ?? Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: storageMode)
-
         bookmark.isFavorite = isFavorite
         bookmark.zoneName   = name
 
@@ -274,9 +288,9 @@ class ZFavoritesManager: ZCloudManager {
     }
 
 
-    @discardableResult func createBookmark(for zone: Zone, isFavorite: Bool) -> Zone {
+    @discardableResult func createBookmark(for iZone: Zone, isFavorite: Bool) -> Zone {
         if isFavorite {
-            let basis: ZRecord = !zone.isBookmark ? zone : zone.crossLink!
+            let basis: ZRecord = !iZone.isBookmark ? iZone : iZone.crossLink!
             let     recordName = basis.record.recordID.recordName
 
             for bookmark in rootZone!.children {
@@ -286,28 +300,30 @@ class ZFavoritesManager: ZCloudManager {
             }
         }
 
-        let    parent: Zone = isFavorite ? rootZone! : zone.parentZone ?? rootZone!
+        let    parent: Zone = isFavorite ? rootZone! : iZone.parentZone ?? rootZone!
         let           count = parent.count
-        var bookmark: Zone? = zone.isBookmark ? zone.deepCopy() : nil
-        var           index = parent.children.index(of: zone) ?? count
+        var bookmark: Zone? = iZone.isBookmark ? iZone.deepCopy() : nil
+        var           index = parent.children.index(of: iZone) ?? count
 
         if isFavorite {
-            updateIndexFor(zone) { object in }
+            updateIndexFor(iZone) { object in }
 
             index           = nextFavoritesIndex(forward: gInsertionsFollow)
         }
 
-        bookmark            = create(withBookmark: bookmark, isFavorite, parent: parent, atIndex: index, zone.storageMode, zone.zoneName)
+        bookmark            = create(withBookmark: bookmark, isFavorite, parent: parent, atIndex: index, iZone.storageMode, iZone.zoneName)
 
         bookmark?.needFlush()
 
-        if !isFavorite {
+        if  isFavorite {
+            updateGrabAndIndexFor(iZone)
+        } else {
             parent.maybeNeedMerge()
             parent.updateCloudProperties()
         }
 
-        if !zone.isBookmark {
-            bookmark?.crossLink = zone
+        if !iZone.isBookmark {
+            bookmark?.crossLink = iZone
         }
 
         return bookmark!
@@ -335,6 +351,8 @@ class ZFavoritesManager: ZCloudManager {
         } else {
             createBookmark(for: zone, isFavorite: true)
         }
+
+        updateGrabAndIndexFor(zone)
     }
 
 

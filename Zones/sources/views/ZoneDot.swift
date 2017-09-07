@@ -180,7 +180,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             isHidden                = isHiddenToggleDot
 
             if !isHidden {
-                let shouldHighlight = isToggle ? (!zone.showChildren || zone.isBookmark || isDragTarget) : zone.isGrabbed // not highlight when editing
+                let shouldHighlight = isToggle ? (!zone.showChildren || zone.isBookmark || isDragTarget) : zone.isGrabbed || zone == gFavoritesManager.currentFavorite // not highlight when editing
                 let     strokeColor = isToggle && isDragTarget ? gDragTargetsColor : zone.color
                 let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
                 let       thickness = CGFloat(gLineThickness)
