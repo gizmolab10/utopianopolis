@@ -85,17 +85,16 @@ class ZControllersManager: NSObject {
         signalFor(nil, regarding: .startup)
         displayActivity(true)
         gOperationsManager.startUp {
-            self.FOREGROUND {
-                self.displayActivity(false)
-                gHere.grab()
-                gFavoritesManager.update()
+            self.displayActivity(false) // now on foreground thread
+            gHere.grab()
+            gFavoritesManager.update()
+            self.signalFor(nil, regarding: .redraw)
+            gOperationsManager.finishUp {
                 self.signalFor(nil, regarding: .redraw)
-                gOperationsManager.finishUp {
-                    self.signalFor(nil, regarding: .redraw)
-                }
             }
         }
     }
+
 
     // MARK:- signals
     // MARK:-

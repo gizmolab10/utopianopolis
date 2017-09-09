@@ -261,7 +261,7 @@ class ZEditingManager: NSObject {
             gHere = zone
 
             zone.grab()
-            self.redrawAndSync(zone)
+            self.redrawAndSync(nil)
         }
 
         if isCommand{
@@ -565,12 +565,14 @@ class ZEditingManager: NSObject {
             if  candidate.parentZone != nil {
                 if preserveChildren {
                     self.preserveChildrenOfGrabbedZones()
+                    gFavoritesManager.update()
                     self.redrawAndSyncAndRedraw()
                 } else {
                     self.prepareUndoForDelete()
                     self.deleteZones(gSelectionManager.simplifiedGrabs, permanently: permanently) { iZone in
                         iZone?.grab()
 
+                        gFavoritesManager.update()
                         self.redrawAndSyncAndRedraw()
                     }
                 }
@@ -1412,8 +1414,11 @@ class ZEditingManager: NSObject {
                 
                 if !selectionOnly {
                     if  there.move(child: index, to: newIndex) { // if move succeeds
-                        there.children[newIndex].grab()
+                        let grab = there.children[newIndex]
+                        
+                        grab.grab()
                         there.updateOrdering()
+                        gFavoritesManager.updateGrabAndIndexFor(grab)
                         self.redrawAndSync(there)
                     }
                 } else {

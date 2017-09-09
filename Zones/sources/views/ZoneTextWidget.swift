@@ -194,10 +194,12 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         if  let t = iText, let zone = iZone {
             gTextCapturing          = true
 
-            let        assignTextTo = { (iTarget: Zone?) in
-                if  let      target = iTarget {
-                    let  components = t.components(separatedBy: "  (")
-                    target.zoneName = components[0]
+            let        assignTextTo = { (iTarget: Zone) in
+                let      components = t.components(separatedBy: "  (")
+                iTarget   .zoneName = components[0]
+
+                if !iTarget.isFavorite {
+                    iTarget.needFlush()
                 }
             }
 
@@ -212,13 +214,19 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 assignTextTo(target)
             }
 
+            var bookmarks = [Zone] ()
+
             for bookmark in gRemoteStoresManager.bookmarksFor(zone) {
+                bookmarks.append(bookmark)
                 assignTextTo(bookmark)
-                signalFor(bookmark, regarding: .datum)
             }
-            
+
             redrawAndSync() {
                 gTextCapturing = false
+
+                for bookmark in bookmarks {
+                    self.signalFor(bookmark, regarding: .datum)
+                }
             }
         }
     }

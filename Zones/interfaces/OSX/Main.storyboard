@@ -380,17 +380,10 @@ CQ
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <viewController id="XfG-lQ-9wD" userLabel="Editor" customClass="ZEditorController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" identifier="drag view" id="m2S-Jp-Qdl" userLabel="Editor View" customClass="ZoneDragView" customModule="Focus" customModuleProvider="target">
+                    <view key="view" identifier="drag view" id="m2S-Jp-Qdl" userLabel="View">
                         <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
-                                <rect key="frame" x="100" y="198" width="200" height="200"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="200" id="bAV-En-6Wv"/>
-                                    <constraint firstAttribute="width" constant="200" id="vJp-G5-N5A"/>
-                                </constraints>
-                            </progressIndicator>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="8fA-4k-lrb" userLabel="Favorites View">
                                 <rect key="frame" x="0.0" y="196" width="400" height="400"/>
                                 <constraints>
@@ -400,24 +393,38 @@ CQ
                                     <segue destination="i29-og-Irn" kind="embed" id="8d5-Fo-5gd"/>
                                 </connections>
                             </containerView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="itU-Gt-Inh" customClass="ZoneDragView" customModule="Focus" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
+                            </customView>
+                            <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
+                                <rect key="frame" x="100" y="198" width="200" height="200"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="bAV-En-6Wv"/>
+                                    <constraint firstAttribute="width" constant="200" id="vJp-G5-N5A"/>
+                                </constraints>
+                            </progressIndicator>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="itU-Gt-Inh" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="2on-Rh-qaW"/>
                             <constraint firstItem="uBD-4n-5KN" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="5bc-yZ-QEO"/>
                             <constraint firstItem="8fA-4k-lrb" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="6ek-ec-8Tg"/>
                             <constraint firstAttribute="trailing" secondItem="8fA-4k-lrb" secondAttribute="trailing" id="BHb-NN-qUM"/>
                             <constraint firstItem="8fA-4k-lrb" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="TwZ-wM-Gkm"/>
                             <constraint firstItem="uBD-4n-5KN" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="VsQ-sf-Z2d"/>
+                            <constraint firstAttribute="bottom" secondItem="itU-Gt-Inh" secondAttribute="bottom" id="doe-l2-P4Y"/>
+                            <constraint firstItem="itU-Gt-Inh" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="lzQ-yE-6cu"/>
+                            <constraint firstAttribute="trailing" secondItem="itU-Gt-Inh" secondAttribute="trailing" id="pGy-4H-4Ky"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="editorView" destination="m2S-Jp-Qdl" id="umk-vN-23n"/>
+                        <outlet property="editorView" destination="itU-Gt-Inh" id="E7f-iE-OVJ"/>
                         <outlet property="favoritesHeight" destination="xEQ-mS-ruW" id="HV7-Vr-r5h"/>
                         <outlet property="spinner" destination="uBD-4n-5KN" id="l76-tc-ycD"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="684.5" y="1466"/>
+            <point key="canvasLocation" x="684" y="1466"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">

@@ -756,7 +756,7 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        if manifest.here == nil {
+        if manifest.here == nil { // first launch
             rootCompletion()
         } else {
             let recordID = manifest.here!.recordID
@@ -778,6 +778,22 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
+    func establishRoot(_ onCompletion: IntegerClosure?) {
+        let recordID = CKRecordID(recordName: rootNameKey)
+
+        onCompletion?(-1)
+
+        assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
+            if iRecord != nil {
+                let      root = self.zoneForRecord(iRecord!)    // get / create root
+                self.rootZone = root
+            }
+
+            self.establishTrash(onCompletion)
+        }
+    }
+
+
     func establishTrash(_ onCompletion: IntegerClosure?) {
         let recordID = CKRecordID(recordName: trashNameKey)
 
@@ -791,22 +807,6 @@ class ZCloudManager: ZRecordsManager {
             }
 
             onCompletion?(0)
-        }
-    }
-
-
-    func establishRoot(_ onCompletion: IntegerClosure?) {
-        let recordID = CKRecordID(recordName: rootNameKey)
-
-        onCompletion?(-1)
-
-        assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
-            if iRecord != nil {
-                let      root = self.zoneForRecord(iRecord!)    // get / create root
-                self.rootZone = root
-            }
-
-            self.establishTrash(onCompletion)
         }
     }
 

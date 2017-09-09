@@ -113,7 +113,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 let width = CGFloat(isInvisible && !isToggle ? 0.0 : gFingerBreadth)
 
                 make.size.equalTo(CGSize(width: width, height: gFingerBreadth))
-                make.center.equalTo(innerDot!)
+                make.center.equalTo(innerDot!)//.offset(0.5)
             }
         }
 
@@ -131,11 +131,11 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     
 
     func drawTinyDots(_ dirtyRect: CGRect) {
-        if  isToggle, let zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showChildren || zone.isBookmark) {
-            var          count = zone.fetchableCount
+        if  let  zone  = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showChildren || zone.isBookmark) {
+            var count  = zone.fetchableCount
 
             if  count == 0 {
-                count = zone.count
+                count  = zone.count
             }
 
             if  count > 1 {
@@ -176,35 +176,49 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        if  let                zone = widgetZone, isInnerDot, isVisible(dirtyRect) {
+        if  let                zone = widgetZone, isVisible(dirtyRect) {
+            let highlightAsFavorite = zone == gFavoritesManager.currentFavorite
             isHidden                = isHiddenToggleDot
 
             if !isHidden {
-                let shouldHighlight = isToggle ? (!zone.showChildren || zone.isBookmark || isDragTarget) : zone.isGrabbed || zone == gFavoritesManager.currentFavorite // not highlight when editing
-                let     strokeColor = isToggle && isDragTarget ? gDragTargetsColor : zone.color
-                let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
-                let       thickness = CGFloat(gLineThickness)
-                var            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
+                if isInnerDot {
+                    let shouldHighlight = isToggle ? (!zone.showChildren || zone.isBookmark || isDragTarget) : zone.isGrabbed || highlightAsFavorite // not highlight when editing
+                    let     strokeColor = isToggle && isDragTarget ? gDragTargetsColor : zone.color
+                    let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
+                    let       thickness = CGFloat(gLineThickness)
+                    var            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
 
-                fillColor.setFill()
-                strokeColor.setStroke()
-                path.lineWidth = thickness * 2.0
-                path.flatness = 0.0001
-                path.stroke()
-                path.fill()
+                    path     .lineWidth = thickness * 2.0
+                    path      .flatness = 0.0001
 
-                if  zone.isBookmark && isToggle {
-                    let inset = CGFloat(innerDotHeight / 3.0)
-                    path      = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
-                    path.flatness = 0.0001
-
-                    gBackgroundColor.setFill()
+                    fillColor.setFill()
+                    strokeColor.setStroke()
+                    path.stroke()
                     path.fill()
+
+                    if isToggle && zone.isBookmark {
+                        let       inset = CGFloat(innerDotHeight / 3.0)
+                        path            = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
+                        path  .flatness = 0.0001
+
+                        gBackgroundColor.setFill()
+                        path.fill()
+                    }
+                } else if isToggle {
+                    drawTinyDots(dirtyRect)
+                } else if highlightAsFavorite {
+                    let     yInset = (dirtyRect.size.height - CGFloat(gDotHeight)) / 2.0 - 2.0
+                    let     xInset = (dirtyRect.size.width  - CGFloat(gDotWidth )) / 2.0 - 2.0
+                    let       path = ZBezierPath(ovalIn: dirtyRect.offsetBy(dx: 0.5, dy: 0.0).insetBy(dx: xInset, dy: yInset))
+                    path.lineWidth = CGFloat(gDotWidth) / 5.0
+                    path.flatness  = 0.0001
+
+                    zone.color.withAlphaComponent(0.7).setStroke()
+                    path.stroke()
+
                 }
             }
         }
-
-        drawTinyDots(dirtyRect)
     }
 
 }

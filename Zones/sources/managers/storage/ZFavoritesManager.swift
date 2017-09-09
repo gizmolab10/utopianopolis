@@ -150,7 +150,7 @@ class ZFavoritesManager: ZCloudManager {
                 if  zone == target {
                     self.favoritesIndex = index
 
-                    iGrabClosure?(zone)
+                    iGrabClosure?(target)
 
                     return
                 }
