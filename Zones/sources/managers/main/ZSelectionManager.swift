@@ -128,7 +128,7 @@ class ZSelectionManager: NSObject {
             movable = currentlyEditingZone
         }
 
-        if  movable == nil || (movable?.parentZone != nil && gStorageMode != movable?.parentZone?.storageMode) {
+        if  movable == nil {
             movable = gHere
         }
 

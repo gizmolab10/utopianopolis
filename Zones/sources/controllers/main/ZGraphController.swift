@@ -232,7 +232,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
     }
 
 
-    func foo(dropZone: Zone?) -> Bool {
+    func bookmarkCycle(_ dropZone: Zone?) -> Bool {
         if let target = dropZone?.bookmarkTarget, let dragged = gDraggedZone, (target == dragged || target.wasSpawnedBy(dragged) || target.children.contains(dragged)) {
             return true
         }
@@ -256,8 +256,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
             let     dragIndex = draggedZone.siblingIndex
             let     sameIndex = dragIndex == index || dragIndex == index - 1
             let  dropIsParent = dropZone?.children.contains(draggedZone) ?? false
-            let bookmarkCyclw = foo(dropZone: dropZone)
-            let    spawnCycle = bookmarkCyclw || dropZone?.wasSpawnedByAGrab() ?? false
+            let    spawnCycle = bookmarkCycle(dropZone) || dropZone?.wasSpawnedByAGrab() ?? false
             let        isNoop = same || spawnCycle || (sameIndex && dropIsParent) || index < 0
             let         prior = gDragDropZone?.widget
             let       dropNow = doneState.contains(iGesture!.state)

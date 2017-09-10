@@ -84,6 +84,7 @@ class ZEditingManager: NSObject {
                 case "p":         printHere()
                 case "b":         createBookmark()
                 case "u", "l":    alterCase(up: key == "u")
+                case "s":         selectCurrentFavorite()
                 case ";":         doFavorites(true,    false)
                 case "'":         doFavorites(isShift, isOption)
                 case ",", ".":    gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
@@ -237,6 +238,14 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
+    func selectCurrentFavorite() {
+        if let current = gFavoritesManager.favorite(for: gHere) {
+            current.grab()
+            signalFor(current, regarding: .datum)
+        }
+    }
+
+
     func doFavorites(_ isShift: Bool, _ isOption: Bool) {
         let backward = isShift || isOption
 
@@ -249,7 +258,6 @@ class ZEditingManager: NSObject {
 
 
     func travelThroughBookmark(_ bookmark: Zone) {
-        gFavoritesManager.updateGrabAndIndexFor(bookmark)
         gTravelManager.travelThrough(bookmark) { object, kind in
             self.redrawAndSync()
         }
@@ -335,7 +343,7 @@ class ZEditingManager: NSObject {
             if iZone == ancestor {
                 gHere = ancestor
 
-                gFavoritesManager.updateGrabAndIndexFor(gHere)
+//                gFavoritesManager.updateGrabAndIndexFor(gHere)
                 gHere.grab()
             }
 
@@ -565,14 +573,17 @@ class ZEditingManager: NSObject {
             if  candidate.parentZone != nil {
                 if preserveChildren {
                     self.preserveChildrenOfGrabbedZones()
-                    gFavoritesManager.update()
+                    gFavoritesManager.updateChildren()
                     self.redrawAndSyncAndRedraw()
                 } else {
                     self.prepareUndoForDelete()
                     self.deleteZones(gSelectionManager.simplifiedGrabs, permanently: permanently) { iZone in
                         iZone?.grab()
 
-                        gFavoritesManager.update()
+                        if iZone?.isFavorite ?? false {
+                            gFavoritesManager.updateChildren()
+                        }
+
                         self.redrawAndSyncAndRedraw()
                     }
                 }
@@ -754,9 +765,7 @@ class ZEditingManager: NSObject {
 
             if !(parent?.isRootOfFavorites ?? false) {
                 if zone.isRoot {
-                    gFavoritesManager.showFavoritesAndGrab(zone) { object, kind in
-                        self.redrawAndSync()
-                    }
+                    self.redrawAndSync()
                 } else if !extreme {
                     if zone == gHere || parent == nil {
                         revealParentAndSiblingsOf(zone) {
@@ -819,11 +828,9 @@ class ZEditingManager: NSObject {
                     self.redrawAndSync(grandparent)
                 }
             } else if parent != nil && parent!.isRoot {
-                gFavoritesManager.showFavoritesAndGrab(nil) { object, kind in
-                    zone.isFavorite = true
+                zone.isFavorite = true
 
-                    moveIntoHere(gFavoritesManager.rootZone)
-                }
+                moveIntoHere(gFavoritesManager.rootZone)
             } else {
                 revealParentAndSiblingsOf(gHere) {
                     if let grandparent = parent?.parentZone {
@@ -1413,13 +1420,15 @@ class ZEditingManager: NSObject {
                 }
                 
                 if !selectionOnly {
-                    if  there.move(child: index, to: newIndex) { // if move succeeds
+                    if  there.moveChildIndex(from: index, to: newIndex) { // if move succeeds
                         let grab = there.children[newIndex]
                         
                         grab.grab()
                         there.updateOrdering()
-                        gFavoritesManager.updateGrabAndIndexFor(grab)
-                        self.redrawAndSync(there)
+                        redrawAndSync(there)
+//                        gFavoritesManager.updateForZone(there) { iZone in
+//                            self.redrawAndSync(there)
+//                        }
                     }
                 } else {
                     let  grabThis = there.children[newIndex]

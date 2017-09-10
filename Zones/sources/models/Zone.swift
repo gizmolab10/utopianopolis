@@ -712,7 +712,7 @@ class Zone : ZRecord {
     }
 
 
-    @discardableResult func move(child from: Int, to: Int) -> Bool {
+    @discardableResult func moveChildIndex(from: Int, to: Int) -> Bool {
         var succeeded = false
 
         if  to < count, from < count, let child = self[from], !gFavoritesManager.defaultFavorites.children.contains(child) {
@@ -868,7 +868,14 @@ class Zone : ZRecord {
         let increment = 1.0 / Double(count + 2)
 
         for (index, child) in children.enumerated() {
-            child.order = increment * Double(index + 1)
+            let newOrder = increment * Double(index + 1)
+            let    order = child.order
+
+            if  order      != newOrder {
+                child.order = newOrder
+
+                child.needFlush()
+            }
         }
     }
 

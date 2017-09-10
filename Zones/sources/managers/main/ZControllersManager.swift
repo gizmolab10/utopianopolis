@@ -87,7 +87,7 @@ class ZControllersManager: NSObject {
         gOperationsManager.startUp {
             self.displayActivity(false) // now on foreground thread
             gHere.grab()
-            gFavoritesManager.update()
+            gFavoritesManager.updateChildren()
             self.signalFor(nil, regarding: .redraw)
             gOperationsManager.finishUp {
                 self.signalFor(nil, regarding: .redraw)

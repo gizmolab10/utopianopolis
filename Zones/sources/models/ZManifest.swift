@@ -39,12 +39,6 @@ class ZManifest: ZRecord {
         set {
             if  _hereZone  != newValue {
                 _hereZone   = newValue
-
-                if let zone = _hereZone, zone.storageMode == gStorageMode {
-                    gFavoritesManager.updateIndexFor(zone) { object in
-                        gFavoritesManager.update()
-                    }
-                }
             }
 
             if let record = _hereZone?.record, record.recordID.recordName != here?.recordID.recordName {
