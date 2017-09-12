@@ -11,6 +11,13 @@ import Foundation
 import CloudKit
 
 
+enum ZFavoriteStyle: Int {
+    case normal
+    case favorite
+    case addFavorite
+}
+
+
 class ZFavoritesManager: ZCloudManager {
 
 
@@ -25,7 +32,26 @@ class ZFavoritesManager: ZCloudManager {
 
 
     var favoritesIndex: Int {
-        return indexOf(favorite(for: gHere)) ?? 0
+        return indexOf(favorite(for: gHere)) ?? userFavoritesIndex
+    }
+
+
+    var userFavoritesIndex: Int {
+        get {
+            if  let    value = UserDefaults.standard.object(forKey: favoritesIndexKey) as? Int {
+                return value
+            }
+
+            let initialValue = 0
+
+            UserDefaults.standard.set(initialValue, forKey: favoritesIndexKey)
+            
+            return initialValue
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: favoritesIndexKey)
+        }
     }
 
 
@@ -73,7 +99,7 @@ class ZFavoritesManager: ZCloudManager {
         if defaultFavorites.count == 0 {
             for (index, mode) in defaultModes.enumerated() {
                 let          name = mode.rawValue
-                let      favorite = create(withBookmark: nil, false, parent: defaultFavorites, atIndex: index, name)
+                let      favorite = create(withBookmark: nil, .addFavorite, parent: defaultFavorites, atIndex: index, name)
                 favorite.zoneLink =  "\(name)::"
                 favorite   .order = Double(index) * 0.001
 
@@ -245,31 +271,37 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    @discardableResult func create(withBookmark: Zone?, _ isFavorite: Bool, _ name: String?) -> Zone {
+    @discardableResult func create(withBookmark: Zone?, _ style: ZFavoriteStyle, _ name: String?) -> Zone {
         let bookmark:  Zone = withBookmark ?? Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: .mine)
-        bookmark.isFavorite = isFavorite
+        bookmark.isFavorite = style != .normal
         bookmark.zoneName   = name
 
         return bookmark
     }
 
 
-    @discardableResult func create(withBookmark: Zone?, _ isFavorite: Bool, parent: Zone, atIndex: Int, _ name: String?) -> Zone {
+    @discardableResult func create(withBookmark: Zone?, _ style: ZFavoriteStyle, parent: Zone, atIndex: Int, _ name: String?) -> Zone {
         let           count = parent.count
-        let bookmark:  Zone = create(withBookmark: withBookmark, isFavorite, name)
+        let bookmark:  Zone = create(withBookmark: withBookmark, style, name)
         let  insertAt: Int? = atIndex == count ? nil : atIndex
 
-        parent.add(bookmark, at: insertAt) // calls update progeny count
+        if style != .favorite {
+            parent.add(bookmark, at: insertAt) // calls update progeny count
+        }
+        
         bookmark.updateCloudProperties() // is this needed?
 
         return bookmark
     }
 
 
-    @discardableResult func createBookmark(for iZone: Zone, isFavorite: Bool) -> Zone {
-        if isFavorite {
+    @discardableResult func createBookmark(for iZone: Zone, style: ZFavoriteStyle) -> Zone {
+        var    parent: Zone = iZone.parentZone ?? rootZone!
+
+        if style != .normal {
             let basis: ZRecord = !iZone.isBookmark ? iZone : iZone.crossLink!
             let     recordName = basis.record.recordID.recordName
+            parent             = rootZone!
 
             for bookmark in rootZone!.children {
                 if recordName == bookmark.crossLink?.record.recordID.recordName, !defaultFavorites.children.contains(bookmark) {
@@ -278,20 +310,19 @@ class ZFavoritesManager: ZCloudManager {
             }
         }
 
-        let    parent: Zone = isFavorite ? rootZone! : iZone.parentZone ?? rootZone!
         let           count = parent.count
         var bookmark: Zone? = iZone.isBookmark ? iZone.deepCopy() : nil
         var           index = parent.children.index(of: iZone) ?? count
 
-        if isFavorite {
+        if style == .addFavorite {
             index           = nextFavoritesIndex(forward: gInsertionsFollow)
         }
 
-        bookmark            = create(withBookmark: bookmark, isFavorite, parent: parent, atIndex: index, iZone.zoneName)
+        bookmark            = create(withBookmark: bookmark, style, parent: parent, atIndex: index, iZone.zoneName)
 
         bookmark?.needFlush()
 
-        if  !isFavorite {
+        if  style == .normal {
             parent.maybeNeedMerge()
             parent.updateCloudProperties()
         }
@@ -323,7 +354,7 @@ class ZFavoritesManager: ZCloudManager {
         if isChildOfFavoritesRoot(zone) {
             deleteFavorite(for: zone)
         } else {
-            createBookmark(for: zone, isFavorite: true)
+            createBookmark(for: zone, style: .addFavorite)
             updateChildren()
         }
     }

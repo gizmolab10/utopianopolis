@@ -304,7 +304,13 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="QHI-d1-ClG"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Refocus" keyEquivalent="/" id="tpQ-4P-p2y">
+                                                    <menuItem title="Select Current Favorite" keyEquivalent="s" id="ir8-Wk-bHQ">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="vYQ-DG-4FY"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Refocus on Current Favorite" keyEquivalent="/" id="tpQ-4P-p2y">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="c9g-W5-Xac"/>
                                                         </connections>

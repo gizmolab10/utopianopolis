@@ -102,6 +102,15 @@ extension String {
         return CGSize(width: size.width, height: size.height)
     }
 
+
+    var integerValue: Int? {
+        if let value = Int(self) {
+            return value
+        }
+
+        return nil
+    }
+
 }
 
 

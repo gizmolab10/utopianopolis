@@ -298,6 +298,7 @@ var gSettingsViewIDs: ZSettingsViewID {
 
 let dragTargetsColorKey = "drag targets color"
 let  backgroundColorKey = "background color"
+let   favoritesIndexKey = "user favorites index"
 let    settingsStateKey = "current settings state"
 let    insertionModeKey = "graph altering mode"
 let    tinyDotsRatioKey = "tiny dots ratio"

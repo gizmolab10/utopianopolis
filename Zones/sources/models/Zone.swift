@@ -660,8 +660,24 @@ class Zone : ZRecord {
     }
 
 
+    func validIndex(from iIndex: Int?) -> Int {
+        var insertAt = iIndex
+
+        if  let index = iIndex, index < count {
+            if index < 0 {
+                insertAt = 0
+            }
+        } else {
+            insertAt = count
+        }
+
+        return insertAt!
+    }
+
+
     @discardableResult func add(_ iChild: Zone?, at iIndex: Int?) -> Int? {
         if let child = iChild {
+            let insertAt = validIndex(from: iIndex)
 
             // make sure it's not already been added
             // NOTE: both must have a record for this to be effective
@@ -671,18 +687,23 @@ class Zone : ZRecord {
 
                 for sibling in children {
                     if sibling.record != nil && sibling.record.recordID.recordName == identifier {
-                        return children.index(of: child)
+                        if  let oldIndex = children.index(of: child) {
+                            if  oldIndex == iIndex {
+                                return oldIndex
+                            } else {
+                                let newIndex = insertAt < count ? insertAt : count - 1
+                                moveChildIndex(from: oldIndex, to: newIndex)
+
+                                return newIndex
+                            }
+                        }
                     }
                 }
             }
 
-            var insertAt = iIndex
-
-            if  let index = iIndex, index >= 0, index < count {
-                children.insert(child, at: index)
+            if  insertAt < count {
+                children.insert(child, at: insertAt)
             } else {
-                insertAt = count
-
                 children.append(child)
             }
 
