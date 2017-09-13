@@ -144,22 +144,6 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
 
     // MARK:- internals
     // MARK:-
-
-
-    override func widgetNearest(_ iGesture: ZGestureRecognizer?, recursed : Bool = false) -> (ZGraphController, ZoneWidget, CGPoint)? {
-        if  let (controller, dropNearest, location) = alternateController?.widgetNearest(iGesture, recursed: true) {
-            return (controller, dropNearest, location)
-        }
-
-        if  let    location = iGesture?.location(in: editorView),
-            let dropNearest = graphRootWidget.widgetNearestTo(location, in: editorView, here) {
-                
-            return (self, dropNearest, location)
-        }
-
-        return nil
-
-    }
     
 
     override func dotHitTest(_ iGesture: ZGestureRecognizer?) -> (ZoneDot, ZGraphController)? {

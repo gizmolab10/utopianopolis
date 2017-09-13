@@ -82,6 +82,7 @@ class ZEditingManager: NSObject {
                 case "r":         reverse()
                 case "c":         recenter()
                 case "p":         printHere()
+                case "o":         orderByLength()
                 case "b":         createBookmark()
                 case "u", "l":    alterCase(up: key == "u")
                 case "s":         selectCurrentFavorite()
@@ -184,6 +185,49 @@ class ZEditingManager: NSObject {
 
     // MARK:- miscellaneous features
     // MARK:-
+
+
+    func orderByLength() {
+        var commonParent = gSelectionManager.firstGrab.parentZone ?? gSelectionManager.firstGrab
+        var        zones = gSelectionManager.simplifiedGrabs
+        for zone in zones {
+            if let parent = zone.parentZone, parent != commonParent {
+                return
+            }
+        }
+
+        if zones.count == 1 {
+            commonParent = gSelectionManager.firstGrab
+            zones        = commonParent.children
+        }
+
+        if zones.count > 1 {
+            let font = gWidgetFont
+
+            zones.sort { (a, b) -> Bool in
+                return a.zoneName?.widthForFont(font) ?? 0 < b.zoneName?.widthForFont(font) ?? 0
+            }
+
+            var start = 1.0
+            var   end = 0.0
+
+            for child in zones {
+                let order = child.order
+
+                if  order > end {
+                    end   = order
+                }
+
+                if  order < start {
+                    start = order
+                }
+            }
+
+            zones.updateOrdering(start: start, end: end)
+            commonParent.respectOrder()
+            redrawAndSync()
+        }
+    }
 
 
     func recenter() {
@@ -1007,42 +1051,41 @@ class ZEditingManager: NSObject {
 
 
     func reverse() {
-        if  var commonParent = gSelectionManager.firstGrab.parentZone {
-            var        zones = gSelectionManager.simplifiedGrabs
-            for zone in zones {
-                if let parent = zone.parentZone, parent != commonParent {
-                    return
-                }
+        var commonParent = gSelectionManager.firstGrab.parentZone ?? gSelectionManager.firstGrab
+        var        zones = gSelectionManager.simplifiedGrabs
+        for zone in zones {
+            if let parent = zone.parentZone, parent != commonParent {
+                return
+            }
+        }
+
+        if zones.count == 1 {
+            zones        = gSelectionManager.firstGrab.children
+            commonParent = gSelectionManager.firstGrab
+        }
+
+        if zones.count > 1 {
+            UNDO(self) { iUndoSelf in
+                iUndoSelf.reverse()
             }
 
-            if zones.count == 1 {
-                zones        = gSelectionManager.firstGrab.children
-                commonParent = gSelectionManager.firstGrab
+            zones.sort { (a, b) -> Bool in
+                return a.order < b.order
             }
 
-            if zones.count > 1 {
-                UNDO(self) { iUndoSelf in
-                    iUndoSelf.reverse()
-                }
+            let   max = zones.count - 1
+            let range = 0 ... max / 2
 
-                zones.sort { (a, b) -> Bool in
-                    return a.order < b.order
-                }
-
-                let   max = zones.count - 1
-                let range = 0 ... max / 2
-
-                for index in range {
-                    let a = zones[index]
-                    let b = zones[max - index]
-                    let o = a.order
-                    a.order = b.order
-                    b.order = o
-                }
-
-                commonParent.respectOrder()
-                redrawAndSync()
+            for index in range {
+                let a = zones[index]
+                let b = zones[max - index]
+                let o = a.order
+                a.order = b.order
+                b.order = o
             }
+
+            commonParent.respectOrder()
+            redrawAndSync()
         }
     }
 
@@ -1422,7 +1465,7 @@ class ZEditingManager: NSObject {
                         let grab = there.children[newIndex]
                         
                         grab.grab()
-                        there.updateOrdering()
+                        there.children.updateOrdering()
                         redrawAndSync(there)
                     }
                 } else {

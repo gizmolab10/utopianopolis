@@ -160,7 +160,7 @@ class ZFavoritesManager: ZCloudManager {
         var  found: Zone? = nil
 
         if  let favorites = rootZone?.children, let target = iTarget {
-            var     level = 0
+            var     level = -1
 
             for favorite in favorites {
                 if let favoriteTarget = favorite.bookmarkTarget, let newLevel = favorite.bookmarkTarget?.level, newLevel > level, favoriteTarget.spawned(target) {

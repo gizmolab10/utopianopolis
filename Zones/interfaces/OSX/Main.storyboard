@@ -331,6 +331,12 @@ CQ
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="iQa-Q8-Wmb"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Sort by Length" keyEquivalent="o" id="Eoi-r1-ax6">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="nGe-LJ-9tj"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                                 <connections>

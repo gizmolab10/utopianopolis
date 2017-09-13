@@ -655,7 +655,7 @@ class Zone : ZRecord {
         if  let child = iChild,
             add(child, at: iIndex) != nil {
 
-            updateOrdering()
+            children.updateOrdering()
         }
     }
 
@@ -792,7 +792,7 @@ class Zone : ZRecord {
         let child = gCloudManager.zoneForRecord(iCKRecord)
 
         add(child)
-        updateOrdering()
+        children.updateOrdering()
 
         return child
     }
@@ -882,22 +882,6 @@ class Zone : ZRecord {
         }
 
         return theCopy
-    }
-
-
-    func updateOrdering() {
-        let increment = 1.0 / Double(count + 2)
-
-        for (index, child) in children.enumerated() {
-            let newOrder = increment * Double(index + 1)
-            let    order = child.order
-
-            if  order      != newOrder {
-                child.order = newOrder
-
-                child.needFlush()
-            }
-        }
     }
 
 

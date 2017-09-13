@@ -225,19 +225,28 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
         if  let    location = iGesture?.location(in: editorView),
             let dropNearest = graphRootWidget.widgetNearestTo(location, in: editorView, here) {
 
+            if  !recursed, let alternate = alternateController,
+                let (controller, otherDrop, otherLocation) = alternate.widgetNearest(iGesture, recursed: true) {
+
+                /////////////////////////////////////////////////
+                // target zone found in both controllers' view //
+                //  deterimine which zone is closer to cursor  //
+                /////////////////////////////////////////////////
+
+                let      dotA = dropNearest.dragDot
+                let      dotB = otherDrop  .dragDot
+                let distanceA = dotA.convert(dotA.bounds.center, to: view) - location
+                let distanceB = dotB.convert(dotB.bounds.center, to: view) - location
+
+                if distanceA.scalarDistance > distanceB.scalarDistance {
+                    return (controller, otherDrop, otherLocation)
+                }
+            }
+
             return (self, dropNearest, location)
         }
 
-        return recursed ? nil : alternateController?.widgetNearest(iGesture, recursed: true)
-    }
-
-
-    func bookmarkCycle(_ dropZone: Zone?) -> Bool {
-        if let target = dropZone?.bookmarkTarget, let dragged = gDraggedZone, (target == dragged || target.wasSpawnedBy(dragged) || target.children.contains(dragged)) {
-            return true
-        }
-
-        return false
+        return nil
     }
 
 
@@ -307,26 +316,33 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
     // MARK:-
 
 
+    func bookmarkCycle(_ dropZone: Zone?) -> Bool {
+        if let target = dropZone?.bookmarkTarget, let dragged = gDraggedZone, (target == dragged || target.wasSpawnedBy(dragged) || target.children.contains(dragged)) {
+            return true
+        }
+
+        return false
+    }
+
+
     func dotHit(_ iGesture: ZGestureRecognizer?) -> ZoneDot? {
         var hit: ZoneDot? = nil
 
-        if  editorView != nil, let location = iGesture?.location(in: editorView), editorView!.bounds.contains(location) {
+        if  let e = editorView, let location = iGesture?.location(in: e), e.bounds.contains(location) {
             here.traverseProgeny { iZone -> ZTraverseStatus in
                 if  let       widget = iZone.widget {
-                    var         rect = widget.outerHitRect
-                    rect             = widget.convert(rect, to: editorView)
+                    var         rect = widget.convert(widget.outerHitRect, to: e)
 
                     if rect.contains(location) {
-                        let hits: DotToBooleanClosure = { (iDot: ZoneDot) -> Bool in
-                            rect     = iDot.bounds
-                            rect     = iDot.convert(rect, to: self.editorView)
-                            let onIt = rect.contains(location)
+                        let hits: DotToBooleanClosure = { iDot -> Bool in
+                            rect     = iDot.convert(iDot.bounds, to: e)
+                            let stop = rect.contains(location)
 
-                            if  onIt {
+                            if  stop {
                                 hit = iDot
                             }
 
-                            return onIt
+                            return stop
                         }
 
                         if hits(widget.dragDot) || hits(widget.toggleDot) {

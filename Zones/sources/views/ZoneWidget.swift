@@ -237,10 +237,7 @@ class ZoneWidget: ZView {
     
 
     var outerHitRect: CGRect {
-        let start = dragDot.bounds.origin
-        let end = toggleDot.bounds.extent
-
-        return CGRect(start: dragDot.convert(start, to: self), end: toggleDot.convert(end, to: self))
+        return CGRect(start: dragDot.convert(dragDot.bounds.origin, to: self), end: toggleDot.convert(toggleDot.bounds.extent, to: self))
     }
 
 

@@ -182,6 +182,15 @@ extension CGPoint {
 }
 
 
+extension CGSize {
+
+    var scalarDistance: CGFloat {
+        return sqrt(width * width + height * height)
+    }
+
+}
+
+
 extension CGRect {
 
     var center: CGPoint { return CGPoint(x: midX, y: midY) }
@@ -204,6 +213,32 @@ extension CGRect {
 }
 
 
+extension Array {
+
+    func updateOrdering() {
+        updateOrdering(start: 0.0, end: 1.0)
+    }
+
+    func updateOrdering(start: Double, end: Double) {
+        let increment = (end - start) / Double(self.count + 2)
+
+        for (index, element) in self.enumerated() {
+            if  let    child = element as? Zone {
+                let newOrder = start + (increment * Double(index + 1))
+                let    order = child.order
+
+                if  order      != newOrder {
+                    child.order = newOrder
+
+                    child.needFlush()
+                }
+            }
+        }
+    }
+
+}
+
+
 extension String {
     var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
     var          isDigit: Bool { return "0123456789.+-=*/".characters.contains(self[startIndex]) }
@@ -211,7 +246,7 @@ extension String {
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
     var           length: Int  { return unicodeScalars.count }
 
-    func substring(from:         Int) -> String   { return substring(from: index(at: from)) }
+    func substring(from:         Int) -> String  { return substring(from: index(at: from)) }
     func substring(to:           Int) -> String  { return substring(to: index(at: to)) }
     func heightForFont(_ font: ZFont) -> CGFloat { return sizeWithFont(font).height }
     func widthForFont (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
