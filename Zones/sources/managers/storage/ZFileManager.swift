@@ -28,7 +28,7 @@ class ZFileManager: NSObject {
 
 
     func save(to storageMode: ZStorageMode?) {
-        if !isSaving && gFileMode == .local && storageMode != nil && storageMode != .favorites {
+        if !isSaving && gFileMode == .local && storageMode != nil && storageMode != .favoritesMode {
             isSaving               = true
             let               root = gRemoteStoresManager.rootZone(for: storageMode!)
             let dict: NSDictionary = root!.storageDict as NSDictionary
@@ -42,7 +42,7 @@ class ZFileManager: NSObject {
 
 
     func restore(from storageMode: ZStorageMode) {
-        if gFileMode == .local && storageMode != .favorites {
+        if gFileMode == .local && storageMode != .favoritesMode {
             if let raw = NSDictionary(contentsOf: pathToFile(for: storageMode)) {
                 let      manifest = gRemoteStoresManager.manifest(for: storageMode)
                 let          root = Zone(dict: raw as! ZStorageDict) // broken, ignores mode
@@ -66,10 +66,10 @@ class ZFileManager: NSObject {
 
     func fileName(for storageMode: ZStorageMode) -> String {
         switch storageMode {
-        case .favorites: return "favorites.storage"
-        case .everyone:  return "everyone.storage"
-        case .shared:    return "shared.storage"
-        case .mine:      return "mine.storage"
+        case .favoritesMode: return "favorites.storage"
+        case  .everyoneMode: return "everyone.storage"
+        case    .sharedMode: return "shared.storage"
+        case      .mineMode: return "mine.storage"
         }
     }
 

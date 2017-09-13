@@ -102,7 +102,7 @@ class ZManifest: ZRecord {
     
 
     override func markForAllOfStates (_ states: [ZRecordState]) {
-        if manifestMode != .favorites {
+        if manifestMode != .favoritesMode {
             super.markForAllOfStates(states)
         }
     }

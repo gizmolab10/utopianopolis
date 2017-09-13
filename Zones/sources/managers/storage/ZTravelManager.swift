@@ -111,7 +111,7 @@ class ZTravelManager: NSObject {
                     gHere = there!
 
                     grabHere()
-                } else if gCloudManager.storageMode != .favorites { // favorites does not have a cloud database
+                } else if gCloudManager.storageMode != .favoritesMode { // favorites does not have a cloud database
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
                         if  let   record = iRecord {
                             gHere        = gCloudManager.zoneForRecord(record)

@@ -45,10 +45,10 @@ enum ZCountsMode: Int {
 
 
 enum ZStorageMode: String {
-    case favorites = "favorites"
-    case everyone  = "everyone"
-    case shared    = "group"
-    case mine      = "mine"
+    case favoritesMode = "favorites"
+    case  everyoneMode = "everyone"
+    case    sharedMode = "group"
+    case      mineMode = "mine"
 }
 
 
@@ -83,8 +83,8 @@ var            gDotWidth:             Double { return gDotHeight * 0.75 }
 var           gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var          gIsDragging:               Bool { return gDraggedZone != nil }
 var    gInsertionsFollow:               Bool { return gInsertionMode == .follow }
-var gFavoritesController:  ZGraphController? { return gControllersManager.controllerForID(.favorites) as? ZGraphController }
-var    gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor)    as? ZEditorController }
+var gFavoritesController:  ZGraphController? { return gControllersManager.controllerForID(.graph)  as? ZGraphController }
+var    gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor) as? ZEditorController }
 var       gFavoritesView:      ZoneDragView? { return gFavoritesController?.editorView }
 var          gEditorView:      ZoneDragView? { return gEditorController?.editorView }
 
@@ -251,7 +251,7 @@ var gStorageMode: ZStorageMode {
         }
 
         if mode == nil {
-            mode      = .everyone
+            mode      = .everyoneMode
 
             UserDefaults.standard.set(mode!.rawValue, forKey:storageModeKey)
             UserDefaults.standard.synchronize()

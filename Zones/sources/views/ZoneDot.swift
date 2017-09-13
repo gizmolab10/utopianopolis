@@ -72,7 +72,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var isHiddenToggleDot: Bool {
         if  let zone = widgetZone, isInnerDot, isToggle, let mode = zone.storageMode {
 
-            return (zone.fetchableCount == 0 && zone.count == 0 && !zone.isBookmark && !isDragTarget) || (mode == .favorites && !zone.isRootOfFavorites)
+            return (zone.fetchableCount == 0 && zone.count == 0 && !zone.isBookmark && !isDragTarget) || (mode == .favoritesMode && !zone.isRootOfFavorites)
         }
         
         return false

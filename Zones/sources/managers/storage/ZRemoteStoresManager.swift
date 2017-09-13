@@ -45,7 +45,7 @@ class ZRemoteStoresManager: NSObject {
             let            manifestName = manifestNameForMode(mode)
             let    recordID: CKRecordID = CKRecordID(recordName: manifestName)
             let    record:   CKRecord   = CKRecord(recordType: manifestTypeKey, recordID: recordID)
-            manifest                    = ZManifest(record: record, storageMode: .mine) // every manifest gets stored in .mine
+            manifest                    = ZManifest(record: record, storageMode: .mineMode) // every manifest gets stored in .mine
             manifest!     .manifestMode = mode
             manifestByStorageMode[mode] = manifest
         }
@@ -60,11 +60,11 @@ class ZRemoteStoresManager: NSObject {
 
 
     func recordsManagerFor(_ storageMode: ZStorageMode) -> ZRecordsManager {
-        if storageMode == .favorites {
+        if storageMode == .favoritesMode {
             return gFavoritesManager
         }
 
-        for storageMode in [ZStorageMode.everyone, ZStorageMode.mine] {
+        for storageMode in [ZStorageMode.everyoneMode, ZStorageMode.mineMode] {
             if  recordsManagers[storageMode] == nil {
                 recordsManagers[storageMode] = ZCloudManager(storageMode)
             }
@@ -76,10 +76,10 @@ class ZRemoteStoresManager: NSObject {
 
     func databaseForMode(_ mode: ZStorageMode) -> CKDatabase? {
         switch mode {
-        case .everyone: return container.publicCloudDatabase
-        case .shared:   return container.sharedCloudDatabase
-        case .mine:     return container.privateCloudDatabase
-        default:        return nil
+        case .everyoneMode: return container.publicCloudDatabase
+        case   .sharedMode: return container.sharedCloudDatabase
+        case     .mineMode: return container.privateCloudDatabase
+        default:            return nil
         }
     }
 
@@ -133,8 +133,8 @@ class ZRemoteStoresManager: NSObject {
 
     func establishRoot(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
         switch storageMode {
-        case .favorites: onCompletion?(0)
-        default:         cloudManagerFor(storageMode).establishRoot(onCompletion)
+        case .favoritesMode: onCompletion?(0)
+        default:             cloudManagerFor(storageMode).establishRoot(onCompletion)
         }
     }
 
@@ -143,7 +143,7 @@ class ZRemoteStoresManager: NSObject {
         let manifest = self.manifest(for: storageMode)
         let     here = manifest.hereZone
 
-        if storageMode == .favorites, let root = gFavoritesManager.rootZone {
+        if storageMode == .favoritesMode, let root = gFavoritesManager.rootZone {
             manifest.hereZone = root
         } else if here.record != nil && here.zoneName != nil {
             here.maybeNeedChildren()
@@ -203,7 +203,7 @@ class ZRemoteStoresManager: NSObject {
         var zoneBookmarks = [Zone] ()
 
         if zone != nil, let recordID = zone?.record?.recordID {
-            applyToAllZones(in: [.mine, .everyone]) { iZone in
+            applyToAllZones(in: [.mineMode, .everyoneMode]) { iZone in
                 if let link = iZone.crossLink, let record = link.record, recordID == record.recordID {
                     zoneBookmarks.append(iZone)
                 }

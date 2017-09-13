@@ -249,7 +249,7 @@ class ZEditingManager: NSObject {
 
 
     func find() {
-        if gStorageMode != .favorites {
+        if gStorageMode != .favoritesMode {
             gShowsSearching = !gShowsSearching
 
             signalFor(nil, regarding: .search)
@@ -284,8 +284,13 @@ class ZEditingManager: NSObject {
 
     func selectCurrentFavorite() {
         if let current = gFavoritesManager.favorite(for: gHere) {
-            current.grab()
-            signalFor(current, regarding: .datum)
+            if current.isGrabbed {
+                gHere.grab()
+            } else {
+                current.grab()
+            }
+
+            signalFor(nil, regarding: .data)
         }
     }
 
@@ -562,11 +567,11 @@ class ZEditingManager: NSObject {
     func createBookmark() {
         let zone = gSelectionManager.firstGrab
 
-        if zone.storageMode != .favorites, !zone.isRoot {
+        if zone.storageMode != .favoritesMode, !zone.isRoot {
             let closure = {
                 var bookmark: Zone? = nil
 
-                self.invokeWithMode(.mine) {
+                self.invokeWithMode(.mineMode) {
                     bookmark = gFavoritesManager.createBookmark(for: zone, style: .normal)
                 }
 
@@ -782,7 +787,7 @@ class ZEditingManager: NSObject {
                 if next != nil {
                     next!.grab()
                 }
-            } else if zone.storageMode != .favorites {
+            } else if zone.storageMode != .favoritesMode {
                 parentZone.children.remove(at: index)
                 parentZone.children.insert(zone, at:newIndex)
             }
@@ -840,7 +845,7 @@ class ZEditingManager: NSObject {
                     self.redrawAndSync()
                 }
             }
-        } else if zone.storageMode != .favorites {
+        } else if zone.storageMode != .favoritesMode {
 
             ///////////////
             // MOVE ZONE //
@@ -1013,7 +1018,7 @@ class ZEditingManager: NSObject {
     
 
     func createIdeaIn(_ iZone: Zone?, at iIndex: Int?, onCompletion: ZoneMaybeClosure?) {
-        if  let         zone = iZone, zone.storageMode != .favorites {
+        if  let         zone = iZone, zone.storageMode != .favoritesMode {
             let createAndAdd = {
                 let   record = CKRecord(recordType: zoneTypeKey)
                 let    child = Zone(record: record, storageMode: zone.storageMode)
@@ -1239,7 +1244,7 @@ class ZEditingManager: NSObject {
                 completedYet     = true
                 var insert: Int? = zone.parentZone?.siblingIndex
 
-                if to.storageMode == .favorites {
+                if to.storageMode == .favoritesMode {
                     insert = gFavoritesManager.nextFavoritesIndex(forward: gInsertionsFollow)
                 } else if zone.parentZone?.parentZone == to {
                     if  insert != nil {

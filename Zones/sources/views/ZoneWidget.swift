@@ -51,7 +51,7 @@ class ZoneWidget: ZView {
 
 
     func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, kind signalKind: ZSignalKind, visited: [Zone]) {
-        if inView != nil && !(inView?.subviews.contains(self))! {
+        if inView != nil && !inView!.subviews.contains(self) {
             inView?.addSubview(self)
 
             if atIndex == nil {
@@ -447,10 +447,12 @@ class ZoneWidget: ZView {
         let     thickness = CGFloat(gDotWidth) / 3.5
         let         delta = gGenericOffset.height / 3.0
         let           dot = toggleDot.innerDot
+        let         ratio = toggleDot.ratio
         let      dotDelta = dot?.isHiddenToggleDot ?? false ? dot!.bounds.size.width + 3.0 : CGFloat(0.0)
-        var          rect = textWidget.frame.insetBy(dx: -18.0 - delta, dy: -0.5 - delta)
+        var          rect = textWidget.frame.insetBy(dx: -18.0 * ratio - delta, dy: -0.5 - delta)
         rect.size .width += -0.5 + (delta * 0.7) - dotDelta
-        rect.size.height += gHighlightHeightOffset - 0.5 + delta / 9.5
+        rect.size.height += -0.5 + gHighlightHeightOffset + delta / 9.5
+        rect.size.height += widgetZone.isInFavorites ? 1.0 : 0.0
         let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
         let         color = widgetZone.color
         let     fillColor = color.withAlphaComponent(0.02)

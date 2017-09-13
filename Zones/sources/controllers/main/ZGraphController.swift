@@ -30,7 +30,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
     var        movementGesture:  ZGestureRecognizer?
     var                   here:  Zone              { return gFavoritesManager.rootZone! }
     var    alternateController:  ZGraphController? { return gEditorController }
-    override  var controllerID:  ZControllerID     { return .favorites }
+    override  var controllerID:  ZControllerID     { return .graph }
     @IBOutlet var   editorView:  ZoneDragView?
 
 
@@ -49,7 +49,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
         restartDragHandling()
         super.setup()
 
-        if controllerID == .favorites {
+        if controllerID == .graph {
             view.zlayer.backgroundColor = ZColor.clear.cgColor  // so rubberband will not be clipped by favorites view
         }
     }
@@ -64,8 +64,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
         if let e = editorView {
             graphRootWidget.snp.removeConstraints()
             graphRootWidget.snp.makeConstraints { make in
-                make  .top.equalTo(e).offset(20.0 - Double(gGenericOffset.height /  3.0))
-                make .left.equalTo(e).offset(15.0 - Double(gGenericOffset.width))//  / 20.0))
+                make  .top.equalTo(e).offset(20.0 - Double(gGenericOffset.height / 3.0))
+                make .left.equalTo(e).offset(15.0 - Double(gGenericOffset.width       ))
             }
         }
     }

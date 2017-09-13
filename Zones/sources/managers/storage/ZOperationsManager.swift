@@ -129,7 +129,7 @@ class ZOperationsManager: NSObject {
             queue.isSuspended = true
             onAvailable       = onCompletion
             let         saved = gStorageMode
-            let        isMine = [.mine].contains(saved)
+            let        isMine = [.mineMode].contains(saved)
 
             for operationID in operationIDs + [.available] {
                 let                     operation = BlockOperation {
@@ -138,8 +138,8 @@ class ZOperationsManager: NSObject {
                     let             skipFavorites = operationID != .here
                     let                      full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .roots, .here].contains(operationID)
                     let forCurrentStorageModeOnly = [.file, .available, .parent, .children, .authenticate                           ].contains(operationID)
-                    let        cloudModes: ZModes = [.mine, .everyone]
-                    let             modes: ZModes = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : skipFavorites ? cloudModes : cloudModes + [.favorites]
+                    let        cloudModes: ZModes = [.mineMode, .everyoneMode]
+                    let             modes: ZModes = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : skipFavorites ? cloudModes : cloudModes + [.favoritesMode]
 
                     recurse = { index in
                         if index >= modes.count {
@@ -183,7 +183,7 @@ class ZOperationsManager: NSObject {
     func invoke(_ identifier: ZOperationID, _ mode: ZStorageMode, _ logic: ZRecursionLogic? = nil, _ onCompletion: AnyClosure?) {
         if identifier == .available {
             becomeAvailable()
-        } else if mode != .favorites || identifier == .here {
+        } else if mode != .favoritesMode || identifier == .here {
             let remote          = gRemoteStoresManager
             let report          = { (iCount: Int) in
                 if  self.debug {

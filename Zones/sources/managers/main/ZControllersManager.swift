@@ -15,11 +15,11 @@ enum ZControllerID: Int {
     case information
     case preferences
     case cloudTools
-    case favorites
     case searchBox
     case shortcuts
     case settings
     case editor
+    case graph
     case help
     case main
 }

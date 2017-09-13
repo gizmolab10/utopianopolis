@@ -60,7 +60,7 @@ class ZCloudManager: ZRecordsManager {
 
     func save(_ onCompletion: IntegerClosure?) {
         var    saves = pullRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
-        let isPublic = storageMode == .everyone
+        let isPublic = storageMode == .everyoneMode
 
         if  isPublic {
             var indices = IndexSet()
@@ -549,7 +549,7 @@ class ZCloudManager: ZRecordsManager {
             } else {
                 // nil means: we already received full response from cloud for this particular fetch
                 self.FOREGROUND {
-                    if let root = gFavoritesManager.rootZone {
+                    if  let         favoritesRoot = gFavoritesManager.rootZone {
                         for retrievedRecord in retrieved {
                             let retrievedFavorite = Zone(record: retrievedRecord, storageMode: self.storageMode)
                             let              link = retrievedFavorite.zoneLink
@@ -558,7 +558,7 @@ class ZCloudManager: ZRecordsManager {
 
                             // avoid adding a duplicate (which was created by a bug)
 
-                            for zone: Zone in root.children {
+                            for zone: Zone in favoritesRoot.children {
                                 if  link  != nil, link == zone.zoneLink {
                                     isDuplicated = true
 
@@ -570,18 +570,26 @@ class ZCloudManager: ZRecordsManager {
                                 }
                             }
 
-                            if  !isDuplicated, let targetID = retrievedFavorite.crossLink?.record.recordID, self.zoneForRecordID(targetID) == nil {
-                                self.assureRecordExists(withRecordID: targetID, recordType: zoneTypeKey) { iAssuredRecord in
-                                    let target = Zone(record: iAssuredRecord, storageMode: self.storageMode)
-
+                            if  !isDuplicated, let targetID = retrievedFavorite.crossLink?.record.recordID {
+                                let process: ZoneClosure = { target in
                                     if  target.isDeleted {
                                         retrievedFavorite.orphan()
                                         retrievedFavorite.needDestroy()
                                     } else {
-                                        root.add(retrievedFavorite)
-                                        root.respectOrder()
+                                        favoritesRoot.add(retrievedFavorite)
+                                        favoritesRoot.respectOrder()
                                         target.maybeNeedRoot()
                                         self.columnarReport(" FAVORITE", target.decoratedName)
+                                    }
+                                }
+
+                                if let targetLocal = self.zoneForRecordID(targetID) {
+                                    process(targetLocal)
+                                } else {
+                                    self.assureRecordExists(withRecordID: targetID, recordType: zoneTypeKey) { iAssuredRecord in
+                                        let targetFromCloud = Zone(record: iAssuredRecord, storageMode: self.storageMode)
+
+                                        process(targetFromCloud)
                                     }
                                 }
                             }
@@ -598,7 +606,7 @@ class ZCloudManager: ZRecordsManager {
     func fetchManifest(_ onCompletion: IntegerClosure?) {
         onCompletion?(-1)
 
-        let     mine = gRemoteStoresManager.cloudManagerFor(.mine)
+        let     mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
         let manifest = gRemoteStoresManager.manifest(for: storageMode)
         let recordID = manifest.record.recordID
 
@@ -661,7 +669,7 @@ class ZCloudManager: ZRecordsManager {
                 }
             }
 
-            columnarReport("PARENTS of", stringForRecordIDs(orphans, in: storageMode))
+            columnarReport("PARENT of", stringForRecordIDs(orphans, in: storageMode))
             clearState(.needsParent)
             start(operation)
         } else {

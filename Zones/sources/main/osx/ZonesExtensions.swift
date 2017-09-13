@@ -488,8 +488,8 @@ extension ZoneWidget {
                 frame.origin   .y = sourceFrame.maxY - halfDotHeight + thickness
                 frame.size.height = fabs( targetMidY + thinThickness - frame.minY)
             case .below:
-                frame.origin   .y = targetFrame.minY + halfDotHeight - thickness
-                frame.size.height = fabs( sourceMidY + thinThickness - frame.minY - halfDotHeight)
+                frame.origin   .y = targetFrame.minY + halfDotHeight - thickness  - thinThickness
+                frame.size.height = fabs( sourceMidY + thinThickness - frame.minY - halfDotHeight + 3.0)
             case .straight:
                 frame.origin   .y =       targetMidY - thinThickness / 2.0
                 frame.origin   .x = sourceFrame.maxX

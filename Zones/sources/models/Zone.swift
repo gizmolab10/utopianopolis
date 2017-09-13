@@ -43,7 +43,7 @@ class Zone : ZRecord {
     var                isEditing:         Bool { return gSelectionManager .isEditing(self) }
     var                isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
     var                isDeleted:         Bool { return gTrash?.spawned(self) ?? false }
-    var                 hasColor:         Bool { return _color != nil }
+    var                 hasColor:         Bool { return zoneColor != nil }
 
 
     var isFavorite: Bool {
@@ -116,7 +116,7 @@ class Zone : ZRecord {
 
 
     convenience init(favoriteNamed: String) {
-        self.init(record: nil, storageMode: .favorites)
+        self.init(record: nil, storageMode: .favoritesMode)
 
         self .zoneName = favoriteNamed
 
@@ -405,17 +405,17 @@ class Zone : ZRecord {
 
 
     func hasCompleteAncestorPath(toColor: Bool = false) -> Bool {
-        var   isComplete = false
-        var child: Zone? = nil
+        var    isComplete = false
+        var parent: Zone? = nil
 
         traverseAllAncestors { iZone in
-            let  isReciprocal  = child == nil  || iZone.children.contains(child!)
+            let  isReciprocal = parent == nil  || iZone.children.contains(parent!)
 
             if  (isReciprocal && iZone.isRoot) || (toColor && iZone.hasColor) {
                 isComplete = true
             }
 
-            child = iZone
+            parent = iZone
         }
 
         return isComplete
