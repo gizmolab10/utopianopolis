@@ -1353,6 +1353,7 @@ class ZEditingManager: NSObject {
                         movable.needFlush()
                     }
 
+                    movable.grab()
                     into.addAndReorderChild(movable, at: iIndex)
                 }
 

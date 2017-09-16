@@ -79,13 +79,14 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
         // only called by gesture system //
         ///////////////////////////////////
 
-        if  let  gesture = iGesture as? ZKeyPanGestureRecognizer {
+        if  let  gesture = iGesture as? ZKeyPanGestureRecognizer,
+            let    flags = gesture.modifiers {
             let location = gesture.location(in: editorView)
             let    state = gesture.state
 
             if isTextEditing(at: location) {
                 restartDragHandling()     // let text editor consume the gesture
-            } else if let flags = gesture.modifiers, flags.isOption {
+            } else if flags.isOption {
                 scrollEvent(move: state == .changed, to: location)
             } else if gIsDragging {
                 dragMaybeStopEvent(iGesture)

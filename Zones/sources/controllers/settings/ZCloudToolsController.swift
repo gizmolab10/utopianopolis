@@ -20,7 +20,6 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     enum ZToolKind: Int {
-        case eZones
         case eTrash
         case eGather
         case eRecount
@@ -28,15 +27,14 @@ class ZCloudToolsController: ZGenericTableController {
     
 
     override  var controllerID: ZControllerID { return .cloudTools }
-    override func numberOfRows(in tableView: ZTableView) -> Int { return 2 }
+    override func numberOfRows(in tableView: ZTableView) -> Int { return 1 }
 
 
     func text(for kind: ZToolKind) -> String {
         switch kind {
-        case .eRecount: return "Recount"
-        case .eGather:  return "Gather Trash"
         case .eTrash:   return "Show Trash"
-        case .eZones:   return "Restore Zones"
+        case .eGather:  return "Gather Trash"
+        case .eRecount: return "Recount"
         }
     }
 
@@ -56,7 +54,6 @@ class ZCloudToolsController: ZGenericTableController {
 
             if  let kind = ZToolKind(rawValue: row) {
                 switch kind {
-                case .eZones:   self.restoreZones()
                 case .eTrash:   self.showTrashCan()
                 case .eGather:  self.gatherAndShowTrash()
                 case .eRecount: self.recount()
@@ -113,38 +110,6 @@ class ZCloudToolsController: ZGenericTableController {
 
     func recount() {
         gSelectionManager.rootMostMoveable.fullUpdateProgenyCount()
-    }
-
-
-    func restoreZones() {
-        for zone in gSelectionManager.currentGrabs {
-            restoreZone(zone)
-        }
-    }
-
-
-    func restoreZone(_ zone: Zone) {
-        // similar to gEditingManager.moveInto
-        let zone = gSelectionManager.firstGrab
-
-        if  let root = gRoot, !zone.isRoot {
-            gHere    = root
-
-            let closure = {
-                root.addAndReorderChild(zone, at: 0)
-                self.redrawAndSync()
-            }
-
-            if zone.hasCompleteAncestorPath() && root.count > 0 {
-                closure()
-            } else {
-                root.needChildren()
-                root.displayChildren()
-                gOperationsManager.children(.expand, 1) {
-                    closure()
-                }
-            }
-        }
     }
 
 

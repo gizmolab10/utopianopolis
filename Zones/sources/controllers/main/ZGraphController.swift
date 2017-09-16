@@ -199,12 +199,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
 
             note("d --- d")
 
-//            if  zone == here {
-//                restartDragHandling()
-//            } else
             if let location = iGesture?.location(in: dot) {
-                dot.dragStart      = location
-                gDraggedZone       = zone
+                dot.dragStart = location
+                gDraggedZone  = zone
             }
         }
     }
