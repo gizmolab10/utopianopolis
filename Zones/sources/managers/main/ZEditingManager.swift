@@ -283,7 +283,7 @@ class ZEditingManager: NSObject {
 
 
     func selectCurrentFavorite() {
-        if let current = gFavoritesManager.favorite(for: gHere) {
+        if let current = gFavoritesManager.currentFavorite {
             if current.isGrabbed {
                 gHere.grab()
             } else {

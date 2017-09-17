@@ -46,6 +46,8 @@ class ZManifest: ZRecord {
 
                 needFlush()
             }
+
+            gFavoritesManager.updateCurrentFavorite()
         }
     }
 
