@@ -103,17 +103,23 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         } else {
             if  innerDot            == nil {
                 innerDot             = ZoneDot()
-                innerDot?.isInnerDot = true
+                innerDot!.isInnerDot = true
 
                 addSubview(innerDot!)
             }
 
-            innerDot?.setupForWidget(iWidget, asToggle: isToggle)
+            innerDot!.setupForWidget(iWidget, asToggle: isToggle)
             snp.makeConstraints { (make: ConstraintMaker) in
-                let width = CGFloat(isInvisible && !isToggle ? 0.0 : gFingerBreadth)
+                var  width = isInvisible && !isToggle ? CGFloat(0.0) : gFingerBreadth
+                var height = gFingerBreadth
 
-                make.size.equalTo(CGSize(width: width, height: gFingerBreadth))
-                make.center.equalTo(innerDot!)//.offset(0.5)
+                if iWidget.widgetZone.isFavorite {
+                    width  *= gReductionRatio
+                    height *= gReductionRatio
+                }
+
+                make.size.equalTo(CGSize(width: width, height: height))
+                make.center.equalTo(innerDot!)
             }
         }
 
@@ -209,13 +215,12 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 } else if highlightAsFavorite {
                     let     yInset = (dirtyRect.size.height - CGFloat(gDotHeight)) / 2.0 - 2.0
                     let     xInset = (dirtyRect.size.width  - CGFloat(gDotWidth )) / 2.0 - 2.0
-                    let       path = ZBezierPath(ovalIn: dirtyRect.offsetBy(dx: 0.5, dy: 0.0).insetBy(dx: xInset, dy: yInset))
+                    let       path = ZBezierPath(ovalIn: dirtyRect.offsetBy(dx: 0.0, dy: 0.5).insetBy(dx: xInset, dy: yInset))
                     path.lineWidth = CGFloat(gDotWidth) / 5.0
                     path.flatness  = 0.0001
 
                     zone.color.withAlphaComponent(0.7).setStroke()
                     path.stroke()
-
                 }
             }
         }

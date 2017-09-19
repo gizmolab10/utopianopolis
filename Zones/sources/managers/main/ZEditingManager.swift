@@ -471,12 +471,12 @@ class ZEditingManager: NSObject {
 
 
     func toggleDotActionOnZone(_ iZone: Zone?) {
-        if let zone = iZone {
-            let s = gSelectionManager
+        if  let zone = iZone {
+            let    s = gSelectionManager
 
-            for grabbed in s.currentGrabs {
-                if zone.spawned(grabbed) {
-                    s.ungrab(grabbed)
+            for     grabbed in s.currentGrabs {
+                if  grabbed != zone && zone.spawned(grabbed) {
+                    grabbed.ungrab()
                 }
             }
 

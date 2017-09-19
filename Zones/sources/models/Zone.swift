@@ -38,12 +38,14 @@ class Zone : ZRecord {
     var            hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var            hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var             showChildren:         Bool { return isRootOfFavorites || gManifest.showsChildren(self) }
+    var              isTrashRoot:         Bool { return zoneName == trashNameKey }
     var               isBookmark:         Bool { return crossLink != nil }
     var               isSelected:         Bool { return gSelectionManager.isSelected(self) }
     var                isEditing:         Bool { return gSelectionManager .isEditing(self) }
     var                isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
     var                isDeleted:         Bool { return gTrash?.spawned(self) ?? false }
     var                 hasColor:         Bool { return zoneColor != nil }
+
 
 
     var isFavorite: Bool {
@@ -177,17 +179,21 @@ class Zone : ZRecord {
     var crossLink: ZRecord? {
         get {
             if _crossLink == nil, var link = zoneLink, link != "" {
-                if  link.contains("Optional(") { // repair consequences of an old, but now fixed, bookmark bug
-                    zoneLink = link.replacingOccurrences(of: "Optional(\"", with: "")
-                    zoneLink = link.replacingOccurrences(of:         "\")", with: "")
-                    link     = zoneLink!
+                if  zoneLink == trashLink {
+                    return gTrash
                 }
 
-                let components:   [String] = link.components(separatedBy: ":")
+                if  link.contains("Optional(") { // repair consequences of an old, but now fixed, bookmark bug
+                    zoneLink = link.replacingOccurrences(of: "Optional(\"", with: "").replacingOccurrences(of: "\")", with: "")
+                }
+
+                link                       = zoneLink!
+                var components:   [String] = link.components(separatedBy: ":")
                 let name:          String  = components[2] == "" ? "root" : components[2]
                 let identifier: CKRecordID = CKRecordID(recordName: name)
                 let record:       CKRecord = CKRecord(recordType: zoneTypeKey, recordID: identifier)
-                let mode:    ZStorageMode? = ZStorageMode(rawValue: components[0])
+                let               rawValue = components[0]
+                let mode:    ZStorageMode? = rawValue == "" ? gStorageMode : ZStorageMode(rawValue: rawValue)
 
                 _crossLink = ZRecord(record: record, storageMode: mode)
             }

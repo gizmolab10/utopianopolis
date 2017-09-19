@@ -27,7 +27,7 @@ class ZFavoritesManager: ZCloudManager {
 
     let     defaultFavorites = Zone(record: nil, storageMode: .favoritesMode)
     let defaultModes: ZModes = [.everyoneMode, .mineMode]
-    let    favoritesFavorite = Zone(favoriteNamed: "favorites")
+    let    favoritesFavorite = Zone(favoriteNamed: favoritesKey)
     var           count: Int { return rootZone?.count ?? 0 }
 
 
@@ -162,7 +162,7 @@ class ZFavoritesManager: ZCloudManager {
     func setup() {
         if  rootZone          == nil {
             rootZone           = Zone(record: nil, storageMode: .favoritesMode)
-            rootZone?.zoneName = "favorites"
+            rootZone?.zoneName = favoritesKey
             rootZone?.record   = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
 
             rootZone?.displayChildren()
@@ -190,6 +190,8 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func updateChildren() {
+        var hasTrash = false
+        var    found = ZModes ()
 
         columnarReport(" FAVORITE", "UPDATE CHILDREN")
 
@@ -201,19 +203,32 @@ class ZFavoritesManager: ZCloudManager {
             rootZone?.removeChild(favorite)
         }
 
-        var found = ZModes ()
-
         for favorite in rootZone!.children {
-            if favorite.isFavorite, let mode = favorite.crossLink?.storageMode, !found.contains(mode) {
-                found.append(mode)
+            if favorite.isFavorite {
+                if let mode = favorite.crossLink?.storageMode, !found.contains(mode) {
+                    found.append(mode)
+                }
+
+                if  let link = favorite.zoneLink, link == trashLink {
+                    hasTrash = true
+                }
             }
         }
 
         for favorite in defaultFavorites.children {
-            if  let mode = favorite.crossLink?.storageMode, !found.contains(mode) {
+            if  let mode = favorite.crossLink?.storageMode,
+                (!found.contains(mode) || favorite.isTrashRoot) {
                 rootZone?.add(favorite)
                 favorite.clearAllStates() // erase side-effect of add
             }
+        }
+
+        if !hasTrash && rootZone != nil {
+            let      trash = create(withBookmark: nil, .addFavorite, parent: rootZone!, atIndex: defaultFavorites.count, trashNameKey)
+            trash.zoneLink = trashLink
+            trash   .order = 0.999
+
+            trash.clearAllStates()
         }
 
         updateCurrentFavorite()

@@ -108,7 +108,10 @@ class ZTravelManager: NSObject {
                     gHere.grab()
                     gHere.needChildren()
                     gHere.displayChildren()
-                    atArrival(gHere, .redraw)
+
+                    gOperationsManager.children(.restore) {
+                        atArrival(gHere, .redraw)
+                    }
                 }
 
                 if  there != nil {

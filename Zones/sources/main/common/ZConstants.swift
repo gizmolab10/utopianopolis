@@ -49,11 +49,13 @@ let         gUndoManager = UndoManager()
 
 let              cloudID = "iCloud.com.zones.Zones"
 let             linksKey = "links"
+let            trashLink = "::trash"
 let          zoneTypeKey = "Zone"
 let          rootNameKey = "root"
 let          childrenKey = "children"
 let          zoneNameKey = "zoneName"
 let         trashNameKey = "trash"
+let         favoritesKey = "favorites"
 let        recordNameKey = "recordName"
 let        recordTypeKey = "recordType"
 let      showChildrenKey = "showChildren"

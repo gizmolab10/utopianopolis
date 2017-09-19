@@ -810,8 +810,10 @@ class ZCloudManager: ZRecordsManager {
         assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
             if iRecord != nil {
                 let      trash = self.zoneForRecord(iRecord!)    // get / create trash
-                trash.zoneName = "trash"
+                trash.zoneName = trashNameKey
                 self.trashZone = trash
+
+                trash.needChildren()
             }
 
             onCompletion?(0)
