@@ -43,7 +43,7 @@ class Zone : ZRecord {
     var               isSelected:         Bool { return gSelectionManager.isSelected(self) }
     var                isEditing:         Bool { return gSelectionManager .isEditing(self) }
     var                isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
-    var                isDeleted:         Bool { return gTrash?.spawned(self) ?? false }
+    var                isDeleted:         Bool { return gTrash != self && gTrash?.spawned(self) ?? false }
     var                 hasColor:         Bool { return zoneColor != nil }
 
 
@@ -803,6 +803,18 @@ class Zone : ZRecord {
         return child
     }
 
+
+    func hasChildMatchingRecordName(of iChild: Zone) -> Bool {
+        let    name  = iChild.record.recordID.recordName
+
+        for child in children {
+            if name ==  child.record.recordID.recordName {
+                return true
+            }
+        }
+
+        return false
+    }
 
     // MARK:- progeny counts
     // MARK:-

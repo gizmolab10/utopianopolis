@@ -223,12 +223,13 @@ class ZFavoritesManager: ZCloudManager {
             }
         }
 
-        if !hasTrash && rootZone != nil {
-            let      trash = create(withBookmark: nil, .addFavorite, parent: rootZone!, atIndex: defaultFavorites.count, trashNameKey)
+        if !hasTrash && gTrash != nil {
+            let      trash = createBookmark(for: gTrash!, style: .addFavorite)
             trash.zoneLink = trashLink
             trash   .order = 0.999
 
             trash.clearAllStates()
+            trash.needFlush()
         }
 
         updateCurrentFavorite()
@@ -258,8 +259,6 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func nextFavoritesIndex(forward: Bool) -> Int {
-        updateChildren()
-
         let increment = (forward ? 1 : -1)
         var     index = favoritesIndex + increment
         let     count = rootZone!.count
@@ -349,9 +348,8 @@ class ZFavoritesManager: ZCloudManager {
 
 
     @discardableResult func create(withBookmark: Zone?, _ style: ZFavoriteStyle, parent: Zone, atIndex: Int, _ name: String?) -> Zone {
-        let           count = parent.count
-        let bookmark:  Zone = create(withBookmark: withBookmark, style, name)
-        let  insertAt: Int? = atIndex == count ? nil : atIndex
+        let bookmark: Zone = create(withBookmark: withBookmark, style, name)
+        let insertAt: Int? = atIndex == parent.count ? nil : atIndex
 
         if style != .favorite {
             parent.add(bookmark, at: insertAt) // calls update progeny count

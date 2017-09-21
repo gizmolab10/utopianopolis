@@ -20,19 +20,25 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     enum ZToolKind: Int {
+        case eRetry
         case eTrash
         case eGather
         case eRecount
     }
     
 
-    override  var controllerID: ZControllerID { return .cloudTools }
-    override func numberOfRows(in tableView: ZTableView) -> Int { return 0 }
+    override var controllerID: ZControllerID { return .cloudTools }
+
+
+    override func numberOfRows(in tableView: ZTableView) -> Int {
+        return gOperationsManager.isLate ? 1 : 0
+    }
 
 
     func text(for kind: ZToolKind) -> String {
         switch kind {
         case .eTrash:   return "Show Trash"
+        case .eRetry:   return "Retry Cloud"
         case .eGather:  return "Gather Trash"
         case .eRecount: return "Recount"
         }
@@ -54,6 +60,7 @@ class ZCloudToolsController: ZGenericTableController {
 
             if  let kind = ZToolKind(rawValue: row) {
                 switch kind {
+                case .eRetry:   self.retryCloud()
                 case .eTrash:   self.showTrashCan()
                 case .eGather:  self.gatherAndShowTrash()
                 case .eRecount: self.recount()
@@ -67,6 +74,11 @@ class ZCloudToolsController: ZGenericTableController {
 
     // MARK:- actions
     // MARK:-
+
+
+    func retryCloud() {
+        gOperationsManager.invokeResponse?(nil)
+    }
 
 
     func showTrashCan() {

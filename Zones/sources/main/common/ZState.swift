@@ -73,6 +73,7 @@ var            gWorkMode                     = ZWorkMode.editMode
 var            gFileMode                     = ZFileMode.cloud
 var       gTextCapturing                     = false
 var      gShowsSearching                     = false
+var    gCloudUnavailable                     = false
 var     gDragDropIndices: NSMutableIndexSet? = nil
 var        gDragRelation:         ZRelation? = nil
 var        gDragDropZone:              Zone? = nil

@@ -67,6 +67,8 @@ class Operation: Foundation.Operation {
                     return true
                 case (.evaluatingConditions, .ready):
                     return true
+                case (.ready, .ready):
+                    return true
                 case (.ready, .executing):
                     return true
                 case (.ready, .finishing):

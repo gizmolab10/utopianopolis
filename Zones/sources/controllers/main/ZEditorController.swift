@@ -29,12 +29,10 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
     var            rubberbandPreGrabs = [Zone] ()
     var           priorScrollLocation = CGPoint.zero
     var               rubberbandStart = CGPoint.zero
-    override  var                here:  Zone          { return gHere }
-    override  var        controllerID:  ZControllerID { return .editor }
+    override  var                here:  Zone              { return gHere }
+    override  var        controllerID:  ZControllerID     { return .editor }
     override  var alternateController:  ZGraphController? { return gFavoritesController }
     @IBOutlet var             spinner:  ZProgressIndicator?
-    @IBOutlet var     favoritesWidth :  NSLayoutConstraint?
-    @IBOutlet var     favoritesHeight:  NSLayoutConstraint?
 
 
     // MARK:- gestures
