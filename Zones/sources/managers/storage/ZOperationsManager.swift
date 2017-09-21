@@ -127,6 +127,10 @@ class ZOperationsManager: NSObject {
 
 
     private func setupAndRun(_ operationIDs: [ZOperationID], logic: ZRecursionLogic? = nil, onCompletion: @escaping Closure) {
+        if gIsLate {
+            onCompletion()
+        }
+
         if  let   prior = onAvailable {         // if already set
             onAvailable = {                     // encapsulate it with subsequent setup for new operation identifiers
                 prior()
@@ -155,6 +159,7 @@ class ZOperationsManager: NSObject {
                             let                mode = modes[index]
                             self    .invokeResponse = { (iResult: Any?) in
                                 self.invokeResponse = nil
+                                self   .lastOpStart = nil
 
                                 self.signalBack(operationID, mode, iResult) { iError in
                                     if let error = iError as? Error {

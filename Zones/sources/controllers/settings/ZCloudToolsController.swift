@@ -31,7 +31,7 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     override func numberOfRows(in tableView: ZTableView) -> Int {
-        return gOperationsManager.isLate ? 1 : 0
+        return gIsLate ? 1 : 0
     }
 
 

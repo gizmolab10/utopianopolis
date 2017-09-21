@@ -156,7 +156,7 @@ class ZSelectionManager: NSObject {
 
 
     func edit(_ iZone: Zone) {
-        if  let textWidget = iZone.widget?.textWidget, !textWidget.isTextEditing, !isEditingStateChanging {
+        if  let textWidget = iZone.widget?.textWidget, textWidget.window != nil, !textWidget.isTextEditing, !isEditingStateChanging {
             assignAsFirstResponder(textWidget)
             deferEditingStateChange()
             deselectGrabs()
