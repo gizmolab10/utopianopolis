@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="TpV-Kz-bkb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="TpV-Kz-bkb">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -98,10 +98,10 @@
             </objects>
             <point key="canvasLocation" x="1249" y="-7"/>
         </scene>
-        <!--View Controller-->
+        <!--Favorites Controller-->
         <scene sceneID="ObE-Yd-Clp">
             <objects>
-                <viewController id="Ztf-n2-9Ns" sceneMemberID="viewController">
+                <viewController id="Ztf-n2-9Ns" customClass="ZFavoritesController" customModule="iFocus" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="wZA-Ph-j7T"/>
                         <viewControllerLayoutGuide type="bottom" id="5C8-2v-3q4"/>
@@ -120,7 +120,7 @@
                                     <segment title="Second"/>
                                 </segments>
                                 <connections>
-                                    <action selector="selectorAction:" destination="Ztf-n2-9Ns" eventType="valueChanged" id="Gty-AE-ig7"/>
+                                    <action selector="selectorActionWithIControl:" destination="Ztf-n2-9Ns" eventType="valueChanged" id="QgT-bi-NeD"/>
                                 </connections>
                             </segmentedControl>
                         </subviews>
@@ -132,6 +132,9 @@
                             <constraint firstItem="a2B-3q-Ohr" firstAttribute="leading" secondItem="lBC-jp-tuP" secondAttribute="leading" constant="-1" id="xoC-h4-qUS"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="favoritesSelector" destination="a2B-3q-Ohr" id="Vtq-KE-1hA"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sgt-jL-L57" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
