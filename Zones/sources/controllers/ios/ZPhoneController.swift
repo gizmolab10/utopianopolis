@@ -11,23 +11,14 @@ import SnapKit
 import UIKit
 
 
-enum ZTabItemID: Int {
-    case eUndo
-    case eDelete
-    case eAddIdea
-    case eAddSibling
-    case eAddFavorite
-}
-
-
 class ZPhoneController: ZGenericController, UITabBarDelegate {
 
 
-    override var         controllerID: ZControllerID        { return .main }
-    var           favoritesController: ZFavoritesController { return gControllersManager.controllerForID(.favorites) as! ZFavoritesController }
-    @IBOutlet var editorTopConstraint: NSLayoutConstraint?
-    @IBOutlet var              tabBar: UITabBar?
-    var           favoritesAreVisible = true
+    override  var           controllerID : ZControllerID { return .main }
+    @IBOutlet var editorBottomConstraint : NSLayoutConstraint?
+    @IBOutlet var    editorTopConstraint : NSLayoutConstraint?
+    var              favoritesAreVisible = true
+    var                actionsAreVisible = true
 
 
     @IBAction func favoritesVisibilityButtonAction(iButton: UIButton) {
@@ -37,16 +28,9 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     }
 
 
-    func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        if let identifier = ZTabItemID(rawValue: item.tag) {
-
-            switch identifier {
-            case .eUndo:        gEditingManager.undoManager.undo()
-            case .eDelete:      gEditingManager.delete()
-            case .eAddIdea:     gEditingManager.createIdea()
-            case .eAddSibling:  gEditingManager.createSiblingIdea() { iChild in iChild.edit() }
-            case .eAddFavorite: gEditingManager.focus(on: gSelectionManager.firstGrab)
-            }
-        }
+    @IBAction func actionsVisibilityButtonAction(iButton: UIButton) {
+        actionsAreVisible                 = !actionsAreVisible
+        iButton                    .title = actionsAreVisible ? "<" : ">"
+        editorBottomConstraint?.constant = actionsAreVisible ? 45.0 : 0.0
     }
 }

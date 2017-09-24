@@ -30,6 +30,15 @@
                                     <segue destination="Ztf-n2-9Ns" kind="embed" id="wuw-Xu-8V4"/>
                                 </connections>
                             </containerView>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iNc-uN-Bhm" userLabel="Actions">
+                                <rect key="frame" x="44" y="622" width="331" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="b2L-wv-7LI"/>
+                                </constraints>
+                                <connections>
+                                    <segue destination="koC-pA-fDD" kind="embed" id="btn-eG-GrG"/>
+                                </connections>
+                            </containerView>
                             <containerView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yzZ-hG-rzt" userLabel="Editor">
                                 <rect key="frame" x="0.0" y="66" width="375" height="557"/>
                                 <connections>
@@ -48,39 +57,43 @@
                                     <action selector="favoritesVisibilityButtonActionWithIButton:" destination="TpV-Kz-bkb" eventType="touchUpInside" id="4dJ-JB-XAX"/>
                                 </connections>
                             </button>
-                            <tabBar clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" itemPositioning="fill" translatesAutoresizingMaskIntoConstraints="NO" id="Iam-uI-Fp2">
-                                <rect key="frame" x="0.0" y="618" width="375" height="49"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <items>
-                                    <tabBarItem title="Undo" id="CTO-aF-BeL"/>
-                                    <tabBarItem tag="1" title="Delete" id="Z3r-gX-jZe"/>
-                                    <tabBarItem tag="2" title="Idea" id="gDD-77-RuL"/>
-                                    <tabBarItem tag="3" title="Sibling" id="FHe-Dg-S5l"/>
-                                    <tabBarItem tag="4" title="Focus" id="eJa-T6-o6k"/>
-                                </items>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="r8d-Tx-fdU">
+                                <rect key="frame" x="0.0" y="623" width="44" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="Dlg-M6-zlV"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="44" id="gDw-yl-UpD"/>
+                                    <constraint firstAttribute="width" constant="44" id="oMB-h4-dcE"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="44" id="yAW-xR-eQd"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="black" pointSize="30"/>
+                                <state key="normal" title="&lt;"/>
                                 <connections>
-                                    <outlet property="delegate" destination="TpV-Kz-bkb" id="PSu-PV-r1A"/>
+                                    <action selector="actionsVisibilityButtonActionWithIButton:" destination="TpV-Kz-bkb" eventType="touchUpInside" id="QJY-Zi-bKC"/>
                                 </connections>
-                            </tabBar>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="yzZ-hG-rzt" firstAttribute="leading" secondItem="ECE-O8-JGv" secondAttribute="leading" id="IQi-cp-quq"/>
+                            <constraint firstItem="r8d-Tx-fdU" firstAttribute="leading" secondItem="ECE-O8-JGv" secondAttribute="leading" id="K9Q-Yo-kge"/>
+                            <constraint firstItem="DKm-Wo-lL1" firstAttribute="top" secondItem="iNc-uN-Bhm" secondAttribute="bottom" id="L2q-Cv-fbc"/>
                             <constraint firstAttribute="trailing" secondItem="yzZ-hG-rzt" secondAttribute="trailing" id="RXM-Ta-kqC"/>
                             <constraint firstItem="YJm-q4-CkJ" firstAttribute="leading" secondItem="ECE-O8-JGv" secondAttribute="leading" constant="44" id="Rvi-zU-zUM"/>
+                            <constraint firstAttribute="trailing" secondItem="iNc-uN-Bhm" secondAttribute="trailing" id="SrJ-9I-WTz"/>
                             <constraint firstItem="BOi-sm-qOe" firstAttribute="leading" secondItem="ECE-O8-JGv" secondAttribute="leading" id="TtE-9y-Pl0"/>
                             <constraint firstItem="yzZ-hG-rzt" firstAttribute="top" secondItem="ddY-8z-bXX" secondAttribute="bottom" constant="46" id="V0M-Z0-QHT"/>
-                            <constraint firstItem="DKm-Wo-lL1" firstAttribute="top" secondItem="yzZ-hG-rzt" secondAttribute="bottom" id="W90-bH-Zoc"/>
+                            <constraint firstItem="DKm-Wo-lL1" firstAttribute="top" secondItem="yzZ-hG-rzt" secondAttribute="bottom" constant="44" id="YO3-mE-OPB"/>
                             <constraint firstItem="YJm-q4-CkJ" firstAttribute="top" secondItem="ddY-8z-bXX" secondAttribute="bottom" id="bOJ-oJ-paA"/>
                             <constraint firstItem="BOi-sm-qOe" firstAttribute="top" secondItem="ddY-8z-bXX" secondAttribute="bottom" id="cGG-K3-v8F"/>
+                            <constraint firstItem="DKm-Wo-lL1" firstAttribute="top" secondItem="r8d-Tx-fdU" secondAttribute="bottom" id="eB4-i4-kdR"/>
+                            <constraint firstItem="iNc-uN-Bhm" firstAttribute="leading" secondItem="r8d-Tx-fdU" secondAttribute="trailing" id="rtC-gy-xDO"/>
                             <constraint firstAttribute="trailing" secondItem="YJm-q4-CkJ" secondAttribute="trailing" id="wXD-88-9zZ"/>
                         </constraints>
                     </view>
-                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="editorBottomConstraint" destination="YO3-mE-OPB" id="45e-v3-Imr"/>
                         <outlet property="editorTopConstraint" destination="V0M-Z0-QHT" id="Lhs-Y3-3VG"/>
-                        <outlet property="tabBar" destination="Iam-uI-Fp2" id="iL5-ie-FWe"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ILe-Hi-wFl" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -130,7 +143,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RYN-wx-Kkr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1249" y="-7"/>
+            <point key="canvasLocation" x="1241" y="-36"/>
         </scene>
         <!--Favorites Controller-->
         <scene sceneID="ObE-Yd-Clp">
@@ -171,34 +184,44 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sgt-jL-L57" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1248.8" y="-357.12143928035982"/>
+            <point key="canvasLocation" x="1241" y="-360"/>
         </scene>
-        <!--Table View Controller-->
-        <scene sceneID="igU-L8-g6j">
+        <!--Actions Controller-->
+        <scene sceneID="u0m-FA-ube">
             <objects>
-                <tableViewController id="NXZ-LK-E3s" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="OPg-5G-oxt">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                <viewController id="koC-pA-fDD" customClass="ZActionsController" customModule="iFocus" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="XNa-p0-LwQ">
+                        <rect key="frame" x="0.0" y="0.0" width="331" height="45"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="CxM-46-LlZ">
+                                <rect key="frame" x="0.0" y="0.0" width="331" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="VPu-hp-pxB"/>
+                                </constraints>
+                                <segments>
+                                    <segment title="First"/>
+                                    <segment title="Second"/>
+                                </segments>
+                                <connections>
+                                    <action selector="selectorActionWithIControl:" destination="koC-pA-fDD" eventType="valueChanged" id="qN2-ZJ-GJG"/>
+                                </connections>
+                            </segmentedControl>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="AtU-1I-dvV">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="AtU-1I-dvV" id="Q6N-gO-v39">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="NXZ-LK-E3s" id="zRK-p4-tCJ"/>
-                            <outlet property="delegate" destination="NXZ-LK-E3s" id="IHS-cc-ctl"/>
-                        </connections>
-                    </tableView>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="4ZC-VR-5kS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                        <constraints>
+                            <constraint firstItem="CxM-46-LlZ" firstAttribute="top" secondItem="XNa-p0-LwQ" secondAttribute="top" id="6B3-g7-aCm"/>
+                            <constraint firstAttribute="trailing" secondItem="CxM-46-LlZ" secondAttribute="trailing" id="SQL-eh-fEG"/>
+                            <constraint firstItem="CxM-46-LlZ" firstAttribute="leading" secondItem="XNa-p0-LwQ" secondAttribute="leading" id="lGv-qx-I5g"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="actionsSelector" destination="CxM-46-LlZ" id="eg9-x9-xbw"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ysy-dD-Is5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="1240.8" y="287.85607196401799"/>
         </scene>
     </scenes>
 </document>
