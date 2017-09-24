@@ -167,10 +167,10 @@ extension UIView {
     func display() {}
 
 
-    @discardableResult func createSwipeGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, direction: UISwipeGestureRecognizerDirection) -> ZKeySwipeGestureRecognizer {
+    @discardableResult func createSwipeGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeySwipeGestureRecognizer {
         let       gesture = ZKeySwipeGestureRecognizer(target: target, action: action)
         gesture .delegate = target
-        gesture.direction = direction
+        gesture.direction = .right
 
         addGestureRecognizer(gesture)
 
@@ -199,16 +199,6 @@ extension UIView {
         addGestureRecognizer(gesture)
 
         return gesture
-    }
-
-
-    func restartClickAndOtherGestureRecognizers(handledBy e: ZGraphController) {
-        clearGestures()
-
-        // e.movementGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
-        e.swipeGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController.swipeEvent), direction: .left)
-        e.clickGesture = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
-        gDraggedZone   = nil
     }
 }
 

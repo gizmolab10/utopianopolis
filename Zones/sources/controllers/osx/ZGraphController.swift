@@ -46,7 +46,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
 
 
     override func setup() {
-        restartDragHandling()
+        restartGestureRecognition()
         super.setup()
 
         if controllerID == .graph {
@@ -55,8 +55,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
     }
 
 
-    func restartDragHandling() {
-        editorView?.restartClickAndOtherGestureRecognizers(handledBy: self)
+    func restartGestureRecognition() {
+        editorView?.gestureHandler = self
     }
 
 
@@ -126,7 +126,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
             let    state = gesture.state
 
             if isTextEditing(at: location) {
-                restartDragHandling()     // let text editor consume the gesture
+                restartGestureRecognition()     // let text editor consume the gesture
             } else if gIsDragging {
                 dragMaybeStopEvent(iGesture)
             } else if state == .began, let (dot, controller) = dotHitTest(iGesture) {
@@ -180,7 +180,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
             }
         }
 
-        restartDragHandling()
+        restartGestureRecognition()
     }
 
 
@@ -212,7 +212,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
             cleanupAfterDrag()
 
             if doneState.contains(iGesture!.state) {
-                restartDragHandling()
+                restartGestureRecognition()
             }
         }
     }
@@ -296,7 +296,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
                     }
 
                     editor.moveGrabbedZones(into: drop, at: at) {
-                        controller.restartDragHandling()
+                        controller.restartGestureRecognition()
                         self.redrawAndSync(nil)
                     }
                 }

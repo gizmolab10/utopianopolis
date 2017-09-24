@@ -83,7 +83,7 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
             let    state = gesture.state
 
             if isTextEditing(at: location) {
-                restartDragHandling()     // let text editor consume the gesture
+                restartGestureRecognition()     // let text editor consume the gesture
             } else if flags.isOption {
                 scrollEvent(move: state == .changed, to: location)
             } else if gIsDragging {
@@ -169,7 +169,7 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
         if  rect == nil {
             editorView?.rubberbandRect = CGRect.zero
 
-            restartDragHandling()
+            restartGestureRecognition()
         } else {
             editorView?.rubberbandRect = rect
             let                   mode = gCloudManager.storageMode

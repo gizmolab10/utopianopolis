@@ -52,6 +52,7 @@ public typealias ZTableViewDataSource       = NSTableViewDataSource
 public typealias ZSearchFieldDelegate       = NSSearchFieldDelegate
 public typealias ZApplicationDelegate       = NSApplicationDelegate
 public typealias ZPanGestureRecognizer      = NSPanGestureRecognizer
+public typealias ZSwipeGestureRecognizer    = NSGestureRecognizer
 public typealias ZClickGestureRecognizer    = NSClickGestureRecognizer
 public typealias ZGestureRecognizerState    = NSGestureRecognizerState
 public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
@@ -196,6 +197,9 @@ extension NSView {
     func insertSubview(_ view: ZView, belowSubview siblingSubview: ZView) { addSubview(view, positioned: .below, relativeTo: siblingSubview) }
 
 
+    @discardableResult func createSwipeGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeySwipeGestureRecognizer? { return nil }
+
+
     @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeyPanGestureRecognizer {
         let                            gesture = ZKeyPanGestureRecognizer(target: target, action: action)
         gesture                      .delegate = target
@@ -217,15 +221,6 @@ extension NSView {
         addGestureRecognizer(gesture)
 
         return gesture
-    }
-
-
-    func restartClickAndOtherGestureRecognizers(handledBy e: ZGraphController) {
-        clearGestures()
-
-        e.movementGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
-        e.clickGesture    = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
-        gDraggedZone      = nil
     }
 }
 
