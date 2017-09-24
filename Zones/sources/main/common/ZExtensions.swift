@@ -349,21 +349,6 @@ extension ZGestureRecognizer {
 extension ZView {
 
 
-    var gestureHandler: ZGraphController? {
-        get { return nil }
-        set {
-            clearGestures()
-
-            if let e = newValue {
-                e.movementGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
-                e.swipeGesture    = createSwipeGestureRecognizer(e, action: #selector(ZEditorController.swipeEvent))
-                e.clickGesture    = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
-                gDraggedZone      = nil
-            }
-        }
-    }
-
-
     func clearGestures() {
         if recognizers != nil {
             for recognizer in recognizers! {

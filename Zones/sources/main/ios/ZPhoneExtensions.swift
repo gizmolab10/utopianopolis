@@ -159,18 +159,74 @@ extension UIKeyModifierFlags {
 }
 
 
+extension ZGraphController {
+
+    func          swipeUpEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager             .moveUp() }
+    func        swipeDownEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager             .moveUp(false) }
+    func      swipeToLeftEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager            .moveOut() }
+    func      fullSwipeUpEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager             .moveUp(       extreme: true) }
+    func     swipeToRightEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager           .moveInto() }
+    func    fullSwipeDownEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager             .moveUp(false, extreme: true) }
+    func  fullSwipeToLeftEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager.applyGenerationally(false) }
+    func fullSwipeToRightEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager.applyGenerationally(true) }
+
+
+    // gesture recognizer delegate method
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return otherGestureRecognizer == swipeToRightGesture
+    }
+    
+}
+
+
+extension   UISwipeGestureRecognizerDirection {
+    var all:UISwipeGestureRecognizerDirection {     return
+            UISwipeGestureRecognizerDirection (     rawValue :
+            UISwipeGestureRecognizerDirection.right.rawValue +
+            UISwipeGestureRecognizerDirection .left.rawValue +
+            UISwipeGestureRecognizerDirection .down.rawValue +
+            UISwipeGestureRecognizerDirection   .up.rawValue
+        )
+    }
+}
+
+
 extension UIView {
     var      zlayer:               CALayer { return layer }
     var recognizers: [ZGestureRecognizer]? { return gestureRecognizers }
 
 
+    var gestureHandler: ZGraphController? {
+        get { return nil }
+        set {
+            clearGestures()
+
+            if let e = newValue {
+                e.swipeUpGesture          = createSwipeGestureRecognizer(e, action: #selector(ZEditorController         .swipeUpEvent), direction: .up,    touchesRequired: 1)
+                e.swipeDownGesture        = createSwipeGestureRecognizer(e, action: #selector(ZEditorController       .swipeDownEvent), direction: .down,  touchesRequired: 1)
+                e.fullSwipeUpGesture      = createSwipeGestureRecognizer(e, action: #selector(ZEditorController     .fullSwipeUpEvent), direction: .up,    touchesRequired: 2)
+                e.swipeToLeftGesture      = createSwipeGestureRecognizer(e, action: #selector(ZEditorController     .swipeToLeftEvent), direction: .left,  touchesRequired: 1)
+                e.swipeToRightGesture     = createSwipeGestureRecognizer(e, action: #selector(ZEditorController    .swipeToRightEvent), direction: .right, touchesRequired: 1)
+                e.fullSwipeDownGesture    = createSwipeGestureRecognizer(e, action: #selector(ZEditorController   .fullSwipeDownEvent), direction: .down,  touchesRequired: 2)
+                e.fullSwipeToLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController .fullSwipeToLeftEvent), direction: .left,  touchesRequired: 2)
+                e.fullSwipeToRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController.fullSwipeToRightEvent), direction: .right, touchesRequired: 2)
+             // e.movementGesture         = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
+             // e.clickGesture            = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
+                gDraggedZone              = nil
+            }
+        }
+    }
+
+
     func display() {}
 
 
-    @discardableResult func createSwipeGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeySwipeGestureRecognizer {
-        let       gesture = ZKeySwipeGestureRecognizer(target: target, action: action)
-        gesture .delegate = target
-        gesture.direction = .right
+    @discardableResult func createSwipeGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, direction: UISwipeGestureRecognizerDirection, touchesRequired: Int) -> ZKeySwipeGestureRecognizer {
+        let                     gesture = ZKeySwipeGestureRecognizer(target: target, action: action)
+        gesture               .delegate = target
+        gesture              .direction = direction
+        gesture.numberOfTouchesRequired = touchesRequired
 
         addGestureRecognizer(gesture)
 
@@ -417,4 +473,3 @@ extension ZoneWidget {
         return path
     }
 }
-

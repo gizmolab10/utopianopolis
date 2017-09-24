@@ -22,11 +22,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/managers/main/ZEditingManager.swift"
-            timestampString = "527023212.88808"
+            timestampString = "527978797.895732"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "933"
-            endingLineNumber = "933"
+            startingLineNumber = "938"
+            endingLineNumber = "938"
             landmarkName = "moveZone(_:to:)"
             landmarkType = "7">
          </BreakpointContent>

@@ -16,9 +16,6 @@ import Foundation
 #endif
 
 
-class ZKeySwipeGestureRecognizer: ZSwipeGestureRecognizer {}
-
-
 class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
 
 

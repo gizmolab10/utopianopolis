@@ -134,7 +134,6 @@ class ZEditingManager: NSObject {
                 // GENERATIONAL //
                 //////////////////
 
-                let zone = gSelectionManager.rootMostMoveable
                 var show = true
 
                 switch arrow {
@@ -143,19 +142,25 @@ class ZEditingManager: NSObject {
                 default:     return
                 }
 
-                var goal: Int? = nil
-
-                if !show {
-                    goal = isCommand ? zone.level - 1 : zone.highestExposed - 1
-                } else if isCommand {
-                    goal = Int.max
-                } else if let lowest = zone.lowestExposed {
-                    goal = lowest + 1
-                }
-
-                toggleDotUpdate(show: show, zone: zone, to: goal)
+                applyGenerationally(show, extreme: isCommand)
             }
         }
+    }
+
+
+    func applyGenerationally(_ show: Bool, extreme: Bool = false) {
+        let       zone = gSelectionManager.rootMostMoveable
+        var goal: Int? = nil
+
+        if !show {
+            goal = extreme ? zone.level - 1 : zone.highestExposed - 1
+        } else if  extreme {
+            goal = Int.max
+        } else if let lowest = zone.lowestExposed {
+            goal = lowest + 1
+        }
+
+        toggleDotUpdate(show: show, zone: zone, to: goal)
     }
 
 
@@ -801,7 +806,7 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func moveOut(selectionOnly: Bool, extreme: Bool) {
+    func moveOut(selectionOnly: Bool = true, extreme: Bool = false) {
         let zone: Zone = gSelectionManager.firstGrab
         let     parent = zone.parentZone
 
@@ -890,7 +895,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveInto(selectionOnly: Bool, extreme: Bool) {
+    func moveInto(selectionOnly: Bool = true, extreme: Bool = false) {
         let zone: Zone = gSelectionManager.firstGrab
 
         if !selectionOnly {
@@ -1421,7 +1426,7 @@ class ZEditingManager: NSObject {
     }
     
     
-    func moveUp(_ iMoveUp: Bool, selectionOnly: Bool, extreme: Bool, extend: Bool) {
+    func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, extend: Bool = false) {
         let            zone = iMoveUp ? gSelectionManager.firstGrab : gSelectionManager.lastGrab
         let          isHere = zone == gHere
         if  let       there = zone.parentZone, !isHere, let index = zone.siblingIndex {
