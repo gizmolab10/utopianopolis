@@ -31,7 +31,7 @@
                                 </connections>
                             </containerView>
                             <containerView hidden="YES" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iNc-uN-Bhm" userLabel="Actions">
-                                <rect key="frame" x="50" y="620" width="323" height="45"/>
+                                <rect key="frame" x="50" y="620" width="326" height="45"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="b2L-wv-7LI"/>
                                 </constraints>
@@ -79,7 +79,7 @@
                             <constraint firstItem="yzZ-hG-rzt" firstAttribute="top" secondItem="ddY-8z-bXX" secondAttribute="bottom" constant="50" id="V0M-Z0-QHT"/>
                             <constraint firstItem="DKm-Wo-lL1" firstAttribute="top" secondItem="yzZ-hG-rzt" secondAttribute="bottom" constant="50" id="YO3-mE-OPB"/>
                             <constraint firstItem="YJm-q4-CkJ" firstAttribute="top" secondItem="ddY-8z-bXX" secondAttribute="bottom" constant="2" id="bOJ-oJ-paA"/>
-                            <constraint firstAttribute="trailing" secondItem="iNc-uN-Bhm" secondAttribute="trailing" constant="2" id="c0L-9O-r4W"/>
+                            <constraint firstAttribute="trailing" secondItem="iNc-uN-Bhm" secondAttribute="trailing" constant="-1" id="c0L-9O-r4W"/>
                             <constraint firstItem="BOi-sm-qOe" firstAttribute="top" secondItem="ddY-8z-bXX" secondAttribute="bottom" constant="2" id="cGG-K3-v8F"/>
                             <constraint firstItem="DKm-Wo-lL1" firstAttribute="top" secondItem="r8d-Tx-fdU" secondAttribute="bottom" constant="2" id="eB4-i4-kdR"/>
                             <constraint firstItem="BOi-sm-qOe" firstAttribute="leading" secondItem="ECE-O8-JGv" secondAttribute="leading" constant="2" id="j14-Dk-znp"/>
@@ -198,11 +198,11 @@
                         <viewControllerLayoutGuide type="bottom" id="ReI-we-BV0"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="XNa-p0-LwQ">
-                        <rect key="frame" x="0.0" y="0.0" width="323" height="45"/>
+                        <rect key="frame" x="0.0" y="0.0" width="326" height="45"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="CxM-46-LlZ" customClass="ZoneSegmentedControl" customModule="iFocus" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="323" height="45"/>
+                            <segmentedControl opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" momentary="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CxM-46-LlZ" customClass="ZoneSegmentedControl" customModule="iFocus" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="326" height="45"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="VPu-hp-pxB"/>
                                 </constraints>

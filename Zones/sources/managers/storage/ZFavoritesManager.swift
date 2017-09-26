@@ -31,6 +31,18 @@ class ZFavoritesManager: ZCloudManager {
     var           count: Int { return rootZone?.count ?? 0 }
 
 
+    var actionTitle: String {
+        if  gHere.isGrabbed,
+            let     target = currentFavorite?.bookmarkTarget {
+            let isFavorite = gHere == target
+
+            return isFavorite ? "Unfavorite" : "Favorite"
+        }
+
+        return "Focus"
+    }
+
+
     var favoritesIndex: Int {
         return indexOf(currentFavoriteID) ?? 0
     }
