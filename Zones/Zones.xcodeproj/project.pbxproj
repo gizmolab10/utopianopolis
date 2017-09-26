@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0C23A94D1F0ED24A00514814 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C23A94C1F0ED24A00514814 /* CloudKit.framework */; };
+		0C26F7301F799EEE00C2B978 /* ZoneSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C26F72F1F799EEE00C2B978 /* ZoneSegmentedControl.swift */; };
 		0C2E22BE1F75B8AB00B50A71 /* ZEditorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2E22B91F75B8AB00B50A71 /* ZEditorController.swift */; };
 		0C2E22BF1F75B8AB00B50A71 /* ZGraphController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2E22BA1F75B8AB00B50A71 /* ZGraphController.swift */; };
 		0C2E22C01F75B8AB00B50A71 /* ZMainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */; };
@@ -314,6 +315,7 @@
 
 /* Begin PBXFileReference section */
 		0C23A94C1F0ED24A00514814 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
+		0C26F72F1F799EEE00C2B978 /* ZoneSegmentedControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneSegmentedControl.swift; sourceTree = "<group>"; };
 		0C2E22B91F75B8AB00B50A71 /* ZEditorController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEditorController.swift; sourceTree = "<group>"; };
 		0C2E22BA1F75B8AB00B50A71 /* ZGraphController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGraphController.swift; sourceTree = "<group>"; };
 		0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMainController.swift; sourceTree = "<group>"; };
@@ -731,6 +733,7 @@
 			children = (
 				0C39B2871F182EBB0091F4D1 /* ZoneDot.swift */,
 				0C367C361F463D93000FC914 /* ZoneDragView.swift */,
+				0C26F72F1F799EEE00C2B978 /* ZoneSegmentedControl.swift */,
 				0C39B2881F182EBB0091F4D1 /* ZoneTextWidget.swift */,
 				0C39B2891F182EBB0091F4D1 /* ZoneWidget.swift */,
 				0C39B28A1F182EBB0091F4D1 /* ZoneWindow.swift */,
@@ -1248,6 +1251,7 @@
 				0C39B2B01F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
 				0C39B2E91F182EBB0091F4D1 /* ZSelectionManager.swift in Sources */,
 				0C39B33D1F182EBB0091F4D1 /* PassbookCondition.swift in Sources */,
+				0C26F7301F799EEE00C2B978 /* ZoneSegmentedControl.swift in Sources */,
 				0C39B3761F182EBB0091F4D1 /* URLSessionTaskOperation.swift in Sources */,
 				0C367C371F463D93000FC914 /* ZoneDragView.swift in Sources */,
 				0C39B3311F182EBB0091F4D1 /* NegatedCondition.swift in Sources */,

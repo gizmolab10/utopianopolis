@@ -74,6 +74,7 @@ var            gFileMode                     = ZFileMode.cloud
 var       gTextCapturing                     = false
 var      gShowsSearching                     = false
 var    gCloudUnavailable                     = false
+var   gKeyboardIsVisible                     = false
 var     gDragDropIndices: NSMutableIndexSet? = nil
 var        gDragRelation:         ZRelation? = nil
 var        gDragDropZone:              Zone? = nil
@@ -93,6 +94,48 @@ var            gDotWidth:             Double { return gDotHeight * 0.75 }
 
 // MARK:- persistence
 // MARK:-
+
+
+var gFavoritesAreVisible: Bool {
+    get {
+        var value: Bool? = UserDefaults.standard.object(forKey: favoritesVisibleKey) as? Bool
+
+        if  value == nil {
+            value = false
+
+            UserDefaults.standard.set(value, forKey:favoritesVisibleKey)
+            UserDefaults.standard.synchronize()
+        }
+
+        return value!
+    }
+
+    set {
+        UserDefaults.standard.set(newValue, forKey:favoritesVisibleKey)
+        UserDefaults.standard.synchronize()
+    }
+}
+
+
+var gActionsAreVisible: Bool {
+    get {
+        var value: Bool? = UserDefaults.standard.object(forKey: actionsVisibleKey) as? Bool
+
+        if  value == nil {
+            value = false
+
+            UserDefaults.standard.set(value, forKey:actionsVisibleKey)
+            UserDefaults.standard.synchronize()
+        }
+
+        return value!
+    }
+
+    set {
+        UserDefaults.standard.set(newValue, forKey:actionsVisibleKey)
+        UserDefaults.standard.synchronize()
+    }
+}
 
 
 var gBackgroundColor: ZColor {
@@ -298,9 +341,11 @@ var gSettingsViewIDs: ZSettingsViewID {
 // MARK:-
 
 
+let favoritesVisibleKey = "favorites are visible"
 let dragTargetsColorKey = "drag targets color"
 let  backgroundColorKey = "background color"
 let  currentFavoriteKey = "current favorite"
+let   actionsVisibleKey = "actions are visible"
 let    settingsStateKey = "current settings state"
 let    insertionModeKey = "graph altering mode"
 let    tinyDotsRatioKey = "tiny dots ratio"

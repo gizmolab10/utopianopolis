@@ -167,6 +167,12 @@ infix operator -- : AdditionPrecedence
 
 extension CGPoint {
 
+    public init(_ size: CGSize) {
+        x = size.width
+        y = size.height
+    }
+
+
     static func - ( left: CGPoint, right: CGPoint) -> CGSize {
         return CGSize(width: left.x - right.x, height: left.y - right.y)
     }
@@ -195,6 +201,7 @@ extension CGRect {
 
     var center: CGPoint { return CGPoint(x: midX, y: midY) }
     var extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
+
 
     public init(start: CGPoint, end: CGPoint) {
         size   = end - start

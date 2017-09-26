@@ -237,7 +237,10 @@ extension NSView {
 
 extension NSWindow {
 
-    
+    /////////////////
+    // stub on osx //
+    /////////////////
+
     override open var acceptsFirstResponder: Bool { return true }
 
 

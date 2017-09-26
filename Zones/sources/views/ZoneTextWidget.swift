@@ -30,21 +30,19 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     var isTextEditing: Bool {
         get { return _isTextEditing }
         set {
-            if _isTextEditing != newValue {
-                _isTextEditing = newValue
-                let       zone = widgetZone
-                font           = preferredFont
+            if  _isTextEditing != newValue {
+                _isTextEditing  = newValue
+                let       zone  = widgetZone
+                font            = preferredFont
 
                 if !_isTextEditing {
                     let  grab = gSelectionManager.currentlyEditingZone == zone
-                    textColor = zone.grabbedTextColor
+                    textColor = !grab ? ZColor.black :zone.grabbedTextColor
 
                     removeMonitorAsync()
                     abortEditing()
 
-                    if  !grab {
-                        textColor                          = ZColor.black
-                    } else {
+                    if  grab {
                         gSelectionManager.clearEdit()
 
                         zone.grab()
@@ -122,13 +120,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         var result = false
 
         if !gSelectionManager.isEditingStateChanging {
-            result = super.becomeFirstResponder()
+            gSelectionManager.deferEditingStateChange()
 
-            if result {
-                gSelectionManager.deferEditingStateChange()
-
-                isTextEditing = true
-            }
+            isTextEditing = true
+            result        = super.becomeFirstResponder()
         }
 
         return result

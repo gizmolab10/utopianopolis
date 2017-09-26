@@ -34,7 +34,6 @@ public typealias ZMenuItem                  = UIMenuItem
 public typealias ZTextView                  = UITextView
 public typealias ZTextField                 = UITextField
 public typealias ZTableView                 = UITableView
-//public typealias ZColorWell                 = UIColorWell
 public typealias ZScrollView                = UIScrollView
 public typealias ZController                = UIViewController
 public typealias ZEventFlags                = UIKeyModifierFlags
@@ -203,14 +202,14 @@ extension UIView {
             clearGestures()
 
             if let e = newValue {
-                e.swipeUpGesture          = createSwipeGestureRecognizer(e, action: #selector(ZEditorController         .swipeUpEvent), direction: .up,    touchesRequired: 1)
-                e.swipeDownGesture        = createSwipeGestureRecognizer(e, action: #selector(ZEditorController       .swipeDownEvent), direction: .down,  touchesRequired: 1)
-                e.fullSwipeUpGesture      = createSwipeGestureRecognizer(e, action: #selector(ZEditorController     .fullSwipeUpEvent), direction: .up,    touchesRequired: 2)
-                e.swipeToLeftGesture      = createSwipeGestureRecognizer(e, action: #selector(ZEditorController     .swipeToLeftEvent), direction: .left,  touchesRequired: 1)
-                e.swipeToRightGesture     = createSwipeGestureRecognizer(e, action: #selector(ZEditorController    .swipeToRightEvent), direction: .right, touchesRequired: 1)
-                e.fullSwipeDownGesture    = createSwipeGestureRecognizer(e, action: #selector(ZEditorController   .fullSwipeDownEvent), direction: .down,  touchesRequired: 2)
-                e.fullSwipeToLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController .fullSwipeToLeftEvent), direction: .left,  touchesRequired: 2)
-                e.fullSwipeToRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController.fullSwipeToRightEvent), direction: .right, touchesRequired: 2)
+                e.swipeUpGesture          = createSwipeGestureRecognizer(e, action: #selector(ZEditorController         .swipeUpEvent), direction: .up,    touchesRequired: 2)
+                e.swipeDownGesture        = createSwipeGestureRecognizer(e, action: #selector(ZEditorController       .swipeDownEvent), direction: .down,  touchesRequired: 2)
+                e.fullSwipeUpGesture      = createSwipeGestureRecognizer(e, action: #selector(ZEditorController     .fullSwipeUpEvent), direction: .up,    touchesRequired: 3)
+                e.swipeToLeftGesture      = createSwipeGestureRecognizer(e, action: #selector(ZEditorController     .swipeToLeftEvent), direction: .left,  touchesRequired: 2)
+                e.swipeToRightGesture     = createSwipeGestureRecognizer(e, action: #selector(ZEditorController    .swipeToRightEvent), direction: .right, touchesRequired: 2)
+                e.fullSwipeDownGesture    = createSwipeGestureRecognizer(e, action: #selector(ZEditorController   .fullSwipeDownEvent), direction: .down,  touchesRequired: 3)
+                e.fullSwipeToLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController .fullSwipeToLeftEvent), direction: .left,  touchesRequired: 3)
+                e.fullSwipeToRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController.fullSwipeToRightEvent), direction: .right, touchesRequired: 3)
              // e.movementGesture         = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
              // e.clickGesture            = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
                 gDraggedZone              = nil
@@ -256,10 +255,20 @@ extension UIView {
 
         return gesture
     }
+
+
+    override open func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+        if  event?.subtype == UIEventSubtype.motionShake && !gKeyboardIsVisible {
+            gEditingManager.recenter()
+        }
+    }
+
 }
 
 
 extension UIWindow {
+
+
     var contentView: UIView? { return self }
     override open var canBecomeFirstResponder: Bool { return true }
 
@@ -315,6 +324,7 @@ extension UIWindow {
 
         gEditingManager.handleEvent(event, isWindow: true)
     }
+
 }
 
 

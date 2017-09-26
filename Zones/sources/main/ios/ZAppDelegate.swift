@@ -26,7 +26,9 @@ class ZAppDelegate: UIResponder, ZApplicationDelegate {
     
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // application.registerUserNotificationSettings(.badgeSetting)
+        application.applicationSupportsShakeToEdit = true
+
+     // application.registerUserNotificationSettings(.badgeSetting)
         application.registerForRemoteNotifications()
         gControllersManager.startupDataAndUI()
 
