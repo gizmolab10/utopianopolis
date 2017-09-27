@@ -15,7 +15,6 @@ import Foundation
     import Cocoa
 
 let isOSX                       = true
-let fontSize:           CGFloat = 17.0
 let unselectBrightness: CGFloat = 0.93
 
 #elseif os(iOS)
@@ -23,17 +22,17 @@ let unselectBrightness: CGFloat = 0.93
     import UIKit
 
 let isOSX                       = false
-let fontSize:           CGFloat = 14.0
 let unselectBrightness: CGFloat = 0.98
 
 #endif
 
 
+let             fontSize = CGFloat(17.0)
 let             gUnlevel = -1
 let          gLogTabStop = 15
 let          gWidgetFont = ZFont.systemFont(ofSize: fontSize)
 let       gFavoritesFont = ZFont.systemFont(ofSize: fontSize * gReductionRatio)
-let       gFingerBreadth = CGFloat(33.0)
+let       gFingerBreadth = CGFloat(44.0)
 let      gReductionRatio = CGFloat(0.8)
 let    gDefaultZoneColor = ZColor.blue
 

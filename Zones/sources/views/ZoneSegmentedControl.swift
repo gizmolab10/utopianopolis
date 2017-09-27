@@ -8,6 +8,7 @@
 
 
 import Foundation
+import UIKit
 
 
 class ZoneSegmentedControl : ZSegmentedControl {
@@ -19,6 +20,8 @@ class ZoneSegmentedControl : ZSegmentedControl {
         setDividerImage(image, forLeftSegmentState:   .normal, rightSegmentState:   .normal, barMetrics: .default)
         setDividerImage(image, forLeftSegmentState:   .normal, rightSegmentState: .selected, barMetrics: .default)
         setDividerImage(image, forLeftSegmentState: .selected, rightSegmentState:   .normal, barMetrics: .default)
+
+        setTitleTextAttributes([NSFontAttributeName : gWidgetFont], for: .normal)
     }
 
 }

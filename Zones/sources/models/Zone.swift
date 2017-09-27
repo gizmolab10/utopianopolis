@@ -139,7 +139,7 @@ class Zone : ZRecord {
 
     var level: Int {
         get {
-            if  !isRoot, !isRootOfFavorites, let p = parentZone {
+            if  !isRoot, !isRootOfFavorites, let p = parentZone, p != self {
                 return p.level + 1
             }
 

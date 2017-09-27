@@ -32,25 +32,8 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     let                       notificationCenter: NotificationCenter = .default
 
 
-    var handleKeyboard: Bool? {
-        get { return nil }
-        set {
-            notificationCenter.removeObserver (self,                                                                name: .UIKeyboardWillShow, object: nil)
-            notificationCenter.removeObserver (self,                                                                name: .UIKeyboardWillHide, object: nil)
-
-            if  newValue ?? false {
-                notificationCenter.addObserver(self, selector: #selector(ZPhoneController.updateHeightForKeyboard), name: .UIKeyboardWillShow, object: nil)
-                notificationCenter.addObserver(self, selector: #selector(ZPhoneController.updateHeightForKeyboard), name: .UIKeyboardWillHide, object: nil)
-            }
-        }
-    }
-
-
-    override func viewDidLoad() {
-        super    .viewDidLoad()
-
-        handleKeyboard = true
-    }
+    // MARK:- hide and show
+    // MARK:-
 
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
@@ -60,15 +43,15 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     }
 
 
-    func updateHeightForKeyboard(_ notification: Notification) {
-        gKeyboardIsVisible     = notification.name == .UIKeyboardWillShow
-        keyboardHeight         = 0.0
+    @IBAction func favoritesVisibilityButtonAction(iButton: UIButton) {
+        gFavoritesAreVisible = !gFavoritesAreVisible
 
-        if  gKeyboardIsVisible,
-            let info           = notification.userInfo,
-            let frame: NSValue = info[UIKeyboardFrameEndUserInfoKey] as? NSValue {
-            keyboardHeight     = frame.cgRectValue.height
-        }
+        update()
+    }
+
+
+    @IBAction func actionsVisibilityButtonAction(iButton: UIButton) {
+        gActionsAreVisible = !gActionsAreVisible
 
         update()
     }
@@ -77,7 +60,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     func update() {
         let                      emphasizedColor = ZColor.blue.lighter(by: 5.0)
         let                            textColor = ZColor.blue
-        let                                 font = UIFont.systemFont(ofSize: 15.0)
+        let                                 font = gWidgetFont
         let                         actionsTitle = gActionsAreVisible   ? " Hide " : " Actions ... "
         let                       favoritesTitle = gFavoritesAreVisible ? " Hide " : " Favorites ... "
         editorTopConstraint?           .constant = gFavoritesAreVisible ? selectorHeight : 0.0
@@ -104,10 +87,49 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     }
 
 
+    // MARK:- keyboard
+    // MARK:-
+
+
+    override func viewDidLoad() {
+        super    .viewDidLoad()
+
+        handleKeyboard = true
+    }
+
+
+    var handleKeyboard: Bool? {
+        get { return nil }
+        set {
+            notificationCenter.removeObserver (self,                                                                name: .UIKeyboardWillShow, object: nil)
+            notificationCenter.removeObserver (self,                                                                name: .UIKeyboardWillHide, object: nil)
+
+            if  newValue ?? false {
+                notificationCenter.addObserver(self, selector: #selector(ZPhoneController.updateHeightForKeyboard), name: .UIKeyboardWillShow, object: nil)
+                notificationCenter.addObserver(self, selector: #selector(ZPhoneController.updateHeightForKeyboard), name: .UIKeyboardWillHide, object: nil)
+            }
+        }
+    }
+
+
+    func updateHeightForKeyboard(_ notification: Notification) {
+        gKeyboardIsVisible     = notification.name == .UIKeyboardWillShow
+        keyboardHeight         = 0.0
+
+        if  gKeyboardIsVisible,
+            let info           = notification.userInfo,
+            let frame: NSValue = info[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+            keyboardHeight     = frame.cgRectValue.height
+        }
+
+        update()
+    }
+
+
     func layoutForKeyboard() {
         var              changed = false
 
-        if  gKeyboardIsVisible {
+        if  gKeyboardIsVisible && !isCached {
             cachedOffset         = gScrollOffset
 
             if  let       center = gEditorView?.bounds.center,
@@ -117,7 +139,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
                 isCached         = true
                 changed          = true
             }
-        } else if isCached {
+        } else if !gKeyboardIsVisible && isCached {
             isCached             = false
             changed              = true
             gScrollOffset        = cachedOffset
@@ -129,17 +151,4 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
         }
     }
 
-
-    @IBAction func favoritesVisibilityButtonAction(iButton: UIButton) {
-        gFavoritesAreVisible = !gFavoritesAreVisible
-
-        update()
-    }
-
-
-    @IBAction func actionsVisibilityButtonAction(iButton: UIButton) {
-        gActionsAreVisible = !gActionsAreVisible
-
-        update()
-    }
 }

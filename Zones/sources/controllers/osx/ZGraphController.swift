@@ -23,22 +23,18 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
     // MARK:-
     
 
-    let         graphRootWidget = ZoneWidget ()
-    let               doneState: [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
-    var            clickGesture:  ZGestureRecognizer?
-    var         movementGesture:  ZGestureRecognizer?
-    var          swipeUpGesture:  ZGestureRecognizer?
-    var        swipeDownGesture:  ZGestureRecognizer?
-    var      fullSwipeUpGesture:  ZGestureRecognizer?
-    var      swipeToLeftGesture:  ZGestureRecognizer?
-    var     swipeToRightGesture:  ZGestureRecognizer?
-    var    fullSwipeDownGesture:  ZGestureRecognizer?
-    var  fullSwipeToLeftGesture:  ZGestureRecognizer?
-    var fullSwipeToRightGesture:  ZGestureRecognizer?
-    var     alternateController:  ZGraphController? { return gEditorController }
-    var                    here:  Zone              { return gFavoritesManager.rootZone! }
-    override  var  controllerID:  ZControllerID     { return .graph }
-    @IBOutlet var    editorView:  ZoneDragView?
+    let        graphRootWidget = ZoneWidget ()
+    let              doneState: [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
+    var           clickGesture:  ZGestureRecognizer?
+    var        movementGesture:  ZGestureRecognizer?
+    var      relocateUpGesture:  ZGestureRecognizer?
+    var    relocateDownGesture:  ZGestureRecognizer?
+    var    relocateLeftGesture:  ZGestureRecognizer?
+    var   relocateRightGesture:  ZGestureRecognizer?
+    var    alternateController:  ZGraphController? { return gEditorController }
+    var                   here:  Zone              { return gFavoritesManager.rootZone! }
+    override  var controllerID:  ZControllerID     { return .graph }
+    @IBOutlet var   editorView:  ZoneDragView?
 
 
     // MARK:- gestures

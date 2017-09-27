@@ -806,7 +806,7 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func moveOut(selectionOnly: Bool = true, extreme: Bool = false) {
+    func moveOut(selectionOnly: Bool = false, extreme: Bool = false) {
         let zone: Zone = gSelectionManager.firstGrab
         let     parent = zone.parentZone
 
@@ -895,7 +895,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveInto(selectionOnly: Bool = true, extreme: Bool = false) {
+    func moveInto(selectionOnly: Bool = false, extreme: Bool = false) {
         let zone: Zone = gSelectionManager.firstGrab
 
         if !selectionOnly {
@@ -1426,7 +1426,7 @@ class ZEditingManager: NSObject {
     }
     
     
-    func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, extend: Bool = false) {
+    func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = false, extreme: Bool = false, extend: Bool = false) {
         let            zone = iMoveUp ? gSelectionManager.firstGrab : gSelectionManager.lastGrab
         let          isHere = zone == gHere
         if  let       there = zone.parentZone, !isHere, let index = zone.siblingIndex {

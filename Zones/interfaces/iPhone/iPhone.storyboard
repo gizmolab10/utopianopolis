@@ -197,7 +197,7 @@
                         <viewControllerLayoutGuide type="top" id="Ymn-qF-trp"/>
                         <viewControllerLayoutGuide type="bottom" id="ReI-we-BV0"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="XNa-p0-LwQ">
+                    <view key="view" contentMode="scaleToFill" id="XNa-p0-LwQ" customClass="UIScrollView">
                         <rect key="frame" x="0.0" y="0.0" width="326" height="45"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>

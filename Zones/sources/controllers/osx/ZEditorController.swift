@@ -93,10 +93,10 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
             } else if state != .began {   // ended
                 rubberbandUpdate(nil)
             } else if let (dot, controller) = dotHitTest(iGesture) {
-                if dot.isToggle {
-                    clickEvent(iGesture)  // no movement
-                } else {
+                if !dot.isToggle {
                     controller.dragStartEvent(dot, iGesture)
+                } else if let zone = dot.widgetZone {
+                    gEditingManager.toggleDotActionOnZone(zone)   // no movement
                 }
             } else {                      // began
                 rubberbandStartEvent(location, iGesture)

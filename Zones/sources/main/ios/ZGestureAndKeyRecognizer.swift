@@ -19,12 +19,12 @@ import Foundation
 class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
 
 
-    var modifiers: ZEventFlags? = nil
+    var modifiers: ZEventFlags? = ZEventFlags()
     override var isShiftDown: Bool { return modifiers?.contains(.shift) ?? false }
 
 
     open func reset() {
-        modifiers = nil
+        modifiers = ZEventFlags()
     }
 
 
@@ -38,12 +38,12 @@ class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
 class ZKeyClickGestureRecognizer: ZClickGestureRecognizer {
 
 
-    var modifiers: ZEventFlags? = nil
+    var modifiers: ZEventFlags? = ZEventFlags()
     override var isShiftDown: Bool { return modifiers?.contains(.shift) ?? false }
 
 
     open func reset() {
-        modifiers = nil
+        modifiers = ZEventFlags()
     }
 
 
@@ -57,12 +57,12 @@ class ZKeyClickGestureRecognizer: ZClickGestureRecognizer {
 class ZKeySwipeGestureRecognizer : ZSwipeGestureRecognizer {
 
 
-    var modifiers: ZEventFlags? = nil
+    var modifiers: ZEventFlags? = ZEventFlags()
     override var isShiftDown: Bool { return modifiers?.contains(.shift) ?? false }
 
 
     open func reset() {
-        modifiers = nil
+        modifiers = ZEventFlags()
     }
 
 

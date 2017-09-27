@@ -160,22 +160,11 @@ extension UIKeyModifierFlags {
 
 extension ZGraphController {
 
-    func          swipeUpEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager             .moveUp() }
-    func        swipeDownEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager             .moveUp(false) }
-    func      swipeToLeftEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager            .moveOut() }
-    func      fullSwipeUpEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager             .moveUp(       extreme: true) }
-    func     swipeToRightEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager           .moveInto() }
-    func    fullSwipeDownEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager             .moveUp(false, extreme: true) }
-    func  fullSwipeToLeftEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager.applyGenerationally(false) }
-    func fullSwipeToRightEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager.applyGenerationally(true) }
+    func    relocateUpEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager  .moveUp(       extreme: true) }
+    func  relocateDownEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager  .moveUp(false, extreme: true) }
+    func  relocateLeftEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager .moveOut() }
+    func relocateRightEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager.moveInto() }
 
-
-    // gesture recognizer delegate method
-
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return otherGestureRecognizer == swipeToRightGesture
-    }
-    
 }
 
 
@@ -202,17 +191,13 @@ extension UIView {
             clearGestures()
 
             if let e = newValue {
-                e.swipeUpGesture          = createSwipeGestureRecognizer(e, action: #selector(ZEditorController         .swipeUpEvent), direction: .up,    touchesRequired: 2)
-                e.swipeDownGesture        = createSwipeGestureRecognizer(e, action: #selector(ZEditorController       .swipeDownEvent), direction: .down,  touchesRequired: 2)
-                e.fullSwipeUpGesture      = createSwipeGestureRecognizer(e, action: #selector(ZEditorController     .fullSwipeUpEvent), direction: .up,    touchesRequired: 3)
-                e.swipeToLeftGesture      = createSwipeGestureRecognizer(e, action: #selector(ZEditorController     .swipeToLeftEvent), direction: .left,  touchesRequired: 2)
-                e.swipeToRightGesture     = createSwipeGestureRecognizer(e, action: #selector(ZEditorController    .swipeToRightEvent), direction: .right, touchesRequired: 2)
-                e.fullSwipeDownGesture    = createSwipeGestureRecognizer(e, action: #selector(ZEditorController   .fullSwipeDownEvent), direction: .down,  touchesRequired: 3)
-                e.fullSwipeToLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController .fullSwipeToLeftEvent), direction: .left,  touchesRequired: 3)
-                e.fullSwipeToRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController.fullSwipeToRightEvent), direction: .right, touchesRequired: 3)
-             // e.movementGesture         = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
-             // e.clickGesture            = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
-                gDraggedZone              = nil
+                e.relocateUpGesture    = createSwipeGestureRecognizer(e, action: #selector(ZEditorController   .relocateUpEvent), direction: .up,    touchesRequired: 2)
+                e.relocateDownGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController .relocateDownEvent), direction: .down,  touchesRequired: 2)
+                e.relocateLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController .relocateLeftEvent), direction: .left,  touchesRequired: 2)
+                e.relocateRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController.relocateRightEvent), direction: .right, touchesRequired: 2)
+//                e.clickGesture            = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
+                e.movementGesture      = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
+                gDraggedZone           = nil
             }
         }
     }
@@ -234,8 +219,9 @@ extension UIView {
     
 
     @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeyPanGestureRecognizer {
-        let      gesture = ZKeyPanGestureRecognizer(target: target, action: action)
-        gesture.delegate = target
+        let                    gesture = ZKeyPanGestureRecognizer(target: target, action: action)
+        gesture              .delegate = target
+        gesture.maximumNumberOfTouches = 1
 
         addGestureRecognizer(gesture)
 
