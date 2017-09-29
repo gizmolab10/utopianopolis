@@ -66,19 +66,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-    #if os(OSX)
-
-    override func keyDown(with event: NSEvent) {
-        currentEditor()?.insertText(event.key)
-
-        FOREGROUND(after: 0.1) {
-            super.becomeFirstResponder()
-        }
-    }
-
-    #endif
-
-
     func setup() {
         delegate               = self
         isBordered             = false
