@@ -29,6 +29,8 @@ class ZoneWindow: ZWindow {
 
     #if os(OSX)
 
+    override open var acceptsFirstResponder: Bool { return true }
+
     // cannot declare this in extensions because compiler barfs about objective-c method conflict (and then compiler throws a seg fault)
 
     override func keyDown(with event: ZEvent) {

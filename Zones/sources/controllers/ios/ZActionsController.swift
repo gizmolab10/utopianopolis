@@ -11,16 +11,20 @@ import Foundation
 import UIKit
 
 
-enum ZActionID: Int {
-    case eHang
-    case eUndo
-    case eCut
-    case eNew
-    case eNext
-    case eFocus
-    case ePrefs
-    case eHelp
+enum ZActionTitle: String {
+    case eHang    = "Reconnect"
+    case eUndo    = "Undo"
+    case eCut     = "Cut"
+    case eNew     = "New"
+    case eNext    = "Next"
+    case eFocus   = "Focus"
+    case ePrefs   = "Preferences"
+    case eHelp    = "Help"
+    case eRefresh = "Refresh"
 }
+
+
+typealias ActionClosure = (ZActionTitle) -> (Void)
 
 
 class ZActionsController : ZGenericController {
@@ -36,37 +40,61 @@ class ZActionsController : ZGenericController {
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         if ![.search, .found].contains(kind),
-            let  selector = actionsSelector {
+            let              selector = actionsSelector {
+            var                 index = 0
+            let insert: ActionClosure = { iTitle -> Void in
+                let           isFocus = iTitle == ZActionTitle.eFocus
+                let     title: String = isFocus ? self.favorite : iTitle.rawValue
 
-            if gIsLate {
-                selector.insertSegment(withTitle: "Reconnect", at:ZActionID .eHelp.rawValue, animated: false)
+                selector.insertSegment(withTitle: title, at:index, animated: false)
+
+                index += 1
             }
 
             selector.apportionsSegmentWidthsByContent = true
             selector.removeAllSegments()
-            selector.insertSegment(withTitle: "Undo",          at:ZActionID .eUndo.rawValue, animated: false)
-            selector.insertSegment(withTitle: "Cut",           at:ZActionID  .eCut.rawValue, animated: false)
-            selector.insertSegment(withTitle: "New",           at:ZActionID  .eNew.rawValue, animated: false)
-            selector.insertSegment(withTitle: "Next",          at:ZActionID .eNext.rawValue, animated: false)
-            selector.insertSegment(withTitle: favorite,        at:ZActionID.eFocus.rawValue, animated: false)
-            selector.insertSegment(withTitle: "Preferences",   at:ZActionID.ePrefs.rawValue, animated: false)
-            selector.insertSegment(withTitle: "Help",          at:ZActionID .eHelp.rawValue, animated: false)
+
+            if gIsLate {
+                insert(.eHang)
+            }
+
+            insert(.eUndo)
+            insert(.eCut)
+            insert(.eNew)
+            insert(.eNext)
+            insert(.eFocus)
+            insert(.ePrefs)
+            insert(.eHelp)
+            insert(.eRefresh)
         }
     }
 
 
     @IBAction func selectorAction(iControl: UISegmentedControl) {
-        if  let identifier = ZActionID(rawValue: iControl.selectedSegment) {
-            switch identifier {
-            case .eHang:  gOperationsManager.invokeResponse?(nil)
-            case .eUndo:  gEditingManager.undoManager.undo()
-            case .eCut:   gEditingManager.delete()
-            case .eNew:   gEditingManager.createIdea()
-            case .eNext:  gEditingManager.createSiblingIdea() { iChild in iChild.edit() }
-            case .eFocus: gEditingManager.focus(on: gSelectionManager.firstGrab)
-            case .ePrefs: break
-            case .eHelp:  break
+        if  let       title = iControl.titleForSegment(at: iControl.selectedSegment) {
+            let actionTitle = actionTitleForTitle(title)
+
+            switch actionTitle {
+            case .eHang:    gOperationsManager.invokeResponse?(nil)
+            case .eUndo:    gEditingManager.undoManager.undo()
+            case .eCut:     gEditingManager.delete()
+            case .eNew:     gEditingManager.createIdea()
+            case .eNext:    gEditingManager.createSiblingIdea() { iChild in iChild.edit() }
+            case .eFocus:   gEditingManager.focus(on: gSelectionManager.firstGrab)
+            case .ePrefs:   break
+            case .eHelp:    break
+            case .eRefresh: break
             }
         }
     }
+
+
+    func actionTitleForTitle(_ iTitle: String) -> ZActionTitle {
+        if  let action = ZActionTitle(rawValue: iTitle) {
+            return action
+        }
+
+        return .eFocus
+    }
+
 }

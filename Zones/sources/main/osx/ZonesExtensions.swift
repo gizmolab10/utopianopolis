@@ -237,14 +237,9 @@ extension NSView {
 
 extension NSWindow {
 
-    /////////////////
-    // stub on osx //
-    /////////////////
 
-    override open var acceptsFirstResponder: Bool { return true }
-
-
-    override open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
+    //override open
+    func xvalidateMenuItem(_ menuItem: ZMenuItem) -> Bool {
         enum ZMenuType: Int {
             case UseGrabs  = 1
             case Paste     = 2

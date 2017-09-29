@@ -9,7 +9,7 @@
 import Foundation
 
 extension NSRecursiveLock {
-    func withCriticalScope<T>(_ block: (Void) -> T) -> T {
+    func withCriticalScope<T>(_ block: () -> T) -> T {
         lock()
         let value = block()
         unlock()
