@@ -26,11 +26,11 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
     let        graphRootWidget = ZoneWidget ()
     let              doneState: [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
     var           clickGesture:  ZGestureRecognizer?
+    var          moveUpGesture:  ZGestureRecognizer?
     var        movementGesture:  ZGestureRecognizer?
-    var      relocateUpGesture:  ZGestureRecognizer?
-    var    relocateDownGesture:  ZGestureRecognizer?
-    var    relocateLeftGesture:  ZGestureRecognizer?
-    var   relocateRightGesture:  ZGestureRecognizer?
+    var        moveDownGesture:  ZGestureRecognizer?
+    var        moveLeftGesture:  ZGestureRecognizer?
+    var       moveRightGesture:  ZGestureRecognizer?
     var    alternateController:  ZGraphController? { return gEditorController }
     var                   here:  Zone              { return gFavoritesManager.rootZone! }
     override  var controllerID:  ZControllerID     { return .graph }
@@ -169,7 +169,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
                             zone.grab()
                         }
 
-                        signalFor(nil, regarding: .preferences)
+                        signalFor(nil, regarding: .data)
                     }
                 } else {
                     gSelectionManager.deselect()

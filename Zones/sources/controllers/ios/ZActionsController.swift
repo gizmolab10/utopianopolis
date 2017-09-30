@@ -12,19 +12,16 @@ import UIKit
 
 
 enum ZActionTitle: String {
-    case eHang    = "Reconnect"
-    case eUndo    = "Undo"
     case eCut     = "Cut"
     case eNew     = "New"
     case eNext    = "Next"
+    case eUndo    = "Undo"
+    case eHelp    = "Help"
+    case eHang    = "Reconnect"
     case eFocus   = "Focus"
     case ePrefs   = "Preferences"
-    case eHelp    = "Help"
     case eRefresh = "Refresh"
 }
-
-
-typealias ActionClosure = (ZActionTitle) -> (Void)
 
 
 class ZActionsController : ZGenericController {
@@ -40,11 +37,11 @@ class ZActionsController : ZGenericController {
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         if ![.search, .found].contains(kind),
-            let              selector = actionsSelector {
-            var                 index = 0
-            let insert: ActionClosure = { iTitle -> Void in
-                let           isFocus = iTitle == ZActionTitle.eFocus
-                let     title: String = isFocus ? self.favorite : iTitle.rawValue
+            let          selector = actionsSelector {
+            var             index = 0
+            let            insert = { (iTitle: ZActionTitle) -> Void in
+                let       isFocus = iTitle == ZActionTitle.eFocus
+                let title: String = isFocus ? self.favorite : iTitle.rawValue
 
                 selector.insertSegment(withTitle: title, at:index, animated: false)
 
@@ -63,9 +60,9 @@ class ZActionsController : ZGenericController {
             insert(.eNew)
             insert(.eNext)
             insert(.eFocus)
+            insert(.eRefresh)
             insert(.ePrefs)
             insert(.eHelp)
-            insert(.eRefresh)
         }
     }
 
@@ -83,8 +80,17 @@ class ZActionsController : ZGenericController {
             case .eFocus:   gEditingManager.focus(on: gSelectionManager.firstGrab)
             case .ePrefs:   break
             case .eHelp:    break
-            case .eRefresh: break
+            case .eRefresh: refresh()
             }
+        }
+    }
+
+
+    func refresh() {
+        gHere.needProgeny()
+
+        gOperationsManager.children(.restore) {
+            self.signalFor(nil, regarding: .data)
         }
     }
 

@@ -178,7 +178,9 @@ class ZRemoteStoresManager: NSObject {
 
                 badgeResetOperation.modifyBadgeCompletionBlock = { (error) -> Void in
                     if error == nil {
-                        zapplication.clearBadge()
+                        self.FOREGROUND {
+                            zapplication.clearBadge()
+                        }
                     }
                 }
 

@@ -61,8 +61,8 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
         let                      emphasizedColor = ZColor.blue.lighter(by: 5.0)
         let                            textColor = ZColor.blue
         let                                 font = gWidgetFont
-        let                         actionsTitle = gActionsAreVisible   ? " Hide " : " Actions ... "
-        let                       favoritesTitle = gFavoritesAreVisible ? " Hide " : " Favorites ... "
+        let                         actionsTitle = gActionsAreVisible   ? " <- " : " Actions ... "
+        let                       favoritesTitle = gFavoritesAreVisible ? " <- " : " Favorites ... "
         editorTopConstraint?           .constant = gFavoritesAreVisible ? selectorHeight : 0.0
         editorBottomConstraint?        .constant = gKeyboardIsVisible   ? keyboardHeight : gActionsAreVisible ? selectorHeight : 0.0
         actionsButtonWidthConstraint?  .constant = actionsTitle  .widthForFont(font) + 10.0

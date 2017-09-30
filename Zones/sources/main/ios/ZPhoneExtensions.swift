@@ -160,10 +160,10 @@ extension UIKeyModifierFlags {
 
 extension ZGraphController {
 
-    func    relocateUpEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager  .moveUp(       extreme: true) }
-    func  relocateDownEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager  .moveUp(false, extreme: true) }
-    func  relocateLeftEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager .moveOut() }
-    func relocateRightEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager.moveInto() }
+    func    moveUpEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager  .moveUp() }
+    func  moveDownEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager  .moveUp(false) }
+    func  moveLeftEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager .moveOut() }
+    func moveRightEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager.moveInto() }
 
 }
 
@@ -191,13 +191,13 @@ extension UIView {
             clearGestures()
 
             if let e = newValue {
-                e.relocateUpGesture    = createSwipeGestureRecognizer(e, action: #selector(ZEditorController   .relocateUpEvent), direction: .up,    touchesRequired: 2)
-                e.relocateDownGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController .relocateDownEvent), direction: .down,  touchesRequired: 2)
-                e.relocateLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController .relocateLeftEvent), direction: .left,  touchesRequired: 2)
-                e.relocateRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController.relocateRightEvent), direction: .right, touchesRequired: 2)
-//                e.clickGesture            = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
-                e.movementGesture      = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
-                gDraggedZone           = nil
+                e.clickGesture     = createPointGestureRecognizer(e, action: #selector(ZEditorController          .clickEvent), clicksRequired: 1)
+                e.moveUpGesture    = createSwipeGestureRecognizer(e, action: #selector(ZEditorController         .moveUpEvent), direction: .up,    touchesRequired: 2)
+                e.moveDownGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController       .moveDownEvent), direction: .down,  touchesRequired: 2)
+                e.moveLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController       .moveLeftEvent), direction: .left,  touchesRequired: 2)
+                e.moveRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController      .moveRightEvent), direction: .right, touchesRequired: 2)
+                e.movementGesture  = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
+                gDraggedZone       = nil
             }
         }
     }
