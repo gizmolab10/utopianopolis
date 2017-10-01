@@ -7,13 +7,13 @@
 //
 
 
-import SnapKit
-
 #if os(OSX)
     import Cocoa
 #elseif os(iOS)
     import UIKit
 #endif
+
+import SnapKit
 
 
 class ZoneDot: ZView, ZGestureRecognizerDelegate {
@@ -113,7 +113,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 var  width = isInvisible && !isToggle ? CGFloat(0.0) : gFingerBreadth
                 var height = gFingerBreadth
 
-                if iWidget.widgetZone.isFavorite {
+                if iWidget.widgetZone.isInFavorites {
                     width  *= gReductionRatio
                     height *= gReductionRatio
                 }

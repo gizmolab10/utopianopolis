@@ -52,7 +52,7 @@ class ZTravelManager: NSObject {
             let recordIDOfLink = record.recordID
             var   there: Zone? = nil
 
-            if bookmark.isFavorite {
+            if bookmark.isInFavorites {
                 gFavoritesManager.currentFavorite = bookmark
             }
 

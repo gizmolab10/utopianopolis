@@ -57,7 +57,7 @@ class ZWidgetsManager: NSObject {
 
     private func mode(for iZone: Zone?) -> ZStorageMode? {
         if let zone = iZone {
-            if zone.isFavorite {
+            if zone.isInFavorites {
                 return .favoritesMode
             }
 

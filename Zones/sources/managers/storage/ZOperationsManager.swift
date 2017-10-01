@@ -15,7 +15,6 @@ enum ZOperationID: Int {
     case cloud
     case roots
     case manifest
-    case favorites
     case file
     case here
     case fetch
@@ -28,6 +27,7 @@ enum ZOperationID: Int {
     case emptyTrash
     case available
     case bookmarks
+    case favorites
     case undelete
     case create
     case parent
@@ -99,14 +99,14 @@ class ZOperationsManager: NSObject {
     func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent,                .children]) { onCompletion() } }
     func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent,         .save, .children]) { onCompletion() } }
     func fetchTrash(_ onCompletion: @escaping Closure) { setupAndRun([.trash,                             .save, .children]) { onCompletion() } }
-    func  bookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks                                          ]) { onCompletion() } }
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                         ]) { onCompletion() } }
+    func  bookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks                                          ]) { onCompletion() } }
 
 
     func children(_ recursing: ZRecursionType, _ iRecursiveGoal: Int? = nil, onCompletion: @escaping Closure) {
         let logic = ZRecursionLogic(recursing, iRecursiveGoal)
 
-        setupAndRun([.children], logic: logic) { onCompletion() }
+        setupAndRun([.manifest, .children], logic: logic) { onCompletion() }
     }
 
 
@@ -133,8 +133,10 @@ class ZOperationsManager: NSObject {
 
         if  let   prior = onAvailable {         // if already set
             onAvailable = {                     // encapsulate it with subsequent setup for new operation identifiers
-                prior()
-                self.setupAndRun(operationIDs) { onCompletion() }
+                self.FOREGROUND {
+                    prior()
+                    self.setupAndRun(operationIDs) { onCompletion() }
+                }
             }
         } else {
             queue.isSuspended = true

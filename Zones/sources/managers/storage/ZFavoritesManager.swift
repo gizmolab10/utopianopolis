@@ -27,7 +27,7 @@ class ZFavoritesManager: ZCloudManager {
 
     let     defaultFavorites = Zone(record: nil, storageMode: .favoritesMode)
     let defaultModes: ZModes = [.everyoneMode, .mineMode]
-    let    favoritesFavorite = Zone(favoriteNamed: favoritesKey)
+    let    favoritesFavorite = Zone(favorite: favoritesKey)
     var           count: Int { return rootZone?.count ?? 0 }
 
 
@@ -173,12 +173,13 @@ class ZFavoritesManager: ZCloudManager {
 
     func setup() {
         if  rootZone          == nil {
-            rootZone           = Zone(record: nil, storageMode: .favoritesMode)
-            rootZone?.zoneName = favoritesKey
-            rootZone?.record   = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
+            let         record = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
+            rootZone           = Zone(record: record, storageMode: .mineMode)
+            rootZone!.zoneName = favoritesKey
 
-            rootZone?.displayChildren()
             setupDefaultFavorites()
+            rootZone!.needChildren()
+            rootZone!.displayChildren()
         }
     }
 
@@ -216,14 +217,12 @@ class ZFavoritesManager: ZCloudManager {
         }
 
         for favorite in rootZone!.children {
-            if favorite.isFavorite {
-                if let mode = favorite.crossLink?.storageMode, !found.contains(mode) {
-                    found.append(mode)
-                }
+            if let mode = favorite.crossLink?.storageMode, !found.contains(mode) {
+                found.append(mode)
+            }
 
-                if  let link = favorite.zoneLink, link == trashLink {
-                    hasTrash = true
-                }
+            if  let link = favorite.zoneLink, link == trashLink {
+                hasTrash = true
             }
         }
 
@@ -320,7 +319,7 @@ class ZFavoritesManager: ZCloudManager {
 
     @discardableResult func focus(on iFavorite: Zone?, _ atArrival: @escaping Closure) -> Bool {
         if  let bookmark = iFavorite {
-            if  bookmark.isFavorite {
+            if  bookmark.isInFavorites {
                 currentFavorite = bookmark
 
                 gTravelManager.travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
@@ -351,9 +350,8 @@ class ZFavoritesManager: ZCloudManager {
 
 
     @discardableResult func create(withBookmark: Zone?, _ style: ZFavoriteStyle, _ name: String?) -> Zone {
-        let bookmark:  Zone = withBookmark ?? Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: .mineMode)
-        bookmark.isFavorite = style != .normal
-        bookmark.zoneName   = name
+        let bookmark: Zone = withBookmark ?? Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: .mineMode)
+        bookmark.zoneName  = name
 
         return bookmark
     }

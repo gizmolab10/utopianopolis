@@ -66,6 +66,19 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
+    #if os(OSX)
+
+    override func keyDown(with event: NSEvent) {
+        currentEditor()?.insertText(event.key)
+
+        FOREGROUND(after: 0.1) {
+            super.becomeFirstResponder()
+        }
+    }
+
+    #endif
+
+
     func setup() {
         delegate               = self
         isBordered             = false
@@ -193,7 +206,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 let      components = t.components(separatedBy: "  (")
                 iTarget   .zoneName = components[0]
 
-                if !iTarget.isFavorite {
+                if !iTarget.isInFavorites {
                     iTarget.needFlush()
                 }
             }

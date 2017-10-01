@@ -68,7 +68,7 @@ class ZCloudManager: ZRecordsManager {
 
             for (index, save) in saves.enumerated() {
                 if  let savable = recordForRecordID(save.recordID) as? Zone {
-                    if !savable.isFavorite {
+                    if !savable.isInFavorites {
                         indices.insert(index)
                     } else {
                         savable.unmarkForAllOfStates([.needsSave])
@@ -81,7 +81,7 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        let deletes = recordIDsWithMatchingStates([.needsDestroy], pull: true, onlyFavorites: isPublic)
+        let deletes = recordIDsWithMatchingStates([.needsDestroy], pull: true)
         let   count = saves.count + deletes.count
 
         onCompletion?(count)
@@ -283,14 +283,15 @@ class ZCloudManager: ZRecordsManager {
 
 
     func bookmarkPredicate(from iRecordIDs: [CKRecordID]) -> NSPredicate {
-        let separator = " AND "
+        var separator = ""
         var    suffix = ""
 
         for identifier in iRecordIDs {
-            suffix = String(format: "%@%@SELF CONTAINS \"%@\"", suffix, separator, identifier.recordName)
+            suffix    = String(format: "%@%@SELF CONTAINS \"%@\"", suffix, separator, identifier.recordName)
+            separator = " AND "
         }
 
-        return NSPredicate(format: "zoneIsFavorite = 0\(suffix)")
+        return NSPredicate(format: suffix)
     }
 
 
@@ -573,18 +574,26 @@ class ZCloudManager: ZRecordsManager {
                             // avoid adding a duplicate (which was created by a bug)
 
                             for zone: Zone in favoritesRoot.children {
+                                let   doDuplicate = { (iZone: Zone) in
+                                    iZone .record = retrievedRecord
+                                    isDuplicated  = true
+
+                                    iZone.updateClassProperties()
+                                }
+
                                 if  link  != nil, link == zone.zoneLink {
-                                    isDuplicated = true
+                                    doDuplicate(zone)
 
                                     break
                                 } else if name != nil, name == zone.zoneName {
-                                    isDuplicated = true
+                                    doDuplicate(zone)
 
                                     break
                                 }
                             }
 
-                            if  !isDuplicated, let targetID = retrievedFavorite.crossLink?.record.recordID {
+                            if  !isDuplicated,
+                                let             targetID = retrievedFavorite.crossLink?.record.recordID {
                                 let process: ZoneClosure = { target in
                                     if  target.isDeleted {
                                         retrievedFavorite.orphan()
@@ -608,6 +617,8 @@ class ZCloudManager: ZRecordsManager {
                                 }
                             }
                         }
+
+                        favoritesRoot.respectOrder()
 
                         onCompletion?(0)
                     }
@@ -722,7 +733,7 @@ class ZCloudManager: ZRecordsManager {
                                 }
                             }
 
-                            let      child = self.zoneForRecord(record)
+                            let     child = self.zoneForRecord(record)
 
                             logic.propagateNeeds(to: child, progenyNeeded)
 
@@ -734,6 +745,10 @@ class ZCloudManager: ZRecordsManager {
                                 ///////////////////////////////////////
                                 // no child has matching record name //
                                 ///////////////////////////////////////
+
+                                if  let target = child.bookmarkTarget {
+                                    target.maybeNeedRoot()
+                                }
 
                                 parent.add(child)
                                 parent.respectOrder()

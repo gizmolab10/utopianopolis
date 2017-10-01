@@ -21,7 +21,6 @@ class Zone : ZRecord {
     dynamic var        zoneOrder:    NSNumber?
     dynamic var        zoneCount:    NSNumber?
     dynamic var      zoneProgeny:    NSNumber?
-    dynamic var   zoneIsFavorite:    NSNumber?
     dynamic var zoneShowChildren:    NSNumber?
     var              _parentZone:        Zone?
     var                   _color:      ZColor?
@@ -34,7 +33,7 @@ class Zone : ZRecord {
     var         grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
     var        isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
     var       hasMissingChildren:         Bool { return count < fetchableCount }
-    var            isInFavorites:         Bool { return isFavorite || isRootOfFavorites || parentZone?.isRootOfFavorites ?? false }
+    var            isInFavorites:         Bool { return isRootOfFavorites || parentZone?.isRootOfFavorites ?? false }
     var            hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var            hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var             showChildren:         Bool { return isRootOfFavorites || gManifest.showsChildren(self) }
@@ -47,29 +46,6 @@ class Zone : ZRecord {
     var                 hasColor:         Bool { return zoneColor != nil }
 
 
-
-    var isFavorite: Bool {
-        get {
-            var value = zoneIsFavorite?.boolValue
-
-            if  value         == nil {
-                value          = false
-                zoneIsFavorite = NSNumber(value: value!)
-
-                needFlush()
-            }
-
-            return value!
-        }
-
-        set {
-            zoneIsFavorite = NSNumber(value: newValue)
-
-            needFlush()
-        }
-    }
-
-
     var decoration: String {
         var d = ""
 
@@ -77,7 +53,7 @@ class Zone : ZRecord {
             d.append("D")
         }
 
-        if isFavorite {
+        if isInFavorites {
             d.append("F")
         }
 
@@ -112,15 +88,14 @@ class Zone : ZRecord {
                 #keyPath(zoneOrder),
                 #keyPath(zoneCount),
                 #keyPath(zoneProgeny),
-                #keyPath(zoneIsFavorite),
                 #keyPath(zoneShowChildren)]
     }
 
 
-    convenience init(favoriteNamed: String) {
+    convenience init(favorite named: String) {
         self.init(record: nil, storageMode: .favoritesMode)
 
-        self .zoneName = favoriteNamed
+        self .zoneName = named
 
         FOREGROUND(after: 0.5) {
             self.crossLink = gFavoritesManager.rootZone
@@ -238,7 +213,7 @@ class Zone : ZRecord {
 
     var fetchableCount: Int {
         get {
-            if isBookmark || isFavorite {
+            if isBookmark || isInFavorites {
                 return bookmarkTarget?.fetchableCount ?? 0
             } else if zoneCount == nil {
                 updateClassProperties()
@@ -252,13 +227,9 @@ class Zone : ZRecord {
         }
 
         set {
-            if  newValue != fetchableCount && !isBookmark && !isFavorite {
+            if  newValue != fetchableCount && !isBookmark && !isInFavorites {
                 zoneCount = NSNumber(value: newValue)
             }
-//
-//            for bookmark in gRemoteStoresManager.bookmarksFor(self) {
-//                bookmark.zoneCount = NSNumber(value: newValue)
-//            }
         }
     }
     

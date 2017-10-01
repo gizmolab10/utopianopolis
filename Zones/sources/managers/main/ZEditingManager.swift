@@ -472,6 +472,8 @@ class ZEditingManager: NSObject {
                 }
             }
         }
+
+        zone.needFlush()
     }
 
 
@@ -633,7 +635,7 @@ class ZEditingManager: NSObject {
                     self.deleteZones(gSelectionManager.simplifiedGrabs, permanently: permanently) { iZone in
                         iZone?.grab()
 
-                        if iZone?.isFavorite ?? false {
+                        if iZone?.isInFavorites ?? false {
                             gFavoritesManager.updateChildren()
                         }
 
@@ -675,7 +677,7 @@ class ZEditingManager: NSObject {
             if  zone == parent { // detect and avoid infinite recursion
                 finished(nil)
             } else {
-                deleteZone(zone, permanently: permanently || zone.isFavorite) { iZone in
+                deleteZone(zone, permanently: permanently || zone.isInFavorites) { iZone in
                     finished(iZone)
                 }
             }
@@ -881,8 +883,6 @@ class ZEditingManager: NSObject {
                     self.redrawAndSync(grandparent)
                 }
             } else if parent != nil && parent!.isRoot {
-                zone.isFavorite = true
-
                 moveIntoHere(gFavoritesManager.rootZone)
             } else {
                 revealParentAndSiblingsOf(gHere) {
@@ -935,7 +935,6 @@ class ZEditingManager: NSObject {
             var         mover = zone
             let    targetLink = there.crossLink
             let     sameGraph = zone.storageMode == targetLink?.storageMode
-            mover .isFavorite = false
             let grabAndTravel = {
                 gTravelManager.travelThrough(there) { object, kind in
                     let there = object as! Zone
@@ -1092,6 +1091,8 @@ class ZEditingManager: NSObject {
                 let o = a.order
                 a.order = b.order
                 b.order = o
+
+                a.needFlush()
             }
 
             commonParent.respectOrder()
@@ -1302,15 +1303,13 @@ class ZEditingManager: NSObject {
         var     restore = [Zone: (Zone, Int?)] ()
         var       grabs = gSelectionManager.currentGrabs
 
-        if  let dragged = gDraggedZone, dragged.isFavorite, !toFavorites {
-            dragged.isFavorite = false              // type 4
-            dragged.needFlush()
+        if  let dragged = gDraggedZone, dragged.isInFavorites, !toFavorites {
+            dragged.needFlush()            // type 4
         }
 
         grabs.sort { (a, b) -> Bool in
-            if  a.isFavorite {
-                a.isFavorite = false                // type 4
-                a.needFlush()
+            if  a.isInFavorites {
+                a.needFlush()              // type 4
             }
 
             return a.order < b.order
@@ -1352,7 +1351,7 @@ class ZEditingManager: NSObject {
 
                     if !toFavorites {
                         movable.orphan()
-                    } else if !movable.isFavorite {
+                    } else if !movable.isInFavorites {
                         movable = gFavoritesManager.createBookmark(for: zone, style: .favorite)
 
                         movable.needFlush()

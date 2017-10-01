@@ -29,7 +29,7 @@ class ZFavoritesController : ZGenericController {
             selector.apportionsSegmentWidthsByContent = true
             selector.removeAllSegments()
 
-            for (iIndex, iFavorite) in favorites.enumerated() {
+            for (iIndex, iFavorite) in favorites.reversed().enumerated() {
                 selector.insertSegment(withTitle: iFavorite.zoneName, at:iIndex, animated: false)
             }
         }
@@ -37,7 +37,7 @@ class ZFavoritesController : ZGenericController {
 
 
     @IBAction func selectorAction(iControl: UISegmentedControl) {
-        let       index = iControl.selectedSegment
+        let       index = iControl.numberOfSegments - iControl.selectedSegment - 1
 
         if let favorite = gFavoritesManager.rootZone?[index] {
             gFavoritesManager.focus(on: favorite) {

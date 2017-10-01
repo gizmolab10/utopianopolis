@@ -86,6 +86,7 @@ class ZControllersManager: NSObject {
     func startupDataAndUI() {
         signalFor(nil, regarding: .startup)
         displayActivity(true)
+        gFavoritesManager.setup()
         gOperationsManager.startUp {
             self.displayActivity(false) // now on foreground thread
             gHere.grab()

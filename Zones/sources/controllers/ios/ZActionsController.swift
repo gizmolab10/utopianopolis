@@ -88,6 +88,8 @@ class ZActionsController : ZGenericController {
 
     func refresh() {
         gHere.needProgeny()
+        gManifest.needFetch()
+        gFavoritesManager.rootZone?.needChildren()
 
         gOperationsManager.children(.restore) {
             self.signalFor(nil, regarding: .data)
