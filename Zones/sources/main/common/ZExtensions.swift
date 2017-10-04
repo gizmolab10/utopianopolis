@@ -243,6 +243,24 @@ extension Array {
         }
     }
 
+    func apply(closure: AnyToStringClosure) -> String {
+        var separator = ""
+        var    string = ""
+
+        for object in self {
+            let message = closure(object)
+
+            string.append("\(separator)\(message)")
+
+            if  separator.length == 0 {
+                separator.appendSpacesToLength(gLogTabStop)
+
+                separator = "\n\(separator)"
+            }
+        }
+
+        return string
+    }
 }
 
 

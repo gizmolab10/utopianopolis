@@ -38,6 +38,10 @@ class ZRemoteStoresManager: NSObject {
     func rootZone(for mode: ZStorageMode) -> Zone? { return recordsManagerFor(mode).rootZone }
 
 
+    func cancel() {
+        currentCloudManager.currentOperation?.cancel()
+    }
+
     func manifest(for mode: ZStorageMode) -> ZManifest {
         var manifest = manifestByStorageMode[mode]
 
@@ -131,7 +135,7 @@ class ZRemoteStoresManager: NSObject {
     }
     
 
-    func establishRoot(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
+    func establishRoot(_ storageMode: ZStorageMode, _ onCompletion: IntClosure?) {
         switch storageMode {
         case .favoritesMode: onCompletion?(0)
         default:             cloudManagerFor(storageMode).establishRoot(onCompletion)
@@ -139,7 +143,7 @@ class ZRemoteStoresManager: NSObject {
     }
 
 
-    func establishHere(_ storageMode: ZStorageMode, _ onCompletion: IntegerClosure?) {
+    func establishHere(_ storageMode: ZStorageMode, _ onCompletion: IntClosure?) {
         let manifest = self.manifest(for: storageMode)
         let     here = manifest.hereZone
 

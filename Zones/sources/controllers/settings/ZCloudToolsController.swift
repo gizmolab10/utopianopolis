@@ -77,7 +77,7 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     func retryCloud() {
-        gOperationsManager.invokeResponse?(nil)
+        gOperationsManager.cloudCallback?(0)
     }
 
 

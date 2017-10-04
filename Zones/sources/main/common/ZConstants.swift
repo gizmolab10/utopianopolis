@@ -27,9 +27,11 @@ let unselectBrightness: CGFloat = 0.98
 #endif
 
 
-let             fontSize = CGFloat(17.0)
-let             gUnlevel = -1
+let       gRemoteTimeout = 10.0
 let          gLogTabStop = 15
+let           gBatchSize = 250
+let             gUnlevel = -1
+let             fontSize = CGFloat(17.0)
 let          gWidgetFont = ZFont.systemFont(ofSize: fontSize)
 let       gFavoritesFont = ZFont.systemFont(ofSize: fontSize * gReductionRatio)
 let       gFingerBreadth = CGFloat(44.0)

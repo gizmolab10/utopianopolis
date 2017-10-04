@@ -72,7 +72,7 @@ class ZActionsController : ZGenericController {
             let actionTitle = actionTitleForTitle(title)
 
             switch actionTitle {
-            case .eHang:    gOperationsManager.invokeResponse?(nil)
+            case .eHang:    gOperationsManager.unHang()
             case .eUndo:    gEditingManager.undoManager.undo()
             case .eCut:     gEditingManager.delete()
             case .eNew:     gEditingManager.createIdea()
@@ -90,6 +90,7 @@ class ZActionsController : ZGenericController {
         gHere.needProgeny()
         gManifest.needFetch()
         gFavoritesManager.rootZone?.needChildren()
+        gOperationsManager.unHang()
 
         gOperationsManager.children(.restore) {
             self.signalFor(nil, regarding: .data)

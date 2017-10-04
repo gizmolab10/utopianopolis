@@ -14,11 +14,16 @@ import CloudKit
 class ZCloudManager: ZRecordsManager {
     var cloudZonesByID = [CKRecordZoneID : CKRecordZone] ()
     var database: CKDatabase? { return gRemoteStoresManager.databaseForMode(storageMode) }
+    var currentOperation: CKOperation? = nil
+    var currentPredicate: NSPredicate? = nil
+    var mostRecentError: Error? = nil
+
 
     
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
         if  database != nil {
-            operation.timeoutIntervalForResource = 30.0
+            operation.timeoutIntervalForResource = gRemoteTimeout
+            operation .timeoutIntervalForRequest = gRemoteTimeout
             operation          .qualityOfService = .background
             operation                 .container = gRemoteStoresManager.container
             operation                  .database = database
@@ -31,6 +36,8 @@ class ZCloudManager: ZRecordsManager {
 
 
     func start(_ operation: CKOperation) {
+        currentOperation = operation
+
         BACKGROUND {     // not stall foreground processor
             operation.start()
         }
@@ -41,7 +48,7 @@ class ZCloudManager: ZRecordsManager {
     // MARK:-
 
 
-    func create(_ onCompletion: IntegerClosure?) {
+    func create(_ onCompletion: IntClosure?) {
         let needCreating = pullRecordsWithMatchingStates([.needsCreate])
         let        count = needCreating.count
 
@@ -59,7 +66,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func save(_ onCompletion: IntegerClosure?) {
+    func save(_ onCompletion: IntClosure?) {
         var    saves = pullRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
         let isPublic = storageMode == .everyoneMode
 
@@ -138,7 +145,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func emptyTrash(_ onCompletion: IntegerClosure?) {
+    func emptyTrash(_ onCompletion: IntClosure?) {
 //        let   predicate = NSPredicate(format: "zoneIsDeleted = 1")
 //        var toBeDeleted = [CKRecordID] ()
 //
@@ -163,7 +170,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func undeleteAll(_ onCompletion: IntegerClosure?) {
+    func undeleteAll(_ onCompletion: IntClosure?) {
 //        let predicate = NSPredicate(format: "zoneIsDeleted = 1")
 //
 //        onCompletion?(-1)
@@ -227,10 +234,12 @@ class ZCloudManager: ZRecordsManager {
 
 
     @discardableResult func detectError(_ iError: Error?, _ onError: Closure) -> Bool {
-        let      hasError = iError != nil
-        gCloudUnavailable = hasError
+        let        hasError = iError != nil
+        gCloudUnavailable   = hasError
 
         if hasError {
+            mostRecentError = iError
+
             onError()
         }
 
@@ -239,6 +248,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func queryWith(_ predicate: NSPredicate, onCompletion: RecordClosure?) {
+        currentPredicate  = predicate
         let nilCompletion = {
             onCompletion?(nil)
         }
@@ -246,7 +256,7 @@ class ZCloudManager: ZRecordsManager {
         if  let                operation = configure(CKQueryOperation()) as? CKQueryOperation {
             operation             .query = CKQuery(recordType: zoneTypeKey, predicate: predicate)
             operation       .desiredKeys = Zone.cloudProperties()
-            operation      .resultsLimit = 500
+            operation      .resultsLimit = gBatchSize
             operation.recordFetchedBlock = { iRecord in
                 onCompletion?(iRecord)
             }
@@ -311,7 +321,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func bookmarks(_ onCompletion: IntegerClosure?) {
+    func bookmarks(_ onCompletion: IntClosure?) {
         let recordIDs = recordIDsWithMatchingStates([.needsBookmarks], pull: true)
         let     count = recordIDs.count
 
@@ -340,7 +350,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func merge(_ onCompletion: IntegerClosure?) {
+    func merge(_ onCompletion: IntClosure?) {
         let recordIDs = recordIDsWithMatchingStates([.needsMerge])
         let     count = recordIDs.count
 
@@ -381,7 +391,7 @@ class ZCloudManager: ZRecordsManager {
     // MARK:-
 
 
-    func fetchTrash(_ onCompletion: IntegerClosure?) {
+    func fetchTrash(_ onCompletion: IntClosure?) {
         if  let     trash = trashZone {
             let parentKey = "parent"
             let predicate = NSPredicate(format: "zoneName != \"\"")
@@ -497,7 +507,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetch(_ onCompletion: IntegerClosure?) {
+    func fetch(_ onCompletion: IntClosure?) {
         let states = [ZRecordState.needsFetch]
         let needed = recordIDsWithMatchingStates(states)
         let  count = needed.count
@@ -549,7 +559,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetchFavorites(_ onCompletion: IntegerClosure?) {
+    func fetchFavorites(_ onCompletion: IntClosure?) {
         let predicate = NSPredicate(format: "zoneIsFavorite = 1")
         var retrieved = [CKRecord] ()
 
@@ -628,7 +638,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetchManifest(_ onCompletion: IntegerClosure?) {
+    func fetchManifest(_ onCompletion: IntClosure?) {
         onCompletion?(-1)
 
         let     mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
@@ -645,7 +655,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetchParents(_ goal: ZRecursionType, _ onCompletion: IntegerClosure?) {
+    func fetchParents(_ goal: ZRecursionType, _ onCompletion: IntClosure?) {
         let state: ZRecordState = (goal == .all) ? .needsRoot : .needsParent
         let      missingParents = parentIDsWithMatchingStates([state])
         let             orphans = recordIDsWithMatchingStates([state])
@@ -703,7 +713,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetchChildren(_ iLogic: ZRecursionLogic? = ZRecursionLogic(.restore), _ onCompletion: IntegerClosure?) {
+    func fetchChildren(_ iLogic: ZRecursionLogic? = ZRecursionLogic(.restore), _ onCompletion: IntClosure?) {
         let          logic = iLogic              ?? ZRecursionLogic(.restore)
         let  progenyNeeded = pullReferencesWithMatchingStates([.needsProgeny])
         let childrenNeeded = pullReferencesWithMatchingStates([.needsChildren]) + progenyNeeded
@@ -733,25 +743,28 @@ class ZCloudManager: ZRecordsManager {
                                 }
                             }
 
-                            let     child = self.zoneForRecord(record)
+                            let child = self.zoneForRecord(record)
 
-                            logic.propagateNeeds(to: child, progenyNeeded)
+                            if  child.isRoot {
+                                child.parentZone = nil // fix a mysterious bug that causes a HANG ... a root can NOT be a child, by definition
+                            } else {
+                                logic.propagateNeeds(to: child, progenyNeeded)
 
-                            if  !child.isRoot,
-                                let parent = child.parentZone,
-                                parent    != child,
-                                !parent.hasChildMatchingRecordName(of: child) {
+                                if let parent = child.parentZone,
+                                    parent          != child,
+                                    !parent.hasChildMatchingRecordName(of: child) {
 
-                                ///////////////////////////////////////
-                                // no child has matching record name //
-                                ///////////////////////////////////////
+                                    ///////////////////////////////////////
+                                    // no child has matching record name //
+                                    ///////////////////////////////////////
 
-                                if  let target = child.bookmarkTarget {
-                                    target.maybeNeedRoot()
+                                    if  let target = child.bookmarkTarget {
+                                        target.maybeNeedRoot()
+                                    }
+
+                                    parent.add(child)
+                                    parent.respectOrder()
                                 }
-
-                                parent.add(child)
-                                parent.respectOrder()
                             }
                         }
 
@@ -764,7 +777,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetchCloudZones(_ onCompletion: IntegerClosure?) {
+    func fetchCloudZones(_ onCompletion: IntClosure?) {
         onCompletion?(-1)
 
         if let                              operation = configure(CKFetchRecordZonesOperation()) as? CKFetchRecordZonesOperation {
@@ -783,7 +796,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func establishHere(_ onCompletion: IntegerClosure?) {
+    func establishHere(_ onCompletion: IntClosure?) {
         let manifest = gRemoteStoresManager.manifest(for: storageMode)
 
         let rootCompletion = {
@@ -818,7 +831,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func establishRoot(_ onCompletion: IntegerClosure?) {
+    func establishRoot(_ onCompletion: IntClosure?) {
         let recordID = CKRecordID(recordName: rootNameKey)
 
         onCompletion?(-1)
@@ -834,7 +847,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func establishTrash(_ onCompletion: IntegerClosure?) {
+    func establishTrash(_ onCompletion: IntClosure?) {
         let recordID = CKRecordID(recordName: trashNameKey)
 
         onCompletion?(-1)
@@ -857,7 +870,7 @@ class ZCloudManager: ZRecordsManager {
     // MARK:-
 
 
-    func unsubscribe(_ onCompletion: IntegerClosure?) {
+    func unsubscribe(_ onCompletion: IntClosure?) {
         if  database == nil {
             onCompletion?(0)
         } else {
@@ -887,7 +900,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func subscribe(_ onCompletion: IntegerClosure?) {
+    func subscribe(_ onCompletion: IntClosure?) {
         if  database == nil {
             onCompletion?(0)
         } else {

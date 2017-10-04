@@ -26,9 +26,6 @@ enum ZRecordState: Int {
 }
 
 
-let batchSize = 250
-
-
 class ZRecordsManager: NSObject {
 
 
@@ -235,7 +232,7 @@ class ZRecordsManager: NSObject {
         findAllRecordsWithAnyMatchingStates(states) { state, ckrecord in
             let identifier = ckrecord.recordID
 
-            if  identifiers.count < batchSize, !identifiers.contains(identifier) {
+            if  identifiers.count < gBatchSize, !identifiers.contains(identifier) {
                 identifiers.append(identifier)
             }
         }
@@ -252,7 +249,7 @@ class ZRecordsManager: NSObject {
         var parents = [CKRecordID] ()
 
         findAllRecordsWithAnyMatchingStates(states) { state, ckrecord in
-            if  parents.count < batchSize, let zone = recordForCKRecord(ckrecord) as? Zone, let reference = zone.parent {
+            if  parents.count < gBatchSize, let zone = recordForCKRecord(ckrecord) as? Zone, let reference = zone.parent {
                 let  parentID = reference.recordID
 
                 if !parents.contains(parentID) {
@@ -269,7 +266,7 @@ class ZRecordsManager: NSObject {
         var results = [CKRecord] ()
 
         findAllRecordsWithAnyMatchingStates(states) { state, ckrecord in
-            if  results.count < batchSize && !results.contains(ckrecord) {
+            if  results.count < gBatchSize && !results.contains(ckrecord) {
                 results.append(ckrecord)
             }
         }
@@ -293,7 +290,7 @@ class ZRecordsManager: NSObject {
         var references = [CKReference] ()
 
         findAllRecordsWithAnyMatchingStates(states) { state, ckrecord in
-            if  references.count < batchSize {
+            if  references.count < gBatchSize {
                 let reference = CKReference(recordID: ckrecord.recordID, action: .none)
 
                 references.append(reference)
@@ -352,69 +349,47 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
-    func applyTo(_ array: [NSObject]?, closure: ObjectToStringClosure) -> String {
-        var separator = ""
-        var    string = ""
-
-        if array != nil {
-            for object in array! {
-                let message = closure(object)
-
-                string.append("\(separator)\(message)")
-
-                if  separator.length == 0 {
-                    separator.appendSpacesToLength(gLogTabStop)
-
-                    separator = "\n\(separator)"
-                }
-            }
-        }
-
-        return string
-    }
-
-
     func stringForZones(_ zones: [Zone]?) -> String {
-        return applyTo(zones)  { object -> (String) in
+        return zones?.apply()  { object -> (String) in
             if let zone = object as? Zone {
                 return zone.decoratedName
             }
 
             return "---"
-        }
+        } ?? ""
     }
 
 
     func stringForRecords(_ records: [CKRecord]?) -> String {
-        return applyTo(records)  { object -> (String) in
+        return records?.apply()  { object -> (String) in
             if  let record = object as? CKRecord {
                 return record.decoratedName
             }
 
             return "---"
-        }
+        } ?? ""
     }
 
 
     func stringForReferences(_ references: [CKReference]?, in storageMode: ZStorageMode) -> String {
-        return applyTo(references)  { object -> (String) in
+        return references?.apply()  { object -> (String) in
             if let reference = object as? CKReference, let zone = gRemoteStoresManager.recordsManagerFor(storageMode).zoneForReference(reference) {
                 return zone.decoratedName
             }
 
             return "---"
-        }
+        } ?? ""
     }
 
 
     func stringForRecordIDs(_ recordIDs: [CKRecordID]?, in storageMode: ZStorageMode) -> String {
-        return applyTo(recordIDs)  { object -> (String) in
+        return recordIDs?.apply()  { object -> (String) in
             if  let recordID = object as? CKRecordID, let record = gRemoteStoresManager.recordsManagerFor(storageMode).recordForRecordID(recordID) {
                 return record.record.decoratedName
             }
             
             return "---"
-        }
+        } ?? ""
     }
 
 

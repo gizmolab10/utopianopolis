@@ -61,24 +61,26 @@ class Operation: Foundation.Operation {
         
         func canTransitionToState(_ target: State) -> Bool {
             switch (self, target) {
-                case (.initialized, .pending):
-                    return true
-                case (.pending, .evaluatingConditions):
-                    return true
-                case (.evaluatingConditions, .ready):
-                    return true
-                case (.ready, .ready):
-                    return true
-                case (.ready, .executing):
-                    return true
-                case (.ready, .finishing):
-                    return true
-                case (.executing, .finishing):
-                    return true
-                case (.finishing, .finished):
-                    return true
-                default:
-                    return false
+            case (.initialized, .pending):
+                return true
+            case (.pending, .finishing):
+                return true
+            case (.pending, .evaluatingConditions):
+                return true
+            case (.evaluatingConditions, .ready):
+                return true
+            case (.ready, .ready):
+                return true
+            case (.ready, .executing):
+                return true
+            case (.ready, .finishing):
+                return true
+            case (.executing, .finishing):
+                return true
+            case (.finishing, .finished):
+                return true
+            default:
+                return false
             }
         }
     }
@@ -298,7 +300,7 @@ class Operation: Foundation.Operation {
     */
     fileprivate var hasFinishedAlready = false
     final func finish(_ errors: [NSError] = []) {
-        if !hasFinishedAlready {
+        if !hasFinishedAlready && state != .finishing {
             hasFinishedAlready = true
             state = .finishing
             
@@ -323,12 +325,11 @@ class Operation: Foundation.Operation {
         // No op.
     }
 
-    func bandaid() {
+    func forceFinish() {
         if ![State.finished, State.pending].contains(state) {
             if state == .evaluatingConditions { state = .ready }
-
-            state = .finishing
-            state = .finished
+            if state != .finishing            { state = .finishing }
+            if state != .finished             { state = .finished }
         }
     }
 
