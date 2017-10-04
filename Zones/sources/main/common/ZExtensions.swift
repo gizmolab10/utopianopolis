@@ -371,19 +371,25 @@ extension ZGestureRecognizer {
     }
 }
 
-
-extension ZView {
-
+extension NSResponder {
 
     override func hark(_ iMessage: Any?) {
-        if  var message = iMessage as? String {
-            if let first = window?.firstResponder, first == self {
-                message.append(" IS FIRST RESPONDER")
+        if  var   message = iMessage as? String {
+            let    window = zapplication.mainWindow
+            message       = "key down in: \(message)"
+
+            if  let first = window?.firstResponder, first == self {
+                message.append(" <-- FIRST RESPONDER")
             }
 
             report(message)
         }
     }
+
+}
+
+
+extension ZView {
 
 
     func clearGestures() {
