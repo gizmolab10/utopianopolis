@@ -68,11 +68,19 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     #if os(OSX)
 
-    override func keyDown(with event: NSEvent) {
-        currentEditor()?.insertText(event.key)
+    let kludge = false
 
-        FOREGROUND(after: 0.1) {
-            super.becomeFirstResponder()
+    override func keyDown(with event: NSEvent) {
+        hark("text widget \"\(widgetZone.decoratedName)\"")
+
+        if !kludge {
+            super.keyDown(with: event)
+        } else {
+            currentEditor()?.insertText(event.key)
+
+            FOREGROUND(after: 0.1) {
+                super.becomeFirstResponder()
+            }
         }
     }
 

@@ -325,7 +325,7 @@ class Operation: Foundation.Operation {
         // No op.
     }
 
-    func forceFinish() {
+    func kill() {
         if ![State.finished, State.pending].contains(state) {
             if state == .evaluatingConditions { state = .ready }
             if state != .finishing            { state = .finishing }

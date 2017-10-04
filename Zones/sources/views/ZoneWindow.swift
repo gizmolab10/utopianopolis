@@ -35,6 +35,7 @@ class ZoneWindow: ZWindow {
 
     override func keyDown(with event: ZEvent) {
         if !gEditingManager.handleEvent(event, isWindow: true) {
+            hark("window")
             super.keyDown(with: event)
         }
     }

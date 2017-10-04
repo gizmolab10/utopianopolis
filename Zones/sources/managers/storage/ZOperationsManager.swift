@@ -194,42 +194,45 @@ class ZOperationsManager: NSObject {
             let        isMine = [.mineMode].contains(saved)
 
             for operationID in operationIDs + [.available] {
-                let                blockOperation = BlockOperation {
+                let                    blockOperation = BlockOperation {
                     self.FOREGROUND {
-                        self               .currentOp = operationID             // if hung, it happened inside this op
-                        var invokeModeAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
-                        let             skipFavorites = operationID != .here
-                        let                      full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .roots, .here].contains(operationID)
-                        let forCurrentStorageModeOnly = [.file, .available, .parent, .children, .authenticate                           ].contains(operationID)
-                        let        cloudModes: ZModes = [.mineMode, .everyoneMode]
-                        let             modes: ZModes = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : skipFavorites ? cloudModes : cloudModes + [.favoritesMode]
+                        self                .currentOp = operationID             // if hung, it happened inside this op
+                        var  invokeModeAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
+                        let              skipFavorites = operationID != .here
+                        let                       full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .roots, .here].contains(operationID)
+                        let  forCurrentStorageModeOnly = [.file, .available, .parent, .children, .authenticate                           ].contains(operationID)
+                        let         cloudModes: ZModes = [.mineMode, .everyoneMode]
+                        let              modes: ZModes = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : skipFavorites ? cloudModes : cloudModes + [.favoritesMode]
 
-                        invokeModeAt                  = { index in
-                            self.FOREGROUND {
-                                if index >= modes.count {
-                                    self.forceFinishOperation(for: operationID)
-                                } else {
-                                    let           mode = modes[index]
-                                    self.cloudCallback = { (iResult: Any?) in
-                                        self.FOREGROUND {
-                                            let      error = iResult as? Error
-                                            let      value = iResult as? Int
-                                            let    isError = error != nil
+                        invokeModeAt                   = { index in
 
-                                            if     isError || value == 0 {
-                                                if isError {
-                                                    self.report(iResult)
-                                                }
+                            /////////////////////////////////
+                            // always called in foreground //
+                            /////////////////////////////////
 
-                                                self.lastOpStart = nil
+                            if index >= modes.count {
+                                self.killOperation(for: operationID)
+                            } else {
+                                let               mode = modes[index]
+                                self    .cloudCallback = { (iResult: Any?) in
+                                    self.FOREGROUND {
+                                        let      error = iResult as? Error
+                                        let      value = iResult as? Int
+                                        let    isError = error != nil
 
-                                                invokeModeAt?(index + 1)         // recurse
+                                        if     isError || value == 0 {
+                                            if isError {
+                                                self.report(iResult)
                                             }
+
+                                            self.lastOpStart = nil
+
+                                            invokeModeAt?(index + 1)         // recurse
                                         }
                                     }
-
-                                    self.invoke(operationID, mode, logic)
                                 }
+
+                                self.invoke(operationID, mode, logic)
                             }
                         }
 
@@ -284,21 +287,21 @@ class ZOperationsManager: NSObject {
 
     func unwaitAll() {
         for identifier in waitingOps.keys {
-            forceFinishOperation(for: identifier)
+            killOperation(for: identifier)
         }
     }
 
 
-    func forceFinishOperation(for identifier: ZOperationID) {
-        var operation  = waitingOps[identifier]
+    func killOperation(for identifier: ZOperationID) {
+        var operation = waitingOps[identifier]
 
-        if  operation != nil {
-            waitingOps[identifier] = nil
+        if  operation == nil {
+            operation = queue.operations.first as? BlockOperation
         } else {
-            operation  = queue.operations.first as? BlockOperation
+            waitingOps[identifier] = nil
         }
 
-        operation?.forceFinish()
+        operation?.kill()
     }
 
 

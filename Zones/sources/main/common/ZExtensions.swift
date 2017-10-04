@@ -25,14 +25,10 @@ extension NSObject {
 
 
     func           note(_ iMessage: Any?)                { } // report(iMessage) }
+    func           hark(_ iMessage: Any?)                { report(iMessage) }
     func    performance(_ iMessage: Any?)                { report(iMessage) }
-    func columnarReport(_ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(iFirst, iSecond) }
+    func columnarReport(_ iFirst: Any?, _ iSecond: Any?) { } // rawColumnarReport(iFirst, iSecond) }
     func  debugCheck()                                   { gTravelManager.debugCheck() }
-
-
-    func   signalFor(_ object: NSObject?, regarding: ZSignalKind) {
-        gControllersManager.signalFor(object, regarding: regarding, onCompletion: nil)
-    }
 
 
     func rawColumnarReport(_ iFirst: Any?, _ iSecond: Any?) {
@@ -76,6 +72,11 @@ extension NSObject {
         redrawAndSync(iZone) {
             self.signalFor(iZone, regarding: .redraw)
         }
+    }
+
+
+    func signalFor(_ object: NSObject?, regarding: ZSignalKind) {
+        gControllersManager.signalFor(object, regarding: regarding, onCompletion: nil)
     }
 
 
@@ -372,6 +373,17 @@ extension ZGestureRecognizer {
 
 
 extension ZView {
+
+
+    override func hark(_ iMessage: Any?) {
+        if  var message = iMessage as? String {
+            if let first = window?.firstResponder, first == self {
+                message.append(" IS FIRST RESPONDER")
+            }
+
+            report(message)
+        }
+    }
 
 
     func clearGestures() {

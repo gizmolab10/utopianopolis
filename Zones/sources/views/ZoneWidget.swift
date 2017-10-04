@@ -46,6 +46,16 @@ class ZoneWidget: ZView {
     }
 
 
+    #if os(OSX)
+
+    override func keyDown(with event: NSEvent) {
+        hark("widget \"\(widgetZone.decoratedName)\"")
+        super.keyDown(with: event)
+    }
+
+    #endif
+
+
     // MARK:- layout
     // MARK:-
 
