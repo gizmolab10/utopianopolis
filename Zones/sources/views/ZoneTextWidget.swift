@@ -68,14 +68,32 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     #if os(OSX)
 
+    func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+
+        //////////////////////////
+        // THIS IS NEVER CALLED //
+        //////////////////////////
+
+        return true
+    }
+
+    func control(_ control: NSControl, textShouldBeginEditing fieldEditor: NSText) -> Bool {
+    
+        //////////////////////////
+        // THIS IS NEVER CALLED //
+        //////////////////////////
+
+        return true
+    }
+
     let kludge = false
 
     override func keyDown(with event: NSEvent) {
         if !kludge {
             hark("text field \"\(widgetZone.decoratedName)\"")
             super.keyDown(with: event)
-        } else {
-            currentEditor()?.insertText(event.key)
+        } else if let e = currentEditor() {
+            e.insertText(event.key)
 
             FOREGROUND(after: 0.1) {
                 super.becomeFirstResponder()
@@ -88,6 +106,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     func setup() {
         delegate               = self
+        isEnabled              = true
         isBordered             = false
         textAlignment          = .left
         backgroundColor        = gClearColor

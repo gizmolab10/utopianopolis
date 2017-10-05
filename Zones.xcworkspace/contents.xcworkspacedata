@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:texst/texst.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Zones/Zones.xcodeproj">
    </FileRef>
 </Workspace>

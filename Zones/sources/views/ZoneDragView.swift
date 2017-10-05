@@ -33,9 +33,6 @@ class ZoneDragView: ZView, ZGestureRecognizerDelegate {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-//        let        scale = CGFloat(gScaling)
-//        zlayer.transform = CATransform3DMakeScale(scale, scale, 1.0)
-
         if  let rect = rubberbandRect {
             gClearColor.setFill()
             gDragTargetsColor.lighter(by: 2.0).setStroke()
