@@ -26,44 +26,70 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         if kind == .search {
-            if gShowsSearching {
+            if  gWorkMode == .searchMode {
                 assignAsFirstResponder(searchBox!)
+
+                gSearchManager.state = .ready
             }
         }
     }
 
 
-    func endSearching() {
-        gShowsSearching = false
+    func handleKeyEvent(_ event: ZEvent, with state: ZSearchState) -> ZEvent? {
+        let string = event.input
+        let    key = string[string.startIndex].description
 
-        signalFor(nil, regarding: .search)
+        switch key {
+        case "\r":
+            switch state {
+            case .ready:        exit();         return nil
+            case .input: if getInput() == nil { return nil }
+            default:
+                break
+            }
+        default: if state == .ready { gSearchManager.state = .input; }
+        }
+
+        return event
+    }
+
+
+    func exit() {
+        self.searchBox?.text = ""
+
+        searchBox?.resignFirstResponder()
+        gSearchManager.exitSearchMode()
+    }
+
+
+    func getInput() -> String? {
+        let searchString = (searchBox?.text)!
+
+        if ["", " ", "  "].contains(searchString) {
+            exit()
+
+            return nil
+        }
+
+        return searchString
     }
 
 
     #if os(OSX)
-    func searchFieldDidEndSearching(_ sender: NSSearchField) {
-        endSearching()
-    }
-
 
     func control(_ control: ZControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
         performance(searchBox?.text)
-        searchBox?.resignFirstResponder()
 
-        let searchString = (searchBox?.text)!
-
-        if ["  ", " ", ""].contains(searchString) {
-            endSearching()
-        } else {
+        if  let searchString = getInput() {
             gCloudManager.search(for: searchString) { iObject in
-                let hasResults = ((iObject as? [Any])?.count)! != 0
-                gWorkMode       = hasResults && gShowsSearching ? .searchMode : .editMode
+                let hasResults = (iObject as! [Any]).count != 0
+                gWorkMode      = hasResults ? .searchMode : .editMode
 
                 if hasResults {
                     self.FOREGROUND {
                         self.searchBox?.text = ""
 
-                        self.signalFor(iObject, regarding: .found)
+                        gSearchManager.showResults(iObject)
                     }
                 }
             }
@@ -71,18 +97,15 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
         return true
     }
+
     #endif
 
     
     func control(_ control: ZControl, textView: ZTextView, doCommandBy commandSelector: Selector) -> Bool {
         let handledIt = commandSelector == Selector(("noop:"))
 
-        if  handledIt {
-            gWorkMode       = .editMode
-            gShowsSearching = false
-
-            signalFor(nil, regarding: .found)
-            signalFor(nil, regarding: .search)
+        if  handledIt && gSearchManager.state != .browse {
+            exit()
         }
 
         return handledIt

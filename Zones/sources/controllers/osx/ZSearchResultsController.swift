@@ -21,17 +21,23 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
 
     var      resultsAreVisible = false
+    var            inSearchBox = false
     var           foundRecords = [CKRecord] ()
     var                monitor: Any?
-    override  var controllerID: ZControllerID { return .searchResults }
+    override  var controllerID: ZControllerID      { return .searchResults }
+    var       searchController: ZSearchController? { return gControllersManager.controllerForID(.searchBox) as? ZSearchController }
     @IBOutlet var    tableView: ZTableView?
+
+
+    // MARK:- content
+    // MARK:-
 
 
     override func handleSignal(_ iObject: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         if kind == .found {
             resultsAreVisible = false
             
-            if gShowsSearching, let records = iObject as? [CKRecord] {
+            if  gWorkMode == .searchMode, let records = iObject as? [CKRecord] {
                 let count = records.count
 
                 if count == 1 {
@@ -41,17 +47,13 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
                     sortRecords()
                     tableView?.reloadData()
-                    monitorKeyEvents()
 
                     #if os(OSX)
                     FOREGROUND {
-                        self.assignAsFirstResponder(self.tableView)
                         self.tableView?.selectRowIndexes(NSIndexSet(index: 0) as IndexSet, byExtendingSelection: false)
                     }
                     #endif
                 }
-            } else {
-                removeMonitorAsync()
             }
         }
     }
@@ -75,6 +77,10 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     }
 
 
+    // MARK:- delegate
+    // MARK:-
+
+
     #if os(OSX)
 
     func numberOfRows(in tableView: ZTableView) -> Int {
@@ -92,6 +98,10 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
                 object  =   zone.decoratedName
             } else {
                 object  = record.decoratedName
+            }
+
+            if row == tableView.selectedRow {
+                object = "• \(object)"
             }
         }
 
@@ -114,23 +124,27 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     #endif
 
 
+    // MARK:- user feel
+    // MARK:-
+
+
     func resolve(in storageMode: ZStorageMode) -> Bool {
-        #if os(iOS)
-            return false
-        #else
+        var resolved = false
 
-        let    index = self.tableView?.selectedRow
-        let resolved = index != -1
+        #if os(OSX)
+            if  gWorkMode == .searchMode {
+                let index = self.tableView?.selectedRow
+                resolved  = index != -1
 
-        if resolved {
-            let record = self.foundRecords[index!]
+                if  resolved {
+                    let record = self.foundRecords[index!]
 
-            resolveRecord(record, in: storageMode)
-        }
+                    resolveRecord(record, in: storageMode)
+                }
+            }
+        #endif
 
         return resolved
-
-        #endif
     }
 
 
@@ -155,7 +169,6 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
     func clear() {
         resultsAreVisible = false
-        gShowsSearching   = false
         gWorkMode         = .editMode
 
         self.signalFor(nil, regarding: .search)
@@ -171,49 +184,58 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
             signalFor(nil, regarding: .search)
         }
-
-        removeMonitorAsync()
     }
 
 
-    func monitorKeyEvents() {
-        #if os(OSX)
-            if  monitor == nil {
-                monitor        = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { (event) -> ZEvent? in
-                    let string = event.input
-                    let    key = string[string.startIndex].description
+    func moveSelection(up: Bool, extreme: Bool) {
+        if  let             t = tableView {
+            var           row = t.selectedRow
+            let       maximum = t.numberOfRows - 1
 
-                    if !event.modifierFlags.isNumericPad {
-                        switch key {
-                        case    "f":    self.reset();                    return nil
-                        case   "\r": if self.resolve(in: gStorageMode) { return nil }; break
-                        default:                                         break
-                        }
-                    } else if let arrow = key.arrow {
-                        switch arrow {
-                        case  .left:    self.reset();                    return nil
-                        case .right: if self.resolve(in: gStorageMode) { return nil }; break
-                        default:                                         break
-                        }
-                    }
+            if extreme {
+                row           = up ?  0 : maximum
+            } else {
+                row          += up ? -1 : 1
 
-                    return event
+                if  row       > maximum {
+                    row       = 0
+                } else if row < 0 {
+                    row       = maximum
                 }
             }
-        #endif
+
+            let rows = [row] as IndexSet
+
+            t.selectRowIndexes(rows, byExtendingSelection: false) // (, byExtendingSelection: false)
+        }
     }
-    
-    
-    func removeMonitorAsync() {
-        #if os(OSX)
-            if let save = monitor {
-                monitor = nil
-                
-                FOREGROUND(after: 0.001) {
-                    ZEvent.removeMonitor(save)
-                }
+
+
+    // MARK:-
+
+
+    func handleBrowseKeyEvent(_ event: ZEvent) -> ZEvent? {
+        let       string = event.input
+        let        flags = event.modifierFlags
+        let    isCommand = flags.isCommand
+        let          key = string[string.startIndex].description
+
+        if  let    arrow = key.arrow {
+            switch arrow {
+            case    .up:    moveSelection(up: true,  extreme: isCommand)
+            case  .down:    moveSelection(up: false, extreme: isCommand)
+            case  .left:    clear();                    return nil
+            case .right: if resolve(in: gStorageMode) { return nil }; break
             }
-        #endif
+        } else if    key == "\r", // N.B. test key first since getInput has a possible side-effect of exiting search
+            let        s  = searchController,
+            s.getInput() == nil {
+            clear()
+
+            return nil
+        }
+
+        return event
     }
-    
+
 }

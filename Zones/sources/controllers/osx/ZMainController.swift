@@ -43,23 +43,17 @@ class ZMainController: ZGenericController {
         switch kind {
         case .found:
             showAsSearching(gWorkMode == .searchMode)
-
-            break
         case .search:
             searchBoxView?.snp.removeConstraints()
             searchBoxView?.snp.makeConstraints { (make: ConstraintMaker) in
-                make.height.equalTo(gShowsSearching ? 44.0 : 0.0)
+                make.height.equalTo(gWorkMode == .searchMode ? 44.0 : 0.0)
             }
 
-            if !gShowsSearching {
+            if  gWorkMode != .searchMode {
                 assignAsFirstResponder(nil)
                 showAsSearching(false)
             }
-
-            break
-        default:
-
-            break
+        default: break
         }
     }
 

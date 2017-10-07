@@ -721,17 +721,6 @@
                                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y9K-16-wpp">
                                                 <rect key="frame" x="20" y="20" width="136" height="62"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <subviews>
-                                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AvO-Ly-6vM" customClass="TexstField" customModule="texst" customModuleProvider="target">
-                                                        <rect key="frame" x="20" y="20" width="96" height="22"/>
-                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="SEy-St-wZe">
-                                                            <font key="font" metaFont="system"/>
-                                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                        </textFieldCell>
-                                                    </textField>
-                                                </subviews>
                                             </customView>
                                         </subviews>
                                     </customView>
@@ -739,6 +728,9 @@
                             </customView>
                         </subviews>
                     </view>
+                    <connections>
+                        <outlet property="innermostView" destination="Y9K-16-wpp" id="09K-bS-gJ3"/>
+                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

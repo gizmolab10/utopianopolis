@@ -320,8 +320,6 @@ extension UITextField {
     func enableUndo() {}
     func abortEditing() { resignFirstResponder() }
     func selectAllText() { selectAll(self) }
-    func removeMonitorAsync() {}
-    func addMonitor() {}
 
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

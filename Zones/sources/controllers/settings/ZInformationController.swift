@@ -30,8 +30,9 @@ class ZInformationController: ZGenericController {
     override func awakeFromNib() {
         view.zlayer.backgroundColor = CGColor.clear
         fractionInMemory? .minValue = 0
-    }
 
+        // view.addSubview(ZTextField(frame: CGRect(x: 0, y: 0, width: 100, height: 22)))
+    }
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         let                     count = gRemoteStoresManager.recordsManagerFor(storageMode).undeletedCount

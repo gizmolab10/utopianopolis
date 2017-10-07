@@ -22,7 +22,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     var     widgetZone:  Zone   { return widget.widgetZone }
     var  preferredFont:  ZFont  { return widgetZone.isInFavorites ? gFavoritesFont : gWidgetFont }
     var         widget:  ZoneWidget!
-    var        monitor:  Any?
     var   originalText = ""
     var _isTextEditing = false
 
@@ -39,7 +38,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     let  grab = gSelectionManager.currentlyEditingZone == zone
                     textColor = !grab ? ZColor.black :zone.grabbedTextColor
 
-                    removeMonitorAsync()
                     abortEditing()
 
                     if  grab {
@@ -55,7 +53,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     gSelectionManager.deselectGrabs()
                     enableUndo()
                     updateText()
-                    addMonitor()
 
                     #if os(iOS)
                         selectAllText()
@@ -106,7 +103,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     func setup() {
         delegate               = self
-        isEnabled              = true
         isBordered             = false
         textAlignment          = .left
         backgroundColor        = gClearColor
@@ -128,8 +124,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     deinit {
-        removeMonitorAsync()
-
         widget = nil
     }
 

@@ -90,7 +90,7 @@
                 </viewController>
                 <customObject id="wYh-I6-Wpi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-280" y="1619"/>
+            <point key="canvasLocation" x="-280" y="1618.5"/>
         </scene>
         <!--Cloud Tools Controller-->
         <scene sceneID="OQa-jH-o6A">

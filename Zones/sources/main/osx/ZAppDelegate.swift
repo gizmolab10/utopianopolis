@@ -31,6 +31,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
             UserDefaults.standard.set(true, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraint‌​s")
             zapplication.registerForRemoteNotifications(matching: .badge)
             gControllersManager.startupDataAndUI()
+            gEventsManager.setupGlobalEventsMonitor()
         }
     }
 
@@ -73,7 +74,9 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
 
     @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
-        gEditingManager.handleMenuItem(iItem)
+        if  gWorkMode == .editMode {
+            gEditingManager.handleMenuItem(iItem)
+        }
     }
 
 }

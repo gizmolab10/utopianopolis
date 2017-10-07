@@ -145,8 +145,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
         // called by controller and gesture system //
         /////////////////////////////////////////////
 
-        gShowsSearching    = false
-
         if  let    gesture = iGesture {
             let   location = gesture.location(in: editorView)
             var     inText = false

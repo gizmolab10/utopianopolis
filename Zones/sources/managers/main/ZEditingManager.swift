@@ -180,10 +180,12 @@ class ZEditingManager: NSObject {
 
     func handleMenuItem(_ iItem: ZMenuItem?) {
         #if os(OSX)
-            let   key = (iItem?.keyEquivalent)!
-            let flags = (iItem?.keyEquivalentModifierMask)!
+            if gWorkMode == .editMode {
+                let   key = (iItem?.keyEquivalent)!
+                let flags = (iItem?.keyEquivalentModifierMask)!
 
-            handleKey(key, flags: flags, isWindow: true)
+                handleKey(key, flags: flags, isWindow: true)
+            }
         #endif
     }
 
@@ -255,7 +257,7 @@ class ZEditingManager: NSObject {
 
     func find() {
         if gStorageMode != .favoritesMode {
-            gShowsSearching = !gShowsSearching
+            gWorkMode = gWorkMode == .searchMode ? .editMode : .searchMode
 
             signalFor(nil, regarding: .search)
         }

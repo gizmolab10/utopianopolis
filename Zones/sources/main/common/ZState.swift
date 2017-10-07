@@ -72,7 +72,6 @@ let          gClearColor                     = ZColor(white: 1.0, alpha: 0.0)
 var            gWorkMode                     = ZWorkMode.editMode
 var            gFileMode                     = ZFileMode.cloud
 var       gTextCapturing                     = false
-var      gShowsSearching                     = false
 var    gCloudUnavailable                     = false
 var   gKeyboardIsVisible                     = false
 var     gDragDropIndices: NSMutableIndexSet? = nil

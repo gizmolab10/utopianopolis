@@ -367,27 +367,6 @@ extension ZoneTextWidget {
         }
     }
 
-
-    func addMonitor() {
-        monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { (event) -> ZEvent? in
-            if self.isTextEditing, !event.modifierFlags.isNumericPad {
-                gEditingManager.handleEvent(event, isWindow: false)
-            }
-
-            return event
-        })
-    }
-
-
-    func removeMonitorAsync() {
-        if let save = monitor {
-            monitor = nil
-
-            FOREGROUND(after: 0.001, closure: {
-                ZEvent.removeMonitor(save)
-            })
-        }
-    }
 }
 
 
