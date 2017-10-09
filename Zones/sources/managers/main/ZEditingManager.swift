@@ -734,10 +734,25 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            if let             grab = grabThisZone {
+            if  let            grab = grabThisZone {
                 grab.fetchableCount = grab.count
             }
 
+            var trashables = [Zone] ()
+
+            if let favorites = gFavoritesManager.rootZone?.children {
+                for favorite in favorites {
+                    if favorite.bookmarkTarget == zone {
+                        trashables.append(favorite)
+                    }
+                }
+
+                for trashThis in trashables {
+                    moveToTrash(trashThis)
+                }
+            }
+
+            onCompletion?(grabThisZone)
             zone.needBookmarks()
 
             gOperationsManager.bookmarks {
@@ -1418,10 +1433,13 @@ class ZEditingManager: NSObject {
                 zone.orphan()
             }
 
+            if gTrash != into {
+                zone.grab()
+            }
+
             into.addAndReorderChild(zone, at: iIndex)
             into.needFlush()
             zone.needFlush()
-            zone.grab()
             onCompletion?()
         }
     }

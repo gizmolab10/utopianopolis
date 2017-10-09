@@ -43,10 +43,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-
-        if !gDebugTextInput {
-            editorView?.addSubview(graphRootWidget)
-        }
+        editorView?.addSubview(graphRootWidget)
     }
 
 
@@ -66,7 +63,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
 
 
     func layoutForCurrentScrollOffset() {
-        if  let e = editorView, !gDebugTextInput {
+        if  let e = editorView {
             graphRootWidget.snp.removeConstraints()
             graphRootWidget.snp.makeConstraints { make in
                 make  .top.equalTo(e).offset(20.0 - Double(gGenericOffset.height / 3.0))
@@ -101,8 +98,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
                         recursing      = [.data, .redraw].contains(kind)
                     }
                 }
-
-                if gDebugTextInput { recursing = false }
 
                 note("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")
 

@@ -27,12 +27,12 @@ extension NSObject {
     func            note(_ iMessage: Any?)                { } // report(iMessage) }
     func     performance(_ iMessage: Any?)                { report(iMessage) }
     func textInputReport(_ iMessage: Any?)                { report(iMessage) }
-    func  columnarReport(_ iFirst: Any?, _ iSecond: Any?) { } // rawColumnarReport(iFirst, iSecond) }
+    func  columnarReport(_ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(iFirst, iSecond) }
     func      debugCheck()                                { gTravelManager.debugCheck() }
 
 
     func rawColumnarReport(_ iFirst: Any?, _ iSecond: Any?) {
-        if  var prefix = iFirst as? String { // , !gDebugTextInput {
+        if  var prefix = iFirst as? String {
             prefix.appendSpacesToLength(gLogTabStop)
             report("\(prefix)\(iSecond ?? "")")
         }

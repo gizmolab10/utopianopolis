@@ -62,13 +62,6 @@ class ZoneWidget: ZView {
 
     func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, kind signalKind: ZSignalKind, visited: [Zone]) {
         if inView != nil, let views = inView?.subviews, !views.contains(self), !views.contains(textWidget) {
-            if  gDebugTextInput {
-                inView?.addSubview(textWidget)
-                layoutText()
-
-                return
-            }
-
             inView?.addSubview(self)
 
             if atIndex == nil {
@@ -78,10 +71,6 @@ class ZoneWidget: ZView {
             }
         }
 
-        if  gDebugTextInput {
-            return
-        }
-
         #if os(iOS)
             backgroundColor = gClearColor
         #endif
@@ -89,11 +78,8 @@ class ZoneWidget: ZView {
         gWidgetsManager.registerWidget(self)
         addTextView()
         layoutText()
-
-        if !gDebugTextInput {
-            layoutDots()
-            addChildrenView()
-        }
+        layoutDots()
+        addChildrenView()
 
         if recursing && !visited.contains(widgetZone) {
             prepareChildrenWidgets()

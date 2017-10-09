@@ -27,7 +27,6 @@ let unselectBrightness: CGFloat = 0.98
 #endif
 
 
-let      gDebugTextInput = false
 let       gRemoteTimeout = 10.0
 let          gLogTabStop = 15
 let           gBatchSize = 250

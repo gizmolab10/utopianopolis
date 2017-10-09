@@ -57,7 +57,7 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
 
 
     override func layoutForCurrentScrollOffset() {
-        if let e = editorView, !gDebugTextInput {
+        if let e = editorView {
             graphRootWidget.snp.removeConstraints()
             graphRootWidget.snp.makeConstraints { make in
                 make.centerY.equalTo(e).offset(gScrollOffset.y)

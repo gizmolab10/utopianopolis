@@ -24,10 +24,13 @@ enum ZOperationID: Int {
     case unsubscribe
     case subscribe
 
+    /////////////////////////////////////////////////////////////////////
+    // the following do not participate in startup, finish up, or sync //
+    /////////////////////////////////////////////////////////////////////
+
     case emptyTrash
     case available
     case bookmarks
-    case favorites
     case undelete
     case create
     case parent
@@ -134,7 +137,6 @@ class ZOperationsManager: NSObject {
             switch identifier {
             case .authenticate: remote.authenticate                      (          cloudCallback)
             case .cloud:        cloudManager.fetchCloudZones             (          cloudCallback)
-            case .favorites:    cloudManager.fetchFavorites              (          cloudCallback)
             case .manifest:     cloudManager.fetchManifest               (          cloudCallback)
             case .children:     cloudManager.fetchChildren               (logic,    cloudCallback)
             case .parent:       cloudManager.fetchParents                (.restore, cloudCallback)
@@ -173,7 +175,7 @@ class ZOperationsManager: NSObject {
         let count = completionStack.count
 
         if  count > 0 {         // if already pre-queued
-            if  lastOpStart != nil {
+            if  lastOpStart != nil || waitingOps.count > 0 {
                 columnarReport("   STACK", "\(count)")
                 completionStack.append {        // push another onto stack
                     self.FOREGROUND {
@@ -199,8 +201,8 @@ class ZOperationsManager: NSObject {
                         self                .currentOp = operationID             // if hung, it happened inside this op
                         var  invokeModeAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
                         let              skipFavorites = operationID != .here
-                        let                       full = [.unsubscribe, .subscribe, .favorites, .manifest, .toRoot, .cloud, .roots, .here].contains(operationID)
-                        let  forCurrentStorageModeOnly = [.file, .available, .parent, .children, .authenticate                           ].contains(operationID)
+                        let                       full = [.unsubscribe, .subscribe, .manifest, .toRoot, .cloud, .roots, .here].contains(operationID)
+                        let  forCurrentStorageModeOnly = [.file, .available, .parent, .children, .authenticate               ].contains(operationID)
                         let         cloudModes: ZModes = [.mineMode, .everyoneMode]
                         let              modes: ZModes = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : skipFavorites ? cloudModes : cloudModes + [.favoritesMode]
 

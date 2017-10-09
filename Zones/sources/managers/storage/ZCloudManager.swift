@@ -296,8 +296,8 @@ class ZCloudManager: ZRecordsManager {
         var separator = ""
         var    suffix = ""
 
-        for identifier in iRecordIDs {
-            suffix    = String(format: "%@%@SELF CONTAINS \"%@\"", suffix, separator, identifier.recordName)
+        for recordID in iRecordIDs {
+            suffix    = String(format: "%@%@SELF CONTAINS \"%@\"", suffix, separator, recordID.recordName)
             separator = " AND "
         }
 
@@ -330,6 +330,8 @@ class ZCloudManager: ZRecordsManager {
         if  count > 0 {
             let predicate = bookmarkPredicate(from: recordIDs)
             var retrieved = [CKRecord] ()
+
+            columnarReport("BOOKMARKS", stringForRecordIDs(recordIDs, in: storageMode))
 
             queryWith(predicate) { iRecord in
                 if let ckRecord = iRecord {
@@ -558,84 +560,6 @@ class ZCloudManager: ZRecordsManager {
         }
     }
 
-
-    func fetchFavorites(_ onCompletion: IntClosure?) {
-        let predicate = NSPredicate(format: "zoneIsFavorite = 1")
-        var retrieved = [CKRecord] ()
-
-        onCompletion?(-1)
-        gFavoritesManager.setup()
-
-        self.queryWith(predicate) { (iRecord: CKRecord?) in
-            if let ckRecord = iRecord {
-                if !retrieved.contains(ckRecord) {
-                    retrieved.append(ckRecord)
-                }
-            } else {
-                // nil means: we already received full response from cloud for this particular fetch
-                self.FOREGROUND {
-                    if  let         favoritesRoot = gFavoritesManager.rootZone {
-                        for retrievedRecord in retrieved {
-                            let retrievedFavorite = Zone(record: retrievedRecord, storageMode: self.storageMode)
-                            let              link = retrievedFavorite.zoneLink
-                            let              name = retrievedFavorite.zoneName
-                            var      isDuplicated = false
-
-                            // avoid adding a duplicate (which was created by a bug)
-
-                            for zone: Zone in favoritesRoot.children {
-                                let   doDuplicate = { (iZone: Zone) in
-                                    iZone .record = retrievedRecord
-                                    isDuplicated  = true
-
-                                    iZone.updateClassProperties()
-                                }
-
-                                if  link  != nil, link == zone.zoneLink {
-                                    doDuplicate(zone)
-
-                                    break
-                                } else if name != nil, name == zone.zoneName {
-                                    doDuplicate(zone)
-
-                                    break
-                                }
-                            }
-
-                            if  !isDuplicated,
-                                let             targetID = retrievedFavorite.crossLink?.record.recordID {
-                                let process: ZoneClosure = { target in
-                                    if  target.isDeleted {
-                                        retrievedFavorite.orphan()
-                                        retrievedFavorite.needDestroy()
-                                    } else {
-                                        favoritesRoot.add(retrievedFavorite)
-                                        favoritesRoot.respectOrder()
-                                        target.maybeNeedRoot()
-                                        self.columnarReport(" FAVORITE", target.decoratedName)
-                                    }
-                                }
-
-                                if let targetLocal = self.zoneForRecordID(targetID) {
-                                    process(targetLocal)
-                                } else {
-                                    self.assureRecordExists(withRecordID: targetID, recordType: zoneTypeKey) { iAssuredRecord in
-                                        let targetFromCloud = Zone(record: iAssuredRecord, storageMode: self.storageMode)
-
-                                        process(targetFromCloud)
-                                    }
-                                }
-                            }
-                        }
-
-                        favoritesRoot.respectOrder()
-
-                        onCompletion?(0)
-                    }
-                }
-            }
-        }
-    }
 
 
     func fetchManifest(_ onCompletion: IntClosure?) {
