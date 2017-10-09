@@ -40,7 +40,6 @@ class Zone : ZRecord {
     var              isTrashRoot:         Bool { return zoneName == trashNameKey }
     var               isBookmark:         Bool { return crossLink != nil }
     var               isSelected:         Bool { return gSelectionManager.isSelected(self) }
-    var                isEditing:         Bool { return gSelectionManager .isEditing(self) }
     var                isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
     var                isDeleted:         Bool { return gTrash != self && gTrash?.spawned(self) ?? false }
     var                 hasColor:         Bool { return zoneColor != nil }

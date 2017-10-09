@@ -24,15 +24,15 @@ typealias       ZModes = [ZStorageMode]
 extension NSObject {
 
 
-    func           note(_ iMessage: Any?)                { } // report(iMessage) }
-    func           hark(_ iMessage: Any?)                { report(iMessage) }
-    func    performance(_ iMessage: Any?)                { report(iMessage) }
-    func columnarReport(_ iFirst: Any?, _ iSecond: Any?) { } // rawColumnarReport(iFirst, iSecond) }
-    func  debugCheck()                                   { gTravelManager.debugCheck() }
+    func            note(_ iMessage: Any?)                { } // report(iMessage) }
+    func     performance(_ iMessage: Any?)                { report(iMessage) }
+    func textInputReport(_ iMessage: Any?)                { report(iMessage) }
+    func  columnarReport(_ iFirst: Any?, _ iSecond: Any?) { } // rawColumnarReport(iFirst, iSecond) }
+    func      debugCheck()                                { gTravelManager.debugCheck() }
 
 
     func rawColumnarReport(_ iFirst: Any?, _ iSecond: Any?) {
-        if  var prefix = iFirst as? String {
+        if  var prefix = iFirst as? String { // , !gDebugTextInput {
             prefix.appendSpacesToLength(gLogTabStop)
             report("\(prefix)\(iSecond ?? "")")
         }
@@ -373,7 +373,7 @@ extension ZGestureRecognizer {
 
 extension NSResponder {
 
-    override func hark(_ iMessage: Any?) {
+    override func textInputReport(_ iMessage: Any?) {
         if  var   message = iMessage as? String {
             let    window = zapplication.mainWindow
             message       = "key down in: \(message)"
@@ -433,3 +433,19 @@ extension ZView {
         }
     }
 }
+
+
+extension ZTextField {
+
+    var  isTextEditing:  Bool { return false }
+    var  preferredFont: ZFont { return gWidgetFont }
+
+    func selectCharacter(in range: NSRange) {}
+    func captureText(force: Bool) {}
+    func alterCase(up: Bool) {}
+    func selectAllText() {}
+    func updateText() {}
+    func setup() {}
+}
+
+

@@ -23,7 +23,7 @@ class ZoneDragView: ZView, ZGestureRecognizerDelegate {
     #if os(OSX)
 
     override func keyDown(with event: NSEvent) {
-        hark("main view")
+        textInputReport("main view")
         super.keyDown(with: event)
     }
 

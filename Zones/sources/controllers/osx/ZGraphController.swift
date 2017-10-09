@@ -44,7 +44,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        editorView?.addSubview(graphRootWidget)
+        if !gDebugTextInput {
+            editorView?.addSubview(graphRootWidget)
+        }
     }
 
 
@@ -64,7 +66,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
 
 
     func layoutForCurrentScrollOffset() {
-        if let e = editorView {
+        if  let e = editorView, !gDebugTextInput {
             graphRootWidget.snp.removeConstraints()
             graphRootWidget.snp.makeConstraints { make in
                 make  .top.equalTo(e).offset(20.0 - Double(gGenericOffset.height / 3.0))
@@ -100,6 +102,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
                     }
                 }
 
+                if gDebugTextInput { recursing = false }
+
                 note("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")
 
                 layoutForCurrentScrollOffset()
@@ -123,7 +127,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
             let location = gesture.location(in: editorView)
             let    state = gesture.state
 
-            if isTextEditing(at: location) {
+            if isEditingText(at: location) {
                 restartGestureRecognition()     // let text editor consume the gesture
             } else if gIsDragging {
                 dragMaybeStopEvent(iGesture)
@@ -365,7 +369,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate {
     }
 
 
-    func isTextEditing(at location: CGPoint) -> Bool {
+    func isEditingText(at location: CGPoint) -> Bool {
         let e = gEditingManager
 
         if  e.isEditing, let textWidget = e.editedTextWidget {

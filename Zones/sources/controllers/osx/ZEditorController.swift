@@ -57,7 +57,7 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
 
 
     override func layoutForCurrentScrollOffset() {
-        if let e = editorView {
+        if let e = editorView, !gDebugTextInput {
             graphRootWidget.snp.removeConstraints()
             graphRootWidget.snp.makeConstraints { make in
                 make.centerY.equalTo(e).offset(gScrollOffset.y)
@@ -82,7 +82,7 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
             let location = gesture.location(in: editorView)
             let    state = gesture.state
 
-            if isTextEditing(at: location) {
+            if isEditingText(at: location) {
                 restartGestureRecognition()     // let text editor consume the gesture
             } else if flags.isOption {
                 scrollEvent(move: state == .changed, to: location)

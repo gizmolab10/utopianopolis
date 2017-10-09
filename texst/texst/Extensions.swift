@@ -22,8 +22,8 @@ extension NSObject {
 
 extension NSResponder {
 
-    func hark(_ iMessage: Any?) {
-        if  var   message = iMessage as? String {
+    func textInputReport(_ iMessage: Any?) {
+        if  var   message = iMessage as? String, gDebugTextInput {
             let    window = NSApp.mainWindow
             message       = "key down in: \(message)"
 

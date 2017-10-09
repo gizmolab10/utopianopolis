@@ -16,7 +16,7 @@ class TexstField: NSTextField, NSTextFieldDelegate {
     }
 
     override func keyDown(with event: NSEvent) {
-        hark("text field")
+        textInputReport("text field")
         super.keyDown(with: event)
     }
 }

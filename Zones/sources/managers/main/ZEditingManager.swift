@@ -56,11 +56,11 @@ class ZEditingManager: NSObject {
     func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) {
         if  var       key = iKey {
             let    widget = gWidgetsManager.currentMovableWidget
+            let hasWidget = widget != nil
             let isControl = flags.isControl
             let isCommand = flags.isCommand
             let  isOption = flags.isOption
             var   isShift = flags.isShift
-            let hasWidget = widget != nil
             let     force = isOption || isWindow
 
             if  key      != key.lowercased() {

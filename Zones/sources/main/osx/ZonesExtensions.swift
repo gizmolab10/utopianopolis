@@ -238,8 +238,7 @@ extension NSView {
 extension NSWindow {
 
 
-    //override open
-    func xvalidateMenuItem(_ menuItem: ZMenuItem) -> Bool {
+    override open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
         enum ZMenuType: Int {
             case UseGrabs  = 1
             case Paste     = 2
@@ -337,15 +336,19 @@ extension ZoneTextWidget {
             self.controlTextDidChange(iNote)
         }
 
+        isTextEditing = true
+
         updateGUI()
     }
 
 
-    override func textDidEndEditing(_ notification: Notification) {
-        resignFirstResponder()
 
+
+    override func controlTextDidEndEditing(_ notification: Notification) {
         if  let        value = notification.userInfo?["NSTextMovement"] as? NSNumber {
             var key: String? = nil
+
+            resignFirstResponder() // do this first so RETURN will end editing
 
             switch value.intValue {
             case NSTabTextMovement:     key = gTabKey
@@ -360,7 +363,7 @@ extension ZoneTextWidget {
     }
 
 
-    func selectAllText() {
+    override func selectAllText() {
         if text != nil, let editor = currentEditor() {
             gSelectionManager.deferEditingStateChange()
             select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: text!.characters.count)

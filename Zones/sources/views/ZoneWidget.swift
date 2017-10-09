@@ -49,7 +49,7 @@ class ZoneWidget: ZView {
     #if os(OSX)
 
     override func keyDown(with event: NSEvent) {
-        hark("view \"\(widgetZone.decoratedName)\"")
+        textInputReport("containing view \"\(widgetZone.decoratedName)\"")
         super.keyDown(with: event)
     }
 
@@ -61,7 +61,14 @@ class ZoneWidget: ZView {
 
 
     func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, kind signalKind: ZSignalKind, visited: [Zone]) {
-        if inView != nil && !inView!.subviews.contains(self) {
+        if inView != nil, let views = inView?.subviews, !views.contains(self), !views.contains(textWidget) {
+            if  gDebugTextInput {
+                inView?.addSubview(textWidget)
+                layoutText()
+
+                return
+            }
+
             inView?.addSubview(self)
 
             if atIndex == nil {
@@ -70,6 +77,11 @@ class ZoneWidget: ZView {
                 }
             }
         }
+
+        if  gDebugTextInput {
+            return
+        }
+
         #if os(iOS)
             backgroundColor = gClearColor
         #endif
@@ -77,8 +89,11 @@ class ZoneWidget: ZView {
         gWidgetsManager.registerWidget(self)
         addTextView()
         layoutText()
-        layoutDots()
-        addChildrenView()
+
+        if !gDebugTextInput {
+            layoutDots()
+            addChildrenView()
+        }
 
         if recursing && !visited.contains(widgetZone) {
             prepareChildrenWidgets()
@@ -137,13 +152,14 @@ class ZoneWidget: ZView {
         textWidget.snp.removeConstraints()
         textWidget.snp.makeConstraints { (make: ConstraintMaker) -> Void in
             let  font = textWidget.preferredFont
-            let width = widgetZone.isRootOfFavorites ? 0.0 :textWidget.text!.widthForFont(font) + 5.0
+            let width = widgetZone.isRootOfFavorites ? 0.0 : textWidget.text!.widthForFont(font) + 5.0
+            let  view = textWidget.superview!
 
             make  .width.equalTo(width)
-            make.centerY.equalTo(self).offset(-verticalTextOffset)
-            make   .left.equalTo(self).offset(gGenericOffset.width + 4.0)
-            make  .right.lessThanOrEqualTo(self).offset(-29.0)
-            make .height.lessThanOrEqualTo(self).offset(-gGenericOffset.height)
+            make.centerY.equalTo(view).offset(-verticalTextOffset)
+            make   .left.equalTo(view).offset(gGenericOffset.width + 4.0)
+            make  .right.lessThanOrEqualTo(view).offset(-29.0)
+            make .height.lessThanOrEqualTo(view).offset(-gGenericOffset.height)
         }
     }
 

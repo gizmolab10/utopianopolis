@@ -20,19 +20,21 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     var     widgetZone:  Zone   { return widget.widgetZone }
-    var  preferredFont:  ZFont  { return widgetZone.isInFavorites ? gFavoritesFont : gWidgetFont }
+    override var preferredFont:  ZFont  { return widgetZone.isInFavorites ? gFavoritesFont : gWidgetFont }
     var         widget:  ZoneWidget!
     var   originalText = ""
     var _isTextEditing = false
 
 
-    var isTextEditing: Bool {
+    override var isTextEditing: Bool {
         get { return _isTextEditing }
         set {
             if  _isTextEditing != newValue {
                 _isTextEditing  = newValue
                 let       zone  = widgetZone
                 font            = preferredFont
+
+                gSelectionManager.deferEditingStateChange()
 
                 if !_isTextEditing {
                     let  grab = gSelectionManager.currentlyEditingZone == zone
@@ -65,43 +67,27 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     #if os(OSX)
 
-    func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+    override func textShouldBeginEditing(_ textObject: NSText) -> Bool {
 
         //////////////////////////
         // THIS IS NEVER CALLED //
         //////////////////////////
 
-        return true
-    }
-
-    func control(_ control: NSControl, textShouldBeginEditing fieldEditor: NSText) -> Bool {
-    
-        //////////////////////////
-        // THIS IS NEVER CALLED //
-        //////////////////////////
+        isTextEditing = true
 
         return true
     }
 
-    let kludge = false
 
     override func keyDown(with event: NSEvent) {
-        if !kludge {
-            hark("text field \"\(widgetZone.decoratedName)\"")
-            super.keyDown(with: event)
-        } else if let e = currentEditor() {
-            e.insertText(event.key)
-
-            FOREGROUND(after: 0.1) {
-                super.becomeFirstResponder()
-            }
-        }
+        textInputReport("text field \"\(widgetZone.decoratedName)\"")
+        super.keyDown(with: event)
     }
 
     #endif
 
 
-    func setup() {
+    override func setup() {
         delegate               = self
         isBordered             = false
         textAlignment          = .left
@@ -115,11 +101,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func toggleResponderState() {
-        if isTextEditing {
-            resignFirstResponder()
-        } else {
-            becomeFirstResponder()
-        }
+        window?.makeFirstResponder(isTextEditing ? nil : self)
     }
 
 
@@ -150,20 +132,17 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-        var result = false
-
         if !gSelectionManager.isEditingStateChanging {
-            gSelectionManager.deferEditingStateChange()
+            super.becomeFirstResponder() // do this first so delegate methods will be called
 
             isTextEditing = true
-            result        = super.becomeFirstResponder()
         }
 
-        return result
+        return true
     }
 
 
-    func selectCharacter(in range: NSRange) {
+    override func selectCharacter(in range: NSRange) {
         #if os(OSX)
         if let textInput = currentEditor() {
             textInput.selectedRange = range
@@ -172,24 +151,24 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-    func updateText() {
-        let  zone = widgetZone
-        text      = zone.unwrappedName
-        var count = 0
+    override func updateText() {
+        let zone = widgetZone
+        text     = zone.unwrappedName
+        var need = 0
 
         switch gCountsMode {
-        case .fetchable: count = zone.fetchableCount
-        case .progeny:   count = zone.fetchableCount + zone.progenyCount
+        case .fetchable: need = zone.fetchableCount
+        case .progeny:   need = zone.fetchableCount + zone.progenyCount
         default:         return
         }
 
-        if (count > 1) && !isTextEditing && (!zone.showChildren || (gCountsMode == .progeny)) {
-            text?.append("  (\(count))")
+        if (need > 1) && !isTextEditing && (!zone.showChildren || (gCountsMode == .progeny)) {
+            text?.append("  (\(need))")
         }
     }
 
 
-    func alterCase(up: Bool) {
+    override func alterCase(up: Bool) {
         if  var t = text {
             t = up ? t.uppercased() : t.lowercased()
 
@@ -260,7 +239,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-    func captureText(force: Bool) {
+    override func captureText(force: Bool) {
         let zone = widgetZone
 
         if !gTextCapturing || force, zone.zoneName != text! {
