@@ -201,7 +201,9 @@ class ZRecord: NSObject {
     }
 
 
+    func needRoot()      { markForAllOfStates([.needsRoot]) }
     func needCount()     { markForAllOfStates([.needsCount]) }
+    func needColor()     { markForAllOfStates([.needsColor]) }
     func needFetch()     { markForAllOfStates([.needsFetch]) }
     func needParent()    { markForAllOfStates([.needsParent]) }
     func needDestroy()   { markForAllOfStates([.needsDestroy]); unmarkForAllOfStates([.needsSave, .needsCreate]) }

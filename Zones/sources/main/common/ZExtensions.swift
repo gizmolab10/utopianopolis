@@ -371,23 +371,6 @@ extension ZGestureRecognizer {
     }
 }
 
-extension NSResponder {
-
-    override func textInputReport(_ iMessage: Any?) {
-        if  var   message = iMessage as? String {
-            let    window = zapplication.mainWindow
-            message       = "key down in: \(message)"
-
-            if  let first = window?.firstResponder, first == self {
-                message.append(" <-- FIRST RESPONDER")
-            }
-
-            report(message)
-        }
-    }
-
-}
-
 
 extension ZView {
 
@@ -443,7 +426,6 @@ extension ZTextField {
     func selectCharacter(in range: NSRange) {}
     func captureText(force: Bool) {}
     func alterCase(up: Bool) {}
-    func selectAllText() {}
     func updateText() {}
     func setup() {}
 }

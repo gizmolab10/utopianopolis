@@ -166,10 +166,11 @@ class Zone : ZRecord {
                 let name:          String  = components[2] == "" ? "root" : components[2]
                 let identifier: CKRecordID = CKRecordID(recordName: name)
                 let record:       CKRecord = CKRecord(recordType: zoneTypeKey, recordID: identifier)
-                let               rawValue = components[0]
-                let mode:    ZStorageMode? = rawValue == "" ? gStorageMode : ZStorageMode(rawValue: rawValue)
-
-                _crossLink = ZRecord(record: record, storageMode: mode)
+                let                rawMode = components[0]
+                let mode:    ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
+                let                manager = mode == nil ? nil : gRemoteStoresManager.recordsManagerFor(mode!)
+                let                   zone = manager?.zoneForRecordID(identifier)
+                _crossLink                 = zone != nil ? zone : Zone(record: record, storageMode: mode)
             }
 
             return _crossLink
@@ -581,7 +582,14 @@ class Zone : ZRecord {
 
     func maybeNeedRoot() {
         if !hasCompleteAncestorPath() {
-            markForAllOfStates([.needsRoot])
+            needRoot()
+        }
+    }
+
+
+    func maybeNeedColor() {
+        if !hasCompleteAncestorPath(toColor: true) {
+            needColor()
         }
     }
 

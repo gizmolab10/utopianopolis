@@ -13,8 +13,9 @@ import CloudKit
 
 enum ZRecursionType: Int {
     case all        // always recurse
-    case expand     // controlled by expose children, level, count
-    case restore    // controlled by expose children
+    case color      // only used by fetch parents
+    case expand     // controlled by show children, level, count
+    case restore    // controlled by show children
 }
 
 
@@ -56,6 +57,7 @@ class ZRecursionLogic: NSObject {
             case .expand:  if expand { iChild.needChildren() }
             case .restore: if reveal { iChild.needChildren() }
             case .all:     propagateDeeply(to: iChild)
+            default:       break
             }
         } else if reveal,
             let parentReference = iChild.parent,

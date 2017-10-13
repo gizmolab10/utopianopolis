@@ -433,7 +433,7 @@ class ZEditingManager: NSObject {
             zone.hideChildren()
 
             revealParentAndSiblingsOf(zone) {
-                if let  parent = zone.parentZone {
+                if let  parent = zone.parentZone, parent != zone {
                     if  gHere == zone {
                         gHere  = parent
                     }

@@ -74,29 +74,6 @@
                                                 <action selector="redo:" target="Ady-hI-5gd" id="FG2-gk-cI6"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="mvI-wj-0h3"/>
-                                        <menuItem title="Find" id="afM-bP-KR8">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Find" id="fBB-He-CoD">
-                                                <items>
-                                                    <menuItem title="Find…" tag="1" keyEquivalent="f" id="bwC-aX-x9U">
-                                                        <connections>
-                                                            <action selector="toggleSearch:" target="Ady-hI-5gd" id="n8l-iq-tvI"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="Find Next" tag="2" enabled="NO" keyEquivalent="g" id="PyE-iv-EC4">
-                                                        <connections>
-                                                            <action selector="performFindPanelAction:" target="Ady-hI-5gd" id="kRK-vi-7BZ"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="Find Previous" tag="3" enabled="NO" keyEquivalent="G" id="JTQ-8o-yrs">
-                                                        <connections>
-                                                            <action selector="performFindPanelAction:" target="Ady-hI-5gd" id="cgu-Ra-rrc"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                </items>
-                                            </menu>
-                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
@@ -168,13 +145,13 @@ CA
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Create" id="GbF-qY-vTh">
                                                 <items>
-                                                    <menuItem title="Subordinate idea" tag="6" alternate="YES" keyEquivalent=" " id="hu1-W0-ukM">
+                                                    <menuItem title="New Idea" tag="6" alternate="YES" keyEquivalent=" " id="hu1-W0-ukM">
                                                         <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="7ug-ra-lWZ"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Sibling idea" tag="6" id="8Vw-09-keH">
+                                                    <menuItem title="Next Idea" tag="6" id="8Vw-09-keH">
                                                         <string key="keyEquivalent" base64-UTF8="YES">
 CQ
 </string>
@@ -183,7 +160,7 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Xte-u6-NHv"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Sibling containing" tag="7" id="E0i-4W-ZZI">
+                                                    <menuItem title="Group containing" tag="7" id="E0i-4W-ZZI">
                                                         <string key="keyEquivalent" base64-UTF8="YES">
 CQ
 </string>

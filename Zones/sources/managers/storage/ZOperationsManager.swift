@@ -17,9 +17,9 @@ enum ZOperationID: Int {
     case manifest
     case file
     case here
-    case fetch
-    case toRoot
     case children
+    case fetch
+    case parent
     case save // zones, manifests, favorites
     case unsubscribe
     case subscribe
@@ -33,7 +33,6 @@ enum ZOperationID: Int {
     case bookmarks
     case undelete
     case create
-    case parent
     case merge
     case trash
     case none
@@ -65,7 +64,7 @@ class ZOperationsManager: NSObject {
     func startUp(_ onCompletion: @escaping Closure) {
         var operationIDs = [ZOperationID] ()
 
-        for sync in ZOperationID.authenticate.rawValue...ZOperationID.children.rawValue {
+        for sync in ZOperationID.authenticate.rawValue...ZOperationID.parent.rawValue {
             operationIDs.append(ZOperationID(rawValue: sync)!)
         }
 
@@ -135,22 +134,21 @@ class ZOperationsManager: NSObject {
             case .roots:                remote               .establishRoot  (mode,     cloudCallback)
             default: let cloudManager = remote               .cloudManagerFor(mode)
             switch identifier {
-            case .authenticate: remote.authenticate                      (          cloudCallback)
-            case .cloud:        cloudManager.fetchCloudZones             (          cloudCallback)
-            case .manifest:     cloudManager.fetchManifest               (          cloudCallback)
-            case .children:     cloudManager.fetchChildren               (logic,    cloudCallback)
-            case .parent:       cloudManager.fetchParents                (.restore, cloudCallback)
-            case .toRoot:       cloudManager.fetchParents                (.all,     cloudCallback)
-            case .unsubscribe:  cloudManager.unsubscribe                 (          cloudCallback)
-            case .undelete:     cloudManager.undeleteAll                 (          cloudCallback)
-            case .emptyTrash:   cloudManager.emptyTrash                  (          cloudCallback)
-            case .trash:        cloudManager.fetchTrash                  (          cloudCallback)
-            case .subscribe:    cloudManager.subscribe                   (          cloudCallback)
-            case .bookmarks:    cloudManager.bookmarks                   (          cloudCallback)
-            case .create:       cloudManager.create                      (          cloudCallback)
-            case .fetch:        cloudManager.fetch                       (          cloudCallback)
-            case .merge:        cloudManager.merge                       (          cloudCallback)
-            case .save:         cloudManager.save                        (          cloudCallback)
+            case .authenticate: remote.authenticate                          (          cloudCallback)
+            case .cloud:        cloudManager.fetchCloudZones                 (          cloudCallback)
+            case .bookmarks:    cloudManager.fetchBookmarks                  (          cloudCallback)
+            case .manifest:     cloudManager.fetchManifest                   (          cloudCallback)
+            case .children:     cloudManager.fetchChildren                   (logic,    cloudCallback)
+            case .parent:       cloudManager.fetchParents                    (          cloudCallback)
+            case .unsubscribe:  cloudManager.unsubscribe                     (          cloudCallback)
+            case .undelete:     cloudManager.undeleteAll                     (          cloudCallback)
+            case .emptyTrash:   cloudManager.emptyTrash                      (          cloudCallback)
+            case .trash:        cloudManager.fetchTrash                      (          cloudCallback)
+            case .subscribe:    cloudManager.subscribe                       (          cloudCallback)
+            case .create:       cloudManager.create                          (          cloudCallback)
+            case .fetch:        cloudManager.fetch                           (          cloudCallback)
+            case .merge:        cloudManager.merge                           (          cloudCallback)
+            case .save:         cloudManager.save                            (          cloudCallback)
             default: break
                 }
             }
@@ -176,11 +174,17 @@ class ZOperationsManager: NSObject {
 
         if  count > 0 {         // if already pre-queued
             if  lastOpStart != nil || waitingOps.count > 0 {
-                columnarReport("   STACK", "\(count)")
-                completionStack.append {        // push another onto stack
-                    self.FOREGROUND {
-                        self.fireCompletion()
-                        self.setupAndRun(operationIDs, logic: logic, onCompletion: onCompletion)
+                if count > 9, let closure = cloudCallback {
+                    closure(0)
+                } else if currentOp == .available {
+                    becomeAvailable()
+                } else {
+                    columnarReport("   STACK", "\(count) \(currentOp)")
+                    completionStack.append {        // push another onto stack
+                        self.FOREGROUND {
+                            self.fireCompletion()
+                            self.setupAndRun(operationIDs, logic: logic, onCompletion: onCompletion)
+                        }
                     }
                 }
             } else if waitingOps.count == 0 {
@@ -201,8 +205,8 @@ class ZOperationsManager: NSObject {
                         self                .currentOp = operationID             // if hung, it happened inside this op
                         var  invokeModeAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
                         let              skipFavorites = operationID != .here
-                        let                       full = [.unsubscribe, .subscribe, .manifest, .toRoot, .cloud, .roots, .here].contains(operationID)
-                        let  forCurrentStorageModeOnly = [.file, .available, .parent, .children, .authenticate               ].contains(operationID)
+                        let                       full = [.unsubscribe, .subscribe, .manifest, .children, .parent, .fetch, .cloud, .roots, .here].contains(operationID)
+                        let  forCurrentStorageModeOnly = [.file, .available, .authenticate                                                      ].contains(operationID)
                         let         cloudModes: ZModes = [.mineMode, .everyoneMode]
                         let              modes: ZModes = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : skipFavorites ? cloudModes : cloudModes + [.favoritesMode]
 

@@ -42,28 +42,32 @@ class ZEventsManager: NSObject {
 
 
     func setupGlobalEventsMonitor() {
-        self.monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
-            switch gWorkMode {
-            case .searchMode:
+        #if os(OSX)
 
-                return gSearchManager.handleKeyEvent(event)
+            self.monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
+                switch gWorkMode {
+                case .searchMode:
 
-            case .editMode:
+                    return gSearchManager.handleKeyEvent(event)
 
-//                if !event.modifierFlags.isNumericPad,
-//                let t = gSelectionManager.currentlyEditingZone?.widget?.textWidget {
+                case .editMode:
+
+//                    if !event.modifierFlags.isNumericPad,
+//                    let t = gSelectionManager.currentlyEditingZone?.widget?.textWidget {
 //
-//                    t.keyDown(with: event)
+//                        t.keyDown(with: event)
 //
-//                    return nil
-//                }
+//                        return nil
+//                    }
 
-                break
+                    break
 
-            default: break
+                default: break
+                }
+
+                return event
             }
 
-            return event
-        }
+        #endif
     }
 }

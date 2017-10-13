@@ -100,11 +100,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-    func toggleResponderState() {
-        window?.makeFirstResponder(isTextEditing ? nil : self)
-    }
-
-
     deinit {
         widget = nil
     }

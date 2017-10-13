@@ -16,6 +16,7 @@ enum ZRecordState: Int {
     case needsRoot
     case needsMerge
     case needsFetch
+    case needsColor
     case needsCount
     case needsParent
     case needsCreate
@@ -104,6 +105,20 @@ class ZRecordsManager: NSObject {
         }
 
         return false
+    }
+
+
+    func states(for iRecord: CKRecord) -> [ZRecordState] {
+        let   name = iRecord.recordID.recordName
+        var states = [ZRecordState] ()
+
+        findAllRecordsWithAnyMatchingStates(allStates) { (iState, iCKRecord) in
+            if !states.contains(iState) && iCKRecord.recordID.recordName == name {
+                states.append(iState)
+            }
+        }
+
+        return states
     }
 
 
@@ -360,7 +375,7 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func stringForRecords(_ records: [CKRecord]?) -> String {
+    func stringForCKRecords(_ records: [CKRecord]?) -> String {
         return records?.apply()  { object -> (String) in
             if  let record = object as? CKRecord {
                 return record.decoratedName
@@ -424,7 +439,7 @@ class ZRecordsManager: NSObject {
             let identifier = record.recordID.recordName
             let registered = isRegistered(zone!)
 
-            if registered != nil && registered! != identifier {
+            if  let    rid = registered, rid != identifier {
                 zonesByID[registered!] = nil
             }
 

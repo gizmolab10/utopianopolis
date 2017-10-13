@@ -73,7 +73,9 @@ func NSStringFromPoint(_ point: CGPoint) -> String {
 
 
 extension NSObject {
-    func assignAsFirstResponder(_ responder: UIResponder?) { window?.makeFirstResponder(responder) }
+    func assignAsFirstResponder(_ responder: UIResponder?) {
+        responder?.becomeFirstResponder()
+    }
 }
 
 

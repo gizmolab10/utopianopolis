@@ -24,6 +24,9 @@ enum ZSearchState: Int {
 }
 
 
+let gSearchManager = ZSearchManager()
+
+
 class ZSearchManager: NSObject {
 
 

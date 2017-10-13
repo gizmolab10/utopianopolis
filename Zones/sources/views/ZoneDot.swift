@@ -93,6 +93,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         widget     = iWidget
 
         if isInnerDot {
+            snp.removeConstraints()
             snp.makeConstraints { (make: ConstraintMaker) in
                 let  size = CGSize(width: innerDotWidth, height: innerDotHeight)
 
@@ -109,13 +110,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             }
 
             innerDot!.setupForWidget(iWidget, asToggle: isToggle)
+            snp.removeConstraints()
             snp.makeConstraints { (make: ConstraintMaker) in
-                var  width = isInvisible && !isToggle ? CGFloat(0.0) : gFingerBreadth
-                var height = gFingerBreadth
+                var   width = isInvisible && !isToggle ? CGFloat(0.0) : gFingerBreadth
+                let  height = innerDotHeight + 5.0 + gGenericOffset.height * 3.0
 
                 if iWidget.widgetZone.isInFavorites {
                     width  *= gReductionRatio
-                    height *= gReductionRatio
+                 // height *= gReductionRatio
                 }
 
                 make.size.equalTo(CGSize(width: width, height: height))
