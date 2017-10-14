@@ -201,10 +201,12 @@ class ZRecord: NSObject {
     }
 
 
+    func needSave()      { markForAllOfStates([.needsSave]) }
     func needRoot()      { markForAllOfStates([.needsRoot]) }
     func needCount()     { markForAllOfStates([.needsCount]) }
     func needColor()     { markForAllOfStates([.needsColor]) }
     func needFetch()     { markForAllOfStates([.needsFetch]) }
+    func needCreate()    { markForAllOfStates([.needsCreate]) }
     func needParent()    { markForAllOfStates([.needsParent]) }
     func needDestroy()   { markForAllOfStates([.needsDestroy]); unmarkForAllOfStates([.needsSave, .needsCreate]) }
     func needProgeny()   { markForAllOfStates([.needsProgeny]) }
@@ -213,8 +215,10 @@ class ZRecord: NSObject {
 
 
     func needFlush() {
-        markForAllOfStates([notYetCreated ? .needsCreate : .needsSave]);
-        unmarkForAllOfStates([.needsMerge])
+        if  storageMode != .favoritesMode {
+            markForAllOfStates([notYetCreated ? .needsCreate : .needsSave]);
+            unmarkForAllOfStates([.needsMerge])
+        }
     }
 
 

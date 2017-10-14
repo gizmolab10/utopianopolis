@@ -43,8 +43,9 @@ class ZOperationsManager: NSObject {
 
 
     var   cloudCallback :    AnyClosure? = nil
-    var     lastOpStart :          Date? = nil
     var     currentMode :  ZStorageMode? = nil
+    var     lastOpStart :          Date? = nil
+    var          isLate :          Bool  { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
     var       currentOp =  ZOperationID.none
     var      waitingOps = [ZOperationID  : BlockOperation] ()
     var completionStack =                        [Closure] ()
@@ -56,44 +57,10 @@ class ZOperationsManager: NSObject {
     // MARK:-
 
 
-    var isLate: Bool {
-        return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0
-    }
-
-
-    func startUp(_ onCompletion: @escaping Closure) {
-        var operationIDs = [ZOperationID] ()
-
-        for sync in ZOperationID.authenticate.rawValue...ZOperationID.parent.rawValue {
-            operationIDs.append(ZOperationID(rawValue: sync)!)
-        }
-
-        setupAndRun(operationIDs) { onCompletion() }
-    }
-    
-
-    func finishUp(_ onCompletion: @escaping Closure) {
-        var operationIDs = [ZOperationID] ()
-
-        for sync in ZOperationID.save.rawValue...ZOperationID.subscribe.rawValue {
-            operationIDs.append(ZOperationID(rawValue: sync)!)
-        }
-
-        setupAndRun(operationIDs) { onCompletion() }
-    }
-
-
-    func travel(_ onCompletion: @escaping Closure) {
-        var operationIDs = [ZOperationID] ()
-
-        for sync in ZOperationID.here.rawValue...ZOperationID.save.rawValue {
-            operationIDs.append(ZOperationID(rawValue: sync)!)
-        }
-
-        setupAndRun(operationIDs) { onCompletion() }
-    }
-
-
+    func    startUp(_ onCompletion: @escaping Closure) { performOps(from: .authenticate, to: .manifest,                        onCompletion) }
+    func continueUp(_ onCompletion: @escaping Closure) { performOps(from: .file,         to: .parent,                          onCompletion) }
+    func   finishUp(_ onCompletion: @escaping Closure) { performOps(from: .save,         to: .subscribe,                       onCompletion) }
+    func     travel(_ onCompletion: @escaping Closure) { performOps(from: .here,         to: .save,                            onCompletion) }
     func       sync(_ onCompletion: @escaping Closure) { setupAndRun([.create,   .fetch, .parent, .merge, .save, .children]) { onCompletion() } }
     func       save(_ onCompletion: @escaping Closure) { setupAndRun([.create,                    .merge, .save           ]) { onCompletion() } }
     func      roots(_ onCompletion: @escaping Closure) { setupAndRun([.roots,                             .save, .children]) { onCompletion() } }
@@ -179,7 +146,7 @@ class ZOperationsManager: NSObject {
                 } else if currentOp == .available {
                     becomeAvailable()
                 } else {
-                    columnarReport("   STACK", "\(count) \(currentOp)")
+                    columnarReport("    STACK", "\(count) \(currentOp)")
                     completionStack.append {        // push another onto stack
                         self.FOREGROUND {
                             self.fireCompletion()
@@ -272,7 +239,7 @@ class ZOperationsManager: NSObject {
     func becomeAvailable() {
         gRemoteStoresManager.cancel()
         queue.cancelAllOperations()
-        reportWaiters()
+        reportWaiters("REMOVE")
         unwaitAll()
 
         cloudCallback  = nil
@@ -288,6 +255,17 @@ class ZOperationsManager: NSObject {
         if  completionStack.count > 0 {
             completionStack.remove(at: 0)()
         }
+    }
+
+
+    func performOps(from: ZOperationID, to: ZOperationID, _ onCompletion: @escaping Closure) {
+        var operationIDs = [ZOperationID] ()
+
+        for sync in from.rawValue...to.rawValue {
+            operationIDs.append(ZOperationID(rawValue: sync)!)
+        }
+
+        setupAndRun(operationIDs) { onCompletion() }
     }
 
 
@@ -323,7 +301,7 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func reportWaiters() {
+    func reportWaiters(_ mark: String) {
         let       keys = Array(waitingOps.keys)
 
         if  keys.count > 1 {
@@ -331,7 +309,7 @@ class ZOperationsManager: NSObject {
                 return "\(key)"
             }
 
-            columnarReport("   UNWAIT", string)
+            columnarReport("    \(mark)", string)
         }
     }
 

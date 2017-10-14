@@ -30,13 +30,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/sources/models/Zone.swift"
-            timestampString = "529626589.053031"
+            filePath = "Zones/sources/main/common/ZExtensions.swift"
+            timestampString = "529708172.112101"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "173"
-            endingLineNumber = "173"
-            landmarkName = "crossLink"
+            startingLineNumber = "140"
+            endingLineNumber = "140"
+            landmarkName = "decoratedName"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>

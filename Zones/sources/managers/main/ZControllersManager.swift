@@ -86,14 +86,16 @@ class ZControllersManager: NSObject {
     func startupDataAndUI() {
         signalFor(nil, regarding: .startup)
         displayActivity(true)
-        gFavoritesManager.setup()
         gOperationsManager.startUp {
-            self.displayActivity(false) // now on foreground thread
-            gHere.grab()
-            gFavoritesManager.updateChildren()
-            self.signalFor(nil, regarding: .redraw)
-            gOperationsManager.finishUp {
+            gFavoritesManager.setup() // bug: manifest not yet fetched
+            gOperationsManager.continueUp {
+                self.displayActivity(false) // now on foreground thread
+                gHere.grab()
+                gFavoritesManager.updateChildren()
                 self.signalFor(nil, regarding: .redraw)
+                gOperationsManager.finishUp {
+                    self.signalFor(nil, regarding: .redraw)
+                }
             }
         }
     }

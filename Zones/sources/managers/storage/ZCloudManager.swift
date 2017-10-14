@@ -58,7 +58,7 @@ class ZCloudManager: ZRecordsManager {
                 self.create(onCompletion) // process remaining
             }
 
-            columnarReport("CREATE \(count)", stringForCKRecords(operation.recordsToSave))
+            columnarReport("CREATE \(count)", stringForCKRecords(needCreating))
             start(operation)
         } else {
             onCompletion?(0)
@@ -71,19 +71,23 @@ class ZCloudManager: ZRecordsManager {
         let isPublic = storageMode == .everyoneMode
 
         if  isPublic {
-            var indices = IndexSet()
+            var notSaved = IndexSet()
 
             for (index, save) in saves.enumerated() {
                 if  let savable = recordForRecordID(save.recordID) as? Zone {
                     if !savable.isInFavorites {
-                        indices.insert(index)
+                        notSaved.insert(index)
                     } else {
                         savable.unmarkForAllOfStates([.needsSave])
                     }
                 }
             }
 
-            for index in indices.reversed() {
+            for index in notSaved.reversed() {
+
+                // must remove in reverse (largest index first) order,
+                // so that after first is removed, subsequent indices still point to correct item in saves array
+
                 saves.remove(at: index)
             }
         }
@@ -536,18 +540,22 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchManifest(_ onCompletion: IntClosure?) {
-        onCompletion?(-1)
+        let      manifest = gRemoteStoresManager.manifest(for: storageMode)
+        let notYetCreated = manifest.notYetCreated
 
-        let     mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
-        let manifest = gRemoteStoresManager.manifest(for: storageMode)
-        let recordID = manifest.record.recordID
+        onCompletion?(notYetCreated ? -1 : 0)
 
-        mine.assureRecordExists(withRecordID: recordID, recordType: manifestTypeKey) { (iManifestRecord: CKRecord?) in
-            if iManifestRecord != nil {
-                manifest.record = iManifestRecord
+        if  notYetCreated {
+            let     mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
+            let recordID = manifest.record.recordID
+
+            mine.assureRecordExists(withRecordID: recordID, recordType: manifestTypeKey) { (iManifestRecord: CKRecord?) in
+                if iManifestRecord != nil {
+                    manifest.record = iManifestRecord
+                }
+
+                onCompletion?(0)
             }
-
-            onCompletion?(0)
         }
     }
 
