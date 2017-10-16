@@ -274,37 +274,6 @@
 		0C39B25D1F182EBB0091F4D1 /* Zone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Zone.swift; sourceTree = "<group>"; };
 		0C39B25E1F182EBB0091F4D1 /* ZRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZRecord.swift; sourceTree = "<group>"; };
 		0C39B25F1F182EBB0091F4D1 /* ZTrait.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTrait.swift; sourceTree = "<group>"; };
-		0C39B2621F182EBB0091F4D1 /* CalendarCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarCondition.swift; sourceTree = "<group>"; };
-		0C39B2631F182EBB0091F4D1 /* CloudCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudCondition.swift; sourceTree = "<group>"; };
-		0C39B2641F182EBB0091F4D1 /* HealthCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HealthCondition.swift; sourceTree = "<group>"; };
-		0C39B2651F182EBB0091F4D1 /* LocationCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationCondition.swift; sourceTree = "<group>"; };
-		0C39B2661F182EBB0091F4D1 /* MutuallyExclusive.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutuallyExclusive.swift; sourceTree = "<group>"; };
-		0C39B2671F182EBB0091F4D1 /* NegatedCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NegatedCondition.swift; sourceTree = "<group>"; };
-		0C39B2681F182EBB0091F4D1 /* NoCancelledDependencies.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoCancelledDependencies.swift; sourceTree = "<group>"; };
-		0C39B2691F182EBB0091F4D1 /* OperationCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperationCondition.swift; sourceTree = "<group>"; };
-		0C39B26A1F182EBB0091F4D1 /* OperationErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperationErrors.swift; sourceTree = "<group>"; };
-		0C39B26B1F182EBB0091F4D1 /* PassbookCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PassbookCondition.swift; sourceTree = "<group>"; };
-		0C39B26C1F182EBB0091F4D1 /* PhotosCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotosCondition.swift; sourceTree = "<group>"; };
-		0C39B26D1F182EBB0091F4D1 /* ReachabilityCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReachabilityCondition.swift; sourceTree = "<group>"; };
-		0C39B26E1F182EBB0091F4D1 /* RemoteNotificationCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteNotificationCondition.swift; sourceTree = "<group>"; };
-		0C39B26F1F182EBB0091F4D1 /* SilentCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SilentCondition.swift; sourceTree = "<group>"; };
-		0C39B2701F182EBB0091F4D1 /* UserNotificationCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNotificationCondition.swift; sourceTree = "<group>"; };
-		0C39B2721F182EBB0091F4D1 /* CKContainer+Operations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CKContainer+Operations.swift"; sourceTree = "<group>"; };
-		0C39B2731F182EBB0091F4D1 /* Dictionary+Operations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dictionary+Operations.swift"; sourceTree = "<group>"; };
-		0C39B2741F182EBB0091F4D1 /* NSLock+Operations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLock+Operations.swift"; sourceTree = "<group>"; };
-		0C39B2751F182EBB0091F4D1 /* NSOperation+Operations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSOperation+Operations.swift"; sourceTree = "<group>"; };
-		0C39B2761F182EBB0091F4D1 /* UIUserNotifications+Operations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIUserNotifications+Operations.swift"; sourceTree = "<group>"; };
-		0C39B2781F182EBB0091F4D1 /* BlockObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockObserver.swift; sourceTree = "<group>"; };
-		0C39B2791F182EBB0091F4D1 /* OperationObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperationObserver.swift; sourceTree = "<group>"; };
-		0C39B27A1F182EBB0091F4D1 /* TimeoutObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeoutObserver.swift; sourceTree = "<group>"; };
-		0C39B27C1F182EBB0091F4D1 /* BlockOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockOperation.swift; sourceTree = "<group>"; };
-		0C39B27D1F182EBB0091F4D1 /* DelayOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DelayOperation.swift; sourceTree = "<group>"; };
-		0C39B27E1F182EBB0091F4D1 /* GroupOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupOperation.swift; sourceTree = "<group>"; };
-		0C39B27F1F182EBB0091F4D1 /* LocationOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationOperation.swift; sourceTree = "<group>"; };
-		0C39B2801F182EBB0091F4D1 /* Operation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
-		0C39B2811F182EBB0091F4D1 /* URLSessionTaskOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLSessionTaskOperation.swift; sourceTree = "<group>"; };
-		0C39B2831F182EBB0091F4D1 /* ExclusivityController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExclusivityController.swift; sourceTree = "<group>"; };
-		0C39B2841F182EBB0091F4D1 /* OperationQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperationQueue.swift; sourceTree = "<group>"; };
 		0C39B2871F182EBB0091F4D1 /* ZoneDot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneDot.swift; sourceTree = "<group>"; };
 		0C39B2881F182EBB0091F4D1 /* ZoneTextWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneTextWidget.swift; sourceTree = "<group>"; };
 		0C39B2891F182EBB0091F4D1 /* ZoneWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneWidget.swift; sourceTree = "<group>"; };
@@ -438,7 +407,6 @@
 				0C39B22D1F182EBB0091F4D1 /* main */,
 				0C39B2451F182EBB0091F4D1 /* managers */,
 				0C39B2541F182EBB0091F4D1 /* models */,
-				0C39B2601F182EBB0091F4D1 /* operations */,
 				0C39B2851F182EBB0091F4D1 /* views */,
 			);
 			path = sources;
@@ -565,84 +533,6 @@
 				0C39B25F1F182EBB0091F4D1 /* ZTrait.swift */,
 			);
 			path = models;
-			sourceTree = "<group>";
-		};
-		0C39B2601F182EBB0091F4D1 /* operations */ = {
-			isa = PBXGroup;
-			children = (
-				0C39B2611F182EBB0091F4D1 /* conditions */,
-				0C39B2711F182EBB0091F4D1 /* extensions */,
-				0C39B2771F182EBB0091F4D1 /* observers */,
-				0C39B27B1F182EBB0091F4D1 /* operations */,
-				0C39B2821F182EBB0091F4D1 /* queues */,
-			);
-			path = operations;
-			sourceTree = "<group>";
-		};
-		0C39B2611F182EBB0091F4D1 /* conditions */ = {
-			isa = PBXGroup;
-			children = (
-				0C39B2621F182EBB0091F4D1 /* CalendarCondition.swift */,
-				0C39B2631F182EBB0091F4D1 /* CloudCondition.swift */,
-				0C39B2641F182EBB0091F4D1 /* HealthCondition.swift */,
-				0C39B2651F182EBB0091F4D1 /* LocationCondition.swift */,
-				0C39B2661F182EBB0091F4D1 /* MutuallyExclusive.swift */,
-				0C39B2671F182EBB0091F4D1 /* NegatedCondition.swift */,
-				0C39B2681F182EBB0091F4D1 /* NoCancelledDependencies.swift */,
-				0C39B2691F182EBB0091F4D1 /* OperationCondition.swift */,
-				0C39B26A1F182EBB0091F4D1 /* OperationErrors.swift */,
-				0C39B26B1F182EBB0091F4D1 /* PassbookCondition.swift */,
-				0C39B26C1F182EBB0091F4D1 /* PhotosCondition.swift */,
-				0C39B26D1F182EBB0091F4D1 /* ReachabilityCondition.swift */,
-				0C39B26E1F182EBB0091F4D1 /* RemoteNotificationCondition.swift */,
-				0C39B26F1F182EBB0091F4D1 /* SilentCondition.swift */,
-				0C39B2701F182EBB0091F4D1 /* UserNotificationCondition.swift */,
-			);
-			path = conditions;
-			sourceTree = "<group>";
-		};
-		0C39B2711F182EBB0091F4D1 /* extensions */ = {
-			isa = PBXGroup;
-			children = (
-				0C39B2721F182EBB0091F4D1 /* CKContainer+Operations.swift */,
-				0C39B2731F182EBB0091F4D1 /* Dictionary+Operations.swift */,
-				0C39B2741F182EBB0091F4D1 /* NSLock+Operations.swift */,
-				0C39B2751F182EBB0091F4D1 /* NSOperation+Operations.swift */,
-				0C39B2761F182EBB0091F4D1 /* UIUserNotifications+Operations.swift */,
-			);
-			path = extensions;
-			sourceTree = "<group>";
-		};
-		0C39B2771F182EBB0091F4D1 /* observers */ = {
-			isa = PBXGroup;
-			children = (
-				0C39B2781F182EBB0091F4D1 /* BlockObserver.swift */,
-				0C39B2791F182EBB0091F4D1 /* OperationObserver.swift */,
-				0C39B27A1F182EBB0091F4D1 /* TimeoutObserver.swift */,
-			);
-			path = observers;
-			sourceTree = "<group>";
-		};
-		0C39B27B1F182EBB0091F4D1 /* operations */ = {
-			isa = PBXGroup;
-			children = (
-				0C39B27C1F182EBB0091F4D1 /* BlockOperation.swift */,
-				0C39B27D1F182EBB0091F4D1 /* DelayOperation.swift */,
-				0C39B27E1F182EBB0091F4D1 /* GroupOperation.swift */,
-				0C39B27F1F182EBB0091F4D1 /* LocationOperation.swift */,
-				0C39B2801F182EBB0091F4D1 /* Operation.swift */,
-				0C39B2811F182EBB0091F4D1 /* URLSessionTaskOperation.swift */,
-			);
-			path = operations;
-			sourceTree = "<group>";
-		};
-		0C39B2821F182EBB0091F4D1 /* queues */ = {
-			isa = PBXGroup;
-			children = (
-				0C39B2831F182EBB0091F4D1 /* ExclusivityController.swift */,
-				0C39B2841F182EBB0091F4D1 /* OperationQueue.swift */,
-			);
-			path = queues;
 			sourceTree = "<group>";
 		};
 		0C39B2851F182EBB0091F4D1 /* views */ = {

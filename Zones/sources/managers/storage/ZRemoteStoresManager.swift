@@ -89,7 +89,7 @@ class ZRemoteStoresManager: NSObject {
 
 
     func authenticate(_ onCompletion: AnyClosure?) {
-        fetchUser { iRecordIDs in
+        fetchUser() { iRecordIDs in
             if iRecordIDs.count > 0 {
                 self.userRecordID = iRecordIDs[0]
             }
@@ -122,14 +122,12 @@ class ZRemoteStoresManager: NSObject {
 
 
     func fetchUser(_ onCompletion: @escaping RecordIDsClosure) {
-        container.fetchUserRecordID() {
-            recordID, error in
-
-            if error != nil || recordID == nil {
+        container.fetchUserRecordID() { recordID, error in
+            if  error == nil && recordID != nil {
+                onCompletion([recordID!])
+            } else {
                 self.columnarReport(" ERROR", error?.localizedDescription ?? "failed to fetch user record id; reason unknown")
                 onCompletion([])
-            } else {
-                onCompletion([recordID!])
             }
         }
     }

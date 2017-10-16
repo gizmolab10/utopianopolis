@@ -81,41 +81,38 @@ class ZOperationsManager: NSObject {
     // MARK:-
 
 
-    private func invoke(_ identifier: ZOperationID, _ mode: ZStorageMode, _ logic: ZRecursionLogic? = nil, cloudCallback: AnyClosure?) {
-        if  mode           != .favoritesMode || identifier == .here {
-            let      remote = gRemoteStoresManager
-            onCloudResponse = cloudCallback     // for retry cloud in tools controller
-            currentMode     = mode              // if hung, it happened in this mode
+    private func invoke(_ identifier: ZOperationID, _ logic: ZRecursionLogic? = nil, cloudCallback: AnyClosure?) {
+        let      remote = gRemoteStoresManager
+        onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
-            reportOp(identifier, mode, 0)
+        reportOperation(identifier)
 
-            switch identifier { // outer switch
-            case .file:                 gFileManager.restore  (from:          mode);    cloudCallback?(0)
-            case .here:                 remote               .establishHere  (mode,     cloudCallback)
-            case .roots:                remote               .establishRoot  (mode,     cloudCallback)
-            default: let cloudManager = remote               .cloudManagerFor(mode)
-            switch identifier { // inner switch
-            case .authenticate: remote.authenticate                          (          cloudCallback)
-            case .cloud:        cloudManager.fetchCloudZones                 (          cloudCallback)
-            case .bookmarks:    cloudManager.fetchBookmarks                  (          cloudCallback)
-            case .manifest:     cloudManager.fetchManifest                   (          cloudCallback)
-            case .children:     cloudManager.fetchChildren                   (logic,    cloudCallback)
-            case .parent:       cloudManager.fetchParents                    (          cloudCallback)
-            case .unsubscribe:  cloudManager.unsubscribe                     (          cloudCallback)
-            case .undelete:     cloudManager.undeleteAll                     (          cloudCallback)
-            case .emptyTrash:   cloudManager.emptyTrash                      (          cloudCallback)
-            case .trash:        cloudManager.fetchTrash                      (          cloudCallback)
-            case .subscribe:    cloudManager.subscribe                       (          cloudCallback)
-            case .create:       cloudManager.create                          (          cloudCallback)
-            case .fetch:        cloudManager.fetch                           (          cloudCallback)
-            case .merge:        cloudManager.merge                           (          cloudCallback)
-            case .save:         cloudManager.save                            (          cloudCallback)
-            default: break
-                } // inner switch
-            } // outer switch
+        switch identifier { // outer switch
+        case .file:                 gFileManager.restore  (from:          currentMode!); cloudCallback?(0)
+        case .here:                 remote               .establishHere  (currentMode!,  cloudCallback)
+        case .roots:                remote               .establishRoot  (currentMode!,  cloudCallback)
+        case .authenticate:         remote               .authenticate   (               cloudCallback)
+        default: let cloudManager = remote               .cloudManagerFor(currentMode!)
+        switch identifier { // inner switch
+        case .cloud:        cloudManager.fetchCloudZones                 (               cloudCallback)
+        case .bookmarks:    cloudManager.fetchBookmarks                  (               cloudCallback)
+        case .manifest:     cloudManager.fetchManifest                   (               cloudCallback)
+        case .children:     cloudManager.fetchChildren                   (logic,         cloudCallback)
+        case .parent:       cloudManager.fetchParents                    (               cloudCallback)
+        case .unsubscribe:  cloudManager.unsubscribe                     (               cloudCallback)
+        case .undelete:     cloudManager.undeleteAll                     (               cloudCallback)
+        case .emptyTrash:   cloudManager.emptyTrash                      (               cloudCallback)
+        case .trash:        cloudManager.fetchTrash                      (               cloudCallback)
+        case .subscribe:    cloudManager.subscribe                       (               cloudCallback)
+        case .create:       cloudManager.create                          (               cloudCallback)
+        case .fetch:        cloudManager.fetch                           (               cloudCallback)
+        case .merge:        cloudManager.merge                           (               cloudCallback)
+        case .save:         cloudManager.save                            (               cloudCallback)
+        default: break
+            } // inner switch
+        } // outer switch
 
-            return
-        }
+        return
     }
 
 
@@ -130,14 +127,15 @@ class ZOperationsManager: NSObject {
 
         for operationID in operationIDs + [.completion] {
             let                     blockOperation = BlockOperation {
+                self            .queue.isSuspended = true
+
                 self.FOREGROUND {
                     self                .currentOp = operationID        // if hung, it happened inside this op
                     var  invokeModeAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
-                    let              skipFavorites = operationID != .here
                     let                       full = [.unsubscribe, .subscribe, .manifest, .children, .parent, .fetch, .cloud, .roots, .here].contains(operationID)
                     let  forCurrentStorageModeOnly = [.file, .completion, .authenticate                                                     ].contains(operationID)
-                    let         cloudModes: ZModes = [.mineMode, .everyoneMode]
-                    let              modes: ZModes = !full && (forCurrentStorageModeOnly || isMine) ? [saved] : skipFavorites ? cloudModes : cloudModes + [.favoritesMode]
+                    let            onlyCurrentMode = !full && (forCurrentStorageModeOnly || isMine)
+                    let              modes: ZModes = onlyCurrentMode ? [saved] : [.mineMode, .everyoneMode]
 
                     invokeModeAt                   = { index in
 
@@ -146,12 +144,16 @@ class ZOperationsManager: NSObject {
                         /////////////////////////////////
 
                         if operationID == .completion {
-                            onCompletion()
-                        } else if      index < modes.count {
-                            let         mode = modes[index]
-                            self.lastOpStart = Date()
+                            self.queue.isSuspended = false
 
-                            self.invoke(operationID, mode, logic) { (iResult: Any?) in
+                            onCompletion()
+                        } else if           index >= modes.count {
+                            self.queue.isSuspended = false
+                        } else {
+                            self      .currentMode = modes[index]      // if hung, it happened in this mode
+                            self      .lastOpStart = Date()
+
+                            self.invoke(operationID, logic) { (iResult: Any?) in
                                 self.lastOpStart = nil
 
                                 self.FOREGROUND(canBeDirect: true) {
@@ -175,7 +177,7 @@ class ZOperationsManager: NSObject {
                 }
             }
 
-            addOperation(blockOperation)
+            add(blockOperation)
         }
 
         queue.isSuspended = false
@@ -200,25 +202,21 @@ class ZOperationsManager: NSObject {
     }
 
 
-    private func addOperation(_ op: BlockOperation) {
+    private func add(_ operation: BlockOperation) {
         if let prior = queue.operations.last {
-            op.addDependency(prior)
+            operation.addDependency(prior)
         } else {
             queue.qualityOfService            = .background
             queue.maxConcurrentOperationCount = 1
         }
 
-        queue.addOperation(op)
+        queue.addOperation(operation)
     }
 
 
-    private func reportOp(_ identifier: ZOperationID, _ mode: ZStorageMode, _ iCount: Int) {
+    private func reportOperation(_ identifier: ZOperationID) {
         if  debug {
-            let   count = iCount <= 0 ? "" : "\(iCount)"
-            var message = "\(String(describing: identifier)) \(count)"
-
-            message.appendSpacesToLength(gLogTabStop - 2)
-            report("\(message)• \(mode)")
+            columnarReport("  " + String(describing: identifier), "\(currentMode!)")
         }
     }
 }
