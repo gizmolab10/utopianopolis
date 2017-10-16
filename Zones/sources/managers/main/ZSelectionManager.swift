@@ -64,9 +64,10 @@ class ZSelectionManager: NSObject {
     }
 
 
-    var currentGrabsHaveChildren: Bool {
-        for grab in currentGrabs {
-            if grab.count > 0 {
+    var currentGrabsHaveVisibleChildren: Bool {
+        for     grab in currentGrabs {
+            if  grab.count > 0 &&
+                grab.showChildren {
                 return true
             }
         }

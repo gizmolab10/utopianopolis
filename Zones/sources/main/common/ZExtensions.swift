@@ -249,14 +249,14 @@ extension Array {
         var    string = ""
 
         for object in self {
-            let message = closure(object)
+            if let message = closure(object) {
+                string.append("\(separator)\(message)")
 
-            string.append("\(separator)\(message)")
+                if  separator.length == 0 {
+                    separator.appendSpacesToLength(gLogTabStop)
 
-            if  separator.length == 0 {
-                separator.appendSpacesToLength(gLogTabStop)
-
-                separator = "\n\(separator)"
+                    separator = "\n\(separator)"
+                }
             }
         }
 

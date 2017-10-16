@@ -365,45 +365,45 @@ class ZRecordsManager: NSObject {
 
 
     func stringForZones(_ zones: [Zone]?) -> String {
-        return zones?.apply()  { object -> (String) in
+        return zones?.apply()  { object -> (String?) in
             if let zone = object as? Zone {
                 return zone.decoratedName
             }
 
-            return "---"
+            return nil
         } ?? ""
     }
 
 
     func stringForCKRecords(_ records: [CKRecord]?) -> String {
-        return records?.apply()  { object -> (String) in
+        return records?.apply()  { object -> (String?) in
             if  let record = object as? CKRecord {
                 return record.decoratedName
             }
 
-            return "---"
+            return nil
         } ?? ""
     }
 
 
     func stringForReferences(_ references: [CKReference]?, in storageMode: ZStorageMode) -> String {
-        return references?.apply()  { object -> (String) in
+        return references?.apply()  { object -> (String?) in
             if let reference = object as? CKReference, let zone = gRemoteStoresManager.recordsManagerFor(storageMode).zoneForReference(reference) {
                 return zone.decoratedName
             }
 
-            return "---"
+            return nil
         } ?? ""
     }
 
 
     func stringForRecordIDs(_ recordIDs: [CKRecordID]?, in storageMode: ZStorageMode) -> String {
-        return recordIDs?.apply()  { object -> (String) in
+        return recordIDs?.apply()  { object -> (String?) in
             if  let recordID = object as? CKRecordID, let record = gRemoteStoresManager.recordsManagerFor(storageMode).recordForRecordID(recordID) {
                 return record.record.decoratedName
             }
             
-            return "---"
+            return nil
         } ?? ""
     }
 

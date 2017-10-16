@@ -308,10 +308,16 @@ CQ
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="iQa-Q8-Wmb"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Sort by Length" keyEquivalent="o" id="Eoi-r1-ax6">
+                                        <menuItem title="Select All" tag="5" keyEquivalent="a" id="Ogq-iB-dId">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="nGe-LJ-9tj"/>
+                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="bte-Av-8P5"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Sort by Length" tag="9" keyEquivalent="o" id="Eoi-r1-ax6">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="SCe-gX-KJx"/>
                                             </connections>
                                         </menuItem>
                                     </items>

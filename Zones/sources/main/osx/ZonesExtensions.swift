@@ -281,24 +281,26 @@ extension NSWindow {
                 let paste = s.pasteableZones.count
                 let grabs = s.currentGrabs  .count
                 let  undo = gEditingManager.undoManager
+                let shown = s.currentGrabsHaveVisibleChildren
 
                 switch type {
-                case .Paste:    valid = paste > 0
-                case .UseGrabs: valid = grabs > 0
-                case .Multiple: valid = grabs > 1
-                case .Children: valid = grabs > 1 || s.currentGrabsHaveChildren
-                case .Undo:     valid = undo.canUndo
-                case .Redo:     valid = undo.canRedo
-                case .Always:   valid = true
-                default:        valid = false
+                case .Paste:     valid = paste > 0
+                case .UseGrabs:  valid = grabs > 0
+                case .Multiple:  valid = grabs > 1
+                case .Children:  valid = grabs > 1 || shown
+                case .SelectAll: valid =              shown
+                case .Undo:      valid = undo.canUndo
+                case .Redo:      valid = undo.canRedo
+                case .Always:    valid = true
+                default:         valid = false
                 }
             }
         }
 
-        var         title = menuItem.title
-        if !valid { title = "< \(title) >" }
-
-        // rawColumnarReport("   \(tag)", title)
+//        var         title = menuItem.title
+//        if !valid { title = "< \(title) >" }
+//
+//        rawColumnarReport("   \(tag)", title)
 
         return valid
     }
@@ -383,7 +385,7 @@ extension ZoneTextWidget {
 
 
     override func selectAllText() {
-        if text != nil, let editor = currentEditor() {
+        if  text != nil, let editor = currentEditor() {
             gSelectionManager.deferEditingStateChange()
             select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: text!.characters.count)
         }

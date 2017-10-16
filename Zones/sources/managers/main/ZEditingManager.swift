@@ -81,6 +81,7 @@ class ZEditingManager: NSObject {
                 case "f":         find()
                 case "r":         reverse()
                 case "c":         recenter()
+                case "a":         selectAll()
                 case "p":         printHere()
                 case "o":         orderByLength()
                 case "b":         createBookmark()
@@ -285,6 +286,20 @@ class ZEditingManager: NSObject {
         #endif
     }
 
+
+    func selectAll() {
+        let zone = gSelectionManager.currentMoveable
+
+        if  zone.showChildren && zone.count != 0 {
+            gSelectionManager.clearGrab()
+
+            for child in zone.children {
+                child.addToGrab()
+            }
+
+            redrawAndSync()
+        }
+    }
 
     // MARK:- focus
     // MARK:-

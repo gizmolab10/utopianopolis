@@ -34,8 +34,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 let       zone  = widgetZone
                 font            = preferredFont
 
-                gSelectionManager.deferEditingStateChange()
-
                 if !_isTextEditing {
                     let  grab = gSelectionManager.currentlyEditingZone == zone
                     textColor = !grab ? ZColor.black :zone.grabbedTextColor

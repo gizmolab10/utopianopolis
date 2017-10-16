@@ -18,9 +18,9 @@ enum ZOperationID: Int {
     case manifest
     case here
     case children
-    case fetch
-    case parent
-    case save // zones, manifests, favorites
+    case fetch      // after children so favorite targets resolve properly
+    case parent     // after fetch so colors resolve properly
+    case save       // zones and manifests
     case unsubscribe
     case subscribe
 
@@ -154,7 +154,7 @@ class ZOperationsManager: NSObject {
                             self      .lastOpStart = Date()
 
                             self.invoke(operationID, logic) { (iResult: Any?) in
-                                self.lastOpStart = nil
+                                self  .lastOpStart = nil
 
                                 self.FOREGROUND(canBeDirect: true) {
                                     let      error = iResult as? Error
