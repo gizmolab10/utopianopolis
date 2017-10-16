@@ -96,6 +96,7 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
                 if !dot.isToggle {
                     controller.dragStartEvent(dot, iGesture)
                 } else if let zone = dot.widgetZone {
+                    cleanupAfterDrag()
                     gEditingManager.toggleDotActionOnZone(zone)   // no movement
                 }
             } else {                      // began
@@ -166,7 +167,7 @@ class ZEditorController: ZGraphController, ZScrollDelegate {
 
 
     func rubberbandUpdate(_ rect: CGRect?) {
-        if  rect == nil {
+        if  rect == nil || rubberbandStart == CGPoint.zero {
             editorView?.rubberbandRect = CGRect.zero
 
             restartGestureRecognition()

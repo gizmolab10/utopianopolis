@@ -43,8 +43,8 @@ class OperationQueue: Foundation.OperationQueue {
                     self?.addOperation($1)
                 },
                 finishHandler: { [weak self] in
-                    if let q = self {
-                        q.delegate?.operationQueue?(q, operationDidFinish: $0, withErrors: $1)
+                    if let q = self, let d = q.delegate {
+                        d.operationQueue?(q, operationDidFinish: $0, withErrors: $1)
                     }
                 }
             )

@@ -38,12 +38,12 @@ class ZRecord: NSObject {
     }
 
 
-    var notYetCreated: Bool {
+    var alreadyExists: Bool {
         if let r = record, r.creationDate == nil {
-            return true
+            return false
         }
 
-        return false
+        return true
     }
 
 
@@ -216,7 +216,7 @@ class ZRecord: NSObject {
 
     func needFlush() {
         if  storageMode != .favoritesMode {
-            markForAllOfStates([notYetCreated ? .needsCreate : .needsSave]);
+            markForAllOfStates([alreadyExists ? .needsSave : .needsCreate]);
             unmarkForAllOfStates([.needsMerge])
         }
     }

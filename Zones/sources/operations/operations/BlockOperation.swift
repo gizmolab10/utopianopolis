@@ -46,12 +46,13 @@ class BlockOperation: Operation {
         })
     }
     
-    override func execute() {
+//    override func execute() {
+    override func start() {
         guard let block = block else {
             finish()
             return
         }
-        
+
         block {
             self.finish()
         }

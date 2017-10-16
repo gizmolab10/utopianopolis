@@ -61,23 +61,19 @@ class Operation: Foundation.Operation {
         
         func canTransitionToState(_ target: State) -> Bool {
             switch (self, target) {
-            case (.initialized, .pending):
-                return true
-            case (.pending, .finishing):
-                return true
-            case (.pending, .evaluatingConditions):
-                return true
-            case (.evaluatingConditions, .ready):
-                return true
-            case (.ready, .ready):
-                return true
-            case (.ready, .executing):
-                return true
-            case (.ready, .finishing):
-                return true
-            case (.executing, .finishing):
-                return true
-            case (.finishing, .finished):
+            case (.initialized,          .pending),
+                 (.pending,              .evaluatingConditions),
+                 (.evaluatingConditions, .ready),
+                 (.ready,                .ready),
+                 (.ready,                .executing),
+                 (.executing,            .finishing),
+                 (.finishing,            .finished),
+                 (.pending,              .finishing), // added
+                 (.evaluatingConditions, .finishing),
+                 (.ready,                .finishing),
+                 (.ready,                .finished),
+                 (.finished,             .finished),
+                 (.finishing,            .ready):
                 return true
             default:
                 return false
@@ -228,19 +224,22 @@ class Operation: Foundation.Operation {
     }
     
     override final func main() {
-        assert(state == .ready, "This operation must be performed on an operation queue.")
+        if isFinished {
+            NSLog("bad news, invoking main on finished operation ... do nothing")
+        } else {
+            assert(state == .ready, "This operation must be performed on an operation queue.")
 
-        if _internalErrors.isEmpty && !isCancelled {
-            state = .executing
-            
-            for observer in observers {
-                observer.operationDidStart(self)
+            if _internalErrors.isEmpty && !isCancelled {
+                state = .executing
+
+                for observer in observers {
+                    observer.operationDidStart(self)
+                }
+
+                execute()
+            } else {
+                finish()
             }
-            
-            execute()
-        }
-        else {
-            finish()
         }
     }
     
@@ -326,10 +325,12 @@ class Operation: Foundation.Operation {
     }
 
     func kill() {
-        if ![State.finished, State.pending].contains(state) {
-            if state == .evaluatingConditions { state = .ready }
-            if state != .finishing            { state = .finishing }
-            if state != .finished             { state = .finished }
+        if     state != .finished {
+            if state == .initialized { state = .pending }
+            if state == .pending     { state = .evaluatingConditions }
+            if state != .finishing   { state = .finishing }
+
+            state = .finished
         }
     }
 

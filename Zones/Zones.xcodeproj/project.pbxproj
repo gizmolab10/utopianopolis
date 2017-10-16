@@ -117,95 +117,6 @@
 		0C39B31F1F182EBB0091F4D1 /* ZTrait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B25F1F182EBB0091F4D1 /* ZTrait.swift */; };
 		0C39B3201F182EBB0091F4D1 /* ZTrait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B25F1F182EBB0091F4D1 /* ZTrait.swift */; };
 		0C39B3211F182EBB0091F4D1 /* ZTrait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B25F1F182EBB0091F4D1 /* ZTrait.swift */; };
-		0C39B3221F182EBB0091F4D1 /* CalendarCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2621F182EBB0091F4D1 /* CalendarCondition.swift */; };
-		0C39B3231F182EBB0091F4D1 /* CalendarCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2621F182EBB0091F4D1 /* CalendarCondition.swift */; };
-		0C39B3241F182EBB0091F4D1 /* CalendarCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2621F182EBB0091F4D1 /* CalendarCondition.swift */; };
-		0C39B3251F182EBB0091F4D1 /* CloudCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2631F182EBB0091F4D1 /* CloudCondition.swift */; };
-		0C39B3261F182EBB0091F4D1 /* CloudCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2631F182EBB0091F4D1 /* CloudCondition.swift */; };
-		0C39B3271F182EBB0091F4D1 /* CloudCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2631F182EBB0091F4D1 /* CloudCondition.swift */; };
-		0C39B3281F182EBB0091F4D1 /* HealthCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2641F182EBB0091F4D1 /* HealthCondition.swift */; };
-		0C39B3291F182EBB0091F4D1 /* HealthCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2641F182EBB0091F4D1 /* HealthCondition.swift */; };
-		0C39B32A1F182EBB0091F4D1 /* HealthCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2641F182EBB0091F4D1 /* HealthCondition.swift */; };
-		0C39B32B1F182EBB0091F4D1 /* LocationCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2651F182EBB0091F4D1 /* LocationCondition.swift */; };
-		0C39B32C1F182EBB0091F4D1 /* LocationCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2651F182EBB0091F4D1 /* LocationCondition.swift */; };
-		0C39B32D1F182EBB0091F4D1 /* LocationCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2651F182EBB0091F4D1 /* LocationCondition.swift */; };
-		0C39B32E1F182EBB0091F4D1 /* MutuallyExclusive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2661F182EBB0091F4D1 /* MutuallyExclusive.swift */; };
-		0C39B32F1F182EBB0091F4D1 /* MutuallyExclusive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2661F182EBB0091F4D1 /* MutuallyExclusive.swift */; };
-		0C39B3301F182EBB0091F4D1 /* MutuallyExclusive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2661F182EBB0091F4D1 /* MutuallyExclusive.swift */; };
-		0C39B3311F182EBB0091F4D1 /* NegatedCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2671F182EBB0091F4D1 /* NegatedCondition.swift */; };
-		0C39B3321F182EBB0091F4D1 /* NegatedCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2671F182EBB0091F4D1 /* NegatedCondition.swift */; };
-		0C39B3331F182EBB0091F4D1 /* NegatedCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2671F182EBB0091F4D1 /* NegatedCondition.swift */; };
-		0C39B3341F182EBB0091F4D1 /* NoCancelledDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2681F182EBB0091F4D1 /* NoCancelledDependencies.swift */; };
-		0C39B3351F182EBB0091F4D1 /* NoCancelledDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2681F182EBB0091F4D1 /* NoCancelledDependencies.swift */; };
-		0C39B3361F182EBB0091F4D1 /* NoCancelledDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2681F182EBB0091F4D1 /* NoCancelledDependencies.swift */; };
-		0C39B3371F182EBB0091F4D1 /* OperationCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2691F182EBB0091F4D1 /* OperationCondition.swift */; };
-		0C39B3381F182EBB0091F4D1 /* OperationCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2691F182EBB0091F4D1 /* OperationCondition.swift */; };
-		0C39B3391F182EBB0091F4D1 /* OperationCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2691F182EBB0091F4D1 /* OperationCondition.swift */; };
-		0C39B33A1F182EBB0091F4D1 /* OperationErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26A1F182EBB0091F4D1 /* OperationErrors.swift */; };
-		0C39B33B1F182EBB0091F4D1 /* OperationErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26A1F182EBB0091F4D1 /* OperationErrors.swift */; };
-		0C39B33C1F182EBB0091F4D1 /* OperationErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26A1F182EBB0091F4D1 /* OperationErrors.swift */; };
-		0C39B33D1F182EBB0091F4D1 /* PassbookCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26B1F182EBB0091F4D1 /* PassbookCondition.swift */; };
-		0C39B33E1F182EBB0091F4D1 /* PassbookCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26B1F182EBB0091F4D1 /* PassbookCondition.swift */; };
-		0C39B33F1F182EBB0091F4D1 /* PassbookCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26B1F182EBB0091F4D1 /* PassbookCondition.swift */; };
-		0C39B3401F182EBB0091F4D1 /* PhotosCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26C1F182EBB0091F4D1 /* PhotosCondition.swift */; };
-		0C39B3411F182EBB0091F4D1 /* PhotosCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26C1F182EBB0091F4D1 /* PhotosCondition.swift */; };
-		0C39B3421F182EBB0091F4D1 /* PhotosCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26C1F182EBB0091F4D1 /* PhotosCondition.swift */; };
-		0C39B3431F182EBB0091F4D1 /* ReachabilityCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26D1F182EBB0091F4D1 /* ReachabilityCondition.swift */; };
-		0C39B3441F182EBB0091F4D1 /* ReachabilityCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26D1F182EBB0091F4D1 /* ReachabilityCondition.swift */; };
-		0C39B3451F182EBB0091F4D1 /* ReachabilityCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26D1F182EBB0091F4D1 /* ReachabilityCondition.swift */; };
-		0C39B3461F182EBB0091F4D1 /* RemoteNotificationCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26E1F182EBB0091F4D1 /* RemoteNotificationCondition.swift */; };
-		0C39B3471F182EBB0091F4D1 /* RemoteNotificationCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26E1F182EBB0091F4D1 /* RemoteNotificationCondition.swift */; };
-		0C39B3481F182EBB0091F4D1 /* RemoteNotificationCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26E1F182EBB0091F4D1 /* RemoteNotificationCondition.swift */; };
-		0C39B3491F182EBB0091F4D1 /* SilentCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26F1F182EBB0091F4D1 /* SilentCondition.swift */; };
-		0C39B34A1F182EBB0091F4D1 /* SilentCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26F1F182EBB0091F4D1 /* SilentCondition.swift */; };
-		0C39B34B1F182EBB0091F4D1 /* SilentCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B26F1F182EBB0091F4D1 /* SilentCondition.swift */; };
-		0C39B34E1F182EBB0091F4D1 /* UserNotificationCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2701F182EBB0091F4D1 /* UserNotificationCondition.swift */; };
-		0C39B34F1F182EBB0091F4D1 /* CKContainer+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2721F182EBB0091F4D1 /* CKContainer+Operations.swift */; };
-		0C39B3501F182EBB0091F4D1 /* CKContainer+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2721F182EBB0091F4D1 /* CKContainer+Operations.swift */; };
-		0C39B3511F182EBB0091F4D1 /* CKContainer+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2721F182EBB0091F4D1 /* CKContainer+Operations.swift */; };
-		0C39B3521F182EBB0091F4D1 /* Dictionary+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2731F182EBB0091F4D1 /* Dictionary+Operations.swift */; };
-		0C39B3531F182EBB0091F4D1 /* Dictionary+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2731F182EBB0091F4D1 /* Dictionary+Operations.swift */; };
-		0C39B3541F182EBB0091F4D1 /* Dictionary+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2731F182EBB0091F4D1 /* Dictionary+Operations.swift */; };
-		0C39B3551F182EBB0091F4D1 /* NSLock+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2741F182EBB0091F4D1 /* NSLock+Operations.swift */; };
-		0C39B3561F182EBB0091F4D1 /* NSLock+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2741F182EBB0091F4D1 /* NSLock+Operations.swift */; };
-		0C39B3571F182EBB0091F4D1 /* NSLock+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2741F182EBB0091F4D1 /* NSLock+Operations.swift */; };
-		0C39B3581F182EBB0091F4D1 /* NSOperation+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2751F182EBB0091F4D1 /* NSOperation+Operations.swift */; };
-		0C39B3591F182EBB0091F4D1 /* NSOperation+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2751F182EBB0091F4D1 /* NSOperation+Operations.swift */; };
-		0C39B35A1F182EBB0091F4D1 /* NSOperation+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2751F182EBB0091F4D1 /* NSOperation+Operations.swift */; };
-		0C39B35D1F182EBB0091F4D1 /* UIUserNotifications+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2761F182EBB0091F4D1 /* UIUserNotifications+Operations.swift */; };
-		0C39B35E1F182EBB0091F4D1 /* BlockObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2781F182EBB0091F4D1 /* BlockObserver.swift */; };
-		0C39B35F1F182EBB0091F4D1 /* BlockObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2781F182EBB0091F4D1 /* BlockObserver.swift */; };
-		0C39B3601F182EBB0091F4D1 /* BlockObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2781F182EBB0091F4D1 /* BlockObserver.swift */; };
-		0C39B3611F182EBB0091F4D1 /* OperationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2791F182EBB0091F4D1 /* OperationObserver.swift */; };
-		0C39B3621F182EBB0091F4D1 /* OperationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2791F182EBB0091F4D1 /* OperationObserver.swift */; };
-		0C39B3631F182EBB0091F4D1 /* OperationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2791F182EBB0091F4D1 /* OperationObserver.swift */; };
-		0C39B3641F182EBB0091F4D1 /* TimeoutObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27A1F182EBB0091F4D1 /* TimeoutObserver.swift */; };
-		0C39B3651F182EBB0091F4D1 /* TimeoutObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27A1F182EBB0091F4D1 /* TimeoutObserver.swift */; };
-		0C39B3661F182EBB0091F4D1 /* TimeoutObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27A1F182EBB0091F4D1 /* TimeoutObserver.swift */; };
-		0C39B3671F182EBB0091F4D1 /* BlockOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27C1F182EBB0091F4D1 /* BlockOperation.swift */; };
-		0C39B3681F182EBB0091F4D1 /* BlockOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27C1F182EBB0091F4D1 /* BlockOperation.swift */; };
-		0C39B3691F182EBB0091F4D1 /* BlockOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27C1F182EBB0091F4D1 /* BlockOperation.swift */; };
-		0C39B36A1F182EBB0091F4D1 /* DelayOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27D1F182EBB0091F4D1 /* DelayOperation.swift */; };
-		0C39B36B1F182EBB0091F4D1 /* DelayOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27D1F182EBB0091F4D1 /* DelayOperation.swift */; };
-		0C39B36C1F182EBB0091F4D1 /* DelayOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27D1F182EBB0091F4D1 /* DelayOperation.swift */; };
-		0C39B36D1F182EBB0091F4D1 /* GroupOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27E1F182EBB0091F4D1 /* GroupOperation.swift */; };
-		0C39B36E1F182EBB0091F4D1 /* GroupOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27E1F182EBB0091F4D1 /* GroupOperation.swift */; };
-		0C39B36F1F182EBB0091F4D1 /* GroupOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27E1F182EBB0091F4D1 /* GroupOperation.swift */; };
-		0C39B3701F182EBB0091F4D1 /* LocationOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27F1F182EBB0091F4D1 /* LocationOperation.swift */; };
-		0C39B3711F182EBB0091F4D1 /* LocationOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27F1F182EBB0091F4D1 /* LocationOperation.swift */; };
-		0C39B3721F182EBB0091F4D1 /* LocationOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B27F1F182EBB0091F4D1 /* LocationOperation.swift */; };
-		0C39B3731F182EBB0091F4D1 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2801F182EBB0091F4D1 /* Operation.swift */; };
-		0C39B3741F182EBB0091F4D1 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2801F182EBB0091F4D1 /* Operation.swift */; };
-		0C39B3751F182EBB0091F4D1 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2801F182EBB0091F4D1 /* Operation.swift */; };
-		0C39B3761F182EBB0091F4D1 /* URLSessionTaskOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2811F182EBB0091F4D1 /* URLSessionTaskOperation.swift */; };
-		0C39B3771F182EBB0091F4D1 /* URLSessionTaskOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2811F182EBB0091F4D1 /* URLSessionTaskOperation.swift */; };
-		0C39B3781F182EBB0091F4D1 /* URLSessionTaskOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2811F182EBB0091F4D1 /* URLSessionTaskOperation.swift */; };
-		0C39B3791F182EBB0091F4D1 /* ExclusivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2831F182EBB0091F4D1 /* ExclusivityController.swift */; };
-		0C39B37A1F182EBB0091F4D1 /* ExclusivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2831F182EBB0091F4D1 /* ExclusivityController.swift */; };
-		0C39B37B1F182EBB0091F4D1 /* ExclusivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2831F182EBB0091F4D1 /* ExclusivityController.swift */; };
-		0C39B37C1F182EBB0091F4D1 /* OperationQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2841F182EBB0091F4D1 /* OperationQueue.swift */; };
-		0C39B37D1F182EBB0091F4D1 /* OperationQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2841F182EBB0091F4D1 /* OperationQueue.swift */; };
-		0C39B37E1F182EBB0091F4D1 /* OperationQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2841F182EBB0091F4D1 /* OperationQueue.swift */; };
 		0C39B3821F182EBB0091F4D1 /* ZoneDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2871F182EBB0091F4D1 /* ZoneDot.swift */; };
 		0C39B3831F182EBB0091F4D1 /* ZoneDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2871F182EBB0091F4D1 /* ZoneDot.swift */; };
 		0C39B3841F182EBB0091F4D1 /* ZoneDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2871F182EBB0091F4D1 /* ZoneDot.swift */; };
@@ -1211,56 +1122,33 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C39B3341F182EBB0091F4D1 /* NoCancelledDependencies.swift in Sources */,
 				0C39B2F21F182EBB0091F4D1 /* ZFavoritesManager.swift in Sources */,
 				0C39B2FE1F182EBB0091F4D1 /* ZRecordsManager.swift in Sources */,
 				0C39B31F1F182EBB0091F4D1 /* ZTrait.swift in Sources */,
 				0C39B2E31F182EBB0091F4D1 /* ZControllersManager.swift in Sources */,
-				0C39B3491F182EBB0091F4D1 /* SilentCondition.swift in Sources */,
-				0C39B3671F182EBB0091F4D1 /* BlockOperation.swift in Sources */,
-				0C39B32E1F182EBB0091F4D1 /* MutuallyExclusive.swift in Sources */,
 				0C39B2BF1F182EBB0091F4D1 /* ZAppDelegate.swift in Sources */,
 				0C39B38B1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
-				0C39B3611F182EBB0091F4D1 /* OperationObserver.swift in Sources */,
 				0C39B3821F182EBB0091F4D1 /* ZoneDot.swift in Sources */,
 				0C2E22DA1F75C82500B50A71 /* ZFavoritesController.swift in Sources */,
 				0C39B28C1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
-				0C39B3521F182EBB0091F4D1 /* Dictionary+Operations.swift in Sources */,
 				0C39B2B91F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,
-				0C39B37C1F182EBB0091F4D1 /* OperationQueue.swift in Sources */,
 				0C39B2AD1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C2E22C41F75BB7D00B50A71 /* ZGraphController.swift in Sources */,
 				0C39B3851F182EBB0091F4D1 /* ZoneTextWidget.swift in Sources */,
-				0C39B36A1F182EBB0091F4D1 /* DelayOperation.swift in Sources */,
-				0C39B3791F182EBB0091F4D1 /* ExclusivityController.swift in Sources */,
 				0C2E22D21F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,
 				0C39B2CE1F182EBB0091F4D1 /* ZPhoneExtensions.swift in Sources */,
 				0C2E22C51F75BB7D00B50A71 /* ZMainController.swift in Sources */,
-				0C39B3581F182EBB0091F4D1 /* NSOperation+Operations.swift in Sources */,
-				0C39B3731F182EBB0091F4D1 /* Operation.swift in Sources */,
-				0C39B3401F182EBB0091F4D1 /* PhotosCondition.swift in Sources */,
 				0C39B3161F182EBB0091F4D1 /* ZManifest.swift in Sources */,
-				0C39B3641F182EBB0091F4D1 /* TimeoutObserver.swift in Sources */,
-				0C39B36D1F182EBB0091F4D1 /* GroupOperation.swift in Sources */,
-				0C39B3551F182EBB0091F4D1 /* NSLock+Operations.swift in Sources */,
 				0C39B3041F182EBB0091F4D1 /* ZTravelManager.swift in Sources */,
 				0C39B3191F182EBB0091F4D1 /* Zone.swift in Sources */,
-				0C39B3221F182EBB0091F4D1 /* CalendarCondition.swift in Sources */,
 				0C39B2C81F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0C39B2FB1F182EBB0091F4D1 /* ZOperationsManager.swift in Sources */,
-				0C39B3431F182EBB0091F4D1 /* ReachabilityCondition.swift in Sources */,
-				0C39B3251F182EBB0091F4D1 /* CloudCondition.swift in Sources */,
 				0C39B38E1F182EBB0091F4D1 /* ZStackableView.swift in Sources */,
 				0C39B2EF1F182EBB0091F4D1 /* ZCloudManager.swift in Sources */,
 				0C39B2B01F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
 				0C39B2E91F182EBB0091F4D1 /* ZSelectionManager.swift in Sources */,
-				0C39B33D1F182EBB0091F4D1 /* PassbookCondition.swift in Sources */,
 				0C26F7301F799EEE00C2B978 /* ZoneSegmentedControl.swift in Sources */,
-				0C39B3761F182EBB0091F4D1 /* URLSessionTaskOperation.swift in Sources */,
 				0C367C371F463D93000FC914 /* ZoneDragView.swift in Sources */,
-				0C39B3311F182EBB0091F4D1 /* NegatedCondition.swift in Sources */,
-				0C39B3371F182EBB0091F4D1 /* OperationCondition.swift in Sources */,
-				0C39B32B1F182EBB0091F4D1 /* LocationCondition.swift in Sources */,
 				0C39B2E61F182EBB0091F4D1 /* ZEditingManager.swift in Sources */,
 				0C39B2F51F182EBB0091F4D1 /* ZFileManager.swift in Sources */,
 				0C2E22C31F75BB7D00B50A71 /* ZEditorController.swift in Sources */,
@@ -1268,16 +1156,10 @@
 				0C39B2BC1F182EBB0091F4D1 /* ZState.swift in Sources */,
 				0C39B3011F182EBB0091F4D1 /* ZRemoteStoresManager.swift in Sources */,
 				0C39B2B61F182EBB0091F4D1 /* ZReachability.swift in Sources */,
-				0C39B33A1F182EBB0091F4D1 /* OperationErrors.swift in Sources */,
 				0C39B3131F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				0C39B2EC1F182EBB0091F4D1 /* ZWidgetsManager.swift in Sources */,
 				0C2E22D01F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
-				0C39B35E1F182EBB0091F4D1 /* BlockObserver.swift in Sources */,
 				0C39B2AA1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
-				0C39B34F1F182EBB0091F4D1 /* CKContainer+Operations.swift in Sources */,
-				0C39B3281F182EBB0091F4D1 /* HealthCondition.swift in Sources */,
-				0C39B3461F182EBB0091F4D1 /* RemoteNotificationCondition.swift in Sources */,
-				0C39B3701F182EBB0091F4D1 /* LocationOperation.swift in Sources */,
 				0C39B2B31F182EBB0091F4D1 /* ZGCD.swift in Sources */,
 				0C3C12811F8D87DE00669432 /* ZEventsManager.swift in Sources */,
 				0C39B31C1F182EBB0091F4D1 /* ZRecord.swift in Sources */,
@@ -1289,56 +1171,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C39B3361F182EBB0091F4D1 /* NoCancelledDependencies.swift in Sources */,
 				0C367C391F463D93000FC914 /* ZoneDragView.swift in Sources */,
 				0C39B2F41F182EBB0091F4D1 /* ZFavoritesManager.swift in Sources */,
 				0C39B3001F182EBB0091F4D1 /* ZRecordsManager.swift in Sources */,
 				0C39B3211F182EBB0091F4D1 /* ZTrait.swift in Sources */,
 				0C39B2E51F182EBB0091F4D1 /* ZControllersManager.swift in Sources */,
-				0C39B34B1F182EBB0091F4D1 /* SilentCondition.swift in Sources */,
-				0C39B3691F182EBB0091F4D1 /* BlockOperation.swift in Sources */,
-				0C39B3301F182EBB0091F4D1 /* MutuallyExclusive.swift in Sources */,
 				0C39B2A61F182EBB0091F4D1 /* ZSettingsController.swift in Sources */,
 				0C39B38D1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
-				0C39B3631F182EBB0091F4D1 /* OperationObserver.swift in Sources */,
 				0C2E22BE1F75B8AB00B50A71 /* ZEditorController.swift in Sources */,
 				0C39B3841F182EBB0091F4D1 /* ZoneDot.swift in Sources */,
 				0C39B28E1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
-				0C39B3541F182EBB0091F4D1 /* Dictionary+Operations.swift in Sources */,
 				0C39B2BB1F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,
 				0C6CAE211F88308E001960F7 /* ZSearchManager.swift in Sources */,
-				0C39B37E1F182EBB0091F4D1 /* OperationQueue.swift in Sources */,
 				0C39B2AF1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C39B3871F182EBB0091F4D1 /* ZoneTextWidget.swift in Sources */,
-				0C39B36C1F182EBB0091F4D1 /* DelayOperation.swift in Sources */,
-				0C39B34E1F182EBB0091F4D1 /* UserNotificationCondition.swift in Sources */,
-				0C39B37B1F182EBB0091F4D1 /* ExclusivityController.swift in Sources */,
-				0C39B35D1F182EBB0091F4D1 /* UIUserNotifications+Operations.swift in Sources */,
-				0C39B35A1F182EBB0091F4D1 /* NSOperation+Operations.swift in Sources */,
-				0C39B3751F182EBB0091F4D1 /* Operation.swift in Sources */,
-				0C39B3421F182EBB0091F4D1 /* PhotosCondition.swift in Sources */,
 				0C39B3181F182EBB0091F4D1 /* ZManifest.swift in Sources */,
-				0C39B3661F182EBB0091F4D1 /* TimeoutObserver.swift in Sources */,
-				0C39B36F1F182EBB0091F4D1 /* GroupOperation.swift in Sources */,
-				0C39B3571F182EBB0091F4D1 /* NSLock+Operations.swift in Sources */,
 				0C39B3061F182EBB0091F4D1 /* ZTravelManager.swift in Sources */,
 				0C39B31B1F182EBB0091F4D1 /* Zone.swift in Sources */,
 				0C2E22C21F75B8AB00B50A71 /* ZSearchResultsController.swift in Sources */,
-				0C39B3241F182EBB0091F4D1 /* CalendarCondition.swift in Sources */,
 				0C39B2FD1F182EBB0091F4D1 /* ZOperationsManager.swift in Sources */,
-				0C39B3451F182EBB0091F4D1 /* ReachabilityCondition.swift in Sources */,
-				0C39B3271F182EBB0091F4D1 /* CloudCondition.swift in Sources */,
 				0C39B3901F182EBB0091F4D1 /* ZStackableView.swift in Sources */,
 				0C39B2F11F182EBB0091F4D1 /* ZCloudManager.swift in Sources */,
 				0C39B2B21F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
 				0C2E22D51F75BF2D00B50A71 /* ZGenericTableController.swift in Sources */,
 				0C39B2EB1F182EBB0091F4D1 /* ZSelectionManager.swift in Sources */,
-				0C39B33F1F182EBB0091F4D1 /* PassbookCondition.swift in Sources */,
 				0C39B2A91F182EBB0091F4D1 /* ZShortcutsController.swift in Sources */,
-				0C39B3781F182EBB0091F4D1 /* URLSessionTaskOperation.swift in Sources */,
-				0C39B3331F182EBB0091F4D1 /* NegatedCondition.swift in Sources */,
-				0C39B3391F182EBB0091F4D1 /* OperationCondition.swift in Sources */,
-				0C39B32D1F182EBB0091F4D1 /* LocationCondition.swift in Sources */,
 				0C2E22C01F75B8AB00B50A71 /* ZMainController.swift in Sources */,
 				0C39B2E81F182EBB0091F4D1 /* ZEditingManager.swift in Sources */,
 				0C39B2F71F182EBB0091F4D1 /* ZFileManager.swift in Sources */,
@@ -1352,18 +1209,12 @@
 				0C39B2B81F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C2E22C11F75B8AB00B50A71 /* ZSearchController.swift in Sources */,
 				0C39B2E21F182EBB0091F4D1 /* ZonesExtensions.swift in Sources */,
-				0C39B33C1F182EBB0091F4D1 /* OperationErrors.swift in Sources */,
 				0C39B2D31F182EBB0091F4D1 /* ZAppDelegate.swift in Sources */,
 				0C39B3151F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				0C39B2EE1F182EBB0091F4D1 /* ZWidgetsManager.swift in Sources */,
-				0C39B3601F182EBB0091F4D1 /* BlockObserver.swift in Sources */,
 				0C39B2AC1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
-				0C39B3511F182EBB0091F4D1 /* CKContainer+Operations.swift in Sources */,
 				0C2E22BF1F75B8AB00B50A71 /* ZGraphController.swift in Sources */,
-				0C39B32A1F182EBB0091F4D1 /* HealthCondition.swift in Sources */,
-				0C39B3481F182EBB0091F4D1 /* RemoteNotificationCondition.swift in Sources */,
 				0C39B2A31F182EBB0091F4D1 /* ZPreferencesController.swift in Sources */,
-				0C39B3721F182EBB0091F4D1 /* LocationOperation.swift in Sources */,
 				0C39B2B51F182EBB0091F4D1 /* ZGCD.swift in Sources */,
 				0C39B31E1F182EBB0091F4D1 /* ZRecord.swift in Sources */,
 			);
@@ -1388,56 +1239,33 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C39B3351F182EBB0091F4D1 /* NoCancelledDependencies.swift in Sources */,
 				0C39B2F31F182EBB0091F4D1 /* ZFavoritesManager.swift in Sources */,
 				0C39B2FF1F182EBB0091F4D1 /* ZRecordsManager.swift in Sources */,
 				0C39B3201F182EBB0091F4D1 /* ZTrait.swift in Sources */,
 				0C39B2E41F182EBB0091F4D1 /* ZControllersManager.swift in Sources */,
-				0C39B34A1F182EBB0091F4D1 /* SilentCondition.swift in Sources */,
-				0C39B3681F182EBB0091F4D1 /* BlockOperation.swift in Sources */,
-				0C39B32F1F182EBB0091F4D1 /* MutuallyExclusive.swift in Sources */,
 				0C39B2C01F182EBB0091F4D1 /* ZAppDelegate.swift in Sources */,
 				0C39B38C1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
-				0C39B3621F182EBB0091F4D1 /* OperationObserver.swift in Sources */,
 				0C39B3831F182EBB0091F4D1 /* ZoneDot.swift in Sources */,
 				0C39B28D1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
-				0C39B3531F182EBB0091F4D1 /* Dictionary+Operations.swift in Sources */,
 				0C2E22CB1F75BB7E00B50A71 /* ZSearchController.swift in Sources */,
 				0C39B2BA1F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,
-				0C39B37D1F182EBB0091F4D1 /* OperationQueue.swift in Sources */,
 				0C39B2AE1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C2E22C91F75BB7E00B50A71 /* ZGraphController.swift in Sources */,
 				0C39B3861F182EBB0091F4D1 /* ZoneTextWidget.swift in Sources */,
-				0C39B36B1F182EBB0091F4D1 /* DelayOperation.swift in Sources */,
-				0C39B37A1F182EBB0091F4D1 /* ExclusivityController.swift in Sources */,
 				0C2E22D31F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,
 				0C39B2CF1F182EBB0091F4D1 /* ZPhoneExtensions.swift in Sources */,
 				0C2E22CA1F75BB7E00B50A71 /* ZMainController.swift in Sources */,
-				0C39B3591F182EBB0091F4D1 /* NSOperation+Operations.swift in Sources */,
-				0C39B3741F182EBB0091F4D1 /* Operation.swift in Sources */,
-				0C39B3411F182EBB0091F4D1 /* PhotosCondition.swift in Sources */,
 				0C39B3171F182EBB0091F4D1 /* ZManifest.swift in Sources */,
-				0C39B3651F182EBB0091F4D1 /* TimeoutObserver.swift in Sources */,
-				0C39B36E1F182EBB0091F4D1 /* GroupOperation.swift in Sources */,
-				0C39B3561F182EBB0091F4D1 /* NSLock+Operations.swift in Sources */,
 				0C39B3051F182EBB0091F4D1 /* ZTravelManager.swift in Sources */,
 				0C39B31A1F182EBB0091F4D1 /* Zone.swift in Sources */,
-				0C39B3231F182EBB0091F4D1 /* CalendarCondition.swift in Sources */,
 				0C39B2C91F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0C39B2FC1F182EBB0091F4D1 /* ZOperationsManager.swift in Sources */,
-				0C39B3441F182EBB0091F4D1 /* ReachabilityCondition.swift in Sources */,
-				0C39B3261F182EBB0091F4D1 /* CloudCondition.swift in Sources */,
 				0C39B38F1F182EBB0091F4D1 /* ZStackableView.swift in Sources */,
 				0C2E22CC1F75BB7E00B50A71 /* ZSearchResultsController.swift in Sources */,
 				0C39B2F01F182EBB0091F4D1 /* ZCloudManager.swift in Sources */,
 				0C39B2B11F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
 				0C39B2EA1F182EBB0091F4D1 /* ZSelectionManager.swift in Sources */,
-				0C39B33E1F182EBB0091F4D1 /* PassbookCondition.swift in Sources */,
-				0C39B3771F182EBB0091F4D1 /* URLSessionTaskOperation.swift in Sources */,
 				0C367C381F463D93000FC914 /* ZoneDragView.swift in Sources */,
-				0C39B3321F182EBB0091F4D1 /* NegatedCondition.swift in Sources */,
-				0C39B3381F182EBB0091F4D1 /* OperationCondition.swift in Sources */,
-				0C39B32C1F182EBB0091F4D1 /* LocationCondition.swift in Sources */,
 				0C39B2E71F182EBB0091F4D1 /* ZEditingManager.swift in Sources */,
 				0C39B2F61F182EBB0091F4D1 /* ZFileManager.swift in Sources */,
 				0C2E22C81F75BB7E00B50A71 /* ZEditorController.swift in Sources */,
@@ -1445,17 +1273,11 @@
 				0C39B2BD1F182EBB0091F4D1 /* ZState.swift in Sources */,
 				0C39B3021F182EBB0091F4D1 /* ZRemoteStoresManager.swift in Sources */,
 				0C39B2B71F182EBB0091F4D1 /* ZReachability.swift in Sources */,
-				0C39B33B1F182EBB0091F4D1 /* OperationErrors.swift in Sources */,
 				0C39B3141F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				0C39B2ED1F182EBB0091F4D1 /* ZWidgetsManager.swift in Sources */,
 				0C2E22D11F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
-				0C39B35F1F182EBB0091F4D1 /* BlockObserver.swift in Sources */,
 				0C39B2AB1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
-				0C39B3501F182EBB0091F4D1 /* CKContainer+Operations.swift in Sources */,
-				0C39B3291F182EBB0091F4D1 /* HealthCondition.swift in Sources */,
-				0C39B3471F182EBB0091F4D1 /* RemoteNotificationCondition.swift in Sources */,
 				0C6CAE201F88308E001960F7 /* ZSearchManager.swift in Sources */,
-				0C39B3711F182EBB0091F4D1 /* LocationOperation.swift in Sources */,
 				0C39B2B41F182EBB0091F4D1 /* ZGCD.swift in Sources */,
 				0C39B31D1F182EBB0091F4D1 /* ZRecord.swift in Sources */,
 			);

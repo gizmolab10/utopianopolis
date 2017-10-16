@@ -166,8 +166,9 @@ class ZEditingManager: NSObject {
 
     @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
         if !isEditing, iEvent != previousEvent, gWorkMode == .editMode {
-            let flags = iEvent.modifierFlags
-            let   key = iEvent.key
+            let     flags = iEvent.modifierFlags
+            let       key = iEvent.key
+            previousEvent = iEvent
 
             handleKey(key, flags: flags, isWindow: isWindow)
 
@@ -468,8 +469,6 @@ class ZEditingManager: NSObject {
                 apply()
             } else {
                 zone.extendNeedForChildren(to: goal)
-                apply()
-
                 gOperationsManager.children(.expand, goal) {
                     apply()
                 }

@@ -13,8 +13,12 @@ import Foundation
 extension NSObject {
 
 
-    func FOREGROUND(_ closure: @escaping Closure) {
-        DispatchQueue.main.async { closure() }
+    func FOREGROUND(canBeDirect: Bool = false, _ closure: @escaping Closure) {
+        if canBeDirect && Thread.isMainThread {
+            closure()
+        } else {
+            DispatchQueue.main.async { closure() }
+        }
     }
 
 

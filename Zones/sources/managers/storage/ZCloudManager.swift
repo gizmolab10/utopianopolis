@@ -228,9 +228,7 @@ class ZCloudManager: ZRecordsManager {
                         }
                     }
 
-                    if  fetchedRecord != nil {
-                        done(fetchedRecord)
-                    }
+                    done(fetchedRecord)
                 }
             }
         }
@@ -485,13 +483,12 @@ class ZCloudManager: ZRecordsManager {
     func fetch(_ onCompletion: IntClosure?) {
         let states = [ZRecordState.needsFetch]
         let needed = recordIDsWithMatchingStates(states)
-        let  count = needed.count
-
-        onCompletion?(count)
 
         fetch(needed: needed) { iCKRecords in
-            if iCKRecords.count != 0 {
-                self.FOREGROUND {
+            self.FOREGROUND {
+                if iCKRecords.count == 0 {
+                    onCompletion?(0)
+                } else {
                     for ckRecord in iCKRecords {
                         var record  = self.recordForCKRecord(ckRecord)
 
@@ -540,14 +537,13 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchManifest(_ onCompletion: IntClosure?) {
-        let      manifest = gRemoteStoresManager.manifest(for: storageMode)
-        let notYetCreated = manifest.notYetCreated
+        let manifest = gRemoteStoresManager.manifest(for: storageMode)
 
-        onCompletion?(notYetCreated ? -1 : 0)
-
-        if  notYetCreated {
-            let     mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
+        if  manifest.alreadyExists {
+            onCompletion?(0)
+        } else {
             let recordID = manifest.record.recordID
+            let     mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
 
             mine.assureRecordExists(withRecordID: recordID, recordType: manifestTypeKey) { (iManifestRecord: CKRecord?) in
                 if iManifestRecord != nil {
@@ -684,7 +680,7 @@ class ZCloudManager: ZRecordsManager {
                                         var  states = [ZRecordState.needsColor]
                                         let manager = gRemoteStoresManager.recordsManagerFor(mode)
 
-                                        if  link.notYetCreated {
+                                        if   !link.alreadyExists {
                                             states.append(.needsFetch)
                                         }
 
