@@ -859,7 +859,10 @@ class ZEditingManager: NSObject {
                     if zone == gHere || parent == nil {
                         revealParentAndSiblingsOf(zone) {
                             if  let ancestor = gHere.parentZone {
-                                ancestor.grab()
+                                if isOSX {
+                                    ancestor.grab()
+                                }
+
                                 self.revealSiblingsOf(gHere, untilReaching: ancestor)
                             }
                         }
@@ -868,7 +871,10 @@ class ZEditingManager: NSObject {
                         p.needChildren()
 
                         gOperationsManager.children(.restore) {
-                            p.grab()
+                            if isOSX {
+                                p.grab()
+                            }
+                            
                             self.signalFor(p, regarding: .redraw)
                         }
                     }

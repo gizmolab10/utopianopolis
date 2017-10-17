@@ -20,6 +20,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     @IBOutlet var         editorBottomConstraint: NSLayoutConstraint?
     @IBOutlet var            editorTopConstraint: NSLayoutConstraint?
     @IBOutlet var            titleLeftConstraint: NSLayoutConstraint?
+    @IBOutlet var            hereWidthConstraint: NSLayoutConstraint?
     @IBOutlet var                 hereTextWidget: ZoneTextWidget?
     @IBOutlet var                favoritesButton: UIButton?
     @IBOutlet var                  actionsButton: UIButton?
@@ -67,6 +68,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
         let                      emphasizedColor = ZColor.blue.lighter(by: 5.0)
         let                            textColor = ZColor.blue
         let                                 font = gWidgetFont
+        let                            hereTitle = gHere.zoneName ?? ""
         let                         actionsTitle = gActionsAreVisible   ? " -> " : " Actions"
         let                       favoritesTitle = gFavoritesAreVisible ? " -> " : " Favorites"
         let                       favoritesWidth = favoritesTitle.widthForFont(font) + 10.0
@@ -75,7 +77,8 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
         editorBottomConstraint?        .constant = gKeyboardIsVisible   ? keyboardHeight : gActionsAreVisible ? selectorHeight : 0.0
         editorTopConstraint?           .constant = gFavoritesAreVisible ? selectorHeight : 0.0
         titleLeftConstraint?           .constant = gFavoritesAreVisible ? favoritesWidth : 0.0
-        hereTextWidget?                    .text = gHere.zoneName
+        hereWidthConstraint?           .constant = hereTitle.widthForFont(font)
+        hereTextWidget?                    .text = hereTitle
         favoritesButton?               .isHidden = false
         actionsButton?                 .isHidden = false
         favoritesView?                 .isHidden = false
