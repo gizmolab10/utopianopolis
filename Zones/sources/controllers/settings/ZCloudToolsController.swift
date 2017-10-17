@@ -60,7 +60,7 @@ class ZCloudToolsController: ZGenericTableController {
 
             if  let kind = ZToolKind(rawValue: row) {
                 switch kind {
-                case .eRetry:   self.retryCloud()
+                case .eRetry:   gOperationsManager.unHang()
                 case .eTrash:   self.showTrashCan()
                 case .eGather:  self.gatherAndShowTrash()
                 case .eRecount: self.recount()
@@ -74,11 +74,6 @@ class ZCloudToolsController: ZGenericTableController {
 
     // MARK:- actions
     // MARK:-
-
-
-    func retryCloud() {
-        gOperationsManager.onCloudResponse?(0)
-    }
 
 
     func showTrashCan() {

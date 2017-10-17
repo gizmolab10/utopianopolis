@@ -19,11 +19,11 @@ import Foundation
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
-    var     widgetZone:  Zone   { return widget.widgetZone }
-    override var preferredFont:  ZFont  { return widgetZone.isInFavorites ? gFavoritesFont : gWidgetFont }
-    var         widget:  ZoneWidget!
-    var   originalText = ""
-    var _isTextEditing = false
+    var             widgetZone : Zone   { return widget.widgetZone }
+    override var preferredFont : ZFont  { return widgetZone.isInFavorites ? gFavoritesFont : gWidgetFont }
+    weak var            widget : ZoneWidget!
+    var           originalText = ""
+    var         _isTextEditing = false
 
 
     override var isTextEditing: Bool {
@@ -91,6 +91,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         textAlignment          = .left
         backgroundColor        = gClearColor
         zlayer.backgroundColor = gClearColor.cgColor
+        font                   = preferredFont
 
         #if os(iOS)
             autocapitalizationType = .none
@@ -98,8 +99,31 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-    deinit {
-        widget = nil
+    func layoutText() {
+        updateText()
+        layoutTextField()
+    }
+
+    func updateGUI() {
+        layoutTextField()
+        widget.setNeedsDisplay()
+    }
+
+
+    func layoutTextField() {
+        snp.removeConstraints()
+        snp.makeConstraints { make in
+            let textWidth = text!.widthForFont(preferredFont)
+            let    height = gGenericOffset.height
+            let     width = !widgetZone.isVisible ? 0.0 : textWidth + 5.0
+            let      view = superview!
+
+            make.centerY.equalTo(view).offset(-verticalTextOffset)
+            make   .left.equalTo(view).offset(gGenericOffset.width + 4.0)
+            make  .right.lessThanOrEqualTo(view).offset(-29.0)
+            make .height.lessThanOrEqualTo(view).offset(-height)
+            make  .width.equalTo(width)
+        }
     }
 
 
@@ -183,11 +207,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         }
     }
 
-
-    func updateGUI() {
-        widget.layoutTextField()
-        widget.setNeedsDisplay()
-    }
 
 
     func assign(_ iText: String?, to iZone: Zone?) {

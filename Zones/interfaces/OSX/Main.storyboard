@@ -414,6 +414,9 @@ CQ
                             <constraint firstAttribute="trailing" secondItem="itU-Gt-Inh" secondAttribute="trailing" id="pGy-4H-4Ky"/>
                         </constraints>
                     </view>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="isMain" value="YES"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="editorView" destination="itU-Gt-Inh" id="E7f-iE-OVJ"/>
                         <outlet property="spinner" destination="uBD-4n-5KN" id="l76-tc-ycD"/>
@@ -620,11 +623,14 @@ CQ
         <!--Favorites-->
         <scene sceneID="OT3-fm-FUP">
             <objects>
-                <viewController id="i29-og-Irn" userLabel="Favorites" customClass="ZGraphController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="i29-og-Irn" userLabel="Favorites" customClass="ZEditorController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="eLr-xw-Fbe" userLabel="Favorites View" customClass="ZoneDragView" customModule="Focus" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </view>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="isMain" value="NO"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="editorView" destination="eLr-xw-Fbe" id="P1b-fl-UwK"/>
                     </connections>

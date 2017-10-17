@@ -209,7 +209,7 @@ extension NSView {
     var recognizers: [NSGestureRecognizer]? { return gestureRecognizers }
 
 
-    var gestureHandler: ZGraphController? {
+    var gestureHandler: ZEditorController? {
         get { return nil }
         set {
             clearGestures()

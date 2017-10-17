@@ -21,7 +21,6 @@ enum ZControllerID: Int {
     case settings
     case actions
     case editor
-    case graph
     case help
     case main
 }
@@ -90,7 +89,11 @@ class ZControllersManager: NSObject {
             gFavoritesManager.setup() // bug: manifest not yet fetched
             gOperationsManager.continueUp {
                 self.displayActivity(false) // now on foreground thread
-                gHere.grab()
+
+                if isOSX {
+                    gHere.grab()
+                }
+
                 gFavoritesManager.updateChildren()
                 self.signalFor(nil, regarding: .redraw)
                 gOperationsManager.finishUp {
@@ -131,7 +134,7 @@ class ZControllersManager: NSObject {
 
 
     func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
-        FOREGROUND {
+        FOREGROUND(canBeDirect: true) {
             let mode = gStorageMode
             
             self.updateCounts() // clean up after fetch children

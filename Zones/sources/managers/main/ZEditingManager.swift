@@ -306,11 +306,11 @@ class ZEditingManager: NSObject {
 
 
     func selectCurrentFavorite() {
-        if let current = gFavoritesManager.currentFavorite {
-            if current.isGrabbed {
-                gHere.grab()
-            } else {
+        if  let current = gFavoritesManager.currentFavorite {
+            if !current.isGrabbed {
                 current.grab()
+            } else if isOSX {
+                gHere.grab()
             }
 
             signalFor(nil, regarding: .data)
@@ -415,7 +415,9 @@ class ZEditingManager: NSObject {
             if iZone == ancestor {
                 gHere = ancestor
 
-                gHere.grab()
+                if isOSX {
+                    gHere.grab()
+                }
             }
 
             self.redrawAndSync()
@@ -495,7 +497,7 @@ class ZEditingManager: NSObject {
 
 
     func toggleDotActionOnZone(_ iZone: Zone?) {
-        if  let zone = iZone {
+        if  let zone = iZone, zone.isVisible {
             let    s = gSelectionManager
 
             for     grabbed in s.currentGrabs {

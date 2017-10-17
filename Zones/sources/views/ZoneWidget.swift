@@ -36,7 +36,7 @@ class ZoneWidget: ZView {
     private var childrenWidgets = [ZoneWidget]   ()
     var            parentWidget:  ZoneWidget? { return widgetZone.parentZone?.widget }
     var             hasChildren:  Bool        { return widgetZone.fetchableCount > 0 }
-    var              widgetZone:  Zone!
+    weak var         widgetZone:  Zone!
 
 
     deinit {
@@ -77,7 +77,7 @@ class ZoneWidget: ZView {
 
         gWidgetsManager.registerWidget(self)
         addTextView()
-        layoutText()
+        textWidget.layoutText()
         layoutDots()
         addChildrenView()
 
@@ -104,7 +104,7 @@ class ZoneWidget: ZView {
 
                 childWidget.layoutInView(childrenView, atIndex: index, recursing: true, kind: kind, visited: visited)
                 childWidget.snp.removeConstraints()
-                childWidget.snp.makeConstraints { (make: ConstraintMaker) in
+                childWidget.snp.makeConstraints { make in
                     if previous == nil {
                         make.bottom.equalTo(childrenView)
                     } else {
@@ -125,31 +125,6 @@ class ZoneWidget: ZView {
     }
 
 
-    func layoutText() {
-        textWidget.widget = self
-        textWidget.font   = textWidget.preferredFont
-
-        textWidget.updateText()
-        layoutTextField()
-    }
-
-
-    func layoutTextField() {
-        textWidget.snp.removeConstraints()
-        textWidget.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let  font = textWidget.preferredFont
-            let width = widgetZone.isRootOfFavorites ? 0.0 : textWidget.text!.widthForFont(font) + 5.0
-            let  view = textWidget.superview!
-
-            make  .width.equalTo(width)
-            make.centerY.equalTo(view).offset(-verticalTextOffset)
-            make   .left.equalTo(view).offset(gGenericOffset.width + 4.0)
-            make  .right.lessThanOrEqualTo(view).offset(-29.0)
-            make .height.lessThanOrEqualTo(view).offset(-gGenericOffset.height)
-        }
-    }
-
-
     func layoutDots() {
         if !subviews.contains(dragDot) {
             insertSubview(dragDot, belowSubview: textWidget)
@@ -157,7 +132,7 @@ class ZoneWidget: ZView {
 
         dragDot.innerDot?.snp.removeConstraints()
         dragDot.setupForWidget(self, asToggle: false)
-        dragDot.innerDot?.snp.makeConstraints { (make: ConstraintMaker) in
+        dragDot.innerDot?.snp.makeConstraints { make in
             make.right.equalTo(textWidget.snp.left).offset(-4.0)
             make.centerY.equalTo(textWidget).offset(verticalTextOffset)
         }
@@ -168,7 +143,7 @@ class ZoneWidget: ZView {
 
         toggleDot.innerDot?.snp.removeConstraints()
         toggleDot.setupForWidget(self, asToggle: true)
-        toggleDot.innerDot?.snp.makeConstraints { (make: ConstraintMaker) in
+        toggleDot.innerDot?.snp.makeConstraints { make in
             make.left.equalTo(textWidget.snp.right).offset(-1.0)
             make.right.lessThanOrEqualToSuperview().offset(-1.0)
             make.centerY.equalTo(textWidget).offset(verticalTextOffset)
@@ -182,12 +157,10 @@ class ZoneWidget: ZView {
 
     func addTextView() {
         if !subviews.contains(textWidget) {
-            textWidget.setup()
+            textWidget.widget = self
+
             addSubview(textWidget)
-            snp.makeConstraints { (make: ConstraintMaker) -> Void in
-                make.centerY.equalTo(textWidget).offset(verticalTextOffset)
-                make.size.greaterThanOrEqualTo(textWidget)
-            }
+            textWidget.setup()
         }
     }
 

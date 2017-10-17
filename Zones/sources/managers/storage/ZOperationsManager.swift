@@ -15,7 +15,7 @@ enum ZOperationID: Int {
     case cloud
     case roots
     case file
-    case manifest
+    case manifest   // zones which show children
     case here
     case children
     case fetch      // after children so favorite targets resolve properly
@@ -53,6 +53,11 @@ class ZOperationsManager: NSObject {
 
     // MARK:- API
     // MARK:-
+
+
+    func unHang() {
+        onCloudResponse?(0)
+    }
 
 
     func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .authenticate, to: .manifest,                    onCompletion) }

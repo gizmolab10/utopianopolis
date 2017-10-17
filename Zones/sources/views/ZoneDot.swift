@@ -23,14 +23,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     // MARK:-
     
 
-    var   widgetZone: Zone?
-    var       widget: ZoneWidget?
-    var     innerDot: ZoneDot?
-    var     isToggle: Bool     = true
-    var    dragStart: CGPoint? = nil
-    var   isInnerDot: Bool     = false
-    var  isInvisible: Bool { return widget?.widgetZone.isRootOfFavorites ?? false }
-    var isDragTarget: Bool { return widgetZone == gDragDropZone }
+    weak var widgetZone: Zone?
+    weak var     widget: ZoneWidget?
+    var        innerDot: ZoneDot?
+    var        isToggle: Bool     = true
+    var       dragStart: CGPoint? = nil
+    var      isInnerDot: Bool     = false
+    var    isDragTarget: Bool { return widgetZone == gDragDropZone }
+    var       isVisible: Bool { return widget?.widgetZone.isVisible ?? true }
 
 
     var innerOrigin: CGPoint? {
@@ -83,7 +83,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     // MARK:-
 
     var         ratio:  CGFloat { return widgetZone?.isInFavorites ?? false ? gReductionRatio : 1.0 }
-    var innerDotWidth:  CGFloat { return CGFloat(isToggle ? gDotHeight : isInvisible ? 0.0 : gDotWidth) * ratio }
+    var innerDotWidth:  CGFloat { return CGFloat(isToggle ? gDotHeight : !isVisible ? 0.0 : gDotWidth) * ratio }
     var innerDotHeight: CGFloat { return CGFloat(gDotHeight * Double(ratio)) }
 
 
@@ -94,7 +94,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
         if isInnerDot {
             snp.removeConstraints()
-            snp.makeConstraints { (make: ConstraintMaker) in
+            snp.makeConstraints { make in
                 let  size = CGSize(width: innerDotWidth, height: innerDotHeight)
 
                 make.size.equalTo(size)
@@ -111,8 +111,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             innerDot!.setupForWidget(iWidget, asToggle: isToggle)
             snp.removeConstraints()
-            snp.makeConstraints { (make: ConstraintMaker) in
-                var   width = isInvisible && !isToggle ? CGFloat(0.0) : gFingerBreadth
+            snp.makeConstraints { make in
+                var   width = !isVisible && !isToggle ? CGFloat(0.0) : gFingerBreadth
                 let  height = innerDotHeight + 5.0 + gGenericOffset.height * 3.0
 
                 if iWidget.widgetZone.isInFavorites {

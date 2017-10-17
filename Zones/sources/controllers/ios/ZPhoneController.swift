@@ -11,9 +11,6 @@ import SnapKit
 import UIKit
 
 
-let selectorHeight: CGFloat = 48.0
-
-
 class ZPhoneController: ZGenericController, UITabBarDelegate {
 
 
@@ -22,6 +19,8 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     @IBOutlet var   actionsButtonWidthConstraint: NSLayoutConstraint?
     @IBOutlet var         editorBottomConstraint: NSLayoutConstraint?
     @IBOutlet var            editorTopConstraint: NSLayoutConstraint?
+    @IBOutlet var            titleLeftConstraint: NSLayoutConstraint?
+    @IBOutlet var                 hereTextWidget: ZoneTextWidget?
     @IBOutlet var                favoritesButton: UIButton?
     @IBOutlet var                  actionsButton: UIButton?
     @IBOutlet var                  favoritesView: UIView?
@@ -43,6 +42,12 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     }
 
 
+    @IBAction func goLeftButtonAction(iButton: UIButton) {
+        gEditingManager.moveOut(selectionOnly: true, extreme: false)
+        update()
+    }
+
+
     @IBAction func favoritesVisibilityButtonAction(iButton: UIButton) {
         gFavoritesAreVisible = !gFavoritesAreVisible
 
@@ -58,15 +63,19 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
 
 
     func update() {
+        let                       selectorHeight = CGFloat(48.0)
         let                      emphasizedColor = ZColor.blue.lighter(by: 5.0)
         let                            textColor = ZColor.blue
         let                                 font = gWidgetFont
-        let                         actionsTitle = gActionsAreVisible   ? " <- " : " Actions ... "
-        let                       favoritesTitle = gFavoritesAreVisible ? " <- " : " Favorites ... "
-        editorTopConstraint?           .constant = gFavoritesAreVisible ? selectorHeight : 0.0
-        editorBottomConstraint?        .constant = gKeyboardIsVisible   ? keyboardHeight : gActionsAreVisible ? selectorHeight : 0.0
+        let                         actionsTitle = gActionsAreVisible   ? " -> " : " Actions"
+        let                       favoritesTitle = gFavoritesAreVisible ? " -> " : " Favorites"
+        let                       favoritesWidth = favoritesTitle.widthForFont(font) + 10.0
         actionsButtonWidthConstraint?  .constant = actionsTitle  .widthForFont(font) + 10.0
-        favoritesButtonWidthConstraint?.constant = favoritesTitle.widthForFont(font) + 10.0
+        favoritesButtonWidthConstraint?.constant = favoritesWidth
+        editorBottomConstraint?        .constant = gKeyboardIsVisible   ? keyboardHeight : gActionsAreVisible ? selectorHeight : 0.0
+        editorTopConstraint?           .constant = gFavoritesAreVisible ? selectorHeight : 0.0
+        titleLeftConstraint?           .constant = gFavoritesAreVisible ? favoritesWidth : 0.0
+        hereTextWidget?                    .text = gHere.zoneName
         favoritesButton?               .isHidden = false
         actionsButton?                 .isHidden = false
         favoritesView?                 .isHidden = false
@@ -93,6 +102,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
 
     override func viewDidLoad() {
         super    .viewDidLoad()
+        hereTextWidget?.setup()
 
         handleKeyboard = true
     }

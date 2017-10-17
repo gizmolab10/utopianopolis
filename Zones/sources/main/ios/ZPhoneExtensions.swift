@@ -160,7 +160,7 @@ extension UIKeyModifierFlags {
 }
 
 
-extension ZGraphController {
+extension ZEditorController {
 
     func    moveUpEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager  .moveUp() }
     func  moveDownEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager  .moveUp(false) }
@@ -187,7 +187,7 @@ extension UIView {
     var recognizers: [ZGestureRecognizer]? { return gestureRecognizers }
 
 
-    var gestureHandler: ZGraphController? {
+    var gestureHandler: ZEditorController? {
         get { return nil }
         set {
             clearGestures()
@@ -334,7 +334,7 @@ extension UITextField {
 
 extension ZoneTextWidget {
     @objc(textField:shouldChangeCharactersInRange:replacementString:) func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        widget.layoutTextField()
+        widget.textWidget.layoutTextField()
         gEditorView?.applyToAllSubviews { iView in
             iView.setNeedsDisplay()
         }

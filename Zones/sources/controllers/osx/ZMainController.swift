@@ -29,7 +29,7 @@ class ZMainController: ZGenericController {
 
     override func awakeFromNib() {
         searchBoxView?.removeConstraint(searchBoxHeight!)
-        searchBoxView?.snp.makeConstraints { (make: ConstraintMaker) in
+        searchBoxView?.snp.makeConstraints { make in
             make.height.equalTo(0.0)
         }
 
@@ -45,7 +45,7 @@ class ZMainController: ZGenericController {
             showAsSearching(gWorkMode == .searchMode)
         case .search:
             searchBoxView?.snp.removeConstraints()
-            searchBoxView?.snp.makeConstraints { (make: ConstraintMaker) in
+            searchBoxView?.snp.makeConstraints { make in
                 make.height.equalTo(gWorkMode == .searchMode ? 44.0 : 0.0)
             }
 
@@ -71,7 +71,7 @@ class ZMainController: ZGenericController {
             view.removeFromSuperview()
         } else if !(overlaysView?.subviews.contains(view))! {
             overlaysView?.addSubview(view)
-            view.snp.makeConstraints { (make: ConstraintMaker) in
+            view.snp.makeConstraints { make in
                 make.top.bottom.left.right.equalTo(overlaysView!)
             }
         }

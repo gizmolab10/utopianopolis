@@ -41,6 +41,7 @@ class Zone : ZRecord {
     var               isBookmark:         Bool { return crossLink != nil }
     var               isSelected:         Bool { return gSelectionManager.isSelected(self) }
     var                isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
+    var                isVisible:         Bool { return !isRootOfFavorites && (isOSX || self != gHere) }
     var                isDeleted:         Bool { return gTrash != self && gTrash?.spawned(self) ?? false }
     var                 hasColor:         Bool { return zoneColor != nil }
 
