@@ -353,13 +353,20 @@ extension ZoneTextWidget {
 
 
     override func controlTextDidChange(_ iNote: Notification) {
-        prepareUndoForTextChange(undoManager) {
-            self.controlTextDidChange(iNote)
+        if  text?.contains("----------- - ") ?? false {
+            widgetZone.zoneName = gLineOfDashes
+            isTextEditing       = false
+
+            updateText()
+        } else {
+            prepareUndoForTextChange(undoManager) {
+                self.controlTextDidChange(iNote)
+            }
+
+            isTextEditing = true
+
+            updateGUI()
         }
-
-        isTextEditing = true
-
-        updateGUI()
     }
 
 

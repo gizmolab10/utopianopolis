@@ -37,10 +37,10 @@ class ZCloudToolsController: ZGenericTableController {
 
     func text(for kind: ZToolKind) -> String {
         switch kind {
-        case .eTrash:   return "Show Trash"
-        case .eRetry:   return "Retry Cloud"
-        case .eGather:  return "Gather Trash"
-        case .eRecount: return "Recount"
+        case .eTrash:    return "Show Trash"
+        case .eRetry:    return "Retry Cloud"
+        case .eGather:   return "Gather Trash"
+        case .eRecount:  return "Recount"
         }
     }
 
@@ -60,10 +60,10 @@ class ZCloudToolsController: ZGenericTableController {
 
             if  let kind = ZToolKind(rawValue: row) {
                 switch kind {
-                case .eRetry:   gOperationsManager.unHang()
-                case .eTrash:   self.showTrashCan()
-                case .eGather:  self.gatherAndShowTrash()
-                case .eRecount: self.recount()
+                case .eRetry:    gOperationsManager.unHang()
+                case .eTrash:    self.showTrashCan()
+                case .eGather:   self.gatherAndShowTrash()
+                case .eRecount:  self.recount()
                 }
             }
         }

@@ -61,7 +61,6 @@ class ZEditingManager: NSObject {
             let isCommand = flags.isCommand
             let  isOption = flags.isOption
             var   isShift = flags.isShift
-            let     force = isOption || isWindow
 
             if  key      != key.lowercased() {
                 key       = key.lowercased()
@@ -83,6 +82,7 @@ class ZEditingManager: NSObject {
                 case "c":         recenter()
                 case "a":         selectAll()
                 case "p":         printHere()
+                case "w":         makeWritable()
                 case "o":         orderByLength()
                 case "b":         createBookmark()
                 case "u", "l":    alterCase(up: key == "u")
@@ -92,13 +92,12 @@ class ZEditingManager: NSObject {
                 case ",", ".":    gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
                 case "/":         focus(on: gSelectionManager.firstGrab, isCommand)
                 // case "?":         gSettingsController?.displayViewFor(id: .Help)
-                case "-":         createSiblingIdea  (with: "-------------------------") { iChild in iChild.grab() }
-                case "=":         createSiblingIdea  (with: "----------- | -----------") { iChild in iChild.editAndSelect(in: NSMakeRange(12, 1)) }
-                case gTabKey:     if hasWidget { createSiblingIdea(containing: isOption) { iChild in iChild.edit() } }
+                case "-":         createNext()
+                case gTabKey:     if hasWidget { createNext(containing: isOption) { iChild in iChild.edit() } }
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
-                case gSpaceKey:   if force { createIdea() }
+                case gSpaceKey:   if isOption || isWindow { createIdea() }
                 case gBackspaceKey,
-                     gDeleteKey:  if force { delete(permanently: isCommand && isControl && isOption && isWindow, preserveChildren: !isCommand && !isControl && isOption && isWindow) }
+                     gDeleteKey:  if isOption || isWindow { delete(permanently: isCommand && isControl && isOption && isWindow, preserveChildren: !isCommand && !isControl && isOption && isWindow) }
                 case "\r":
                     if hasWidget && gSelectionManager.hasGrab {
                         if isCommand {
@@ -112,6 +111,29 @@ class ZEditingManager: NSObject {
             }
         }
     }
+
+
+    func createNext() {
+        let   grab = gSelectionManager.currentMoveable
+
+        let assign = { (iText: String) in
+            grab.zoneName = iText
+
+            grab.widget?.textWidget.updateText()
+        }
+
+        if  grab.zoneName?.contains("----------- ") ?? false {
+            assign(gLineOfDashes)
+        } else if grab.zoneName?.contains(gLineOfDashes) ?? false {
+            assign(gLineWithStubTitle)
+            grab.editAndSelect(in: NSMakeRange(12, 1))
+        } else {
+            createNext(with: gLineOfDashes) { iChild in
+                iChild.grab()
+            }
+        }
+    }
+
 
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
@@ -194,6 +216,17 @@ class ZEditingManager: NSObject {
 
     // MARK:- miscellaneous features
     // MARK:-
+
+    func makeWritable() {
+        for zone in gSelectionManager.currentGrabs {
+            zone.isWritable = !zone.isWritable
+
+            zone.needFlush()
+        }
+
+        redrawAndSyncAndRedraw()
+    }
+
 
 
     func orderByLength() {
@@ -309,7 +342,7 @@ class ZEditingManager: NSObject {
         if  let current = gFavoritesManager.currentFavorite {
             if !current.isGrabbed {
                 current.grab()
-            } else if isOSX {
+            } else {
                 gHere.grab()
             }
 
@@ -415,9 +448,7 @@ class ZEditingManager: NSObject {
             if iZone == ancestor {
                 gHere = ancestor
 
-                if isOSX {
-                    gHere.grab()
-                }
+                gHere.grab()
             }
 
             self.redrawAndSync()
@@ -536,7 +567,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func createSiblingIdea(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
+    func createNext(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
         let       zone = gSelectionManager.rootMostMoveable
 
         if  var parent = zone.parentZone {
@@ -859,10 +890,7 @@ class ZEditingManager: NSObject {
                     if zone == gHere || parent == nil {
                         revealParentAndSiblingsOf(zone) {
                             if  let ancestor = gHere.parentZone {
-                                if isOSX {
-                                    ancestor.grab()
-                                }
-
+                                ancestor.grab()
                                 self.revealSiblingsOf(gHere, untilReaching: ancestor)
                             }
                         }
@@ -871,10 +899,7 @@ class ZEditingManager: NSObject {
                         p.needChildren()
 
                         gOperationsManager.children(.restore) {
-                            if isOSX {
-                                p.grab()
-                            }
-                            
+                            p.grab()
                             self.signalFor(p, regarding: .redraw)
                         }
                     }

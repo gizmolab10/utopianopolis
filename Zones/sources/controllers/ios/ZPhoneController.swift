@@ -19,13 +19,14 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     @IBOutlet var   actionsButtonWidthConstraint: NSLayoutConstraint?
     @IBOutlet var         editorBottomConstraint: NSLayoutConstraint?
     @IBOutlet var            editorTopConstraint: NSLayoutConstraint?
-    @IBOutlet var            titleLeftConstraint: NSLayoutConstraint?
     @IBOutlet var            hereWidthConstraint: NSLayoutConstraint?
     @IBOutlet var                 hereTextWidget: ZoneTextWidget?
     @IBOutlet var                favoritesButton: UIButton?
+    @IBOutlet var                 focusOutButton: UIButton?
     @IBOutlet var                  actionsButton: UIButton?
     @IBOutlet var                  favoritesView: UIView?
     @IBOutlet var                    actionsView: UIView?
+    @IBOutlet var                       lineView: UIView?
     var                                 isCached: Bool               =  false
     var                             cachedOffset: CGPoint            = .zero
     var                           keyboardHeight: CGFloat            =  0.0
@@ -75,14 +76,15 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
         actionsButtonWidthConstraint?  .constant = actionsTitle  .widthForFont(font) + 10.0
         favoritesButtonWidthConstraint?.constant = favoritesWidth
         editorBottomConstraint?        .constant = gKeyboardIsVisible   ? keyboardHeight : gActionsAreVisible ? selectorHeight : 0.0
-        editorTopConstraint?           .constant = gFavoritesAreVisible ? selectorHeight : 0.0
-        titleLeftConstraint?           .constant = gFavoritesAreVisible ? favoritesWidth : 0.0
+        editorTopConstraint?           .constant = gFavoritesAreVisible ? selectorHeight : 2.0
         hereWidthConstraint?           .constant = hereTitle.widthForFont(font)
         hereTextWidget?                    .text = hereTitle
         favoritesButton?               .isHidden = false
+        focusOutButton?                .isHidden = false
         actionsButton?                 .isHidden = false
         favoritesView?                 .isHidden = false
         actionsView?                   .isHidden = false
+        lineView?                      .isHidden = gFavoritesAreVisible
         let                          buttonSetup = { (iButton: UIButton?, iTitle: String, iHidden: Bool) in
             if  let                       button = iButton {
                 button                    .title = iTitle

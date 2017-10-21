@@ -64,6 +64,8 @@ let      showChildrenKey = "showChildren"
 let      manifestTypeKey = "ZManifest"
 let      manifestNameKey = "manifest"
 let favoritesRootNameKey = "favoritesRoot"
+let   gLineWithStubTitle = "----------- | -----------"
+let        gLineOfDashes = "-------------------------"
 
 let        gBackspaceKey = "\u{8}"
 let           gDeleteKey = "\u{7F}"

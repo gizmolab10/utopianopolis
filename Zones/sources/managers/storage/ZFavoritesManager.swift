@@ -331,10 +331,7 @@ class ZFavoritesManager: ZCloudManager {
                 gStorageMode = mode
 
                 gTravelManager.travel {
-                    if isOSX {
-                        gHere.grab()
-                    }
-
+                    gHere.grab()
                     atArrival()
                 }
 

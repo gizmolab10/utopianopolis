@@ -186,14 +186,13 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
         if  let                zone = widgetZone, isVisible(dirtyRect) {
             let highlightAsFavorite = zone == gFavoritesManager.currentFavorite
-            isHidden                = isHiddenToggleDot
 
-            if !isHidden {
+            if !isHiddenToggleDot {
                 if isInnerDot {
                     let shouldHighlight = isToggle ? (!zone.showChildren || zone.isBookmark || isDragTarget) : zone.isGrabbed || highlightAsFavorite // not highlight when editing
                     let     strokeColor = isToggle && isDragTarget ? gDragTargetsColor : zone.color
-                    let       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
-                    let       thickness = CGFloat(gLineThickness)
+                    var       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
+                    var       thickness = CGFloat(gLineThickness)
                     var            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
 
                     path     .lineWidth = thickness * 2.0
@@ -210,6 +209,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                         path  .flatness = 0.0001
 
                         gBackgroundColor.setFill()
+                        path.fill()
+                    } else if !isToggle && !zone.chldrenAreWritable {
+                        fillColor       = shouldHighlight ? gBackgroundColor : strokeColor
+                        thickness      *= 1.5 * (zone.isInFavorites ? gReductionRatio : 1.0)
+                        let        rect = CGRect(origin: CGPoint(x: dirtyRect.midX - (thickness / 2.0), y: dirtyRect.minY), size: CGSize(width: thickness, height: dirtyRect.size.height))
+                        path            = ZBezierPath(rect: rect)
+
+                        fillColor.setFill()
                         path.fill()
                     }
                 } else if isToggle {

@@ -19,11 +19,12 @@ import Foundation
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
-    var             widgetZone : Zone   { return widget.widgetZone }
-    override var preferredFont : ZFont  { return widgetZone.isInFavorites ? gFavoritesFont : gWidgetFont }
-    weak var            widget : ZoneWidget!
-    var           originalText = ""
-    var         _isTextEditing = false
+    var                     widgetZone : Zone  { return widget.widgetZone }
+    override var acceptsFirstResponder : Bool  { return widgetZone.isWritable }
+    override var         preferredFont : ZFont { return widgetZone.isInFavorites ? gFavoritesFont : gWidgetFont }
+    weak var                    widget : ZoneWidget!
+    var                   originalText = ""
+    var                 _isTextEditing = false
 
 
     override var isTextEditing: Bool {
@@ -61,28 +62,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             }
         }
     }
-
-
-    #if os(OSX)
-
-    override func textShouldBeginEditing(_ textObject: NSText) -> Bool {
-
-        //////////////////////////
-        // THIS IS NEVER CALLED //
-        //////////////////////////
-
-        isTextEditing = true
-
-        return true
-    }
-
-
-    override func keyDown(with event: NSEvent) {
-        textInputReport("text field \"\(widgetZone.decoratedName)\"")
-        super.keyDown(with: event)
-    }
-
-    #endif
 
 
     override func setup() {
@@ -149,13 +128,15 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-        if !gSelectionManager.isEditingStateChanging {
+        if !gSelectionManager.isEditingStateChanging && widgetZone.isWritable {
             super.becomeFirstResponder() // do this first so delegate methods will be called
 
             isTextEditing = true
+
+            return true
         }
 
-        return true
+        return false
     }
 
 

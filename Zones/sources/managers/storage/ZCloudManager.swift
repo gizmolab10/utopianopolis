@@ -67,31 +67,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func save(_ onCompletion: IntClosure?) {
-        var    saves = pullRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
-        let isPublic = storageMode == .everyoneMode
-
-        if  isPublic {
-            var notSaved = IndexSet()
-
-            for (index, save) in saves.enumerated() {
-                if  let savable = recordForRecordID(save.recordID) as? Zone {
-                    if !savable.isInFavorites {
-                        notSaved.insert(index)
-                    } else {
-                        savable.unmarkForAllOfStates([.needsSave])
-                    }
-                }
-            }
-
-            for index in notSaved.reversed() {
-
-                // must remove in reverse (largest index first) order,
-                // so that after first is removed, subsequent indices still point to correct item in saves array
-
-                saves.remove(at: index)
-            }
-        }
-
+        let   saves = pullRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
         let deletes = recordIDsWithMatchingStates([.needsDestroy], pull: true)
         let   count = saves.count + deletes.count
 
@@ -557,7 +533,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchParents(_ onCompletion: IntClosure?) {
-        let states: [ZRecordState] = [.needsParent, .needsColor, .needsRoot]
+        let states: [ZRecordState] = [.needsWritable, .needsParent, .needsColor, .needsRoot]
         let         missingParents = parentIDsWithMatchingStates(states)
         let                orphans = recordIDsWithMatchingStates(states)
         let                  count = missingParents.count
@@ -610,6 +586,10 @@ class ZCloudManager: ZRecordsManager {
                                         p.maybeNeedColor()
                                     }
 
+                                    if  states.contains(.needsWritable) {
+                                        p.needWritable()
+                                    }
+
                                     p.maybeNeedChildren()
                                 }
                             }
@@ -649,13 +629,19 @@ class ZCloudManager: ZRecordsManager {
                         retrieved.append(ckRecord)
                     }
                 } else { // nil means: we already received full response from cloud for this particular fetch
-                    self.FOREGROUND() { // mutate graph
+                    self.FOREGROUND() {
+
+                        ////////////////////////////
+                        // now we can mutate heap //
+                        ////////////////////////////
+
                         for record in retrieved {
-                            if  self.zoneForRecordID(record.recordID) != nil {
-                                if destroyedIDs.contains(record.recordID) {
+                            let identifier = record.recordID
+                            if  self.zoneForRecordID(identifier) != nil {
+                                if destroyedIDs.contains(identifier) {
                                     // self.columnarReport(" DESTROYED", child.decoratedName)
 
-                                    break
+                                    break // don't process/add destroyed zone
                                 }
                             }
 
@@ -676,9 +662,14 @@ class ZCloudManager: ZRecordsManager {
                                     ///////////////////////////////////////
 
                                     if  let    link = child.crossLink,
+
+                                        ///////////////////////////////////////////
+                                        // bookmarks need fetch, color, writable //
+                                        ///////////////////////////////////////////
+
                                         let    mode = link.storageMode {
-                                        var  states = [ZRecordState.needsColor]
                                         let manager = gRemoteStoresManager.recordsManagerFor(mode)
+                                        var states: [ZRecordState] = [.needsColor, .needsWritable]
 
                                         if   !link.alreadyExists {
                                             states.append(.needsFetch)

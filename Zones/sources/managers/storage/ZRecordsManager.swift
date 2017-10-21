@@ -22,6 +22,7 @@ enum ZRecordState: Int {
     case needsCreate
     case needsDestroy
     case needsProgeny
+    case needsWritable
     case needsChildren
     case needsBookmarks
 }

@@ -89,11 +89,7 @@ class ZControllersManager: NSObject {
             gFavoritesManager.setup() // bug: manifest not yet fetched
             gOperationsManager.continueUp {
                 self.displayActivity(false) // now on foreground thread
-
-                if isOSX {
-                    gHere.grab()
-                }
-
+                gHere.grab()
                 gFavoritesManager.updateChildren()
                 self.signalFor(nil, regarding: .redraw)
                 gOperationsManager.finishUp {

@@ -73,10 +73,7 @@ class ZTravelManager: NSObject {
                             gHere        = gCloudManager.zoneForRecord(iRecord!)
                             gHere.record = iRecord!
 
-                            if isOSX {
-                                gHere.grab()
-                            }
-
+                            gHere.grab()
                             gHere.needChildren()
                             gHere.maybeNeedRoot()
                             gHere.displayChildren()
@@ -110,10 +107,7 @@ class ZTravelManager: NSObject {
                 let grabHere = {
                     gHere.needChildren()
                     gHere.displayChildren()
-
-                    if isOSX {
-                        gHere.grab()
-                    }
+                    gHere.grab()
 
                     gOperationsManager.children(.restore) {
                         atArrival(gHere, .redraw)

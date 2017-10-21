@@ -306,7 +306,7 @@ class ZoneWidget: ZView {
         if dragHitFrame(in: iView, iHere).contains(iPoint) && !widgetZone.wasSpawnedBy(gDraggedZone) {
             if widgetZone.showChildren {
                 for child in widgetZone.children {
-                    if let childWidget = child.widget, let found = childWidget.widgetNearestTo(iPoint, in: iView, iHere) {
+                    if let childWidget = child.widget, self != childWidget, let found = childWidget.widgetNearestTo(iPoint, in: iView, iHere) {
                         return found
                     }
                 }
@@ -491,8 +491,7 @@ class ZoneWidget: ZView {
 
             note("      .        \(zone.unwrappedName)")
 
-            if isGrabbed && !textWidget.isTextEditing { // && !childrenPass {  CLUE! ... adding this to the logic makes highlight disappear for zones with children shown
-                // columnarReport("highlighting", zone.unwrappedName)
+            if  isGrabbed && !textWidget.isTextEditing && (isOSX || zone != gHere) {
                 drawSelectionHighlight()
             }
 
