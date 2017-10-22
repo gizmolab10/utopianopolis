@@ -73,7 +73,7 @@ class ZShortcutsController: ZGenericTableController {
         "    \tP        \tprints the graph",
         "    \tR        \treverses order",
         "    \tS        \tselect favorite =~ focus",
-        "    \t-    =   \tadds a [broken =] line",
+        "    \t-        \tadds line, or [un]titles it",
         "    \t/        \tfocuses or toggles favorite",
         "    \t'        \tshows next favorite",
         "    \t;        \tshows previous favorite",

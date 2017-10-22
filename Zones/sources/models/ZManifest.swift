@@ -29,7 +29,7 @@ class ZManifest: ZRecord {
     var hereZone: Zone {
         get {
             if _hereZone == nil {
-                let hereRecord: CKRecord? = (here == nil) ? nil : CKRecord(recordType: zoneTypeKey, recordID: (here?.recordID)!)
+                let hereRecord: CKRecord? = (here == nil) ? nil : CKRecord(recordType: gZoneTypeKey, recordID: (here?.recordID)!)
                 _hereZone                 = Zone(record: hereRecord, storageMode: manifestMode)
             }
 

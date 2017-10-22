@@ -86,7 +86,7 @@ class ZCloudManager: ZRecordsManager {
 //                                record.maybeNeedMerge()
 //                            }
 //
-//                            if  let    name = iRecord?[zoneNameKey] as? String {
+//                            if  let    name = iRecord?[gZoneNameKey] as? String {
 //                                description = "\(description): \(name)"
 //                            }
 //
@@ -133,7 +133,7 @@ class ZCloudManager: ZRecordsManager {
 //            // iRecord == nil means: end of response to this particular query
 //
 //            if iRecord != nil {
-//                self.columnarReport("DELETE", String(describing: iRecord![zoneNameKey]))
+//                self.columnarReport("DELETE", String(describing: iRecord![gZoneNameKey]))
 //                toBeDeleted.append((iRecord?.recordID)!)
 //
 //            } else if (toBeDeleted.count) > 0, let operation = self.configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
@@ -232,7 +232,7 @@ class ZCloudManager: ZRecordsManager {
         }
 
         if  let                operation = configure(CKQueryOperation()) as? CKQueryOperation {
-            operation             .query = CKQuery(recordType: zoneTypeKey, predicate: predicate)
+            operation             .query = CKQuery(recordType: gZoneTypeKey, predicate: predicate)
             operation       .desiredKeys = Zone.cloudProperties()
             operation      .resultsLimit = gBatchSize
             operation.recordFetchedBlock = { iRecord in
@@ -344,12 +344,12 @@ class ZCloudManager: ZRecordsManager {
         if  let     trash = trashZone {
             let parentKey = "parent"
             let predicate = NSPredicate(format: "zoneName != \"\"")
-            let rootNames = [rootNameKey, trashNameKey, favoritesRootNameKey]
+            let rootNames = [gRootNameKey, gTrashNameKey, gFavoriteRootNameKey]
             var retrieved = [CKRecord] ()
 
             self.queryWith(predicate) { (iRecord: CKRecord?) in
                 if  let ckRecord = iRecord, !retrieved.contains(ckRecord) {
-                    if  let name = ckRecord[zoneNameKey] as? String,
+                    if  let name = ckRecord[gZoneNameKey] as? String,
                         !rootNames.contains(name) {
                         retrieved.append(ckRecord)
                     }
@@ -367,8 +367,8 @@ class ZCloudManager: ZRecordsManager {
 
                                     parentIDs.append(parent.recordID)
                                 } // else it's already in memory (either the trash or the graph)
-                            } else if let name = ckRecord[zoneNameKey] as? String,
-                                ![rootNameKey, trashNameKey, favoritesRootNameKey].contains(name),
+                            } else if let name = ckRecord[gZoneNameKey] as? String,
+                                ![gRootNameKey, gTrashNameKey, gFavoriteRootNameKey].contains(name),
                                 let added = trash.addCKRecord(ckRecord) {
                                 added.needFlush()
                                 trash.needFlush()
@@ -418,7 +418,7 @@ class ZCloudManager: ZRecordsManager {
                                     if missing.count != 0 {
                                         for parent in missing {
                                             if  let    child = childrenRefs[parent] {
-//                                                if  let name = child[zoneNameKey] as? String {
+//                                                if  let name = child[gZoneNameKey] as? String {
 //                                                    self.columnarReport(" MISSING", name)
 //                                                }
                                                 
@@ -521,7 +521,7 @@ class ZCloudManager: ZRecordsManager {
             let recordID = manifest.record.recordID
             let     mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
 
-            mine.assureRecordExists(withRecordID: recordID, recordType: manifestTypeKey) { (iManifestRecord: CKRecord?) in
+            mine.assureRecordExists(withRecordID: recordID, recordType: gManifestTypeKey) { (iManifestRecord: CKRecord?) in
                 if iManifestRecord != nil {
                     manifest.record = iManifestRecord
                 }
@@ -772,8 +772,8 @@ class ZCloudManager: ZRecordsManager {
         } else {
             let recordID = manifest.here!.recordID
 
-            self.assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey) { (iHereRecord: CKRecord?) in
-                if iHereRecord == nil || iHereRecord?[zoneNameKey] == nil {
+            self.assureRecordExists(withRecordID: recordID, recordType: gZoneTypeKey) { (iHereRecord: CKRecord?) in
+                if iHereRecord == nil || iHereRecord?[gZoneNameKey] == nil {
                     rootCompletion()
                 } else {
                     let          here = self.zoneForRecord(iHereRecord!)
@@ -790,11 +790,11 @@ class ZCloudManager: ZRecordsManager {
 
 
     func establishRoot(_ onCompletion: IntClosure?) {
-        let recordID = CKRecordID(recordName: rootNameKey)
+        let recordID = CKRecordID(recordName: gRootNameKey)
 
         onCompletion?(-1)
 
-        assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
+        assureRecordExists(withRecordID: recordID, recordType: gZoneTypeKey) { (iRecord: CKRecord?) in
             if iRecord != nil {
                 let      root = self.zoneForRecord(iRecord!)    // get / create root
                 self.rootZone = root
@@ -806,14 +806,14 @@ class ZCloudManager: ZRecordsManager {
 
 
     func establishTrash(_ onCompletion: IntClosure?) {
-        let recordID = CKRecordID(recordName: trashNameKey)
+        let recordID = CKRecordID(recordName: gTrashNameKey)
 
         onCompletion?(-1)
 
-        assureRecordExists(withRecordID: recordID, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
+        assureRecordExists(withRecordID: recordID, recordType: gZoneTypeKey) { (iRecord: CKRecord?) in
             if iRecord != nil {
                 let      trash = self.zoneForRecord(iRecord!)    // get / create trash
-                trash.zoneName = trashNameKey
+                trash.zoneName = gTrashNameKey
                 self.trashZone = trash
 
                 trash.needChildren()
@@ -862,7 +862,7 @@ class ZCloudManager: ZRecordsManager {
         if  database == nil {
             onCompletion?(0)
         } else {
-            let classNames = [zoneTypeKey, manifestTypeKey]
+            let classNames = [gZoneTypeKey, gManifestTypeKey]
             var      count = classNames.count
 
             onCompletion?(-1)

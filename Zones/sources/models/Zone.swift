@@ -32,13 +32,13 @@ class Zone : ZRecord {
     var                   unwrappedName:       String { return zoneName ?? "empty" }
     var                   decoratedName:       String { return "\(unwrappedName)\(decoration)" }
     var                grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
-    var               isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == favoritesRootNameKey }
+    var               isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
     var              hasMissingChildren:         Bool { return count < fetchableCount }
     var                   isInFavorites:         Bool { return isRootOfFavorites || parentZone?.isRootOfFavorites ?? false }
     var                   hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var                   hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var                    showChildren:         Bool { return isRootOfFavorites || gManifest.showsChildren(self) }
-    var                     isTrashRoot:         Bool { return zoneName == trashNameKey }
+    var                     isTrashRoot:         Bool { return zoneName == gTrashNameKey }
     var                      isBookmark:         Bool { return crossLink != nil }
     var                      isSelected:         Bool { return gSelectionManager.isSelected(self) }
     var                       isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
@@ -193,7 +193,7 @@ class Zone : ZRecord {
     var crossLink: ZRecord? {
         get {
             if _crossLink == nil, var link = zoneLink, link != "" {
-                if  zoneLink == trashLink {
+                if  zoneLink == gTrashLink {
                     return gTrash
                 }
 
@@ -205,7 +205,7 @@ class Zone : ZRecord {
                 var components:   [String] = link.components(separatedBy: ":")
                 let name:          String  = components[2] == "" ? "root" : components[2]
                 let identifier: CKRecordID = CKRecordID(recordName: name)
-                let record:       CKRecord = CKRecord(recordType: zoneTypeKey, recordID: identifier)
+                let record:       CKRecord = CKRecord(recordType: gZoneTypeKey, recordID: identifier)
                 let                rawMode = components[0]
                 let mode:    ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
                 let                manager = mode == nil ? nil : gRemoteStoresManager.recordsManagerFor(mode!)
@@ -914,7 +914,7 @@ class Zone : ZRecord {
 
 
     func deepCopy() -> Zone {
-        let theCopy = Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: storageMode)
+        let theCopy = Zone(record: CKRecord(recordType: gZoneTypeKey), storageMode: storageMode)
 
         copy(into: theCopy)
 
@@ -989,10 +989,10 @@ class Zone : ZRecord {
 
     
     override func setStorageDictionary(_ dict: ZStorageDict) {
-        if let string = dict[    zoneNameKey] as!   String? { zoneName     = string }
+        if let string = dict[    gZoneNameKey] as!   String? { zoneName     = string }
         // if let number = dict[showChildrenKey] as! NSNumber? { showChildren = number.boolValue }
 
-        if let childrenStore: [ZStorageDict] = dict[childrenKey] as! [ZStorageDict]? {
+        if let childrenStore: [ZStorageDict] = dict[gChildrenKey] as! [ZStorageDict]? {
             for childStore: ZStorageDict in childrenStore {
                 let child = Zone(dict: childStore)
 
@@ -1009,15 +1009,15 @@ class Zone : ZRecord {
     override func storageDictionary() -> ZStorageDict? {
         var      childrenStore = [ZStorageDict] ()
         var               dict = super.storageDictionary()!
-        dict[zoneNameKey]      = zoneName as NSObject?
-        dict[showChildrenKey]  = NSNumber(booleanLiteral: showChildren)
+        dict[gZoneNameKey]     = zoneName as NSObject?
+        dict[gShowChildrenKey]  = NSNumber(booleanLiteral: showChildren)
 
 
         for child: Zone in children {
             childrenStore.append(child.storageDictionary()!)
         }
 
-        dict[childrenKey]      = childrenStore as NSObject?
+        dict[gChildrenKey]      = childrenStore as NSObject?
 
         return dict
     }

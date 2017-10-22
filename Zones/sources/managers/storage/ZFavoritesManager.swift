@@ -27,7 +27,7 @@ class ZFavoritesManager: ZCloudManager {
 
     let     defaultFavorites = Zone(record: nil, storageMode: .favoritesMode)
     let defaultModes: ZModes = [.everyoneMode, .mineMode]
-    let    favoritesFavorite = Zone(favorite: favoritesKey)
+    let    favoritesFavorite = Zone(favorite: gFavoritesKey)
     var           count: Int { return rootZone?.count ?? 0 }
 
 
@@ -173,9 +173,9 @@ class ZFavoritesManager: ZCloudManager {
 
     func setup() {
         if  rootZone          == nil {
-            let         record = CKRecord(recordType: zoneTypeKey, recordID: CKRecordID(recordName: favoritesRootNameKey))
+            let         record = CKRecord(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: gFavoriteRootNameKey))
             rootZone           = Zone(record: record, storageMode: .mineMode)
-            rootZone!.zoneName = favoritesKey
+            rootZone!.zoneName = gFavoritesKey
 
             setupDefaultFavorites()
             rootZone!.needChildren()
@@ -221,7 +221,7 @@ class ZFavoritesManager: ZCloudManager {
                 found.append(mode)
             }
 
-            if  let link = favorite.zoneLink, link == trashLink {
+            if  let link = favorite.zoneLink, link == gTrashLink {
                 hasTrash = true
             }
         }
@@ -236,7 +236,7 @@ class ZFavoritesManager: ZCloudManager {
 
         if !hasTrash && gTrash != nil {
             let      trash = createBookmark(for: gTrash!, style: .addFavorite)
-            trash.zoneLink = trashLink
+            trash.zoneLink = gTrashLink
             trash   .order = 0.999
 
             trash.clearAllStates()
@@ -270,41 +270,37 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func nextFavoritesIndex(forward: Bool) -> Int {
+        return next(favoritesIndex, forward)
+    }
+
+
+    func next(_ index: Int, _ forward: Bool) -> Int {
         let increment = (forward ? 1 : -1)
-        var     index = favoritesIndex + increment
+        var      next = index + increment
         let     count = rootZone!.count
 
-        if index >= count {
-            index =       0
-        } else if index < 0 {
-            index = count - 1
+        if next >= count {
+            next =       0
+        } else if next < 0 {
+            next = count - 1
         }
 
-        return index
-    }
-
-
-    func nextFavorite(forward: Bool) -> Zone? {
-        let index = nextFavoritesIndex(forward: forward)
-
-        return rootZone!.count <= index ? nil : rootZone![index]
-    }
-
-
-    func nextName(forward: Bool) -> String {
-        let name = nextFavorite(forward: forward)?.zoneName?.substring(to: 10)
-
-        return name ?? ""
+        return next
     }
 
 
     func switchToNext(_ forward: Bool, atArrival: @escaping Closure) {
-        let index = nextFavoritesIndex(forward: forward)
-        let  next = zoneAtIndex(index)
+        let    index = nextFavoritesIndex(forward: forward)
+        var     bump : IntClosure?
+        bump         = { (iIndex: Int) in
+            let zone = self.zoneAtIndex(iIndex)
 
-        if !focus(on: next, atArrival) {
-            switchToNext(forward, atArrival: atArrival)
+            if !self.focus(on: zone, atArrival) {
+                bump?(self.next(index, forward))
+            }
         }
+
+        bump?(index)
     }
 
 
@@ -318,7 +314,7 @@ class ZFavoritesManager: ZCloudManager {
 
 
     @discardableResult func focus(on iFavorite: Zone?, _ atArrival: @escaping Closure) -> Bool {
-        if  let bookmark = iFavorite {
+        if  let bookmark = iFavorite, bookmark.isBookmark {
             if  bookmark.isInFavorites {
                 currentFavorite = bookmark
 
@@ -350,7 +346,7 @@ class ZFavoritesManager: ZCloudManager {
 
 
     @discardableResult func create(withBookmark: Zone?, _ style: ZFavoriteStyle, _ name: String?) -> Zone {
-        let bookmark: Zone = withBookmark ?? Zone(record: CKRecord(recordType: zoneTypeKey), storageMode: .mineMode)
+        let bookmark: Zone = withBookmark ?? Zone(record: CKRecord(recordType: gZoneTypeKey), storageMode: .mineMode)
         bookmark.zoneName  = name
 
         return bookmark

@@ -68,7 +68,7 @@ class ZTravelManager: NSObject {
                         atArrival(gHere, .redraw)
                     }
                 } else {
-                    gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
+                    gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: gZoneTypeKey) { (iRecord: CKRecord?) in
                         if iRecord != nil {
                             gHere        = gCloudManager.zoneForRecord(iRecord!)
                             gHere.record = iRecord!
@@ -119,7 +119,7 @@ class ZTravelManager: NSObject {
 
                     grabHere()
                 } else if gCloudManager.storageMode != .favoritesMode { // favorites does not have a cloud database
-                    gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: zoneTypeKey) { (iRecord: CKRecord?) in
+                    gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: gZoneTypeKey) { (iRecord: CKRecord?) in
                         if  let   record = iRecord {
                             gHere        = gCloudManager.zoneForRecord(record)
                             gHere.record = record

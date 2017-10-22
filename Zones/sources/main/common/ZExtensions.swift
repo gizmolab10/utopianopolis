@@ -101,7 +101,7 @@ extension NSObject {
 
 
     func manifestNameForMode(_ mode: ZStorageMode) -> String {
-        return "\(manifestNameKey).\(mode.rawValue)"
+        return "\(gManifestNameKey).\(mode.rawValue)"
     }
 
 
@@ -117,9 +117,9 @@ extension CKRecord {
 
 
     var  decoratedName: String {
-        if recordType       != zoneTypeKey {
+        if recordType       != gZoneTypeKey {
             return recordID.recordName
-        } else if let   name = self[zoneNameKey] as? String {
+        } else if let   name = self[gZoneNameKey] as? String {
             var       suffix = ""
 
             if  let fetchable = self["zoneCount"] as? Int, fetchable > 1 {

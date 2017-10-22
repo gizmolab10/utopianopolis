@@ -740,7 +740,7 @@ class ZEditingManager: NSObject {
         var     deleteMe = !zone.isRoot && grabThisZone?.record != nil
 
         if !deleteMe && zone.isBookmark, let name = zone.crossLink?.record.recordID.recordName {
-            deleteMe = ![rootNameKey, trashNameKey, favoritesRootNameKey].contains(name)
+            deleteMe = ![gRootNameKey, gTrashNameKey, gFavoriteRootNameKey].contains(name)
         }
 
         if !deleteMe {
@@ -1055,7 +1055,7 @@ class ZEditingManager: NSObject {
 
     func applyModeRecursivelyTo(_ iZone: Zone?) {
         iZone?.traverseAllProgeny() { iChild in
-            iChild.record      = CKRecord(recordType: zoneTypeKey)
+            iChild.record      = CKRecord(recordType: gZoneTypeKey)
             iChild.storageMode = gStorageMode
 
             iChild.needFlush()
@@ -1089,7 +1089,7 @@ class ZEditingManager: NSObject {
     func createIdeaIn(_ iZone: Zone?, at iIndex: Int?, onCompletion: ZoneMaybeClosure?) {
         if  let         zone = iZone, zone.storageMode != .favoritesMode {
             let createAndAdd = {
-                let   record = CKRecord(recordType: zoneTypeKey)
+                let   record = CKRecord(recordType: gZoneTypeKey)
                 let    child = Zone(record: record, storageMode: zone.storageMode)
 
                 self.UNDO(self) { iUndoSelf in

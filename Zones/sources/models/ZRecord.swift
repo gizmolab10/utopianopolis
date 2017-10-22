@@ -17,7 +17,7 @@ class ZRecord: NSObject {
     var    storageMode: ZStorageMode?
     var     kvoContext: UInt8 = 1
     var        _record: CKRecord?
-    var         isRoot: Bool            { return record != nil && [rootNameKey, favoritesRootNameKey, trashNameKey].contains(record.recordID.recordName) }
+    var         isRoot: Bool            { return record != nil && [gRootNameKey, gFavoriteRootNameKey, gTrashNameKey].contains(record.recordID.recordName) }
     var recordsManager: ZRecordsManager { return gRemoteStoresManager.recordsManagerFor(storageMode!) }
     var   cloudManager: ZCloudManager?  { return recordsManager as? ZCloudManager }
 
@@ -162,8 +162,8 @@ class ZRecord: NSObject {
 
         for (key, value) in dict {
             switch key {
-            case recordTypeKey: type = value as? String; break
-            case recordNameKey: name = value as? String; break
+            case gRecordTypeKey: type = value as? String; break
+            case gRecordNameKey: name = value as? String; break
             default:                                     break
             }
         }
@@ -180,8 +180,8 @@ class ZRecord: NSObject {
 
     func storageDictionary() -> ZStorageDict? {
         return record == nil ? [:] :
-            [recordNameKey : record.recordID.recordName as NSObject,
-             recordTypeKey : record.recordType          as NSObject]
+            [gRecordNameKey : record.recordID.recordName as NSObject,
+             gRecordTypeKey : record.recordType          as NSObject]
     }
 
 
