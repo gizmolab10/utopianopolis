@@ -176,7 +176,7 @@ class ZFavoritesManager: ZCloudManager {
             let                   record = CKRecord(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: gFavoriteRootNameKey))
             rootZone                     = Zone(record: record, storageMode: .mineMode)
             rootZone!          .zoneName = gFavoritesKey
-            rootZone!.progenyAreWritable = true
+            rootZone!.progenyAccess = .eProgenyWritable
 
             setupDefaultFavorites()
             rootZone!.needChildren()

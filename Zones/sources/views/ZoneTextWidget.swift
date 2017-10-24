@@ -194,7 +194,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func assign(_ iText: String?, to iZone: Zone?) {
-        if  let t = iText, let zone = iZone {
+        if  let t = iText, var zone = iZone {
             gTextCapturing          = true
 
             let        assignTextTo = { (iTarget: Zone) in
@@ -213,7 +213,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
             assignTextTo(zone)
 
-            if  zone.isBookmark, let link = zone.crossLink, let mode = link.storageMode, let target = gRemoteStoresManager.cloudManagerFor(mode).zoneForRecordID(link.record.recordID) {
+            if  let target = zone.bookmarkTarget {
+                zone       = target
+
                 assignTextTo(target)
             }
 

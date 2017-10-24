@@ -238,8 +238,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                             gBackgroundColor.setFill()
                             path.fill()
                         }
-                    } else if !zone.isWritable ||   (zone.isRoot && !zone.progenyAreWritable!) {
-                        let type: ZDecorationType = !zone.isRoot &&  zone.progenyAreWritable! && !zone.isWritable ? .sideDot : .vertical
+                    } else if !zone.isWritable ||   (zone.isRoot && !zone.progenyNotReadOnly) {
+                        let type: ZDecorationType = !zone.isRoot &&  zone.progenyNotReadOnly && !zone.isWritable ? .sideDot : .vertical
                         fillColor                 = shouldHighlight ? gBackgroundColor : strokeColor
 
                         fillColor.setFill()

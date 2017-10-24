@@ -47,23 +47,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/views/ZoneTextWidget.swift"
-            timestampString = "530493189.235313"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "33"
-            endingLineNumber = "33"
-            landmarkName = "isTextEditing"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/views/ZoneTextWidget.swift"
-            timestampString = "530493189.235378"
+            timestampString = "530501057.79156"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "142"
@@ -78,13 +62,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/sources/views/ZoneTextWidget.swift"
-            timestampString = "530493189.235437"
+            filePath = "Zones/sources/models/Zone.swift"
+            timestampString = "530501057.791718"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "23"
-            endingLineNumber = "23"
-            landmarkName = "ZoneTextWidget"
+            startingLineNumber = "801"
+            endingLineNumber = "801"
+            landmarkName = "Zone"
             landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>

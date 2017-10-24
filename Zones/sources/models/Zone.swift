@@ -11,6 +11,13 @@ import Foundation
 import CloudKit
 
 
+ enum ZoneAccess: Int {
+    case eProgenyReadOnly
+    case eProgenyWritable
+    case eRecurse
+ }
+
+
 class Zone : ZRecord {
 
 
@@ -21,7 +28,7 @@ class Zone : ZRecord {
     dynamic var              zoneOrder:    NSNumber?
     dynamic var              zoneCount:    NSNumber?
     dynamic var            zoneProgeny:    NSNumber?
-    dynamic var zoneProgenyAreWritable:    NSNumber?
+    dynamic var      zoneProgenyAccess:    NSNumber?
     var                    _parentZone:        Zone?
     var                         _color:      ZColor?
     var                     _crossLink:     ZRecord?
@@ -33,6 +40,7 @@ class Zone : ZRecord {
     var               grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
     var              isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
     var             hasMissingChildren:         Bool { return count < fetchableCount }
+    var             progenyNotReadOnly:         Bool { return progenyAccess != .eProgenyReadOnly}
     var                  isInFavorites:         Bool { return isRootOfFavorites || parentZone?.isRootOfFavorites ?? false }
     var                  hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var                  hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
@@ -88,7 +96,7 @@ class Zone : ZRecord {
                 #keyPath(zoneOrder),
                 #keyPath(zoneCount),
                 #keyPath(zoneProgeny),
-                #keyPath(zoneProgenyAreWritable)]
+                #keyPath(zoneProgenyAccess)]
     }
 
 
@@ -148,51 +156,6 @@ class Zone : ZRecord {
                 needFlush()
             }
         }
-    }
-
-
-    var progenyAreWritable: Bool? {
-        get {
-            if  isTrashRoot {
-                return true
-            } else if let t = bookmarkTarget {
-                return t.progenyAreWritable
-            } else if let w = zoneProgenyAreWritable {
-                return w.boolValue
-            } else if let p = parentZone, p != self, hasCompleteAncestorPath(toWritable: true) {
-                return p.progenyAreWritable
-            }
-
-            return false
-        }
-
-        set {
-            if  newValue                          == nil {
-                zoneProgenyAreWritable             = nil
-            } else if let                    value = newValue,
-                zoneProgenyAreWritable?.boolValue != value {
-                zoneProgenyAreWritable             = NSNumber(value: value)
-            }
-
-            needFlush()
-        }
-    }
-
-
-    var isWritable: Bool {
-        if  isTrashRoot {
-            return true
-        } else if let t = bookmarkTarget {
-            return t.isWritable
-        } else if let p = parentZone, p != self {
-            return p.progenyAreWritable!
-        } else if let w = zoneProgenyAreWritable, isRoot {
-            return w.boolValue
-        } else if isRoot {
-            return true
-        }
-
-        return false
     }
 
 
@@ -355,6 +318,63 @@ class Zone : ZRecord {
     }
 
 
+    // MARK:- write access
+    // MARK:-
+
+
+    var progenyAccess: ZoneAccess {
+        get {
+            if  isTrashRoot {
+                return .eProgenyWritable
+            } else if let t = bookmarkTarget {
+                return t.progenyAccess
+            } else if let a = zoneProgenyAccess {
+                return ZoneAccess(rawValue: a.intValue) ?? .eProgenyReadOnly
+            } else if let p = parentZone, p != self, hasCompleteAncestorPath(toWritable: true) {
+                return p.progenyAccess
+            }
+
+            return .eProgenyReadOnly
+        }
+
+        set {
+            if  zoneProgenyAccess?.intValue != newValue.rawValue {
+                zoneProgenyAccess            = NSNumber(value: newValue.rawValue)
+
+                needFlush()
+            }
+        }
+    }
+
+
+    var isWritable: Bool {
+        if  isTrashRoot {
+            return true
+        } else if let t  = bookmarkTarget {
+            return    t.isWritable
+        } else if let p  = parentZone, p != self {
+            return    p.progenyAccess == .eProgenyWritable
+        } else if let a  = zoneProgenyAccess?.intValue {
+            return    a == ZoneAccess.eProgenyWritable.rawValue
+        }
+
+        return false
+    }
+
+
+    func toggleWritable() {
+        if isRoot {
+            progenyAccess = progenyNotReadOnly ? .eProgenyReadOnly : .eProgenyWritable
+        } else if let parent = parentZone, parent.progenyAccess != progenyAccess {
+            progenyAccess = .eRecurse
+        } else {
+            progenyAccess = progenyNotReadOnly ? .eProgenyReadOnly : .eProgenyWritable
+        }
+
+        needFlush()
+    }
+
+
     // MARK:- convenience
     // MARK:-
 
@@ -434,7 +454,7 @@ class Zone : ZRecord {
         traverseAllAncestors { iZone in
             let  isReciprocal = parent == nil  || iZone.children.contains(parent!)
 
-            if  (isReciprocal && iZone.isRoot) || (toColor && iZone.hasColor) || (toWritable && iZone.zoneProgenyAreWritable != nil) {
+            if  (isReciprocal && iZone.isRoot) || (toColor && iZone.hasColor) || (toWritable && iZone.zoneProgenyAccess != nil) {
                 isComplete = true
             }
 
@@ -777,21 +797,6 @@ class Zone : ZRecord {
         }
 
         return false
-    }
-
-
-    func toggleWritable() {
-        if isRoot {
-            progenyAreWritable = !progenyAreWritable!
-        } else if let parent = parentZone, parent.progenyAreWritable! != progenyAreWritable! {
-            progenyAreWritable = nil
-        } else if let c = progenyAreWritable {
-            progenyAreWritable = !c
-        } else {
-            progenyAreWritable = false
-        }
-
-        needFlush()
     }
 
 
