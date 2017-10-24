@@ -45,7 +45,7 @@ class ZSelectionManager: NSObject {
         for grab in current {
             var found = false
 
-            grab.traverseAncestors() { iZone -> ZTraverseStatus in
+            grab.traverseAncestors { iZone -> ZTraverseStatus in
                 if  grab != iZone && current.contains(iZone) {
                     found = true
 

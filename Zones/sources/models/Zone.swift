@@ -14,37 +14,36 @@ import CloudKit
 class Zone : ZRecord {
 
 
-    dynamic var                  parent: CKReference?
-    dynamic var                zoneName:      String?
-    dynamic var                zoneLink:      String?
-    dynamic var               zoneColor:      String?
-    dynamic var               zoneOrder:    NSNumber?
-    dynamic var               zoneCount:    NSNumber?
-    dynamic var             zoneProgeny:    NSNumber?
-    dynamic var zoneChildrenAreWritable:    NSNumber?
-    var                     _isWritable:        Bool?
-    var                     _parentZone:        Zone?
-    var                          _color:      ZColor?
-    var                      _crossLink:     ZRecord?
-    var                        children  =     [Zone] ()
-    var                           count:          Int { return children.count }
-    var                          widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
-    var                   unwrappedName:       String { return zoneName ?? "empty" }
-    var                   decoratedName:       String { return "\(unwrappedName)\(decoration)" }
-    var                grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
-    var               isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
-    var              hasMissingChildren:         Bool { return count < fetchableCount }
-    var                   isInFavorites:         Bool { return isRootOfFavorites || parentZone?.isRootOfFavorites ?? false }
-    var                   hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
-    var                   hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
-    var                    showChildren:         Bool { return isRootOfFavorites || gManifest.showsChildren(self) }
-    var                     isTrashRoot:         Bool { return zoneName == gTrashNameKey }
-    var                      isBookmark:         Bool { return crossLink != nil }
-    var                      isSelected:         Bool { return gSelectionManager.isSelected(self) }
-    var                       isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
-    var                       isVisible:         Bool { return !isRootOfFavorites && (isOSX || self != gHere) }
-    var                       isDeleted:         Bool { return gTrash != self && gTrash?.spawned(self) ?? false }
-    var                        hasColor:         Bool { return zoneColor != nil }
+    dynamic var                 parent: CKReference?
+    dynamic var               zoneName:      String?
+    dynamic var               zoneLink:      String?
+    dynamic var              zoneColor:      String?
+    dynamic var              zoneOrder:    NSNumber?
+    dynamic var              zoneCount:    NSNumber?
+    dynamic var            zoneProgeny:    NSNumber?
+    dynamic var zoneProgenyAreWritable:    NSNumber?
+    var                    _parentZone:        Zone?
+    var                         _color:      ZColor?
+    var                     _crossLink:     ZRecord?
+    var                       children  =     [Zone] ()
+    var                          count:          Int { return children.count }
+    var                         widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
+    var                  unwrappedName:       String { return zoneName ?? "empty" }
+    var                  decoratedName:       String { return "\(unwrappedName)\(decoration)" }
+    var               grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
+    var              isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
+    var             hasMissingChildren:         Bool { return count < fetchableCount }
+    var                  isInFavorites:         Bool { return isRootOfFavorites || parentZone?.isRootOfFavorites ?? false }
+    var                  hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
+    var                  hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
+    var                   showChildren:         Bool { return isRootOfFavorites || gManifest.showsChildren(self) }
+    var                    isTrashRoot:         Bool { return zoneName == gTrashNameKey }
+    var                     isBookmark:         Bool { return crossLink != nil }
+    var                     isSelected:         Bool { return gSelectionManager.isSelected(self) }
+    var                      isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
+    var                      isVisible:         Bool { return !isRootOfFavorites && (isOSX || self != gHere) }
+    var                      isDeleted:         Bool { return gTrash != self && gTrash?.spawned(self) ?? false }
+    var                       hasColor:         Bool { return zoneColor != nil }
 
 
     var decoration: String {
@@ -89,7 +88,7 @@ class Zone : ZRecord {
                 #keyPath(zoneOrder),
                 #keyPath(zoneCount),
                 #keyPath(zoneProgeny),
-                #keyPath(zoneChildrenAreWritable)]
+                #keyPath(zoneProgenyAreWritable)]
     }
 
 
@@ -152,41 +151,48 @@ class Zone : ZRecord {
     }
 
 
-    var chldrenAreWritable: Bool {
-        if  isTrashRoot || (isRoot && storageMode != .everyoneMode) {
-            return true
-        } else if let t = bookmarkTarget {
-            return t.chldrenAreWritable
-        } else if let w = zoneChildrenAreWritable {
-            return w.boolValue
-        } else if let p = parentZone, p != self, hasCompleteAncestorPath(toWritable: true) {
-            return p.chldrenAreWritable
-        }
-
-        return false
-    }
-
-
-    var isWritable: Bool {
+    var progenyAreWritable: Bool? {
         get {
-            if  isTrashRoot || (isRoot && storageMode != .everyoneMode) {
+            if  isTrashRoot {
                 return true
             } else if let t = bookmarkTarget {
-                return t.isWritable
-            } else if let p = parentZone, p != self {
-                return p.chldrenAreWritable
+                return t.progenyAreWritable
+            } else if let w = zoneProgenyAreWritable {
+                return w.boolValue
+            } else if let p = parentZone, p != self, hasCompleteAncestorPath(toWritable: true) {
+                return p.progenyAreWritable
             }
 
             return false
         }
 
         set {
-            if  zoneChildrenAreWritable?.boolValue != newValue {
-                zoneChildrenAreWritable             = NSNumber(value: newValue)
-
-                needFlush()
+            if  newValue                          == nil {
+                zoneProgenyAreWritable             = nil
+            } else if let                    value = newValue,
+                zoneProgenyAreWritable?.boolValue != value {
+                zoneProgenyAreWritable             = NSNumber(value: value)
             }
+
+            needFlush()
         }
+    }
+
+
+    var isWritable: Bool {
+        if  isTrashRoot {
+            return true
+        } else if let t = bookmarkTarget {
+            return t.isWritable
+        } else if let p = parentZone, p != self {
+            return p.progenyAreWritable!
+        } else if let w = zoneProgenyAreWritable, isRoot {
+            return w.boolValue
+        } else if isRoot {
+            return true
+        }
+
+        return false
     }
 
 
@@ -428,7 +434,7 @@ class Zone : ZRecord {
         traverseAllAncestors { iZone in
             let  isReciprocal = parent == nil  || iZone.children.contains(parent!)
 
-            if  (isReciprocal && iZone.isRoot) || (toColor && iZone.hasColor) || (toWritable && iZone.zoneChildrenAreWritable != nil) {
+            if  (isReciprocal && iZone.isRoot) || (toColor && iZone.hasColor) || (toWritable && iZone.zoneProgenyAreWritable != nil) {
                 isComplete = true
             }
 
@@ -656,6 +662,16 @@ class Zone : ZRecord {
     }
 
 
+    func prepareForArrival() {
+        grab()
+        needChildren()
+        maybeNeedRoot()
+        maybeNeedColor()
+        displayChildren()
+        maybeNeedWritable()
+    }
+
+
     func extendNeedForChildren(to iLevel: Int) {
         traverseProgeny { iZone -> ZTraverseStatus in
             if iLevel < iZone.level {
@@ -707,7 +723,7 @@ class Zone : ZRecord {
 
 
     @discardableResult func add(_ iChild: Zone?, at iIndex: Int?) -> Int? {
-        if let child = iChild {
+        if  let    child = iChild, child != child.parentZone {
             let insertAt = validIndex(from: iIndex)
 
             // make sure it's not already been added
@@ -738,7 +754,7 @@ class Zone : ZRecord {
                 children.append(child)
             }
 
-            child.parentZone   = self
+            child.parentZone = self
 
             needCount()
 
@@ -761,6 +777,37 @@ class Zone : ZRecord {
         }
 
         return false
+    }
+
+
+    func toggleWritable() {
+        if isRoot {
+            progenyAreWritable = !progenyAreWritable!
+        } else if let parent = parentZone, parent.progenyAreWritable! != progenyAreWritable! {
+            progenyAreWritable = nil
+        } else if let c = progenyAreWritable {
+            progenyAreWritable = !c
+        } else {
+            progenyAreWritable = false
+        }
+
+        needFlush()
+    }
+
+
+    func recursivelyApplyMode(_ iMode: ZStorageMode?, create: Bool = true) {
+        if let mode = iMode {
+            traverseAllProgeny { iChild in
+                iChild.storageMode = mode
+
+                if  create {
+                    iChild .record = CKRecord(recordType: gZoneTypeKey)
+                }
+
+                iChild.needFlush()
+                iChild.updateCloudProperties()
+            }
+        }
     }
 
 

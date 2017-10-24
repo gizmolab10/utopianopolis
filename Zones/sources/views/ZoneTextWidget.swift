@@ -55,9 +55,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     enableUndo()
                     updateText()
 
-                    #if os(iOS)
-                        selectAllText()
-                    #endif
+//                    #if os(iOS)
+//                        selectAllText()
+//                    #endif
                 }
             }
         }
@@ -110,6 +110,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         var result = false
 
         if !gSelectionManager.isEditingStateChanging {
+//            gSelectionManager.deferEditingStateChange()
             captureText(force: false)
 
             result = super.resignFirstResponder()
@@ -128,12 +129,14 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-        if !gSelectionManager.isEditingStateChanging && widgetZone.isWritable {
-            super.becomeFirstResponder() // do this first so delegate methods will be called
+        let writable = widgetZone.isWritable
 
-            isTextEditing = true
+        if !gSelectionManager.isEditingStateChanging && writable {
+//            gSelectionManager.deferEditingStateChange()
 
-            return true
+            isTextEditing = super.becomeFirstResponder() // becomeFirstResponder is called first so delegate methods will be called
+
+            return isTextEditing
         }
 
         return false
@@ -221,7 +224,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 assignTextTo(bookmark)
             }
 
-            redrawAndSync() {
+            redrawAndSync {
                 gTextCapturing = false
 
                 for bookmark in bookmarks {
@@ -246,7 +249,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
         let             zone = widgetZone
 
-        if  zone.isBookmark, !zone.isGrabbed, !isTextEditing {
+        if  zone.isBookmark, !zone.isInFavorites, !zone.isGrabbed, !isTextEditing {
             var         rect = dirtyRect.insetBy(dx: 3.0, dy: 0.0)
             rect.size.height = 0.0
             rect.size.width -= 4.0

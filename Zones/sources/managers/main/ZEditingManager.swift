@@ -82,7 +82,7 @@ class ZEditingManager: NSObject {
                 case "c":         recenter()
                 case "a":         selectAll()
                 case "p":         printHere()
-                case "w":         makeWritable()
+                case "w":         toggleWritable()
                 case "o":         orderByLength()
                 case "b":         createBookmark()
                 case "u", "l":    alterCase(up: key == "u")
@@ -217,11 +217,10 @@ class ZEditingManager: NSObject {
     // MARK:- miscellaneous features
     // MARK:-
 
-    func makeWritable() {
-        for zone in gSelectionManager.currentGrabs {
-            zone.isWritable = !zone.isWritable
 
-            zone.needFlush()
+    func toggleWritable() {
+        for zone in gSelectionManager.currentGrabs {
+            zone.toggleWritable()
         }
 
         redrawAndSyncAndRedraw()
@@ -378,7 +377,7 @@ class ZEditingManager: NSObject {
         }
 
         if isCommand{
-            gFavoritesManager.refocus() {
+            gFavoritesManager.refocus {
                 self.redrawAndSync()
             }
         } else if iZone.isBookmark {
@@ -777,7 +776,7 @@ class ZEditingManager: NSObject {
             } else {
                 zone.orphan()
 
-                zone.traverseAllProgeny() { iZone in
+                zone.traverseAllProgeny { iZone in
                     iZone.needDestroy()
                 }
             }
@@ -1005,7 +1004,7 @@ class ZEditingManager: NSObject {
                     let there = object as! Zone
 
                     if !sameGraph {
-                        self.applyModeRecursivelyTo(mover)
+                        mover.recursivelyApplyMode(there.storageMode)
                     }
 
                     self.moveZone(mover, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
@@ -1049,17 +1048,6 @@ class ZEditingManager: NSObject {
                     moveZone(zone, to: there)
                 }
             }
-        }
-    }
-
-
-    func applyModeRecursivelyTo(_ iZone: Zone?) {
-        iZone?.traverseAllProgeny() { iChild in
-            iChild.record      = CKRecord(recordType: gZoneTypeKey)
-            iChild.storageMode = gStorageMode
-
-            iChild.needFlush()
-            iChild.updateCloudProperties()
         }
     }
 
@@ -1415,6 +1403,15 @@ class ZEditingManager: NSObject {
                     var movable = zone
 
                     if !toFavorites {
+                        if  movable.isInFavorites && movable.isBookmark {
+                            let apply = movable.storageMode != into.storageMode
+                            movable   = movable.deepCopy()
+
+                            if apply {
+                                movable.recursivelyApplyMode(into.storageMode)
+                            }
+                        }
+
                         movable.orphan()
                     } else if !movable.isInFavorites {
                         movable = gFavoritesManager.createBookmark(for: zone, style: .favorite)
@@ -1433,9 +1430,9 @@ class ZEditingManager: NSObject {
                 onCompletion?()
             }
 
-            ///////////////////////////////////////////////////////////
-            // assure children (of into) are present, then add grabs //
-            ///////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////
+            // assure children (of into) are present, then call add grabs //
+            ////////////////////////////////////////////////////////////////
 
             into.displayChildren()
 

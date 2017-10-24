@@ -181,6 +181,32 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
+    enum ZDecorationType: Int {
+        case vertical
+        case sideDot
+    }
+
+
+    func drawDecoration(of type: ZDecorationType, for zone: Zone, in dirtyRect: CGRect) {
+        let     ratio = zone.isInFavorites ? gReductionRatio : 1.0
+        var thickness = CGFloat(gLineThickness) * 1.5 * ratio
+        var      path = ZBezierPath(rect: CGRect.zero)
+        var      rect = CGRect.zero
+
+        switch type {
+        case .vertical:
+            rect      = CGRect(origin: CGPoint(x: dirtyRect.midX - (thickness / 2.0), y: dirtyRect.minY + 1.0),             size: CGSize(width: thickness, height: dirtyRect.size.height - 2.0))
+            path      = ZBezierPath(rect: rect)
+        case .sideDot:
+            thickness = 4.0 * ratio
+            rect      = CGRect(origin: CGPoint(x: dirtyRect.maxX - thickness - 1.0,   y: dirtyRect.midY - thickness / 2.0), size: CGSize(width: thickness, height: thickness))
+            path      = ZBezierPath(ovalIn: rect)
+        }
+
+        path.fill()
+    }
+
+
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
@@ -192,7 +218,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     let shouldHighlight = isToggle ? (!zone.showChildren || zone.isBookmark || isDragTarget) : zone.isGrabbed || highlightAsFavorite // not highlight when editing
                     let     strokeColor = isToggle && isDragTarget ? gDragTargetsColor : zone.color
                     var       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
-                    var       thickness = CGFloat(gLineThickness)
+                    let       thickness = CGFloat(gLineThickness)
                     var            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
 
                     path     .lineWidth = thickness * 2.0
@@ -203,21 +229,21 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     path.stroke()
                     path.fill()
 
-                    if isToggle && zone.isBookmark {
-                        let       inset = CGFloat(innerDotHeight / 3.0)
-                        path            = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
-                        path  .flatness = 0.0001
+                    if isToggle {
+                        if zone.isBookmark { // draw tiny bookmark dot inside toggle dot
+                            let     inset = CGFloat(innerDotHeight / 3.0)
+                            path          = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
+                            path.flatness = 0.0001
 
-                        gBackgroundColor.setFill()
-                        path.fill()
-                    } else if !isToggle && !zone.chldrenAreWritable {
-                        fillColor       = shouldHighlight ? gBackgroundColor : strokeColor
-                        thickness      *= 1.5 * (zone.isInFavorites ? gReductionRatio : 1.0)
-                        let        rect = CGRect(origin: CGPoint(x: dirtyRect.midX - (thickness / 2.0), y: dirtyRect.minY), size: CGSize(width: thickness, height: dirtyRect.size.height))
-                        path            = ZBezierPath(rect: rect)
+                            gBackgroundColor.setFill()
+                            path.fill()
+                        }
+                    } else if !zone.isWritable ||   (zone.isRoot && !zone.progenyAreWritable!) {
+                        let type: ZDecorationType = !zone.isRoot &&  zone.progenyAreWritable! && !zone.isWritable ? .sideDot : .vertical
+                        fillColor                 = shouldHighlight ? gBackgroundColor : strokeColor
 
                         fillColor.setFill()
-                        path.fill()
+                        drawDecoration(of: type, for: zone, in: dirtyRect)
                     }
                 } else if isToggle {
                     drawTinyDots(dirtyRect)

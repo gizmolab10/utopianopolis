@@ -552,7 +552,7 @@ class ZCloudManager: ZRecordsManager {
 
             operation.completionBlock = {
                 self.FOREGROUND {
-                    var children = [Zone] ()
+                    var forReport = [Zone] ()
 
                     for (iRecord, iID) in recordsByID {
                         var fetchedParent  = self.zoneForRecordID(iID)
@@ -570,12 +570,16 @@ class ZCloudManager: ZRecordsManager {
                                 if  let  child = self.zoneForRecordID(orphan), let parentID = child.parentZone?.record.recordID, parentID == fetchedID {
                                     let states = self.states(for: child.record)
 
-                                    if !children.contains(child) {
-                                        children.append(child)
+                                    if  child.isRoot || child == p {
+                                        child.parentZone = nil
+
+                                        child.needFlush()
+                                    } else if !p.children.contains(child) {
+                                        p.children.append(child)
                                     }
 
-                                    if !p.children.contains(child) {
-                                        p.children.append(child)
+                                    if !forReport.contains(child) {
+                                        forReport.append(child)
                                     }
 
                                     if  states.contains(.needsRoot) {
@@ -596,7 +600,7 @@ class ZCloudManager: ZRecordsManager {
                         }
                     }
                     
-                    self.columnarReport("PARENT of", self.stringForZones(children))
+                    self.columnarReport("PARENT of", self.stringForZones(forReport))
                     self.clearRecordIDs(orphans, for: states)
                     self.fetchParents(onCompletion)   // process remaining
                 }
@@ -629,7 +633,7 @@ class ZCloudManager: ZRecordsManager {
                         retrieved.append(ckRecord)
                     }
                 } else { // nil means: we already received full response from cloud for this particular fetch
-                    self.FOREGROUND() {
+                    self.FOREGROUND {
 
                         ////////////////////////////
                         // now we can mutate heap //
