@@ -172,11 +172,11 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func setup() {
-        if  rootZone                    == nil {
-            let                   record = CKRecord(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: gFavoriteRootNameKey))
-            rootZone                     = Zone(record: record, storageMode: .mineMode)
-            rootZone!          .zoneName = gFavoritesKey
-            rootZone!.progenyAccess = .eProgenyWritable
+        if  rootZone                        == nil {
+            let                       record = CKRecord(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: gFavoriteRootNameKey))
+            rootZone                         = Zone(record: record, storageMode: .mineMode)
+            rootZone!              .zoneName = gFavoritesKey
+            rootZone!.ancestralProgenyAccess = .eProgenyWritable
 
             setupDefaultFavorites()
             rootZone!.needChildren()

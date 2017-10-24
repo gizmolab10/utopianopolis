@@ -40,7 +40,11 @@ class Zone : ZRecord {
     var               grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
     var              isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
     var             hasMissingChildren:         Bool { return count < fetchableCount }
-    var             progenyNotReadOnly:         Bool { return progenyAccess != .eProgenyReadOnly}
+    var            hasAccessDecoration:         Bool { return  !isWritable || directReadOnly }
+    var             showAccessChanging:         Bool { return (!isWritable && directWritable) || (isWritable && directReadOnly) }
+    var                directRecursive:         Bool { return zoneProgenyAccess == nil ? true  : zoneProgenyAccess!.intValue == ZoneAccess.eRecurse        .rawValue}
+    var                 directWritable:         Bool { return zoneProgenyAccess == nil ? false : zoneProgenyAccess!.intValue == ZoneAccess.eProgenyWritable.rawValue}
+    var                 directReadOnly:         Bool { return zoneProgenyAccess == nil ? false : zoneProgenyAccess!.intValue == ZoneAccess.eProgenyReadOnly.rawValue}
     var                  isInFavorites:         Bool { return isRootOfFavorites || parentZone?.isRootOfFavorites ?? false }
     var                  hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var                  hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
@@ -322,16 +326,16 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    var progenyAccess: ZoneAccess {
+    var ancestralProgenyAccess: ZoneAccess {
         get {
             if  isTrashRoot {
                 return .eProgenyWritable
             } else if let t = bookmarkTarget {
-                return t.progenyAccess
-            } else if let a = zoneProgenyAccess {
-                return ZoneAccess(rawValue: a.intValue) ?? .eProgenyReadOnly
-            } else if let p = parentZone, p != self, hasCompleteAncestorPath(toWritable: true) {
-                return p.progenyAccess
+                return t.ancestralProgenyAccess // go up bookmark's ancestor path
+            } else if  directWritable || directReadOnly {
+                return directWritable ? .eProgenyWritable : .eProgenyReadOnly
+            } else if let p = parentZone, p != self, p.hasCompleteAncestorPath(toWritable: true) {
+                return p.ancestralProgenyAccess // go further up ancestor path
             }
 
             return .eProgenyReadOnly
@@ -353,8 +357,8 @@ class Zone : ZRecord {
         } else if let t  = bookmarkTarget {
             return    t.isWritable
         } else if let p  = parentZone, p != self {
-            return    p.progenyAccess == .eProgenyWritable
-        } else if let a  = zoneProgenyAccess?.intValue {
+            return    p.ancestralProgenyAccess == .eProgenyWritable  // go up ancestor path
+        } else if let a  = zoneProgenyAccess?.intValue {    // root or orphan
             return    a == ZoneAccess.eProgenyWritable.rawValue
         }
 
@@ -363,12 +367,10 @@ class Zone : ZRecord {
 
 
     func toggleWritable() {
-        if isRoot {
-            progenyAccess = progenyNotReadOnly ? .eProgenyReadOnly : .eProgenyWritable
-        } else if let parent = parentZone, parent.progenyAccess != progenyAccess {
-            progenyAccess = .eRecurse
+        if  !directRecursive, let p = parentZone, showAccessChanging, (p.showAccessChanging || (p.directRecursive && p.isWritable == isWritable)) {
+            ancestralProgenyAccess = .eRecurse
         } else {
-            progenyAccess = progenyNotReadOnly ? .eProgenyReadOnly : .eProgenyWritable
+            ancestralProgenyAccess = isWritable ? .eProgenyReadOnly : .eProgenyWritable
         }
 
         needFlush()
@@ -454,7 +456,7 @@ class Zone : ZRecord {
         traverseAllAncestors { iZone in
             let  isReciprocal = parent == nil  || iZone.children.contains(parent!)
 
-            if  (isReciprocal && iZone.isRoot) || (toColor && iZone.hasColor) || (toWritable && iZone.zoneProgenyAccess != nil) {
+            if  (isReciprocal && iZone.isRoot) || (toColor && iZone.hasColor) || (toWritable && !iZone.directRecursive) {
                 isComplete = true
             }
 
