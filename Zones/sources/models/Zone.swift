@@ -53,6 +53,7 @@ class Zone : ZRecord {
     var                    isTrashRoot:         Bool { return zoneName == gTrashNameKey }
     var                     isBookmark:         Bool { return crossLink != nil }
     var                     isSelected:         Bool { return gSelectionManager.isSelected(self) }
+    var                      isInTrash:         Bool { return parentZone?.isTrashRoot ?? false }
     var                      isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
     var                      isVisible:         Bool { return !isRootOfFavorites && (isOSX || self != gHere) }
     var                      isDeleted:         Bool { return gTrash != self && gTrash?.spawned(self) ?? false }
@@ -368,13 +369,19 @@ class Zone : ZRecord {
 
 
     func toggleWritable() {
-        if  !directRecursive, let p = parentZone, showAccessChanging, (p.showAccessChanging || (p.directRecursive && p.isWritable == isWritable)) {
-            ancestralProgenyAccess = .eRecurse
+        if  let t = bookmarkTarget {
+            t.toggleWritable()
+        } else if isTrashRoot {
+            ancestralProgenyAccess = .eProgenyWritable
         } else {
-            ancestralProgenyAccess = isWritable ? .eProgenyReadOnly : .eProgenyWritable
-        }
+            if  !directRecursive, let p = parentZone, showAccessChanging, (p.showAccessChanging || (p.directRecursive && p.isWritable == isWritable)) {
+                ancestralProgenyAccess = .eRecurse
+            } else {
+                ancestralProgenyAccess = isWritable ? .eProgenyReadOnly : .eProgenyWritable
+            }
 
-        needFlush()
+            needFlush()
+        }
     }
 
 

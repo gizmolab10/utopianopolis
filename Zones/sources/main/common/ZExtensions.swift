@@ -227,6 +227,17 @@ extension Array {
         updateOrdering(start: 0.0, end: 1.0)
     }
 
+    func sortedByReverseOrdering() -> Array {
+        return sorted { (a, b) -> Bool in
+            if  let zoneA = a as? Zone,
+                let zoneB = b as? Zone {
+                return zoneA.order > zoneB.order
+            }
+
+            return true
+        }
+    }
+
     func updateOrdering(start: Double, end: Double) {
         let increment = (end - start) / Double(self.count + 2)
 
