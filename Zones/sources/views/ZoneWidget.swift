@@ -387,11 +387,14 @@ class ZoneWidget: ZView {
 
 
     func lineRect(to widget: ZoneWidget?) -> CGRect {
-        var    frame = CGRect ()
-        if  let  dot = widget?.dragDot.innerDot {
-            let kind = lineKind(to: widget)
-            frame    = dot.convert(dot.bounds, to: self)
-            frame    = lineRect(to: frame, kind: kind)
+        let  hasIndent = widget?.widgetZone.isCurrentFavorite ?? false
+        let      inset = CGFloat(hasIndent ? -3.0 : 0.0)
+        var      frame = CGRect ()
+        if  let    dot = widget?.dragDot.innerDot {
+            let dFrame = dot.bounds.insetBy(dx: inset, dy: 0.0)
+            let   kind = lineKind(to: widget)
+            frame      = dot.convert(dFrame, to: self)
+            frame      = lineRect(to: frame, kind: kind)
         }
 
         return frame

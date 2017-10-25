@@ -38,6 +38,7 @@ class Zone : ZRecord {
     var                  unwrappedName:       String { return zoneName ?? "empty" }
     var                  decoratedName:       String { return "\(unwrappedName)\(decoration)" }
     var               grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
+    var              isCurrentFavorite:         Bool { return self == gFavoritesManager.currentFavorite }
     var              isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
     var             hasMissingChildren:         Bool { return count < fetchableCount }
     var            hasAccessDecoration:         Bool { return  !isWritable || directReadOnly }

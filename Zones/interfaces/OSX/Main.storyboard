@@ -383,10 +383,7 @@ CQ
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="8fA-4k-lrb" userLabel="Favorites View">
-                                <rect key="frame" x="0.0" y="196" width="400" height="400"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="400" id="xEQ-mS-ruW"/>
-                                </constraints>
+                                <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
                                 <connections>
                                     <segue destination="i29-og-Irn" kind="embed" id="8d5-Fo-5gd"/>
                                 </connections>
@@ -404,6 +401,7 @@ CQ
                         </subviews>
                         <constraints>
                             <constraint firstItem="itU-Gt-Inh" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="2on-Rh-qaW"/>
+                            <constraint firstAttribute="bottom" secondItem="8fA-4k-lrb" secondAttribute="bottom" id="3rp-ur-lZC"/>
                             <constraint firstItem="uBD-4n-5KN" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="5bc-yZ-QEO"/>
                             <constraint firstItem="8fA-4k-lrb" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="6ek-ec-8Tg"/>
                             <constraint firstAttribute="trailing" secondItem="8fA-4k-lrb" secondAttribute="trailing" id="BHb-NN-qUM"/>

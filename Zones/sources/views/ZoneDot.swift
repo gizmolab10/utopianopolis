@@ -195,10 +195,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
         switch type {
         case .vertical:
-            rect      = CGRect(origin: CGPoint(x: dirtyRect.midX - (thickness / 2.0), y: dirtyRect.minY + 1.0),             size: CGSize(width: thickness, height: dirtyRect.size.height - 2.0))
+            rect      = CGRect(origin: CGPoint(x: dirtyRect.midX - (thickness / 2.0), y: dirtyRect.minY),                   size: CGSize(width: thickness, height: dirtyRect.size.height))
             path      = ZBezierPath(rect: rect)
         case .sideDot:
-            thickness = 4.0 * ratio
+            thickness = (thickness + 1.5) * ratio * dirtyRect.size.height / 12.0
             rect      = CGRect(origin: CGPoint(x: dirtyRect.maxX - thickness - 1.0,   y: dirtyRect.midY - thickness / 2.0), size: CGSize(width: thickness, height: thickness))
             path      = ZBezierPath(ovalIn: rect)
         }
@@ -211,7 +211,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         super.draw(dirtyRect)
 
         if  let                zone = widgetZone, isVisible(dirtyRect) {
-            let highlightAsFavorite = zone == gFavoritesManager.currentFavorite
+            let highlightAsFavorite = zone.isCurrentFavorite
 
             if !isHiddenToggleDot {
                 if isInnerDot {
