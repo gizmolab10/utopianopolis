@@ -20,6 +20,16 @@ class ZWidgetsManager: NSObject {
     var firstGrabbableWidget: ZoneWidget? { return widgetForZone(gSelectionManager.firstGrab) }
 
 
+    var visibleWidgets: [ZoneWidget] {
+        var      visible = [ZoneWidget] ()
+
+        if let      main = widgets[  gStorageMode]?.values { visible.append(contentsOf: main) }
+        if let favorites = widgets[.favoritesMode]?.values { visible.append(contentsOf: favorites) }
+
+        return visible
+    }
+
+
     func registerWidget(_ widget: ZoneWidget) {
         if  let                      zone = widget.widgetZone,
             let                      mode = mode(for: zone) {

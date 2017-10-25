@@ -302,8 +302,10 @@ class ZoneWidget: ZView {
     }
 
 
-    func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView?, _ iHere: Zone) -> ZoneWidget? {
-        if dragHitFrame(in: iView, iHere).contains(iPoint) && !widgetZone.wasSpawnedBy(gDraggedZone) {
+    func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView?, _ iHere: Zone?) -> ZoneWidget? {
+        if  iHere != nil &&
+            !widgetZone.wasSpawnedBy(gDraggedZone) &&
+            dragHitFrame(in: iView, iHere!).contains(iPoint) {
             if widgetZone.showChildren {
                 for child in widgetZone.children {
                     if let childWidget = child.widget, self != childWidget, let found = childWidget.widgetNearestTo(iPoint, in: iView, iHere) {
