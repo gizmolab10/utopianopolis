@@ -42,11 +42,11 @@ class Zone : ZRecord {
     var              isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
     var             hasMissingChildren:         Bool { return count < fetchableCount }
     var            hasAccessDecoration:         Bool { return  !isWritable || directReadOnly }
-    var             showAccessChanging:         Bool { return (!isWritable && directWritable) || (isWritable && directReadOnly) }
+    var             showAccessChanging:         Bool { return (!isWritable && directWritable) || (isWritable && directReadOnly) || isRootOfFavorites }
     var                directRecursive:         Bool { return zoneProgenyAccess == nil ? true  : zoneProgenyAccess!.intValue == ZoneAccess.eRecurse        .rawValue}
     var                 directWritable:         Bool { return zoneProgenyAccess == nil ? false : zoneProgenyAccess!.intValue == ZoneAccess.eProgenyWritable.rawValue}
     var                 directReadOnly:         Bool { return zoneProgenyAccess == nil ? false : zoneProgenyAccess!.intValue == ZoneAccess.eProgenyReadOnly.rawValue}
-    var                  isInFavorites:         Bool { return isRootOfFavorites || parentZone?.isRootOfFavorites ?? false }
+    var                  isInFavorites:         Bool { return isRootOfFavorites || parentZone?.isInFavorites ?? false }
     var                  hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var                  hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var                   showChildren:         Bool { return isRootOfFavorites || gManifest.showsChildren(self) }
@@ -228,13 +228,13 @@ class Zone : ZRecord {
 
     var fetchableCount: Int {
         get {
-            if isBookmark || isInFavorites {
-                return bookmarkTarget?.fetchableCount ?? 0
+            if  let    t = bookmarkTarget {
+                return t.fetchableCount
             } else if zoneCount == nil {
                 updateClassProperties()
 
-                if zoneCount == nil {
-                    zoneCount = NSNumber(value: 0)
+                if  zoneCount == nil {
+                    zoneCount = NSNumber(value: count)
                 }
             }
 
@@ -242,7 +242,7 @@ class Zone : ZRecord {
         }
 
         set {
-            if  newValue != fetchableCount && !isBookmark && !isInFavorites {
+            if  newValue != fetchableCount && !isBookmark {
                 zoneCount = NSNumber(value: newValue)
             }
         }
@@ -374,7 +374,7 @@ class Zone : ZRecord {
         } else if isTrashRoot {
             ancestralProgenyAccess = .eProgenyWritable
         } else {
-            if  !directRecursive, let p = parentZone, showAccessChanging, (p.showAccessChanging || (p.directRecursive && p.isWritable == isWritable)) {
+            if  !directRecursive, showAccessChanging, let p = parentZone, (p.showAccessChanging || (!p.directReadOnly && p.isWritable == isWritable)) {
                 ancestralProgenyAccess = .eRecurse
             } else {
                 ancestralProgenyAccess = isWritable ? .eProgenyReadOnly : .eProgenyWritable

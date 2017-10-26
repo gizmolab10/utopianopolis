@@ -35,7 +35,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     var        moveDownGesture:  ZGestureRecognizer?
     var        moveLeftGesture:  ZGestureRecognizer?
     var       moveRightGesture:  ZGestureRecognizer?
-    override  var controllerID:  ZControllerID { return .favorites }
+    override  var controllerID:  ZControllerID { return .editor }
     @IBOutlet var   editorView:  ZoneDragView?
     @IBOutlet var      spinner:  ZProgressIndicator?
     
@@ -99,6 +99,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 make  .top.equalTo(e).offset(20.0 - Double(gGenericOffset.height / 3.0))
                 make .left.equalTo(e).offset(15.0 - Double(gGenericOffset.width       ))
             }
+
+            e.setNeedsDisplay()
         }
     }
     
@@ -107,7 +109,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     // MARK:-
 
 
-    func update(_ object: Any?, isMain: Bool, kind: ZSignalKind) {
+    func update(_ object: Any?, _ kind: ZSignalKind, isMain: Bool) {
         let                        here = isMain ? gHere : gFavoritesManager.rootZone
         var specificWidget: ZoneWidget? = isMain ? editorRootWidget : favoritesRootWidget
         var   specificView:      ZView? = editorView
@@ -127,12 +129,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
         note("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")
 
-        layoutForCurrentScrollOffset()
         specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, visited: [])
-
-        editorView?.applyToAllSubviews { iView in
-            iView.setNeedsDisplay()
-        }
     }
 
     
@@ -141,8 +138,10 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             if gWorkMode != .editMode {
                 editorView?.snp.removeConstraints()
             } else if !gEditingManager.isEditing {
-                update(object, isMain: true,  kind: kind)
-                update(object, isMain: false, kind: kind)
+                layoutForCurrentScrollOffset()
+                update(object, kind, isMain: true)
+                update(object, kind, isMain: false)
+                editorView?.setAllSubviewsNeedDisplay()
             }
         }
     }
@@ -263,7 +262,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             gScrollOffset   = CGPoint(x: gScrollOffset.x + location.x - priorScrollLocation.x, y: gScrollOffset.y + priorScrollLocation.y - location.y)
             
             layoutForCurrentScrollOffset()
-            editorView?.setNeedsDisplay()
         }
         
         priorScrollLocation = location
@@ -326,7 +324,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
             prior?           .displayForDrag() // erase  child lines
             dropZone?.widget?.displayForDrag() // redraw child lines
-            gFavoritesView? .setNeedsDisplay() // redraw drag (line and dot)
             gEditorView?    .setNeedsDisplay() // redraw drag (line and dot)
 
             columnarReport(relation, dropZone?.unwrappedName)
@@ -426,11 +423,11 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 }
             }
 
-            editorView?.setNeedsDisplay()
+            editorView?.setAllSubviewsNeedDisplay()
         }
         
         signalFor(nil, regarding: .preferences)
-        editorView?.setNeedsDisplay()
+        editorView?.setAllSubviewsNeedDisplay()
     }
 
     

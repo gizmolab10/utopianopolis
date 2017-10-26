@@ -335,9 +335,7 @@ extension UITextField {
 extension ZoneTextWidget {
     @objc(textField:shouldChangeCharactersInRange:replacementString:) func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         widget.textWidget.layoutTextField()
-        gEditorView?.applyToAllSubviews { iView in
-            iView.setNeedsDisplay()
-        }
+        gEditorView?.setAllSubviewsNeedDisplay()
 
         return true
     }

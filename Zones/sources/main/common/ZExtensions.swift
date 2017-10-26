@@ -410,6 +410,13 @@ extension ZView {
     }
 
 
+    func setAllSubviewsNeedDisplay() {
+        applyToAllSubviews { iView in
+            iView.setNeedsDisplay()
+        }
+    }
+
+
     func applyToAllSubviews(_ closure: ViewClosure) {
         closure(self)
 

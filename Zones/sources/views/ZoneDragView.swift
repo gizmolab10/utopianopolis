@@ -71,7 +71,6 @@ class ZoneDragView: ZView, ZGestureRecognizerDelegate {
             }
 
             gEditorController?.layoutForCurrentScrollOffset()
-            gEditorView?.setNeedsDisplay()
         }
     #endif
 

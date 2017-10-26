@@ -179,7 +179,7 @@ class ZFavoritesManager: ZCloudManager {
             rootZone!.ancestralProgenyAccess = .eProgenyWritable
 
             setupDefaultFavorites()
-            rootZone!.needChildren()
+            rootZone!.needProgeny()
             rootZone!.displayChildren()
         }
     }
@@ -205,7 +205,8 @@ class ZFavoritesManager: ZCloudManager {
 
     func updateChildren() {
         if  let   children = rootZone?.children {
-            var trashIndex = -1
+            let    invalid = -1
+            var trashIndex = invalid
             var   hasTrash = false
             var      found = ZModes ()
 
@@ -220,13 +221,13 @@ class ZFavoritesManager: ZCloudManager {
             }
 
             for (index, favorite) in children.enumerated() {
-                if  let    mode  = favorite.crossLink?.storageMode,
-                    let    link  = favorite.zoneLink {
-                    if     link == gTrashLink {
+                if  let     mode  = favorite.crossLink?.storageMode,
+                    let     link  = favorite.zoneLink {
+                    if      link == gTrashLink {
                         if  hasTrash {
                             trashIndex = index
                         } else {
-                            hasTrash = true
+                            hasTrash   = true
                         }
                     } else if !found.contains(mode) {
                         found.append(mode)
@@ -234,7 +235,7 @@ class ZFavoritesManager: ZCloudManager {
                 }
             }
 
-            if  trashIndex != -1 {
+            if  trashIndex != invalid {
                 rootZone?.children.remove(at: trashIndex)
             }
 
@@ -309,7 +310,7 @@ class ZFavoritesManager: ZCloudManager {
             let zone = self.zoneAtIndex(iIndex)
 
             if !self.focus(on: zone, atArrival) {
-                bump?(self.next(index, forward))
+                bump?(self.next(iIndex, forward))
             }
         }
 

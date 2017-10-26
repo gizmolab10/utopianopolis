@@ -276,7 +276,6 @@ class ZEditingManager: NSObject {
         gScrollOffset = CGPoint.zero
 
         gEditorController?.layoutForCurrentScrollOffset()
-        gEditorView?.setNeedsDisplay()
     }
     
 
@@ -1177,6 +1176,7 @@ class ZEditingManager: NSObject {
         gSelectionManager.deselectGrabs()
 
         for (child, (parent, index)) in gSelectionManager.pasteableZones {
+            child.orphan()
             parent?.addAndReorderChild(child, at: index)
             child.addToGrab()
         }

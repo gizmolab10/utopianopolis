@@ -83,9 +83,7 @@ var           gDragPoint:           CGPoint? = nil
 var              gIsLate:               Bool { return gCloudUnavailable || gOperationsManager.isLate }
 var          gIsDragging:               Bool { return gDraggedZone != nil }
 var    gInsertionsFollow:               Bool { return gInsertionMode == .follow }
-var gFavoritesController: ZEditorController? { return gControllersManager.controllerForID(.favorites) as? ZEditorController }
-var    gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor)    as? ZEditorController }
-var       gFavoritesView:      ZoneDragView? { return gFavoritesController?.editorView }
+var    gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor) as? ZEditorController }
 var          gEditorView:      ZoneDragView? { return gEditorController?.editorView }
 var           gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var            gDotWidth:             Double { return gDotHeight * 0.75 }
