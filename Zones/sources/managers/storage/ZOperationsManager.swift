@@ -92,27 +92,27 @@ class ZOperationsManager: NSObject {
 
         reportOperation(identifier)
 
-        switch identifier { // outer switch
-        case .file:                 gFileManager.restore  (from:          currentMode!); cloudCallback?(0)
+        switch identifier {      // outer switch
+        case .file:                 gFileManager         .restore  (from: currentMode!); cloudCallback?(0)
+        case .authenticate:         gUserManager         .authenticate   (               cloudCallback)
         case .here:                 remote               .establishHere  (currentMode!,  cloudCallback)
         case .roots:                remote               .establishRoot  (currentMode!,  cloudCallback)
-        case .authenticate:         remote               .authenticate   (               cloudCallback)
         default: let cloudManager = remote               .cloudManagerFor(currentMode!)
-        switch identifier { // inner switch
-        case .cloud:        cloudManager.fetchCloudZones                 (               cloudCallback)
-        case .bookmarks:    cloudManager.fetchBookmarks                  (               cloudCallback)
-        case .manifest:     cloudManager.fetchManifest                   (               cloudCallback)
-        case .children:     cloudManager.fetchChildren                   (logic,         cloudCallback)
-        case .parent:       cloudManager.fetchParents                    (               cloudCallback)
-        case .unsubscribe:  cloudManager.unsubscribe                     (               cloudCallback)
-        case .undelete:     cloudManager.undeleteAll                     (               cloudCallback)
-        case .emptyTrash:   cloudManager.emptyTrash                      (               cloudCallback)
-        case .trash:        cloudManager.fetchTrash                      (               cloudCallback)
-        case .subscribe:    cloudManager.subscribe                       (               cloudCallback)
-        case .create:       cloudManager.create                          (               cloudCallback)
-        case .fetch:        cloudManager.fetch                           (               cloudCallback)
-        case .merge:        cloudManager.merge                           (               cloudCallback)
-        case .save:         cloudManager.save                            (               cloudCallback)
+        switch identifier {      // inner switch
+        case .cloud:                cloudManager.fetchCloudZones         (               cloudCallback)
+        case .bookmarks:            cloudManager.fetchBookmarks          (               cloudCallback)
+        case .manifest:             cloudManager.fetchManifest           (               cloudCallback)
+        case .children:             cloudManager.fetchChildren           (logic,         cloudCallback)
+        case .parent:               cloudManager.fetchParents            (               cloudCallback)
+        case .unsubscribe:          cloudManager.unsubscribe             (               cloudCallback)
+        case .undelete:             cloudManager.undeleteAll             (               cloudCallback)
+        case .emptyTrash:           cloudManager.emptyTrash              (               cloudCallback)
+        case .trash:                cloudManager.fetchTrash              (               cloudCallback)
+        case .subscribe:            cloudManager.subscribe               (               cloudCallback)
+        case .create:               cloudManager.create                  (               cloudCallback)
+        case .fetch:                cloudManager.fetch                   (               cloudCallback)
+        case .merge:                cloudManager.merge                   (               cloudCallback)
+        case .save:                 cloudManager.save                    (               cloudCallback)
         default: break
             } // inner switch
         } // outer switch

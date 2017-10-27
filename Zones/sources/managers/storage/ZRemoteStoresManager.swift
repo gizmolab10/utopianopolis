@@ -22,11 +22,9 @@ var         gHere: Zone    { get { return gManifest.hereZone }             set {
 class ZRemoteStoresManager: NSObject {
 
 
-    let             container = CKContainer(identifier: gCloudID)
     var      storageModeStack = ZModes ()
     var       recordsManagers = [ZStorageMode : ZCloudManager]()
     var manifestByStorageMode = [ZStorageMode : ZManifest] ()
-    var          userRecordID: CKRecordID?
     var currentRecordsManager: ZRecordsManager { return recordsManagerFor(gStorageMode) }
     var   currentCloudManager: ZCloudManager   { return cloudManagerFor(gStorageMode) }
     var      rootProgenyCount: Int             { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
@@ -80,55 +78,10 @@ class ZRemoteStoresManager: NSObject {
 
     func databaseForMode(_ mode: ZStorageMode) -> CKDatabase? {
         switch mode {
-        case .everyoneMode: return container.publicCloudDatabase
-        case   .sharedMode: return container.sharedCloudDatabase
-        case     .mineMode: return container.privateCloudDatabase
+        case .everyoneMode: return gContainer.publicCloudDatabase
+        case   .sharedMode: return gContainer.sharedCloudDatabase
+        case     .mineMode: return gContainer.privateCloudDatabase
         default:            return nil
-        }
-    }
-
-
-    func authenticate(_ onCompletion: AnyClosure?) {
-        fetchUser() { iRecordIDs in
-            if iRecordIDs.count > 0 {
-                self.userRecordID = iRecordIDs[0]
-            }
-
-            self.container.accountStatus { (iStatus, iError) in
-                switch iStatus {
-                case .available: onCompletion?(0)
-                default:         onCompletion?(iError)
-                }
-            }
-        }
-
-//        [[CKContainer defaultContainer] accountStatusWithCompletionHandler:^(CKAccountStatus accountStatus, NSError *error) {
-//            if (accountStatus == CKAccountStatusNoAccount) {
-//            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Sign in to iCloud"
-//            message:@"Sign in to your iCloud account to write records. On the Home screen, launch Settings, tap iCloud, and enter your Apple ID. Turn iCloud Drive on. If you don't have an iCloud account, tap Create a new Apple ID."
-//            preferredStyle:UIAlertControllerStyleAlert];
-//            [alert addAction:[UIAlertAction actionWithTitle:@"Okay"
-//            style:UIAlertActionStyleCancel
-//            handler:nil]];
-//            [self presentViewController:alert animated:YES completion:nil];
-//            }
-//            else {
-//            // Insert your just-in-time schema code here
-//            }
-//            }]
-
-
-    }
-
-
-    func fetchUser(_ onCompletion: @escaping RecordIDsClosure) {
-        container.fetchUserRecordID() { recordID, error in
-            if  error == nil && recordID != nil {
-                onCompletion([recordID!])
-            } else {
-                self.columnarReport(" ERROR", error?.localizedDescription ?? "failed to fetch user record id; reason unknown")
-                onCompletion([])
-            }
         }
     }
     
@@ -174,7 +127,7 @@ class ZRemoteStoresManager: NSObject {
 
 
     func resetBadgeCounter() {
-        container.accountStatus { (iStatus, iError) in
+        gContainer.accountStatus { (iStatus, iError) in
             if iStatus == .available {
                 let badgeResetOperation = CKModifyBadgeOperation(badgeValue: 0)
 
@@ -186,7 +139,7 @@ class ZRemoteStoresManager: NSObject {
                     }
                 }
 
-                self.container.add(badgeResetOperation)
+                gContainer.add(badgeResetOperation)
             }
         }
     }

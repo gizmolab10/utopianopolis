@@ -25,6 +25,7 @@ class Zone : ZRecord {
     dynamic var               zoneName:      String?
     dynamic var               zoneLink:      String?
     dynamic var              zoneColor:      String?
+    dynamic var              zoneOwner: CKReference?
     dynamic var              zoneOrder:    NSNumber?
     dynamic var              zoneCount:    NSNumber?
     dynamic var            zoneProgeny:    NSNumber?
@@ -100,6 +101,7 @@ class Zone : ZRecord {
                 #keyPath(zoneName),
                 #keyPath(zoneLink),
                 #keyPath(zoneColor),
+                #keyPath(zoneOwner),
                 #keyPath(zoneOrder),
                 #keyPath(zoneCount),
                 #keyPath(zoneProgeny),
@@ -223,6 +225,17 @@ class Zone : ZRecord {
             if newValue != order {
                 zoneOrder = NSNumber(value: newValue)
             }
+        }
+    }
+
+
+    var ownerID: CKRecordID? {
+        get {
+            return zoneOwner?.recordID
+        }
+
+        set {
+            zoneOwner = (newValue == nil) ? nil : CKReference(recordID: newValue!, action: .none)
         }
     }
 
@@ -373,12 +386,17 @@ class Zone : ZRecord {
         if  let t = bookmarkTarget {
             t.toggleWritable()
         } else if isTrashRoot {
-            ancestralProgenyAccess = .eProgenyWritable
+            ancestralProgenyAccess     = .eProgenyWritable
         } else if isWritableByUseer {
+            ownerID                    = nil
+
             if  !directRecursive, showAccessChanging, let p = parentZone, (p.showAccessChanging || (!p.directReadOnly && p.isWritable == isWritable)) {
                 ancestralProgenyAccess = .eRecurse
+            } else if !isWritable {
+                ancestralProgenyAccess = .eProgenyWritable
             } else {
-                ancestralProgenyAccess = isWritable ? .eProgenyReadOnly : .eProgenyWritable
+                ancestralProgenyAccess = .eProgenyReadOnly
+                ownerID                = gUserManager.userRecordID
             }
 
             needFlush()

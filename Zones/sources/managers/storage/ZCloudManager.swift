@@ -25,7 +25,7 @@ class ZCloudManager: ZRecordsManager {
             operation.timeoutIntervalForResource = gRemoteTimeout
             operation .timeoutIntervalForRequest = gRemoteTimeout
             operation          .qualityOfService = .background
-            operation                 .container = gRemoteStoresManager.container
+            operation                 .container = gContainer
             operation                  .database = database
 
             return operation

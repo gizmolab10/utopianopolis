@@ -8,6 +8,7 @@
 
 
 import Foundation
+import CloudKit
 
 
 #if os(OSX)
@@ -49,6 +50,7 @@ let       gTravelManager = ZTravelManager()
 let         gUserManager = ZUserManager()
 let         gFileManager = ZFileManager()
 let         gUndoManager = UndoManager()
+let           gContainer = CKContainer(identifier: gCloudID)
 
 let             gCloudID = "iCloud.com.zones.Zones"
 let            gLinksKey = "links"
