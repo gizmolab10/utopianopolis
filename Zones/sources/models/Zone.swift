@@ -43,6 +43,7 @@ class Zone : ZRecord {
     var             hasMissingChildren:         Bool { return count < fetchableCount }
     var            hasAccessDecoration:         Bool { return  !isWritable || directReadOnly }
     var             showAccessChanging:         Bool { return (!isWritable && directWritable) || (isWritable && directReadOnly) || isRootOfFavorites }
+    var              isWritableByUseer:         Bool { return isWritable || gUserManager.userCanAlter(self) }
     var                directRecursive:         Bool { return zoneProgenyAccess == nil ? true  : zoneProgenyAccess!.intValue == ZoneAccess.eRecurse        .rawValue}
     var                 directWritable:         Bool { return zoneProgenyAccess == nil ? false : zoneProgenyAccess!.intValue == ZoneAccess.eProgenyWritable.rawValue}
     var                 directReadOnly:         Bool { return zoneProgenyAccess == nil ? false : zoneProgenyAccess!.intValue == ZoneAccess.eProgenyReadOnly.rawValue}
@@ -373,7 +374,7 @@ class Zone : ZRecord {
             t.toggleWritable()
         } else if isTrashRoot {
             ancestralProgenyAccess = .eProgenyWritable
-        } else {
+        } else if isWritableByUseer {
             if  !directRecursive, showAccessChanging, let p = parentZone, (p.showAccessChanging || (!p.directReadOnly && p.isWritable == isWritable)) {
                 ancestralProgenyAccess = .eRecurse
             } else {

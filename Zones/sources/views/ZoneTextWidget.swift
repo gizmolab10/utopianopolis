@@ -20,7 +20,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     var                     widgetZone : Zone  { return widget.widgetZone }
-    override var acceptsFirstResponder : Bool  { return widgetZone.isWritable }
+    override var acceptsFirstResponder : Bool  { return widgetZone.isWritableByUseer }
     override var         preferredFont : ZFont { return widgetZone.isInFavorites ? gFavoritesFont : gWidgetFont }
     weak var                    widget : ZoneWidget!
     var                   originalText = ""
@@ -129,9 +129,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-        let writable = widgetZone.isWritable
-
-        if !gSelectionManager.isEditingStateChanging && writable {
+        if !gSelectionManager.isEditingStateChanging && widgetZone.isWritableByUseer {
 //            gSelectionManager.deferEditingStateChange()
 
             isTextEditing = super.becomeFirstResponder() // becomeFirstResponder is called first so delegate methods will be called

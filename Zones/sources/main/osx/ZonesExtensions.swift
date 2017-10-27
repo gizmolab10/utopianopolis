@@ -370,8 +370,6 @@ extension ZoneTextWidget {
     }
 
 
-
-
     override func controlTextDidEndEditing(_ notification: Notification) {
         if  let        value = notification.userInfo?["NSTextMovement"] as? NSNumber {
             var key: String? = nil

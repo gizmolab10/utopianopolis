@@ -46,6 +46,7 @@ let      gWidgetsManager = ZWidgetsManager()
 let      gEditingManager = ZEditingManager()
 let       gEventsManager = ZEventsManager()
 let       gTravelManager = ZTravelManager()
+let         gUserManager = ZUserManager()
 let         gFileManager = ZFileManager()
 let         gUndoManager = UndoManager()
 

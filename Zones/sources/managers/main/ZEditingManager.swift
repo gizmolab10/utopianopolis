@@ -725,7 +725,7 @@ class ZEditingManager: NSObject {
             if  zone == parent { // detect and avoid infinite recursion
                 finished()
             } else {
-                deleteZone(zone, permanently: permanently || zone.isInFavorites) {
+                deleteZone(zone, permanently: permanently) {
                     finished()
                 }
             }
@@ -737,9 +737,18 @@ class ZEditingManager: NSObject {
         if  let       zone = gInsertionsFollow ? zones.first : zones.last,
             let     parent = zone.parentZone {
             let   siblings = parent.children
-            let        max = siblings.count - 1
+            var      count = siblings.count
+            let        max = count - 1
 
-            if  var       index  = zone.siblingIndex, max > 0 {
+            if siblings.count == zones.count {
+                for zone in zones {
+                    if siblings.contains(zone) {
+                        count -= 1
+                    }
+                }
+            }
+
+            if  var       index  = zone.siblingIndex, max > 0, count > 0 {
                 if        index == max &&   gInsertionsFollow {
                     index        = 0
                 } else if index == 0   &&  !gInsertionsFollow {
@@ -1370,18 +1379,18 @@ class ZEditingManager: NSObject {
         // 4. move a favorite into a normal zone -- convert favorite to a bookmark, then move the bookmark          //
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        let toFavorites = iInto.isRootOfFavorites   // type 3
-        let  toBookmark = iInto.isBookmark          // type 2
+        let  toBookmark = iInto.isBookmark                   // type 2
+        let toFavorites = iInto.isInFavorites && !toBookmark // type 3
         var     restore = [Zone: (Zone, Int?)] ()
         var       grabs = gSelectionManager.currentGrabs
 
         if  let dragged = gDraggedZone, dragged.isInFavorites, !toFavorites {
-            dragged.needFlush()            // type 4
+            dragged.needFlush()                              // type 4
         }
 
         grabs.sort { (a, b) -> Bool in
             if  a.isInFavorites {
-                a.needFlush()              // type 4
+                a.needFlush()                                // type 4
             }
 
             return a.order < b.order
