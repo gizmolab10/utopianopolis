@@ -49,12 +49,79 @@ class ZEditingManager: NSObject {
     }
 
 
+    enum ZMenuType: Int {
+        case Always    = 0
+        case UseGrabs  = 1
+        case Paste     = 2
+        case Undo      = 3
+        case Redo      = 4
+        case SelectAll = 5
+        case Alter     = 6
+        case Multiple  = 7
+        case Copy      = 8
+        case Children  = 9
+        case Parent    = 10
+    }
+
+
+    func menuType(for key: String) -> ZMenuType {
+        switch key {
+        case "r", "o":                                                       return .Children
+        case "u", "l", "w", "-", "\r", gSpaceKey, gBackspaceKey, gDeleteKey: return .Alter
+        case "b", gTabKey:                                                   return .Parent
+        default:                                                             return .Always
+        }
+    }
+
+
+    func validateKey(_ key: String) -> Bool {
+        let type = menuType(for: key)
+
+        return validateTag(type.rawValue)
+    }
+
+
+    func validateTag(_ tag: Int) -> Bool {
+        var valid = !isEditing
+
+        if  tag <= 10, tag > 0, let type = ZMenuType(rawValue: tag) {
+            if !valid {
+                valid = [.Undo, .Redo, .Copy, .Alter, .SelectAll].contains(type)
+            } else {
+                let   undo = undoManager
+                let      s = gSelectionManager
+                let wGrabs = s.writableGrabsCount
+                let  paste = s.pasteableZones.count
+                let  grabs = s.currentGrabs  .count
+                let  write = s.currentMoveable.isWritable
+                let  shown = s.currentGrabsHaveVisibleChildren
+                let pWrite = s.currentMoveable.parentZone?.isWritable ?? false
+
+                switch type {
+                case .Parent:    valid =              pWrite
+                case .Alter:     valid =               write
+                case .Paste:     valid =  paste > 0 && write
+                case .UseGrabs:  valid = wGrabs > 0 && write
+                case .Multiple:  valid =  grabs > 1
+                case .Children:  valid = (shown     && write) || (grabs > 1 && pWrite)
+                case .SelectAll: valid =  shown
+                case .Undo:      valid = undo.canUndo
+                case .Redo:      valid = undo.canRedo
+                default:         valid = false
+                }
+            }
+        }
+
+        return valid
+    }
+
+
     // MARK:- events
     // MARK:-
 
 
     func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) {
-        if  var       key = iKey {
+        if  var       key = iKey, validateKey(key) {
             let    widget = gWidgetsManager.currentMovableWidget
             let hasWidget = widget != nil
             let isControl = flags.isControl
@@ -204,9 +271,10 @@ class ZEditingManager: NSObject {
 
     func handleMenuItem(_ iItem: ZMenuItem?) {
         #if os(OSX)
-            if gWorkMode == .editMode {
-                let   key = (iItem?.keyEquivalent)!
-                let flags = (iItem?.keyEquivalentModifierMask)!
+            if  gWorkMode == .editMode,
+                let   item = iItem {
+                let  flags = item.keyEquivalentModifierMask
+                let    key = item.keyEquivalent
 
                 handleKey(key, flags: flags, isWindow: true)
             }

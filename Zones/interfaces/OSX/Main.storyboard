@@ -137,11 +137,11 @@ CA
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="Graph" tag="6" id="34Y-GC-lZU">
+                            <menuItem title="Graph" id="34Y-GC-lZU">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Graph" id="ixh-Wh-nLR">
                                     <items>
-                                        <menuItem title="Create" tag="6" id="PJi-eK-2ck">
+                                        <menuItem title="Create" id="PJi-eK-2ck">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Create" id="GbF-qY-vTh">
                                                 <items>
@@ -169,7 +169,7 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="bsP-FQ-jyh"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Bookmark" keyEquivalent="b" id="3wN-52-oXT">
+                                                    <menuItem title="Bookmark" tag="10" keyEquivalent="b" id="3wN-52-oXT">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Oel-Sg-rlG"/>
@@ -179,13 +179,13 @@ CQ
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <menu key="submenu" title="New ideas ..." id="OBR-N9-GY7">
                                                             <items>
-                                                                <menuItem title="Follow" tag="6" keyEquivalent="." id="VH7-3z-X0C">
+                                                                <menuItem title="Follow" keyEquivalent="." id="VH7-3z-X0C">
                                                                     <modifierMask key="keyEquivalentModifierMask"/>
                                                                     <connections>
                                                                         <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="nxe-Rr-q22"/>
                                                                     </connections>
                                                                 </menuItem>
-                                                                <menuItem title="Precede" tag="6" keyEquivalent="," id="dHQ-7g-fgO">
+                                                                <menuItem title="Precede" keyEquivalent="," id="dHQ-7g-fgO">
                                                                     <modifierMask key="keyEquivalentModifierMask"/>
                                                                     <connections>
                                                                         <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="rWe-PO-mDa"/>
@@ -232,25 +232,25 @@ CQ
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Move Ideas" id="mgN-HE-iPa">
                                                 <items>
-                                                    <menuItem title="Up" keyEquivalent="" id="Q7K-pQ-hmB">
+                                                    <menuItem title="Up" tag="10" keyEquivalent="" id="Q7K-pQ-hmB">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="pAA-Jx-Z2s"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Down" keyEquivalent="" id="hX0-kk-URN">
+                                                    <menuItem title="Down" tag="10" keyEquivalent="" id="hX0-kk-URN">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="yc8-kI-kIG"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Out" keyEquivalent="" id="Mz9-sk-WIT">
+                                                    <menuItem title="Out" tag="10" keyEquivalent="" id="Mz9-sk-WIT">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Hsb-zh-n3e"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="In" keyEquivalent="" id="kLu-OH-6ht">
+                                                    <menuItem title="In" tag="10" keyEquivalent="" id="kLu-OH-6ht">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Qm7-zT-Ksg"/>

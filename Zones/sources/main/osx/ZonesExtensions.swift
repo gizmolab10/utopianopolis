@@ -255,57 +255,11 @@ extension NSView {
 
 extension NSWindow {
 
-
     override open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
-        enum ZMenuType: Int {
-            case UseGrabs  = 1
-            case Paste     = 2
-            case Undo      = 3
-            case Redo      = 4
-            case SelectAll = 5
-            case Always    = 6
-            case Multiple  = 7
-            case Copy      = 8
-            case Children  = 9
-        }
-
-        let  edit = gEditingManager.isEditing
-        let   tag = menuItem.tag
-        var valid = !edit
-
-        if  tag <= 9, tag > 0, let type = ZMenuType(rawValue: tag) {
-            if edit {
-                valid = [.Undo, .Redo, .Copy, .Always, .SelectAll].contains(type)
-            } else {
-                let     s = gSelectionManager
-                let paste = s.pasteableZones.count
-                let grabs = s.currentGrabs  .count
-                let  undo = gEditingManager.undoManager
-                let shown = s.currentGrabsHaveVisibleChildren
-
-                switch type {
-                case .Paste:     valid = paste > 0
-                case .UseGrabs:  valid = grabs > 0
-                case .Multiple:  valid = grabs > 1
-                case .Children:  valid = grabs > 1 || shown
-                case .SelectAll: valid =              shown
-                case .Undo:      valid = undo.canUndo
-                case .Redo:      valid = undo.canRedo
-                case .Always:    valid = true
-                default:         valid = false
-                }
-            }
-        }
-
-//        var         title = menuItem.title
-//        if !valid { title = "< \(title) >" }
-//
-//        rawColumnarReport("   \(tag)", title)
-
-        return valid
+        return gEditingManager.validateTag(menuItem.tag)
     }
 
-
+    
     @IBAction func displayPreferences     (_ sender: Any?) { gSettingsController?.displayViewFor(id: .Preferences) }
     @IBAction func displayHelp            (_ sender: Any?) { gSettingsController?.displayViewFor(id: .Help) }
     @IBAction func printHere              (_ sender: Any?) { gEditingManager.printHere() }

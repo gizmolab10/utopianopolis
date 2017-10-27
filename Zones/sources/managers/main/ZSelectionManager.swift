@@ -38,6 +38,19 @@ class ZSelectionManager: NSObject {
     }
 
 
+    var writableGrabsCount: Int {
+        var count = 0
+
+        for zone in currentGrabs {
+            if zone.isWritable {
+                count += 1
+            }
+        }
+
+        return count
+    }
+
+
     var simplifiedGrabs: [Zone] {
         let current = currentGrabs
         var   grabs = [Zone] ()

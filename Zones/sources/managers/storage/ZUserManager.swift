@@ -17,7 +17,7 @@ class ZUserManager : NSObject {
     var          user: ZUser?
     var  userRecordID: CKRecordID?
     var  userIdentity: CKUserIdentity?
-    var isSpecialUser: Bool { return user?.access == .eAccessFull }
+    var isSpecialUser: Bool { return false } // user?.access == .eAccessFull }
 
 
     func userCanAlter(_ zone: Zone) -> Bool {
