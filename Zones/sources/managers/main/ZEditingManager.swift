@@ -49,6 +49,10 @@ class ZEditingManager: NSObject {
     }
 
 
+    // MARK:- events
+    // MARK:-
+
+
     enum ZMenuType: Int {
         case Always    = 0
         case UseGrabs  = 1
@@ -116,10 +120,6 @@ class ZEditingManager: NSObject {
     }
 
 
-    // MARK:- events
-    // MARK:-
-
-
     func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) {
         if  var       key = iKey, validateKey(key) {
             let    widget = gWidgetsManager.currentMovableWidget
@@ -180,29 +180,6 @@ class ZEditingManager: NSObject {
     }
 
 
-    func createNext() {
-        let   grab = gSelectionManager.currentMoveable
-
-        let assign = { (iText: String) in
-            grab.zoneName = iText
-
-            grab.widget?.textWidget.updateText()
-        }
-
-        if  grab.zoneName?.contains("----------- ") ?? false {
-            assign(gLineOfDashes)
-        } else if grab.zoneName?.contains(gLineOfDashes) ?? false {
-            assign(gLineWithStubTitle)
-            grab.editAndSelect(in: NSMakeRange(12, 1))
-        } else {
-            createNext(with: gLineOfDashes) { iChild in
-                iChild.grab()
-            }
-        }
-    }
-
-
-
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
         let isCommand = flags.isCommand
         let  isOption = flags.isOption
@@ -235,22 +212,6 @@ class ZEditingManager: NSObject {
                 applyGenerationally(show, extreme: isCommand)
             }
         }
-    }
-
-
-    func applyGenerationally(_ show: Bool, extreme: Bool = false) {
-        let       zone = gSelectionManager.rootMostMoveable
-        var goal: Int? = nil
-
-        if !show {
-            goal = extreme ? zone.level - 1 : zone.highestExposed - 1
-        } else if  extreme {
-            goal = Int.max
-        } else if let lowest = zone.lowestExposed {
-            goal = lowest + 1
-        }
-
-        toggleDotUpdate(show: show, zone: zone, to: goal)
     }
 
 
@@ -294,6 +255,43 @@ class ZEditingManager: NSObject {
         redrawAndSyncAndRedraw()
     }
 
+
+    func createNext() {
+        let   grab = gSelectionManager.currentMoveable
+
+        let assign = { (iText: String) in
+            grab.zoneName = iText
+
+            grab.widget?.textWidget.updateText()
+        }
+
+        if  grab.zoneName?.contains("----------- ") ?? false {
+            assign(gLineOfDashes)
+        } else if grab.zoneName?.contains(gLineOfDashes) ?? false {
+            assign(gLineWithStubTitle)
+            grab.editAndSelect(in: NSMakeRange(12, 1))
+        } else {
+            createNext(with: gLineOfDashes) { iChild in
+                iChild.grab()
+            }
+        }
+    }
+
+
+    func applyGenerationally(_ show: Bool, extreme: Bool = false) {
+        let       zone = gSelectionManager.rootMostMoveable
+        var goal: Int? = nil
+
+        if !show {
+            goal = extreme ? zone.level - 1 : zone.highestExposed - 1
+        } else if  extreme {
+            goal = Int.max
+        } else if let lowest = zone.lowestExposed {
+            goal = lowest + 1
+        }
+
+        toggleDotUpdate(show: show, zone: zone, to: goal)
+    }
 
 
     func orderByLength() {
@@ -623,7 +621,8 @@ class ZEditingManager: NSObject {
 
 
     func createIdea() {
-        if let parentZone = gWidgetsManager.currentMovableWidget?.widgetZone, !parentZone.isBookmark {
+        let parentZone = gSelectionManager.currentMoveable
+        if !parentZone.isBookmark {
             createIdeaIn(parentZone, at: gInsertionsFollow ? nil : 0) { iChild in
                 gControllersManager.signalFor(parentZone, regarding: .redraw) {
                     iChild?.edit()

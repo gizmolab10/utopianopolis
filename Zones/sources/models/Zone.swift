@@ -44,7 +44,7 @@ class Zone : ZRecord {
     var             hasMissingChildren:         Bool { return count < fetchableCount }
     var            hasAccessDecoration:         Bool { return  !isWritable || directReadOnly }
     var             showAccessChanging:         Bool { return (!isWritable && directWritable) || (isWritable && directReadOnly) || isRootOfFavorites }
-    var              isWritableByUseer:         Bool { return isWritable || gUserManager.userCanAlter(self) }
+    var              isWritableByUseer:         Bool { return isWritable || gUserManager.userHasAccess(self) }
     var                directRecursive:         Bool { return zoneProgenyAccess == nil ? true  : zoneProgenyAccess!.intValue == ZoneAccess.eRecurse        .rawValue}
     var                 directWritable:         Bool { return zoneProgenyAccess == nil ? false : zoneProgenyAccess!.intValue == ZoneAccess.eProgenyWritable.rawValue}
     var                 directReadOnly:         Bool { return zoneProgenyAccess == nil ? false : zoneProgenyAccess!.intValue == ZoneAccess.eProgenyReadOnly.rawValue}
@@ -231,7 +231,15 @@ class Zone : ZRecord {
 
     var ownerID: CKRecordID? {
         get {
-            return zoneOwner?.recordID
+            if let owner = zoneOwner {
+                return owner.recordID
+            } else if let t = bookmarkTarget {
+                return t.ownerID
+            } else if let p = parentZone {
+                return p.ownerID
+            } else {
+                return nil
+            }
         }
 
         set {

@@ -72,6 +72,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         zlayer.backgroundColor = gClearColor.cgColor
         font                   = preferredFont
 
+        isEditable             = widgetZone.isWritableByUseer
+
         #if os(iOS)
             autocapitalizationType = .none
         #endif
