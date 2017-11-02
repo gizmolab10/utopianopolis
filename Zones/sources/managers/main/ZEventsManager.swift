@@ -16,6 +16,9 @@ import Foundation
 #endif
 
 
+let gEventsManager = ZEventsManager()
+
+
 class ZEventsManager: NSObject {
 
 

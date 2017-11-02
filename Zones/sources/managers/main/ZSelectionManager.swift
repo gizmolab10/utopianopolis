@@ -23,6 +23,9 @@ enum ZRelation: Int {
 }
 
 
+let gSelectionManager = ZSelectionManager()
+
+
 class ZSelectionManager: NSObject {
 
 

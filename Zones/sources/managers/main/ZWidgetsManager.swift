@@ -11,6 +11,9 @@ import Foundation
 import CloudKit
 
 
+let gWidgetsManager = ZWidgetsManager()
+
+
 class ZWidgetsManager: NSObject {
 
 

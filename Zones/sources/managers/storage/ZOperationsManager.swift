@@ -13,7 +13,7 @@ import Foundation
 enum ZOperationID: Int {
     case authenticate
     case cloud
-    case roots
+    case root
     case file
     case manifest   // zones which show children
     case here
@@ -37,6 +37,9 @@ enum ZOperationID: Int {
     case trash
     case none
 }
+
+
+let gOperationsManager = ZOperationsManager()
 
 
 class ZOperationsManager: NSObject {
@@ -65,7 +68,7 @@ class ZOperationsManager: NSObject {
     func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .save,         to: .subscribe,                   onCompletion) }
     func     travel(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,         to: .save,                        onCompletion) }
     func       save(_ onCompletion: @escaping Closure) { setupAndRun([.create,                    .merge, .save           ]) { onCompletion() } }
-    func      roots(_ onCompletion: @escaping Closure) { setupAndRun([.roots,                             .save, .children]) { onCompletion() } }
+    func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                              .save, .children]) { onCompletion() } }
     func fetchTrash(_ onCompletion: @escaping Closure) { setupAndRun([.trash,                             .save, .children]) { onCompletion() } }
     func       sync(_ onCompletion: @escaping Closure) { setupAndRun([.create,   .fetch, .parent, .merge, .save, .children]) { onCompletion() } }
     func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent,         .save, .children]) { onCompletion() } }
@@ -96,7 +99,7 @@ class ZOperationsManager: NSObject {
         case .file:                 gFileManager         .restore  (from: currentMode!); cloudCallback?(0)
         case .authenticate:         gUserManager         .authenticate   (               cloudCallback)
         case .here:                 remote               .establishHere  (currentMode!,  cloudCallback)
-        case .roots:                remote               .establishRoot  (currentMode!,  cloudCallback)
+        case .root:                 remote               .establishRoot  (currentMode!,  cloudCallback)
         default: let cloudManager = remote               .cloudManagerFor(currentMode!)
         switch identifier {      // inner switch
         case .cloud:                cloudManager.fetchCloudZones         (               cloudCallback)
@@ -137,10 +140,11 @@ class ZOperationsManager: NSObject {
                 self.FOREGROUND {
                     self                .currentOp = operationID        // if hung, it happened inside this op
                     var  invokeModeAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
-                    let                       full = [.unsubscribe, .subscribe, .manifest, .children, .parent, .fetch, .cloud, .roots, .here].contains(operationID)
-                    let  forCurrentStorageModeOnly = [.file, .completion, .authenticate                                                     ].contains(operationID)
-                    let            onlyCurrentMode = !full && (forCurrentStorageModeOnly || isMine)
+                    let                       full = [.unsubscribe, .subscribe, .manifest, .children, .parent, .fetch, .cloud, .root, .here].contains(operationID)
+                    let  forCurrentStorageModeOnly = [.file, .completion, .authenticate                                                    ].contains(operationID)
+                    let            onlyCurrentMode = !gHasPrivateDatabase || (!full && (forCurrentStorageModeOnly || isMine))
                     let              modes: ZModes = onlyCurrentMode ? [saved] : [.mineMode, .everyoneMode]
+                    let                     isNoop = onlyCurrentMode && isMine && !gHasPrivateDatabase
 
                     invokeModeAt                   = { index in
 
@@ -148,7 +152,7 @@ class ZOperationsManager: NSObject {
                         // always called in foreground //
                         /////////////////////////////////
 
-                        if operationID == .completion {
+                        if operationID == .completion || isNoop {
                             self.queue.isSuspended = false
 
                             onCompletion()

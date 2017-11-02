@@ -404,7 +404,9 @@ class Zone : ZRecord {
                 ancestralProgenyAccess = .eProgenyWritable
             } else {
                 ancestralProgenyAccess = .eProgenyReadOnly
-                ownerID                = gUserManager.userRecordID
+                if let name = gUserRecordID {
+                    ownerID            = CKRecordID(recordName: name)
+                }
             }
 
             needFlush()
@@ -837,18 +839,19 @@ class Zone : ZRecord {
     }
 
 
-    func recursivelyApplyMode(_ iMode: ZStorageMode?, create: Bool = true) {
-        if let mode = iMode {
-            traverseAllProgeny { iChild in
-                iChild.storageMode = mode
-
-                if  create {
-                    iChild .record = CKRecord(recordType: gZoneTypeKey)
-                }
-
-                iChild.needFlush()
-                iChild.updateCloudProperties()
+    func recursivelyApplyMode(create: Bool = true) {
+        traverseAllProgeny { iChild in
+            if  create {
+                iChild .record = CKRecord(recordType: gZoneTypeKey)
             }
+
+            if  let              p = iChild.parentZone {
+                iChild.storageMode = p.storageMode
+                iChild     .parent = CKReference(record: p.record, action: .none)
+            }
+
+            iChild.needFlush()
+            iChild.updateCloudProperties()
         }
     }
 

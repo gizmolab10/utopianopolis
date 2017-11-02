@@ -8,6 +8,7 @@
 
 
 import Foundation
+import CloudKit
 
 #if os(OSX)
     import Cocoa
@@ -83,67 +84,66 @@ var           gDragPoint:           CGPoint? = nil
 var              gIsLate:               Bool { return gCloudUnavailable || gOperationsManager.isLate }
 var          gIsDragging:               Bool { return gDraggedZone != nil }
 var    gInsertionsFollow:               Bool { return gInsertionMode == .follow }
+var  gHasPrivateDatabase:               Bool { return gUserRecordID != nil }
 var    gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor) as? ZEditorController }
 var          gEditorView:      ZoneDragView? { return gEditorController?.editorView }
 var           gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var            gDotWidth:             Double { return gDotHeight * 0.75 }
 
 
+// MARK:- keys
+// MARK:-
+
+
+let     userRecordIDKey = "user record id"
+let favoritesVisibleKey = "favorites are visible"
+let dragTargetsColorKey = "drag targets color"
+let  backgroundColorKey = "background color"
+let  currentFavoriteKey = "current favorite"
+let   actionsVisibleKey = "actions are visible"
+let    settingsStateKey = "current settings state"
+let    insertionModeKey = "graph altering mode"
+let    tinyDotsRatioKey = "tiny dots ratio"
+let    bookmarkColorKey = "bookmark color"
+let    lineThicknessKey = "line thickness"
+let    genericOffsetKey = "generic offset"
+let     scrollOffsetKey = "scroll offset"
+let      storageModeKey = "current storage mode"
+let       countsModeKey = "counts mode"
+let          scalingKey = "scaling"
+
+
 // MARK:- persistence
 // MARK:-
 
 
+var gUserRecordID: String? {
+    get { return getString(   for: userRecordIDKey, defaultString: nil) }
+    set { setString(newValue, for: userRecordIDKey) }
+}
+
+
 var gFavoritesAreVisible: Bool {
-    get {
-        var value: Bool? = UserDefaults.standard.object(forKey: favoritesVisibleKey) as? Bool
-
-        if  value == nil {
-            value = false
-
-            UserDefaults.standard.set(value, forKey:favoritesVisibleKey)
-            UserDefaults.standard.synchronize()
-        }
-
-        return value!
-    }
-
-    set {
-        UserDefaults.standard.set(newValue, forKey:favoritesVisibleKey)
-        UserDefaults.standard.synchronize()
-    }
+    get { return getBool(   for: favoritesVisibleKey, defaultBool: false) }
+    set { setBool(newValue, for: favoritesVisibleKey) }
 }
 
 
 var gActionsAreVisible: Bool {
-    get {
-        var value: Bool? = UserDefaults.standard.object(forKey: actionsVisibleKey) as? Bool
-
-        if  value == nil {
-            value = false
-
-            UserDefaults.standard.set(value, forKey:actionsVisibleKey)
-            UserDefaults.standard.synchronize()
-        }
-
-        return value!
-    }
-
-    set {
-        UserDefaults.standard.set(newValue, forKey:actionsVisibleKey)
-        UserDefaults.standard.synchronize()
-    }
+    get { return getBool(   for: actionsVisibleKey, defaultBool: false) }
+    set { setBool(newValue, for: actionsVisibleKey) }
 }
 
 
 var gBackgroundColor: ZColor {
-    get { return   getColorForKey(backgroundColorKey, defaultColor: ZColor(hue: 0.6, saturation: 0.0, brightness: unselectBrightness, alpha: 1)) }
-    set { setColor(newValue, key: backgroundColorKey) }
+    get { return   getColor( for: backgroundColorKey, defaultColor: ZColor(hue: 0.6, saturation: 0.0, brightness: unselectBrightness, alpha: 1)) }
+    set { setColor(newValue, for: backgroundColorKey) }
 }
 
 
 var gDragTargetsColor: ZColor {
-    get { return   getColorForKey(dragTargetsColorKey, defaultColor: ZColor.red) }
-    set { setColor(newValue, key: dragTargetsColorKey) }
+    get { return   getColor( for: dragTargetsColorKey, defaultColor: ZColor.red) }
+    set { setColor(newValue, for: dragTargetsColorKey) }
 }
 
 
@@ -292,7 +292,7 @@ var gStorageMode: ZStorageMode {
             mode      = ZStorageMode(rawValue: object as! String)
         }
 
-        if mode == nil {
+        if  mode     == nil || !gHasPrivateDatabase {
             mode      = .everyoneMode
 
             UserDefaults.standard.set(mode!.rawValue, forKey:storageModeKey)
@@ -334,41 +334,63 @@ var gSettingsViewIDs: ZSettingsViewID {
 }
 
 
-// MARK:- user default -- keys and methods
+// MARK:- internals
 // MARK:-
 
-
-let favoritesVisibleKey = "favorites are visible"
-let dragTargetsColorKey = "drag targets color"
-let  backgroundColorKey = "background color"
-let  currentFavoriteKey = "current favorite"
-let   actionsVisibleKey = "actions are visible"
-let    settingsStateKey = "current settings state"
-let    insertionModeKey = "graph altering mode"
-let    tinyDotsRatioKey = "tiny dots ratio"
-let    bookmarkColorKey = "bookmark color"
-let    lineThicknessKey = "line thickness"
-let    genericOffsetKey = "generic offset"
-let     scrollOffsetKey = "scroll offset"
-let      storageModeKey = "current storage mode"
-let       countsModeKey = "counts mode"
-let          scalingKey = "scaling"
-
-
-func getColorForKey(_ key: String, defaultColor: ZColor) -> ZColor {
+func getColor(for key: String, defaultColor: ZColor) -> ZColor {
     if let data = UserDefaults.standard.object(forKey: key) as? Data, let color = NSKeyedUnarchiver.unarchiveObject(with: data) as? ZColor {
         return color
     }
 
-    setColor(defaultColor, key: key)
+    setColor(defaultColor, for: key)
 
     return defaultColor
 }
 
 
-func setColor(_ iColor: ZColor, key: String) {
+func setColor(_ iColor: ZColor, for key: String) {
     let data: Data = NSKeyedArchiver.archivedData(withRootObject: iColor)
 
     UserDefaults.standard.set(data, forKey: key)
     UserDefaults.standard.synchronize()
 }
+
+
+func getString(for key: String, defaultString: String?) -> String? {
+    if let string = UserDefaults.standard.object(forKey: key) as? String {
+        return string
+    }
+
+    if let string = defaultString {
+        setString(string, for: key)
+    }
+
+    return defaultString
+}
+
+
+func setString(_ iString: String?, for key: String) {
+    if let string = iString {
+        UserDefaults.standard.set(string, forKey: key)
+        UserDefaults.standard.synchronize()
+    }
+}
+
+
+func getBool(for key: String, defaultBool: Bool) -> Bool {
+    if  let value: NSNumber = UserDefaults.standard.object(forKey: key) as? NSNumber {
+        return value.boolValue
+    }
+
+    setBool(defaultBool, for: key)
+
+    return defaultBool
+}
+
+
+func setBool(_ iBool: Bool, for key: String) {
+    UserDefaults.standard.set(iBool, forKey: key)
+    UserDefaults.standard.synchronize()
+}
+
+

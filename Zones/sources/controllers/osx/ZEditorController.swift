@@ -47,7 +47,10 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     override func awakeFromNib() {
         super.awakeFromNib()
         editorView?.addSubview(editorRootWidget)
-        editorView?.addSubview(favoritesRootWidget)
+
+        if gHasPrivateDatabase {
+            editorView?.addSubview(favoritesRootWidget)
+        }
     }
     
     
@@ -94,13 +97,15 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 make.centerX.equalTo(e).offset(gScrollOffset.x)
             }
 
-            favoritesRootWidget.snp.removeConstraints()
-            favoritesRootWidget.snp.makeConstraints { make in
-                make  .top.equalTo(e).offset(20.0 - Double(gGenericOffset.height / 3.0))
-                make .left.equalTo(e).offset(15.0 - Double(gGenericOffset.width       ))
-            }
+            if gHasPrivateDatabase {
+                favoritesRootWidget.snp.removeConstraints()
+                favoritesRootWidget.snp.makeConstraints { make in
+                    make  .top.equalTo(e).offset(20.0 - Double(gGenericOffset.height / 3.0))
+                    make .left.equalTo(e).offset(15.0 - Double(gGenericOffset.width       ))
+                }
 
-            e.setNeedsDisplay()
+                e.setNeedsDisplay()
+            }
         }
     }
     
@@ -110,6 +115,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
 
     func update(_ object: Any?, _ kind: ZSignalKind, isMain: Bool) {
+        if !isMain && !gHasPrivateDatabase { return }
+
         let                        here = isMain ? gHere : gFavoritesManager.rootZone
         var specificWidget: ZoneWidget? = isMain ? editorRootWidget : favoritesRootWidget
         var   specificView:      ZView? = editorView
@@ -118,13 +125,12 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         gTextCapturing                  = false
         specificWidget?     .widgetZone = here
 
-        if let zone = object as? Zone {
-            if zone == here {
-                specificWidget = zone.widget
-                specificindex  = zone.siblingIndex
-                specificView   = specificWidget?.superview
-                recursing      = [.data, .redraw].contains(kind)
-            }
+        if  let       zone = object as? Zone,
+            zone          == here {
+            specificWidget = zone.widget
+            specificindex  = zone.siblingIndex
+            specificView   = specificWidget?.superview
+            recursing      = [.data, .redraw].contains(kind)
         }
 
         note("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")
@@ -376,6 +382,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             let dropNearest = rootWidget.widgetNearestTo(location, in: editorView, gHere) {
 
             if  isMain,
+                gHasPrivateDatabase,
                 let (_, otherDrop, otherLocation) = widgetNearest(iGesture, isMain: false) {
 
                 /////////////////////////////////////////////////

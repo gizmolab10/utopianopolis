@@ -39,18 +39,7 @@ let       gFingerBreadth = CGFloat(44.0)
 let      gReductionRatio = CGFloat(0.8)
 let    gDefaultZoneColor = ZColor.blue
 
-let  gControllersManager = ZControllersManager()
-let   gOperationsManager = ZOperationsManager()
-let    gSelectionManager = ZSelectionManager()
-let    gFavoritesManager = ZFavoritesManager(.favoritesMode)
-let      gWidgetsManager = ZWidgetsManager()
-let      gEditingManager = ZEditingManager()
-let       gEventsManager = ZEventsManager()
-let       gTravelManager = ZTravelManager()
-let         gUserManager = ZUserManager()
-let         gFileManager = ZFileManager()
 let         gUndoManager = UndoManager()
-let           gContainer = CKContainer(identifier: gCloudID)
 
 let             gCloudID = "iCloud.com.zones.Zones"
 let            gLinksKey = "links"

@@ -17,6 +17,9 @@ import CoreFoundation
 #endif
 
 
+let gFileManager = ZFileManager()
+
+
 class ZFileManager: NSObject {
 
 

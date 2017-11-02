@@ -26,7 +26,7 @@ protocol ZGenericControllerProtocol {
 
 class ZGenericController: ZController, ZGenericControllerProtocol {
     var controllerID:  ZControllerID { return .undefined }
-    override func awakeFromNib() { view.zlayer.backgroundColor = gBackgroundColor.cgColor }
+    override func awakeFromNib() { setup() }
     func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {}
     func displayActivity(_ show: Bool) {}
 

@@ -12,6 +12,7 @@ import Foundation
 enum ZControllerID: Int {
     case undefined
     case searchResults
+    case authenticate
     case information
     case preferences
     case cloudTools
@@ -38,9 +39,13 @@ enum ZSignalKind: Int {
 }
 
 
+let gControllersManager = ZControllersManager()
+
+
 class ZControllersManager: NSObject {
 
 
+    var currentController: ZGenericController? = nil
     var signalObjectsByControllerID = [ZControllerID : ZSignalObject] ()
 
 
@@ -70,6 +75,7 @@ class ZControllersManager: NSObject {
 
     func register(_ iController: ZGenericController, iID: ZControllerID, closure: @escaping ModeAndSignalClosure) {
         signalObjectsByControllerID[iID] = ZSignalObject(closure, forController: iController)
+        currentController                = iController
     }
 
 

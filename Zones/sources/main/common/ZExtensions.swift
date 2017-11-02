@@ -46,23 +46,6 @@ extension NSObject {
     }
 
 
-    func reportError(_ iError: Any? = nil, _ message: String? = nil) {
-        let text = message ?? ""
-
-        if let error: NSError = iError as? NSError {
-            let waitForIt = (error.userInfo[CKErrorRetryAfterKey] as? String) ?? ""
-
-            print(waitForIt + text)
-        } else if let error: CKError = iError as? CKError {
-            print(error.localizedDescription + text)
-        } else {
-            let error = iError as? String ?? ""
-
-            print(error + text)
-        }
-    }
-
-
     func redrawAndSync(_ iZone: Zone? = nil, _ onCompletion: Closure? = nil) {
         gControllersManager.syncToCloudAndSignalFor(iZone, regarding: .redraw, onCompletion: onCompletion)
     }

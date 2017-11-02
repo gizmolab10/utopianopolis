@@ -39,11 +39,11 @@ class ZRecord: NSObject {
 
 
     var alreadyExists: Bool {
-        if let r = record, r.creationDate == nil {
-            return false
+        if  let    r = record {
+            return r.creationDate != nil
         }
 
-        return true
+        return false
     }
 
 

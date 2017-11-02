@@ -11,6 +11,9 @@ import Foundation
 import CloudKit
 
 
+let gTravelManager = ZTravelManager()
+
+
 class ZTravelManager: NSObject {
 
 

@@ -11,49 +11,62 @@ import Foundation
 import CloudKit
 
 
+let gUserManager = ZUserManager()
+
+
 class ZUserManager : NSObject {
 
 
-    var          user: ZUser?
-    var  userRecordID: CKRecordID?
-    var  userIdentity: CKUserIdentity?
-    var isSpecialUser: Bool { return user?.access == .eAccessFull }
+    var            user : ZUser?
+    var    userIdentity : CKUserIdentity?
+    var   isSpecialUser : Bool { return user?.access == .eAccessFull }
+    let makeUserSpecial = false
 
 
     func userHasAccess(_ zone: Zone) -> Bool {
-        return isSpecialUser || zone.ownerID == nil || zone.ownerID == userRecordID
+        return isSpecialUser || zone.ownerID == nil || zone.ownerID!.recordName == gUserRecordID
     }
 
 
     func authenticate(_ onCompletion: AnyClosure?) {
-        fetchUser() {
-            self.fetchUserID() {
-                if  let recordID = self.userRecordID {
-                    gCloudManager.assureRecordExists(withRecordID: recordID, recordType: CKRecordTypeUserRecord) { (iUserRecord: CKRecord?) in
-                        if  let record = iUserRecord {
-                            let   user = ZUser(record: record, storageMode: gStorageMode)
-                            self .user = user
-                        }
+        gContainer.accountStatus { (iStatus, iError) in
+            self.fetchUser() {
+                if  let recordName = gUserRecordID {
+                    let ckRecordID = CKRecordID(recordName: recordName)
 
-                        gContainer.accountStatus { (iStatus, iError) in
-                            switch iStatus {
-                            case .available: onCompletion?(0)
-                            default:         onCompletion?(iError)
+                    gCloudManager.assureRecordExists(withRecordID: ckRecordID, recordType: CKRecordTypeUserRecord) { (iUserRecord: CKRecord?) in
+                        if  let  record = iUserRecord {
+                            let    user = ZUser(record: record, storageMode: gStorageMode)
+                            self  .user = user
+
+                            if  self.makeUserSpecial {
+                                user.access = .eAccessFull
+
+                                user.needFlush()
                             }
                         }
+
+                        self.fetchUserIdentity(for: ckRecordID) {
+                            onCompletion?(0)
+                        }
                     }
+                } else {
+                    // fubar, no cloud kit account
+                    onCompletion?(0)
                 }
             }
         }
     }
 
 
-    func fetchUserID(_ onCompletion: @escaping Closure) {
-        gContainer.discoverUserIdentity(withUserRecordID: userRecordID!) { (iCKUserIdentity, iError) in
-            if  iError == nil {
+    func fetchUserIdentity(for iRecordID: CKRecordID, _ onCompletion: @escaping Closure) {
+        gContainer.discoverUserIdentity(withUserRecordID: iRecordID) { (iCKUserIdentity, iError) in
+            if  iError != nil {
+                gAlertManager.report(error: iError, "failed to fetch user id; reason unknown")
+            } else if iCKUserIdentity != nil {
                 self.userIdentity = iCKUserIdentity
-            } else {
-                self.columnarReport(" ERROR", iError?.localizedDescription ?? "failed to fetch user id; reason unknown")
+//            } else {
+//                gAlertManager.report(error: CKError(_nsError: NSError(domain: "yikes", code: 9, userInfo: nil)))
             }
 
             onCompletion()
@@ -63,10 +76,10 @@ class ZUserManager : NSObject {
 
     func fetchUser(_ onCompletion: @escaping Closure) {
         gContainer.fetchUserRecordID() { iRecordID, iError in
-            if  iError == nil {
-                self.userRecordID = iRecordID
+            if  iError != nil {
+                gAlertManager.report(error: iError, "failed to fetch user record id; reason unknown")
             } else {
-                self.columnarReport(" ERROR", iError?.localizedDescription ?? "failed to fetch user record id; reason unknown")
+                gUserRecordID = iRecordID?.recordName
             }
 
             onCompletion()

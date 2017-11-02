@@ -17,6 +17,9 @@ import CloudKit
 #endif
 
 
+let gEditingManager = ZEditingManager()
+
+
 class ZEditingManager: NSObject {
 
 
@@ -65,14 +68,16 @@ class ZEditingManager: NSObject {
         case Copy      = 8
         case Children  = 9
         case Parent    = 10
-    }
+        case Favorites = 11
+}
 
 
     func menuType(for key: String) -> ZMenuType {
         switch key {
-        case "r", "o":                                                       return .Children
         case "u", "l", "w", "-", "\r", gSpaceKey, gBackspaceKey, gDeleteKey: return .Alter
         case "b", gTabKey:                                                   return .Parent
+        case "r", "o":                                                       return .Children
+        case ";", "'", "/":                                                  return .Favorites
         default:                                                             return .Always
         }
     }
@@ -97,9 +102,9 @@ class ZEditingManager: NSObject {
                 let wGrabs = s.writableGrabsCount
                 let  paste = s.pasteableZones.count
                 let  grabs = s.currentGrabs  .count
-                let  write = s.currentMoveable.isWritable
                 let  shown = s.currentGrabsHaveVisibleChildren
-                let pWrite = s.currentMoveable.parentZone?.isWritable ?? false
+                let  write = s.currentMoveable.isWritableByUseer
+                let pWrite = s.currentMoveable.parentZone?.isWritableByUseer ?? false
 
                 switch type {
                 case .Parent:    valid =              pWrite
@@ -109,6 +114,7 @@ class ZEditingManager: NSObject {
                 case .Multiple:  valid =  grabs > 1
                 case .Children:  valid = (shown     && write) || (grabs > 1 && pWrite)
                 case .SelectAll: valid =  shown
+                case .Favorites: valid = gHasPrivateDatabase
                 case .Undo:      valid = undo.canUndo
                 case .Redo:      valid = undo.canRedo
                 default:         valid = false
@@ -467,7 +473,7 @@ class ZEditingManager: NSObject {
         if gRoot?.record != nil {
             onCompletion?()
         } else {
-            gOperationsManager.roots {
+            gOperationsManager.root {
                 onCompletion?()
             }
         }
@@ -1096,11 +1102,11 @@ class ZEditingManager: NSObject {
                 gTravelManager.travelThrough(there) { object, kind in
                     let there = object as! Zone
 
-                    if !sameGraph {
-                        mover.recursivelyApplyMode(there.storageMode)
-                    }
-
                     self.moveZone(mover, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
+                        if !sameGraph {
+                            mover.recursivelyApplyMode()
+                        }
+
                         self.redrawAndSync()
                     }
                 }
@@ -1499,12 +1505,7 @@ class ZEditingManager: NSObject {
 
                     if !toFavorites {
                         if  movable.isInFavorites && movable.isBookmark {
-                            let apply = movable.storageMode != into.storageMode
-                            movable   = movable.deepCopy()
-
-                            if apply {
-                                movable.recursivelyApplyMode(into.storageMode)
-                            }
+                            movable = movable.deepCopy()
                         }
 
                         movable.orphan()
@@ -1516,6 +1517,7 @@ class ZEditingManager: NSObject {
 
                     movable.grab()
                     into.addAndReorderChild(movable, at: iIndex)
+                    movable.recursivelyApplyMode()
                 }
 
                 if toBookmark {
