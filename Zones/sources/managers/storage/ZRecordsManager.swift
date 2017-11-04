@@ -242,13 +242,13 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
-    func recordIDsWithMatchingStates( _ states: [ZRecordState], pull: Bool = false) -> [CKRecordID] {
+    func recordIDsWithMatchingStates( _ states: [ZRecordState], pull: Bool = false, batchSize: Int = gBatchSize) -> [CKRecordID] {
         var identifiers = [CKRecordID] ()
 
         findAllRecordsWithAnyMatchingStates(states) { state, ckrecord in
             let identifier = ckrecord.recordID
 
-            if  identifiers.count < gBatchSize, !identifiers.contains(identifier) {
+            if  identifiers.count < batchSize, !identifiers.contains(identifier) {
                 identifiers.append(identifier)
             }
         }

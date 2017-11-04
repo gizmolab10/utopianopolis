@@ -59,7 +59,7 @@ public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 
 let        gVerticalWeight = 1.0
 let gHighlightHeightOffset = CGFloat(-3.0)
-let           zapplication = NSApplication.shared()
+let           gApplication = NSApplication.shared()
 var    gSettingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
 
 
@@ -190,14 +190,14 @@ extension NSResponder {
 
     override func textInputReport(_ iMessage: Any?) {
         if  var   message = iMessage as? String {
-            let    window = zapplication.mainWindow
+            let    window = gApplication.mainWindow
             message       = "key down in: \(message)"
 
             if  let first = window?.firstResponder, first == self {
                 message.append(" <-- FIRST RESPONDER")
             }
 
-            report(message)
+            gAlertManager.alertError(nil, message)
         }
     }
 

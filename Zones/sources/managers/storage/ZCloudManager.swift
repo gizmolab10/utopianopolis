@@ -19,8 +19,6 @@ class ZCloudManager: ZRecordsManager {
     var database: CKDatabase? { return gRemoteStoresManager.databaseForMode(storageMode) }
     var currentOperation: CKOperation? = nil
     var currentPredicate: NSPredicate? = nil
-    var mostRecentError: Error? = nil
-
 
     
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
@@ -71,7 +69,7 @@ class ZCloudManager: ZRecordsManager {
 
     func save(_ onCompletion: IntClosure?) {
         let   saves = pullRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
-        let deletes = recordIDsWithMatchingStates([.needsDestroy], pull: true)
+        let deletes = recordIDsWithMatchingStates([.needsDestroy], pull: true, batchSize: 20)
         let   count = saves.count + deletes.count
 
         if  count > 0, let           operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
@@ -196,35 +194,27 @@ class ZCloudManager: ZRecordsManager {
         } else {
             BACKGROUND {     // not stall foreground processor
                 self.database?.fetch(withRecordID: recordID) { (fetchedRecord: CKRecord?, fetchError: Error?) in
-                    self.detectError(fetchError) {
-                        let brandNew: CKRecord = CKRecord(recordType: recordType, recordID: recordID)
+                    gAlertManager.detectError(fetchError) { iHasError in
+                        if !iHasError {
+                            done(fetchedRecord)
+                        } else {
+                            let brandNew: CKRecord = CKRecord(recordType: recordType, recordID: recordID)
 
-                        self.database?.save(brandNew) { (savedRecord: CKRecord?, saveError: Error?) in
-                            if self.detectError(saveError, { done(nil) }) {
-                                done(savedRecord!)
-                                gFileManager.save(to: self.storageMode)
+                            self.database?.save(brandNew) { (savedRecord: CKRecord?, saveError: Error?) in
+                                gAlertManager.detectError(saveError) { iHasError in
+                                    if iHasError {
+                                        done(nil)
+                                    } else {
+                                        done(savedRecord)
+                                        gFileManager.save(to: self.storageMode)
+                                    }
+                                }
                             }
                         }
                     }
-
-                    done(fetchedRecord)
                 }
             }
         }
-    }
-
-
-    @discardableResult func detectError(_ iError: Error?, _ onError: Closure) -> Bool {
-        let        hasError = iError != nil
-        gCloudUnavailable   = hasError
-
-        if hasError {
-            mostRecentError = iError
-
-            onError()
-        }
-
-        return !hasError
     }
 
 
@@ -239,11 +229,15 @@ class ZCloudManager: ZRecordsManager {
             }
 
             operation.queryCompletionBlock = { (cursor, error) in
-                self.detectError(error) {
-                    gAlertManager.report(error: error, predicate.description)
+                gAlertManager.detectError(error) { iHasError in
+                    if !iHasError {
+                        onCompletion?(nil) // nil means done
+                    } else {
+                        gAlertManager.alertError(error, predicate.description) { iResponse in
+                            onCompletion?(nil)
+                        }
+                    }
                 }
-
-                onCompletion?(nil) // nil means done
             }
 
             start(operation)
@@ -306,8 +300,10 @@ class ZCloudManager: ZRecordsManager {
             var                    recordsByID = [CKRecord : CKRecordID?] ()
             operation               .recordIDs = recordIDs
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
-                if  self.detectError(iError, { gAlertManager.report(error: "MERGE ==> \(self.storageMode) \(iError!)") } ) {
-                    if let record = iRecord {
+                gAlertManager.detectError(iError) { iHasError in
+                    if iHasError {
+                        gAlertManager.alertError("MERGE ==> \(self.storageMode) \(iError!)")
+                    } else if let record = iRecord {
                         recordsByID[record] = iID
                     }
                 }
@@ -497,8 +493,9 @@ class ZCloudManager: ZRecordsManager {
             operation.recordIDs = needed
 
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
-                if self.detectError(iError, { gAlertManager.report(error: iError) } ) {
-                    if  let ckRecord = iRecord,
+                gAlertManager.alertError(iError) { iHasError in
+                    if  !iHasError,
+                        let ckRecord = iRecord,
                         !retrieved.contains(ckRecord) {
                         retrieved.append(ckRecord)
                     }
@@ -548,8 +545,8 @@ class ZCloudManager: ZRecordsManager {
             operation   .recordIDs = missingParents
 
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
-                if self.detectError(iError, { gAlertManager.report(error: iError) } ) {
-                    if iRecord != nil {
+                gAlertManager.alertError(iError) { iHasError in
+                    if  !iHasError, iRecord != nil {
                         recordsByID[iRecord!] = iID
                     }
                 }
@@ -851,22 +848,26 @@ class ZCloudManager: ZRecordsManager {
         } else {
             onCompletion?(-1)
             database!.fetchAllSubscriptions { (iSubscriptions: [CKSubscription]?, iError: Error?) in
-                if self.detectError(iError, { onCompletion?(0); gAlertManager.report(error: iError) } ) {
-                    var count: Int = iSubscriptions!.count
-
-                    if count == 0 {
+                gAlertManager.alertError(iError) { iHasError in
+                    if iHasError {
                         onCompletion?(0)
                     } else {
-                        for subscription: CKSubscription in iSubscriptions! {
-                            self.database!.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (iSubscription: String?, iUnsubscribeError: Error?) in
-                                self.detectError(iUnsubscribeError) { gAlertManager.report(error: iUnsubscribeError) }
+                        var count: Int = iSubscriptions!.count
 
-                                count -= 1
+                        if count == 0 {
+                            onCompletion?(0)
+                        } else {
+                            for subscription: CKSubscription in iSubscriptions! {
+                                self.database!.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (iSubscription: String?, iUnsubscribeError: Error?) in
+                                    gAlertManager.alertError(iUnsubscribeError) { iHasError in }
 
-                                if count == 0 {
-                                    onCompletion?(0)
-                                }
-                            })
+                                    count -= 1
+
+                                    if count == 0 {
+                                        onCompletion?(0)
+                                    }
+                                })
+                            }
                         }
                     }
                 }
@@ -893,9 +894,10 @@ class ZCloudManager: ZRecordsManager {
                 subscription.notificationInfo          = information
 
                 database!.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iSubscribeError: Error?) in
-                    self.detectError (iSubscribeError) {
-                        self.signalFor(iSubscribeError as NSObject?, regarding: .error)
-                        gAlertManager.report(error: iSubscribeError)
+                    gAlertManager.alertError(iSubscribeError) { iHasError in
+                        if iHasError {
+                            self.signalFor(iSubscribeError as NSObject?, regarding: .error)
+                        }
                     }
 
                     count -= 1
@@ -923,17 +925,22 @@ class ZCloudManager: ZRecordsManager {
 
 
     func getFromObject(_ object: ZRecord, valueForPropertyName: String) {
-        if  database != nil && object.record != nil {
+        if  database          != nil &&
+            object    .record != nil {
             let      predicate = NSPredicate(value: true)
             let  type: String  = NSStringFromClass(type(of: object)) as String
             let query: CKQuery = CKQuery(recordType: type, predicate: predicate)
 
             database?.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, performanceError: Error?) in
-                if  self.detectError(performanceError, { self.signalFor(performanceError as NSObject?, regarding: .error) } ) {
-                    let        record: CKRecord = (iResults?[0])!
-                    object.record[valueForPropertyName] = (record as! CKRecordValue)
+                gAlertManager.detectError(performanceError) { iHasError in
+                    if iHasError {
+                        self.signalFor(performanceError as NSObject?, regarding: .error)
+                    } else {
+                        let                record: CKRecord = (iResults?[0])!
+                        object.record[valueForPropertyName] = (record as! CKRecordValue)
 
-                    self.signalFor(nil, regarding: .redraw)
+                        self.signalFor(nil, regarding: .redraw)
+                    }
                 }
             }
         }

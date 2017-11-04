@@ -11,7 +11,7 @@ import Foundation
 
 
 enum ZOperationID: Int {
-    case authenticate
+    case onboard
     case cloud
     case root
     case file
@@ -48,6 +48,7 @@ class ZOperationsManager: NSObject {
     var onCloudResponse :   AnyClosure? = nil
     var     currentMode : ZStorageMode? = nil
     var     lastOpStart :         Date? = nil
+    var   operationText :       String  { return String(describing: currentOp) }
     var          isLate :         Bool  { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
     var       currentOp = ZOperationID.none
     var           queue = OperationQueue()
@@ -58,12 +59,8 @@ class ZOperationsManager: NSObject {
     // MARK:-
 
 
-    func unHang() {
-        onCloudResponse?(0)
-    }
-
-
-    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .authenticate, to: .manifest,                    onCompletion) }
+    func     unHang()                                  {                                                                       onCloudResponse?(0) }
+    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .onboard,      to: .manifest,                    onCompletion) }
     func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,         to: .parent,                      onCompletion) }
     func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .save,         to: .subscribe,                   onCompletion) }
     func     travel(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,         to: .save,                        onCompletion) }
@@ -97,7 +94,7 @@ class ZOperationsManager: NSObject {
 
         switch identifier {      // outer switch
         case .file:                 gFileManager         .restore  (from: currentMode!); cloudCallback?(0)
-        case .authenticate:         gUserManager         .authenticate   (               cloudCallback)
+        case .onboard:              gUserManager         .onboard        (               cloudCallback)
         case .here:                 remote               .establishHere  (currentMode!,  cloudCallback)
         case .root:                 remote               .establishRoot  (currentMode!,  cloudCallback)
         default: let cloudManager = remote               .cloudManagerFor(currentMode!)
@@ -141,7 +138,7 @@ class ZOperationsManager: NSObject {
                     self                .currentOp = operationID        // if hung, it happened inside this op
                     var  invokeModeAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
                     let                       full = [.unsubscribe, .subscribe, .manifest, .children, .parent, .fetch, .cloud, .root, .here].contains(operationID)
-                    let  forCurrentStorageModeOnly = [.file, .completion, .authenticate                                                    ].contains(operationID)
+                    let  forCurrentStorageModeOnly = [.file, .completion, .onboard                                                         ].contains(operationID)
                     let            onlyCurrentMode = !gHasPrivateDatabase || (!full && (forCurrentStorageModeOnly || isMine))
                     let              modes: ZModes = onlyCurrentMode ? [saved] : [.mineMode, .everyoneMode]
                     let                     isNoop = onlyCurrentMode && isMine && !gHasPrivateDatabase
@@ -172,7 +169,7 @@ class ZOperationsManager: NSObject {
 
                                     if     isError || value == 0 {
                                         if isError {
-                                            self.report(iResult)
+                                            self.log(iResult)
                                         }
 
                                         invokeModeAt?(index + 1)         // recurse

@@ -11,6 +11,9 @@ import Cocoa
 import CloudKit
 
 
+var gAppDelegate: ZAppDelegate? = nil
+
+
 @NSApplicationMain
 
 
@@ -26,10 +29,11 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
     func applicationDidBecomeActive(_ notification: Notification) {
         if  needsSetup {
-            needsSetup = false
+            needsSetup   = false
+            gAppDelegate = self
 
             UserDefaults.standard.set(true, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraint‌​s")
-            zapplication.registerForRemoteNotifications(matching: .badge)
+            gApplication.registerForRemoteNotifications(matching: .badge)
             gControllersManager.startupDataAndUI()
             gEventsManager.setupGlobalEventsMonitor()
         }

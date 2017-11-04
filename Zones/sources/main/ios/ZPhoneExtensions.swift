@@ -58,7 +58,7 @@ public typealias ZGestureRecognizerDelegate = UIGestureRecognizerDelegate
 
 let      gHighlightHeightOffset = CGFloat(3.0)
 let             gVerticalWeight = -1.0
-let                zapplication = UIApplication.shared
+let                gApplication = UIApplication.shared
 var windowKeys: [UIKeyCommand]? = nil
 
 

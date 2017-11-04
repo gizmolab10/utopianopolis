@@ -11,6 +11,16 @@ import Foundation
 import CloudKit
 
 
+enum ZOnboardingState: Int {
+    case internet
+    case appleID            // ubquity?
+    case accountStatus      // vs no account
+    case fetchUserRecordID  //
+    case assureUserExists   // record
+    case cloudDrive         // ubiquity?
+}
+
+
 let gUserManager = ZUserManager()
 
 
@@ -28,61 +38,105 @@ class ZUserManager : NSObject {
     }
 
 
-    func authenticate(_ onCompletion: AnyClosure?) {
-        gContainer.accountStatus { (iStatus, iError) in
-            self.fetchUser() {
-                if  let recordName = gUserRecordID {
-                    let ckRecordID = CKRecordID(recordName: recordName)
-
-                    gCloudManager.assureRecordExists(withRecordID: ckRecordID, recordType: CKRecordTypeUserRecord) { (iUserRecord: CKRecord?) in
-                        if  let  record = iUserRecord {
-                            let    user = ZUser(record: record, storageMode: gStorageMode)
-                            self  .user = user
-
-                            if  self.makeUserSpecial {
-                                user.access = .eAccessFull
-
-                                user.needFlush()
+    func onboard(_ onCompletion: AnyClosure?) {
+        internet {
+            self.ubiquity {
+                self.accountStatus {
+                    self.fetchUserRecordID {
+                        self.assureUserExists {
+                            self.fetchUserIdentity {
+                                onCompletion?(0)
                             }
                         }
-
-                        self.fetchUserIdentity(for: ckRecordID) {
-                            onCompletion?(0)
-                        }
                     }
-                } else {
-                    // fubar, no cloud kit account
-                    onCompletion?(0)
                 }
             }
         }
     }
 
 
-    func fetchUserIdentity(for iRecordID: CKRecordID, _ onCompletion: @escaping Closure) {
-        gContainer.discoverUserIdentity(withUserRecordID: iRecordID) { (iCKUserIdentity, iError) in
-            if  iError != nil {
-                gAlertManager.report(error: iError, "failed to fetch user id; reason unknown")
-            } else if iCKUserIdentity != nil {
-                self.userIdentity = iCKUserIdentity
-//            } else {
-//                gAlertManager.report(error: CKError(_nsError: NSError(domain: "yikes", code: 9, userInfo: nil)))
-            }
+    func internet(_ onCompletion: @escaping Closure) {
+        onCompletion()
+    }
 
-            onCompletion()
+
+    func ubiquity(_ onCompletion: @escaping Closure) {
+        onCompletion()
+    }
+
+
+    func accountStatus(_ onCompletion: @escaping Closure) {
+        gContainer.accountStatus { (iStatus, iError) in
+            self.FOREGROUND {
+                switch iStatus {
+                case .available:
+                    onCompletion()
+                default:
+                    // alert system prefs
+                    break
+                }
+            }
         }
     }
 
 
-    func fetchUser(_ onCompletion: @escaping Closure) {
-        gContainer.fetchUserRecordID() { iRecordID, iError in
-            if  iError != nil {
-                gAlertManager.report(error: iError, "failed to fetch user record id; reason unknown")
-            } else {
-                gUserRecordID = iRecordID?.recordName
-            }
+    func assureUserExists(_ onCompletion: @escaping Closure) {
+        if  let recordName = gUserRecordID {
+            let ckRecordID = CKRecordID(recordName: recordName)
 
-            onCompletion()
+            gCloudManager.assureRecordExists(withRecordID: ckRecordID, recordType: CKRecordTypeUserRecord) { (iUserRecord: CKRecord?) in
+                if  let  record = iUserRecord {
+                    let    user = ZUser(record: record, storageMode: gStorageMode)
+                    self  .user = user
+
+                    if  self.makeUserSpecial {
+                        user.access = .eAccessFull
+
+                        user.needFlush()
+                    }
+
+                    onCompletion()
+                } else {
+                    // alert ... i forgot what caused this
+                }
+            }
+        }
+    }
+
+
+    func fetchUserRecordID(_ onCompletion: @escaping Closure) {
+        gContainer.fetchUserRecordID() { iRecordID, iError in
+            gAlertManager.alertError(iError, "failed to fetch user record id; reason unknown") { iHasError in
+                if !iHasError {
+                    gUserRecordID = iRecordID?.recordName
+
+                    onCompletion()
+                }
+            }
+        }
+    }
+
+
+    func fetchUserIdentity(_ onCompletion: @escaping Closure) {
+        if  let recordName = gUserRecordID {
+            let ckRecordID = CKRecordID(recordName: recordName)
+            let  debugAuth = true
+
+            gContainer.discoverUserIdentity(withUserRecordID: ckRecordID) { (iCKUserIdentity, iError) in
+                let message = "failed to fetch user id; reason unknown"
+
+                if  iError != nil {
+                    gAlertManager.alertError(iError, message)
+                } else if iCKUserIdentity != nil {
+                    self.userIdentity = iCKUserIdentity
+                } else if debugAuth {
+                    let error = CKError(_nsError: NSError(domain: "yikes", code: 9, userInfo: nil))
+
+                    gAlertManager.alertError(error, message)
+                }
+
+                onCompletion()
+            }
         }
     }
 

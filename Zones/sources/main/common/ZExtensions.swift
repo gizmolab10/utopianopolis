@@ -25,8 +25,8 @@ extension NSObject {
 
 
     func            note(_ iMessage: Any?)                { } // report(iMessage) }
-    func     performance(_ iMessage: Any?)                { report(iMessage) }
-    func textInputReport(_ iMessage: Any?)                { report(iMessage) }
+    func     performance(_ iMessage: Any?)                { log(iMessage) }
+    func textInputReport(_ iMessage: Any?)                { log(iMessage) }
     func  columnarReport(_ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(iFirst, iSecond) }
     func      debugCheck()                                { gTravelManager.debugCheck() }
 
@@ -34,12 +34,12 @@ extension NSObject {
     func rawColumnarReport(_ iFirst: Any?, _ iSecond: Any?) {
         if  var prefix = iFirst as? String {
             prefix.appendSpacesToLength(gLogTabStop)
-            report("\(prefix)\(iSecond ?? "")")
+            log("\(prefix)\(iSecond ?? "")")
         }
     }
 
 
-    func report(_ iMessage: Any?) {
+    func log(_ iMessage: Any?) {
         if  let message = iMessage as? String, message != "" {
             print(message)
         }

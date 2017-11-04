@@ -22,27 +22,59 @@ enum ZAlertType: Int {
     case eNoInternet
 }
 
-let gAlertManager = ZAlertManager()
+let      gAlertManager = ZAlertManager()
+typealias AlertClosure = (NSAlert?) -> (Void)
 
 
 class ZAlertManager : NSObject {
 
 
-    var currentError: Any?
+    var mostRecentError: Error? = nil
 
 
-    func report(error iError: Any? = nil, _ message: String? = nil) {
-        let text = message ?? ""
+    func detectError(_ iError: Any? = nil, _ message: String? = nil, _ closure: BooleanClosure? = nil) {
+        let        hasError = iError != nil
+        gCloudUnavailable   = hasError
 
-        if let error: CKError = iError as? CKError {
-            if error.code == CKError.notAuthenticated {
-                authAlert()
+        if  let error = iError as? Error {
+            mostRecentError = error
+        }
+
+        closure?(hasError)
+    }
+
+
+    func alertError(_ iError: Any? = nil, _ message: String? = nil, _ closure: BooleanClosure? = nil) {
+        detectError(iError, message) { iHasError in
+            if !iHasError {
+                closure?(false) // false means no error
+            } else {
+                self.report(error: iError) { (iResponse: Any?) in
+                    closure?(iResponse as? Bool ?? true) // false means user approved alert
+                }
             }
-            print(error.localizedDescription + text)
-        } else if let error: NSError = iError as? NSError {
-            let waitForIt = (error.userInfo[CKErrorRetryAfterKey] as? String) ?? ""
+        }
+    }
 
-            print(waitForIt + text)
+
+    private func report(error iError: Any? = nil, _ iMessage: String? = nil, _ closure: AnyClosure? = nil) {
+        let   message = iMessage ?? gOperationsManager.operationText
+        let      text = " " + (iMessage ?? "")
+
+        if  let ckError: CKError = iError as? CKError {
+            if  ckError.code == CKError.notAuthenticated {
+                authAlert(closure)
+            } else {
+                print(ckError.localizedDescription + text)
+            }
+        } else if let nsError = iError as? NSError {
+            let waitForIt = nsError.userInfo[CKErrorRetryAfterKey] as? String ?? ""
+
+            alert(message, waitForIt) { iAlert in
+                let response = iAlert?.runModal()
+
+                closure?(response)
+            }
         } else {
             let error = iError as? String ?? ""
 
@@ -51,19 +83,33 @@ class ZAlertManager : NSObject {
     }
 
 
-    func authAlert() {
-        alert()
+    func authAlert(_ closure: AnyClosure? = nil) {
+        alert("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?") { iAlert in
+            let response = iAlert?.runModal()
+
+            #if os(OSX)
+                if let url = URL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
+                    NSWorkspace.shared().open(url)
+                }
+            #else
+                if let url = URL(string: "App-Prefs:root=General&path=Network") {
+                    UIApplication.shared.open(url)
+                }
+            #endif
+
+            closure?(response)
+        }
     }
 
 
-    func alert() {
+    func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ closure: AlertClosure? = nil) {
         FOREGROUND(canBeDirect: true) {
             let             a = NSAlert()
-            a    .messageText = "Warning"
-            a.informativeText = "There are problems, please resolve these first"
+            a    .messageText = iMessage
+            a.informativeText = iExplain ?? ""
 
-            a.addButton(withTitle: "OK")
-            a.runModal()
+            a.addButton(withTitle: iOkayTitle)
+            closure?(a)
         }
     }
 }
