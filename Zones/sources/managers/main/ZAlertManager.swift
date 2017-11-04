@@ -87,16 +87,6 @@ class ZAlertManager : NSObject {
         alert("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?") { iAlert in
             let response = iAlert?.runModal()
 
-            #if os(OSX)
-                if let url = URL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
-                    NSWorkspace.shared().open(url)
-                }
-            #else
-                if let url = URL(string: "App-Prefs:root=General&path=Network") {
-                    UIApplication.shared.open(url)
-                }
-            #endif
-
             closure?(response)
         }
     }

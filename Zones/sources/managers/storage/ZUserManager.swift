@@ -10,14 +10,20 @@
 import Foundation
 import CloudKit
 
+#if os(OSX)
+    import Cocoa
+#elseif os(iOS)
+    import UIKit
+#endif
+
 
 enum ZOnboardingState: Int {
     case internet
-    case appleID            // ubquity?
+    case ubiquity
     case accountStatus      // vs no account
-    case fetchUserRecordID  //
-    case assureUserExists   // record
-    case cloudDrive         // ubiquity?
+    case fetchUserID
+    case fetchUserRecord    // record
+    case fetchUserIdentity
 }
 
 
@@ -38,12 +44,23 @@ class ZUserManager : NSObject {
     }
 
 
+    func cloudStateChanged(_ notification: Notification) {
+        onboard(nil)
+    }
+
+
+    func setup() {
+        NotificationCenter.default.addObserver(self, selector: #selector(ZUserManager.cloudStateChanged), name: .NSUbiquityIdentityDidChange, object: nil)
+    }
+
+
     func onboard(_ onCompletion: AnyClosure?) {
+        setup()
         internet {
             self.ubiquity {
                 self.accountStatus {
-                    self.fetchUserRecordID {
-                        self.assureUserExists {
+                    self.fetchUserID {
+                        self.fetchUserRecord {
                             self.fetchUserIdentity {
                                 onCompletion?(0)
                             }
@@ -61,7 +78,15 @@ class ZUserManager : NSObject {
 
 
     func ubiquity(_ onCompletion: @escaping Closure) {
-        onCompletion()
+        if FileManager.default.ubiquityIdentityToken == nil {
+            gAlertManager.alert("To gain full use of this app,", "Please enable iCloud and turn on your iCloud drive", "Click here to open System Preferences") { iAlert in
+                iAlert?.runModal()
+                self.openSystemPreferences()
+                onCompletion()
+            }
+        } else {
+            onCompletion()
+        }
     }
 
 
@@ -80,7 +105,7 @@ class ZUserManager : NSObject {
     }
 
 
-    func assureUserExists(_ onCompletion: @escaping Closure) {
+    func fetchUserRecord(_ onCompletion: @escaping Closure) {
         if  let recordName = gUserRecordID {
             let ckRecordID = CKRecordID(recordName: recordName)
 
@@ -104,7 +129,7 @@ class ZUserManager : NSObject {
     }
 
 
-    func fetchUserRecordID(_ onCompletion: @escaping Closure) {
+    func fetchUserID(_ onCompletion: @escaping Closure) {
         gContainer.fetchUserRecordID() { iRecordID, iError in
             gAlertManager.alertError(iError, "failed to fetch user record id; reason unknown") { iHasError in
                 if !iHasError {
@@ -120,24 +145,41 @@ class ZUserManager : NSObject {
     func fetchUserIdentity(_ onCompletion: @escaping Closure) {
         if  let recordName = gUserRecordID {
             let ckRecordID = CKRecordID(recordName: recordName)
-            let  debugAuth = true
+            let  debugAuth = false
 
             gContainer.discoverUserIdentity(withUserRecordID: ckRecordID) { (iCKUserIdentity, iError) in
                 let message = "failed to fetch user id; reason unknown"
 
                 if  iError != nil {
                     gAlertManager.alertError(iError, message)
+                    self.openSystemPreferences()
                 } else if iCKUserIdentity != nil {
                     self.userIdentity = iCKUserIdentity
                 } else if debugAuth {
-                    let error = CKError(_nsError: NSError(domain: "yikes", code: 9, userInfo: nil))
-
-                    gAlertManager.alertError(error, message)
+                    gAlertManager.alert("To gain full use of this app,", "Please enable iCloud and turn on your iCloud drive", "Click here to open System Preferences") { iAlert in
+                        iAlert?.runModal()
+                        self.openSystemPreferences()
+                    }
                 }
 
                 onCompletion()
             }
         }
+    }
+
+
+    func openSystemPreferences() {
+
+        #if os(OSX)
+            if let url = URL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
+                NSWorkspace.shared().open(url)
+            }
+        #else
+            if let url = URL(string: "App-Prefs:root=General&path=Network") {
+                UIApplication.shared.open(url)
+            }
+        #endif
+
     }
 
 
