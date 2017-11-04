@@ -94,7 +94,7 @@ class ZOperationsManager: NSObject {
 
         switch identifier {      // outer switch
         case .file:                 gFileManager         .restore  (from: currentMode!); cloudCallback?(0)
-        case .onboard:              gUserManager         .onboard        (               cloudCallback)
+        case .onboard:              gOnboardingManager         .onboard        (               cloudCallback)
         case .here:                 remote               .establishHere  (currentMode!,  cloudCallback)
         case .root:                 remote               .establishRoot  (currentMode!,  cloudCallback)
         default: let cloudManager = remote               .cloudManagerFor(currentMode!)

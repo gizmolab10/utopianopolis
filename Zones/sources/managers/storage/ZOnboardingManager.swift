@@ -1,5 +1,5 @@
 //
-//  ZUserManager.swift
+//  ZOnboardingManager.swift
 //  iFocus
 //
 //  Created by Jonathan Sand on 10/26/17.
@@ -27,10 +27,10 @@ enum ZOnboardingState: Int {
 }
 
 
-let gUserManager = ZUserManager()
+let gOnboardingManager = ZOnboardingManager()
 
 
-class ZUserManager : NSObject {
+class ZOnboardingManager : NSObject {
 
 
     var            user : ZUser?
@@ -50,7 +50,7 @@ class ZUserManager : NSObject {
 
 
     func setup() {
-        NotificationCenter.default.addObserver(self, selector: #selector(ZUserManager.cloudStateChanged), name: .NSUbiquityIdentityDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ZOnboardingManager.cloudStateChanged), name: .NSUbiquityIdentityDidChange, object: nil)
     }
 
 
