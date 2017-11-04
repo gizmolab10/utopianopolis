@@ -942,7 +942,7 @@ class Zone : ZRecord {
             fastUpdateProgenyCount()
         } else {
             needChildren()
-            gOperationsManager.children(.restore) {
+            gDBOperationsManager.children(.restore) {
                 self.fastUpdateProgenyCount()
             }
         }

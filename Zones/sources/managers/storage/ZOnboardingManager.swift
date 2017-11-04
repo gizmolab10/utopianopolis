@@ -17,16 +17,6 @@ import CloudKit
 #endif
 
 
-enum ZOnboardingState: Int {
-    case internet
-    case ubiquity
-    case accountStatus      // vs no account
-    case fetchUserID
-    case fetchUserRecord    // record
-    case fetchUserIdentity
-}
-
-
 let gOnboardingManager = ZOnboardingManager()
 
 

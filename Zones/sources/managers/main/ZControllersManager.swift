@@ -91,14 +91,14 @@ class ZControllersManager: NSObject {
     func startupDataAndUI() {
         signalFor(nil, regarding: .startup)
         displayActivity(true)
-        gOperationsManager.startUp {
+        gDBOperationsManager.startUp {
             gFavoritesManager.setup() // bug: manifest not yet fetched
-            gOperationsManager.continueUp {
+            gDBOperationsManager.continueUp {
                 self.displayActivity(false) // now on foreground thread
                 gHere.grab()
                 gFavoritesManager.updateChildren()
                 self.signalFor(nil, regarding: .redraw)
-                gOperationsManager.finishUp {
+                gDBOperationsManager.finishUp {
                     self.signalFor(nil, regarding: .redraw)
                 }
             }
@@ -156,7 +156,7 @@ class ZControllersManager: NSObject {
     func syncToCloudAndSignalFor(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
         signalFor(zone, regarding: regarding, onCompletion: onCompletion)
 
-        gOperationsManager.sync {
+        gDBOperationsManager.sync {
             onCompletion?()
             gFileManager.save(to: zone?.storageMode)
         }

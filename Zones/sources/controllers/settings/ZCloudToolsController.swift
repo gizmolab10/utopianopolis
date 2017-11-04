@@ -60,7 +60,7 @@ class ZCloudToolsController: ZGenericTableController {
 
             if  let kind = ZToolKind(rawValue: row) {
                 switch kind {
-                case .eRetry:    gOperationsManager.unHang()
+                case .eRetry:    gDBOperationsManager.unHang()
                 case .eTrash:    self.showTrashCan()
                 case .eGather:   self.gatherAndShowTrash()
                 case .eRecount:  self.recount()
@@ -81,14 +81,14 @@ class ZCloudToolsController: ZGenericTableController {
             gHere = trash
 
             gHere.needChildren()
-            gOperationsManager.children(.restore) {
+            gDBOperationsManager.children(.restore) {
                 self.redrawAndSync()
             }
         }
     }
 
     func gatherAndShowTrash() {
-        gOperationsManager.fetchTrash {
+        gDBOperationsManager.fetchTrash {
             if let trash = gTrash {
                 gHere = trash
 
@@ -96,7 +96,7 @@ class ZCloudToolsController: ZGenericTableController {
 
                 trash.needProgeny()
                 trash.displayChildren()
-                gOperationsManager.children(.all) {
+                gDBOperationsManager.children(.all) {
                     self.grabChildless()
                 }
             }
@@ -121,7 +121,7 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     func restoreFromTrash() {
-        gOperationsManager.undelete {
+        gDBOperationsManager.undelete {
             self.signalFor(nil, regarding: .redraw)
         }
 
@@ -132,7 +132,7 @@ class ZCloudToolsController: ZGenericTableController {
 
         // needs elaborate gui, like search results, but with checkboxes and [de]select all checkbox
 
-        //gOperationsManager.emptyTrash {
+        //gDBOperationsManager.emptyTrash {
         //    self.note("eliminated")
         //}
     }

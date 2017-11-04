@@ -473,7 +473,7 @@ class ZEditingManager: NSObject {
         if gRoot?.record != nil {
             onCompletion?()
         } else {
-            gOperationsManager.root {
+            gDBOperationsManager.root {
                 onCompletion?()
             }
         }
@@ -485,13 +485,13 @@ class ZEditingManager: NSObject {
             parent.displayChildren()
             parent.maybeNeedProgeny()
 
-            gOperationsManager.children(.restore) {
+            gDBOperationsManager.children(.restore) {
                 onCompletion?()
             }
         } else {
             iZone.needParent()
 
-            gOperationsManager.families {
+            gDBOperationsManager.families {
                 onCompletion?()
             }
         }
@@ -587,7 +587,7 @@ class ZEditingManager: NSObject {
                 apply()
             } else {
                 zone.extendNeedForChildren(to: goal)
-                gOperationsManager.children(.expand, goal) {
+                gDBOperationsManager.children(.expand, goal) {
                     apply()
                 }
             }
@@ -705,7 +705,7 @@ class ZEditingManager: NSObject {
 
                 bookmark?.grab()
                 self.signalFor(nil, regarding: .redraw)
-                gOperationsManager.sync {}
+                gDBOperationsManager.sync {}
             }
 
             if gHere != zone {
@@ -764,7 +764,7 @@ class ZEditingManager: NSObject {
             closure()
         } else {
             candidate.needProgeny()
-            gOperationsManager.children(.all) {
+            gDBOperationsManager.children(.all) {
                 closure()
             }
         }
@@ -901,7 +901,7 @@ class ZEditingManager: NSObject {
             onCompletion?()
             zone.needBookmarks()
 
-            gOperationsManager.bookmarks {
+            gDBOperationsManager.bookmarks {
                 let bookmarks = gRemoteStoresManager.bookmarksFor(zone)
 
                 if bookmarks.count == 0 {
@@ -996,7 +996,7 @@ class ZEditingManager: NSObject {
                         p.displayChildren()
                         p.needChildren()
 
-                        gOperationsManager.children(.restore) {
+                        gDBOperationsManager.children(.restore) {
                             p.grab()
                             self.signalFor(p, regarding: .redraw)
                         }
@@ -1069,7 +1069,7 @@ class ZEditingManager: NSObject {
             zone.needChildren()
             zone.displayChildren()
 
-            gOperationsManager.children(.restore) {
+            gDBOperationsManager.children(.restore) {
                 self.grabChild(of: zone)
             }
         }
@@ -1126,7 +1126,7 @@ class ZEditingManager: NSObject {
                     mover.grab()
                 }
 
-                gOperationsManager.sync {
+                gDBOperationsManager.sync {
                     grabAndTravel()
                 }
             }
@@ -1155,7 +1155,7 @@ class ZEditingManager: NSObject {
         into.displayChildren()
         into.needChildren()
 
-        gOperationsManager.children(.restore) {
+        gDBOperationsManager.children(.restore) {
             for zone in zones {
                 if orphan {
                     zone.orphan()
@@ -1200,7 +1200,7 @@ class ZEditingManager: NSObject {
 
                 var     isFirstTime = true
 
-                gOperationsManager.children(.restore) {
+                gDBOperationsManager.children(.restore) {
                     if  isFirstTime {
                         isFirstTime = false
 
@@ -1331,7 +1331,7 @@ class ZEditingManager: NSObject {
                 if !need {
                     action()
                 } else {
-                    gOperationsManager.children(.all) {
+                    gDBOperationsManager.children(.all) {
                         action()
                     }
                 }
@@ -1538,7 +1538,7 @@ class ZEditingManager: NSObject {
             } else {
                 into.maybeNeedChildren()
 
-                gOperationsManager.children(.restore) {
+                gDBOperationsManager.children(.restore) {
                     addGrabs()
                 }
             }
@@ -1570,7 +1570,7 @@ class ZEditingManager: NSObject {
         into.displayChildren()
         into.needChildren()
 
-        gOperationsManager.children(.restore) {
+        gDBOperationsManager.children(.restore) {
             if orphan {
                 zone.orphan()
             }

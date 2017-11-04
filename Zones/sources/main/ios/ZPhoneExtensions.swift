@@ -318,7 +318,7 @@ extension UIWindow {
 
 extension UITextField {
     var isBordered : Bool { get { return borderStyle != .none } set { borderStyle = (newValue ? .line : .none) } }
-    override open var canBecomeFirstResponder: Bool { return true } // gOperationsManager.isAvailable }    // fix a bug where root zone is editing on launch
+    override open var canBecomeFirstResponder: Bool { return true } // gDBOperationsManager.isAvailable }    // fix a bug where root zone is editing on launch
     func enableUndo() {}
     func abortEditing() { resignFirstResponder() }
     func selectAllText() { selectAll(self) }

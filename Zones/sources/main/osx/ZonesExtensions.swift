@@ -303,7 +303,7 @@ extension NSTextField {
 
 
 extension ZoneTextWidget {
-    // override open var acceptsFirstResponder: Bool { return gOperationsManager.isReady }    // fix a bug where root zone is editing on launch
+    // override open var acceptsFirstResponder: Bool { return gDBOperationsManager.isReady }    // fix a bug where root zone is editing on launch
 
 
     override func controlTextDidChange(_ iNote: Notification) {

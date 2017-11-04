@@ -44,7 +44,7 @@ class ZTravelManager: NSObject {
         createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
 
         gSelectionManager .clearEdit()
-        gOperationsManager.travel(atArrival)
+        gDBOperationsManager.travel(atArrival)
     }
 
 
@@ -107,7 +107,7 @@ class ZTravelManager: NSObject {
                 let grabHere = {
                     gHere.prepareForArrival()
 
-                    gOperationsManager.children(.restore) {
+                    gDBOperationsManager.children(.restore) {
                         atArrival(gHere, .redraw)
                     }
                 }
