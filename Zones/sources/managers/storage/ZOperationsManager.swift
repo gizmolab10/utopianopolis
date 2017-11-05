@@ -41,6 +41,7 @@ enum ZOperationID: Int {
     // the following constitute onboarding //
     /////////////////////////////////////////
 
+    case setup
     case internet
     case ubiquity
     case accountStatus      // vs no account
@@ -53,10 +54,49 @@ enum ZOperationID: Int {
 class ZOperationsManager: NSObject {
 
 
-    var queue = OperationQueue()
+    var onCloudResponse :   AnyClosure? = nil
+    var   operationText :       String  { return String(describing: currentOp) }
+    var     lastOpStart :         Date? = nil
+    var       currentOp = ZOperationID.none
+    let           queue = OperationQueue()
+    var           debug = true
 
 
-    func setupAndRunUnsafe(_ operationIDs: [ZOperationID], logic: ZRecursionLogic?, onCompletion: @escaping Closure) {}
+    func invoke(_ identifier: ZOperationID, _ logic: ZRecursionLogic? = nil, cloudCallback: AnyClosure?) {}
+    func performBlock(on operationID: ZOperationID, with logic: ZRecursionLogic? = nil, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {}
+
+
+    func setupAndRunUnsafe(_ operationIDs: [ZOperationID], logic: ZRecursionLogic?, onCompletion: @escaping Closure) {
+        if gIsLate {
+            onCompletion()
+        }
+
+        queue.isSuspended = true
+        let         saved = gStorageMode
+
+        for operationID in operationIDs + [.completion] {
+            let         blockOperation = BlockOperation {
+                self.queue.isSuspended = true
+                self.currentOp         = operationID        // if hung, it happened inside this op
+
+                if  self.debug {
+                    self.columnarReport("  " + self.operationText, "")
+                }
+
+                self.FOREGROUND {
+                    self.performBlock(on: operationID, with: logic, restoreToMode: saved) {
+                        if self.currentOp == .completion {
+                            onCompletion()
+                        }
+                    }
+                }
+            }
+
+            add(blockOperation)
+        }
+
+        queue.isSuspended = false
+    }
 
 
     func setupAndRun(_ operationIDs: [ZOperationID], logic: ZRecursionLogic? = nil, onCompletion: @escaping Closure) {

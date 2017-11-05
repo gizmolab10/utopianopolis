@@ -16,13 +16,8 @@ let gDBOperationsManager = ZDBOperationsManager()
 class ZDBOperationsManager: ZOperationsManager {
 
 
-    var onCloudResponse :   AnyClosure? = nil
-    var     currentMode : ZStorageMode? = nil
-    var     lastOpStart :         Date? = nil
-    var   operationText :       String  { return String(describing: currentOp) }
-    var          isLate :         Bool  { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
-    var       currentOp = ZOperationID.none
-    var           debug = false
+    var currentMode : ZStorageMode? = nil
+    var      isLate :         Bool  { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
 
 
     // MARK:- API
@@ -56,15 +51,13 @@ class ZDBOperationsManager: ZOperationsManager {
     // MARK:-
 
 
-    private func invoke(_ identifier: ZOperationID, _ logic: ZRecursionLogic? = nil, cloudCallback: AnyClosure?) {
+    override func invoke(_ identifier: ZOperationID, _ logic: ZRecursionLogic? = nil, cloudCallback: AnyClosure?) {
         let      remote = gRemoteStoresManager
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
-        reportOperation(identifier)
-
         switch identifier {      // outer switch
         case .file:                 gFileManager         .restore  (from: currentMode!); cloudCallback?(0)
-        case .onboard:              gOnboardingManager         .onboard        (               cloudCallback)
+        case .onboard:              gOnboardingManager   .onboard        (               cloudCallback!)
         case .here:                 remote               .establishHere  (currentMode!,  cloudCallback)
         case .root:                 remote               .establishRoot  (currentMode!,  cloudCallback)
         default: let cloudManager = remote               .cloudManagerFor(currentMode!)
@@ -91,78 +84,51 @@ class ZDBOperationsManager: ZOperationsManager {
     }
 
 
-    override func setupAndRunUnsafe(_ operationIDs: [ZOperationID], logic: ZRecursionLogic?, onCompletion: @escaping Closure) {
-        if gIsLate {
-            onCompletion()
-        }
+    override func performBlock(on operationID: ZOperationID, with logic: ZRecursionLogic? = nil, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {
+        let                     isMine = [.mineMode].contains(restoreToMode)
+        var  invokeModeAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
+        let                       full = [.unsubscribe, .subscribe, .manifest, .children, .parent, .fetch, .cloud, .root, .here].contains(operationID)
+        let  forCurrentStorageModeOnly = [.file, .completion, .onboard                                                         ].contains(operationID)
+        let            onlyCurrentMode = !gHasPrivateDatabase || (!full && (forCurrentStorageModeOnly || isMine))
+        let              modes: ZModes = onlyCurrentMode ? [restoreToMode] : [.mineMode, .everyoneMode]
+        let                     isNoop = onlyCurrentMode && isMine && !gHasPrivateDatabase
 
-        queue.isSuspended = true
-        let         saved = gStorageMode
-        let        isMine = [.mineMode].contains(saved)
+        invokeModeAt                   = { index in
 
-        for operationID in operationIDs + [.completion] {
-            let                     blockOperation = BlockOperation {
-                self            .queue.isSuspended = true
+            /////////////////////////////////
+            // always called in foreground //
+            /////////////////////////////////
 
-                self.FOREGROUND {
-                    self                .currentOp = operationID        // if hung, it happened inside this op
-                    var  invokeModeAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
-                    let                       full = [.unsubscribe, .subscribe, .manifest, .children, .parent, .fetch, .cloud, .root, .here].contains(operationID)
-                    let  forCurrentStorageModeOnly = [.file, .completion, .onboard                                                         ].contains(operationID)
-                    let            onlyCurrentMode = !gHasPrivateDatabase || (!full && (forCurrentStorageModeOnly || isMine))
-                    let              modes: ZModes = onlyCurrentMode ? [saved] : [.mineMode, .everyoneMode]
-                    let                     isNoop = onlyCurrentMode && isMine && !gHasPrivateDatabase
+            if operationID == .completion || isNoop {
+                self.queue.isSuspended = false
 
-                    invokeModeAt                   = { index in
+                onCompletion()
+            } else if           index >= modes.count {
+                self.queue.isSuspended = false
+            } else {
+                self      .currentMode = modes[index]      // if hung, it happened in this mode
+                self      .lastOpStart = Date()
 
-                        /////////////////////////////////
-                        // always called in foreground //
-                        /////////////////////////////////
+                self.invoke(operationID, logic) { (iResult: Any?) in
+                    self  .lastOpStart = nil
 
-                        if operationID == .completion || isNoop {
-                            self.queue.isSuspended = false
+                    self.FOREGROUND(canBeDirect: true) {
+                        let      error = iResult as? Error
+                        let      value = iResult as? Int
+                        let    isError = error != nil
 
-                            onCompletion()
-                        } else if           index >= modes.count {
-                            self.queue.isSuspended = false
-                        } else {
-                            self      .currentMode = modes[index]      // if hung, it happened in this mode
-                            self      .lastOpStart = Date()
-
-                            self.invoke(operationID, logic) { (iResult: Any?) in
-                                self  .lastOpStart = nil
-
-                                self.FOREGROUND(canBeDirect: true) {
-                                    let      error = iResult as? Error
-                                    let      value = iResult as? Int
-                                    let    isError = error != nil
-
-                                    if     isError || value == 0 {
-                                        if isError {
-                                            self.log(iResult)
-                                        }
-
-                                        invokeModeAt?(index + 1)         // recurse
-                                    }
-                                }
+                        if     isError || value == 0 {
+                            if isError {
+                                self.log(iResult)
                             }
+
+                            invokeModeAt?(index + 1)         // recurse
                         }
                     }
-
-                    invokeModeAt?(0)
                 }
             }
-
-            add(blockOperation)
         }
 
-        queue.isSuspended = false
-    }
-
-
-    private func reportOperation(_ identifier: ZOperationID) {
-        if  debug {
-            columnarReport("  " + String(describing: identifier), "\(currentMode!)")
-        }
+        invokeModeAt?(0)
     }
 }

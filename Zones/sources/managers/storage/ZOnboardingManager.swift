@@ -20,7 +20,7 @@ import CloudKit
 let gOnboardingManager = ZOnboardingManager()
 
 
-class ZOnboardingManager : NSObject {
+class ZOnboardingManager : ZOperationsManager {
 
 
     var            user : ZUser?
@@ -29,36 +29,68 @@ class ZOnboardingManager : NSObject {
     let makeUserSpecial = false
 
 
+    // MARK:- API
+    // MARK:-
+
+
     func userHasAccess(_ zone: Zone) -> Bool {
         return isSpecialUser || zone.ownerID == nil || zone.ownerID!.recordName == gUserRecordID
     }
 
 
-    func cloudStateChanged(_ notification: Notification) {
-        onboard(nil)
+    func onboard(_ onCompletion: AnyClosure?) {
+        setupAndRunOps(from: .setup, to: .fetchUserIdentity) { onCompletion?(0) }
     }
+
+
+    // MARK:- internals
+    // MARK:-
+
+
+    override func performBlock(on operationID: ZOperationID, with logic: ZRecursionLogic? = nil, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {
+        let done = {
+            self.queue.isSuspended = false
+
+            onCompletion()
+        }
+
+        switch operationID {
+        case .setup:             setup();            done()
+        case .internet:          internet          { done() }
+        case .ubiquity:          ubiquity          { done() }
+        case .accountStatus:     accountStatus     { done() }
+        case .fetchUserID:       fetchUserID       { done() }
+        case .fetchUserRecord:   fetchUserRecord   { done() }
+        case .fetchUserIdentity: fetchUserIdentity { done() }
+        default:                                     done()
+        }
+    }
+
+
+    func cloudStateChanged(_ notification: Notification) {
+        setupAndRunOps(from: .internet, to: .fetchUserIdentity) {}
+    }
+
+
+    func openSystemPreferences() {
+        #if os(OSX)
+            if let url = URL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
+                NSWorkspace.shared().open(url)
+            }
+        #else
+            if let url = URL(string: "App-Prefs:root=General&path=Network") {
+                UIApplication.shared.open(url)
+            }
+        #endif
+    }
+
+
+    // MARK:- operations
+    // MARK:-
 
 
     func setup() {
         NotificationCenter.default.addObserver(self, selector: #selector(ZOnboardingManager.cloudStateChanged), name: .NSUbiquityIdentityDidChange, object: nil)
-    }
-
-
-    func onboard(_ onCompletion: AnyClosure?) {
-        setup()
-        internet {
-            self.ubiquity {
-                self.accountStatus {
-                    self.fetchUserID {
-                        self.fetchUserRecord {
-                            self.fetchUserIdentity {
-                                onCompletion?(0)
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
 
@@ -155,21 +187,6 @@ class ZOnboardingManager : NSObject {
                 onCompletion()
             }
         }
-    }
-
-
-    func openSystemPreferences() {
-
-        #if os(OSX)
-            if let url = URL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
-                NSWorkspace.shared().open(url)
-            }
-        #else
-            if let url = URL(string: "App-Prefs:root=General&path=Network") {
-                UIApplication.shared.open(url)
-            }
-        #endif
-
     }
 
 
