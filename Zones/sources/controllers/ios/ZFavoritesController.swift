@@ -17,14 +17,35 @@ class ZFavoritesController : ZGenericController {
     override  var      controllerID: ZControllerID { return .favorites }
 
 
+    var favorites: [Zone] {
+        if  var children = gFavoritesManager.rootZone?.children {
+            var removals = IndexPath()
+
+            for (iIndex, iChild) in children.enumerated() {
+                if !iChild.isBookmark {
+                    removals.append(iIndex)
+                }
+            }
+
+            while let index = removals.last {
+                removals.removeLast()
+                children.remove(at: index)
+            }
+
+            return children
+        }
+
+        return []
+    }
+
+
     // MARK:- events
     // MARK:-
 
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
         if ![.search, .found, .startup].contains(kind),
-            let favorites = gFavoritesManager.rootZone?.children,
-            let  selector = favoritesSelector {
+            let selector = favoritesSelector {
 
             selector.apportionsSegmentWidthsByContent = true
             selector.removeAllSegments()
@@ -37,12 +58,12 @@ class ZFavoritesController : ZGenericController {
 
 
     @IBAction func selectorAction(iControl: UISegmentedControl) {
-        let       index = iControl.numberOfSegments - iControl.selectedSegment - 1
+        let    index = iControl.numberOfSegments - iControl.selectedSegment - 1
+        let favorite = favorites[index]
 
-        if let favorite = gFavoritesManager.rootZone?[index] {
-            gFavoritesManager.focus(on: favorite) {
-                self.syncToCloudAndSignalFor(nil, regarding: .redraw, onCompletion: nil)
-            }
+        gFavoritesManager.focus(on: favorite) {
+            self.syncToCloudAndSignalFor(nil, regarding: .redraw, onCompletion: nil)
         }
     }
+
 }

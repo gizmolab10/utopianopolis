@@ -47,6 +47,15 @@ class ZOnboardingManager : ZOperationsManager {
     // MARK:-
 
 
+    func cloudStateChanged(_ notification: Notification) {
+        setupAndRunOps(from: .internet, to: .fetchUserIdentity) {}
+    }
+
+
+    // MARK:- operations
+    // MARK:-
+
+
     override func performBlock(on operationID: ZOperationID, with logic: ZRecursionLogic? = nil, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {
         let done = {
             self.queue.isSuspended = false
@@ -67,28 +76,6 @@ class ZOnboardingManager : ZOperationsManager {
     }
 
 
-    func cloudStateChanged(_ notification: Notification) {
-        setupAndRunOps(from: .internet, to: .fetchUserIdentity) {}
-    }
-
-
-    func openSystemPreferences() {
-        #if os(OSX)
-            if let url = URL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
-                NSWorkspace.shared().open(url)
-            }
-        #else
-            if let url = URL(string: "App-Prefs:root=General&path=Network") {
-                UIApplication.shared.open(url)
-            }
-        #endif
-    }
-
-
-    // MARK:- operations
-    // MARK:-
-
-
     func setup() {
         NotificationCenter.default.addObserver(self, selector: #selector(ZOnboardingManager.cloudStateChanged), name: .NSUbiquityIdentityDidChange, object: nil)
     }
@@ -101,11 +88,7 @@ class ZOnboardingManager : ZOperationsManager {
 
     func ubiquity(_ onCompletion: @escaping Closure) {
         if FileManager.default.ubiquityIdentityToken == nil {
-            gAlertManager.alert("To gain full use of this app,", "Please enable iCloud and turn on your iCloud drive", "Click here to open System Preferences") { iAlert in
-                iAlert?.runModal()
-                self.openSystemPreferences()
-                onCompletion()
-            }
+            gAlertManager.alertSystemPreferences(onCompletion)
         } else {
             onCompletion()
         }
@@ -144,7 +127,7 @@ class ZOnboardingManager : ZOperationsManager {
 
                     onCompletion()
                 } else {
-                    // alert ... i forgot what caused this
+                    // alert ... i forgot what causes this
                 }
             }
         }
@@ -174,14 +157,11 @@ class ZOnboardingManager : ZOperationsManager {
 
                 if  iError != nil {
                     gAlertManager.alertError(iError, message)
-                    self.openSystemPreferences()
+                    gAlertManager.openSystemPreferences()
                 } else if iCKUserIdentity != nil {
                     self.userIdentity = iCKUserIdentity
                 } else if debugAuth {
-                    gAlertManager.alert("To gain full use of this app,", "Please enable iCloud and turn on your iCloud drive", "Click here to open System Preferences") { iAlert in
-                        iAlert?.runModal()
-                        self.openSystemPreferences()
-                    }
+                    gAlertManager.alertSystemPreferences(onCompletion)
                 }
 
                 onCompletion()

@@ -21,6 +21,7 @@ enum ZArrowKey: CChar {
 
 public typealias ZFont                      = NSFont
 public typealias ZView                      = NSView
+public typealias ZAlert                     = NSAlert
 public typealias ZEvent                     = NSEvent
 public typealias ZImage                     = NSImage
 public typealias ZColor                     = NSColor
@@ -302,8 +303,19 @@ extension NSTextField {
 }
 
 
+extension ZAlert {
+
+    func showAlert(closure: AlertStateClosure? = nil) {
+        runModal()
+        closure?(.eYes)
+    }
+
+}
+
+
 extension ZoneTextWidget {
     // override open var acceptsFirstResponder: Bool { return gDBOperationsManager.isReady }    // fix a bug where root zone is editing on launch
+    override var acceptsFirstResponder : Bool  { return widgetZone.isWritableByUseer }
 
 
     override func controlTextDidChange(_ iNote: Notification) {

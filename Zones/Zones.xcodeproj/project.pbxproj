@@ -146,9 +146,6 @@
 		0C3ECC231FA3023500F085EA /* ZUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3ECC221FA3023500F085EA /* ZUser.swift */; };
 		0C3ECC241FA3023500F085EA /* ZUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3ECC221FA3023500F085EA /* ZUser.swift */; };
 		0C3ECC251FA3023500F085EA /* ZUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3ECC221FA3023500F085EA /* ZUser.swift */; };
-		0C4118DA1FA50FB500A58004 /* ZAuthenticationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118D91FA50FB500A58004 /* ZAuthenticationController.swift */; };
-		0C4118DB1FA50FB500A58004 /* ZAuthenticationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118D91FA50FB500A58004 /* ZAuthenticationController.swift */; };
-		0C4118DC1FA50FB500A58004 /* ZAuthenticationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118D91FA50FB500A58004 /* ZAuthenticationController.swift */; };
 		0C4118DE1FA8110200A58004 /* ZAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118DD1FA8110200A58004 /* ZAlertManager.swift */; };
 		0C4118DF1FA8110200A58004 /* ZAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118DD1FA8110200A58004 /* ZAlertManager.swift */; };
 		0C4118E01FA8110200A58004 /* ZAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118DD1FA8110200A58004 /* ZAlertManager.swift */; };
@@ -156,14 +153,14 @@
 		0C60B6731DBDB8A0005D99F9 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C60B6791DBE84DF005D99F9 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; };
 		0C6415721FA977EB0043E1CC /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */; };
-		0C69C9D51F09CD95004D026D /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; };
-		0C69C9DB1F09CD95004D026D /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C6CAE201F88308E001960F7 /* ZSearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */; };
 		0C6CAE211F88308E001960F7 /* ZSearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */; };
 		0C71172B1FA980D400603017 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C7117351FAE7F9900603017 /* ZDBOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZDBOperationsManager.swift */; };
 		0C7117361FAE7F9900603017 /* ZDBOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZDBOperationsManager.swift */; };
 		0C7117371FAE7F9900603017 /* ZDBOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZDBOperationsManager.swift */; };
+		0C71173A1FAFC4F200603017 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C7117391FAFC4F200603017 /* SnapKit.framework */; };
+		0C71173B1FAFC50500603017 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0CA04B2D1D2ECF1B001892E5 /* ZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */; };
 		0CA04B631D2ECF41001892E5 /* PadZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */; };
 		0CA04B6E1D2ECF41001892E5 /* PadZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */; };
@@ -230,7 +227,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				0C69C9DB1F09CD95004D026D /* SnapKit.framework in Embed Frameworks */,
+				0C71173B1FAFC50500603017 /* SnapKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -306,7 +303,6 @@
 		0C39B3C01F1989830091F4D1 /* Zones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Zones.entitlements; path = Zones/Zones.entitlements; sourceTree = "<group>"; };
 		0C3ECC1E1FA2953E00F085EA /* ZOnboardingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZOnboardingManager.swift; sourceTree = "<group>"; };
 		0C3ECC221FA3023500F085EA /* ZUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZUser.swift; sourceTree = "<group>"; };
-		0C4118D91FA50FB500A58004 /* ZAuthenticationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZAuthenticationController.swift; sourceTree = "<group>"; };
 		0C4118DD1FA8110200A58004 /* ZAlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZAlertManager.swift; sourceTree = "<group>"; };
 		0C48B0941F87197B00A247BC /* ZEventsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEventsManager.swift; sourceTree = "<group>"; };
 		0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = PadZones/Frameworks/SnapKit.framework; sourceTree = "<group>"; };
@@ -314,6 +310,7 @@
 		0C69C9DF1F09CD95004D026D /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSearchManager.swift; sourceTree = "<group>"; };
 		0C7117341FAE7F9900603017 /* ZDBOperationsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDBOperationsManager.swift; sourceTree = "<group>"; };
+		0C7117391FAFC4F200603017 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = iFocus/Frameworks/SnapKit.framework; sourceTree = "<group>"; };
 		0CA04B141D2ECF1A001892E5 /* Focus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Focus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
@@ -337,7 +334,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C69C9D51F09CD95004D026D /* SnapKit.framework in Frameworks */,
+				0C71173A1FAFC4F200603017 /* SnapKit.framework in Frameworks */,
 				0C23A94D1F0ED24A00514814 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -393,7 +390,6 @@
 		0C2E22B81F75B8AB00B50A71 /* osx */ = {
 			isa = PBXGroup;
 			children = (
-				0C4118D91FA50FB500A58004 /* ZAuthenticationController.swift */,
 				0C2E22B91F75B8AB00B50A71 /* ZEditorController.swift */,
 				0C2E22D41F75BF2D00B50A71 /* ZGenericTableController.swift */,
 				0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */,
@@ -674,6 +670,14 @@
 			name = Tests;
 			sourceTree = "<group>";
 		};
+		0C7117381FAFC4F100603017 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0C7117391FAFC4F200603017 /* SnapKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		0CA04B0B1D2ECF1A001892E5 = {
 			isa = PBXGroup;
 			children = (
@@ -683,6 +687,7 @@
 				0C39B3921F1988380091F4D1 /* interfaces */,
 				0CA04B151D2ECF1A001892E5 /* Products */,
 				0C401E891D2F6B6D000B9864 /* Tests */,
+				0C7117381FAFC4F100603017 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1035,7 +1040,6 @@
 				0C39B31F1F182EBB0091F4D1 /* ZTrait.swift in Sources */,
 				0C39B2E31F182EBB0091F4D1 /* ZControllersManager.swift in Sources */,
 				0C4118DE1FA8110200A58004 /* ZAlertManager.swift in Sources */,
-				0C4118DA1FA50FB500A58004 /* ZAuthenticationController.swift in Sources */,
 				0C39B2BF1F182EBB0091F4D1 /* ZAppDelegate.swift in Sources */,
 				0C3ECC1F1FA2953E00F085EA /* ZOnboardingManager.swift in Sources */,
 				0C39B38B1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
@@ -1091,7 +1095,6 @@
 				0C39B2A61F182EBB0091F4D1 /* ZSettingsController.swift in Sources */,
 				0C39B38D1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
 				0C2E22BE1F75B8AB00B50A71 /* ZEditorController.swift in Sources */,
-				0C4118DC1FA50FB500A58004 /* ZAuthenticationController.swift in Sources */,
 				0C39B3841F182EBB0091F4D1 /* ZoneDot.swift in Sources */,
 				0C39B28E1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
 				0C39B2BB1F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,
@@ -1178,7 +1181,6 @@
 				0C39B2C91F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0C39B2FC1F182EBB0091F4D1 /* ZOperationsManager.swift in Sources */,
 				0C4118DF1FA8110200A58004 /* ZAlertManager.swift in Sources */,
-				0C4118DB1FA50FB500A58004 /* ZAuthenticationController.swift in Sources */,
 				0C39B38F1F182EBB0091F4D1 /* ZStackableView.swift in Sources */,
 				0C2E22CC1F75BB7E00B50A71 /* ZSearchResultsController.swift in Sources */,
 				0C39B2F01F182EBB0091F4D1 /* ZCloudManager.swift in Sources */,
@@ -1257,6 +1259,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/PadZones/Frameworks",
 					"$(PROJECT_DIR)/Zones/Frameworks",
+					"$(PROJECT_DIR)/iFocus/Frameworks",
 				);
 				INFOPLIST_FILE = iFocus/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1286,6 +1289,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/PadZones/Frameworks",
 					"$(PROJECT_DIR)/Zones/Frameworks",
+					"$(PROJECT_DIR)/iFocus/Frameworks",
 				);
 				INFOPLIST_FILE = iFocus/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;

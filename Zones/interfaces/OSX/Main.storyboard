@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -467,12 +467,6 @@ CQ
                                     <constraint firstItem="cYx-gW-vNV" firstAttribute="leading" secondItem="E7h-Pg-qLQ" secondAttribute="leading" id="ggg-pQ-BJ6"/>
                                 </constraints>
                             </customView>
-                            <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wyD-be-XSj" userLabel="Authentication View">
-                                <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                                <connections>
-                                    <segue destination="wKG-Bi-ZEf" kind="embed" id="Wpd-18-HLg"/>
-                                </connections>
-                            </containerView>
                         </subviews>
                         <constraints>
                             <constraint firstItem="E7h-Pg-qLQ" firstAttribute="leading" secondItem="oY0-De-wof" secondAttribute="trailing" id="5EX-92-39v"/>
@@ -484,18 +478,13 @@ CQ
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="Swz-Ny-sRM"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="V3R-5b-vYA"/>
                             <constraint firstAttribute="trailing" secondItem="E7h-Pg-qLQ" secondAttribute="trailing" id="VaR-1I-XUX"/>
-                            <constraint firstItem="wyD-be-XSj" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="Xe6-7a-6M7"/>
                             <constraint firstItem="oY0-De-wof" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="YwV-zC-dv4"/>
-                            <constraint firstAttribute="bottom" secondItem="wyD-be-XSj" secondAttribute="bottom" id="cqS-0s-pFE"/>
                             <constraint firstAttribute="bottom" secondItem="oY0-De-wof" secondAttribute="bottom" id="gea-Tv-a7Q"/>
-                            <constraint firstAttribute="trailing" secondItem="wyD-be-XSj" secondAttribute="trailing" id="nCp-y1-qI1"/>
                             <constraint firstItem="E7h-Pg-qLQ" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="r9j-vw-EsB"/>
-                            <constraint firstItem="wyD-be-XSj" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="xlu-T8-rbI"/>
                             <constraint firstAttribute="bottom" secondItem="E7h-Pg-qLQ" secondAttribute="bottom" id="xse-VP-hp0"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="authenticationView" destination="wyD-be-XSj" id="Nee-D6-Khi"/>
                         <outlet property="editorView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
                         <outlet property="overlaysView" destination="E7h-Pg-qLQ" id="PLu-7K-JWt"/>
                         <outlet property="searchBoxHeight" destination="lGr-3g-ayh" id="9xd-lu-oT0"/>
@@ -615,96 +604,6 @@ CQ
                 <customObject id="j6X-Bm-Ffa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-101" y="1162"/>
-        </scene>
-        <!--Authentication Controller-->
-        <scene sceneID="Aim-Ld-OxV">
-            <objects>
-                <viewController id="wKG-Bi-ZEf" customClass="ZAuthenticationController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="yDV-F4-y7e">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="XNb-cy-0HP">
-                                <rect key="frame" x="76" y="59" width="299" height="183"/>
-                                <subviews>
-                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WBz-aG-SFW">
-                                        <rect key="frame" x="84" y="97" width="130" height="33"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="22" id="uMR-sa-wWb"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="push" title="Use Current ID" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pw8-cs-k4w">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="authenticationButtonAction:" target="wKG-Bi-ZEf" id="dz7-eA-Lhw"/>
-                                        </connections>
-                                    </button>
-                                    <button verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="sES-A2-KuX" userLabel="Enter New ID">
-                                        <rect key="frame" x="90" y="55" width="119" height="33"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="22" id="7Zj-5k-DKH"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="push" title="Enter New ID" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="d4E-P7-5aM">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="authenticationButtonAction:" target="wKG-Bi-ZEf" id="iMQ-Gx-c5h"/>
-                                        </connections>
-                                    </button>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8b0-PA-giu">
-                                        <rect key="frame" x="18" y="146" width="263" height="17"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="17" id="v8K-m0-WZf"/>
-                                        </constraints>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Will you allow Focus to use your Apple ID?" id="ZwR-UU-R21">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jQl-da-rSu">
-                                        <rect key="frame" x="20" y="20" width="259" height="22"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="Pov-4X-WsO">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                        <connections>
-                                            <outlet property="delegate" destination="wKG-Bi-ZEf" id="4yW-TP-YrJ"/>
-                                        </connections>
-                                    </textField>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="8b0-PA-giu" firstAttribute="top" secondItem="XNb-cy-0HP" secondAttribute="top" constant="20" id="24d-RA-dsT"/>
-                                    <constraint firstItem="8b0-PA-giu" firstAttribute="centerX" secondItem="XNb-cy-0HP" secondAttribute="centerX" id="86d-yp-GlS"/>
-                                    <constraint firstItem="sES-A2-KuX" firstAttribute="centerX" secondItem="XNb-cy-0HP" secondAttribute="centerX" id="Azf-fL-gcY"/>
-                                    <constraint firstAttribute="trailing" secondItem="jQl-da-rSu" secondAttribute="trailing" constant="20" id="HlN-d8-Vad"/>
-                                    <constraint firstAttribute="bottom" secondItem="jQl-da-rSu" secondAttribute="bottom" constant="20" id="Jqd-ac-ei4"/>
-                                    <constraint firstItem="jQl-da-rSu" firstAttribute="top" secondItem="sES-A2-KuX" secondAttribute="bottom" constant="20" id="QSF-Lo-DYw"/>
-                                    <constraint firstItem="WBz-aG-SFW" firstAttribute="centerX" secondItem="XNb-cy-0HP" secondAttribute="centerX" id="Z5M-UJ-9ss"/>
-                                    <constraint firstItem="WBz-aG-SFW" firstAttribute="top" secondItem="8b0-PA-giu" secondAttribute="bottom" constant="20" id="bv0-Ug-M09"/>
-                                    <constraint firstItem="sES-A2-KuX" firstAttribute="centerX" secondItem="XNb-cy-0HP" secondAttribute="centerX" id="dsu-W1-d4t"/>
-                                    <constraint firstItem="jQl-da-rSu" firstAttribute="leading" secondItem="XNb-cy-0HP" secondAttribute="leading" constant="20" id="fuC-VM-SUv"/>
-                                    <constraint firstAttribute="trailing" secondItem="8b0-PA-giu" secondAttribute="trailing" constant="20" id="ofn-TI-iRK"/>
-                                    <constraint firstItem="8b0-PA-giu" firstAttribute="leading" secondItem="XNb-cy-0HP" secondAttribute="leading" constant="20" id="puj-iD-cEv"/>
-                                    <constraint firstItem="sES-A2-KuX" firstAttribute="top" secondItem="WBz-aG-SFW" secondAttribute="bottom" constant="20" id="xl5-WF-f6G"/>
-                                </constraints>
-                            </customView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="XNb-cy-0HP" firstAttribute="centerX" secondItem="yDV-F4-y7e" secondAttribute="centerX" id="YOf-Hb-bEP"/>
-                            <constraint firstItem="XNb-cy-0HP" firstAttribute="centerY" secondItem="yDV-F4-y7e" secondAttribute="centerY" id="t4a-mq-3Il"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="emailEntryField" destination="jQl-da-rSu" id="964-wb-9nj"/>
-                    </connections>
-                </viewController>
-                <customObject id="vXu-mv-Wbi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-425" y="1339"/>
         </scene>
     </scenes>
 </document>

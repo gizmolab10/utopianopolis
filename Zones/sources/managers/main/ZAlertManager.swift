@@ -22,8 +22,18 @@ enum ZAlertType: Int {
     case eNoInternet
 }
 
-let      gAlertManager = ZAlertManager()
-typealias AlertClosure = (NSAlert?) -> (Void)
+
+enum ZAlertState: Int {
+    case eShown
+    case eShow
+    case eYes
+    case eNo
+}
+
+
+let           gAlertManager = ZAlertManager()
+typealias      AlertClosure = (ZAlert?, ZAlertState) -> (Void)
+typealias AlertStateClosure = (ZAlertState) -> (Void)
 
 
 class ZAlertManager : NSObject {
@@ -70,10 +80,10 @@ class ZAlertManager : NSObject {
         } else if let nsError = iError as? NSError {
             let waitForIt = nsError.userInfo[CKErrorRetryAfterKey] as? String ?? ""
 
-            alert(message, waitForIt) { iAlert in
-                let response = iAlert?.runModal()
-
-                closure?(response)
+            alert(message, waitForIt) { iAlert, iState in
+                iAlert?.showAlert { iResponse in
+                    closure?(iResponse)
+                }
             }
         } else {
             let error = iError as? String ?? ""
@@ -83,23 +93,75 @@ class ZAlertManager : NSObject {
     }
 
 
-    func authAlert(_ closure: AnyClosure? = nil) {
-        alert("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?") { iAlert in
-            let response = iAlert?.runModal()
+    func alertSystemPreferences(_ onCompletion: @escaping Closure) {
+        let message = "In System Preferences, please \n  1. click on iCloud,\n  2. sign in,\n  3. turn on iCloud drive"
 
-            closure?(response)
+        alert("To gain full use of this app,", message, "Click here to begin") { iAlert, iState in
+                switch iState {
+                case .eShow:
+                    iAlert?.showAlert { iResponse in
+                        switch iResponse {
+                        case .eYes:
+                            self.openSystemPreferences()
+                            onCompletion()
+                        default: break
+                        }
+                    }
+                default:
+                    self.openSystemPreferences()
+                    onCompletion()
+                }
+        }
+    }
+
+
+    func openSystemPreferences() {
+        #if os(OSX)
+            if let url = URL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
+                NSWorkspace.shared().open(url)
+            }
+        #else
+            if let url = URL(string: "App-Prefs:root=General&path=Network") {
+                UIApplication.shared.open(url)
+            }
+        #endif
+    }
+
+
+    func authAlert(_ closure: AnyClosure? = nil) {
+        alert("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?") { iAlert, iState in
+            switch iState {
+            case .eShow:
+                iAlert?.showAlert { iResponse in
+                    if let state = ZAlertState(rawValue: iResponse as! Int) {
+                        closure?(state)
+                    }
+                }
+            default:
+                closure?(iState)
+            }
         }
     }
 
 
     func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ closure: AlertClosure? = nil) {
         FOREGROUND(canBeDirect: true) {
-            let             a = NSAlert()
-            a    .messageText = iMessage
-            a.informativeText = iExplain ?? ""
+            #if os(OSX)
+                let             a = ZAlert()
+                a    .messageText = iMessage
+                a.informativeText = iExplain ?? ""
 
-            a.addButton(withTitle: iOkayTitle)
-            closure?(a)
+                a.addButton(withTitle: iOkayTitle)
+            #else
+                let             a = ZAlert(title: iMessage, message: iExplain, preferredStyle: .alert)
+                let          okay = UIAlertAction(title: iOkayTitle, style: .default) { iAction in
+                    closure?(a, .eYes)
+                }
+
+                a.addAction(okay)
+            #endif
+
+            closure?(a, .eShow)
         }
     }
 }

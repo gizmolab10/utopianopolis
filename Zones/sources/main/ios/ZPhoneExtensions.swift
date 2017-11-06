@@ -23,6 +23,7 @@ enum ZArrowKey: CChar {
 
 public typealias ZFont                      = UIFont
 public typealias ZView                      = UIView
+public typealias ZAlert                     = UIAlertController
 public typealias ZImage                     = UIImage
 public typealias ZColor                     = UIColor
 public typealias ZEvent                     = UIKeyCommand
@@ -73,25 +74,29 @@ func NSStringFromPoint(_ point: CGPoint) -> String {
 
 
 extension NSObject {
+
     func assignAsFirstResponder(_ responder: UIResponder?) {
         responder?.becomeFirstResponder()
     }
+
 }
 
 
 extension UIKeyCommand {
-    var key: String {
 
+    var key: String {
         if input.hasPrefix("UIKeyInput") {
             return input.character(at: 10)
         }
 
         return input.character(at: 0)
     }
+
 }
 
 
 extension String {
+
     var cgPoint: CGPoint { return CGPointFromString(self) }
     var cgSize:   CGSize { return  CGSizeFromString(self) }
     var arrow: ZArrowKey? {
@@ -110,12 +115,15 @@ extension String {
 
 
 extension UIBezierPath {
+
     func setClip()         { addClip() }
     func line(to: CGPoint) { addLine(to: to) }
+
 }
 
 
 extension UIColor {
+
     var string: String {
         var   red: CGFloat = 0.0
         var  blue: CGFloat = 0.0
@@ -148,15 +156,18 @@ extension UIColor {
 
         return UIColor(hue: hue, saturation: saturation * 0.9, brightness: brightness * by, alpha: alpha)
     }
+
 }
 
 
 extension UIKeyModifierFlags {
+
     var isNumericPad: Bool { return contains(.numericPad) }
     var isControl:    Bool { return contains(.control) }
     var isCommand:    Bool { return contains(.command) }
     var isOption:     Bool { return contains(.alternate) }
     var isShift:      Bool { return contains(.shift) }
+
 }
 
 
@@ -171,6 +182,7 @@ extension ZEditorController {
 
 
 extension   UISwipeGestureRecognizerDirection {
+
     var all:UISwipeGestureRecognizerDirection {     return
             UISwipeGestureRecognizerDirection (     rawValue :
             UISwipeGestureRecognizerDirection.right.rawValue +
@@ -179,10 +191,12 @@ extension   UISwipeGestureRecognizerDirection {
             UISwipeGestureRecognizerDirection   .up.rawValue
         )
     }
+
 }
 
 
 extension UIView {
+
     var      zlayer:               CALayer { return layer }
     var recognizers: [ZGestureRecognizer]? { return gestureRecognizers }
 
@@ -256,7 +270,6 @@ extension UIView {
 
 extension UIWindow {
 
-
     var contentView: UIView? { return self }
     override open var canBecomeFirstResponder: Bool { return true }
 
@@ -317,6 +330,7 @@ extension UIWindow {
 
 
 extension UITextField {
+
     var isBordered : Bool { get { return borderStyle != .none } set { borderStyle = (newValue ? .line : .none) } }
     override open var canBecomeFirstResponder: Bool { return true } // gDBOperationsManager.isAvailable }    // fix a bug where root zone is editing on launch
     func enableUndo() {}
@@ -329,24 +343,29 @@ extension UITextField {
 
         return true
     }
+
 }
 
 
 extension ZoneTextWidget {
+
     @objc(textField:shouldChangeCharactersInRange:replacementString:) func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         widget.textWidget.layoutTextField()
         gEditorView?.setAllSubviewsNeedDisplay()
 
         return true
     }
+
 }
 
 
 public extension UISlider {
+
     var doubleValue: Double {
         get { return Double(value) }
         set { value = Float(newValue) }
     }
+
 }
 
 
@@ -367,6 +386,7 @@ extension UIButton {
         get { return title(for: .normal) }
         set { setTitle(newValue, for: .normal) }
     }
+
 }
 
 
@@ -381,10 +401,12 @@ extension UIApplication {
 
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
+
 }
 
 
 extension Zone {
+
     func hasZoneAbove(_ iAbove: Bool) -> Bool {
         if  let     index  = siblingIndex {
             let compareTo  = !iAbove ? 0 : (parentZone!.count - 1)
@@ -393,6 +415,21 @@ extension Zone {
 
         return false
     }
+
+}
+
+
+extension ZAlert {
+
+    func showAlert(closure: AlertStateClosure? = nil) {
+        modalPresentationStyle = .popover
+
+        gControllersManager.currentController?.present(self, animated: true) {
+           // self.dismiss(animated: false, completion: nil)
+            closure?(.eShown)
+        }
+    }
+
 }
 
 
@@ -466,4 +503,6 @@ extension ZoneWidget {
 
         return path
     }
+
 }
+

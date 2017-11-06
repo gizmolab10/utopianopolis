@@ -16,6 +16,7 @@ import CloudKit
     import Cocoa
 
 let isOSX                       = true
+let isPhone                     = false
 let unselectBrightness: CGFloat = 0.93
 
 #elseif os(iOS)
@@ -23,6 +24,7 @@ let unselectBrightness: CGFloat = 0.93
     import UIKit
 
 let isOSX                       = false
+let isPhone                     = UIDevice.current.userInterfaceIdiom == .phone
 let unselectBrightness: CGFloat = 0.98
 
 #endif

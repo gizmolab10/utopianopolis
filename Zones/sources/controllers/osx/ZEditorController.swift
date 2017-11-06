@@ -48,7 +48,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         super.awakeFromNib()
         editorView?.addSubview(editorRootWidget)
 
-        if gHasPrivateDatabase {
+        if gHasPrivateDatabase && !isPhone {
             editorView?.addSubview(favoritesRootWidget)
         }
     }
@@ -71,9 +71,9 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     
     #if os(iOS)
     private func updateMinZoomScaleForSize(_ size: CGSize) {
-        let           d = graphRootWidget
-        let heightScale = size.height / d.bounds.height
-        let  widthScale = size.width  / d.bounds.width
+        let           w = editorRootWidget
+        let heightScale = size.height / w.bounds.height
+        let  widthScale = size.width  / w.bounds.width
         let    minScale = min(widthScale, heightScale)
         gScaling        = Double(minScale)
     }
@@ -81,10 +81,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-
-        if isMain {
-            updateMinZoomScaleForSize(view.bounds.size)
-        }
+        updateMinZoomScaleForSize(view.bounds.size)
     }
     #endif
 
@@ -97,7 +94,11 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 make.centerX.equalTo(e).offset(gScrollOffset.x)
             }
 
-            if gHasPrivateDatabase {
+            if gHasPrivateDatabase && !isPhone {
+                if favoritesRootWidget.superview == nil {
+                    editorView?.addSubview(favoritesRootWidget)
+                }
+
                 favoritesRootWidget.snp.removeConstraints()
                 favoritesRootWidget.snp.makeConstraints { make in
                     make  .top.equalTo(e).offset(20.0 - Double(gGenericOffset.height / 3.0))
@@ -115,7 +116,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
 
     func update(_ object: Any?, _ kind: ZSignalKind, isMain: Bool) {
-        if !isMain && !gHasPrivateDatabase { return }
+        if !isMain && (!gHasPrivateDatabase || isPhone) { return }
 
         let                        here = isMain ? gHere : gFavoritesManager.rootZone
         var specificWidget: ZoneWidget? = isMain ? editorRootWidget : favoritesRootWidget
@@ -382,6 +383,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             let dropNearest = rootWidget.widgetNearestTo(location, in: editorView, gHere) {
 
             if  isMain,
+                !isPhone,
                 gHasPrivateDatabase,
                 let (_, otherDrop, otherLocation) = widgetNearest(iGesture, isMain: false) {
 

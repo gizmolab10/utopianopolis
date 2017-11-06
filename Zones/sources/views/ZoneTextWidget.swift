@@ -20,7 +20,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     var                     widgetZone : Zone  { return widget.widgetZone }
-    override var acceptsFirstResponder : Bool  { return widgetZone.isWritableByUseer }
     override var         preferredFont : ZFont { return widgetZone.isInFavorites ? gFavoritesFont : gWidgetFont }
     weak var                    widget : ZoneWidget!
     var                   originalText = ""
@@ -65,17 +64,17 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     override func setup() {
-        delegate               = self
-        isBordered             = false
-        textAlignment          = .left
-        backgroundColor        = gClearColor
-        zlayer.backgroundColor = gClearColor.cgColor
-        font                   = preferredFont
-
-        isEditable             = widgetZone.isWritableByUseer
+        delegate                   = self
+        isBordered                 = false
+        textAlignment              = .left
+        backgroundColor            = gClearColor
+        zlayer.backgroundColor     = gClearColor.cgColor
+        font                       = preferredFont
 
         #if os(iOS)
             autocapitalizationType = .none
+        #else
+            isEditable             = widgetZone.isWritableByUseer
         #endif
     }
 
