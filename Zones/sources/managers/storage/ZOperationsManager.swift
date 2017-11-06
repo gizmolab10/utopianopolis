@@ -77,13 +77,14 @@ class ZOperationsManager: NSObject {
         for operationID in operationIDs + [.completion] {
             let         blockOperation = BlockOperation {
                 self.queue.isSuspended = true
-                self.currentOp         = operationID        // if hung, it happened inside this op
-
-                if  self.debug {
-                    self.columnarReport("  " + self.operationText, "")
-                }
 
                 self.FOREGROUND {
+                    self.currentOp     = operationID        // if hung, it happened inside this op
+
+                    if  self.debug {
+                        self.columnarReport("  " + self.operationText, "")
+                    }
+
                     self.performBlock(on: operationID, with: logic, restoreToMode: saved) {
                         if self.currentOp == .completion {
                             onCompletion()

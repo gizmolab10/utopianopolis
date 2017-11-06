@@ -208,11 +208,10 @@ class ZFavoritesManager: ZCloudManager {
 
     func updateChildren() {
         if  gHasPrivateDatabase,
-            let   children = rootZone?.children {
-            let    invalid = -1
-            var trashIndex = invalid
-            var   hasTrash = false
-            var      found = ZModes ()
+            let    children = rootZone?.children {
+            var    hasTrash = false
+            var trashCopies = IndexPath()
+            var       found = ZModes ()
 
             columnarReport(" FAVORITE", "UPDATE CHILDREN")
 
@@ -229,7 +228,7 @@ class ZFavoritesManager: ZCloudManager {
                     let     link  = favorite.zoneLink {
                     if      link == gTrashLink {
                         if  hasTrash {
-                            trashIndex = index
+                            trashCopies.append(index)
                         } else {
                             hasTrash   = true
                         }
@@ -239,8 +238,9 @@ class ZFavoritesManager: ZCloudManager {
                 }
             }
 
-            if  trashIndex != invalid {
-                rootZone?.children.remove(at: trashIndex)
+            while let index = trashCopies.last {
+                trashCopies.removeLast()
+                rootZone?.children.remove(at: index)
             }
 
             for favorite in defaultFavorites.children {
