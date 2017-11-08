@@ -58,8 +58,9 @@ let     gShowChildrenKey = "showChildren"
 let     gManifestTypeKey = "ZManifest"
 let     gManifestNameKey = "manifest"
 let gFavoriteRootNameKey = "favoritesRoot"
-let   gLineWithStubTitle = "----------- | -----------"
-let        gLineOfDashes = "-------------------------"
+let    gHalfLineOfDashes = "-----------"
+let   gLineWithStubTitle = gHalfLineOfDashes + " | " + gHalfLineOfDashes
+let        gLineOfDashes = gHalfLineOfDashes + "---" + gHalfLineOfDashes
 
 let        gBackspaceKey = "\u{8}"
 let           gDeleteKey = "\u{7F}"

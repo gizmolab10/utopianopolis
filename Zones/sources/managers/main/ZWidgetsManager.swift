@@ -33,6 +33,11 @@ class ZWidgetsManager: NSObject {
     }
 
 
+    func clear() {
+        widgets = [ZStorageMode : [Int : ZoneWidget]] ()
+    }
+
+
     func registerWidget(_ widget: ZoneWidget) {
         if  let                      zone = widget.widgetZone,
             let                      mode = mode(for: zone) {

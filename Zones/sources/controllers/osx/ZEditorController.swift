@@ -53,7 +53,13 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         }
     }
     
-    
+
+    func clear() {
+        editorRootWidget   .widgetZone = nil
+        favoritesRootWidget.widgetZone = nil
+    }
+
+
     override func setup() {
         restartGestureRecognition()
         super.setup()

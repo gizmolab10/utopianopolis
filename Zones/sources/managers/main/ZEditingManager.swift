@@ -65,10 +65,9 @@ class ZEditingManager: NSObject {
         case SelectAll = 5
         case Alter     = 6
         case Multiple  = 7
-        case Copy      = 8
-        case Children  = 9
-        case Parent    = 10
-        case Favorites = 11
+        case Children  = 8
+        case Parent    = 9
+        case Favorites = 10
 }
 
 
@@ -78,6 +77,7 @@ class ZEditingManager: NSObject {
         case "b", gTabKey:                                                   return .Parent
         case "r", "o":                                                       return .Children
         case ";", "'", "/":                                                  return .Favorites
+        case "a":                                                            return .SelectAll
         default:                                                             return .Always
         }
     }
@@ -85,41 +85,33 @@ class ZEditingManager: NSObject {
 
     func validateKey(_ key: String) -> Bool {
         let type = menuType(for: key)
-
-        return validateTag(type.rawValue)
-    }
-
-
-    func validateTag(_ tag: Int) -> Bool {
         var valid = !isEditing
 
-        if  tag <= 10, tag > 0, let type = ZMenuType(rawValue: tag) {
-            if !valid {
-                valid = [.Undo, .Redo, .Copy, .Alter, .SelectAll].contains(type)
-            } else {
-                let   undo = undoManager
-                let      s = gSelectionManager
-                let wGrabs = s.writableGrabsCount
-                let  paste = s.pasteableZones.count
-                let  grabs = s.currentGrabs  .count
-                let  shown = s.currentGrabsHaveVisibleChildren
-                let  write = s.currentMoveable.isWritableByUseer
-                let pWrite = s.currentMoveable.parentZone?.isWritableByUseer ?? false
+        if  valid {
+            let   undo = undoManager
+            let      s = gSelectionManager
+            let wGrabs = s.writableGrabsCount
+            let  paste = s.pasteableZones.count
+            let  grabs = s.currentGrabs  .count
+            let  shown = s.currentGrabsHaveVisibleChildren
+            let  write = s.currentMoveable.isWritableByUseer
+            let pWrite = s.currentMoveable.parentZone?.isWritableByUseer ?? false
 
-                switch type {
-                case .Parent:    valid =              pWrite
-                case .Alter:     valid =               write
-                case .Paste:     valid =  paste > 0 && write
-                case .UseGrabs:  valid = wGrabs > 0 && write
-                case .Multiple:  valid =  grabs > 1
-                case .Children:  valid = (shown     && write) || (grabs > 1 && pWrite)
-                case .SelectAll: valid =  shown
-                case .Favorites: valid = gHasPrivateDatabase
-                case .Undo:      valid = undo.canUndo
-                case .Redo:      valid = undo.canRedo
-                default:         valid = false
-                }
+            switch type {
+            case .Parent:    valid =              pWrite
+            case .Alter:     valid =               write
+            case .Paste:     valid =  paste > 0 && write
+            case .UseGrabs:  valid = wGrabs > 0 && write
+            case .Multiple:  valid =  grabs > 1
+            case .Children:  valid = (shown     && write) || (grabs > 1 && pWrite)
+            case .SelectAll: valid =  shown
+            case .Favorites: valid = gHasPrivateDatabase
+            case .Undo:      valid = undo.canUndo
+            case .Redo:      valid = undo.canRedo
+            case .Always:    valid = true
             }
+        } else if key.arrow == nil {
+            valid = [.Undo, .Redo, .Alter, .SelectAll].contains(type)
         }
 
         return valid
@@ -271,7 +263,7 @@ class ZEditingManager: NSObject {
             grab.widget?.textWidget.updateText()
         }
 
-        if  grab.zoneName?.contains("----------- ") ?? false {
+        if  grab.zoneName?.contains(gHalfLineOfDashes + " ") ?? false {
             assign(gLineOfDashes)
         } else if grab.zoneName?.contains(gLineOfDashes) ?? false {
             assign(gLineWithStubTitle)

@@ -148,7 +148,7 @@ CA
                                                     <menuItem title="New Idea" tag="6" alternate="YES" keyEquivalent=" " id="hu1-W0-ukM">
                                                         <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                                         <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="7ug-ra-lWZ"/>
+                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="fMD-Pi-5be"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem title="Next Idea" tag="6" id="8Vw-09-keH">
@@ -348,7 +348,7 @@ CQ
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="ZAppDelegate" customModule="Focus" customModuleProvider="target"/>
+                <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Focus" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="228" y="-435"/>
@@ -551,7 +551,7 @@ CQ
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn width="405" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
+                                                <tableColumn identifier="" width="405" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>

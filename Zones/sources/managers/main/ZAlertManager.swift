@@ -133,9 +133,7 @@ class ZAlertManager : NSObject {
             switch iState {
             case .eShow:
                 iAlert?.showAlert { iResponse in
-                    if let state = ZAlertState(rawValue: iResponse as! Int) {
-                        closure?(state)
-                    }
+                    closure?(iResponse.rawValue)
                 }
             default:
                 closure?(iState)

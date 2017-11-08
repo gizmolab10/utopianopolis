@@ -261,7 +261,7 @@ extension Array {
 
 extension String {
     var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
-    var          isDigit: Bool { return "0123456789.+-=*/".characters.contains(self[startIndex]) }
+    var          isDigit: Bool { return "0123456789.+-=*/".contains(self[startIndex]) }
     var          isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
     var           length: Int  { return unicodeScalars.count }

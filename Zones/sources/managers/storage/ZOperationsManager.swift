@@ -11,6 +11,7 @@ import Foundation
 
 
 enum ZOperationID: Int {
+    case clear
     case onboard
     case cloud
     case root

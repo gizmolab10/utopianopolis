@@ -87,16 +87,10 @@ class ZActionsController : ZGenericController {
 
 
     func refresh() {
-        gHere.needProgeny()
-        gManifest.needFetch()
         gDBOperationsManager.unHang()
-        gFavoritesManager.rootZone?.needChildren()
-
-        gFavoritesManager.rootZone?.children = []
-
-        gDBOperationsManager.children(.restore) {
-            self.signalFor(nil, regarding: .data)
-        }
+        gWidgetsManager     .clear()
+        gEditorController?  .clear()
+        gControllersManager .startupDataAndUI()
     }
 
 

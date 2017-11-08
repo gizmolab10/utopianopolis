@@ -70,10 +70,10 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
         let                            textColor = ZColor.blue
         let                                 font = gWidgetFont
         let                            hereTitle = gHere.zoneName ?? ""
-        let                         actionsTitle = gActionsAreVisible   ? " -> " : " Actions"
-        let                       favoritesTitle = gFavoritesAreVisible ? " -> " : " Favorites"
-        let                       favoritesWidth = favoritesTitle.widthForFont(font) + 10.0
-        actionsButtonWidthConstraint?  .constant = actionsTitle  .widthForFont(font) + 10.0
+        let                         actionsTitle = gActionsAreVisible   ? " -> " : " Actions "
+        let                       favoritesTitle = gFavoritesAreVisible ? " -> " : " Favorites "
+        let                       favoritesWidth = favoritesTitle.widthForFont(font) + 15.0
+        actionsButtonWidthConstraint?  .constant = actionsTitle  .widthForFont(font) + 15.0
         favoritesButtonWidthConstraint?.constant = favoritesWidth
         editorBottomConstraint?        .constant = gKeyboardIsVisible   ? keyboardHeight : gActionsAreVisible ? selectorHeight : 0.0
         editorTopConstraint?           .constant = gFavoritesAreVisible ? selectorHeight : 2.0
@@ -88,10 +88,10 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
         let                          buttonSetup = { (iButton: UIButton?, iTitle: String, iHidden: Bool) in
             if  let                       button = iButton {
                 button                    .title = iTitle
-                button          .backgroundColor = iHidden ? emphasizedColor : ZColor.clear
+                button          .backgroundColor = iHidden ? emphasizedColor : gBackgroundColor
 
                 button.setTitleColor(              iHidden ? ZColor.white    : textColor, for: .normal)
-                button.addBorder(thickness: 1.0, radius: 5.0, color: iHidden ? textColor.cgColor : ZColor.clear.cgColor)
+                button.addBorder(thickness: 1.0, radius: 5.0, color: textColor.cgColor)
             }
         }
 

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C1ABAAB1FB144E300D62947 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3981F1988380091F4D1 /* Assets.xcassets */; };
+		0C1ABAAC1FB144E400D62947 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3981F1988380091F4D1 /* Assets.xcassets */; };
 		0C23A94D1F0ED24A00514814 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C23A94C1F0ED24A00514814 /* CloudKit.framework */; };
 		0C26F7301F799EEE00C2B978 /* ZoneSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C26F72F1F799EEE00C2B978 /* ZoneSegmentedControl.swift */; };
 		0C2E22BE1F75B8AB00B50A71 /* ZEditorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2E22B91F75B8AB00B50A71 /* ZEditorController.swift */; };
@@ -57,15 +59,14 @@
 		0C39B2BC1F182EBB0091F4D1 /* ZState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2351F182EBB0091F4D1 /* ZState.swift */; };
 		0C39B2BD1F182EBB0091F4D1 /* ZState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2351F182EBB0091F4D1 /* ZState.swift */; };
 		0C39B2BE1F182EBB0091F4D1 /* ZState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2351F182EBB0091F4D1 /* ZState.swift */; };
-		0C39B2BF1F182EBB0091F4D1 /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2371F182EBB0091F4D1 /* ZAppDelegate.swift */; };
-		0C39B2C01F182EBB0091F4D1 /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2371F182EBB0091F4D1 /* ZAppDelegate.swift */; };
+		0C39B2BF1F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2371F182EBB0091F4D1 /* ZMobileAppDelegate.swift */; };
+		0C39B2C01F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2371F182EBB0091F4D1 /* ZMobileAppDelegate.swift */; };
 		0C39B2C81F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B23A1F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift */; };
 		0C39B2C91F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B23A1F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift */; };
-		0C39B2CE1F182EBB0091F4D1 /* ZPhoneExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B23C1F182EBB0091F4D1 /* ZPhoneExtensions.swift */; };
-		0C39B2CF1F182EBB0091F4D1 /* ZPhoneExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B23C1F182EBB0091F4D1 /* ZPhoneExtensions.swift */; };
-		0C39B2D31F182EBB0091F4D1 /* ZAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B23F1F182EBB0091F4D1 /* ZAppDelegate.swift */; };
+		0C39B2CE1F182EBB0091F4D1 /* ZMobileExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B23C1F182EBB0091F4D1 /* ZMobileExtensions.swift */; };
+		0C39B2CF1F182EBB0091F4D1 /* ZMobileExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B23C1F182EBB0091F4D1 /* ZMobileExtensions.swift */; };
+		0C39B2D31F182EBB0091F4D1 /* ZDesktopAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B23F1F182EBB0091F4D1 /* ZDesktopAppDelegate.swift */; };
 		0C39B2DC1F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2421F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift */; };
-		0C39B2E21F182EBB0091F4D1 /* ZonesExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2441F182EBB0091F4D1 /* ZonesExtensions.swift */; };
 		0C39B2E31F182EBB0091F4D1 /* ZControllersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2471F182EBB0091F4D1 /* ZControllersManager.swift */; };
 		0C39B2E41F182EBB0091F4D1 /* ZControllersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2471F182EBB0091F4D1 /* ZControllersManager.swift */; };
 		0C39B2E51F182EBB0091F4D1 /* ZControllersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2471F182EBB0091F4D1 /* ZControllersManager.swift */; };
@@ -129,13 +130,11 @@
 		0C39B38E1F182EBB0091F4D1 /* ZStackableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B28B1F182EBB0091F4D1 /* ZStackableView.swift */; };
 		0C39B38F1F182EBB0091F4D1 /* ZStackableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B28B1F182EBB0091F4D1 /* ZStackableView.swift */; };
 		0C39B3901F182EBB0091F4D1 /* ZStackableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B28B1F182EBB0091F4D1 /* ZStackableView.swift */; };
-		0C39B3A01F1988380091F4D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3941F1988380091F4D1 /* Assets.xcassets */; };
 		0C39B3A31F1988380091F4D1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3951F1988380091F4D1 /* LaunchScreen.storyboard */; };
 		0C39B3A61F1988380091F4D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3961F1988380091F4D1 /* Main.storyboard */; };
 		0C39B3A81F1988380091F4D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3981F1988380091F4D1 /* Assets.xcassets */; };
 		0C39B3AB1F1988380091F4D1 /* iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3991F1988380091F4D1 /* iPhone.storyboard */; };
 		0C39B3AE1F1988380091F4D1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B39A1F1988380091F4D1 /* LaunchScreen.storyboard */; };
-		0C39B3B31F1988380091F4D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B39C1F1988380091F4D1 /* Assets.xcassets */; };
 		0C39B3B61F1988380091F4D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B39D1F1988380091F4D1 /* Main.storyboard */; };
 		0C39B3B91F1988380091F4D1 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B39E1F1988380091F4D1 /* Settings.storyboard */; };
 		0C39B3C51F198CB80091F4D1 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C23A94C1F0ED24A00514814 /* CloudKit.framework */; };
@@ -161,6 +160,7 @@
 		0C7117371FAE7F9900603017 /* ZDBOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZDBOperationsManager.swift */; };
 		0C71173A1FAFC4F200603017 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C7117391FAFC4F200603017 /* SnapKit.framework */; };
 		0C71173B1FAFC50500603017 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		0C7126CD1FB39C5200CD3E76 /* ZDesktopExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */; };
 		0CA04B2D1D2ECF1B001892E5 /* ZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */; };
 		0CA04B631D2ECF41001892E5 /* PadZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */; };
 		0CA04B6E1D2ECF41001892E5 /* PadZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */; };
@@ -259,12 +259,11 @@
 		0C39B2331F182EBB0091F4D1 /* ZReachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZReachability.swift; sourceTree = "<group>"; };
 		0C39B2341F182EBB0091F4D1 /* ZRecursionLogic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZRecursionLogic.swift; sourceTree = "<group>"; };
 		0C39B2351F182EBB0091F4D1 /* ZState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZState.swift; sourceTree = "<group>"; };
-		0C39B2371F182EBB0091F4D1 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
+		0C39B2371F182EBB0091F4D1 /* ZMobileAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMobileAppDelegate.swift; sourceTree = "<group>"; };
 		0C39B23A1F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGestureAndKeyRecognizer.swift; sourceTree = "<group>"; };
-		0C39B23C1F182EBB0091F4D1 /* ZPhoneExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZPhoneExtensions.swift; sourceTree = "<group>"; };
-		0C39B23F1F182EBB0091F4D1 /* ZAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAppDelegate.swift; sourceTree = "<group>"; };
+		0C39B23C1F182EBB0091F4D1 /* ZMobileExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMobileExtensions.swift; sourceTree = "<group>"; };
+		0C39B23F1F182EBB0091F4D1 /* ZDesktopAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDesktopAppDelegate.swift; sourceTree = "<group>"; };
 		0C39B2421F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGestureAndKeyRecognizer.swift; sourceTree = "<group>"; };
-		0C39B2441F182EBB0091F4D1 /* ZonesExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZonesExtensions.swift; sourceTree = "<group>"; };
 		0C39B2471F182EBB0091F4D1 /* ZControllersManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZControllersManager.swift; sourceTree = "<group>"; };
 		0C39B2481F182EBB0091F4D1 /* ZEditingManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEditingManager.swift; sourceTree = "<group>"; };
 		0C39B2491F182EBB0091F4D1 /* ZSelectionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSelectionManager.swift; sourceTree = "<group>"; };
@@ -286,13 +285,11 @@
 		0C39B2891F182EBB0091F4D1 /* ZoneWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneWidget.swift; sourceTree = "<group>"; };
 		0C39B28A1F182EBB0091F4D1 /* ZoneWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneWindow.swift; sourceTree = "<group>"; };
 		0C39B28B1F182EBB0091F4D1 /* ZStackableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZStackableView.swift; sourceTree = "<group>"; };
-		0C39B3941F1988380091F4D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C39B3951F1988380091F4D1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0C39B3961F1988380091F4D1 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		0C39B3981F1988380091F4D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C39B3991F1988380091F4D1 /* iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = iPhone.storyboard; sourceTree = "<group>"; };
 		0C39B39A1F1988380091F4D1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		0C39B39C1F1988380091F4D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C39B39D1F1988380091F4D1 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		0C39B39E1F1988380091F4D1 /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
 		0C39B3BA1F1989210091F4D1 /* iFocus.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = iFocus.entitlements; path = iFocus/iFocus.entitlements; sourceTree = "<group>"; };
@@ -311,6 +308,7 @@
 		0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSearchManager.swift; sourceTree = "<group>"; };
 		0C7117341FAE7F9900603017 /* ZDBOperationsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDBOperationsManager.swift; sourceTree = "<group>"; };
 		0C7117391FAFC4F200603017 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = iFocus/Frameworks/SnapKit.framework; sourceTree = "<group>"; };
+		0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDesktopExtensions.swift; sourceTree = "<group>"; };
 		0CA04B141D2ECF1A001892E5 /* Focus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Focus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
@@ -480,9 +478,9 @@
 		0C39B2361F182EBB0091F4D1 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				0C39B2371F182EBB0091F4D1 /* ZAppDelegate.swift */,
 				0C39B23A1F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift */,
-				0C39B23C1F182EBB0091F4D1 /* ZPhoneExtensions.swift */,
+				0C39B2371F182EBB0091F4D1 /* ZMobileAppDelegate.swift */,
+				0C39B23C1F182EBB0091F4D1 /* ZMobileExtensions.swift */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -490,9 +488,9 @@
 		0C39B23E1F182EBB0091F4D1 /* osx */ = {
 			isa = PBXGroup;
 			children = (
-				0C39B23F1F182EBB0091F4D1 /* ZAppDelegate.swift */,
+				0C39B23F1F182EBB0091F4D1 /* ZDesktopAppDelegate.swift */,
+				0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */,
 				0C39B2421F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift */,
-				0C39B2441F182EBB0091F4D1 /* ZonesExtensions.swift */,
 			);
 			path = osx;
 			sourceTree = "<group>";
@@ -566,6 +564,7 @@
 		0C39B3921F1988380091F4D1 /* interfaces */ = {
 			isa = PBXGroup;
 			children = (
+				0C39B3981F1988380091F4D1 /* Assets.xcassets */,
 				0C39B3931F1988380091F4D1 /* iPad */,
 				0C39B3971F1988380091F4D1 /* iPhone */,
 				0C39B39B1F1988380091F4D1 /* desktop */,
@@ -576,7 +575,6 @@
 		0C39B3931F1988380091F4D1 /* iPad */ = {
 			isa = PBXGroup;
 			children = (
-				0C39B3941F1988380091F4D1 /* Assets.xcassets */,
 				0C39B3951F1988380091F4D1 /* LaunchScreen.storyboard */,
 				0C39B3961F1988380091F4D1 /* Main.storyboard */,
 			);
@@ -586,7 +584,6 @@
 		0C39B3971F1988380091F4D1 /* iPhone */ = {
 			isa = PBXGroup;
 			children = (
-				0C39B3981F1988380091F4D1 /* Assets.xcassets */,
 				0C39B3991F1988380091F4D1 /* iPhone.storyboard */,
 				0C39B39A1F1988380091F4D1 /* LaunchScreen.storyboard */,
 			);
@@ -596,7 +593,6 @@
 		0C39B39B1F1988380091F4D1 /* desktop */ = {
 			isa = PBXGroup;
 			children = (
-				0C39B39C1F1988380091F4D1 /* Assets.xcassets */,
 				0C39B39D1F1988380091F4D1 /* Main.storyboard */,
 				0C39B39E1F1988380091F4D1 /* Settings.storyboard */,
 			);
@@ -984,8 +980,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C39B3B31F1988380091F4D1 /* Assets.xcassets in Resources */,
 				0C39B3B61F1988380091F4D1 /* Main.storyboard in Resources */,
+				0C1ABAAC1FB144E400D62947 /* Assets.xcassets in Resources */,
 				0C39B3B91F1988380091F4D1 /* Settings.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1008,8 +1004,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C39B3A01F1988380091F4D1 /* Assets.xcassets in Resources */,
 				0C39B3A61F1988380091F4D1 /* Main.storyboard in Resources */,
+				0C1ABAAB1FB144E300D62947 /* Assets.xcassets in Resources */,
 				0C39B3A31F1988380091F4D1 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1040,7 +1036,7 @@
 				0C39B31F1F182EBB0091F4D1 /* ZTrait.swift in Sources */,
 				0C39B2E31F182EBB0091F4D1 /* ZControllersManager.swift in Sources */,
 				0C4118DE1FA8110200A58004 /* ZAlertManager.swift in Sources */,
-				0C39B2BF1F182EBB0091F4D1 /* ZAppDelegate.swift in Sources */,
+				0C39B2BF1F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
 				0C3ECC1F1FA2953E00F085EA /* ZOnboardingManager.swift in Sources */,
 				0C39B38B1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
 				0C39B3821F182EBB0091F4D1 /* ZoneDot.swift in Sources */,
@@ -1050,7 +1046,7 @@
 				0C39B2AD1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C39B3851F182EBB0091F4D1 /* ZoneTextWidget.swift in Sources */,
 				0C2E22D21F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,
-				0C39B2CE1F182EBB0091F4D1 /* ZPhoneExtensions.swift in Sources */,
+				0C39B2CE1F182EBB0091F4D1 /* ZMobileExtensions.swift in Sources */,
 				0C2E22C51F75BB7D00B50A71 /* ZMainController.swift in Sources */,
 				0C39B3161F182EBB0091F4D1 /* ZManifest.swift in Sources */,
 				0C3ECC231FA3023500F085EA /* ZUser.swift in Sources */,
@@ -1126,10 +1122,10 @@
 				0C39B3031F182EBB0091F4D1 /* ZRemoteStoresManager.swift in Sources */,
 				0C39B2B81F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C2E22C11F75B8AB00B50A71 /* ZSearchController.swift in Sources */,
-				0C39B2E21F182EBB0091F4D1 /* ZonesExtensions.swift in Sources */,
-				0C39B2D31F182EBB0091F4D1 /* ZAppDelegate.swift in Sources */,
+				0C39B2D31F182EBB0091F4D1 /* ZDesktopAppDelegate.swift in Sources */,
 				0C3ECC211FA29A3A00F085EA /* ZOnboardingManager.swift in Sources */,
 				0C39B3151F182EBB0091F4D1 /* ZAction.swift in Sources */,
+				0C7126CD1FB39C5200CD3E76 /* ZDesktopExtensions.swift in Sources */,
 				0C39B2EE1F182EBB0091F4D1 /* ZWidgetsManager.swift in Sources */,
 				0C39B2AC1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
 				0C39B2A31F182EBB0091F4D1 /* ZPreferencesController.swift in Sources */,
@@ -1162,7 +1158,7 @@
 				0C39B2FF1F182EBB0091F4D1 /* ZRecordsManager.swift in Sources */,
 				0C39B3201F182EBB0091F4D1 /* ZTrait.swift in Sources */,
 				0C39B2E41F182EBB0091F4D1 /* ZControllersManager.swift in Sources */,
-				0C39B2C01F182EBB0091F4D1 /* ZAppDelegate.swift in Sources */,
+				0C39B2C01F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
 				0C39B38C1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
 				0C39B3831F182EBB0091F4D1 /* ZoneDot.swift in Sources */,
 				0C3ECC241FA3023500F085EA /* ZUser.swift in Sources */,
@@ -1172,7 +1168,7 @@
 				0C39B2AE1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C39B3861F182EBB0091F4D1 /* ZoneTextWidget.swift in Sources */,
 				0C2E22D31F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,
-				0C39B2CF1F182EBB0091F4D1 /* ZPhoneExtensions.swift in Sources */,
+				0C39B2CF1F182EBB0091F4D1 /* ZMobileExtensions.swift in Sources */,
 				0C2E22CA1F75BB7E00B50A71 /* ZMainController.swift in Sources */,
 				0C7117361FAE7F9900603017 /* ZDBOperationsManager.swift in Sources */,
 				0C39B3171F182EBB0091F4D1 /* ZManifest.swift in Sources */,
@@ -1250,6 +1246,7 @@
 		0C69C9DD1F09CD95004D026D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.IOS;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = iFocus/iFocus.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -1280,6 +1277,7 @@
 		0C69C9DE1F09CD95004D026D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.IOS;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = iFocus/iFocus.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -1413,7 +1411,7 @@
 		0CA04B3D1D2ECF1B001892E5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.OSX;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Zones/Zones.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
@@ -1438,7 +1436,7 @@
 		0CA04B3E1D2ECF1B001892E5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.OSX;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Zones/Zones.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
@@ -1520,7 +1518,7 @@
 		0CA04B711D2ECF41001892E5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.IOS;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = PadZones/PadZones.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -1550,7 +1548,7 @@
 		0CA04B721D2ECF41001892E5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.IOS;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = PadZones/PadZones.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";

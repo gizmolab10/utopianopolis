@@ -33,7 +33,13 @@ class ZRemoteStoresManager: NSObject {
     var              rootZone: Zone?     { get { return currentRecordsManager.rootZone }  set { currentRecordsManager.rootZone  = newValue } }
 
 
-    func rootZone(for mode: ZStorageMode) -> Zone? { return recordsManagerFor(mode).rootZone }
+    func rootZone(for mode: ZStorageMode) -> Zone? { return recordsManagerFor(mode).rootZone     }
+
+
+    func clear() {
+        recordsManagers       = [ZStorageMode : ZCloudManager]()
+        manifestByStorageMode = [ZStorageMode : ZManifest] ()
+    }
 
 
     func cancel() {

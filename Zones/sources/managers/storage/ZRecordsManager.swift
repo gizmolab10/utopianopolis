@@ -43,6 +43,14 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func clear() {
+        rootZone       = nil
+        trashZone      = nil
+        recordsByState = [ZRecordState : [CKRecord]] ()
+        zonesByID      = [String       :       Zone] ()
+    }
+
+
     // MARK:- record state
     // MARK:-
 
