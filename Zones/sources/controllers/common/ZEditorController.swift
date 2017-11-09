@@ -140,7 +140,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             recursing      = [.data, .redraw].contains(kind)
         }
 
-        note("<  <  -  >  >  \(specificWidget?.widgetZone.zoneName ?? "---")")
+        note("<  <  -  >  >  \(specificWidget?.widgetZone?.zoneName ?? "---")")
 
         specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, visited: [])
     }
@@ -433,7 +433,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                     let widgetRect = widget.convert(hitRect, to: editorView)
 
                     if  widgetRect.intersects(rect!) {
-                        widget.widgetZone.addToGrab()
+                        widget.widgetZone?.addToGrab()
                     }
                 }
             }

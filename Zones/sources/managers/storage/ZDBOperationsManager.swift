@@ -28,7 +28,7 @@ class ZDBOperationsManager: ZOperationsManager {
     func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .clear,        to: .manifest,                    onCompletion) }
     func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,         to: .parent,                      onCompletion) }
     func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .save,         to: .subscribe,                   onCompletion) }
-    func     travel(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,         to: .save,                        onCompletion) }
+    func     travel(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .root,         to: .save,                        onCompletion) }
     func       save(_ onCompletion: @escaping Closure) { setupAndRun([.create,                    .merge, .save           ]) { onCompletion() } }
     func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                              .save, .children]) { onCompletion() } }
     func fetchTrash(_ onCompletion: @escaping Closure) { setupAndRun([.trash,                             .save, .children]) { onCompletion() } }

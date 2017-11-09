@@ -30,7 +30,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var       dragStart: CGPoint? = nil
     var      isInnerDot: Bool     = false
     var    isDragTarget: Bool { return widgetZone == gDragDropZone }
-    var       isVisible: Bool { return widget?.widgetZone.isVisible ?? true }
+    var       isVisible: Bool { return widget?.widgetZone?.isVisible ?? true }
 
 
     var innerOrigin: CGPoint? {
@@ -115,7 +115,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 var   width = !isVisible && !isToggle ? CGFloat(0.0) : gFingerBreadth
                 let  height = innerDotHeight + 5.0 + gGenericOffset.height * 3.0
 
-                if iWidget.widgetZone.isInFavorites {
+                if iWidget.widgetZone?.isInFavorites ?? false {
                     width  *= gReductionRatio
                  // height *= gReductionRatio
                 }

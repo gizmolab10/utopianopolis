@@ -158,7 +158,7 @@ class ZEditingManager: NSObject {
                 case "/":         focus(on: gSelectionManager.firstGrab, isCommand)
                 // case "?":         gSettingsController?.displayViewFor(id: .Help)
                 case "-":         createNext()
-                case gTabKey:     if hasWidget { createNext(containing: isOption) { iChild in iChild.edit() } }
+                case gTabKey:     createNext(containing: isOption) { iChild in iChild.edit() }
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
                 case gSpaceKey:   if isOption || isWindow { createIdea() }
                 case gBackspaceKey,
@@ -799,8 +799,8 @@ class ZEditingManager: NSObject {
 
 
     func grabAppropriate(_ zones: [Zone]) -> Zone? {
-        if  let       zone = gInsertionsFollow ? zones.first : zones.last,
-            let     parent = zone.parentZone {
+        if  let       grab = gInsertionsFollow ? zones.first : zones.last,
+            let     parent = grab.parentZone {
             let   siblings = parent.children
             var      count = siblings.count
             let        max = count - 1
@@ -813,15 +813,17 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            if  var       index  = zone.siblingIndex, max > 0, count > 0 {
-                if        index == max &&   gInsertionsFollow {
-                    index        = 0
-                } else if index == 0   &&  !gInsertionsFollow {
-                    index        = max
-                } else if index  < max &&  (gInsertionsFollow || index == 0) {
-                    index       += 1
-                } else if index > 0    && (!gInsertionsFollow || index == max) {
-                    index       -= 1
+            if  var           index  = grab.siblingIndex, max > 0, count > 0 {
+                if !grab.isGrabbed {
+                    if        index == max &&   gInsertionsFollow {
+                        index        = 0
+                    } else if index == 0   &&  !gInsertionsFollow {
+                        index        = max
+                    }
+                } else if     index  < max &&  (gInsertionsFollow || index == 0) {
+                    index           += 1
+                } else if     index  > 0    && (!gInsertionsFollow || index == max) {
+                    index           -= 1
                 }
 
                 return siblings[index]
@@ -1096,7 +1098,7 @@ class ZEditingManager: NSObject {
 
                     self.moveZone(mover, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
                         if !sameGraph {
-                            mover.recursivelyApplyMode()
+                            mover.recursivelyApplyMode(create: true)
                         }
 
                         self.redrawAndSync()

@@ -19,9 +19,9 @@ import Foundation
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
-    var                     widgetZone : Zone  { return widget.widgetZone }
-    override var         preferredFont : ZFont { return widgetZone.isInFavorites ? gFavoritesFont : gWidgetFont }
-    weak var                    widget : ZoneWidget!
+    var                     widgetZone : Zone? { return widget?.widgetZone }
+    override var         preferredFont : ZFont { return (widgetZone?.isInFavorites ?? false) ? gFavoritesFont : gWidgetFont }
+    weak var                    widget : ZoneWidget?
     var                   originalText = ""
     var                 _isTextEditing = false
 
@@ -31,32 +31,36 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         set {
             if  _isTextEditing != newValue {
                 _isTextEditing  = newValue
-                let       zone  = widgetZone
                 font            = preferredFont
+                let           s = gSelectionManager
 
-                if !_isTextEditing {
-                    let  grab = gSelectionManager.currentlyEditingZone == zone
-                    textColor = !grab ? ZColor.black :zone.grabbedTextColor
+                if  let   zone  = widgetZone {
+                    if !_isTextEditing {
+                        let  grab = s.currentlyEditingZone == zone
+                        textColor = !grab ? ZColor.black : zone.grabbedTextColor
 
-                    abortEditing()
+                        abortEditing()
 
-                    if  grab {
-                        gSelectionManager.clearEdit()
+                        if  grab {
+                            s.clearEdit()
 
-                        zone.grab()
+                            zone.grab()
+                        }
+                    } else {
+                        s.currentlyEditingZone = zone
+                        textColor              = ZColor.black
+                        originalText           = zone.zoneName ?? ""
+
+                        s.deselectGrabs()
+                        enableUndo()
+                        updateText()
+
+                        //                    #if os(iOS)
+                        //                        selectAllText()
+                        //                    #endif
                     }
                 } else {
-                    gSelectionManager.currentlyEditingZone = zone
-                    textColor                              = ZColor.black
-                    originalText                           = zone.zoneName ?? ""
-
-                    gSelectionManager.deselectGrabs()
-                    enableUndo()
-                    updateText()
-
-//                    #if os(iOS)
-//                        selectAllText()
-//                    #endif
+                    s.clearEdit()
                 }
             }
         }
@@ -74,7 +78,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         #if os(iOS)
             autocapitalizationType = .none
         #else
-            isEditable             = widgetZone.isWritableByUseer
+            isEditable             = widgetZone?.isWritableByUseer ?? false
         #endif
     }
 
@@ -86,17 +90,18 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     func updateGUI() {
         layoutTextField()
-        widget.setNeedsDisplay()
+        widget?.setNeedsDisplay()
     }
 
 
     func layoutTextField() {
         snp.removeConstraints()
         snp.makeConstraints { make in
-            let textWidth = text!.widthForFont(preferredFont)
-            let    height = gGenericOffset.height
-            let     width = !widgetZone.isVisible ? 0.0 : textWidth + 5.0
-            let      view = superview!
+            let zoneHidden = !(widgetZone?.isVisible ?? true)
+            let  textWidth = text!.widthForFont(preferredFont)
+            let     height = gGenericOffset.height
+            let      width = zoneHidden ? 0.0 : textWidth + 5.0
+            let       view = superview!
 
             make.centerY.equalTo(view).offset(-verticalTextOffset)
             make   .left.equalTo(view).offset(gGenericOffset.width + 4.0)
@@ -107,31 +112,34 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-    @discardableResult override func resignFirstResponder() -> Bool {
-        var result = false
-
-        if !gSelectionManager.isEditingStateChanging {
-//            gSelectionManager.deferEditingStateChange()
-            captureText(force: false)
-
-            result = super.resignFirstResponder()
-
-            if result && isTextEditing {
-                gSelectionManager.clearGrab()
-
-                FOREGROUND { // avoid state garbling
-                    self.isTextEditing = false
-                }
-            }
-        }
-
-        return result
-    }
+//    @discardableResult override func resignFirstResponder() -> Bool {
+//        var result = false
+//
+//        if !gSelectionManager.isEditingStateChanging {
+////            gSelectionManager.deferEditingStateChange()
+//            captureText(force: false)
+//
+//            result = super.resignFirstResponder()
+//
+//            if result && isTextEditing {
+//                gSelectionManager.clearGrab()
+//
+//                FOREGROUND { // avoid state garbling
+//                    self.isTextEditing = false
+//                }
+//            }
+//        }
+//
+//        return result
+//    }
 
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-        if !gSelectionManager.isEditingStateChanging && widgetZone.isWritableByUseer {
-//            gSelectionManager.deferEditingStateChange()
+        if !gSelectionManager.isEditingStateChanging && widgetZone?.isWritableByUseer ?? false {
+
+            if window?.firstResponder == self {
+                gSelectionManager.deferEditingStateChange()
+            }
 
             isTextEditing = super.becomeFirstResponder() // becomeFirstResponder is called first so delegate methods will be called
 
@@ -152,18 +160,19 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     override func updateText() {
-        let zone = widgetZone
-        text     = zone.unwrappedName
-        var need = 0
+        if  let zone = widgetZone {
+            text     = zone.unwrappedName
+            var need = 0
 
-        switch gCountsMode {
-        case .fetchable: need = zone.fetchableCount
-        case .progeny:   need = zone.fetchableCount + zone.progenyCount
-        default:         return
-        }
+            switch gCountsMode {
+            case .fetchable: need = zone.fetchableCount
+            case .progeny:   need = zone.fetchableCount + zone.progenyCount
+            default:         return
+            }
 
-        if (need > 1) && !isTextEditing && (!zone.showChildren || (gCountsMode == .progeny)) {
-            text?.append("  (\(need))")
+            if (need > 1) && !isTextEditing && (!zone.showChildren || (gCountsMode == .progeny)) {
+                text?.append("  (\(need))")
+            }
         }
     }
 
@@ -239,7 +248,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     override func captureText(force: Bool) {
         let zone = widgetZone
 
-        if !gTextCapturing || force, zone.zoneName != text! {
+        if !gTextCapturing || force, zone?.zoneName != text! {
             assign(text, to: zone)
         }
     }
@@ -248,9 +257,16 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        let             zone = widgetZone
+        if  let zone = widgetZone,
+            zone.isBookmark,
+            !zone.isInFavorites,
+            !zone.isGrabbed,
+            !isTextEditing {
 
-        if  zone.isBookmark, !zone.isInFavorites, !zone.isGrabbed, !isTextEditing {
+            ///////////////////////////////////////////////////////////
+            // draw line underneath text indicating it is a bookmark //
+            ///////////////////////////////////////////////////////////
+
             var         rect = dirtyRect.insetBy(dx: 3.0, dy: 0.0)
             rect.size.height = 0.0
             rect.size.width -= 4.0
@@ -261,6 +277,5 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             zone.color.setStroke()
             path.stroke()
         }
-
     }
 }

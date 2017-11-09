@@ -315,13 +315,13 @@ extension ZAlert {
 
 extension ZoneTextWidget {
     // override open var acceptsFirstResponder: Bool { return gDBOperationsManager.isReady }    // fix a bug where root zone is editing on launch
-    override var acceptsFirstResponder : Bool  { return widgetZone.isWritableByUseer }
+    override var acceptsFirstResponder : Bool  { return widgetZone?.isWritableByUseer ?? false }
 
 
     override func textDidChange(_ iNote: Notification) {
         if  text?.contains(gHalfLineOfDashes + " - ") ?? false {
-            widgetZone.zoneName = gLineOfDashes
-            isTextEditing       = false
+            widgetZone?.zoneName = gLineOfDashes
+            isTextEditing        = false
 
             updateText()
         } else {
@@ -340,13 +340,16 @@ extension ZoneTextWidget {
         if  let        value = notification.userInfo?["NSTextMovement"] as? NSNumber {
             var key: String? = nil
 
-            resignFirstResponder() // do this first so RETURN will end editing
-
             switch value.intValue {
-            case NSTabTextMovement:   key = gTabKey
-            case NSBacktabTextMovement,
-                 NSOtherTextMovement: key = gSpaceKey
-            default:                  return
+            case NSTabTextMovement:     key = gTabKey
+            case NSBacktabTextMovement: key = gSpaceKey
+            case NSReturnTextMovement:
+                resignFirstResponder() // do this first so RETURN will end editing
+
+                isTextEditing = false
+
+                return
+            default: break
             }
 
             FOREGROUND { // execute on next cycle of runloop
@@ -437,9 +440,9 @@ extension ZoneWidget {
             let cFrame =     convert(childrenView.frame, to: view)
             let dFrame = dot.convert(        dot.bounds, to: view)
             let   left =    isHere ? 0.0 : dFrame.minX - gGenericOffset.width
-            let bottom =  (!isHere && widgetZone.hasZonesBelow) ? cFrame.minY : 0.0
-            let    top = ((!isHere && widgetZone.hasZonesAbove) ? cFrame      : view.bounds).maxY
-            let  right =                                                        view.bounds .maxX
+            let bottom =  (!isHere && widgetZone?.hasZonesBelow ?? false) ? cFrame.minY : 0.0
+            let    top = ((!isHere && widgetZone?.hasZonesAbove ?? false) ? cFrame      : view.bounds).maxY
+            let  right =                                                                  view.bounds .maxX
 
             return CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
         }

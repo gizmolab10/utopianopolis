@@ -38,7 +38,7 @@ class Zone : ZRecord {
     var                         widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var                  unwrappedName:       String { return zoneName ?? "empty" }
     var                  decoratedName:       String { return "\(unwrappedName)\(decoration)" }
-    var               grabbedTextColor:       ZColor { return color.darker(by: 1.8) }
+    var               grabbedTextColor:       ZColor { return color.darker(by: 3.0) }
     var              isCurrentFavorite:         Bool { return self == gFavoritesManager.currentFavorite }
     var              isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
     var             hasMissingChildren:         Bool { return count < fetchableCount }
@@ -839,7 +839,7 @@ class Zone : ZRecord {
     }
 
 
-    func recursivelyApplyMode(create: Bool = true) {
+    func recursivelyApplyMode(create: Bool = false) {
         traverseAllProgeny { iChild in
             if  create {
                 iChild .record = CKRecord(recordType: gZoneTypeKey)

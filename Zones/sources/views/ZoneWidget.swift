@@ -34,9 +34,9 @@ class ZoneWidget: ZView {
     let              textWidget = ZoneTextWidget ()
     let            childrenView = ZView          ()
     private var childrenWidgets = [ZoneWidget]   ()
-    var            parentWidget:  ZoneWidget? { return widgetZone.parentZone?.widget }
-    var             hasChildren:  Bool        { return widgetZone.fetchableCount > 0 }
-    weak var         widgetZone:  Zone!
+    var            parentWidget:  ZoneWidget? { return widgetZone?.parentZone?.widget }
+    var             hasChildren:  Bool        { return widgetZone?.fetchableCount ?? 0 > 0 }
+    weak var         widgetZone:  Zone?
 
 
     deinit {
@@ -49,7 +49,7 @@ class ZoneWidget: ZView {
     #if os(OSX)
 
     override func keyDown(with event: NSEvent) {
-        textInputReport("containing view \"\(widgetZone.decoratedName)\"")
+        textInputReport("containing view \"\(widgetZone?.decoratedName ?? "")\"")
         super.keyDown(with: event)
     }
 
@@ -81,16 +81,18 @@ class ZoneWidget: ZView {
         layoutDots()
         addChildrenView()
 
-        if recursing && !visited.contains(widgetZone) {
+        if  recursing && (widgetZone == nil || !visited.contains(widgetZone!)) {
+            let more = widgetZone == nil ? [] : [widgetZone!]
+
             prepareChildrenWidgets()
-            layoutChildren(signalKind, visited: visited + [widgetZone])
+            layoutChildren(signalKind, visited: visited + more)
         }
     }
 
 
     func layoutChildren(_ kind: ZSignalKind, visited: [Zone]) {
-        if widgetZone.showChildren {
-            var                 index = widgetZone.count
+        if  let                  zone = widgetZone, zone.showChildren {
+            var                 index = zone.count
             var previous: ZoneWidget? = nil
 
             if  index > 60 {
@@ -100,7 +102,7 @@ class ZoneWidget: ZView {
             while index > 0 {
                 index                 -= 1 // go backwards down the arrays, constraint making expects it
                 let childWidget        = childrenWidgets[index]
-                childWidget.widgetZone = widgetZone     [index]
+                childWidget.widgetZone = zone           [index]
 
                 childWidget.layoutInView(childrenView, atIndex: index, recursing: true, kind: kind, visited: visited)
                 childWidget.snp.removeConstraints()
@@ -179,30 +181,32 @@ class ZoneWidget: ZView {
 
 
     func prepareChildrenWidgets() {
-        if !widgetZone.showChildren {
-            for child in childrenWidgets {
-                gWidgetsManager.unregisterWidget(child)
-            }
-
-            childrenWidgets.removeAll()
-
-            for view in childrenView.subviews {
-                view.removeFromSuperview()
-            }
-        } else {
-            for child in childrenWidgets {
-                if  let zone = child.widgetZone, !widgetZone.children.contains(zone) {
+        if  let zone = widgetZone {
+            if !zone.showChildren {
+                for child in childrenWidgets {
                     gWidgetsManager.unregisterWidget(child)
-                    child.removeFromSuperview()
+                }
 
-                    if let index = childrenWidgets.index(of: child) {
-                        childrenWidgets.remove(at: index)
+                childrenWidgets.removeAll()
+
+                for view in childrenView.subviews {
+                    view.removeFromSuperview()
+                }
+            } else {
+                for child in childrenWidgets {
+                    if  let zone = child.widgetZone, !zone.children.contains(zone) {
+                        gWidgetsManager.unregisterWidget(child)
+                        child.removeFromSuperview()
+
+                        if let index = childrenWidgets.index(of: child) {
+                            childrenWidgets.remove(at: index)
+                        }
                     }
                 }
-            }
 
-            while childrenWidgets.count < widgetZone.count {
-                childrenWidgets.append(ZoneWidget())
+                while childrenWidgets.count < zone.count {
+                    childrenWidgets.append(ZoneWidget())
+                }
             }
         }
     }
@@ -229,7 +233,8 @@ class ZoneWidget: ZView {
     var floatingDropDotRect: CGRect {
         var rect = CGRect()
 
-        if !widgetZone.showChildren {
+        if  let zone = widgetZone {
+            if !zone.showChildren {
 
                 /////////////////////////
                 // DOT IS STRAIGHT OUT //
@@ -239,35 +244,36 @@ class ZoneWidget: ZView {
                     let     insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
                     rect           = dot.convert(dot.bounds, to: self).insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
                 }
-        } else if let      indices = gDragDropIndices, indices.count > 0 {
-            let         firstindex = indices.firstIndex
+            } else if let      indices = gDragDropIndices, indices.count > 0 {
+                let         firstindex = indices.firstIndex
 
-            if  let       firstDot = dot(at: firstindex) {
-                rect               = firstDot.convert(firstDot.bounds, to: self)
-                let      lastIndex = indices.lastIndex
+                if  let       firstDot = dot(at: firstindex) {
+                    rect               = firstDot.convert(firstDot.bounds, to: self)
+                    let      lastIndex = indices.lastIndex
 
-                if  indices.count == 1 || lastIndex >= widgetZone.count {
+                    if  indices.count == 1 || lastIndex >= zone.count {
 
-                    ///////////////////////////
-                    // DOT IS ABOVE OR BELOW //
-                    ///////////////////////////
+                        ///////////////////////////
+                        // DOT IS ABOVE OR BELOW //
+                        ///////////////////////////
 
-                    let   relation = gDragRelation
-                    let    isAbove = relation == .above || (!gInsertionsFollow && (lastIndex == 0 || relation == .upon))
-                    let multiplier = (isAbove ? 1.0 : -1.0) * gVerticalWeight
-                    let    gHeight = Double(gGenericOffset.height)
-                    let      delta = (gHeight + (gDotHeight * 0.75)) * multiplier
-                    rect           = rect.offsetBy(dx: 0.0, dy: CGFloat(delta))
+                        let   relation = gDragRelation
+                        let    isAbove = relation == .above || (!gInsertionsFollow && (lastIndex == 0 || relation == .upon))
+                        let multiplier = (isAbove ? 1.0 : -1.0) * gVerticalWeight
+                        let    gHeight = Double(gGenericOffset.height)
+                        let      delta = (gHeight + (gDotHeight * 0.75)) * multiplier
+                        rect           = rect.offsetBy(dx: 0.0, dy: CGFloat(delta))
 
-                } else if lastIndex < widgetZone.count, let secondDot = dot(at: lastIndex) {
+                    } else if lastIndex < zone.count, let secondDot = dot(at: lastIndex) {
 
-                    //////////////////
-                    // DOT IS TWEEN //
-                    //////////////////
+                        //////////////////
+                        // DOT IS TWEEN //
+                        //////////////////
 
-                    let secondRect = secondDot.convert(secondDot.bounds, to: self)
-                    let      delta = (rect.minY - secondRect.minY) / CGFloat(2.0)
-                    rect           = rect.offsetBy(dx: 0.0, dy: -delta)
+                        let secondRect = secondDot.convert(secondDot.bounds, to: self)
+                        let      delta = (rect.minY - secondRect.minY) / CGFloat(2.0)
+                        rect           = rect.offsetBy(dx: 0.0, dy: -delta)
+                    }
                 }
             }
         }
@@ -291,25 +297,29 @@ class ZoneWidget: ZView {
 
 
     func dot(at iIndex: Int) -> ZoneDot? {
-        if widgetZone.count == 0 || iIndex < 0 {
+        if  let zone = widgetZone {
+            if zone.count == 0 || iIndex < 0 {
+                return nil
+            }
+
+            let  index = min(iIndex, zone.count - 1)
+            let target = zone.children[index]
+
+            return target.widget?.dragDot.innerDot
+        } else {
             return nil
         }
-
-        let  index = min(iIndex, widgetZone.count - 1)
-        let target = widgetZone.children[index]
-
-        return target.widget?.dragDot.innerDot
     }
 
 
     func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView?, _ iHere: Zone?) -> ZoneWidget? {
-        if  iHere      != nil &&
-            widgetZone != nil &&
-            !widgetZone.wasSpawnedBy(gDraggedZone) &&
+        if  let    zone = widgetZone,
+            iHere      != nil,
+            !zone.wasSpawnedBy(gDraggedZone),
             dragHitFrame(in: iView, iHere!).contains(iPoint) {
 
-            if widgetZone.showChildren {
-                for child in widgetZone.children {
+            if zone.showChildren {
+                for child in zone.children {
                     if  let            childWidget = child.widget,
                         self        != childWidget,
                         let    found = childWidget.widgetNearestTo(iPoint, in: iView, iHere) {
@@ -369,7 +379,10 @@ class ZoneWidget: ZView {
 
     func lineKind(to widget: ZoneWidget?) -> ZLineKind {
         var kind:    ZLineKind = .straight
-        if  let        dragDot = widget?.dragDot.innerDot, widgetZone.count > 1 {
+
+        if  let           zone = widgetZone,
+            zone        .count > 1,
+            let        dragDot = widget?.dragDot.innerDot {
             let       dragRect = dragDot.convert(dragDot.bounds, to: self)
             if  let   dragKind = lineKind(to: dragRect) {
                 kind           = dragKind
@@ -393,7 +406,7 @@ class ZoneWidget: ZView {
 
 
     func lineRect(to widget: ZoneWidget?) -> CGRect {
-        let  hasIndent = widget?.widgetZone.isCurrentFavorite ?? false
+        let  hasIndent = widget?.widgetZone?.isCurrentFavorite ?? false
         let      inset = CGFloat(hasIndent ? -3.0 : 0.0)
         var      frame = CGRect ()
         if  let    dot = widget?.dragDot.innerDot {
@@ -408,7 +421,9 @@ class ZoneWidget: ZView {
 
 
     func straightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-        if  !isDragLine && widgetZone.count > 1 {
+        if  !isDragLine,
+            let   zone = widgetZone,
+            zone.count > 1 {
             ZBezierPath(rect: bounds).setClip()
         }
 
@@ -446,17 +461,17 @@ class ZoneWidget: ZView {
         var          rect = textWidget.frame.insetBy(dx: -18.0 * ratio - delta, dy: -0.5 - delta)
         rect.size .width += -0.5 + (delta * 0.7) - dotDelta
         rect.size.height += -0.5 + gHighlightHeightOffset + delta / 9.5
-        rect.size.height += widgetZone.isInFavorites ? 1.0 : 0.0
+        rect.size.height += widgetZone?.isInFavorites ?? false ? 1.0 : 0.0
         let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
-        let         color = widgetZone.color
-        let     fillColor = color.withAlphaComponent(0.02)
-        let   strokeColor = color.withAlphaComponent(0.2)
+        let         color = widgetZone?.color
+        let     fillColor = color?.withAlphaComponent(0.02)
+        let   strokeColor = color?.withAlphaComponent(0.2)
         let          path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
         path   .lineWidth = thickness
         path    .flatness = 0.0001
 
-        strokeColor.setStroke()
-        fillColor.setFill()
+        strokeColor?.setStroke()
+        fillColor?  .setFill()
         path.stroke()
         path.fill()
     }

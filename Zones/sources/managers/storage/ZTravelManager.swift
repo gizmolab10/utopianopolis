@@ -43,7 +43,7 @@ class ZTravelManager: NSObject {
     func travel(_ atArrival: @escaping Closure) {
         createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
 
-        gSelectionManager .clearEdit()
+        gSelectionManager.clearEdit()
         gDBOperationsManager.travel(atArrival)
     }
 
