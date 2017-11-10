@@ -1098,7 +1098,7 @@ class ZEditingManager: NSObject {
 
                     self.moveZone(mover, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
                         if !sameGraph {
-                            mover.recursivelyApplyMode(create: true)
+                            mover.recursivelyApplyMode()
                         }
 
                         self.redrawAndSync()
@@ -1170,7 +1170,7 @@ class ZEditingManager: NSObject {
     func createIdeaIn(_ iZone: Zone?, at iIndex: Int?, onCompletion: ZoneMaybeClosure?) {
         if  let         zone = iZone, zone.storageMode != .favoritesMode {
             let createAndAdd = {
-                let   record = CKRecord(recordType: gZoneTypeKey)
+                let   record = newCKZoneRecord()
                 let    child = Zone(record: record, storageMode: zone.storageMode)
 
                 self.UNDO(self) { iUndoSelf in
@@ -1278,21 +1278,14 @@ class ZEditingManager: NSObject {
                 gSelectionManager.deselectGrabs()
 
                 for (child, (parent, index)) in pastables {
-                    let pastable = child.isDeleted ? child : child.deepCopy()
+                    let pastable = child.isDeleted ? child : child.deepCopy() // for deleted zones, paste a deep copy
                     let       at = index  != nil ? index : gInsertionsFollow ? nil : 0
                     let     into = parent != nil ? honorFormerParents ? parent! : zone : zone
-                    let     mode = into.storageMode ?? gStorageMode
-
-                    pastable.traverseAllProgeny { iChild in
-                        iChild.fetchableCount = iChild.count
-                        iChild   .storageMode = mode
-
-                        iChild.needFlush()
-                    }
 
                     pastable.orphan()
                     into.displayChildren()
                     into.addAndReorderChild(pastable, at: at)
+                    pastable.recursivelyApplyMode()
                     forUndo.append(pastable)
                     pastable.addToGrab()
                 }

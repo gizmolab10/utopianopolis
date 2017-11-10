@@ -344,7 +344,8 @@ extension ZoneTextWidget {
             case NSTabTextMovement:     key = gTabKey
             case NSBacktabTextMovement: key = gSpaceKey
             case NSReturnTextMovement:
-                resignFirstResponder() // do this first so RETURN will end editing
+                captureText(force: false)
+                resignFirstResponder()
 
                 isTextEditing = false
 

@@ -364,7 +364,7 @@ class ZFavoritesManager: ZCloudManager {
 
 
     @discardableResult func create(withBookmark: Zone?, _ style: ZFavoriteStyle, _ name: String?) -> Zone {
-        let bookmark: Zone = withBookmark ?? Zone(record: CKRecord(recordType: gZoneTypeKey), storageMode: .mineMode)
+        let bookmark: Zone = withBookmark ?? Zone(record: newCKZoneRecord(), storageMode: .mineMode)
         bookmark.zoneName  = name
 
         return bookmark
@@ -379,7 +379,7 @@ class ZFavoritesManager: ZCloudManager {
             parent.add(bookmark, at: insertAt) // calls update progeny count
         }
         
-        bookmark.updateCloudProperties() // is this needed?
+        bookmark.updateRecordProperties() // is this needed?
 
         return bookmark
     }
@@ -418,7 +418,7 @@ class ZFavoritesManager: ZCloudManager {
 
         if  style == .normal {
             parent.maybeNeedMerge()
-            parent.updateCloudProperties()
+            parent.updateRecordProperties()
         }
 
         if !iZone.isBookmark {

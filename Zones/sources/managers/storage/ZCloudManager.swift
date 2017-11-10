@@ -76,7 +76,12 @@ class ZCloudManager: ZRecordsManager {
             operation       .recordIDsToDelete = deletes
             operation           .recordsToSave = saves
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
-//                self.detectError(iError) {
+                gAlertManager.detectError(iError) { iHasError in
+                    if iHasError {
+                        let message = iRecord?.description ?? ""
+                        print(iError.debugDescription + " " + message)
+                    }
+                }
 //                    // mark failed records as needing merge
 //                    if  let error:  CKError = iError as? CKError {
 //                        let info            = error.errorUserInfo
@@ -172,7 +177,7 @@ class ZCloudManager: ZRecordsManager {
 //                }
 //
 //                deleted.maybeNeedMerge()
-//                deleted.updateCloudProperties()
+//                deleted.updateRecordProperties()
 //            }
 //        }
     }

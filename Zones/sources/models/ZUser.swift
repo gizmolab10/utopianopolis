@@ -26,7 +26,7 @@ class ZUser : ZRecord {
     var access: ZUserAccess {
         get {
             if  writeAccess == nil {
-                updateClassProperties()
+                updateInstanceProperties()
 
                 if  writeAccess == nil {
                     writeAccess = NSNumber(value: ZUserAccess.eAccessNormal.rawValue)

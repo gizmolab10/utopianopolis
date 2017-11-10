@@ -80,7 +80,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     func control(_ control: ZControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
         performance(searchBox?.text)
 
-        if  let searchString = getInput() {
+        if  gWorkMode == .searchMode, let searchString = getInput() {
             gCloudManager.search(for: searchString) { iObject in
                 let hasResults = (iObject as! [Any]).count != 0
                 gWorkMode      = hasResults ? .searchMode : .editMode

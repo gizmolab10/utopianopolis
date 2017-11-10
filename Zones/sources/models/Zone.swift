@@ -211,7 +211,7 @@ class Zone : ZRecord {
     var order: Double {
         get {
             if zoneOrder == nil {
-                updateClassProperties()
+                updateInstanceProperties()
 
                 if zoneOrder == nil {
                     zoneOrder = NSNumber(value: 0.0)
@@ -253,7 +253,7 @@ class Zone : ZRecord {
             if  let    t = bookmarkTarget {
                 return t.fetchableCount
             } else if zoneCount == nil {
-                updateClassProperties()
+                updateInstanceProperties()
 
                 if  zoneCount == nil {
                     zoneCount = NSNumber(value: count)
@@ -274,7 +274,7 @@ class Zone : ZRecord {
     var progenyCount: Int {
         get {
             if  zoneProgeny == nil {
-                updateClassProperties()
+                updateInstanceProperties()
 
                 if  zoneProgeny == nil {
                     zoneProgeny = NSNumber(value: 0)
@@ -445,7 +445,7 @@ class Zone : ZRecord {
         parentZone = nil
 
         needFlush()
-        updateCloudProperties()
+        updateRecordProperties()
     }
 
 
@@ -839,19 +839,24 @@ class Zone : ZRecord {
     }
 
 
-    func recursivelyApplyMode(create: Bool = false) {
+    func recursivelyApplyMode() {
+        let copy = parentZone?.storageMode != storageMode
+
         traverseAllProgeny { iChild in
-            if  create {
-                iChild .record = CKRecord(recordType: gZoneTypeKey)
+            if  copy {
+                iChild .record = newCKZoneRecord()
             }
 
             if  let              p = iChild.parentZone {
                 iChild.storageMode = p.storageMode
-                iChild     .parent = CKReference(record: p.record, action: .none)
+
+                if  iChild .parent?.recordID.recordName != p.record.recordID.recordName {
+                    iChild .parent = CKReference(record: p.record, action: .none)
+                }
             }
 
-            iChild.needFlush()
-            iChild.updateCloudProperties()
+            iChild.needFlush() // so will be noted in new mode's record manager
+            iChild.updateRecordProperties() // in case new ckrecord is created, above
         }
     }
 
@@ -1006,7 +1011,7 @@ class Zone : ZRecord {
 
 
     func deepCopy() -> Zone {
-        let theCopy = Zone(record: CKRecord(recordType: gZoneTypeKey), storageMode: storageMode)
+        let theCopy = Zone(record: newCKZoneRecord(), storageMode: storageMode)
 
         copy(into: theCopy)
 

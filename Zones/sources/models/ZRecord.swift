@@ -32,7 +32,7 @@ class ZRecord: NSObject {
                 _record  = newValue
 
                 register()
-                updateClassProperties()
+                updateInstanceProperties()
             }
         }
     }
@@ -99,7 +99,7 @@ class ZRecord: NSObject {
     // MARK:-
 
 
-    func updateClassProperties() {
+    func updateInstanceProperties() {
         if record != nil {
             for keyPath in cloudProperties() {
                 if  let    cloudValue = record[keyPath] as! NSObject? {
@@ -114,7 +114,7 @@ class ZRecord: NSObject {
     }
 
 
-    func updateCloudProperties() {
+    func updateRecordProperties() {
         if record != nil {
             for keyPath in cloudProperties() {
                 let    cloudValue = record[keyPath] as! NSObject?
@@ -130,18 +130,18 @@ class ZRecord: NSObject {
 
     func copy(into copy: ZRecord) {
         copy.needFlush() // so KVO won't call set needsMerge state bit
-        updateCloudProperties()
+        updateRecordProperties()
 
         for keyPath: String in cloudProperties() {
             copy.record[keyPath] = record[keyPath]
         }
 
-        copy.updateClassProperties()
+        copy.updateInstanceProperties()
     }
 
 
     func mergeIntoAndTake(_ iRecord: CKRecord) {
-        updateCloudProperties()
+        updateRecordProperties()
 
         if record != nil {
             for keyPath: String in cloudProperties() {
@@ -171,7 +171,7 @@ class ZRecord: NSObject {
         if type != nil && name != nil {
             record = CKRecord(recordType: type!, recordID: CKRecordID(recordName: name!))
 
-            self.updateCloudProperties()
+            self.updateRecordProperties()
 
             // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
         }
