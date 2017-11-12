@@ -60,7 +60,7 @@ class ZOperationsManager: NSObject {
     var     lastOpStart :         Date? = nil
     var       currentOp = ZOperationID.none
     let           queue = OperationQueue()
-    var           debug = true
+    var           debug = false
 
 
     func invoke(_ identifier: ZOperationID, _ logic: ZRecursionLogic? = nil, cloudCallback: AnyClosure?) {}

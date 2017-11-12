@@ -44,8 +44,9 @@ class Zone : ZRecord {
     var              isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
     var             hasMissingChildren:         Bool { return count < fetchableCount }
     var            hasAccessDecoration:         Bool { return  !isWritable || directReadOnly }
-    var             showAccessChanging:         Bool { return (!isWritable && directWritable) || (isWritable && directReadOnly) || isRootOfFavorites }
+    var             showAccessChanging:         Bool { return !isWritable && directWritable } // (!isWritable && directWritable) || (isWritable && directReadOnly) || isRootOfFavorites }
     var              isWritableByUseer:         Bool { return isWritable || gOnboardingManager.userHasAccess(self) }
+    var               accessIsChanging:         Bool { return (!isWritable && directWritable) || (isWritable && directReadOnly) || isRootOfFavorites }
     var                directRecursive:         Bool { return zoneProgenyAccess == nil ? true  : zoneProgenyAccess!.intValue == ZoneAccess.eRecurse        .rawValue}
     var                 directWritable:         Bool { return zoneProgenyAccess == nil ? false : zoneProgenyAccess!.intValue == ZoneAccess.eProgenyWritable.rawValue}
     var                 directReadOnly:         Bool { return zoneProgenyAccess == nil ? false : zoneProgenyAccess!.intValue == ZoneAccess.eProgenyReadOnly.rawValue}
@@ -424,7 +425,7 @@ class Zone : ZRecord {
         } else if isWritableByUseer {
             ownerID                    = nil
 
-            if  !directRecursive, showAccessChanging, let p = parentZone, (p.showAccessChanging || (!p.directReadOnly && p.isWritable == isWritable)) {
+            if  !directRecursive, accessIsChanging, let p = parentZone, (p.accessIsChanging || (!p.directReadOnly && p.isWritable == isWritable)) {
                 ancestralProgenyAccess = .eRecurse
             } else if !isWritable {
                 ancestralProgenyAccess = .eProgenyWritable
