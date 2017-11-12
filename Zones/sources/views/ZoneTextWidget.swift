@@ -95,19 +95,20 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func layoutTextField() {
-        snp.removeConstraints()
-        snp.makeConstraints { make in
-            let zoneHidden = !(widgetZone?.isVisible ?? true)
-            let  textWidth = text!.widthForFont(preferredFont)
-            let     height = gGenericOffset.height
-            let      width = zoneHidden ? 0.0 : textWidth + 5.0
-            let       view = superview!
+        if  let           view = superview {
+            snp.removeConstraints()
+            snp.makeConstraints { make in
+                let zoneHidden = !(widgetZone?.isVisible ?? true)
+                let  textWidth = text!.widthForFont(preferredFont)
+                let     height = gGenericOffset.height
+                let      width = zoneHidden ? 0.0 : textWidth + 5.0
 
-            make.centerY.equalTo(view).offset(-verticalTextOffset)
-            make   .left.equalTo(view).offset(gGenericOffset.width + 4.0)
-            make  .right.lessThanOrEqualTo(view).offset(-29.0)
-            make .height.lessThanOrEqualTo(view).offset(-height)
-            make  .width.equalTo(width)
+                make.centerY.equalTo(view).offset(-verticalTextOffset)
+                make   .left.equalTo(view).offset(gGenericOffset.width + 4.0)
+                make  .right.lessThanOrEqualTo(view).offset(-29.0)
+                make .height.lessThanOrEqualTo(view).offset(-height)
+                make  .width.equalTo(width)
+            }
         }
     }
 

@@ -101,15 +101,24 @@ extension NSObject {
 extension CKRecord {
 
 
-    var  decoratedName: String {
+    var decoratedName: String {
         if recordType       != gZoneTypeKey {
             return recordID.recordName
         } else if let   name = self[gZoneNameKey] as? String {
+            let    separator = " "
             var       suffix = ""
+
+            if let link  = self["zoneLink"] as? String {
+                if link == gNullLink {
+                    suffix.append("-")
+                } else {
+                    suffix.append("L")
+                }
+            }
 
             if  let fetchable = self["zoneCount"] as? Int, fetchable > 1 {
                 if  suffix != "" {
-                    suffix.append(" ")
+                    suffix.append(separator)
                 }
 
                 suffix.append("\(fetchable)")

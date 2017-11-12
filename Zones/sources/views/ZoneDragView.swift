@@ -35,7 +35,7 @@ class ZoneDragView: ZView, ZGestureRecognizerDelegate {
 
         if  let rect = rubberbandRect {
             gClearColor.setFill()
-            gDragTargetsColor.lighter(by: 2.0).setStroke()
+            gRubberbandColor.lighter(by: 2.0).setStroke()
             ZBezierPath(rect: rect).stroke()
         }
 
@@ -43,8 +43,8 @@ class ZoneDragView: ZView, ZGestureRecognizerDelegate {
             let   dotRect = widget.floatingDropDotRect
             let localRect = widget.convert(dotRect, to: self)
 
-            gDragTargetsColor.setFill()
-            gDragTargetsColor.setStroke()
+            gRubberbandColor.setFill()
+            gRubberbandColor.setStroke()
             ZBezierPath(ovalIn: localRect).fill()
             widget.drawDragLine(to: dotRect, in: self)
         }

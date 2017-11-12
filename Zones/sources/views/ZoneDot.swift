@@ -164,7 +164,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     let          x = offCenter.x + orbitRadius * CGFloat(cos(angle))
                     let          y = offCenter.y + orbitRadius * CGFloat(sin(angle))
                     rect           = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
-                    color          = isDragTarget ? gDragTargetsColor : zone.color
+                    color          = isDragTarget ? gRubberbandColor : zone.color
                     let       path = ZBezierPath(ovalIn: rect!)
                     path .flatness = 0.0001
 
@@ -187,7 +187,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func drawDecoration(of type: ZDecorationType, for zone: Zone, in dirtyRect: CGRect) {
+    func drawAccessDecoration(of type: ZDecorationType, for zone: Zone, in dirtyRect: CGRect) {
         let     ratio = zone.isInFavorites ? gReductionRatio : 1.0
         var thickness = CGFloat(gLineThickness) * 1.5 * ratio
         var      path = ZBezierPath(rect: CGRect.zero)
@@ -216,7 +216,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             if !isHiddenToggleDot {
                 if isInnerDot {
                     let shouldHighlight = isToggle ? (!zone.showChildren || zone.isBookmark || isDragTarget) : zone.isGrabbed || highlightAsFavorite // not highlight when editing
-                    let     strokeColor = isToggle && isDragTarget ? gDragTargetsColor : zone.color
+                    let     strokeColor = isToggle && isDragTarget ? gRubberbandColor : zone.color
                     var       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
                     let       thickness = CGFloat(gLineThickness)
                     var            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
@@ -243,7 +243,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                         fillColor                 = shouldHighlight ? gBackgroundColor : strokeColor
 
                         fillColor.setFill()
-                        drawDecoration(of: type, for: zone, in: dirtyRect)
+                        drawAccessDecoration(of: type, for: zone, in: dirtyRect)
                     }
                 } else if isToggle {
                     drawTinyDots(dirtyRect)

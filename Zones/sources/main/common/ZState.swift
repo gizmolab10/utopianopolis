@@ -97,7 +97,7 @@ var            gDotWidth:             Double { return gDotHeight * 0.75 }
 
 let     userRecordIDKey = "user record id"
 let favoritesVisibleKey = "favorites are visible"
-let dragTargetsColorKey = "drag targets color"
+let  rubberbandColorKey = "rubberband color"
 let  backgroundColorKey = "background color"
 let  currentFavoriteKey = "current favorite"
 let   actionsVisibleKey = "actions are visible"
@@ -136,14 +136,14 @@ var gActionsAreVisible: Bool {
 
 
 var gBackgroundColor: ZColor {
-    get { return   getColor( for: backgroundColorKey, defaultColor: ZColor(hue: 0.6, saturation: 0.0, brightness: unselectBrightness, alpha: 1)) }
+    get { return   getColor( for: backgroundColorKey, defaultColor: ZColor(hue: 0.6, saturation: 0.1, brightness: unselectBrightness, alpha: 1)) }
     set { setColor(newValue, for: backgroundColorKey) }
 }
 
 
-var gDragTargetsColor: ZColor {
-    get { return   getColor( for: dragTargetsColorKey, defaultColor: ZColor.red) }
-    set { setColor(newValue, for: dragTargetsColorKey) }
+var gRubberbandColor: ZColor {
+    get { return   getColor( for: rubberbandColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
+    set { setColor(newValue, for: rubberbandColorKey) }
 }
 
 

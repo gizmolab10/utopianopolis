@@ -41,7 +41,7 @@ class ZPreferencesController: ZGenericController {
         thickness?               .doubleValue = gLineThickness
         verticalSpacing?         .doubleValue = Double(gGenericOffset.height)
         horizontalSpacing?       .doubleValue = Double(gGenericOffset.width)
-        dragTargetsColorBox?           .color = gDragTargetsColor
+        dragTargetsColorBox?           .color = gRubberbandColor
         backgroundColorBox?            .color = gBackgroundColor
         zoneColorBox?                  .color =  grabbed.color
         clearColorButton?           .isHidden = !grabbed.hasColor
@@ -75,7 +75,7 @@ class ZPreferencesController: ZGenericController {
 
         if  let     identifier = iColorBox.identifier {
             switch (identifier) {
-            case "drag targets":                 gDragTargetsColor = color
+            case "drag targets":                 gRubberbandColor = color
             case   "background":                  gBackgroundColor = color
             case        "zones": gSelectionManager.firstGrab.color = color
             default:             break

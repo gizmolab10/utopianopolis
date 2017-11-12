@@ -79,7 +79,7 @@ class ZCloudManager: ZRecordsManager {
                 gAlertManager.detectError(iError) { iHasError in
                     if iHasError {
                         let message = iRecord?.description ?? ""
-                        print(iError.debugDescription + " " + message)
+                        print(String(describing: iError!) + "\n" + message)
                     }
                 }
 //                    // mark failed records as needing merge
@@ -234,14 +234,8 @@ class ZCloudManager: ZRecordsManager {
             }
 
             operation.queryCompletionBlock = { (cursor, error) in
-                gAlertManager.detectError(error) { iHasError in
-                    if !iHasError {
-                        onCompletion?(nil) // nil means done
-                    } else {
-                        gAlertManager.alertError(error, predicate.description) { iResponse in
-                            onCompletion?(nil)
-                        }
-                    }
+                gAlertManager.alertError(error, predicate.description) { iHasError in
+                    onCompletion?(nil) // nil means done
                 }
             }
 
@@ -268,16 +262,20 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func bookmarkPredicate(from iRecordIDs: [CKRecordID]) -> NSPredicate {
+    func bookmarkPredicate(specificTo iRecordIDs: [CKRecordID]? = nil) -> NSPredicate {
         var separator = ""
-        var    suffix = ""
+        var predicate = ""
 
-        for recordID in iRecordIDs {
-            suffix    = String(format: "%@%@SELF CONTAINS \"%@\"", suffix, separator, recordID.recordName)
-            separator = " AND "
+        if  let recordIDs = iRecordIDs {
+            for recordID in  recordIDs {
+                predicate = String(format: "%@%@SELF CONTAINS \"%@\"", predicate, separator, recordID.recordName)
+                separator = " AND "
+            }
+        } else {
+            predicate = String(format:"zoneLink != '-'")
         }
 
-        return NSPredicate(format: suffix)
+        return NSPredicate(format: predicate)
     }
 
 
@@ -499,8 +497,9 @@ class ZCloudManager: ZRecordsManager {
 
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
                 gAlertManager.alertError(iError) { iHasError in
-                    if  !iHasError,
-                        let ckRecord = iRecord,
+                    if  iHasError {
+                        print("ack!")
+                    } else if let ckRecord = iRecord,
                         !retrieved.contains(ckRecord) {
                         retrieved.append(ckRecord)
                     }
@@ -706,43 +705,53 @@ class ZCloudManager: ZRecordsManager {
 
     func fetchBookmarks(_ onCompletion: IntClosure?) {
         let recordIDs = recordIDsWithMatchingStates([.needsBookmarks], pull: true)
-        let     count = recordIDs.count
+        let isGeneric = recordIDs.count == 0
+        var retrieved = [CKRecord] ()
 
-        onCompletion?(count)
+        let queryClosure: RecordClosure = { iRecord in
+            if let ckRecord = iRecord {
+                if !retrieved.contains(ckRecord) {
+                    retrieved.append(ckRecord)
+                }
+            } else { // nil means done
+                self.FOREGROUND {
+                    for ckRecord in retrieved {
+                        var zRecord = self.recordForCKRecord(ckRecord)
 
-        if  count > 0 {
-            let predicate = bookmarkPredicate(from: recordIDs)
-            var retrieved = [CKRecord] ()
-
-            queryWith(predicate) { iRecord in
-                if let ckRecord = iRecord {
-                    if !retrieved.contains(ckRecord) {
-                        retrieved.append(ckRecord)
+                        if  zRecord == nil  {
+                            zRecord  = Zone(record: ckRecord, storageMode: self.storageMode) // register
+                        }
                     }
-                } else { // nil means done
-                    self.FOREGROUND {
-                        for ckrecord in retrieved {
-                            var record  = self.recordForCKRecord(ckrecord)
 
-                            if  record == nil  {
-                                record  = Zone(record: iRecord, storageMode: self.storageMode) // register
-                            }
-                        }
+                    for identifier in recordIDs {
+                        let zRecord = self.recordForRecordID(identifier)
 
-                        for identifier in recordIDs {
-                            let record = self.recordForRecordID(identifier)
+                        zRecord?.unmarkForAllOfStates([.needsBookmarks])
+                    }
 
-                            record?.unmarkForAllOfStates([.needsBookmarks])
-                        }
-
+                    if !isGeneric {
                         if retrieved.count > 0 {
                             self.columnarReport("BOOKMARKS", self.stringForCKRecords(retrieved))
                         }
 
                         self.fetchBookmarks(onCompletion)    // process remaining
+                    } else if retrieved.count > 0 && self.recordIDsWithMatchingStates([.needsSave, .needsCreate]).count != 0 {
+                        self.save { iSaveResult in
+                            self.create { iCreationResult in
+                                self.fetchBookmarks(onCompletion)
+                            }
+                        }
+                    } else {
+                        onCompletion?(0)
                     }
                 }
             }
+        }
+
+        if isGeneric {
+            queryWith(bookmarkPredicate(),                      onCompletion: queryClosure)
+        } else {
+            queryWith(bookmarkPredicate(specificTo: recordIDs), onCompletion: queryClosure)
         }
     }
 

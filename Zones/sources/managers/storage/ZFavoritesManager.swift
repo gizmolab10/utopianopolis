@@ -146,14 +146,15 @@ class ZFavoritesManager: ZCloudManager {
             for favorite in favorites {
                 if  let favoriteTarget = favorite.bookmarkTarget,
                     let     targetMode = favoriteTarget.storageMode,
-                    let       newLevel = favorite.bookmarkTarget?.level,
-                    newLevel           < level,
                     targetMode        == mode {
-                    let        spawned = iSpawned ? target.spawned(favoriteTarget) : favoriteTarget.spawned(target)
+                    let       newLevel = favoriteTarget.level
+                    if        newLevel < level {
+                        let    spawned = iSpawned ? target.spawned(favoriteTarget) : favoriteTarget.spawned(target)
 
-                    if spawned {
-                        level          = newLevel
-                        found          = favorite
+                        if spawned {
+                            level      = newLevel
+                            found      = favorite
+                        }
                     }
                 }
             }
@@ -213,7 +214,7 @@ class ZFavoritesManager: ZCloudManager {
             var trashCopies = IndexPath()
             var       found = ZModes ()
 
-            columnarReport(" FAVORITE", "UPDATE CHILDREN")
+//            columnarReport(" FAVORITE", "UPDATE CHILDREN")
 
             // assure at least one favorite per db
             // call every time favorites MIGHT be altered

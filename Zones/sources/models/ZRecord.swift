@@ -18,6 +18,18 @@ class ZRecord: NSObject {
     var     kvoContext: UInt8 = 1
     var        _record: CKRecord?
     var         isRoot: Bool            { return record != nil && [gRootNameKey, gFavoriteRootNameKey, gTrashNameKey].contains(record.recordID.recordName) }
+    var      needsSave: Bool            { return isMarkedForAnyOfStates([.needsSave]) }
+    var      needsRoot: Bool            { return isMarkedForAnyOfStates([.needsRoot]) }
+    var     needsCount: Bool            { return isMarkedForAnyOfStates([.needsCount]) }
+    var     needsColor: Bool            { return isMarkedForAnyOfStates([.needsColor]) }
+    var     needsFetch: Bool            { return isMarkedForAnyOfStates([.needsFetch]) }
+    var    needsCreate: Bool            { return isMarkedForAnyOfStates([.needsCreate]) }
+    var    needsParent: Bool            { return isMarkedForAnyOfStates([.needsParent]) }
+    var   needsDestroy: Bool            { return isMarkedForAnyOfStates([.needsDestroy]) }
+    var   needsProgeny: Bool            { return isMarkedForAnyOfStates([.needsProgeny]) }
+    var  needsWritable: Bool            { return isMarkedForAnyOfStates([.needsWritable]) }
+    var  needsChildren: Bool            { return isMarkedForAnyOfStates([.needsChildren]) }
+    var needsBookmarks: Bool            { return isMarkedForAnyOfStates([.needsBookmarks]) }
     var recordsManager: ZRecordsManager { return gRemoteStoresManager.recordsManagerFor(storageMode!) }
     var   cloudManager: ZCloudManager?  { return recordsManager as? ZCloudManager }
 
@@ -33,6 +45,7 @@ class ZRecord: NSObject {
 
                 register()
                 updateInstanceProperties()
+                setupLinks()
             }
         }
     }
@@ -97,6 +110,9 @@ class ZRecord: NSObject {
 
     // MARK:- properties
     // MARK:-
+
+
+    func setupLinks() {}
 
 
     func updateInstanceProperties() {

@@ -60,7 +60,7 @@ class ZAlertManager : NSObject {
                 closure?(false) // false means no error
             } else {
                 self.report(error: iError) { (iResponse: Any?) in
-                    closure?(iResponse as? Bool ?? true) // false means user approved alert
+                    closure?(iResponse as? Bool ?? true) // true means user rejected alert
                 }
             }
         }
@@ -76,6 +76,7 @@ class ZAlertManager : NSObject {
                 authAlert(closure)
             } else {
                 print(ckError.localizedDescription + text)
+                closure?(true)
             }
         } else if let nsError = iError as? NSError {
             let waitForIt = nsError.userInfo[CKErrorRetryAfterKey] as? String ?? ""
@@ -89,6 +90,7 @@ class ZAlertManager : NSObject {
             let error = iError as? String ?? ""
 
             print(error + text)
+            closure?(true)
         }
     }
 

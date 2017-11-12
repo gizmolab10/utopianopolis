@@ -30,6 +30,7 @@ class Zone : ZRecord {
     dynamic var              zoneCount:    NSNumber?
     dynamic var            zoneProgeny:    NSNumber?
     dynamic var      zoneProgenyAccess:    NSNumber?
+    dynamic var         zoneParentLink:      String?
     var                    _parentZone:        Zone?
     var                         _color:      ZColor?
     var                     _crossLink:     ZRecord?
@@ -77,6 +78,14 @@ class Zone : ZRecord {
             d.append("B")
         }
 
+        if let link  = zoneLink {
+            if link != gNullLink {
+                d.append("L")
+            } else {
+                d.append("-")
+            }
+        }
+
         if  fetchableCount != 0 {
             let s  = d == "" ? "" : " "
             let c  = s + "\(fetchableCount)"
@@ -98,13 +107,14 @@ class Zone : ZRecord {
 
     class func cloudProperties() -> [String] {
         return [#keyPath(parent),
-                #keyPath(zoneName),
                 #keyPath(zoneLink),
+                #keyPath(zoneName),
                 #keyPath(zoneColor),
-                #keyPath(zoneOwner),
-                #keyPath(zoneOrder),
                 #keyPath(zoneCount),
+                #keyPath(zoneOrder),
+                #keyPath(zoneOwner),
                 #keyPath(zoneProgeny),
+                #keyPath(zoneParentLink),
                 #keyPath(zoneProgenyAccess)]
     }
 
@@ -168,9 +178,25 @@ class Zone : ZRecord {
     }
 
 
+    func zone(from link: String) -> Zone? {
+        if link == gNullLink { return nil }
+
+        var components:   [String] = link.components(separatedBy: ":")
+        let name:          String  = components[2] == "" ? "root" : components[2]
+        let identifier: CKRecordID = CKRecordID(recordName: name)
+        let record:       CKRecord = CKRecord(recordType: gZoneTypeKey, recordID: identifier)
+        let                rawMode = components[0]
+        let mode:    ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
+        let                manager = mode == nil ? nil : gRemoteStoresManager.recordsManagerFor(mode!)
+        let                   zone = manager?.zoneForRecordID(identifier)
+
+        return zone != nil ? zone! : Zone(record: record, storageMode: mode)
+    }
+
+
     var crossLink: ZRecord? {
         get {
-            if _crossLink == nil, var link = zoneLink, link != "" {
+            if _crossLink == nil, let link = zoneLink, link != "" {
                 if  zoneLink == gTrashLink {
                     return gTrash
                 }
@@ -179,16 +205,7 @@ class Zone : ZRecord {
                     zoneLink = link.replacingOccurrences(of: "Optional(\"", with: "").replacingOccurrences(of: "\")", with: "")
                 }
 
-                link                       = zoneLink!
-                var components:   [String] = link.components(separatedBy: ":")
-                let name:          String  = components[2] == "" ? "root" : components[2]
-                let identifier: CKRecordID = CKRecordID(recordName: name)
-                let record:       CKRecord = CKRecord(recordType: gZoneTypeKey, recordID: identifier)
-                let                rawMode = components[0]
-                let mode:    ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
-                let                manager = mode == nil ? nil : gRemoteStoresManager.recordsManagerFor(mode!)
-                let                   zone = manager?.zoneForRecordID(identifier)
-                _crossLink                 = zone != nil ? zone : Zone(record: record, storageMode: mode)
+                _crossLink = zone(from: link)
             }
 
             return _crossLink
@@ -196,7 +213,7 @@ class Zone : ZRecord {
 
         set {
             if newValue == nil {
-                zoneLink = nil
+                zoneLink = gNullLink
             } else {
                 let    hasRef = newValue!.record != nil
                 let reference = !hasRef ? "" : newValue!.record.recordID.recordName
@@ -314,24 +331,33 @@ class Zone : ZRecord {
 
     var parentZone: Zone? {
         get {
-            if  parent == nil && _parentZone?.record != nil {
-                parent  = CKReference(record: (_parentZone?.record)!, action: .none)
-            }
-
-            if  parent != nil && _parentZone == nil && storageMode != nil {
-                _parentZone = gRemoteStoresManager.cloudManagerFor(storageMode!).zoneForReference(parent!)
+            if  let p = _parentZone {
+                if  parent == nil, p.storageMode == storageMode, let record = p.record {
+                    parent  = CKReference(record: record, action: .none)
+                }
+            } else {
+                if  let  reference = parent, let mode = storageMode {
+                    _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).zoneForReference(reference)
+                } else if let link = zoneParentLink {
+                    _parentZone    = zone(from: link)
+                }
             }
 
             return _parentZone
         }
 
         set {
-            _parentZone  = newValue
+            zoneParentLink = gNullLink
+            _parentZone    = newValue
+            parent         = nil
 
-            if let parentRecord = newValue?.record {
-                parent          = CKReference(record: parentRecord, action: .none)
-            } else {
-                parent          = nil
+            if  let  parentRecord  = newValue?.record,
+                let       newMode  = newValue?.storageMode {
+                if        newMode == storageMode {
+                    parent         = CKReference(record: parentRecord, action: .none)
+                } else {
+                    zoneParentLink = "\(newMode.rawValue)::\(parentRecord.recordID.recordName)"
+                }
             }
         }
     }
@@ -428,6 +454,32 @@ class Zone : ZRecord {
 
     override func debug(_  iMessage: String) {
         note("\(iMessage) children \(count) parent \(parent != nil) isDeleted \(isDeleted) mode \(storageMode!) \(unwrappedName)")
+    }
+
+
+    override func setupLinks() {
+        if  record != nil {
+            var dirty = false
+
+            if  let    link  = zoneLink {
+                if     link == "" {
+                    zoneLink = gNullLink
+                    dirty    = true
+                }
+            } else {
+                zoneLink = gNullLink
+                dirty    = true
+            }
+
+            if  zoneParentLink == nil {
+                zoneParentLink  = gNullLink
+                dirty           = true
+            }
+
+            if  dirty {
+                needFlush()
+            }
+        }
     }
 
 

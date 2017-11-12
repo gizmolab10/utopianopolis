@@ -20,6 +20,7 @@ enum ZOperationID: Int {
     case here
     case children
     case fetch      // after children so favorite targets resolve properly
+    case bookmarks
     case parent     // after fetch so colors resolve properly
     case save       // zones and manifests
     case unsubscribe
@@ -31,7 +32,6 @@ enum ZOperationID: Int {
 
     case emptyTrash
     case completion
-    case bookmarks
     case undelete
     case create
     case merge
@@ -60,7 +60,7 @@ class ZOperationsManager: NSObject {
     var     lastOpStart :         Date? = nil
     var       currentOp = ZOperationID.none
     let           queue = OperationQueue()
-    var           debug = false
+    var           debug = true
 
 
     func invoke(_ identifier: ZOperationID, _ logic: ZRecursionLogic? = nil, cloudCallback: AnyClosure?) {}
