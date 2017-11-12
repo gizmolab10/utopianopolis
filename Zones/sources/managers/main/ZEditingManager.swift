@@ -156,7 +156,7 @@ class ZEditingManager: NSObject {
                 case "'":         doFavorites(isShift, isOption)
                 case ",", ".":    gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
                 case "/":         focus(on: gSelectionManager.firstGrab, isCommand)
-                // case "?":         gSettingsController?.displayViewFor(id: .Help)
+                case "?":         gSettingsController?.displayViewFor(id: .Help)
                 case "-":         createNext()
                 case gTabKey:     createNext(containing: isOption) { iChild in iChild.edit() }
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }

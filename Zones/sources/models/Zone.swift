@@ -44,12 +44,12 @@ class Zone : ZRecord {
     var              isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
     var             hasMissingChildren:         Bool { return count < fetchableCount }
     var            hasAccessDecoration:         Bool { return  !isWritable || directReadOnly }
-    var             showAccessChanging:         Bool { return !isWritable && directWritable } // (!isWritable && directWritable) || (isWritable && directReadOnly) || isRootOfFavorites }
+    var             showAccessChanging:         Bool { return !isWritable && directWritable }
     var              isWritableByUseer:         Bool { return isWritable || gOnboardingManager.userHasAccess(self) }
     var               accessIsChanging:         Bool { return (!isWritable && directWritable) || (isWritable && directReadOnly) || isRootOfFavorites }
-    var                directRecursive:         Bool { return zoneProgenyAccess == nil ? true  : zoneProgenyAccess!.intValue == ZoneAccess.eRecurse        .rawValue}
-    var                 directWritable:         Bool { return zoneProgenyAccess == nil ? false : zoneProgenyAccess!.intValue == ZoneAccess.eProgenyWritable.rawValue}
-    var                 directReadOnly:         Bool { return zoneProgenyAccess == nil ? false : zoneProgenyAccess!.intValue == ZoneAccess.eProgenyReadOnly.rawValue}
+    var                directRecursive:         Bool { return directAccess == nil ? true  : directAccess! == .eRecurse }
+    var                 directWritable:         Bool { return directAccess == nil ? false : directAccess! == .eProgenyWritable }
+    var                 directReadOnly:         Bool { return directAccess == nil ? false : directAccess! == .eProgenyReadOnly }
     var                  isInFavorites:         Bool { return isRootOfFavorites || parentZone?.isInFavorites ?? false }
     var                  hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var                  hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
@@ -377,13 +377,26 @@ class Zone : ZRecord {
     // MARK:-
 
 
+    var directAccess: ZoneAccess? {
+        if  isBookmark {
+            return bookmarkTarget?.directAccess
+        } else if let value = zoneProgenyAccess?.intValue,
+            value          <= ZoneAccess.eRecurse.rawValue,
+            value          >= 0 {
+            return ZoneAccess(rawValue: value)
+        }
+
+        return nil
+    }
+
+
     var ancestralProgenyAccess: ZoneAccess {
         get {
             if  isTrashRoot {
                 return .eProgenyWritable
             } else if let t = bookmarkTarget {
-                return t.ancestralProgenyAccess // go up bookmark's ancestor path
-            } else if  directWritable || directReadOnly {
+                return t.ancestralProgenyAccess // go up bookmark target's (NOT bookmark's) ancestor path
+            } else if  directAccess != .eRecurse {
                 return directWritable ? .eProgenyWritable : .eProgenyReadOnly
             } else if let p = parentZone, p != self, p.hasCompleteAncestorPath(toWritable: true) {
                 return p.ancestralProgenyAccess // go further up ancestor path

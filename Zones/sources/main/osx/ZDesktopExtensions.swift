@@ -337,14 +337,15 @@ extension ZoneTextWidget {
 
 
     override func textDidEndEditing(_ notification: Notification) {
-        if  let        value = notification.userInfo?["NSTextMovement"] as? NSNumber {
+        if  let       number = notification.userInfo?["NSTextMovement"] as? NSNumber {
+            let        value = number.intValue
+            isTextEditing    = value == NSOtherTextMovement
             var key: String? = nil
-            isTextEditing    = false
 
             captureText(force: false)
             resignFirstResponder()
 
-            switch value.intValue {
+            switch value {
             case NSBacktabTextMovement: key = gSpaceKey
             case NSTabTextMovement:     key = gTabKey
             case NSReturnTextMovement:  return
