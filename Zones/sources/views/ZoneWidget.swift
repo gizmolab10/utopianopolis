@@ -234,7 +234,7 @@ class ZoneWidget: ZView {
         var rect = CGRect()
 
         if  let zone = widgetZone {
-            if !zone.showChildren {
+            if !zone.showChildren || zone.count == 0 {
 
                 /////////////////////////
                 // DOT IS STRAIGHT OUT //

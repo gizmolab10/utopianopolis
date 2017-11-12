@@ -73,33 +73,21 @@ class ZCloudManager: ZRecordsManager {
         let   count = saves.count + deletes.count
 
         if  count > 0, let           operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
+            operation              .savePolicy = .changedKeys
             operation       .recordIDsToDelete = deletes
             operation           .recordsToSave = saves
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
                 gAlertManager.detectError(iError) { iHasError in
-                    if iHasError {
-                        let message = iRecord?.description ?? ""
-                        print(String(describing: iError!) + "\n" + message)
+                    if  iHasError {
+                        if  let     ck = iError as? CKError, ck.code == .serverRecordChanged, // oplock error
+                            let record = self.recordForCKRecord(iRecord) {
+                            record.maybeNeedMerge()
+                        } else {
+                            let message = iRecord?.description ?? ""
+                            print(String(describing: iError!) + "\n" + message)
+                        }
                     }
                 }
-//                    // mark failed records as needing merge
-//                    if  let error:  CKError = iError as? CKError {
-//                        let info            = error.errorUserInfo
-//                        var description     = info["CKErrorDescription"] as! String
-//
-//                        if  description    != "record to insert already exists" {
-//                            if  let  record = self.recordForCKRecord(iRecord) {
-//                                record.maybeNeedMerge()
-//                            }
-//
-//                            if  let    name = iRecord?[gZoneNameKey] as? String {
-//                                description = "\(description): \(name)"
-//                            }
-//
-//                            self.columnarReport("SAVE ERROR", "\(self.storageMode) \(description)")
-//                        }
-//                    }
-//                }
             }
 
             operation.completionBlock   = {
@@ -118,7 +106,11 @@ class ZCloudManager: ZRecordsManager {
                         }
                     }
 
-                    self.save(onCompletion)         // process remaining
+                    self.merge { iResult in                 // process merges due to save oplock errors
+                        if iResult == 0 {
+                            self.save(onCompletion)         // process remaining
+                        }
+                    }
                 }
             }
 

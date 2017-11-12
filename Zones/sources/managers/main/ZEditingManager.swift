@@ -111,7 +111,7 @@ class ZEditingManager: NSObject {
             case .Always:    valid = true
             }
         } else if key.arrow == nil {
-            valid = [.Undo, .Redo, .Alter, .SelectAll].contains(type)
+            valid = [.Undo, .Redo, .Alter, .Parent, .SelectAll].contains(type)
         }
 
         return valid
@@ -160,7 +160,7 @@ class ZEditingManager: NSObject {
                 case "-":         createNext()
                 case gTabKey:     createNext(containing: isOption) { iChild in iChild.edit() }
                 case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
-                case gSpaceKey:   if isOption || isWindow { createIdea() }
+                case gSpaceKey:   if isOption || isWindow || isControl { createIdea() }
                 case gBackspaceKey,
                      gDeleteKey:  if isOption || isWindow { delete(permanently: isCommand && isControl && isOption && isWindow, preserveChildren: !isCommand && !isControl && isOption && isWindow) }
                 case "\r":
