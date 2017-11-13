@@ -139,7 +139,7 @@ class ZRemoteStoresManager: NSObject {
 
                 badgeResetOperation.modifyBadgeCompletionBlock = { (error) -> Void in
                     if error == nil {
-                        self.FOREGROUND {
+                        FOREGROUND {
                             gApplication.clearBadge()
                         }
                     }
@@ -190,7 +190,7 @@ class ZRemoteStoresManager: NSObject {
                 let  parent = zone.parentZone
 
                 if  zone.showChildren {
-                    self.FOREGROUND {
+                    FOREGROUND {
                         self.signalFor(parent, regarding: .redraw)
 
                         gDBOperationsManager.children(.restore) {

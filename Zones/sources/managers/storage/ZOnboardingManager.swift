@@ -97,7 +97,7 @@ class ZOnboardingManager : ZOperationsManager {
 
     func accountStatus(_ onCompletion: @escaping Closure) {
         gContainer.accountStatus { (iStatus, iError) in
-            self.FOREGROUND {
+            FOREGROUND {
                 switch iStatus {
                 case .available:
                     onCompletion()

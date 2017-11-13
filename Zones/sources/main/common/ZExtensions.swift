@@ -21,9 +21,6 @@ typealias ZStorageDict = [String : NSObject]
 typealias       ZModes = [ZStorageMode]
 
 
-func newCKZoneRecord() -> CKRecord { return CKRecord(recordType: gZoneTypeKey) }
-
-
 extension NSObject {
 
 

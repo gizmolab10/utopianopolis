@@ -114,7 +114,7 @@ class ZDBOperationsManager: ZOperationsManager {
                 self.invoke(operationID, logic) { (iResult: Any?) in
                     self  .lastOpStart = nil
 
-                    self.FOREGROUND(canBeDirect: true) {
+                    FOREGROUND(canBeDirect: true) {
                         let      error = iResult as? Error
                         let      value = iResult as? Int
                         let    isError = error != nil

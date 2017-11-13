@@ -608,7 +608,7 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="mm0-xX-hLQ"/>
                                                     </constraints>
-                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.5" maxValue="1.75" doubleValue="1.25" tickMarkPosition="above" sliderType="linear" id="whI-vU-fzO"/>
+                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.75" maxValue="1.75" doubleValue="1.25" tickMarkPosition="above" sliderType="linear" id="whI-vU-fzO"/>
                                                     <connections>
                                                         <action selector="sliderAction:" target="Naq-se-Exq" id="2bw-KX-vd8"/>
                                                     </connections>

@@ -93,7 +93,7 @@ class ZCloudManager: ZRecordsManager {
             operation.completionBlock   = {
                 // deal with saved records marked as deleted
 
-                self.FOREGROUND {
+                FOREGROUND {
                     for recordID: CKRecordID in deletes {
                         if  let zone = self.zoneForRecordID(recordID) {
                             self.unregisterZone(zone)
@@ -181,7 +181,7 @@ class ZCloudManager: ZRecordsManager {
 
     func assureRecordExists(withRecordID recordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
         let done: RecordClosure = { (record: CKRecord?) in
-            self.FOREGROUND(canBeDirect: true) {
+            FOREGROUND(canBeDirect: true) {
                 onCompletion(record)
             }
         }
@@ -307,7 +307,7 @@ class ZCloudManager: ZRecordsManager {
             }
 
             operation.completionBlock = {
-                self.FOREGROUND {
+                FOREGROUND {
                     if recordsByID.count == 0 {
                         for ckRecordID in recordIDs {
                             self.clearStatesForRecordID(ckRecordID, forStates: [.needsMerge])
@@ -350,7 +350,7 @@ class ZCloudManager: ZRecordsManager {
                         retrieved.append(ckRecord)
                     }
                 } else { // nil means: we already received full response from cloud for this particular fetch
-                    self.FOREGROUND {
+                    FOREGROUND {
                         var    parentIDs = [CKRecordID] ()
                         var childrenRefs = [CKRecordID : CKRecord] ()
 
@@ -457,7 +457,7 @@ class ZCloudManager: ZRecordsManager {
         let needed = recordIDsWithMatchingStates(states)
 
         fetch(needed: needed) { iCKRecords in
-            self.FOREGROUND {
+            FOREGROUND {
                 if iCKRecords.count == 0 {
                     onCompletion?(0)
                 } else {
@@ -549,7 +549,7 @@ class ZCloudManager: ZRecordsManager {
             }
 
             operation.completionBlock = {
-                self.FOREGROUND {
+                FOREGROUND {
                     var forReport = [Zone] ()
 
                     for (iRecord, iID) in recordsByID {
@@ -631,7 +631,7 @@ class ZCloudManager: ZRecordsManager {
                         retrieved.append(ckRecord)
                     }
                 } else { // nil means: we already received full response from cloud for this particular fetch
-                    self.FOREGROUND {
+                    FOREGROUND {
 
                         ////////////////////////////
                         // now we can mutate heap //
@@ -706,7 +706,7 @@ class ZCloudManager: ZRecordsManager {
                     retrieved.append(ckRecord)
                 }
             } else { // nil means done
-                self.FOREGROUND {
+                FOREGROUND {
                     for ckRecord in retrieved {
                         var zRecord = self.recordForCKRecord(ckRecord)
 

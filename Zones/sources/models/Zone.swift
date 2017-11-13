@@ -120,16 +120,10 @@ class Zone : ZRecord {
     }
 
 
-    convenience init(favorite named: String) {
-        self.init(record: nil, storageMode: .favoritesMode)
-
-        self .zoneName = named
-
-        FOREGROUND(after: 0.5) {
-            self.crossLink = gFavoritesManager.rootZone
-        }
+    convenience init(storageMode: ZStorageMode?) {
+        self.init(record: CKRecord(recordType: gZoneTypeKey), storageMode: storageMode)
     }
-    
+
 
     var bookmarkTarget: Zone? {
         if  let link = crossLink, let mode = link.storageMode {
@@ -910,7 +904,7 @@ class Zone : ZRecord {
 
         traverseAllProgeny { iChild in
             if  copy {
-                iChild .record = newCKZoneRecord()
+                iChild .record = CKRecord(recordType: gZoneTypeKey)
             }
 
             if  let              p = iChild.parentZone {
@@ -1077,7 +1071,7 @@ class Zone : ZRecord {
 
 
     func deepCopy() -> Zone {
-        let theCopy = Zone(record: newCKZoneRecord(), storageMode: storageMode)
+        let theCopy = Zone(storageMode: storageMode)
 
         copy(into: theCopy)
 

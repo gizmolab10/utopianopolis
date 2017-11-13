@@ -79,7 +79,7 @@ class ZOperationsManager: NSObject {
             let         blockOperation = BlockOperation {
                 self.queue.isSuspended = true
 
-                self.FOREGROUND {
+                FOREGROUND {
                     self.currentOp     = operationID        // if hung, it happened inside this op
 
                     if  self.debug {

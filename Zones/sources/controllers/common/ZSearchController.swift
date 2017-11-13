@@ -86,7 +86,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                 gWorkMode      = hasResults ? .searchMode : .editMode
 
                 if hasResults {
-                    self.FOREGROUND {
+                    FOREGROUND {
                         self.searchBox?.text = ""
 
                         gSearchManager.showResults(iObject)

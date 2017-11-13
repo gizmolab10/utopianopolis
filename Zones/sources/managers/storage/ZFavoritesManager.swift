@@ -28,9 +28,8 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    let     defaultFavorites = Zone(record: nil, storageMode: .favoritesMode)
     let defaultModes: ZModes = [.everyoneMode, .mineMode]
-    let    favoritesFavorite = Zone(favorite: gFavoritesKey)
+    let     defaultFavorites = Zone(record: nil, storageMode: .favoritesMode)
     var                count : Int  { return rootZone?.count ?? 0 }
 
 
@@ -365,7 +364,7 @@ class ZFavoritesManager: ZCloudManager {
 
 
     @discardableResult func create(withBookmark: Zone?, _ style: ZFavoriteStyle, _ name: String?) -> Zone {
-        let bookmark: Zone = withBookmark ?? Zone(record: newCKZoneRecord(), storageMode: .mineMode)
+        let bookmark: Zone = withBookmark ?? Zone(storageMode: .mineMode)
         bookmark.zoneName  = name
 
         return bookmark
