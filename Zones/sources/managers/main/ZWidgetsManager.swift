@@ -24,12 +24,9 @@ class ZWidgetsManager: NSObject {
 
 
     var visibleWidgets: [ZoneWidget] {
-        var      visible = [ZoneWidget] ()
+        let favorites = gFavoritesManager.rootZone?.visibleWidgets ?? []
 
-        if let      main = widgets[  gStorageMode]?.values { visible.append(contentsOf: main) }
-        if let favorites = widgets[.favoritesMode]?.values { visible.append(contentsOf: favorites) }
-
-        return visible
+        return gHere.visibleWidgets + favorites
     }
 
 

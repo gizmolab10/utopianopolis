@@ -297,6 +297,7 @@ class ZEditingManager: NSObject {
         var        zones = gSelectionManager.simplifiedGrabs
         for zone in zones {
             if let parent = zone.parentZone, parent != commonParent {
+                // status bar -> not all of the grabbed zones share the same parent
                 return
             }
         }
@@ -736,29 +737,26 @@ class ZEditingManager: NSObject {
 
 
     func delete(permanently: Bool = false, preserveChildren: Bool = false) {
-        let candidate = gSelectionManager.rootMostMoveable
-        let   closure = {
-            if  candidate.parentZone != nil {
-                if preserveChildren {
-                    self.preserveChildrenOfGrabbedZones()
-                    gFavoritesManager.updateChildren()
+        let candidates = gSelectionManager.simplifiedGrabs
+        let    closure = {
+            if preserveChildren {
+                self.preserveChildrenOfGrabbedZones()
+                gFavoritesManager.updateChildren()
+                self.redrawAndSyncAndRedraw()
+            } else {
+                self.prepareUndoForDelete()
+                self.deleteZones(gSelectionManager.simplifiedGrabs, permanently: permanently) {
                     self.redrawAndSyncAndRedraw()
-                } else {
-                    self.prepareUndoForDelete()
-                    self.deleteZones(gSelectionManager.simplifiedGrabs, permanently: permanently) {
-                        self.redrawAndSyncAndRedraw()
-                    }
                 }
             }
         }
 
-        if candidate.count == candidate.fetchableCount {
-            closure()
-        } else {
+        for candidate in candidates {
             candidate.needProgeny()
-            gDBOperationsManager.children(.all) {
-                closure()
-            }
+        }
+
+        gDBOperationsManager.children(.all) {
+            closure()
         }
     }
 

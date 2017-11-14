@@ -651,6 +651,20 @@ class Zone : ZRecord {
     // MARK:-
 
 
+    var visibleWidgets: [ZoneWidget] {
+        var visible = [ZoneWidget] ()
+
+        traverseProgeny { iZone -> ZTraverseStatus in
+            if let w = iZone.widget {
+                visible.append(w)
+            }
+
+            return iZone.showChildren ? .eContinue : .eSkip
+        }
+
+        return visible
+    }
+
     func spawned(_ iChild: Zone) -> Bool {
         var isSpawn = false
 
@@ -704,6 +718,77 @@ class Zone : ZRecord {
         }
         
         return status
+    }
+
+
+    enum ZCycleType: Int {
+        case cycle
+        case found
+        case none
+    }
+
+
+    func deepCopy() -> Zone {
+        let theCopy = Zone(storageMode: storageMode)
+
+        copy(into: theCopy)
+
+        theCopy.parentZone = nil
+
+        for child in children {
+            theCopy.add(child.deepCopy())
+        }
+
+        return theCopy
+    }
+
+
+    func exposedProgeny(at iLevel: Int) -> [Zone] {
+        var     progeny = [Zone]()
+        var begun: Bool = false
+
+        traverseProgeny { iZone -> ZTraverseStatus in
+            if begun {
+                if iZone.level > iLevel || iZone == self {
+                    return .eSkip
+                } else if iZone.level == iLevel && iZone != self && (iZone.parentZone == nil || iZone.parentZone!.showChildren) {
+                    progeny.append(iZone)
+                }
+            }
+
+            begun = true
+
+            return .eContinue
+        }
+
+        return progeny
+    }
+
+
+    func exposed(upTo highestLevel: Int) -> Int? {
+        if  count == 0 {
+            return nil
+        }
+
+        var   exposedLevel  = level
+
+        while exposedLevel <= highestLevel {
+            let progeny = exposedProgeny(at: exposedLevel + 1)
+
+            if  progeny.count == 0 {
+                return exposedLevel
+            }
+
+            exposedLevel += 1
+
+            for child: Zone in progeny {
+                if  !child.showChildren && child.fetchableCount > 0 {
+                    return exposedLevel
+                }
+            }
+        }
+
+        return level
     }
 
 
@@ -1056,81 +1141,6 @@ class Zone : ZRecord {
 
             progenyCount = counter
         }
-    }
-
-
-    // MARK:- recursion
-    // MARK:-
-
-
-    enum ZCycleType: Int {
-        case cycle
-        case found
-        case none
-    }
-
-
-    func deepCopy() -> Zone {
-        let theCopy = Zone(storageMode: storageMode)
-
-        copy(into: theCopy)
-
-        theCopy.parentZone = nil
-
-        for child in children {
-            theCopy.add(child.deepCopy())
-        }
-
-        return theCopy
-    }
-
-
-    func exposedProgeny(at iLevel: Int) -> [Zone] {
-        var     progeny = [Zone]()
-        var begun: Bool = false
-
-        traverseProgeny { iZone -> ZTraverseStatus in
-            if begun {
-                if iZone.level > iLevel || iZone == self {
-                    return .eSkip
-                } else if iZone.level == iLevel && iZone != self && (iZone.parentZone == nil || iZone.parentZone!.showChildren) {
-                    progeny.append(iZone)
-                }
-            }
-
-            begun = true
-
-            return .eContinue
-        }
-
-        return progeny
-    }
-
-
-    func exposed(upTo highestLevel: Int) -> Int? {
-        if  count == 0 {
-            return nil
-        }
-
-        var   exposedLevel  = level
-
-        while exposedLevel <= highestLevel {
-            let progeny = exposedProgeny(at: exposedLevel + 1)
-
-            if  progeny.count == 0 {
-                return exposedLevel
-            }
-
-            exposedLevel += 1
-
-            for child: Zone in progeny {
-                if  !child.showChildren && child.fetchableCount > 0 {
-                    return exposedLevel
-                }
-            }
-        }
-
-        return level
     }
 
 
