@@ -189,7 +189,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
     func drawAccessDecoration(of type: ZDecorationType, for zone: Zone, in dirtyRect: CGRect) {
         let     ratio = zone.isInFavorites ? gReductionRatio : 1.0
-        var thickness = CGFloat(gLineThickness) * 1.5 * ratio
+        var thickness = CGFloat(gLineThickness) * ratio
         var      path = ZBezierPath(rect: CGRect.zero)
         var      rect = CGRect.zero
 
@@ -198,7 +198,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             rect      = CGRect(origin: CGPoint(x: dirtyRect.midX - (thickness / 2.0), y: dirtyRect.minY),                   size: CGSize(width: thickness, height: dirtyRect.size.height))
             path      = ZBezierPath(rect: rect)
         case .sideDot:
-            thickness = (thickness + 1.5) * ratio * dirtyRect.size.height / 12.0
+            thickness = (thickness + 3.0) * ratio * dirtyRect.size.height / 12.0
             rect      = CGRect(origin: CGPoint(x: dirtyRect.maxX - thickness - 1.0,   y: dirtyRect.midY - thickness / 2.0), size: CGSize(width: thickness, height: thickness))
             path      = ZBezierPath(ovalIn: rect)
         }

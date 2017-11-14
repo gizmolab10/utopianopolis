@@ -64,7 +64,7 @@ class ZOperationsManager: NSObject {
 
 
     func invoke(_ identifier: ZOperationID, _ logic: ZRecursionLogic? = nil, cloudCallback: AnyClosure?) {}
-    func performBlock(on operationID: ZOperationID, with logic: ZRecursionLogic? = nil, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {}
+    func performBlock(for operationID: ZOperationID, with logic: ZRecursionLogic? = nil, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {}
 
 
     func setupAndRunUnsafe(_ operationIDs: [ZOperationID], logic: ZRecursionLogic?, onCompletion: @escaping Closure) {
@@ -86,7 +86,7 @@ class ZOperationsManager: NSObject {
                         self.columnarReport("  " + self.operationText, "")
                     }
 
-                    self.performBlock(on: operationID, with: logic, restoreToMode: saved) {
+                    self.performBlock(for: operationID, with: logic, restoreToMode: saved) {
                         if self.currentOp == .completion {
                             onCompletion()
                         }

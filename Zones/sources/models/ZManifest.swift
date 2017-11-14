@@ -14,11 +14,11 @@ import CloudKit
 class ZManifest: ZRecord {
 
 
-    dynamic var here:           CKReference?
-    dynamic var zonesExpanded: [String]?
-    var          manifestMode: ZStorageMode?
-    var         currentGrabs = [Zone] ()
-    var        _hereZone:       Zone?
+    dynamic var here:            String?
+    dynamic var zonesExpanded : [String]?
+    var          manifestMode :  ZStorageMode?
+    var             _hereZone :  Zone?
+    var          currentGrabs = [Zone] ()
 
 
     override func cloudProperties() -> [String] {
@@ -27,27 +27,20 @@ class ZManifest: ZRecord {
 
 
     var hereZone: Zone {
-        get {
-            if _hereZone == nil {
-                let hereRecord: CKRecord? = (here == nil) ? nil : CKRecord(recordType: gZoneTypeKey, recordID: (here?.recordID)!)
-                _hereZone                 = Zone(record: hereRecord, storageMode: manifestMode)
-            }
-
-            return _hereZone!
-        }
+        get { return _hereZone! }
 
         set {
-            if  _hereZone  != newValue {
-                _hereZone   = newValue
+            if  _hereZone != newValue {
+                _hereZone  = newValue
             }
 
-            if let record = _hereZone?.record, record.recordID.recordName != here?.recordID.recordName {
-                here = CKReference(record: record, action: .none)
+            if  let   name = _hereZone?.record.recordID.recordName {
+                here       = name
 
                 needFlush()
             }
 
-            gFavoritesManager.updateCurrentFavorite()
+            gFavoritesManager.updateCurrentFavorite() // so user will know
         }
     }
 

@@ -50,7 +50,7 @@ class Zone : ZRecord {
     var                directRecursive:         Bool { return directAccess == nil ? true  : directAccess! == .eRecurse }
     var                 directWritable:         Bool { return directAccess == nil ? false : directAccess! == .eProgenyWritable }
     var                 directReadOnly:         Bool { return directAccess == nil ? false : directAccess! == .eProgenyReadOnly }
-    var                  isInFavorites:         Bool { return isRootOfFavorites || parentZone?.isInFavorites ?? false }
+    var                  isInFavorites:         Bool { return isRootOfFavorites || (self != parentZone && parentZone?.isInFavorites ?? false) }
     var                  hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var                  hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var                   showChildren:         Bool { return isRootOfFavorites || gManifest.showsChildren(self) }
@@ -61,7 +61,7 @@ class Zone : ZRecord {
     var                      isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
     var                      isVisible:         Bool { return !isRootOfFavorites && (isOSX || self != gHere) }
     var                      isDeleted:         Bool { return gTrash != self && gTrash?.spawned(self) ?? false }
-    var                       hasColor:         Bool { return zoneColor != nil }
+    var                       hasColor:         Bool { return zoneColor != nil && zoneColor != "" }
 
 
     var decoration: String {

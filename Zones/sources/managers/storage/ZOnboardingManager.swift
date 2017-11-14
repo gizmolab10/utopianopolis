@@ -56,7 +56,7 @@ class ZOnboardingManager : ZOperationsManager {
     // MARK:-
 
 
-    override func performBlock(on operationID: ZOperationID, with logic: ZRecursionLogic? = nil, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {
+    override func performBlock(for operationID: ZOperationID, with logic: ZRecursionLogic? = nil, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {
         let done = {
             self.queue.isSuspended = false
 

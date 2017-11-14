@@ -520,11 +520,23 @@ class ZCloudManager: ZRecordsManager {
             let     mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
 
             mine.assureRecordExists(withRecordID: recordID, recordType: gManifestTypeKey) { (iManifestRecord: CKRecord?) in
-                if iManifestRecord != nil {
-                    manifest.record = iManifestRecord
-                }
+                if  iManifestRecord   != nil {
+                    manifest.record    = iManifestRecord
 
-                onCompletion?(0)
+                    if  let       here = manifest.here,
+                        let       mode = manifest.manifestMode {
+                        let identifier = CKRecordID(recordName: here)
+                        let      cloud = gRemoteStoresManager.cloudManagerFor(mode)
+
+                        cloud.assureRecordExists(withRecordID: identifier, recordType: gZoneTypeKey) { iCKRecord in
+                            manifest._hereZone = Zone(record: iCKRecord, storageMode: mode)
+
+                            onCompletion?(0)
+                        }
+                    } else {
+                        onCompletion?(0)
+                    }
+                }
             }
         }
     }
@@ -775,10 +787,10 @@ class ZCloudManager: ZRecordsManager {
             onCompletion?(0)
         }
 
-        if manifest.here == nil { // first launch
+        if manifest.here == nil { // first time user
             rootCompletion()
         } else {
-            let recordID = manifest.here!.recordID
+            let recordID = CKRecordID(recordName: manifest.here!)
 
             self.assureRecordExists(withRecordID: recordID, recordType: gZoneTypeKey) { (iHereRecord: CKRecord?) in
                 if iHereRecord == nil || iHereRecord?[gZoneNameKey] == nil {

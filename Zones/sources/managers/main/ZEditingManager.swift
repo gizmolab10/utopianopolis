@@ -1132,8 +1132,8 @@ class ZEditingManager: NSObject {
         if  var           there = zone.parentZone {
             let        siblings = there.children
 
-            if  let       index = siblings.index(of: zone) {
-                let cousinIndex = index == 0 ? 1 : index - 1
+            if  let       index = zone.siblingIndex {
+                let cousinIndex = index == 0 ? 1 : index - 1 // always insert into sibling above, except at top
 
                 if cousinIndex >= 0 && cousinIndex < siblings.count {
                     there       = siblings[cousinIndex]
