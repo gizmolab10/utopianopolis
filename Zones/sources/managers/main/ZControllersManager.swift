@@ -89,10 +89,10 @@ class ZControllersManager: NSObject {
     
 
     func startupDataAndUI() {
-        // signalFor(nil, regarding: .startup)
+        signalFor(nil, regarding: .startup)
         displayActivity(true)
         gDBOperationsManager.startUp {
-            gFavoritesManager.setup() // bug: manifest not yet fetched
+            gFavoritesManager.setup() // manifest has been fetched
             gDBOperationsManager.continueUp {
                 self.displayActivity(false) // now on foreground thread
                 gHere.grab()

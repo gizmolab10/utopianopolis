@@ -174,14 +174,17 @@ class Zone : ZRecord {
 
 
     func zone(from link: String) -> Zone? {
-        if link == gNullLink { return nil }
-
         var components:   [String] = link.components(separatedBy: ":")
-        let name:          String  = components[2] == "" ? "root" : components[2]
+
+        if  components.count < 3 {
+            return nil
+        }
+
+        let           name: String = components[2] == "" ? "root" : components[2]
         let identifier: CKRecordID = CKRecordID(recordName: name)
-        let record:       CKRecord = CKRecord(recordType: gZoneTypeKey, recordID: identifier)
+        let       record: CKRecord = CKRecord(recordType: gZoneTypeKey, recordID: identifier)
         let                rawMode = components[0]
-        let mode:    ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
+        let    mode: ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
         let                manager = mode == nil ? nil : gRemoteStoresManager.recordsManagerFor(mode!)
         let                   zone = manager?.zoneForRecordID(identifier)
 
@@ -359,8 +362,16 @@ class Zone : ZRecord {
 
 
     var siblingIndex: Int? {
-        if let siblings = parentZone?.children, let index = siblings.index(of: self) {
-            return index
+        if let siblings = parentZone?.children {
+            if let index = siblings.index(of: self) {
+                return index
+            } else {
+                for (index, sibling) in siblings.enumerated() {
+                    if sibling.order > order {
+                        return index == 0 ? 0 : index - 1
+                    }
+                }
+            }
         }
 
         return nil
@@ -457,7 +468,14 @@ class Zone : ZRecord {
     func     ungrab() { gSelectionManager   .ungrab(self) }
     func       grab() { gSelectionManager     .grab(self) }
     func       edit() { gSelectionManager     .edit(self) }
+
+
     override func register() { cloudManager?.registerZone(self) }
+
+
+    override func unorphan() {
+        parentZone?.add(self, at: siblingIndex)
+    }
 
 
     override func debug(_  iMessage: String) {
@@ -470,7 +488,7 @@ class Zone : ZRecord {
             var dirty = false
 
             if  let    link  = zoneLink {
-                if     link == "" {
+                if     link == "" || link == "-" {
                     zoneLink = gNullLink
                     dirty    = true
                 }

@@ -104,6 +104,7 @@ class ZRecord: NSObject {
 
 
     func register() {}
+    func unorphan() {}
     func debug(_  iMessage: String) {}
     func cloudProperties() -> [String] { return [] }
 

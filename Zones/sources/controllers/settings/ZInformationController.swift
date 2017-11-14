@@ -39,9 +39,12 @@ class ZInformationController: ZGenericController {
         let                     total = gRemoteStoresManager.rootProgenyCount // TODO wrong manager
         totalCountLabel?        .text = "of \(total), retrieved: \(count)"
         graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
-        levelLabel?             .text = "level: \(gSelectionManager.rootMostMoveable.level)"
         fractionInMemory?.doubleValue = Double(count)
         fractionInMemory?   .maxValue = Double(total)
+
+        if kind != .startup {
+            levelLabel?         .text = "level: \(gSelectionManager.rootMostMoveable.level)"
+        }
 
         if let                version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
             versionLabel?       .text = "Focus version \(version)"

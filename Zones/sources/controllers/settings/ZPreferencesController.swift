@@ -33,20 +33,22 @@ class ZPreferencesController: ZGenericController {
 
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
-        let                           grabbed = gSelectionManager.firstGrab
-        let                    hideIdeasColor = grabbed.isBookmark || grabbed.isRootOfFavorites
-        view          .zlayer.backgroundColor = CGColor.clear
-        insertionModeControl?.selectedSegment = gInsertionMode.rawValue
-        countsModeControl?   .selectedSegment = gCountsMode.rawValue
-        thickness?               .doubleValue = gLineThickness
-        verticalSpacing?         .doubleValue = Double(gGenericOffset.height)
-        horizontalSpacing?       .doubleValue = Double(gGenericOffset.width)
-        dragTargetsColorBox?           .color = gRubberbandColor
-        backgroundColorBox?            .color = gBackgroundColor
-        zoneColorBox?                  .color =  grabbed.color
-        clearColorButton?           .isHidden = !grabbed.hasColor
-        zoneColorBox?               .isHidden =  hideIdeasColor
-        ideasLabel?                 .isHidden =  hideIdeasColor
+        if kind != .startup {
+            let                           grabbed = gSelectionManager.firstGrab
+            let                    hideIdeasColor = grabbed.isBookmark || grabbed.isRootOfFavorites
+            view          .zlayer.backgroundColor = CGColor.clear
+            insertionModeControl?.selectedSegment = gInsertionMode.rawValue
+            countsModeControl?   .selectedSegment = gCountsMode.rawValue
+            thickness?               .doubleValue = gLineThickness
+            verticalSpacing?         .doubleValue = Double(gGenericOffset.height)
+            horizontalSpacing?       .doubleValue = Double(gGenericOffset.width)
+            dragTargetsColorBox?           .color = gRubberbandColor
+            backgroundColorBox?            .color = gBackgroundColor
+            zoneColorBox?                  .color =  grabbed.color
+            clearColorButton?           .isHidden = !grabbed.hasColor
+            zoneColorBox?               .isHidden =  hideIdeasColor
+            ideasLabel?                 .isHidden =  hideIdeasColor
+        }
     }
 
 

@@ -101,8 +101,10 @@ class ZCloudManager: ZRecordsManager {
                     }
 
                     for record: CKRecord in saves {
-                        if  let zone = self.zoneForRecordID(record.recordID), zone.isDeleted { // only unregister deleted zones
-                            self.unregisterZone(zone)
+                        if  let zone = self.zoneForRecordID(record.recordID) {
+                            if  zone.isDeleted {
+                                self.unregisterZone(zone)   // unregister deleted zones
+                            }
                         }
                     }
 
@@ -469,6 +471,8 @@ class ZCloudManager: ZRecordsManager {
                         } else {
                             record?.record = ckRecord
                         }
+
+                        record?.unorphan()
                     }
 
                     self.clearCKRecords(iCKRecords, for: states)    // deferred to make sure fetch worked before clearing fetch flag
@@ -636,7 +640,6 @@ class ZCloudManager: ZRecordsManager {
             var  retrieved = [CKRecord] ()
             let  predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
 
-            columnarReport("CHILDREN of", stringForReferences(childrenNeeded, in: storageMode))
             queryWith(predicate) { (iRecord: CKRecord?) in
                 if  let ckRecord = iRecord {
                     if !retrieved.contains(ckRecord) {
@@ -698,6 +701,7 @@ class ZCloudManager: ZRecordsManager {
                             }
                         }
 
+                        self.columnarReport("CHILDREN of", self.stringForReferences(childrenNeeded, in: self.storageMode))
                         self.add(states: [.needsCount], to: childrenNeeded)
                         self.fetchChildren(logic, onCompletion) // process remaining
                     }
@@ -725,12 +729,15 @@ class ZCloudManager: ZRecordsManager {
                         if  zRecord == nil  {
                             zRecord  = Zone(record: ckRecord, storageMode: self.storageMode) // register
                         }
+
+                        zRecord?.unorphan()
                     }
 
-                    for identifier in recordIDs {
-                        let zRecord = self.recordForRecordID(identifier)
+                    for recordID in recordIDs {
+                        let zRecord = self.recordForRecordID(recordID)
 
                         zRecord?.unmarkForAllOfStates([.needsBookmarks])
+                        zRecord?.unorphan()
                     }
 
                     if !isGeneric {

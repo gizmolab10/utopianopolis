@@ -45,7 +45,7 @@ let         gUndoManager = UndoManager()
 
 let             gCloudID = "iCloud.com.zones.Zones"
 let            gLinksKey = "links"
-let            gNullLink = "-"
+let            gNullLink = "no"
 let           gTrashLink = "::trash"
 let         gZoneTypeKey = "Zone"
 let         gRootNameKey = "root"
