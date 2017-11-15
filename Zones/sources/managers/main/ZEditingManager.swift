@@ -73,6 +73,7 @@ class ZEditingManager: NSObject {
 
     func menuType(for key: String) -> ZMenuType {
         switch key {
+        case "z":                                                            return .Undo
         case "u", "l", "w", "-", "\r", gSpaceKey, gBackspaceKey, gDeleteKey: return .Alter
         case "b", gTabKey:                                                   return .Parent
         case "r", "o":                                                       return .Children
@@ -591,7 +592,7 @@ class ZEditingManager: NSObject {
 
 
     func toggleDotActionOnZone(_ iZone: Zone?) {
-        if  let zone = iZone, zone.isVisible {
+        if  let zone = iZone, !zone.onlyShowToggleDot {
             let    s = gSelectionManager
 
             for     grabbed in s.currentGrabs {
@@ -737,59 +738,57 @@ class ZEditingManager: NSObject {
 
 
     func delete(permanently: Bool = false, preserveChildren: Bool = false) {
-        let candidates = gSelectionManager.simplifiedGrabs
-        let    closure = {
-            if preserveChildren {
-                self.preserveChildrenOfGrabbedZones()
+        if  preserveChildren {
+            preserveChildrenOfGrabbedZones {
                 gFavoritesManager.updateChildren()
                 self.redrawAndSyncAndRedraw()
-            } else {
-                self.prepareUndoForDelete()
-                self.deleteZones(gSelectionManager.simplifiedGrabs, permanently: permanently) {
-                    self.redrawAndSyncAndRedraw()
-                }
             }
-        }
+        } else {
+            prepareUndoForDelete()
 
-        for candidate in candidates {
-            candidate.needProgeny()
-        }
-
-        gDBOperationsManager.children(.all) {
-            closure()
+            deleteZones(gSelectionManager.simplifiedGrabs, permanently: permanently) {
+                gFavoritesManager.updateChildren()
+                self.redrawAndSyncAndRedraw()
+            }
         }
     }
 
 
     private func deleteZones(_ iZones: [Zone], permanently: Bool = false, in parent: Zone? = nil, shouldGrab: Bool = true, onCompletion: Closure?) {
-        let zones = iZones.sortedByReverseOrdering()
-        let  grab = grabAppropriate(zones)
-        var count = zones.count
-
-        if count == 0 {
-            onCompletion?()
-
-            return
+        for zone in iZones {
+            zone.needProgeny()
         }
 
-        let finished: Closure = {
-            count -= 1
+        gDBOperationsManager.children(.all) { // to make sure all progeny are acted upon
+            let zones = iZones.sortedByReverseOrdering()
+            let  grab = self.grabAppropriate(zones)
+            var count = zones.count
 
-            if  count == 0 {
-                if  shouldGrab {
-                    grab?.grab()
-                }
-
+            if count == 0 {
                 onCompletion?()
-            }
-        }
 
-        for zone in zones {
-            if  zone == parent { // detect and avoid infinite recursion
-                finished()
-            } else {
-                deleteZone(zone, permanently: permanently) {
+                return
+            }
+
+            let finished: Closure = {
+                count -= 1
+
+                if  count == 0 {
+                    if  shouldGrab {
+                        grab?.grab()
+                    }
+
+                    onCompletion?()
+                }
+            }
+
+            for zone in zones {
+                if  zone == parent { // detect and avoid infinite recursion
                     finished()
+                } else {
+                    self.deleteZone(zone, permanently: permanently) {
+                        finished()
+                    }
                 }
             }
         }
@@ -835,6 +834,12 @@ class ZEditingManager: NSObject {
 
 
     private func deleteZone(_ zone: Zone, permanently: Bool = false, onCompletion: Closure?) {
+        if  zone.isTrash && zone.parent == nil {
+            onCompletion?()
+
+            return
+        }
+
         let   parent = zone.parentZone
         var deleteMe = !zone.isRoot && parent?.record != nil
 
@@ -967,7 +972,9 @@ class ZEditingManager: NSObject {
         let zone: Zone = gSelectionManager.firstGrab
         let     parent = zone.parentZone
 
-        if selectionOnly {
+        if zone.isTrash || parent?.isTrash ?? false || parent?.isRootOfFavorites ?? false {
+            return // short-circuit rediculous situations
+        } else if selectionOnly {
 
             ///////////////
             // MOVE GRAB //
@@ -1333,39 +1340,49 @@ class ZEditingManager: NSObject {
     }
 
 
-    func preserveChildrenOfGrabbedZones() {
-        let     candidate = gSelectionManager.rootMostMoveable
-        if  let    parent = candidate.parentZone {
-            var  children = [Zone] ()
-            let     index = candidate.siblingIndex
-            let     grabs = gSelectionManager.simplifiedGrabs
+    func preserveChildrenOfGrabbedZones(onCompletion: Closure?) {
+        let grabs = gSelectionManager.simplifiedGrabs
 
-            gSelectionManager.deselectGrabs()
-            gSelectionManager.clearPaste()
+        for zone in grabs {
+            zone.needProgeny()
+            zone.displayChildren()
+        }
 
-            for grab in grabs {
-                for child in grab.children {
-                    children.append(child)
+        gDBOperationsManager.children(.all) { // to make sure all progeny are acted upon
+            let     candidate = gSelectionManager.rootMostMoveable
+            if  let    parent = candidate.parentZone {
+                var  children = [Zone] ()
+                let     index = candidate.siblingIndex
+
+                gSelectionManager.deselectGrabs()
+                gSelectionManager.clearPaste()
+
+                for grab in grabs {
+                    for child in grab.children {
+                        children.append(child)
+                    }
+
+                    grab.addToPaste()
+                    self.moveToTrash(grab)
                 }
 
-                grab.addToPaste()
-                moveToTrash(grab)
+                children.sort { (a, b) -> Bool in
+                    return a.order > b.order      // reversed ordering
+                }
+
+                for child in children {
+                    parent.addAndReorderChild(child, at: index)
+                    child.addToGrab()
+                }
+
+                self.UNDO(self) { iUndoSelf in
+                    iUndoSelf.prepareUndoForDelete()
+                    iUndoSelf.deleteZones(children, shouldGrab: false) {}
+                    iUndoSelf.pasteInto(parent, honorFormerParents: true)
+                }
             }
 
-            children.sort { (a, b) -> Bool in
-                return a.order > b.order      // reversed ordering
-            }
-
-            for child in children {
-                parent.addAndReorderChild(child, at: index)
-                child.addToGrab()
-            }
-
-            self.UNDO(self) { iUndoSelf in
-                iUndoSelf.prepareUndoForDelete()
-                iUndoSelf.deleteZones(children, shouldGrab: false) {}
-                iUndoSelf.pasteInto(parent, honorFormerParents: true)
-            }
+            onCompletion?()
         }
     }
 
@@ -1482,10 +1499,18 @@ class ZEditingManager: NSObject {
         }
 
         let finish = {
-            let     into = !toBookmark ? iInto : iInto.bookmarkTarget! // grab bookmark AFTER travel
-            let addGrabs = {
-                for zone in grabs {
-                    var movable = zone
+            let into = !toBookmark ? iInto : iInto.bookmarkTarget! // grab bookmark AFTER travel
+
+            into.displayChildren()
+            into.maybeNeedChildren()
+
+            for grab in grabs {
+                grab.needProgeny()
+            }
+
+            gDBOperationsManager.children(.all) {
+                for grab in grabs {
+                    var movable = grab
 
                     if !toFavorites {
                         if  movable.isInFavorites && movable.isBookmark {
@@ -1494,7 +1519,7 @@ class ZEditingManager: NSObject {
 
                         movable.orphan()
                     } else if !movable.isInFavorites {
-                        movable = gFavoritesManager.createBookmark(for: zone, style: .favorite)
+                        movable = gFavoritesManager.createBookmark(for: grab, style: .favorite)
 
                         movable.needFlush()
                     }
@@ -1509,22 +1534,6 @@ class ZEditingManager: NSObject {
                 }
 
                 onCompletion?()
-            }
-
-            ////////////////////////////////////////////////////////////////
-            // assure children (of into) are present, then call add grabs //
-            ////////////////////////////////////////////////////////////////
-
-            into.displayChildren()
-
-            if !into.hasMissingChildren {
-                addGrabs()
-            } else {
-                into.maybeNeedChildren()
-
-                gDBOperationsManager.children(.restore) {
-                    addGrabs()
-                }
             }
         }
 

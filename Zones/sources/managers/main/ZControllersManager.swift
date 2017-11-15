@@ -91,6 +91,7 @@ class ZControllersManager: NSObject {
     func startupDataAndUI() {
         signalFor(nil, regarding: .startup)
         displayActivity(true)
+        gRemoteStoresManager.clear()
         gDBOperationsManager.startUp {
             gFavoritesManager.setup() // manifest has been fetched
             gDBOperationsManager.continueUp {

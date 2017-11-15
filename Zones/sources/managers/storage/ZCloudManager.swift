@@ -69,12 +69,12 @@ class ZCloudManager: ZRecordsManager {
 
     func save(_ onCompletion: IntClosure?) {
         let   saves = pullRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
-        let deletes = recordIDsWithMatchingStates([.needsDestroy], pull: true, batchSize: 20)
-        let   count = saves.count + deletes.count
+        let destroy = recordIDsWithMatchingStates([.needsDestroy], pull: true, batchSize: 20)
+        let   count = saves.count + destroy.count
 
         if  count > 0, let           operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
             operation              .savePolicy = .changedKeys
-            operation       .recordIDsToDelete = deletes
+            operation       .recordIDsToDelete = destroy
             operation           .recordsToSave = saves
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
                 gAlertManager.detectError(iError) { iHasError in
@@ -94,7 +94,7 @@ class ZCloudManager: ZRecordsManager {
                 // deal with saved records marked as deleted
 
                 FOREGROUND {
-                    for recordID: CKRecordID in deletes {
+                    for recordID: CKRecordID in destroy {
                         if  let zone = self.zoneForRecordID(recordID) {
                             self.unregisterZone(zone)
                         }
@@ -117,7 +117,7 @@ class ZCloudManager: ZRecordsManager {
             }
 
             if   saves.count > 0 { columnarReport("SAVE \(     saves.count)", stringForCKRecords(saves)) }
-            if deletes.count > 0 { columnarReport("DESTROY \(deletes.count)", stringForRecordIDs(deletes, in: storageMode)) }
+            if destroy.count > 0 { columnarReport("DESTROY \(destroy.count)", stringForRecordIDs(destroy, in: storageMode)) }
             start(operation)
         } else {
             onCompletion?(0)

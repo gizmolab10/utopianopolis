@@ -209,11 +209,9 @@ class ZFavoritesManager: ZCloudManager {
     func updateChildren() {
         if  gHasPrivateDatabase,
             let    children = rootZone?.children {
-            var    hasTrash = false
             var trashCopies = IndexPath()
             var       found = ZModes ()
-
-//            columnarReport(" FAVORITE", "UPDATE CHILDREN")
+            var    hasTrash = false
 
             // assure at least one favorite per db
             // call every time favorites MIGHT be altered
@@ -245,7 +243,7 @@ class ZFavoritesManager: ZCloudManager {
 
             for favorite in defaultFavorites.children {
                 if  let mode = favorite.crossLink?.storageMode,
-                    (!found.contains(mode) || favorite.isTrashRoot) {
+                    (!found.contains(mode) || favorite.isTrash) {
                     rootZone?.add(favorite)
                     favorite.clearAllStates() // erase side-effect of add
                 }
@@ -363,7 +361,7 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    @discardableResult func create(withBookmark: Zone?, _ style: ZFavoriteStyle, _ name: String?) -> Zone {
+    @discardableResult func create(withBookmark: Zone?, _ name: String?) -> Zone {
         let bookmark: Zone = withBookmark ?? Zone(storageMode: .mineMode)
         bookmark.zoneName  = name
 
@@ -372,7 +370,7 @@ class ZFavoritesManager: ZCloudManager {
 
 
     @discardableResult func create(withBookmark: Zone?, _ style: ZFavoriteStyle, parent: Zone, atIndex: Int, _ name: String?) -> Zone {
-        let bookmark: Zone = create(withBookmark: withBookmark, style, name)
+        let bookmark: Zone = create(withBookmark: withBookmark, name)
         let insertAt: Int? = atIndex == parent.count ? nil : atIndex
 
         if style != .favorite {
@@ -386,9 +384,10 @@ class ZFavoritesManager: ZCloudManager {
 
 
     @discardableResult func createBookmark(for iZone: Zone, style: ZFavoriteStyle) -> Zone {
-        var    parent: Zone = iZone.parentZone ?? rootZone!
+        var parent: Zone = iZone.parentZone ?? rootZone!
+        let     isNormal = style == .normal
 
-        if style != .normal {
+        if  !isNormal {
             let basis: ZRecord = !iZone.isBookmark ? iZone : iZone.crossLink!
 
             if  let recordName = basis.record?.recordID.recordName {
@@ -416,7 +415,7 @@ class ZFavoritesManager: ZCloudManager {
 
         bookmark?.needFlush()
 
-        if  style == .normal {
+        if  isNormal {
             parent.maybeNeedMerge()
             parent.updateRecordProperties()
         }

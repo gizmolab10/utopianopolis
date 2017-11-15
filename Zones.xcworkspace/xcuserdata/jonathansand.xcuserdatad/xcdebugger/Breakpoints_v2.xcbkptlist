@@ -48,7 +48,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/managers/storage/ZCloudManager.swift"
-            timestampString = "532388054.423824"
+            timestampString = "532402218.818868"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "497"
@@ -64,7 +64,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/managers/storage/ZRecordsManager.swift"
-            timestampString = "532388054.424407"
+            timestampString = "532390098.472947"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "510"
@@ -80,7 +80,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/models/ZRecord.swift"
-            timestampString = "532388054.424479"
+            timestampString = "532402218.819045"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "236"
@@ -96,7 +96,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/managers/storage/ZCloudManager.swift"
-            timestampString = "532388054.424547"
+            timestampString = "532402218.819119"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "83"
@@ -112,7 +112,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/managers/storage/ZCloudManager.swift"
-            timestampString = "532388054.424925"
+            timestampString = "532402218.81921"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "86"
@@ -128,7 +128,7 @@
                   moduleName = "Focus"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jonathansand/GitHub/zones/Zones/sources/managers/storage/ZCloudManager.swift"
-                  timestampString = "532388054.950083"
+                  timestampString = "532402219.231157"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "86"
@@ -143,7 +143,7 @@
                   moduleName = "Focus"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jonathansand/GitHub/zones/Zones/sources/managers/storage/ZCloudManager.swift"
-                  timestampString = "532388054.952834"
+                  timestampString = "532402219.234613"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "86"
@@ -151,6 +151,54 @@
                   offsetFromSymbolStart = "4">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Zones/sources/managers/storage/ZFavoritesManager.swift"
+            timestampString = "532402218.819298"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "255"
+            endingLineNumber = "255"
+            landmarkName = "updateChildren()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Zones/sources/managers/storage/ZFavoritesManager.swift"
+            timestampString = "532402218.819356"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "247"
+            endingLineNumber = "247"
+            landmarkName = "updateChildren()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Zones/sources/models/Zone.swift"
+            timestampString = "532402367.62285"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "476"
+            endingLineNumber = "476"
+            landmarkName = "unorphan()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

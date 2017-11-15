@@ -43,25 +43,24 @@ class Zone : ZRecord {
     var              isCurrentFavorite:         Bool { return self == gFavoritesManager.currentFavorite }
     var              isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
     var             hasMissingChildren:         Bool { return count < fetchableCount }
-    var            hasAccessDecoration:         Bool { return  !isWritable || directReadOnly }
+    var            hasAccessDecoration:         Bool { return !isWritable || directReadOnly }
     var             showAccessChanging:         Bool { return !isWritable && directWritable }
+    var              onlyShowToggleDot:         Bool { return isRootOfFavorites || (!isOSX && self == gHere) }
     var              isWritableByUseer:         Bool { return isWritable || gOnboardingManager.userHasAccess(self) }
     var               accessIsChanging:         Bool { return (!isWritable && directWritable) || (isWritable && directReadOnly) || isRootOfFavorites }
     var                directRecursive:         Bool { return directAccess == nil ? true  : directAccess! == .eRecurse }
     var                 directWritable:         Bool { return directAccess == nil ? false : directAccess! == .eProgenyWritable }
     var                 directReadOnly:         Bool { return directAccess == nil ? false : directAccess! == .eProgenyReadOnly }
-    var                  isInFavorites:         Bool { return isRootOfFavorites || (self != parentZone && parentZone?.isInFavorites ?? false) }
+    var                  isInFavorites:         Bool { return  isRootOfFavorites || (self != parentZone && parentZone?.isInFavorites ?? false) }
     var                  hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
     var                  hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
     var                   showChildren:         Bool { return isRootOfFavorites || gManifest.showsChildren(self) }
-    var                    isTrashRoot:         Bool { return zoneName == gTrashNameKey }
     var                     isBookmark:         Bool { return crossLink != nil }
     var                     isSelected:         Bool { return gSelectionManager.isSelected(self) }
-    var                      isInTrash:         Bool { return parentZone?.isTrashRoot ?? false }
     var                      isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
-    var                      isVisible:         Bool { return !isRootOfFavorites && (isOSX || self != gHere) }
-    var                      isDeleted:         Bool { return gTrash != self && gTrash?.spawned(self) ?? false }
+    var                      isDeleted:         Bool { return !isTrash && gTrash?.spawned(self) ?? false }
     var                       hasColor:         Bool { return zoneColor != nil && zoneColor != "" }
+    var                        isTrash:         Bool { return zoneName == gTrashNameKey }
 
 
     var decoration: String {
@@ -397,7 +396,7 @@ class Zone : ZRecord {
 
     var ancestralProgenyAccess: ZoneAccess {
         get {
-            if  isTrashRoot {
+            if  isTrash {
                 return .eProgenyWritable
             } else if let t = bookmarkTarget {
                 return t.ancestralProgenyAccess // go up bookmark target's (NOT bookmark's) ancestor path
@@ -421,7 +420,7 @@ class Zone : ZRecord {
 
 
     var isWritable: Bool {
-        if  isTrashRoot {
+        if  isTrash {
             return true
         } else if let t  = bookmarkTarget {
             return    t.isWritable
@@ -438,7 +437,7 @@ class Zone : ZRecord {
     func toggleWritable() {
         if  let t = bookmarkTarget {
             t.toggleWritable()
-        } else if isTrashRoot {
+        } else if isTrash {
             ancestralProgenyAccess     = .eProgenyWritable
         } else if isWritableByUseer {
             ownerID                    = nil

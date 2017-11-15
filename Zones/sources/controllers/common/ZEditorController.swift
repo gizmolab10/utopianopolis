@@ -177,9 +177,9 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 scrollEvent(move: state == .changed, to: location)
             } else if gIsDragging {
                 dragMaybeStopEvent(iGesture)
-            } else if state == .changed { // changed
+            } else if state == .changed {       // changed
                 rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
-            } else if state != .began {   // ended
+            } else if state != .began {         // ended, cancelled or failed
                 rubberbandUpdate(nil)
             } else if let dot = dotHitTest(iGesture) {
                 if  !dot.isToggle {
@@ -188,7 +188,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                     cleanupAfterDrag()
                     gEditingManager.toggleDotActionOnZone(zone)   // no movement
                 }
-            } else {                      // began
+            } else {                            // began
                 rubberbandStartEvent(location, iGesture)
             }
         }

@@ -98,10 +98,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         if  let           view = superview {
             snp.removeConstraints()
             snp.makeConstraints { make in
-                let zoneHidden = !(widgetZone?.isVisible ?? true)
-                let  textWidth = text!.widthForFont(preferredFont)
-                let     height = gGenericOffset.height
-                let      width = zoneHidden ? 0.0 : textWidth + 5.0
+                let textWidth = text!.widthForFont(preferredFont)
+                let  hideText = widgetZone?.onlyShowToggleDot ?? true
+                let    height = gGenericOffset.height
+                let     width = hideText ? 0.0 : textWidth + 5.0
 
                 make.centerY.equalTo(view).offset(-verticalTextOffset)
                 make   .left.equalTo(view).offset(gGenericOffset.width + 4.0)
