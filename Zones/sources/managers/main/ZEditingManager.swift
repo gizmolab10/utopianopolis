@@ -85,36 +85,38 @@ class ZEditingManager: NSObject {
 
 
     func validateKey(_ key: String) -> Bool {
+        if gWorkMode != .editMode {
+            return false
+        }
+
         let type = menuType(for: key)
         var valid = !isEditing
 
-        if gWorkMode == .editMode {
-            if  valid {
-                let   undo = undoManager
-                let      s = gSelectionManager
-                let wGrabs = s.writableGrabsCount
-                let  paste = s.pasteableZones.count
-                let  grabs = s.currentGrabs  .count
-                let  shown = s.currentGrabsHaveVisibleChildren
-                let  write = s.currentMoveable.isWritableByUseer
-                let pWrite = s.currentMoveable.parentZone?.isWritableByUseer ?? false
+        if  valid {
+            let   undo = undoManager
+            let      s = gSelectionManager
+            let wGrabs = s.writableGrabsCount
+            let  paste = s.pasteableZones.count
+            let  grabs = s.currentGrabs  .count
+            let  shown = s.currentGrabsHaveVisibleChildren
+            let  write = s.currentMoveable.isWritableByUseer
+            let pWrite = s.currentMoveable.parentZone?.isWritableByUseer ?? false
 
-                switch type {
-                case .Parent:    valid =              pWrite
-                case .Alter:     valid =               write
-                case .Paste:     valid =  paste > 0 && write
-                case .UseGrabs:  valid = wGrabs > 0 && write
-                case .Multiple:  valid =  grabs > 1
-                case .Children:  valid = (shown     && write) || (grabs > 1 && pWrite)
-                case .SelectAll: valid =  shown
-                case .Favorites: valid = gHasPrivateDatabase
-                case .Undo:      valid = undo.canUndo
-                case .Redo:      valid = undo.canRedo
-                case .Always:    valid = true
-                }
-            } else if key.arrow == nil {
-                valid = [.Undo, .Redo, .Alter, .Parent, .SelectAll].contains(type)
+            switch type {
+            case .Parent:    valid =              pWrite
+            case .Alter:     valid =               write
+            case .Paste:     valid =  paste > 0 && write
+            case .UseGrabs:  valid = wGrabs > 0 && write
+            case .Multiple:  valid =  grabs > 1
+            case .Children:  valid = (shown     && write) || (grabs > 1 && pWrite)
+            case .SelectAll: valid =  shown
+            case .Favorites: valid = gHasPrivateDatabase
+            case .Undo:      valid = undo.canUndo
+            case .Redo:      valid = undo.canRedo
+            case .Always:    valid = true
             }
+        } else if key.arrow == nil {
+            valid = [.Undo, .Redo, .Alter, .Parent, .SelectAll].contains(type)
         }
 
         return valid

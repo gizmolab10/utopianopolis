@@ -149,9 +149,9 @@ class ZRecordsManager: NSObject {
     func addRecord(_ iRecord: ZRecord, for states: [ZRecordState]) {
         if  let ckrecord = iRecord.record {
             if addCKRecord(ckrecord, for: states) {
-                if ckrecord[gZoneNameKey] == nil {
-                    columnarReport("  REGISTER", "no name")
-                }
+//                if ckrecord[gZoneNameKey] == nil {
+//                    columnarReport("  REGISTER", "no name")
+//                }
             }
         }
     }

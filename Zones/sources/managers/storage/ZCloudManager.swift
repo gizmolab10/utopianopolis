@@ -79,7 +79,11 @@ class ZCloudManager: ZRecordsManager {
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
                 gAlertManager.detectError(iError) { iHasError in
                     if  iHasError {
-                        if  let     ck = iError as? CKError, ck.code == .serverRecordChanged, // oplock error
+                        let notDestroy = iRecord == nil || !destroy.contains(iRecord!.recordID)
+
+                        if  notDestroy,
+                            let     ck = iError as? CKError,
+                            ck.code   == .serverRecordChanged, // oplock error
                             let record = self.recordForCKRecord(iRecord) {
                             record.maybeNeedMerge()
                         } else {

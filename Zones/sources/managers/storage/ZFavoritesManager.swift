@@ -197,6 +197,7 @@ class ZFavoritesManager: ZCloudManager {
             setupDefaultFavorites()
             rootZone!.needProgeny()
             rootZone!.displayChildren()
+            rootZone!.unmarkForAllOfStates([.needsCreate])
         }
     }
 
