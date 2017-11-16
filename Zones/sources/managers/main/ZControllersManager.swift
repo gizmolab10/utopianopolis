@@ -100,6 +100,8 @@ class ZControllersManager: NSObject {
                 gFavoritesManager.updateChildren()
                 self.signalFor(nil, regarding: .redraw)
                 gDBOperationsManager.finishUp {
+                    gWorkMode = .editMode
+
                     self.signalFor(nil, regarding: .redraw)
                 }
             }

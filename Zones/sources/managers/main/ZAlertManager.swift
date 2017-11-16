@@ -95,6 +95,28 @@ class ZAlertManager : NSObject {
     }
 
 
+    func alertNoInternet(_ onCompletion: @escaping Closure) {
+        let message = "In System Preferences, please enable network access"
+
+        alert("To gain full use of this app,", message, "Click here to begin") { iAlert, iState in
+            switch iState {
+            case .eShow:
+                iAlert?.showAlert { iResponse in
+                    switch iResponse {
+                    case .eYes:
+                        self.openSystemPreferences()
+                        onCompletion()
+                    default: break
+                    }
+                }
+            default:
+                self.openSystemPreferences()
+                onCompletion()
+            }
+        }
+    }
+
+
     func alertSystemPreferences(_ onCompletion: @escaping Closure) {
         let message = "In System Preferences, please \n  1. click on iCloud,\n  2. sign in,\n  3. turn on iCloud drive"
 

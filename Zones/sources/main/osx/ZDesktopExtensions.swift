@@ -344,6 +344,7 @@ extension ZoneTextWidget {
 
             captureText(force: false)
             resignFirstResponder()
+            deselectAllText()
 
             switch value {
             case NSBacktabTextMovement: key = gSpaceKey

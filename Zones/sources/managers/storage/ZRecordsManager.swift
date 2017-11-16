@@ -148,23 +148,33 @@ class ZRecordsManager: NSObject {
 
     func addRecord(_ iRecord: ZRecord, for states: [ZRecordState]) {
         if  let ckrecord = iRecord.record {
-            addCKRecord(ckrecord, for: states)
+            if addCKRecord(ckrecord, for: states) {
+                if ckrecord[gZoneNameKey] == nil {
+                    columnarReport("  REGISTER", "no name")
+                }
+            }
         }
     }
 
 
-    func addCKRecord(_ iRecord: CKRecord, for states: [ZRecordState]) {
+    @discardableResult func addCKRecord(_ iRecord: CKRecord, for states: [ZRecordState]) -> Bool {
+        var wasAdded = false
+
         for state in states {
             if !hasCKRecord(iRecord, forAnyOf: [state]) {
                 var records = recordsForState(state)
 
                 if !records.contains(iRecord) {
                     records.append(iRecord)
+
+                    wasAdded = true
                 }
 
                 recordsByState[state] = records
             }
         }
+
+        return wasAdded
     }
 
 
@@ -375,8 +385,11 @@ class ZRecordsManager: NSObject {
 
     func stringForZones(_ zones: [Zone]?) -> String {
         return zones?.apply()  { object -> (String?) in
-            if let zone = object as? Zone {
-                return zone.decoratedName
+            if  let    zone  = object as? Zone {
+                let    name  = zone.decoratedName
+                if     name != "" {
+                    return name
+                }
             }
 
             return nil
@@ -385,9 +398,12 @@ class ZRecordsManager: NSObject {
 
 
     func stringForCKRecords(_ records: [CKRecord]?) -> String {
-        return records?.apply()  { object -> (String?) in
-            if  let record = object as? CKRecord {
-                return record.decoratedName
+        return records?.apply() { object -> (String?) in
+            if  let  record  = object as? CKRecord {
+                let    name  = record.decoratedName
+                if     name != "" {
+                    return name
+                }
             }
 
             return nil
@@ -398,7 +414,10 @@ class ZRecordsManager: NSObject {
     func stringForReferences(_ references: [CKReference]?, in storageMode: ZStorageMode) -> String {
         return references?.apply()  { object -> (String?) in
             if let reference = object as? CKReference, let zone = gRemoteStoresManager.recordsManagerFor(storageMode).zoneForReference(reference) {
-                return zone.decoratedName
+                let    name  = zone.decoratedName
+                if     name != "" {
+                    return name
+                }
             }
 
             return nil
@@ -409,7 +428,10 @@ class ZRecordsManager: NSObject {
     func stringForRecordIDs(_ recordIDs: [CKRecordID]?, in storageMode: ZStorageMode) -> String {
         return recordIDs?.apply()  { object -> (String?) in
             if  let recordID = object as? CKRecordID, let record = gRemoteStoresManager.recordsManagerFor(storageMode).recordForRecordID(recordID) {
-                return record.record.decoratedName
+                let    name  = record.record.decoratedName
+                if     name != "" {
+                    return name
+                }
             }
             
             return nil

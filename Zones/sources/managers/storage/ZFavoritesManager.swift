@@ -33,6 +33,19 @@ class ZFavoritesManager: ZCloudManager {
     var                count : Int  { return rootZone?.count ?? 0 }
 
 
+    var hasTrash: Bool {
+        if  let favorites = rootZone?.children {
+            for favorite in favorites {
+                if  let target = favorite.bookmarkTarget, target.isTrash {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+
     var actionTitle: String {
         if  gHere.isGrabbed,
             let     target = currentFavorite?.bookmarkTarget {
@@ -211,7 +224,7 @@ class ZFavoritesManager: ZCloudManager {
             let    children = rootZone?.children {
             var trashCopies = IndexPath()
             var       found = ZModes ()
-            var    hasTrash = false
+            var  foundTrash = false
 
             // assure at least one favorite per db
             // call every time favorites MIGHT be altered
@@ -222,13 +235,13 @@ class ZFavoritesManager: ZCloudManager {
             }
 
             for (index, favorite) in children.enumerated() {
-                if  let     mode  = favorite.crossLink?.storageMode,
-                    let     link  = favorite.zoneLink {
-                    if      link == gTrashLink {
-                        if  hasTrash {
+                if  let mode  = favorite.crossLink?.storageMode,
+                    let link  = favorite.zoneLink {
+                    if  link == gTrashLink {
+                        if  foundTrash {
                             trashCopies.append(index)
                         } else {
-                            hasTrash   = true
+                            foundTrash = true
                         }
                     } else if !found.contains(mode) {
                         found.append(mode)
@@ -249,7 +262,7 @@ class ZFavoritesManager: ZCloudManager {
                 }
             }
 
-            if !hasTrash && gTrash != nil {
+            if !foundTrash && gTrash != nil {
                 let      trash = createBookmark(for: gTrash!, style: .addFavorite)
                 trash.zoneLink = gTrashLink
                 trash   .order = 0.999
@@ -452,7 +465,7 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func toggleFavorite(for zone: Zone) {
-        if gHasPrivateDatabase {
+        if gHasPrivateDatabase && !zone.isRoot {
             if isChildOfFavoritesRoot(zone) {
                 deleteFavorite(for:   zone)
             } else {

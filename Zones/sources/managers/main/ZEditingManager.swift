@@ -88,31 +88,33 @@ class ZEditingManager: NSObject {
         let type = menuType(for: key)
         var valid = !isEditing
 
-        if  valid {
-            let   undo = undoManager
-            let      s = gSelectionManager
-            let wGrabs = s.writableGrabsCount
-            let  paste = s.pasteableZones.count
-            let  grabs = s.currentGrabs  .count
-            let  shown = s.currentGrabsHaveVisibleChildren
-            let  write = s.currentMoveable.isWritableByUseer
-            let pWrite = s.currentMoveable.parentZone?.isWritableByUseer ?? false
+        if gWorkMode == .editMode {
+            if  valid {
+                let   undo = undoManager
+                let      s = gSelectionManager
+                let wGrabs = s.writableGrabsCount
+                let  paste = s.pasteableZones.count
+                let  grabs = s.currentGrabs  .count
+                let  shown = s.currentGrabsHaveVisibleChildren
+                let  write = s.currentMoveable.isWritableByUseer
+                let pWrite = s.currentMoveable.parentZone?.isWritableByUseer ?? false
 
-            switch type {
-            case .Parent:    valid =              pWrite
-            case .Alter:     valid =               write
-            case .Paste:     valid =  paste > 0 && write
-            case .UseGrabs:  valid = wGrabs > 0 && write
-            case .Multiple:  valid =  grabs > 1
-            case .Children:  valid = (shown     && write) || (grabs > 1 && pWrite)
-            case .SelectAll: valid =  shown
-            case .Favorites: valid = gHasPrivateDatabase
-            case .Undo:      valid = undo.canUndo
-            case .Redo:      valid = undo.canRedo
-            case .Always:    valid = true
+                switch type {
+                case .Parent:    valid =              pWrite
+                case .Alter:     valid =               write
+                case .Paste:     valid =  paste > 0 && write
+                case .UseGrabs:  valid = wGrabs > 0 && write
+                case .Multiple:  valid =  grabs > 1
+                case .Children:  valid = (shown     && write) || (grabs > 1 && pWrite)
+                case .SelectAll: valid =  shown
+                case .Favorites: valid = gHasPrivateDatabase
+                case .Undo:      valid = undo.canUndo
+                case .Redo:      valid = undo.canRedo
+                case .Always:    valid = true
+                }
+            } else if key.arrow == nil {
+                valid = [.Undo, .Redo, .Alter, .Parent, .SelectAll].contains(type)
             }
-        } else if key.arrow == nil {
-            valid = [.Undo, .Redo, .Alter, .Parent, .SelectAll].contains(type)
         }
 
         return valid
@@ -441,7 +443,7 @@ class ZEditingManager: NSObject {
             self.redrawAndSync(nil)
         }
 
-        if isCommand{
+        if isCommand {
             gFavoritesManager.refocus {
                 self.redrawAndSync()
             }
@@ -834,7 +836,7 @@ class ZEditingManager: NSObject {
 
 
     private func deleteZone(_ zone: Zone, permanently: Bool = false, onCompletion: Closure?) {
-        if  zone.isTrash && zone.parent == nil {
+        if  zone.isTrash && zone.parentZone?.isRootOfFavorites ?? true {
             onCompletion?()
 
             return
@@ -850,36 +852,41 @@ class ZEditingManager: NSObject {
         if !deleteMe {
             onCompletion?()
         } else {
-            if  let          p = parent {
-                if       zone == gHere { // this can only happen once during recursion (multiple places, below)
-                    revealParentAndSiblingsOf(zone) {
-                        gHere  = p
+            if  let     p = parent,
+                zone     == gHere { // this can only happen once during recursion (multiple places, below)
+                revealParentAndSiblingsOf(zone) {
+                    gHere = p
 
-                        self.deleteZone(zone, onCompletion: onCompletion) // recurse
-                    }
-
-                    return
+                    self.deleteZone(zone, onCompletion: onCompletion) // recurse
                 }
+
+                return
             }
 
-            if !permanently && !zone.isDeleted {
-                zone.addToPaste()
-                moveToTrash(zone)
-            } else {
+            // let isAnnoyingBookmark = zone.bookmarkTarget?.isTrash ?? false && !(zone.parentZone?.isRootOfFavorites ?? true)
+
+            if permanently || zone.isDeleted { // } || isAnnoyingBookmark {
                 zone.orphan()
 
                 zone.traverseAllProgeny { iZone in
                     iZone.needDestroy()
                 }
+            } else {
+                zone.addToPaste()
+                moveToTrash(zone)
             }
 
             if  let            p = parent {
-                p.fetchableCount = p.count
+                p.fetchableCount = p.count // delete alters the count
             }
 
             if  zone.isInFavorites {
-                gFavoritesManager.updateChildren()
+                gFavoritesManager.updateChildren() // delete alters the list
             }
+
+            ////////////////////////////////////////////
+            // remove a favorite whose target is zone //
+            ////////////////////////////////////////////
 
             var trashables = [Zone] ()
 
@@ -896,16 +903,23 @@ class ZEditingManager: NSObject {
             }
 
             onCompletion?()
-            zone.needBookmarks()
 
-            gDBOperationsManager.bookmarks {
-                let bookmarks = gRemoteStoresManager.bookmarksFor(zone)
+            ////////////////////////////////////////////
+            // remove a bookmark whose target is zone //
+            ////////////////////////////////////////////
 
-                if bookmarks.count == 0 {
-                    onCompletion?()
-                } else {
-                    self.deleteZones(bookmarks, permanently: permanently, shouldGrab: false) { iZone in // recurse
+            if !zone.isBookmark {
+                zone.needBookmarks()
+
+                gDBOperationsManager.bookmarks {
+                    let bookmarks = gRemoteStoresManager.bookmarksFor(zone)
+
+                    if bookmarks.count == 0 {
                         onCompletion?()
+                    } else {
+                        self.deleteZones(bookmarks, permanently: permanently, shouldGrab: false) { iZone in // recurse
+                            onCompletion?()
+                        }
                     }
                 }
             }

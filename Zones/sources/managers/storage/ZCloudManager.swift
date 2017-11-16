@@ -662,23 +662,27 @@ class ZCloudManager: ZRecordsManager {
                                 }
                             }
 
-                            let  child = self.zoneForRecord(record)
-                            let parent = child.parentZone
+                            let    fetched = self.zoneForRecord(record)
+                            let     parent = fetched.parentZone
+                            let extraTrash = fetched.zoneLink == gTrashLink && parent?.isRootOfFavorites ?? false && gFavoritesManager.hasTrash
 
-                            if  child.isRoot || parent == child {
-                                child.parentZone = nil // fix a mysterious bug that causes a HANG ... a root can NOT be a child, by definition
-
-                                child.needFlush()
+                            if  fetched.isRoot {
+                                fetched.parent = nil  // avoids HANG ... a root can NOT be a child, by definition
+                            } else if fetched == parent || extraTrash {
+                                fetched.needDestroy()
+                                // self-parenting causes infinite recursion AND extra trash favorites are annoying
+                                // destroy either on fetch
                             } else {
-                                logic.propagateNeeds(to: child, progenyNeeded)
+                                logic.propagateNeeds(to: fetched, progenyNeeded)
 
-                                if  let p = parent, !p.hasChildMatchingRecordName(of: child) {
+                                if  let p = parent,
+                                    !p.hasChildMatchingRecordName(of: fetched) {
 
                                     ///////////////////////////////////////
                                     // no child has matching record name //
                                     ///////////////////////////////////////
 
-                                    if  let    link = child.crossLink,
+                                    if  let    link = fetched.crossLink,
 
                                         ///////////////////////////////////////////
                                         // bookmarks need fetch, color, writable //
@@ -695,7 +699,7 @@ class ZCloudManager: ZRecordsManager {
                                         manager.addRecord(link, for: states)
                                     }
 
-                                    p.add(child)
+                                    p.add(fetched)
                                     p.respectOrder()
                                 }
                             }

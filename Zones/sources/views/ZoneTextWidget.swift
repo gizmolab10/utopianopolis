@@ -39,7 +39,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                         let  grab = s.currentlyEditingZone == zone
                         textColor = !grab ? ZColor.black : zone.grabbedTextColor
 
-                        abortEditing()
+                        abortEditing() // NOTE: this does NOT remove selection highlight !!!!!!!
+                        deselectAllText()
 
                         if  grab {
                             s.clearEdit()
@@ -63,6 +64,13 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     s.clearEdit()
                 }
             }
+        }
+    }
+
+
+    func deselectAllText() {
+        if  let editor = currentEditor() {
+            select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: 0)
         }
     }
 

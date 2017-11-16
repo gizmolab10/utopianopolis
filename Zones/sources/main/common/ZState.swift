@@ -30,6 +30,7 @@ enum ZFileMode: Int {
 
 
 enum ZWorkMode: Int {
+    case startupMode
     case searchMode
     case essayMode
     case editMode
@@ -70,7 +71,7 @@ struct ZSettingsViewID: OptionSet {
 
 
 let          gClearColor                     = ZColor(white: 1.0, alpha: 0.0)
-var            gWorkMode                     = ZWorkMode.editMode
+var            gWorkMode                     = ZWorkMode.startupMode
 var            gFileMode                     = ZFileMode.cloud
 var       gTextCapturing                     = false
 var    gCloudUnavailable                     = false
