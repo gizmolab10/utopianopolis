@@ -189,10 +189,10 @@ class ZFavoritesManager: ZCloudManager {
 
     func setup() {
         if  gHasPrivateDatabase && rootZone == nil {
-            let                       record = CKRecord(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: gFavoriteRootNameKey))
-            rootZone                         = Zone(record: record, storageMode: .mineMode)
-            rootZone!              .zoneName = gFavoritesKey
-            rootZone!.ancestralProgenyAccess = .eProgenyWritable
+            let             record = CKRecord(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: gFavoriteRootNameKey))
+            rootZone               = Zone(record: record, storageMode: .mineMode)
+            rootZone!    .zoneName = gFavoritesKey
+            rootZone!.directAccess = .eChildrenWritable
 
             setupDefaultFavorites()
             rootZone!.needProgeny()
@@ -363,9 +363,9 @@ class ZFavoritesManager: ZCloudManager {
 
                 return true
             }
-        }
 
-        performance("oops!")
+            performance("oops!")
+        }
 
         return false
     }

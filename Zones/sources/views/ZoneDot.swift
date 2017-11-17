@@ -239,7 +239,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                             path.fill()
                         }
                     } else if                       zone.hasAccessDecoration {
-                        let type: ZDecorationType = zone.showAccessChanging ? .sideDot : .vertical
+                        let type: ZDecorationType = zone.directChildrenWritable ? .sideDot : .vertical
                         fillColor                 = shouldHighlight ? gBackgroundColor : strokeColor
 
                         fillColor.setFill()

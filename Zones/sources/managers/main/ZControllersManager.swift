@@ -95,13 +95,13 @@ class ZControllersManager: NSObject {
         gDBOperationsManager.startUp {
             gFavoritesManager.setup() // manifest has been fetched
             gDBOperationsManager.continueUp {
-                self.displayActivity(false) // now on foreground thread
                 gHere.grab()
                 gFavoritesManager.updateChildren()
                 self.signalFor(nil, regarding: .redraw)
                 gDBOperationsManager.finishUp {
                     gWorkMode = .editMode
 
+                    self.displayActivity(false)
                     self.signalFor(nil, regarding: .redraw)
                 }
             }
@@ -156,12 +156,16 @@ class ZControllersManager: NSObject {
     }
 
 
-    func syncToCloudAndSignalFor(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
-        signalFor(zone, regarding: regarding, onCompletion: onCompletion)
-
+    func syncAndSave(_ zone: Zone? = nil, onCompletion: Closure?) {
         gDBOperationsManager.sync {
             onCompletion?()
             gFileManager.save(to: zone?.storageMode)
         }
+    }
+
+
+    func syncToCloudAndSignalFor(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
+        signalFor(zone, regarding: regarding, onCompletion: onCompletion)
+        syncAndSave(zone, onCompletion: onCompletion)
     }
 }

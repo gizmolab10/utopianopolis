@@ -61,7 +61,7 @@ class ZOnboardingManager : ZOperationsManager {
 
 
     func userHasAccess(_ zone: Zone) -> Bool {
-        return zone.ownerID == nil || zone.ownerID!.recordName == gUserRecordID || isSpecialUser
+        return zone.ownerID == nil // || zone.ownerID!.recordName == gUserRecordID || isSpecialUser
     }
 
 

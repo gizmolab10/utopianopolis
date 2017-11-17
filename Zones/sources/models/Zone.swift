@@ -12,54 +12,55 @@ import CloudKit
 
 
  enum ZoneAccess: Int {
-    case eProgenyReadOnly
-    case eProgenyWritable
     case eRecurse
+    case eFullReadOnly
+    case eChildrenWritable
+    case eFullWritable
  }
 
 
 class Zone : ZRecord {
 
 
-    dynamic var            parent: CKReference?
-    dynamic var          zoneName:      String?
-    dynamic var          zoneLink:      String?
-    dynamic var         zoneColor:      String?
-    dynamic var         zoneOwner: CKReference?
-    dynamic var         zoneOrder:    NSNumber?
-    dynamic var         zoneCount:    NSNumber?
-    dynamic var       zoneProgeny:    NSNumber?
-    dynamic var zoneProgenyAccess:    NSNumber?
-    dynamic var    zoneParentLink:      String?
-    var               _parentZone:        Zone?
-    var                _crossLink:     ZRecord?
-    var                  children =      [Zone] ()
-    var                    _color:      ZColor?
-    var                     count:          Int { return children.count }
-    var                    widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
-    var             unwrappedName:       String { return zoneName ?? "empty" }
-    var             decoratedName:       String { return "\(unwrappedName)\(decoration)" }
-    var          grabbedTextColor:       ZColor { return color.darker(by: 3.0) }
-    var         isCurrentFavorite:         Bool { return self == gFavoritesManager.currentFavorite }
-    var         isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
-    var        hasMissingChildren:         Bool { return count < fetchableCount }
-    var       hasAccessDecoration:         Bool { return !isWritable || directReadOnly }
-    var        showAccessChanging:         Bool { return !isWritable && directWritable }
-    var         onlyShowToggleDot:         Bool { return isRootOfFavorites || (!isOSX && self == gHere) }
-    var         isWritableByUseer:         Bool { return isWritable || gOnboardingManager.userHasAccess(self) }
-    var          accessIsChanging:         Bool { return (!isWritable && directWritable) || (isWritable && directReadOnly) || isRootOfFavorites }
-    var           directRecursive:         Bool { return directAccess == nil ? true  : directAccess! == .eRecurse }
-    var            directWritable:         Bool { return directAccess == nil ? false : directAccess! == .eProgenyWritable }
-    var            directReadOnly:         Bool { return directAccess == nil ? false : directAccess! == .eProgenyReadOnly }
-    var             isInFavorites:         Bool { return  isRootOfFavorites || (self != parentZone && parentZone?.isInFavorites ?? false) }
-    var             hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
-    var             hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
-    var              showChildren:         Bool { return isRootOfFavorites || gManifest.showsChildren(self) }
-    var                isBookmark:         Bool { return crossLink != nil }
-    var                isSelected:         Bool { return gSelectionManager.isSelected(self) }
-    var                 isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
-    var                  hasColor:         Bool { return zoneColor != nil && zoneColor != "" }
-    var                   isTrash:         Bool { return zoneName == gTrashNameKey }
+    dynamic var         parent: CKReference?
+    dynamic var       zoneName:      String?
+    dynamic var       zoneLink:      String?
+    dynamic var      zoneColor:      String?
+    dynamic var      zoneOwner: CKReference?
+    dynamic var      zoneOrder:    NSNumber?
+    dynamic var      zoneCount:    NSNumber?
+    dynamic var     zoneAccess:    NSNumber?
+    dynamic var    zoneProgeny:    NSNumber?
+    dynamic var zoneParentLink:      String?
+    var            _parentZone:        Zone?
+    var             _crossLink:     ZRecord?
+    var               children =      [Zone] ()
+    var                 _color:      ZColor?
+    var                  count:          Int { return children.count }
+    var                 widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
+    var          unwrappedName:       String { return zoneName ?? "empty" }
+    var          decoratedName:       String { return "\(unwrappedName)\(decoration)" }
+    var       grabbedTextColor:       ZColor { return color.darker(by: 3.0) }
+    var      isCurrentFavorite:         Bool { return self == gFavoritesManager.currentFavorite }
+    var      isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
+    var      onlyShowToggleDot:         Bool { return isRootOfFavorites || (!isOSX && self == gHere) }
+    var     hasMissingChildren:         Bool { return count < fetchableCount }
+    var directChildrenWritable:         Bool { return   directAccess == .eChildrenWritable }
+    var    hasAccessDecoration:         Bool { return !isTextEditable || directChildrenWritable }
+    var      isWritableByUseer:         Bool { return  isTextEditable || gOnboardingManager.userHasAccess(self) }
+    var       accessIsChanging:         Bool { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
+    var        directRecursive:         Bool { return directAccess == .eRecurse }
+    var         directWritable:         Bool { return directAccess == .eFullWritable }
+    var         directReadOnly:         Bool { return directAccess == .eFullReadOnly || directChildrenWritable }
+    var          hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
+    var          hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
+    var          isInFavorites:         Bool { return isRootOfFavorites || (self != parentZone && parentZone?.isInFavorites ?? false) }
+    var           showChildren:         Bool { return isRootOfFavorites || gManifest.showsChildren(self) }
+    var             isBookmark:         Bool { return crossLink != nil }
+    var             isSelected:         Bool { return gSelectionManager.isSelected(self) }
+    var              isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
+    var               hasColor:         Bool { return zoneColor != nil && zoneColor != "" }
+    var                isTrash:         Bool { return zoneName == gTrashNameKey }
 
 
     var isDeleted: Bool {
@@ -128,9 +129,9 @@ class Zone : ZRecord {
                 #keyPath(zoneCount),
                 #keyPath(zoneOrder),
                 #keyPath(zoneOwner),
+                #keyPath(zoneAccess),
                 #keyPath(zoneProgeny),
-                #keyPath(zoneParentLink),
-                #keyPath(zoneProgenyAccess)]
+                #keyPath(zoneParentLink)]
     }
 
 
@@ -396,78 +397,114 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    var directAccess: ZoneAccess? {
-        if  isBookmark {
-            return bookmarkTarget?.directAccess
-        } else if let value = zoneProgenyAccess?.intValue,
-            value          <= ZoneAccess.eRecurse.rawValue,
-            value          >= 0 {
-            return ZoneAccess(rawValue: value)
-        }
-
-        return nil
-    }
-
-
-    var ancestralProgenyAccess: ZoneAccess {
+    var directAccess: ZoneAccess {
         get {
-            if  isTrash {
-                return .eProgenyWritable
-            } else if let t = bookmarkTarget {
-                return t.ancestralProgenyAccess // go up bookmark target's (NOT bookmark's) ancestor path
-            } else if  directAccess != .eRecurse {
-                return directWritable ? .eProgenyWritable : .eProgenyReadOnly
-            } else if let p = parentZone, p != self, p.hasCompleteAncestorPath(toWritable: true) {
-                return p.ancestralProgenyAccess // go further up ancestor path
+            if  isTrash || isRootOfFavorites {
+                return .eChildrenWritable
+            } else if  let    target = bookmarkTarget {
+                return target.directAccess
+            } else if let value = zoneAccess?.intValue,
+                value          <= ZoneAccess.eFullWritable.rawValue,
+                value          >= 0 {
+                return ZoneAccess(rawValue: value)!
             }
 
-            return .eProgenyReadOnly
+            return .eRecurse // default value
         }
 
         set {
-            if  zoneProgenyAccess?.intValue != newValue.rawValue {
-                zoneProgenyAccess            = NSNumber(value: newValue.rawValue)
+            let                 value = newValue.rawValue
 
-                needFlush()
+            if  zoneAccess?.intValue != value {
+                zoneAccess            = NSNumber(value: value)
             }
         }
     }
 
 
-    var isWritable: Bool {
-        if  isTrash {
-            return true
-        } else if let t  = bookmarkTarget {
-            return    t.isWritable
-        } else if let p  = parentZone, p != self {
-            return    p.ancestralProgenyAccess == .eProgenyWritable  // go up ancestor path
-        } else if let a  = zoneProgenyAccess?.intValue {    // root or orphan
-            return    a == ZoneAccess.eProgenyWritable.rawValue
+    var ancestorAccess: ZoneAccess {
+        var      access = directAccess
+
+        traverseAncestors { iZone -> ZTraverseStatus in
+            if   iZone != self {
+                access  = iZone.directAccess
+            }
+
+            return access == .eRecurse ? .eContinue : .eStop
         }
 
-        return false
+        return access
+    }
+
+
+    var isTextEditable: Bool {
+        if let t = bookmarkTarget {
+            return    t.isTextEditable
+        } else if directWritable {
+            return true
+        } else if directReadOnly {
+            return false
+        } else if let p = parentZone {
+            return p.directChildrenWritable ? true : p.isTextEditable
+        }
+
+        return true
+    }
+
+
+    var isMovableByUser: Bool {
+        if  let p = parentZone, p.ancestorAccess != .eFullReadOnly {
+            return !directChildrenWritable && !directReadOnly
+        }
+
+        return gOnboardingManager.userHasAccess(self)
+    }
+
+
+    var nextAccess: ZoneAccess {
+        var      access = directAccess
+
+        if isWritableByUseer {
+            let ancestor = ancestorAccess
+            let readOnly = ancestor == .eFullReadOnly
+
+            if directChildrenWritable {
+                access  = .eFullWritable
+            } else if directWritable {
+                access  = .eFullReadOnly
+            } else if directReadOnly || readOnly {
+                access  = .eChildrenWritable
+            } else if !readOnly {
+                access  = .eFullReadOnly
+            }
+
+            if  access == ancestor {
+                access  = .eRecurse
+            }
+        }
+
+        return access
     }
 
 
     func toggleWritable() {
-        if  let t = bookmarkTarget {
-            t.toggleWritable()
-        } else if isTrash {
-            ancestralProgenyAccess     = .eProgenyWritable
-        } else if isWritableByUseer {
-            if  let               name = gUserRecordID {
-                ownerID                = CKRecordID(recordName: name)
-            }
+        if  storageMode == .everyoneMode && !isTrash && !isRootOfFavorites {
+            if  let t = bookmarkTarget {
+                t.toggleWritable()
+            } else if isWritableByUseer {
+                if  let     name = gUserRecordID {
+                    ownerID      = CKRecordID(recordName: name)
+                }
 
-            if  !directRecursive, accessIsChanging, let p = parentZone, (p.accessIsChanging || (!p.directReadOnly && p.isWritable == isWritable)) {
-                ancestralProgenyAccess = .eRecurse
-            } else if !isWritable {
-                ancestralProgenyAccess = .eProgenyWritable
-            } else {
-                ancestralProgenyAccess = .eProgenyReadOnly
-            }
+                let         next = nextAccess
+                let       direct = directAccess
 
-            needFlush()
+                if  direct      != next {
+                    directAccess = next
+
+                    needFlush()
+                }
+            }
         }
     }
 

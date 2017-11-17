@@ -45,7 +45,7 @@ class ZSelectionManager: NSObject {
         var count = 0
 
         for zone in currentGrabs {
-            if zone.isWritable {
+            if zone.isTextEditable {
                 count += 1
             }
         }

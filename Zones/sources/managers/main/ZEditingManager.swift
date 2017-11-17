@@ -38,7 +38,7 @@ class ZEditingManager: NSObject {
 
     var    previousEvent:         ZEvent?
     var editedTextWidget: ZoneTextWidget? { return gSelectionManager.currentlyEditingZone?.widget?.textWidget }
-    var        isEditing:           Bool  { return editedTextWidget == nil ? false : editedTextWidget!.isTextEditing }
+    var        isEditing:           Bool  { return editedTextWidget == nil ? false : editedTextWidget!.isFirstResponder }
 
 
     var undoManager: UndoManager {
@@ -57,29 +57,32 @@ class ZEditingManager: NSObject {
 
 
     enum ZMenuType: Int {
-        case Always    = 0
-        case UseGrabs  = 1
-        case Paste     = 2
-        case Undo      = 3
-        case Redo      = 4
-        case SelectAll = 5
-        case Alter     = 6
-        case Multiple  = 7
-        case Children  = 8
-        case Parent    = 9
-        case Favorites = 10
+        case Undo
+        case Sort
+        case Child
+        case Alter
+        case Always
+        case Parent
+        case Favorites
+        case SelectAll
+
+        case Redo
+        case Paste
+        case UseGrabs
+        case Multiple
 }
 
 
     func menuType(for key: String) -> ZMenuType {
         switch key {
-        case "z":                                                            return .Undo
-        case "u", "l", "w", "-", "\r", gSpaceKey, gBackspaceKey, gDeleteKey: return .Alter
-        case "b", gTabKey:                                                   return .Parent
-        case "r", "o":                                                       return .Children
-        case ";", "'", "/":                                                  return .Favorites
-        case "a":                                                            return .SelectAll
-        default:                                                             return .Always
+        case "z":                                     return .Undo
+        case "r", "o":                                return .Sort
+        case "v", "x", gSpaceKey:                     return .Child
+        case "u", "l", "w", "-", "\r":                return .Alter
+        case "b", gTabKey, gBackspaceKey, gDeleteKey: return .Parent
+        case ";", "'", "/":                           return .Favorites
+        case "a":                                     return .SelectAll
+        default:                                      return .Always
         }
     }
 
@@ -95,20 +98,23 @@ class ZEditingManager: NSObject {
         if  valid {
             let   undo = undoManager
             let      s = gSelectionManager
+            let  mover = s.currentMoveable
             let wGrabs = s.writableGrabsCount
             let  paste = s.pasteableZones.count
             let  grabs = s.currentGrabs  .count
             let  shown = s.currentGrabsHaveVisibleChildren
-            let  write = s.currentMoveable.isWritableByUseer
-            let pWrite = s.currentMoveable.parentZone?.isWritableByUseer ?? false
+            let parent = mover.isMovableByUser
+            let  write = mover.isWritableByUseer
+            let   sort = mover.ancestorAccess != .eFullReadOnly
 
             switch type {
-            case .Parent:    valid =              pWrite
+            case .Parent:    valid =               parent
+            case .Child:     valid =               sort
             case .Alter:     valid =               write
             case .Paste:     valid =  paste > 0 && write
             case .UseGrabs:  valid = wGrabs > 0 && write
             case .Multiple:  valid =  grabs > 1
-            case .Children:  valid = (shown     && write) || (grabs > 1 && pWrite)
+            case .Sort:      valid = (shown     && sort) || (grabs > 1 && parent)
             case .SelectAll: valid =  shown
             case .Favorites: valid = gHasPrivateDatabase
             case .Undo:      valid = undo.canUndo
@@ -188,6 +194,10 @@ class ZEditingManager: NSObject {
         let  isOption = flags.isOption
         let   isShift = flags.isShift
 
+        if isOption && !gSelectionManager.currentMoveable.isMovableByUser {
+            return
+        }
+
         switch arrow {
         case .down:     moveUp(false, selectionOnly: !isOption, extreme: isCommand, extend: isShift)
         case .up:       moveUp(true,  selectionOnly: !isOption, extreme: isCommand, extend: isShift)
@@ -198,7 +208,7 @@ class ZEditingManager: NSObject {
                 case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand)
                 default: break
                 }
-            } else {
+            } else if !isOption {
 
                 //////////////////
                 // GENERATIONAL //
@@ -433,6 +443,9 @@ class ZEditingManager: NSObject {
     func travelThroughBookmark(_ bookmark: Zone) {
         gTravelManager.travelThrough(bookmark) { object, kind in
             self.redrawAndSync()
+//            gControllersManager.syncAndSave {
+//                self.signalFor(nil, regarding: .redraw)
+//            }
         }
     }
 
@@ -996,7 +1009,7 @@ class ZEditingManager: NSObject {
             // MOVE GRAB //
             ///////////////
 
-            if !(parent?.isRootOfFavorites ?? false) {
+            if !(parent?.isRootOfFavorites ?? true) {
                 if zone.isRoot {
                     self.redrawAndSync()
                 } else if !extreme {

@@ -19,11 +19,12 @@ import Foundation
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
-    var                     widgetZone : Zone? { return widget?.widgetZone }
+    var               isFirstResponder : Bool  { if let first = window?.firstResponder { return first == currentEditor() } else { return false } }
     override var         preferredFont : ZFont { return (widgetZone?.isInFavorites ?? false) ? gFavoritesFont : gWidgetFont }
+    var                     widgetZone : Zone? { return widget?.widgetZone }
     weak var                    widget : ZoneWidget?
-    var                   originalText = ""
     var                 _isTextEditing = false
+    var                   originalText = ""
 
 
     override var isTextEditing: Bool {
@@ -146,7 +147,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     @discardableResult override func becomeFirstResponder() -> Bool {
         if !gSelectionManager.isEditingStateChanging && widgetZone?.isWritableByUseer ?? false {
 
-            if window?.firstResponder == self {
+            if  isFirstResponder {
                 gSelectionManager.deferEditingStateChange()
             }
 

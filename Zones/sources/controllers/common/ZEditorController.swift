@@ -223,7 +223,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                             zone.grab()
                         }
                         
-                        signalFor(nil, regarding: .data)
+                        // signalFor(nil, regarding: .data)
                     }
                 } else {
                     gSelectionManager.deselect()
@@ -306,58 +306,60 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
 
     func dragEvent(_ iGesture: ZGestureRecognizer?) -> Bool {
-        if  let (isMain, dropNearest, location) = widgetNearest(iGesture),
-            let   draggedZone = gDraggedZone {
-            var      dropZone = dropNearest.widgetZone
-            let          same = gSelectionManager.currentGrabs.contains(dropZone!)
-            let     dropIndex = dropZone?.siblingIndex
-            let          here = isMain ? gHere : gFavoritesManager.rootZone
-            let      dropHere = dropZone == here
-            let      relation = relationOf(location, to: dropNearest.textWidget)
-            let useDropParent = relation != .upon && !dropHere
-            ;        dropZone = same ? nil : useDropParent ? dropZone?.parentZone : dropZone
-            let lastDropIndex = dropZone == nil ? 0 : dropZone!.count
-            var         index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!gInsertionsFollow || same) ? 0 : lastDropIndex)
-            ;           index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
-            let     dragIndex = draggedZone.siblingIndex
-            let     sameIndex = dragIndex == index || dragIndex == index - 1
-            let  dropIsParent = dropZone?.children.contains(draggedZone) ?? false
-            let    spawnCycle = bookmarkCycle(dropZone) || dropZone?.wasSpawnedByAGrab() ?? false
-            let        isNoop = same || spawnCycle || (sameIndex && dropIsParent) || index < 0
-            let         prior = gDragDropZone?.widget
-            let       dropNow = doneState.contains(iGesture!.state)
-            gDragDropIndices  = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
-            gDragDropZone     = isNoop || dropNow ? nil : dropZone
-            gDragRelation     = isNoop || dropNow ? nil : relation
-            gDragPoint        = isNoop || dropNow ? nil : location
+        if  let draggedZone       = gDraggedZone {
+            if  draggedZone.isMovableByUser,
+                let (isMain, dropNearest, location) = widgetNearest(iGesture) {
+                var      dropZone = dropNearest.widgetZone
+                let          same = gSelectionManager.currentGrabs.contains(dropZone!)
+                let     dropIndex = dropZone?.siblingIndex
+                let          here = isMain ? gHere : gFavoritesManager.rootZone
+                let      dropHere = dropZone == here
+                let      relation = relationOf(location, to: dropNearest.textWidget)
+                let useDropParent = relation != .upon && !dropHere
+                ;        dropZone = same ? nil : useDropParent ? dropZone?.parentZone : dropZone
+                let lastDropIndex = dropZone == nil ? 0 : dropZone!.count
+                var         index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!gInsertionsFollow || same) ? 0 : lastDropIndex)
+                ;           index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
+                let     dragIndex = draggedZone.siblingIndex
+                let     sameIndex = dragIndex == index || dragIndex == index - 1
+                let  dropIsParent = dropZone?.children.contains(draggedZone) ?? false
+                let    spawnCycle = bookmarkCycle(dropZone) || dropZone?.wasSpawnedByAGrab() ?? false
+                let        isNoop = same || spawnCycle || (sameIndex && dropIsParent) || index < 0
+                let         prior = gDragDropZone?.widget
+                let       dropNow = doneState.contains(iGesture!.state)
+                gDragDropIndices  = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
+                gDragDropZone     = isNoop || dropNow ? nil : dropZone
+                gDragRelation     = isNoop || dropNow ? nil : relation
+                gDragPoint        = isNoop || dropNow ? nil : location
 
-            if !isNoop && !dropNow && !dropHere && index > 0 {
-                gDragDropIndices?.add(index - 1)
-            }
-
-            prior?           .displayForDrag() // erase  child lines
-            dropZone?.widget?.displayForDrag() // redraw child lines
-            gEditorView?    .setNeedsDisplay() // redraw drag (line and dot)
-
-            columnarReport(relation, dropZone?.unwrappedName)
-
-            if dropNow, let drop = dropZone, !isNoop {
-                let   toBookmark = drop.isBookmark
-                var     at: Int? = index
-
-                if toBookmark {
-                    at           = gInsertionsFollow ? nil : 0
-                } else if dragIndex != nil && dragIndex! <= index && dropIsParent {
-                    at!         -= 1
+                if !isNoop && !dropNow && !dropHere && index > 0 {
+                    gDragDropIndices?.add(index - 1)
                 }
 
-                gEditingManager.moveGrabbedZones(into: drop, at: at) {
-                    self.restartGestureRecognition()
-                    self.redrawAndSync(nil)
-                }
-            }
+                prior?           .displayForDrag() // erase  child lines
+                dropZone?.widget?.displayForDrag() // redraw child lines
+                gEditorView?    .setNeedsDisplay() // redraw drag (line and dot)
 
-            return dropNow
+                columnarReport(relation, dropZone?.unwrappedName)
+
+                if dropNow, let drop = dropZone, !isNoop {
+                    let   toBookmark = drop.isBookmark
+                    var     at: Int? = index
+
+                    if toBookmark {
+                        at           = gInsertionsFollow ? nil : 0
+                    } else if dragIndex != nil && dragIndex! <= index && dropIsParent {
+                        at!         -= 1
+                    }
+
+                    gEditingManager.moveGrabbedZones(into: drop, at: at) {
+                        self.restartGestureRecognition()
+                        self.redrawAndSync(nil)
+                    }
+                }
+
+                return dropNow
+            }
         }
 
         return true
@@ -441,7 +443,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             editorView?.setAllSubviewsNeedDisplay()
         }
         
-        signalFor(nil, regarding: .preferences)
+        // signalFor(nil, regarding: .preferences)
         editorView?.setAllSubviewsNeedDisplay()
     }
 
