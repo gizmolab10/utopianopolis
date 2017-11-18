@@ -103,9 +103,9 @@ class ZEditingManager: NSObject {
             let  paste = s.pasteableZones.count
             let  grabs = s.currentGrabs  .count
             let  shown = s.currentGrabsHaveVisibleChildren
-            let parent = mover.isMovableByUser
             let  write = mover.isWritableByUseer
-            let   sort = mover.ancestorAccess != .eFullReadOnly
+            let   sort = mover.isSortableByUser
+            let parent = mover.isMovableByUser
 
             switch type {
             case .Parent:    valid =               parent
@@ -145,35 +145,37 @@ class ZEditingManager: NSObject {
 
             if  isEditing {
                 switch key {
-                case "a":         if isCommand { gSelectionManager.currentlyEditingZone?.widget?.textWidget.selectAllText() }
-                case gSpaceKey:   if isControl { addIdea() }
-                default:          break
+             // case "f":        if isCommand { find() }
+                case "a":        if isCommand { gSelectionManager.currentlyEditingZone?.widget?.textWidget.selectAllText() }
+             // case "?":        if isCommand { gSettingsController?.displayViewFor(id: .Help) }
+                case gSpaceKey:  if isControl { addIdea() }
+                default:         break
                 }
             } else if isWindow, let arrow = key.arrow {
                 handleArrow(arrow, flags: flags)
             } else {
                 switch key {
-                case "f":         find()
-                case "-":         addLine()
-                case "r":         reverse()
-                case "c":         recenter()
-                case "a":         selectAll()
-                case "p":         printHere()
-                case "b":         addBookmark()
-                case "o":         orderByLength()
-                case "w":         toggleWritable()
-                case "s":         selectCurrentFavorite()
-                case "u", "l":    alterCase(up: key == "u")
-                case ";":         doFavorites(true,    false)
-                case "'":         doFavorites(isShift, isOption)
-                case "?":         gSettingsController?.displayViewFor(id: .Help)
-                case "/":         focus(on: gSelectionManager.firstGrab, isCommand)
-                case gTabKey:     addNext(containing: isOption) { iChild in iChild.edit() }
-                case ",", ".":    gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
-                case "z":         if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
-                case gSpaceKey:   if isOption || isWindow || isControl { addIdea() }
+                case "f":        find()
+                case "-":        addLine()
+                case "r":        reverse()
+                case "c":        recenter()
+                case "a":        selectAll()
+                case "p":        printHere()
+                case "b":        addBookmark()
+                case "o":        orderByLength()
+                case "w":        toggleWritable()
+                case "s":        selectCurrentFavorite()
+                case "u", "l":   alterCase(up: key == "u")
+                case ";":        doFavorites(true,    false)
+                case "'":        doFavorites(isShift, isOption)
+                case "?":        gSettingsController?.displayViewFor(id: .Help)
+                case "/":        focus(on: gSelectionManager.firstGrab, isCommand)
+                case gTabKey:    addNext(containing: isOption) { iChild in iChild.edit() }
+                case ",", ".":   gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
+                case "z":        if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
+                case gSpaceKey:  if isOption || isWindow || isControl { addIdea() }
                 case gBackspaceKey,
-                     gDeleteKey:  if isOption || isWindow { delete(permanently: isCommand && isControl && isOption && isWindow, preserveChildren: !isCommand && !isControl && isOption && isWindow) }
+                     gDeleteKey: if isOption || isWindow { delete(permanently: isCommand && isControl && isOption && isWindow, preserveChildren: !isCommand && !isControl && isOption && isWindow) }
                 case "\r":
                     if hasWidget && gSelectionManager.hasGrab {
                         if isCommand {
@@ -182,7 +184,7 @@ class ZEditingManager: NSObject {
                             gSelectionManager.editCurrent()
                         }
                     }
-                default:          break
+                default:         break
                 }
             }
         }

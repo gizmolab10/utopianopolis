@@ -35,6 +35,7 @@ enum ZSignalKind: Int {
     case search
     case redraw
     case startup
+    case information
     case preferences
 }
 

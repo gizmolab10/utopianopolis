@@ -16,10 +16,14 @@ import Foundation
 #endif
 
 
+var gCrippleUserAccess = false
+
+
 class ZCloudToolsController: ZGenericTableController {
 
 
     enum ZToolKind: Int {
+        case eDebug
         case eRetry
         case eTrash
         case eGather
@@ -31,12 +35,13 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     override func numberOfRows(in tableView: ZTableView) -> Int {
-        return gIsLate ? 1 : 0
+        return 1 + (gIsLate ? 1 : 0)
     }
 
 
     func text(for kind: ZToolKind) -> String {
         switch kind {
+        case .eDebug:    return "Debug User Access"
         case .eTrash:    return "Show Trash"
         case .eRetry:    return "Retry Cloud"
         case .eGather:   return "Gather Trash"
@@ -60,6 +65,7 @@ class ZCloudToolsController: ZGenericTableController {
 
             if  let kind = ZToolKind(rawValue: row) {
                 switch kind {
+                case .eDebug:    self.toggleUserAccess()
                 case .eRetry:    gDBOperationsManager.unHang()
                 case .eTrash:    self.showTrashCan()
                 case .eGather:   self.gatherAndShowTrash()
@@ -74,6 +80,11 @@ class ZCloudToolsController: ZGenericTableController {
 
     // MARK:- actions
     // MARK:-
+
+
+    func toggleUserAccess() {
+        gCrippleUserAccess = !gCrippleUserAccess
+    }
 
 
     func showTrashCan() {

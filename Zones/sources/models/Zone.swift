@@ -49,6 +49,7 @@ class Zone : ZRecord {
     var    hasAccessDecoration:         Bool { return !isTextEditable || directChildrenWritable }
     var      isWritableByUseer:         Bool { return  isTextEditable || gOnboardingManager.userHasAccess(self) }
     var       accessIsChanging:         Bool { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
+    var       isSortableByUser:         Bool { return ancestorAccess != .eFullReadOnly || gOnboardingManager.userHasAccess(self) }
     var        directRecursive:         Bool { return directAccess == .eRecurse }
     var         directWritable:         Bool { return directAccess == .eFullWritable }
     var         directReadOnly:         Bool { return directAccess == .eFullReadOnly || directChildrenWritable }
@@ -453,8 +454,11 @@ class Zone : ZRecord {
 
 
     var isMovableByUser: Bool {
-        if  let p = parentZone, p.ancestorAccess != .eFullReadOnly {
-            return !directChildrenWritable && !directReadOnly
+        if  let p = parentZone,
+            p.ancestorAccess != .eFullReadOnly,
+            !directChildrenWritable,
+            !directReadOnly {
+            return true
         }
 
         return gOnboardingManager.userHasAccess(self)

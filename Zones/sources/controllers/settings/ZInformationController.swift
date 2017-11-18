@@ -35,19 +35,21 @@ class ZInformationController: ZGenericController {
     }
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
-        let                     count = gRemoteStoresManager.recordsManagerFor(storageMode).undeletedCount
-        let                     total = gRemoteStoresManager.rootProgenyCount // TODO wrong manager
-        totalCountLabel?        .text = "of \(total), retrieved: \(count)"
-        graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
-        fractionInMemory?.doubleValue = Double(count)
-        fractionInMemory?   .maxValue = Double(total)
+        if ![.search, .found].contains(kind) {
+            let                     count = gRemoteStoresManager.recordsManagerFor(storageMode).undeletedCount
+            let                     total = gRemoteStoresManager.rootProgenyCount // TODO wrong manager
+            totalCountLabel?        .text = "of \(total), retrieved: \(count)"
+            graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
+            fractionInMemory?.doubleValue = Double(count)
+            fractionInMemory?   .maxValue = Double(total)
 
-        if kind != .startup {
-            levelLabel?         .text = "level: \(gSelectionManager.rootMostMoveable.level)"
-        }
+            if kind != .startup {
+                levelLabel?         .text = "level: \(gSelectionManager.rootMostMoveable.level)"
+            }
 
-        if let                version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
-            versionLabel?       .text = "Focus version \(version)"
+            if let                version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
+                versionLabel?       .text = "Focus version \(version)"
+            }
         }
     }
 }

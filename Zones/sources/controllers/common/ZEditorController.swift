@@ -147,7 +147,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
     
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
-        if ![.search, .found, .startup].contains(kind) {
+        if [.datum, .data, .redraw].contains(kind) { // ignore for preferences, search, information, startup
             if gWorkMode != .editMode {
                 editorView?.snp.removeConstraints()
             } else if !gEditingManager.isEditing {
@@ -166,10 +166,12 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         // only called by gesture system //
         ///////////////////////////////////
         
-        if  let  gesture = iGesture as? ZKeyPanGestureRecognizer,
-            let    flags = gesture.modifiers {
-            let location = gesture.location(in: editorView)
-            let    state = gesture.state
+        if  gWorkMode        != .editMode {
+            gSearchManager.exitSearchMode()
+        } else if let gesture = iGesture as? ZKeyPanGestureRecognizer,
+            let         flags = gesture.modifiers {
+            let      location = gesture.location(in: editorView)
+            let         state = gesture.state
 
             if isEditingText(at: location) {
                 restartGestureRecognition()     // let text editor consume the gesture
@@ -223,7 +225,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                             zone.grab()
                         }
                         
-                        // signalFor(nil, regarding: .data)
+                         signalFor(nil, regarding: .information)
                     }
                 } else {
                     gSelectionManager.deselect()
