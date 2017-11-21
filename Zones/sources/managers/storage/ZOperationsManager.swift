@@ -13,10 +13,11 @@ import Foundation
 enum ZOperationID: Int {
     case onboard
     case cloud
+    case refetch    // user defaults list of record ids
     case root
     case file
     case manifest   // zones which show children
-    case here
+    case here       // needs manifest
     case children
     case fetch      // after children so favorite targets resolve properly
     case bookmarks
@@ -31,6 +32,7 @@ enum ZOperationID: Int {
 
     case emptyTrash
     case completion
+    case remember
     case undelete
     case create
     case merge
@@ -54,8 +56,10 @@ enum ZOperationID: Int {
 class ZOperationsManager: NSObject {
 
 
-    var onCloudResponse :   AnyClosure? = nil
     var   operationText :       String  { return String(describing: currentOp) }
+    var onCloudResponse :   AnyClosure? = nil
+    var debugTimerCount :           Int = 0
+    var     _debugTimer :        Timer? = nil
     var     lastOpStart :         Date? = nil
     var       currentOp = ZOperationID.none
     let           queue = OperationQueue()
@@ -64,6 +68,28 @@ class ZOperationsManager: NSObject {
 
     func invoke(_ identifier: ZOperationID, _ logic: ZRecursionLogic? = nil, cloudCallback: AnyClosure?) {}
     func performBlock(for operationID: ZOperationID, with logic: ZRecursionLogic? = nil, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {}
+
+
+    var debugTimer: Bool {
+        get { return true }
+        set {
+            let fire: TimerClosure = { iTimer in
+                if self.debugTimerCount % 10 == 0 || self._debugTimer?.isValid == false {
+                    self.columnarReport("---- TIME ----", "\(Float(self.debugTimerCount) / 10.0) -----------")
+                }
+
+                self.debugTimerCount += 1
+            }
+
+            if debug && newValue {
+                _debugTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: fire)
+                fire(_debugTimer!)
+            } else if _debugTimer != nil && !newValue {
+                _debugTimer?.invalidate()
+                fire(_debugTimer!)
+            }
+        }
+    }
 
 
     func setupAndRunUnsafe(_ operationIDs: [ZOperationID], logic: ZRecursionLogic?, onCompletion: @escaping Closure) {

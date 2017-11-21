@@ -36,32 +36,76 @@ class Zone : ZRecord {
     var             _crossLink:     ZRecord?
     var               children =      [Zone] ()
     var                 _color:      ZColor?
-    var                  count:          Int { return children.count }
+    var                  count:         Int  { return children.count }
     var                 widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
-    var          unwrappedName:       String { return zoneName ?? "empty" }
-    var          decoratedName:       String { return "\(unwrappedName)\(decoration)" }
-    var       grabbedTextColor:       ZColor { return color.darker(by: 3.0) }
-    var      isCurrentFavorite:         Bool { return self == gFavoritesManager.currentFavorite }
-    var      isRootOfFavorites:         Bool { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
-    var      onlyShowToggleDot:         Bool { return isRootOfFavorites || (!isOSX && self == gHere) }
-    var     hasMissingChildren:         Bool { return count < fetchableCount }
-    var directChildrenWritable:         Bool { return   directAccess == .eChildrenWritable }
-    var    hasAccessDecoration:         Bool { return !isTextEditable || directChildrenWritable }
-    var      isWritableByUseer:         Bool { return  isTextEditable || gOnboardingManager.userHasAccess(self) }
-    var       accessIsChanging:         Bool { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
-    var       isSortableByUser:         Bool { return ancestorAccess != .eFullReadOnly || gOnboardingManager.userHasAccess(self) }
-    var        directRecursive:         Bool { return directAccess == .eRecurse }
-    var         directWritable:         Bool { return directAccess == .eFullWritable }
-    var         directReadOnly:         Bool { return directAccess == .eFullReadOnly || directChildrenWritable }
-    var          hasZonesBelow:         Bool { return hasAnyZonesAbove(false) }
-    var          hasZonesAbove:         Bool { return hasAnyZonesAbove(true) }
-    var          isInFavorites:         Bool { return isRootOfFavorites || (self != parentZone && parentZone?.isInFavorites ?? false) }
-    var           showChildren:         Bool { return isRootOfFavorites || gManifest.showsChildren(self) }
-    var             isBookmark:         Bool { return crossLink != nil }
-    var             isSelected:         Bool { return gSelectionManager.isSelected(self) }
-    var              isGrabbed:         Bool { return gSelectionManager .isGrabbed(self) }
-    var               hasColor:         Bool { return zoneColor != nil && zoneColor != "" }
-    var                isTrash:         Bool { return zoneName == gTrashNameKey }
+    var               linkName:      String? { return name(from: zoneLink) }
+    var          unwrappedName:      String  { return zoneName ?? "empty" }
+    var          decoratedName:      String  { return "\(unwrappedName)\(decoration)" }
+    var       grabbedTextColor:      ZColor  { return color.darker(by: 3.0) }
+    var      isCurrentFavorite:        Bool  { return self == gFavoritesManager.currentFavorite }
+    var      isRootOfFavorites:        Bool  { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
+    var      onlyShowToggleDot:        Bool  { return isRootOfFavorites || (!isOSX && self == gHere) }
+    var     hasMissingChildren:        Bool  { return count < fetchableCount }
+    var directChildrenWritable:        Bool  { return   directAccess == .eChildrenWritable }
+    var    hasAccessDecoration:        Bool  { return !isTextEditable || directChildrenWritable }
+    var      isWritableByUseer:        Bool  { return  isTextEditable || gOnboardingManager.userHasAccess(self) }
+    var       accessIsChanging:        Bool  { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
+    var       isSortableByUser:        Bool  { return ancestorAccess != .eFullReadOnly || gOnboardingManager.userHasAccess(self) }
+    var        directRecursive:        Bool  { return directAccess == .eRecurse }
+    var         directWritable:        Bool  { return directAccess == .eFullWritable }
+    var         directReadOnly:        Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
+    var          hasZonesBelow:        Bool  { return hasAnyZonesAbove(false) }
+    var          hasZonesAbove:        Bool  { return hasAnyZonesAbove(true) }
+    var          isInFavorites:        Bool  { return isRootOfFavorites || (self != parentZone && parentZone?.isInFavorites ?? false) }
+    var           showChildren:        Bool  { return isRootOfFavorites || gManifest.showsChildren(self) }
+    var             isBookmark:        Bool  { return crossLink != nil }
+    var             isSelected:        Bool  { return gSelectionManager.isSelected(self) }
+    var              isGrabbed:        Bool  { return gSelectionManager .isGrabbed(self) }
+    var               hasColor:        Bool  { return zoneColor != nil && zoneColor != "" }
+    var                isTrash:        Bool  { return zoneName == gTrashNameKey }
+
+
+    convenience init(storageMode: ZStorageMode?) {
+        self.init(record: CKRecord(recordType: gZoneTypeKey), storageMode: storageMode)
+    }
+
+
+    // MARK:- properties
+    // MARK:-
+
+
+    class func cloudProperties() -> [String] {
+        return [#keyPath(parent),
+                #keyPath(zoneLink),
+                #keyPath(zoneName),
+                #keyPath(zoneColor),
+                #keyPath(zoneCount),
+                #keyPath(zoneOrder),
+                #keyPath(zoneOwner),
+                #keyPath(zoneAccess),
+                #keyPath(zoneProgeny),
+                #keyPath(zoneParentLink)]
+    }
+
+
+    override func cloudProperties() -> [String] {
+        return super.cloudProperties() + Zone.cloudProperties()
+    }
+
+
+    var hasFetchedBookmark: Bool {
+        if  let identifier = record?.recordID.recordName {
+            for     zone in gAllZones {
+                if  zone.alreadyExists, let linkName = zone.linkName {
+                    if linkName == identifier {
+                        return true
+                    }
+                }
+            }
+        }
+
+        return false
+    }
 
 
     var isDeleted: Bool {
@@ -118,32 +162,9 @@ class Zone : ZRecord {
     }
 
 
-    // MARK:- properties
-    // MARK:-
-
-
-    class func cloudProperties() -> [String] {
-        return [#keyPath(parent),
-                #keyPath(zoneLink),
-                #keyPath(zoneName),
-                #keyPath(zoneColor),
-                #keyPath(zoneCount),
-                #keyPath(zoneOrder),
-                #keyPath(zoneOwner),
-                #keyPath(zoneAccess),
-                #keyPath(zoneProgeny),
-                #keyPath(zoneParentLink)]
-    }
-
-
-    convenience init(storageMode: ZStorageMode?) {
-        self.init(record: CKRecord(recordType: gZoneTypeKey), storageMode: storageMode)
-    }
-
-
     var bookmarkTarget: Zone? {
-        if  let link = crossLink, let mode = link.storageMode {
-            return gRemoteStoresManager.cloudManagerFor(mode).zoneForRecordID(link.record.recordID)
+        if  let    link = crossLink {
+            return link.target as? Zone
         }
 
         return nil
@@ -186,25 +207,6 @@ class Zone : ZRecord {
                 needFlush()
             }
         }
-    }
-
-
-    func zone(from link: String) -> Zone? {
-        var components:   [String] = link.components(separatedBy: ":")
-
-        if  components.count < 3 {
-            return nil
-        }
-
-        let           name: String = components[2] == "" ? "root" : components[2]
-        let identifier: CKRecordID = CKRecordID(recordName: name)
-        let       record: CKRecord = CKRecord(recordType: gZoneTypeKey, recordID: identifier)
-        let                rawMode = components[0]
-        let    mode: ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
-        let                manager = mode == nil ? nil : gRemoteStoresManager.recordsManagerFor(mode!)
-        let                   zone = manager?.zoneForRecordID(identifier)
-
-        return zone != nil ? zone! : Zone(record: record, storageMode: mode)
     }
 
 
@@ -606,11 +608,6 @@ class Zone : ZRecord {
         } else {
             return nil
         }
-    }
-
-
-    override func cloudProperties() -> [String] {
-        return super.cloudProperties() + Zone.cloudProperties()
     }
 
 

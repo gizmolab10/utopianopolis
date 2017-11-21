@@ -90,21 +90,25 @@ class ZControllersManager: NSObject {
     
 
     func startupDataAndUI() {
+        gDBOperationsManager.debugTimer = true
+
         signalFor(nil, regarding: .startup)
         displayActivity(true)
         gRemoteStoresManager.clear()
         gDBOperationsManager.startUp {
             gFavoritesManager.setup() // manifest has been fetched
             gDBOperationsManager.continueUp {
-                gHere.grab()
-                gFavoritesManager.updateChildren()
-                self.signalFor(nil, regarding: .redraw)
-                gDBOperationsManager.finishUp {
-                    gWorkMode = .editMode
+                gWorkMode                       = .editMode
+                gDBOperationsManager.debugTimer = false
 
+                if gManifest.alreadyExists {
+                    gHere.grab()
+                    gFavoritesManager.updateChildren()
                     self.displayActivity(false)
                     self.signalFor(nil, regarding: .redraw)
                 }
+
+                gDBOperationsManager.finishUp {}
             }
         }
     }

@@ -82,15 +82,48 @@ extension NSObject {
     }
 
 
-    func manifestNameForMode(_ mode: ZStorageMode) -> String {
-        return "\(gManifestNameKey).\(mode.rawValue)"
-    }
-
-
     func UNDO<TargetType : AnyObject>(_ target: TargetType, handler: @escaping (TargetType) -> Swift.Void) {
         gUndoManager.registerUndo(withTarget:target, handler: { iTarget in
             handler(iTarget)
         })
+    }
+
+
+    // MARK:- bookmarks
+    // MARK:-
+
+
+    func name(from iLink: String?) -> String? {
+        if let link = iLink {
+            var components = link.components(separatedBy: gSeparatorKey)
+
+            if  components.count < 3 {
+                return nil
+            }
+
+            return components[2] == "" ? "root" : components[2]
+        }
+
+        return nil
+    }
+
+
+    func zone(from link: String) -> Zone? {
+        var components:   [String] = link.components(separatedBy: gSeparatorKey)
+
+        if  components.count < 3 {
+            return nil
+        }
+
+        let           name: String = components[2] == "" ? "root" : components[2]
+        let identifier: CKRecordID = CKRecordID(recordName: name)
+        let       record: CKRecord = CKRecord(recordType: gZoneTypeKey, recordID: identifier)
+        let                rawMode = components[0]
+        let    mode: ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
+        let                manager = mode == nil ? nil : gRemoteStoresManager.recordsManagerFor(mode!)
+        let                   zone = manager?.zoneForRecordID(identifier)
+
+        return zone != nil ? zone! : Zone(record: record, storageMode: mode)
     }
 }
 
@@ -129,6 +162,11 @@ extension CKRecord {
         }
 
         return ""
+    }
+
+
+    convenience init(for name: String) {
+        self.init(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: name))
     }
 
 
@@ -288,7 +326,7 @@ extension String {
             var green = 0.0
 
             for pair in pairs {
-                let values = pair.components(separatedBy: ":")
+                let values = pair.components(separatedBy: gSeparatorKey)
                 let  value = Double(values[1])!
                 let    key = values[0]
 

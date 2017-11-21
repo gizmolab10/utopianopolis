@@ -19,6 +19,18 @@ var         gRoot: Zone?   { get { return gRemoteStoresManager.rootZone }  set {
 var         gHere: Zone    { get { return gManifest.hereZone }             set { gManifest.hereZone             = newValue } }
 
 
+var gAllZones: [Zone] {
+    var zones = [Zone] ()
+
+    for mode in [ZStorageMode.everyoneMode, ZStorageMode.mineMode] {
+        let manageer = gRemoteStoresManager.cloudManagerFor(mode)
+        zones       += manageer.zonesByID.values
+    }
+
+    return zones
+}
+
+
 class ZRemoteStoresManager: NSObject {
 
 
@@ -50,7 +62,7 @@ class ZRemoteStoresManager: NSObject {
         var manifest = manifestByStorageMode[mode]
 
         if  manifest == nil {
-            let            manifestName = manifestNameForMode(mode)
+            let            manifestName = "manifest.\(mode.rawValue)"
             let    recordID: CKRecordID = CKRecordID(recordName: manifestName)
             let    record:   CKRecord   = CKRecord(recordType: gManifestTypeKey, recordID: recordID)
             manifest                    = ZManifest(record: record, storageMode: .mineMode) // every manifest gets stored in .mine
@@ -64,8 +76,8 @@ class ZRemoteStoresManager: NSObject {
 
     func cloudManagerFor(_ storageMode: ZStorageMode) -> ZCloudManager {
         return recordsManagerFor(storageMode) as! ZCloudManager
-    }
 
+    }
 
     func recordsManagerFor(_ storageMode: ZStorageMode) -> ZRecordsManager {
         if storageMode == .favoritesMode {
@@ -90,7 +102,7 @@ class ZRemoteStoresManager: NSObject {
         default:            return nil
         }
     }
-    
+
 
     func establishRoot(_ storageMode: ZStorageMode, _ onCompletion: IntClosure?) {
         switch storageMode {
@@ -100,18 +112,24 @@ class ZRemoteStoresManager: NSObject {
     }
 
 
-    func establishHere(_ storageMode: ZStorageMode, _ onCompletion: IntClosure?) {
-        let manifest = self.manifest(for: storageMode)
-        let     here = manifest.hereZone
+    func establishHere(_ iStorageMode: ZStorageMode, _ onCompletion: IntClosure?) {
+        let manifest             = self.manifest(for: iStorageMode)
+        let establishHereClosure = { self.cloudManagerFor(iStorageMode).establishHere(onCompletion) }
 
-        if storageMode == .favoritesMode, let root = gFavoritesManager.rootZone {
-            manifest.hereZone = root
-        } else if here.record != nil && here.zoneName != nil {
-            here.maybeNeedChildren()
+        if  iStorageMode         == .favoritesMode,
+            let             root = gFavoritesManager.rootZone {
+            manifest   .hereZone = root
+        } else if manifest.here != nil {
+            let             here = manifest.hereZone
+
+            if  here    .record != nil,
+                here  .zoneName != nil {
+                here.maybeNeedChildren()
+            } else {
+                return establishHereClosure()
+            }
         } else {
-            cloudManagerFor(storageMode).establishHere(onCompletion)
-
-            return
+            return establishHereClosure()
         }
 
         onCompletion?(0)

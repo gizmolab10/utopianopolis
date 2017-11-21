@@ -165,33 +165,35 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         ///////////////////////////////////
         // only called by gesture system //
         ///////////////////////////////////
-        
-        if  gWorkMode        != .editMode {
-            gSearchManager.exitSearchMode()
-        } else if let gesture = iGesture as? ZKeyPanGestureRecognizer,
-            let         flags = gesture.modifiers {
-            let      location = gesture.location(in: editorView)
-            let         state = gesture.state
 
-            if isEditingText(at: location) {
-                restartGestureRecognition()     // let text editor consume the gesture
-            } else if flags.isOption {
-                scrollEvent(move: state == .changed, to: location)
-            } else if gIsDragging {
-                dragMaybeStopEvent(iGesture)
-            } else if state == .changed {       // changed
-                rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
-            } else if state != .began {         // ended, cancelled or failed
-                rubberbandUpdate(nil)
-            } else if let dot = dotHitTest(iGesture) {
-                if  !dot.isToggle {
-                    dragStartEvent(dot, iGesture)
-                } else if let zone = dot.widgetZone {
-                    cleanupAfterDrag()
-                    gEditingManager.toggleDotActionOnZone(zone)   // no movement
+        if gManifest.alreadyExists {
+            if  gWorkMode        != .editMode {
+                gSearchManager.exitSearchMode()
+            } else if let gesture = iGesture as? ZKeyPanGestureRecognizer,
+                let         flags = gesture.modifiers {
+                let      location = gesture.location(in: editorView)
+                let         state = gesture.state
+
+                if isEditingText(at: location) {
+                    restartGestureRecognition()     // let text editor consume the gesture
+                } else if flags.isOption {
+                    scrollEvent(move: state == .changed, to: location)
+                } else if gIsDragging {
+                    dragMaybeStopEvent(iGesture)
+                } else if state == .changed {       // changed
+                    rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
+                } else if state != .began {         // ended, cancelled or failed
+                    rubberbandUpdate(nil)
+                } else if let dot = dotHitTest(iGesture) {
+                    if  !dot.isToggle {
+                        dragStartEvent(dot, iGesture)
+                    } else if let zone = dot.widgetZone {
+                        cleanupAfterDrag()
+                        gEditingManager.toggleDotActionOnZone(zone)   // no movement
+                    }
+                } else {                            // began
+                    rubberbandStartEvent(location, iGesture)
                 }
-            } else {                            // began
-                rubberbandStartEvent(location, iGesture)
             }
         }
     }
@@ -203,7 +205,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         // called by controller and gesture system //
         /////////////////////////////////////////////
         
-        if  let    gesture = iGesture {
+        if  let    gesture = iGesture, gManifest.alreadyExists { 
             let   location = gesture.location(in: editorView)
             var     inText = false
             

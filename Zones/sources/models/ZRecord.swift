@@ -73,6 +73,15 @@ class ZRecord: NSObject {
     }
 
 
+    var target: ZRecord? {
+        if  let mode = storageMode {
+            return gRemoteStoresManager.cloudManagerFor(mode).zoneForRecordID(record.recordID)
+        }
+
+        return nil
+    }
+
+
     // MARK:- overrides
     // MARK:-
 
@@ -221,13 +230,19 @@ class ZRecord: NSObject {
     func needRoot()      { markForAllOfStates([.needsRoot]) }
     func needCount()     { markForAllOfStates([.needsCount]) }
     func needColor()     { markForAllOfStates([.needsColor]) }
-    func needFetch()     { markForAllOfStates([.needsFetch]) }
     func needParent()    { markForAllOfStates([.needsParent]) }
     func needDestroy()   { markForAllOfStates([.needsDestroy]); unmarkForAllOfStates([.needsSave, .needsCreate]) }
     func needProgeny()   { markForAllOfStates([.needsProgeny]) }
     func needWritable()  { markForAllOfStates([.needsWritable]) }
     func needChildren()  { markForAllOfStates([.needsChildren]) }
     func needBookmarks() { markForAllOfStates([.needsBookmarks]) }
+
+
+    func needFetch() {
+        if !alreadyExists {
+            markForAllOfStates([.needsFetch])
+        }
+    }
 
 
     func needFlush() {

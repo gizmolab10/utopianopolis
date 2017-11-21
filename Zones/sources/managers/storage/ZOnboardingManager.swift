@@ -49,8 +49,8 @@ class ZOnboardingManager : ZOperationsManager {
             return false
         }
 
-        let     isReachable = (flags.rawValue & UInt32(kSCNetworkFlagsReachable)) != 0
-        let needsConnection = (flags.rawValue & UInt32(kSCNetworkFlagsConnectionRequired)) != 0
+        let     isReachable = flags.contains(.reachable)
+        let needsConnection = flags.contains(.connectionRequired)
 
         return isReachable && !needsConnection
     }
@@ -158,7 +158,7 @@ class ZOnboardingManager : ZOperationsManager {
 
                     onCompletion()
                 } else {
-                    // alert ... i forgot what causes this
+                    print("alert: record does not exist")
                 }
             }
         }

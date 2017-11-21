@@ -33,7 +33,7 @@ class ZPreferencesController: ZGenericController {
 
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
-        if kind != .startup {
+        if  kind != .startup {
             let                           grabbed = gSelectionManager.firstGrab
             let                    hideIdeasColor = grabbed.isBookmark || grabbed.isRootOfFavorites
             view          .zlayer.backgroundColor = CGColor.clear
@@ -77,7 +77,7 @@ class ZPreferencesController: ZGenericController {
 
         if  let     identifier = iColorBox.identifier {
             switch (identifier) {
-            case "drag targets":                 gRubberbandColor = color
+            case "drag targets":                  gRubberbandColor = color
             case   "background":                  gBackgroundColor = color
             case        "zones": gSelectionManager.firstGrab.color = color
             default:             break

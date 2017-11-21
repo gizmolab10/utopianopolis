@@ -43,11 +43,14 @@ class ZAlertManager : NSObject {
 
 
     func detectError(_ iError: Any? = nil, _ message: String? = nil, _ closure: BooleanClosure? = nil) {
-        let        hasError = iError != nil
-        gCloudUnavailable   = hasError
+        let          hasError = iError != nil
 
-        if  let error = iError as? Error {
-            mostRecentError = error
+        if  hasError {
+            gCloudUnavailable = true
+        }
+
+        if  let         error = iError as? Error {
+            mostRecentError   = error
         }
 
         closure?(hasError)
@@ -72,9 +75,10 @@ class ZAlertManager : NSObject {
         let      text = " " + (iMessage ?? "")
 
         if  let ckError: CKError = iError as? CKError {
-            if  ckError.code == CKError.notAuthenticated {
-                authAlert(closure)
-            } else {
+            switch ckError.code {
+            case .notAuthenticated: alertWith("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?", closure)
+            case .networkFailure:   alertNoInternet { closure?(true) }
+            default:
                 print(ckError.localizedDescription + text)
                 closure?(true)
             }
@@ -152,8 +156,8 @@ class ZAlertManager : NSObject {
     }
 
 
-    func authAlert(_ closure: AnyClosure? = nil) {
-        alert("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?") { iAlert, iState in
+    func alertWith(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ closure: AnyClosure? = nil) {
+        alert(iMessage, iExplain, iOkayTitle) { iAlert, iState in
             switch iState {
             case .eShow:
                 iAlert?.showAlert { iResponse in

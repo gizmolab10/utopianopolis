@@ -32,10 +32,10 @@ class ZGenericController: ZController, ZGenericControllerProtocol {
 
 
     func setup() {
-        view.zlayer.backgroundColor = gBackgroundColor.cgColor
-
         gControllersManager.register(self, iID: controllerID) { object, mode, kind in
-            if kind != .error {
+            self.view.zlayer.backgroundColor = gBackgroundColor.cgColor
+
+            if  kind != .error && gManifest.alreadyExists {
                 self.handleSignal(object, in: mode, kind: kind)
             }
         }

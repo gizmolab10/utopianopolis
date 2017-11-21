@@ -207,7 +207,7 @@ class ZFavoritesManager: ZCloudManager {
             for (index, mode) in defaultModes.enumerated() {
                 let          name = mode.rawValue
                 let      favorite = create(withBookmark: nil, .addFavorite, parent: defaultFavorites, atIndex: index, name)
-                favorite.zoneLink =  "\(name)::"
+                favorite.zoneLink =  "\(name)\(gSeparatorKey)\(gSeparatorKey)"
                 favorite   .order = Double(index) * 0.001
 
                 favorite.clearAllStates()

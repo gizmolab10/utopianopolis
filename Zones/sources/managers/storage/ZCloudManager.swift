@@ -15,10 +15,21 @@ let gContainer = CKContainer(identifier: gCloudID)
 
 
 class ZCloudManager: ZRecordsManager {
-    var cloudZonesByID = [CKRecordZoneID : CKRecordZone] ()
-    var database: CKDatabase? { return gRemoteStoresManager.databaseForMode(storageMode) }
-    var currentOperation: CKOperation? = nil
-    var currentPredicate: NSPredicate? = nil
+    var   cloudZonesByID = [CKRecordZoneID : CKRecordZone] ()
+    var         database :  CKDatabase? { return gRemoteStoresManager.databaseForMode(storageMode) }
+    var   refetchingName :       String { return "remember.\(storageMode.rawValue)" }
+    var        _manifest :   ZManifest? = nil
+    var currentOperation : CKOperation? = nil
+    var currentPredicate : NSPredicate? = nil
+
+
+    var manifest : ZManifest {
+        if  _manifest == nil {
+            _manifest = gRemoteStoresManager.manifest(for: storageMode)
+        }
+
+        return _manifest!
+    }
 
     
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
@@ -186,9 +197,9 @@ class ZCloudManager: ZRecordsManager {
 
 
     func assureRecordExists(withRecordID recordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
-        let done: RecordClosure = { (record: CKRecord?) in
+        let done: RecordClosure = { (iCKRecord: CKRecord?) in
             FOREGROUND(canBeDirect: true) {
-                onCompletion(record)
+                onCompletion(iCKRecord)
             }
         }
 
@@ -196,10 +207,10 @@ class ZCloudManager: ZRecordsManager {
             done(nil)
         } else {
             BACKGROUND {     // not stall foreground processor
-                self.database?.fetch(withRecordID: recordID) { (fetchedRecord: CKRecord?, fetchError: Error?) in
-                    gAlertManager.detectError(fetchError) { iHasError in
+                self.database?.fetch(withRecordID: recordID) { (fetchedCKRecord: CKRecord?, fetchError: Error?) in
+                    gAlertManager.alertError(fetchError) { iHasError in
                         if !iHasError {
-                            done(fetchedRecord)
+                            done(fetchedCKRecord)
                         } else {
                             let brandNew: CKRecord = CKRecord(recordType: recordType, recordID: recordID)
 
@@ -270,7 +281,7 @@ class ZCloudManager: ZRecordsManager {
                 separator = " AND "
             }
         } else {
-            predicate = String(format:"zoneLink != '-'")
+            predicate = String(format: "zoneLink != '-'")
         }
 
         return NSPredicate(format: predicate)
@@ -340,6 +351,39 @@ class ZCloudManager: ZRecordsManager {
 
     // MARK:- fetch
     // MARK:-
+
+
+    func remember(_ onCompletion: IntClosure?) {
+        var memorables = [String] ()
+
+        for      iChild in zonesByID.values {
+            if   iChild.alreadyExists,
+                (iChild.parentZone?.showChildren ?? true || iChild.hasFetchedBookmark),
+                let  name = iChild.record?.recordID.recordName,
+                !memorables.contains(name) {
+                memorables.append(name)
+            }
+        }
+
+        columnarReport("REMEMBER \(memorables.count)", "")
+
+        setString(memorables.joined(separator: gSeparatorKey), for: refetchingName)
+    }
+
+
+    func refetch(_ onCompletion: IntClosure?) {
+        if  let fetchables = getString(for: refetchingName, defaultString: "")?.components(separatedBy: gSeparatorKey) {
+            let   fetching = [ZRecordState.needsFetch]
+
+            for fetchable in fetchables {
+                if fetchable != "" {
+                    addCKRecord(CKRecord(for: fetchable), for: fetching)
+                }
+            }
+
+            fetch(onCompletion)
+        }
+    }
 
 
     func fetchTrash(_ onCompletion: IntClosure?) {
@@ -480,8 +524,8 @@ class ZCloudManager: ZRecordsManager {
                     }
 
                     self.clearCKRecords(iCKRecords, for: states)    // deferred to make sure fetch worked before clearing fetch flag
-                    self.columnarReport("FETCH", self.stringForCKRecords(iCKRecords))
-                    self.fetch(onCompletion)        // process remaining
+                    self.columnarReport("FETCH \(iCKRecords.count)", self.stringForCKRecords(iCKRecords))
+                    self.fetch(onCompletion)                        // process remaining
                 }
             }
         }
@@ -519,8 +563,6 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchManifest(_ onCompletion: IntClosure?) {
-        let manifest = gRemoteStoresManager.manifest(for: storageMode)
-
         if  manifest.alreadyExists || manifest.isMarkedForAnyOfStates([.needsCreate, .needsMerge, .needsSave]) {
             onCompletion?(0)
         } else {
@@ -528,16 +570,16 @@ class ZCloudManager: ZRecordsManager {
             let     mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
 
             mine.assureRecordExists(withRecordID: recordID, recordType: gManifestTypeKey) { (iManifestRecord: CKRecord?) in
-                if  iManifestRecord   != nil {
-                    manifest.record    = iManifestRecord
+                if  iManifestRecord     != nil {
+                    self.manifest.record = iManifestRecord
 
-                    if  let       here = manifest.here,
-                        let       mode = manifest.manifestMode {
-                        let identifier = CKRecordID(recordName: here)
-                        let      cloud = gRemoteStoresManager.cloudManagerFor(mode)
+                    if  let         here = self.manifest.here,
+                        let         mode = self.manifest.manifestMode {
+                        let   identifier = CKRecordID(recordName: here)
+                        let        cloud = gRemoteStoresManager.cloudManagerFor(mode)
 
                         cloud.assureRecordExists(withRecordID: identifier, recordType: gZoneTypeKey) { iCKRecord in
-                            manifest._hereZone = Zone(record: iCKRecord, storageMode: mode)
+                            self.manifest._hereZone = Zone(record: iCKRecord, storageMode: mode)
 
                             onCompletion?(0)
                         }
@@ -609,7 +651,7 @@ class ZCloudManager: ZRecordsManager {
                                     }
 
                                     if  states.contains(.needsWritable) {
-                                        p.needWritable()
+                                        p.maybeNeedWritable()
                                     }
 
                                     p.maybeNeedChildren()
@@ -686,21 +728,18 @@ class ZCloudManager: ZRecordsManager {
                                     // no child has matching record name //
                                     ///////////////////////////////////////
 
-                                    if  let    link = fetched.crossLink,
+                                    if  let target = fetched.bookmarkTarget {
 
-                                        ///////////////////////////////////////////
-                                        // bookmarks need fetch, color, writable //
-                                        ///////////////////////////////////////////
+                                        ///////////////////////////////////////////////////////////
+                                        // bookmark targets need color, writable and maybe fetch //
+                                        ///////////////////////////////////////////////////////////
 
-                                        let    mode = link.storageMode {
-                                        let manager = gRemoteStoresManager.recordsManagerFor(mode)
-                                        var states: [ZRecordState] = [.needsColor, .needsWritable]
-
-                                        if   !link.alreadyExists {
-                                            states.append(.needsFetch)
+                                        if !target.alreadyExists {
+                                            target.needFetch()
                                         }
 
-                                        manager.addRecord(link, for: states)
+                                        target.maybeNeedWritable()
+                                        target.maybeNeedColor()
                                     }
 
                                     p.add(fetched)
@@ -794,10 +833,8 @@ class ZCloudManager: ZRecordsManager {
 
 
     func establishHere(_ onCompletion: IntClosure?) {
-        let manifest = gRemoteStoresManager.manifest(for: storageMode)
-
         let rootCompletion = {
-            manifest.hereZone = gRoot!
+            self.manifest.hereZone = gRoot!
 
             onCompletion?(0)
         }
@@ -811,9 +848,9 @@ class ZCloudManager: ZRecordsManager {
                 if iHereRecord == nil || iHereRecord?[gZoneNameKey] == nil {
                     rootCompletion()
                 } else {
-                    let          here = self.zoneForRecord(iHereRecord!)
-                    here      .record = iHereRecord
-                    manifest.hereZone = here
+                    let               here = self.zoneForRecord(iHereRecord!)
+                    here           .record = iHereRecord
+                    self.manifest.hereZone = here
 
                     here.maybeNeedRoot()
                     here.needProgeny()
