@@ -164,7 +164,7 @@ class ZOnboardingManager : ZOperationsManager {
 
                     onCompletion()
                 } else {
-                    print("alert: record does not exist")
+                    print("alert: user record does not exist")
                 }
             }
         }

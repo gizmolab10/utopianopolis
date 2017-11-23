@@ -110,7 +110,6 @@ class ZDBOperationsManager: ZOperationsManager {
                 self.queue.isSuspended = false
             } else {
                 self      .currentMode = modes[index]      // if hung, it happened in this mode
-                self      .lastOpStart = Date()
 
                 self.invoke(operationID, logic) { (iResult: Any?) in
                     self  .lastOpStart = nil

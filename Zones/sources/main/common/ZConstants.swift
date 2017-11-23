@@ -31,7 +31,7 @@ let unselectBrightness: CGFloat = 0.98
 
 
 let       gRemoteTimeout = 10.0
-let          gLogTabStop = 15
+let          gLogTabStop = 21
 let           gBatchSize = 250
 let             gUnlevel = -1
 let             fontSize = CGFloat(17.0)

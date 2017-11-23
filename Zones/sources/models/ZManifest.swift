@@ -27,7 +27,13 @@ class ZManifest: ZRecord {
 
 
     var hereZone: Zone {
-        get { return _hereZone! }
+        get {
+            if  _hereZone == nil && here != nil {
+                _hereZone  = Zone(record: CKRecord(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: here!)), storageMode: manifestMode)
+            }
+
+            return _hereZone!
+        }
 
         set {
             if  _hereZone != newValue {
@@ -40,7 +46,9 @@ class ZManifest: ZRecord {
                 needFlush()
             }
 
-            gFavoritesManager.updateCurrentFavorite() // so user will know
+            if manifestMode == _hereZone?.storageMode {
+                gFavoritesManager.updateCurrentFavorite() // so user will know
+            }
         }
     }
 

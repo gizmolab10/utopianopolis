@@ -38,7 +38,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     override  var controllerID:  ZControllerID { return .editor }
     @IBOutlet var   editorView:  ZoneDragView?
     @IBOutlet var      spinner:  ZProgressIndicator?
-    
+    @IBOutlet var  spinnerView:  ZView?
+
     
     // MARK:- gestures
     // MARK:-
@@ -375,7 +376,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
 
     override func displayActivity(_ show: Bool) {
-        spinner?.isHidden = !show
+        spinnerView?.isHidden = !show
 
         if show {
             spinner?.startAnimating()

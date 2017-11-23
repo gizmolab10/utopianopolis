@@ -20,9 +20,9 @@ enum ZOperationID: Int {
     case here       // needs manifest
     case children
     case fetch      // after children so favorite targets resolve properly
-    case bookmarks
     case parent     // after fetch so colors resolve properly
     case save       // zones and manifests
+    case bookmarks
     case unsubscribe
     case subscribe
 
@@ -53,13 +53,15 @@ enum ZOperationID: Int {
 }
 
 
+var gDebugTimer : Timer? = nil
+var gDebugTimerCount : Int = 0
+
+
 class ZOperationsManager: NSObject {
 
 
     var   operationText :       String  { return String(describing: currentOp) }
     var onCloudResponse :   AnyClosure? = nil
-    var debugTimerCount :           Int = 0
-    var     _debugTimer :        Timer? = nil
     var     lastOpStart :         Date? = nil
     var       currentOp = ZOperationID.none
     let           queue = OperationQueue()
@@ -71,22 +73,22 @@ class ZOperationsManager: NSObject {
 
 
     var debugTimer: Bool {
-        get { return true }
+        get { return gDebugTimer?.isValid ?? false }
         set {
             let fire: TimerClosure = { iTimer in
-                if self.debugTimerCount % 10 == 0 || self._debugTimer?.isValid == false {
-                    self.columnarReport("---- TIME ----", "\(Float(self.debugTimerCount) / 10.0) -----------")
+                if gDebugTimerCount % 10 == 0 || gDebugTimer?.isValid == false {
+                   // self.columnarReport("---- TIME ----", "\(Float(gDebugTimerCount) / 10.0) -----------")
                 }
 
-                self.debugTimerCount += 1
+                gDebugTimerCount += 1
             }
 
             if debug && newValue {
-                _debugTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: fire)
-                fire(_debugTimer!)
-            } else if _debugTimer != nil && !newValue {
-                _debugTimer?.invalidate()
-                fire(_debugTimer!)
+                gDebugTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: fire)
+                fire(gDebugTimer!)
+            } else if gDebugTimer != nil && !newValue {
+                gDebugTimer?.invalidate()
+                fire(gDebugTimer!)
             }
         }
     }
@@ -103,15 +105,25 @@ class ZOperationsManager: NSObject {
         for operationID in operationIDs + [.completion] {
             let         blockOperation = BlockOperation {
                 self.queue.isSuspended = true
+                let              start = Date()
 
                 FOREGROUND {
                     self.currentOp     = operationID        // if hung, it happened inside this op
 
                     if  self.debug {
-                        self.columnarReport("  " + self.operationText, "")
+                        let    message = !self.debugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)"
+
+                        self.columnarReport("  " + self.operationText, message)
                     }
 
                     self.performBlock(for: operationID, with: logic, restoreToMode: saved) {
+                        if  self.debug && false {
+                            let   duration = Int(start.timeIntervalSinceNow) * -10
+                            let    message = "\(Float(duration) / 10.0)"
+
+                            self.columnarReport("  " + self.operationText, message)
+                        }
+                        
                         if self.currentOp == .completion {
                             onCompletion()
                         }
