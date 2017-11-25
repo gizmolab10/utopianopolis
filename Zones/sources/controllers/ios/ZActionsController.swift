@@ -90,7 +90,7 @@ class ZActionsController : ZGenericController {
         gDBOperationsManager.unHang()
         gWidgetsManager     .clear()
         gEditorController?  .clear()
-        gControllersManager .startupDataAndUI()
+        gControllersManager .startupCloudAndUI()
     }
 
 

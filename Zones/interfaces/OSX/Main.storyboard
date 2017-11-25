@@ -154,6 +154,12 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Xte-u6-NHv"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="Duplicate Idea" tag="6" keyEquivalent="d" id="5hd-1O-7Z4">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="WlD-5G-cl8"/>
+                                                        </connections>
+                                                    </menuItem>
                                                     <menuItem title="Group containing" tag="7" id="E0i-4W-ZZI">
                                                         <string key="keyEquivalent" base64-UTF8="YES">
 CQ
@@ -394,7 +400,7 @@ CQ
                                         <constraints>
                                             <constraint firstAttribute="height" constant="17" id="JJM-hu-6Pr"/>
                                         </constraints>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Retrieving your ideas" id="a2T-KG-FNZ">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="retrieving ideas from iCloud" id="a2T-KG-FNZ">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

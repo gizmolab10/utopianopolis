@@ -11,6 +11,11 @@ import Foundation
 
 
 enum ZOperationID: Int {
+
+    ///////////////////////////////////////////////////////////////////////
+    // the following operations constitute all of startup, in this order //
+    ///////////////////////////////////////////////////////////////////////
+
     case onboard
     case cloud
     case refetch    // user defaults list of record ids
@@ -23,21 +28,9 @@ enum ZOperationID: Int {
     case parent     // after fetch so colors resolve properly
     case save       // zones and manifests
     case bookmarks
+    case remember
     case unsubscribe
     case subscribe
-
-    /////////////////////////////////////////////////////////////////////
-    // the following do not participate in startup, finish up, or sync //
-    /////////////////////////////////////////////////////////////////////
-
-    case emptyTrash
-    case completion
-    case remember
-    case undelete
-    case create
-    case merge
-    case trash
-    case none
 
     /////////////////////////////////////////
     // the following constitute onboarding //
@@ -50,6 +43,18 @@ enum ZOperationID: Int {
     case fetchUserID
     case fetchUserRecord    // record
     case fetchUserIdentity
+
+    ///////////////////////////////////////////////////////////////
+    // the following do not participate in startup or onboarding //
+    ///////////////////////////////////////////////////////////////
+
+    case emptyTrash
+    case completion
+    case undelete
+    case create
+    case merge
+    case trash
+    case none // default operation
 }
 
 
@@ -72,7 +77,7 @@ class ZOperationsManager: NSObject {
     func performBlock(for operationID: ZOperationID, with logic: ZRecursionLogic? = nil, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {}
 
 
-    var debugTimer: Bool {
+    var usingDebugTimer: Bool {
         get { return gDebugTimer?.isValid ?? false }
         set {
             let fire: TimerClosure = { iTimer in
@@ -111,7 +116,7 @@ class ZOperationsManager: NSObject {
                     self.currentOp     = operationID        // if hung, it happened inside this op
 
                     if  self.debug {
-                        let    message = !self.debugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)"
+                        let    message = !self.usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)"
 
                         self.columnarReport("  " + self.operationText, message)
                     }

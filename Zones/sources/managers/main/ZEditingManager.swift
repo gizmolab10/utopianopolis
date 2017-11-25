@@ -75,14 +75,14 @@ class ZEditingManager: NSObject {
 
     func menuType(for key: String) -> ZMenuType {
         switch key {
-        case "z":                                     return .Undo
-        case "r", "o":                                return .Sort
-        case "v", "x", gSpaceKey:                     return .Child
-        case "u", "l", "w", "-", "\r":                return .Alter
-        case "b", gTabKey, gBackspaceKey, gDeleteKey: return .Parent
-        case ";", "'", "/":                           return .Favorites
-        case "a":                                     return .SelectAll
-        default:                                      return .Always
+        case "z":                                          return .Undo
+        case "r", "o":                                     return .Sort
+        case "v", "x", gSpaceKey:                          return .Child
+        case "u", "l", "w", "-", "\r":                     return .Alter
+        case "b", "d", gTabKey, gBackspaceKey, gDeleteKey: return .Parent
+        case ";", "'", "/":                                return .Favorites
+        case "a":                                          return .SelectAll
+        default:                                           return .Always
         }
     }
 
@@ -122,7 +122,7 @@ class ZEditingManager: NSObject {
             case .Always:    valid = true
             }
         } else if key.arrow == nil {
-            valid = [.Undo, .Redo, .Alter, .Parent, .SelectAll].contains(type)
+            valid = [.Undo, .Redo, .Alter, .Child, .Parent, .SelectAll].contains(type)
         }
 
         return valid
@@ -160,9 +160,10 @@ class ZEditingManager: NSObject {
                 case "r":        reverse()
                 case "c":        recenter()
                 case "a":        selectAll()
+                case "d":        duplicate()
                 case "p":        printHere()
                 case "b":        addBookmark()
-                case "o":        orderByLength()
+                case "o":        orderByLength(isOption)
                 case "w":        toggleWritable()
                 case "s":        selectCurrentFavorite()
                 case "u", "l":   alterCase(up: key == "u")
@@ -309,7 +310,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func orderByLength() {
+    func orderByLength(_ iBackwards: Bool = false) {
         var commonParent = gSelectionManager.firstGrab.parentZone ?? gSelectionManager.firstGrab
         var        zones = gSelectionManager.simplifiedGrabs
         for zone in zones {
@@ -335,14 +336,16 @@ class ZEditingManager: NSObject {
             var   end = 0.0
 
             for child in zones {
-                let order = child.order
+                let  order = child.order
+                let  after = order > end
+                let before = order < start
 
-                if  order > end {
-                    end   = order
+                if  (iBackwards && before) || (!iBackwards && after) {
+                    end    = order
                 }
 
-                if  order < start {
-                    start = order
+                if  (iBackwards && after) || (!iBackwards && before) {
+                    start  = order
                 }
             }
 
@@ -1241,6 +1244,46 @@ class ZEditingManager: NSObject {
     }
 
 
+    func duplicate() {
+        let commonParent = gSelectionManager.firstGrab.parentZone ?? gSelectionManager.firstGrab
+        var        zones = gSelectionManager.simplifiedGrabs
+        var   duplicates = [Zone] ()
+        var      indices = [Int] ()
+
+        for zone in zones {
+            if let parent = zone.parentZone, parent != commonParent {
+                return
+            }
+        }
+
+        zones.sort { (a, b) -> Bool in
+            return a.order < b.order
+        }
+
+        for zone in zones {
+            if  let index = zone.siblingIndex {
+                duplicates.append(zone.deepCopy())
+                indices.append(index)
+            }
+        }
+
+        while   var index = indices.last, let duplicate = duplicates.last, let zone = zones.last {
+            if  let     p = zone.parentZone {
+                index    += (gInsertionsFollow ? 1 : 0)
+
+                duplicate.grab()
+                p.addAndReorderChild(duplicate, at: index)
+            }
+
+            duplicates.removeLast()
+            indices   .removeLast()
+            zones     .removeLast()
+        }
+
+        redrawAndSync()
+    }
+
+
     func reverse() {
         var commonParent = gSelectionManager.firstGrab.parentZone ?? gSelectionManager.firstGrab
         var        zones = gSelectionManager.simplifiedGrabs
@@ -1251,8 +1294,8 @@ class ZEditingManager: NSObject {
         }
 
         if zones.count == 1 {
-            zones        = gSelectionManager.firstGrab.children
             commonParent = gSelectionManager.firstGrab
+            zones        = commonParent.children
         }
 
         if zones.count > 1 {

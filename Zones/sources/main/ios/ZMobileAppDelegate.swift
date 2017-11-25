@@ -30,7 +30,7 @@ class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
 
      // application.registerUserNotificationSettings(.badgeSetting)
         application.registerForRemoteNotifications()
-        gControllersManager.startupDataAndUI()
+        gControllersManager.startupCloudAndUI()
 
         return true
     }

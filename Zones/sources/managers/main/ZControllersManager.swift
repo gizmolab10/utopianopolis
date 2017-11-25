@@ -89,8 +89,8 @@ class ZControllersManager: NSObject {
     // MARK:-
     
 
-    func startupDataAndUI() {
-        gDBOperationsManager.debugTimer = true
+    func startupCloudAndUI() {
+        gDBOperationsManager.usingDebugTimer = true
 
         signalFor(nil, regarding: .startup)
         displayActivity(true)
@@ -98,17 +98,20 @@ class ZControllersManager: NSObject {
         gDBOperationsManager.startUp {
             gFavoritesManager.setup() // manifest has been fetched
             gDBOperationsManager.continueUp {
-                gWorkMode                       = .editMode
-                gDBOperationsManager.debugTimer = false
+                gWorkMode                            = .editMode
+                gDBOperationsManager.usingDebugTimer = false
+
+                self.displayActivity(false)
 
                 if gManifest.alreadyExists {
                     gHere.grab()
                     gFavoritesManager.updateChildren()
-                    self.displayActivity(false)
                     self.signalFor(nil, regarding: .redraw)
                 }
 
-                gDBOperationsManager.finishUp {}
+                gDBOperationsManager.finishUp {
+                    self.signalFor(nil, regarding: .redraw)
+                }
             }
         }
     }

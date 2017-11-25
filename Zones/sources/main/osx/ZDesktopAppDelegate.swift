@@ -9,7 +9,7 @@
 
 import Cocoa
 import CloudKit
-
+import HockeySDK
 
 var gDesktopAppDelegate: ZDesktopAppDelegate? = nil
 
@@ -34,9 +34,18 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 
             UserDefaults.standard.set(true, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraint‌​s")
             gApplication.registerForRemoteNotifications(matching: .badge)
-            gControllersManager.startupDataAndUI()
+            gControllersManager.startupCloudAndUI()
             gEventsManager.setupGlobalEventsMonitor()
         }
+    }
+
+
+    func startupHockeySDK() {
+        
+        BITHockeyManager.shared().configure(withIdentifier: "4edafe5a97fc4a2294094e71b11e5051")
+        // Do some additional configuration if needed here
+        BITHockeyManager.shared().start()
+
     }
 
 

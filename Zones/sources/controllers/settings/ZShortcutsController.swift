@@ -68,6 +68,7 @@ class ZShortcutsController: ZGenericTableController {
         "    \tA        \tselect all ideas",
         "    \tB        \tbookmark",
         "    \tC        \trecenter the graph",
+        "    \tD        \tduplicate",
         "    \tF        \tfind in cloud",
         "    \tO        \tsort by name length",
         "    \tP        \tprints the graph",

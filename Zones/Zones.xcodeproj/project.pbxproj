@@ -155,6 +155,8 @@
 		0CA04B2D1D2ECF1B001892E5 /* ZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */; };
 		0CA04B631D2ECF41001892E5 /* PadZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */; };
 		0CA04B6E1D2ECF41001892E5 /* PadZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */; };
+		0CA4DAC01FC8F5CF00F509CE /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CA4DABF1FC8F5CF00F509CE /* HockeySDK.framework */; };
+		0CA4DAC31FC8F65300F509CE /* HockeySDK.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0CA4DABF1FC8F5CF00F509CE /* HockeySDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0CAC51F01F7859F300BDCECB /* ZActionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAC51EF1F7859F300BDCECB /* ZActionsController.swift */; };
 		0CB619961FB3C4660087B066 /* ZSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */; };
 		0CB619971FB3C4660087B066 /* ZSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */; };
@@ -232,6 +234,16 @@
 				0C71173B1FAFC50500603017 /* SnapKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CA4DABE1FC8F59600F509CE /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0CA4DAC31FC8F65300F509CE /* HockeySDK.framework in CopyFiles */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -320,6 +332,7 @@
 		0CA04B691D2ECF41001892E5 /* PadZonesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PadZonesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PadZonesUITests.swift; sourceTree = "<group>"; };
 		0CA04B6F1D2ECF41001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0CA4DABF1FC8F5CF00F509CE /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = "Zones/Frameworks/HockeySDK-Mac/HockeySDK.framework"; sourceTree = "<group>"; };
 		0CAC51EF1F7859F300BDCECB /* ZActionsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZActionsController.swift; sourceTree = "<group>"; };
 		0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSearchResultsController.swift; sourceTree = "<group>"; };
 		0CB619941FB3C4660087B066 /* ZSearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSearchController.swift; sourceTree = "<group>"; };
@@ -343,6 +356,7 @@
 			files = (
 				0C6415721FA977EB0043E1CC /* SnapKit.framework in Frameworks */,
 				0CD576CF1FC27F730012FA0C /* CloudKit.framework in Frameworks */,
+				0CA4DAC01FC8F5CF00F509CE /* HockeySDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -650,6 +664,7 @@
 		0C39B3C71F198CDC0091F4D1 /* OSX */ = {
 			isa = PBXGroup;
 			children = (
+				0CA4DABF1FC8F5CF00F509CE /* HockeySDK.framework */,
 				0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */,
 				0CD921791D8F4C3200F80964 /* CloudKit.framework */,
 			);
@@ -767,6 +782,8 @@
 				0CA04B111D2ECF1A001892E5 /* Frameworks */,
 				0CA04B121D2ECF1A001892E5 /* Resources */,
 				0C401E761D2F635A000B9864 /* Embed Frameworks */,
+				0CA4DABD1FC8F52600F509CE /* ShellScript */,
+				0CA4DABE1FC8F59600F509CE /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -887,10 +904,10 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Push = {
-								enabled = 0;
+								enabled = 1;
 							};
 							com.apple.Sandbox = {
-								enabled = 0;
+								enabled = 1;
 							};
 							com.apple.iCloud = {
 								enabled = 1;
@@ -1020,6 +1037,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0CA4DABD1FC8F52600F509CE /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FILE=\"${SRCROOT}/Zones/Zones/HockeySDK-Mac/BuildAgent\"\nif [ -f \"$FILE\" ]; then\n\"$FILE\"\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0C69C9871F09CD95004D026D /* Sources */ = {
@@ -1258,7 +1291,7 @@
 				INFOPLIST_FILE = iFocus/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.zones.iphone;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.iphone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1289,7 +1322,7 @@
 				INFOPLIST_FILE = iFocus/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.zones.iphone;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.iphone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1417,11 +1450,14 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Zones/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/Zones/Frameworks",
+					"$(PROJECT_DIR)/Zones/Frameworks/HockeySDK-Mac",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/Zones/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.zones.mac;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1443,11 +1479,14 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Zones/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/Zones/Frameworks",
+					"$(PROJECT_DIR)/Zones/Frameworks/HockeySDK-Mac",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/Zones/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.zones.mac;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1532,7 +1571,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/PadZones/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.zones.ipad;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ipad;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1562,7 +1601,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/PadZones/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.zones.ipad;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ipad;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";

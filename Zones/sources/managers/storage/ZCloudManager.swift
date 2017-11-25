@@ -358,7 +358,8 @@ class ZCloudManager: ZRecordsManager {
 
         for      iChild in zonesByID.values {
             if   iChild.alreadyExists,
-                (iChild.parentZone?.showChildren ?? true || iChild.hasFetchedBookmark),
+                !iChild.isInFavorites,
+                (iChild.parentZone?.showChildren ?? false || iChild.isRoot || iChild.hasFetchedBookmark),
                 let  name = iChild.record?.recordID.recordName,
                 !memorables.contains(name) {
                 memorables.append(name)
@@ -853,7 +854,6 @@ class ZCloudManager: ZRecordsManager {
                     self.manifest.hereZone = here
 
                     here.maybeNeedRoot()
-                    here.needProgeny()
                     onCompletion?(0)
                 }
             }
@@ -880,7 +880,6 @@ class ZCloudManager: ZRecordsManager {
                 }
 
                 self.rootZone?.needFlush()
-                self.rootZone?.needProgeny()
                 self.establishTrash(onCompletion)
             }
         }
@@ -898,8 +897,6 @@ class ZCloudManager: ZRecordsManager {
                     let      trash = self.zoneForRecord(iRecord!)    // get / create trash
                     trash.zoneName = gTrashNameKey
                     self.trashZone = trash
-
-                    trash.needChildren()
                 }
 
                 onCompletion?(0)

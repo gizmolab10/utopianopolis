@@ -14,7 +14,7 @@ import CloudKit
 class ZManifest: ZRecord {
 
 
-    dynamic var here:            String?
+    dynamic var          here :  String?
     dynamic var zonesExpanded : [String]?
     var          manifestMode :  ZStorageMode?
     var             _hereZone :  Zone?

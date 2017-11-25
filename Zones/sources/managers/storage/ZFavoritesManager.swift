@@ -221,8 +221,7 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func updateChildren() {
-        if  gHasPrivateDatabase,
-            let    children = rootZone?.children {
+        if  gHasPrivateDatabase {
             var trashCopies = IndexPath()
             var       found = ZModes ()
             var  foundTrash = false
@@ -235,24 +234,26 @@ class ZFavoritesManager: ZCloudManager {
                 rootZone?.removeChild(favorite)
             }
 
-            for (index, favorite) in children.enumerated() {
-                if  let mode  = favorite.crossLink?.storageMode,
-                    let link  = favorite.zoneLink {
-                    if  link == gTrashLink {
-                        if  foundTrash {
-                            trashCopies.append(index)
-                        } else {
-                            foundTrash = true
+            if  let children = rootZone?.children {
+                for (index, favorite) in children.enumerated() {
+                    if  let mode  = favorite.crossLink?.storageMode,
+                        let link  = favorite.zoneLink {
+                        if  link == gTrashLink {
+                            if  foundTrash {
+                                trashCopies.append(index)
+                            } else {
+                                foundTrash = true
+                            }
+                        } else if !found.contains(mode) {
+                            found.append(mode)
                         }
-                    } else if !found.contains(mode) {
-                        found.append(mode)
                     }
                 }
-            }
 
-            while let index = trashCopies.last {
-                trashCopies.removeLast()
-                rootZone?.children.remove(at: index)
+                while let index = trashCopies.last {
+                    trashCopies.removeLast()
+                    rootZone?.children.remove(at: index)
+                }
             }
 
             for favorite in defaultFavorites.children {

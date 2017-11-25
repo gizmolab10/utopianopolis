@@ -87,14 +87,14 @@ class ZDBOperationsManager: ZOperationsManager {
 
 
     override func performBlock(for operationID: ZOperationID, with logic: ZRecursionLogic? = nil, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {
-        let                     isMine = [.mineMode].contains(restoreToMode)
-        var  invokeModeAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
-        let                       full = [.unsubscribe, .subscribe, .remember, .manifest, .children, .refetch, .parent, .fetch, .cloud, .root, .here].contains(operationID)
-        let  forCurrentStorageModeOnly = [.file, .completion, .onboard                                                                              ].contains(operationID)
-        let            forMineModeOnly = [.bookmarks                                                                                                ].contains(operationID)
-        let            onlyCurrentMode = !gHasPrivateDatabase || (!full && (forCurrentStorageModeOnly || isMine))
+        let                       full = [.unsubscribe, .subscribe, .remember, .manifest, .children, .refetch, .parent, .fetch, .cloud, .file, .root, .here].contains(operationID)
+        let  forCurrentStorageModeOnly = [.completion, .onboard                                                                                            ].contains(operationID)
+        let            forMineModeOnly = [.bookmarks                                                                                                       ].contains(operationID)
+        let                     isMine = restoreToMode == .mineMode
+        let            onlyCurrentMode = !gHasPrivateDatabase || !full || !(forCurrentStorageModeOnly || isMine)
         let              modes: ZModes = forMineModeOnly ? [.mineMode] : onlyCurrentMode ? [restoreToMode] : [.mineMode, .everyoneMode]
         let                     isNoop = onlyCurrentMode && isMine && !gHasPrivateDatabase
+        var  invokeModeAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
 
         invokeModeAt                   = { index in
 
