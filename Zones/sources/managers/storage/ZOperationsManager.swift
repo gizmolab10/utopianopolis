@@ -18,9 +18,9 @@ enum ZOperationID: Int {
 
     case onboard
     case cloud
-    case refetch    // user defaults list of record ids
     case root
     case file
+    case refetch    // user defaults list of record ids
     case manifest   // zones which show children
     case here       // needs manifest
     case children
@@ -51,7 +51,6 @@ enum ZOperationID: Int {
     case emptyTrash
     case completion
     case undelete
-    case create
     case merge
     case trash
     case none // default operation

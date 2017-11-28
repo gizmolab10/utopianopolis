@@ -180,9 +180,6 @@ class ZFavoritesManager: ZCloudManager {
     }
 
 
-
-
-
     // MARK:- setup
     // MARK:-
 
@@ -197,7 +194,6 @@ class ZFavoritesManager: ZCloudManager {
             setupDefaultFavorites()
             rootZone!.needProgeny()
             rootZone!.displayChildren()
-            rootZone!.unmarkForAllOfStates([.needsCreate])
         }
     }
 
@@ -270,7 +266,7 @@ class ZFavoritesManager: ZCloudManager {
                 trash   .order = 0.999
 
                 trash.clearAllStates()
-                trash.needFlush()
+                trash.needSave()
             }
 
             updateCurrentFavorite()
@@ -428,7 +424,7 @@ class ZFavoritesManager: ZCloudManager {
 
         bookmark            = create(withBookmark: bookmark, style, parent: parent, atIndex: index, iZone.zoneName)
 
-        bookmark?.needFlush()
+        bookmark?.needSave()
 
         if  isNormal {
             parent.maybeNeedMerge()

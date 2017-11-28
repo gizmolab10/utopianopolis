@@ -609,7 +609,7 @@ class ZEditingManager: NSObject {
             }
         }
 
-        zone.needFlush()
+        zone.needSave()
     }
 
 
@@ -1317,7 +1317,7 @@ class ZEditingManager: NSObject {
                 a.order = b.order
                 b.order = o
 
-                a.needFlush()
+                a.needSave()
             }
 
             commonParent.respectOrder()
@@ -1533,12 +1533,12 @@ class ZEditingManager: NSObject {
         var       grabs = gSelectionManager.currentGrabs
 
         if  let dragged = gDraggedZone, dragged.isInFavorites, !toFavorites {
-            dragged.needFlush()                              // type 4
+            dragged.needSave()                              // type 4
         }
 
         grabs.sort { (a, b) -> Bool in
             if  a.isInFavorites {
-                a.needFlush()                                // type 4
+                a.needSave()                                // type 4
             }
 
             return a.order < b.order
@@ -1595,7 +1595,7 @@ class ZEditingManager: NSObject {
                     } else if !movable.isInFavorites {
                         movable = gFavoritesManager.createBookmark(for: grab, style: .favorite)
 
-                        movable.needFlush()
+                        movable.needSave()
                     }
 
                     movable.grab()
@@ -1647,8 +1647,8 @@ class ZEditingManager: NSObject {
             }
 
             into.addAndReorderChild(zone, at: iIndex)
-            into.needFlush()
-            zone.needFlush()
+            into.needSave()
+            zone.needSave()
             onCompletion?()
         }
     }

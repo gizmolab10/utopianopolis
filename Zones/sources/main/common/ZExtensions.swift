@@ -278,7 +278,7 @@ extension Array {
                 if  order      != newOrder {
                     child.order = newOrder
 
-                    child.needFlush()
+                    child.needSave()
                 }
             }
         }

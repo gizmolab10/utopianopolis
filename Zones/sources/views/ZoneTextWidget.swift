@@ -220,7 +220,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 iTarget   .zoneName = components[0]
 
                 if !iTarget.isInFavorites {
-                    iTarget.needFlush()
+                    iTarget.needSave()
                 }
             }
 

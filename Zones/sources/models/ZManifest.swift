@@ -43,9 +43,10 @@ class ZManifest: ZRecord {
             if  let   name = _hereZone?.record.recordID.recordName {
                 here       = name
 
-                needFlush()
+                needSave()
             }
 
+            _hereZone?.maybeNeedRoot()
             if manifestMode == _hereZone?.storageMode {
                 gFavoritesManager.updateCurrentFavorite() // so user will know
             }
@@ -80,7 +81,7 @@ class ZManifest: ZRecord {
 
             zonesExpanded = expansionSet
             
-            needFlush()
+            needSave()
         }
     }
 
@@ -99,7 +100,7 @@ class ZManifest: ZRecord {
         if  expanded.count != expansionSet.count {
             zonesExpanded   = expansionSet
 
-            needFlush()
+            needSave()
         }
     }
     

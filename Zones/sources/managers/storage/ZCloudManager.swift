@@ -31,7 +31,7 @@ class ZCloudManager: ZRecordsManager {
         return _manifest!
     }
 
-    
+
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
         if  database != nil {
             operation.timeoutIntervalForResource = gRemoteTimeout
@@ -60,31 +60,13 @@ class ZCloudManager: ZRecordsManager {
     // MARK:-
 
 
-    func create(_ onCompletion: IntClosure?) {
-        let needCreating = pullRecordsWithMatchingStates([.needsCreate])
-        let        count = needCreating.count
-
-        if  count > 0, let  operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
-            operation  .recordsToSave = needCreating
-            operation.completionBlock = {
-                self.create(onCompletion) // process remaining
-            }
-
-            columnarReport("CREATE \(count)", stringForCKRecords(needCreating))
-            start(operation)
-        } else {
-            onCompletion?(0)
-        }
-    }
-
-
     func save(_ onCompletion: IntClosure?) {
         let   saves = pullRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
         let destroy = recordIDsWithMatchingStates([.needsDestroy], pull: true, batchSize: 20)
         let   count = saves.count + destroy.count
 
         if  count > 0, let           operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
-            operation              .savePolicy = .changedKeys
+            operation              .savePolicy = .allKeys
             operation       .recordIDsToDelete = destroy
             operation           .recordsToSave = saves
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
@@ -105,27 +87,39 @@ class ZCloudManager: ZRecordsManager {
                 }
             }
 
-            operation.completionBlock   = {
+            operation.modifyRecordsCompletionBlock = { (iSavedCKRecords, iDeletedRecordIDs, iError) in
                 // deal with saved records marked as deleted
 
                 FOREGROUND {
-                    for recordID: CKRecordID in destroy {
-                        if  let zone = self.zoneForRecordID(recordID) {
-                            self.unregisterZone(zone)
-                        }
-                    }
-
-                    for record: CKRecord in saves {
-                        if  let zone = self.zoneForRecordID(record.recordID) {
-                            if  zone.isDeleted {
-                                self.unregisterZone(zone)   // unregister deleted zones
+                    if let deleted = iDeletedRecordIDs {
+                        for recordID: CKRecordID in deleted {
+                            if  let zone = self.zoneForRecordID(recordID) {
+                                self.unregisterZone(zone)
                             }
                         }
                     }
 
-                    self.merge { iResult in                 // process merges due to save oplock errors
-                        if iResult == 0 {
-                            self.save(onCompletion)         // process remaining
+                    if  let saved = iSavedCKRecords {
+                        for ckrecord: CKRecord in saved {
+                            if  let zone = self.zoneForRecordID(ckrecord.recordID) {
+                                if  zone.isDeleted {
+                                    self.unregisterZone(zone)   // unregister deleted zones
+                                } else {
+                                    zone.record = ckrecord
+                                }
+                            }
+                        }
+                    }
+
+                    gAlertManager.detectError(iError, "") { iHasError in
+                        if iHasError {
+                            print(String(describing: iError!))
+                        }
+                    }
+
+                    self.merge { iCount in                 // process merges caused (before now) by save oplock errors
+                        if iCount == 0 {
+                            self.save(onCompletion)         // process any remaining
                         }
                     }
                 }
@@ -271,17 +265,18 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func bookmarkPredicate(specificTo iRecordIDs: [CKRecordID]? = nil) -> NSPredicate {
-        var separator = ""
-        var predicate = ""
+    func bookmarkPredicate(specificTo iRecordIDs: [CKRecordID]) -> NSPredicate {
+        var  predicate    = ""
 
-        if  let recordIDs = iRecordIDs {
-            for recordID in  recordIDs {
+        if  iRecordIDs.count == 0 {
+            predicate     = String(format: "zoneLink != '\(gNullLink)'")
+        } else {
+            var separator = ""
+
+            for recordID in  iRecordIDs {
                 predicate = String(format: "%@%@SELF CONTAINS \"%@\"", predicate, separator, recordID.recordName)
                 separator = " AND "
             }
-        } else {
-            predicate = String(format: "zoneLink != '-'")
         }
 
         return NSPredicate(format: predicate)
@@ -354,21 +349,36 @@ class ZCloudManager: ZRecordsManager {
 
 
     func remember(_ onCompletion: IntClosure?) {
-        var memorables = [String] ()
+        BACKGROUND {     // not stall foreground processor
+            var memorables = [String] ()
 
-        for      iChild in zonesByID.values {
-            if   iChild.alreadyExists,
-                !iChild.isInFavorites,
-                (iChild.parentZone?.showChildren ?? false || iChild.isRoot || iChild.hasFetchedBookmark),
-                let  name = iChild.record?.recordID.recordName,
-                !memorables.contains(name) {
-                memorables.append(name)
+            let scan: ObjectClosure = { iObject in
+                if let zone = iObject as? Zone {
+                    zone.traverseProgeny { iZone -> (ZTraverseStatus) in
+                        if  iZone.alreadyExists,
+                            iZone.storageMode == self.storageMode,
+                            let name = iZone.record?.recordID.recordName,
+                            !memorables.contains(name) {
+                            memorables.append(name)
+
+                            if iZone.showChildren || iZone.isRoot {
+                                return .eContinue
+                            }
+                        }
+
+                        return .eSkip
+                    }
+                }
             }
+
+            scan(self.rootZone)
+            scan(self.manifest.hereZone)
+            scan(gFavoritesManager.rootZone)
+
+            self.columnarReport("REMEMBER \(memorables.count)", "\(self.storageMode.rawValue)")
+            setString(memorables.joined(separator: gSeparatorKey), for: self.refetchingName)
+            onCompletion?(0)
         }
-
-        columnarReport("REMEMBER \(memorables.count)", "")
-
-        setString(memorables.joined(separator: gSeparatorKey), for: refetchingName)
     }
 
 
@@ -417,8 +427,8 @@ class ZCloudManager: ZRecordsManager {
                             } else if let name = ckRecord[gZoneNameKey] as? String,
                                 ![gRootNameKey, gTrashNameKey, gFavoriteRootNameKey].contains(name),
                                 let added = trash.addCKRecord(ckRecord) {
-                                added.needFlush()
-                                trash.needFlush()
+                                added.needSave()
+                                trash.needSave()
                             }
                         }
 
@@ -470,8 +480,8 @@ class ZCloudManager: ZRecordsManager {
 //                                                }
                                                 
                                                 if let added = trash.addCKRecord(child) {
-                                                    added.needFlush()
-                                                    trash.needFlush()
+                                                    added.needSave()
+                                                    trash.needSave()
                                                 }
                                             }
                                         }
@@ -537,8 +547,9 @@ class ZCloudManager: ZRecordsManager {
         let count = needed.count
 
         if  count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            var       retrieved = [CKRecord] ()
-            operation.recordIDs = needed
+            var            retrieved = [CKRecord] ()
+            operation   .desiredKeys = Zone.cloudProperties()
+            operation     .recordIDs = needed
 
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
                 gAlertManager.alertError(iError) { iHasError in
@@ -564,7 +575,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchManifest(_ onCompletion: IntClosure?) {
-        if  manifest.alreadyExists || manifest.isMarkedForAnyOfStates([.needsCreate, .needsMerge, .needsSave]) {
+        if  manifest.alreadyExists || manifest.isMarkedForAnyOfStates([.needsMerge, .needsSave]) {
             onCompletion?(0)
         } else {
             let recordID = manifest.record.recordID
@@ -634,7 +645,7 @@ class ZCloudManager: ZRecordsManager {
                                     if  child.isRoot || child == p {
                                         child.parentZone = nil
 
-                                        child.needFlush()
+                                        child.needSave()
                                     } else if !p.children.contains(child) {
                                         p.children.append(child)
                                     }
@@ -700,51 +711,48 @@ class ZCloudManager: ZRecordsManager {
                         ////////////////////////////
 
                         for record in retrieved {
-                            let identifier = record.recordID
-                            if  self.zoneForRecordID(identifier) != nil {
-                                if destroyedIDs.contains(identifier) {
-                                    // self.columnarReport(" DESTROYED", child.decoratedName)
+                            let     identifier = record.recordID
 
-                                    break // don't process/add destroyed zone
-                                }
-                            }
-
-                            let    fetched = self.zoneForRecord(record)
-                            let     parent = fetched.parentZone
-                            let extraTrash = fetched.zoneLink == gTrashLink && parent?.isRootOfFavorites ?? false && gFavoritesManager.hasTrash
-
-                            if  fetched.isRoot {
-                                fetched.parent = nil  // avoids HANG ... a root can NOT be a child, by definition
-                            } else if fetched == parent || extraTrash {
-                                fetched.needDestroy()
-                                // self-parenting causes infinite recursion AND extra trash favorites are annoying
-                                // destroy either on fetch
+                            if destroyedIDs.contains(identifier) {
+                                // self.columnarReport(" DESTROYED", child.decoratedName)
                             } else {
-                                logic.propagateNeeds(to: fetched, progenyNeeded)
+                                let    fetched = self.zoneForRecord(record)
+                                let     parent = fetched.parentZone
+                                let extraTrash = fetched.zoneLink == gTrashLink && parent?.isRootOfFavorites ?? false && gFavoritesManager.hasTrash
 
-                                if  let p = parent,
-                                    !p.hasChildMatchingRecordName(of: fetched) {
+                                if  fetched.isRoot {
+                                    fetched.parent = nil  // avoids HANG ... a root can NOT be a child, by definition
+                                } else if fetched == parent || extraTrash {
+                                    fetched.needDestroy()
+                                    // self-parenting causes infinite recursion AND extra trash favorites are annoying
+                                    // destroy either on fetch
+                                } else {
+                                    logic.propagateNeeds(to: fetched, progenyNeeded)
 
-                                    ///////////////////////////////////////
-                                    // no child has matching record name //
-                                    ///////////////////////////////////////
+                                    if  let p = parent,
+                                        !p.hasChildMatchingRecordName(of: fetched) {
 
-                                    if  let target = fetched.bookmarkTarget {
+                                        ///////////////////////////////////////
+                                        // no child has matching record name //
+                                        ///////////////////////////////////////
 
-                                        ///////////////////////////////////////////////////////////
-                                        // bookmark targets need color, writable and maybe fetch //
-                                        ///////////////////////////////////////////////////////////
+                                        if  let target = fetched.bookmarkTarget {
 
-                                        if !target.alreadyExists {
-                                            target.needFetch()
+                                            ///////////////////////////////////////////////////////////
+                                            // bookmark targets need color, writable and maybe fetch //
+                                            ///////////////////////////////////////////////////////////
+
+                                            if !target.alreadyExists {
+                                                target.needFetch()
+                                            }
+
+                                            target.maybeNeedWritable()
+                                            target.maybeNeedColor()
                                         }
 
-                                        target.maybeNeedWritable()
-                                        target.maybeNeedColor()
+                                        p.add(fetched)
+                                        p.respectOrder()
                                     }
-
-                                    p.add(fetched)
-                                    p.respectOrder()
                                 }
                             }
                         }
@@ -760,57 +768,52 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchBookmarks(_ onCompletion: IntClosure?) {
-        let recordIDs = recordIDsWithMatchingStates([.needsBookmarks], pull: true)
-        let isGeneric = recordIDs.count == 0
+        let targetIDs = recordIDsWithMatchingStates([.needsBookmarks], pull: true)
+        let predicate = bookmarkPredicate(specificTo: targetIDs)
         var retrieved = [CKRecord] ()
 
-        let queryClosure: RecordClosure = { iRecord in
+        queryWith(predicate) { iRecord in
             if let ckRecord = iRecord {
                 if !retrieved.contains(ckRecord) {
                     retrieved.append(ckRecord)
                 }
             } else { // nil means done
                 FOREGROUND {
-                    for ckRecord in retrieved {
-                        var zRecord = self.recordForCKRecord(ckRecord)
+                    var     gotFresh = false
 
-                        if  zRecord == nil  {
+                    for ckRecord in retrieved {
+                        var zRecord  = self.recordForCKRecord(ckRecord)
+
+                        if  zRecord == nil {                                                 // if not already registered
                             zRecord  = Zone(record: ckRecord, storageMode: self.storageMode) // register
+                            gotFresh = true
                         }
 
                         zRecord?.unorphan()
                     }
 
-                    for recordID in recordIDs {
-                        let zRecord = self.recordForRecordID(recordID)
+                    if  targetIDs.count != 0 {
+                        for recordID in targetIDs {
+                            let  zRecord = self.recordForRecordID(recordID)
 
-                        zRecord?.unmarkForAllOfStates([.needsBookmarks])
-                        zRecord?.unorphan()
-                    }
+                            zRecord?.unmarkForAllOfStates([.needsBookmarks])
+                            zRecord?.unorphan()
+                        }
 
-                    if !isGeneric {
                         if retrieved.count > 0 {
                             self.columnarReport("BOOKMARKS", self.stringForCKRecords(retrieved))
                         }
 
-                        self.fetchBookmarks(onCompletion)    // process remaining
-                    } else if retrieved.count > 0 && self.recordIDsWithMatchingStates([.needsSave, .needsCreate]).count != 0 {
-                        self.save { iSaveResult in
-                            self.create { iCreationResult in
-                                self.fetchBookmarks(onCompletion)
-                            }
+                        self.fetchBookmarks(onCompletion)       // process remaining
+                    } else if gotFresh {
+                        self.save { iCount in                   // no-op if no zones need to be saved, in which case falls through ...
+                            self.fetchBookmarks(onCompletion)   // process remaining
                         }
                     } else {
                         onCompletion?(0)
                     }
                 }
             }
-        }
-
-        if isGeneric {
-            queryWith(bookmarkPredicate(),                      onCompletion: queryClosure)
-        } else {
-            queryWith(bookmarkPredicate(specificTo: recordIDs), onCompletion: queryClosure)
         }
     }
 
@@ -879,7 +882,7 @@ class ZCloudManager: ZRecordsManager {
                     self.rootZone?.zoneName = "title"
                 }
 
-                self.rootZone?.needFlush()
+                self.rootZone?.needSave()
                 self.establishTrash(onCompletion)
             }
         }

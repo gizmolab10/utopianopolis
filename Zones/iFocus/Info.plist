@@ -25,7 +25,7 @@
 	<key>CFBundleSignature</key>
 	<string>zone</string>
 	<key>CFBundleVersion</key>
-	<string>1030</string>
+	<string>1031</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

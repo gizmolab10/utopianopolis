@@ -23,7 +23,6 @@ class ZRecord: NSObject {
     var     needsCount: Bool            { return isMarkedForAnyOfStates([.needsCount]) }
     var     needsColor: Bool            { return isMarkedForAnyOfStates([.needsColor]) }
     var     needsFetch: Bool            { return isMarkedForAnyOfStates([.needsFetch]) }
-    var    needsCreate: Bool            { return isMarkedForAnyOfStates([.needsCreate]) }
     var    needsParent: Bool            { return isMarkedForAnyOfStates([.needsParent]) }
     var   needsDestroy: Bool            { return isMarkedForAnyOfStates([.needsDestroy]) }
     var   needsProgeny: Bool            { return isMarkedForAnyOfStates([.needsProgeny]) }
@@ -155,7 +154,7 @@ class ZRecord: NSObject {
 
 
     func copy(into copy: ZRecord) {
-        copy.needFlush() // so KVO won't call set needsMerge state bit
+        copy.needSave() // so KVO won't set needsMerge
         updateRecordProperties()
 
         for keyPath: String in cloudProperties() {
@@ -177,7 +176,7 @@ class ZRecord: NSObject {
 
         record = iRecord
 
-        needFlush()
+        needSave()
     }
 
 
@@ -231,7 +230,7 @@ class ZRecord: NSObject {
     func needCount()     { markForAllOfStates([.needsCount]) }
     func needColor()     { markForAllOfStates([.needsColor]) }
     func needParent()    { markForAllOfStates([.needsParent]) }
-    func needDestroy()   { markForAllOfStates([.needsDestroy]); unmarkForAllOfStates([.needsSave, .needsCreate]) }
+    func needDestroy()   { markForAllOfStates([.needsDestroy]); unmarkForAllOfStates([.needsSave]) }
     func needProgeny()   { markForAllOfStates([.needsProgeny]) }
     func needWritable()  { markForAllOfStates([.needsWritable]) }
     func needChildren()  { markForAllOfStates([.needsChildren]) }
@@ -245,17 +244,17 @@ class ZRecord: NSObject {
     }
 
 
-    func needFlush() {
+    func needSave() {
         unmarkForAllOfStates([.needsMerge])
 
         if  storageMode != .favoritesMode && record.recordID.recordName != gFavoriteRootNameKey {
-            markForAllOfStates([alreadyExists ? .needsSave : .needsCreate]);
+            markForAllOfStates([.needsSave]);
         }
     }
 
 
     func maybeNeedMerge() {
-        if !isMarkedForAnyOfStates([.needsCreate, .needsSave, .needsMerge]) {
+        if !isMarkedForAnyOfStates([.needsSave, .needsMerge]) {
             markForAllOfStates([.needsMerge])
         }
     }

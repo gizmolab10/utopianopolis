@@ -27,11 +27,19 @@ class ZInformationController: ZGenericController {
     @IBOutlet var       levelLabel: ZTextField?
 
 
+    var statusText: String {
+        if  let     version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
+            let buildNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion")            as? String {
+            return "version \(version), build \(buildNumber)"
+        }
+
+        return ""
+    }
+
+
     override func awakeFromNib() {
         view.zlayer.backgroundColor = CGColor.clear
         fractionInMemory? .minValue = 0
-
-        // view.addSubview(ZTextField(frame: CGRect(x: 0, y: 0, width: 100, height: 22)))
     }
 
     override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
@@ -42,13 +50,10 @@ class ZInformationController: ZGenericController {
             graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
             fractionInMemory?.doubleValue = Double(count)
             fractionInMemory?   .maxValue = Double(total)
+            versionLabel?           .text = statusText
 
             if kind != .startup {
                 levelLabel?         .text = "level: \(gSelectionManager.rootMostMoveable.level)"
-            }
-
-            if let                version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
-                versionLabel?       .text = "Focus version \(version)"
             }
         }
     }

@@ -19,7 +19,6 @@ enum ZRecordState: Int {
     case needsColor
     case needsCount
     case needsParent
-    case needsCreate
     case needsDestroy
     case needsProgeny
     case needsWritable

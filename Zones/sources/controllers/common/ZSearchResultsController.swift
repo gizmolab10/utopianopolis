@@ -153,17 +153,19 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
         if  zone == nil {
             zone  = Zone(record: record, storageMode: storageMode)
-
-            if  zone!.fetchableCount > 0 {
-                zone!.needChildren()
-            }
         }
 
         gHere = zone!
 
         clear()
         zone?.grab()
+        zone?.needChildren()
+        zone?.displayChildren()
         signalFor(nil, regarding: .redraw)
+
+        gDBOperationsManager.sync {
+            self.signalFor(nil, regarding: .redraw)
+        }
     }
 
 

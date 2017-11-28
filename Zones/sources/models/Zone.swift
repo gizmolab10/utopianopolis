@@ -204,7 +204,7 @@ class Zone : ZRecord {
                 _color    = newValue
                 zoneColor = newValue.string
 
-                needFlush()
+                needSave()
             }
         }
     }
@@ -508,7 +508,7 @@ class Zone : ZRecord {
                 if  direct      != next {
                     directAccess = next
 
-                    needFlush()
+                    needSave()
                 }
             }
         }
@@ -530,7 +530,9 @@ class Zone : ZRecord {
 
 
     override func unorphan() {
-        parentZone?.add(self, at: siblingIndex)
+        if let p = parentZone { // , p.storageMode == storageMode {
+            p.add(self, at: siblingIndex)
+        }
     }
 
 
@@ -540,26 +542,32 @@ class Zone : ZRecord {
 
 
     override func setupLinks() {
-        if  record != nil {
-            var dirty = false
+        if  record          != nil {
+            var        dirty = false
+            let     badLinks = ["", "-", "no"]
 
-            if  let    link  = zoneLink {
-                if     link == "" || link == "-" {
+            if  let link     = zoneLink {
+                if  badLinks.contains(link) {
                     zoneLink = gNullLink
                     dirty    = true
                 }
             } else {
-                zoneLink = gNullLink
-                dirty    = true
+                zoneLink     = gNullLink
+                dirty        = true
             }
 
-            if  zoneParentLink == nil {
-                zoneParentLink  = gNullLink
-                dirty           = true
+            if  let pLink    = zoneParentLink {
+                if  badLinks.contains(pLink) {
+                    zoneParentLink = gNullLink
+                    dirty          = true
+                }
+            } else {
+                zoneParentLink = gNullLink
+                dirty          = true
             }
 
             if  dirty {
-                needFlush()
+                needSave()
             }
         }
     }
@@ -578,7 +586,7 @@ class Zone : ZRecord {
 
         parentZone = nil
 
-        needFlush()
+        needSave()
         updateRecordProperties()
     }
 
@@ -587,7 +595,7 @@ class Zone : ZRecord {
         zoneColor = ""
         _color    = nil
 
-        needFlush()
+        needSave()
     }
 
 
@@ -949,7 +957,7 @@ class Zone : ZRecord {
         traverseProgeny { iZone -> ZTraverseStatus in
             if iLevel < iZone.level {
                 return .eSkip
-            } else if iZone.hasMissingChildren {
+            } else {
                 iZone.needChildren()
             }
 
@@ -1029,6 +1037,8 @@ class Zone : ZRecord {
 
             child.parentZone = self
 
+            child.needSave()
+            needSave()
             needCount()
 
             // self.columnarReport(" ADDED", child.decoratedName)
@@ -1069,7 +1079,7 @@ class Zone : ZRecord {
                 }
             }
 
-            iChild.needFlush() // so will be noted in new mode's record manager
+            iChild.needSave() // so will be noted in new mode's record manager
             iChild.updateRecordProperties() // in case new ckrecord is created, above
         }
     }

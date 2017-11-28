@@ -112,12 +112,11 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             innerDot!.setupForWidget(iWidget, asToggle: isToggle)
             snp.removeConstraints()
             snp.makeConstraints { make in
-                var   width = !isToggle && isDragDotHidden ? CGFloat(0.0) : gFingerBreadth
-                let  height = innerDotHeight + 5.0 + gGenericOffset.height * 3.0
+                var   width = !isToggle && isDragDotHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) - 42.0 + innerDotWidth
+                let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
 
                 if iWidget.widgetZone?.isInFavorites ?? false {
                     width  *= gReductionRatio
-                 // height *= gReductionRatio
                 }
 
                 make.size.equalTo(CGSize(width: width, height: height))
@@ -136,7 +135,18 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
     // MARK:- draw
     // MARK:-
-    
+
+
+    enum ZDecorationType: Int {
+        case vertical
+        case sideDot
+    }
+
+
+    func isVisible(_ rect: CGRect) -> Bool {
+        return window?.contentView?.bounds.intersects(rect) ?? false
+    }
+
 
     func drawTinyDots(_ dirtyRect: CGRect) {
         if  let  zone  = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showChildren || zone.isBookmark) {
@@ -173,17 +183,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 }
             }
         }
-    }
-
-
-    func isVisible(_ rect: CGRect) -> Bool {
-        return window?.contentView?.bounds.intersects(rect) ?? false
-    }
-
-
-    enum ZDecorationType: Int {
-        case vertical
-        case sideDot
     }
 
 
@@ -246,6 +245,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                         drawAccessDecoration(of: type, for: zone, in: dirtyRect)
                     }
                 } else if isToggle {
+                    // addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.red.cgColor)
                     drawTinyDots(dirtyRect)
                 } else if highlightAsFavorite {
                     let     yInset = (dirtyRect.size.height - CGFloat(gDotHeight)) / 2.0 - 2.0
