@@ -168,8 +168,8 @@ class ZEditingManager: NSObject {
                 case "s":        selectCurrentFavorite()
                 case "u", "l":   alterCase(up: key == "u")
                 case ";":        doFavorites(true,    false)
+                case "?":        openBrowserForFocusWebsite()
                 case "'":        doFavorites(isShift, isOption)
-                case "?":        gSettingsController?.displayViewFor(id: .Help)
                 case "/":        focus(on: gSelectionManager.firstGrab, isCommand)
                 case gTabKey:    addNext(containing: isOption) { iChild in iChild.edit() }
                 case ",", ".":   gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
@@ -499,7 +499,7 @@ class ZEditingManager: NSObject {
     func revealParentAndSiblingsOf(_ iZone: Zone, onCompletion: Closure?) {
         if let parent = iZone.parentZone, parent.zoneName != nil {
             parent.displayChildren()
-            parent.maybeNeedProgeny()
+            parent.needChildren()
 
             gDBOperationsManager.children(.restore) {
                 onCompletion?()
@@ -715,7 +715,7 @@ class ZEditingManager: NSObject {
             let closure = {
                 var bookmark: Zone? = nil
 
-                self.invokeWithMode(.mineMode) {
+                self.invokeUnderStorageMode(.mineMode) {
                     bookmark = gFavoritesManager.createBookmark(for: zone, style: .normal)
                 }
 
@@ -856,89 +856,80 @@ class ZEditingManager: NSObject {
 
 
     private func deleteZone(_ zone: Zone, permanently: Bool = false, onCompletion: Closure?) {
-        if  zone.isTrash && zone.parentZone?.isRootOfFavorites ?? true {
-            onCompletion?()
-
-            return
-        }
-
-        let   parent = zone.parentZone
-        var deleteMe = !zone.isRoot && parent?.record != nil
-
-        if !deleteMe && zone.isBookmark, let name = zone.crossLink?.record.recordID.recordName {
-            deleteMe = ![gRootNameKey, gTrashNameKey, gFavoriteRootNameKey].contains(name)
-        }
-
-        if !deleteMe {
+        if zone.isTrash || zone.isRoot || zone.isRootBookmark {
             onCompletion?()
         } else {
-            if  let     p = parent,
-                zone     == gHere { // this can only happen once during recursion (multiple places, below)
-                revealParentAndSiblingsOf(zone) {
-                    gHere = p
+            let         parent = zone.parentZone
+            let     isFavorite = zone.isInFavorites
 
-                    self.deleteZone(zone, onCompletion: onCompletion) // recurse
-                }
+            if  zone          == gHere {                                  // this can only happen once during recursion (multiple places, below)
+                if  let      p = parent {
+                    revealParentAndSiblingsOf(zone) {
+                        gHere  = p
 
-                return
-            }
-
-            // let isAnnoyingBookmark = zone.bookmarkTarget?.isTrash ?? false && !(zone.parentZone?.isRootOfFavorites ?? true)
-
-            if permanently || zone.isDeleted { // } || isAnnoyingBookmark {
-                zone.orphan()
-
-                zone.traverseAllProgeny { iZone in
-                    iZone.needDestroy()
+                        self.deleteZone(zone, onCompletion: onCompletion) // recurse
+                    }
+                } else {
+                    gFavoritesManager.refocus {                           // travel to current favorite
+                        self.deleteZone(zone, onCompletion: onCompletion) // recurse
+                    }
                 }
             } else {
-                zone.addToPaste()
-                moveToTrash(zone)
-            }
+                if permanently || zone.isDeleted {
+                    zone.orphan()
 
-            if  let            p = parent {
-                p.fetchableCount = p.count // delete alters the count
-            }
+                    zone.traverseAllProgeny { iZone in
+                        iZone.needDestroy()
+                    }
+                } else {
+                    zone.addToPaste()
+                    moveToTrash(zone)
+                }
 
-            if  zone.isInFavorites {
-                gFavoritesManager.updateChildren() // delete alters the list
-            }
+                if  let            p = parent {
+                    p.fetchableCount = p.count           // delete alters the count
+                }
 
-            ////////////////////////////////////////////
-            // remove a favorite whose target is zone //
-            ////////////////////////////////////////////
+                if  isFavorite {
+                    gFavoritesManager.updateChildren()   // delete alters the list
+                }
 
-            var trashables = [Zone] ()
+                ////////////////////////////////////////////
+                // remove a favorite whose target is zone //
+                ////////////////////////////////////////////
 
-            if let favorites = gFavoritesManager.rootZone?.children {
-                for favorite in favorites {
-                    if favorite.bookmarkTarget == zone {
-                        trashables.append(favorite)
+                var trashables = [Zone] ()
+
+                if let favorites = gFavoritesManager.rootZone?.children {
+                    for favorite in favorites {
+                        if favorite.bookmarkTarget == zone {
+                            trashables.append(favorite)
+                        }
+                    }
+
+                    for trashThis in trashables {
+                        moveToTrash(trashThis)
                     }
                 }
 
-                for trashThis in trashables {
-                    moveToTrash(trashThis)
-                }
-            }
+                onCompletion?()
 
-            onCompletion?()
+                ////////////////////////////////////////////
+                // remove a bookmark whose target is zone //
+                ////////////////////////////////////////////
 
-            ////////////////////////////////////////////
-            // remove a bookmark whose target is zone //
-            ////////////////////////////////////////////
+                if !zone.isBookmark {
+                    zone.needBookmarks()
 
-            if !zone.isBookmark {
-                zone.needBookmarks()
+                    gDBOperationsManager.bookmarks {
+                        let bookmarks = gRemoteStoresManager.bookmarksFor(zone)
 
-                gDBOperationsManager.bookmarks {
-                    let bookmarks = gRemoteStoresManager.bookmarksFor(zone)
-
-                    if bookmarks.count == 0 {
-                        onCompletion?()
-                    } else {
-                        self.deleteZones(bookmarks, permanently: permanently, shouldGrab: false) { iZone in // recurse
+                        if bookmarks.count == 0 {
                             onCompletion?()
+                        } else {
+                            self.deleteZones(bookmarks, permanently: permanently, shouldGrab: false) { iZone in // recurse
+                                onCompletion?()
+                            }
                         }
                     }
                 }
@@ -1020,7 +1011,7 @@ class ZEditingManager: NSObject {
                 } else if !extreme {
                     if zone == gHere || parent == nil {
                         revealParentAndSiblingsOf(zone) {
-                            if  let ancestor = gHere.parentZone {
+                            if  let ancestor = zone.parentZone {
                                 ancestor.grab()
                                 self.revealSiblingsOf(gHere, untilReaching: ancestor)
                             }
@@ -1603,7 +1594,7 @@ class ZEditingManager: NSObject {
                     movable.recursivelyApplyMode()
                 }
 
-                if toBookmark {
+                if  toBookmark && self.undoManager.groupingLevel > 0 {
                     self.undoManager.endUndoGrouping()
                 }
 

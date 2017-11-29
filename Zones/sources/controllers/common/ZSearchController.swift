@@ -78,18 +78,25 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     #if os(OSX)
 
     func control(_ control: ZControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
-        performance(searchBox?.text)
-
         if  gWorkMode == .searchMode, let searchString = getInput() {
-            gCloudManager.search(for: searchString) { iObject in
-                let hasResults = (iObject as! [Any]).count != 0
-                gWorkMode      = hasResults ? .searchMode : .editMode
+            var total = [Any] ()
 
-                if hasResults {
-                    FOREGROUND {
-                        self.searchBox?.text = ""
+            for mode in [ZStorageMode.mineMode, ZStorageMode.everyoneMode] {
+                let manager = gRemoteStoresManager.cloudManagerFor(mode)
 
-                        gSearchManager.showResults(iObject)
+                manager.search(for: searchString) { iObject in
+                    FOREGROUND {                                    // guarantee atomic ...
+                        let    results = iObject as! [Any]
+                        let hasResults = results.count != 0
+                        let       done = total.count > 0            // ... this test must be atomic relative to each search
+                        gWorkMode      = hasResults ? .searchMode : .editMode
+                        total         += results
+
+                        if done {
+                            self.searchBox?.text = ""
+
+                            gSearchManager.showResults(total)
+                        }
                     }
                 }
             }
@@ -104,7 +111,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     func control(_ control: ZControl, textView: ZTextView, doCommandBy commandSelector: Selector) -> Bool {
         let handledIt = commandSelector == Selector(("noop:"))
 
-        if  handledIt && gSearchManager.state != .browse {
+        if  handledIt { // && gSearchManager.state != .browse {
             exit()
         }
 

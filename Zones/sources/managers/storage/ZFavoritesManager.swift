@@ -192,7 +192,7 @@ class ZFavoritesManager: ZCloudManager {
             rootZone!.directAccess = .eChildrenWritable
 
             setupDefaultFavorites()
-            rootZone!.needProgeny()
+            rootZone!.needChildren()
             rootZone!.displayChildren()
         }
     }
@@ -227,21 +227,26 @@ class ZFavoritesManager: ZCloudManager {
             // end of handleKey in editor
 
             for favorite in defaultFavorites.children {
-                rootZone?.removeChild(favorite)
+                rootZone?.removeSpawn(favorite)
+            }
+
+            rootZone?.traverseAllProgeny { iFavorite in
+                if  let mode = iFavorite.crossLink?.storageMode,
+                    let link = iFavorite.zoneLink,
+                    link    != gTrashLink,
+                    !found.contains(mode) {
+                    found.append(mode)
+                }
             }
 
             if  let children = rootZone?.children {
                 for (index, favorite) in children.enumerated() {
-                    if  let mode  = favorite.crossLink?.storageMode,
-                        let link  = favorite.zoneLink {
-                        if  link == gTrashLink {
-                            if  foundTrash {
-                                trashCopies.append(index)
-                            } else {
-                                foundTrash = true
-                            }
-                        } else if !found.contains(mode) {
-                            found.append(mode)
+                    if  let link  = favorite.zoneLink,
+                        link     == gTrashLink {
+                        if  foundTrash {
+                            trashCopies.append(index)
+                        } else {
+                            foundTrash = true
                         }
                     }
                 }

@@ -73,7 +73,7 @@ extension NSObject {
     }
 
 
-    func invokeWithMode(_ mode: ZStorageMode?, block: Closure) {
+    func invokeUnderStorageMode(_ mode: ZStorageMode?, block: Closure) {
         if  mode != nil && mode != gStorageMode {
             detectWithMode(mode!) { block(); return false }
         } else {
@@ -86,6 +86,11 @@ extension NSObject {
         gUndoManager.registerUndo(withTarget:target, handler: { iTarget in
             handler(iTarget)
         })
+    }
+
+
+    func openBrowserForFocusWebsite() {
+        "https://medium.com/@sand_74696/what-you-get-d565b064be7b".openAsURL()
     }
 
 

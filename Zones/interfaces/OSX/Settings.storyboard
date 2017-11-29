@@ -474,25 +474,25 @@
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Focus" sceneMemberID="viewController">
                     <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="228" height="277"/>
+                        <rect key="frame" x="0.0" y="0.0" width="228" height="279"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box autoresizesSubviews="NO" borderType="line" title="new ideas" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
-                                <rect key="frame" x="5" y="233" width="218" height="36"/>
+                                <rect key="frame" x="5" y="232" width="218" height="39"/>
                                 <view key="contentView" id="qnC-vV-W8u">
-                                    <rect key="frame" x="1" y="1" width="216" height="20"/>
+                                    <rect key="frame" x="1" y="1" width="216" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="direction" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i0m-vf-1Of">
-                                            <rect key="frame" x="2" y="1" width="212" height="23"/>
+                                            <rect key="frame" x="1" y="0.0" width="214" height="27"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="sur-0v-evK"/>
+                                                <constraint firstAttribute="height" constant="24" id="sur-0v-evK"/>
                                             </constraints>
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="spU-aj-Ylf">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <segments>
-                                                    <segment label="precede" width="103" selected="YES"/>
-                                                    <segment label="follow" width="103" tag="1"/>
+                                                    <segment label="precede" width="106" selected="YES"/>
+                                                    <segment label="follow" width="102" tag="1"/>
                                                 </segments>
                                             </segmentedCell>
                                             <connections>
@@ -506,27 +506,27 @@
                                     </constraints>
                                 </view>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="32" id="9eg-3P-j9J"/>
+                                    <constraint firstAttribute="height" constant="35" id="9eg-3P-j9J"/>
                                 </constraints>
                             </box>
                             <box autoresizesSubviews="NO" borderType="line" title="counts show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="children counts">
-                                <rect key="frame" x="5" y="193" width="218" height="36"/>
+                                <rect key="frame" x="5" y="193" width="218" height="35"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
-                                    <rect key="frame" x="1" y="1" width="216" height="20"/>
+                                    <rect key="frame" x="1" y="1" width="216" height="19"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="counts" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hRI-S8-ys7">
-                                            <rect key="frame" x="3" y="1" width="211" height="23"/>
+                                            <rect key="frame" x="1" y="-4" width="214" height="27"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="IcD-O8-4He"/>
+                                                <constraint firstAttribute="height" constant="24" id="IcD-O8-4He"/>
                                             </constraints>
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="AOk-RI-tLe">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <segments>
                                                     <segment label="hidden" width="54"/>
-                                                    <segment label="dots" width="43" selected="YES" tag="1"/>
-                                                    <segment label="numbers" width="63"/>
-                                                    <segment label="totals" width="45"/>
+                                                    <segment label="dots" width="44" selected="YES" tag="1"/>
+                                                    <segment label="numbers" width="64"/>
+                                                    <segment label="totals" width="46"/>
                                                 </segments>
                                             </segmentedCell>
                                             <connections>
@@ -536,11 +536,11 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="hRI-S8-ys7" firstAttribute="centerX" secondItem="5gJ-xh-VlV" secondAttribute="centerX" id="G63-aA-Xl2"/>
-                                        <constraint firstAttribute="centerY" secondItem="hRI-S8-ys7" secondAttribute="centerY" constant="2.5" id="h83-pb-w7Y"/>
+                                        <constraint firstAttribute="centerY" secondItem="hRI-S8-ys7" secondAttribute="centerY" id="h83-pb-w7Y"/>
                                     </constraints>
                                 </view>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="32" id="Oqg-X2-PkA"/>
+                                    <constraint firstAttribute="height" constant="31" id="Oqg-X2-PkA"/>
                                 </constraints>
                             </box>
                             <box borderType="line" title="layuot" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
@@ -822,7 +822,7 @@
                 </viewController>
                 <customObject id="JO0-BM-25B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-279" y="1895"/>
+            <point key="canvasLocation" x="-279" y="1894.5"/>
         </scene>
         <!--Shortcuts Controller-->
         <scene sceneID="45A-WG-zgj">

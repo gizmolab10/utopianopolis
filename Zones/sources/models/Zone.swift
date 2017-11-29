@@ -93,6 +93,15 @@ class Zone : ZRecord {
     }
 
 
+    var isRootBookmark: Bool {
+        if isBookmark, let name = crossLink?.record.recordID.recordName {
+            return [gRootNameKey, gTrashNameKey, gFavoriteRootNameKey].contains(name)
+        }
+
+        return false
+    }
+
+
     var hasFetchedBookmark: Bool {
         if  let identifier = record?.recordID.recordName {
             for     zone in gAllZones {
@@ -306,7 +315,9 @@ class Zone : ZRecord {
 
     var progenyCount: Int {
         get {
-            if  zoneProgeny == nil {
+            if  let    t = bookmarkTarget {
+                return t.progenyCount
+            } else if  zoneProgeny == nil {
                 updateInstanceProperties()
 
                 if  zoneProgeny == nil {
@@ -530,7 +541,7 @@ class Zone : ZRecord {
 
 
     override func unorphan() {
-        if let p = parentZone { // , p.storageMode == storageMode {
+        if let p = parentZone, !p.isBookmark, !p.spawned(self) {
             p.add(self, at: siblingIndex)
         }
     }
@@ -566,7 +577,7 @@ class Zone : ZRecord {
                 dirty          = true
             }
 
-            if  dirty {
+            if  dirty && storageMode == .everyoneMode {
                 needSave()
             }
         }
@@ -930,7 +941,7 @@ class Zone : ZRecord {
 
 
     func maybeNeedProgeny() {
-        if showChildren && hasMissingChildren {
+        if  showChildren && hasMissingChildren {
             needProgeny()
         }
     }
@@ -1060,6 +1071,25 @@ class Zone : ZRecord {
         }
 
         return false
+    }
+
+
+    @discardableResult func removeSpawn(_ iSpawn: Zone?) -> Bool {
+        var removed = false
+
+        traverseProgeny { iZone -> (ZTraverseStatus) in
+            if  iZone == iSpawn {
+                iZone.orphan()
+
+                removed = true
+
+                return .eStop
+            }
+
+            return .eContinue
+        }
+
+        return removed
     }
 
 

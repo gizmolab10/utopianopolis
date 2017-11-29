@@ -112,6 +112,13 @@ extension String {
         return nil
     }
 
+
+    func openAsURL() {
+        if let url = URL(string: self) {
+            NSWorkspace.shared().open(url)
+        }
+    }
+
 }
 
 
@@ -262,7 +269,7 @@ extension NSWindow {
 
     
     @IBAction func displayPreferences     (_ sender: Any?) { gSettingsController?.displayViewFor(id: .Preferences) }
-    @IBAction func displayHelp            (_ sender: Any?) { gSettingsController?.displayViewFor(id: .Help) }
+    @IBAction func displayHelp            (_ sender: Any?) { openBrowserForFocusWebsite() }
     @IBAction func printHere              (_ sender: Any?) { gEditingManager.printHere() }
     @IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gEditingManager.handleMenuItem(iItem) }
     @IBAction func copy              (_ iItem: ZMenuItem?) { gEditingManager.copyToPaste() }

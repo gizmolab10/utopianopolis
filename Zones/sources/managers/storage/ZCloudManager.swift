@@ -91,8 +91,8 @@ class ZCloudManager: ZRecordsManager {
                 // deal with saved records marked as deleted
 
                 FOREGROUND {
-                    if let deleted = iDeletedRecordIDs {
-                        for recordID: CKRecordID in deleted {
+                    if  let destroyed = iDeletedRecordIDs {
+                        for recordID: CKRecordID in destroyed {
                             if  let zone = self.zoneForRecordID(recordID) {
                                 self.unregisterZone(zone)
                             }

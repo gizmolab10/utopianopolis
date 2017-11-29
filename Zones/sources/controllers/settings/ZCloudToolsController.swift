@@ -105,7 +105,7 @@ class ZCloudToolsController: ZGenericTableController {
 
                 self.columnarReport(" TRASH", "\(trash.count)")
 
-                trash.needProgeny()
+                trash.needChildren()
                 trash.displayChildren()
                 gDBOperationsManager.children(.all) {
                     self.grabChildless()

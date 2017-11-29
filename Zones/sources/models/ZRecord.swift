@@ -231,7 +231,7 @@ class ZRecord: NSObject {
     func needColor()     { markForAllOfStates([.needsColor]) }
     func needParent()    { markForAllOfStates([.needsParent]) }
     func needDestroy()   { markForAllOfStates([.needsDestroy]); unmarkForAllOfStates([.needsSave]) }
-    func needProgeny()   { markForAllOfStates([.needsProgeny]) }
+    func needProgeny()   { markForAllOfStates([.needsProgeny]); unmarkForAllOfStates([.needsChildren]) }
     func needWritable()  { markForAllOfStates([.needsWritable]) }
     func needChildren()  { markForAllOfStates([.needsChildren]) }
     func needBookmarks() { markForAllOfStates([.needsBookmarks]) }

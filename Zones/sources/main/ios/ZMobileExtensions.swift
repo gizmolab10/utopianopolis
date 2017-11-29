@@ -111,6 +111,13 @@ extension String {
         return nil
     }
 
+
+    func openAsURL() {
+        if let url = URL(string: self) {
+            UIApplication.shared.open(url)
+        }
+    }
+
 }
 
 
