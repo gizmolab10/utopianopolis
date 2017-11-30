@@ -59,6 +59,7 @@ enum ZOperationID: Int {
 
 var gDebugTimer : Timer? = nil
 var gDebugTimerCount : Int = 0
+var gDebugOperations = false
 
 
 class ZOperationsManager: NSObject {
@@ -69,7 +70,6 @@ class ZOperationsManager: NSObject {
     var     lastOpStart :         Date? = nil
     var       currentOp = ZOperationID.none
     let           queue = OperationQueue()
-    var           debug = true
 
 
     func invoke(_ identifier: ZOperationID, _ logic: ZRecursionLogic? = nil, cloudCallback: AnyClosure?) {}
@@ -87,7 +87,7 @@ class ZOperationsManager: NSObject {
                 gDebugTimerCount += 1
             }
 
-            if debug && newValue {
+            if  gDebugOperations && newValue {
                 gDebugTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: fire)
                 fire(gDebugTimer!)
             } else if gDebugTimer != nil && !newValue {
@@ -114,14 +114,14 @@ class ZOperationsManager: NSObject {
                 FOREGROUND {
                     self.currentOp     = operationID        // if hung, it happened inside this op
 
-                    if  self.debug {
+                    if  gDebugOperations {
                         let    message = !self.usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)"
 
                         self.columnarReport("  " + self.operationText, message)
                     }
 
                     self.performBlock(for: operationID, with: logic, restoreToMode: saved) {
-                        if  self.debug && false {
+                        if  gDebugOperations && false {
                             let   duration = Int(start.timeIntervalSinceNow) * -10
                             let    message = "\(Float(duration) / 10.0)"
 

@@ -48,6 +48,8 @@ class ZPreferencesController: ZGenericController {
             clearColorButton?           .isHidden = !grabbed.hasColor
             zoneColorBox?               .isHidden =  hideIdeasColor
             ideasLabel?                 .isHidden =  hideIdeasColor
+
+            view.setAllSubviewsNeedDisplay()
         }
     }
 

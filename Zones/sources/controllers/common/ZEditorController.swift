@@ -185,6 +185,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                     rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
                 } else if state != .began {         // ended, cancelled or failed
                     rubberbandUpdate(nil)
+                    signalFor(nil, regarding: .preferences) // so color well gets updated
                 } else if let dot = dotHitTest(iGesture) {
                     if  !dot.isToggle {
                         dragStartEvent(dot, iGesture)
@@ -269,6 +270,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             cleanupAfterDrag()
             
             if doneState.contains(iGesture!.state) {
+                signalFor(nil, regarding: .preferences) // so color well gets updated
                 restartGestureRecognition()
             }
         }
