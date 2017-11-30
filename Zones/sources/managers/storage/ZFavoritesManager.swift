@@ -28,17 +28,16 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    let defaultModes: ZModes = [.everyoneMode, .mineMode]
-    let     defaultFavorites = Zone(record: nil, storageMode: .favoritesMode)
-    var                count : Int  { return rootZone?.count ?? 0 }
+    let databaseModes: ZModes = [.everyoneMode, .mineMode]
+    let databaseRootFavorites = Zone(record: nil, storageMode: .favoritesMode)
+    var      workingFavorites = [Zone] ()
+    var                 count : Int  { return rootZone?.count ?? 0 }
 
 
     var hasTrash: Bool {
-        if  let favorites = rootZone?.children {
-            for favorite in favorites {
-                if  let target = favorite.bookmarkTarget, target.isTrash {
-                    return true
-                }
+        for favorite in workingFavorites {
+            if  let target = favorite.bookmarkTarget, target.isTrash {
+                return true
             }
         }
 
@@ -106,16 +105,16 @@ class ZFavoritesManager: ZCloudManager {
     // are ordered before those that are graphically above and equal
 
     var rotatedEnumeration: EnumeratedSequence<Array<Zone>> {
-        let enumeration = rootZone?.children.enumerated()
+        let enumeration = workingFavorites.enumerated()
         var     rotated = [Zone] ()
 
-        for (index, favorite) in enumeration! {
+        for (index, favorite) in enumeration {
             if  index >= favoritesIndex {
                 rotated.append(favorite)
             }
         }
 
-        for (index, favorite) in enumeration! {
+        for (index, favorite) in enumeration {
             if  index < favoritesIndex {
                 rotated.append(favorite)
             }
@@ -125,18 +124,27 @@ class ZFavoritesManager: ZCloudManager {
     }
 
 
+    var hereSpawnedTargetOfCurrentFavorite: Bool {
+        if  let target = currentFavorite?.bookmarkTarget {
+            return gHere.spawned(target)
+        }
+
+        return false
+    }
+
+
     private func zoneAtIndex(_ index: Int) -> Zone? {
-        if index < 0 || rootZone == nil || index >= count {
+        if index < 0 || index >= workingFavorites.count {
             return nil
         }
 
-        return rootZone?[index]
+        return workingFavorites[index]
     }
 
 
     func indexOf(_ iFavoriteID: String?) -> Int? {
-        if  let identifier = iFavoriteID, let enumeration = rootZone?.children.enumerated() {
-            for (index, zone) in enumeration {
+        if  let identifier = iFavoriteID {
+            for (index, zone) in workingFavorites.enumerated() {
                 if  zone.record.recordID.recordName == identifier {
                     return index
                 }
@@ -150,12 +158,11 @@ class ZFavoritesManager: ZCloudManager {
     func favorite(for iTarget: Zone?, iSpawned: Bool = true) -> Zone? {
         var               found: Zone? = nil
 
-        if  let              favorites = rootZone?.children,
-            let                 target = iTarget,
+        if  let                 target = iTarget,
             let                   mode = target.storageMode {
             var                  level = Int.max
 
-            for favorite in favorites {
+            for favorite in workingFavorites {
                 if  let favoriteTarget = favorite.bookmarkTarget,
                     let     targetMode = favoriteTarget.storageMode,
                     targetMode        == mode {
@@ -191,18 +198,18 @@ class ZFavoritesManager: ZCloudManager {
             rootZone!    .zoneName = gFavoritesKey
             rootZone!.directAccess = .eChildrenWritable
 
-            setupDefaultFavorites()
+            setupDatabaseFavorites()
             rootZone!.needChildren()
             rootZone!.displayChildren()
         }
     }
 
 
-    func setupDefaultFavorites() {
-        if defaultFavorites.count == 0 {
-            for (index, mode) in defaultModes.enumerated() {
+    func setupDatabaseFavorites() {
+        if databaseRootFavorites.count == 0 {
+            for (index, mode) in databaseModes.enumerated() {
                 let          name = mode.rawValue
-                let      favorite = create(withBookmark: nil, .addFavorite, parent: defaultFavorites, atIndex: index, name)
+                let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name)
                 favorite.zoneLink =  "\(name)\(gSeparatorKey)\(gSeparatorKey)"
                 favorite   .order = Double(index) * 0.001
 
@@ -216,19 +223,37 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    func updateChildren() {
+    func updateWorkingFavorites() {
+        workingFavorites.removeAll()
+
+        rootZone?.traverseAllProgeny { iChild in
+            if iChild.isBookmark {
+                self.workingFavorites.append(iChild)
+            }
+        }
+    }
+
+
+    func updateFavorites() {
         if  gHasPrivateDatabase {
             var trashCopies = IndexPath()
             var       found = ZModes ()
             var  foundTrash = false
 
-            // assure at least one favorite per db
-            // call every time favorites MIGHT be altered
-            // end of handleKey in editor
+            ////////////////////////////////////////////////
+            // assure at least one root favorite per db   //
+            // call every time favorites MIGHT be altered //
+            ////////////////////////////////////////////////
 
-            for favorite in defaultFavorites.children {
-                rootZone?.removeSpawn(favorite)
+            rootZone?.traverseAllProgeny { iProgeny in
+                if  iProgeny.bookmarkTarget?.isRoot ?? false {
+                    iProgeny.orphan()
+                }
             }
+
+            /////////////////////////////////////////////////////
+            // look for trash bookmarks and remove all but one //
+            /////////////////////////////////////////////////////
 
             rootZone?.traverseAllProgeny { iFavorite in
                 if  let mode = iFavorite.crossLink?.storageMode,
@@ -257,13 +282,21 @@ class ZFavoritesManager: ZCloudManager {
                 }
             }
 
-            for favorite in defaultFavorites.children {
+            ////////////////////////////////
+            // add missing root favorites //
+            ////////////////////////////////
+
+            for favorite in databaseRootFavorites.children {
                 if  let mode = favorite.crossLink?.storageMode,
-                    (!found.contains(mode) || favorite.isTrash) {
-                    rootZone?.add(favorite)
+                    !found.contains(mode) {
+                    rootZone?.add(favorite.deepCopy())
                     favorite.clearAllStates() // erase side-effect of add
                 }
             }
+
+            ////////////////////////////////
+            // add missing trash favorite //
+            ////////////////////////////////
 
             if !foundTrash && gTrash != nil {
                 let      trash = createBookmark(for: gTrash!, style: .addFavorite)
@@ -274,24 +307,16 @@ class ZFavoritesManager: ZCloudManager {
                 trash.needSave()
             }
 
+            updateWorkingFavorites()
             updateCurrentFavorite()
         }
     }
 
 
-    var hereSpawnedCurrentFavorite: Bool {
-        if  let target = currentFavorite?.bookmarkTarget, currentFavorite != nil {
-            return gHere.spawned(target)
-        }
-
-        return false
-    }
-
-
     func updateCurrentFavorite() {
-        if  let    favorite = favorite(for: gHere),
-            let      target = favorite.bookmarkTarget,
-            (!hereSpawnedCurrentFavorite || gHere == target) {
+        if  let     favorite = favorite(for: gHere),
+            let       target = favorite.bookmarkTarget,
+            (gHere == target || !hereSpawnedTargetOfCurrentFavorite) {
             currentFavorite = favorite
         }
     }
@@ -309,7 +334,7 @@ class ZFavoritesManager: ZCloudManager {
     func next(_ index: Int, _ forward: Bool) -> Int {
         let increment = (forward ? 1 : -1)
         var      next = index + increment
-        let     count = rootZone!.count
+        let     count = workingFavorites.count
 
         if next >= count {
             next =       0
@@ -322,6 +347,8 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func switchToNext(_ forward: Bool, atArrival: @escaping Closure) {
+        updateWorkingFavorites()
+
         let    index = nextFavoritesIndex(forward: forward)
         var     bump : IntClosure?
         bump         = { (iIndex: Int) in
@@ -409,8 +436,8 @@ class ZFavoritesManager: ZCloudManager {
             if  let recordName = basis.record?.recordID.recordName {
                 parent         = rootZone!
 
-                for bookmark in rootZone!.children {
-                    if recordName == bookmark.crossLink?.record.recordID.recordName, !defaultFavorites.children.contains(bookmark) {
+                for bookmark in workingFavorites {
+                    if recordName == bookmark.crossLink?.record.recordID.recordName, !bookmark.bookmarkTarget!.isRoot {
                         currentFavorite = bookmark
 
                         return bookmark
@@ -448,34 +475,28 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    func isChildOfFavoritesRoot(_ zone: Zone) -> Bool {
-        var found = false
-
-        if let recordName = zone.record?.recordID.recordName {
-            rootZone?.traverseProgeny { iChild -> (ZTraverseStatus) in
-                if  recordName == iChild.crossLink?.record.recordID.recordName, !defaultFavorites.children.contains(iChild) {
-                    found = true
-
-                    return .eStop
+    func isWorkingFavorite(_ zone: Zone) -> Bool {
+        if  let     recordName  = zone.record?.recordID.recordName {
+            for iChild in workingFavorites {
+                if  recordName == iChild.crossLink?.record.recordID.recordName {
+                    return true
                 }
-
-                return .eContinue
             }
         }
 
-        return found
+        return false
     }
 
 
     func toggleFavorite(for zone: Zone) {
-        if gHasPrivateDatabase && !zone.isRoot {
-            if isChildOfFavoritesRoot(zone) {
-                deleteFavorite(for:   zone)
+        if  gHasPrivateDatabase && !zone.isRoot {
+            if  isWorkingFavorite  (zone) {
+                deleteFavorite(for: zone)
             } else {
                 createBookmark(for: zone, style: .addFavorite)
             }
 
-            updateChildren()
+            updateFavorites()
         }
     }
 
@@ -483,13 +504,12 @@ class ZFavoritesManager: ZCloudManager {
     func deleteFavorite(for zone: Zone) {
         let recordID = zone.record.recordID
 
-        for (index, favorite) in rootZone!.children.enumerated() {
+        for favorite in workingFavorites {
             if  favorite.crossLink?.record.recordID == recordID {
                 favorite.needDestroy()
+                favorite.orphan()
 
-                rootZone?.children.remove(at: index)
-
-                break
+                return
             }
         }
     }

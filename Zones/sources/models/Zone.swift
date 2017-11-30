@@ -93,15 +93,6 @@ class Zone : ZRecord {
     }
 
 
-    var isRootBookmark: Bool {
-        if isBookmark, let name = crossLink?.record.recordID.recordName {
-            return [gRootNameKey, gTrashNameKey, gFavoriteRootNameKey].contains(name)
-        }
-
-        return false
-    }
-
-
     var hasFetchedBookmark: Bool {
         if  let identifier = record?.recordID.recordName {
             for     zone in gAllZones {
@@ -911,13 +902,6 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    override func maybeNeedMerge() {
-        if !gFavoritesManager.defaultFavorites.children.contains(self) {
-            super.maybeNeedMerge()
-        }
-    }
-
-
     func maybeNeedRoot() {
         if !hasCompleteAncestorPath() {
             needRoot()
@@ -1074,25 +1058,6 @@ class Zone : ZRecord {
     }
 
 
-    @discardableResult func removeSpawn(_ iSpawn: Zone?) -> Bool {
-        var removed = false
-
-        traverseProgeny { iZone -> (ZTraverseStatus) in
-            if  iZone == iSpawn {
-                iZone.orphan()
-
-                removed = true
-
-                return .eStop
-            }
-
-            return .eContinue
-        }
-
-        return removed
-    }
-
-
     func recursivelyApplyMode() {
         let copy = parentZone?.storageMode != storageMode
 
@@ -1116,16 +1081,14 @@ class Zone : ZRecord {
 
 
     @discardableResult func moveChildIndex(from: Int, to: Int) -> Bool {
-        var succeeded = false
-
-        if  to < count, from < count, let child = self[from], !gFavoritesManager.defaultFavorites.children.contains(child) {
+        if  to < count, from < count, let child = self[from] {
             children.remove(       at: from)
             children.insert(child, at: to)
 
-            succeeded = true
+            return true
         }
 
-        return succeeded
+        return false
     }
 
 

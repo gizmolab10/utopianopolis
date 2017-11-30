@@ -105,7 +105,7 @@ class ZControllersManager: NSObject {
 
                 if gManifest.alreadyExists {
                     gHere.grab()
-                    gFavoritesManager.updateChildren()
+                    gFavoritesManager.updateFavorites()
                     self.signalFor(nil, regarding: .redraw)
                 }
 
