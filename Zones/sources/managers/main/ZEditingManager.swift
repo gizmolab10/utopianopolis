@@ -574,7 +574,8 @@ class ZEditingManager: NSObject {
                     }
 
                     parent.grab()
-                    self.toggleDotRecurse(false, parent, to: iGoal, onCompletion: onCompletion)
+                    
+                    self.toggleDotRecurse(show, parent, to: iGoal, onCompletion: onCompletion)
                 } else {
                     onCompletion?()
                 }
@@ -588,10 +589,12 @@ class ZEditingManager: NSObject {
             let  goal = iGoal ?? zone.level + (show ? 1 : -1)
             let apply = {
                 zone.traverseAllProgeny { iChild in
-                    if !show && iChild.level >= goal {
-                        iChild.hideChildren()
-                    } else if show && iChild.level < goal {
-                        iChild.displayChildren()
+                    if           !iChild.isBookmark {
+                        if        iChild.level >= goal && !show {
+                                  iChild.hideChildren()
+                        } else if iChild.level  < goal && show {
+                                  iChild.displayChildren()
+                        }
                     }
                 }
 
@@ -618,7 +621,7 @@ class ZEditingManager: NSObject {
             let    s = gSelectionManager
 
             for     grabbed in s.currentGrabs {
-                if  grabbed != zone && zone.spawned(grabbed) {
+                if  grabbed != zone && grabbed.spawnedBy(zone) {
                     grabbed.ungrab()
                 }
             }
@@ -856,7 +859,7 @@ class ZEditingManager: NSObject {
 
 
     private func deleteZone(_ zone: Zone, permanently: Bool = false, onCompletion: Closure?) {
-        if zone.isRoot {
+        if zone.parentZone == nil {
             onCompletion?()
         } else {
             let         parent = zone.parentZone

@@ -12,41 +12,41 @@ import Foundation
 
 enum ZOperationID: Int {
 
-    ///////////////////////////////////////////////////////////////////////
-    // the following operations constitute all of startup, in this order //
-    ///////////////////////////////////////////////////////////////////////
+    // startup
 
     case onboard
     case cloud
+    case refetch    // user defaults list of record ids
     case root
     case file
-    case refetch    // user defaults list of record ids
+
+    // continue
+
     case manifest   // zones which show children
     case here       // needs manifest
     case children
     case fetch      // after children so favorite targets resolve properly
     case parent     // after fetch so colors resolve properly
+
+    // finish
+
     case save       // zones and manifests
     case bookmarks
     case remember
     case unsubscribe
     case subscribe
 
-    /////////////////////////////////////////
-    // the following constitute onboarding //
-    /////////////////////////////////////////
+    // onboarding
 
     case setup
     case internet
     case ubiquity
     case accountStatus      // vs no account
     case fetchUserID
-    case fetchUserRecord    // record
+    case fetchUserRecord
     case fetchUserIdentity
 
-    ///////////////////////////////////////////////////////////////
-    // the following do not participate in startup or onboarding //
-    ///////////////////////////////////////////////////////////////
+    // miscellaneous
 
     case emptyTrash
     case completion
@@ -59,7 +59,7 @@ enum ZOperationID: Int {
 
 var gDebugTimer : Timer? = nil
 var gDebugTimerCount : Int = 0
-var gDebugOperations = false
+var gDebugOperations = true
 
 
 class ZOperationsManager: NSObject {

@@ -44,7 +44,10 @@ class ZTravelManager: NSObject {
         createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
 
         gSelectionManager.clearEdit()
-        gDBOperationsManager.travel(atArrival)
+        gDBOperationsManager.travel {
+            atArrival()
+            gDBOperationsManager.save {}
+        }
     }
 
 

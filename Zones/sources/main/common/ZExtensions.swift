@@ -113,8 +113,12 @@ extension NSObject {
     }
 
 
-    func zone(from link: String) -> Zone? {
-        var components:   [String] = link.components(separatedBy: gSeparatorKey)
+    func zone(from link: String?) -> Zone? {
+        if  link == nil || link == "" {
+            return nil
+        }
+
+        var components: [String] = link!.components(separatedBy: gSeparatorKey)
 
         if  components.count < 3 {
             return nil

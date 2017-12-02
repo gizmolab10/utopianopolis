@@ -330,7 +330,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 let     dragIndex = draggedZone.siblingIndex
                 let     sameIndex = dragIndex == index || dragIndex == index - 1
                 let  dropIsParent = dropZone?.children.contains(draggedZone) ?? false
-                let    spawnCycle = bookmarkCycle(dropZone) || dropZone?.wasSpawnedByAGrab() ?? false
+                let    spawnCycle = bookmarkCycle(dropZone) || dropZone?.spawnedByAGrab() ?? false
                 let        isNoop = same || spawnCycle || (sameIndex && dropIsParent) || index < 0
                 let         prior = gDragDropZone?.widget
                 let       dropNow = doneState.contains(iGesture!.state)
@@ -456,7 +456,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
     
     func bookmarkCycle(_ dropZone: Zone?) -> Bool {
-        if let target = dropZone?.bookmarkTarget, let dragged = gDraggedZone, (target == dragged || target.wasSpawnedBy(dragged) || target.children.contains(dragged)) {
+        if let target = dropZone?.bookmarkTarget, let dragged = gDraggedZone, (target == dragged || target.spawnedBy(dragged) || target.children.contains(dragged)) {
             return true
         }
         

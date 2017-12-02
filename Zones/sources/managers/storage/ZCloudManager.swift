@@ -176,7 +176,7 @@ class ZCloudManager: ZRecordsManager {
 //                } else {
 //                    deleted.parentZone = root
 //
-//                    root?.needFetch()
+//                    root?.maybeNeedFetch()
 //                }
 //
 //                deleted.maybeNeedMerge()
@@ -474,23 +474,13 @@ class ZCloudManager: ZRecordsManager {
 
                                     if missing.count != 0 {
                                         for parent in missing {
-                                            if  let    child = childrenRefs[parent] {
-//                                                if  let name = child[gZoneNameKey] as? String {
-//                                                    self.columnarReport(" MISSING", name)
-//                                                }
-                                                
-                                                if let added = trash.addCKRecord(child) {
-                                                    added.needSave()
-                                                    trash.needSave()
-                                                }
+                                            if  let child = childrenRefs[parent],
+                                                let added = trash.addCKRecord(child) {
+                                                added.needSave()
+                                                trash.needSave()
                                             }
                                         }
                                     }
-
-//                                    if destroy.count != 0 {
-//                                        for ckRecord in destroy {}
-//                                        self.columnarReport(" DESTROY?", self.stringForCKRecords(destroy))
-//                                    }
 
                                     let evokeClosure = parentIDs.count != 0
 
@@ -739,15 +729,12 @@ class ZCloudManager: ZRecordsManager {
                                         if  let target = fetched.bookmarkTarget {
 
                                             ///////////////////////////////////////////////////////////
-                                            // bookmark targets need color, writable and maybe fetch //
+                                            // bookmark targets need writable, color and maybe fetch //
                                             ///////////////////////////////////////////////////////////
 
-                                            if !target.alreadyExists {
-                                                target.needFetch()
-                                            }
-
-                                            target.maybeNeedWritable()
+                                            target.maybeNeedFetch()
                                             target.maybeNeedColor()
+                                            target.maybeNeedWritable()
                                         }
 
                                         p.add(fetched)

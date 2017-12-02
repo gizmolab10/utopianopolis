@@ -237,18 +237,18 @@ class ZRecord: NSObject {
     func needBookmarks() { markForAllOfStates([.needsBookmarks]) }
 
 
-    func needFetch() {
-        if !alreadyExists {
-            markForAllOfStates([.needsFetch])
-        }
-    }
-
-
     func needSave() {
         unmarkForAllOfStates([.needsMerge])
 
         if  storageMode != .favoritesMode && record.recordID.recordName != gFavoriteRootNameKey {
             markForAllOfStates([.needsSave]);
+        }
+    }
+
+
+    func maybeNeedFetch() {
+        if !alreadyExists {
+            markForAllOfStates([.needsFetch])
         }
     }
 

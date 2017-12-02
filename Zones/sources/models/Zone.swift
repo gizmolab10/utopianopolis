@@ -56,13 +56,23 @@ class Zone : ZRecord {
     var         directReadOnly:        Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
     var          hasZonesBelow:        Bool  { return hasAnyZonesAbove(false) }
     var          hasZonesAbove:        Bool  { return hasAnyZonesAbove(true) }
-    var          isInFavorites:        Bool  { return isRootOfFavorites || (self != parentZone && parentZone?.isInFavorites ?? false) }
     var           showChildren:        Bool  { return isRootOfFavorites || gManifest.showsChildren(self) }
     var             isBookmark:        Bool  { return crossLink != nil }
     var             isSelected:        Bool  { return gSelectionManager.isSelected(self) }
     var              isGrabbed:        Bool  { return gSelectionManager .isGrabbed(self) }
     var               hasColor:        Bool  { return zoneColor != nil && zoneColor != "" }
     var                isTrash:        Bool  { return zoneName == gTrashNameKey }
+
+
+    var isInFavorites: Bool {
+        if isRootOfFavorites { return true }
+
+        if let p = parentZone {
+            return !p.spawnedBy(self) && p.isInFavorites
+        }
+
+        return false
+    }
 
 
     convenience init(storageMode: ZStorageMode?) {
@@ -212,16 +222,16 @@ class Zone : ZRecord {
 
     var crossLink: ZRecord? {
         get {
-            if _crossLink == nil, let link = zoneLink, link != "" {
+            if _crossLink == nil {
                 if  zoneLink == gTrashLink {
                     return gTrash
                 }
 
-                if  link.contains("Optional(") { // repair consequences of an old, but now fixed, bookmark bug
-                    zoneLink = link.replacingOccurrences(of: "Optional(\"", with: "").replacingOccurrences(of: "\")", with: "")
+                if  zoneLink?.contains("Optional(") ?? false { // repair consequences of an old, but now fixed, bookmark bug
+                    zoneLink = zoneLink?.replacingOccurrences(of: "Optional(\"", with: "").replacingOccurrences(of: "\")", with: "")
                 }
 
-                _crossLink = zone(from: link)
+                _crossLink = zone(from: zoneLink)
             }
 
             return _crossLink
@@ -356,8 +366,8 @@ class Zone : ZRecord {
             } else {
                 if  let  reference = parent, let mode = storageMode {
                     _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).zoneForReference(reference)
-                } else if let link = zoneParentLink {
-                    _parentZone    = zone(from: link)
+                } else if let zone = zone(from: zoneParentLink) {
+                    _parentZone    = zone
                 }
             }
 
@@ -528,14 +538,8 @@ class Zone : ZRecord {
     func       edit() { gSelectionManager     .edit(self) }
 
 
-    override func register() { cloudManager?.registerZone(self) }
-
-
-    override func unorphan() {
-        if let p = parentZone, !p.isBookmark, !p.spawned(self) {
-            p.add(self, at: siblingIndex)
-        }
-    }
+    override func register() { cloudManager?  .registerZone(self) }
+    func        unregister() { cloudManager?.unregisterZone(self) }
 
 
     override func debug(_  iMessage: String) {
@@ -544,32 +548,23 @@ class Zone : ZRecord {
 
 
     override func setupLinks() {
-        if  record          != nil {
-            var        dirty = false
-            let     badLinks = ["", "-", "no"]
+        if  record                != nil {
+            let           badLinks = ["", "-", "no"]
 
-            if  let link     = zoneLink {
+            if  let link           = zoneLink {
                 if  badLinks.contains(link) {
-                    zoneLink = gNullLink
-                    dirty    = true
+                    zoneLink       = gNullLink
                 }
             } else {
-                zoneLink     = gNullLink
-                dirty        = true
+                zoneLink           = gNullLink
             }
 
-            if  let pLink    = zoneParentLink {
+            if  let pLink          = zoneParentLink {
                 if  badLinks.contains(pLink) {
                     zoneParentLink = gNullLink
-                    dirty          = true
                 }
             } else {
-                zoneParentLink = gNullLink
-                dirty          = true
-            }
-
-            if  dirty && storageMode == .everyoneMode {
-                needSave()
+                zoneParentLink     = gNullLink
             }
         }
     }
@@ -579,6 +574,13 @@ class Zone : ZRecord {
         edit()
         FOREGROUND {
             self.widget?.textWidget.selectCharacter(in: range)
+        }
+    }
+
+
+    override func unorphan() {
+        if let p = parentZone, !p.isBookmark, !spawnedBy(p) {
+            p.add(self, at: siblingIndex)
         }
     }
 
@@ -665,7 +667,7 @@ class Zone : ZRecord {
     }
 
 
-    func wasSpawnedByAGrab() -> Bool {
+    func spawnedByAGrab() -> Bool {
         let               grabbed = gSelectionManager.currentGrabs
         var wasSpawned:      Bool = grabbed.contains(self)
         if !wasSpawned, let pZone = parentZone {
@@ -684,7 +686,7 @@ class Zone : ZRecord {
     }
     
     
-    func wasSpawnedBy(_ iZone: Zone?) -> Bool {
+    func spawnedBy(_ iZone: Zone?) -> Bool {
         var wasSpawned: Bool = false
 
         if let zone = iZone, let pZone = parentZone {
@@ -718,9 +720,10 @@ class Zone : ZRecord {
 
 
     func safeTraverseAncestors(visited: [Zone], _ block: ZoneToStatusClosure) {
-        let status  = block(self)
-
-        if  let parent  = parentZone, !visited.contains(self), !isRoot, status == .eContinue {
+        if  block(self) == .eContinue,  //        skip == stop
+            !isRoot,                    //      isRoot == stop
+            !visited.contains(self),    // graph cycle == stop
+            let parent = parentZone {   //  nil parent == stop
             parent.safeTraverseAncestors(visited: visited + [self], block)
         }
     }
@@ -742,22 +745,6 @@ class Zone : ZRecord {
         }
 
         return visible
-    }
-
-    func spawned(_ iChild: Zone) -> Bool {
-        var isSpawn = false
-
-        traverseProgeny { iZone -> ZTraverseStatus in
-            if iZone == iChild {
-                isSpawn = true
-
-                return .eStop
-            }
-            
-            return .eContinue
-        }
-        
-        return isSpawn
     }
 
 

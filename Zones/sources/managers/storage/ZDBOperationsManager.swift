@@ -24,20 +24,20 @@ class ZDBOperationsManager: ZOperationsManager {
     // MARK:-
 
 
-    func     unHang()                                  {                                                                                  onCloudResponse?(0) }
-    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .onboard,      to: .manifest,                               onCompletion) }
-    func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,         to: .parent,                                 onCompletion) }
-    func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .save,         to: .subscribe,                              onCompletion) }
-    func     travel(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .root,         to: .save,                                   onCompletion) }
-    func       save(_ onCompletion: @escaping Closure) { setupAndRun([                                    .save                      ]) { onCompletion() } }
-    func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                              .save, .children           ]) { onCompletion() } }
-    func fetchTrash(_ onCompletion: @escaping Closure) { setupAndRun([.trash,                             .save, .children           ]) { onCompletion() } }
-    func       sync(_ onCompletion: @escaping Closure) { setupAndRun([           .fetch, .parent, .merge, .save, .children, .remember]) { onCompletion() } }
-    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent,         .save, .children           ]) { onCompletion() } }
-    func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent,                .children           ]) { onCompletion() } }
-    func     parent(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent                                     ]) { onCompletion() } }
-    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                                    ]) { onCompletion() } }
-    func  bookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks                                                     ]) { onCompletion() } }
+    func     unHang()                                  {                                                                                                   onCloudResponse?(0) }
+    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .onboard,      to: .manifest,                                                onCompletion) }
+    func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,         to: .parent,                                                  onCompletion) }
+    func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .save,         to: .subscribe,                                               onCompletion) }
+    func       save(_ onCompletion: @escaping Closure) { setupAndRun([                                    .save                                       ]) { onCompletion() } }
+    func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                              .save, .children,                  .remember]) { onCompletion() } }
+    func     travel(_ onCompletion: @escaping Closure) { setupAndRun([.root, .manifest,                          .children, .parent, .fetch, .remember]) { onCompletion() } }
+    func fetchTrash(_ onCompletion: @escaping Closure) { setupAndRun([.trash,                             .save, .children,                  .remember]) { onCompletion() } }
+    func       sync(_ onCompletion: @escaping Closure) { setupAndRun([           .fetch, .parent, .merge, .save, .children,                  .remember]) { onCompletion() } }
+    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent,         .save, .children,                  .remember]) { onCompletion() } }
+    func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent,                .children,                  .remember]) { onCompletion() } }
+    func     parent(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent                                                      ]) { onCompletion() } }
+    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                                                     ]) { onCompletion() } }
+    func  bookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks                                                                      ]) { onCompletion() } }
 
 
     func children(_ recursing: ZRecursionType, _ iGoal: Int? = nil, onCompletion: @escaping Closure) {
