@@ -33,7 +33,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     // MARK:-
 
 
-    override func handleSignal(_ iObject: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
+    override func handleSignal(_ iObject: Any?, kind: ZSignalKind) {
         if kind == .found {
             resultsAreVisible = false
             
@@ -41,7 +41,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
                 let count = records.count
 
                 if count == 1 {
-                    self.resolveRecord(records[0], in: storageMode)
+                    self.resolveRecord(records[0])
                 } else if count > 0 {
                     foundRecords = records
 
@@ -128,7 +128,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     // MARK:-
 
 
-    func resolve(in storageMode: ZStorageMode) -> Bool {
+    @discardableResult func resolve() -> Bool {
         var resolved = false
 
         #if os(OSX)
@@ -139,7 +139,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
                 if  resolved {
                     let record = self.foundRecords[index!]
 
-                    resolveRecord(record, in: storageMode)
+                    resolveRecord(record)
                 }
             }
         #endif
@@ -148,11 +148,11 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     }
 
 
-    func resolveRecord(_ record: CKRecord, in storageMode: ZStorageMode) {
+    func resolveRecord(_ record: CKRecord) {
         var zone  = gCloudManager.zoneForRecordID(record.recordID)
 
         if  zone == nil {
-            zone  = Zone(record: record, storageMode: storageMode)
+            zone  = Zone(record: record, storageMode: gStorageMode)
         }
 
         gHere = zone!
@@ -226,13 +226,14 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             switch arrow {
             case    .up:    moveSelection(up: true,  extreme: isCommand)
             case  .down:    moveSelection(up: false, extreme: isCommand)
-            case  .left:    clear();                    return nil
-            case .right: if resolve(in: gStorageMode) { return nil }; break
+            case  .left:    clear();    return nil
+            case .right: if resolve() { return nil }; break
             }
         } else if    key == "\r", // N.B. test key first since getInput has a possible side-effect of exiting search
             let        s  = searchController,
             s.getInput() == nil {
             clear()
+            resolve()
 
             return nil
         }

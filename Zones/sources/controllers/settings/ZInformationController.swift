@@ -27,13 +27,13 @@ class ZInformationController: ZGenericController {
     @IBOutlet var       levelLabel: ZTextField?
 
 
-    var statusText: String {
+    var versionText: String {
         if  let     version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
             let buildNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion")            as? String {
             return "version \(version), build \(buildNumber)"
         }
 
-        return ""
+        return "BUILD ERROR --- NO VERSION"
     }
 
 
@@ -42,15 +42,15 @@ class ZInformationController: ZGenericController {
         fractionInMemory? .minValue = 0
     }
 
-    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         if ![.search, .found].contains(kind) {
-            let                     count = gRemoteStoresManager.recordsManagerFor(storageMode).undeletedCount
+            let                     count = gRemoteStoresManager.recordsManagerFor(gStorageMode).undeletedCount
             let                     total = gRemoteStoresManager.rootProgenyCount // TODO wrong manager
             totalCountLabel?        .text = "of \(total), retrieved: \(count)"
             graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
             fractionInMemory?.doubleValue = Double(count)
             fractionInMemory?   .maxValue = Double(total)
-            versionLabel?           .text = statusText
+            versionLabel?           .text = versionText
 
             if kind != .startup {
                 levelLabel?         .text = "level: \(gSelectionManager.rootMostMoveable.level)"

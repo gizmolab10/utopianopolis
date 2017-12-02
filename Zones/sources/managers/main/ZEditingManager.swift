@@ -859,7 +859,7 @@ class ZEditingManager: NSObject {
 
 
     private func deleteZone(_ zone: Zone, permanently: Bool = false, onCompletion: Closure?) {
-        if zone.parentZone == nil {
+        if zone.isRoot {
             onCompletion?()
         } else {
             let         parent = zone.parentZone

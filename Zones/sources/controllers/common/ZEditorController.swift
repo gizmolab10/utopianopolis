@@ -147,7 +147,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     }
 
     
-    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         if [.datum, .data, .redraw].contains(kind) { // ignore for preferences, search, information, startup
             if gWorkMode != .editMode {
                 editorView?.snp.removeConstraints()
@@ -207,19 +207,20 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         // called by controller and gesture system //
         /////////////////////////////////////////////
         
-        if  let    gesture = iGesture, gManifest.alreadyExists { 
-            let   location = gesture.location(in: editorView)
-            var     inText = false
+        if  let         gesture = iGesture, gManifest.alreadyExists { // avoid crash for click event before manifest is fetched
+            var          inText = false
             
-            if  let widget = gEditingManager.editedTextWidget {
-                let   rect = widget.convert(widget.bounds, to: editorView)
-                inText     = rect.contains(location)
+            if  let     editing = gEditingManager.editedTextWidget {
+                let    location = gesture.location(in: editorView)
+                let        rect = editing.convert(editing.bounds, to: editorView)
+                inText          = rect.contains(location)
             }
             
             if !inText {
-                if let dot = dotHitTest(iGesture) {
-                    if let zone = dot.widgetZone {
-                        if dot.isToggle {
+                if  let  widget = doWidgetTest(gesture),
+                    let    zone = widget.widgetZone {
+                    if  let dot = dotHitInWidget(widget, gesture) {
+                        if  dot.isToggle {
                             gEditingManager.toggleDotActionOnZone(zone)
                         } else if zone.isGrabbed {
                             zone.ungrab()
@@ -228,8 +229,12 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                         } else {
                             zone.grab()
                         }
-                        
-                         signalFor(nil, regarding: .information)
+
+                        signalFor(nil, regarding: .information)
+                    } else {
+                        gSelectionManager.deselect()
+                        widget.widgetZone?.grab()
+                        signalFor(nil, regarding: .search)
                     }
                 } else {
                     gSelectionManager.deselect()
@@ -462,43 +467,76 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         
         return false
     }
-    
-    
-    func dotHit(in here: Zone?, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
-        var hit: ZoneDot? = nil
-        
-        if  let e = editorView, let location = iGesture?.location(in: e), e.bounds.contains(location) {
-            here?.traverseProgeny { iZone -> ZTraverseStatus in
-                if  let       widget = iZone.widget {
-                    var         rect = widget.convert(widget.outerHitRect, to: e)
-                    
+
+
+    func widgetHit(in iStart: Zone?, _ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
+        var hit:   ZoneWidget? = nil
+        if  let              e = editorView,
+            let       location = iGesture?.location(in: e),
+            e.bounds.contains(location) {
+            iStart?.traverseProgeny { iZone -> ZTraverseStatus in
+                if  let widget = iZone.widget {
+                    let   rect = widget.convert(widget.outerHitRect, to: e)
+
                     if rect.contains(location) {
-                        let hits: DotToBooleanClosure = { iDot -> Bool in
-                            rect     = iDot.convert(iDot.bounds, to: e)
-                            let stop = rect.contains(location)
-                            
-                            if  stop {
-                                hit = iDot
-                            }
-                            
-                            return stop
-                        }
-                        
-                        if hits(widget.dragDot) || hits(widget.toggleDot) {
-                            return .eStop
-                        }
+                        hit    = widget
+
+                        return .eStop
                     }
                 }
-                
+
                 return .eContinue
             }
         }
-        
+
         return hit
     }
-    
-    
-    func dotHitTest(_ iGesture: ZGestureRecognizer?) -> (ZoneDot?) {
+
+
+    func doWidgetTest(_ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
+        if  let    altHit = widgetHit(in: gFavoritesManager.rootZone, iGesture) {
+            return altHit
+        }
+
+        if  let    hit    = widgetHit(in:                      gHere, iGesture) {
+            return hit
+        }
+
+        return nil
+    }
+
+
+    func dotHitInWidget(_ widget: ZoneWidget, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
+        var  hit:   ZoneDot? = nil
+
+        if  let                e = editorView,
+            let         location = iGesture?.location(in: e) {
+            let test: DotClosure = { iDot in
+                let         rect = iDot.convert(iDot.bounds, to: e)
+
+                if  rect.contains(location) {
+                    hit = iDot
+                }
+            }
+
+            test(widget.dragDot)
+            test(widget.toggleDot)
+        }
+
+        return hit
+    }
+
+
+    func dotHit(in here: Zone?, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
+        if  let widget = widgetHit(in: here, iGesture) {
+            return dotHitInWidget(widget, iGesture)
+        }
+
+        return nil
+    }
+
+
+    func dotHitTest(_ iGesture: ZGestureRecognizer?) -> ZoneDot? {
         let altHit = dotHit(in: gFavoritesManager.rootZone, iGesture)
         let    hit = dotHit(in:                      gHere, iGesture)
 

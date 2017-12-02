@@ -23,7 +23,7 @@ class ZGenericTableController: ZGenericController, ZTableViewDelegate, ZTableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { return UITableViewCell() }
 
 
-    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         self.genericTableUpdate()
     }
     

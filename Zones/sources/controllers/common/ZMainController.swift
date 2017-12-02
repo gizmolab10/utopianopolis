@@ -43,7 +43,7 @@ class ZMainController: ZGenericController {
     }
 
 
-    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         switch kind {
         case .found:
             showAsSearching(gWorkMode == .searchMode)

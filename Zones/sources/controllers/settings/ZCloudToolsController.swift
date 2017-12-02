@@ -41,7 +41,7 @@ class ZCloudToolsController: ZGenericTableController {
 
     func text(for kind: ZToolKind) -> String {
         switch kind {
-        case .eDebug:    return "Debug User Access"
+        case .eDebug:    return (gCrippleUserAccess ? "Crippled" : "Normal") + " User Access"
         case .eTrash:    return "Show Trash"
         case .eRetry:    return "Retry Cloud"
         case .eGather:   return "Gather Trash"

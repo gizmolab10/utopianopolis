@@ -43,7 +43,7 @@ class ZFavoritesController : ZGenericController {
     // MARK:-
 
 
-    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         if ![.search, .found, .startup].contains(kind),
             let selector = favoritesSelector {
 

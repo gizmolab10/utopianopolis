@@ -159,14 +159,21 @@ class ZFavoritesManager: ZCloudManager {
         var               found: Zone? = nil
 
         if  let                 target = iTarget,
-            let                   mode = target.storageMode {
+            let                   mode = target.storageMode,
+            let                   name = target.record?.recordID.recordName {
             var                  level = Int.max
 
             for favorite in workingFavorites {
                 if  let favoriteTarget = favorite.bookmarkTarget,
                     let     targetMode = favoriteTarget.storageMode,
                     targetMode        == mode {
+
+                    if  name == favoriteTarget.record.recordID.recordName {
+                        return favorite
+                    }
+
                     let       newLevel = favoriteTarget.level
+
                     if        newLevel < level {
                         let    spawned = iSpawned ? target.spawnedBy(favoriteTarget) : favoriteTarget.spawnedBy(target)
 

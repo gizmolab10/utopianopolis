@@ -162,8 +162,9 @@ class ZoneWidget: ZView {
             textWidget.widget = self
 
             addSubview(textWidget)
-            textWidget.setup()
         }
+
+        textWidget.setup()
     }
 
 

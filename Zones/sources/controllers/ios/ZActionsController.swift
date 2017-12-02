@@ -35,7 +35,7 @@ class ZActionsController : ZGenericController {
     // MARK:-
 
 
-    override func handleSignal(_ object: Any?, in storageMode: ZStorageMode, kind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         if ![.search, .found].contains(kind),
             let          selector = actionsSelector {
             var             index = 0

@@ -51,10 +51,10 @@ class ZControllersManager: NSObject {
 
 
     class ZSignalObject {
-        let    closure: ModeAndSignalClosure!
+        let    closure: SignalClosure!
         let controller: ZGenericController!
 
-        init(_ iClosure: @escaping ModeAndSignalClosure, forController iController: ZGenericController) {
+        init(_ iClosure: @escaping SignalClosure, forController iController: ZGenericController) {
             controller = iController
             closure    = iClosure
         }
@@ -74,7 +74,7 @@ class ZControllersManager: NSObject {
     // MARK:-
 
 
-    func register(_ iController: ZGenericController, iID: ZControllerID, closure: @escaping ModeAndSignalClosure) {
+    func register(_ iController: ZGenericController, iID: ZControllerID, closure: @escaping SignalClosure) {
         signalObjectsByControllerID[iID] = ZSignalObject(closure, forController: iController)
         currentController                = iController
     }
@@ -148,14 +148,12 @@ class ZControllersManager: NSObject {
 
     func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
         FOREGROUND(canBeDirect: true) {
-            let mode = gStorageMode
-            
             self.updateCounts() // clean up after fetch children
 
             for (identifier, signalObject) in self.signalObjectsByControllerID {
                 switch regarding {
-                case .preferences: if identifier == .preferences { signalObject.closure(object, mode, regarding) }
-                default:                                           signalObject.closure(object, mode, regarding)
+                case .preferences: if identifier == .preferences { signalObject.closure(object, regarding) }
+                default:                                           signalObject.closure(object, regarding)
                 }
             }
 

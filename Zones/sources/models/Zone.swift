@@ -56,12 +56,33 @@ class Zone : ZRecord {
     var         directReadOnly:        Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
     var          hasZonesBelow:        Bool  { return hasAnyZonesAbove(false) }
     var          hasZonesAbove:        Bool  { return hasAnyZonesAbove(true) }
-    var           showChildren:        Bool  { return isRootOfFavorites || gManifest.showsChildren(self) }
     var             isBookmark:        Bool  { return crossLink != nil }
     var             isSelected:        Bool  { return gSelectionManager.isSelected(self) }
     var              isGrabbed:        Bool  { return gSelectionManager .isGrabbed(self) }
     var               hasColor:        Bool  { return zoneColor != nil && zoneColor != "" }
     var                isTrash:        Bool  { return zoneName == gTrashNameKey }
+
+
+    var manifest: ZManifest? {
+        if let mode = storageMode {
+            return gRemoteStoresManager.manifest(for: mode)
+        }
+
+        return nil
+    }
+
+
+    var showChildren: Bool  {
+        var show = false
+
+        if isRootOfFavorites {
+            show = true
+        } else if let m = manifest {
+            show    = m.showsChildren(self)
+        }
+
+        return show
+    }
 
 
     var isInFavorites: Bool {
@@ -455,6 +476,8 @@ class Zone : ZRecord {
     var isTextEditable: Bool {
         if let t = bookmarkTarget {
             return    t.isTextEditable
+        } else if isTrash {
+            return false
         } else if directWritable {
             return true
         } else if directReadOnly {
@@ -952,8 +975,8 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    func displayChildren() { gManifest.displayChildren(in: self) }
-    func    hideChildren() { gManifest   .hideChildren(in: self) }
+    func displayChildren() { manifest?.displayChildren(in: self) }
+    func    hideChildren() { manifest?   .hideChildren(in: self) }
 
 
     @discardableResult func add(_ child: Zone?) -> Int? {
