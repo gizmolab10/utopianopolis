@@ -65,6 +65,7 @@ class ZEditingManager: NSObject {
         case Parent
         case Favorites
         case SelectAll
+        case Hyperlink
 
         case Redo
         case Paste
@@ -76,12 +77,13 @@ class ZEditingManager: NSObject {
     func menuType(for key: String) -> ZMenuType {
         switch key {
         case "z":                                          return .Undo
-        case "r", "o":                                     return .Sort
+        case "o", "r":                                     return .Sort
         case "v", "x", gSpaceKey:                          return .Child
-        case "u", "l", "w", "-", "\r":                     return .Alter
+        case "h", "l", "\r", "u", "w", "-":                return .Alter
         case "b", "d", gTabKey, gBackspaceKey, gDeleteKey: return .Parent
         case ";", "'", "/":                                return .Favorites
         case "a":                                          return .SelectAll
+        case "=":                                          return .Hyperlink
         default:                                           return .Always
         }
     }
@@ -119,6 +121,7 @@ class ZEditingManager: NSObject {
             case .Favorites: valid = gHasPrivateDatabase
             case .Undo:      valid = undo.canUndo
             case .Redo:      valid = undo.canRedo
+            case .Hyperlink: valid = mover.isHyperlink
             case .Always:    valid = true
             }
         } else if key.arrow == nil {
@@ -163,14 +166,16 @@ class ZEditingManager: NSObject {
                 case "d":        duplicate()
                 case "p":        printHere()
                 case "b":        addBookmark()
-                case "o":        orderByLength(isOption)
+                case "h":        editHyperlink()
                 case "w":        toggleWritable()
+                case "o":        orderByLength(isOption)
                 case "s":        selectCurrentFavorite()
                 case "u", "l":   alterCase(up: key == "u")
                 case ";":        doFavorites(true,    false)
                 case "?":        openBrowserForFocusWebsite()
                 case "'":        doFavorites(isShift, isOption)
                 case "/":        focus(on: gSelectionManager.firstGrab, isCommand)
+                case "=":        travelThroughHyperlink(gSelectionManager.firstGrab)
                 case gTabKey:    addNext(containing: isOption) { iChild in iChild.edit() }
                 case ",", ".":   gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
                 case "z":        if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
@@ -261,6 +266,23 @@ class ZEditingManager: NSObject {
 
     // MARK:- miscellaneous features
     // MARK:-
+
+
+    func travelThroughHyperlink(_ iZone: Zone) {
+        if  let link  = iZone.hyperLink,
+            link     != gNullLink {
+            link.openAsURL()
+        }
+    }
+
+
+    func editHyperlink() {
+        let       zone = gSelectionManager.firstGrab
+        if  let widget = gWidgetsManager.widgetForZone(zone) {
+            widget.textWidget.isEditiingHyperlink = true
+            zone.edit()
+        }
+    }
 
 
     func toggleWritable() {
@@ -628,7 +650,7 @@ class ZEditingManager: NSObject {
 
             if zone.isBookmark {
                 travelThroughBookmark(zone)
-            } else {
+            } else if zone.zoneCount?.intValue ?? 0 > 0 {
                 if isEditing {
                     s.stopCurrentEdit()
                 }
@@ -636,6 +658,8 @@ class ZEditingManager: NSObject {
                 let show = !zone.showChildren
 
                 toggleDotUpdate(show: show, zone: zone)
+            } else if zone.isHyperlink {
+                travelThroughHyperlink(zone)
             }
         }
     }
@@ -1084,6 +1108,8 @@ class ZEditingManager: NSObject {
             actuallyMoveZone(zone)
         } else if zone.isBookmark {
             travelThroughBookmark(zone)
+        } else if zone.isHyperlink {
+            travelThroughHyperlink(zone)
         } else {
             zone.needChildren()
             zone.displayChildren()

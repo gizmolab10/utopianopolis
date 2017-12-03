@@ -175,6 +175,12 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Oel-Sg-rlG"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="Hyperlink" tag="10" keyEquivalent="h" id="faE-cI-ZaT">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Kdz-KX-lfr"/>
+                                                        </connections>
+                                                    </menuItem>
                                                     <menuItem title="New ideas ..." tag="6" id="qrM-Lc-daa">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <menu key="submenu" title="New ideas ..." id="OBR-N9-GY7">
@@ -219,7 +225,13 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="zg8-A2-e7r"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="In" keyEquivalent="" id="z1w-26-QzR">
+                                                    <menuItem title="In" keyEquivalent="" id="z73-ac-ZOW">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Tb0-go-IcO"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Hyperlink" keyEquivalent="=" id="z1w-26-QzR">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="0X2-pp-xtA"/>

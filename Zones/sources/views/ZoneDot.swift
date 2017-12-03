@@ -72,7 +72,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var isHiddenToggleDot: Bool {
         if  let zone = widgetZone, isInnerDot, isToggle, let mode = zone.storageMode {
 
-            return (zone.fetchableCount == 0 && zone.count == 0 && !zone.isBookmark && !isDragTarget) || (mode == .favoritesMode && !zone.isRootOfFavorites)
+            return (!zone.isBookmark && !zone.isHyperlink && zone.fetchableCount == 0 && zone.count == 0 && !isDragTarget)
+                || (!zone.isRootOfFavorites && mode == .favoritesMode)
         }
         
         return false
@@ -214,7 +215,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             if !isHiddenToggleDot {
                 if isInnerDot {
-                    let shouldHighlight = isToggle ? (!zone.showChildren || zone.isBookmark || isDragTarget) : zone.isGrabbed || highlightAsFavorite // not highlight when editing
+                    let isChildlessHyperlink = zone.isHyperlink && zone.progenyCount == 0
+                    let shouldHighlight = isToggle ? (!zone.showChildren || zone.isBookmark || isChildlessHyperlink || isDragTarget) : zone.isGrabbed || highlightAsFavorite // not highlight when editing
                     let     strokeColor = isToggle && isDragTarget ? gRubberbandColor : zone.color
                     var       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
                     let       thickness = CGFloat(gLineThickness)
@@ -229,7 +231,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     path.fill()
 
                     if isToggle {
-                        if zone.isBookmark { // draw tiny bookmark dot inside toggle dot
+                        if  zone.isBookmark || isChildlessHyperlink { // draw tiny bookmark dot inside toggle dot
                             let     inset = CGFloat(innerDotHeight / 3.0)
                             path          = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
                             path.flatness = 0.0001

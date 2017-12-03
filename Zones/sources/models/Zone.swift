@@ -25,13 +25,14 @@ class Zone : ZRecord {
     dynamic var         parent: CKReference?
     dynamic var       zoneName:      String?
     dynamic var       zoneLink:      String?
+    dynamic var      hyperLink:      String?
     dynamic var      zoneColor:      String?
     dynamic var      zoneOwner: CKReference?
     dynamic var      zoneOrder:    NSNumber?
     dynamic var      zoneCount:    NSNumber?
     dynamic var     zoneAccess:    NSNumber?
+    dynamic var     parentLink:      String?
     dynamic var    zoneProgeny:    NSNumber?
-    dynamic var zoneParentLink:      String?
     var            _parentZone:        Zone?
     var             _crossLink:     ZRecord?
     var               children =      [Zone] ()
@@ -39,7 +40,7 @@ class Zone : ZRecord {
     var                  count:         Int  { return children.count }
     var                 widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var               linkName:      String? { return name(from: zoneLink) }
-    var          unwrappedName:      String  { return zoneName ?? "empty" }
+    var          unwrappedName:      String  { return zoneName ?? gNoName }
     var          decoratedName:      String  { return "\(unwrappedName)\(decoration)" }
     var       grabbedTextColor:      ZColor  { return color.darker(by: 3.0) }
     var      isCurrentFavorite:        Bool  { return self == gFavoritesManager.currentFavorite }
@@ -56,6 +57,7 @@ class Zone : ZRecord {
     var         directReadOnly:        Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
     var          hasZonesBelow:        Bool  { return hasAnyZonesAbove(false) }
     var          hasZonesAbove:        Bool  { return hasAnyZonesAbove(true) }
+    var            isHyperlink:        Bool  { return hyperLink != nil && hyperLink != gNullLink }
     var             isBookmark:        Bool  { return crossLink != nil }
     var             isSelected:        Bool  { return gSelectionManager.isSelected(self) }
     var              isGrabbed:        Bool  { return gSelectionManager .isGrabbed(self) }
@@ -107,15 +109,16 @@ class Zone : ZRecord {
 
     class func cloudProperties() -> [String] {
         return [#keyPath(parent),
-                #keyPath(zoneLink),
                 #keyPath(zoneName),
+                #keyPath(zoneLink),
+                #keyPath(hyperLink),
                 #keyPath(zoneColor),
                 #keyPath(zoneCount),
                 #keyPath(zoneOrder),
                 #keyPath(zoneOwner),
                 #keyPath(zoneAccess),
-                #keyPath(zoneProgeny),
-                #keyPath(zoneParentLink)]
+                #keyPath(parentLink),
+                #keyPath(zoneProgeny)]
     }
 
 
@@ -387,7 +390,7 @@ class Zone : ZRecord {
             } else {
                 if  let  reference = parent, let mode = storageMode {
                     _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).zoneForReference(reference)
-                } else if let zone = zone(from: zoneParentLink) {
+                } else if let zone = zone(from: parentLink) {
                     _parentZone    = zone
                 }
             }
@@ -396,16 +399,16 @@ class Zone : ZRecord {
         }
 
         set {
-            zoneParentLink = gNullLink
-            _parentZone    = newValue
-            parent         = nil
+            parentLink  = gNullLink
+            _parentZone = newValue
+            parent      = nil
 
             if  let  parentRecord  = newValue?.record,
                 let       newMode  = newValue?.storageMode {
                 if        newMode == storageMode {
                     parent         = CKReference(record: parentRecord, action: .none)
                 } else {
-                    zoneParentLink = "\(newMode.rawValue)::\(parentRecord.recordID.recordName)"
+                    parentLink     = "\(newMode.rawValue)::\(parentRecord.recordID.recordName)"
                 }
             }
         }
@@ -582,12 +585,12 @@ class Zone : ZRecord {
                 zoneLink           = gNullLink
             }
 
-            if  let pLink          = zoneParentLink {
+            if  let pLink          = parentLink {
                 if  badLinks.contains(pLink) {
-                    zoneParentLink = gNullLink
+                    parentLink     = gNullLink
                 }
             } else {
-                zoneParentLink     = gNullLink
+                parentLink         = gNullLink
             }
         }
     }

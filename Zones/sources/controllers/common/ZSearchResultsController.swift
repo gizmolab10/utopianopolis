@@ -68,12 +68,14 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             }
         }
 
-        foundRecords.sort(by: {
-            let a = $0[gZoneNameKey] as! String
-            let b = $1[gZoneNameKey] as! String
+        foundRecords.sort {
+            if  let a = $0[gZoneNameKey] as? String,
+                let b = $1[gZoneNameKey] as? String {
+                return a.lowercased() < b.lowercased()
+            }
 
-            return a.lowercased() < b.lowercased()
-        })
+            return false
+        }
     }
 
 

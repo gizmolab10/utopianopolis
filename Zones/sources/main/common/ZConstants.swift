@@ -43,9 +43,10 @@ let    gDefaultZoneColor = ZColor.blue
 
 let         gUndoManager = UndoManager()
 
+let              gNoName = "empty"
 let             gCloudID = "iCloud.com.zones.Zones"
 let            gLinksKey = "links"
-let            gNullLink = "not a link"
+let            gNullLink = "n"
 let           gTrashLink = "\(gSeparatorKey)\(gSeparatorKey)trash"
 let         gZoneTypeKey = "Zone"
 let         gRootNameKey = "root"

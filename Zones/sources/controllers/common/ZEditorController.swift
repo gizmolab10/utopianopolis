@@ -208,11 +208,12 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         /////////////////////////////////////////////
         
         if  let         gesture = iGesture, gManifest.alreadyExists { // avoid crash for click event before manifest is fetched
+            let         editing = gEditingManager.editedTextWidget
             var          inText = false
-            
-            if  let     editing = gEditingManager.editedTextWidget {
+
+            if  editing != nil {
                 let    location = gesture.location(in: editorView)
-                let        rect = editing.convert(editing.bounds, to: editorView)
+                let        rect = editing!.convert(editing!.bounds, to: editorView)
                 inText          = rect.contains(location)
             }
             
@@ -232,6 +233,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
                         signalFor(nil, regarding: .information)
                     } else {
+                        editing?.isEditingText = false
+                        
                         gSelectionManager.deselect()
                         widget.widgetZone?.grab()
                         signalFor(nil, regarding: .search)
@@ -446,7 +449,9 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 if  let    hitRect = widget.hitRect {
                     let widgetRect = widget.convert(hitRect, to: editorView)
 
-                    if  widgetRect.intersects(rect!) {
+                    if  let zone = widget.widgetZone, !zone.isRootOfFavorites,
+                        
+                        widgetRect.intersects(rect!) {
                         widget.widgetZone?.addToGrab()
                     }
                 }

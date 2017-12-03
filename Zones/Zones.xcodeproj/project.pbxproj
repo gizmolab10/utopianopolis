@@ -437,7 +437,7 @@
 				0C39B2201F182EBB0091F4D1 /* common */,
 				0C2E22CD1F75BEEA00B50A71 /* ios */,
 				0C2E22B81F75B8AB00B50A71 /* osx */,
-				0C39B2271F182EBB0091F4D1 /* settings */,
+				0C39B2271F182EBB0091F4D1 /* details */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -454,7 +454,7 @@
 			path = common;
 			sourceTree = "<group>";
 		};
-		0C39B2271F182EBB0091F4D1 /* settings */ = {
+		0C39B2271F182EBB0091F4D1 /* details */ = {
 			isa = PBXGroup;
 			children = (
 				0C39B2281F182EBB0091F4D1 /* ZCloudToolsController.swift */,
@@ -463,7 +463,7 @@
 				0C39B22B1F182EBB0091F4D1 /* ZSettingsController.swift */,
 				0C39B22C1F182EBB0091F4D1 /* ZShortcutsController.swift */,
 			);
-			path = settings;
+			path = details;
 			sourceTree = "<group>";
 		};
 		0C39B22D1F182EBB0091F4D1 /* main */ = {

@@ -32,13 +32,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/main/ios/ZMobileExtensions.swift"
-            timestampString = "533605033.470865"
+            timestampString = "534029753.380738"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "360"
             endingLineNumber = "360"
-            landmarkName = "UITextField"
-            landmarkType = "21">
+            landmarkName = "textField(_:shouldChangeCharactersIn:replacementString:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -48,11 +48,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/models/Zone.swift"
-            timestampString = "533950882.537254"
+            timestampString = "534036601.87933"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "564"
-            endingLineNumber = "564"
+            startingLineNumber = "567"
+            endingLineNumber = "567"
             landmarkName = "Zone"
             landmarkType = "3">
          </BreakpointContent>
@@ -128,7 +128,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/managers/storage/ZOnboardingManager.swift"
-            timestampString = "533950882.537669"
+            timestampString = "534036601.879808"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "126"
@@ -304,11 +304,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/models/Zone.swift"
-            timestampString = "533950882.538443"
+            timestampString = "534036601.880271"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "612"
-            endingLineNumber = "612"
+            startingLineNumber = "615"
+            endingLineNumber = "615"
             landmarkName = "orphan()"
             landmarkType = "7">
          </BreakpointContent>
@@ -320,28 +320,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/managers/main/ZFavoritesManager.swift"
-            timestampString = "533950882.538528"
+            timestampString = "534036601.880384"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "245"
             endingLineNumber = "245"
             landmarkName = "updateFavorites()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/controllers/common/ZSearchResultsController.swift"
-            timestampString = "533950882.538741"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "142"
-            endingLineNumber = "142"
-            landmarkName = "resolve()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

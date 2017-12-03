@@ -332,11 +332,11 @@ extension ZoneTextWidget {
 
         if  text?.contains(gHalfLineOfDashes + " - ") ?? false {
             widgetZone?.zoneName = gLineOfDashes
-            isTextEditing        = false
+            isEditingText        = false
 
             updateText()
         } else {
-            isTextEditing = true
+            isEditingText        = true
 
             updateGUI()
         }
@@ -345,11 +345,13 @@ extension ZoneTextWidget {
 
     override func textDidEndEditing(_ notification: Notification) {
         if  let       number = notification.userInfo?["NSTextMovement"] as? NSNumber {
+
+            captureText(force: false) // do this before clearing isEditingText so isHyperlink will retain its value
+
             let        value = number.intValue
-            isTextEditing    = value == NSOtherTextMovement
+            isEditingText    = value == NSOtherTextMovement
             var key: String? = nil
 
-            captureText(force: false)
             resignFirstResponder()
             deselectAllText()
 

@@ -23,22 +23,32 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     override var         preferredFont : ZFont { return (widgetZone?.isInFavorites ?? false) ? gFavoritesFont : gWidgetFont }
     var                     widgetZone : Zone? { return widget?.widgetZone }
     weak var                    widget : ZoneWidget?
-    var                 _isTextEditing = false
+    var            isEditiingHyperlink = false
+    var                 _isEditingText = false
     var                   originalText = ""
 
 
-    override var isTextEditing: Bool {
-        get { return _isTextEditing }
+    var textToEdit: String {
+        if  let    name = isEditiingHyperlink ? widgetZone?.hyperLink: widgetZone?.unwrappedName, name != gNullLink {
+            return name
+        }
+
+        return gNoName
+    }
+
+
+    override var isEditingText: Bool {
+        get { return _isEditingText }
         set {
-            if  _isTextEditing != newValue {
-                _isTextEditing  = newValue
+            if  _isEditingText != newValue {
+                _isEditingText  = newValue
                 font            = preferredFont
                 let           s = gSelectionManager
 
                 if  let   zone  = widgetZone {
-                    if !_isTextEditing {
-                        let  grab = s.currentlyEditingZone == zone
-                        textColor = !grab ? ZColor.black : zone.grabbedTextColor
+                    if !_isEditingText {
+                        let            grab = s.currentlyEditingZone == zone
+                        textColor           = !grab ? ZColor.black : zone.grabbedTextColor
 
                         abortEditing() // NOTE: this does NOT remove selection highlight !!!!!!!
                         deselectAllText()
@@ -48,19 +58,18 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
                             zone.grab()
                         }
+
+                        isEditiingHyperlink    = false
                     } else {
                         s.currentlyEditingZone = zone
                         textColor              = ZColor.black
-                        originalText           = zone.zoneName ?? ""
+                        originalText           = textToEdit
 
                         s.deselectGrabs()
                         enableUndo()
-                        updateText()
-
-                        //                    #if os(iOS)
-                        //                        selectAllText()
-                        //                    #endif
                     }
+
+                    layoutText()
                 } else {
                     s.clearEdit()
                 }
@@ -122,28 +131,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-//    @discardableResult override func resignFirstResponder() -> Bool {
-//        var result = false
-//
-//        if !gSelectionManager.isEditingStateChanging {
-////            gSelectionManager.deferEditingStateChange()
-//            captureText(force: false)
-//
-//            result = super.resignFirstResponder()
-//
-//            if result && isTextEditing {
-//                gSelectionManager.clearGrab()
-//
-//                FOREGROUND { // avoid state garbling
-//                    self.isTextEditing = false
-//                }
-//            }
-//        }
-//
-//        return result
-//    }
-
-
     @discardableResult override func becomeFirstResponder() -> Bool {
         if !gSelectionManager.isEditingStateChanging && widgetZone?.isWritableByUseer ?? false {
 
@@ -151,9 +138,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 gSelectionManager.deferEditingStateChange()
             }
 
-            isTextEditing = super.becomeFirstResponder() // becomeFirstResponder is called first so delegate methods will be called
+            isEditingText = super.becomeFirstResponder() // becomeFirstResponder is called first so delegate methods will be called
 
-            return isTextEditing
+            return isEditingText
         }
 
         return false
@@ -171,7 +158,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     override func updateText() {
         if  let zone = widgetZone {
-            text     = zone.unwrappedName
+            text     = textToEdit
             var need = 0
 
             switch gCountsMode {
@@ -180,7 +167,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             default:         return
             }
 
-            if (need > 1) && !isTextEditing && (!zone.showChildren || (gCountsMode == .progeny)) {
+            if (need > 1) && !isEditingText && (!zone.showChildren || (gCountsMode == .progeny)) {
                 text?.append("  (\(need))")
             }
         }
@@ -212,12 +199,22 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func assign(_ iText: String?, to iZone: Zone?) {
-        if  let t = iText, var zone = iZone {
+        if  let t = iText, var zone = iZone, t != gNoName {
             gTextCapturing          = true
 
-            let        assignTextTo = { (iTarget: Zone) in
-                let      components = t.components(separatedBy: "  (")
-                iTarget   .zoneName = components[0]
+            let         assignTextTo = { (iTarget: Zone) in
+                let       components = t.components(separatedBy: "  (")
+                var newText: String? = components[0]
+
+                if  newText == gNoName || newText == "" {
+                    newText  = nil
+                }
+
+                if self.isEditiingHyperlink {
+                    iTarget.hyperLink = newText ?? gNullLink
+                } else {
+                    iTarget .zoneName = newText
+                }
 
                 if !iTarget.isInFavorites {
                     iTarget.needSave()
@@ -231,24 +228,28 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
             assignTextTo(zone)
 
-            if  let target = zone.bookmarkTarget {
-                zone       = target
-
-                assignTextTo(target)
-            }
-
-            var bookmarks = [Zone] ()
-
-            for bookmark in gRemoteStoresManager.bookmarksFor(zone) {
-                bookmarks.append(bookmark)
-                assignTextTo(bookmark)
-            }
-
-            redrawAndSync {
+            if isEditiingHyperlink {
                 gTextCapturing = false
+            } else {
+                if  let target = zone.bookmarkTarget {
+                    zone       = target
 
-                for bookmark in bookmarks {
-                    self.signalFor(bookmark, regarding: .datum)
+                    assignTextTo(target)
+                }
+
+                var bookmarks = [Zone] ()
+
+                for bookmark in gRemoteStoresManager.bookmarksFor(zone) {
+                    bookmarks.append(bookmark)
+                    assignTextTo(bookmark)
+                }
+
+                redrawAndSync {
+                    gTextCapturing = false
+
+                    for bookmark in bookmarks {
+                        self.signalFor(bookmark, regarding: .datum)
+                    }
                 }
             }
         }
@@ -258,7 +259,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     override func captureText(force: Bool) {
         let zone = widgetZone
 
-        if !gTextCapturing || force, zone?.zoneName != text! {
+        if !gTextCapturing || force, originalText != text! {
             assign(text, to: zone)
         }
     }
@@ -268,10 +269,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         super.draw(dirtyRect)
 
         if  let zone = widgetZone,
-            zone.isBookmark,
+            (zone.isBookmark || zone.isHyperlink),
             !zone.isInFavorites,
             !zone.isGrabbed,
-            !isTextEditing {
+            !isEditingText {
 
             ///////////////////////////////////////////////////////////
             // draw line underneath text indicating it is a bookmark //

@@ -476,7 +476,7 @@ extension ZView {
 
 extension ZTextField {
 
-    var  isTextEditing:  Bool { return false }
+    var  isEditingText:  Bool { return false }
     var  preferredFont: ZFont { return gWidgetFont }
 
     func selectCharacter(in range: NSRange) {}
