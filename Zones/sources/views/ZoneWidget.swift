@@ -35,7 +35,6 @@ class ZoneWidget: ZView {
     let            childrenView = ZView          ()
     private var childrenWidgets = [ZoneWidget]   ()
     var            parentWidget:  ZoneWidget? { return widgetZone?.parentZone?.widget }
-    var             hasChildren:  Bool        { return widgetZone?.fetchableCount ?? 0 > 0 }
     weak var         widgetZone:  Zone?
 
 

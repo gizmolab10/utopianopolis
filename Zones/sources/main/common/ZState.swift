@@ -90,6 +90,9 @@ var    gEditorController: ZEditorController? { return gControllersManager.contro
 var          gEditorView:      ZoneDragView? { return gEditorController?.editorView }
 var           gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var            gDotWidth:             Double { return gDotHeight * 0.75 }
+var             fontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
+var          gWidgetFont:              ZFont { return .systemFont(ofSize: fontSize) }
+var       gFavoritesFont:              ZFont { return .systemFont(ofSize: fontSize * gReductionRatio) }
 
 
 // MARK:- keys

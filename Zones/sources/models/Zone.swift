@@ -181,9 +181,9 @@ class Zone : ZRecord {
             }
         }
 
-        if  fetchableCount != 0 {
+        if  indirectFetchableCount != 0 {
             let s  = d == "" ? "" : " "
-            let c  = s + "\(fetchableCount)"
+            let c  = s + "\(indirectFetchableCount)"
 
             d.append(c)
         }
@@ -317,9 +317,7 @@ class Zone : ZRecord {
 
     var fetchableCount: Int {
         get {
-            if  let    t = bookmarkTarget {
-                return t.fetchableCount
-            } else if zoneCount == nil {
+            if zoneCount == nil {
                 updateInstanceProperties()
 
                 if  zoneCount == nil {
@@ -334,6 +332,15 @@ class Zone : ZRecord {
             if  newValue != fetchableCount && !isBookmark {
                 zoneCount = NSNumber(value: newValue)
             }
+        }
+    }
+
+
+    var indirectFetchableCount: Int {
+        if  let    t = bookmarkTarget {
+            return t.indirectFetchableCount
+        } else {
+            return fetchableCount
         }
     }
     
@@ -384,7 +391,7 @@ class Zone : ZRecord {
     var parentZone: Zone? {
         get {
             if  let p = _parentZone {
-                if  parent == nil, p.storageMode == storageMode, let record = p.record {
+                if  parent == nil, parentLink == gNullLink, p.storageMode == storageMode, let record = p.record {
                     parent  = CKReference(record: record, action: .none)
                 }
             } else {
@@ -654,17 +661,17 @@ class Zone : ZRecord {
 
 
     func hasCompleteAncestorPath(toColor: Bool = false, toWritable: Bool = false) -> Bool {
-        var    isComplete = false
-        var parent: Zone? = nil
+        var      isComplete = false
+        var ancestor: Zone? = nil
 
         traverseAllAncestors { iZone in
-            let  isReciprocal = parent == nil  || iZone.children.contains(parent!)
+            let  isReciprocal = ancestor == nil  || iZone.children.contains(ancestor!)
 
             if  (isReciprocal && iZone.isRoot) || (toColor && iZone.hasColor) || (toWritable && !iZone.directRecursive) {
                 isComplete = true
             }
 
-            parent = iZone
+            ancestor = iZone
         }
 
         return isComplete
@@ -749,8 +756,8 @@ class Zone : ZRecord {
         if  block(self) == .eContinue,  //        skip == stop
             !isRoot,                    //      isRoot == stop
             !visited.contains(self),    // graph cycle == stop
-            let parent = parentZone {   //  nil parent == stop
-            parent.safeTraverseAncestors(visited: visited + [self], block)
+            let p = parentZone {        //  nil parent == stop
+            p.safeTraverseAncestors(visited: visited + [self], block)
         }
     }
 
@@ -874,7 +881,7 @@ class Zone : ZRecord {
             exposedLevel += 1
 
             for child: Zone in progeny {
-                if  !child.showChildren && child.fetchableCount > 0 {
+                if  !child.showChildren && child.fetchableCount != 0 {
                     return exposedLevel
                 }
             }
@@ -895,8 +902,8 @@ class Zone : ZRecord {
 
     private func safeHasAnyZonesAbove(_ iAbove: Bool, _ visited: [Zone]) -> Bool {
         if self != gHere && !visited.contains(self) {
-            if !hasZoneAbove(iAbove), let parent = parentZone {
-                return parent.safeHasAnyZonesAbove(iAbove, visited + [self])
+            if !hasZoneAbove(iAbove), let p = parentZone {
+                return p.safeHasAnyZonesAbove(iAbove, visited + [self])
             }
 
             return true

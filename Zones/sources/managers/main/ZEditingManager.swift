@@ -268,14 +268,6 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func travelThroughHyperlink(_ iZone: Zone) {
-        if  let link  = iZone.hyperLink,
-            link     != gNullLink {
-            link.openAsURL()
-        }
-    }
-
-
     func editHyperlink() {
         let       zone = gSelectionManager.firstGrab
         if  let widget = gWidgetsManager.widgetForZone(zone) {
@@ -439,7 +431,7 @@ class ZEditingManager: NSObject {
         }
     }
 
-    // MARK:- focus
+    // MARK:- focus and travel
     // MARK:-
 
 
@@ -467,16 +459,6 @@ class ZEditingManager: NSObject {
     }
 
 
-    func travelThroughBookmark(_ bookmark: Zone) {
-        gTravelManager.travelThrough(bookmark) { object, kind in
-            self.redrawAndSync()
-//            gControllersManager.syncAndSave {
-//                self.signalFor(nil, regarding: .redraw)
-//            }
-        }
-    }
-
-
     func focus(on iZone: Zone, _ isCommand: Bool = false) {
         let focusClosure = { (zone: Zone) in
             gHere = zone
@@ -499,6 +481,33 @@ class ZEditingManager: NSObject {
             redrawAndSync(nil)
         } else {
             focusClosure(iZone)
+        }
+    }
+
+
+    func maybeTravelThrough(_ iZone: Zone) {
+        if iZone.isBookmark {
+            travelThroughBookmark(iZone)
+        } else if iZone.isHyperlink {
+            travelThroughHyperlink(iZone)
+        }
+    }
+
+
+    func travelThroughHyperlink(_ iZone: Zone) {
+        if  let link  = iZone.hyperLink,
+            link     != gNullLink {
+            link.openAsURL()
+        }
+    }
+
+
+    func travelThroughBookmark(_ bookmark: Zone) {
+        gTravelManager.travelThrough(bookmark) { object, kind in
+            self.redrawAndSync()
+            //            gControllersManager.syncAndSave {
+            //                self.signalFor(nil, regarding: .redraw)
+            //            }
         }
     }
 
@@ -648,9 +657,9 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            if zone.isBookmark {
-                travelThroughBookmark(zone)
-            } else if zone.zoneCount?.intValue ?? 0 > 0 {
+            if  zone.fetchableCount == 0 {
+                maybeTravelThrough(zone)
+            } else {
                 if isEditing {
                     s.stopCurrentEdit()
                 }
@@ -658,8 +667,6 @@ class ZEditingManager: NSObject {
                 let show = !zone.showChildren
 
                 toggleDotUpdate(show: show, zone: zone)
-            } else if zone.isHyperlink {
-                travelThroughHyperlink(zone)
             }
         }
     }
@@ -1106,10 +1113,8 @@ class ZEditingManager: NSObject {
 
         if !selectionOnly {
             actuallyMoveZone(zone)
-        } else if zone.isBookmark {
-            travelThroughBookmark(zone)
-        } else if zone.isHyperlink {
-            travelThroughHyperlink(zone)
+        } else if zone.fetchableCount == 0 {
+            maybeTravelThrough(zone)
         } else {
             zone.needChildren()
             zone.displayChildren()

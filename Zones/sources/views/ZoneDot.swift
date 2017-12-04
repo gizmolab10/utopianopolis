@@ -151,7 +151,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
     func drawTinyDots(_ dirtyRect: CGRect) {
         if  let  zone  = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showChildren || zone.isBookmark) {
-            var count  = zone.fetchableCount
+            var count  = zone.indirectFetchableCount
 
             if  count == 0 {
                 count  = zone.count
@@ -215,7 +215,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             if !isHiddenToggleDot {
                 if isInnerDot {
-                    let isChildlessHyperlink = zone.isHyperlink && zone.progenyCount == 0
+                    let isChildlessHyperlink = zone.isHyperlink && zone.fetchableCount == 0
                     let shouldHighlight = isToggle ? (!zone.showChildren || zone.isBookmark || isChildlessHyperlink || isDragTarget) : zone.isGrabbed || highlightAsFavorite // not highlight when editing
                     let     strokeColor = isToggle && isDragTarget ? gRubberbandColor : zone.color
                     var       fillColor = shouldHighlight ? strokeColor : gBackgroundColor

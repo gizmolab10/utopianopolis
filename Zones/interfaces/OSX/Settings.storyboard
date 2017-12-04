@@ -550,36 +550,36 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="FKt-Xz-j3O" userLabel="labels">
-                                            <rect key="frame" x="12" y="0.0" width="105" height="74"/>
+                                            <rect key="frame" x="8" y="0.0" width="100" height="74"/>
                                             <subviews>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1Ja-OD-89z">
-                                                    <rect key="frame" x="-2" y="48" width="109" height="22"/>
+                                                    <rect key="frame" x="-2" y="48" width="104" height="22"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="E1u-F7-yma"/>
                                                     </constraints>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="line thickness" id="Ukl-QF-qxm">
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="thickness" id="Ukl-QF-qxm">
                                                         <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="N3k-Vd-PsQ">
-                                                    <rect key="frame" x="-2" y="26" width="109" height="22"/>
+                                                    <rect key="frame" x="-2" y="26" width="104" height="22"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="ads-0v-NG0"/>
                                                     </constraints>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="vertical spacing" id="xJc-At-88z">
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="size" id="xJc-At-88z">
                                                         <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="b2f-4b-i9J">
-                                                    <rect key="frame" x="-2" y="4" width="109" height="22"/>
+                                                    <rect key="frame" x="-2" y="4" width="104" height="22"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="BNZ-fl-QS2"/>
                                                     </constraints>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="horizontal spacing" id="mLK-OR-6f6">
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="spacing" id="mLK-OR-6f6">
                                                         <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -597,38 +597,38 @@
                                                 <constraint firstAttribute="trailing" secondItem="b2f-4b-i9J" secondAttribute="trailing" id="eV3-Jk-5oa"/>
                                                 <constraint firstAttribute="bottom" secondItem="b2f-4b-i9J" secondAttribute="bottom" constant="4" id="hkg-aa-7zF"/>
                                                 <constraint firstItem="b2f-4b-i9J" firstAttribute="top" secondItem="N3k-Vd-PsQ" secondAttribute="bottom" id="lVH-AS-hYY"/>
-                                                <constraint firstAttribute="width" constant="105" id="zLR-4P-YMH"/>
+                                                <constraint firstAttribute="width" constant="100" id="zLR-4P-YMH"/>
                                             </constraints>
                                         </customView>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="xWn-hi-oFR" userLabel="sliders">
-                                            <rect key="frame" x="125" y="0.0" width="83" height="74"/>
+                                            <rect key="frame" x="116" y="0.0" width="90" height="74"/>
                                             <subviews>
                                                 <slider identifier="thickness" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gh7-LP-7IV">
-                                                    <rect key="frame" x="-2" y="46" width="87" height="26"/>
+                                                    <rect key="frame" x="-2" y="46" width="94" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="mm0-xX-hLQ"/>
                                                     </constraints>
-                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.75" maxValue="1.75" doubleValue="1.25" tickMarkPosition="above" sliderType="linear" id="whI-vU-fzO"/>
+                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.75" maxValue="1.75" doubleValue="1.1944444444444444" tickMarkPosition="below" sliderType="linear" id="whI-vU-fzO"/>
                                                     <connections>
                                                         <action selector="sliderAction:" target="Naq-se-Exq" id="2bw-KX-vd8"/>
                                                     </connections>
                                                 </slider>
                                                 <slider identifier="horizontal" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OmD-gF-PvR">
-                                                    <rect key="frame" x="-2" y="2" width="87" height="26"/>
+                                                    <rect key="frame" x="-2" y="2" width="94" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xc9-eh-z97"/>
                                                     </constraints>
-                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="30" maxValue="40" doubleValue="30" tickMarkPosition="above" sliderType="linear" id="j5S-Yr-54O"/>
+                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="30" maxValue="40" doubleValue="30" tickMarkPosition="below" sliderType="linear" id="j5S-Yr-54O"/>
                                                     <connections>
                                                         <action selector="sliderAction:" target="Naq-se-Exq" id="BHm-V9-lFh"/>
                                                     </connections>
                                                 </slider>
                                                 <slider identifier="vertical" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X28-Kf-ltl">
-                                                    <rect key="frame" x="-2" y="24" width="87" height="26"/>
+                                                    <rect key="frame" x="-2" y="24" width="94" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xX2-we-KBt"/>
                                                     </constraints>
-                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="2" maxValue="20" doubleValue="6" tickMarkPosition="above" sliderType="linear" id="qGt-br-s4B"/>
+                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="2" maxValue="20" doubleValue="6" tickMarkPosition="below" sliderType="linear" id="qGt-br-s4B"/>
                                                     <connections>
                                                         <action selector="sliderAction:" target="Naq-se-Exq" id="NZr-P4-M7Y"/>
                                                     </connections>
@@ -651,9 +651,9 @@
                                     <constraints>
                                         <constraint firstItem="xWn-hi-oFR" firstAttribute="top" secondItem="npe-oq-zV9" secondAttribute="top" id="5Yg-Qp-UKE"/>
                                         <constraint firstItem="xWn-hi-oFR" firstAttribute="leading" secondItem="FKt-Xz-j3O" secondAttribute="trailing" constant="8" id="BLA-FQ-VyQ"/>
-                                        <constraint firstAttribute="trailing" secondItem="xWn-hi-oFR" secondAttribute="trailing" constant="8" id="Qol-Wp-0Tv"/>
+                                        <constraint firstAttribute="trailing" secondItem="xWn-hi-oFR" secondAttribute="trailing" constant="10" id="Qol-Wp-0Tv"/>
                                         <constraint firstAttribute="bottom" secondItem="xWn-hi-oFR" secondAttribute="bottom" id="VUp-3p-9ID"/>
-                                        <constraint firstItem="FKt-Xz-j3O" firstAttribute="leading" secondItem="npe-oq-zV9" secondAttribute="leading" constant="12" id="aCR-80-zH0"/>
+                                        <constraint firstItem="FKt-Xz-j3O" firstAttribute="leading" secondItem="npe-oq-zV9" secondAttribute="leading" constant="8" id="aCR-80-zH0"/>
                                         <constraint firstItem="FKt-Xz-j3O" firstAttribute="top" secondItem="npe-oq-zV9" secondAttribute="top" id="iXC-jm-Mh1"/>
                                         <constraint firstAttribute="bottom" secondItem="FKt-Xz-j3O" secondAttribute="bottom" id="tDh-qC-eIE"/>
                                     </constraints>

@@ -162,8 +162,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             var need = 0
 
             switch gCountsMode {
-            case .fetchable: need = zone.fetchableCount
-            case .progeny:   need = zone.fetchableCount + zone.progenyCount
+            case .fetchable: need = zone.indirectFetchableCount
+            case .progeny:   need = zone.indirectFetchableCount + zone.progenyCount
             default:         return
             }
 
