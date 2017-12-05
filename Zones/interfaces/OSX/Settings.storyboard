@@ -543,7 +543,7 @@
                                     <constraint firstAttribute="height" constant="31" id="Oqg-X2-PkA"/>
                                 </constraints>
                             </box>
-                            <box borderType="line" title="layuot" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
+                            <box borderType="line" title="graph" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
                                 <rect key="frame" x="5" y="4" width="218" height="90"/>
                                 <view key="contentView" id="npe-oq-zV9">
                                     <rect key="frame" x="1" y="1" width="216" height="74"/>

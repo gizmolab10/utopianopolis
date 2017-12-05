@@ -51,7 +51,7 @@ class ZFileManager: NSObject {
                 let          root = Zone(dict: raw as! ZStorageDict) // broken, ignores mode
                 manifest.hereZone = root
 
-                gRemoteStoresManager.recordsManagerFor(storageMode).rootZone = root
+                gRemoteStoresManager.recordsManagerFor(storageMode)?.rootZone = root
 
                 signalFor(nil, regarding: .redraw)
             }

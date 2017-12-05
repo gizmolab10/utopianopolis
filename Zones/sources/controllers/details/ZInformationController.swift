@@ -44,7 +44,7 @@ class ZInformationController: ZGenericController {
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         if ![.search, .found].contains(kind) {
-            let                     count = gRemoteStoresManager.recordsManagerFor(gStorageMode).undeletedCount
+            let                     count = gRemoteStoresManager.recordsManagerFor(gStorageMode)?.undeletedCount ?? 0
             let                     total = gRemoteStoresManager.rootProgenyCount // TODO wrong manager
             totalCountLabel?        .text = "of \(total), retrieved: \(count)"
             graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"

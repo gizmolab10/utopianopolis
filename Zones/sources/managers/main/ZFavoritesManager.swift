@@ -18,7 +18,8 @@ enum ZFavoriteStyle: Int {
 }
 
 
-let gFavoritesManager = ZFavoritesManager(.favoritesMode)
+let         gFavoritesManager = ZFavoritesManager(.favoritesMode)
+let gAllDatabaseModes: ZModes = [.everyoneMode, .mineMode]
 
 
 class ZFavoritesManager: ZCloudManager {
@@ -28,7 +29,6 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    let databaseModes: ZModes = [.everyoneMode, .mineMode]
     let databaseRootFavorites = Zone(record: nil, storageMode: .favoritesMode)
     var      workingFavorites = [Zone] ()
     var                 count : Int  { return rootZone?.count ?? 0 }
@@ -214,7 +214,7 @@ class ZFavoritesManager: ZCloudManager {
 
     func setupDatabaseFavorites() {
         if databaseRootFavorites.count == 0 {
-            for (index, mode) in databaseModes.enumerated() {
+            for (index, mode) in gAllDatabaseModes.enumerated() {
                 let          name = mode.rawValue
                 let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name)
                 favorite.zoneLink =  "\(name)\(gSeparatorKey)\(gSeparatorKey)"

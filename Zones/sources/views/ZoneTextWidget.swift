@@ -213,7 +213,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 if self.isEditiingHyperlink {
                     iTarget.hyperLink = newText ?? gNullLink
                 } else {
-                    iTarget .zoneName = newText
+                    iTarget  .zoneName = newText
                 }
 
                 if !iTarget.isInFavorites {

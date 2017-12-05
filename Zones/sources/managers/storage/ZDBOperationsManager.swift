@@ -24,20 +24,20 @@ class ZDBOperationsManager: ZOperationsManager {
     // MARK:-
 
 
-    func     unHang()                                  {                                                                                                   onCloudResponse?(0) }
-    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .onboard,      to: .manifest,                                                onCompletion) }
-    func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,         to: .parent,                                                  onCompletion) }
-    func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .save,         to: .subscribe,                                               onCompletion) }
-    func       save(_ onCompletion: @escaping Closure) { setupAndRun([                                    .save                                       ]) { onCompletion() } }
-    func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                              .save, .children,                  .remember]) { onCompletion() } }
-    func     travel(_ onCompletion: @escaping Closure) { setupAndRun([.root, .manifest,                          .children, .parent, .fetch, .remember]) { onCompletion() } }
-    func fetchTrash(_ onCompletion: @escaping Closure) { setupAndRun([.trash,                             .save, .children,                  .remember]) { onCompletion() } }
-    func       sync(_ onCompletion: @escaping Closure) { setupAndRun([           .fetch, .parent, .merge, .save, .children,                  .remember]) { onCompletion() } }
-    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parent,         .save, .children,                  .remember]) { onCompletion() } }
-    func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent,                .children,                  .remember]) { onCompletion() } }
-    func     parent(_ onCompletion: @escaping Closure) { setupAndRun([                   .parent                                                      ]) { onCompletion() } }
-    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                                                     ]) { onCompletion() } }
-    func  bookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks                                                                      ]) { onCompletion() } }
+    func     unHang()                                  {                                                                                                              onCloudResponse?(0) }
+    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .onboard, to: .manifest,                                                                onCompletion) }
+    func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,    to: .traits,                                                                  onCompletion) }
+    func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .save,    to: .subscribe,                                                               onCompletion) }
+    func       save(_ onCompletion: @escaping Closure) { setupAndRun([                                     .save                                                 ]) { onCompletion() } }
+    func       root(_ onCompletion: @escaping Closure) { setupAndRun([.root,                               .save, .children,                   .traits, .remember]) { onCompletion() } }
+    func     travel(_ onCompletion: @escaping Closure) { setupAndRun([.root, .manifest,                           .children, .parents, .fetch, .traits, .remember]) { onCompletion() } }
+    func fetchTrash(_ onCompletion: @escaping Closure) { setupAndRun([.trash,                              .save, .children,                   .traits, .remember]) { onCompletion() } }
+    func       sync(_ onCompletion: @escaping Closure) { setupAndRun([           .fetch, .parents, .merge, .save, .children,                   .traits, .remember]) { onCompletion() } }
+    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parents,         .save, .children,                   .traits, .remember]) { onCompletion() } }
+    func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parents,                .children,                   .traits, .remember]) { onCompletion() } }
+    func    parents(_ onCompletion: @escaping Closure) { setupAndRun([                   .parents                                                                ]) { onCompletion() } }
+    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                                                                ]) { onCompletion() } }
+    func  bookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks                                                                                 ]) { onCompletion() } }
 
 
     func children(_ recursing: ZRecursionType, _ iGoal: Int? = nil, onCompletion: @escaping Closure) {
@@ -66,7 +66,8 @@ class ZDBOperationsManager: ZOperationsManager {
         case .bookmarks:            cloudManager.fetchBookmarks          (               cloudCallback)
         case .manifest:             cloudManager.fetchManifest           (               cloudCallback)
         case .children:             cloudManager.fetchChildren           (logic,         cloudCallback)
-        case .parent:               cloudManager.fetchParents            (               cloudCallback)
+        case .parents:              cloudManager.fetchParents            (               cloudCallback)
+        case .traits:               cloudManager.fetchTraits             (               cloudCallback)
         case .unsubscribe:          cloudManager.unsubscribe             (               cloudCallback)
         case .undelete:             cloudManager.undeleteAll             (               cloudCallback)
         case .emptyTrash:           cloudManager.emptyTrash              (               cloudCallback)

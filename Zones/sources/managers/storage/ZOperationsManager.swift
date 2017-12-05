@@ -26,7 +26,8 @@ enum ZOperationID: Int {
     case here       // needs manifest
     case children
     case fetch      // after children so favorite targets resolve properly
-    case parent     // after fetch so colors resolve properly
+    case parents    // after fetch so colors resolve properly
+    case traits
 
     // finish
 

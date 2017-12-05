@@ -19,15 +19,15 @@ var         gRoot: Zone?   { get { return gRemoteStoresManager.rootZone }  set {
 var         gHere: Zone    { get { return gManifest.hereZone }             set { gManifest.hereZone             = newValue } }
 
 
-var gAllZones: [Zone] {
-    var zones = [Zone] ()
+var gAllRegisteredZRecords: [ZRecord] {
+    var records = [ZRecord] ()
 
-    for mode in [ZStorageMode.everyoneMode, ZStorageMode.mineMode] {
+    for mode in gAllDatabaseModes {
         let manageer = gRemoteStoresManager.cloudManagerFor(mode)
-        zones       += manageer.zonesByID.values
+        records     += manageer.zRecordsByID.values
     }
 
-    return zones
+    return records
 }
 
 
@@ -37,7 +37,7 @@ class ZRemoteStoresManager: NSObject {
     var      storageModeStack = ZModes ()
     var       recordsManagers = [ZStorageMode : ZCloudManager]()
     var manifestByStorageMode = [ZStorageMode : ZManifest] ()
-    var currentRecordsManager: ZRecordsManager { return recordsManagerFor(gStorageMode) }
+    var currentRecordsManager: ZRecordsManager { return recordsManagerFor(gStorageMode)! }
     var   currentCloudManager: ZCloudManager   { return cloudManagerFor(gStorageMode) }
     var      rootProgenyCount: Int             { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
     var              manifest: ZManifest       { return manifest(for: gStorageMode) }
@@ -45,7 +45,7 @@ class ZRemoteStoresManager: NSObject {
     var              rootZone: Zone?     { get { return currentRecordsManager.rootZone }  set { currentRecordsManager.rootZone  = newValue } }
 
 
-    func rootZone(for mode: ZStorageMode) -> Zone? { return recordsManagerFor(mode).rootZone     }
+    func rootZone(for mode: ZStorageMode) -> Zone? { return recordsManagerFor(mode)?.rootZone }
 
 
     func clear() {
@@ -79,18 +79,22 @@ class ZRemoteStoresManager: NSObject {
 
     }
 
-    func recordsManagerFor(_ storageMode: ZStorageMode) -> ZRecordsManager {
+    func recordsManagerFor(_ storageMode: ZStorageMode?) -> ZRecordsManager? {
+        if storageMode == nil {
+            return nil
+        }
+
         if storageMode == .favoritesMode {
             return gFavoritesManager
         }
 
-        for storageMode in [ZStorageMode.everyoneMode, ZStorageMode.mineMode] {
+        for storageMode in gAllDatabaseModes {
             if  recordsManagers[storageMode] == nil {
                 recordsManagers[storageMode] = ZCloudManager(storageMode)
             }
         }
 
-        return recordsManagers[storageMode]!
+        return recordsManagers[storageMode!]!
     }
 
 
@@ -171,10 +175,12 @@ class ZRemoteStoresManager: NSObject {
 
     func applyToAllZones(in modes: ZModes, _ closure: ZoneClosure) {
         for mode: ZStorageMode in modes {
-            let zones = cloudManagerFor(mode).zonesByID
+            let zRecords = cloudManagerFor(mode).zRecordsByID
 
-            for zone in zones.values {
-                closure(zone)
+            for zRecord in zRecords.values {
+                if let zone = zRecord as? Zone {
+                    closure(zone)
+                }
             }
         }
     }

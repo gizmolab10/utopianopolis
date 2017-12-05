@@ -25,7 +25,6 @@ class Zone : ZRecord {
     dynamic var         parent: CKReference?
     dynamic var       zoneName:      String?
     dynamic var       zoneLink:      String?
-    dynamic var      hyperLink:      String?
     dynamic var      zoneColor:      String?
     dynamic var      zoneOwner: CKReference?
     dynamic var      zoneOrder:    NSNumber?
@@ -34,8 +33,10 @@ class Zone : ZRecord {
     dynamic var     parentLink:      String?
     dynamic var    zoneProgeny:    NSNumber?
     var            _parentZone:        Zone?
+    var             _hyperLink:      String?
     var             _crossLink:     ZRecord?
     var               children =      [Zone] ()
+    var                 traits = [ZTraitType : ZTrait] ()
     var                 _color:      ZColor?
     var                  count:         Int  { return children.count }
     var                 widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
@@ -64,6 +65,42 @@ class Zone : ZRecord {
     var               hasColor:        Bool  { return zoneColor != nil && zoneColor != "" }
     var                isTrash:        Bool  { return zoneName == gTrashNameKey }
 
+
+    var hyperLink: String? {
+        get {
+            if  _hyperLink == nil {
+                _hyperLink  = traits[.eHyperlink]?.text
+            }
+
+            return _hyperLink
+        }
+
+        set {
+            if  _hyperLink != newValue {
+                _hyperLink  = newValue
+
+                if  let trait       = traits[.eHyperlink] {
+                    if  newValue   != nil {
+                        trait .text = newValue
+
+                        trait.needSave()
+                    } else {
+                        traits[.eHyperlink] = nil
+
+                        trait.needDestroy()
+                    }
+                } else if newValue != nil {
+                    let       trait = ZTrait(storageMode: storageMode)
+                    trait.traitType = .eHyperlink
+                    trait    .owner = CKReference(record: record, action: .none)
+                    trait     .text = newValue
+
+                    trait.updateRecordProperties()
+                    trait.needSave()
+                }
+            }
+        }
+    }
 
     var manifest: ZManifest? {
         if let mode = storageMode {
@@ -111,7 +148,6 @@ class Zone : ZRecord {
         return [#keyPath(parent),
                 #keyPath(zoneName),
                 #keyPath(zoneLink),
-                #keyPath(hyperLink),
                 #keyPath(zoneColor),
                 #keyPath(zoneCount),
                 #keyPath(zoneOrder),
@@ -129,9 +165,11 @@ class Zone : ZRecord {
 
     var hasFetchedBookmark: Bool {
         if  let identifier = record?.recordID.recordName {
-            for     zone in gAllZones {
-                if  zone.alreadyExists, let linkName = zone.linkName {
-                    if linkName == identifier {
+            for zRecord in gAllRegisteredZRecords {
+                if  let      zone = zRecord as? Zone,
+                    let  linkName = zone.linkName,
+                    zone.alreadyExists {
+                    if  linkName == identifier {
                         return true
                     }
                 }
@@ -255,7 +293,7 @@ class Zone : ZRecord {
                     zoneLink = zoneLink?.replacingOccurrences(of: "Optional(\"", with: "").replacingOccurrences(of: "\")", with: "")
                 }
 
-                _crossLink = zone(from: zoneLink)
+                _crossLink = zoneFrom(zoneLink)
             }
 
             return _crossLink
@@ -397,7 +435,7 @@ class Zone : ZRecord {
             } else {
                 if  let  reference = parent, let mode = storageMode {
                     _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).zoneForReference(reference)
-                } else if let zone = zone(from: parentLink) {
+                } else if let zone = zoneFrom(parentLink) {
                     _parentZone    = zone
                 }
             }
@@ -571,10 +609,6 @@ class Zone : ZRecord {
     func       edit() { gSelectionManager     .edit(self) }
 
 
-    override func register() { cloudManager?  .registerZone(self) }
-    func        unregister() { cloudManager?.unregisterZone(self) }
-
-
     override func debug(_  iMessage: String) {
         note("\(iMessage) children \(count) parent \(parent != nil) isDeleted \(isDeleted) mode \(storageMode!) \(unwrappedName)")
     }
@@ -691,7 +725,7 @@ class Zone : ZRecord {
                     return true
                 }
 
-                let zone = gRemoteStoresManager.recordsManagerFor(mode).zoneForRecordID(probeID)
+                let zone = gRemoteStoresManager.recordsManagerFor(mode)?.zoneForRecordID(probeID)
                 probeID  = zone?.parent?.recordID
             }
         }

@@ -61,7 +61,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func save(_ onCompletion: IntClosure?) {
-        let   saves = pullRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
+        let   saves = pullCKRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
         let destroy = recordIDsWithMatchingStates([.needsDestroy], pull: true, batchSize: 20)
         let   count = saves.count + destroy.count
 
@@ -77,7 +77,7 @@ class ZCloudManager: ZRecordsManager {
                         if  notDestroy,
                             let     ck = iError as? CKError,
                             ck.code   == .serverRecordChanged, // oplock error
-                            let record = self.recordForCKRecord(iRecord) {
+                            let record = self.zRecordForCKRecord(iRecord) {
                             record.maybeNeedMerge()
                         } else {
                             let message = iRecord?.description ?? ""
@@ -94,7 +94,7 @@ class ZCloudManager: ZRecordsManager {
                     if  let destroyed = iDeletedRecordIDs {
                         for recordID: CKRecordID in destroyed {
                             if  let zone = self.zoneForRecordID(recordID) {
-                                self.unregisterZone(zone)
+                                self.unregisterZRecord(zone)
                             }
                         }
                     }
@@ -103,7 +103,7 @@ class ZCloudManager: ZRecordsManager {
                         for ckrecord: CKRecord in saved {
                             if  let zone = self.zoneForRecordID(ckrecord.recordID) {
                                 if  zone.isDeleted {
-                                    self.unregisterZone(zone)   // unregister deleted zones
+                                    self.unregisterZRecord(zone)   // unregister deleted zones
                                 } else {
                                     zone.record = ckrecord
                                 }
@@ -169,7 +169,7 @@ class ZCloudManager: ZRecordsManager {
 //                onCompletion?(0)
 //            } else {
 //                let            root = gRemoteStoresManager.rootZone(for: self.storageMode)
-//                let         deleted = self.recordForCKRecord(iRecord) as? Zone ?? Zone(record: iRecord, storageMode: self.storageMode)
+//                let         deleted = self.zRecordForCKRecord(iRecord) as? Zone ?? Zone(record: iRecord, storageMode: self.storageMode)
 //
 //                if  deleted.parent != nil {
 //                    deleted.needParent()
@@ -226,11 +226,11 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func queryWith(_ predicate: NSPredicate, onCompletion: RecordClosure?) {
+    func queryWith(_ predicate: NSPredicate, recordType: String, properties: [String], onCompletion: RecordClosure?) {
         currentPredicate                 = predicate
         if  let                operation = configure(CKQueryOperation()) as? CKQueryOperation {
-            operation             .query = CKQuery(recordType: gZoneTypeKey, predicate: predicate)
-            operation       .desiredKeys = Zone.cloudProperties()
+            operation             .query = CKQuery(recordType: recordType, predicate: predicate)
+            operation       .desiredKeys = properties
             operation      .resultsLimit = gBatchSize
             operation.recordFetchedBlock = { iRecord in
                 onCompletion?(iRecord)
@@ -249,6 +249,11 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
+    func queryWith(_ predicate: NSPredicate, onCompletion: RecordClosure?) {
+        queryWith(predicate, recordType: gZoneTypeKey, properties: Zone.cloudProperties(), onCompletion: onCompletion)
+    }
+
+
     func searchPredicateFrom(_ searchString: String) -> NSPredicate {
         let    tokens = searchString.components(separatedBy: " ")
         var separator = ""
@@ -262,6 +267,23 @@ class ZCloudManager: ZRecordsManager {
         }
 
         return NSPredicate(format: suffix)
+    }
+
+
+    func traitsPredicate(specificTo iRecordIDs: [CKRecordID]) -> NSPredicate {
+        if  iRecordIDs.count == 0 {
+            return NSPredicate(value: true)
+        } else {
+            var predicate = ""
+            var separator = ""
+
+            for recordID in iRecordIDs {
+                predicate = String(format: "%@%@SELF CONTAINS \"%@\"", predicate, separator, recordID.recordName)
+                separator = " AND "
+            }
+
+            return NSPredicate(format: predicate)
+        }
     }
 
 
@@ -326,8 +348,8 @@ class ZCloudManager: ZRecordsManager {
                         }
                     } else {
                         for (iRecord, iID) in recordsByID {
-                            if  let record = self.recordForRecordID(iID) {
-                                record.mergeIntoAndTake(iRecord)
+                            if  let zRecord = self.zRecordForRecordID(iID) {
+                                zRecord.mergeIntoAndTake(iRecord)
                             }
                         }
                     }
@@ -418,7 +440,7 @@ class ZCloudManager: ZRecordsManager {
                         for ckRecord in retrieved {
                             if  let parent   = ckRecord[parentKey] as? CKReference {
                                 let parentID = parent.recordID
-                                if  self.recordForRecordID(parent.recordID) == nil,
+                                if  self.zRecordForRecordID(parent.recordID) == nil,
                                     !rootNames.contains(parent.recordID.recordName) {
                                     childrenRefs[parentID] = ckRecord
 
@@ -513,7 +535,7 @@ class ZCloudManager: ZRecordsManager {
                     onCompletion?(0)
                 } else {
                     for ckRecord in iCKRecords {
-                        var record  = self.recordForCKRecord(ckRecord)
+                        var record  = self.zRecordForCKRecord(ckRecord)
 
                         if  record == nil {
                             record  = ZRecord(record: ckRecord, storageMode: self.storageMode)
@@ -754,6 +776,35 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
+    func fetchTraits(_ onCompletion: IntClosure?) {
+        let recordIDs = recordIDsWithMatchingStates([.needsTraits], pull: true)
+        let predicate = traitsPredicate(specificTo: recordIDs)
+        var retrieved = [CKRecord] ()
+
+        queryWith(predicate, recordType: gTraitTypeKey, properties: ZTrait.cloudProperties()) { iRecord in
+            if let ckRecord = iRecord {
+                if !retrieved.contains(ckRecord) {
+                    retrieved.append(ckRecord)
+                }
+            } else { // nil means done
+                FOREGROUND {
+                    for ckRecord in retrieved {
+                        var zRecord  = self.zRecordForCKRecord(ckRecord)
+
+                        if  zRecord == nil {                                                   // if not already registered
+                            zRecord  = ZTrait(record: ckRecord, storageMode: self.storageMode) // register
+                        }
+
+                        zRecord?.unorphan()
+                    }
+
+                    onCompletion?(0)
+                }
+            }
+        }
+    }
+
+
     func fetchBookmarks(_ onCompletion: IntClosure?) {
         let targetIDs = recordIDsWithMatchingStates([.needsBookmarks], pull: true)
         let predicate = bookmarkPredicate(specificTo: targetIDs)
@@ -769,7 +820,7 @@ class ZCloudManager: ZRecordsManager {
                     var     gotFresh = false
 
                     for ckRecord in retrieved {
-                        var zRecord  = self.recordForCKRecord(ckRecord)
+                        var zRecord  = self.zRecordForCKRecord(ckRecord)
 
                         if  zRecord == nil {                                                 // if not already registered
                             zRecord  = Zone(record: ckRecord, storageMode: self.storageMode) // register
@@ -781,7 +832,7 @@ class ZCloudManager: ZRecordsManager {
 
                     if  targetIDs.count != 0 {
                         for recordID in targetIDs {
-                            let  zRecord = self.recordForRecordID(recordID)
+                            let  zRecord = self.zRecordForRecordID(recordID)
 
                             zRecord?.unmarkForAllOfStates([.needsBookmarks])
                             zRecord?.unorphan()

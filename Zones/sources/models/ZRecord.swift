@@ -17,20 +17,21 @@ class ZRecord: NSObject {
     var    storageMode: ZStorageMode?
     var     kvoContext: UInt8 = 1
     var        _record: CKRecord?
-    var         isRoot: Bool            { return record != nil && [gRootNameKey, gFavoriteRootNameKey, gTrashNameKey].contains(record.recordID.recordName) }
-    var      needsSave: Bool            { return isMarkedForAnyOfStates([.needsSave]) }
-    var      needsRoot: Bool            { return isMarkedForAnyOfStates([.needsRoot]) }
-    var     needsCount: Bool            { return isMarkedForAnyOfStates([.needsCount]) }
-    var     needsColor: Bool            { return isMarkedForAnyOfStates([.needsColor]) }
-    var     needsFetch: Bool            { return isMarkedForAnyOfStates([.needsFetch]) }
-    var    needsParent: Bool            { return isMarkedForAnyOfStates([.needsParent]) }
-    var   needsDestroy: Bool            { return isMarkedForAnyOfStates([.needsDestroy]) }
-    var   needsProgeny: Bool            { return isMarkedForAnyOfStates([.needsProgeny]) }
-    var  needsWritable: Bool            { return isMarkedForAnyOfStates([.needsWritable]) }
-    var  needsChildren: Bool            { return isMarkedForAnyOfStates([.needsChildren]) }
-    var needsBookmarks: Bool            { return isMarkedForAnyOfStates([.needsBookmarks]) }
-    var recordsManager: ZRecordsManager { return gRemoteStoresManager.recordsManagerFor(storageMode!) }
-    var   cloudManager: ZCloudManager?  { return recordsManager as? ZCloudManager }
+    var         isRoot: Bool             { return record != nil && [gRootNameKey, gFavoriteRootNameKey, gTrashNameKey].contains(record.recordID.recordName) }
+    var      needsSave: Bool             { return isMarkedForAnyOfStates([.needsSave]) }
+    var      needsRoot: Bool             { return isMarkedForAnyOfStates([.needsRoot]) }
+    var     needsCount: Bool             { return isMarkedForAnyOfStates([.needsCount]) }
+    var     needsColor: Bool             { return isMarkedForAnyOfStates([.needsColor]) }
+    var     needsFetch: Bool             { return isMarkedForAnyOfStates([.needsFetch]) }
+    var    needsTraits: Bool             { return isMarkedForAnyOfStates([.needsTraits]) }
+    var    needsParent: Bool             { return isMarkedForAnyOfStates([.needsParent]) }
+    var   needsDestroy: Bool             { return isMarkedForAnyOfStates([.needsDestroy]) }
+    var   needsProgeny: Bool             { return isMarkedForAnyOfStates([.needsProgeny]) }
+    var  needsWritable: Bool             { return isMarkedForAnyOfStates([.needsWritable]) }
+    var  needsChildren: Bool             { return isMarkedForAnyOfStates([.needsChildren]) }
+    var needsBookmarks: Bool             { return isMarkedForAnyOfStates([.needsBookmarks]) }
+    var recordsManager: ZRecordsManager? { return gRemoteStoresManager.recordsManagerFor(storageMode) }
+    var   cloudManager: ZCloudManager?   { return recordsManager as? ZCloudManager }
 
 
     var record: CKRecord! {
@@ -111,10 +112,11 @@ class ZRecord: NSObject {
     }
 
 
-    func register() {}
     func unorphan() {}
     func debug(_  iMessage: String) {}
     func cloudProperties() -> [String] { return [] }
+    func   register() { cloudManager?  .registerZRecord(self) }
+    func unregister() { cloudManager?.unregisterZRecord(self) }
 
 
     // MARK:- properties
@@ -214,14 +216,14 @@ class ZRecord: NSObject {
     // MARK:-
 
 
-    func isMarkedForAnyOfStates(_ states: [ZRecordState]) -> Bool { return recordsManager.hasRecord(self, forAnyOf:states) }
-    func markForAllOfStates    (_ states: [ZRecordState])         {        recordsManager.addRecord(self, for: states) }
-    func clearAllStates()                                         {        recordsManager.clearAllStatesForRecord(self.record) }
+    func isMarkedForAnyOfStates(_ states: [ZRecordState]) -> Bool { return recordsManager?.hasZRecord(self, forAnyOf:states) ?? false }
+    func markForAllOfStates    (_ states: [ZRecordState])         {        recordsManager?.addZRecord(self, for: states) }
+    func clearAllStates()                                         {        recordsManager?.clearAllStatesForRecord(self.record) }
 
 
     func unmarkForAllOfStates(_ states: [ZRecordState]) {
         if let identifier = self.record?.recordID {
-            recordsManager.clearStatesForRecordID(identifier, forStates:states)
+            recordsManager?.clearStatesForRecordID(identifier, forStates:states)
         }
     }
 
@@ -229,6 +231,7 @@ class ZRecord: NSObject {
     func needRoot()      { markForAllOfStates([.needsRoot]) }
     func needCount()     { markForAllOfStates([.needsCount]) }
     func needColor()     { markForAllOfStates([.needsColor]) }
+    func needTraits()    { markForAllOfStates([.needsTraits]) }
     func needParent()    { markForAllOfStates([.needsParent]) }
     func needDestroy()   { markForAllOfStates([.needsDestroy]); unmarkForAllOfStates([.needsSave]) }
     func needProgeny()   { markForAllOfStates([.needsProgeny]); unmarkForAllOfStates([.needsChildren]) }

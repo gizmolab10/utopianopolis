@@ -113,7 +113,7 @@ extension NSObject {
     }
 
 
-    func zone(from link: String?) -> Zone? {
+    func zoneFrom(_ link: String?) -> Zone? {
         if  link == nil || link == "" {
             return nil
         }
@@ -129,7 +129,7 @@ extension NSObject {
         let       record: CKRecord = CKRecord(recordType: gZoneTypeKey, recordID: identifier)
         let                rawMode = components[0]
         let    mode: ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
-        let                manager = mode == nil ? nil : gRemoteStoresManager.recordsManagerFor(mode!)
+        let                manager = mode == nil ? nil : gRemoteStoresManager.recordsManagerFor(mode)
         let                   zone = manager?.zoneForRecordID(identifier)
 
         return zone != nil ? zone! : Zone(record: record, storageMode: mode)
