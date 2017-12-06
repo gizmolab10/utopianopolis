@@ -19,7 +19,6 @@ import Foundation
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
-    var               isFirstResponder : Bool  { if let first = window?.firstResponder { return first == currentEditor() } else { return false } }
     override var         preferredFont : ZFont { return (widgetZone?.isInFavorites ?? false) ? gFavoritesFont : gWidgetFont }
     var                     widgetZone : Zone? { return widget?.widgetZone }
     weak var                    widget : ZoneWidget?
@@ -74,13 +73,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     s.clearEdit()
                 }
             }
-        }
-    }
-
-
-    func deselectAllText() {
-        if  let editor = currentEditor() {
-            select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: 0)
         }
     }
 
@@ -202,7 +194,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         if  let t = iText, var zone = iZone, t != gNoName {
             gTextCapturing          = true
 
-            let         assignTextTo = { (iTarget: Zone) in
+            let         assignTextTo = { (iAssignee: Zone) in
                 let       components = t.components(separatedBy: "  (")
                 var newText: String? = components[0]
 
@@ -211,14 +203,16 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 }
 
                 if self.isEditiingHyperlink {
-                    iTarget.hyperLink = newText ?? gNullLink
+                    iAssignee.hyperLink = newText
                 } else {
-                    iTarget  .zoneName = newText
+                    iAssignee .zoneName = newText
                 }
 
-                if !iTarget.isInFavorites {
-                    iTarget.needSave()
+                if !iAssignee.isInFavorites {
+                    iAssignee.needSave()
                 }
+
+                self.redrawAndSync()
             }
 
             prepareUndoForTextChange(gUndoManager) {

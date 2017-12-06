@@ -75,8 +75,8 @@ class ZActionsController : ZGenericController {
             case .eHang:    gDBOperationsManager.unHang()
             case .eUndo:    gEditingManager.undoManager.undo()
             case .eCut:     gEditingManager.delete()
-            case .eNew:     gEditingManager.createIdea()
-            case .eNext:    gEditingManager.createNext() { iChild in iChild.edit() }
+            case .eNew:     gEditingManager.addIdea()
+            case .eNext:    gEditingManager.addNext() { iChild in iChild.edit() }
             case .eFocus:   gEditingManager.focus(on: gSelectionManager.firstGrab)
             case .ePrefs:   break
             case .eHelp:    break

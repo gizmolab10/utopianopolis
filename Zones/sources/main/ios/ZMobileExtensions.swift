@@ -357,11 +357,13 @@ extension UITextField {
 extension ZoneTextWidget {
 
     @objc(textField:shouldChangeCharactersInRange:replacementString:) func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        widget.textWidget.layoutTextField()
+        layoutTextField()
         gEditorView?.setAllSubviewsNeedDisplay()
 
         return true
     }
+
+    func deselectAllText() {}
 
 }
 
@@ -451,8 +453,8 @@ extension ZoneWidget {
             let isHere = widgetZone == iHere
             let cFrame =     convert(childrenView.frame, to: view)
             let dFrame = dot.convert(        dot.bounds, to: view)
-            let bottom =  (!isHere && widgetZone.hasZonesBelow) ? cFrame.minY : 0.0
-            let    top = ((!isHere && widgetZone.hasZonesAbove) ? cFrame      : view.bounds).maxY
+            let bottom =  (!isHere && widgetZone?.hasZonesBelow ?? false) ? cFrame.minY : 0.0
+            let    top = ((!isHere && widgetZone?.hasZonesAbove ?? false) ? cFrame      : view.bounds).maxY
             let  right =                                                        view.bounds .maxX
             let   left =    isHere ? 0.0 : dFrame.minX - gGenericOffset.width
             hitRect    = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)

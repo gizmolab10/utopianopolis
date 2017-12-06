@@ -75,6 +75,7 @@ var            gWorkMode                     = ZWorkMode.startupMode
 var            gFileMode                     = ZFileMode.cloud
 var       gTextCapturing                     = false
 var    gCloudUnavailable                     = false
+var   gCrippleUserAccess                     = false
 var   gKeyboardIsVisible                     = false
 var     gDragDropIndices: NSMutableIndexSet? = nil
 var        gDragRelation:         ZRelation? = nil
@@ -157,7 +158,7 @@ var gGenericOffset: CGSize {
             return string.cgSize
         }
 
-        let defaultValue = CGSize(width: 24.0, height: 12.0)
+        let defaultValue = CGSize(width: 30.0, height: 2.0)
         let       string = NSStringFromSize(defaultValue)
 
         UserDefaults.standard.set(string, forKey: genericOffsetKey)

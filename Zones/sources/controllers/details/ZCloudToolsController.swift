@@ -16,9 +16,6 @@ import Foundation
 #endif
 
 
-var gCrippleUserAccess = false
-
-
 class ZCloudToolsController: ZGenericTableController {
 
 

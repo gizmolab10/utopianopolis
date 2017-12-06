@@ -323,6 +323,14 @@ extension ZAlert {
 extension ZoneTextWidget {
     // override open var acceptsFirstResponder: Bool { return gDBOperationsManager.isReady }    // fix a bug where root zone is editing on launch
     override var acceptsFirstResponder : Bool  { return widgetZone?.isWritableByUseer ?? false }
+    var               isFirstResponder : Bool  { if let first = window?.firstResponder { return first == currentEditor() } else { return false } }
+
+
+    func deselectAllText() {
+        if  let editor = currentEditor() {
+            select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: 0)
+        }
+    }
 
 
     override func textDidChange(_ iNote: Notification) {

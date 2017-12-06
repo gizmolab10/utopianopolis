@@ -82,6 +82,7 @@ class Zone : ZRecord {
                 if  let trait       = traits[.eHyperlink] {
                     if  newValue   != nil {
                         trait .text = newValue
+                        traits[.eHyperlink] = trait
 
                         trait.needSave()
                     } else {

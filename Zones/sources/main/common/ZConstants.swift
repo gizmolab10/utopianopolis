@@ -30,10 +30,10 @@ let unselectBrightness: CGFloat = 0.98
 #endif
 
 
-let       gRemoteTimeout = 10.0
-let          gLogTabStop = 21
-let           gBatchSize = 250
 let             gUnlevel = -1
+let           gBatchSize = 250
+let          gLogTabStop = 21
+let       gRemoteTimeout = 10.0
 let       gFingerBreadth = CGFloat(44.0)
 let      gReductionRatio = CGFloat(0.8)
 let    gDefaultZoneColor = ZColor.blue
@@ -57,8 +57,8 @@ let       gRecordNameKey = "recordName"
 let       gRecordTypeKey = "recordType"
 let     gShowChildrenKey = "showChildren"
 let     gManifestTypeKey = "ZManifest"
-let gFavoriteRootNameKey = "favoritesRoot"
 let    gHalfLineOfDashes = "-----------"
+let gFavoriteRootNameKey = "favoritesRoot"
 let   gLineWithStubTitle = gHalfLineOfDashes + " | " + gHalfLineOfDashes
 let        gLineOfDashes = gHalfLineOfDashes + "---" + gHalfLineOfDashes
 

@@ -18,24 +18,21 @@ class ZFavoritesController : ZGenericController {
 
 
     var favorites: [Zone] {
-        if  var children = gFavoritesManager.rootZone?.children {
-            var removals = IndexPath()
+        var children = gFavoritesManager.workingFavorites
+        var removals = IndexPath()
 
-            for (iIndex, iChild) in children.enumerated() {
-                if !iChild.isBookmark {
-                    removals.append(iIndex)
-                }
+        for (iIndex, iChild) in children.enumerated() {
+            if !iChild.isBookmark {
+                removals.append(iIndex)
             }
-
-            while let index = removals.last {
-                removals.removeLast()
-                children.remove(at: index)
-            }
-
-            return children
         }
 
-        return []
+        while let index = removals.last {
+            removals.removeLast()
+            children.remove(at: index)
+        }
+
+        return children
     }
 
 
@@ -61,7 +58,7 @@ class ZFavoritesController : ZGenericController {
         let    index = iControl.numberOfSegments - iControl.selectedSegment - 1
         let favorite = favorites[index]
 
-        gFavoritesManager.focus(on: favorite) {
+        gFavoritesManager.travel(into: favorite) {
             self.syncToCloudAndSignalFor(nil, regarding: .redraw, onCompletion: nil)
         }
     }

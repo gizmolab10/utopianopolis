@@ -12,9 +12,11 @@ import CloudKit
 
 
 enum ZTraitType: String {
+    case eDuration  = "d" // accumulative
     case eEssay     = "e"
+    case eGraphic   = "g"
     case eHyperlink = "h"
-    case eImage     = "i"
+    case eMoney     = "m" // accumulative
     case eTime      = "t"
 }
 

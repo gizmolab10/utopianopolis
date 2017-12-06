@@ -94,14 +94,14 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
     
     func layoutForCurrentScrollOffset() {
-        if let e = editorView {
+        if let e = editorView, !isPhone {
             editorRootWidget.snp.removeConstraints()
             editorRootWidget.snp.makeConstraints { make in
                 make.centerY.equalTo(e).offset(gScrollOffset.y)
                 make.centerX.equalTo(e).offset(gScrollOffset.x)
             }
 
-            if gHasPrivateDatabase && !isPhone {
+            if gHasPrivateDatabase {
                 if favoritesRootWidget.superview == nil {
                     editorView?.addSubview(favoritesRootWidget)
                 }
@@ -169,7 +169,9 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
         if gManifest.alreadyExists {
             if  gWorkMode        != .editMode {
-                gSearchManager.exitSearchMode()
+                #if os(OSX)
+                    gSearchManager.exitSearchMode()
+                #endif
             } else if let gesture = iGesture as? ZKeyPanGestureRecognizer,
                 let         flags = gesture.modifiers {
                 let      location = gesture.location(in: editorView)
@@ -207,46 +209,51 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         // called by controller and gesture system //
         /////////////////////////////////////////////
         
-        if  let         gesture = iGesture, gManifest.alreadyExists { // avoid crash for click event before manifest is fetched
-            let         editing = gEditingManager.editedTextWidget
-            var          inText = false
+        if  let             gesture = iGesture as? ZKeyClickGestureRecognizer, gManifest.alreadyExists { // avoid crash for click event before manifest is fetched
+            let          textWidget = gEditingManager.editedTextWidget
 
-            if  editing != nil {
-                let    location = gesture.location(in: editorView)
-                let        rect = editing!.convert(editing!.bounds, to: editorView)
-                inText          = rect.contains(location)
-            }
-            
-            if !inText {
-                if  let  widget = doWidgetTest(gesture),
-                    let    zone = widget.widgetZone {
-                    if  let dot = dotHitInWidget(widget, gesture) {
-                        if  dot.isToggle {
-                            gEditingManager.toggleDotActionOnZone(zone)
-                        } else if zone.isGrabbed {
-                            zone.ungrab()
-                        } else if gesture.isShiftDown {
-                            zone.addToGrab()
+            if gesture.modifiers?.contains(.command) ?? false, let zone = textWidget?.widgetZone, let link = zone.hyperLink, link != gNullLink {
+                link.openAsURL()
+            } else {
+                var          inText = false
+
+                if  textWidget != nil {
+                    let    location = gesture.location(in: editorView)
+                    let        rect = textWidget!.convert(textWidget!.bounds, to: editorView)
+                    inText          = rect.contains(location)
+                }
+
+                if !inText {
+                    if  let  widget = doWidgetTest(gesture),
+                        let    zone = widget.widgetZone {
+                        if  let dot = dotHitInWidget(widget, gesture) {
+                            if  dot.isToggle {
+                                gEditingManager.toggleDotActionOnZone(zone)
+                            } else if zone.isGrabbed {
+                                zone.ungrab()
+                            } else if gesture.isShiftDown {
+                                zone.addToGrab()
+                            } else {
+                                zone.grab()
+                            }
+
+                            signalFor(nil, regarding: .information)
                         } else {
-                            zone.grab()
-                        }
+                            textWidget?.isEditingText = false
 
-                        signalFor(nil, regarding: .information)
+                            gSelectionManager.deselect()
+                            widget.widgetZone?.grab()
+                            signalFor(nil, regarding: .search)
+                        }
                     } else {
-                        editing?.isEditingText = false
-                        
                         gSelectionManager.deselect()
-                        widget.widgetZone?.grab()
                         signalFor(nil, regarding: .search)
                     }
-                } else {
-                    gSelectionManager.deselect()
-                    signalFor(nil, regarding: .search)
                 }
             }
+
+            restartGestureRecognition()
         }
-        
-        restartGestureRecognition()
     }
     
     
