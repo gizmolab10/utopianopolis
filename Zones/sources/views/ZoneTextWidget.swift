@@ -23,12 +23,13 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     var                     widgetZone : Zone? { return widget?.widgetZone }
     weak var                    widget : ZoneWidget?
     var            isEditiingHyperlink = false
+    var                isEditiingEmail = false
     var                 _isEditingText = false
     var                   originalText = ""
 
 
     var textToEdit: String {
-        if  let    name = isEditiingHyperlink ? widgetZone?.hyperLink: widgetZone?.unwrappedName, name != gNullLink {
+        if  let    name = isEditiingHyperlink ? widgetZone?.hyperLink: isEditiingEmail ? widgetZone?.email : widgetZone?.unwrappedName, name != gNullLink {
             return name
         }
 
@@ -58,6 +59,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                             zone.grab()
                         }
 
+                        isEditiingEmail        = false
                         isEditiingHyperlink    = false
                     } else {
                         s.currentlyEditingZone = zone
@@ -191,27 +193,28 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func assign(_ iText: String?, to iZone: Zone?) {
-        if  let t = iText, var zone = iZone, t != gNoName {
-            gTextCapturing          = true
+        if  let t = iText, var  zone = iZone, t != gNoName {
+            gTextCapturing           = true
 
             let         assignTextTo = { (iAssignee: Zone) in
                 let       components = t.components(separatedBy: "  (")
                 var newText: String? = components[0]
 
-                if  newText == gNoName || newText == "" {
+                if  newText == gNoName || newText == gNullLink || newText == "" {
                     newText  = nil
                 }
 
                 if self.isEditiingHyperlink {
                     iAssignee.hyperLink = newText
+                    iAssignee    .email = nil
+                } else if self.isEditiingEmail {
+                    iAssignee.hyperLink = nil
+                    iAssignee    .email = newText
                 } else {
                     iAssignee .zoneName = newText
                 }
 
-                if !iAssignee.isInFavorites {
-                    iAssignee.needSave()
-                }
-
+                iAssignee.needSave()
                 self.redrawAndSync()
             }
 
@@ -222,7 +225,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
             assignTextTo(zone)
 
-            if isEditiingHyperlink {
+            if isEditiingHyperlink || isEditiingEmail {
                 gTextCapturing = false
             } else {
                 if  let target = zone.bookmarkTarget {
@@ -263,7 +266,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         super.draw(dirtyRect)
 
         if  let zone = widgetZone,
-            (zone.isBookmark || zone.isHyperlink),
+            (zone.isBookmark || zone.isHyperlink || zone.isEmail),
             !zone.isInFavorites,
             !zone.isGrabbed,
             !isEditingText {

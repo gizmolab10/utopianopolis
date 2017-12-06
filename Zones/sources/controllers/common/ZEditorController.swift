@@ -94,14 +94,16 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
     
     func layoutForCurrentScrollOffset() {
-        if let e = editorView, !isPhone {
-            editorRootWidget.snp.removeConstraints()
-            editorRootWidget.snp.makeConstraints { make in
-                make.centerY.equalTo(e).offset(gScrollOffset.y)
-                make.centerX.equalTo(e).offset(gScrollOffset.x)
+        if let e = editorView {
+            if isOSX {
+                editorRootWidget.snp.removeConstraints()
+                editorRootWidget.snp.makeConstraints { make in
+                    make.centerY.equalTo(e).offset(gScrollOffset.y)
+                    make.centerX.equalTo(e).offset(gScrollOffset.x)
+                }
             }
 
-            if gHasPrivateDatabase {
+            if gHasPrivateDatabase && !isPhone {
                 if favoritesRootWidget.superview == nil {
                     editorView?.addSubview(favoritesRootWidget)
                 }
@@ -245,10 +247,10 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                             widget.widgetZone?.grab()
                             signalFor(nil, regarding: .search)
                         }
-                    } else {
-                        gSelectionManager.deselect()
-                        signalFor(nil, regarding: .search)
                     }
+//                } else {
+//                    gSelectionManager.deselect()
+//                    signalFor(nil, regarding: .search)
                 }
             }
 

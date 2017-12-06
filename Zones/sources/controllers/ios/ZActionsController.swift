@@ -20,6 +20,7 @@ enum ZActionTitle: String {
     case eHang    = "Reconnect"
     case eFocus   = "Focus"
     case ePrefs   = "Preferences"
+    case eTravel  = "Travel"
     case eRefresh = "Refresh"
 }
 
@@ -60,6 +61,7 @@ class ZActionsController : ZGenericController {
             insert(.eNew)
             insert(.eNext)
             insert(.eFocus)
+            insert(.eTravel)
             insert(.eRefresh)
             insert(.ePrefs)
             insert(.eHelp)
@@ -78,6 +80,7 @@ class ZActionsController : ZGenericController {
             case .eNew:     gEditingManager.addIdea()
             case .eNext:    gEditingManager.addNext() { iChild in iChild.edit() }
             case .eFocus:   gEditingManager.focus(on: gSelectionManager.firstGrab)
+            case .eTravel:  gEditingManager.maybeTravelThrough(gSelectionManager.currentMoveable)
             case .ePrefs:   break
             case .eHelp:    break
             case .eRefresh: refresh()

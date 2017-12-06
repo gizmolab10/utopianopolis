@@ -30,6 +30,7 @@ extension NSObject {
     func  columnarReport(_ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(iFirst, iSecond) }
     func      debugCheck()                                { gTravelManager.debugCheck() }
 
+
     func rawColumnarReport(_ iFirst: Any?, _ iSecond: Any?) {
         if  var prefix = iFirst as? String {
             prefix.appendSpacesToLength(gLogTabStop)

@@ -12,12 +12,13 @@ import CloudKit
 
 
 enum ZTraitType: String {
-    case eDuration  = "d" // accumulative
-    case eEssay     = "e"
-    case eGraphic   = "g"
-    case eHyperlink = "h"
-    case eMoney     = "m" // accumulative
-    case eTime      = "t"
+    case eComposition = "c"
+    case eDuration    = "d" // accumulative
+    case eEmail       = "e"
+    case eGraphic     = "g"
+    case eHyperlink   = "h"
+    case eMoney       = "m" // accumulative
+    case eTime        = "t"
 }
 
 
@@ -30,7 +31,7 @@ class ZTrait: ZRecord {
     dynamic var asset: CKAsset?
     dynamic var owner: CKReference?
     var _traitType: ZTraitType? = nil
-    var _zoneOwner: Zone? = nil
+    var _ownerZone: Zone? = nil
 
 
     var traitType: ZTraitType? {
@@ -51,12 +52,12 @@ class ZTrait: ZRecord {
     }
 
 
-    var zoneOwner: Zone? {
-        if  _zoneOwner == nil, let mode = storageMode {
-            _zoneOwner  = gRemoteStoresManager.cloudManagerFor(mode).zRecordForRecordID(owner?.recordID) as? Zone
+    var ownerZone: Zone? {
+        if  _ownerZone == nil, let mode = storageMode {
+            _ownerZone  = gRemoteStoresManager.cloudManagerFor(mode).zRecordForRecordID(owner?.recordID) as? Zone
         }
 
-        return _zoneOwner
+        return _ownerZone
     }
 
 
@@ -80,8 +81,8 @@ class ZTrait: ZRecord {
 
 
     override func unorphan() {
-        if  let traits = zoneOwner?.traits, traits[.eHyperlink] == nil {
-            zoneOwner?.traits[.eHyperlink] = self
+        if  let traits = ownerZone?.traits, let t = traitType, traits[t] == nil {
+            ownerZone?.traits[t] = self
         }
     }
 

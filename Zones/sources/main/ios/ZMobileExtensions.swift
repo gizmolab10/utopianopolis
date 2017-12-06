@@ -13,7 +13,7 @@ import CloudKit
 import UIKit
 
 
-enum ZArrowKey: CChar {
+enum ZArrowKey: Int8 {
     case up    = 85 // U
     case down  = 68 // D
     case left  = 76 // L
@@ -84,12 +84,35 @@ extension NSObject {
 
 extension UIKeyCommand {
 
-    var key: String {
-        if input.hasPrefix("UIKeyInput") {
-            return input.character(at: 10)
+    var key: String? {
+        var working = input
+
+        if  working.hasPrefix("UIKeyInput") {
+            working = String(input.dropFirst(10))
+
+            if working.count > 1 {
+                return nil
+            }
         }
 
-        return input.character(at: 0)
+        return working.character(at: 0)
+    }
+
+
+    var arrow: ZArrowKey? {
+        var working = input
+
+        if  working.hasPrefix("UIKeyInput") {
+            working = String(input.dropFirst(10))
+
+            if working.count > 1 {
+                let value = working.character(at: 0)
+
+                return value.arrow
+            }
+        }
+
+        return nil
     }
 
 }

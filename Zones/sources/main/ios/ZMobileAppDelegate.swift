@@ -9,6 +9,7 @@
 
 import UIKit
 import CloudKit
+import HockeySDK
 import UserNotifications
 
 
@@ -23,10 +24,14 @@ class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
 
     // MARK:- delegation
     // MARK:-
-    
 
+    
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         application.applicationSupportsShakeToEdit = true
+        BITHockeyManager.shared().configure(withIdentifier: "0d601d64398142a5a39ba45512035130")
+        // Do some additional configuration if needed here
+        BITHockeyManager.shared().start()
+        BITHockeyManager.shared().authenticator.authenticateInstallation()
 
      // application.registerUserNotificationSettings(.badgeSetting)
         application.registerForRemoteNotifications()

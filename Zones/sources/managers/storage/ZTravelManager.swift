@@ -132,4 +132,51 @@ class ZTravelManager: NSObject {
             }
         }
     }
+
+
+    func maybeTravelThrough(_ iZone: Zone) {
+        if     !travelThroughBookmark(iZone) {
+            if !travelThroughHyperlink(iZone) {
+                travelThroughEmail(iZone)
+            }
+        }
+    }
+
+
+    @discardableResult func travelThroughEmail(_ iZone: Zone) -> Bool {
+        if  let link  = iZone.email {
+            let email = "mailTo:" + link
+            email.openAsURL()
+
+            return true
+        }
+
+        return false
+    }
+
+
+    @discardableResult func travelThroughHyperlink(_ iZone: Zone) -> Bool {
+        if  let link = iZone.hyperLink,
+            link    != gNullLink {
+            link.openAsURL()
+
+            return true
+        }
+
+        return false
+    }
+
+
+    @discardableResult func travelThroughBookmark(_ bookmark: Zone) -> Bool {
+        let doThis = bookmark.isBookmark
+
+        if  doThis {
+            travelThrough(bookmark) { object, kind in
+                self.redrawAndSync()
+            }
+        }
+
+        return doThis
+    }
+
 }

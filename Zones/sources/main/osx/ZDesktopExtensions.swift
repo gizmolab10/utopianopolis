@@ -139,7 +139,9 @@ extension NSEventModifierFlags {
 
 
 extension NSEvent {
-    var key: String { return input.character(at: 0) }
+    var   key:    String? { return input.character(at: 0) }
+    var arrow: ZArrowKey? { return key?.arrow }
+
 
     var input: String {
         if let result = charactersIgnoringModifiers {

@@ -76,16 +76,31 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FXl-uY-tYT" customClass="ZoneDragView" customModule="PadFocus" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="FXl-uY-tYT" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="21l-KR-xkB"/>
+                            <constraint firstItem="FXl-uY-tYT" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="KAV-mD-NlH"/>
+                            <constraint firstAttribute="trailing" secondItem="FXl-uY-tYT" secondAttribute="trailing" id="OOf-qt-N2h"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="FXl-uY-tYT" secondAttribute="bottom" id="gHS-Oa-Zbw"/>
+                        </constraints>
                     </view>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="1024" height="768"/>
+                    <connections>
+                        <outlet property="editorView" destination="FXl-uY-tYT" id="PKB-cq-mb4"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer id="g7O-Ne-Y03"/>
             </objects>
-            <point key="canvasLocation" x="936" y="810"/>
+            <point key="canvasLocation" x="936" y="809.59520239880067"/>
         </scene>
         <!--Generic Controller-->
         <scene sceneID="DhE-si-isi">

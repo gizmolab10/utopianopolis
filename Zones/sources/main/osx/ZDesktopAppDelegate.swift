@@ -11,6 +11,7 @@ import Cocoa
 import CloudKit
 import HockeySDK
 
+
 var gDesktopAppDelegate: ZDesktopAppDelegate? = nil
 
 
@@ -40,15 +41,6 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     }
 
 
-    func startupHockeySDK() {
-        
-        BITHockeyManager.shared().configure(withIdentifier: "4edafe5a97fc4a2294094e71b11e5051")
-        // Do some additional configuration if needed here
-        BITHockeyManager.shared().start()
-
-    }
-
-
     func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
         let note: CKNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! ZStorageDict)
 
@@ -61,6 +53,9 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
+        BITHockeyManager.shared().configure(withIdentifier: "4edafe5a97fc4a2294094e71b11e5051")
+        // Do some additional configuration if needed here
+        BITHockeyManager.shared().start()
     }
 
 

@@ -38,6 +38,7 @@ class Zone : ZRecord {
     var               children =      [Zone] ()
     var                 traits = [ZTraitType : ZTrait] ()
     var                 _color:      ZColor?
+    var                 _email:      String?
     var                  count:         Int  { return children.count }
     var                 widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var               linkName:      String? { return name(from: zoneLink) }
@@ -46,7 +47,7 @@ class Zone : ZRecord {
     var       grabbedTextColor:      ZColor  { return color.darker(by: 3.0) }
     var      isCurrentFavorite:        Bool  { return self == gFavoritesManager.currentFavorite }
     var      isRootOfFavorites:        Bool  { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
-    var      onlyShowToggleDot:        Bool  { return isRootOfFavorites || (!isOSX && self == gHere) }
+    var      onlyShowToggleDot:        Bool  { return isRootOfFavorites || (isPhone && self == gHere) }
     var     hasMissingChildren:        Bool  { return count < fetchableCount }
     var directChildrenWritable:        Bool  { return   directAccess == .eChildrenWritable }
     var    hasAccessDecoration:        Bool  { return !isTextEditable || directChildrenWritable }
@@ -58,18 +59,38 @@ class Zone : ZRecord {
     var         directReadOnly:        Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
     var          hasZonesBelow:        Bool  { return hasAnyZonesAbove(false) }
     var          hasZonesAbove:        Bool  { return hasAnyZonesAbove(true) }
-    var            isHyperlink:        Bool  { return hyperLink != nil && hyperLink != gNullLink }
+    var            isHyperlink:        Bool  { return hasTrait(for: .eHyperlink) && hyperLink != gNullLink }
     var             isBookmark:        Bool  { return crossLink != nil }
     var             isSelected:        Bool  { return gSelectionManager.isSelected(self) }
     var              isGrabbed:        Bool  { return gSelectionManager .isGrabbed(self) }
     var               hasColor:        Bool  { return zoneColor != nil && zoneColor != "" }
     var                isTrash:        Bool  { return zoneName == gTrashNameKey }
+    var                isEmail:        Bool  { return hasTrait(for: .eEmail) }
+
+
+    var email: String? {
+        get {
+            if  _email == nil {
+                _email  = getTraitText(for: .eEmail)
+            }
+
+            return _email
+        }
+
+        set {
+            if  _email != newValue {
+                _email  = newValue
+
+                setTraitText(newValue, for: .eEmail)
+            }
+        }
+    }
 
 
     var hyperLink: String? {
         get {
             if  _hyperLink == nil {
-                _hyperLink  = traits[.eHyperlink]?.text
+                _hyperLink  = getTraitText(for: .eHyperlink)
             }
 
             return _hyperLink
@@ -79,29 +100,11 @@ class Zone : ZRecord {
             if  _hyperLink != newValue {
                 _hyperLink  = newValue
 
-                if  let trait       = traits[.eHyperlink] {
-                    if  newValue   != nil {
-                        trait .text = newValue
-                        traits[.eHyperlink] = trait
-
-                        trait.needSave()
-                    } else {
-                        traits[.eHyperlink] = nil
-
-                        trait.needDestroy()
-                    }
-                } else if newValue != nil {
-                    let       trait = ZTrait(storageMode: storageMode)
-                    trait.traitType = .eHyperlink
-                    trait    .owner = CKReference(record: record, action: .none)
-                    trait     .text = newValue
-
-                    trait.updateRecordProperties()
-                    trait.needSave()
-                }
+                setTraitText(newValue, for: .eHyperlink)
             }
         }
     }
+
 
     var manifest: ZManifest? {
         if let mode = storageMode {
@@ -691,9 +694,45 @@ class Zone : ZRecord {
     }
 
 
-    // MARK:- traverse ancestors
+    // MARK:- traits
     // MARK:-
 
+
+    func hasTrait(for iType: ZTraitType) -> Bool {
+        return traits[iType] != nil
+    }
+
+    
+    func getTraitText(for iType: ZTraitType) -> String? {
+        return traits[iType]?.text
+    }
+
+
+    func setTraitText(_ iText: String?, for iType: ZTraitType) {
+        var trait         = traits[iType]
+
+        if  trait        == nil {
+            trait         = ZTrait(storageMode: storageMode)
+        } else if  iText == nil {
+            traits[iType] = nil
+
+            trait?.needDestroy()
+
+            return
+        }
+
+        traits   [iType] = trait
+        trait?.traitType = iType
+        trait?    .owner = CKReference(record: record, action: .none)
+        trait?     .text = iText
+
+        trait?.updateRecordProperties()
+        trait?.needSave()
+    }
+
+
+    // MARK:- traverse ancestors
+    // MARK:-
 
     func hasCompleteAncestorPath(toColor: Bool = false, toWritable: Bool = false) -> Bool {
         var      isComplete = false

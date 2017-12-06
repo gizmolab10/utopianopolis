@@ -72,7 +72,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var isHiddenToggleDot: Bool {
         if  let zone = widgetZone, isInnerDot, isToggle, let mode = zone.storageMode {
 
-            return (!zone.isBookmark && !zone.isHyperlink && zone.fetchableCount == 0 && zone.count == 0 && !isDragTarget)
+            return (!zone.isBookmark && !zone.isHyperlink && !zone.isEmail && zone.fetchableCount == 0 && zone.count == 0 && !isDragTarget)
                 || (!zone.isRootOfFavorites && mode == .favoritesMode)
         }
         
@@ -215,8 +215,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             if !isHiddenToggleDot {
                 if isInnerDot {
-                    let isChildlessHyperlink = zone.isHyperlink && zone.fetchableCount == 0
-                    let shouldHighlight = isToggle ? (!zone.showChildren || zone.isBookmark || isChildlessHyperlink || isDragTarget) : zone.isGrabbed || highlightAsFavorite // not highlight when editing
+                    let isBarrenSpecial = (zone.isHyperlink || zone.isEmail) && zone.fetchableCount == 0
+                    let shouldHighlight = isToggle ? (!zone.showChildren || zone.isBookmark || isBarrenSpecial || isDragTarget) : zone.isGrabbed || highlightAsFavorite // not highlight when editing
                     let     strokeColor = isToggle && isDragTarget ? gRubberbandColor : zone.color
                     var       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
                     let       thickness = CGFloat(gLineThickness)
@@ -231,7 +231,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     path.fill()
 
                     if isToggle {
-                        if  zone.isBookmark || isChildlessHyperlink { // draw tiny bookmark dot inside toggle dot
+                        if  zone.isBookmark || isBarrenSpecial { // draw tiny bookmark dot inside toggle dot
                             let     inset = CGFloat(innerDotHeight / 3.0)
                             path          = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
                             path.flatness = 0.0001

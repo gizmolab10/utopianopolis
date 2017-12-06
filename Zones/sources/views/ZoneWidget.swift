@@ -515,7 +515,7 @@ class ZoneWidget: ZView {
 
             note("      .        \(zone.unwrappedName)")
 
-            if  isGrabbed && !textWidget.isFirstResponder && (isOSX || zone != gHere) {
+            if  isGrabbed && !textWidget.isFirstResponder && (!isPhone || zone != gHere) {
                 drawSelectionHighlight()
             }
 

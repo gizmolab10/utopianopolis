@@ -63,9 +63,9 @@ class ZEditingManager: NSObject {
         case Alter
         case Always
         case Parent
+        case Travel
         case Favorites
         case SelectAll
-        case Hyperlink
 
         case Redo
         case Paste
@@ -79,11 +79,11 @@ class ZEditingManager: NSObject {
         case "z":                                          return .Undo
         case "o", "r":                                     return .Sort
         case "v", "x", gSpaceKey:                          return .Child
-        case "h", "l", "\r", "u", "w", "-":                return .Alter
+        case "e", "h", "l", "\r", "u", "w", "-":           return .Alter
         case "b", "d", gTabKey, gBackspaceKey, gDeleteKey: return .Parent
         case ";", "'", "/":                                return .Favorites
         case "a":                                          return .SelectAll
-        case "=":                                          return .Hyperlink
+        case "=":                                          return .Travel
         default:                                           return .Always
         }
     }
@@ -121,7 +121,7 @@ class ZEditingManager: NSObject {
             case .Favorites: valid = gHasPrivateDatabase
             case .Undo:      valid = undo.canUndo
             case .Redo:      valid = undo.canRedo
-            case .Hyperlink: valid = mover.isHyperlink
+            case .Travel:    valid = mover.isHyperlink || mover.isEmail
             case .Always:    valid = true
             }
         } else if key.arrow == nil {
@@ -162,6 +162,7 @@ class ZEditingManager: NSObject {
                 case "-":        addLine()
                 case "r":        reverse()
                 case "c":        recenter()
+                case "e":        editEmail()
                 case "a":        selectAll()
                 case "d":        duplicate()
                 case "p":        printHere()
@@ -175,7 +176,7 @@ class ZEditingManager: NSObject {
                 case "?":        openBrowserForFocusWebsite()
                 case "'":        doFavorites(isShift, isOption)
                 case "/":        focus(on: gSelectionManager.firstGrab, isCommand)
-                case "=":        travelThroughHyperlink(gSelectionManager.firstGrab)
+                case "=":        gTravelManager.maybeTravelThrough(gSelectionManager.firstGrab)
                 case gTabKey:    addNext(containing: isOption) { iChild in iChild.edit() }
                 case ",", ".":   gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
                 case "z":        if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
@@ -239,10 +240,14 @@ class ZEditingManager: NSObject {
     @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
         if !isEditing, iEvent != previousEvent, gWorkMode == .editMode {
             let     flags = iEvent.modifierFlags
-            let       key = iEvent.key
             previousEvent = iEvent
 
-            handleKey(key, flags: flags, isWindow: isWindow)
+            if let key = iEvent.key {
+                handleKey(key, flags: flags, isWindow: isWindow)
+            } else if let arrow = iEvent.arrow {
+                handleArrow(arrow, flags: flags)
+            }
+
 
             return true
         }
@@ -266,6 +271,15 @@ class ZEditingManager: NSObject {
 
     // MARK:- miscellaneous features
     // MARK:-
+
+
+    func editEmail() {
+        let       zone = gSelectionManager.firstGrab
+        if  let widget = gWidgetsManager.widgetForZone(zone) {
+            widget.textWidget.isEditiingEmail = true
+            zone.edit()
+        }
+    }
 
 
     func editHyperlink() {
@@ -485,33 +499,6 @@ class ZEditingManager: NSObject {
     }
 
 
-    func maybeTravelThrough(_ iZone: Zone) {
-        if iZone.isBookmark {
-            travelThroughBookmark(iZone)
-        } else if iZone.isHyperlink {
-            travelThroughHyperlink(iZone)
-        }
-    }
-
-
-    func travelThroughHyperlink(_ iZone: Zone) {
-        if  let link  = iZone.hyperLink,
-            link     != gNullLink {
-            link.openAsURL()
-        }
-    }
-
-
-    func travelThroughBookmark(_ bookmark: Zone) {
-        gTravelManager.travelThrough(bookmark) { object, kind in
-            self.redrawAndSync()
-            //            gControllersManager.syncAndSave {
-            //                self.signalFor(nil, regarding: .redraw)
-            //            }
-        }
-    }
-
-
     // MARK:- async reveal
     // MARK:-
 
@@ -658,7 +645,7 @@ class ZEditingManager: NSObject {
             }
 
             if  zone.fetchableCount == 0 {
-                maybeTravelThrough(zone)
+                gTravelManager.maybeTravelThrough(zone)
             } else {
                 if isEditing {
                     s.stopCurrentEdit()
@@ -1114,7 +1101,7 @@ class ZEditingManager: NSObject {
         if !selectionOnly {
             actuallyMoveZone(zone)
         } else if zone.fetchableCount == 0 {
-            maybeTravelThrough(zone)
+            gTravelManager.maybeTravelThrough(zone)
         } else {
             zone.needChildren()
             zone.displayChildren()

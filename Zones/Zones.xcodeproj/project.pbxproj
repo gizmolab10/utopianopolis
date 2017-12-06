@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		0C1ABAAB1FB144E300D62947 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3981F1988380091F4D1 /* Assets.xcassets */; };
 		0C1ABAAC1FB144E400D62947 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3981F1988380091F4D1 /* Assets.xcassets */; };
-		0C23A94D1F0ED24A00514814 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C23A94C1F0ED24A00514814 /* CloudKit.framework */; };
 		0C26F7301F799EEE00C2B978 /* ZoneSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C26F72F1F799EEE00C2B978 /* ZoneSegmentedControl.swift */; };
 		0C2E22C01F75B8AB00B50A71 /* ZMainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */; };
 		0C2E22C51F75BB7D00B50A71 /* ZMainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */; };
@@ -126,7 +125,6 @@
 		0C39B3AE1F1988380091F4D1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B39A1F1988380091F4D1 /* LaunchScreen.storyboard */; };
 		0C39B3B61F1988380091F4D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B39D1F1988380091F4D1 /* Main.storyboard */; };
 		0C39B3B91F1988380091F4D1 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B39E1F1988380091F4D1 /* Settings.storyboard */; };
-		0C39B3C51F198CB80091F4D1 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C23A94C1F0ED24A00514814 /* CloudKit.framework */; };
 		0C3C12811F8D87DE00669432 /* ZEventsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C48B0941F87197B00A247BC /* ZEventsManager.swift */; };
 		0C3ECC1F1FA2953E00F085EA /* ZOnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3ECC1E1FA2953E00F085EA /* ZOnboardingManager.swift */; };
 		0C3ECC201FA29A3900F085EA /* ZOnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3ECC1E1FA2953E00F085EA /* ZOnboardingManager.swift */; };
@@ -144,7 +142,6 @@
 		0C63DA6E1FCF837D005EC548 /* ZFavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C63DA6C1FCF837C005EC548 /* ZFavoritesManager.swift */; };
 		0C63DA6F1FCF837D005EC548 /* ZFavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C63DA6C1FCF837C005EC548 /* ZFavoritesManager.swift */; };
 		0C6415721FA977EB0043E1CC /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */; };
-		0C6CAE201F88308E001960F7 /* ZSearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */; };
 		0C6CAE211F88308E001960F7 /* ZSearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */; };
 		0C71172B1FA980D400603017 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C7117351FAE7F9900603017 /* ZDBOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZDBOperationsManager.swift */; };
@@ -152,15 +149,16 @@
 		0C7117371FAE7F9900603017 /* ZDBOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZDBOperationsManager.swift */; };
 		0C71173B1FAFC50500603017 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C7126CD1FB39C5200CD3E76 /* ZDesktopExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */; };
+		0C71521B1FD778BB00C7DA61 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; };
+		0C71521E1FD7796000C7DA61 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C71521C1FD7795F00C7DA61 /* HockeySDK.framework */; };
+		0C7152211FD779F100C7DA61 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C71521C1FD7795F00C7DA61 /* HockeySDK.framework */; };
 		0CA04B2D1D2ECF1B001892E5 /* ZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */; };
 		0CA04B631D2ECF41001892E5 /* PadZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */; };
 		0CA04B6E1D2ECF41001892E5 /* PadZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */; };
 		0CA4DAC01FC8F5CF00F509CE /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CA4DABF1FC8F5CF00F509CE /* HockeySDK.framework */; };
 		0CA4DAC31FC8F65300F509CE /* HockeySDK.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0CA4DABF1FC8F5CF00F509CE /* HockeySDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0CAC51F01F7859F300BDCECB /* ZActionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAC51EF1F7859F300BDCECB /* ZActionsController.swift */; };
-		0CB619971FB3C4660087B066 /* ZSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */; };
 		0CB619981FB3C4660087B066 /* ZSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */; };
-		0CB6199D1FB3C4660087B066 /* ZSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619941FB3C4660087B066 /* ZSearchController.swift */; };
 		0CB6199E1FB3C4660087B066 /* ZSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619941FB3C4660087B066 /* ZSearchController.swift */; };
 		0CB6199F1FB3C4660087B066 /* ZEditorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZEditorController.swift */; };
 		0CB619A01FB3C4660087B066 /* ZEditorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZEditorController.swift */; };
@@ -247,7 +245,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0C23A94C1F0ED24A00514814 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
 		0C26F72F1F799EEE00C2B978 /* ZoneSegmentedControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneSegmentedControl.swift; sourceTree = "<group>"; };
 		0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMainController.swift; sourceTree = "<group>"; };
 		0C2E22CE1F75BEEA00B50A71 /* ZGenericTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGenericTableController.swift; sourceTree = "<group>"; };
@@ -316,6 +313,7 @@
 		0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSearchManager.swift; sourceTree = "<group>"; };
 		0C7117341FAE7F9900603017 /* ZDBOperationsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDBOperationsManager.swift; sourceTree = "<group>"; };
 		0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDesktopExtensions.swift; sourceTree = "<group>"; };
+		0C71521C1FD7795F00C7DA61 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = iFocus/Frameworks/HockeySDK.framework; sourceTree = "<group>"; };
 		0CA04B141D2ECF1A001892E5 /* Focus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Focus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
@@ -344,7 +342,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C23A94D1F0ED24A00514814 /* CloudKit.framework in Frameworks */,
+				0C7152211FD779F100C7DA61 /* HockeySDK.framework in Frameworks */,
+				0C71521B1FD778BB00C7DA61 /* SnapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -376,8 +375,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C71521E1FD7796000C7DA61 /* HockeySDK.framework in Frameworks */,
 				0C60B6791DBE84DF005D99F9 /* SnapKit.framework in Frameworks */,
-				0C39B3C51F198CB80091F4D1 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -653,8 +652,8 @@
 		0C39B3C61F198CD00091F4D1 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				0C71521C1FD7795F00C7DA61 /* HockeySDK.framework */,
 				0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */,
-				0C23A94C1F0ED24A00514814 /* CloudKit.framework */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -669,7 +668,7 @@
 			name = OSX;
 			sourceTree = "<group>";
 		};
-		0C401E891D2F6B6D000B9864 /* Tests */ = {
+		0C401E891D2F6B6D000B9864 /* tests */ = {
 			isa = PBXGroup;
 			children = (
 				0CA04B611D2ECF41001892E5 /* PadZonesTests */,
@@ -677,7 +676,7 @@
 				0CA04B2B1D2ECF1B001892E5 /* ZonesTests */,
 				0CA04B361D2ECF1B001892E5 /* ZonesUITests */,
 			);
-			name = Tests;
+			name = tests;
 			sourceTree = "<group>";
 		};
 		0CA04B0B1D2ECF1A001892E5 = {
@@ -687,12 +686,12 @@
 				0C39B3C11F198BAA0091F4D1 /* configuration */,
 				0CD921761D8F4C2500F80964 /* frameworks */,
 				0C39B3921F1988380091F4D1 /* interfaces */,
-				0CA04B151D2ECF1A001892E5 /* Products */,
-				0C401E891D2F6B6D000B9864 /* Tests */,
+				0CA04B151D2ECF1A001892E5 /* products */,
+				0C401E891D2F6B6D000B9864 /* tests */,
 			);
 			sourceTree = "<group>";
 		};
-		0CA04B151D2ECF1A001892E5 /* Products */ = {
+		0CA04B151D2ECF1A001892E5 /* products */ = {
 			isa = PBXGroup;
 			children = (
 				0CA04B141D2ECF1A001892E5 /* Focus.app */,
@@ -703,7 +702,7 @@
 				0CA04B691D2ECF41001892E5 /* PadZonesUITests.xctest */,
 				0C69C9DF1F09CD95004D026D /* iFocus.app */,
 			);
-			name = Products;
+			name = products;
 			sourceTree = "<group>";
 		};
 		0CA04B2B1D2ECF1B001892E5 /* ZonesTests */ = {
@@ -762,6 +761,7 @@
 				0C69C9D41F09CD95004D026D /* Frameworks */,
 				0C69C9D61F09CD95004D026D /* Resources */,
 				0C69C9DA1F09CD95004D026D /* Embed Frameworks */,
+				0C71520C1FD7716700C7DA61 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -966,7 +966,7 @@
 				Base,
 			);
 			mainGroup = 0CA04B0B1D2ECF1A001892E5;
-			productRefGroup = 0CA04B151D2ECF1A001892E5 /* Products */;
+			productRefGroup = 0CA04B151D2ECF1A001892E5 /* products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -1043,6 +1043,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0C71520C1FD7716700C7DA61 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FILE=\"${SRCROOT}/Zones/iFocus/HockeySDK-iOS/BuildAgent\"\nif [ -f \"$FILE\" ]; then\n\"$FILE\"\nfi";
+		};
 		0CA4DABD1FC8F52600F509CE /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1189,7 +1202,6 @@
 				0C39B2FF1F182EBB0091F4D1 /* ZRecordsManager.swift in Sources */,
 				0C39B3201F182EBB0091F4D1 /* ZTrait.swift in Sources */,
 				0C39B2E41F182EBB0091F4D1 /* ZControllersManager.swift in Sources */,
-				0CB619971FB3C4660087B066 /* ZSearchResultsController.swift in Sources */,
 				0C39B2C01F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
 				0C39B38C1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
 				0C39B3831F182EBB0091F4D1 /* ZoneDot.swift in Sources */,
@@ -1210,7 +1222,6 @@
 				0C39B2FC1F182EBB0091F4D1 /* ZOperationsManager.swift in Sources */,
 				0C4118DF1FA8110200A58004 /* ZAlertManager.swift in Sources */,
 				0C39B38F1F182EBB0091F4D1 /* ZStackableView.swift in Sources */,
-				0CB6199D1FB3C4660087B066 /* ZSearchController.swift in Sources */,
 				0C39B2F01F182EBB0091F4D1 /* ZCloudManager.swift in Sources */,
 				0C63DA6E1FCF837D005EC548 /* ZFavoritesManager.swift in Sources */,
 				0C39B2B11F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
@@ -1227,7 +1238,6 @@
 				0C39B2ED1F182EBB0091F4D1 /* ZWidgetsManager.swift in Sources */,
 				0C2E22D11F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
 				0C39B2AB1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
-				0C6CAE201F88308E001960F7 /* ZSearchManager.swift in Sources */,
 				0C39B2B41F182EBB0091F4D1 /* ZGCD.swift in Sources */,
 				0C39B31D1F182EBB0091F4D1 /* ZRecord.swift in Sources */,
 			);
@@ -1290,14 +1300,15 @@
 					"$(PROJECT_DIR)/PadZones/Frameworks",
 					"$(PROJECT_DIR)/Zones/Frameworks",
 					"$(PROJECT_DIR)/iFocus/Frameworks",
+					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = iFocus/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.iphone;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "8b959e36-9799-4e94-b734-324d5e7b18c3";
-				PROVISIONING_PROFILE_SPECIFIER = "focus development on iPhone";
+				PROVISIONING_PROFILE = "0bc9b81f-28e3-4e6b-993a-ee937a37b4cc";
+				PROVISIONING_PROFILE_SPECIFIER = "focus development on iOS";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
@@ -1322,14 +1333,15 @@
 					"$(PROJECT_DIR)/PadZones/Frameworks",
 					"$(PROJECT_DIR)/Zones/Frameworks",
 					"$(PROJECT_DIR)/iFocus/Frameworks",
+					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = iFocus/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.iphone;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "8b959e36-9799-4e94-b734-324d5e7b18c3";
-				PROVISIONING_PROFILE_SPECIFIER = "focus development on iPhone";
+				PROVISIONING_PROFILE = "0bc9b81f-28e3-4e6b-993a-ee937a37b4cc";
+				PROVISIONING_PROFILE_SPECIFIER = "focus development on iOS";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
@@ -1566,19 +1578,22 @@
 				CODE_SIGN_ENTITLEMENTS = PadZones/PadZones.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F8M94NY2TV;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/PadZones/Frameworks",
 					"$(PROJECT_DIR)/Zones/Frameworks",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/iFocus/Frameworks",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PadZones/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ipad;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "c1766a51-307f-4f4c-891b-bbd6619906a6";
+				PROVISIONING_PROFILE_SPECIFIER = "focus development on iOS";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
@@ -1596,19 +1611,22 @@
 				CODE_SIGN_ENTITLEMENTS = PadZones/PadZones.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F8M94NY2TV;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/PadZones/Frameworks",
 					"$(PROJECT_DIR)/Zones/Frameworks",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/iFocus/Frameworks",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PadZones/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ipad;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "c1766a51-307f-4f4c-891b-bbd6619906a6";
+				PROVISIONING_PROFILE_SPECIFIER = "focus development on iOS";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
