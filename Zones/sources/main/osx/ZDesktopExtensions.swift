@@ -355,8 +355,9 @@ extension ZoneTextWidget {
 
     override func textDidEndEditing(_ notification: Notification) {
         if  let       number = notification.userInfo?["NSTextMovement"] as? NSNumber {
+            let      isShift = NSEvent.modifierFlags().isShift
 
-            captureText(force: false) // do this before clearing isEditingText so isHyperlink will retain its value
+            captureText(force: isShift) // do this before setting isEditingText so isHyperlink will not yet change
 
             let        value = number.intValue
             isEditingText    = value == NSOtherTextMovement

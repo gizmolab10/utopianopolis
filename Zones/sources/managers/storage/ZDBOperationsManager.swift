@@ -35,9 +35,9 @@ class ZDBOperationsManager: ZOperationsManager {
     func       sync(_ onCompletion: @escaping Closure) { setupAndRun([           .fetch, .parents, .merge, .save, .children,                   .traits, .remember]) { onCompletion() } }
     func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete, .fetch, .parents,         .save, .children,                   .traits, .remember]) { onCompletion() } }
     func   families(_ onCompletion: @escaping Closure) { setupAndRun([                   .parents,                .children,                   .traits, .remember]) { onCompletion() } }
-    func    parents(_ onCompletion: @escaping Closure) { setupAndRun([                   .parents                                                                ]) { onCompletion() } }
-    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                                                                ]) { onCompletion() } }
-    func  bookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks                                                                                 ]) { onCompletion() } }
+    func    parents(_ onCompletion: @escaping Closure) { setupAndRun([                   .parents,                                             .traits, .remember]) { onCompletion() } }
+    func  bookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks,                                                              .traits, .remember]) { onCompletion() } }
+    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash,                                                                      .remember]) { onCompletion() } }
 
 
     func children(_ recursing: ZRecursionType, _ iGoal: Int? = nil, onCompletion: @escaping Closure) {

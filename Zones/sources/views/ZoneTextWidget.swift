@@ -253,10 +253,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-    override func captureText(force: Bool) {
+    override func captureText(force: Bool = false) {
         let zone = widgetZone
 
-        if !gTextCapturing || force, originalText != text! {
+        if (!gTextCapturing && originalText != text!) || force {
             assign(text, to: zone)
         }
     }

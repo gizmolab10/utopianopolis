@@ -504,7 +504,7 @@ class ZEditingManager: NSObject {
 
 
     func revealRoot(_ onCompletion: Closure?) {
-        if gRoot?.record != nil {
+        if  gRoot?.record != nil {
             onCompletion?()
         } else {
             gDBOperationsManager.root {
@@ -515,7 +515,7 @@ class ZEditingManager: NSObject {
 
 
     func revealParentAndSiblingsOf(_ iZone: Zone, onCompletion: Closure?) {
-        if let parent = iZone.parentZone, parent.zoneName != nil {
+        if let parent = iZone.parentZone {
             parent.displayChildren()
             parent.needChildren()
 
@@ -532,25 +532,56 @@ class ZEditingManager: NSObject {
     }
 
 
-    func recursivelyRevealSiblingsOf(_ descendent: Zone, untilReaching ancestor: Zone, onCompletion: ZoneClosure?) {
-        descendent.traverseAncestors { iAncestor -> ZTraverseStatus in
-            if  iAncestor == ancestor || iAncestor.isRoot {
-                onCompletion?(ancestor)
+    func recursivelyRevealSiblings(_ descendent: Zone, untilReaching iAncestor: Zone, onCompletion: ZoneClosure?) {
+        var needRoot = true
 
-                return .eStop
-            } else {
-                revealParentAndSiblingsOf(iAncestor) {}
+        descendent.traverseAllAncestors { iParent in
+            iParent.displayChildren()
+            iParent.needChildren() // need this to show "minimal flesh" on graph
 
-                return .eContinue
+            if iParent == iAncestor {
+                needRoot = false
+            }
+        }
+
+        if needRoot {
+            descendent.needRoot()
+        }
+
+        gDBOperationsManager.families {
+            FOREGROUND {
+                descendent.traverseAncestors { iParent -> ZTraverseStatus in
+                    let  gotThere = iParent == iAncestor || iParent.isRoot    // reached the ancestor or the root
+                    let gotOrphan = iParent.parentZone == nil
+
+                    if  gotThere || gotOrphan {
+                        if  gHere.level > iAncestor.level {
+                            gHere = iAncestor
+                        }
+
+                        if !gotThere && !iParent.alreadyExists { // reached an orphan that has not yet been fetched
+                            self.recursivelyRevealSiblings(iParent, untilReaching: iAncestor, onCompletion: onCompletion)
+                        } else {
+                            iAncestor.displayChildren()
+                            FOREGROUND(after: 0.1) {
+                                onCompletion?(iAncestor)
+                            }
+                        }
+
+                        return .eStop
+                    }
+
+                    return .eContinue
+                }
             }
         }
     }
 
 
-    func revealSiblingsOf(_ descendent: Zone, untilReaching ancestor: Zone) {
-        recursivelyRevealSiblingsOf(descendent, untilReaching: ancestor) { iZone in
-            if iZone == ancestor {
-                gHere = ancestor
+    func revealSiblingsOf(_ descendent: Zone, untilReaching iAncestor: Zone) {
+        recursivelyRevealSiblings(descendent, untilReaching: iAncestor) { iZone in
+            if iZone == iAncestor {
+                gHere = iAncestor
 
                 gHere.grab()
             }
@@ -577,7 +608,7 @@ class ZEditingManager: NSObject {
 
 
     func toggleDotRecurse(_ show: Bool, _ zone: Zone, to iGoal: Int?, onCompletion: Closure?) {
-        if !show && (zone.count == 0 || !zone.showChildren) && zone.isGrabbed {
+        if !show && zone.isGrabbed && (zone.count == 0 || !zone.showChildren) {
 
             //////////////////////////
             // COLLAPSE INTO PARENT //
@@ -606,6 +637,8 @@ class ZEditingManager: NSObject {
 
             let  goal = iGoal ?? zone.level + (show ? 1 : -1)
             let apply = {
+                // let favorite = zone.isInFavorites
+
                 zone.traverseAllProgeny { iChild in
                     if           !iChild.isBookmark {
                         if        iChild.level >= goal && !show {
@@ -1478,7 +1511,7 @@ class ZEditingManager: NSObject {
         let         zone = gSelectionManager.firstGrab
         var completedYet = false
 
-        recursivelyRevealSiblingsOf(zone, untilReaching: to) { iRevealedZone in
+        recursivelyRevealSiblings(zone, untilReaching: to) { iRevealedZone in
             if !completedYet && iRevealedZone == to {
                 completedYet     = true
                 var insert: Int? = zone.parentZone?.siblingIndex

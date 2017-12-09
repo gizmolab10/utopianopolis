@@ -222,7 +222,7 @@ class ZSelectionManager: NSObject {
         if  let editingZone = currentlyEditingZone {
             if  let  widget = editingZone.widget {
                 widget.setNeedsDisplay()
-                widget.textWidget.captureText(force: false)
+                widget.textWidget.captureText()
             }
 
             clearEdit()

@@ -247,10 +247,10 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                             widget.widgetZone?.grab()
                             signalFor(nil, regarding: .search)
                         }
+                    } else { // click on background
+                        gSelectionManager.deselect()
+                        signalFor(nil, regarding: .datum)
                     }
-//                } else {
-//                    gSelectionManager.deselect()
-//                    signalFor(nil, regarding: .search)
                 }
             }
 

@@ -89,9 +89,7 @@ class ZManifest: ZRecord {
     func hideChildren(in iZone: Zone) {
         var expansionSet = expanded
 
-        if iZone.isRoot {
-            expansionSet.removeAll()
-        } else if let  name = iZone.record?.recordID.recordName {
+        if let  name = iZone.record?.recordID.recordName {
             while let index = expansionSet.index(of: name) {
                 expansionSet.remove(at: index)
             }

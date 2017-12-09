@@ -668,6 +668,7 @@ class ZCloudManager: ZRecordsManager {
 
                                     if  states.contains(.needsRoot) {
                                         p.maybeNeedRoot()
+                                        p.needChildren()
                                     }
 
                                     if  states.contains(.needsColor) {

@@ -149,7 +149,7 @@ extension CKRecord {
             var       suffix = ""
 
             if let link  = self["zoneLink"] as? String {
-                if link == gNullLink {
+                if link == gNullLink || link == "not a link" {
                     suffix.append("-")
                 } else {
                     suffix.append("L")
@@ -481,7 +481,7 @@ extension ZTextField {
     var  preferredFont: ZFont { return gWidgetFont }
 
     func selectCharacter(in range: NSRange) {}
-    func captureText(force: Bool) {}
+    func captureText(force: Bool = false) {}
     func alterCase(up: Bool) {}
     func updateText() {}
     func setup() {}

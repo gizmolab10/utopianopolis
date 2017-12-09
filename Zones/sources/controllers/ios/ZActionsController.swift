@@ -74,16 +74,16 @@ class ZActionsController : ZGenericController {
             let actionTitle = actionTitleForTitle(title)
 
             switch actionTitle {
-            case .eHang:    gDBOperationsManager.unHang()
-            case .eUndo:    gEditingManager.undoManager.undo()
+            case .eRefresh: refresh()
             case .eCut:     gEditingManager.delete()
             case .eNew:     gEditingManager.addIdea()
+            case .eHang:    gDBOperationsManager.unHang()
+            case .eUndo:    gEditingManager.undoManager.undo()
             case .eNext:    gEditingManager.addNext() { iChild in iChild.edit() }
             case .eFocus:   gEditingManager.focus(on: gSelectionManager.firstGrab)
-            case .eTravel:  gEditingManager.maybeTravelThrough(gSelectionManager.currentMoveable)
+            case .eTravel:  gTravelManager.maybeTravelThrough(gSelectionManager.currentMoveable)
             case .ePrefs:   break
             case .eHelp:    break
-            case .eRefresh: refresh()
             }
         }
     }
