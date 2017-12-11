@@ -52,7 +52,6 @@ let         gZoneTypeKey = "Zone"
 let        gTraitTypeKey = "ZTrait"
 let        gSeparatorKey = ":"
 let        gTrashNameKey = "trash"
-let        gFavoritesKey = "favorites"
 let       gRecordNameKey = "recordName"
 let       gRecordTypeKey = "recordType"
 let     gShowChildrenKey = "showChildren"
@@ -61,6 +60,8 @@ let    gHalfLineOfDashes = "-----------"
 let gFavoriteRootNameKey = "favoritesRoot"
 let   gLineWithStubTitle = gHalfLineOfDashes + " | " + gHalfLineOfDashes
 let        gLineOfDashes = gHalfLineOfDashes + "---" + gHalfLineOfDashes
+let           gRootNames = [gRootNameKey, gTrashNameKey, gFavoriteRootNameKey]
+
 
 let        gBackspaceKey = "\u{8}"
 let           gDeleteKey = "\u{7F}"

@@ -446,8 +446,8 @@ class ZRecordsManager: NSObject {
 
 
     func registerZRecord(_ zRecord: ZRecord?) {
-        if  let     record = zRecord?.record {
-            let identifier = record.recordID.recordName
+        if  let       name = zRecord?.recordName {
+            let identifier = name
             let registered = isRegistered(zRecord!)
 
             if  let    rid = registered, rid != identifier {
@@ -460,8 +460,8 @@ class ZRecordsManager: NSObject {
 
 
     func unregisterZRecord(_ zRecord: ZRecord?) {
-        if  let record = zRecord?.record {
-            zRecordsByID[record.recordID.recordName] = nil
+        if  let name = zRecord?.recordName {
+            zRecordsByID[name] = nil
         }
     }
 
@@ -481,7 +481,7 @@ class ZRecordsManager: NSObject {
         var   record = zoneForRecordID(recordID) as ZRecord?
         let manifest = gRemoteStoresManager.manifest(for:  storageMode)
 
-        if  record  == nil && manifest.record?.recordID.recordName == recordID?.recordName {
+        if  record  == nil && manifest.recordName == recordID?.recordName {
             record   = manifest
         }
 

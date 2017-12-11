@@ -40,7 +40,7 @@ class ZManifest: ZRecord {
                 _hereZone  = newValue
             }
 
-            if  let   name = _hereZone?.record.recordID.recordName {
+            if  let   name = _hereZone?.recordName {
                 here       = name
 
                 needSave()
@@ -64,7 +64,7 @@ class ZManifest: ZRecord {
 
 
     func showsChildren(_ iZone: Zone) -> Bool {
-        if  let name = iZone.record?.recordID.recordName,
+        if  let name = iZone.recordName,
             let    _ = expanded.index(of: name) {
             return true
         }
@@ -76,8 +76,8 @@ class ZManifest: ZRecord {
     func displayChildren(in iZone: Zone) {
         var expansionSet = expanded
 
-        if  let name = iZone.record?.recordID.recordName, !expansionSet.contains(name) {
-            expansionSet.append(iZone.record.recordID.recordName)
+        if  let name = iZone.recordName, !expansionSet.contains(name) {
+            expansionSet.append(name)
 
             zonesExpanded = expansionSet
             
@@ -89,7 +89,7 @@ class ZManifest: ZRecord {
     func hideChildren(in iZone: Zone) {
         var expansionSet = expanded
 
-        if let  name = iZone.record?.recordID.recordName {
+        if let  name = iZone.recordName {
             while let index = expansionSet.index(of: name) {
                 expansionSet.remove(at: index)
             }
@@ -103,9 +103,9 @@ class ZManifest: ZRecord {
     }
     
 
-    override func markForAllOfStates (_ states: [ZRecordState]) {
+    override func addState(_ state: ZRecordState) {
         if manifestMode != .favoritesMode {
-            super.markForAllOfStates(states)
+            super.addState(state)
         }
     }
 

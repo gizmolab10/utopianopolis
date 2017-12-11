@@ -379,11 +379,11 @@ class ZCloudManager: ZRecordsManager {
                     zone.traverseProgeny { iZone -> (ZTraverseStatus) in
                         if  iZone.alreadyExists,
                             iZone.storageMode == self.storageMode,
-                            let name = iZone.record?.recordID.recordName,
-                            !memorables.contains(name) {
-                            memorables.append(name)
+                            let identifier = iZone.recordName,
+                            !memorables.contains(identifier) {
+                            memorables.append(identifier)
 
-                            if iZone.showChildren || iZone.isRoot {
+                            if iZone.showChildren {
                                 return .eContinue
                             }
                         }
@@ -423,13 +423,12 @@ class ZCloudManager: ZRecordsManager {
         if  let     trash = trashZone {
             let parentKey = "parent"
             let predicate = NSPredicate(format: "zoneName != \"\"")
-            let rootNames = [gRootNameKey, gTrashNameKey, gFavoriteRootNameKey]
             var retrieved = [CKRecord] ()
 
             self.queryWith(predicate) { (iRecord: CKRecord?) in
                 if  let ckRecord = iRecord, !retrieved.contains(ckRecord) {
                     if  let name = ckRecord[gZoneNameKey] as? String,
-                        !rootNames.contains(name) {
+                        !gRootNames.contains(name) {
                         retrieved.append(ckRecord)
                     }
                 } else { // nil means: we already received full response from cloud for this particular fetch
@@ -441,13 +440,13 @@ class ZCloudManager: ZRecordsManager {
                             if  let parent   = ckRecord[parentKey] as? CKReference {
                                 let parentID = parent.recordID
                                 if  self.zRecordForRecordID(parent.recordID) == nil,
-                                    !rootNames.contains(parent.recordID.recordName) {
+                                    !gRootNames.contains(parent.recordID.recordName) {
                                     childrenRefs[parentID] = ckRecord
 
                                     parentIDs.append(parent.recordID)
                                 } // else it's already in memory (either the trash or the graph)
                             } else if let name = ckRecord[gZoneNameKey] as? String,
-                                ![gRootNameKey, gTrashNameKey, gFavoriteRootNameKey].contains(name),
+                                !gRootNames.contains(name),
                                 let added = trash.addCKRecord(ckRecord) {
                                 added.needSave()
                                 trash.needSave()
@@ -587,7 +586,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchManifest(_ onCompletion: IntClosure?) {
-        if  manifest.alreadyExists || manifest.isMarkedForAnyOfStates([.needsMerge, .needsSave]) {
+        if  manifest.alreadyExists || manifest.needsMerge || manifest.needsSave {
             onCompletion?(0)
         } else {
             let recordID = manifest.record.recordID
@@ -832,11 +831,11 @@ class ZCloudManager: ZRecordsManager {
                     }
 
                     if  targetIDs.count != 0 {
-                        for recordID in targetIDs {
-                            let  zRecord = self.zRecordForRecordID(recordID)
+                        for targetID in targetIDs {
+                            let zTarget = self.zRecordForRecordID(targetID)
 
-                            zRecord?.unmarkForAllOfStates([.needsBookmarks])
-                            zRecord?.unorphan()
+                            zTarget?.removeState(.needsBookmarks)
+                            zTarget?.unorphan()
                         }
 
                         if retrieved.count > 0 {
@@ -849,7 +848,7 @@ class ZCloudManager: ZRecordsManager {
                             self.fetchBookmarks(onCompletion)   // process remaining
                         }
                     } else {
-                        onCompletion?(0)
+                        onCompletion?(0) // only exit for async activity
                     }
                 }
             }

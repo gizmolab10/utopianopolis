@@ -267,7 +267,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
         if  let zone = widgetZone,
             (zone.isBookmark || zone.isHyperlink || zone.isEmail),
-            !zone.isInFavorites,
+            !zone.isFavorite,
             !zone.isGrabbed,
             !isEditingText {
 

@@ -45,13 +45,13 @@ class Zone : ZRecord {
     var          unwrappedName:      String  { return zoneName ?? gNoName }
     var          decoratedName:      String  { return "\(unwrappedName)\(decoration)" }
     var       grabbedTextColor:      ZColor  { return color.darker(by: 3.0) }
-    var      isCurrentFavorite:        Bool  { return self == gFavoritesManager.currentFavorite }
-    var      isRootOfFavorites:        Bool  { return record != nil && record.recordID.recordName == gFavoriteRootNameKey }
-    var      onlyShowToggleDot:        Bool  { return isRootOfFavorites || (isPhone && self == gHere) }
-    var     hasMissingChildren:        Bool  { return count < fetchableCount }
     var directChildrenWritable:        Bool  { return   directAccess == .eChildrenWritable }
     var    hasAccessDecoration:        Bool  { return !isTextEditable || directChildrenWritable }
+    var     hasMissingChildren:        Bool  { return count < fetchableCount }
+    var      onlyShowToggleDot:        Bool  { return isRootOfFavorites || (isPhone && self == gHere) }
     var      isWritableByUseer:        Bool  { return  isTextEditable || gOnboardingManager.userHasAccess(self) }
+    var      isCurrentFavorite:        Bool  { return self == gFavoritesManager.currentFavorite }
+    var      isRootOfFavorites:        Bool  { return record != nil && recordName == gFavoriteRootNameKey }
     var       accessIsChanging:        Bool  { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
     var       isSortableByUser:        Bool  { return ancestorAccess != .eFullReadOnly || gOnboardingManager.userHasAccess(self) }
     var        directRecursive:        Bool  { return directAccess == .eRecurse }
@@ -61,11 +61,12 @@ class Zone : ZRecord {
     var          hasZonesAbove:        Bool  { return hasAnyZonesAbove(true) }
     var            isHyperlink:        Bool  { return hasTrait(for: .eHyperlink) && hyperLink != gNullLink }
     var             isBookmark:        Bool  { return crossLink != nil }
+    var             isFavorite:        Bool  { return gFavoritesManager.isWorkingFavorite(self) }
     var             isSelected:        Bool  { return gSelectionManager.isSelected(self) }
     var              isGrabbed:        Bool  { return gSelectionManager .isGrabbed(self) }
     var               hasColor:        Bool  { return zoneColor != nil && zoneColor != "" }
-    var                isTrash:        Bool  { return zoneName == gTrashNameKey }
-    var                isEmail:        Bool  { return hasTrait(for: .eEmail) }
+    var                isEmail:        Bool  { return hasTrait(for: .eEmail) && email != "" }
+    var                isTrash:        Bool  { return recordName == gTrashNameKey }
 
 
     var email: String? {
@@ -128,19 +129,45 @@ class Zone : ZRecord {
     }
 
 
-    var isInFavorites: Bool {
-        if isRootOfFavorites { return true }
+    var isDeleted: Bool {
+        var result = false
 
-        if let p = parentZone {
-            return !p.spawnedBy(self) && p.isInFavorites
+        traverseAllAncestors { iZone in
+            if iZone.isTrash {
+                result = true
+            }
         }
 
-        return false
+        return result
     }
 
 
-    convenience init(storageMode: ZStorageMode?) {
-        self.init(record: CKRecord(recordType: gZoneTypeKey), storageMode: storageMode)
+    var isInFavorites: Bool {
+        var result = false
+
+        traverseAllAncestors { iZone in
+            if iZone.isRootOfFavorites {
+                result = true
+            }
+        }
+
+        return result
+    }
+
+
+    convenience init(storageMode: ZStorageMode?, named: String? = nil, isLocalOnly: Bool = false) {
+        let      name = named == nil ? nil : (named == gFavoriteRootNameKey || !isLocalOnly) ? named : "local." + named!
+        var newRecord : CKRecord?
+
+        if isLocalOnly, let localName = name {
+            newRecord = CKRecord(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: localName))
+        } else {
+            newRecord = CKRecord(recordType: gZoneTypeKey)
+        }
+
+        self.init(record: newRecord!, storageMode: storageMode)
+
+        zoneName = name
     }
 
 
@@ -167,36 +194,19 @@ class Zone : ZRecord {
     }
 
 
-    var hasFetchedBookmark: Bool {
-        if  let identifier = record?.recordID.recordName {
+    var fetchedBookmark: Zone? {
+        if  let       identifier = recordName {
             for zRecord in gAllRegisteredZRecords {
-                if  let      zone = zRecord as? Zone,
-                    let  linkName = zone.linkName,
-                    zone.alreadyExists {
-                    if  linkName == identifier {
-                        return true
-                    }
+                if  let     zone = zRecord as? Zone,
+                    let linkName = zone.linkName,
+                    linkName    == identifier {
+
+                    return zone
                 }
             }
         }
 
-        return false
-    }
-
-
-    var isDeleted: Bool {
-        var result = false
-
-        if !isRoot {
-            traverseAllAncestors{ iParent in
-                if iParent.isRoot && iParent.isTrash {
-                    result = true
-                }
-            }
-        }
-
-        return result
-
+        return nil
     }
 
 
@@ -239,8 +249,8 @@ class Zone : ZRecord {
 
 
     var bookmarkTarget: Zone? {
-        if  let    link = crossLink {
-            return link.target as? Zone
+        if  let    target = crossLink as? Zone {
+            return target
         }
 
         return nil
@@ -308,7 +318,7 @@ class Zone : ZRecord {
                 zoneLink = gNullLink
             } else {
                 let    hasRef = newValue!.record != nil
-                let reference = !hasRef ? "" : newValue!.record.recordID.recordName
+                let reference = !hasRef ? "" : newValue!.recordName!
                 zoneLink      = "\(newValue!.storageMode!.rawValue)::\(reference)"
             }
 
@@ -432,11 +442,7 @@ class Zone : ZRecord {
 
     var parentZone: Zone? {
         get {
-            if  let p = _parentZone {
-                if  parent == nil, parentLink == gNullLink, p.storageMode == storageMode, let record = p.record {
-                    parent  = CKReference(record: record, action: .none)
-                }
-            } else {
+            if      _parentZone   == nil {
                 if  let  reference = parent, let mode = storageMode {
                     _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).zoneForReference(reference)
                 } else if let zone = zoneFrom(parentLink) {
@@ -457,7 +463,7 @@ class Zone : ZRecord {
                 if        newMode == storageMode {
                     parent         = CKReference(record: parentRecord, action: .none)
                 } else {
-                    parentLink     = "\(newMode.rawValue)::\(parentRecord.recordID.recordName)"
+                    parentLink     = "\(newMode.rawValue)::\(parentRecord.recordID.recordName)" // parentLink is needed to link to a parent residing in the other db
                 }
             }
         }
@@ -614,7 +620,7 @@ class Zone : ZRecord {
 
 
     override func debug(_  iMessage: String) {
-        note("\(iMessage) children \(count) parent \(parent != nil) isDeleted \(isDeleted) mode \(storageMode!) \(unwrappedName)")
+        note("\(iMessage) children \(count) parent \(parent != nil) is \(isDeleted ? "" : "not ")deleted  mode \(storageMode!) \(unwrappedName)")
     }
 
 
@@ -678,7 +684,7 @@ class Zone : ZRecord {
         let unequal = left != right // avoid infinite recursion by using negated version of this infix operator
 
         if  unequal && left.record != nil && right.record != nil {
-            return left.record.recordID.recordName == right.record.recordID.recordName
+            return left.recordName == right.recordName
         }
 
         return !unequal
@@ -755,7 +761,7 @@ class Zone : ZRecord {
     func isABookmark(spawnedBy zone: Zone) -> Bool {
         if  let        link = crossLink, let mode = link.storageMode {
             var     probeID = link.record.recordID as CKRecordID?
-            let  identifier = zone.record.recordID.recordName
+            let  identifier = zone.recordName
             var     visited = [String] ()
 
             while let probe = probeID?.recordName, !visited.contains(probe) {
@@ -876,8 +882,8 @@ class Zone : ZRecord {
 
         if status == .eContinue {
             for child in children {
-                if visited.contains(self) {
-                    status = .eStop
+                if visited.contains(child) {
+                    status = .eSkip
 
                     break
                 }
@@ -1026,7 +1032,7 @@ class Zone : ZRecord {
     
 
     func maybeNeedChildren() {
-        if  showChildren && hasMissingChildren && !isMarkedForAnyOfStates([.needsProgeny]) {
+        if  showChildren && hasMissingChildren && !needsProgeny {
             needChildren()
         }
     }
@@ -1093,40 +1099,39 @@ class Zone : ZRecord {
 
 
     @discardableResult func add(_ iChild: Zone?, at iIndex: Int?) -> Int? {
-        if  let    child = iChild, child != child.parentZone {
+        if  let newChild = iChild {
             let insertAt = validIndex(from: iIndex)
 
             // make sure it's not already been added
             // NOTE: both must have a record for this to be effective
 
-            if  let     record = child.record {
-                let identifier = record.recordID.recordName
+            if  let identifier = newChild.recordName,
+                let   oldIndex = children.index(of: newChild) {
 
                 for sibling in children {
-                    if sibling.record != nil && sibling.record.recordID.recordName == identifier {
-                        if  let oldIndex = children.index(of: child) {
-                            if  oldIndex == iIndex {
-                                return oldIndex
-                            } else {
-                                let newIndex = insertAt < count ? insertAt : count - 1
-                                moveChildIndex(from: oldIndex, to: newIndex)
+                    if  sibling.recordName == identifier {
+                        if  oldIndex == iIndex {
+                            return oldIndex
+                        } else {
+                            let newIndex = insertAt < count ? insertAt : count - 1
+                            moveChildIndex(from: oldIndex, to: newIndex)
 
-                                return newIndex
-                            }
+                            return newIndex
+
                         }
                     }
                 }
             }
 
             if  insertAt < count {
-                children.insert(child, at: insertAt)
+                children.insert(newChild, at: insertAt)
             } else {
-                children.append(child)
+                children.append(newChild)
             }
 
-            child.parentZone = self
+            newChild.parentZone = self
 
-            child.needSave()
+            newChild.needSave()
             needSave()
             needCount()
 
@@ -1163,8 +1168,8 @@ class Zone : ZRecord {
             if  let              p = iChild.parentZone {
                 iChild.storageMode = p.storageMode
 
-                if  iChild .parent?.recordID.recordName != p.record.recordID.recordName {
-                    iChild .parent = CKReference(record: p.record, action: .none)
+                if  iChild.parent?.recordID.recordName != p.recordName {
+                    iChild.parent = CKReference(record: p.record, action: .none)
                 }
             }
 
@@ -1238,10 +1243,10 @@ class Zone : ZRecord {
 
 
     func hasChildMatchingRecordName(of iChild: Zone) -> Bool {
-        let    name  = iChild.record.recordID.recordName
+        let    name  = iChild.recordName
 
         for child in children {
-            if name ==  child.record.recordID.recordName {
+            if name ==  child.recordName {
                 return true
             }
         }

@@ -14,24 +14,27 @@ import CloudKit
 class ZRecord: NSObject {
     
 
+    var        _record: CKRecord?
     var    storageMode: ZStorageMode?
     var     kvoContext: UInt8 = 1
-    var        _record: CKRecord?
-    var         isRoot: Bool             { return record != nil && [gRootNameKey, gFavoriteRootNameKey, gTrashNameKey].contains(record.recordID.recordName) }
-    var      needsSave: Bool             { return isMarkedForAnyOfStates([.needsSave]) }
-    var      needsRoot: Bool             { return isMarkedForAnyOfStates([.needsRoot]) }
-    var     needsCount: Bool             { return isMarkedForAnyOfStates([.needsCount]) }
-    var     needsColor: Bool             { return isMarkedForAnyOfStates([.needsColor]) }
-    var     needsFetch: Bool             { return isMarkedForAnyOfStates([.needsFetch]) }
-    var    needsTraits: Bool             { return isMarkedForAnyOfStates([.needsTraits]) }
-    var    needsParent: Bool             { return isMarkedForAnyOfStates([.needsParent]) }
-    var   needsDestroy: Bool             { return isMarkedForAnyOfStates([.needsDestroy]) }
-    var   needsProgeny: Bool             { return isMarkedForAnyOfStates([.needsProgeny]) }
-    var  needsWritable: Bool             { return isMarkedForAnyOfStates([.needsWritable]) }
-    var  needsChildren: Bool             { return isMarkedForAnyOfStates([.needsChildren]) }
-    var needsBookmarks: Bool             { return isMarkedForAnyOfStates([.needsBookmarks]) }
+    var    isLocalOnly: Bool  = false
+    var         isRoot: Bool             { return record != nil && gRootNames.contains(recordName!) }
+    var      needsSave: Bool             { return hasState(.needsSave) }
+    var      needsRoot: Bool             { return hasState(.needsRoot) }
+    var     needsCount: Bool             { return hasState(.needsCount) }
+    var     needsColor: Bool             { return hasState(.needsColor) }
+    var     needsFetch: Bool             { return hasState(.needsFetch) }
+    var     needsMerge: Bool             { return hasState(.needsMerge) }
+    var    needsTraits: Bool             { return hasState(.needsTraits) }
+    var    needsParent: Bool             { return hasState(.needsParent) }
+    var   needsDestroy: Bool             { return hasState(.needsDestroy) }
+    var   needsProgeny: Bool             { return hasState(.needsProgeny) }
+    var  needsWritable: Bool             { return hasState(.needsWritable) }
+    var  needsChildren: Bool             { return hasState(.needsChildren) }
+    var needsBookmarks: Bool             { return hasState(.needsBookmarks) }
     var recordsManager: ZRecordsManager? { return gRemoteStoresManager.recordsManagerFor(storageMode) }
     var   cloudManager: ZCloudManager?   { return recordsManager as? ZCloudManager }
+    var     recordName: String?          { return record?.recordID.recordName }
 
 
     var record: CKRecord! {
@@ -207,8 +210,8 @@ class ZRecord: NSObject {
 
     func storageDictionary() -> ZStorageDict? {
         return record == nil ? [:] :
-            [gRecordNameKey : record.recordID.recordName as NSObject,
-             gRecordTypeKey : record.recordType          as NSObject]
+            [gRecordNameKey : recordName!       as NSObject,
+             gRecordTypeKey : record.recordType as NSObject]
     }
 
 
@@ -216,49 +219,49 @@ class ZRecord: NSObject {
     // MARK:-
 
 
-    func isMarkedForAnyOfStates(_ states: [ZRecordState]) -> Bool { return recordsManager?.hasZRecord(self, forAnyOf:states) ?? false }
-    func markForAllOfStates    (_ states: [ZRecordState])         {        recordsManager?.addZRecord(self, for: states) }
-    func clearAllStates()                                         {        recordsManager?.clearAllStatesForRecord(self.record) }
+    func hasState(_ state: ZRecordState) -> Bool { return recordsManager?.hasZRecord(self, forAnyOf:[state]) ?? false }
+    func addState(_ state: ZRecordState)         {        recordsManager?.addZRecord(self,     for: [state]) }
+    func clearAllStates()                        {        recordsManager?.clearAllStatesForRecord(self.record) }
 
 
-    func unmarkForAllOfStates(_ states: [ZRecordState]) {
+    func removeState(_ state: ZRecordState) {
         if let identifier = self.record?.recordID {
-            recordsManager?.clearStatesForRecordID(identifier, forStates:states)
+            recordsManager?.clearStatesForRecordID(identifier, forStates:[state])
         }
     }
 
 
-    func needRoot()      { markForAllOfStates([.needsRoot]) }
-    func needCount()     { markForAllOfStates([.needsCount]) }
-    func needColor()     { markForAllOfStates([.needsColor]) }
-    func needTraits()    { markForAllOfStates([.needsTraits]) }
-    func needParent()    { markForAllOfStates([.needsParent]) }
-    func needDestroy()   { markForAllOfStates([.needsDestroy]); unmarkForAllOfStates([.needsSave]) }
-    func needProgeny()   { markForAllOfStates([.needsProgeny]); unmarkForAllOfStates([.needsChildren]) }
-    func needWritable()  { markForAllOfStates([.needsWritable]) }
-    func needChildren()  { markForAllOfStates([.needsChildren]) }
-    func needBookmarks() { markForAllOfStates([.needsBookmarks]) }
+    func needRoot()      { addState(.needsRoot) }
+    func needCount()     { addState(.needsCount) }
+    func needColor()     { addState(.needsColor) }
+    func needTraits()    { addState(.needsTraits) }
+    func needParent()    { addState(.needsParent) }
+    func needProgeny()   { addState(.needsProgeny); removeState(.needsChildren) }
+    func needDestroy()   { addState(.needsDestroy); removeState(.needsSave); removeState(.needsMerge) }
+    func needWritable()  { addState(.needsWritable) }
+    func needChildren()  { addState(.needsChildren) }
+    func needBookmarks() { addState(.needsBookmarks) }
 
 
     func needSave() {
-        unmarkForAllOfStates([.needsMerge])
+        removeState(.needsMerge)
 
-        if  storageMode != .favoritesMode && record.recordID.recordName != gFavoriteRootNameKey {
-            markForAllOfStates([.needsSave]);
+        if !isLocalOnly, !needsDestroy, storageMode != .favoritesMode, recordName != gFavoriteRootNameKey {
+            addState(.needsSave)
         }
     }
 
 
     func maybeNeedFetch() {
         if !alreadyExists {
-            markForAllOfStates([.needsFetch])
+            addState(.needsFetch)
         }
     }
 
 
     func maybeNeedMerge() {
-        if !isMarkedForAnyOfStates([.needsSave, .needsMerge]) {
-            markForAllOfStates([.needsMerge])
+        if !isLocalOnly, !needsSave, !needsMerge, !needsDestroy {
+            addState(.needsMerge)
         }
     }
 

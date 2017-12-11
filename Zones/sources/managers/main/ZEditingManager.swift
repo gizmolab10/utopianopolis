@@ -503,12 +503,32 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func revealRoot(_ onCompletion: Closure?) {
-        if  gRoot?.record != nil {
+    func revealZonesToRoot(from zone: Zone, _ onCompletion: Closure?) {
+        if zone.isRoot {
             onCompletion?()
         } else {
-            gDBOperationsManager.root {
+            var needOp = false
+
+            zone.traverseAncestors { iZone -> ZTraverseStatus in
+                if  let parentZone = iZone.parentZone, !parentZone.alreadyExists {
+                    iZone.needRoot()
+
+                    needOp = true
+
+                    return .eStop
+                }
+
+                return .eContinue
+            }
+
+            if let root = gRoot, !needOp {
+                gHere = root
+
                 onCompletion?()
+            } else {
+                gDBOperationsManager.root {
+                    onCompletion?()
+                }
             }
         }
     }
@@ -555,10 +575,6 @@ class ZEditingManager: NSObject {
                     let gotOrphan = iParent.parentZone == nil
 
                     if  gotThere || gotOrphan {
-                        if  gHere.level > iAncestor.level {
-                            gHere = iAncestor
-                        }
-
                         if !gotThere && !iParent.alreadyExists { // reached an orphan that has not yet been fetched
                             self.recursivelyRevealSiblings(iParent, untilReaching: iAncestor, onCompletion: onCompletion)
                         } else {
@@ -637,8 +653,6 @@ class ZEditingManager: NSObject {
 
             let  goal = iGoal ?? zone.level + (show ? 1 : -1)
             let apply = {
-                // let favorite = zone.isInFavorites
-
                 zone.traverseAllProgeny { iChild in
                     if           !iChild.isBookmark {
                         if        iChild.level >= goal && !show {
@@ -1049,9 +1063,9 @@ class ZEditingManager: NSObject {
 
     func moveOut(selectionOnly: Bool = true, extreme: Bool = false) {
         let zone: Zone = gSelectionManager.firstGrab
-        let     parent = zone.parentZone
+        let parentZone = zone.parentZone
 
-        if zone.isRoot || zone.isTrash || parent == gFavoritesManager.rootZone {
+        if zone.isRoot || zone.isTrash || parentZone == gFavoritesManager.rootZone {
             return // short-circuit rediculous situations
         } else if selectionOnly {
 
@@ -1059,46 +1073,59 @@ class ZEditingManager: NSObject {
             // MOVE SELECTION //
             ////////////////////
 
-            if !extreme {
-                if zone == gHere || parent == nil {
-                    revealParentAndSiblingsOf(zone) {
-                        if  let ancestor = zone.parentZone {
-                            ancestor.grab()
-                            self.revealSiblingsOf(gHere, untilReaching: ancestor)
-                        }
+            if extreme {
+                if  gHere.isRoot {
+                    gHere = zone // reverse what the last move out extreme did
+
+                    self.redrawAndSync()
+                } else {
+                    let here = gHere // revealPathToRoot (below) changes gHere, so nab it first
+
+                    zone.grab()
+                    revealZonesToRoot(from: zone) {
+                        self.revealSiblingsOf(here, untilReaching: gRoot!)
                     }
-                } else if let p = parent {
+                }
+            } else if let p = parentZone {
+                p.grab()
+
+                if  zone == gHere {
+                    revealParentAndSiblingsOf(zone) {
+                        self.revealSiblingsOf(zone, untilReaching: p)
+                    }
+                } else {
                     p.displayChildren()
                     p.needChildren()
-                    p.grab()
 
                     gDBOperationsManager.children(.restore) {
                         self.signalFor(p, regarding: .redraw)
                     }
                 }
-            } else if !gHere.isRoot {
-                let here = gHere // revealRoot changes gHere, so nab it first
-
-                zone.grab()
-
-                revealRoot {
-                    self.revealSiblingsOf(here, untilReaching: gRoot!)
-                }
             } else {
-                gHere = zone
+                // zone is an orphan
+                // focus on bookmark of zone
 
-                self.redrawAndSync()
+                zone.needBookmarks()
+                gDBOperationsManager.bookmarks {
+                    if  let b = zone.fetchedBookmark {
+                        gHere = b
+                    }
+
+                    self.signalFor(nil, regarding: .redraw)
+                }
             }
-        } else if let p = parent, !p.isRoot {
+        } else if let p = parentZone, !p.isRoot {
 
             ///////////////
             // MOVE ZONE //
             ///////////////
 
-            let grandparent = p.parentZone
+            let grandParentZone = p.parentZone
 
             let moveOutToHere = { (iHere: Zone?) in
-                if iHere != nil {
+                if iHere == nil {
+                    self.redrawAndSync()
+                } else {
                     gHere = iHere!
 
                     self.moveOut(to: iHere!) {
@@ -1109,19 +1136,19 @@ class ZEditingManager: NSObject {
 
             if extreme {
                 if gHere.isRoot {
-                    moveOutToHere(grandparent)
+                    moveOutToHere(grandParentZone)
                 } else {
-                    revealRoot {
+                    revealZonesToRoot(from: zone) {
                         moveOutToHere(gRoot)
                     }
                 }
-            } else if gHere != zone && gHere != p && grandparent != nil {
-                moveOut(to: grandparent!){
-                    self.redrawAndSync(grandparent)
+            } else if gHere != zone && gHere != p && grandParentZone != nil {
+                moveOut(to: grandParentZone!){
+                    self.redrawAndSync(grandParentZone)
                 }
             } else {
                 revealParentAndSiblingsOf(gHere) {
-                    moveOutToHere(p.parentZone)
+                    moveOutToHere(grandParentZone)
                 }
             }
         }
@@ -1569,12 +1596,12 @@ class ZEditingManager: NSObject {
         var     restore = [Zone: (Zone, Int?)] ()
         var       grabs = gSelectionManager.currentGrabs
 
-        if  let dragged = gDraggedZone, dragged.isInFavorites, !toFavorites {
+        if  let dragged = gDraggedZone, dragged.isFavorite, !toFavorites {
             dragged.needSave()                              // type 4
         }
 
         grabs.sort { (a, b) -> Bool in
-            if  a.isInFavorites {
+            if  a.isFavorite {
                 a.needSave()                                // type 4
             }
 
@@ -1610,7 +1637,8 @@ class ZEditingManager: NSObject {
         }
 
         let finish = {
-            let into = !toBookmark ? iInto : iInto.bookmarkTarget! // grab bookmark AFTER travel
+            let    into = iInto.bookmarkTarget ?? iInto // grab bookmark AFTER travel
+            let toTrash = into.isDeleted
 
             into.displayChildren()
             into.maybeNeedChildren()
@@ -1621,18 +1649,20 @@ class ZEditingManager: NSObject {
 
             gDBOperationsManager.children(.all) {
                 for grab in grabs {
-                    var movable = grab
+                    var      movable = grab
+                    let    fromTrash = movable.isDeleted
+                    let fromFavorite = movable.isInFavorites
 
-                    if !toFavorites {
-                        if  movable.isInFavorites && movable.isBookmark {
+                    if  toFavorites, !fromFavorite, !fromTrash {
+                        movable = gFavoritesManager.createBookmark(for: grab, style: .favorite)
+
+                        movable.needSave()
+                    } else {
+                        if  fromFavorite, !toFavorites, !toTrash, !fromTrash {
                             movable = movable.deepCopy()
                         }
 
                         movable.orphan()
-                    } else if !movable.isInFavorites {
-                        movable = gFavoritesManager.createBookmark(for: grab, style: .favorite)
-
-                        movable.needSave()
                     }
 
                     movable.grab()
@@ -1679,7 +1709,7 @@ class ZEditingManager: NSObject {
                 zone.orphan()
             }
 
-            if gTrash != into {
+            if !into.isDeleted {
                 zone.grab()
             }
 
