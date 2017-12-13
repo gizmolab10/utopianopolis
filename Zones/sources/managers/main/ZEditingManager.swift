@@ -1657,11 +1657,15 @@ class ZEditingManager: NSObject {
 
                         movable.needSave()
                     } else {
+                        movable.orphan()
+
+                        if into.storageMode != movable.storageMode {
+                            movable.needDestroy()
+                        }
+
                         if  fromFavorite, !toFavorites, !toTrash, !fromTrash {
                             movable = movable.deepCopy()
                         }
-
-                        movable.orphan()
                     }
 
                     movable.grab()

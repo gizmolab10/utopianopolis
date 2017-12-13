@@ -99,7 +99,7 @@ class ZoneWidget: ZView {
             }
 
             while index > 0 {
-                index                 -= 1 // go backwards down the arrays, constraint making expects it
+                index                 -= 1 // go backwards down the children arrays, constraint making expects it
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone = zone           [index]
 
@@ -182,28 +182,17 @@ class ZoneWidget: ZView {
 
     func prepareChildrenWidgets() {
         if  let zone = widgetZone {
-            if !zone.showChildren {
-                for child in childrenWidgets {
-                    gWidgetsManager.unregisterWidget(child)
-                }
+            for widget in childrenWidgets {
+                gWidgetsManager.unregisterWidget(widget)
+            }
 
-                childrenWidgets.removeAll()
+            childrenWidgets.removeAll()
 
-                for view in childrenView.subviews {
-                    view.removeFromSuperview()
-                }
-            } else {
-                for child in childrenWidgets {
-                    if  let zone = child.widgetZone, !zone.children.contains(zone) {
-                        gWidgetsManager.unregisterWidget(child)
-                        child.removeFromSuperview()
+            for view in childrenView.subviews {
+                view.removeFromSuperview()
+            }
 
-                        if let index = childrenWidgets.index(of: child) {
-                            childrenWidgets.remove(at: index)
-                        }
-                    }
-                }
-
+            if zone.showChildren {
                 while childrenWidgets.count < zone.count {
                     childrenWidgets.append(ZoneWidget())
                 }

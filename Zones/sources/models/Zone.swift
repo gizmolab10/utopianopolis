@@ -157,11 +157,11 @@ class Zone : ZRecord {
     }
 
 
-    convenience init(storageMode: ZStorageMode?, named: String? = nil, isLocalOnly: Bool = false) {
-        let      name = named == nil ? nil : (named == gFavoriteRootNameKey || !isLocalOnly) ? named : "local." + named!
+    convenience init(storageMode: ZStorageMode?, named: String? = nil, isLocalOnly iLocal: Bool = false) {
+        let      name = named == nil ? nil : (named == gFavoriteRootNameKey || !iLocal) ? named : "local." + named!
         var newRecord : CKRecord?
 
-        if isLocalOnly, let localName = name {
+        if iLocal, let localName = name {
             newRecord = CKRecord(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: localName))
         } else {
             newRecord = CKRecord(recordType: gZoneTypeKey)
@@ -169,7 +169,8 @@ class Zone : ZRecord {
 
         self.init(record: newRecord!, storageMode: storageMode)
 
-        zoneName = name
+        isLocalOnly = iLocal
+        zoneName    = name
     }
 
 

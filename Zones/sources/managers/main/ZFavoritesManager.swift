@@ -243,6 +243,7 @@ class ZFavoritesManager: ZCloudManager {
         if  gHasPrivateDatabase {
             var trashCopies = IndexPath()
             var  foundModes = ZModes ()
+            var  foundTrash = false
 
             ////////////////////////////////////////////////
             // assure at least one root favorite per db   //
@@ -266,7 +267,11 @@ class ZFavoritesManager: ZCloudManager {
             for (index, favorite) in workingFavorites.enumerated() {
                 if  let link  = favorite.zoneLink {
                     if  link == gTrashLink {
-                        trashCopies.append(index)
+                        if !foundTrash && favorite.isLocalOnly {
+                            foundTrash = true
+                        } else {
+                            trashCopies.append(index)
+                        }
                     } else if let mode = favorite.crossLink?.storageMode,
                         !foundModes.contains(mode) {
                         foundModes.append(mode)
@@ -287,12 +292,14 @@ class ZFavoritesManager: ZCloudManager {
             // add missing trash favorite //
             ////////////////////////////////
 
-            let      trash = Zone(storageMode: .mineMode, named: gTrashNameKey, isLocalOnly: true)
-            trash.zoneName = gTrashNameKey
-            trash.zoneLink = gTrashLink
+            if !foundTrash {
+                let      trash = Zone(storageMode: .mineMode, named: gTrashNameKey, isLocalOnly: true)
+                trash.zoneName = gTrashNameKey
+                trash.zoneLink = gTrashLink
 
-            rootZone?.addAndReorderChild(trash, at: nil)
-            trash.clearAllStates()
+                rootZone?.addAndReorderChild(trash, at: nil)
+                trash.clearAllStates()
+            }
 
             ////////////////////////////////
             // add missing root favorites //

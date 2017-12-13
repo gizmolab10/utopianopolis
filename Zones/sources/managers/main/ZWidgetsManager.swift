@@ -54,7 +54,7 @@ class ZWidgetsManager: NSObject {
 
         // only unlink the zone from its current widget
 
-        if  let zone = widget.widgetZone, let mode = zone.storageMode, var dict = widgets[mode] {
+        if  let zone = widget.widgetZone, let mode = mode(for: zone), var dict = widgets[mode] {
             dict[zone.hash] = nil
             widgets[mode]   = dict
         }

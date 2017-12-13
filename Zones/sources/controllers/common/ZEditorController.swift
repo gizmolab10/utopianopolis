@@ -483,14 +483,67 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     }
 
 
-    func ancestor(for iMode: ZStorageMode?) -> Zone? {
-        if let mode = iMode {
-            switch mode {
-            case .favoritesMode: return gFavoritesManager.rootZone
-            default:
-                let    manifest = gRemoteStoresManager.manifest(for: mode)
-                return manifest.hereZone
+    func isEditingText(at location: CGPoint) -> Bool {
+        let e = gEditingManager
+
+        if  e.isEditing, let textWidget = e.editedTextWidget {
+            let rect = textWidget.convert(textWidget.bounds, to: editorView)
+
+            return rect.contains(location)
+        }
+
+        return false
+    }
+
+
+    func cleanupAfterDrag() {
+        rubberbandStart  = CGPoint.zero
+
+        // cursor exited view, remove drag cruft
+
+        let          dot = gDragDropZone?.widget?.toggleDot.innerDot // drag view does not "un"draw this
+        gDragDropIndices = nil
+        gDragDropZone    = nil
+        gDragRelation    = nil
+        gDragPoint       = nil
+
+        favoritesRootWidget.setNeedsDisplay()
+        editorRootWidget   .setNeedsDisplay()
+        dot?               .setNeedsDisplay()
+    }
+
+
+    func relationOf(_ iPoint: CGPoint, to iView: ZView?) -> ZRelation {
+        var relation: ZRelation = .upon
+
+        if  iView     != nil {
+            let margin = CGFloat(5.0)
+            let  point = editorView!.convert(iPoint, to: iView)
+            let   rect = iView!.bounds
+            let      y = point.y
+
+            if y < rect.minY + margin {
+                relation = .above
+            } else if y > rect.maxY - margin {
+                relation = .below
             }
+        }
+
+        return relation
+    }
+
+
+    // MARK:- detect
+    // MARK:-
+
+
+    func detectWidget(_ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
+        if  let    altHit = detectWidgetFor(.favoritesMode, iGesture) {
+            return altHit
+        }
+
+        if  let    hit    = detectWidgetFor(  gStorageMode, iGesture) {
+            return hit
         }
 
         return nil
@@ -520,14 +573,15 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         return hit
     }
 
-
-    func detectWidget(_ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
-        if  let    altHit = detectWidgetFor(.favoritesMode, iGesture) {
-            return altHit
-        }
-
-        if  let    hit    = detectWidgetFor(  gStorageMode, iGesture) {
-            return hit
+    
+    func ancestor(for iMode: ZStorageMode?) -> Zone? {
+        if let mode = iMode {
+            switch mode {
+            case .favoritesMode: return gFavoritesManager.rootZone
+            default:
+                let    manifest = gRemoteStoresManager.manifest(for: mode)
+                return manifest.hereZone
+            }
         }
 
         return nil
@@ -578,55 +632,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
         return nil
     }
-    
-    
-    func isEditingText(at location: CGPoint) -> Bool {
-        let e = gEditingManager
-        
-        if  e.isEditing, let textWidget = e.editedTextWidget {
-            let rect = textWidget.convert(textWidget.bounds, to: editorView)
-            
-            return rect.contains(location)
-        }
-        
-        return false
-    }
-    
-    
-    func cleanupAfterDrag() {
-        rubberbandStart  = CGPoint.zero
 
-        // cursor exited view, remove drag cruft
-        
-        let          dot = gDragDropZone?.widget?.toggleDot.innerDot // drag view does not "un"draw this
-        gDragDropIndices = nil
-        gDragDropZone    = nil
-        gDragRelation    = nil
-        gDragPoint       = nil
-        
-        favoritesRootWidget.setNeedsDisplay()
-        editorRootWidget   .setNeedsDisplay()
-        dot?               .setNeedsDisplay()
-    }
-    
-    
-    func relationOf(_ iPoint: CGPoint, to iView: ZView?) -> ZRelation {
-        var relation: ZRelation = .upon
-        
-        if  iView     != nil {
-            let margin = CGFloat(5.0)
-            let  point = editorView!.convert(iPoint, to: iView)
-            let   rect = iView!.bounds
-            let      y = point.y
-            
-            if y < rect.minY + margin {
-                relation = .above
-            } else if y > rect.maxY - margin {
-                relation = .below
-            }
-        }
-        
-        return relation
-    }
 }
 
