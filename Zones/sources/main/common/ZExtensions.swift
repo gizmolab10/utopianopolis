@@ -127,13 +127,13 @@ extension NSObject {
 
         let           name: String = components[2] == "" ? "root" : components[2]
         let identifier: CKRecordID = CKRecordID(recordName: name)
-        let       record: CKRecord = CKRecord(recordType: gZoneTypeKey, recordID: identifier)
+        let     ckRecord: CKRecord = CKRecord(recordType: gZoneTypeKey, recordID: identifier)
         let                rawMode = components[0]
         let    mode: ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
-        let                manager = mode == nil ? nil : gRemoteStoresManager.recordsManagerFor(mode)
-        let                   zone = manager?.zoneForRecordID(identifier)
+        let                manager = gRemoteStoresManager.recordsManagerFor(mode)
+        let                   zone = manager?.zoneForCKRecord(ckRecord) ?? Zone(record: ckRecord, storageMode: mode)
 
-        return zone != nil ? zone! : Zone(record: record, storageMode: mode)
+        return zone
     }
 }
 

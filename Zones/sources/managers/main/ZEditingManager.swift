@@ -943,9 +943,8 @@ class ZEditingManager: NSObject {
                     }
                 }
             } else {
-                if permanently || zone.isDeleted {
+                if  zone.isInTrash || permanently {
                     zone.orphan()
-
                     zone.traverseAllProgeny { iZone in
                         iZone.needDestroy()
                     }
@@ -1420,7 +1419,7 @@ class ZEditingManager: NSObject {
                 gSelectionManager.deselectGrabs()
 
                 for (child, (parent, index)) in pastables {
-                    let pastable = child.isDeleted ? child : child.deepCopy() // for deleted zones, paste a deep copy
+                    let pastable = child.isInTrash ? child : child.deepCopy() // for deleted zones, paste a deep copy
                     let       at = index  != nil ? index : gInsertionsFollow ? nil : 0
                     let     into = parent != nil ? honorFormerParents ? parent! : zone : zone
 
@@ -1450,7 +1449,7 @@ class ZEditingManager: NSObject {
                 var need = false
 
                 for child in pastables.keys {
-                    if !child.isDeleted {
+                    if !child.isInTrash {
                         child.needProgeny()
 
                         need = true
@@ -1638,7 +1637,7 @@ class ZEditingManager: NSObject {
 
         let finish = {
             let    into = iInto.bookmarkTarget ?? iInto // grab bookmark AFTER travel
-            let toTrash = into.isDeleted
+            let toTrash = into.isInTrash || into.isTrash
 
             into.displayChildren()
             into.maybeNeedChildren()
@@ -1650,7 +1649,7 @@ class ZEditingManager: NSObject {
             gDBOperationsManager.children(.all) {
                 for grab in grabs {
                     var      movable = grab
-                    let    fromTrash = movable.isDeleted
+                    let    fromTrash = movable.isInTrash
                     let fromFavorite = movable.isInFavorites
 
                     if  toFavorites, !fromFavorite, !fromTrash {
@@ -1709,7 +1708,7 @@ class ZEditingManager: NSObject {
                 zone.orphan()
             }
 
-            if !into.isDeleted {
+            if !into.isInTrash { // TODO: why?
                 zone.grab()
             }
 

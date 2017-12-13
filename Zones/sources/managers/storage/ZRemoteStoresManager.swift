@@ -209,7 +209,7 @@ class ZRemoteStoresManager: NSObject {
         resetBadgeCounter()
         gCloudManager.assureRecordExists(withRecordID: recordID, recordType: gZoneTypeKey) { iRecord in
             if iRecord != nil {                                                 // TODO: extract storage mode from record id, i.e., the database
-                let    zone = self.currentCloudManager.zoneForRecord(iRecord!)  // TODO: currentCloudManager is wrong here
+                let    zone = self.currentCloudManager.zoneForCKRecord(iRecord!)  // TODO: currentCloudManager is wrong here
                 zone.record = iRecord
                 let  parent = zone.parentZone
 

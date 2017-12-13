@@ -25,12 +25,10 @@ class ZUser : ZRecord {
 
     var access: ZUserAccess {
         get {
-            if  writeAccess == nil {
-                updateInstanceProperties()
+            updateInstanceProperties()
 
-                if  writeAccess == nil {
-                    writeAccess = NSNumber(value: ZUserAccess.eAccessNormal.rawValue)
-                }
+            if  writeAccess == nil {
+                writeAccess  = NSNumber(value: ZUserAccess.eAccessNormal.rawValue)
             }
 
             return ZUserAccess(rawValue: writeAccess!.intValue)!

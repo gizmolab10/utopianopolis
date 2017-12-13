@@ -60,7 +60,7 @@ class ZRecordsManager: NSObject {
         var  count = values.count
 
         for zRecord in values {
-            if  let zone = zRecord as? Zone, !zone.isRoot, (zone.isDeleted || zone.parentZone?.storageMode != zone.storageMode) {
+            if  let zone = zRecord as? Zone, !zone.isRoot, (zone.isInTrash || zone.parentZone?.storageMode != zone.storageMode) {
                 count -= 1
             }
         }
@@ -165,7 +165,7 @@ class ZRecordsManager: NSObject {
 
     func add(states: [ZRecordState], to iReferences: [CKReference]) {
         for reference in iReferences {
-            if let zRecord = zRecordForRecordID(reference.recordID) {
+            if let zRecord = maybeZRecordForRecordID(reference.recordID) {
                 addZRecord(zRecord, for: states)
             }
         }
@@ -268,7 +268,7 @@ class ZRecordsManager: NSObject {
         var parents = [CKRecordID] ()
 
         findAllCKRecordsWithAnyMatchingStates(states) { state, ckrecord in
-            if  parents.count < gBatchSize, let zone = zRecordForCKRecord(ckrecord) as? Zone, let reference = zone.parent {
+            if  parents.count < gBatchSize, let zone = maybeZRecordForCKRecord(ckrecord) as? Zone, let reference = zone.parent {
                 let  parentID = reference.recordID
 
                 if !parents.contains(parentID) {
@@ -329,7 +329,7 @@ class ZRecordsManager: NSObject {
         var records = [CKRecord] ()
 
         findAllCKRecordsWithAnyMatchingStates(states) { state, ckrecord in
-            if let record = zRecordForCKRecord(ckrecord) {
+            if let record = maybeZRecordForCKRecord(ckrecord) {
                 onEach(state, record)
             }
 
@@ -398,7 +398,7 @@ class ZRecordsManager: NSObject {
 
     func stringForReferences(_ references: [CKReference]?, in storageMode: ZStorageMode) -> String {
         return references?.apply()  { object -> (String?) in
-            if let reference = object as? CKReference, let zone = gRemoteStoresManager.recordsManagerFor(storageMode)?.zoneForReference(reference) {
+            if let reference = object as? CKReference, let zone = gRemoteStoresManager.recordsManagerFor(storageMode)?.maybeZoneForReference(reference) {
                 let    name  = zone.decoratedName
                 if     name != "" {
                     return name
@@ -412,7 +412,7 @@ class ZRecordsManager: NSObject {
 
     func stringForRecordIDs(_ recordIDs: [CKRecordID]?, in storageMode: ZStorageMode) -> String {
         return recordIDs?.apply()  { object -> (String?) in
-            if  let recordID = object as? CKRecordID, let zRecord = gRemoteStoresManager.recordsManagerFor(storageMode)?.zRecordForRecordID(recordID) {
+            if  let recordID = object as? CKRecordID, let zRecord = gRemoteStoresManager.recordsManagerFor(storageMode)?.maybeZRecordForRecordID(recordID) {
                 let    name  = zRecord.record.decoratedName
                 if     name != "" {
                     return name
@@ -424,19 +424,19 @@ class ZRecordsManager: NSObject {
     }
 
 
-    // MARK:- zones registry
+    // MARK:- registry
     // MARK:-
 
 
     func isRegistered(_ zRecord: ZRecord) -> String? {
         if  zRecordsByID.values.contains(zRecord) {
-            let keys = zRecordsByID.keys
+            let hash = zRecord.hash
 
-            for name in keys {
-                let examined = zRecordsByID[name]
+            for key in zRecordsByID.keys {
+                let examined = zRecordsByID[key]
 
-                if examined?.hash == zRecord.hash {
-                    return name
+                if  examined?.hash == hash {
+                    return key
                 }
             }
         }
@@ -445,16 +445,14 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func registerZRecord(_ zRecord: ZRecord?) {
-        if  let       name = zRecord?.recordName {
-            let identifier = name
-            let registered = isRegistered(zRecord!)
-
-            if  let    rid = registered, rid != identifier {
-                zRecordsByID[registered!] = nil
+    func registerZRecord(_   iRecord: ZRecord?) {
+        if  let          zRecord  = iRecord,
+            let               id  = zRecord.recordName {
+            if  let          rid  = isRegistered(zRecord), rid != id {
+                zRecordsByID[rid] = nil
             }
 
-            zRecordsByID[identifier] = zRecord
+            zRecordsByID[id]      = zRecord
         }
     }
 
@@ -466,19 +464,19 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func zRecordForCKRecord(_ record: CKRecord?) -> ZRecord? {
+    func maybeZRecordForCKRecord(_ record: CKRecord?) -> ZRecord? {
         var zRecord: ZRecord? = nil
 
         if  let recordID = record?.recordID {
-            zRecord      = zRecordForRecordID(recordID)
+            zRecord      = maybeZRecordForRecordID(recordID)
         }
 
         return zRecord
     }
 
 
-    func zRecordForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
-        var   record = zoneForRecordID(recordID) as ZRecord?
+    func maybeZRecordForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
+        var   record = maybeZoneForRecordID(recordID) as ZRecord?
         let manifest = gRemoteStoresManager.manifest(for:  storageMode)
 
         if  record  == nil && manifest.recordName == recordID?.recordName {
@@ -489,35 +487,46 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func zoneForReference(_ reference: CKReference) -> Zone? {
-        var zone  = zRecordsByID[reference.recordID.recordName] as? Zone
+    func maybeZoneForReference(_ reference: CKReference) -> Zone? {
+        var zone  = maybeZoneForRecordID(reference.recordID)
 
-        if  zone == nil, let record = zRecordForRecordID(reference.recordID)?.record {
-            zone  = Zone(record: record, storageMode: storageMode)
+        if  zone == nil, let ckRecord = maybeZRecordForRecordID(reference.recordID)?.record {
+            zone  = Zone(record: ckRecord, storageMode: storageMode)
         }
 
         return zone
     }
 
 
-    func zoneForRecord(_ iRecord: CKRecord) -> Zone {
-        var zone  = zRecordsByID[iRecord.recordID.recordName] as? Zone
+    func maybeZoneForRecordName(_ recordName: String?) -> Zone? {
+        if  let id = recordName {
+            return zRecordsByID[id] as? Zone
+        }
+
+        return nil
+    }
+
+
+    func maybeZoneForRecordID(_ recordID: CKRecordID?) -> Zone? {
+        return maybeZoneForRecordName(recordID?.recordName)
+    }
+
+
+    func maybeZoneForCKRecord(_ record: CKRecord?) -> Zone? {
+        return maybeZoneForRecordID(record?.recordID)
+    }
+
+
+    func zoneForCKRecord(_ ckRecord: CKRecord) -> Zone {
+        var zone  = maybeZoneForCKRecord(ckRecord)
 
         if  zone == nil {
-            zone  = Zone(record: iRecord, storageMode: storageMode)
-        } else if !zone!.isDeleted {
-            zone!.record = iRecord
+            zone  = Zone(record: ckRecord, storageMode: storageMode)
+        } else {
+            zone!.record = ckRecord
         }
 
         return zone!
     }
 
-
-    func zoneForRecordID(_ recordID: CKRecordID?) -> Zone? {
-        if recordID == nil {
-            return nil
-        }
-
-        return zRecordsByID[recordID!.recordName] as? Zone
-    }
 }

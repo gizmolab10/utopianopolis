@@ -47,7 +47,8 @@ class ZManifest: ZRecord {
             }
 
             _hereZone?.maybeNeedRoot()
-            if manifestMode == _hereZone?.storageMode {
+
+            if  manifestMode == _hereZone?.storageMode {
                 gFavoritesManager.updateCurrentFavorite() // so user will know
             }
         }

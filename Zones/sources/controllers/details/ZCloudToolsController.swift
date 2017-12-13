@@ -20,7 +20,8 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     enum ZToolKind: Int {
-        case eDebug
+        case eIdentifiers
+        case eAccess
         case eRetry
         case eTrash
         case eGather
@@ -32,17 +33,18 @@ class ZCloudToolsController: ZGenericTableController {
 
 
     override func numberOfRows(in tableView: ZTableView) -> Int {
-        return 1 + (gIsLate ? 1 : 0)
+        return !gIsSpecialUser ? 0 : 2 + (gIsLate ? 1 : 0)
     }
 
 
     func text(for kind: ZToolKind) -> String {
         switch kind {
-        case .eDebug:    return (gCrippleUserAccess ? "Crippled" : "Normal") + " User Access"
-        case .eTrash:    return "Show Trash"
-        case .eRetry:    return "Retry Cloud"
-        case .eGather:   return "Gather Trash"
-        case .eRecount:  return "Recount"
+        case .eIdentifiers: return   (gShowIdentifiers ? "Visible"  : "Hidden") + " Identifiers"
+        case .eAccess:      return (gCrippleUserAccess ? "Crippled" : "Normal") + " User Access"
+        case .eGather:      return "Gather Trash"
+        case .eRetry:       return "Retry Cloud"
+        case .eTrash:       return "Show Trash"
+        case .eRecount:     return "Recount"
         }
     }
 
@@ -62,11 +64,12 @@ class ZCloudToolsController: ZGenericTableController {
 
             if  let kind = ZToolKind(rawValue: row) {
                 switch kind {
-                case .eDebug:    self.toggleUserAccess()
-                case .eRetry:    gDBOperationsManager.unHang()
-                case .eTrash:    self.showTrashCan()
-                case .eGather:   self.gatherAndShowTrash()
-                case .eRecount:  self.recount()
+                case .eIdentifiers: self.toggleShowIdentifiers()
+                case .eAccess:      self.toggleUserAccess()
+                case .eRetry:       gDBOperationsManager.unHang()
+                case .eTrash:       self.showTrashCan()
+                case .eGather:      self.gatherAndShowTrash()
+                case .eRecount:     self.recount()
                 }
             }
         }
@@ -79,9 +82,8 @@ class ZCloudToolsController: ZGenericTableController {
     // MARK:-
 
 
-    func toggleUserAccess() {
-        gCrippleUserAccess = !gCrippleUserAccess
-    }
+    func toggleShowIdentifiers() { gShowIdentifiers   = !gShowIdentifiers }
+    func      toggleUserAccess() { gCrippleUserAccess = !gCrippleUserAccess }
 
 
     func showTrashCan() {

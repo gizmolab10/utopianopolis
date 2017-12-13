@@ -129,12 +129,14 @@ class Zone : ZRecord {
     }
 
 
-    var isDeleted: Bool {
+    var isInTrash: Bool {
         var result = false
 
-        traverseAllAncestors { iZone in
-            if iZone.isTrash {
-                result = true
+        if !isTrash {
+            traverseAllAncestors { iZone in
+                if iZone.isTrash {
+                    result = true
+                }
             }
         }
 
@@ -213,7 +215,7 @@ class Zone : ZRecord {
     var decoration: String {
         var d = ""
 
-        if isDeleted {
+        if isInTrash {
             d.append("D")
         }
 
@@ -444,7 +446,7 @@ class Zone : ZRecord {
         get {
             if      _parentZone   == nil {
                 if  let  reference = parent, let mode = storageMode {
-                    _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).zoneForReference(reference)
+                    _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).maybeZoneForReference(reference)
                 } else if let zone = zoneFrom(parentLink) {
                     _parentZone    = zone
                 }
@@ -620,7 +622,7 @@ class Zone : ZRecord {
 
 
     override func debug(_  iMessage: String) {
-        note("\(iMessage) children \(count) parent \(parent != nil) is \(isDeleted ? "" : "not ")deleted  mode \(storageMode!) \(unwrappedName)")
+        note("\(iMessage) children \(count) parent \(parent != nil) is \(isInTrash ? "" : "not ")deleted  mode \(storageMode!) \(unwrappedName)")
     }
 
 
@@ -771,7 +773,7 @@ class Zone : ZRecord {
                     return true
                 }
 
-                let zone = gRemoteStoresManager.recordsManagerFor(mode)?.zoneForRecordID(probeID)
+                let zone = gRemoteStoresManager.recordsManagerFor(mode)?.maybeZoneForRecordID(probeID)
                 probeID  = zone?.parent?.recordID
             }
         }
@@ -1233,7 +1235,7 @@ class Zone : ZRecord {
             return nil
         }
 
-        let child = gCloudManager.zoneForRecord(iCKRecord)
+        let child = gCloudManager.zoneForCKRecord(iCKRecord)
 
         add(child)
         children.updateOrdering()

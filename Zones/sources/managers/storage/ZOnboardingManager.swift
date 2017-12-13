@@ -19,6 +19,7 @@ import CloudKit
 
 
 let gOnboardingManager = ZOnboardingManager()
+var gIsSpecialUser: Bool { return gOnboardingManager.isSpecialUser }
 
 
 class ZOnboardingManager : ZOperationsManager {

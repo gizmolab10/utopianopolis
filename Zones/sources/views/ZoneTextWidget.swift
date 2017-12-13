@@ -151,9 +151,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     override func updateText() {
-        if  let zone = widgetZone {
-            text     = textToEdit
-            var need = 0
+        if  let   zone = widgetZone {
+            text       = textToEdit
+            var suffix = ""
+            var   need = 0
 
             switch gCountsMode {
             case .fetchable: need = zone.indirectFetchableCount
@@ -161,8 +162,16 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             default:         return
             }
 
-            if (need > 1) && !isEditingText && (!zone.showChildren || (gCountsMode == .progeny)) {
-                text?.append("  (\(need))")
+            if !isEditingText {
+                if  gShowIdentifiers, let id = widgetZone?.record.recordID {
+                    suffix = id.recordName
+                } else if (need > 1) && (!zone.showChildren || (gCountsMode == .progeny)) {
+                    suffix = String.init(describing: need)
+                }
+
+                if suffix.count > 0 {
+                    text?.append("  (\(suffix))")
+                }
             }
         }
     }

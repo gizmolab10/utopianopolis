@@ -243,7 +243,6 @@ class ZFavoritesManager: ZCloudManager {
         if  gHasPrivateDatabase {
             var trashCopies = IndexPath()
             var  foundModes = ZModes ()
-            var  foundTrash = false
 
             ////////////////////////////////////////////////
             // assure at least one root favorite per db   //
@@ -259,18 +258,15 @@ class ZFavoritesManager: ZCloudManager {
                 }
             }
 
-            /////////////////////////////////////////////////////
-            // look for trash bookmarks and remove all but one //
-            /////////////////////////////////////////////////////
+            /////////////////////////////////////////
+            // detect modes which have bookmarks   //
+            // remove all leftover trash bookmarks //
+            /////////////////////////////////////////
 
             for (index, favorite) in workingFavorites.enumerated() {
                 if  let link  = favorite.zoneLink {
                     if  link == gTrashLink {
-                        if  foundTrash {
-                            trashCopies.append(index)
-                        } else {
-                            foundTrash = true
-                        }
+                        trashCopies.append(index)
                     } else if let mode = favorite.crossLink?.storageMode,
                         !foundModes.contains(mode) {
                         foundModes.append(mode)
@@ -288,6 +284,17 @@ class ZFavoritesManager: ZCloudManager {
             }
 
             ////////////////////////////////
+            // add missing trash favorite //
+            ////////////////////////////////
+
+            let      trash = Zone(storageMode: .mineMode, named: gTrashNameKey, isLocalOnly: true)
+            trash.zoneName = gTrashNameKey
+            trash.zoneLink = gTrashLink
+
+            rootZone?.addAndReorderChild(trash, at: nil)
+            trash.clearAllStates()
+
+            ////////////////////////////////
             // add missing root favorites //
             ////////////////////////////////
 
@@ -298,19 +305,6 @@ class ZFavoritesManager: ZCloudManager {
                     rootZone?.add(add)
                     add.clearAllStates() // erase side-effect of add
                 }
-            }
-
-            ////////////////////////////////
-            // add missing trash favorite //
-            ////////////////////////////////
-
-            if !foundTrash && gTrash != nil {
-                let      trash = createBookmark(for: gTrash!, style: .addFavorite)
-                trash.zoneLink = gTrashLink
-                trash   .order = 0.99999
-
-                trash.clearAllStates()
-                trash.needSave()
             }
 
             updateWorkingFavorites()
@@ -381,9 +375,7 @@ class ZFavoritesManager: ZCloudManager {
     @discardableResult func travel(into iBookmark: Zone?, _ atArrival: @escaping Closure) -> Bool {
         if  let bookmark = iBookmark, bookmark.isBookmark {
             if  bookmark.isInFavorites {
-                currentFavorite = bookmark
-
-                bookmark.parentZone?.displayChildren()
+                bookmark.bookmarkTarget?.parentZone?.displayChildren()
                 gTravelManager.travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
                     self.updateFavorites()
                     atArrival()
@@ -412,10 +404,16 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    @discardableResult func create(withBookmark: Zone?, _ name: String?, isLocalOnly: Bool = false) -> Zone {
-        assert(withBookmark == nil || name == nil)
+    @discardableResult func create(withBookmark: Zone?, _ iName: String?, isLocalOnly: Bool = false) -> Zone {
+        if  let     name = iName,
+            let bookmark = withBookmark,
+            isLocalOnly == bookmark.isLocalOnly {
+            bookmark.zoneName = name
 
-        return withBookmark ?? Zone(storageMode: .mineMode, named: name, isLocalOnly: isLocalOnly)
+            return bookmark
+        }
+
+        return withBookmark ?? Zone(storageMode: .mineMode, named: iName, isLocalOnly: isLocalOnly)
     }
 
 
@@ -482,12 +480,10 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    func isWorkingFavorite(_ zone: Zone) -> Bool {
-        if  let     recordName  = zone.recordName {
-            for iChild in workingFavorites {
-                if  recordName == iChild.crossLink?.recordName {
-                    return true
-                }
+    func isWorkingFavorite(_ iZone: Zone) -> Bool {
+        for     iChild in workingFavorites {
+            if  iChild == iZone {
+                return true
             }
         }
 

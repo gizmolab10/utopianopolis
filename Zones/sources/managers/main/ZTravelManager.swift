@@ -60,6 +60,7 @@ class ZTravelManager: NSObject {
 
             if bookmark.isFavorite {
                 gFavoritesManager.currentFavorite = bookmark
+//                gFavoritesManager.updateFavorites()
             }
 
             if  gStorageMode  != mode {
@@ -76,7 +77,7 @@ class ZTravelManager: NSObject {
                 } else {
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: gZoneTypeKey) { (iRecord: CKRecord?) in
                         if iRecord != nil {
-                            gHere        = gCloudManager.zoneForRecord(iRecord!)
+                            gHere        = gCloudManager.zoneForCKRecord(iRecord!)
                             gHere.record = iRecord!
 
                             gHere.prepareForArrival()
@@ -92,7 +93,7 @@ class ZTravelManager: NSObject {
                 // STAY WITHIN GRAPH //
                 ///////////////////////
 
-                there = gCloudManager.zoneForRecordID(recordIDOfLink)
+                there = gCloudManager.maybeZoneForRecordID(recordIDOfLink)
                 let grabbed = gSelectionManager.firstGrab
                 let    here = gHere
 
@@ -122,7 +123,7 @@ class ZTravelManager: NSObject {
                 } else if gCloudManager.storageMode != .favoritesMode { // favorites does not have a cloud database
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: gZoneTypeKey) { (iRecord: CKRecord?) in
                         if  let   record = iRecord {
-                            gHere        = gCloudManager.zoneForRecord(record)
+                            gHere        = gCloudManager.zoneForCKRecord(record)
                             gHere.record = record
 
                             grabHere()

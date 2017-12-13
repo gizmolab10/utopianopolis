@@ -78,7 +78,7 @@ class ZRecord: NSObject {
 
     var target: ZRecord? {
         if  let mode = storageMode {
-            return gRemoteStoresManager.cloudManagerFor(mode).zoneForRecordID(record.recordID)
+            return gRemoteStoresManager.cloudManagerFor(mode).maybeZoneForRecordID(record.recordID)
         }
 
         return nil

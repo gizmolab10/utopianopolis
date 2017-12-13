@@ -96,7 +96,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         if row < foundRecords.count {
             let  record = foundRecords[row]
 
-            if let zone = gCloudManager.zoneForRecordID(record.recordID) {
+            if let zone = gCloudManager.maybeZoneForRecordID(record.recordID) {
                 object  =   zone.decoratedName
             } else {
                 object  = record.decoratedName
@@ -151,7 +151,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
 
     func resolveRecord(_ record: CKRecord) {
-        var zone  = gCloudManager.zoneForRecordID(record.recordID)
+        var zone  = gCloudManager.maybeZoneForRecordID(record.recordID)
 
         if  zone == nil {
             zone  = Zone(record: record, storageMode: gStorageMode)
