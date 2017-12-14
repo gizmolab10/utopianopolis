@@ -35,6 +35,7 @@ class ZoneWidget: ZView {
     let            childrenView = ZView          ()
     private var childrenWidgets = [ZoneWidget]   ()
     var            parentWidget:  ZoneWidget? { return widgetZone?.parentZone?.widget }
+    var                   ratio:     CGFloat  { return widgetZone?.isInFavorites ?? false ? gReductionRatio : 1.0 }
     weak var         widgetZone:  Zone?
 
 
@@ -174,7 +175,7 @@ class ZoneWidget: ZView {
 
         childrenView.snp.removeConstraints()
         childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            make.left.equalTo(textWidget.snp.right).offset(gDotWidth + Double(gGenericOffset.height * 0.8 - 6.0))
+            make.left.equalTo(textWidget.snp.right).offset(Double(ratio) * (gDotWidth + Double(gGenericOffset.height) * 1.2 - 5.0))
             make.bottom.top.right.equalTo(self)
         }
     }
@@ -443,14 +444,17 @@ class ZoneWidget: ZView {
 
     func drawSelectionHighlight() {
         let     thickness = CGFloat(gDotWidth) / 3.5
-        let         delta = gGenericOffset.height / 3.0
+        let        height = gGenericOffset.height
+        let         delta = height / 8.0
         let           dot = toggleDot.innerDot
         let         ratio = toggleDot.ratio
+        let         inset = (height + 32.0) / -2.0
         let      dotDelta = dot?.isHiddenToggleDot ?? false ? dot!.bounds.size.width + 3.0 : CGFloat(0.0)
-        var          rect = textWidget.frame.insetBy(dx: -18.0 * ratio - delta, dy: -0.5 - delta)
-        rect.size .width += -0.5 + (delta * 0.7) - dotDelta
-        rect.size.height += -0.5 + gHighlightHeightOffset + delta / 9.5
+        var          rect = textWidget.frame.insetBy(dx: inset * ratio - delta, dy: -0.5 - delta)
+        let        shrink = -0.5 + (height / 6.0)
+        rect.size.height += -0.5 + gHighlightHeightOffset // + (delta / 9.5)
         rect.size.height += widgetZone?.isInFavorites ?? false ? 1.0 : 0.0
+        rect.size .width += shrink - dotDelta
         let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
         let         color = widgetZone?.color
         let     fillColor = color?.withAlphaComponent(0.02)

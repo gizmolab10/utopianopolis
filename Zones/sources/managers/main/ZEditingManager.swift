@@ -1418,17 +1418,17 @@ class ZEditingManager: NSObject {
 
                 gSelectionManager.deselectGrabs()
 
-                for (child, (parent, index)) in pastables {
-                    let pastable = child.isInTrash ? child : child.deepCopy() // for deleted zones, paste a deep copy
-                    let       at = index  != nil ? index : gInsertionsFollow ? nil : 0
-                    let     into = parent != nil ? honorFormerParents ? parent! : zone : zone
+                for (pastable, (parent, index)) in pastables {
+                    let pasteMe = pastable.isInTrash ? pastable : pastable.deepCopy() // for zones not in trash, paste a deep copy
+                    let      at = index  != nil ? index : gInsertionsFollow ? nil : 0
+                    let    into = parent != nil ? honorFormerParents ? parent! : zone : zone
 
-                    pastable.orphan()
+                    pasteMe.orphan()
                     into.displayChildren()
-                    into.addAndReorderChild(pastable, at: at)
-                    pastable.recursivelyApplyMode()
-                    forUndo.append(pastable)
-                    pastable.addToGrab()
+                    into.addAndReorderChild(pasteMe, at: at)
+                    pasteMe.recursivelyApplyMode()
+                    forUndo.append(pasteMe)
+                    pasteMe.addToGrab()
                 }
 
                 self.UNDO(self) { iUndoSelf in
@@ -1446,21 +1446,27 @@ class ZEditingManager: NSObject {
             }
 
             let prepare = {
-                var need = false
+                var childrenAreMissing = false
 
                 for child in pastables.keys {
                     if !child.isInTrash {
                         child.needProgeny()
 
-                        need = true
+                        childrenAreMissing = true
                     }
                 }
 
-                if !need {
+                if !childrenAreMissing {
                     action()
                 } else {
+                    var once = true
+
                     gDBOperationsManager.children(.all) {
-                        action()
+                        if  once {
+                            once = false
+
+                            action()
+                        }
                     }
                 }
             }
@@ -1712,7 +1718,7 @@ class ZEditingManager: NSObject {
                 zone.orphan()
             }
 
-            if !into.isInTrash { // TODO: why?
+            if !into.isInTrash && !into.isTrash { // so grab won't disappear
                 zone.grab()
             }
 

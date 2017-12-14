@@ -83,9 +83,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     // MARK:- initialization
     // MARK:-
 
-    var         ratio:  CGFloat { return widgetZone?.isInFavorites ?? false ? gReductionRatio : 1.0 }
-    var innerDotWidth:  CGFloat { return CGFloat(isToggle ? gDotHeight : isDragDotHidden ? 0.0 : gDotWidth) * ratio }
-    var innerDotHeight: CGFloat { return CGFloat(gDotHeight * Double(ratio)) }
+
+    var         ratio:  CGFloat { return widget?.ratio ?? 1.0 }
+    var innerDotWidth:  CGFloat { return ratio * CGFloat(isToggle ? gDotHeight : isDragDotHidden ? 0.0 : gDotWidth) }
+    var innerDotHeight: CGFloat { return ratio * CGFloat(gDotHeight) }
 
 
     func setupForWidget(_ iWidget: ZoneWidget, asToggle: Bool) {

@@ -412,7 +412,9 @@ extension Character {
 
 extension ZGestureRecognizer {
 
-    var isShiftDown: Bool { return false }
+    var isShiftDown:   Bool { return false }
+    var isOptionDown:  Bool { return false }
+    var isCommandDown: Bool { return false }
 
 
     func cancel() {

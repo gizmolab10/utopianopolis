@@ -32,7 +32,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/models/ZRecord.swift"
-            timestampString = "534894663.977751"
+            timestampString = "534904563.889771"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "81"
@@ -47,13 +47,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/sources/models/Zone.swift"
-            timestampString = "534894663.978165"
+            filePath = "Zones/sources/managers/main/ZEditingManager.swift"
+            timestampString = "534973452.511251"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1105"
-            endingLineNumber = "1105"
-            landmarkName = "add(_:at:)"
+            startingLineNumber = "1010"
+            endingLineNumber = "1010"
+            landmarkName = "moveToTrash(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

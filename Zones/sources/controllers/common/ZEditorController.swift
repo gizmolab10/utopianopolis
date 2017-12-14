@@ -64,10 +64,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     override func setup() {
         restartGestureRecognition()
         super.setup()
-//
-//        if !isMain {
-//            view.zlayer.backgroundColor = ZColor.clear.cgColor  // so rubberband will not be clipped by favorites view
-//        }
     }
     
     
@@ -181,7 +177,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
                 if isEditingText(at: location) {
                     restartGestureRecognition()     // let text editor consume the gesture
-                } else if flags.isOption {
+                } else if flags.isCommand {
                     scrollEvent(move: state == .changed, to: location)
                 } else if gIsDragging {
                     dragMaybeStopEvent(iGesture)
@@ -265,16 +261,20 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     
     
     func dragStartEvent(_ dot: ZoneDot, _ iGesture: ZGestureRecognizer?) {
-        if  let    zone = dot.widgetZone { // should always be true
-            if let gesture = iGesture, (gesture.isShiftDown || zone.isGrabbed) {
+        if  var zone = dot.widgetZone { // should always be true
+            if  iGesture?.isOptionDown ?? false {
+                zone = zone.deepCopy()
+            }
+
+            if  iGesture?.isShiftDown ?? false {
                 zone.addToGrab()
-            } else {
+            } else if !zone.isGrabbed {
                 zone.grab()
             }
             
             note("d --- d")
             
-            if let location = iGesture?.location(in: dot) {
+            if  let location  = iGesture?.location(in: dot) {
                 dot.dragStart = location
                 gDraggedZone  = zone
             }
