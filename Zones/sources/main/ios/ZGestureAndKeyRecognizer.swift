@@ -20,9 +20,9 @@ class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
 
 
     var modifiers: ZEventFlags? = ZEventFlags()
-    override var isShiftDown:   Bool { return modifiers?.contains(.shift)   ?? false }
-    override var isOptionDown:  Bool { return modifiers?.contains(.option)  ?? false }
-    override var isCommandDown: Bool { return modifiers?.contains(.command) ?? false }
+    override var isShiftDown:   Bool { return modifiers?.contains(.shift)     ?? false }
+    override var isOptionDown:  Bool { return modifiers?.contains(.alternate) ?? false }
+    override var isCommandDown: Bool { return modifiers?.contains(.command)   ?? false }
 
 
     open func reset() {
@@ -41,9 +41,9 @@ class ZKeyClickGestureRecognizer: ZClickGestureRecognizer {
 
 
     var modifiers: ZEventFlags? = ZEventFlags()
-    override var isShiftDown:   Bool { return modifiers?.contains(.shift)   ?? false }
-    override var isOptionDown:  Bool { return modifiers?.contains(.option)  ?? false }
-    override var isCommandDown: Bool { return modifiers?.contains(.command) ?? false }
+    override var isShiftDown:   Bool { return modifiers?.contains(.shift)     ?? false }
+    override var isOptionDown:  Bool { return modifiers?.contains(.alternate) ?? false }
+    override var isCommandDown: Bool { return modifiers?.contains(.command)   ?? false }
 
 
     open func reset() {
@@ -62,9 +62,9 @@ class ZKeySwipeGestureRecognizer : ZSwipeGestureRecognizer {
 
 
     var modifiers: ZEventFlags? = ZEventFlags()
-    override var isShiftDown:   Bool { return modifiers?.contains(.shift)   ?? false }
-    override var isOptionDown:  Bool { return modifiers?.contains(.option)  ?? false }
-    override var isCommandDown: Bool { return modifiers?.contains(.command) ?? false }
+    override var isShiftDown:   Bool { return modifiers?.contains(.shift)     ?? false }
+    override var isOptionDown:  Bool { return modifiers?.contains(.alternate) ?? false }
+    override var isCommandDown: Bool { return modifiers?.contains(.command)   ?? false }
 
 
     open func reset() {
