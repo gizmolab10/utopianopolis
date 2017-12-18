@@ -40,6 +40,20 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     @IBOutlet var      spinner:  ZProgressIndicator?
     @IBOutlet var  spinnerView:  ZView?
 
+
+    func isInFavoritesGraph(_ iWidget: ZoneWidget?) -> Bool {
+        var result = false
+
+        iWidget?.applyToAllSuperviews { iView in
+            if iView == favoritesRootWidget {
+                result = true
+            }
+        }
+
+        return result
+    }
+
+
     
     // MARK:- gestures
     // MARK:-
@@ -551,20 +565,22 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
 
     func detectWidgetFor(_ iMode: ZStorageMode?, _ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
-        var hit:   ZoneWidget? = nil
-        if  let           mode = iMode,
-            let              e = editorView,
-            let       location = iGesture?.location(in: e),
+        var hit:    ZoneWidget? = nil
+        if  let            mode = iMode,
+            let               e = editorView,
+            let        location = iGesture?.location(in: e),
             e.bounds.contains(location),
-            let         iStart = ancestor(for: mode),
-            let    widgetsDict = gWidgetsManager.widgets[mode] {
-            let        widgets = widgetsDict.values
+            let          iStart = ancestor(for: mode),
+            let     widgetsDict = gWidgetsManager.widgets[mode] {
+            let         widgets = widgetsDict.values
             for         widget in widgets {
-                let       rect = widget.convert(widget.outerHitRect, to: e)
+                let        rect = widget.convert(widget.outerHitRect, to: e)
 
                 if  rect.contains(location) {
-                    if widget.widgetZone?.spawnedBy(iStart) ?? false {
-                        hit    = widget
+                    if let zone = widget.widgetZone, (zone == iStart || zone.spawnedBy(iStart)) {
+                        hit     = widget
+
+                        break
                     }
                 }
             }

@@ -60,7 +60,6 @@ class ZTravelManager: NSObject {
 
             if bookmark.isFavorite {
                 gFavoritesManager.currentFavorite = bookmark
-//                gFavoritesManager.updateFavorites()
             }
 
             if  gStorageMode  != mode {

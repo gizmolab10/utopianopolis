@@ -48,7 +48,7 @@ class Zone : ZRecord {
     var directChildrenWritable:        Bool  { return   directAccess == .eChildrenWritable }
     var    hasAccessDecoration:        Bool  { return !isTextEditable || directChildrenWritable }
     var     hasMissingChildren:        Bool  { return count < fetchableCount }
-    var      onlyShowToggleDot:        Bool  { return isRootOfFavorites || (isPhone && self == gHere) }
+    var      onlyShowToggleDot:        Bool  { return (isRootOfFavorites && widget?.isInFavoritesGraph ?? false) || (isPhone && self == gHere) }
     var      isWritableByUseer:        Bool  { return  isTextEditable || gOnboardingManager.userHasAccess(self) }
     var      isCurrentFavorite:        Bool  { return self == gFavoritesManager.currentFavorite }
     var      isRootOfFavorites:        Bool  { return record != nil && recordName == gFavoriteRootNameKey }
@@ -158,11 +158,11 @@ class Zone : ZRecord {
 
 
     convenience init(storageMode: ZStorageMode?, named: String? = nil, isLocalOnly iLocal: Bool = false) {
-        let      name = named == nil ? nil : (named == gFavoriteRootNameKey || !iLocal) ? named : "local." + named!
         var newRecord : CKRecord?
 
-        if iLocal, let localName = name {
-            newRecord = CKRecord(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: localName))
+        if  let  name = named, iLocal {
+            let rName = (name == gFavoritesNameKey) ? gFavoriteRootNameKey : "local." + name
+            newRecord = CKRecord(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: rName))
         } else {
             newRecord = CKRecord(recordType: gZoneTypeKey)
         }
@@ -170,7 +170,7 @@ class Zone : ZRecord {
         self.init(record: newRecord!, storageMode: storageMode)
 
         isLocalOnly = iLocal
-        zoneName    = name
+        zoneName    = named
     }
 
 
@@ -447,7 +447,7 @@ class Zone : ZRecord {
         get {
             if      _parentZone   == nil {
                 if  let  reference = parent, let mode = storageMode {
-                    _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).maybeZoneForReference(reference)
+                    _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).zoneForReference(reference)
                 } else if let zone = zoneFrom(parentLink) {
                     _parentZone    = zone
                 }
@@ -543,7 +543,7 @@ class Zone : ZRecord {
             return true
         } else if directReadOnly {
             return false
-        } else if let p = parentZone {
+        } else if let p = parentZone, p != self {
             return p.directChildrenWritable ? true : p.isTextEditable
         }
 

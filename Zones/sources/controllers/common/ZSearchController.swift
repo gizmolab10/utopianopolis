@@ -79,7 +79,8 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
     func control(_ control: ZControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
         if  gWorkMode == .searchMode, let searchString = getInput() {
-            var total = [Any] ()
+            var combined = [ZStorageMode: [Any]] ()
+            var     done = false
 
             for mode in [ZStorageMode.mineMode, ZStorageMode.everyoneMode] {
                 let manager = gRemoteStoresManager.cloudManagerFor(mode)
@@ -88,14 +89,15 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                     FOREGROUND {                                    // guarantee atomic ...
                         let    results = iObject as! [Any]
                         let hasResults = results.count != 0
-                        let       done = total.count > 0            // ... this test must be atomic relative to each search
                         gWorkMode      = hasResults ? .searchMode : .editMode
-                        total         += results
+                        combined[mode] = results
 
-                        if done {
+                        if !done {
+                            done = true
+                        } else {
                             self.searchBox?.text = ""
 
-                            gSearchManager.showResults(total)
+                            gSearchManager.showResults(combined)
                         }
                     }
                 }

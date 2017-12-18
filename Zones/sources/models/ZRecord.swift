@@ -166,6 +166,8 @@ class ZRecord: NSObject {
             copy.record[keyPath] = record[keyPath]
         }
 
+        copy.isLocalOnly = isLocalOnly
+
         copy.updateInstanceProperties()
     }
 
@@ -233,6 +235,7 @@ class ZRecord: NSObject {
 
     func needRoot()      { addState(.needsRoot) }
     func needCount()     { addState(.needsCount) }
+    func needFetch()     { addState(.needsFetch) }
     func needColor()     { addState(.needsColor) }
     func needTraits()    { addState(.needsTraits) }
     func needParent()    { addState(.needsParent) }
@@ -254,7 +257,7 @@ class ZRecord: NSObject {
 
     func maybeNeedFetch() {
         if !alreadyExists {
-            addState(.needsFetch)
+            needFetch()
         }
     }
 

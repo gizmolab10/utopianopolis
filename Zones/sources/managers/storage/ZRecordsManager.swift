@@ -250,9 +250,22 @@ class ZRecordsManager: NSObject {
 
         findAllCKRecordsWithAnyMatchingStates(states) { state, ckrecord in
             let identifier = ckrecord.recordID
+            let       name = identifier.recordName
 
-            if  identifiers.count < batchSize, !identifiers.contains(identifier) {
-                identifiers.append(identifier)
+            if  identifiers.count < batchSize {
+                var appended = false
+
+                for id in identifiers {
+                    if id.recordName == name {
+                        appended = true
+
+                        break
+                    }
+                }
+
+                if !appended {
+                    identifiers.append(identifier)
+                }
             }
         }
 
@@ -410,9 +423,10 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func stringForRecordIDs(_ recordIDs: [CKRecordID]?, in storageMode: ZStorageMode) -> String {
+    func stringForRecordIDs(_ recordIDs: [CKRecordID]?) -> String {
         return recordIDs?.apply()  { object -> (String?) in
-            if  let recordID = object as? CKRecordID, let zRecord = gRemoteStoresManager.recordsManagerFor(storageMode)?.maybeZRecordForRecordID(recordID) {
+            if  let recordID = object as? CKRecordID,
+                let  zRecord = self.maybeZRecordForRecordID(recordID) {
                 let    name  = zRecord.record.decoratedName
                 if     name != "" {
                     return name
@@ -517,11 +531,27 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func zoneForReference(_ reference: CKReference) -> Zone {
+        var zone  = maybeZoneForReference(reference)
+
+        if  zone == nil {
+            zone  = Zone(record: CKRecord(recordType: gZoneTypeKey, recordID: reference.recordID), storageMode: storageMode)
+
+            columnarReport("REFERENCE FETCH", "\(reference.recordID.recordName)")
+            zone?.needFetch()
+        }
+
+        return zone!
+    }
+
+
     func zoneForCKRecord(_ ckRecord: CKRecord) -> Zone {
         var zone  = maybeZoneForCKRecord(ckRecord)
 
         if  zone == nil {
             zone  = Zone(record: ckRecord, storageMode: storageMode)
+
+            zone?.needFetch()
         } else {
             zone!.record = ckRecord
         }

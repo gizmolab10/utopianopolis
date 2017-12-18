@@ -32,6 +32,7 @@ enum ZOperationID: Int {
     // finish
 
     case save       // zones and manifests
+    case delete
     case bookmarks
     case remember
     case unsubscribe

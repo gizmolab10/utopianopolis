@@ -117,7 +117,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 var   width = !isToggle && isDragDotHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) - 42.0 + innerDotWidth
                 let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
 
-                if iWidget.widgetZone?.isInFavorites ?? false {
+                if iWidget.isInFavoritesGraph {
                     width  *= gReductionRatio
                 }
 
@@ -189,7 +189,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawAccessDecoration(of type: ZDecorationType, for zone: Zone, in dirtyRect: CGRect) {
-        let     ratio = zone.isInFavorites ? gReductionRatio : 1.0
+        let     ratio = (widget?.isInFavoritesGraph ?? false) ? gReductionRatio : 1.0
         var thickness = CGFloat(gLineThickness + 0.1) * ratio
         var      path = ZBezierPath(rect: CGRect.zero)
         var      rect = CGRect.zero

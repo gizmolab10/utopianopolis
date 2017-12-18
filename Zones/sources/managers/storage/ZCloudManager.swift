@@ -38,7 +38,6 @@ class ZCloudManager: ZRecordsManager {
             operation .timeoutIntervalForRequest = gRemoteTimeout
             operation          .qualityOfService = .background
             operation                 .container = gContainer
-            operation                  .database = database
 
             return operation
         }
@@ -47,11 +46,11 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func start(_ operation: CKOperation) {
+    func start(_ operation: CKDatabaseOperation) {
         currentOperation = operation
 
         BACKGROUND {     // not stall foreground processor
-            operation.start()
+            self.database?.add(operation)
         }
     }
 
@@ -60,22 +59,38 @@ class ZCloudManager: ZRecordsManager {
     // MARK:-
 
 
+    func delete(_ onCompletion: IntClosure?) {
+        let destroy = recordIDsWithMatchingStates([.needsDestroy], pull: true, batchSize: 1)
+
+        if  destroy.count == 0 {
+            onCompletion?(0)
+        } else {
+            columnarReport("DESTROY", stringForRecordIDs(destroy))
+
+            database?.delete(withRecordID: destroy[0]) { (iID, iError) in
+                gAlertManager.detectError(iError) { iHasError in
+                    if  iHasError {
+                        self.columnarReport("DELETE ERROR", iError)
+                    }
+                }
+
+                self.delete(onCompletion)
+            }
+        }
+    }
+
+
     func save(_ onCompletion: IntClosure?) {
         let   saves = pullCKRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
-        let destroy = recordIDsWithMatchingStates([.needsDestroy], pull: true, batchSize: 20)
-        let   count = saves.count + destroy.count
+        let   count = saves.count // + destroy.count
 
         if  count > 0, let           operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
             operation              .savePolicy = .allKeys
-            operation       .recordIDsToDelete = destroy
             operation           .recordsToSave = saves
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
                 gAlertManager.detectError(iError) { iHasError in
                     if  iHasError {
-                        let notDestroy = iRecord == nil || !destroy.contains(iRecord!.recordID)
-
-                        if  notDestroy,
-                            let     ck = iError as? CKError,
+                        if  let     ck = iError as? CKError,
                             ck.code   == .serverRecordChanged, // oplock error
                             let record = self.maybeZRecordForCKRecord(iRecord) {
                             record.maybeNeedMerge()
@@ -121,8 +136,10 @@ class ZCloudManager: ZRecordsManager {
                 }
             }
 
-            if   saves.count > 0 { columnarReport("SAVE \(     saves.count)", stringForCKRecords(saves)) }
-            if destroy.count > 0 { columnarReport("DESTROY \(destroy.count)", stringForRecordIDs(destroy, in: storageMode)) }
+            if   saves.count > 0 {
+                columnarReport("SAVE \(     saves.count)", stringForCKRecords(saves))
+            }
+
             start(operation)
         } else {
             onCompletion?(0)
@@ -318,7 +335,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func merge(_ onCompletion: IntClosure?) {
-        let recordIDs = recordIDsWithMatchingStates([.needsMerge])
+        var recordIDs = recordIDsWithMatchingStates([.needsMerge])
         let     count = recordIDs.count
 
         if  count > 0, let           operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
@@ -326,8 +343,12 @@ class ZCloudManager: ZRecordsManager {
             operation               .recordIDs = recordIDs
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
                 gAlertManager.detectError(iError) { iHasError in
-                    if iHasError {
-                        gAlertManager.alertError("MERGE ==> \(self.storageMode) \(iError!)")
+                    if  iHasError {
+                        gAlertManager.alertError("MERGE within \(self.storageMode) \(iError!)")
+
+                        if let id = iID, let index = recordIDs.index(of: id) {
+                            recordIDs.remove(at: index)
+                        }
                     } else if let record = iRecord {
                         recordsByID[record] = iID
                     }
@@ -338,7 +359,7 @@ class ZCloudManager: ZRecordsManager {
 
             operation.completionBlock = {
                 FOREGROUND {
-                    if recordsByID.count == 0 {
+                    if  recordsByID.count == 0 {
                         for ckRecordID in recordIDs {
                             self.clearStatesForRecordID(ckRecordID, forStates: [.needsMerge])
                         }
@@ -354,7 +375,7 @@ class ZCloudManager: ZRecordsManager {
                 }
             }
             
-            self.columnarReport("MERGE", stringForRecordIDs(recordIDs, in: storageMode))
+            self.columnarReport("MERGE (\(recordIDs.count))", stringForRecordIDs(recordIDs))
             start(operation)
         } else {
             onCompletion?(0)
@@ -561,7 +582,7 @@ class ZCloudManager: ZRecordsManager {
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
                 gAlertManager.alertError(iError) { iHasError in
                     if  iHasError {
-                        print("fetch failure")
+                        self.clearStatesForRecordID(iID, forStates: [.needsFetch])
                     } else if let ckRecord = iRecord,
                         !retrieved.contains(ckRecord) {
                         retrieved.append(ckRecord)
@@ -695,8 +716,8 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetchChildren(_ iLogic: ZRecursionLogic? = ZRecursionLogic(.restore), _ onCompletion: IntClosure?) {
-        let          logic = iLogic              ?? ZRecursionLogic(.restore)
+    func fetchChildren(_ iLogic: ZRecursionLogic?, _ onCompletion: IntClosure?) {
+        let          logic = iLogic ?? ZRecursionLogic(.all)
         let  progenyNeeded = pullReferencesWithMatchingStates([.needsProgeny])
         let childrenNeeded = pullReferencesWithMatchingStates([.needsChildren]) + progenyNeeded
         let   destroyedIDs = recordIDsWithMatchingStates([.needsDestroy])
@@ -1054,5 +1075,6 @@ class ZCloudManager: ZRecordsManager {
             }
         }
     }
+
 }
 

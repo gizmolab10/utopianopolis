@@ -146,29 +146,29 @@ extension CKRecord {
             return recordID.recordName
         } else if let   name = self[gZoneNameKey] as? String {
             let    separator = " "
-            var       suffix = ""
+            var       prefix = ""
 
             if let link  = self["zoneLink"] as? String {
                 if link == gNullLink || link == "not a link" {
-                    suffix.append("-")
+                    prefix.append("-")
                 } else {
-                    suffix.append("L")
+                    prefix.append("L")
                 }
             }
 
             if  let fetchable = self["zoneCount"] as? Int, fetchable > 1 {
-                if  suffix != "" {
-                    suffix.append(separator)
+                if  prefix != "" {
+                    prefix.append(separator)
                 }
 
-                suffix.append("\(fetchable)")
+                prefix.append("\(fetchable)")
             }
 
-            if  suffix != "" {
-                suffix  = "  (" + suffix + ")"
+            if  prefix != "" {
+                prefix  = "(" + prefix + ")  "
             }
 
-            return name.appending(suffix)
+            return prefix.appending(name)
         }
 
         return ""
@@ -464,6 +464,13 @@ extension ZView {
         for view in subviews {
             view.applyToAllSubviews(closure)
         }
+    }
+
+
+    func applyToAllSuperviews(_ closure: ViewClosure) {
+        closure(self)
+
+        superview?.applyToAllSuperviews(closure)
     }
 
 

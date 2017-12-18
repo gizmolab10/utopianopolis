@@ -57,6 +57,7 @@ let       gRecordTypeKey = "recordType"
 let     gShowChildrenKey = "showChildren"
 let     gManifestTypeKey = "ZManifest"
 let    gHalfLineOfDashes = "-----------"
+let    gFavoritesNameKey = "favorites"
 let gFavoriteRootNameKey = "favoritesRoot"
 let   gLineWithStubTitle = gHalfLineOfDashes + " | " + gHalfLineOfDashes
 let        gLineOfDashes = gHalfLineOfDashes + "---" + gHalfLineOfDashes

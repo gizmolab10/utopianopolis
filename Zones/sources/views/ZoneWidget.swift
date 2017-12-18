@@ -29,14 +29,15 @@ let verticalTextOffset = 1.55 // 1.7 gap is above dot, 1.2 gap is below dot
 class ZoneWidget: ZView {
 
 
-    let                 dragDot = ZoneDot        ()
-    let               toggleDot = ZoneDot        ()
-    let              textWidget = ZoneTextWidget ()
-    let            childrenView = ZView          ()
-    private var childrenWidgets = [ZoneWidget]   ()
-    var            parentWidget:  ZoneWidget? { return widgetZone?.parentZone?.widget }
-    var                   ratio:     CGFloat  { return widgetZone?.isInFavorites ?? false ? gReductionRatio : 1.0 }
-    weak var         widgetZone:  Zone?
+    let                  dragDot = ZoneDot        ()
+    let                toggleDot = ZoneDot        ()
+    let               textWidget = ZoneTextWidget ()
+    let             childrenView = ZView          ()
+    private var  childrenWidgets = [ZoneWidget]   ()
+    var isInFavoritesGraph: Bool = false
+    var                    ratio :     CGFloat { return isInFavoritesGraph ? gReductionRatio : 1.0 }
+    var             parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
+    weak var          widgetZone :       Zone?
 
 
     deinit {
@@ -70,6 +71,8 @@ class ZoneWidget: ZView {
                 }
             }
         }
+
+        isInFavoritesGraph = gEditorController?.isInFavoritesGraph(self) ?? false
 
         #if os(iOS)
             backgroundColor = gClearColor
@@ -453,7 +456,7 @@ class ZoneWidget: ZView {
         var          rect = textWidget.frame.insetBy(dx: inset * ratio - delta, dy: -0.5 - delta)
         let        shrink = -0.5 + (height / 6.0)
         rect.size.height += -0.5 + gHighlightHeightOffset // + (delta / 9.5)
-        rect.size.height += widgetZone?.isInFavorites ?? false ? 1.0 : 0.0
+        rect.size.height += isInFavoritesGraph ? 1.0 : 0.0
         rect.size .width += shrink - dotDelta
         let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
         let         color = widgetZone?.color

@@ -200,11 +200,11 @@ class ZFavoritesManager: ZCloudManager {
 
     func setup() {
         if  gHasPrivateDatabase && rootZone == nil {
-            rootZone               = Zone(storageMode: .mineMode, named: gFavoriteRootNameKey, isLocalOnly: true)
+            rootZone               = Zone(storageMode: .mineMode, named: gFavoritesNameKey, isLocalOnly: true)
             rootZone!.directAccess = .eChildrenWritable
 
             setupDatabaseFavorites()
-            rootZone!.needChildren()
+            rootZone!.needProgeny()
             rootZone!.displayChildren()
         }
     }
@@ -234,6 +234,8 @@ class ZFavoritesManager: ZCloudManager {
         rootZone?.traverseAllProgeny { iChild in
             if iChild.isBookmark {
                 self.workingFavorites.append(iChild)
+            } else {
+                iChild.displayChildren()
             }
         }
     }
@@ -251,13 +253,13 @@ class ZFavoritesManager: ZCloudManager {
             ////////////////////////////////////////////////
 
             updateWorkingFavorites()
-
-            for iProgeny in workingFavorites {
-                if  let t = iProgeny.bookmarkTarget, t.isRoot, !t.isTrash {
-                    iProgeny.needDestroy()
-                    iProgeny.orphan()
-                }
-            }
+//
+//            for iWorking in workingFavorites {
+//                if  let t = iWorking.bookmarkTarget, t.isRoot, !t.isTrash, iWorking.isLocalOnly {
+//                    iWorking.needDestroy()
+//                    iWorking.orphan()
+//                }
+//            }
 
             /////////////////////////////////////////
             // detect modes which have bookmarks   //
@@ -272,7 +274,11 @@ class ZFavoritesManager: ZCloudManager {
                         } else {
                             trashCopies.append(index)
                         }
-                    } else if let mode = favorite.crossLink?.storageMode,
+                    } else if favorite.isLocalOnly,
+                        let t = favorite.bookmarkTarget,
+                        let mode = t.storageMode,
+                        t.isRoot,
+                        !t.isTrash,
                         !foundModes.contains(mode) {
                         foundModes.append(mode)
                     }

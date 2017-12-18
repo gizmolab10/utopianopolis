@@ -535,11 +535,16 @@ class ZEditingManager: NSObject {
 
 
     func revealParentAndSiblingsOf(_ iZone: Zone, onCompletion: Closure?) {
-        if let parent = iZone.parentZone {
+        if  let parent = iZone.parentZone {
             parent.displayChildren()
-            parent.needChildren()
 
-            gDBOperationsManager.children(.restore) {
+            if  parent.hasMissingChildren {
+                parent.needChildren()
+
+                gDBOperationsManager.children(.restore) {
+                    onCompletion?()
+                }
+            } else {
                 onCompletion?()
             }
         } else {
@@ -557,7 +562,10 @@ class ZEditingManager: NSObject {
 
         descendent.traverseAllAncestors { iParent in
             iParent.displayChildren()
-            iParent.needChildren() // need this to show "minimal flesh" on graph
+
+            if iParent.hasMissingChildren {
+                iParent.needChildren() // need this to show "minimal flesh" on graph
+            }
 
             if iParent == iAncestor {
                 needRoot = false
@@ -575,7 +583,7 @@ class ZEditingManager: NSObject {
                     let gotOrphan = iParent.parentZone == nil
 
                     if  gotThere || gotOrphan {
-                        if !gotThere && !iParent.alreadyExists { // reached an orphan that has not yet been fetched
+                        if !gotThere && !iParent.alreadyExists && iParent.parentZone != nil { // reached an orphan that has not yet been fetched
                             self.recursivelyRevealSiblings(iParent, untilReaching: iAncestor, onCompletion: onCompletion)
                         } else {
                             iAncestor.displayChildren()
@@ -661,6 +669,10 @@ class ZEditingManager: NSObject {
                                   iChild.displayChildren()
                         }
                     }
+                }
+
+                if zone.isInFavorites && show {
+                    gFavoritesManager.updateFavorites()
                 }
 
                 onCompletion?()
@@ -931,7 +943,7 @@ class ZEditingManager: NSObject {
             let     isFavorite = zone.isInFavorites
 
             if  zone          == gHere {                                  // this can only happen once during recursion (multiple places, below)
-                if  let      p = parent {
+                if  let      p = parent, p != zone {
                     revealParentAndSiblingsOf(zone) {
                         gHere  = p
 
@@ -1011,49 +1023,6 @@ class ZEditingManager: NSObject {
         }
     }
 
-
-    // MARK:- experimental
-    // MARK:-
-
-
-    func nextUpward(_ moveUp: Bool, extreme: Bool,  zone: Zone?) -> (Zone?, Int, Int) {
-        if let siblings = zone?.parentZone?.children {
-            if siblings.count > 0 {
-                if let     index = siblings.index(of: zone!)  {
-                    var newIndex = index + (moveUp ? -1 : 1)
-
-                    if extreme {
-                        newIndex = moveUp ? 0 : siblings.count - 1
-                    }
-
-                    if newIndex >= 0 && newIndex < siblings.count {
-                        return (siblings[newIndex], index, newIndex)
-                    }
-                }
-            }
-        }
-
-        return (nil, 0, 0)
-    }
-
-
-    func newmoveUp(_ moveUp: Bool, selectionOnly: Bool, extreme: Bool, extend: Bool) {
-        let                  zone: Zone = gSelectionManager.firstGrab
-        if  let              parentZone = zone.parentZone {
-            let (next, index, newIndex) = nextUpward(moveUp, extreme: extreme, zone: parentZone)
-
-            if selectionOnly {
-                if next != nil {
-                    next!.grab()
-                }
-            } else if zone.storageMode != .favoritesMode {
-                parentZone.children.remove(at: index)
-                parentZone.children.insert(zone, at:newIndex)
-            }
-
-            signalFor(parentZone, regarding: .redraw)
-        }
-    }
 
 
     // MARK:- move
@@ -1159,7 +1128,7 @@ class ZEditingManager: NSObject {
 
         if !selectionOnly {
             actuallyMoveZone(zone)
-        } else if zone.fetchableCount == 0 {
+        } else if zone.fetchableCount == 0 && zone.count == 0 {
             gTravelManager.maybeTravelThrough(zone)
         } else {
             zone.needChildren()
@@ -1203,24 +1172,20 @@ class ZEditingManager: NSObject {
                             mover.recursivelyApplyMode()
                         }
 
+                        mover.grab()
                         self.redrawAndSync()
                     }
                 }
             }
 
-            if sameGraph {
-                mover.orphan()
+            mover.orphan()
 
+            if sameGraph {
                 grabAndTravel()
             } else {
+                mover.needDestroy()
 
-                if mover.isBookmark && mover.crossLink?.record != nil && !(mover.crossLink?.isRoot)! {
-                    mover.orphan()
-                } else {
-                    mover = zone.deepCopy()
-
-                    mover.grab()
-                }
+                mover = mover.deepCopy()
 
                 gDBOperationsManager.sync {
                     grabAndTravel()
@@ -1642,6 +1607,7 @@ class ZEditingManager: NSObject {
         }
 
         let finish = {
+            var    done = false
             let    into = iInto.bookmarkTarget ?? iInto // grab bookmark AFTER travel
             let toTrash = into.isInTrash || into.isTrash
 
@@ -1653,37 +1619,41 @@ class ZEditingManager: NSObject {
             }
 
             gDBOperationsManager.children(.all) {
-                for grab in grabs {
-                    var      movable = grab
-                    let    fromTrash = movable.isInTrash
-                    let fromFavorite = movable.isInFavorites
+                if !done {
+                    done = true
 
-                    if  toFavorites, !fromFavorite, !fromTrash {
-                        movable = gFavoritesManager.createBookmark(for: grab, style: .favorite)
+                    for grab in grabs {
+                        var      movable = grab
+                        let    fromTrash = movable.isInTrash
+                        let fromFavorite = movable.isInFavorites
 
-                        movable.needSave()
-                    } else {
-                        movable.orphan()
+                        if  toFavorites, !fromFavorite, !fromTrash {
+                            movable = gFavoritesManager.createBookmark(for: grab, style: .favorite)
 
-                        if into.storageMode != movable.storageMode {
-                            movable.needDestroy()
+                            movable.needSave()
+                        } else {
+                            movable.orphan()
+
+                            if into.storageMode != movable.storageMode {
+                                movable.needDestroy()
+                            }
+
+                            if  fromFavorite, !toFavorites, !toTrash, !fromTrash {
+                                movable = movable.deepCopy()
+                            }
                         }
 
-                        if  fromFavorite, !toFavorites, !toTrash, !fromTrash {
-                            movable = movable.deepCopy()
-                        }
+                        movable.grab()
+                        into.addAndReorderChild(movable, at: iIndex)
+                        movable.recursivelyApplyMode()
                     }
 
-                    movable.grab()
-                    into.addAndReorderChild(movable, at: iIndex)
-                    movable.recursivelyApplyMode()
-                }
+                    if  toBookmark && self.undoManager.groupingLevel > 0 {
+                        self.undoManager.endUndoGrouping()
+                    }
 
-                if  toBookmark && self.undoManager.groupingLevel > 0 {
-                    self.undoManager.endUndoGrouping()
+                    onCompletion?()
                 }
-
-                onCompletion?()
             }
         }
 

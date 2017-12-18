@@ -19,7 +19,7 @@ import Foundation
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
-    override var         preferredFont : ZFont { return (widgetZone?.isInFavorites ?? false) ? gFavoritesFont : gWidgetFont }
+    override var         preferredFont : ZFont { return (widget?.isInFavoritesGraph ?? false) ? gFavoritesFont : gWidgetFont }
     var                     widgetZone : Zone? { return widget?.widgetZone }
     weak var                    widget : ZoneWidget?
     var            isEditiingHyperlink = false

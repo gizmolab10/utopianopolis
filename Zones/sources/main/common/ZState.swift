@@ -363,11 +363,11 @@ func setColor(_ iColor: ZColor, for key: String) {
 
 
 func getString(for key: String, defaultString: String?) -> String? {
-    if let string = UserDefaults.standard.object(forKey: key) as? String {
+    if  let    string = UserDefaults.standard.object(forKey: key) as? String {
         return string
     }
 
-    if let string = defaultString {
+    if  let    string = defaultString {
         setString(string, for: key)
     }
 
