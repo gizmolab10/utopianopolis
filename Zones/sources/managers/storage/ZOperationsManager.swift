@@ -102,7 +102,15 @@ class ZOperationsManager: NSObject {
 
     func setupAndRunUnsafe(_ operationIDs: [ZOperationID], logic: ZRecursionLogic?, onCompletion: @escaping Closure) {
         if gIsLate {
-            onCompletion()
+            FOREGROUND { // avoid stack overflow
+                onCompletion()
+            }
+        }
+
+        if queue.operationCount > 1500 {
+            gAlertManager.alertWith("overloading queue", "programmer error", "send an email to sand@gizmolab.com") { iObject in
+               // onCompletion()
+            }
         }
 
         queue.isSuspended = true

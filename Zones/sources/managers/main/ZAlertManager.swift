@@ -45,9 +45,9 @@ class ZAlertManager : NSObject {
     func detectError(_ iError: Any? = nil, _ message: String? = nil, _ closure: BooleanClosure? = nil) {
         let          hasError = iError != nil
 
-        if  hasError {
-            gCloudUnavailable = true
-        }
+//        if  hasError {
+//            gCloudUnavailable = true
+//        }
 
         if  let         error = iError as? Error {
             mostRecentError   = error
@@ -161,6 +161,10 @@ class ZAlertManager : NSObject {
             switch iState {
             case .eShow:
                 iAlert?.showAlert { iResponse in
+                    let window = iAlert?.window
+
+                    NSApp.abortModal()
+                    window?.orderOut(iAlert)
                     closure?(iResponse.rawValue)
                 }
             default:

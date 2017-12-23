@@ -455,7 +455,7 @@ class ZFavoritesManager: ZCloudManager {
                 parent         = rootZone!
 
                 for bookmark in workingFavorites {
-                    if recordName == bookmark.crossLink?.recordName, !bookmark.bookmarkTarget!.isRoot {
+                    if recordName == bookmark.linkName, !bookmark.bookmarkTarget!.isRoot {
                         currentFavorite = bookmark
 
                         return bookmark

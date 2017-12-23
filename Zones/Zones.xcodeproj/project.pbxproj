@@ -146,7 +146,7 @@
 		0C7117351FAE7F9900603017 /* ZDBOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZDBOperationsManager.swift */; };
 		0C7117361FAE7F9900603017 /* ZDBOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZDBOperationsManager.swift */; };
 		0C7117371FAE7F9900603017 /* ZDBOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZDBOperationsManager.swift */; };
-		0C71173B1FAFC50500603017 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		0C71173B1FAFC50500603017 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0C7126CD1FB39C5200CD3E76 /* ZDesktopExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */; };
 		0C71521B1FD778BB00C7DA61 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; };
 		0C7152231FD8A1E400C7DA61 /* ZTravelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7152221FD8A1E400C7DA61 /* ZTravelManager.swift */; };
@@ -1287,6 +1287,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/PadZones/Frameworks",
@@ -1302,7 +1303,7 @@
 				PROVISIONING_PROFILE = "7f5373bd-6c8c-44b0-95a7-b9030a84d3d4";
 				PROVISIONING_PROFILE_SPECIFIER = "iOS focus development";
 				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -1320,6 +1321,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/PadZones/Frameworks",
@@ -1335,7 +1337,7 @@
 				PROVISIONING_PROFILE = "b9425c73-011e-4e98-b20f-8a8f857b1254";
 				PROVISIONING_PROFILE_SPECIFIER = "focus distribution on iOS";
 				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1394,6 +1396,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1443,7 +1446,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
@@ -1574,6 +1577,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/PadZones/Frameworks",
@@ -1607,6 +1611,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/PadZones/Frameworks",

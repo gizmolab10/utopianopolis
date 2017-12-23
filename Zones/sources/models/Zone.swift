@@ -69,6 +69,16 @@ class Zone : ZRecord {
     var                isTrash:        Bool  { return recordName == gTrashNameKey }
 
 
+    var trashZone: Zone? {
+        if  let       mode = storageMode {
+            let    manager = gRemoteStoresManager.cloudManagerFor(mode)
+
+            return manager.trashZone
+        }
+
+        return nil }
+
+
     var email: String? {
         get {
             if  _email == nil {
@@ -198,13 +208,10 @@ class Zone : ZRecord {
 
 
     var fetchedBookmark: Zone? {
-        if  let       identifier = recordName {
-            for zRecord in gAllRegisteredZRecords {
-                if  let     zone = zRecord as? Zone,
-                    let linkName = zone.linkName,
-                    linkName    == identifier {
-
-                    return zone
+        if  let     identifier  = recordName {
+            for bookmark in gAllBookmarks {
+                if  identifier == bookmark.linkName {
+                    return bookmark
                 }
             }
         }
@@ -457,16 +464,16 @@ class Zone : ZRecord {
         }
 
         set {
-            parentLink  = gNullLink
-            _parentZone = newValue
-            parent      = nil
+            _parentZone            = newValue
 
             if  let  parentRecord  = newValue?.record,
                 let       newMode  = newValue?.storageMode {
                 if        newMode == storageMode {
                     parent         = CKReference(record: parentRecord, action: .none)
-                } else {
-                    parentLink     = "\(newMode.rawValue)::\(parentRecord.recordID.recordName)" // parentLink is needed to link to a parent residing in the other db
+                    parentLink     = gNullLink
+                } else {                                                                            // new parent is in different db
+                    parentLink     = "\(newMode.rawValue)::\(parentRecord.recordID.recordName)"     // references don't work across dbs
+                    parent         = nil
                 }
             }
         }
@@ -659,7 +666,7 @@ class Zone : ZRecord {
 
 
     override func unorphan() {
-        if let p = parentZone, !p.isBookmark, !spawnedBy(p) {
+        if  !needsDestroy, let p = parentZone, p != self {
             p.add(self, at: siblingIndex)
         }
     }
@@ -670,7 +677,6 @@ class Zone : ZRecord {
 
         parentZone = nil
 
-        needSave()
         updateRecordProperties()
     }
 
@@ -1005,6 +1011,13 @@ class Zone : ZRecord {
     // MARK:-
 
 
+    func maybeNeedBookmarks() {
+        if !isBookmark {
+            addState(.needsBookmarks)
+        }
+    }
+
+
     func maybeNeedRoot() {
         if !hasCompleteAncestorPath() {
             needRoot()
@@ -1160,24 +1173,20 @@ class Zone : ZRecord {
     }
 
 
-    func recursivelyApplyMode() {
-        let copy = parentZone?.storageMode != storageMode
+    func recursivelyApplyMode(_ iMode: ZStorageMode?) {
+        if let mode = iMode, mode != storageMode {
+            traverseAllProgeny { iZone in
+                let            pz = iZone.parentZone
+                let        record = iZone.record
+                iZone     .record = CKRecord(recordType: gZoneTypeKey)
 
-        traverseAllProgeny { iChild in
-            if  copy {
-                iChild .record = CKRecord(recordType: gZoneTypeKey)
+                record?.copy(to: iZone.record, properties: iZone.cloudProperties())
+
+                iZone.storageMode = mode
+                iZone.parentZone  = pz      // this will correct parent and parentLink for mode change
+
+                iZone.needSave()            // so will be noted in new mode's record manager
             }
-
-            if  let              p = iChild.parentZone {
-                iChild.storageMode = p.storageMode
-
-                if  iChild.parent?.recordID.recordName != p.recordName {
-                    iChild.parent = CKReference(record: p.record, action: .none)
-                }
-            }
-
-            iChild.needSave() // so will be noted in new mode's record manager
-            iChild.updateRecordProperties() // in case new ckrecord is created, above
         }
     }
 

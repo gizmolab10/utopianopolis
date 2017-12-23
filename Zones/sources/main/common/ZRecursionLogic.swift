@@ -19,6 +19,9 @@ enum ZRecursionType: Int {
 }
 
 
+let gRecursionLogic = ZRecursionLogic()
+
+
 // for each zone, determine whether or not to recurse, AND if so,
 // whether or not to extensively recurse [add to references, in next fetch operation)
 

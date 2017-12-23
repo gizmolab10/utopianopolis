@@ -176,21 +176,14 @@ class ZEditingManager: NSObject {
                 case "?":        openBrowserForFocusWebsite()
                 case "'":        doFavorites(isShift, isOption)
                 case "/":        focus(on: gSelectionManager.firstGrab, isCommand)
-                case "=":        gTravelManager.maybeTravelThrough(gSelectionManager.firstGrab)
+                case "=":        gTravelManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawAndSyncAndRedraw() }
                 case gTabKey:    addNext(containing: isOption) { iChild in iChild.edit() }
                 case ",", ".":   gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
                 case "z":        if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
                 case gSpaceKey:  if isOption || isWindow || isControl { addIdea() }
                 case gBackspaceKey,
                      gDeleteKey: if isOption || isWindow { delete(permanently: isCommand && isControl && isOption && isWindow, preserveChildren: !isCommand && !isControl && isOption && isWindow) }
-                case "\r":
-                    if hasWidget && gSelectionManager.hasGrab {
-                        if isCommand {
-                            gSelectionManager.deselect()
-                        } else {
-                            gSelectionManager.editCurrent()
-                        }
-                    }
+                case "\r":       if hasWidget { grabOrEdit(isCommand) }
                 default:         break
                 }
             }
@@ -213,8 +206,8 @@ class ZEditingManager: NSObject {
         default:
             if !isShift {
                 switch arrow {
-                case .right: moveInto(selectionOnly: !isOption, extreme: isCommand)
-                case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand)
+                case .right: moveInto(selectionOnly: !isOption, extreme: isCommand) { self.redrawAndSyncAndRedraw() }
+                case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand) { self.redrawAndSyncAndRedraw() }
                 default: break
                 }
             } else if !isOption {
@@ -334,7 +327,9 @@ class ZEditingManager: NSObject {
             goal = lowest + 1
         }
 
-        toggleDotUpdate(show: show, zone: zone, to: goal)
+        toggleDotUpdate(show: show, zone: zone, to: goal) {
+            self.redrawAndSyncAndRedraw()
+        }
     }
 
 
@@ -379,7 +374,7 @@ class ZEditingManager: NSObject {
 
             zones.updateOrdering(start: start, end: end)
             commonParent.respectOrder()
-            redrawAndSync()
+            redrawAndSyncAndRedraw()
         }
     }
 
@@ -441,9 +436,21 @@ class ZEditingManager: NSObject {
                 child.addToGrab()
             }
 
-            redrawAndSync()
+            redrawAndSyncAndRedraw()
         }
     }
+
+
+    func grabOrEdit(_ isCommand: Bool) {
+        if  !gSelectionManager.hasGrab {
+            gHere.grab()
+        } else if isCommand {
+            gSelectionManager.deselect()
+        } else {
+            gSelectionManager.editCurrent()
+        }
+    }
+
 
     // MARK:- focus and travel
     // MARK:-
@@ -466,9 +473,7 @@ class ZEditingManager: NSObject {
         let backward = isShift || isOption
 
         gFavoritesManager.switchToNext(!backward) {
-            self.redrawAndSync() {
-                self.signalFor(nil, regarding: .redraw)
-            }
+            self.redrawAndSyncAndRedraw()
         }
     }
 
@@ -483,7 +488,7 @@ class ZEditingManager: NSObject {
 
         if isCommand {
             gFavoritesManager.refocus {
-                self.redrawAndSync()
+                self.redrawAndSyncAndRedraw()
             }
         } else if iZone.isBookmark {
             gTravelManager.travelThrough(iZone) { object, kind in
@@ -610,7 +615,7 @@ class ZEditingManager: NSObject {
                 gHere.grab()
             }
 
-            self.redrawAndSync()
+            self.redrawAndSyncAndRedraw()
         }
     }
 
@@ -619,14 +624,14 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func toggleDotUpdate(show: Bool, zone: Zone, to iGoal: Int? = nil) {
+    func toggleDotUpdate(show: Bool, zone: Zone, to iGoal: Int? = nil, onCompletion: Closure?) {
         toggleDotRecurse(show, zone, to: iGoal) {
 
             ///////////////////////////////////////////////////////////
             // delay executing this until the last time it is called //
             ///////////////////////////////////////////////////////////
 
-            self.redrawAndSync()
+            onCompletion?()
         }
     }
 
@@ -704,7 +709,9 @@ class ZEditingManager: NSObject {
             }
 
             if  zone.fetchableCount == 0 {
-                gTravelManager.maybeTravelThrough(zone)
+                gTravelManager.maybeTravelThrough(zone) {
+                    self.redrawAndSyncAndRedraw()
+                }
             } else {
                 if isEditing {
                     s.stopCurrentEdit()
@@ -712,7 +719,9 @@ class ZEditingManager: NSObject {
 
                 let show = !zone.showChildren
 
-                toggleDotUpdate(show: show, zone: zone)
+                toggleDotUpdate(show: show, zone: zone) {
+                    self.redrawAndSyncAndRedraw()
+                }
             }
         }
     }
@@ -856,42 +865,122 @@ class ZEditingManager: NSObject {
     }
 
 
-    private func deleteZones(_ iZones: [Zone], permanently: Bool = false, in parent: Zone? = nil, shouldGrab: Bool = true, onCompletion: Closure?) {
+    private func deleteZones(_ iZones: [Zone], permanently: Bool = false, in iParent: Zone? = nil, iShouldGrab: Bool = true, onCompletion: Closure?) {
+        let zones = iZones.sortedByReverseOrdering()
+        let  grab = !iShouldGrab ? nil : self.grabAppropriate(zones)
+        var  done = false
+
         for zone in iZones {
             zone.needProgeny()
         }
 
         gDBOperationsManager.children(.all) { // to make sure all progeny are acted upon
-            let zones = iZones.sortedByReverseOrdering()
-            let  grab = self.grabAppropriate(zones)
-            var count = zones.count
-
-            if count == 0 {
-                onCompletion?()
-
-                return
-            }
-
-            let finished: Closure = {
-                count -= 1
+            if !done {
+                done      = true
+                var count = zones.count
 
                 if  count == 0 {
-                    if  shouldGrab {
-                        grab?.grab()
+                    onCompletion?()
+                } else {
+                    let maybefinish: Closure = {
+                        count -= 1
+
+                        if  count == 0 {
+                            if  iShouldGrab {
+                                grab?.grab()
+                            }
+
+                            gDBOperationsManager.delete {
+                                var bookmarks = [Zone] ()
+
+                                for zone in zones {
+                                    bookmarks += gRemoteStoresManager.bookmarksFor(zone)
+                                }
+
+                                if  bookmarks.count == 0 {
+                                    onCompletion?()
+                                } else {
+
+                                    ////////////////////////////////////////////
+                                    // remove a bookmark whose target is zone //
+                                    ////////////////////////////////////////////
+
+                                    self.deleteZones(bookmarks, permanently: permanently, iShouldGrab: false) { iZone in // recurse
+                                        onCompletion?()
+                                    }
+                                }
+                            }
+                        }
                     }
 
-                    onCompletion?()
+                    for zone in zones {
+                        if  zone == iParent { // detect and avoid infinite recursion
+                            maybefinish()
+                        } else {
+                            self.deleteZone(zone, permanently: permanently) {
+                                maybefinish()
+                            }
+                        }
+                    }
                 }
             }
+        }
+    }
 
-            for zone in zones {
-                if  zone == parent { // detect and avoid infinite recursion
-                    finished()
-                } else {
-                    self.deleteZone(zone, permanently: permanently) {
-                        finished()
+
+    private func deleteZone(_ zone: Zone, permanently: Bool = false, onCompletion: Closure?) {
+        if zone.isRoot {
+            onCompletion?()
+        } else {
+            let   name = zone.recordName
+            let parent = zone.parentZone
+
+            if  zone         == gHere {                    // this can only happen once during recursion (multiple places, below)
+                if  let     p = parent, p != zone {
+                    revealParentAndSiblingsOf(zone) {
+                        gHere = p
+
+                        self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)   // recurse
+                    }
+                } else {                                    // delete here but here has no parent ... so, go somewhere useful and familiar:
+                    gFavoritesManager.refocus {             // travel to current favorite
+                        self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)   // then, recurse
                     }
                 }
+            } else {
+                if  zone.isInTrash || permanently {
+                    zone.orphan()
+                    zone.traverseAllProgeny { iZone in
+                        iZone.needDestroy()
+                    }
+                } else {
+                    zone.addToPaste()
+                    moveToTrash(zone)
+                }
+
+                if  let            p = parent {
+                    p.fetchableCount = p.count              // delete alters the count
+                }
+
+                ////////////////////////////////////////////
+                // remove a favorite whose target is zone //
+                ////////////////////////////////////////////
+
+                var trashables = [Zone] ()
+
+                for     favorite in gFavoritesManager.workingFavorites {
+                    if  favorite.bookmarkTarget?.recordName == name {
+                        trashables.append(favorite)
+                    }
+                }
+
+                for trashThis in trashables {
+                    moveToTrash(trashThis)
+                }
+
+                zone.maybeNeedBookmarks()
+                gFavoritesManager.updateFavorites()     // delete alters the list
+                onCompletion?()
             }
         }
     }
@@ -935,91 +1024,9 @@ class ZEditingManager: NSObject {
     }
 
 
-    private func deleteZone(_ zone: Zone, permanently: Bool = false, onCompletion: Closure?) {
-        if zone.isRoot {
-            onCompletion?()
-        } else {
-            let         parent = zone.parentZone
-            let     isFavorite = zone.isInFavorites
-
-            if  zone          == gHere {                                  // this can only happen once during recursion (multiple places, below)
-                if  let      p = parent, p != zone {
-                    revealParentAndSiblingsOf(zone) {
-                        gHere  = p
-
-                        self.deleteZone(zone, onCompletion: onCompletion) // recurse
-                    }
-                } else {
-                    gFavoritesManager.refocus {                           // travel to current favorite
-                        self.deleteZone(zone, onCompletion: onCompletion) // recurse
-                    }
-                }
-            } else {
-                if  zone.isInTrash || permanently {
-                    zone.orphan()
-                    zone.traverseAllProgeny { iZone in
-                        iZone.needDestroy()
-                    }
-                } else {
-                    zone.addToPaste()
-                    moveToTrash(zone)
-                }
-
-                if  let            p = parent {
-                    p.fetchableCount = p.count           // delete alters the count
-                }
-
-                if  isFavorite {
-                    gFavoritesManager.updateFavorites()   // delete alters the list
-                }
-
-                ////////////////////////////////////////////
-                // remove a favorite whose target is zone //
-                ////////////////////////////////////////////
-
-                var trashables = [Zone] ()
-
-                if let favorites = gFavoritesManager.rootZone?.children {
-                    for favorite in favorites {
-                        if favorite.bookmarkTarget == zone {
-                            trashables.append(favorite)
-                        }
-                    }
-
-                    for trashThis in trashables {
-                        moveToTrash(trashThis)
-                    }
-                }
-
-                onCompletion?()
-
-                ////////////////////////////////////////////
-                // remove a bookmark whose target is zone //
-                ////////////////////////////////////////////
-
-                if !zone.isBookmark {
-                    zone.needBookmarks()
-
-                    gDBOperationsManager.bookmarks {
-                        let bookmarks = gRemoteStoresManager.bookmarksFor(zone)
-
-                        if bookmarks.count == 0 {
-                            onCompletion?()
-                        } else {
-                            self.deleteZones(bookmarks, permanently: permanently, shouldGrab: false) { iZone in // recurse
-                                onCompletion?()
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    func moveToTrash(_ zone: Zone) {
-        if let trash = gTrash {
-            moveZone(zone, to: trash)
+    func moveToTrash(_ iZone: Zone, onCompletion: Closure? = nil) {
+        if  let trash = iZone.trashZone {
+            moveZone(iZone, to: trash, onCompletion: onCompletion)
         }
     }
 
@@ -1029,7 +1036,7 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func moveOut(selectionOnly: Bool = true, extreme: Bool = false) {
+    func moveOut(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
         let zone: Zone = gSelectionManager.firstGrab
         let parentZone = zone.parentZone
 
@@ -1045,7 +1052,7 @@ class ZEditingManager: NSObject {
                 if  gHere.isRoot {
                     gHere = zone // reverse what the last move out extreme did
 
-                    self.redrawAndSync()
+                    onCompletion?()
                 } else {
                     let here = gHere // revealPathToRoot (below) changes gHere, so nab it first
 
@@ -1066,20 +1073,20 @@ class ZEditingManager: NSObject {
                     p.needChildren()
 
                     gDBOperationsManager.children(.restore) {
-                        self.signalFor(p, regarding: .redraw)
+                        onCompletion?()
                     }
                 }
             } else {
                 // zone is an orphan
                 // focus on bookmark of zone
 
-                zone.needBookmarks()
+                zone.maybeNeedBookmarks()
                 gDBOperationsManager.bookmarks {
                     if  let b = zone.fetchedBookmark {
                         gHere = b
                     }
 
-                    self.signalFor(nil, regarding: .redraw)
+                    onCompletion?()
                 }
             }
         } else if let p = parentZone, !p.isRoot {
@@ -1092,13 +1099,11 @@ class ZEditingManager: NSObject {
 
             let moveOutToHere = { (iHere: Zone?) in
                 if iHere == nil {
-                    self.redrawAndSync()
+                    onCompletion?()
                 } else {
                     gHere = iHere!
 
-                    self.moveOut(to: iHere!) {
-                        self.redrawAndSync()
-                    }
+                    self.moveOut(to: iHere!, onCompletion: onCompletion)
                 }
             }
 
@@ -1111,25 +1116,21 @@ class ZEditingManager: NSObject {
                     }
                 }
             } else if gHere != zone && gHere != p && grandParentZone != nil {
-                moveOut(to: grandParentZone!){
-                    self.redrawAndSync(grandParentZone)
-                }
+                moveOut(to: grandParentZone!, onCompletion: onCompletion)
             } else {
-                revealParentAndSiblingsOf(gHere) {
-                    moveOutToHere(grandParentZone)
-                }
+                revealParentAndSiblingsOf(gHere, onCompletion: onCompletion)
             }
         }
     }
 
 
-    func moveInto(selectionOnly: Bool = true, extreme: Bool = false) {
+    func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
         let zone: Zone = gSelectionManager.firstGrab
 
         if !selectionOnly {
-            actuallyMoveZone(zone)
+            actuallyMoveZone(zone, onCompletion: onCompletion)
         } else if zone.fetchableCount == 0 && zone.count == 0 {
-            gTravelManager.maybeTravelThrough(zone)
+            gTravelManager.maybeTravelThrough(zone, onCompletion: onCompletion)
         } else {
             zone.needChildren()
             zone.displayChildren()
@@ -1144,15 +1145,15 @@ class ZEditingManager: NSObject {
     func grabChild(of zone: Zone) {
         if  zone.count > 0, let child = gInsertionsFollow ? zone.children.last : zone.children.first {
             child.grab()
-            redrawAndSync()
+            redrawAndSyncAndRedraw()
         }
     }
 
 
-    func moveZone(_ zone: Zone, to there: Zone) {
+    func moveZone(_ zone: Zone, to there: Zone, onCompletion: Closure?) {
         if !there.isBookmark {
             moveZone(zone, into: there, at: gInsertionsFollow ? nil : 0, orphan: true) {
-                self.redrawAndSync(nil)
+                onCompletion?()
             }
         } else if !there.isABookmark(spawnedBy: zone) {
 
@@ -1168,12 +1169,9 @@ class ZEditingManager: NSObject {
                     let there = object as! Zone
 
                     self.moveZone(mover, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
-                        if !sameGraph {
-                            mover.recursivelyApplyMode()
-                        }
-
+                        mover.recursivelyApplyMode(targetLink?.storageMode)
                         mover.grab()
-                        self.redrawAndSync()
+                        onCompletion?()
                     }
                 }
             }
@@ -1195,7 +1193,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func actuallyMoveZone(_ zone: Zone) {
+    func actuallyMoveZone(_ zone: Zone, onCompletion: Closure?) {
         if  var           there = zone.parentZone {
             let        siblings = there.children
 
@@ -1205,7 +1203,7 @@ class ZEditingManager: NSObject {
                 if cousinIndex >= 0 && cousinIndex < siblings.count {
                     there       = siblings[cousinIndex]
 
-                    moveZone(zone, to: there)
+                    moveZone(zone, to: there, onCompletion: onCompletion)
                 }
             }
         }
@@ -1308,7 +1306,7 @@ class ZEditingManager: NSObject {
             zones     .removeLast()
         }
 
-        redrawAndSync()
+        redrawAndSyncAndRedraw()
     }
 
 
@@ -1349,7 +1347,7 @@ class ZEditingManager: NSObject {
             }
 
             commonParent.respectOrder()
-            redrawAndSync()
+            redrawAndSyncAndRedraw()
         }
     }
 
@@ -1369,7 +1367,7 @@ class ZEditingManager: NSObject {
             iUndoSelf.delete()
         }
 
-        redrawAndSync()
+        redrawAndSyncAndRedraw()
     }
 
 
@@ -1391,23 +1389,23 @@ class ZEditingManager: NSObject {
                     pasteMe.orphan()
                     into.displayChildren()
                     into.addAndReorderChild(pasteMe, at: at)
-                    pasteMe.recursivelyApplyMode()
+                    pasteMe.recursivelyApplyMode(into.storageMode)
                     forUndo.append(pasteMe)
                     pasteMe.addToGrab()
                 }
 
                 self.UNDO(self) { iUndoSelf in
                     iUndoSelf.prepareUndoForDelete()
-                    iUndoSelf.deleteZones(forUndo, shouldGrab: false) { iZone in }
+                    iUndoSelf.deleteZones(forUndo, iShouldGrab: false) { iZone in }
                     zone.grab()
-                    iUndoSelf.redrawAndSync()
+                    iUndoSelf.redrawAndSyncAndRedraw()
                 }
 
                 if isBookmark {
                     self.undoManager.endUndoGrouping()
                 }
 
-                self.redrawAndSync()
+                self.redrawAndSyncAndRedraw()
             }
 
             let prepare = {
@@ -1485,7 +1483,7 @@ class ZEditingManager: NSObject {
 
                 self.UNDO(self) { iUndoSelf in
                     iUndoSelf.prepareUndoForDelete()
-                    iUndoSelf.deleteZones(children, shouldGrab: false) {}
+                    iUndoSelf.deleteZones(children, iShouldGrab: false) {}
                     iUndoSelf.pasteInto(parent, honorFormerParents: true)
                 }
             }
@@ -1645,7 +1643,7 @@ class ZEditingManager: NSObject {
 
                         movable.grab()
                         into.addAndReorderChild(movable, at: iIndex)
-                        movable.recursivelyApplyMode()
+                        movable.recursivelyApplyMode(into.storageMode)
                     }
 
                     if  toBookmark && self.undoManager.groupingLevel > 0 {

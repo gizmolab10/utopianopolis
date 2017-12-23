@@ -199,6 +199,15 @@ extension CKRecord {
         return index
     }
 
+
+    func copy(to iCopy: CKRecord?, properties: [String]) {
+        if  let copy = iCopy {
+            for keyPath in properties {
+                copy[keyPath] = self[keyPath]
+            }
+        }
+    }
+
 }
 
 
@@ -262,9 +271,9 @@ extension CGRect {
 
 extension Array {
 
-    func updateOrdering() {
-        updateOrdering(start: 0.0, end: 1.0)
-    }
+
+    func updateOrdering() { updateOrdering(start: 0.0, end: 1.0) }
+
 
     func sortedByReverseOrdering() -> Array {
         return sorted { (a, b) -> Bool in
@@ -276,6 +285,7 @@ extension Array {
             return true
         }
     }
+
 
     func updateOrdering(start: Double, end: Double) {
         let increment = (end - start) / Double(self.count + 2)
@@ -293,6 +303,7 @@ extension Array {
             }
         }
     }
+
 
     func apply(closure: AnyToStringClosure) -> String {
         var separator = ""

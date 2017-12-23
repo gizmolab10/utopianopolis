@@ -21,6 +21,8 @@ class ZCloudManager: ZRecordsManager {
     var        _manifest :   ZManifest? = nil
     var currentOperation : CKOperation? = nil
     var currentPredicate : NSPredicate? = nil
+    var    isRemembering :         Bool = false
+
 
 
     var manifest : ZManifest {
@@ -60,37 +62,42 @@ class ZCloudManager: ZRecordsManager {
 
 
     func delete(_ onCompletion: IntClosure?) {
-        let destroy = recordIDsWithMatchingStates([.needsDestroy], pull: true, batchSize: 1)
-
-        if  destroy.count == 0 {
+//        if let destroy = pullRecordIDWithHighestLevel(for: [.needsDestroy]) {
+//            columnarReport("DESTROY", stringForRecordID(destroy))
+//
+//            database?.delete(withRecordID: destroy) { (iID, iError) in
+//                gAlertManager.detectError(iError) { iHasError in
+//                    if  iHasError {
+//                        self.columnarReport("DELETE ERROR", iError)
+//                    } else if let zRecord = self.maybeZRecordForRecordID(destroy) {
+//                        self.unregisterZRecord(zRecord)
+//                    }
+//                }
+//
+//                self.delete(onCompletion)
+//            }
+//        } else {
             onCompletion?(0)
-        } else {
-            columnarReport("DESTROY", stringForRecordIDs(destroy))
-
-            database?.delete(withRecordID: destroy[0]) { (iID, iError) in
-                gAlertManager.detectError(iError) { iHasError in
-                    if  iHasError {
-                        self.columnarReport("DELETE ERROR", iError)
-                    }
-                }
-
-                self.delete(onCompletion)
-            }
-        }
+//        }
     }
 
 
     func save(_ onCompletion: IntClosure?) {
         let   saves = pullCKRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
-        let   count = saves.count // + destroy.count
+        let destroy = pullRecordIDsWithHighestLevel(for: [.needsDestroy], batchSize: 20)
+        let   count = saves.count + destroy.count
 
         if  count > 0, let           operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
             operation              .savePolicy = .allKeys
             operation           .recordsToSave = saves
+            operation       .recordIDsToDelete = destroy
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
                 gAlertManager.detectError(iError) { iHasError in
                     if  iHasError {
-                        if  let     ck = iError as? CKError,
+                        let notDestroy = iRecord == nil || !destroy.contains(iRecord!.recordID)
+
+                        if  notDestroy,
+                            let     ck = iError as? CKError,
                             ck.code   == .serverRecordChanged, // oplock error
                             let record = self.maybeZRecordForCKRecord(iRecord) {
                             record.maybeNeedMerge()
@@ -136,9 +143,8 @@ class ZCloudManager: ZRecordsManager {
                 }
             }
 
-            if   saves.count > 0 {
-                columnarReport("SAVE \(     saves.count)", stringForCKRecords(saves))
-            }
+            if   saves.count > 0 { columnarReport("SAVE \(     saves.count)", stringForCKRecords(saves)) }
+            if destroy.count > 0 { columnarReport("DESTROY \(destroy.count)", stringForRecordIDs(destroy)) }
 
             start(operation)
         } else {
@@ -354,14 +360,14 @@ class ZCloudManager: ZRecordsManager {
                     }
                 }
 
-                self.clearStatesForRecordID(iID, forStates:[.needsMerge])
+                self.clearRecordID(iID, for:[.needsMerge])
             }
 
             operation.completionBlock = {
                 FOREGROUND {
                     if  recordsByID.count == 0 {
                         for ckRecordID in recordIDs {
-                            self.clearStatesForRecordID(ckRecordID, forStates: [.needsMerge])
+                            self.clearRecordID(ckRecordID, for: [.needsMerge])
                         }
                     } else {
                         for (iRecord, iID) in recordsByID {
@@ -388,6 +394,14 @@ class ZCloudManager: ZRecordsManager {
 
 
     func remember(_ onCompletion: IntClosure?) {
+        if !isRemembering {
+            isRemembering = true
+        } else {
+            onCompletion?(0)
+
+            return
+        }
+
         BACKGROUND {     // not stall foreground processor
             var memorables = [String] ()
 
@@ -416,6 +430,9 @@ class ZCloudManager: ZRecordsManager {
 
             self.columnarReport("REMEMBER \(memorables.count)", "\(self.storageMode.rawValue)")
             setString(memorables.joined(separator: gSeparatorKey), for: self.refetchingName)
+
+            self.isRemembering = false
+
             onCompletion?(0)
         }
     }
@@ -551,15 +568,15 @@ class ZCloudManager: ZRecordsManager {
                     onCompletion?(0)
                 } else {
                     for ckRecord in iCKRecords {
-                        var record  = self.maybeZRecordForCKRecord(ckRecord)
+                        var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
 
-                        if  record == nil {
-                            record  = ZRecord(record: ckRecord, storageMode: self.storageMode)
+                        if  zRecord == nil {
+                            zRecord  = ZRecord(record: ckRecord, storageMode: self.storageMode)
                         } else {
-                            record?.record = ckRecord
+                            zRecord?.record = ckRecord
                         }
 
-                        record?.unorphan()
+                        zRecord?.unorphan()
                     }
 
                     self.clearCKRecords(iCKRecords, for: states)    // deferred to make sure fetch worked before clearing fetch flag
@@ -582,7 +599,7 @@ class ZCloudManager: ZRecordsManager {
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
                 gAlertManager.alertError(iError) { iHasError in
                     if  iHasError {
-                        self.clearStatesForRecordID(iID, forStates: [.needsFetch])
+                        self.clearRecordID(iID, for: [.needsFetch])
                     } else if let ckRecord = iRecord,
                         !retrieved.contains(ckRecord) {
                         retrieved.append(ckRecord)

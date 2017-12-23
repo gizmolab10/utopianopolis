@@ -71,6 +71,8 @@ class ZTravelManager: NSObject {
 
                 if crossLink.isRoot { // e.g., default root favorite
                     travel {
+                        gHere = bookmark.bookmarkTarget!
+
                         atArrival(gHere, .redraw)
                     }
                 } else {
@@ -134,8 +136,8 @@ class ZTravelManager: NSObject {
     }
 
 
-    func maybeTravelThrough(_ iZone: Zone) {
-        if     !travelThroughBookmark(iZone) {
+    func maybeTravelThrough(_ iZone: Zone, onCompletion: Closure?) {
+        if     !travelThroughBookmark(iZone, onCompletion: onCompletion) {
             if !travelThroughHyperlink(iZone) {
                 travelThroughEmail(iZone)
             }
@@ -167,12 +169,12 @@ class ZTravelManager: NSObject {
     }
 
 
-    @discardableResult func travelThroughBookmark(_ bookmark: Zone) -> Bool {
+    @discardableResult func travelThroughBookmark(_ bookmark: Zone, onCompletion: Closure?) -> Bool {
         let doThis = bookmark.isBookmark
 
         if  doThis {
             travelThrough(bookmark) { object, kind in
-                self.redrawAndSync()
+                onCompletion?()
             }
         }
 

@@ -19,15 +19,15 @@ var         gRoot: Zone?   { get { return gRemoteStoresManager.rootZone }  set {
 var         gHere: Zone    { get { return gManifest.hereZone }             set { gManifest.hereZone             = newValue } }
 
 
-var gAllRegisteredZRecords: [ZRecord] {
-    var records = [ZRecord] ()
+var gAllBookmarks: [Zone] {
+    var bookmarks = [Zone] ()
 
     for mode in gAllDatabaseModes {
         let manageer = gRemoteStoresManager.cloudManagerFor(mode)
-        records     += manageer.zRecordsByID.values
+        bookmarks   += manageer.bookmarksByID.values
     }
 
-    return records
+    return bookmarks
 }
 
 
@@ -171,33 +171,20 @@ class ZRemoteStoresManager: NSObject {
             }
         }
     }
-    
 
-    func applyToAllZones(in modes: ZModes, _ closure: ZoneClosure) {
-        for mode: ZStorageMode in modes {
-            let zRecords = cloudManagerFor(mode).zRecordsByID
-
-            for zRecord in zRecords.values {
-                if let zone = zRecord as? Zone {
-                    closure(zone)
-                }
-            }
-        }
-    }
- 
 
     func bookmarksFor(_ zone: Zone?) -> [Zone] {
-        var zoneBookmarks = [Zone] ()
+        var        bookmarks = [Zone] ()
 
-        if zone != nil, let recordID = zone?.record?.recordID {
-            applyToAllZones(in: [.mineMode, .everyoneMode]) { iZone in
-                if let link = iZone.crossLink, let record = link.record, recordID == record.recordID {
-                    zoneBookmarks.append(iZone)
+        if  let         name = zone?.recordName {
+            for bookmark in gAllBookmarks {
+                if  name    == bookmark.linkName {
+                    bookmarks.append(bookmark)
                 }
             }
         }
 
-        return zoneBookmarks
+        return bookmarks
     }
     
 

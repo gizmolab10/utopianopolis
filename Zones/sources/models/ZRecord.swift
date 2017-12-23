@@ -161,10 +161,7 @@ class ZRecord: NSObject {
     func copy(into copy: ZRecord) {
         copy.needSave() // so KVO won't set needsMerge
         updateRecordProperties()
-
-        for keyPath: String in cloudProperties() {
-            copy.record[keyPath] = record[keyPath]
-        }
+        record.copy(to: copy.record, properties: cloudProperties())
 
         copy.isLocalOnly = isLocalOnly
 
@@ -223,12 +220,12 @@ class ZRecord: NSObject {
 
     func hasState(_ state: ZRecordState) -> Bool { return recordsManager?.hasZRecord(self, forAnyOf:[state]) ?? false }
     func addState(_ state: ZRecordState)         {        recordsManager?.addZRecord(self,     for: [state]) }
-    func clearAllStates()                        {        recordsManager?.clearAllStatesForRecord(self.record) }
+    func clearAllStates()                        {        recordsManager?.clearAllStatesForCKRecord(self.record) }
 
 
     func removeState(_ state: ZRecordState) {
         if let identifier = self.record?.recordID {
-            recordsManager?.clearStatesForRecordID(identifier, forStates:[state])
+            recordsManager?.clearRecordID(identifier, for:[state])
         }
     }
 
@@ -243,7 +240,6 @@ class ZRecord: NSObject {
     func needDestroy()   { addState(.needsDestroy); removeState(.needsSave); removeState(.needsMerge) }
     func needWritable()  { addState(.needsWritable) }
     func needChildren()  { addState(.needsChildren) }
-    func needBookmarks() { addState(.needsBookmarks) }
 
 
     func needSave() {
