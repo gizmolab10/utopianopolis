@@ -733,8 +733,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetchChildren(_ iLogic: ZRecursionLogic?, _ onCompletion: IntClosure?) {
-        let          logic = iLogic ?? ZRecursionLogic(.all)
+    func fetchChildren(_ onCompletion: IntClosure?) {
         let  progenyNeeded = pullReferencesWithMatchingStates([.needsProgeny])
         let childrenNeeded = pullReferencesWithMatchingStates([.needsChildren]) + progenyNeeded
         let   destroyedIDs = recordIDsWithMatchingStates([.needsDestroy])
@@ -775,7 +774,7 @@ class ZCloudManager: ZRecordsManager {
                                     // self-parenting causes infinite recursion AND extra trash favorites are annoying
                                     // destroy either on fetch
                                 } else {
-                                    logic.propagateNeeds(to: fetched, progenyNeeded)
+                                    gRecursionLogic.propagateNeeds(to: fetched, progenyNeeded)
 
                                     if  let p = parent,
                                         !p.hasChildMatchingRecordName(of: fetched) {
@@ -804,7 +803,7 @@ class ZCloudManager: ZRecordsManager {
 
                         self.columnarReport("CHILDREN of", self.stringForReferences(childrenNeeded, in: self.storageMode))
                         self.add(states: [.needsCount], to: childrenNeeded)
-                        self.fetchChildren(logic, onCompletion) // process remaining
+                        self.fetchChildren(onCompletion) // process remaining
                     }
                 }
             }

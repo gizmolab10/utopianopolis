@@ -13,14 +13,6 @@ import Foundation
 let gDBOperationsManager = ZDBOperationsManager()
 
 
-typealias stringKeyedItems = [String: Any]
-
-
-let r = "recursion type"
-let c = "on completion"
-let g = "goal"
-
-
 class ZDBOperationsManager: ZOperationsManager {
 
 
@@ -38,12 +30,12 @@ class ZDBOperationsManager: ZOperationsManager {
 
 
     class ZBatch: NSObject {
-        var identifier: ZBatchOperationID
-        var  itemsList: [stringKeyedItems]
+        var completions : [Closure]
+        var  identifier : ZBatchOperationID
 
-        init(_ iID: ZBatchOperationID, _ iItemsList: [stringKeyedItems]) {
-            itemsList  = iItemsList
-            identifier = iID
+        init(_ iID: ZBatchOperationID, _ iCompletions: [Closure]) {
+            completions = iCompletions
+            identifier  = iID
         }
     }
 
@@ -58,23 +50,21 @@ class ZDBOperationsManager: ZOperationsManager {
     // MARK:-
 
 
-    func      save(_ onCompletion: @escaping Closure) { batch(.save,      [c : onCompletion]) }
-    func      root(_ onCompletion: @escaping Closure) { batch(.root,      [c : onCompletion]) }
-    func      sync(_ onCompletion: @escaping Closure) { batch(.sync,      [c : onCompletion]) }
-    func    travel(_ onCompletion: @escaping Closure) { batch(.travel,    [c : onCompletion]) }
-    func    delete(_ onCompletion: @escaping Closure) { batch(.delete,    [c : onCompletion]) }
-    func   parents(_ onCompletion: @escaping Closure) { batch(.parents,   [c : onCompletion]) }
-    func  families(_ onCompletion: @escaping Closure) { batch(.families,  [c : onCompletion]) }
-    func bookmarks(_ onCompletion: @escaping Closure) { batch(.bookmarks, [c : onCompletion]) }
+    func      save(_ onCompletion: @escaping Closure) { batch(.save,      onCompletion) }
+    func      root(_ onCompletion: @escaping Closure) { batch(.root,      onCompletion) }
+    func      sync(_ onCompletion: @escaping Closure) { batch(.sync,      onCompletion) }
+    func    travel(_ onCompletion: @escaping Closure) { batch(.travel,    onCompletion) }
+    func    delete(_ onCompletion: @escaping Closure) { batch(.delete,    onCompletion) }
+    func   parents(_ onCompletion: @escaping Closure) { batch(.parents,   onCompletion) }
+    func  families(_ onCompletion: @escaping Closure) { batch(.families,  onCompletion) }
+    func bookmarks(_ onCompletion: @escaping Closure) { batch(.bookmarks, onCompletion) }
 
 
     func  children(_ recursing: ZRecursionType = .restore, _ iGoal: Int? = nil, _ onCompletion: @escaping Closure) {
-        var items = stringKeyedItems()
-        items [c] = onCompletion
-        items [r] = recursing
-        items [g] = iGoal
+        gRecursionLogic       .type = recursing
+        gRecursionLogic.targetLevel = iGoal
 
-        batch(.children, items)
+        batch(.children, onCompletion)
     }
 
 
@@ -97,13 +87,7 @@ class ZDBOperationsManager: ZOperationsManager {
     func  pFamilies(_ onCompletion: @escaping Closure) { setupAndRun([                   .parents,                .children,         .traits, .remember]) { onCompletion() } }
     func    pDelete(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks, .delete,                                                    .remember]) { onCompletion() } }
     func pBookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks,                                                    .traits, .remember]) { onCompletion() } }
-
-
-    func pChildren(_ recursing: ZRecursionType, _ iGoal: Int?, _ onCompletion: @escaping Closure) {
-        let logic = ZRecursionLogic(recursing,    iGoal)
-
-        setupAndRun([.manifest, .children], logic: logic) { onCompletion() }
-    }
+    func  pChildren(_ onCompletion: @escaping Closure) { setupAndRun([.manifest,                                  .children                            ]) { onCompletion() } }
 
 
     // MARK:- batches
@@ -126,7 +110,7 @@ class ZDBOperationsManager: ZOperationsManager {
     }
 
 
-    func batch(_ iID: ZBatchOperationID, _ items: stringKeyedItems) {
+    func batch(_ iID: ZBatchOperationID, _ iCompletion: @escaping Closure) {
         undefer()
 
         let doClosure = currentOps.count == 0
@@ -135,31 +119,26 @@ class ZDBOperationsManager: ZOperationsManager {
         // else append to current batches
 
         if !isBatchID(iID, containedIn: currentOps) {
-            currentOps.append(ZBatch(iID, [items]))
+            currentOps.insert(ZBatch(iID, [iCompletion]), at: 0)
         } else if let deferal = getBatch(iID, from: deferredOps) {
-            deferal.itemsList += [items]
+            deferal.completions = [iCompletion] + deferal.completions
         } else {
-            deferredOps.append(ZBatch(iID, [items]))
+            deferredOps.insert(ZBatch(iID, [iCompletion]), at: 0)
         }
 
         if doClosure {
             var closure: Closure? = nil
             closure               = {
                 if  let     batch = self.currentOps.first {
-                    var      list = batch.itemsList
 
-                    self.currentOps.remove(at: 0)
+                    self.currentOps.removeFirst()
 
-                    if  var items = list.first {
-                        list.remove(at: 0)
+                    if  var completion = batch.completions.popLast() {
+                        self.invokeBatch(batch.identifier, completion) {
+                            while batch.completions.count > 0 {
+                                completion = batch.completions.popLast()!
 
-                        self.invokeBatch(batch.identifier, items) {
-                            while list.count > 0 {
-                                items      = list.first!
-                                let finish = items[c] as? Closure
-
-                                list.remove(at: 0)
-                                finish?()
+                                completion()
                             }
 
                             closure?()
@@ -192,24 +171,17 @@ class ZDBOperationsManager: ZOperationsManager {
     }
 
 
-    func invokeBatch(_ iID: ZBatchOperationID, _ items: stringKeyedItems, _ iClosure: @escaping Closure) {
-        if  let onCompletion = items[c] as? Closure {
-            switch iID {
-            case .save:      pSave        { onCompletion(); iClosure() }
-            case .root:      pRoot        { onCompletion(); iClosure() }
-            case .sync:      pSync        { onCompletion(); iClosure() }
-            case .travel:    pTravel      { onCompletion(); iClosure() }
-            case .delete:    pDelete      { onCompletion(); iClosure() }
-            case .parents:   pParents     { onCompletion(); iClosure() }
-            case .families:  pFamilies    { onCompletion(); iClosure() }
-            case .bookmarks: pBookmarks   { onCompletion(); iClosure() }
-            case .children:
-                if  let type = items[r] as? ZRecursionType {
-                    let goal = items[g] as? Int
-
-                    pChildren(type, goal) { onCompletion(); iClosure() }
-                }
-            }
+    func invokeBatch(_ iID: ZBatchOperationID, _ onCompletion: @escaping Closure, _ iClosure: @escaping Closure) {
+        switch iID {
+        case .save:      pSave      { onCompletion(); iClosure() }
+        case .root:      pRoot      { onCompletion(); iClosure() }
+        case .sync:      pSync      { onCompletion(); iClosure() }
+        case .travel:    pTravel    { onCompletion(); iClosure() }
+        case .delete:    pDelete    { onCompletion(); iClosure() }
+        case .parents:   pParents   { onCompletion(); iClosure() }
+        case .children:  pChildren  { onCompletion(); iClosure() }
+        case .families:  pFamilies  { onCompletion(); iClosure() }
+        case .bookmarks: pBookmarks { onCompletion(); iClosure() }
         }
     }
 
@@ -218,7 +190,7 @@ class ZDBOperationsManager: ZOperationsManager {
     // MARK:-
 
 
-    override func invoke(_ identifier: ZOperationID, _ logic: ZRecursionLogic? = nil, cloudCallback: AnyClosure?) {
+    override func invoke(_ identifier: ZOperationID, cloudCallback: AnyClosure?) {
         let      remote = gRemoteStoresManager
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
@@ -232,7 +204,7 @@ class ZDBOperationsManager: ZOperationsManager {
         case .cloud:                cloudManager.fetchCloudZones         (               cloudCallback)
         case .bookmarks:            cloudManager.fetchBookmarks          (               cloudCallback)
         case .manifest:             cloudManager.fetchManifest           (               cloudCallback)
-        case .children:             cloudManager.fetchChildren           (logic,         cloudCallback)
+        case .children:             cloudManager.fetchChildren           (               cloudCallback)
         case .parents:              cloudManager.fetchParents            (               cloudCallback)
         case .traits:               cloudManager.fetchTraits             (               cloudCallback)
         case .unsubscribe:          cloudManager.unsubscribe             (               cloudCallback)
@@ -254,7 +226,7 @@ class ZDBOperationsManager: ZOperationsManager {
     }
 
 
-    override func performBlock(for operationID: ZOperationID, with logic: ZRecursionLogic? = nil, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {
+    override func performBlock(for operationID: ZOperationID, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {
         let  forCurrentStorageModeOnly = [.completion, .onboard ].contains(operationID)
         let            forMineModeOnly = [.bookmarks            ].contains(operationID)
         let                     isMine = restoreToMode == .mineMode
@@ -278,7 +250,7 @@ class ZDBOperationsManager: ZOperationsManager {
             } else {
                 self      .currentMode = modes[index]      // if hung, it happened in this mode
 
-                self.invoke(operationID, logic) { (iResult: Any?) in
+                self.invoke(operationID) { (iResult: Any?) in
                     self  .lastOpStart = nil
 
                     FOREGROUND(canBeDirect: true) {

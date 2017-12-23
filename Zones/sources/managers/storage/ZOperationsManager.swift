@@ -74,8 +74,8 @@ class ZOperationsManager: NSObject {
     let           queue = OperationQueue()
 
 
-    func invoke(_ identifier: ZOperationID, _ logic: ZRecursionLogic? = nil, cloudCallback: AnyClosure?) {}
-    func performBlock(for operationID: ZOperationID, with logic: ZRecursionLogic? = nil, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {}
+    func invoke(_ identifier: ZOperationID, cloudCallback: AnyClosure?) {}
+    func performBlock(for operationID: ZOperationID, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {}
 
 
     var usingDebugTimer: Bool {
@@ -100,7 +100,7 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func setupAndRunUnsafe(_ operationIDs: [ZOperationID], logic: ZRecursionLogic?, onCompletion: @escaping Closure) {
+    func setupAndRunUnsafe(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
         if gIsLate {
             FOREGROUND { // avoid stack overflow
                 onCompletion()
@@ -130,7 +130,7 @@ class ZOperationsManager: NSObject {
                         self.columnarReport("  " + self.operationText, message)
                     }
 
-                    self.performBlock(for: operationID, with: logic, restoreToMode: saved) {
+                    self.performBlock(for: operationID, restoreToMode: saved) {
                         if  gDebugOperations && false {
                             let   duration = Int(start.timeIntervalSinceNow) * -10
                             let    message = "\(Float(duration) / 10.0)"
@@ -152,9 +152,9 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func setupAndRun(_ operationIDs: [ZOperationID], logic: ZRecursionLogic? = nil, onCompletion: @escaping Closure) {
+    func setupAndRun(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
         FOREGROUND(canBeDirect: true) {
-            self.setupAndRunUnsafe(operationIDs, logic: logic, onCompletion: onCompletion)
+            self.setupAndRunUnsafe(operationIDs, onCompletion: onCompletion)
         }
     }
 
