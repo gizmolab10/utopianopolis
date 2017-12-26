@@ -173,21 +173,6 @@ class ZRemoteStoresManager: NSObject {
     }
 
 
-    func bookmarksFor(_ zone: Zone?) -> [Zone] {
-        var        bookmarks = [Zone] ()
-
-        if  let         name = zone?.recordName {
-            for bookmark in gAllBookmarks {
-                if  name    == bookmark.linkName {
-                    bookmarks.append(bookmark)
-                }
-            }
-        }
-
-        return bookmarks
-    }
-    
-
     // MARK:- receive from cloud
     // MARK:-
 

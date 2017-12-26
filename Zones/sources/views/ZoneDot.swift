@@ -28,7 +28,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var       dragStart: CGPoint? = nil
     var        isToggle:  Bool = true
     var      isInnerDot:  Bool = false
-    var    isDragTarget:  Bool { return widgetZone == gDragDropZone }
+    var      isDragDrop:  Bool { return widgetZone == gDragDropZone }
     var      widgetZone: Zone? { return widget?.widgetZone }
     var isDragDotHidden:  Bool { return widgetZone?.onlyShowToggleDot ?? true }
 
@@ -72,7 +72,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var isHiddenToggleDot: Bool {
         if  let zone = widgetZone, isInnerDot, isToggle, let mode = zone.storageMode {
 
-            return (!zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 && !isDragTarget)
+            return (!zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 && !isDragDrop)
                 || (!zone.isRootOfFavorites && mode == .favoritesMode)
         }
         
@@ -175,7 +175,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     let          x = offCenter.x + orbitRadius * CGFloat(cos(angle))
                     let          y = offCenter.y + orbitRadius * CGFloat(sin(angle))
                     rect           = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
-                    color          = isDragTarget ? gRubberbandColor : zone.color
+                    color          = isDragDrop ? gRubberbandColor : zone.color
                     let       path = ZBezierPath(ovalIn: rect!)
                     path .flatness = 0.0001
 
@@ -215,14 +215,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             if !isHiddenToggleDot {
                 if isInnerDot {
-                    let showTravelerDot = zone.canTravel && zone.fetchableCount == 0
-                    let     dotIsFilled = isToggle ? (!zone.showChildren || showTravelerDot || isDragTarget) : (zone.isGrabbed || highlightAsFavorite) // not highlight when editing
-                    let     strokeColor = isToggle  && isDragTarget ? gRubberbandColor : zone.color
-                    var       fillColor = dotIsFilled ? strokeColor : gBackgroundColor
-                    let       thickness = CGFloat(gLineThickness)
-                    var            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
-                    path     .lineWidth = thickness * 2.0
-                    path      .flatness = 0.0001
+                    let showTinyCenterDot = zone.canTravel && zone.fetchableCount == 0
+                    let       dotIsFilled = isToggle ? (!zone.showChildren || showTinyCenterDot || isDragDrop) : (zone.isGrabbed || highlightAsFavorite) // not highlight when editing
+                    let       strokeColor = isToggle  && isDragDrop ? gRubberbandColor : zone.color
+                    var         fillColor = dotIsFilled ? strokeColor : gBackgroundColor
+                    let         thickness = CGFloat(gLineThickness)
+                    var              path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
+                    path       .lineWidth = thickness * 2.0
+                    path        .flatness = 0.0001
 
                     fillColor.setFill()
                     strokeColor.setStroke()
@@ -230,7 +230,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     path.fill()
 
                     if isToggle {
-                        if  showTravelerDot {
+                        if  showTinyCenterDot {
                             let     inset = CGFloat(innerDotHeight / 3.0)
                             path          = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
                             path.flatness = 0.0001

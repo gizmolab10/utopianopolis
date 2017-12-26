@@ -177,12 +177,6 @@ class Zone : ZRecord {
         if record != nil {
             self.record = record
         }
-
-        if !isBookmark, zoneLink != gNullLink {
-            zoneLink = gNullLink
-
-            maybeNeedSave()
-        }
     }
 
 
@@ -232,7 +226,7 @@ class Zone : ZRecord {
 
 
     var fetchedBookmarks: [Zone] {
-        var           bookmarks = [Zone] ()
+        var          bookmarks  = [Zone] ()
         if  let     identifier  = recordName {
             for bookmark in gAllBookmarks {
                 if  identifier == bookmark.linkName {
@@ -679,6 +673,12 @@ class Zone : ZRecord {
                 }
             } else {
                 parentLink         = gNullLink
+            }
+
+            if  let                    key = linkName,
+                let                   mode = storageMode {
+                let                manager = gRemoteStoresManager.cloudManagerFor(mode)
+                manager.bookmarksByID[key] = self
             }
         }
     }

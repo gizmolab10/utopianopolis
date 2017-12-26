@@ -245,7 +245,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
                 var bookmarks = [Zone] ()
 
-                for bookmark in gRemoteStoresManager.bookmarksFor(zone) {
+                for bookmark in zone.fetchedBookmarks {
                     bookmarks.append(bookmark)
                     assignTextTo(bookmark)
                 }

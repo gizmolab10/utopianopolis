@@ -325,13 +325,13 @@ class ZoneWidget: ZView {
 
 
     func displayForDrag() {
-        toggleDot.innerDot?         .setNeedsDisplay()
-        parentWidget?               .setNeedsDisplay() // sibling lines
-        self                        .setNeedsDisplay() // children lines
+        toggleDot.innerDot?        .setNeedsDisplay()
+        parentWidget?              .setNeedsDisplay() // sibling lines
+        self                       .setNeedsDisplay() // children lines
 
         for child in childrenWidgets {
-            child .dragDot.innerDot?.setNeedsDisplay()
-            child                   .setNeedsDisplay() // grandchildren lines
+            child.dragDot.innerDot?.setNeedsDisplay()
+            child                  .setNeedsDisplay() // grandchildren lines
         }
     }
 

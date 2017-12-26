@@ -520,7 +520,7 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func registerZRecord(_   iRecord: ZRecord?) {
+    func registerZRecord(_  iRecord : ZRecord?) {
         if  let             zRecord = iRecord,
             let                  id = zRecord.recordName {
             if  let             rid = isRegistered(zRecord), rid != id {

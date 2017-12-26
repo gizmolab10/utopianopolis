@@ -100,14 +100,14 @@ extension NSObject {
 
 
     func name(from iLink: String?) -> String? {
-        if let link = iLink {
-            var components = link.components(separatedBy: gSeparatorKey)
+        if  let       link = iLink {
+            var components =  link.components(separatedBy: gSeparatorKey)
 
-            if  components.count < 3 {
-                return nil
+            if  components.count > 2 {
+                let    name = components[2]
+
+                return name == "" ? gRootNameKey : name
             }
-
-            return components[2] == "" ? "root" : components[2]
         }
 
         return nil
@@ -115,26 +115,23 @@ extension NSObject {
 
 
     func zoneFrom(_ link: String?) -> Zone? {
-        if  link == nil || link == "" {
-            return nil
+        if  link                      != nil,
+            link                      != "",
+            let                   name = name(from: link) {
+            var components:   [String] = link!.components(separatedBy: gSeparatorKey)
+            let identifier: CKRecordID = CKRecordID(recordName: name)
+            let   ckRecord: CKRecord   = CKRecord(recordType: gZoneTypeKey, recordID: identifier)
+            let                rawMode = components[0]
+            let    mode: ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
+            let                manager = gRemoteStoresManager.recordsManagerFor(mode)
+            let                   zone = manager?.zoneForCKRecord(ckRecord) ?? Zone(record: ckRecord, storageMode: mode)
+
+            return zone
         }
 
-        var components: [String] = link!.components(separatedBy: gSeparatorKey)
-
-        if  components.count < 3 {
-            return nil
-        }
-
-        let           name: String = components[2] == "" ? "root" : components[2]
-        let identifier: CKRecordID = CKRecordID(recordName: name)
-        let     ckRecord: CKRecord = CKRecord(recordType: gZoneTypeKey, recordID: identifier)
-        let                rawMode = components[0]
-        let    mode: ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
-        let                manager = gRemoteStoresManager.recordsManagerFor(mode)
-        let                   zone = manager?.zoneForCKRecord(ckRecord) ?? Zone(record: ckRecord, storageMode: mode)
-
-        return zone
+        return nil
     }
+
 }
 
 

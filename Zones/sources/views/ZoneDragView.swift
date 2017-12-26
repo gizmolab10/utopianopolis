@@ -33,8 +33,10 @@ class ZoneDragView: ZView, ZGestureRecognizerDelegate {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
+        gClearColor.setFill()
+        ZBezierPath(rect: bounds).fill()
+
         if  let rect = rubberbandRect {
-            gClearColor.setFill()
             gRubberbandColor.lighter(by: 2.0).setStroke()
             ZBezierPath(rect: rect).stroke()
         }

@@ -894,7 +894,7 @@ class ZEditingManager: NSObject {
                                 var bookmarks = [Zone] ()
 
                                 for zone in zones {
-                                    bookmarks += gRemoteStoresManager.bookmarksFor(zone)
+                                    bookmarks += zone.fetchedBookmarks
                                 }
 
                                 if  bookmarks.count == 0 {

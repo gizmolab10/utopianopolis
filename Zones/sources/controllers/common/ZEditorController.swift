@@ -364,9 +364,9 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
                 prior?           .displayForDrag() // erase  child lines
                 dropZone?.widget?.displayForDrag() // redraw child lines
-                gEditorView?    .setNeedsDisplay() // redraw drag (line and dot)
+                editorView?     .setNeedsDisplay() // redraw drag: line and dot
 
-                columnarReport(relation, dropZone?.unwrappedName)
+                // columnarReport(String(describing: gDragRelation), gDragDropZone?.unwrappedName)
 
                 if dropNow, let drop = dropZone, !isNoop {
                     let   toBookmark = drop.isBookmark
@@ -426,14 +426,14 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 //  deterimine which zone is closer to cursor  //
                 /////////////////////////////////////////////////
 
-                let      dotA = dropNearest.dragDot
-                let      dotB = otherDrop  .dragDot
-                let distanceA = dotA.convert(dotA.bounds.center, to: view) - location
-                let distanceB = dotB.convert(dotB.bounds.center, to: view) - location
-                let   scalarA = distanceA.scalarDistance
-                let   scalarB = distanceB.scalarDistance
+                let      dotN = dropNearest.dragDot
+                let      dotO = otherDrop  .dragDot
+                let distanceN = dotN.convert(dotN.bounds.center, to: view) - location
+                let distanceO = dotO.convert(dotO.bounds.center, to: view) - location
+                let   scalarN = distanceN.scalarDistance
+                let   scalarO = distanceO.scalarDistance
 
-                if scalarA > scalarB {
+                if scalarN > scalarO {
                     return (false, otherDrop, otherLocation)
                 }
             }
@@ -511,6 +511,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
         favoritesRootWidget.setNeedsDisplay()
         editorRootWidget   .setNeedsDisplay()
+        editorView?        .setNeedsDisplay() // erase drag: line and dot
         dot?               .setNeedsDisplay()
     }
 
