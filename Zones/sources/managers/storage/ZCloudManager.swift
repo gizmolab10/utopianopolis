@@ -61,27 +61,6 @@ class ZCloudManager: ZRecordsManager {
     // MARK:-
 
 
-    func delete(_ onCompletion: IntClosure?) {
-//        if let destroy = pullRecordIDWithHighestLevel(for: [.needsDestroy]) {
-//            columnarReport("DESTROY", stringForRecordID(destroy))
-//
-//            database?.delete(withRecordID: destroy) { (iID, iError) in
-//                gAlertManager.detectError(iError) { iHasError in
-//                    if  iHasError {
-//                        self.columnarReport("DELETE ERROR", iError)
-//                    } else if let zRecord = self.maybeZRecordForRecordID(destroy) {
-//                        self.unregisterZRecord(zRecord)
-//                    }
-//                }
-//
-//                self.delete(onCompletion)
-//            }
-//        } else {
-            onCompletion?(0)
-//        }
-    }
-
-
     func save(_ onCompletion: IntClosure?) {
         let   saves = pullCKRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
         let destroy = pullRecordIDsWithHighestLevel(for: [.needsDestroy], batchSize: 20)
@@ -407,19 +386,14 @@ class ZCloudManager: ZRecordsManager {
 
             let scan: ObjectClosure = { iObject in
                 if let zone = iObject as? Zone {
-                    zone.traverseProgeny { iZone -> (ZTraverseStatus) in
-                        if  iZone.alreadyExists,
+                    zone.traverseAllProgeny { iZone in
+                        if !iZone.isLocalOnly,
+                            iZone.alreadyExists,
                             iZone.storageMode == self.storageMode,
                             let identifier = iZone.recordName,
                             !memorables.contains(identifier) {
                             memorables.append(identifier)
-
-                            if iZone.showChildren {
-                                return .eContinue
-                            }
                         }
-
-                        return .eSkip
                     }
                 }
             }
@@ -454,113 +428,109 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchTrash(_ onCompletion: IntClosure?) {
-        if  let     trash = trashZone {
-            let parentKey = "parent"
-            let predicate = NSPredicate(format: "zoneName != \"\"")
-            var retrieved = [CKRecord] ()
+        let predicate = NSPredicate(format: "zoneName != \"\"")
+        var retrieved = [CKRecord] ()
+        let     trash = trashZone
+        let parentKey = "parent"
 
-            self.queryWith(predicate) { (iRecord: CKRecord?) in
-                if  let ckRecord = iRecord, !retrieved.contains(ckRecord) {
-                    if  let name = ckRecord[gZoneNameKey] as? String,
-                        !gRootNames.contains(name) {
-                        retrieved.append(ckRecord)
+        self.queryWith(predicate) { (iRecord: CKRecord?) in
+            if  let ckRecord = iRecord, !retrieved.contains(ckRecord) {
+                if  let name = ckRecord[gZoneNameKey] as? String,
+                    !gRootNames.contains(name) {
+                    retrieved.append(ckRecord)
+                }
+            } else { // nil means: we already received full response from cloud for this particular fetch
+                FOREGROUND {
+                    var    parentIDs = [CKRecordID] ()
+                    var childrenRefs = [CKRecordID : CKRecord] ()
+                    
+                    for ckRecord in retrieved {
+                        if  let parent   = ckRecord[parentKey] as? CKReference {
+                            let parentID = parent.recordID
+                            if  self.maybeZRecordForRecordID(parent.recordID) == nil,
+                                !gRootNames.contains(parent.recordID.recordName) {
+                                childrenRefs[parentID] = ckRecord
+                                
+                                parentIDs.append(parent.recordID)
+                            } // else it's already in memory (either the trash or the graph)
+                        } else if let name = ckRecord[gZoneNameKey] as? String,
+                            !gRootNames.contains(name),
+                            let added = trash.addCKRecord(ckRecord) {
+                            added.maybeNeedSave()
+                            trash.maybeNeedSave()
+                        }
                     }
-                } else { // nil means: we already received full response from cloud for this particular fetch
-                    FOREGROUND {
-                        var    parentIDs = [CKRecordID] ()
-                        var childrenRefs = [CKRecordID : CKRecord] ()
-
-                        for ckRecord in retrieved {
-                            if  let parent   = ckRecord[parentKey] as? CKReference {
-                                let parentID = parent.recordID
-                                if  self.maybeZRecordForRecordID(parent.recordID) == nil,
-                                    !gRootNames.contains(parent.recordID.recordName) {
-                                    childrenRefs[parentID] = ckRecord
-
-                                    parentIDs.append(parent.recordID)
-                                } // else it's already in memory (either the trash or the graph)
-                            } else if let name = ckRecord[gZoneNameKey] as? String,
-                                !gRootNames.contains(name),
-                                let added = trash.addCKRecord(ckRecord) {
-                                added.needSave()
-                                trash.needSave()
+                    
+                    let count = parentIDs.count
+                    
+                    if count == 0 {
+                        onCompletion?(0)
+                    } else {
+                        var  destroy = [CKRecord] ()
+                        var tracking = [CKRecordID] ()
+                        var  closure:  RecordIDsClosure? = nil
+                        
+                        closure = { iParentIDs in
+                            var missing = iParentIDs
+                            
+                            for recordID in tracking {
+                                if  let index = missing.index(of: recordID) {
+                                    missing.remove(at: index)
+                                }
                             }
-                        }
-
-                        let count = parentIDs.count
-
-                        if count == 0 {
-                            onCompletion?(0)
-                        } else {
-                            var  destroy = [CKRecord] ()
-                            var tracking = [CKRecordID] ()
-                            var  closure:  RecordIDsClosure? = nil
-
-                            closure = { iParentIDs in
-                                var missing = iParentIDs
-
-                                for recordID in tracking {
-                                    if  let index = missing.index(of: recordID) {
+                            
+                            tracking.append(contentsOf: missing)
+                            
+                            // ask cloud if referenced zone exists
+                            // do the same with its parent
+                            // until doesn't exist
+                            // then add to trash
+                            
+                            self.fetch(needed: missing) { iRetrievedParents in
+                                parentIDs = []
+                                
+                                for ckParent in iRetrievedParents {
+                                    if  let index = ckParent.index(within: missing) {
                                         missing.remove(at: index)
+                                        
+                                        if  let grandParentRef = ckParent[parentKey] as? CKReference {
+                                            parentIDs.append(grandParentRef.recordID)
+                                        }
+                                    } else {
+                                        destroy.append(ckParent)
                                     }
                                 }
-
-                                tracking.append(contentsOf: missing)
-
-                                // ask cloud if referenced zone exists
-                                // do the same with its parent
-                                // until doesn't exist
-                                // then add to trash
-
-                                self.fetch(needed: missing) { iRetrievedParents in
-                                    parentIDs = []
-
-                                    for ckParent in iRetrievedParents {
-                                        if  let index = ckParent.index(within: missing) {
-                                            missing.remove(at: index)
-
-                                            if  let grandParentRef = ckParent[parentKey] as? CKReference {
-                                                parentIDs.append(grandParentRef.recordID)
-                                            }
-                                        } else {
-                                            destroy.append(ckParent)
+                                
+                                if missing.count != 0 {
+                                    for parent in missing {
+                                        if  let child = childrenRefs[parent],
+                                            let added = trash.addCKRecord(child) {
+                                            added.maybeNeedSave()
+                                            trash.maybeNeedSave()
                                         }
                                     }
-
-                                    if missing.count != 0 {
-                                        for parent in missing {
-                                            if  let child = childrenRefs[parent],
-                                                let added = trash.addCKRecord(child) {
-                                                added.needSave()
-                                                trash.needSave()
-                                            }
-                                        }
-                                    }
-
-                                    let evokeClosure = parentIDs.count != 0
-
-                                    if  evokeClosure {
-                                        closure?(parentIDs)
-                                    } else {
-                                        onCompletion?(0)
-                                    }
+                                }
+                                
+                                let evokeClosure = parentIDs.count != 0
+                                
+                                if  evokeClosure {
+                                    closure?(parentIDs)
+                                } else {
+                                    onCompletion?(0)
                                 }
                             }
-
-                            closure?(parentIDs)
                         }
+                        
+                        closure?(parentIDs)
                     }
                 }
             }
-        } else {
-            onCompletion?(0)
         }
     }
 
 
     func fetch(_ onCompletion: IntClosure?) {
-        let states = [ZRecordState.needsFetch]
-        let needed = recordIDsWithMatchingStates(states)
+        let needed = recordIDsWithMatchingStates([.needsFetch], pull: true)
 
         fetch(needed: needed) { iCKRecords in
             FOREGROUND {
@@ -575,13 +545,10 @@ class ZCloudManager: ZRecordsManager {
                         } else {
                             zRecord?.record = ckRecord
                         }
-
-                        zRecord?.unorphan()
                     }
 
-                    self.clearCKRecords(iCKRecords, for: states)    // deferred to make sure fetch worked before clearing fetch flag
                     self.columnarReport("FETCH \(iCKRecords.count)", self.stringForCKRecords(iCKRecords))
-                    self.fetch(onCompletion)                        // process remaining
+                    self.fetch(onCompletion)                            // process remaining
                 }
             }
         }
@@ -692,7 +659,7 @@ class ZCloudManager: ZRecordsManager {
                                     if  child.isRoot || child == p {
                                         child.parentZone = nil
 
-                                        child.needSave()
+                                        child.maybeNeedSave()
                                     } else if !p.children.contains(child) {
                                         p.children.append(child)
                                     }
@@ -829,8 +796,6 @@ class ZCloudManager: ZRecordsManager {
                         if  zRecord == nil {                                                   // if not already registered
                             zRecord  = ZTrait(record: ckRecord, storageMode: self.storageMode) // register
                         }
-
-                        zRecord?.unorphan()
                     }
 
                     onCompletion?(0)
@@ -841,9 +806,10 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchBookmarks(_ onCompletion: IntClosure?) {
-        let targetIDs = recordIDsWithMatchingStates([.needsBookmarks], pull: true)
-        let predicate = bookmarkPredicate(specificTo: targetIDs)
-        var retrieved = [CKRecord] ()
+        let     targetIDs = recordIDsWithMatchingStates([.needsBookmarks], pull: true)
+        let     predicate = bookmarkPredicate(specificTo: targetIDs)
+        let soughtTargets = targetIDs.count != 0
+        var     retrieved = [CKRecord] ()
 
         queryWith(predicate) { iRecord in
             if let ckRecord = iRecord {
@@ -855,35 +821,25 @@ class ZCloudManager: ZRecordsManager {
                     var     gotFresh = false
 
                     for ckRecord in retrieved {
-                        var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
-
-                        if  zRecord == nil {                                                 // if not already registered
-                            zRecord  = Zone(record: ckRecord, storageMode: self.storageMode) // register
+                        var zone     = self.maybeZoneForCKRecord(ckRecord)
+                        if  zone    == nil {                                                 // if not already registered
+                            zone     = Zone(record: ckRecord, storageMode: self.storageMode) // create and register
                             gotFresh = true
                         }
-
-                        zRecord?.unorphan()
                     }
 
-                    if  targetIDs.count != 0 {
-                        for targetID in targetIDs {
-                            let zTarget = self.maybeZRecordForRecordID(targetID)
+                    if  soughtTargets, retrieved.count > 0 {
+                        self.columnarReport("BOOKMARKS", self.stringForCKRecords(retrieved))
+                    }
 
-                            zTarget?.removeState(.needsBookmarks)
-                            zTarget?.unorphan()
-                        }
-
-                        if retrieved.count > 0 {
-                            self.columnarReport("BOOKMARKS", self.stringForCKRecords(retrieved))
-                        }
-
-                        self.fetchBookmarks(onCompletion)       // process remaining
-                    } else if gotFresh {
-                        self.save { iCount in                   // no-op if no zones need to be saved, in which case falls through ...
-                            self.fetchBookmarks(onCompletion)   // process remaining
-                        }
+                    if !gotFresh && !soughtTargets {
+                        onCompletion?(0)                            // only async exit
                     } else {
-                        onCompletion?(0) // only exit for async activity
+                        self.save { iCount in                       // no-op if no zones need to be saved, in which case falls through ...
+                            if      iCount == 0 {
+                                self.fetchBookmarks(onCompletion)   // process remaining
+                            }
+                        }
                     }
                 }
             }
@@ -938,8 +894,8 @@ class ZCloudManager: ZRecordsManager {
 
 
     func establishRoot(_ onCompletion: IntClosure?) {
-        if rootZone != nil {
-            establishTrash(onCompletion)
+        if  rootZone != nil {
+            onCompletion?(0)
         } else {
             let recordID = CKRecordID(recordName: gRootNameKey)
 
@@ -955,29 +911,7 @@ class ZCloudManager: ZRecordsManager {
                     self.rootZone?.zoneName = "title"
                 }
 
-                self.rootZone?.needSave()
-                self.establishTrash(onCompletion)
-            }
-        }
-    }
-
-
-    func establishTrash(_ onCompletion: IntClosure?) {
-        if trashZone != nil {
-            onCompletion?(0)
-        } else {
-            let recordID = CKRecordID(recordName: gTrashNameKey)
-
-            assureRecordExists(withRecordID: recordID, recordType: gZoneTypeKey) { (iRecord: CKRecord?) in
-                if  let     record = iRecord {
-                    let      trash = self.zoneForCKRecord(record)    // get / create trash
-                    let trashyName = (self.storageMode == .mineMode) ? "my " : "public "
-                    trash.zoneName = trashyName + gTrashNameKey
-                    self.trashZone = trash
-
-                    trash.needSave()
-                }
-
+                self.rootZone?.maybeNeedSave()
                 onCompletion?(0)
             }
         }

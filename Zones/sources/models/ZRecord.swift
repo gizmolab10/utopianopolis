@@ -11,13 +11,16 @@ import Foundation
 import CloudKit
 
 
+let gUnlikelyRecordName = "highly.unlikely.record.name"
+
+
 class ZRecord: NSObject {
     
 
     var        _record: CKRecord?
     var    storageMode: ZStorageMode?
     var     kvoContext: UInt8 = 1
-    var    isLocalOnly: Bool  = false
+    var   _isLocalOnly: Bool = false
     var         isRoot: Bool             { return record != nil && gRootNames.contains(recordName!) }
     var      needsSave: Bool             { return hasState(.needsSave) }
     var      needsRoot: Bool             { return hasState(.needsRoot) }
@@ -35,6 +38,19 @@ class ZRecord: NSObject {
     var recordsManager: ZRecordsManager? { return gRemoteStoresManager.recordsManagerFor(storageMode) }
     var   cloudManager: ZCloudManager?   { return recordsManager as? ZCloudManager }
     var     recordName: String?          { return record?.recordID.recordName }
+
+
+    var isLocalOnly: Bool {
+        get {
+            return _isLocalOnly ||
+                gLocalOnlyNames.contains(recordName ?? gUnlikelyRecordName) ||
+                (recordName?.contains(gLocalNamePrefix) ?? true)    // true because lack of record name prevents save to db
+        }
+
+        set {
+            _isLocalOnly = newValue
+        }
+    }
 
 
     var record: CKRecord! {
@@ -107,6 +123,8 @@ class ZRecord: NSObject {
         if record != nil {
             self.record = record
         }
+
+        unorphan()
     }
 
 
@@ -159,12 +177,9 @@ class ZRecord: NSObject {
 
 
     func copy(into copy: ZRecord) {
-        copy.needSave() // so KVO won't set needsMerge
+        copy.maybeNeedSave() // so KVO won't set needsMerge
         updateRecordProperties()
         record.copy(to: copy.record, properties: cloudProperties())
-
-        copy.isLocalOnly = isLocalOnly
-
         copy.updateInstanceProperties()
     }
 
@@ -180,7 +195,7 @@ class ZRecord: NSObject {
 
         record = iRecord
 
-        needSave()
+        maybeNeedSave()
     }
 
 
@@ -232,7 +247,6 @@ class ZRecord: NSObject {
 
     func needRoot()      { addState(.needsRoot) }
     func needCount()     { addState(.needsCount) }
-    func needFetch()     { addState(.needsFetch) }
     func needColor()     { addState(.needsColor) }
     func needTraits()    { addState(.needsTraits) }
     func needParent()    { addState(.needsParent) }
@@ -242,18 +256,10 @@ class ZRecord: NSObject {
     func needChildren()  { addState(.needsChildren) }
 
 
-    func needSave() {
-        removeState(.needsMerge)
-
-        if !isLocalOnly, !needsDestroy, storageMode != .favoritesMode, recordName != gFavoriteRootNameKey {
-            addState(.needsSave)
-        }
-    }
-
-
-    func maybeNeedFetch() {
-        if !alreadyExists {
-            needFetch()
+    func maybeNeedSave() {
+        if !isLocalOnly, !needsDestroy, !needsFetch {
+            removeState(.needsMerge)
+            addState   (.needsSave)
         }
     }
 
@@ -261,6 +267,13 @@ class ZRecord: NSObject {
     func maybeNeedMerge() {
         if !isLocalOnly, !needsSave, !needsMerge, !needsDestroy {
             addState(.needsMerge)
+        }
+    }
+
+    
+    func maybeNeedFetch() {
+        if !isLocalOnly, !alreadyExists {
+            addState(.needsFetch)
         }
     }
 

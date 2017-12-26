@@ -200,7 +200,7 @@ class ZFavoritesManager: ZCloudManager {
 
     func setup() {
         if  gHasPrivateDatabase && rootZone == nil {
-            rootZone               = Zone(storageMode: .mineMode, named: gFavoritesNameKey, isLocalOnly: true)
+            rootZone               = Zone(storageMode: .mineMode, named: gFavoritesNameKey, identifier: gFavoriteRootNameKey)
             rootZone!.directAccess = .eChildrenWritable
 
             setupDatabaseFavorites()
@@ -214,7 +214,7 @@ class ZFavoritesManager: ZCloudManager {
         if databaseRootFavorites.count == 0 {
             for (index, mode) in gAllDatabaseModes.enumerated() {
                 let          name = mode.rawValue
-                let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, isLocalOnly: true)
+                let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: gLocalNamePrefix + name)
                 favorite.zoneLink =  "\(name)\(gSeparatorKey)\(gSeparatorKey)"
                 favorite   .order = Double(index) * 0.001
 
@@ -253,13 +253,6 @@ class ZFavoritesManager: ZCloudManager {
             ////////////////////////////////////////////////
 
             updateWorkingFavorites()
-//
-//            for iWorking in workingFavorites {
-//                if  let t = iWorking.bookmarkTarget, t.isRoot, !t.isTrash, iWorking.isLocalOnly {
-//                    iWorking.needDestroy()
-//                    iWorking.orphan()
-//                }
-//            }
 
             /////////////////////////////////////////
             // detect modes which have bookmarks   //
@@ -269,25 +262,22 @@ class ZFavoritesManager: ZCloudManager {
             for (index, favorite) in workingFavorites.enumerated() {
                 if  let link  = favorite.zoneLink {
                     if  link == gTrashLink {
-                        if !foundTrash && favorite.isLocalOnly {
+                        if !foundTrash {
                             foundTrash = true
                         } else {
                             trashCopies.append(index)
                         }
-                    } else if favorite.isLocalOnly,
-                        let t = favorite.bookmarkTarget,
+                    } else if      favorite.isLocalOnly,
+                        let    t = favorite.bookmarkTarget,
                         let mode = t.storageMode,
                         t.isRoot,
-                        !t.isTrash,
                         !foundModes.contains(mode) {
                         foundModes.append(mode)
                     }
                 }
             }
 
-            while let index = trashCopies.last {
-                trashCopies.removeLast()
-
+            while   let index = trashCopies.popLast() {
                 if  let trash = zoneAtIndex(index) {
                     trash.needDestroy()
                     trash.orphan()
@@ -299,9 +289,8 @@ class ZFavoritesManager: ZCloudManager {
             ////////////////////////////////
 
             if !foundTrash {
-                let      trash = Zone(storageMode: .mineMode, named: gTrashNameKey, isLocalOnly: true)
-                trash.zoneName = gTrashNameKey
-                trash.zoneLink = gTrashLink
+                let      trash = Zone(storageMode: .mineMode, named: gTrashNameKey, identifier: gLocalNamePrefix + gTrashNameKey)
+                trash.zoneLink = gTrashLink // convert into a bookmark
 
                 rootZone?.addAndReorderChild(trash, at: nil)
                 trash.clearAllStates()
@@ -312,8 +301,9 @@ class ZFavoritesManager: ZCloudManager {
             ////////////////////////////////
 
             for favorite in databaseRootFavorites.children {
-                if  let mode = favorite.crossLink?.storageMode, !foundModes.contains(mode) {
-                    let  add = favorite.deepCopy()
+                if  let        mode = favorite.crossLink?.storageMode, !foundModes.contains(mode) {
+                    let         add = favorite.deepCopy()
+                    add.isLocalOnly = true
 
                     rootZone?.add(add)
                     add.clearAllStates() // erase side-effect of add
@@ -417,21 +407,22 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    @discardableResult func create(withBookmark: Zone?, _ iName: String?, isLocalOnly: Bool = false) -> Zone {
-        if  let     name = iName,
-            let bookmark = withBookmark,
-            isLocalOnly == bookmark.isLocalOnly {
+    @discardableResult func create(withBookmark: Zone?, _ iName: String?, identifier: String? = nil) -> Zone {
+        let           isLocal = identifier != nil
+        if  let          name = iName,
+            let      bookmark = withBookmark,
+            isLocal          == bookmark.isLocalOnly {
             bookmark.zoneName = name
 
             return bookmark
         }
 
-        return withBookmark ?? Zone(storageMode: .mineMode, named: iName, isLocalOnly: isLocalOnly)
+        return withBookmark ?? Zone(storageMode: .mineMode, named: iName, identifier: identifier)
     }
 
 
-    @discardableResult func create(withBookmark: Zone?, _ style: ZFavoriteStyle, parent: Zone, atIndex: Int, _ name: String?, isLocalOnly: Bool = false) -> Zone {
-        let bookmark: Zone = create(withBookmark: withBookmark, name, isLocalOnly: isLocalOnly)
+    @discardableResult func create(withBookmark: Zone?, _ style: ZFavoriteStyle, parent: Zone, atIndex: Int, _ name: String?, identifier: String? = nil) -> Zone {
+        let bookmark: Zone = create(withBookmark: withBookmark, name, identifier: identifier)
         let insertAt: Int? = atIndex == parent.count ? nil : atIndex
 
         if style != .favorite {
@@ -446,10 +437,11 @@ class ZFavoritesManager: ZCloudManager {
 
     @discardableResult func createBookmark(for iZone: Zone, style: ZFavoriteStyle) -> Zone {
         var parent: Zone = iZone.parentZone ?? rootZone!
+        let   isBookmark = iZone.isBookmark
         let     isNormal = style == .normal
 
         if  !isNormal {
-            let basis: ZRecord = !iZone.isBookmark ? iZone : iZone.crossLink!
+            let basis: ZRecord = isBookmark ? iZone.crossLink! : iZone
 
             if  let recordName = basis.recordName {
                 parent         = rootZone!
@@ -465,7 +457,7 @@ class ZFavoritesManager: ZCloudManager {
         }
 
         let           count = parent.count
-        var bookmark: Zone? = iZone.isBookmark ? iZone.deepCopy() : nil
+        var bookmark: Zone? = isBookmark ? iZone.deepCopy() : nil
         var           index = parent.children.index(of: iZone) ?? count
 
         if style == .addFavorite {
@@ -474,14 +466,14 @@ class ZFavoritesManager: ZCloudManager {
 
         bookmark            = create(withBookmark: bookmark, style, parent: parent, atIndex: index, iZone.zoneName)
 
-        bookmark?.needSave()
+        bookmark?.maybeNeedSave()
 
         if  isNormal {
-            parent.maybeNeedMerge()
             parent.updateRecordProperties()
+            parent.maybeNeedMerge()
         }
 
-        if !iZone.isBookmark {
+        if !isBookmark {
             bookmark?.crossLink = iZone
         }
 

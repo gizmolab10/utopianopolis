@@ -43,7 +43,7 @@ let         gUndoManager = UndoManager()
 let              gNoName = "empty"
 let             gCloudID = "iCloud.com.zones.Zones"
 let            gLinksKey = "links"
-let            gNullLink = "n"
+let            gNullLink = "no"
 let           gTrashLink = "\(gSeparatorKey)\(gSeparatorKey)trash"
 let         gRootNameKey = "root"
 let         gChildrenKey = "children"
@@ -60,8 +60,10 @@ let    gHalfLineOfDashes = "-----------"
 let    gFavoritesNameKey = "favorites"
 let gFavoriteRootNameKey = "favoritesRoot"
 let   gLineWithStubTitle = gHalfLineOfDashes + " | " + gHalfLineOfDashes
+let     gLocalNamePrefix = "local."
+let      gLocalOnlyNames = [gTrashNameKey, gFavoriteRootNameKey]
 let        gLineOfDashes = gHalfLineOfDashes + "---" + gHalfLineOfDashes
-let           gRootNames = [gRootNameKey, gTrashNameKey, gFavoriteRootNameKey]
+let           gRootNames = [gRootNameKey] + gLocalOnlyNames
 
 
 let        gBackspaceKey = "\u{8}"

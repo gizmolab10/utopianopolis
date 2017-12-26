@@ -19,7 +19,7 @@ import Foundation
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
-    override var         preferredFont : ZFont { return (widget?.isInFavoritesGraph ?? false) ? gFavoritesFont : gWidgetFont }
+    override var         preferredFont : ZFont { return (widget?.isInMain ?? true) ? gWidgetFont : gFavoritesFont }
     var                     widgetZone : Zone? { return widget?.widgetZone }
     weak var                    widget : ZoneWidget?
     var            isEditiingHyperlink = false
@@ -223,7 +223,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     iAssignee .zoneName = newText
                 }
 
-                iAssignee.needSave()
+                iAssignee.maybeNeedSave()
                 self.redrawAndSync()
             }
 
@@ -275,7 +275,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         super.draw(dirtyRect)
 
         if  let zone = widgetZone,
-            (zone.isBookmark || zone.isHyperlink || zone.isEmail),
+             zone.canTravel,
             !zone.isFavorite,
             !zone.isGrabbed,
             !isEditingText {

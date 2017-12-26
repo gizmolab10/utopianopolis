@@ -237,12 +237,12 @@ extension UIView {
             clearGestures()
 
             if let e = newValue {
-                e.clickGesture     = createPointGestureRecognizer(e, action: #selector(ZEditorController          .clickEvent), clicksRequired: 1)
-                e.moveUpGesture    = createSwipeGestureRecognizer(e, action: #selector(ZEditorController         .moveUpEvent), direction: .up,    touchesRequired: 2)
-                e.moveDownGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController       .moveDownEvent), direction: .down,  touchesRequired: 2)
-                e.moveLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController       .moveLeftEvent), direction: .left,  touchesRequired: 2)
-                e.moveRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController      .moveRightEvent), direction: .right, touchesRequired: 2)
-                e.movementGesture  = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
+                e.clickGesture     = createPointGestureRecognizer(e, action: #selector(ZEditorController       .clickEvent), clicksRequired: 1)
+                e.moveUpGesture    = createSwipeGestureRecognizer(e, action: #selector(ZEditorController      .moveUpEvent), direction: .up,    touchesRequired: 2)
+                e.moveDownGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController    .moveDownEvent), direction: .down,  touchesRequired: 2)
+                e.moveLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController    .moveLeftEvent), direction: .left,  touchesRequired: 2)
+                e.moveRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController   .moveRightEvent), direction: .right, touchesRequired: 2)
+                e.movementGesture  = createDragGestureRecognizer (e, action: #selector(ZEditorController.dragGestureEvent))
                 gDraggedZone       = nil
             }
         }

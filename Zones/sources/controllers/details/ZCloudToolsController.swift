@@ -97,6 +97,7 @@ class ZCloudToolsController: ZGenericTableController {
         }
     }
 
+
     func gatherAndShowTrash() {
         gDBOperationsManager.fetchTrash {
             if let trash = gTrash {

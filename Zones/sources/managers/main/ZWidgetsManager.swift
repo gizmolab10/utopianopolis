@@ -35,28 +35,26 @@ class ZWidgetsManager: NSObject {
     }
 
 
+    func clear(for iMode: ZStorageMode) {
+        widgets[iMode] = [Int : ZoneWidget] ()
+    }
+
+
     func registerWidget(_ widget: ZoneWidget) {
         if  let                      zone = widget.widgetZone,
             let                      mode = mode(for: zone) {
             var dict: [Int : ZoneWidget]? = widgets[mode]
 
-            if dict == nil {
+            if  dict == nil {
                 dict = [:]
+            }
+
+            if zone.zoneName == "test" {
+                print("<register> in \(self.mode(for: zone)!.rawValue)")
             }
 
             dict![zone.hash] = widget
             widgets[mode]    = dict
-        }
-    }
-
-
-    func unregisterWidget(_ widget: ZoneWidget) {
-
-        // only unlink the zone from its current widget
-
-        if  let zone = widget.widgetZone, let mode = mode(for: zone), var dict = widgets[mode] {
-            dict[zone.hash] = nil
-            widgets[mode]   = dict
         }
     }
 

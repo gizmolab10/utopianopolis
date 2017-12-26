@@ -42,8 +42,8 @@ class ZGenericController: ZController, ZGenericControllerProtocol {
     }
 
 
-    func syncToCloudAndSignalFor(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
-        gControllersManager.syncToCloudAndSignalFor(zone, regarding: regarding, onCompletion: onCompletion)
+    func syncToCloudAndSignalFor(_ widget: ZoneWidget?, regarding: ZSignalKind,  onCompletion: Closure?) {
+        gControllersManager.syncToCloudAndSignalFor(widget, regarding: regarding, onCompletion: onCompletion)
     }
 
 

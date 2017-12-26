@@ -46,14 +46,14 @@ extension NSObject {
     }
 
 
-    func redrawAndSync(_ iZone: Zone? = nil, _ onCompletion: Closure? = nil) {
-        gControllersManager.syncToCloudAndSignalFor(iZone, regarding: .redraw, onCompletion: onCompletion)
+    func redrawAndSync(_ widget: ZoneWidget? = nil, _ onCompletion: Closure? = nil) {
+        gControllersManager.syncToCloudAndSignalFor(widget, regarding: .redraw, onCompletion: onCompletion)
     }
 
 
-    func redrawAndSyncAndRedraw(_ iZone: Zone? = nil) {
-        redrawAndSync(iZone) {
-            self.signalFor(iZone, regarding: .redraw)
+    func redrawSyncRedraw(_ widget: ZoneWidget? = nil) {
+        redrawAndSync(widget) {
+            self.signalFor(widget, regarding: .redraw)
         }
     }
 
@@ -298,7 +298,7 @@ extension Array {
                 if  order      != newOrder {
                     child.order = newOrder
 
-                    child.needSave()
+                    child.maybeNeedSave()
                 }
             }
         }

@@ -34,8 +34,8 @@ class ZoneWidget: ZView {
     let               textWidget = ZoneTextWidget ()
     let             childrenView = ZView          ()
     private var  childrenWidgets = [ZoneWidget]   ()
-    var isInFavoritesGraph: Bool = false
-    var                    ratio :     CGFloat { return isInFavoritesGraph ? gReductionRatio : 1.0 }
+    var           isInMain: Bool = false
+    var                    ratio :     CGFloat { return isInMain ? 1.0: gReductionRatio }
     var             parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
     weak var          widgetZone :       Zone?
 
@@ -61,7 +61,7 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, kind signalKind: ZSignalKind, visited: [Zone]) {
+    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, kind signalKind: ZSignalKind, isMain: Bool, visited: [Zone]) {
         if inView != nil, let views = inView?.subviews, !views.contains(self), !views.contains(textWidget) {
             inView?.addSubview(self)
 
@@ -72,7 +72,7 @@ class ZoneWidget: ZView {
             }
         }
 
-        isInFavoritesGraph = gEditorController?.isInFavoritesGraph(self) ?? false
+        isInMain = isMain
 
         #if os(iOS)
             backgroundColor = gClearColor
@@ -105,9 +105,9 @@ class ZoneWidget: ZView {
             while index > 0 {
                 index                 -= 1 // go backwards down the children arrays, constraint making expects it
                 let childWidget        = childrenWidgets[index]
-                childWidget.widgetZone = zone           [index]
+                childWidget.widgetZone =            zone[index]
 
-                childWidget.layoutInView(childrenView, atIndex: index, recursing: true, kind: kind, visited: visited)
+                childWidget.layoutInView(childrenView, atIndex: index, recursing: true, kind: kind, isMain: isInMain, visited: visited)
                 childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints { make in
                     if previous == nil {
@@ -186,10 +186,6 @@ class ZoneWidget: ZView {
 
     func prepareChildrenWidgets() {
         if  let zone = widgetZone {
-            for widget in childrenWidgets {
-                gWidgetsManager.unregisterWidget(widget)
-            }
-
             childrenWidgets.removeAll()
 
             for view in childrenView.subviews {
@@ -456,7 +452,7 @@ class ZoneWidget: ZView {
         var          rect = textWidget.frame.insetBy(dx: inset * ratio - delta, dy: -0.5 - delta)
         let        shrink = -0.5 + (height / 6.0)
         rect.size.height += -0.5 + gHighlightHeightOffset // + (delta / 9.5)
-        rect.size.height += isInFavoritesGraph ? 1.0 : 0.0
+        rect.size.height += isInMain ? 0.0 : 1.0
         rect.size .width += shrink - dotDelta
         let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
         let         color = widgetZone?.color
@@ -508,8 +504,6 @@ class ZoneWidget: ZView {
         if  let             zone = widgetZone {
             let        isGrabbed = zone.isGrabbed
             textWidget.textColor = isGrabbed ? zone.grabbedTextColor : ZColor.black
-
-            note("      .        \(zone.unwrappedName)")
 
             if  isGrabbed && !textWidget.isFirstResponder && (!isPhone || zone != gHere) {
                 drawSelectionHighlight()

@@ -48,7 +48,7 @@ class Zone : ZRecord {
     var directChildrenWritable:        Bool  { return   directAccess == .eChildrenWritable }
     var    hasAccessDecoration:        Bool  { return !isTextEditable || directChildrenWritable }
     var     hasMissingChildren:        Bool  { return count < fetchableCount }
-    var      onlyShowToggleDot:        Bool  { return (isRootOfFavorites && widget?.isInFavoritesGraph ?? false) || (isPhone && self == gHere) }
+    var      onlyShowToggleDot:        Bool  { return (isRootOfFavorites && !(widget?.isInMain ?? true)) || (isPhone && self == gHere) }
     var      isWritableByUseer:        Bool  { return  isTextEditable || gOnboardingManager.userHasAccess(self) }
     var      isCurrentFavorite:        Bool  { return self == gFavoritesManager.currentFavorite }
     var      isRootOfFavorites:        Bool  { return record != nil && recordName == gFavoriteRootNameKey }
@@ -63,6 +63,7 @@ class Zone : ZRecord {
     var             isBookmark:        Bool  { return crossLink != nil }
     var             isFavorite:        Bool  { return gFavoritesManager.isWorkingFavorite(self) }
     var             isSelected:        Bool  { return gSelectionManager.isSelected(self) }
+    var              canTravel:        Bool  { return isBookmark || isHyperlink || isEmail }
     var              isGrabbed:        Bool  { return gSelectionManager .isGrabbed(self) }
     var               hasColor:        Bool  { return zoneColor != nil && zoneColor != "" }
     var                isEmail:        Bool  { return hasTrait(for: .eEmail) && email != "" }
@@ -76,7 +77,8 @@ class Zone : ZRecord {
             return manager.trashZone
         }
 
-        return nil }
+        return nil
+    }
 
 
     var email: String? {
@@ -167,11 +169,27 @@ class Zone : ZRecord {
     }
 
 
-    convenience init(storageMode: ZStorageMode?, named: String? = nil, isLocalOnly iLocal: Bool = false) {
+    convenience init(record: CKRecord?, storageMode: ZStorageMode?) {
+        self.init()
+
+        self.storageMode = storageMode
+
+        if record != nil {
+            self.record = record
+        }
+
+        if !isBookmark, zoneLink != gNullLink {
+            zoneLink = gNullLink
+
+            maybeNeedSave()
+        }
+    }
+
+
+    convenience init(storageMode: ZStorageMode?, named: String? = nil, identifier: String? = nil) {
         var newRecord : CKRecord?
 
-        if  let  name = named, iLocal {
-            let rName = (name == gFavoritesNameKey) ? gFavoriteRootNameKey : "local." + name
+        if  let rName = identifier {
             newRecord = CKRecord(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: rName))
         } else {
             newRecord = CKRecord(recordType: gZoneTypeKey)
@@ -179,8 +197,7 @@ class Zone : ZRecord {
 
         self.init(record: newRecord!, storageMode: storageMode)
 
-        isLocalOnly = iLocal
-        zoneName    = named
+        zoneName      = named
     }
 
 
@@ -208,15 +225,23 @@ class Zone : ZRecord {
 
 
     var fetchedBookmark: Zone? {
+        let    bookmarks = fetchedBookmarks
+
+        return bookmarks.count == 0 ? nil : bookmarks[0]
+    }
+
+
+    var fetchedBookmarks: [Zone] {
+        var           bookmarks = [Zone] ()
         if  let     identifier  = recordName {
             for bookmark in gAllBookmarks {
                 if  identifier == bookmark.linkName {
-                    return bookmark
+                    bookmarks.append(bookmark)
                 }
             }
         }
 
-        return nil
+        return bookmarks
     }
 
 
@@ -300,7 +325,7 @@ class Zone : ZRecord {
                 _color    = newValue
                 zoneColor = newValue.string
 
-                needSave()
+                maybeNeedSave()
             }
         }
     }
@@ -475,6 +500,8 @@ class Zone : ZRecord {
                     parentLink     = "\(newMode.rawValue)::\(parentRecord.recordID.recordName)"     // references don't work across dbs
                     parent         = nil
                 }
+
+                maybeNeedSave()
             }
         }
     }
@@ -611,7 +638,7 @@ class Zone : ZRecord {
                 if  direct      != next {
                     directAccess = next
 
-                    needSave()
+                    maybeNeedSave()
                 }
             }
         }
@@ -665,27 +692,11 @@ class Zone : ZRecord {
     }
 
 
-    override func unorphan() {
-        if  !needsDestroy, let p = parentZone, p != self {
-            p.add(self, at: siblingIndex)
-        }
-    }
-
-
-    func orphan() {
-        parentZone?.removeChild(self)
-
-        parentZone = nil
-
-        updateRecordProperties()
-    }
-
-
     func clearColor() {
         zoneColor = ""
         _color    = nil
 
-        needSave()
+        maybeNeedSave()
     }
 
 
@@ -742,7 +753,7 @@ class Zone : ZRecord {
         trait?     .text = iText
 
         trait?.updateRecordProperties()
-        trait?.needSave()
+        trait?.maybeNeedSave()
     }
 
 
@@ -1085,6 +1096,23 @@ class Zone : ZRecord {
     func    hideChildren() { manifest?   .hideChildren(in: self) }
 
 
+    override func unorphan() {
+        if  !needsDestroy, let p = parentZone, p != self {
+            p.maybeNeedFetch()
+            p.add(self, at: siblingIndex)
+        }
+    }
+
+
+    func orphan() {
+        parentZone?.removeChild(self)
+
+        parentZone = nil
+
+        updateRecordProperties()
+    }
+
+
     @discardableResult func add(_ child: Zone?) -> Int? {
         return add(child, at: 0)
     }
@@ -1147,8 +1175,8 @@ class Zone : ZRecord {
 
             newChild.parentZone = self
 
-            newChild.needSave()
-            needSave()
+            newChild.maybeNeedSave()
+            maybeNeedSave()
             needCount()
 
             // self.columnarReport(" ADDED", child.decoratedName)
@@ -1185,7 +1213,7 @@ class Zone : ZRecord {
                 iZone.storageMode = mode
                 iZone.parentZone  = pz      // this will correct parent and parentLink for mode change
 
-                iZone.needSave()            // so will be noted in new mode's record manager
+                iZone.maybeNeedSave()            // so will be noted in new mode's record manager
             }
         }
     }

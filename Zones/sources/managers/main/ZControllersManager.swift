@@ -110,7 +110,9 @@ class ZControllersManager: NSObject {
                 }
 
                 gDBOperationsManager.finishUp {
-                    self.signalFor(nil, regarding: .redraw)
+                    gDBOperationsManager.fetch() { // parents of bookmarks
+                        self.signalFor(nil, regarding: .redraw)
+                    }
                 }
             }
         }
@@ -162,16 +164,16 @@ class ZControllersManager: NSObject {
     }
 
 
-    func syncAndSave(_ zone: Zone? = nil, onCompletion: Closure?) {
+    func syncAndSave(_ widget: ZoneWidget? = nil, onCompletion: Closure?) {
         gDBOperationsManager.sync {
             onCompletion?()
-            gFileManager.save(to: zone?.storageMode)
+            gFileManager.save(to: widget?.widgetZone?.storageMode)
         }
     }
 
 
-    func syncToCloudAndSignalFor(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
-        signalFor(zone, regarding: regarding, onCompletion: onCompletion)
-        syncAndSave(zone, onCompletion: onCompletion)
+    func syncToCloudAndSignalFor(_ widget: ZoneWidget?, regarding: ZSignalKind,  onCompletion: Closure?) {
+        signalFor(widget, regarding: regarding, onCompletion: onCompletion)
+        syncAndSave(widget, onCompletion: onCompletion)
     }
 }

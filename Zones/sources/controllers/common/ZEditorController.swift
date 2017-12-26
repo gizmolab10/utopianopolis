@@ -40,20 +40,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     @IBOutlet var      spinner:  ZProgressIndicator?
     @IBOutlet var  spinnerView:  ZView?
 
-
-    func isInFavoritesGraph(_ iWidget: ZoneWidget?) -> Bool {
-        var result = false
-
-        iWidget?.applyToAllSuperviews { iView in
-            if iView == favoritesRootWidget {
-                result = true
-            }
-        }
-
-        return result
-    }
-
-
     
     // MARK:- gestures
     // MARK:-
@@ -145,9 +131,10 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         gTextCapturing                  = false
         specificWidget?     .widgetZone = here
 
-        if  let       zone = object as? Zone,
+        if  let     widget = object as? ZoneWidget,
+            let       zone = widget.widgetZone,
             zone          == here {
-            specificWidget = zone.widget
+            specificWidget = zone.widget // YIKES: value was established in previous call to handleSignal
             specificindex  = zone.siblingIndex
             specificView   = specificWidget?.superview
             recursing      = [.data, .redraw].contains(kind)
@@ -155,7 +142,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
         note("<  <  -  >  >  \(specificWidget?.widgetZone?.zoneName ?? "---")")
 
-        specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, visited: [])
+        gWidgetsManager.clear(for: isMain ? gStorageMode : .favoritesMode)
+        specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, isMain: isMain, visited: [])
     }
 
     
@@ -173,7 +161,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     }
     
     
-    func movementGestureEvent(_ iGesture: ZGestureRecognizer?) {
+    func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
         
         ///////////////////////////////////
         // only called by gesture system //
@@ -205,7 +193,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                         dragStartEvent(dot, iGesture)
                     } else if let zone = dot.widgetZone {
                         cleanupAfterDrag()
-                        gEditingManager.toggleDotActionOnZone(zone)   // no movement
+                        gEditingManager.toggleDotActionOnZone(zone)   // no dragging
                     }
                 } else {                            // began
                     rubberbandStartEvent(location, iGesture)

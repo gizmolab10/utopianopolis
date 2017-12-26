@@ -43,7 +43,7 @@ class ZManifest: ZRecord {
             if  let   name = _hereZone?.recordName {
                 here       = name
 
-                needSave()
+                maybeNeedSave()
             }
 
             _hereZone?.maybeNeedRoot()
@@ -82,7 +82,7 @@ class ZManifest: ZRecord {
 
             zonesExpanded = expansionSet
             
-            needSave()
+            maybeNeedSave()
         }
     }
 
@@ -99,7 +99,7 @@ class ZManifest: ZRecord {
         if  expanded.count != expansionSet.count {
             zonesExpanded   = expansionSet
 
-            needSave()
+            maybeNeedSave()
         }
     }
     

@@ -23,14 +23,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     // MARK:-
     
 
-    weak var widgetZone: Zone?
     weak var     widget: ZoneWidget?
     var        innerDot: ZoneDot?
-    var        isToggle: Bool     = true
     var       dragStart: CGPoint? = nil
-    var      isInnerDot: Bool     = false
-    var    isDragTarget: Bool { return widgetZone == gDragDropZone }
-    var isDragDotHidden: Bool { return widget?.widgetZone?.onlyShowToggleDot ?? true }
+    var        isToggle:  Bool = true
+    var      isInnerDot:  Bool = false
+    var    isDragTarget:  Bool { return widgetZone == gDragDropZone }
+    var      widgetZone: Zone? { return widget?.widgetZone }
+    var isDragDotHidden:  Bool { return widgetZone?.onlyShowToggleDot ?? true }
 
 
     var innerOrigin: CGPoint? {
@@ -72,7 +72,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var isHiddenToggleDot: Bool {
         if  let zone = widgetZone, isInnerDot, isToggle, let mode = zone.storageMode {
 
-            return (!zone.isBookmark && !zone.isHyperlink && !zone.isEmail && zone.fetchableCount == 0 && zone.count == 0 && !isDragTarget)
+            return (!zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 && !isDragTarget)
                 || (!zone.isRootOfFavorites && mode == .favoritesMode)
         }
         
@@ -90,9 +90,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func setupForWidget(_ iWidget: ZoneWidget, asToggle: Bool) {
-        widgetZone = iWidget.widgetZone
-        isToggle   = asToggle
-        widget     = iWidget
+        isToggle = asToggle
+        widget   = iWidget
 
         if isInnerDot {
             snp.removeConstraints()
@@ -117,7 +116,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 var   width = !isToggle && isDragDotHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) - 42.0 + innerDotWidth
                 let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
 
-                if iWidget.isInFavoritesGraph {
+                if !iWidget.isInMain {
                     width  *= gReductionRatio
                 }
 
@@ -189,7 +188,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawAccessDecoration(of type: ZDecorationType, for zone: Zone, in dirtyRect: CGRect) {
-        let     ratio = (widget?.isInFavoritesGraph ?? false) ? gReductionRatio : 1.0
+        let     ratio = (widget?.isInMain ?? true) ? 1.0 : gReductionRatio
         var thickness = CGFloat(gLineThickness + 0.1) * ratio
         var      path = ZBezierPath(rect: CGRect.zero)
         var      rect = CGRect.zero
@@ -216,13 +215,12 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             if !isHiddenToggleDot {
                 if isInnerDot {
-                    let isBarrenSpecial = (zone.isHyperlink || zone.isEmail) && zone.fetchableCount == 0
-                    let shouldHighlight = isToggle ? (!zone.showChildren || zone.isBookmark || isBarrenSpecial || isDragTarget) : zone.isGrabbed || highlightAsFavorite // not highlight when editing
-                    let     strokeColor = isToggle && isDragTarget ? gRubberbandColor : zone.color
-                    var       fillColor = shouldHighlight ? strokeColor : gBackgroundColor
+                    let showTravelerDot = zone.canTravel && zone.fetchableCount == 0
+                    let     dotIsFilled = isToggle ? (!zone.showChildren || showTravelerDot || isDragTarget) : (zone.isGrabbed || highlightAsFavorite) // not highlight when editing
+                    let     strokeColor = isToggle  && isDragTarget ? gRubberbandColor : zone.color
+                    var       fillColor = dotIsFilled ? strokeColor : gBackgroundColor
                     let       thickness = CGFloat(gLineThickness)
                     var            path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
-
                     path     .lineWidth = thickness * 2.0
                     path      .flatness = 0.0001
 
@@ -232,7 +230,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     path.fill()
 
                     if isToggle {
-                        if  zone.isBookmark || isBarrenSpecial { // draw tiny bookmark dot inside toggle dot
+                        if  showTravelerDot {
                             let     inset = CGFloat(innerDotHeight / 3.0)
                             path          = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
                             path.flatness = 0.0001
@@ -242,7 +240,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                         }
                     } else if                       zone.hasAccessDecoration {
                         let type: ZDecorationType = zone.directChildrenWritable ? .sideDot : .vertical
-                        fillColor                 = shouldHighlight ? gBackgroundColor : strokeColor
+                        fillColor                 = dotIsFilled ? gBackgroundColor : strokeColor
 
                         fillColor.setFill()
                         drawAccessDecoration(of: type, for: zone, in: dirtyRect)

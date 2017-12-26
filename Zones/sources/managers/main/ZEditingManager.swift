@@ -121,7 +121,7 @@ class ZEditingManager: NSObject {
             case .Favorites: valid = gHasPrivateDatabase
             case .Undo:      valid = undo.canUndo
             case .Redo:      valid = undo.canRedo
-            case .Travel:    valid = mover.isHyperlink || mover.isEmail
+            case .Travel:    valid = mover.canTravel
             case .Always:    valid = true
             }
         } else if key.arrow == nil {
@@ -176,7 +176,7 @@ class ZEditingManager: NSObject {
                 case "?":        openBrowserForFocusWebsite()
                 case "'":        doFavorites(isShift, isOption)
                 case "/":        focus(on: gSelectionManager.firstGrab, isCommand)
-                case "=":        gTravelManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawAndSyncAndRedraw() }
+                case "=":        gTravelManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawSyncRedraw() }
                 case gTabKey:    addNext(containing: isOption) { iChild in iChild.edit() }
                 case ",", ".":   gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
                 case "z":        if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
@@ -206,8 +206,8 @@ class ZEditingManager: NSObject {
         default:
             if !isShift {
                 switch arrow {
-                case .right: moveInto(selectionOnly: !isOption, extreme: isCommand) { self.redrawAndSyncAndRedraw() }
-                case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand) { self.redrawAndSyncAndRedraw() }
+                case .right: moveInto(selectionOnly: !isOption, extreme: isCommand) { self.redrawSyncRedraw() }
+                case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand) { self.redrawSyncRedraw() }
                 default: break
                 }
             } else if !isOption {
@@ -289,7 +289,7 @@ class ZEditingManager: NSObject {
             zone.toggleWritable()
         }
 
-        redrawAndSyncAndRedraw()
+        redrawSyncRedraw()
     }
 
 
@@ -328,7 +328,7 @@ class ZEditingManager: NSObject {
         }
 
         toggleDotUpdate(show: show, zone: zone, to: goal) {
-            self.redrawAndSyncAndRedraw()
+            self.redrawSyncRedraw()
         }
     }
 
@@ -374,7 +374,7 @@ class ZEditingManager: NSObject {
 
             zones.updateOrdering(start: start, end: end)
             commonParent.respectOrder()
-            redrawAndSyncAndRedraw()
+            redrawSyncRedraw()
         }
     }
 
@@ -436,7 +436,7 @@ class ZEditingManager: NSObject {
                 child.addToGrab()
             }
 
-            redrawAndSyncAndRedraw()
+            redrawSyncRedraw()
         }
     }
 
@@ -473,7 +473,7 @@ class ZEditingManager: NSObject {
         let backward = isShift || isOption
 
         gFavoritesManager.switchToNext(!backward) {
-            self.redrawAndSyncAndRedraw()
+            self.redrawSyncRedraw()
         }
     }
 
@@ -483,12 +483,12 @@ class ZEditingManager: NSObject {
             gHere = zone
 
             zone.grab()
-            self.redrawAndSync(nil)
+            self.redrawSyncRedraw()
         }
 
         if isCommand {
             gFavoritesManager.refocus {
-                self.redrawAndSyncAndRedraw()
+                self.redrawSyncRedraw()
             }
         } else if iZone.isBookmark {
             gTravelManager.travelThrough(iZone) { object, kind in
@@ -497,7 +497,7 @@ class ZEditingManager: NSObject {
             }
         } else if iZone == gHere {
             gFavoritesManager.toggleFavorite(for: iZone)
-            redrawAndSync(nil)
+            redrawSyncRedraw()
         } else {
             focusClosure(iZone)
         }
@@ -615,7 +615,7 @@ class ZEditingManager: NSObject {
                 gHere.grab()
             }
 
-            self.redrawAndSyncAndRedraw()
+            self.redrawSyncRedraw()
         }
     }
 
@@ -694,7 +694,7 @@ class ZEditingManager: NSObject {
             }
         }
 
-        zone.needSave()
+        zone.maybeNeedSave()
     }
 
 
@@ -710,7 +710,7 @@ class ZEditingManager: NSObject {
 
             if  zone.fetchableCount == 0 {
                 gTravelManager.maybeTravelThrough(zone) {
-                    self.redrawAndSyncAndRedraw()
+                    self.redrawSyncRedraw()
                 }
             } else {
                 if isEditing {
@@ -720,7 +720,7 @@ class ZEditingManager: NSObject {
                 let show = !zone.showChildren
 
                 toggleDotUpdate(show: show, zone: zone) {
-                    self.redrawAndSyncAndRedraw()
+                    self.redrawSyncRedraw()
                 }
             }
         }
@@ -852,14 +852,14 @@ class ZEditingManager: NSObject {
         if  preserveChildren {
             preserveChildrenOfGrabbedZones {
                 gFavoritesManager.updateFavorites()
-                self.redrawAndSyncAndRedraw()
+                self.redrawSyncRedraw()
             }
         } else {
             prepareUndoForDelete()
 
             deleteZones(gSelectionManager.simplifiedGrabs, permanently: permanently) {
                 gFavoritesManager.updateFavorites()
-                self.redrawAndSyncAndRedraw()
+                self.redrawSyncRedraw()
             }
         }
     }
@@ -890,7 +890,7 @@ class ZEditingManager: NSObject {
                                 grab?.grab()
                             }
 
-                            gDBOperationsManager.delete {
+                            gDBOperationsManager.bookmarks {
                                 var bookmarks = [Zone] ()
 
                                 for zone in zones {
@@ -979,8 +979,14 @@ class ZEditingManager: NSObject {
                 }
 
                 zone.maybeNeedBookmarks()
-                gFavoritesManager.updateFavorites()     // delete alters the list
-                onCompletion?()
+                gDBOperationsManager.bookmarks {
+                    for bookmark in zone.fetchedBookmarks {
+                        bookmark.needDestroy()
+                    }
+
+                    gFavoritesManager.updateFavorites()     // delete alters the list
+                    onCompletion?()
+                }
             }
         }
     }
@@ -1078,12 +1084,12 @@ class ZEditingManager: NSObject {
                 }
             } else {
                 // zone is an orphan
-                // focus on bookmark of zone
+                // change focus to bookmark of zone
 
                 zone.maybeNeedBookmarks()
                 gDBOperationsManager.bookmarks {
-                    if  let b = zone.fetchedBookmark {
-                        gHere = b
+                    if  let bookmark = zone.fetchedBookmark {
+                        gHere        = bookmark
                     }
 
                     onCompletion?()
@@ -1145,7 +1151,7 @@ class ZEditingManager: NSObject {
     func grabChild(of zone: Zone) {
         if  zone.count > 0, let child = gInsertionsFollow ? zone.children.last : zone.children.first {
             child.grab()
-            redrawAndSyncAndRedraw()
+            redrawSyncRedraw()
         }
     }
 
@@ -1306,7 +1312,7 @@ class ZEditingManager: NSObject {
             zones     .removeLast()
         }
 
-        redrawAndSyncAndRedraw()
+        redrawSyncRedraw()
     }
 
 
@@ -1343,11 +1349,11 @@ class ZEditingManager: NSObject {
                 a.order = b.order
                 b.order = o
 
-                a.needSave()
+                a.maybeNeedSave()
             }
 
             commonParent.respectOrder()
-            redrawAndSyncAndRedraw()
+            redrawSyncRedraw()
         }
     }
 
@@ -1367,7 +1373,7 @@ class ZEditingManager: NSObject {
             iUndoSelf.delete()
         }
 
-        redrawAndSyncAndRedraw()
+        redrawSyncRedraw()
     }
 
 
@@ -1398,14 +1404,14 @@ class ZEditingManager: NSObject {
                     iUndoSelf.prepareUndoForDelete()
                     iUndoSelf.deleteZones(forUndo, iShouldGrab: false) { iZone in }
                     zone.grab()
-                    iUndoSelf.redrawAndSyncAndRedraw()
+                    iUndoSelf.redrawSyncRedraw()
                 }
 
                 if isBookmark {
                     self.undoManager.endUndoGrouping()
                 }
 
-                self.redrawAndSyncAndRedraw()
+                self.redrawSyncRedraw()
             }
 
             let prepare = {
@@ -1565,12 +1571,12 @@ class ZEditingManager: NSObject {
         var       grabs = gSelectionManager.currentGrabs
 
         if  let dragged = gDraggedZone, dragged.isFavorite, !toFavorites {
-            dragged.needSave()                              // type 4
+            dragged.maybeNeedSave()                              // type 4
         }
 
         grabs.sort { (a, b) -> Bool in
             if  a.isFavorite {
-                a.needSave()                                // type 4
+                a.maybeNeedSave()                                // type 4
             }
 
             return a.order < b.order
@@ -1628,7 +1634,7 @@ class ZEditingManager: NSObject {
                         if  toFavorites, !fromFavorite, !fromTrash {
                             movable = gFavoritesManager.createBookmark(for: grab, style: .favorite)
 
-                            movable.needSave()
+                            movable.maybeNeedSave()
                         } else {
                             movable.orphan()
 
@@ -1691,8 +1697,8 @@ class ZEditingManager: NSObject {
             }
 
             into.addAndReorderChild(zone, at: iIndex)
-            into.needSave()
-            zone.needSave()
+            into.maybeNeedSave()
+            zone.maybeNeedSave()
             onCompletion?()
         }
     }
@@ -1749,7 +1755,7 @@ class ZEditingManager: NSObject {
                         
                         grab.grab()
                         there.children.updateOrdering()
-                        redrawAndSync(there)
+                        redrawSyncRedraw(there.widget)
                     }
                 } else {
                     let  grabThis = there.children[newIndex]

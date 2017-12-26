@@ -225,7 +225,7 @@ extension NSView {
             clearGestures()
 
             if let e = newValue {
-                e.movementGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.movementGestureEvent))
+                e.movementGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.dragGestureEvent))
                 e.clickGesture    = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
                 gDraggedZone      = nil
             }

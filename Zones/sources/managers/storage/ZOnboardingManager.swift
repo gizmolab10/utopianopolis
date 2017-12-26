@@ -143,7 +143,7 @@ class ZOnboardingManager : ZOperationsManager {
                     if  self.makeUserSpecial {
                         user.access = .eAccessFull
 
-                        user.needSave()
+                        user.maybeNeedSave()
                     }
 
                     onCompletion()

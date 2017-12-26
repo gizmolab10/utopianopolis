@@ -31,12 +31,26 @@ enum ZRecordState: Int {
 class ZRecordsManager: NSObject {
 
 
-    var ckRecordsByState = [ZRecordState : [CKRecord]] ()
-    var     zRecordsByID = [String       :    ZRecord] ()
-    var    bookmarksByID = [String       :       Zone] ()
-    var storageMode: ZStorageMode
-    var   trashZone: Zone? = nil
+    var        storageMode : ZStorageMode
+    var   ckRecordsByState = [ZRecordState : [CKRecord]] ()
+    var       zRecordsByID = [String       :    ZRecord] ()
+    var      bookmarksByID = [String       :       Zone] ()
+    var  _trashZone: Zone? = nil
     var    rootZone: Zone? = nil
+
+
+    var trashZone: Zone {
+        if  _trashZone    == nil {
+            let   recordID = CKRecordID(recordName: gTrashNameKey)
+            let     record = CKRecord(recordType: gZoneTypeKey, recordID: recordID)
+            let      trash = zoneForCKRecord(record)    // get / create trash
+            let     prefix = (storageMode == .mineMode) ? "my " : "public "
+            trash.zoneName = prefix + gTrashNameKey
+            _trashZone     = trash
+        }
+
+        return _trashZone!
+    }
 
 
     init(_ storageMode: ZStorageMode) {
@@ -46,7 +60,7 @@ class ZRecordsManager: NSObject {
 
     func clear() {
         rootZone         = nil
-        trashZone        = nil
+        _trashZone       = nil
         ckRecordsByState = [ZRecordState : [CKRecord]] ()
         zRecordsByID     = [String       :    ZRecord] ()
     }
@@ -597,7 +611,7 @@ class ZRecordsManager: NSObject {
             zone  = Zone(record: CKRecord(recordType: gZoneTypeKey, recordID: reference.recordID), storageMode: storageMode)
 
             // columnarReport("REFERENCE FETCH", "\(reference.recordID.recordName)")
-            zone?.needFetch()
+            zone?.maybeNeedFetch()
         }
 
         return zone!
@@ -605,14 +619,14 @@ class ZRecordsManager: NSObject {
 
 
     func zoneForCKRecord(_ ckRecord: CKRecord) -> Zone {
-        var zone  = maybeZoneForCKRecord(ckRecord)
+        var     zone = maybeZoneForCKRecord(ckRecord)
 
-        if  zone == nil {
-            zone  = Zone(record: ckRecord, storageMode: storageMode)
-
-            zone?.needFetch()
+        if  let    z = zone {
+            z.record = ckRecord
         } else {
-            zone!.record = ckRecord
+            zone     = Zone(record: ckRecord, storageMode: storageMode)
+
+            zone?.maybeNeedFetch()
         }
 
         return zone!

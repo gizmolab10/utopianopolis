@@ -92,16 +92,17 @@ class ZPreferencesController: ZGenericController {
 
     @IBAction func clearColorAction(_ button: ZButton) {
         let           grab = gSelectionManager.firstGrab
+        let         widget = grab.widget
         if  let      color = grab._color {
             UNDO(self) { iUndoSelf in
                 grab.color = color
 
-                iUndoSelf.syncToCloudAndSignalFor(grab, regarding: .redraw) {}
+                iUndoSelf.syncToCloudAndSignalFor(widget, regarding: .redraw) {}
             }
         }
 
         grab.clearColor()
-        syncToCloudAndSignalFor(grab, regarding: .redraw) {}
+        syncToCloudAndSignalFor(widget, regarding: .redraw) {}
     }
 
 

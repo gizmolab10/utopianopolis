@@ -12,11 +12,11 @@ import CloudKit
 
 
 let gRemoteStoresManager = ZRemoteStoresManager()
-var     gManifest: ZManifest     { return gRemoteStoresManager.manifest }
-var gCloudManager: ZCloudManager { return gRemoteStoresManager.currentCloudManager }
-var        gTrash: Zone?   { get { return gRemoteStoresManager.trashZone } set { gRemoteStoresManager.trashZone = newValue } }
-var         gRoot: Zone?   { get { return gRemoteStoresManager.rootZone }  set { gRemoteStoresManager.rootZone  = newValue } }
-var         gHere: Zone    { get { return gManifest.hereZone }             set { gManifest.hereZone             = newValue } }
+var        gCloudManager : ZCloudManager { return gRemoteStoresManager.currentCloudManager }
+var            gManifest : ZManifest     { return gRemoteStoresManager.manifest }
+var               gTrash : Zone?         { return gRemoteStoresManager.trashZone }
+var                gRoot : Zone?   { get { return gRemoteStoresManager.rootZone } set { gRemoteStoresManager.rootZone  = newValue } }
+var                gHere : Zone    { get { return gManifest.hereZone }            set { gManifest.hereZone             = newValue } }
 
 
 var gAllBookmarks: [Zone] {
@@ -41,7 +41,7 @@ class ZRemoteStoresManager: NSObject {
     var   currentCloudManager: ZCloudManager   { return cloudManagerFor(gStorageMode) }
     var      rootProgenyCount: Int             { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
     var              manifest: ZManifest       { return manifest(for: gStorageMode) }
-    var             trashZone: Zone?     { get { return currentRecordsManager.trashZone } set { currentRecordsManager.trashZone = newValue } }
+    var             trashZone: Zone?           { return currentRecordsManager.trashZone }
     var              rootZone: Zone?     { get { return currentRecordsManager.rootZone }  set { currentRecordsManager.rootZone  = newValue } }
 
 
