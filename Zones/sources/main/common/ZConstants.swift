@@ -30,43 +30,61 @@ let unselectBrightness: CGFloat = 0.98
 #endif
 
 
-let             gUnlevel = -1
-let           gBatchSize = 250
-let          gLogTabStop = 21
-let       gRemoteTimeout = 10.0
-let       gFingerBreadth = CGFloat(44.0)
-let      gReductionRatio = CGFloat(0.8)
-let    gDefaultZoneColor = ZColor.blue
+let           gUnlevel = -1
+let         gBatchSize = 250
+let        gLogTabStop = 21
+let     gRemoteTimeout = 10.0
+let     gFingerBreadth = CGFloat(44.0)
+let    gReductionRatio = CGFloat(0.8)
+let  gDefaultZoneColor = ZColor.blue
 
-let         gUndoManager = UndoManager()
+let       gUndoManager = UndoManager()
 
-let              gNoName = "empty"
-let             gCloudID = "iCloud.com.zones.Zones"
-let            gLinksKey = "links"
-let            gNullLink = "no"
-let           gTrashLink = "\(gSeparatorKey)\(gSeparatorKey)trash"
-let         gRootNameKey = "root"
-let         gChildrenKey = "children"
-let         gZoneNameKey = "zoneName"
-let         gZoneTypeKey = "Zone"
-let        gTraitTypeKey = "ZTrait"
-let        gSeparatorKey = ":"
-let        gTrashNameKey = "trash"
-let       gRecordNameKey = "recordName"
-let       gRecordTypeKey = "recordType"
-let     gShowChildrenKey = "showChildren"
-let     gManifestTypeKey = "ZManifest"
-let    gHalfLineOfDashes = "-----------"
-let    gFavoritesNameKey = "favorites"
-let gFavoriteRootNameKey = "favoritesRoot"
-let   gLineWithStubTitle = gHalfLineOfDashes + " | " + gHalfLineOfDashes
-let     gLocalNamePrefix = "local."
-let      gLocalOnlyNames = [gTrashNameKey, gFavoriteRootNameKey]
-let        gLineOfDashes = gHalfLineOfDashes + "---" + gHalfLineOfDashes
-let           gRootNames = [gRootNameKey] + gLocalOnlyNames
+let            gNoName = "empty"
+let           gCloudID = "iCloud.com.zones.Zones"
+let          gNullLink = "no"
+let         gTrashLink = kSeparator + kSeparator + "trash"
+let  gHalfLineOfDashes = "-----------"
+let gLineWithStubTitle = gHalfLineOfDashes + " | " + gHalfLineOfDashes
+let   gLocalNamePrefix = "local."
+let    gLocalOnlyNames = [kTrashName, kFavoriteRootName]
+let      gLineOfDashes = gHalfLineOfDashes + "---" + gHalfLineOfDashes
+let         gRootNames = [kRootName] + gLocalOnlyNames
 
 
-let        gBackspaceKey = "\u{8}"
-let           gDeleteKey = "\u{7F}"
-let            gSpaceKey = " "
-let              gTabKey = "\t"
+// MARK:- keys
+// MARK:-
+
+
+let             kLinks = "links"
+let          kRootName = "root"
+let          kChildren = "children"
+let          kZoneName = "zoneName"
+let          kZoneType = "Zone"
+let         kTraitType = "ZTrait"
+let         kSeparator = ":"
+let         kTrashName = "trash"
+let        kRecordName = "recordName"
+let        kRecordType = "recordType"
+let      kShowChildren = "showChildren"
+let      kManifestType = "ZManifest"
+let     kFavoritesName = "favorites"
+let  kFavoriteRootName = "favoritesRoot"
+let  kfavoritesVisible = "favorites are visible"
+let   kRubberbandColor = "rubberband color"
+let   kBackgroundColor = "background color"
+let   kCurrentFavorite = "current favorite"
+let    kActionsVisible = "actions are visible"
+let     kSettingsState = "current settings state"
+let     kInsertionMode = "graph altering mode"
+let     kLineThickness = "line thickness"
+let     kGenericOffset = "generic offset"
+let      kUserRecordID = "user record id"
+let      kScrollOffset = "scroll offset"
+let       kStorageMode = "current storage mode"
+let        kCountsMode = "counts mode"
+let         kBackspace = "\u{8}"
+let           kScaling = "scaling"
+let            kDelete = "\u{7F}"
+let             kSpace = " "
+let               kTab = "\t"

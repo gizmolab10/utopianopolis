@@ -64,7 +64,7 @@ class ZRemoteStoresManager: NSObject {
         if  manifest == nil {
             let            manifestName = "manifest.\(mode.rawValue)"
             let    recordID: CKRecordID = CKRecordID(recordName: manifestName)
-            let    record:   CKRecord   = CKRecord(recordType: gManifestTypeKey, recordID: recordID)
+            let    record:   CKRecord   = CKRecord(recordType: kManifestType, recordID: recordID)
             manifest                    = ZManifest(record: record, storageMode: .mineMode) // every manifest gets stored in .mine
             manifest!     .manifestMode = mode
             manifestByStorageMode[mode] = manifest
@@ -179,7 +179,7 @@ class ZRemoteStoresManager: NSObject {
 
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
-        gCloudManager.assureRecordExists(withRecordID: recordID, recordType: gZoneTypeKey) { iRecord in
+        gCloudManager.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { iRecord in
             if iRecord != nil {                                                 // TODO: extract storage mode from record id, i.e., the database
                 let    zone = self.currentCloudManager.zoneForCKRecord(iRecord!)  // TODO: currentCloudManager is wrong here
                 zone.record = iRecord

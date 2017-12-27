@@ -76,15 +76,15 @@ class ZEditingManager: NSObject {
 
     func menuType(for key: String) -> ZMenuType {
         switch key {
-        case "z":                                          return .Undo
-        case "o", "r":                                     return .Sort
-        case "v", "x", gSpaceKey:                          return .Child
-        case "e", "h", "l", "\r", "u", "w", "-":           return .Alter
-        case "b", "d", gTabKey, gBackspaceKey, gDeleteKey: return .Parent
-        case ";", "'", "/":                                return .Favorites
-        case "a":                                          return .SelectAll
-        case "=":                                          return .Travel
-        default:                                           return .Always
+        case "z":                                 return .Undo
+        case "o", "r":                            return .Sort
+        case "v", "x", kSpace:                    return .Child
+        case "e", "h", "l", "\r", "u", "w", "-":  return .Alter
+        case "b", "d", kTab, kBackspace, kDelete: return .Parent
+        case ";", "'", "/":                       return .Favorites
+        case "a":                                 return .SelectAll
+        case "=":                                 return .Travel
+        default:                                  return .Always
         }
     }
 
@@ -148,43 +148,43 @@ class ZEditingManager: NSObject {
 
             if  isEditing {
                 switch key {
-             // case "f":        if isCommand { find() }
-                case "a":        if isCommand { gSelectionManager.currentlyEditingZone?.widget?.textWidget.selectAllText() }
-             // case "?":        if isCommand { gSettingsController?.displayViewFor(id: .Help) }
-                case gSpaceKey:  if isControl { addIdea() }
-                default:         break
+             // case "f":      if isCommand { find() }
+                case "a":      if isCommand { gSelectionManager.currentlyEditingZone?.widget?.textWidget.selectAllText() }
+             // case "?":      if isCommand { gSettingsController?.displayViewFor(id: .Help) }
+                case kSpace:   if isControl { addIdea() }
+                default:       break
                 }
             } else if isWindow, let arrow = key.arrow {
                 handleArrow(arrow, flags: flags)
             } else {
                 switch key {
-                case "f":        find()
-                case "-":        addLine()
-                case "r":        reverse()
-                case "c":        recenter()
-                case "e":        editEmail()
-                case "a":        selectAll()
-                case "d":        duplicate()
-                case "p":        printHere()
-                case "b":        addBookmark()
-                case "h":        editHyperlink()
-                case "w":        toggleWritable()
-                case "o":        orderByLength(isOption)
-                case "s":        selectCurrentFavorite()
-                case "u", "l":   alterCase(up: key == "u")
-                case ";":        doFavorites(true,    false)
-                case "?":        openBrowserForFocusWebsite()
-                case "'":        doFavorites(isShift, isOption)
-                case "/":        focus(on: gSelectionManager.firstGrab, isCommand)
-                case "=":        gTravelManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawSyncRedraw() }
-                case gTabKey:    addNext(containing: isOption) { iChild in iChild.edit() }
-                case ",", ".":   gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
-                case "z":        if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
-                case gSpaceKey:  if isOption || isWindow || isControl { addIdea() }
-                case gBackspaceKey,
-                     gDeleteKey: if isOption || isWindow { delete(permanently: isCommand && isControl && isOption && isWindow, preserveChildren: !isCommand && !isControl && isOption && isWindow) }
-                case "\r":       if hasWidget { grabOrEdit(isCommand) }
-                default:         break
+                case "f":      find()
+                case "-":      addLine()
+                case "r":      reverse()
+                case "c":      recenter()
+                case "e":      editEmail()
+                case "a":      selectAll()
+                case "d":      duplicate()
+                case "p":      printHere()
+                case "b":      addBookmark()
+                case "h":      editHyperlink()
+                case "w":      toggleWritable()
+                case "o":      orderByLength(isOption)
+                case "s":      selectCurrentFavorite()
+                case "u", "l": alterCase(up: key == "u")
+                case ";":      doFavorites(true,    false)
+                case "?":      openBrowserForFocusWebsite()
+                case "'":      doFavorites(isShift, isOption)
+                case "/":      focus(on: gSelectionManager.firstGrab, isCommand)
+                case "=":      gTravelManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawSyncRedraw() }
+                case kTab:     addNext(containing: isOption) { iChild in iChild.edit() }
+                case ",", ".": gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
+                case "z":      if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
+                case kSpace:   if isOption || isWindow || isControl { addIdea() }
+                case kBackspace,
+                     kDelete:  if isOption || isWindow { delete(permanently: isCommand && isControl && isOption && isWindow, preserveChildren: !isCommand && !isControl && isOption && isWindow) }
+                case "\r":     if hasWidget { grabOrEdit(isCommand) }
+                default:       break
                 }
             }
         }

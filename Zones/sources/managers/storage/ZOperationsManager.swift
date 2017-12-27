@@ -51,16 +51,11 @@ enum ZOperationID: Int {
 
     case emptyTrash
     case completion
+    case fetchlost
     case undelete
     case merge
-    case trash
     case none // default operation
 }
-
-
-var gDebugTimer : Timer? = nil
-var gDebugTimerCount : Int = 0
-var gDebugOperations = true
 
 
 class ZOperationsManager: NSObject {

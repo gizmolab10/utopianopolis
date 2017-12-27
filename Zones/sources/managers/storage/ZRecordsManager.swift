@@ -41,11 +41,11 @@ class ZRecordsManager: NSObject {
 
     var trashZone: Zone {
         if  _trashZone    == nil {
-            let   recordID = CKRecordID(recordName: gTrashNameKey)
-            let     record = CKRecord(recordType: gZoneTypeKey, recordID: recordID)
+            let   recordID = CKRecordID(recordName: kTrashName)
+            let     record = CKRecord(recordType: kZoneType, recordID: recordID)
             let      trash = zoneForCKRecord(record)    // get / create trash
             let     prefix = (storageMode == .mineMode) ? "my " : "public "
-            trash.zoneName = prefix + gTrashNameKey
+            trash.zoneName = prefix + kTrashName
             _trashZone     = trash
         }
 
@@ -149,7 +149,7 @@ class ZRecordsManager: NSObject {
     func addZRecord(_ iRecord: ZRecord, for states: [ZRecordState]) {
         if  let ckrecord = iRecord.record {
             if addCKRecord(ckrecord, for: states) {
-//                if ckrecord[gZoneNameKey] == nil {
+//                if ckrecord[kZoneName] == nil {
 //                    columnarReport("  REGISTER", "no name")
 //                }
             }
@@ -608,7 +608,7 @@ class ZRecordsManager: NSObject {
         var zone  = maybeZoneForReference(reference)
 
         if  zone == nil {
-            zone  = Zone(record: CKRecord(recordType: gZoneTypeKey, recordID: reference.recordID), storageMode: storageMode)
+            zone  = Zone(record: CKRecord(recordType: kZoneType, recordID: reference.recordID), storageMode: storageMode)
 
             // columnarReport("REFERENCE FETCH", "\(reference.recordID.recordName)")
             zone?.maybeNeedFetch()

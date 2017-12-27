@@ -64,7 +64,7 @@ class ZFavoritesManager: ZCloudManager {
 
     var currentFavoriteID: String? {
         get {
-            if  let    identifier = UserDefaults.standard.object(forKey: currentFavoriteKey) as? String {
+            if  let    identifier = UserDefaults.standard.object(forKey: kCurrentFavorite) as? String {
                 return identifier
             }
 
@@ -74,7 +74,7 @@ class ZFavoritesManager: ZCloudManager {
                 // initial default value is first item in favorites list, whatever it happens to be //
                 //////////////////////////////////////////////////////////////////////////////////////
 
-                UserDefaults.standard.set(initialID, forKey: currentFavoriteKey)
+                UserDefaults.standard.set(initialID, forKey: kCurrentFavorite)
 
                 return initialID
             }
@@ -83,7 +83,7 @@ class ZFavoritesManager: ZCloudManager {
         }
 
         set {
-            UserDefaults.standard.set(newValue, forKey: currentFavoriteKey)
+            UserDefaults.standard.set(newValue, forKey: kCurrentFavorite)
         }
     }
 
@@ -200,7 +200,7 @@ class ZFavoritesManager: ZCloudManager {
 
     func setup() {
         if  gHasPrivateDatabase && rootZone == nil {
-            rootZone               = Zone(storageMode: .mineMode, named: gFavoritesNameKey, identifier: gFavoriteRootNameKey)
+            rootZone               = Zone(storageMode: .mineMode, named: kFavoritesName, identifier: kFavoriteRootName)
             rootZone!.directAccess = .eChildrenWritable
 
             setupDatabaseFavorites()
@@ -215,7 +215,7 @@ class ZFavoritesManager: ZCloudManager {
             for (index, mode) in gAllDatabaseModes.enumerated() {
                 let          name = mode.rawValue
                 let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: gLocalNamePrefix + name)
-                favorite.zoneLink =  "\(name)\(gSeparatorKey)\(gSeparatorKey)"
+                favorite.zoneLink =  "\(name)\(kSeparator)\(kSeparator)"
                 favorite   .order = Double(index) * 0.001
 
                 favorite.clearAllStates()
@@ -289,7 +289,7 @@ class ZFavoritesManager: ZCloudManager {
             ////////////////////////////////
 
             if !foundTrash {
-                let      trash = Zone(storageMode: .mineMode, named: gTrashNameKey, identifier: gLocalNamePrefix + gTrashNameKey)
+                let      trash = Zone(storageMode: .mineMode, named: kTrashName, identifier: gLocalNamePrefix + kTrashName)
                 trash.zoneLink = gTrashLink // convert into a bookmark
 
                 rootZone?.addAndReorderChild(trash, at: nil)

@@ -101,12 +101,12 @@ extension NSObject {
 
     func name(from iLink: String?) -> String? {
         if  let       link = iLink {
-            var components =  link.components(separatedBy: gSeparatorKey)
+            var components =  link.components(separatedBy: kSeparator)
 
             if  components.count > 2 {
                 let    name = components[2]
 
-                return name == "" ? gRootNameKey : name
+                return name == "" ? kRootName : name
             }
         }
 
@@ -118,9 +118,9 @@ extension NSObject {
         if  link                      != nil,
             link                      != "",
             let                   name = name(from: link) {
-            var components:   [String] = link!.components(separatedBy: gSeparatorKey)
+            var components:   [String] = link!.components(separatedBy: kSeparator)
             let identifier: CKRecordID = CKRecordID(recordName: name)
-            let   ckRecord: CKRecord   = CKRecord(recordType: gZoneTypeKey, recordID: identifier)
+            let   ckRecord: CKRecord   = CKRecord(recordType: kZoneType, recordID: identifier)
             let                rawMode = components[0]
             let    mode: ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
             let                manager = gRemoteStoresManager.recordsManagerFor(mode)
@@ -139,9 +139,9 @@ extension CKRecord {
 
 
     var decoratedName: String {
-        if recordType       != gZoneTypeKey {
+        if recordType       != kZoneType {
             return recordID.recordName
-        } else if let   name = self[gZoneNameKey] as? String {
+        } else if let   name = self[ kZoneName] as? String {
             let    separator = " "
             var       prefix = ""
 
@@ -173,7 +173,7 @@ extension CKRecord {
 
 
     convenience init(for name: String) {
-        self.init(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: name))
+        self.init(recordType: kZoneType, recordID: CKRecordID(recordName: name))
     }
 
 
@@ -344,7 +344,7 @@ extension String {
             var green = 0.0
 
             for pair in pairs {
-                let values = pair.components(separatedBy: gSeparatorKey)
+                let values = pair.components(separatedBy: kSeparator)
                 let  value = Double(values[1])!
                 let    key = values[0]
 

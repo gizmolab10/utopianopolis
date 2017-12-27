@@ -206,8 +206,8 @@ class ZRecord: NSObject {
 
         for (key, value) in dict {
             switch key {
-            case gRecordTypeKey: type = value as? String; break
-            case gRecordNameKey: name = value as? String; break
+            case kRecordType: type = value as? String; break
+            case kRecordName: name = value as? String; break
             default:                                     break
             }
         }
@@ -224,8 +224,8 @@ class ZRecord: NSObject {
 
     func storageDictionary() -> ZStorageDict? {
         return record == nil ? [:] :
-            [gRecordNameKey : recordName!       as NSObject,
-             gRecordTypeKey : record.recordType as NSObject]
+            [kRecordName : recordName!       as NSObject,
+             kRecordType : record.recordType as NSObject]
     }
 
 

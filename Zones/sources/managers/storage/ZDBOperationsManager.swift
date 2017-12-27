@@ -77,15 +77,15 @@ class ZDBOperationsManager: ZOperationsManager {
     func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,    to: .traits,                                                         onCompletion) }
     func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .save,    to: .subscribe,                                                      onCompletion) }
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash,                                                             .remember]) { onCompletion() } }
-    func fetchTrash(_ onCompletion: @escaping Closure) { setupAndRun([.trash,                               .save, .children,         .traits, .remember]) { onCompletion() } }
+    func  fetchLost(_ onCompletion: @escaping Closure) { setupAndRun([.fetchlost,                           .save, .children,                  .remember]) { onCompletion() } }
     func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete,  .fetch, .parents,         .save, .children,         .traits, .remember]) { onCompletion() } }
     func      pSave(_ onCompletion: @escaping Closure) { setupAndRun([                                      .save                                       ]) { onCompletion() } }
     func      pRoot(_ onCompletion: @escaping Closure) { setupAndRun([.root,                                .save, .children,         .traits, .remember]) { onCompletion() } }
     func      pSync(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents, .merge, .save, .children,         .traits, .remember]) { onCompletion() } }
-    func    pTravel(_ onCompletion: @escaping Closure) { setupAndRun([.root, .manifest,   .parents,                .children, .fetch, .traits, .remember]) { onCompletion() } }
+    func    pTravel(_ onCompletion: @escaping Closure) { setupAndRun([.root,   .manifest, .parents,                .children, .fetch, .traits, .remember]) { onCompletion() } }
     func   pParents(_ onCompletion: @escaping Closure) { setupAndRun([                    .parents,                                   .traits, .remember]) { onCompletion() } }
     func  pFamilies(_ onCompletion: @escaping Closure) { setupAndRun([                    .parents,                .children,         .traits, .remember]) { onCompletion() } }
-    func pBookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks,                           .save,            .fetch, .traits, .remember]) { onCompletion() } }
+    func pBookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks, .fetch,                   .save,                    .traits, .remember]) { onCompletion() } }
     func     pFetch(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch,                                             .traits, .remember]) { onCompletion() } }
     func  pChildren(_ onCompletion: @escaping Closure) { setupAndRun([.manifest,                                   .children,         .traits, .remember]) { onCompletion() } }
 
@@ -210,8 +210,8 @@ class ZDBOperationsManager: ZOperationsManager {
         case .unsubscribe:          cloudManager.unsubscribe             (               cloudCallback)
         case .undelete:             cloudManager.undeleteAll             (               cloudCallback)
         case .emptyTrash:           cloudManager.emptyTrash              (               cloudCallback)
-        case .trash:                cloudManager.fetchTrash              (               cloudCallback)
         case .subscribe:            cloudManager.subscribe               (               cloudCallback)
+        case .fetchlost:            cloudManager.fetchLost               (               cloudCallback)
         case .refetch:              cloudManager.refetch                 (               cloudCallback)
         case .remember:             cloudManager.remember                (               cloudCallback)
         case .fetch:                cloudManager.fetch                   (               cloudCallback)

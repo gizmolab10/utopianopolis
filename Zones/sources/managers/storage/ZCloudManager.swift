@@ -140,7 +140,7 @@ class ZCloudManager: ZRecordsManager {
 //            // iRecord == nil means: end of response to this particular query
 //
 //            if iRecord != nil {
-//                self.columnarReport("DELETE", String(describing: iRecord![gZoneNameKey]))
+//                self.columnarReport("DELETE", String(describing: iRecord![kZoneName]))
 //                toBeDeleted.append((iRecord?.recordID)!)
 //
 //            } else if (toBeDeleted.count) > 0, let operation = self.configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
@@ -248,7 +248,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func queryWith(_ predicate: NSPredicate, onCompletion: RecordClosure?) {
-        queryWith(predicate, recordType: gZoneTypeKey, properties: Zone.cloudProperties(), onCompletion: onCompletion)
+        queryWith(predicate, recordType: kZoneType, properties: Zone.cloudProperties(), onCompletion: onCompletion)
     }
 
 
@@ -403,7 +403,7 @@ class ZCloudManager: ZRecordsManager {
             scan(gFavoritesManager.rootZone)
 
             self.columnarReport("REMEMBER \(memorables.count)", "\(self.storageMode.rawValue)")
-            setString(memorables.joined(separator: gSeparatorKey), for: self.refetchingName)
+            setString(memorables.joined(separator: kSeparator), for: self.refetchingName)
 
             self.isRemembering = false
 
@@ -413,7 +413,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func refetch(_ onCompletion: IntClosure?) {
-        if  let fetchables = getString(for: refetchingName, defaultString: "")?.components(separatedBy: gSeparatorKey) {
+        if  let fetchables = getString(for: refetchingName, defaultString: "")?.components(separatedBy: kSeparator) {
             let   fetching = [ZRecordState.needsFetch]
 
             for fetchable in fetchables {
@@ -427,18 +427,15 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetchTrash(_ onCompletion: IntClosure?) {
-        let predicate = NSPredicate(format: "zoneName != \"\"")
+    func fetchLost(_ onCompletion: IntClosure?) {
+        let predicate = NSPredicate(format: kZoneName + " != \"\"")
         var retrieved = [CKRecord] ()
         let     trash = trashZone
         let parentKey = "parent"
 
         self.queryWith(predicate) { (iRecord: CKRecord?) in
             if  let ckRecord = iRecord, !retrieved.contains(ckRecord) {
-                if  let name = ckRecord[gZoneNameKey] as? String,
-                    !gRootNames.contains(name) {
-                    retrieved.append(ckRecord)
-                }
+                retrieved.append(ckRecord)
             } else { // nil means: we already received full response from cloud for this particular fetch
                 FOREGROUND {
                     var    parentIDs = [CKRecordID] ()
@@ -453,8 +450,7 @@ class ZCloudManager: ZRecordsManager {
                                 
                                 parentIDs.append(parent.recordID)
                             } // else it's already in memory (either the trash or the graph)
-                        } else if let name = ckRecord[gZoneNameKey] as? String,
-                            !gRootNames.contains(name),
+                        } else if !gRootNames.contains(ckRecord.recordID.recordName),
                             let added = trash.addCKRecord(ckRecord) {
                             added.maybeNeedSave()
                             trash.maybeNeedSave()
@@ -510,10 +506,8 @@ class ZCloudManager: ZRecordsManager {
                                         }
                                     }
                                 }
-                                
-                                let evokeClosure = parentIDs.count != 0
-                                
-                                if  evokeClosure {
+
+                                if  parentIDs.count != 0 {
                                     closure?(parentIDs)
                                 } else {
                                     onCompletion?(0)
@@ -593,7 +587,7 @@ class ZCloudManager: ZRecordsManager {
             let recordID = manifest.record.recordID
             let     mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
 
-            mine.assureRecordExists(withRecordID: recordID, recordType: gManifestTypeKey) { (iManifestRecord: CKRecord?) in
+            mine.assureRecordExists(withRecordID: recordID, recordType: kManifestType) { (iManifestRecord: CKRecord?) in
                 if  iManifestRecord     != nil {
                     self.manifest.record = iManifestRecord
 
@@ -602,7 +596,7 @@ class ZCloudManager: ZRecordsManager {
                         let   identifier = CKRecordID(recordName: here)
                         let        cloud = gRemoteStoresManager.cloudManagerFor(mode)
 
-                        cloud.assureRecordExists(withRecordID: identifier, recordType: gZoneTypeKey) { iCKRecord in
+                        cloud.assureRecordExists(withRecordID: identifier, recordType: kZoneType) { iCKRecord in
                             if  let ckRecord = iCKRecord {
                                 self.manifest._hereZone = cloud.zoneForCKRecord(ckRecord)
                             }
@@ -783,7 +777,7 @@ class ZCloudManager: ZRecordsManager {
         let predicate = traitsPredicate(specificTo: recordIDs)
         var retrieved = [CKRecord] ()
 
-        queryWith(predicate, recordType: gTraitTypeKey, properties: ZTrait.cloudProperties()) { iRecord in
+        queryWith(predicate, recordType: kTraitType, properties: ZTrait.cloudProperties()) { iRecord in
             if let ckRecord = iRecord {
                 if !retrieved.contains(ckRecord) {
                     retrieved.append(ckRecord)
@@ -877,8 +871,8 @@ class ZCloudManager: ZRecordsManager {
         } else {
             let recordID = CKRecordID(recordName: manifest.here!)
 
-            self.assureRecordExists(withRecordID: recordID, recordType: gZoneTypeKey) { (iHereRecord: CKRecord?) in
-                if iHereRecord == nil || iHereRecord?[gZoneNameKey] == nil {
+            self.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { (iHereRecord: CKRecord?) in
+                if iHereRecord == nil || iHereRecord?[kZoneName] == nil {
                     rootCompletion()
                 } else {
                     let               here = self.zoneForCKRecord(iHereRecord!)
@@ -897,12 +891,12 @@ class ZCloudManager: ZRecordsManager {
         if  rootZone != nil {
             onCompletion?(0)
         } else {
-            let recordID = CKRecordID(recordName: gRootNameKey)
+            let recordID = CKRecordID(recordName: kRootName)
 
-            assureRecordExists(withRecordID: recordID, recordType: gZoneTypeKey) { (iRecord: CKRecord?) in
+            assureRecordExists(withRecordID: recordID, recordType: kZoneType) { (iRecord: CKRecord?) in
                 var ckRecord  = iRecord
                 if  ckRecord == nil {
-                    ckRecord  = CKRecord(recordType: gZoneNameKey, recordID: recordID)
+                    ckRecord  = CKRecord(recordType: kZoneName, recordID: recordID)
                 }
 
                 self.rootZone = self.zoneForCKRecord(ckRecord!)    // get / create root7
@@ -960,7 +954,7 @@ class ZCloudManager: ZRecordsManager {
         if  database == nil {
             onCompletion?(0)
         } else {
-            let classNames = [gZoneTypeKey, gManifestTypeKey]
+            let classNames = [kZoneType, kManifestType]
             var      count = classNames.count
 
             onCompletion?(-1)

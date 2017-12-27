@@ -367,8 +367,8 @@ extension ZoneTextWidget {
             deselectAllText()
 
             switch value {
-            case NSBacktabTextMovement: key = gSpaceKey
-            case NSTabTextMovement:     key = gTabKey
+            case NSBacktabTextMovement: key = kSpace
+            case NSTabTextMovement:     key = kTab
             case NSReturnTextMovement:  return
             default:                    break
             }

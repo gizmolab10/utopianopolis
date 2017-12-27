@@ -51,7 +51,7 @@ class Zone : ZRecord {
     var      onlyShowToggleDot:        Bool  { return (isRootOfFavorites && !(widget?.isInMain ?? true)) || (isPhone && self == gHere) }
     var      isWritableByUseer:        Bool  { return  isTextEditable || gOnboardingManager.userHasAccess(self) }
     var      isCurrentFavorite:        Bool  { return self == gFavoritesManager.currentFavorite }
-    var      isRootOfFavorites:        Bool  { return record != nil && recordName == gFavoriteRootNameKey }
+    var      isRootOfFavorites:        Bool  { return record != nil && recordName == kFavoriteRootName }
     var       accessIsChanging:        Bool  { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
     var       isSortableByUser:        Bool  { return ancestorAccess != .eFullReadOnly || gOnboardingManager.userHasAccess(self) }
     var        directRecursive:        Bool  { return directAccess == .eRecurse }
@@ -67,7 +67,7 @@ class Zone : ZRecord {
     var              isGrabbed:        Bool  { return gSelectionManager .isGrabbed(self) }
     var               hasColor:        Bool  { return zoneColor != nil && zoneColor != "" }
     var                isEmail:        Bool  { return hasTrait(for: .eEmail) && email != "" }
-    var                isTrash:        Bool  { return recordName == gTrashNameKey }
+    var                isTrash:        Bool  { return recordName == kTrashName }
 
 
     var trashZone: Zone? {
@@ -184,9 +184,9 @@ class Zone : ZRecord {
         var newRecord : CKRecord?
 
         if  let rName = identifier {
-            newRecord = CKRecord(recordType: gZoneTypeKey, recordID: CKRecordID(recordName: rName))
+            newRecord = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: rName))
         } else {
-            newRecord = CKRecord(recordType: gZoneTypeKey)
+            newRecord = CKRecord(recordType: kZoneType)
         }
 
         self.init(record: newRecord!, storageMode: storageMode)
@@ -1206,7 +1206,7 @@ class Zone : ZRecord {
             traverseAllProgeny { iZone in
                 let            pz = iZone.parentZone
                 let        record = iZone.record
-                iZone     .record = CKRecord(recordType: gZoneTypeKey)
+                iZone     .record = CKRecord(recordType: kZoneType)
 
                 record?.copy(to: iZone.record, properties: iZone.cloudProperties())
 
@@ -1367,10 +1367,9 @@ class Zone : ZRecord {
 
     
     override func setStorageDictionary(_ dict: ZStorageDict) {
-        if let string = dict[    gZoneNameKey] as!   String? { zoneName     = string }
-        // if let number = dict[showChildrenKey] as! NSNumber? { showChildren = number.boolValue }
+        if let     string = dict[kZoneName] as! String? { zoneName = string }
 
-        if let childrenStore: [ZStorageDict] = dict[gChildrenKey] as! [ZStorageDict]? {
+        if let childrenStore: [ZStorageDict] = dict[kChildren] as! [ZStorageDict]? {
             for childStore: ZStorageDict in childrenStore {
                 let child = Zone(dict: childStore)
 
@@ -1385,17 +1384,17 @@ class Zone : ZRecord {
 
 
     override func storageDictionary() -> ZStorageDict? {
-        var      childrenStore = [ZStorageDict] ()
-        var               dict = super.storageDictionary()!
-        dict[gZoneNameKey]     = zoneName as NSObject?
-        dict[gShowChildrenKey]  = NSNumber(booleanLiteral: showChildren)
+        var   childrenStore = [ZStorageDict] ()
+        var            dict = super.storageDictionary()!
+        dict[kZoneName]     = zoneName as NSObject?
+        dict[kShowChildren] = NSNumber(booleanLiteral: showChildren)
 
 
         for child: Zone in children {
             childrenStore.append(child.storageDictionary()!)
         }
 
-        dict[gChildrenKey]      = childrenStore as NSObject?
+        dict[kChildren]     = childrenStore as NSObject?
 
         return dict
     }

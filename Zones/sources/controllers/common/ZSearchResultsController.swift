@@ -76,8 +76,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     func sortRecords() {
         for (mode, records) in foundRecords {
             foundRecords[mode] = records.sorted() {
-                if  let a = $0[gZoneNameKey] as? String,
-                    let b = $1[gZoneNameKey] as? String {
+                if  let a = $0[kZoneName] as? String,
+                    let b = $1[kZoneName] as? String {
                     return a.lowercased() < b.lowercased()
                 }
 

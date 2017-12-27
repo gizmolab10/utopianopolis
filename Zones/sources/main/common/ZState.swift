@@ -78,10 +78,13 @@ var     gShowIdentifiers                     = false
 var    gCloudUnavailable                     = false
 var   gCrippleUserAccess                     = false
 var   gKeyboardIsVisible                     = false
+var     gDebugOperations                     = true
+var     gDebugTimerCount                     = 0
 var     gDragDropIndices: NSMutableIndexSet? = nil
 var        gDragRelation:         ZRelation? = nil
 var        gDragDropZone:              Zone? = nil
 var         gDraggedZone:              Zone? = nil
+var          gDebugTimer:             Timer? = nil
 var           gDragPoint:           CGPoint? = nil
 
 var              gIsLate:               Bool { return gCloudUnavailable || gDBOperationsManager.isLate }
@@ -97,72 +100,50 @@ var          gWidgetFont:              ZFont { return .systemFont(ofSize: fontSi
 var       gFavoritesFont:              ZFont { return .systemFont(ofSize: fontSize * gReductionRatio) }
 
 
-// MARK:- keys
-// MARK:-
-
-
-let     userRecordIDKey = "user record id"
-let favoritesVisibleKey = "favorites are visible"
-let  rubberbandColorKey = "rubberband color"
-let  backgroundColorKey = "background color"
-let  currentFavoriteKey = "current favorite"
-let   actionsVisibleKey = "actions are visible"
-let    settingsStateKey = "current settings state"
-let    insertionModeKey = "graph altering mode"
-let    tinyDotsRatioKey = "tiny dots ratio"
-let    bookmarkColorKey = "bookmark color"
-let    lineThicknessKey = "line thickness"
-let    genericOffsetKey = "generic offset"
-let     scrollOffsetKey = "scroll offset"
-let      storageModeKey = "current storage mode"
-let       countsModeKey = "counts mode"
-let          scalingKey = "scaling"
-
-
 // MARK:- persistence
 // MARK:-
 
 
 var gUserRecordID: String? {
-    get { return getString(   for: userRecordIDKey, defaultString: nil) }
-    set { setString(newValue, for: userRecordIDKey) }
+    get { return getString(   for: kUserRecordID, defaultString: nil) }
+    set { setString(newValue, for: kUserRecordID) }
 }
 
 
 var gFavoritesAreVisible: Bool {
-    get { return getBool(   for: favoritesVisibleKey, defaultBool: false) }
-    set { setBool(newValue, for: favoritesVisibleKey) }
+    get { return getBool(   for: kfavoritesVisible, defaultBool: false) }
+    set { setBool(newValue, for: kfavoritesVisible) }
 }
 
 
 var gActionsAreVisible: Bool {
-    get { return getBool(   for: actionsVisibleKey, defaultBool: false) }
-    set { setBool(newValue, for: actionsVisibleKey) }
+    get { return getBool(   for: kActionsVisible, defaultBool: false) }
+    set { setBool(newValue, for: kActionsVisible) }
 }
 
 
 var gBackgroundColor: ZColor {
-    get { return   getColor( for: backgroundColorKey, defaultColor: ZColor(hue: 0.6, saturation: 0.1, brightness: unselectBrightness, alpha: 1)) }
-    set { setColor(newValue, for: backgroundColorKey) }
+    get { return   getColor( for: kBackgroundColor, defaultColor: ZColor(hue: 0.6, saturation: 0.1, brightness: unselectBrightness, alpha: 1)) }
+    set { setColor(newValue, for: kBackgroundColor) }
 }
 
 
 var gRubberbandColor: ZColor {
-    get { return   getColor( for: rubberbandColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
-    set { setColor(newValue, for: rubberbandColorKey) }
+    get { return   getColor( for: kRubberbandColor, defaultColor: ZColor.purple.darker(by: 1.5)) }
+    set { setColor(newValue, for: kRubberbandColor) }
 }
 
 
 var gGenericOffset: CGSize {
     get {
-        if let string = UserDefaults.standard.object(forKey: genericOffsetKey) as? String {
+        if let string = UserDefaults.standard.object(forKey: kGenericOffset) as? String {
             return string.cgSize
         }
 
         let defaultValue = CGSize(width: 30.0, height: 2.0)
         let       string = NSStringFromSize(defaultValue)
 
-        UserDefaults.standard.set(string, forKey: genericOffsetKey)
+        UserDefaults.standard.set(string, forKey: kGenericOffset)
         UserDefaults.standard.synchronize()
 
         return defaultValue
@@ -171,7 +152,7 @@ var gGenericOffset: CGSize {
     set {
         let string = NSStringFromSize(newValue)
 
-        UserDefaults.standard.set(string, forKey: genericOffsetKey)
+        UserDefaults.standard.set(string, forKey: kGenericOffset)
         UserDefaults.standard.synchronize()
     }
 }
@@ -179,14 +160,14 @@ var gGenericOffset: CGSize {
 
 var gScrollOffset: CGPoint {
     get {
-        if let string = UserDefaults.standard.object(forKey: scrollOffsetKey) as? String {
+        if let string = UserDefaults.standard.object(forKey: kScrollOffset) as? String {
             return string.cgPoint
         }
 
         let defaultValue = CGPoint(x: 0.0, y: 0.0)
         let       string = NSStringFromPoint(defaultValue)
 
-        UserDefaults.standard.set(string, forKey: scrollOffsetKey)
+        UserDefaults.standard.set(string, forKey: kScrollOffset)
         UserDefaults.standard.synchronize()
 
         return defaultValue
@@ -195,7 +176,7 @@ var gScrollOffset: CGPoint {
     set {
         let string = NSStringFromPoint(newValue)
 
-        UserDefaults.standard.set(string, forKey: scrollOffsetKey)
+        UserDefaults.standard.set(string, forKey: kScrollOffset)
         UserDefaults.standard.synchronize()
     }
 }
@@ -204,12 +185,12 @@ var gScrollOffset: CGPoint {
 var gCountsMode: ZCountsMode {
     get {
         var  mode  = ZCountsMode.dots
-        let value  = UserDefaults.standard.object(forKey: countsModeKey) as? Int
+        let value  = UserDefaults.standard.object(forKey: kCountsMode) as? Int
 
         if  value != nil {
             mode   = ZCountsMode(rawValue: value!)!
         } else {
-            UserDefaults.standard.set(mode.rawValue, forKey:countsModeKey)
+            UserDefaults.standard.set(mode.rawValue, forKey:kCountsMode)
             UserDefaults.standard.synchronize()
         }
 
@@ -217,7 +198,7 @@ var gCountsMode: ZCountsMode {
     }
 
     set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:countsModeKey)
+        UserDefaults.standard.set(newValue.rawValue, forKey:kCountsMode)
         UserDefaults.standard.synchronize()
     }
 }
@@ -225,12 +206,12 @@ var gCountsMode: ZCountsMode {
 
 var gScaling: Double {
     get {
-        var value: Double? = UserDefaults.standard.object(forKey: scalingKey) as? Double
+        var value: Double? = UserDefaults.standard.object(forKey: kScaling) as? Double
 
         if value == nil {
             value = 1.00
 
-            UserDefaults.standard.set(value, forKey:scalingKey)
+            UserDefaults.standard.set(value, forKey:kScaling)
             UserDefaults.standard.synchronize()
         }
 
@@ -238,7 +219,7 @@ var gScaling: Double {
     }
 
     set {
-        UserDefaults.standard.set(newValue, forKey:scalingKey)
+        UserDefaults.standard.set(newValue, forKey:kScaling)
         UserDefaults.standard.synchronize()
     }
 }
@@ -246,12 +227,12 @@ var gScaling: Double {
 
 var gLineThickness: Double {
     get {
-        var value: Double? = UserDefaults.standard.object(forKey: lineThicknessKey) as? Double
+        var value: Double? = UserDefaults.standard.object(forKey: kLineThickness) as? Double
 
         if value == nil {
             value = 1.25
 
-            UserDefaults.standard.set(value, forKey:lineThicknessKey)
+            UserDefaults.standard.set(value, forKey:kLineThickness)
             UserDefaults.standard.synchronize()
         }
 
@@ -259,7 +240,7 @@ var gLineThickness: Double {
     }
 
     set {
-        UserDefaults.standard.set(newValue, forKey:lineThicknessKey)
+        UserDefaults.standard.set(newValue, forKey:kLineThickness)
         UserDefaults.standard.synchronize()
     }
 }
@@ -269,14 +250,14 @@ var gInsertionMode: ZInsertionMode {
     get {
         var mode: ZInsertionMode? = nil
 
-        if let object = UserDefaults.standard.object(forKey:insertionModeKey) {
+        if let object = UserDefaults.standard.object(forKey:kInsertionMode) {
             mode      = ZInsertionMode(rawValue: object as! Int)
         }
 
         if  mode == nil {
             mode      = .follow
 
-            UserDefaults.standard.set(mode!.rawValue, forKey:insertionModeKey)
+            UserDefaults.standard.set(mode!.rawValue, forKey:kInsertionMode)
             UserDefaults.standard.synchronize()
         }
 
@@ -284,7 +265,7 @@ var gInsertionMode: ZInsertionMode {
     }
 
     set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:insertionModeKey)
+        UserDefaults.standard.set(newValue.rawValue, forKey:kInsertionMode)
         UserDefaults.standard.synchronize()
     }
 }
@@ -294,14 +275,14 @@ var gStorageMode: ZStorageMode {
     get {
         var mode: ZStorageMode? = nil
 
-        if let object = UserDefaults.standard.object(forKey:storageModeKey) {
+        if let object = UserDefaults.standard.object(forKey:kStorageMode) {
             mode      = ZStorageMode(rawValue: object as! String)
         }
 
         if  mode     == nil || !gHasPrivateDatabase {
             mode      = .everyoneMode
 
-            UserDefaults.standard.set(mode!.rawValue, forKey:storageModeKey)
+            UserDefaults.standard.set(mode!.rawValue, forKey:kStorageMode)
             UserDefaults.standard.synchronize()
         }
 
@@ -309,7 +290,7 @@ var gStorageMode: ZStorageMode {
     }
 
     set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:storageModeKey)
+        UserDefaults.standard.set(newValue.rawValue, forKey:kStorageMode)
         UserDefaults.standard.synchronize()
     }
 }
@@ -319,14 +300,14 @@ var gSettingsViewIDs: ZSettingsViewID {
     get {
         var state: ZSettingsViewID? = nil
 
-        if let object = UserDefaults.standard.object(forKey:settingsStateKey) {
+        if let object = UserDefaults.standard.object(forKey:kSettingsState) {
             state     = ZSettingsViewID(rawValue: object as! Int)
         }
 
         if state == nil {
             state     = .All
 
-            UserDefaults.standard.set(state!.rawValue, forKey:settingsStateKey)
+            UserDefaults.standard.set(state!.rawValue, forKey:kSettingsState)
             UserDefaults.standard.synchronize()
         }
 
@@ -334,7 +315,7 @@ var gSettingsViewIDs: ZSettingsViewID {
     }
 
     set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:settingsStateKey)
+        UserDefaults.standard.set(newValue.rawValue, forKey:kSettingsState)
         UserDefaults.standard.synchronize()
     }
 }
