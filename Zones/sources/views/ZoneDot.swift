@@ -117,7 +117,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
 
                 if !iWidget.isInMain {
-                    width  *= gReductionRatio
+                    width  *= kReductionRatio
                 }
 
                 make.size.equalTo(CGSize(width: width, height: height))
@@ -188,7 +188,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawAccessDecoration(of type: ZDecorationType, for zone: Zone, in dirtyRect: CGRect) {
-        let     ratio = (widget?.isInMain ?? true) ? 1.0 : gReductionRatio
+        let     ratio = (widget?.isInMain ?? true) ? 1.0 : kReductionRatio
         var thickness = CGFloat(gLineThickness + 0.1) * ratio
         var      path = ZBezierPath(rect: CGRect.zero)
         var      rect = CGRect.zero

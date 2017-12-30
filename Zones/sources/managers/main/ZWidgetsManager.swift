@@ -17,7 +17,7 @@ let gWidgetsManager = ZWidgetsManager()
 class ZWidgetsManager: NSObject {
 
 
-    var widgets = [ZStorageMode : [Int : ZoneWidget]] ()
+    var widgets: [Int : ZoneWidget] = [:]
     var currentEditingWidget: ZoneWidget? { return widgetForZone(gSelectionManager.currentlyEditingZone) }
     var currentMovableWidget: ZoneWidget? { return widgetForZone(gSelectionManager.currentMoveable) }
     var firstGrabbableWidget: ZoneWidget? { return widgetForZone(gSelectionManager.firstGrab) }
@@ -31,50 +31,20 @@ class ZWidgetsManager: NSObject {
 
 
     func clear() {
-        widgets = [ZStorageMode : [Int : ZoneWidget]] ()
-    }
-
-
-    func clear(for iMode: ZStorageMode) {
-        widgets[iMode] = [Int : ZoneWidget] ()
+        widgets = [:]
     }
 
 
     func registerWidget(_ widget: ZoneWidget) {
-        if  let                      zone = widget.widgetZone,
-            let                      mode = mode(for: zone) {
-            var dict: [Int : ZoneWidget]? = widgets[mode]
-
-            if  dict == nil {
-                dict = [:]
-            }
-
-            if zone.zoneName == "test" {
-                print("<register> in \(self.mode(for: zone)!.rawValue)")
-            }
-
-            dict![zone.hash] = widget
-            widgets[mode]    = dict
+        if  let           zone = widget.widgetZone {
+            widgets[zone.hash] = widget
         }
     }
 
 
-    func widgetForZone(_ zone: Zone?) -> ZoneWidget? {
-        if  let mode = mode(for: zone), var dict = widgets[mode] {
-            return dict[zone!.hash]
-        }
-
-        return nil
-    }
-
-
-    private func mode(for iZone: Zone?) -> ZStorageMode? {
-        if let zone = iZone {
-            if zone.isInFavorites {
-                return .favoritesMode
-            }
-
-            return zone.storageMode
+    func widgetForZone(_ iZone: Zone?) -> ZoneWidget? {
+        if  let zone = iZone {
+            return widgets[zone.hash]
         }
 
         return nil

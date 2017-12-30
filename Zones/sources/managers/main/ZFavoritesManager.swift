@@ -214,7 +214,7 @@ class ZFavoritesManager: ZCloudManager {
         if databaseRootFavorites.count == 0 {
             for (index, mode) in gAllDatabaseModes.enumerated() {
                 let          name = mode.rawValue
-                let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: gLocalNamePrefix + name)
+                let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: kLocalNamePrefix + name)
                 favorite.zoneLink =  "\(name)\(kSeparator)\(kSeparator)"
                 favorite   .order = Double(index) * 0.001
 
@@ -261,7 +261,7 @@ class ZFavoritesManager: ZCloudManager {
 
             for (index, favorite) in workingFavorites.enumerated() {
                 if  let link  = favorite.zoneLink {
-                    if  link == gTrashLink {
+                    if  link == kTrashLink {
                         if !foundTrash {
                             foundTrash = true
                         } else {
@@ -289,8 +289,8 @@ class ZFavoritesManager: ZCloudManager {
             ////////////////////////////////
 
             if !foundTrash {
-                let      trash = Zone(storageMode: .mineMode, named: kTrashName, identifier: gLocalNamePrefix + kTrashName)
-                trash.zoneLink = gTrashLink // convert into a bookmark
+                let      trash = Zone(storageMode: .mineMode, named: kTrashName, identifier: kLocalNamePrefix + kTrashName)
+                trash.zoneLink = kTrashLink // convert into a bookmark
 
                 rootZone?.addAndReorderChild(trash, at: nil)
                 trash.clearAllStates()

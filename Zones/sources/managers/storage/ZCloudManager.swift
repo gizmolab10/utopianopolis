@@ -11,7 +11,7 @@ import Foundation
 import CloudKit
 
 
-let gContainer = CKContainer(identifier: gCloudID)
+let gContainer = CKContainer(identifier: kCloudID)
 
 
 class ZCloudManager: ZRecordsManager {
@@ -36,8 +36,8 @@ class ZCloudManager: ZRecordsManager {
 
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
         if  database != nil {
-            operation.timeoutIntervalForResource = gRemoteTimeout
-            operation .timeoutIntervalForRequest = gRemoteTimeout
+            operation.timeoutIntervalForResource = kRemoteTimeout
+            operation .timeoutIntervalForRequest = kRemoteTimeout
             operation          .qualityOfService = .background
             operation                 .container = gContainer
 
@@ -224,12 +224,12 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func queryWith(_ predicate: NSPredicate, recordType: String, properties: [String], onCompletion: RecordClosure?) {
+    func queryWith(_ predicate: NSPredicate, recordType: String, properties: [String], batchSize: Int = kBatchSize, onCompletion: RecordClosure?) {
         currentPredicate                 = predicate
         if  let                operation = configure(CKQueryOperation()) as? CKQueryOperation {
             operation             .query = CKQuery(recordType: recordType, predicate: predicate)
             operation       .desiredKeys = properties
-            operation      .resultsLimit = gBatchSize
+            operation      .resultsLimit = batchSize
             operation.recordFetchedBlock = { iRecord in
                 onCompletion?(iRecord)
             }
@@ -247,8 +247,8 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func queryWith(_ predicate: NSPredicate, onCompletion: RecordClosure?) {
-        queryWith(predicate, recordType: kZoneType, properties: Zone.cloudProperties(), onCompletion: onCompletion)
+    func queryWith(_ predicate: NSPredicate, batchSize: Int = kBatchSize, onCompletion: RecordClosure?) {
+        queryWith(predicate, recordType: kZoneType, properties: Zone.cloudProperties(), batchSize: batchSize, onCompletion: onCompletion)
     }
 
 
@@ -289,7 +289,7 @@ class ZCloudManager: ZRecordsManager {
         var  predicate    = ""
 
         if  iRecordIDs.count == 0 {
-            predicate     = String(format: "zoneLink != '\(gNullLink)'")
+            predicate     = String(format: "zoneLink != '\(kNullLink)'")
         } else {
             var separator = ""
 
@@ -428,94 +428,105 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchLost(_ onCompletion: IntClosure?) {
-        let predicate = NSPredicate(format: kZoneName + " != \"\"")
-        var retrieved = [CKRecord] ()
-        let     trash = trashZone
-        let parentKey = "parent"
+        let predicate = NSPredicate(format: kZoneName + " != \"\(kRootName)\"")
+        var   fetched = [CKRecord] ()
 
-        self.queryWith(predicate) { (iRecord: CKRecord?) in
-            if  let ckRecord = iRecord, !retrieved.contains(ckRecord) {
-                retrieved.append(ckRecord)
+        self.queryWith(predicate, batchSize: kMaxBatchSize) { iRecord in
+            if  let ckRecord      = iRecord {
+                if  !kLocalOnlyNames.contains(ckRecord.recordID.recordName),
+                    !fetched.contains(ckRecord) {
+                    fetched.append(ckRecord)
+                }
             } else { // nil means: we already received full response from cloud for this particular fetch
                 FOREGROUND {
-                    var    parentIDs = [CKRecordID] ()
-                    var childrenRefs = [CKRecordID : CKRecord] ()
-                    
-                    for ckRecord in retrieved {
-                        if  let parent   = ckRecord[parentKey] as? CKReference {
-                            let parentID = parent.recordID
-                            if  self.maybeZRecordForRecordID(parent.recordID) == nil,
-                                !gRootNames.contains(parent.recordID.recordName) {
-                                childrenRefs[parentID] = ckRecord
-                                
-                                parentIDs.append(parent.recordID)
-                            } // else it's already in memory (either the trash or the graph)
-                        } else if !gRootNames.contains(ckRecord.recordID.recordName),
-                            let added = trash.addCKRecord(ckRecord) {
-                            added.maybeNeedSave()
-                            trash.maybeNeedSave()
+                    let          parentKey = "parent"
+                    let            linkKey = "parentLink"
+                    let              trash = self.trashZone
+                    var          parentIDs = [CKRecordID] ()
+                    var childrenRecordsFor = [CKRecordID : [CKRecord]] ()
+                    let          hasParent = { (iCKRecord: CKRecord) -> Bool in
+                        if  let  parentRef = iCKRecord[parentKey] as? CKReference {
+                            let  parentID  = parentRef.recordID
+
+                            if  self.maybeZRecordForRecordID(parentID) == nil,  // not already in memory
+                                !kRootNames.contains(parentID.recordName) {
+                                parentIDs.append(parentID)
+
+                                if  childrenRecordsFor[parentID] == nil {
+                                    childrenRecordsFor[parentID]  = []
+                                }
+
+                                childrenRecordsFor[parentID]?.append(iCKRecord)
+                            }
+
+                            return true
+                        } else if let link = iCKRecord[linkKey] as? String, self.name(from: link) != nil {
+                            return true
+                        }
+
+                        return false
+                    }
+
+                    for ckRecord in fetched {
+                        if !hasParent(ckRecord) {
+                            trash.addZone(for: ckRecord)
                         }
                     }
                     
-                    let count = parentIDs.count
+                    let count = childrenRecordsFor.keys.count
                     
                     if count == 0 {
                         onCompletion?(0)
                     } else {
-                        var  destroy = [CKRecord] ()
-                        var tracking = [CKRecordID] ()
-                        var  closure:  RecordIDsClosure? = nil
+                        var   found = [CKRecordID] ()
+                        var closure : Closure? = nil
                         
-                        closure = { iParentIDs in
-                            var missing = iParentIDs
-                            
-                            for recordID in tracking {
-                                if  let index = missing.index(of: recordID) {
-                                    missing.remove(at: index)
-                                }
-                            }
-                            
-                            tracking.append(contentsOf: missing)
-                            
-                            // ask cloud if referenced zone exists
-                            // do the same with its parent
-                            // until doesn't exist
-                            // then add to trash
-                            
-                            self.fetch(needed: missing) { iRetrievedParents in
-                                parentIDs = []
-                                
-                                for ckParent in iRetrievedParents {
-                                    if  let index = ckParent.index(within: missing) {
-                                        missing.remove(at: index)
-                                        
-                                        if  let grandParentRef = ckParent[parentKey] as? CKReference {
-                                            parentIDs.append(grandParentRef.recordID)
-                                        }
-                                    } else {
-                                        destroy.append(ckParent)
-                                    }
-                                }
-                                
-                                if missing.count != 0 {
-                                    for parent in missing {
-                                        if  let child = childrenRefs[parent],
-                                            let added = trash.addCKRecord(child) {
-                                            added.maybeNeedSave()
-                                            trash.maybeNeedSave()
-                                        }
+                        closure = {
+                            if  parentIDs.count == 0 {
+                                onCompletion?(0)
+                            } else {
+                                var missingParents = parentIDs
+
+                                for recordID in found {
+                                    if  let index = missingParents.index(of: recordID) {
+                                        missingParents.remove(at: index)
                                     }
                                 }
 
-                                if  parentIDs.count != 0 {
-                                    closure?(parentIDs)
-                                } else {
-                                    onCompletion?(0)
+                                found.append(contentsOf: missingParents)
+
+                                // ask cloud if parentIDs exist
+                                // do the same with parent's parent
+                                // until doesn't exist
+                                // then add parentless ancestor to trash
+
+                                self.fetch(needed: missingParents) { iFetchedParents in
+                                    parentIDs = []
+
+                                    for ckParent in iFetchedParents {
+                                        if  let index = missingParents.index(of: ckParent.recordID) {
+                                            missingParents.remove(at: index)
+
+                                            if !hasParent(ckParent) {}
+                                        }
+                                    }
+
+                                    for parent in missingParents {
+                                        if  let children = childrenRecordsFor[parent] {
+                                            for ckRecord in children {
+                                                trash.addZone(for: ckRecord)
+                                            }
+
+                                            childrenRecordsFor[parent] = nil
+                                        }
+                                    }
+
+                                    closure?()
                                 }
                             }
                         }
                         
-                        closure?(parentIDs)
+                        closure?()
                     }
                 }
             }
@@ -726,7 +737,7 @@ class ZCloudManager: ZRecordsManager {
                             } else {
                                 let    fetched = self.zoneForCKRecord(record)
                                 let     parent = fetched.parentZone
-                                let extraTrash = fetched.zoneLink == gTrashLink && parent?.isRootOfFavorites ?? false && gFavoritesManager.hasTrash
+                                let extraTrash = fetched.zoneLink == kTrashLink && parent?.isRootOfFavorites ?? false && gFavoritesManager.hasTrash
 
                                 if  fetched.isRoot {
                                     fetched.parent = nil  // avoids HANG ... a root can NOT be a child, by definition
@@ -738,7 +749,7 @@ class ZCloudManager: ZRecordsManager {
                                     gRecursionLogic.propagateNeeds(to: fetched, progenyNeeded)
 
                                     if  let p = parent,
-                                        !p.hasChildMatchingRecordName(of: fetched) {
+                                        !p.containsCKRecord(fetched.record) {
 
                                         ///////////////////////////////////////
                                         // no child has matching record name //

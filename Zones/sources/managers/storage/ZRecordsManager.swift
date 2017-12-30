@@ -256,7 +256,7 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func pullRecordIDsWithHighestLevel(for states: [ZRecordState], batchSize: Int = gBatchSize) -> [CKRecordID] {
+    func pullRecordIDsWithHighestLevel(for states: [ZRecordState], batchSize: Int = kBatchSize) -> [CKRecordID] {
         var found = [Int : [CKRecordID]] ()
         var results = [CKRecordID] ()
 
@@ -296,7 +296,7 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
-    func recordIDsWithMatchingStates( _ states: [ZRecordState], pull: Bool = false, batchSize: Int = gBatchSize) -> [CKRecordID] {
+    func recordIDsWithMatchingStates( _ states: [ZRecordState], pull: Bool = false, batchSize: Int = kBatchSize) -> [CKRecordID] {
         var identifiers = [CKRecordID] ()
 
         applyToAllCKRecordsWithAnyMatchingStates(states) { state, ckrecord in
@@ -332,7 +332,7 @@ class ZRecordsManager: NSObject {
         var parents = [CKRecordID] ()
 
         applyToAllCKRecordsWithAnyMatchingStates(states) { state, ckrecord in
-            if  parents.count < gBatchSize, let zone = maybeZRecordForCKRecord(ckrecord) as? Zone, let reference = zone.parent {
+            if  parents.count < kBatchSize, let zone = maybeZRecordForCKRecord(ckrecord) as? Zone, let reference = zone.parent {
                 let  parentID = reference.recordID
 
                 if !parents.contains(parentID) {
@@ -349,7 +349,7 @@ class ZRecordsManager: NSObject {
         var results = [CKRecord] ()
 
         applyToAllCKRecordsWithAnyMatchingStates(states) { state, ckrecord in
-            if  results.count < gBatchSize && !results.contains(ckrecord) {
+            if  results.count < kBatchSize && !results.contains(ckrecord) {
                 results.append(ckrecord)
             }
         }
@@ -373,7 +373,7 @@ class ZRecordsManager: NSObject {
         var references = [CKReference] ()
 
         applyToAllCKRecordsWithAnyMatchingStates(states) { state, ckrecord in
-            if  references.count < gBatchSize {
+            if  references.count < kBatchSize {
                 let reference = CKReference(recordID: ckrecord.recordID, action: .none)
 
                 references.append(reference)
@@ -564,24 +564,13 @@ class ZRecordsManager: NSObject {
 
     func maybeZRecordForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
         var   record = maybeZoneForRecordID(recordID) as ZRecord?
-        let manifest = gRemoteStoresManager.manifest(for:  storageMode)
+        let manifest = gRemoteStoresManager.manifest(for: storageMode)
 
         if  record  == nil && manifest.recordName == recordID?.recordName {
             record   = manifest
         }
 
         return record
-    }
-
-
-    func maybeZoneForReference(_ reference: CKReference) -> Zone? {
-        var zone  = maybeZoneForRecordID(reference.recordID)
-
-        if  zone == nil, let ckRecord = maybeZRecordForRecordID(reference.recordID)?.record {
-            zone  = Zone(record: ckRecord, storageMode: storageMode)
-        }
-
-        return zone
     }
 
 
@@ -596,6 +585,11 @@ class ZRecordsManager: NSObject {
 
     func maybeZoneForRecordID(_ recordID: CKRecordID?) -> Zone? {
         return maybeZoneForRecordName(recordID?.recordName)
+    }
+
+
+    func maybeZoneForReference(_ reference: CKReference) -> Zone? {
+        return maybeZoneForRecordID(reference.recordID)
     }
 
 

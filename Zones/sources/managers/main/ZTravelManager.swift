@@ -159,7 +159,7 @@ class ZTravelManager: NSObject {
 
     @discardableResult func travelThroughHyperlink(_ iZone: Zone) -> Bool {
         if  let link = iZone.hyperLink,
-            link    != gNullLink {
+            link    != kNullLink {
             link.openAsURL()
 
             return true

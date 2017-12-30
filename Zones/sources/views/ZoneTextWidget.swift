@@ -29,11 +29,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     var textToEdit: String {
-        if  let    name = isEditiingHyperlink ? widgetZone?.hyperLink: isEditiingEmail ? widgetZone?.email : widgetZone?.unwrappedName, name != gNullLink {
+        if  let    name = isEditiingHyperlink ? widgetZone?.hyperLink: isEditiingEmail ? widgetZone?.email : widgetZone?.unwrappedName, name != kNullLink {
             return name
         }
 
-        return gNoName
+        return kNoName
     }
 
 
@@ -202,14 +202,14 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func assign(_ iText: String?, to iZone: Zone?) {
-        if  let t = iText, var  zone = iZone, t != gNoName {
+        if  let t = iText, var  zone = iZone, t != kNoName {
             gTextCapturing           = true
 
             let         assignTextTo = { (iAssignee: Zone) in
                 let       components = t.components(separatedBy: "  (")
                 var newText: String? = components[0]
 
-                if  newText == gNoName || newText == gNullLink || newText == "" {
+                if  newText == kNoName || newText == kNullLink || newText == "" {
                     newText  = nil
                 }
 

@@ -21,7 +21,7 @@ class ZRecord: NSObject {
     var    storageMode: ZStorageMode?
     var     kvoContext: UInt8 = 1
     var   _isLocalOnly: Bool = false
-    var         isRoot: Bool             { return record != nil && gRootNames.contains(recordName!) }
+    var         isRoot: Bool             { return record != nil && kRootNames.contains(recordName!) }
     var      needsSave: Bool             { return hasState(.needsSave) }
     var      needsRoot: Bool             { return hasState(.needsRoot) }
     var     needsCount: Bool             { return hasState(.needsCount) }
@@ -43,8 +43,8 @@ class ZRecord: NSObject {
     var isLocalOnly: Bool {
         get {
             return _isLocalOnly ||
-                gLocalOnlyNames.contains(recordName ?? gUnlikelyRecordName) ||
-                (recordName?.contains(gLocalNamePrefix) ?? true)    // true because lack of record name prevents save to db
+                kLocalOnlyNames.contains(recordName ?? gUnlikelyRecordName) ||
+                (recordName?.contains(kLocalNamePrefix) ?? true)    // true because lack of record name prevents save to db
         }
 
         set {
@@ -245,15 +245,15 @@ class ZRecord: NSObject {
     }
 
 
-    func needRoot()      { addState(.needsRoot) }
-    func needCount()     { addState(.needsCount) }
-    func needColor()     { addState(.needsColor) }
-    func needTraits()    { addState(.needsTraits) }
-    func needParent()    { addState(.needsParent) }
-    func needProgeny()   { addState(.needsProgeny); removeState(.needsChildren) }
-    func needDestroy()   { addState(.needsDestroy); removeState(.needsSave); removeState(.needsMerge) }
-    func needWritable()  { addState(.needsWritable) }
-    func needChildren()  { addState(.needsChildren) }
+    func needRoot()     { addState(.needsRoot) }
+    func needCount()    { addState(.needsCount) }
+    func needColor()    { addState(.needsColor) }
+    func needTraits()   { addState(.needsTraits) }
+    func needParent()   { addState(.needsParent) }
+    func needProgeny()  { addState(.needsProgeny); removeState(.needsChildren) }
+    func needDestroy()  { addState(.needsDestroy); removeState(.needsSave); removeState(.needsMerge) }
+    func needWritable() { addState(.needsWritable) }
+    func needChildren() { addState(.needsChildren) }
 
 
     func maybeNeedSave() {

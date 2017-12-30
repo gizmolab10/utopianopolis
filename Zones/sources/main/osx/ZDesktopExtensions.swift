@@ -340,8 +340,8 @@ extension ZoneTextWidget {
             self.textDidChange(iNote)
         }
 
-        if  text?.contains(gHalfLineOfDashes + " - ") ?? false {
-            widgetZone?.zoneName = gLineOfDashes
+        if  text?.contains(kHalfLineOfDashes + " - ") ?? false {
+            widgetZone?.zoneName = kLineOfDashes
             isEditingText        = false
 
             updateText()

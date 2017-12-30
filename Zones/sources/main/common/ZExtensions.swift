@@ -33,7 +33,7 @@ extension NSObject {
 
     func rawColumnarReport(_ iFirst: Any?, _ iSecond: Any?) {
         if  var prefix = iFirst as? String {
-            prefix.appendSpacesToLength(gLogTabStop)
+            prefix.appendSpacesToLength(kLogTabStop)
             log("\(prefix)\(iSecond ?? "")")
         }
     }
@@ -146,7 +146,7 @@ extension CKRecord {
             var       prefix = ""
 
             if let link  = self["zoneLink"] as? String {
-                if link == gNullLink || link == "not a link" {
+                if link == kNullLink || link == "not a link" {
                     prefix.append("-")
                 } else {
                     prefix.append("L")
@@ -311,7 +311,7 @@ extension Array {
                 string.append("\(separator)\(message)")
 
                 if  separator.length == 0 {
-                    separator.appendSpacesToLength(gLogTabStop)
+                    separator.appendSpacesToLength(kLogTabStop)
 
                     separator = "\n\(separator)"
                 }

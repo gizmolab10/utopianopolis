@@ -163,7 +163,6 @@ class ZEditingManager: NSObject {
                 case "r":      reverse()
                 case "c":      recenter()
                 case "e":      editEmail()
-                case "a":      selectAll()
                 case "d":      duplicate()
                 case "p":      printHere()
                 case "b":      addBookmark()
@@ -174,6 +173,7 @@ class ZEditingManager: NSObject {
                 case "u", "l": alterCase(up: key == "u")
                 case ";":      doFavorites(true,    false)
                 case "?":      openBrowserForFocusWebsite()
+                case "a":      selectAll  (progeny: isOption)
                 case "'":      doFavorites(isShift, isOption)
                 case "/":      focus(on: gSelectionManager.firstGrab, isCommand)
                 case "=":      gTravelManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawSyncRedraw() }
@@ -302,13 +302,13 @@ class ZEditingManager: NSObject {
             grab.widget?.textWidget.updateText()
         }
 
-        if  grab.zoneName?.contains(gHalfLineOfDashes + " ") ?? false {
-            assign(gLineOfDashes)
-        } else if grab.zoneName?.contains(gLineOfDashes) ?? false {
-            assign(gLineWithStubTitle)
+        if  grab.zoneName?.contains(kHalfLineOfDashes + " ") ?? false {
+            assign(kLineOfDashes)
+        } else if grab.zoneName?.contains(kLineOfDashes) ?? false {
+            assign(kLineWithStubTitle)
             grab.editAndSelect(in: NSMakeRange(12, 1))
         } else {
-            addNext(with: gLineOfDashes) { iChild in
+            addNext(with: kLineOfDashes) { iChild in
                 iChild.grab()
             }
         }
@@ -426,14 +426,20 @@ class ZEditingManager: NSObject {
     }
 
 
-    func selectAll() {
+    func selectAll(progeny: Bool = false) {
         let zone = gSelectionManager.currentMoveable
 
         if  zone.showChildren && zone.count != 0 {
             gSelectionManager.clearGrab()
 
-            for child in zone.children {
-                child.addToGrab()
+            if progeny {
+                zone.traverseAllProgeny { iChild in
+                    iChild.addToGrab()
+                }
+            } else {
+                for child in zone.children {
+                    child.addToGrab()
+                }
             }
 
             redrawSyncRedraw()
@@ -1047,7 +1053,7 @@ class ZEditingManager: NSObject {
         let parentZone = zone.parentZone
 
         if zone.isRoot || zone.isTrash || parentZone == gFavoritesManager.rootZone {
-            return // short-circuit rediculous situations
+            onCompletion?() // avoid disasters
         } else if selectionOnly {
 
             ////////////////////
@@ -1104,28 +1110,30 @@ class ZEditingManager: NSObject {
             let grandParentZone = p.parentZone
 
             let moveOutToHere = { (iHere: Zone?) in
-                if iHere == nil {
-                    onCompletion?()
-                } else {
-                    gHere = iHere!
-
-                    self.moveOut(to: iHere!, onCompletion: onCompletion)
+                if  let here = iHere {
+                    gHere = here
                 }
+
+                self.moveOut(to: gHere, onCompletion: onCompletion)
             }
 
             if extreme {
                 if gHere.isRoot {
-                    moveOutToHere(grandParentZone)
+                    moveOut(to: gHere, onCompletion: onCompletion)
                 } else {
                     revealZonesToRoot(from: zone) {
                         moveOutToHere(gRoot)
                     }
                 }
-            } else if gHere != zone && gHere != p && grandParentZone != nil {
-                moveOut(to: grandParentZone!, onCompletion: onCompletion)
-            } else {
-                revealParentAndSiblingsOf(gHere, onCompletion: onCompletion)
-            }
+            } else if grandParentZone != nil {
+                revealParentAndSiblingsOf(p) {
+                    if  grandParentZone!.spawnedBy(gHere) {
+                        self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
+                    } else {
+                        moveOutToHere(grandParentZone!)
+                    }
+                }
+            } // else no available move
         }
     }
 

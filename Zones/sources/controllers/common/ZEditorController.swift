@@ -49,7 +49,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         super.awakeFromNib()
         editorView?.addSubview(editorRootWidget)
 
-        if gHasPrivateDatabase && !isPhone {
+        if gHasPrivateDatabase && !kIsPhone {
             editorView?.addSubview(favoritesRootWidget)
         }
     }
@@ -91,7 +91,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     
     func layoutForCurrentScrollOffset() {
         if let e = editorView {
-            if isOSX {
+            if kIsDesktop {
                 editorRootWidget.snp.removeConstraints()
                 editorRootWidget.snp.makeConstraints { make in
                     make.centerY.equalTo(e).offset(gScrollOffset.y)
@@ -99,7 +99,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 }
             }
 
-            if gHasPrivateDatabase && !isPhone {
+            if gHasPrivateDatabase && !kIsPhone {
                 if favoritesRootWidget.superview == nil {
                     editorView?.addSubview(favoritesRootWidget)
                 }
@@ -121,7 +121,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
 
     func update(_ object: Any?, _ kind: ZSignalKind, isMain: Bool) {
-        if !isMain && (!gHasPrivateDatabase || isPhone) { return }
+        if !isMain && (!gHasPrivateDatabase || kIsPhone) { return }
 
         let                        here = isMain ? gHere : gFavoritesManager.rootZone
         var specificWidget: ZoneWidget? = isMain ? editorRootWidget : favoritesRootWidget
@@ -142,7 +142,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
         note("<  <  -  >  >  \(specificWidget?.widgetZone?.zoneName ?? "---")")
 
-        gWidgetsManager.clear(for: isMain ? gStorageMode : .favoritesMode)
         specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, isMain: isMain, visited: [])
     }
 
@@ -153,6 +152,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 editorView?.snp.removeConstraints()
             } else if !gEditingManager.isEditing {
                 layoutForCurrentScrollOffset()
+                gWidgetsManager.clear()
                 update(object, kind, isMain: true)
                 update(object, kind, isMain: false)
                 editorView?.setAllSubviewsNeedDisplay()
@@ -212,7 +212,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         if  let             gesture = iGesture as? ZKeyClickGestureRecognizer, gManifest.alreadyExists { // avoid crash for click event before manifest is fetched
             let          textWidget = gEditingManager.editedTextWidget
 
-            if gesture.modifiers?.contains(.command) ?? false, let zone = textWidget?.widgetZone, let link = zone.hyperLink, link != gNullLink {
+            if gesture.modifiers?.contains(.command) ?? false, let zone = textWidget?.widgetZone, let link = zone.hyperLink, link != kNullLink {
                 link.openAsURL()
             } else {
                 var          inText = false
@@ -417,7 +417,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             let dropNearest = rootWidget.widgetNearestTo(location, in: editorView, gHere) {
 
             if  isMain,
-                !isPhone,
+                !kIsPhone,
                 gHasPrivateDatabase,
                 let (_, otherDrop, otherLocation) = widgetNearest(iGesture, isMain: false) {
 
@@ -541,36 +541,18 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
 
     func detectWidget(_ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
-        if  let    altHit = detectWidgetFor(.favoritesMode, iGesture) {
-            return altHit
-        }
-
-        if  let    hit    = detectWidgetFor(  gStorageMode, iGesture) {
-            return hit
-        }
-
-        return nil
-    }
-
-
-    func detectWidgetFor(_ iMode: ZStorageMode?, _ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
         var hit:    ZoneWidget? = nil
-        if  let            mode = iMode,
-            let               e = editorView,
+        if  let               e = editorView,
             let        location = iGesture?.location(in: e),
-            e.bounds.contains(location),
-            let          iStart = ancestor(for: mode),
-            let     widgetsDict = gWidgetsManager.widgets[mode] {
-            let         widgets = widgetsDict.values
+            e.bounds.contains(location) {
+            let         widgets = gWidgetsManager.widgets.values
             for         widget in widgets {
                 let        rect = widget.convert(widget.outerHitRect, to: e)
 
                 if  rect.contains(location) {
-                    if let zone = widget.widgetZone, (zone == iStart || zone.spawnedBy(iStart)) {
-                        hit     = widget
+                    hit     = widget
 
-                        break
-                    }
+                    break
                 }
             }
         }
@@ -594,7 +576,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
 
     func detectDotIn(_ widget: ZoneWidget, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
-        var  hit:   ZoneDot? = nil
+        var hit:        ZoneDot? = nil
 
         if  let                e = editorView,
             let         location = iGesture?.location(in: e) {
@@ -614,25 +596,9 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     }
 
 
-    func detectDotFor(_ iMode: ZStorageMode?, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
-        if  let widget = detectWidgetFor(iMode, iGesture) {
-            return detectDotIn(widget, iGesture)
-        }
-
-        return nil
-    }
-
-
     func detectDot(_ iGesture: ZGestureRecognizer?) -> ZoneDot? {
-        let altHit = detectDotFor(.favoritesMode, iGesture)
-        let    hit = detectDotFor(  gStorageMode, iGesture)
-
-        if  altHit != nil {
-            return altHit
-        }
-
-        if  hit != nil {
-            return hit
+        if  let widget = detectWidget(iGesture) {
+            return detectDotIn(widget, iGesture)
         }
 
         return nil

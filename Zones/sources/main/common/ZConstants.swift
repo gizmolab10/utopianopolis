@@ -15,41 +15,40 @@ import CloudKit
 
     import Cocoa
 
-let isOSX                       = true
-let isPhone                     = false
-let unselectBrightness: CGFloat = 0.93
+let kIsDesktop                   = true
+let kIsPhone                     = false
+let kUnselectBrightness: CGFloat = 0.93
 
 #elseif os(iOS)
 
     import UIKit
 
-let isOSX                       = false
-let isPhone                     = UIDevice.current.userInterfaceIdiom == .phone
-let unselectBrightness: CGFloat = 0.98
+let kIsDesktop                   = false
+let kIsPhone                     = UIDevice.current.userInterfaceIdiom == .phone
+let kUnselectBrightness: CGFloat = 0.98
 
 #endif
 
 
-let           gUnlevel = -1
-let         gBatchSize = 250
-let        gLogTabStop = 21
-let     gRemoteTimeout = 10.0
-let     gFingerBreadth = CGFloat(44.0)
-let    gReductionRatio = CGFloat(0.8)
-let  gDefaultZoneColor = ZColor.blue
+let         kBatchSize = 250
+let        kLogTabStop = 21
+let      kMaxBatchSize = 1000
+let     kRemoteTimeout = 10.0
+let    kReductionRatio = CGFloat(0.8)
+let  kDefaultZoneColor = ZColor.blue
 
 let       gUndoManager = UndoManager()
 
-let            gNoName = "empty"
-let           gCloudID = "iCloud.com.zones.Zones"
-let          gNullLink = "no"
-let         gTrashLink = kSeparator + kSeparator + "trash"
-let  gHalfLineOfDashes = "-----------"
-let gLineWithStubTitle = gHalfLineOfDashes + " | " + gHalfLineOfDashes
-let   gLocalNamePrefix = "local."
-let    gLocalOnlyNames = [kTrashName, kFavoriteRootName]
-let      gLineOfDashes = gHalfLineOfDashes + "---" + gHalfLineOfDashes
-let         gRootNames = [kRootName] + gLocalOnlyNames
+let            kNoName = "empty"
+let           kCloudID = "iCloud.com.zones.Zones"
+let          kNullLink = "no"
+let         kTrashLink = kSeparator + kSeparator + "trash"
+let  kHalfLineOfDashes = "-----------"
+let kLineWithStubTitle = kHalfLineOfDashes + " | " + kHalfLineOfDashes
+let   kLocalNamePrefix = "local."
+let    kLocalOnlyNames = [kTrashName, kFavoriteRootName]
+let      kLineOfDashes = kHalfLineOfDashes + "---" + kHalfLineOfDashes
+let         kRootNames = [kRootName] + kLocalOnlyNames
 
 
 // MARK:- keys
@@ -77,13 +76,13 @@ let   kCurrentFavorite = "current favorite"
 let    kActionsVisible = "actions are visible"
 let     kSettingsState = "current settings state"
 let     kInsertionMode = "graph altering mode"
-let     kLineThickness = "line thickness"
 let     kGenericOffset = "generic offset"
 let      kUserRecordID = "user record id"
 let      kScrollOffset = "scroll offset"
 let       kStorageMode = "current storage mode"
 let        kCountsMode = "counts mode"
 let         kBackspace = "\u{8}"
+let         kThickness = "line thickness"
 let           kScaling = "scaling"
 let            kDelete = "\u{7F}"
 let             kSpace = " "

@@ -42,13 +42,13 @@ class Zone : ZRecord {
     var                  count:         Int  { return children.count }
     var                 widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var               linkName:      String? { return name(from: zoneLink) }
-    var          unwrappedName:      String  { return zoneName ?? gNoName }
+    var          unwrappedName:      String  { return zoneName ?? kNoName }
     var          decoratedName:      String  { return "\(unwrappedName)\(decoration)" }
     var       grabbedTextColor:      ZColor  { return color.darker(by: 3.0) }
     var directChildrenWritable:        Bool  { return   directAccess == .eChildrenWritable }
     var    hasAccessDecoration:        Bool  { return !isTextEditable || directChildrenWritable }
     var     hasMissingChildren:        Bool  { return count < fetchableCount }
-    var      onlyShowToggleDot:        Bool  { return (isRootOfFavorites && !(widget?.isInMain ?? true)) || (isPhone && self == gHere) }
+    var      onlyShowToggleDot:        Bool  { return (isRootOfFavorites && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
     var      isWritableByUseer:        Bool  { return  isTextEditable || gOnboardingManager.userHasAccess(self) }
     var      isCurrentFavorite:        Bool  { return self == gFavoritesManager.currentFavorite }
     var      isRootOfFavorites:        Bool  { return record != nil && recordName == kFavoriteRootName }
@@ -59,7 +59,7 @@ class Zone : ZRecord {
     var         directReadOnly:        Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
     var          hasZonesBelow:        Bool  { return hasAnyZonesAbove(false) }
     var          hasZonesAbove:        Bool  { return hasAnyZonesAbove(true) }
-    var            isHyperlink:        Bool  { return hasTrait(for: .eHyperlink) && hyperLink != gNullLink }
+    var            isHyperlink:        Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
     var             isBookmark:        Bool  { return crossLink != nil }
     var             isFavorite:        Bool  { return gFavoritesManager.isWorkingFavorite(self) }
     var             isSelected:        Bool  { return gSelectionManager.isSelected(self) }
@@ -255,7 +255,7 @@ class Zone : ZRecord {
         }
 
         if let link  = zoneLink {
-            if link != gNullLink {
+            if link != kNullLink {
                 d.append("L")
             } else {
                 d.append("-")
@@ -301,13 +301,13 @@ class Zone : ZRecord {
         get {
             if _color == nil {
                 if isBookmark {
-                    return bookmarkTarget?.color ?? gDefaultZoneColor
+                    return bookmarkTarget?.color ?? kDefaultZoneColor
                 } else if let z = zoneColor, z != "" {
                     _color      = z.color
                 } else if let p = parentZone, p != self, hasCompleteAncestorPath(toColor: true) {
                     return p.color
                 } else {
-                    return gDefaultZoneColor
+                    return kDefaultZoneColor
                 }
             }
 
@@ -328,7 +328,7 @@ class Zone : ZRecord {
     var crossLink: ZRecord? {
         get {
             if _crossLink == nil {
-                if  zoneLink == gTrashLink {
+                if  zoneLink == kTrashLink {
                     return gTrash
                 }
 
@@ -344,7 +344,7 @@ class Zone : ZRecord {
 
         set {
             if newValue == nil {
-                zoneLink = gNullLink
+                zoneLink = kNullLink
             } else {
                 let    hasRef = newValue!.record != nil
                 let reference = !hasRef ? "" : newValue!.recordName!
@@ -489,7 +489,7 @@ class Zone : ZRecord {
                 let       newMode  = newValue?.storageMode {
                 if        newMode == storageMode {
                     parent         = CKReference(record: parentRecord, action: .none)
-                    parentLink     = gNullLink
+                    parentLink     = kNullLink
                 } else {                                                                            // new parent is in different db
                     parentLink     = "\(newMode.rawValue)::\(parentRecord.recordID.recordName)"     // references don't work across dbs
                     parent         = nil
@@ -661,18 +661,18 @@ class Zone : ZRecord {
 
             if  let link           = zoneLink {
                 if  badLinks.contains(link) {
-                    zoneLink       = gNullLink
+                    zoneLink       = kNullLink
                 }
             } else {
-                zoneLink           = gNullLink
+                zoneLink           = kNullLink
             }
 
             if  let pLink          = parentLink {
                 if  badLinks.contains(pLink) {
-                    parentLink     = gNullLink
+                    parentLink     = kNullLink
                 }
             } else {
-                parentLink         = gNullLink
+                parentLink         = kNullLink
             }
 
             if  let                    key = linkName,
@@ -1254,45 +1254,32 @@ class Zone : ZRecord {
     }
 
 
-    func containsCKRecord(_ iCKRecord: CKRecord) -> Bool {
-        let      identifier = iCKRecord.recordID
-        var           found = false
-
-        for child in children {
-            if  let childID = child.record?.recordID, childID == identifier {
-                found       = true
-            }
-        }
-
-        return found
-    }
-
-
-    @discardableResult func addCKRecord(_ iCKRecord: CKRecord) -> Zone? {
-        if containsCKRecord(iCKRecord) {
-            return nil
-        }
-
-        let child = gCloudManager.zoneForCKRecord(iCKRecord)
-
-        add(child)
-        children.updateOrdering()
-
-        return child
-    }
-
-
-    func hasChildMatchingRecordName(of iChild: Zone) -> Bool {
-        let    name  = iChild.recordName
-
-        for child in children {
-            if name ==  child.recordName {
-                return true
+    func containsCKRecord(_ iCKRecord: CKRecord?) -> Bool {
+        if let identifier = iCKRecord?.recordID.recordName {
+            for child in children {
+                if  let childID = child.recordName, childID == identifier {
+                    return true
+                }
             }
         }
 
         return false
     }
+
+
+    @discardableResult func addZone(for iCKRecord: CKRecord?) -> Zone? {
+        var child: Zone? = nil
+        if  let ckRecord = iCKRecord,
+            !containsCKRecord(ckRecord) {
+            child = gCloudManager.zoneForCKRecord(ckRecord)
+
+            add(child)
+            children.updateOrdering()
+        }
+
+        return child
+    }
+
 
     // MARK:- progeny counts
     // MARK:-

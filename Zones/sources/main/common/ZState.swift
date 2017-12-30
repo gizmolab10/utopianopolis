@@ -97,7 +97,7 @@ var           gDotHeight:             Double { return Double(gGenericOffset.heig
 var            gDotWidth:             Double { return gDotHeight * 0.75 }
 var             fontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
 var          gWidgetFont:              ZFont { return .systemFont(ofSize: fontSize) }
-var       gFavoritesFont:              ZFont { return .systemFont(ofSize: fontSize * gReductionRatio) }
+var       gFavoritesFont:              ZFont { return .systemFont(ofSize: fontSize * kReductionRatio) }
 
 
 // MARK:- persistence
@@ -123,7 +123,7 @@ var gActionsAreVisible: Bool {
 
 
 var gBackgroundColor: ZColor {
-    get { return   getColor( for: kBackgroundColor, defaultColor: ZColor(hue: 0.6, saturation: 0.1, brightness: unselectBrightness, alpha: 1)) }
+    get { return   getColor( for: kBackgroundColor, defaultColor: ZColor(hue: 0.6, saturation: 0.1, brightness: kUnselectBrightness, alpha: 1)) }
     set { setColor(newValue, for: kBackgroundColor) }
 }
 
@@ -227,12 +227,12 @@ var gScaling: Double {
 
 var gLineThickness: Double {
     get {
-        var value: Double? = UserDefaults.standard.object(forKey: kLineThickness) as? Double
+        var value: Double? = UserDefaults.standard.object(forKey: kThickness) as? Double
 
         if value == nil {
             value = 1.25
 
-            UserDefaults.standard.set(value, forKey:kLineThickness)
+            UserDefaults.standard.set(value, forKey:kThickness)
             UserDefaults.standard.synchronize()
         }
 
@@ -240,7 +240,7 @@ var gLineThickness: Double {
     }
 
     set {
-        UserDefaults.standard.set(newValue, forKey:kLineThickness)
+        UserDefaults.standard.set(newValue, forKey:kThickness)
         UserDefaults.standard.synchronize()
     }
 }

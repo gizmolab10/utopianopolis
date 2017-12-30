@@ -35,7 +35,7 @@ class ZoneWidget: ZView {
     let             childrenView = ZView          ()
     private var  childrenWidgets = [ZoneWidget]   ()
     var           isInMain: Bool = false
-    var                    ratio :     CGFloat { return isInMain ? 1.0: gReductionRatio }
+    var                    ratio :     CGFloat { return isInMain ? 1.0: kReductionRatio }
     var             parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
     weak var          widgetZone :       Zone?
 
@@ -505,7 +505,7 @@ class ZoneWidget: ZView {
             let        isGrabbed = zone.isGrabbed
             textWidget.textColor = isGrabbed ? zone.grabbedTextColor : ZColor.black
 
-            if  isGrabbed && !textWidget.isFirstResponder && (!isPhone || zone != gHere) {
+            if  isGrabbed && !textWidget.isFirstResponder && (!kIsPhone || zone != gHere) {
                 drawSelectionHighlight()
             }
 
