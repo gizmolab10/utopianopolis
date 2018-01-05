@@ -32,8 +32,8 @@ enum ZFileMode: Int {
 enum ZWorkMode: Int {
     case startupMode
     case searchMode
+    case graphMode
     case essayMode
-    case editMode
 }
 
 

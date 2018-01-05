@@ -53,15 +53,23 @@ class ZEventsManager: NSObject {
 
                     return gSearchManager.handleKeyEvent(event)
 
-                case .editMode:
+                case .graphMode:
+                    let    flags = event.modifierFlags
 
-//                    if !event.modifierFlags.isNumericPad,
-//                    let t = gSelectionManager.currentlyEditingZone?.widget?.textWidget {
-//
-//                        t.keyDown(with: event)
-//
-//                        return nil
-//                    }
+                    if  flags.isCommand,
+                        let  key = event.charactersIgnoringModifiers,
+                        let view = gEditorView?.window?.firstResponder,
+                        view.isKind(of: ZTextView.self) {
+                        switch key {
+                        case "f":
+                            gSelectionManager.stopCurrentEdit()
+                            gEditingManager.handleKey(key, flags: flags, isWindow: false)
+
+                            return nil
+                        default:
+                            break
+                        }
+                    }
 
                     break
 

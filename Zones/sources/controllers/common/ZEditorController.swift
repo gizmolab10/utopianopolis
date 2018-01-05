@@ -142,17 +142,24 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
         note("<  <  -  >  >  \(specificWidget?.widgetZone?.zoneName ?? "---")")
 
-        specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, isMain: isMain, visited: [])
+        if kind == .redraw {
+            specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, isMain: isMain, visited: [])
+        } else {
+            specificWidget?.setNeedsDisplay()
+        }
     }
 
     
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         if [.datum, .data, .redraw].contains(kind) { // ignore for preferences, search, information, startup
-            if gWorkMode != .editMode {
+            if gWorkMode != .graphMode {
                 editorView?.snp.removeConstraints()
             } else if !gEditingManager.isEditing {
+                if kind == .redraw {
+                    gWidgetsManager.clear()
+                }
+
                 layoutForCurrentScrollOffset()
-                gWidgetsManager.clear()
                 update(object, kind, isMain: true)
                 update(object, kind, isMain: false)
                 editorView?.setAllSubviewsNeedDisplay()
@@ -168,7 +175,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         ///////////////////////////////////
 
         if gManifest.alreadyExists {
-            if  gWorkMode        != .editMode {
+            if  gWorkMode        != .graphMode {
                 #if os(OSX)
                     gSearchManager.exitSearchMode()
                 #endif

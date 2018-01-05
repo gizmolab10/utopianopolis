@@ -90,7 +90,7 @@ class ZEditingManager: NSObject {
 
 
     func validateKey(_ key: String) -> Bool {
-        if gWorkMode != .editMode {
+        if gWorkMode != .graphMode {
             return false
         }
 
@@ -232,7 +232,7 @@ class ZEditingManager: NSObject {
 
 
     @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
-        if !isEditing, iEvent != previousEvent, gWorkMode == .editMode {
+        if !isEditing, iEvent != previousEvent, gWorkMode == .graphMode {
             let     flags = iEvent.modifierFlags
             previousEvent = iEvent
 
@@ -252,7 +252,7 @@ class ZEditingManager: NSObject {
 
     func handleMenuItem(_ iItem: ZMenuItem?) {
         #if os(OSX)
-            if  gWorkMode == .editMode,
+            if  gWorkMode == .graphMode,
                 let   item = iItem {
                 let  flags = item.keyEquivalentModifierMask
                 let    key = item.keyEquivalent
@@ -418,7 +418,7 @@ class ZEditingManager: NSObject {
 
     func find() {
         if gStorageMode != .favoritesMode {
-            gWorkMode = gWorkMode == .searchMode ? .editMode : .searchMode
+            gWorkMode = gWorkMode == .searchMode ? .graphMode : .searchMode
 
             signalFor(nil, regarding: .search)
         }

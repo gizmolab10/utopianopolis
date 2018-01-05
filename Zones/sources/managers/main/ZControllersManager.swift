@@ -98,7 +98,7 @@ class ZControllersManager: NSObject {
         gDBOperationsManager.startUp {
             gFavoritesManager.setup() // manifest has been fetched
             gDBOperationsManager.continueUp {
-                gWorkMode                            = .editMode
+                gWorkMode                            = .graphMode
                 gDBOperationsManager.usingDebugTimer = false
 
                 self.displayActivity(false)

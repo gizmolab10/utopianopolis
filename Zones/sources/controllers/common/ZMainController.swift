@@ -63,7 +63,7 @@ class ZMainController: ZGenericController {
 
 
     func showAsSearching(_ iSearching: Bool) {
-        gWorkMode = iSearching ? .searchMode : .editMode
+        gWorkMode = iSearching ? .searchMode : .graphMode
 
         show( iSearching, view: searchResultsView!)
         show(!iSearching, view: editorView!)

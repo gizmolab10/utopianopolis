@@ -62,7 +62,7 @@ class ZoneWidget: ZView {
 
 
     func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, kind signalKind: ZSignalKind, isMain: Bool, visited: [Zone]) {
-        if inView != nil, let views = inView?.subviews, !views.contains(self), !views.contains(textWidget) {
+        if  inView != nil, let views = inView?.subviews, !views.contains(self), !views.contains(textWidget) {
             inView?.addSubview(self)
 
             if atIndex == nil {
@@ -78,18 +78,18 @@ class ZoneWidget: ZView {
             backgroundColor = gClearColor
         #endif
 
-        gWidgetsManager.registerWidget(self)
-        addTextView()
-        textWidget.layoutText()
-        layoutDots()
-        addChildrenView()
+            gWidgetsManager.registerWidget(self)
+            addTextView()
+            textWidget.layoutText()
+            layoutDots()
+            addChildrenView()
 
-        if  recursing && (widgetZone == nil || !visited.contains(widgetZone!)) {
-            let more = widgetZone == nil ? [] : [widgetZone!]
+            if  recursing && (widgetZone == nil || !visited.contains(widgetZone!)) {
+                let more = widgetZone == nil ? [] : [widgetZone!]
 
-            prepareChildrenWidgets()
-            layoutChildren(signalKind, visited: visited + more)
-        }
+                prepareChildrenWidgets()
+                layoutChildren(signalKind, visited: visited + more)
+            }
     }
 
 
@@ -186,15 +186,22 @@ class ZoneWidget: ZView {
 
     func prepareChildrenWidgets() {
         if  let zone = widgetZone {
-            childrenWidgets.removeAll()
 
-            for view in childrenView.subviews {
-                view.removeFromSuperview()
-            }
+            if !zone.showChildren {
+                childrenWidgets.removeAll()
 
-            if zone.showChildren {
+                for view in childrenView.subviews {
+                    view.removeFromSuperview()
+                }
+            } else {
                 while childrenWidgets.count < zone.count {
                     childrenWidgets.append(ZoneWidget())
+                }
+
+                while childrenWidgets.count > zone.count {
+                    let widget = childrenWidgets.removeLast()
+
+                    widget.removeFromSuperview()
                 }
             }
         }

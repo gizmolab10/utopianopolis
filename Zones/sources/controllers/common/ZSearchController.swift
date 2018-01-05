@@ -89,7 +89,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                     FOREGROUND {                                    // guarantee atomic ...
                         let    results = iObject as! [Any]
                         let hasResults = results.count != 0
-                        gWorkMode      = hasResults ? .searchMode : .editMode
+                        gWorkMode      = hasResults ? .searchMode : .graphMode
                         combined[mode] = results
 
                         if !done {

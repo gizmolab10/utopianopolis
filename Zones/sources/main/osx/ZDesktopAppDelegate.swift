@@ -82,7 +82,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 
 
     @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
-        if  gWorkMode == .editMode {
+        if  gWorkMode == .graphMode {
             gEditingManager.handleMenuItem(iItem)
         }
     }

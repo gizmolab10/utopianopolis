@@ -44,7 +44,7 @@ class ZSearchManager: NSObject {
 
 
     func exitSearchMode() {
-        gWorkMode = .editMode
+        gWorkMode = .graphMode
         state     = .gone
 
         signalFor(nil, regarding: .found)
