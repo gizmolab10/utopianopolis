@@ -31,22 +31,27 @@ enum ZRecordState: Int {
 class ZRecordsManager: NSObject {
 
 
-    var        storageMode : ZStorageMode
-    var   ckRecordsByState = [ZRecordState : [CKRecord]] ()
-    var       zRecordsByID = [String       :    ZRecord] ()
-    var      bookmarksByID = [String       :       Zone] ()
-    var  _trashZone: Zone? = nil
-    var    rootZone: Zone? = nil
+    var               storageMode : ZStorageMode
+    var          ckRecordsByState = [ZRecordState : [CKRecord]] ()
+    var              zRecordsByID = [String       :    ZRecord] ()
+    var             bookmarksByID = [String       :       Zone] ()
+    var  _lostAndFoundZone: Zone? = nil
+    var         _trashZone: Zone? = nil
+    var           rootZone: Zone? = nil
+
+
+    var lostAndFoundZone: Zone {
+        if  _lostAndFoundZone == nil {
+            _lostAndFoundZone = prefixedZone(for: kLostAndFoundName)
+        }
+
+        return _lostAndFoundZone!
+    }
 
 
     var trashZone: Zone {
-        if  _trashZone    == nil {
-            let   recordID = CKRecordID(recordName: kTrashName)
-            let     record = CKRecord(recordType: kZoneType, recordID: recordID)
-            let      trash = zoneForCKRecord(record)    // get / create trash
-            let     prefix = (storageMode == .mineMode) ? "my " : "public "
-            trash.zoneName = prefix + kTrashName
-            _trashZone     = trash
+        if  _trashZone == nil {
+            _trashZone  = prefixedZone(for: kTrashName)
         }
 
         return _trashZone!
@@ -63,6 +68,27 @@ class ZRecordsManager: NSObject {
         _trashZone       = nil
         ckRecordsByState = [ZRecordState : [CKRecord]] ()
         zRecordsByID     = [String       :    ZRecord] ()
+    }
+
+
+    func prefixedZone(for iName: String) -> Zone {
+        let      recordID = CKRecordID(recordName: iName)
+        let        record = CKRecord(recordType: kZoneType, recordID: recordID)
+        let          zone = zoneForCKRecord(record)    // get / create trash
+        let        prefix = (storageMode == .mineMode) ? "my " : "public "
+        zone.directAccess = .eDefaultName
+        zone    .zoneName = prefix + iName
+
+        return zone
+    }
+
+
+    func createRandomLost() -> Zone {
+        let lost = Zone.randomZone(in: storageMode)
+
+        lostAndFoundZone.add(lost, at: nil)
+
+        return lost
     }
 
 
@@ -548,6 +574,11 @@ class ZRecordsManager: NSObject {
             let            link = bookmark.linkName {
             bookmarksByID[link] = nil
         }
+    }
+
+
+    func notRegistered(_ recordID: CKRecordID?) -> Bool {
+        return maybeZoneForRecordID(recordID) == nil
     }
 
 

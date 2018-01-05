@@ -16,6 +16,7 @@ import CloudKit
     case eFullReadOnly
     case eChildrenWritable
     case eFullWritable
+    case eDefaultName
  }
 
 
@@ -45,18 +46,19 @@ class Zone : ZRecord {
     var          unwrappedName:      String  { return zoneName ?? kNoName }
     var          decoratedName:      String  { return "\(unwrappedName)\(decoration)" }
     var       grabbedTextColor:      ZColor  { return color.darker(by: 3.0) }
-    var directChildrenWritable:        Bool  { return   directAccess == .eChildrenWritable }
+    var directChildrenWritable:        Bool  { return directAccess == .eChildrenWritable || directAccess == .eDefaultName }
     var    hasAccessDecoration:        Bool  { return !isTextEditable || directChildrenWritable }
     var     hasMissingChildren:        Bool  { return count < fetchableCount }
     var      onlyShowToggleDot:        Bool  { return (isRootOfFavorites && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
-    var      isWritableByUseer:        Bool  { return  isTextEditable || gOnboardingManager.userHasAccess(self) }
+    var      isWritableByUseer:        Bool  { return isTextEditable || userHasAccess }
     var      isCurrentFavorite:        Bool  { return self == gFavoritesManager.currentFavorite }
     var      isRootOfFavorites:        Bool  { return record != nil && recordName == kFavoriteRootName }
     var       accessIsChanging:        Bool  { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
-    var       isSortableByUser:        Bool  { return ancestorAccess != .eFullReadOnly || gOnboardingManager.userHasAccess(self) }
+    var       isSortableByUser:        Bool  { return ancestorAccess != .eFullReadOnly || userHasAccess }
     var        directRecursive:        Bool  { return directAccess == .eRecurse }
     var         directWritable:        Bool  { return directAccess == .eFullWritable }
     var         directReadOnly:        Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
+    var         isLostAndFound:        Bool  { return recordName == kLostAndFoundName }
     var          hasZonesBelow:        Bool  { return hasAnyZonesAbove(false) }
     var          hasZonesAbove:        Bool  { return hasAnyZonesAbove(true) }
     var            isHyperlink:        Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
@@ -192,6 +194,13 @@ class Zone : ZRecord {
         self.init(record: newRecord!, storageMode: storageMode)
 
         zoneName      = named
+
+        updateRecordProperties()
+    }
+
+
+    class func randomZone(in mode: ZStorageMode) -> Zone {
+        return Zone(storageMode: mode, named: String(arc4random()))
     }
 
 
@@ -330,6 +339,10 @@ class Zone : ZRecord {
             if _crossLink == nil {
                 if  zoneLink == kTrashLink {
                     return gTrash
+                }
+
+                if  zoneLink == kLostAndFoundLink {
+                    return gLostAndFound
                 }
 
                 if  zoneLink?.contains("Optional(") ?? false { // repair consequences of an old, but now fixed, bookmark bug
@@ -524,9 +537,7 @@ class Zone : ZRecord {
 
     var directAccess: ZoneAccess {
         get {
-            if  isTrash || isRootOfFavorites {
-                return .eChildrenWritable
-            } else if  let    target = bookmarkTarget {
+            if  let    target = bookmarkTarget {
                 return target.directAccess
             } else if let value = zoneAccess?.intValue,
                 value          <= ZoneAccess.eFullWritable.rawValue,
@@ -562,11 +573,21 @@ class Zone : ZRecord {
     }
 
 
+    var userHasAccess: Bool {
+        if  let    t = bookmarkTarget {
+            return t.userHasAccess
+        }
+
+        return (!isTrash && !isRootOfFavorites && !isLostAndFound && ownerID == nil)
+            || (!gCrippleUserAccess && (ownerID?.recordName == gUserRecordID || gIsSpecialUser))
+    }
+
+
     var isTextEditable: Bool {
-        if let t = bookmarkTarget {
-            return    t.isTextEditable
-        } else if isTrash {
+        if  isLocalOnly {
             return false
+        } else if let t = bookmarkTarget {
+            return    t.isTextEditable
         } else if directWritable {
             return true
         } else if directReadOnly {
@@ -587,7 +608,7 @@ class Zone : ZRecord {
             return true
         }
 
-        return gOnboardingManager.userHasAccess(self)
+        return userHasAccess
     }
 
 
@@ -1122,7 +1143,7 @@ class Zone : ZRecord {
         if  let child = iChild,
             add(child, at: iIndex) != nil {
 
-            children.updateOrdering()
+            children.updateOrder()
         }
     }
 
@@ -1274,10 +1295,42 @@ class Zone : ZRecord {
             child = gCloudManager.zoneForCKRecord(ckRecord)
 
             add(child)
-            children.updateOrdering()
+            children.updateOrder()
         }
 
         return child
+    }
+
+
+    func divideEvenly() {
+        let optimumSize     = 40
+        if  count           > optimumSize,
+            let        mode = storageMode {
+            var   divisions = ((count - 1) / optimumSize) + 1
+            let        size = count / divisions
+            var     holders = [Zone] ()
+
+            while divisions > 0 {
+                divisions  -= 1
+                var gotten  = 0
+                let holder  = Zone.randomZone(in: mode)
+
+                holders.append(holder)
+
+                while gotten < size && count > 0 {
+                    if  let child = children.popLast(),
+                        child.progenyCount < (optimumSize / 2) {
+                        holder.add(child, at: nil)
+                    }
+
+                    gotten += 1
+                }
+            }
+
+            for child in holders {
+                add(child, at: nil)
+            }
+        }
     }
 
 

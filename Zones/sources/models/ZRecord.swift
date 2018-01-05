@@ -11,9 +11,6 @@ import Foundation
 import CloudKit
 
 
-let gUnlikelyRecordName = "highly.unlikely.record.name"
-
-
 class ZRecord: NSObject {
     
 
@@ -42,9 +39,7 @@ class ZRecord: NSObject {
 
     var isLocalOnly: Bool {
         get {
-            return _isLocalOnly ||
-                kLocalOnlyNames.contains(recordName ?? gUnlikelyRecordName) ||
-                (recordName?.contains(kLocalNamePrefix) ?? true)    // true because lack of record name prevents save to db
+            return _isLocalOnly || (record?.recordID.isLocalOnly ?? true)    // true because lack of record prevents save to db
         }
 
         set {

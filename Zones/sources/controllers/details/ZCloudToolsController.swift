@@ -41,7 +41,7 @@ class ZCloudToolsController: ZGenericTableController {
         switch kind {
         case .eIdentifiers: return   (gShowIdentifiers ? "Visible"  : "Hidden") + " Identifiers"
         case .eAccess:      return (gCrippleUserAccess ? "Crippled" : "Normal") + " User Access"
-        case .eGather:      return "Gather Trash"
+        case .eGather:      return "Gather Lost and Found"
         case .eRetry:       return "Retry Cloud"
         case .eTrash:       return "Show Trash"
         case .eRecount:     return "Recount"
@@ -68,7 +68,7 @@ class ZCloudToolsController: ZGenericTableController {
                 case .eAccess:      self.toggleUserAccess()
                 case .eRetry:       gDBOperationsManager.unHang()
                 case .eTrash:       self.showTrashCan()
-                case .eGather:      self.gatherAndShowTrash()
+                case .eGather:      self.gatherAndShowLost()
                 case .eRecount:     self.recount()
                 }
             }
@@ -98,15 +98,15 @@ class ZCloudToolsController: ZGenericTableController {
     }
 
 
-    func gatherAndShowTrash() {
+    func gatherAndShowLost() {
         gDBOperationsManager.fetchLost {
-            if let trash = gTrash {
-                gHere = trash
+            if  let lost = gLostAndFound {
+                gHere    = lost
 
-                self.columnarReport(" TRASH", "\(trash.count)")
+                self.columnarReport(" LOST", "\(lost.count)")
 
-                trash.needChildren()
-                trash.displayChildren()
+                lost.needChildren()
+                lost.displayChildren()
                 gDBOperationsManager.children(.all) {
                     self.grabChildless()
                 }

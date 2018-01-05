@@ -440,16 +440,17 @@ class ZCloudManager: ZRecordsManager {
             } else { // nil means: we already received full response from cloud for this particular fetch
                 FOREGROUND {
                     let          parentKey = "parent"
-                    let            linkKey = "parentLink"
-                    let              trash = self.trashZone
+                    let      parentLinkKey = "parentLink"
+                    var               lost = self.createRandomLost()
                     var          parentIDs = [CKRecordID] ()
+                    var             toLose = [CKRecord] ()
                     var childrenRecordsFor = [CKRecordID : [CKRecord]] ()
-                    let          hasParent = { (iCKRecord: CKRecord) -> Bool in
+                    let         isOrphaned = { (iCKRecord: CKRecord) -> Bool in
                         if  let  parentRef = iCKRecord[parentKey] as? CKReference {
                             let  parentID  = parentRef.recordID
 
-                            if  self.maybeZRecordForRecordID(parentID) == nil,  // not already in memory
-                                !kRootNames.contains(parentID.recordName) {
+                            if  !parentID.isLocalOnly,
+                                self.notRegistered(parentID) {
                                 parentIDs.append(parentID)
 
                                 if  childrenRecordsFor[parentID] == nil {
@@ -459,74 +460,92 @@ class ZCloudManager: ZRecordsManager {
                                 childrenRecordsFor[parentID]?.append(iCKRecord)
                             }
 
-                            return true
-                        } else if let link = iCKRecord[linkKey] as? String, self.name(from: link) != nil {
-                            return true
+                            return false
+                        } else if let parentLink = iCKRecord[parentLinkKey] as? String, self.name(from: parentLink) != nil {
+                            return false // parent is in other db, therefore it can't be verified as lost
                         }
 
-                        return false
+                        return true
+                    }
+
+                    let addToLost: RecordsClosure = { iCKRecords in
+                        if iCKRecords.count > 0 {
+                            self.columnarReport("  LOSING (\(iCKRecords.count))", self.stringForCKRecords(iCKRecords))
+                            for ckRecord in iCKRecords {
+                                lost.addZone(for: ckRecord)
+
+                                if  lost.count > 30 {
+                                    lost = self.createRandomLost()
+                                }
+                            }
+                        }
                     }
 
                     for ckRecord in fetched {
-                        if !hasParent(ckRecord) {
-                            trash.addZone(for: ckRecord)
+                        if isOrphaned(ckRecord) {
+                            toLose.append(ckRecord)
                         }
                     }
-                    
-                    let count = childrenRecordsFor.keys.count
-                    
-                    if count == 0 {
+
+                    addToLost(toLose)
+
+                    if childrenRecordsFor.count == 0 {
                         onCompletion?(0)
                     } else {
-                        var   found = [CKRecordID] ()
-                        var closure : Closure? = nil
+                        var missingIDs = [CKRecordID] ()
+                        var fetchClosure : Closure? = nil
                         
-                        closure = {
+                        fetchClosure = {
                             if  parentIDs.count == 0 {
                                 onCompletion?(0)
                             } else {
-                                var missingParents = parentIDs
+                                var seekParentIDs = parentIDs
 
-                                for recordID in found {
-                                    if  let index = missingParents.index(of: recordID) {
-                                        missingParents.remove(at: index)
+                                for recordID in missingIDs {
+                                    if  let index = seekParentIDs.index(of: recordID) {
+                                        seekParentIDs.remove(at: index)
                                     }
                                 }
 
-                                found.append(contentsOf: missingParents)
+                                missingIDs.append(contentsOf: seekParentIDs)
 
                                 // ask cloud if parentIDs exist
                                 // do the same with parent's parent
                                 // until doesn't exist
-                                // then add parentless ancestor to trash
+                                // add each parentless ancestor to lost
 
-                                self.fetch(needed: missingParents) { iFetchedParents in
+                                self.fetch(needed: seekParentIDs) { iFetchedParents in
                                     parentIDs = []
+                                    toLose    = []
 
+                                    self.columnarReport("  FETCHED (\(iFetchedParents.count))", self.stringForCKRecords(iFetchedParents))
                                     for ckParent in iFetchedParents {
-                                        if  let index = missingParents.index(of: ckParent.recordID) {
-                                            missingParents.remove(at: index)
+                                        if  let index = seekParentIDs.index(of: ckParent.recordID) {
+                                            seekParentIDs.remove(at: index)
 
-                                            if !hasParent(ckParent) {}
+                                            if isOrphaned(ckParent) {}
                                         }
                                     }
 
-                                    for parent in missingParents {
-                                        if  let children = childrenRecordsFor[parent] {
-                                            for ckRecord in children {
-                                                trash.addZone(for: ckRecord)
-                                            }
+                                    for parentID in seekParentIDs {
+                                        if  let children = childrenRecordsFor[parentID] {
+                                            toLose.append(contentsOf: children)
 
-                                            childrenRecordsFor[parent] = nil
+                                            childrenRecordsFor[parentID] = nil
                                         }
                                     }
 
-                                    closure?()
+                                    FOREGROUND {
+                                        addToLost(toLose)
+
+//                                        onCompletion?(0)
+                                        fetchClosure?()
+                                    }
                                 }
                             }
                         }
                         
-                        closure?()
+                        fetchClosure?()
                     }
                 }
             }
@@ -561,6 +580,37 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetch(needed: [CKRecordID], _ onCompletion: RecordsClosure?) {
+        var recordIDs = [CKRecordID] ()
+        var retrieved = [CKRecord] ()
+        var remainder = needed
+        var fetchClosure : Closure? = nil
+
+        fetchClosure = {
+            let count = remainder.count
+            recordIDs = remainder
+
+            if  count == 0 {
+                onCompletion?(retrieved)
+            } else {
+                if  count <= kBatchSize {
+                    remainder = []
+                } else {
+                    recordIDs.removeSubrange(kBatchSize ..< count)
+                    remainder.removeSubrange(0 ..< kBatchSize)
+                }
+
+                self.singleFetch(needed: recordIDs) { iCKRecords in
+                    retrieved.append(contentsOf: iCKRecords)
+                    fetchClosure?()
+                }
+            }
+        }
+
+        fetchClosure?()
+    }
+
+
+    func singleFetch(needed: [CKRecordID], _ onCompletion: RecordsClosure?) {
         let count = needed.count
 
         if  count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
@@ -625,13 +675,13 @@ class ZCloudManager: ZRecordsManager {
 
     func fetchParents(_ onCompletion: IntClosure?) {
         let states: [ZRecordState] = [.needsWritable, .needsParent, .needsColor, .needsRoot]
-        let         missingParents = parentIDsWithMatchingStates(states)
+        let         missingParentIDs = parentIDsWithMatchingStates(states)
         let                orphans = recordIDsWithMatchingStates(states)
-        let                  count = missingParents.count
+        let                  count = missingParentIDs.count
 
         if  count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
             var        recordsByID = [CKRecord : CKRecordID?] ()
-            operation   .recordIDs = missingParents
+            operation   .recordIDs = missingParentIDs
 
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
                 gAlertManager.alertError(iError) { iHasError in
@@ -717,7 +767,7 @@ class ZCloudManager: ZRecordsManager {
             var  retrieved = [CKRecord] ()
             let  predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
 
-            queryWith(predicate) { (iRecord: CKRecord?) in
+            queryWith(predicate, batchSize: kMaxBatchSize) { (iRecord: CKRecord?) in
                 if  let ckRecord = iRecord {
                     if !retrieved.contains(ckRecord) {
                         retrieved.append(ckRecord)

@@ -201,7 +201,7 @@ class ZFavoritesManager: ZCloudManager {
     func setup() {
         if  gHasPrivateDatabase && rootZone == nil {
             rootZone               = Zone(storageMode: .mineMode, named: kFavoritesName, identifier: kFavoriteRootName)
-            rootZone!.directAccess = .eChildrenWritable
+            rootZone!.directAccess = .eDefaultName
 
             setupDatabaseFavorites()
             rootZone!.needProgeny()
@@ -243,9 +243,10 @@ class ZFavoritesManager: ZCloudManager {
 
     func updateFavorites() {
         if  gHasPrivateDatabase {
-            var trashCopies = IndexPath()
-            var  foundModes = ZModes ()
-            var  foundTrash = false
+            var discardCopies = IndexPath()
+            var      hasModes = ZModes ()
+            var      hasTrash = false
+            var      haveLost = false
 
             ////////////////////////////////////////////////
             // assure at least one root favorite per db   //
@@ -262,38 +263,56 @@ class ZFavoritesManager: ZCloudManager {
             for (index, favorite) in workingFavorites.enumerated() {
                 if  let link  = favorite.zoneLink {
                     if  link == kTrashLink {
-                        if !foundTrash {
-                            foundTrash = true
+                        if !hasTrash {
+                            hasTrash = true
                         } else {
-                            trashCopies.append(index)
+                            discardCopies.append(index)
+                        }
+                    } else if  link == kLostAndFoundLink {
+                        if !haveLost {
+                            haveLost = true
+                        } else {
+                            discardCopies.append(index)
                         }
                     } else if      favorite.isLocalOnly,
                         let    t = favorite.bookmarkTarget,
                         let mode = t.storageMode,
                         t.isRoot,
-                        !foundModes.contains(mode) {
-                        foundModes.append(mode)
+                        !hasModes.contains(mode) {
+                        hasModes.append(mode)
                     }
                 }
             }
 
-            while   let index = trashCopies.popLast() {
-                if  let trash = zoneAtIndex(index) {
-                    trash.needDestroy()
-                    trash.orphan()
+            while   let   index = discardCopies.popLast() {
+                if  let discard = zoneAtIndex(index) {
+                    discard.needDestroy()
+                    discard.orphan()
                 }
             }
 
-            ////////////////////////////////
-            // add missing trash favorite //
-            ////////////////////////////////
+            /////////////////////////////////////////////////
+            // add missing trash + lost and found favorite //
+            /////////////////////////////////////////////////
 
-            if !foundTrash {
-                let      trash = Zone(storageMode: .mineMode, named: kTrashName, identifier: kLocalNamePrefix + kTrashName)
-                trash.zoneLink = kTrashLink // convert into a bookmark
+            if !hasTrash {
+                let          trash = Zone(storageMode: .mineMode, named: kTrashName, identifier: kLocalNamePrefix + kTrashName)
+                trash    .zoneLink = kTrashLink // convert into a bookmark
+                trash.directAccess = .eDefaultName
+                trash .isLocalOnly = true
 
                 rootZone?.addAndReorderChild(trash, at: nil)
                 trash.clearAllStates()
+            }
+
+            if !haveLost {
+                let          lost = Zone(storageMode: .mineMode, named: kLostAndFoundName, identifier: kLocalNamePrefix + kLostAndFoundName)
+                lost    .zoneLink = kLostAndFoundLink // convert into a bookmark
+                lost.directAccess = .eDefaultName
+                lost .isLocalOnly = true
+
+                rootZone?.addAndReorderChild(lost, at: nil)
+                lost.clearAllStates()
             }
 
             ////////////////////////////////
@@ -301,9 +320,10 @@ class ZFavoritesManager: ZCloudManager {
             ////////////////////////////////
 
             for favorite in databaseRootFavorites.children {
-                if  let        mode = favorite.crossLink?.storageMode, !foundModes.contains(mode) {
-                    let         add = favorite.deepCopy()
-                    add.isLocalOnly = true
+                if  let         mode = favorite.crossLink?.storageMode, !hasModes.contains(mode) {
+                    let          add = favorite.deepCopy()
+                    add.directAccess = .eDefaultName
+                    add .isLocalOnly = true
 
                     rootZone?.add(add)
                     add.clearAllStates() // erase side-effect of add

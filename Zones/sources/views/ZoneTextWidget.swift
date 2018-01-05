@@ -276,7 +276,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
         if  let zone = widgetZone,
              zone.canTravel,
-            !zone.isFavorite,
+            !zone.isInFavorites,
             !zone.isGrabbed,
             !isEditingText {
 

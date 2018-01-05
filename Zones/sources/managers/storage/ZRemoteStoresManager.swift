@@ -13,6 +13,7 @@ import CloudKit
 
 let gRemoteStoresManager = ZRemoteStoresManager()
 var        gCloudManager : ZCloudManager { return gRemoteStoresManager.currentCloudManager }
+var        gLostAndFound : Zone?         { return gRemoteStoresManager.lostAndFoundZone }
 var            gManifest : ZManifest     { return gRemoteStoresManager.manifest }
 var               gTrash : Zone?         { return gRemoteStoresManager.trashZone }
 var                gRoot : Zone?   { get { return gRemoteStoresManager.rootZone } set { gRemoteStoresManager.rootZone  = newValue } }
@@ -40,9 +41,10 @@ class ZRemoteStoresManager: NSObject {
     var currentRecordsManager: ZRecordsManager { return recordsManagerFor(gStorageMode)! }
     var   currentCloudManager: ZCloudManager   { return cloudManagerFor(gStorageMode) }
     var      rootProgenyCount: Int             { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
-    var              manifest: ZManifest       { return manifest(for: gStorageMode) }
+    var      lostAndFoundZone: Zone?           { return currentRecordsManager.lostAndFoundZone }
     var             trashZone: Zone?           { return currentRecordsManager.trashZone }
     var              rootZone: Zone?     { get { return currentRecordsManager.rootZone }  set { currentRecordsManager.rootZone  = newValue } }
+    var              manifest: ZManifest       { return manifest(for: gStorageMode) }
 
 
     func rootZone(for mode: ZStorageMode) -> Zone? { return recordsManagerFor(mode)?.rootZone }

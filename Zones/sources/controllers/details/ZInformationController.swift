@@ -19,12 +19,13 @@ import Foundation
 class ZInformationController: ZGenericController {
 
 
-    override  var     controllerID: ZControllerID { return .information }
-    @IBOutlet var fractionInMemory: ZProgressIndicator?
-    @IBOutlet var  totalCountLabel: ZTextField?
-    @IBOutlet var   graphNameLabel: ZTextField?
-    @IBOutlet var     versionLabel: ZTextField?
-    @IBOutlet var       levelLabel: ZTextField?
+    override  var        controllerID: ZControllerID { return .information }
+    @IBOutlet var    fractionInMemory: ZProgressIndicator?
+    @IBOutlet var operationCountLabel: ZTextField?
+    @IBOutlet var     totalCountLabel: ZTextField?
+    @IBOutlet var      graphNameLabel: ZTextField?
+    @IBOutlet var        versionLabel: ZTextField?
+    @IBOutlet var          levelLabel: ZTextField?
 
 
     var versionText: String {
@@ -44,10 +45,12 @@ class ZInformationController: ZGenericController {
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         if ![.search, .found].contains(kind) {
-            let                     count = gRemoteStoresManager.recordsManagerFor(gStorageMode)?.undeletedCount ?? 0
+            let                     count = gCloudManager.undeletedCount
             let                     total = gRemoteStoresManager.rootProgenyCount // TODO wrong manager
+            let            operationCount = gDBOperationsManager.queue.operationCount
             totalCountLabel?        .text = "of \(total), retrieved: \(count)"
             graphNameLabel?         .text = "graph: \(gStorageMode.rawValue)"
+            operationCountLabel?    .text = operationCount == 0 ? "" : "\(operationCount) cloud operations in progress"
             fractionInMemory?.doubleValue = Double(count)
             fractionInMemory?   .maxValue = Double(total)
             versionLabel?           .text = versionText

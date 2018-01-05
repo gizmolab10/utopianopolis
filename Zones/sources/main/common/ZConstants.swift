@@ -39,14 +39,11 @@ let  kDefaultZoneColor = ZColor.blue
 
 let       gUndoManager = UndoManager()
 
-let            kNoName = "empty"
-let           kCloudID = "iCloud.com.zones.Zones"
-let          kNullLink = "no"
-let         kTrashLink = kSeparator + kSeparator + "trash"
+let         kTrashLink = kSeparator + kSeparator + kTrashName
+let  kLostAndFoundLink = kSeparator + kSeparator + kLostAndFoundName
 let  kHalfLineOfDashes = "-----------"
 let kLineWithStubTitle = kHalfLineOfDashes + " | " + kHalfLineOfDashes
-let   kLocalNamePrefix = "local."
-let    kLocalOnlyNames = [kTrashName, kFavoriteRootName]
+let    kLocalOnlyNames = [kTrashName, kFavoriteRootName, kLostAndFoundName]
 let      kLineOfDashes = kHalfLineOfDashes + "---" + kHalfLineOfDashes
 let         kRootNames = [kRootName] + kLocalOnlyNames
 
@@ -55,35 +52,41 @@ let         kRootNames = [kRootName] + kLocalOnlyNames
 // MARK:-
 
 
+let               kTab = "\t"
+let             kSpace = " "
 let             kLinks = "links"
+let            kNoName = "empty"
+let            kDelete = "\u{7F}"
+let           kScaling = "scaling"
+let           kCloudID = "iCloud.com.zones.Zones"
+let          kNullLink = "no"
 let          kRootName = "root"
-let          kChildren = "children"
-let          kZoneName = "zoneName"
 let          kZoneType = "Zone"
+let          kZoneName = "zoneName"
+let          kChildren = "children"
+let         kBackspace = "\u{8}"
+let         kThickness = "line thickness"
 let         kTraitType = "ZTrait"
 let         kSeparator = ":"
 let         kTrashName = "trash"
 let        kRecordName = "recordName"
 let        kRecordType = "recordType"
+let        kCountsMode = "counts mode"
+let       kStorageMode = "current storage mode"
 let      kShowChildren = "showChildren"
 let      kManifestType = "ZManifest"
+let      kUserRecordID = "user record id"
+let      kScrollOffset = "scroll offset"
 let     kFavoritesName = "favorites"
-let  kFavoriteRootName = "favoritesRoot"
-let  kfavoritesVisible = "favorites are visible"
+let     kGenericOffset = "generic offset"
+let     kInsertionMode = "graph altering mode"
+let     kSettingsState = "current settings state"
+let    kActionsVisible = "actions are visible"
 let   kRubberbandColor = "rubberband color"
 let   kBackgroundColor = "background color"
 let   kCurrentFavorite = "current favorite"
-let    kActionsVisible = "actions are visible"
-let     kSettingsState = "current settings state"
-let     kInsertionMode = "graph altering mode"
-let     kGenericOffset = "generic offset"
-let      kUserRecordID = "user record id"
-let      kScrollOffset = "scroll offset"
-let       kStorageMode = "current storage mode"
-let        kCountsMode = "counts mode"
-let         kBackspace = "\u{8}"
-let         kThickness = "line thickness"
-let           kScaling = "scaling"
-let            kDelete = "\u{7F}"
-let             kSpace = " "
-let               kTab = "\t"
+let   kLocalNamePrefix = "local "
+let  kLostAndFoundName = "lost and found"
+let  kFavoriteRootName = "favoritesRoot"
+let  kfavoritesVisible = "favorites are visible"
+

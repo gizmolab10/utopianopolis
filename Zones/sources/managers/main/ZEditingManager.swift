@@ -78,7 +78,7 @@ class ZEditingManager: NSObject {
         switch key {
         case "z":                                 return .Undo
         case "o", "r":                            return .Sort
-        case "v", "x", kSpace:                    return .Child
+        case "v", "x", "!", kSpace:               return .Child
         case "e", "h", "l", "\r", "u", "w", "-":  return .Alter
         case "b", "d", kTab, kBackspace, kDelete: return .Parent
         case ";", "'", "/":                       return .Favorites
@@ -167,6 +167,7 @@ class ZEditingManager: NSObject {
                 case "p":      printHere()
                 case "b":      addBookmark()
                 case "h":      editHyperlink()
+                case "!":      divideChildren()
                 case "w":      toggleWritable()
                 case "o":      orderByLength(isOption)
                 case "s":      selectCurrentFavorite()
@@ -284,6 +285,23 @@ class ZEditingManager: NSObject {
     }
 
 
+    func divideChildren() {
+        let grabs = gSelectionManager.currentGrabs
+
+        for zone in grabs {
+            zone.needChildren()
+        }
+
+        gDBOperationsManager.children {
+            for zone in grabs {
+                zone.divideEvenly()
+            }
+
+            self.redrawSyncRedraw()
+        }
+    }
+
+
     func toggleWritable() {
         for zone in gSelectionManager.currentGrabs {
             zone.toggleWritable()
@@ -350,6 +368,8 @@ class ZEditingManager: NSObject {
 
         if zones.count > 1 {
             let font = gWidgetFont
+
+            zones.updateOrder()
 
             zones.sort { (a, b) -> Bool in
                 return a.zoneName?.widthForFont(font) ?? 0 < b.zoneName?.widthForFont(font) ?? 0
@@ -1762,7 +1782,7 @@ class ZEditingManager: NSObject {
                         let grab = there.children[newIndex]
                         
                         grab.grab()
-                        there.children.updateOrdering()
+                        there.children.updateOrder()
                         redrawSyncRedraw(there.widget)
                     }
                 } else {

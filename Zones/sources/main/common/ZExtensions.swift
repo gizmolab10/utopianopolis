@@ -135,8 +135,16 @@ extension NSObject {
 }
 
 
-extension CKRecord {
+extension CKRecordID {
 
+    var isLocalOnly: Bool {
+        return kLocalOnlyNames.contains(recordName) || recordName.contains(kLocalNamePrefix)
+    }
+
+}
+
+
+extension CKRecord {
 
     var decoratedName: String {
         if recordType       != kZoneType {
@@ -269,7 +277,7 @@ extension CGRect {
 extension Array {
 
 
-    func updateOrdering() { updateOrdering(start: 0.0, end: 1.0) }
+    func updateOrder() { updateOrdering(start: 0.0, end: 1.0) }
 
 
     func sortedByReverseOrdering() -> Array {

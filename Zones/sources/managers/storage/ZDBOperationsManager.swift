@@ -270,5 +270,6 @@ class ZDBOperationsManager: ZOperationsManager {
         }
 
         invokeModeAt?(0)
+        self.signalFor(nil, regarding: .information)
     }
 }

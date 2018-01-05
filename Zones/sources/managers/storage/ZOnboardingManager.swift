@@ -50,11 +50,6 @@ class ZOnboardingManager : ZOperationsManager {
     // MARK:-
 
 
-    func userHasAccess(_ zone: Zone) -> Bool {
-        return (!zone.isTrash && zone.ownerID == nil) || ((zone.ownerID?.recordName == gUserRecordID || isSpecialUser) && !gCrippleUserAccess)
-    }
-
-
     func onboard(_ onCompletion: AnyClosure?) {
         setupAndRunOps(from: .setup, to: .fetchUserIdentity) { onCompletion?(0) }
     }

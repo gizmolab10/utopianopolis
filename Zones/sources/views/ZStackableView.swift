@@ -112,6 +112,9 @@ class ZStackableView: ZView {
             }
 
             signalFor(nil, regarding: .datum)
+            FOREGROUND(after: 0.2) {
+                self.hideableView?.setNeedsDisplay()
+            }
         }
     }
 }
