@@ -43,8 +43,8 @@ class ZInformationController: ZGenericController {
         fractionInMemory? .minValue = 0
     }
 
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-        if ![.search, .found].contains(kind) {
+    override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
+        if ![.search, .found].contains(iKind) {
             let                     count = gCloudManager.undeletedCount
             let                     total = gRemoteStoresManager.rootProgenyCount // TODO wrong manager
             let            operationCount = gDBOperationsManager.queue.operationCount
@@ -57,7 +57,7 @@ class ZInformationController: ZGenericController {
             fractionInMemory?   .maxValue = Double(total)
             versionLabel?           .text = versionText
 
-            if kind != .startup {
+            if iKind != .startup {
                 levelLabel?         .text = "level: \(zone.level)"
             }
         }

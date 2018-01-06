@@ -44,8 +44,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     // MARK:-
 
 
-    override func handleSignal(_ iObject: Any?, kind: ZSignalKind) {
-        if kind == .found {
+    override func handleSignal(_ iObject: Any?, iKind: ZSignalKind) {
+        if iKind == .found {
             resultsAreVisible = false
             
             if  gWorkMode == .searchMode, let recordsByMode = iObject as? [ZStorageMode: [CKRecord]] {

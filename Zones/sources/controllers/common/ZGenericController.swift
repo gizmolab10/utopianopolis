@@ -18,7 +18,7 @@ import Foundation
 
 protocol ZGenericControllerProtocol {
 
-    func handleSignal(_ object: Any?, kind: ZSignalKind)
+    func handleSignal(_ object: Any?, iKind: ZSignalKind)
     func displayActivity(_ show: Bool)
     func setup()
 }
@@ -27,7 +27,7 @@ protocol ZGenericControllerProtocol {
 class ZGenericController: ZController, ZGenericControllerProtocol {
     var controllerID:  ZControllerID { return .undefined }
     override func awakeFromNib() { setup() }
-    func handleSignal(_ object: Any?, kind: ZSignalKind) {}
+    func handleSignal(_ object: Any?, iKind: ZSignalKind) {}
     func displayActivity(_ show: Bool) {}
 
 
@@ -36,7 +36,7 @@ class ZGenericController: ZController, ZGenericControllerProtocol {
             self.view.zlayer.backgroundColor = gBackgroundColor.cgColor
 
             if  kind != .error && gManifest.alreadyExists {
-                self.handleSignal(object, kind: kind)
+                self.handleSignal(object, iKind: kind)
             }
         }
     }

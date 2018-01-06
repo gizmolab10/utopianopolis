@@ -61,7 +61,7 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, kind signalKind: ZSignalKind, isMain: Bool, visited: [Zone]) {
+    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, isMain: Bool, visited: [Zone]) {
         if  inView != nil, let views = inView?.subviews, !views.contains(self), !views.contains(textWidget) {
             inView?.addSubview(self)
 
@@ -88,12 +88,12 @@ class ZoneWidget: ZView {
                 let more = widgetZone == nil ? [] : [widgetZone!]
 
                 prepareChildrenWidgets()
-                layoutChildren(signalKind, visited: visited + more)
+                layoutChildren(iKind, visited: visited + more)
             }
     }
 
 
-    func layoutChildren(_ kind: ZSignalKind, visited: [Zone]) {
+    func layoutChildren(_ iKind: ZSignalKind, visited: [Zone]) {
         if  let                  zone = widgetZone, zone.showChildren {
             var                 index = zone.count
             var previous: ZoneWidget? = nil
@@ -107,7 +107,7 @@ class ZoneWidget: ZView {
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone =            zone[index]
 
-                childWidget.layoutInView(childrenView, atIndex: index, recursing: true, kind: kind, isMain: isInMain, visited: visited)
+                childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, isMain: isInMain, visited: visited)
                 childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints { make in
                     if previous == nil {

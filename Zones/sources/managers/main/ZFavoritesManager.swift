@@ -214,7 +214,7 @@ class ZFavoritesManager: ZCloudManager {
         if databaseRootFavorites.count == 0 {
             for (index, mode) in gAllDatabaseModes.enumerated() {
                 let          name = mode.rawValue
-                let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: kLocalNamePrefix + name)
+                let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: name + kFavoritesSuffix)
                 favorite.zoneLink =  "\(name)\(kSeparator)\(kSeparator)"
                 favorite   .order = Double(index) * 0.001
 
@@ -296,20 +296,18 @@ class ZFavoritesManager: ZCloudManager {
             /////////////////////////////////////////////////
 
             if !hasTrash {
-                let          trash = Zone(storageMode: .mineMode, named: kTrashName, identifier: kLocalNamePrefix + kTrashName)
+                let          trash = Zone(storageMode: .mineMode, named: kTrashName, identifier: kTrashName + kFavoritesSuffix)
                 trash    .zoneLink = kTrashLink // convert into a bookmark
                 trash.directAccess = .eDefaultName
-                trash .isLocalOnly = true
 
                 rootZone?.addAndReorderChild(trash, at: nil)
                 trash.clearAllStates()
             }
 
             if !haveLost {
-                let          lost = Zone(storageMode: .mineMode, named: kLostAndFoundName, identifier: kLocalNamePrefix + kLostAndFoundName)
+                let          lost = Zone(storageMode: .mineMode, named: kLostAndFoundName, identifier: kLostAndFoundName + kFavoritesSuffix)
                 lost    .zoneLink = kLostAndFoundLink // convert into a bookmark
                 lost.directAccess = .eDefaultName
-                lost .isLocalOnly = true
 
                 rootZone?.addAndReorderChild(lost, at: nil)
                 lost.clearAllStates()

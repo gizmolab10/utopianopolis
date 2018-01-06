@@ -24,8 +24,8 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     override  var controllerID: ZControllerID { return .searchBox }
 
 
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-        if kind == .search {
+    override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
+        if iKind == .search {
             if  gWorkMode == .searchMode {
                 assignAsFirstResponder(searchBox!)
 

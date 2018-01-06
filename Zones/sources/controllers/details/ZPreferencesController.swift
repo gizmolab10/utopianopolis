@@ -32,8 +32,8 @@ class ZPreferencesController: ZGenericController {
     override  var         controllerID: ZControllerID { return .preferences }
 
 
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-        if  kind != .startup {
+    override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
+        if  iKind != .startup {
             let                           grabbed = gSelectionManager.firstGrab
             let                    hideIdeasColor = grabbed.isBookmark || grabbed.isRootOfFavorites
             view          .zlayer.backgroundColor = CGColor.clear

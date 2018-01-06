@@ -89,6 +89,7 @@ var           gDragPoint:           CGPoint? = nil
 
 var              gIsLate:               Bool { return gCloudUnavailable || gDBOperationsManager.isLate }
 var          gIsDragging:               Bool { return gDraggedZone != nil }
+var       gIsEditingText:               Bool { return gEditorView?.window?.firstResponder?.isKind(of: ZTextView.self) ?? false }
 var    gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var  gHasPrivateDatabase:               Bool { return gUserRecordID != nil }
 var    gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor) as? ZEditorController }

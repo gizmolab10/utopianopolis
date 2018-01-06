@@ -276,20 +276,19 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
         if  let zone = widgetZone,
              zone.canTravel,
-            !zone.isInFavorites,
             !zone.isGrabbed,
             !isEditingText {
 
-            ///////////////////////////////////////////////////////////
-            // draw line underneath text indicating it is a bookmark //
-            ///////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////
+            // draw line underneath text indicating it can travel //
+            ////////////////////////////////////////////////////////
 
             var         rect = dirtyRect.insetBy(dx: 3.0, dy: 0.0)
             rect.size.height = 0.0
             rect.size.width -= 4.0
             rect.origin.y    = dirtyRect.maxY - 1.0
             let path         = ZBezierPath(rect: rect)
-            path  .lineWidth = 0.7
+            path  .lineWidth = 0.4
 
             zone.color.setStroke()
             path.stroke()

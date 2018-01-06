@@ -120,48 +120,48 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     // MARK:-
 
 
-    func update(_ object: Any?, _ kind: ZSignalKind, isMain: Bool) {
-        if !isMain && (!gHasPrivateDatabase || kIsPhone) { return }
+    func layoutWidgets(_ iSignalObject: Any?, _ iKind: ZSignalKind, inMainGraph: Bool) {
+        if !inMainGraph && (!gHasPrivateDatabase || kIsPhone) { return }
 
-        let                        here = isMain ? gHere : gFavoritesManager.rootZone
-        var specificWidget: ZoneWidget? = isMain ? editorRootWidget : favoritesRootWidget
+        let                        here = inMainGraph ? gHere : gFavoritesManager.rootZone
+        var specificWidget: ZoneWidget? = inMainGraph ? editorRootWidget : favoritesRootWidget
         var   specificView:      ZView? = editorView
         var  specificindex:        Int? = nil
         var                   recursing = true
         gTextCapturing                  = false
         specificWidget?     .widgetZone = here
 
-        if  let     widget = object as? ZoneWidget,
+        if  let     widget = iSignalObject as? ZoneWidget,
             let       zone = widget.widgetZone,
             zone          == here {
             specificWidget = zone.widget // YIKES: value was established in previous call to handleSignal
             specificindex  = zone.siblingIndex
             specificView   = specificWidget?.superview
-            recursing      = [.data, .redraw].contains(kind)
+            recursing      = [.data, .redraw].contains(iKind)
         }
 
         note("<  <  -  >  >  \(specificWidget?.widgetZone?.zoneName ?? "---")")
 
-        if kind == .redraw {
-            specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, kind: kind, isMain: isMain, visited: [])
+        if iKind == .redraw {
+            specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, iKind, isMain: inMainGraph, visited: [])
         } else {
             specificWidget?.setNeedsDisplay()
         }
     }
 
     
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-        if [.datum, .data, .redraw].contains(kind) { // ignore for preferences, search, information, startup
+    override func handleSignal(_ iSignalObject: Any?, iKind: ZSignalKind) {
+        if [.datum, .data, .redraw].contains(iKind) { // ignore for preferences, search, information, startup
             if gWorkMode != .graphMode {
                 editorView?.snp.removeConstraints()
-            } else if !gEditingManager.isEditing {
-                if kind == .redraw {
+            } else if !gIsEditingText {
+                if iKind == .redraw {
                     gWidgetsManager.clear()
                 }
 
                 layoutForCurrentScrollOffset()
-                update(object, kind, isMain: true)
-                update(object, kind, isMain: false)
+                layoutWidgets(iSignalObject, iKind, inMainGraph: true)
+                layoutWidgets(iSignalObject, iKind, inMainGraph: false)
                 editorView?.setAllSubviewsNeedDisplay()
             }
         }
@@ -217,7 +217,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         /////////////////////////////////////////////
         
         if  let             gesture = iGesture as? ZKeyClickGestureRecognizer, gManifest.alreadyExists { // avoid crash for click event before manifest is fetched
-            let          textWidget = gEditingManager.editedTextWidget
+            let          textWidget = gEditedTextWidget
 
             if gesture.modifiers?.contains(.command) ?? false, let zone = textWidget?.widgetZone, let link = zone.hyperLink, link != kNullLink {
                 link.openAsURL()
@@ -493,9 +493,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
 
     func isEditingText(at location: CGPoint) -> Bool {
-        let e = gEditingManager
-
-        if  e.isEditing, let textWidget = e.editedTextWidget {
+        if  gIsEditingText, let textWidget = gEditedTextWidget {
             let rect = textWidget.convert(textWidget.bounds, to: editorView)
 
             return rect.contains(location)

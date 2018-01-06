@@ -24,15 +24,60 @@ enum ZRelation: Int {
 
 
 let gSelectionManager = ZSelectionManager()
+var gEditedTextWidget: ZoneTextWidget? { return gSelectionManager.currentlyEditingZone?.widget?.textWidget }
+
+
+class ZSnapshot: NSObject {
+
+
+    var currentGrabs = [Zone] ()
+    var  storageMode : ZStorageMode?
+    var         here : Zone?
+
+
+    static func == ( left: ZSnapshot, right: ZSnapshot) -> Bool {
+        let  goodHere = left       .here != nil && right       .here != nil
+        let goodModes = left.storageMode != nil && right.storageMode != nil
+        let sameCount = left.currentGrabs.count == right.currentGrabs.count
+
+        if  goodHere && goodModes && sameCount {
+            let  sameHere = left.here == right.here
+            let sameModes = left.storageMode == right.storageMode
+
+            if sameHere && sameModes {
+                for (index, grab) in left.currentGrabs.enumerated() {
+                    if  grab != right.currentGrabs[index] {
+                        return false
+                    }
+                }
+
+                return true
+            }
+        }
+
+        return false
+    }
+
+}
 
 
 class ZSelectionManager: NSObject {
 
 
-    var                hasGrab:   Bool { return currentGrabs.count > 0 }
-    var isEditingStateChanging:   Bool               = false
-    var   currentlyEditingZone:   Zone?              = nil
+    var                hasGrab : Bool { return currentGrabs.count > 0 }
+    var   currentlyEditingZone : Zone? = nil
+    var isEditingStateChanging = false
     var         pasteableZones = [Zone: (Zone?, Int?)] ()
+
+
+    var snapshot : ZSnapshot {
+        let          snap = ZSnapshot()
+        snap.currentGrabs = currentGrabs
+        snap .storageMode = gStorageMode
+        snap        .here = gHere
+
+        return snap
+    }
 
 
     var currentGrabs: [Zone] {
@@ -153,6 +198,10 @@ class ZSelectionManager: NSObject {
     }
 
 
+    // MARK:- convenience
+    // MARK:-
+
+
     func clearGrab()   { currentGrabs          = [ ] }
     func clearPaste()  { pasteableZones        = [:] }
     func clearEdit()   { currentlyEditingZone  = nil }
@@ -161,6 +210,10 @@ class ZSelectionManager: NSObject {
     func isEditing (_ zone: Zone) -> Bool { return currentlyEditingZone == zone }
     func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || isEditing(zone) }
     func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
+
+
+    // MARK:- text edit
+    // MARK:-
 
 
     func deferEditingStateChange() {
@@ -196,7 +249,11 @@ class ZSelectionManager: NSObject {
             fullResign()
         }
     }
-    
+
+
+    // MARK:- selection
+    // MARK:-
+
 
     func deselectGrabs(retaining zones: [Zone]? = nil) {
         var grabbed = currentGrabs

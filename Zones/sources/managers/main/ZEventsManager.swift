@@ -57,9 +57,8 @@ class ZEventsManager: NSObject {
                     let    flags = event.modifierFlags
 
                     if  flags.isCommand,
-                        let  key = event.charactersIgnoringModifiers,
-                        let view = gEditorView?.window?.firstResponder,
-                        view.isKind(of: ZTextView.self) {
+                        gIsEditingText,
+                        let    key = event.charactersIgnoringModifiers {
                         switch key {
                         case "f":
                             gSelectionManager.stopCurrentEdit()

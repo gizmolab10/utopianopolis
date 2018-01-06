@@ -1,4 +1,4 @@
-//
+ //
 //  ZEditingManager.swift
 //  Zones
 //
@@ -37,18 +37,15 @@ class ZEditingManager: NSObject {
 
 
     var    previousEvent:         ZEvent?
-    var editedTextWidget: ZoneTextWidget? { return gSelectionManager.currentlyEditingZone?.widget?.textWidget }
-    var        isEditing:           Bool  { return editedTextWidget == nil ? false : editedTextWidget!.isFirstResponder }
 
 
     var undoManager: UndoManager {
-        var manager = gUndoManager
-
-        if editedTextWidget != nil && editedTextWidget!.undoManager != nil {
-            manager = editedTextWidget!.undoManager!
+        if  let w = gEditedTextWidget,
+            w.undoManager != nil {
+            return w.undoManager!
         }
 
-        return manager
+        return gUndoManager
     }
 
 
@@ -95,7 +92,7 @@ class ZEditingManager: NSObject {
         }
 
         let type = menuType(for: key)
-        var valid = !isEditing
+        var valid = !gIsEditingText
 
         if  valid {
             let   undo = undoManager
@@ -146,7 +143,7 @@ class ZEditingManager: NSObject {
                 isShift   = true
             }
 
-            if  isEditing {
+            if  gIsEditingText {
                 switch key {
              // case "f":      if isCommand { find() }
                 case "a":      if isCommand { gSelectionManager.currentlyEditingZone?.widget?.textWidget.selectAllText() }
@@ -232,7 +229,7 @@ class ZEditingManager: NSObject {
 
 
     @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
-        if !isEditing, iEvent != previousEvent, gWorkMode == .graphMode {
+        if !gIsEditingText, iEvent != previousEvent, gWorkMode == .graphMode {
             let     flags = iEvent.modifierFlags
             previousEvent = iEvent
 
@@ -734,12 +731,12 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            if  zone.fetchableCount == 0 {
+            if  zone.fetchableCount == 0 && zone.count == 0 {
                 gTravelManager.maybeTravelThrough(zone) {
                     self.redrawSyncRedraw()
                 }
             } else {
-                if isEditing {
+                if gIsEditingText {
                     s.stopCurrentEdit()
                 }
 
@@ -1735,7 +1732,9 @@ class ZEditingManager: NSObject {
     func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, extend: Bool = false) {
         let            zone = iMoveUp ? gSelectionManager.firstGrab : gSelectionManager.lastGrab
         let          isHere = zone == gHere
-        if  let       there = zone.parentZone, !isHere, let index = zone.siblingIndex {
+        let          parent = zone.parentZone
+        let isParentFetched = parent?.alreadyExists ?? false
+        if  let       there = parent, !isHere, isParentFetched, let index = zone.siblingIndex {
             var    newIndex = index + (iMoveUp ? -1 : 1)
             var  allGrabbed = true
             var soloGrabbed = false
@@ -1769,7 +1768,7 @@ class ZEditingManager: NSObject {
             }
 
             if newIndex >= 0 && newIndex < indexMax {
-                if  zone == gHere {
+                if  isHere {
                     gHere = there
                 }
                 
@@ -1822,17 +1821,19 @@ class ZEditingManager: NSObject {
             // parent is not yet fetched from cloud //
             //////////////////////////////////////////
 
+            let snapshot = gSelectionManager.snapshot
+
             revealParentAndSiblingsOf(zone) {
-                if let parent = zone.parentZone {
-                    if isHere {
-                        gHere = parent
-                        
+                if  let there = parent {
+                    if  isHere {
+                        gHere = there
+
                         self.signalFor(nil, regarding: .redraw)
                     }
-                    
-                    if parent.count > 1 {
-                        self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme, extend: extend)
-                    }
+                }
+
+                if  snapshot == gSelectionManager.snapshot, 1 < (parent?.count ?? 0) {
+                    self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme, extend: extend)
                 }
             }
         }

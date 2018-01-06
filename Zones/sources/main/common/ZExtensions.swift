@@ -138,7 +138,7 @@ extension NSObject {
 extension CKRecordID {
 
     var isLocalOnly: Bool {
-        return kLocalOnlyNames.contains(recordName) || recordName.contains(kLocalNamePrefix)
+        return kLocalOnlyNames.contains(recordName)
     }
 
 }
