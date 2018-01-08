@@ -234,8 +234,6 @@ class ZFavoritesManager: ZCloudManager {
         rootZone?.traverseAllProgeny { iChild in
             if iChild.isBookmark {
                 self.workingFavorites.append(iChild)
-            } else {
-                iChild.displayChildren()
             }
         }
     }
@@ -274,9 +272,8 @@ class ZFavoritesManager: ZCloudManager {
                         } else {
                             discardCopies.append(index)
                         }
-                    } else if      favorite.isLocalOnly,
-                        let    t = favorite.bookmarkTarget,
-                        let mode = t.storageMode,
+                    } else if let t = favorite.bookmarkTarget,
+                        let    mode = t.storageMode,
                         t.isRoot,
                         !hasModes.contains(mode) {
                         hasModes.append(mode)
@@ -321,7 +318,6 @@ class ZFavoritesManager: ZCloudManager {
                 if  let         mode = favorite.crossLink?.storageMode, !hasModes.contains(mode) {
                     let          add = favorite.deepCopy()
                     add.directAccess = .eDefaultName
-                    add .isLocalOnly = true
 
                     rootZone?.add(add)
                     add.clearAllStates() // erase side-effect of add

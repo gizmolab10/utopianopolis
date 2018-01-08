@@ -62,7 +62,6 @@ class Zone : ZRecord {
     var          hasZonesBelow:        Bool  { return hasAnyZonesAbove(false) }
     var          hasZonesAbove:        Bool  { return hasAnyZonesAbove(true) }
     var            isHyperlink:        Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
-    var             isBookmark:        Bool  { return crossLink != nil }
     var             isFavorite:        Bool  { return gFavoritesManager.isWorkingFavorite(self) }
     var             isSelected:        Bool  { return gSelectionManager.isSelected(self) }
     var              canTravel:        Bool  { return isBookmark || isHyperlink || isEmail }

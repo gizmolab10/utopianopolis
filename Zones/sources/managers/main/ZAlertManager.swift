@@ -43,14 +43,10 @@ class ZAlertManager : NSObject {
 
 
     func detectError(_ iError: Any? = nil, _ message: String? = nil, _ closure: BooleanClosure? = nil) {
-        let          hasError = iError != nil
+        let        hasError = iError != nil
 
-//        if  hasError {
-//            gCloudUnavailable = true
-//        }
-
-        if  let         error = iError as? Error {
-            mostRecentError   = error
+        if  let       error = iError as? Error {
+            mostRecentError = error
         }
 
         closure?(hasError)

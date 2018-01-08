@@ -18,6 +18,7 @@ class ZRecord: NSObject {
     var    storageMode: ZStorageMode?
     var     kvoContext: UInt8 = 1
     var   _isLocalOnly: Bool = false
+    var     isBookmark: Bool             { return record.isBookmark }
     var         isRoot: Bool             { return record != nil && kRootNames.contains(recordName!) }
     var      needsSave: Bool             { return hasState(.needsSave) }
     var      needsRoot: Bool             { return hasState(.needsRoot) }
@@ -248,7 +249,13 @@ class ZRecord: NSObject {
     func needProgeny()  { addState(.needsProgeny); removeState(.needsChildren) }
     func needDestroy()  { addState(.needsDestroy); removeState(.needsSave); removeState(.needsMerge) }
     func needWritable() { addState(.needsWritable) }
-    func needChildren() { addState(.needsChildren) }
+
+
+    func needChildren() {
+        if !isBookmark { // no bookmark has children, by design
+            addState(.needsChildren)
+        }
+    }
 
 
     func maybeNeedSave() {

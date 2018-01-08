@@ -518,7 +518,9 @@ class ZoneWidget: ZView {
 
             if zone.showChildren {
                 if  childrenPass || gIsDragging || gEditorView?.rubberbandRect != nil {
-                    for child in childrenWidgets { drawLine(to: child) }
+                    for child in childrenWidgets {
+                        drawLine(to: child)
+                    }
                 } else {
                     FOREGROUND {
                         self.childrenPass = true

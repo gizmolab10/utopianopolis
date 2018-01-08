@@ -599,7 +599,7 @@ class ZCloudManager: ZRecordsManager {
                     remainder.removeSubrange(0 ..< kBatchSize)
                 }
 
-                self.singleFetch(needed: recordIDs) { iCKRecords in
+                self.reliableFetch(needed: recordIDs) { iCKRecords in
                     retrieved.append(contentsOf: iCKRecords)
                     fetchClosure?()
                 }
@@ -610,7 +610,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func singleFetch(needed: [CKRecordID], _ onCompletion: RecordsClosure?) {
+    func reliableFetch(needed: [CKRecordID], _ onCompletion: RecordsClosure?) {
         let count = needed.count
 
         if  count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
@@ -621,10 +621,15 @@ class ZCloudManager: ZRecordsManager {
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
                 gAlertManager.alertError(iError) { iHasError in
                     if  iHasError {
-                        self.clearRecordID(iID, for: [.needsFetch])
-                    } else if let ckRecord = iRecord,
-                        !retrieved.contains(ckRecord) {
-                        retrieved.append(ckRecord)
+                        if  let bad = self.maybeZoneForRecordID(iID) {
+                            bad.unregister()    // makes sure we do not save it to cloud
+                        } else {
+                            self.clearRecordID(iID, for: [.needsFetch])
+                        }
+                    } else if let ckRecord = iRecord {
+                        if !retrieved.contains(ckRecord) {
+                            retrieved.append(ckRecord)
+                        }
                     }
                 }
             }
@@ -861,38 +866,42 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchBookmarks(_ onCompletion: IntClosure?) {
-        let     targetIDs = recordIDsWithMatchingStates([.needsBookmarks], pull: true)
-        let     predicate = bookmarkPredicate(specificTo: targetIDs)
-        let soughtTargets = targetIDs.count != 0
-        var     retrieved = [CKRecord] ()
+        let targetIDs = recordIDsWithMatchingStates([.needsBookmarks], pull: true)
+        let predicate = bookmarkPredicate(specificTo: targetIDs)
+        let specified = targetIDs.count != 0
+        var retrieved = [CKRecord] ()
 
         queryWith(predicate) { iRecord in
-            if let ckRecord = iRecord {
-                if !retrieved.contains(ckRecord) {
+            if  let ckRecord = iRecord {
+                if !retrieved.contains(ckRecord) && ckRecord.isBookmark {
                     retrieved.append(ckRecord)
                 }
             } else { // nil means done
                 FOREGROUND {
-                    var     gotFresh = false
+                    var created = false
+                    let   count = retrieved.count
 
-                    for ckRecord in retrieved {
-                        var zone     = self.maybeZoneForCKRecord(ckRecord)
-                        if  zone    == nil {                                                 // if not already registered
-                            zone     = Zone(record: ckRecord, storageMode: self.storageMode) // create and register
-                            gotFresh = true
+                    if  count > 0 {
+                        for ckRecord in retrieved {
+                            var zone    = self.maybeZoneForCKRecord(ckRecord)
+                            if  zone   == nil {                                                 // if not already registered
+                                zone    = Zone(record: ckRecord, storageMode: self.storageMode) // create and register
+                                created = true
+
+                                zone?.maybeNeedFetch()
+                                zone?.needParent()
+                            }
                         }
+
+                        self.columnarReport("BOOKMARKS (\(count))", self.stringForCKRecords(retrieved))
                     }
 
-                    if  soughtTargets, retrieved.count > 0 {
-                        self.columnarReport("BOOKMARKS", self.stringForCKRecords(retrieved))
-                    }
-
-                    if !gotFresh && !soughtTargets {
+                    if !created && !specified {
                         onCompletion?(0)                            // only async exit
                     } else {
                         self.save { iCount in                       // no-op if no zones need to be saved, in which case falls through ...
                             if      iCount == 0 {
-                                self.fetchBookmarks(onCompletion)   // process remaining
+                                self.fetchBookmarks(onCompletion)   // process remaining (or no-op)
                             }
                         }
                     }

@@ -662,9 +662,9 @@ class ZEditingManager: NSObject {
     func toggleDotRecurse(_ show: Bool, _ zone: Zone, to iGoal: Int?, onCompletion: Closure?) {
         if !show && zone.isGrabbed && (zone.count == 0 || !zone.showChildren) {
 
-            //////////////////////////
-            // COLLAPSE INTO PARENT //
-            //////////////////////////
+            //////////////////////////////////
+            // COLLAPSE OUTWARD INTO PARENT //
+            //////////////////////////////////
 
             zone.hideChildren()
 
@@ -716,8 +716,6 @@ class ZEditingManager: NSObject {
                 }
             }
         }
-
-        zone.maybeNeedSave()
     }
 
 
@@ -1165,9 +1163,17 @@ class ZEditingManager: NSObject {
         } else {
             zone.needChildren()
             zone.displayChildren()
+            grabChild(of: zone)
+            signalFor(nil, regarding: .data)
+
+            let snapshot = gSelectionManager.snapshot
 
             gDBOperationsManager.children(.restore) {
-                self.grabChild(of: zone)
+                if  snapshot == gSelectionManager.snapshot {
+                    self.grabChild(of: zone)
+                }
+
+                self.redrawSyncRedraw()
             }
         }
     }
@@ -1176,7 +1182,6 @@ class ZEditingManager: NSObject {
     func grabChild(of zone: Zone) {
         if  zone.count > 0, let child = gInsertionsFollow ? zone.children.last : zone.children.first {
             child.grab()
-            redrawSyncRedraw()
         }
     }
 

@@ -110,7 +110,7 @@ class ZControllersManager: NSObject {
                 }
 
                 gDBOperationsManager.finishUp {
-                    gDBOperationsManager.fetch() { // parents of bookmarks
+                    gDBOperationsManager.families() { // created bookmarks and parents of bookmarks
                         self.signalFor(nil, regarding: .redraw)
                     }
                 }

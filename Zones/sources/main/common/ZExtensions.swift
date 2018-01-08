@@ -146,19 +146,24 @@ extension CKRecordID {
 
 extension CKRecord {
 
-    var decoratedName: String {
-        if recordType       != kZoneType {
-            return recordID.recordName
-        } else if let   name = self[ kZoneName] as? String {
-            let    separator = " "
-            var       prefix = ""
+    var isBookmark: Bool {
+        if  let    link = self["zoneLink"] as? String {
+            return link.contains(kSeparator)
+        }
 
-            if let link  = self["zoneLink"] as? String {
-                if link == kNullLink || link == "not a link" {
-                    prefix.append("-")
-                } else {
-                    prefix.append("L")
-                }
+        return false
+    }
+
+
+    var decoratedName: String {
+        if recordType     != kZoneType {
+            return recordID.recordName
+        } else if let name = self[ kZoneName] as? String {
+            let  separator = " "
+            var     prefix = ""
+
+            if  isBookmark {
+                prefix.append("L")
             }
 
             if  let fetchable = self["zoneCount"] as? Int, fetchable > 1 {
@@ -271,6 +276,17 @@ extension CGRect {
             origin   .y = end.y
         }
     }
+
+
+    func indices(within iBounds: CGRect, radix: Int) -> IndexSet {
+        let c = center
+        var set = IndexSet()
+
+        set.insert(Int(c.x))
+
+        return set
+    }
+
 }
 
 

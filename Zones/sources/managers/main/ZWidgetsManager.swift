@@ -17,7 +17,8 @@ let gWidgetsManager = ZWidgetsManager()
 class ZWidgetsManager: NSObject {
 
 
-    var widgets: [Int : ZoneWidget] = [:]
+    var widgets: [Int :  ZoneWidget]  = [:]
+    var    grid: [Int : [ZoneWidget]] = [:]
     var currentEditingWidget: ZoneWidget? { return widgetForZone(gSelectionManager.currentlyEditingZone) }
     var currentMovableWidget: ZoneWidget? { return widgetForZone(gSelectionManager.currentMoveable) }
     var firstGrabbableWidget: ZoneWidget? { return widgetForZone(gSelectionManager.firstGrab) }
@@ -48,6 +49,27 @@ class ZWidgetsManager: NSObject {
         }
 
         return nil
+    }
+
+
+    func reindex() {
+        if  let   view = gEditorView {
+            let bounds = view.bounds
+            grid       = [:]
+
+            for widget in widgets.values {
+                let   frame = widget.convert(widget.bounds, to: view)
+                let indices = frame.indices(within: bounds, radix: 10)
+
+                for index in indices {
+                    if  grid[index] == nil {
+                        grid[index] = []
+                    }
+
+                    grid[index]?.append(widget)
+                }
+            }
+        }
     }
 
 }

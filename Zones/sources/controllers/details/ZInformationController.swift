@@ -48,14 +48,14 @@ class ZInformationController: ZGenericController {
             let                     count = gCloudManager.undeletedCount
             let                     total = gRemoteStoresManager.rootProgenyCount // TODO wrong manager
             let            operationCount = gDBOperationsManager.queue.operationCount
-            totalCountLabel?        .text = "of \(total), retrieved: \(count)"
             let                      zone = gSelectionManager.rootMostMoveable
             let                      mode = zone.storageMode
+            totalCountLabel?        .text = "of \(total), retrieved: \(count)"
             graphNameLabel?         .text = mode == nil ? "" : "graph: \(mode!.rawValue)"
-            operationCountLabel?    .text = operationCount == 0 ? "" : "\(operationCount) cloud operations in progress"
+            operationCountLabel?    .text = operationCount == 0 ? "" : "\(operationCount) cloud operation\(operationCount == 1 ? "" : "s") in progress"
+            versionLabel?           .text = versionText
             fractionInMemory?.doubleValue = Double(count)
             fractionInMemory?   .maxValue = Double(total)
-            versionLabel?           .text = versionText
 
             if iKind != .startup {
                 levelLabel?         .text = "level: \(zone.level)"

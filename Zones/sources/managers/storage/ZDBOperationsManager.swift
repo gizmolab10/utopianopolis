@@ -84,7 +84,7 @@ class ZDBOperationsManager: ZOperationsManager {
     func      pSync(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents, .merge, .save, .children,         .traits, .remember]) { onCompletion() } }
     func    pTravel(_ onCompletion: @escaping Closure) { setupAndRun([.root,   .manifest, .parents,                .children, .fetch, .traits, .remember]) { onCompletion() } }
     func   pParents(_ onCompletion: @escaping Closure) { setupAndRun([                    .parents,                                   .traits, .remember]) { onCompletion() } }
-    func  pFamilies(_ onCompletion: @escaping Closure) { setupAndRun([                    .parents,                .children,         .traits, .remember]) { onCompletion() } }
+    func  pFamilies(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents,                .children,         .traits, .remember]) { onCompletion() } }
     func pBookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks, .fetch,                   .save,                    .traits, .remember]) { onCompletion() } }
     func     pFetch(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch,                                             .traits, .remember]) { onCompletion() } }
     func  pChildren(_ onCompletion: @escaping Closure) { setupAndRun([.manifest,                                   .children,         .traits, .remember]) { onCompletion() } }
