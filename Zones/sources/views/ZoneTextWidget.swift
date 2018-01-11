@@ -22,14 +22,14 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     override var         preferredFont : ZFont { return (widget?.isInMain ?? true) ? gWidgetFont : gFavoritesFont }
     var                     widgetZone : Zone? { return widget?.widgetZone }
     weak var                    widget : ZoneWidget?
-    var            isEditiingHyperlink = false
-    var                isEditiingEmail = false
+    var            isEditingHyperlink = false
+    var                isEditingEmail = false
     var                 _isEditingText = false
     var                   originalText = ""
 
 
     var textToEdit: String {
-        if  let    name = isEditiingHyperlink ? widgetZone?.hyperLink: isEditiingEmail ? widgetZone?.email : widgetZone?.unwrappedName, name != kNullLink {
+        if  let    name = isEditingHyperlink ? widgetZone?.hyperLink: isEditingEmail ? widgetZone?.email : widgetZone?.unwrappedName, name != kNullLink {
             return name
         }
 
@@ -59,8 +59,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                             zone.grab()
                         }
 
-                        isEditiingEmail        = false
-                        isEditiingHyperlink    = false
+                        isEditingEmail        = false
+                        isEditingHyperlink    = false
                     } else {
                         s.currentlyEditingZone = zone
                         textColor              = ZColor.black
@@ -162,7 +162,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             default:         return
             }
 
-            if !isEditingText {
+            if !isFirstResponder {
                 if  gShowIdentifiers, let id = widgetZone?.record.recordID {
                     suffix = id.recordName
                 } else if (need > 1) && (!zone.showChildren || (gCountsMode == .progeny)) {
@@ -213,10 +213,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     newText  = nil
                 }
 
-                if self.isEditiingHyperlink {
+                if self.isEditingHyperlink {
                     iAssignee.hyperLink = newText
                     iAssignee    .email = nil
-                } else if self.isEditiingEmail {
+                } else if self.isEditingEmail {
                     iAssignee.hyperLink = nil
                     iAssignee    .email = newText
                 } else {
@@ -224,7 +224,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 }
 
                 iAssignee.maybeNeedSave()
-                self.redrawAndSync()
+                self.signalFor(iAssignee, regarding: .datum)
             }
 
             prepareUndoForTextChange(gUndoManager) {
@@ -232,41 +232,30 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 self.updateGUI()
             }
 
-            assignTextTo(zone)
-
-            if isEditiingHyperlink || isEditiingEmail {
-                gTextCapturing = false
+            if  isEditingHyperlink || isEditingEmail {
+                assignTextTo(zone)
             } else {
                 if  let target = zone.bookmarkTarget {
                     zone       = target
-
-                    assignTextTo(target)
                 }
 
-                var bookmarks = [Zone] ()
+                assignTextTo(zone)
 
                 for bookmark in zone.fetchedBookmarks {
-                    bookmarks.append(bookmark)
                     assignTextTo(bookmark)
                 }
-
-                redrawAndSync {
-                    gTextCapturing = false
-
-                    for bookmark in bookmarks {
-                        self.signalFor(bookmark, regarding: .datum)
-                    }
-                }
             }
+
+            gTextCapturing = false
+
+            redrawAndSync()
         }
     }
 
 
     override func captureText(force: Bool = false) {
-        let zone = widgetZone
-
         if (!gTextCapturing && originalText != text!) || force {
-            assign(text, to: zone)
+            assign(text, to: widgetZone)
         }
     }
 
@@ -277,7 +266,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         if  let zone = widgetZone,
              zone.canTravel,
             !zone.isGrabbed,
-            !isEditingText {
+            !isFirstResponder {
 
             ////////////////////////////////////////////////////////
             // draw line underneath text indicating it can travel //

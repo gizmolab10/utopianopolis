@@ -12,6 +12,7 @@ import CloudKit
 
 
 enum ZRecordState: Int {
+    case doNotSave
     case needsSave
     case needsRoot
     case needsMerge
@@ -31,13 +32,12 @@ enum ZRecordState: Int {
 class ZRecordsManager: NSObject {
 
 
-    var               storageMode : ZStorageMode
-    var          ckRecordsByState = [ZRecordState : [CKRecord]] ()
-    var              zRecordsByID = [String       :    ZRecord] ()
-    var             bookmarksByID = [String       :       Zone] ()
-    var  _lostAndFoundZone: Zone? = nil
-    var         _trashZone: Zone? = nil
-    var           rootZone: Zone? = nil
+    var              storageMode : ZStorageMode
+    var             zRecordsByID = [String       :    ZRecord] ()
+    var         ckRecordsByState = [ZRecordState : [CKRecord]] ()
+    var _lostAndFoundZone: Zone? = nil
+    var        _trashZone: Zone? = nil
+    var          rootZone: Zone? = nil
 
 
     var lostAndFoundZone: Zone {
@@ -547,18 +547,17 @@ class ZRecordsManager: NSObject {
 
 
     func registerZRecord(_  iRecord : ZRecord?) {
-        if  let             zRecord = iRecord,
-            let                  id = zRecord.recordName {
-            if  let             rid = isRegistered(zRecord), rid != id {
-                zRecordsByID[rid]   = nil
+        if  let           zRecord = iRecord,
+            let                id = zRecord.recordName {
+            if  let           rid = isRegistered(zRecord), rid != id {
+                zRecordsByID[rid] = nil
             }
 
-            if  let        bookmark = zRecord as? Zone,
-                let            link = bookmark.linkName {
-                bookmarksByID[link] = bookmark
+            if  let      bookmark = zRecord as? Zone, bookmark.isBookmark {
+                gBookmarksManager.registerBookmark(bookmark)
             }
 
-            zRecordsByID[id]        = zRecord
+            zRecordsByID[id]      = zRecord
         }
     }
 
@@ -570,9 +569,8 @@ class ZRecordsManager: NSObject {
             zRecordsByID[name] = nil
         }
 
-        if  let        bookmark = zRecord as? Zone,
-            let            link = bookmark.linkName {
-            bookmarksByID[link] = nil
+        if  let       bookmark = zRecord as? Zone, bookmark.isBookmark {
+            gBookmarksManager.unregisterBookmark(bookmark)
         }
     }
 
@@ -652,6 +650,7 @@ class ZRecordsManager: NSObject {
             zone     = Zone(record: ckRecord, storageMode: storageMode)
 
             zone?.maybeNeedFetch()
+            zone?.requireFetch()
         }
 
         return zone!

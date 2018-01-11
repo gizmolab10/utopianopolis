@@ -29,13 +29,43 @@ class ZDBOperationsManager: ZOperationsManager {
     }
 
 
-    class ZBatch: NSObject {
-        var completions : [Closure]
-        var  identifier : ZBatchOperationID
+    class ZBatchCompletion: NSObject {
+        var completion : BooleanClosure?
+        var   snapshot : ZSnapshot
 
-        init(_ iID: ZBatchOperationID, _ iCompletions: [Closure]) {
+
+        override init() {
+            snapshot = gSelectionManager.snapshot
+        }
+
+
+        convenience init(_ iClosure: @escaping BooleanClosure) {
+            self.init()
+
+            completion = iClosure
+        }
+
+
+        func fire() {
+            completion?(snapshot == gSelectionManager.snapshot)
+        }
+    }
+
+
+    class ZBatch: NSObject {
+        var completions : [ZBatchCompletion]
+        var  identifier :  ZBatchOperationID
+
+        init(_ iID: ZBatchOperationID, _ iCompletions: [ZBatchCompletion]) {
             completions = iCompletions
             identifier  = iID
+        }
+
+
+        func fireCompletions() {
+            while let completion = completions.popLast() {
+                completion.fire()
+            }
         }
     }
 
@@ -50,17 +80,17 @@ class ZDBOperationsManager: ZOperationsManager {
     // MARK:-
 
 
-    func      save(_ onCompletion: @escaping Closure) { batch(.save,      onCompletion) }
-    func      root(_ onCompletion: @escaping Closure) { batch(.root,      onCompletion) }
-    func      sync(_ onCompletion: @escaping Closure) { batch(.sync,      onCompletion) }
-    func     fetch(_ onCompletion: @escaping Closure) { batch(.fetch,     onCompletion) }
-    func    travel(_ onCompletion: @escaping Closure) { batch(.travel,    onCompletion) }
-    func   parents(_ onCompletion: @escaping Closure) { batch(.parents,   onCompletion) }
-    func  families(_ onCompletion: @escaping Closure) { batch(.families,  onCompletion) }
-    func bookmarks(_ onCompletion: @escaping Closure) { batch(.bookmarks, onCompletion) }
+    func      save(_ onCompletion: @escaping BooleanClosure) { batch(.save,      onCompletion) }
+    func      root(_ onCompletion: @escaping BooleanClosure) { batch(.root,      onCompletion) }
+    func      sync(_ onCompletion: @escaping BooleanClosure) { batch(.sync,      onCompletion) }
+    func     fetch(_ onCompletion: @escaping BooleanClosure) { batch(.fetch,     onCompletion) }
+    func    travel(_ onCompletion: @escaping BooleanClosure) { batch(.travel,    onCompletion) }
+    func   parents(_ onCompletion: @escaping BooleanClosure) { batch(.parents,   onCompletion) }
+    func  families(_ onCompletion: @escaping BooleanClosure) { batch(.families,  onCompletion) }
+    func bookmarks(_ onCompletion: @escaping BooleanClosure) { batch(.bookmarks, onCompletion) }
 
 
-    func  children(_ recursing: ZRecursionType = .all, _ iGoal: Int? = nil, _ onCompletion: @escaping Closure) {
+    func  children(_ recursing: ZRecursionType = .all, _ iGoal: Int = Int.max, _ onCompletion: @escaping BooleanClosure) {
         gRecursionLogic       .type = recursing
         gRecursionLogic.targetLevel = iGoal
 
@@ -110,20 +140,21 @@ class ZDBOperationsManager: ZOperationsManager {
     }
 
 
-    func batch(_ iID: ZBatchOperationID, _ iCompletion: @escaping Closure) {
+    func batch(_ iID: ZBatchOperationID, _ iCompletion: @escaping BooleanClosure) {
         undefer()
 
-        let doClosure = currentOps.count == 0
+        let   doClosure = currentOps.count == 0
+        let completions = [ZBatchCompletion(iCompletion)]
 
         // if is in current batches -> move or append to end of deferred
         // else append to current batches
 
         if !isBatchID(iID, containedIn: currentOps) {
-            currentOps.insert(ZBatch(iID, [iCompletion]), at: 0)
+            currentOps.insert(ZBatch(iID, completions), at: 0)
         } else if let deferal = getBatch(iID, from: deferredOps) {
-            deferal.completions = [iCompletion] + deferal.completions
+            deferal.completions.append(contentsOf: completions)
         } else {
-            deferredOps.insert(ZBatch(iID, [iCompletion]), at: 0)
+            deferredOps.insert(ZBatch(iID, completions), at: 0)
         }
 
         if doClosure {
@@ -132,19 +163,8 @@ class ZDBOperationsManager: ZOperationsManager {
                 if  let     batch = self.currentOps.first {
 
                     self.currentOps.removeFirst()
-
-                    if  var completion = batch.completions.popLast() {
-                        self.invokeBatch(batch.identifier, completion) {
-                            while batch.completions.count > 0 {
-                                completion = batch.completions.popLast()!
-
-                                completion()
-                            }
-
-                            closure?()
-                        }
-                    } else {
-                        self.undefer()
+                    self.invokeBatch(batch.identifier) {
+                        batch.fireCompletions()
                         closure?()
                     }
                 } else if self.deferredOps.count > 0 {
@@ -171,17 +191,17 @@ class ZDBOperationsManager: ZOperationsManager {
     }
 
 
-    func invokeBatch(_ iID: ZBatchOperationID, _ onCompletion: @escaping Closure, _ iClosure: @escaping Closure) {
+    func invokeBatch(_ iID: ZBatchOperationID, _ onCompletion: @escaping Closure) {
         switch iID {
-        case .save:      pSave      { onCompletion(); iClosure() }
-        case .root:      pRoot      { onCompletion(); iClosure() }
-        case .sync:      pSync      { onCompletion(); iClosure() }
-        case .fetch:     pFetch     { onCompletion(); iClosure() }
-        case .travel:    pTravel    { onCompletion(); iClosure() }
-        case .parents:   pParents   { onCompletion(); iClosure() }
-        case .children:  pChildren  { onCompletion(); iClosure() }
-        case .families:  pFamilies  { onCompletion(); iClosure() }
-        case .bookmarks: pBookmarks { onCompletion(); iClosure() }
+        case .save:      pSave      { onCompletion() }
+        case .root:      pRoot      { onCompletion() }
+        case .sync:      pSync      { onCompletion() }
+        case .fetch:     pFetch     { onCompletion() }
+        case .travel:    pTravel    { onCompletion() }
+        case .parents:   pParents   { onCompletion() }
+        case .children:  pChildren  { onCompletion() }
+        case .families:  pFamilies  { onCompletion() }
+        case .bookmarks: pBookmarks { onCompletion() }
         }
     }
 

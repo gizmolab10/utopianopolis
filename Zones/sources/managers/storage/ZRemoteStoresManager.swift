@@ -20,18 +20,6 @@ var                gRoot : Zone?   { get { return gRemoteStoresManager.rootZone 
 var                gHere : Zone    { get { return gManifest.hereZone }            set { gManifest.hereZone             = newValue } }
 
 
-var gAllBookmarks: [Zone] {
-    var bookmarks = [Zone] ()
-
-    for mode in gAllDatabaseModes {
-        let manageer = gRemoteStoresManager.cloudManagerFor(mode)
-        bookmarks   += manageer.bookmarksByID.values
-    }
-
-    return bookmarks
-}
-
-
 class ZRemoteStoresManager: NSObject {
 
 
@@ -181,17 +169,17 @@ class ZRemoteStoresManager: NSObject {
 
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
-        gCloudManager.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { iRecord in
-            if iRecord != nil {                                                 // TODO: extract storage mode from record id, i.e., the database
-                let    zone = self.currentCloudManager.zoneForCKRecord(iRecord!)  // TODO: currentCloudManager is wrong here
-                zone.record = iRecord
+        gCloudManager.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
+            if iUpdatedRecord != nil {                                                   // TODO: extract storage mode from record id, i.e., the database
+                let    zone = self.currentCloudManager.zoneForCKRecord(iUpdatedRecord!)  // TODO: currentCloudManager is wrong here
+                zone.record = iUpdatedRecord
                 let  parent = zone.parentZone
 
                 if  zone.showChildren {
                     FOREGROUND {
                         self.signalFor(parent, regarding: .redraw)
 
-                        gDBOperationsManager.children(.restore) {
+                        gDBOperationsManager.children(.restore) { iSame in
                             self.signalFor(parent, regarding: .redraw)
                         }
                     }

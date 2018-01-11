@@ -91,7 +91,7 @@ class ZCloudToolsController: ZGenericTableController {
             gHere = trash
 
             gHere.needChildren()
-            gDBOperationsManager.children(.restore) {
+            gDBOperationsManager.children(.restore) { iSame in
                 self.redrawAndSync()
             }
         }
@@ -107,7 +107,7 @@ class ZCloudToolsController: ZGenericTableController {
 
                 lost.needChildren()
                 lost.displayChildren()
-                gDBOperationsManager.children(.all) {
+                gDBOperationsManager.children(.all) { iSame in
                     self.grabChildless()
                 }
             }

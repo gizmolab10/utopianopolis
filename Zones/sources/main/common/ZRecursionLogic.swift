@@ -30,10 +30,10 @@ class ZRecursionLogic: NSObject {
 
 
     var        type: ZRecursionType?
-    var targetLevel: Int?
+    var targetLevel: Int = Int.max
 
 
-    init(_ iType: ZRecursionType = .restore, _ iLevel: Int? = nil) {
+    init(_ iType: ZRecursionType = .all, _ iLevel: Int = Int.max) {
         super.init()
 
         self.targetLevel = iLevel
@@ -51,19 +51,17 @@ class ZRecursionLogic: NSObject {
 
 
     func propagateNeeds(to iChild: Zone, _ iProgenyNeeded: [CKReference]?) {
-        let        reveal = iChild.showChildren && iChild.hasMissingChildren
         if  let recursing = type, recursing != .all {
-            let    expand = reveal && targetLevel != nil && (targetLevel! < 0 || targetLevel! > iChild.level)
+            let    reveal = iChild.showChildren && iChild.hasMissingChildren
+            let    expand = reveal && (targetLevel < 0 || targetLevel > iChild.level)
 
             switch recursing {
             case .expand:  if expand { iChild.needChildren() }
             case .restore: if reveal { iChild.needChildren() }
             default:       break
             }
-        } else if reveal,
-            let parentReference = iChild.parent,
-            let   progenyNeeded = iProgenyNeeded,
-            progenyNeeded.count > 0,
+        } else if let progenyNeeded = iProgenyNeeded,
+            let     parentReference = iChild.parent,
             progenyNeeded.contains(parentReference) {
             iChild.needProgeny()
         }

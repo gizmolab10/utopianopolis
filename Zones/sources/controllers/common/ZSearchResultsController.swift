@@ -179,7 +179,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         zone?.displayChildren()
         signalFor(nil, regarding: .redraw)
 
-        gDBOperationsManager.sync {
+        gDBOperationsManager.sync { iSame in
             self.signalFor(nil, regarding: .redraw)
         }
     }

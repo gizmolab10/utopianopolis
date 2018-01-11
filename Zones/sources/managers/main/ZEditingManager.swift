@@ -267,7 +267,7 @@ class ZEditingManager: NSObject {
     func editEmail() {
         let       zone = gSelectionManager.firstGrab
         if  let widget = gWidgetsManager.widgetForZone(zone) {
-            widget.textWidget.isEditiingEmail = true
+            widget.textWidget.isEditingEmail = true
             zone.edit()
         }
     }
@@ -276,7 +276,7 @@ class ZEditingManager: NSObject {
     func editHyperlink() {
         let       zone = gSelectionManager.firstGrab
         if  let widget = gWidgetsManager.widgetForZone(zone) {
-            widget.textWidget.isEditiingHyperlink = true
+            widget.textWidget.isEditingHyperlink = true
             zone.edit()
         }
     }
@@ -289,7 +289,7 @@ class ZEditingManager: NSObject {
             zone.needChildren()
         }
 
-        gDBOperationsManager.children {
+        gDBOperationsManager.children { iSame in
             for zone in grabs {
                 zone.divideEvenly()
             }
@@ -554,7 +554,7 @@ class ZEditingManager: NSObject {
 
                 onCompletion?()
             } else {
-                gDBOperationsManager.root {
+                gDBOperationsManager.root { iSame in
                     onCompletion?()
                 }
             }
@@ -569,7 +569,7 @@ class ZEditingManager: NSObject {
             if  parent.hasMissingChildren {
                 parent.needChildren()
 
-                gDBOperationsManager.children(.restore) {
+                gDBOperationsManager.children(.restore) { iSame in
                     onCompletion?()
                 }
             } else {
@@ -578,7 +578,7 @@ class ZEditingManager: NSObject {
         } else {
             iZone.needParent()
 
-            gDBOperationsManager.families {
+            gDBOperationsManager.families { iSame in
                 onCompletion?()
             }
         }
@@ -604,7 +604,7 @@ class ZEditingManager: NSObject {
             descendent.needRoot()
         }
 
-        gDBOperationsManager.families {
+        gDBOperationsManager.families { iSame in
             FOREGROUND {
                 descendent.traverseAncestors { iParent -> ZTraverseStatus in
                     let  gotThere = iParent == iAncestor || iParent.isRoot    // reached the ancestor or the root
@@ -711,7 +711,7 @@ class ZEditingManager: NSObject {
                 apply()
             } else {
                 zone.extendNeedForChildren(to: goal)
-                gDBOperationsManager.children(.expand, goal) {
+                gDBOperationsManager.children(.expand, goal) { iSame in
                     apply()
                 }
             }
@@ -831,7 +831,8 @@ class ZEditingManager: NSObject {
 
                 bookmark?.grab()
                 self.signalFor(nil, regarding: .redraw)
-                gDBOperationsManager.sync {}
+                gDBOperationsManager.sync { iSame in
+                }
             }
 
             if gHere != zone {
@@ -895,7 +896,7 @@ class ZEditingManager: NSObject {
             zone.needProgeny()
         }
 
-        gDBOperationsManager.children(.all) { // to make sure all progeny are acted upon
+        gDBOperationsManager.children(.all) { iSame in // to make sure all progeny are acted upon
             if !done {
                 done      = true
                 var count = zones.count
@@ -911,7 +912,7 @@ class ZEditingManager: NSObject {
                                 grab?.grab()
                             }
 
-                            gDBOperationsManager.bookmarks {
+                            gDBOperationsManager.bookmarks { iSame in
                                 var bookmarks = [Zone] ()
 
                                 for zone in zones {
@@ -950,21 +951,19 @@ class ZEditingManager: NSObject {
 
 
     private func deleteZone(_ zone: Zone, permanently: Bool = false, onCompletion: Closure?) {
-        if zone.isRoot {
+        if  zone.isRoot {
             onCompletion?()
         } else {
-            let   name = zone.recordName
-            let parent = zone.parentZone
-
-            if  zone         == gHere {                    // this can only happen once during recursion (multiple places, below)
+            let parent        = zone.parentZone
+            if  zone         == gHere {                         // this can only happen once during recursion (multiple places, below)
                 if  let     p = parent, p != zone {
                     revealParentAndSiblingsOf(zone) {
                         gHere = p
 
                         self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)   // recurse
                     }
-                } else {                                    // delete here but here has no parent ... so, go somewhere useful and familiar:
-                    gFavoritesManager.refocus {             // travel to current favorite
+                } else {                                        // delete here but here has no parent ... so, go somewhere useful and familiar:
+                    gFavoritesManager.refocus {                 // travel to current favorite
                         self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)   // then, recurse
                     }
                 }
@@ -972,6 +971,7 @@ class ZEditingManager: NSObject {
                 if  zone.isInTrash || permanently {
                     zone.orphan()
                     zone.traverseAllProgeny { iZone in
+                        iZone.hideChildren()                    // remove from manifest
                         iZone.needDestroy()
                     }
                 } else {
@@ -980,33 +980,19 @@ class ZEditingManager: NSObject {
                 }
 
                 if  let            p = parent {
-                    p.fetchableCount = p.count              // delete alters the count
+                    p.fetchableCount = p.count                  // delete alters the count
                 }
 
-                ////////////////////////////////////////////
-                // remove a favorite whose target is zone //
-                ////////////////////////////////////////////
-
-                var trashables = [Zone] ()
-
-                for     favorite in gFavoritesManager.workingFavorites {
-                    if  favorite.bookmarkTarget?.recordName == name {
-                        trashables.append(favorite)
-                    }
-                }
-
-                for trashThis in trashables {
-                    moveToTrash(trashThis)
-                }
+                /////////////////////////////////////////////////////////
+                // remove all bookmarks for which their target is zone //
+                /////////////////////////////////////////////////////////
 
                 zone.maybeNeedBookmarks()
-                gDBOperationsManager.bookmarks {
-                    for bookmark in zone.fetchedBookmarks {
-                        bookmark.needDestroy()
+                gDBOperationsManager.bookmarks { iSame in
+                    self.deleteZones(zone.fetchedBookmarks, permanently: permanently) {
+                        gFavoritesManager.updateFavorites()     // delete alters the list
+                        onCompletion?()
                     }
-
-                    gFavoritesManager.updateFavorites()     // delete alters the list
-                    onCompletion?()
                 }
             }
         }
@@ -1099,7 +1085,7 @@ class ZEditingManager: NSObject {
                     p.displayChildren()
                     p.needChildren()
 
-                    gDBOperationsManager.children(.restore) {
+                    gDBOperationsManager.children(.restore) { iSame in
                         onCompletion?()
                     }
                 }
@@ -1108,7 +1094,7 @@ class ZEditingManager: NSObject {
                 // change focus to bookmark of zone
 
                 zone.maybeNeedBookmarks()
-                gDBOperationsManager.bookmarks {
+                gDBOperationsManager.bookmarks { iSame in
                     if  let bookmark = zone.fetchedBookmark {
                         gHere        = bookmark
                     }
@@ -1166,10 +1152,8 @@ class ZEditingManager: NSObject {
             grabChild(of: zone)
             signalFor(nil, regarding: .data)
 
-            let snapshot = gSelectionManager.snapshot
-
-            gDBOperationsManager.children(.restore) {
-                if  snapshot == gSelectionManager.snapshot {
+            gDBOperationsManager.children(.restore) { iSame in
+                if  iSame {
                     self.grabChild(of: zone)
                 }
 
@@ -1221,7 +1205,7 @@ class ZEditingManager: NSObject {
 
                 mover = mover.deepCopy()
 
-                gDBOperationsManager.sync {
+                gDBOperationsManager.sync { iSame in
                     grabAndTravel()
                 }
             }
@@ -1250,7 +1234,7 @@ class ZEditingManager: NSObject {
         into.displayChildren()
         into.needChildren()
 
-        gDBOperationsManager.children(.restore) {
+        gDBOperationsManager.children(.restore) { iSame in
             for zone in zones {
                 if orphan {
                     zone.orphan()
@@ -1294,7 +1278,7 @@ class ZEditingManager: NSObject {
 
                 var     isFirstTime = true
 
-                gDBOperationsManager.children(.restore) {
+                gDBOperationsManager.children(.restore) { iSame in
                     if  isFirstTime {
                         isFirstTime = false
 
@@ -1460,7 +1444,7 @@ class ZEditingManager: NSObject {
                 } else {
                     var once = true
 
-                    gDBOperationsManager.children(.all) {
+                    gDBOperationsManager.children(.all) { iSame in
                         if  once {
                             once = false
 
@@ -1490,11 +1474,11 @@ class ZEditingManager: NSObject {
             zone.displayChildren()
         }
 
-        gDBOperationsManager.children(.all) { // to make sure all progeny are acted upon
-            let     candidate = gSelectionManager.rootMostMoveable
-            if  let    parent = candidate.parentZone {
-                var  children = [Zone] ()
-                let     index = candidate.siblingIndex
+        gDBOperationsManager.children(.all) { iSame in // to make sure all progeny are acted upon
+            let    candidate = gSelectionManager.rootMostMoveable
+            if  let   parent = candidate.parentZone {
+                let    index = candidate.siblingIndex
+                var children = [Zone] ()
 
                 gSelectionManager.deselectGrabs()
                 gSelectionManager.clearPaste()
@@ -1652,7 +1636,7 @@ class ZEditingManager: NSObject {
                 grab.needProgeny()
             }
 
-            gDBOperationsManager.children(.all) {
+            gDBOperationsManager.children(.all) { iSame in
                 if !done {
                     done = true
 
@@ -1717,7 +1701,7 @@ class ZEditingManager: NSObject {
         into.displayChildren()
         into.needChildren()
 
-        gDBOperationsManager.children(.restore) {
+        gDBOperationsManager.children(.restore) { iSame in
             if orphan {
                 zone.orphan()
             }
@@ -1738,8 +1722,8 @@ class ZEditingManager: NSObject {
         let            zone = iMoveUp ? gSelectionManager.firstGrab : gSelectionManager.lastGrab
         let          isHere = zone == gHere
         let          parent = zone.parentZone
-        let isParentFetched = parent?.alreadyExists ?? false
-        if  let       there = parent, !isHere, isParentFetched, let index = zone.siblingIndex {
+        if  let       there = parent, !isHere, (there.alreadyExists || there.isAutoGenerated),
+            let       index = zone.siblingIndex {
             var    newIndex = index + (iMoveUp ? -1 : 1)
             var  allGrabbed = true
             var soloGrabbed = false

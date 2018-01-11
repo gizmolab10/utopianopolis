@@ -44,9 +44,10 @@ class ZTravelManager: NSObject {
         createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
 
         gSelectionManager.clearEdit()
-        gDBOperationsManager.travel {
+        gDBOperationsManager.travel { iSame in
             atArrival()
-            gDBOperationsManager.save {}
+            gDBOperationsManager.save { iSaveSame in
+            }
         }
     }
 
@@ -77,9 +78,8 @@ class ZTravelManager: NSObject {
                     }
                 } else {
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: kZoneType) { (iRecord: CKRecord?) in
-                        if iRecord != nil {
-                            gHere        = gCloudManager.zoneForCKRecord(iRecord!)
-                            gHere.record = iRecord!
+                        if  let hereRecord = iRecord {
+                            gHere          = gCloudManager.zoneForCKRecord(hereRecord)
 
                             gHere.prepareForArrival()
                             self.travel {
@@ -112,7 +112,7 @@ class ZTravelManager: NSObject {
                 let grabHere = {
                     gHere.prepareForArrival()
 
-                    gDBOperationsManager.children(.restore) {
+                    gDBOperationsManager.children(.restore) { iSame in
                         atArrival(gHere, .redraw)
                     }
                 }
@@ -123,9 +123,8 @@ class ZTravelManager: NSObject {
                     grabHere()
                 } else if gCloudManager.storageMode != .favoritesMode { // favorites does not have a cloud database
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: kZoneType) { (iRecord: CKRecord?) in
-                        if  let   record = iRecord {
-                            gHere        = gCloudManager.zoneForCKRecord(record)
-                            gHere.record = record
+                        if  let hereRecord = iRecord {
+                            gHere          = gCloudManager.zoneForCKRecord(hereRecord)
 
                             grabHere()
                         }

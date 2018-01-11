@@ -24,51 +24,53 @@ class Zone : ZRecord {
 
 
     dynamic var         parent: CKReference?
-    dynamic var       zoneName:      String?
-    dynamic var       zoneLink:      String?
-    dynamic var      zoneColor:      String?
-    dynamic var      zoneOwner: CKReference?
-    dynamic var      zoneOrder:    NSNumber?
-    dynamic var      zoneCount:    NSNumber?
-    dynamic var     zoneAccess:    NSNumber?
-    dynamic var     parentLink:      String?
-    dynamic var    zoneProgeny:    NSNumber?
-    var            _parentZone:        Zone?
-    var             _hyperLink:      String?
-    var             _crossLink:     ZRecord?
-    var               children =      [Zone] ()
+    dynamic var       zoneName:       String?
+    dynamic var       zoneLink:       String?
+    dynamic var      zoneColor:       String?
+    dynamic var      zoneOwner:  CKReference?
+    dynamic var      zoneOrder:     NSNumber?
+    dynamic var      zoneCount:     NSNumber?
+    dynamic var     zoneAccess:     NSNumber?
+    dynamic var     parentLink:       String?
+    dynamic var    zoneProgeny:     NSNumber?
+    var            _parentZone:         Zone?
+    var             _hyperLink:       String?
+    var             _crossLink:      ZRecord?
+    var                 _color:       ZColor?
+    var                 _email:       String?
+    var               children =                [Zone] ()
     var                 traits = [ZTraitType : ZTrait] ()
-    var                 _color:      ZColor?
-    var                 _email:      String?
-    var                  count:         Int  { return children.count }
-    var                 widget:  ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
-    var               linkName:      String? { return name(from: zoneLink) }
-    var          unwrappedName:      String  { return zoneName ?? kNoName }
-    var          decoratedName:      String  { return "\(unwrappedName)\(decoration)" }
-    var       grabbedTextColor:      ZColor  { return color.darker(by: 3.0) }
-    var directChildrenWritable:        Bool  { return directAccess == .eChildrenWritable || directAccess == .eDefaultName }
-    var    hasAccessDecoration:        Bool  { return !isTextEditable || directChildrenWritable }
-    var     hasMissingChildren:        Bool  { return count < fetchableCount }
-    var      onlyShowToggleDot:        Bool  { return (isRootOfFavorites && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
-    var      isWritableByUseer:        Bool  { return isTextEditable || userHasAccess }
-    var      isCurrentFavorite:        Bool  { return self == gFavoritesManager.currentFavorite }
-    var      isRootOfFavorites:        Bool  { return record != nil && recordName == kFavoriteRootName }
-    var       accessIsChanging:        Bool  { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
-    var       isSortableByUser:        Bool  { return ancestorAccess != .eFullReadOnly || userHasAccess }
-    var        directRecursive:        Bool  { return directAccess == .eRecurse }
-    var         directWritable:        Bool  { return directAccess == .eFullWritable }
-    var         directReadOnly:        Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
-    var         isLostAndFound:        Bool  { return recordName == kLostAndFoundName }
-    var          hasZonesBelow:        Bool  { return hasAnyZonesAbove(false) }
-    var          hasZonesAbove:        Bool  { return hasAnyZonesAbove(true) }
-    var            isHyperlink:        Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
-    var             isFavorite:        Bool  { return gFavoritesManager.isWorkingFavorite(self) }
-    var             isSelected:        Bool  { return gSelectionManager.isSelected(self) }
-    var              canTravel:        Bool  { return isBookmark || isHyperlink || isEmail }
-    var              isGrabbed:        Bool  { return gSelectionManager .isGrabbed(self) }
-    var               hasColor:        Bool  { return zoneColor != nil && zoneColor != "" }
-    var                isEmail:        Bool  { return hasTrait(for: .eEmail) && email != "" }
-    var                isTrash:        Bool  { return recordName == kTrashName }
+    var                  count:          Int  { return children.count }
+    var                 widget:   ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
+    var               linkName:       String? { return name(from: zoneLink) }
+    var               linkMode: ZStorageMode? { return mode(from: zoneLink) }
+    var          unwrappedName:       String  { return zoneName ?? kNoName }
+    var          decoratedName:       String  { return "\(unwrappedName)\(decoration)" }
+    var       fetchedBookmarks:       [Zone]  { return gBookmarksManager.bookmarks(for: self) ?? [] }
+    var       grabbedTextColor:       ZColor  { return color.darker(by: 3.0) }
+    var directChildrenWritable:         Bool  { return directAccess == .eChildrenWritable || directAccess == .eDefaultName }
+    var    hasAccessDecoration:         Bool  { return !isTextEditable || directChildrenWritable }
+    var     hasMissingChildren:         Bool  { return count < fetchableCount }
+    var      onlyShowToggleDot:         Bool  { return (isRootOfFavorites && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
+    var      isWritableByUseer:         Bool  { return isTextEditable || userHasAccess }
+    var      isCurrentFavorite:         Bool  { return self == gFavoritesManager.currentFavorite }
+    var      isRootOfFavorites:         Bool  { return record != nil && recordName == kFavoriteRootName }
+    var       accessIsChanging:         Bool  { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
+    var       isSortableByUser:         Bool  { return ancestorAccess != .eFullReadOnly || userHasAccess }
+    var        directRecursive:         Bool  { return directAccess == .eRecurse }
+    var         directWritable:         Bool  { return directAccess == .eFullWritable }
+    var         directReadOnly:         Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
+    var         isLostAndFound:         Bool  { return recordName == kLostAndFoundName }
+    var          hasZonesBelow:         Bool  { return hasAnyZonesAbove(false) }
+    var          hasZonesAbove:         Bool  { return hasAnyZonesAbove(true) }
+    var            isHyperlink:         Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
+    var             isFavorite:         Bool  { return gFavoritesManager.isWorkingFavorite(self) }
+    var             isSelected:         Bool  { return gSelectionManager.isSelected(self) }
+    var              canTravel:         Bool  { return isBookmark || isHyperlink || isEmail }
+    var              isGrabbed:         Bool  { return gSelectionManager .isGrabbed(self) }
+    var               hasColor:         Bool  { return zoneColor != nil && zoneColor != "" }
+    var                isEmail:         Bool  { return hasTrait(for: .eEmail) && email != "" }
+    var                isTrash:         Bool  { return recordName == kTrashName }
 
 
     var trashZone: Zone? {
@@ -230,20 +232,6 @@ class Zone : ZRecord {
         let    bookmarks = fetchedBookmarks
 
         return bookmarks.count == 0 ? nil : bookmarks[0]
-    }
-
-
-    var fetchedBookmarks: [Zone] {
-        var          bookmarks  = [Zone] ()
-        if  let     identifier  = recordName {
-            for bookmark in gAllBookmarks {
-                if  identifier == bookmark.linkName {
-                    bookmarks.append(bookmark)
-                }
-            }
-        }
-
-        return bookmarks
     }
 
 
@@ -484,8 +472,8 @@ class Zone : ZRecord {
     var parentZone: Zone? {
         get {
             if      _parentZone   == nil {
-                if  let  reference = parent, let mode = storageMode {
-                    _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).zoneForReference(reference)
+                if  let  parentRef = parent, let mode = storageMode {
+                    _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).zoneForReference(parentRef) // BAD DUMMY ?
                 } else if let zone = zoneFrom(parentLink) {
                     _parentZone    = zone
                 }
@@ -583,7 +571,7 @@ class Zone : ZRecord {
 
 
     var isTextEditable: Bool {
-        if  isLocalOnly {
+        if  isAutoGenerated {
             return false
         } else if let t = bookmarkTarget {
             return    t.isTextEditable
@@ -695,11 +683,7 @@ class Zone : ZRecord {
                 parentLink         = kNullLink
             }
 
-            if  let                    key = linkName,
-                let                   mode = storageMode {
-                let                manager = gRemoteStoresManager.cloudManagerFor(mode)
-                manager.bookmarksByID[key] = self
-            }
+            gBookmarksManager.registerBookmark(self)
         }
     }
 
@@ -1288,10 +1272,10 @@ class Zone : ZRecord {
 
 
     @discardableResult func addZone(for iCKRecord: CKRecord?) -> Zone? {
-        var child: Zone? = nil
-        if  let ckRecord = iCKRecord,
-            !containsCKRecord(ckRecord) {
-            child = gCloudManager.zoneForCKRecord(ckRecord)
+        var child: Zone?    = nil
+        if  let childRecord = iCKRecord,
+            !containsCKRecord(childRecord) {
+            child = gCloudManager.zoneForCKRecord(childRecord) // BAD DUMMY ?
 
             add(child)
             children.updateOrder()
@@ -1342,7 +1326,7 @@ class Zone : ZRecord {
             fastUpdateProgenyCount()
         } else {
             needChildren()
-            gDBOperationsManager.children(.restore) {
+            gDBOperationsManager.children(.restore) { iSame in
                 self.fastUpdateProgenyCount()
             }
         }

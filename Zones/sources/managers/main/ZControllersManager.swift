@@ -110,7 +110,7 @@ class ZControllersManager: NSObject {
                 }
 
                 gDBOperationsManager.finishUp {
-                    gDBOperationsManager.families() { // created bookmarks and parents of bookmarks
+                    gDBOperationsManager.families() { iSame in // created bookmarks and parents of bookmarks
                         self.signalFor(nil, regarding: .redraw)
                     }
                 }
@@ -165,7 +165,7 @@ class ZControllersManager: NSObject {
 
 
     func syncAndSave(_ widget: ZoneWidget? = nil, onCompletion: Closure?) {
-        gDBOperationsManager.sync {
+        gDBOperationsManager.sync { iSame in
             onCompletion?()
             gFileManager.save(to: widget?.widgetZone?.storageMode)
         }

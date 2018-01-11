@@ -134,7 +134,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         if  let     widget = iSignalObject as? ZoneWidget,
             let       zone = widget.widgetZone,
             zone          == here {
-            specificWidget = zone.widget // YIKES: value was established in previous call to handleSignal
+            specificWidget = widget
             specificindex  = zone.siblingIndex
             specificView   = specificWidget?.superview
             recursing      = [.data, .redraw].contains(iKind)
