@@ -19,13 +19,21 @@ import Foundation
 class ZInformationController: ZGenericController {
 
 
-    override  var        controllerID: ZControllerID { return .information }
     @IBOutlet var    fractionInMemory: ZProgressIndicator?
     @IBOutlet var operationCountLabel: ZTextField?
     @IBOutlet var     totalCountLabel: ZTextField?
     @IBOutlet var      graphNameLabel: ZTextField?
     @IBOutlet var        versionLabel: ZTextField?
     @IBOutlet var          levelLabel: ZTextField?
+
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        controllerID                = .information
+        view.zlayer.backgroundColor = CGColor.clear
+        fractionInMemory? .minValue = 0
+    }
 
 
     var versionText: String {
@@ -37,11 +45,6 @@ class ZInformationController: ZGenericController {
         return "BUILD ERROR --- NO VERSION"
     }
 
-
-    override func awakeFromNib() {
-        view.zlayer.backgroundColor = CGColor.clear
-        fractionInMemory? .minValue = 0
-    }
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
         if ![.search, .found].contains(iKind) {

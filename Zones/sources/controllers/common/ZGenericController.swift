@@ -25,7 +25,7 @@ protocol ZGenericControllerProtocol {
 
 
 class ZGenericController: ZController, ZGenericControllerProtocol {
-    var controllerID:  ZControllerID { return .undefined }
+    var controllerID = ZControllerID.undefined 
     override func awakeFromNib() { setup() }
     func handleSignal(_ object: Any?, iKind: ZSignalKind) {}
     func displayActivity(_ show: Bool) {}

@@ -284,7 +284,7 @@ class Zone : ZRecord {
 
     var level: Int {
         get {
-            if  !isRoot, !isRootOfFavorites, let p = parentZone, p != self {
+            if  !isRoot, !isRootOfFavorites, let p = parentZone, p != self, !p.spawnedBy(self) {
                 return p.level + 1
             }
 
@@ -473,7 +473,9 @@ class Zone : ZRecord {
         get {
             if      _parentZone   == nil {
                 if  let  parentRef = parent, let mode = storageMode {
-                    _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).zoneForReference(parentRef) // BAD DUMMY ?
+                    _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).zoneForReference(parentRef) // POTENTIALLY BAD DUMMY
+
+                    _parentZone?.requireFetch()
                 } else if let zone = zoneFrom(parentLink) {
                     _parentZone    = zone
                 }
@@ -483,20 +485,23 @@ class Zone : ZRecord {
         }
 
         set {
-            _parentZone            = newValue
+            _parentZone                  = newValue
 
-            if  let  parentRecord  = newValue?.record,
-                let       newMode  = newValue?.storageMode {
-                if        newMode == storageMode {
-                    parent         = CKReference(record: parentRecord, action: .none)
-                    parentLink     = kNullLink
+            if  newValue == nil {
+                parent                   = nil
+                parentLink               = kNullLink
+            } else if let  parentRecord  = newValue?.record,
+                let             newMode  = newValue?.storageMode {
+                if              newMode == storageMode {
+                    parent               = CKReference(record: parentRecord, action: .none)
+                    parentLink           = kNullLink
                 } else {                                                                            // new parent is in different db
-                    parentLink     = "\(newMode.rawValue)::\(parentRecord.recordID.recordName)"     // references don't work across dbs
-                    parent         = nil
+                    parentLink           = "\(newMode.rawValue)::\(parentRecord.recordID.recordName)"     // references don't work across dbs
+                    parent               = nil
                 }
-
-                maybeNeedSave()
             }
+
+            maybeNeedSave()
         }
     }
 
@@ -804,31 +809,17 @@ class Zone : ZRecord {
     }
 
 
-    func spawnedByAGrab() -> Bool {
-        let               grabbed = gSelectionManager.currentGrabs
-        var wasSpawned:      Bool = grabbed.contains(self)
-        if !wasSpawned, let pZone = parentZone {
-            pZone.traverseAncestors { iAncestor -> ZTraverseStatus in
-                if grabbed.contains(iAncestor) {
-                    wasSpawned = true
+    func spawnedByAGrab() -> Bool { return spawnedByAny(of: gSelectionManager.currentGrabs) }
+    func spawnedBy(_ iZone: Zone?) -> Bool { return iZone == nil ? false : spawnedByAny(of: [iZone!]) }
+    func traverseAncestors(_ block: ZoneToStatusClosure) { safeTraverseAncestors(visited: [], block) }
 
-                    return .eStop
-                }
 
-                return .eContinue
-            }
-        }
-        
-        return wasSpawned
-    }
-    
-    
-    func spawnedBy(_ iZone: Zone?) -> Bool {
+    func spawnedByAny(of iZones: [Zone]) -> Bool {
         var wasSpawned: Bool = false
 
-        if let zone = iZone, let pZone = parentZone {
-            pZone.traverseAncestors { iAncestor -> ZTraverseStatus in
-                if iAncestor == zone {
+        if  iZones.count > 0 {
+            traverseAncestors { iAncestor -> ZTraverseStatus in
+                if iZones.contains(iAncestor) {
                     wasSpawned = true
 
                     return .eStop
@@ -848,11 +839,6 @@ class Zone : ZRecord {
 
             return .eContinue
         }
-    }
-
-
-    func traverseAncestors(_ block: ZoneToStatusClosure) {
-        safeTraverseAncestors(visited: [], block)
     }
 
 
@@ -1273,9 +1259,8 @@ class Zone : ZRecord {
 
     @discardableResult func addZone(for iCKRecord: CKRecord?) -> Zone? {
         var child: Zone?    = nil
-        if  let childRecord = iCKRecord,
-            !containsCKRecord(childRecord) {
-            child = gCloudManager.zoneForCKRecord(childRecord) // BAD DUMMY ?
+        if  let childRecord = iCKRecord, !containsCKRecord(childRecord) {
+            child           = gCloudManager.zoneForCKRecord(childRecord)
 
             add(child)
             children.updateOrder()

@@ -74,6 +74,8 @@ class ZStackableView: ZView {
 
 
     override func awakeFromNib() {
+        super.awakeFromNib()
+        
         update()
     }
 

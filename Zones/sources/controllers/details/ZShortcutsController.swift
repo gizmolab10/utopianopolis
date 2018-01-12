@@ -19,11 +19,14 @@ import Foundation
 class ZShortcutsController: ZGenericTableController {
 
 
-    var              tabStops = [NSTextTab]()
-    override var controllerID:  ZControllerID { return .shortcuts }
+    var tabStops = [NSTextTab]()
 
 
     override func awakeFromNib() {
+        super.awakeFromNib()
+
+        controllerID = .shortcuts
+
         for value in [15, 73, 100] {
             tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
         }

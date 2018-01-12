@@ -166,7 +166,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 if  gShowIdentifiers, let id = widgetZone?.record.recordID {
                     suffix = id.recordName
                 } else if (need > 1) && (!zone.showChildren || (gCountsMode == .progeny)) {
-                    suffix = String.init(describing: need)
+                    suffix = String(describing: need)
                 }
 
                 if suffix.count > 0 {

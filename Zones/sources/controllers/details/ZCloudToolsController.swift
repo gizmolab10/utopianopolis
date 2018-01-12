@@ -29,7 +29,11 @@ class ZCloudToolsController: ZGenericTableController {
     }
     
 
-    override var controllerID: ZControllerID { return .cloudTools }
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        controllerID = .cloudTools
+    }
 
 
     override func numberOfRows(in tableView: ZTableView) -> Int {

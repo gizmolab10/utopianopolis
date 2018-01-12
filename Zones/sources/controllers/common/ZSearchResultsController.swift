@@ -24,9 +24,15 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     var            inSearchBox = false
     var           foundRecords = [ZStorageMode: [CKRecord]] ()
     var                monitor: Any?
-    override  var controllerID: ZControllerID      { return .searchResults }
     var       searchController: ZSearchController? { return gControllersManager.controllerForID(.searchBox) as? ZSearchController }
     @IBOutlet var    tableView: ZTableView?
+
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        controllerID = .searchResults
+    }
 
 
     var foundRecordsCount: Int {

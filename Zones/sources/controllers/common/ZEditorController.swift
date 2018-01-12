@@ -35,25 +35,27 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     var        moveDownGesture:  ZGestureRecognizer?
     var        moveLeftGesture:  ZGestureRecognizer?
     var       moveRightGesture:  ZGestureRecognizer?
-    override  var controllerID:  ZControllerID { return .editor }
     @IBOutlet var   editorView:  ZoneDragView?
     @IBOutlet var      spinner:  ZProgressIndicator?
     @IBOutlet var  spinnerView:  ZView?
 
-    
-    // MARK:- gestures
-    // MARK:-
-    
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
+
+        controllerID = .editor
+
         editorView?.addSubview(editorRootWidget)
 
         if gHasPrivateDatabase && !kIsPhone {
             editorView?.addSubview(favoritesRootWidget)
         }
     }
+
     
+    // MARK:- gestures
+    // MARK:-
+
 
     func clear() {
         editorRootWidget   .widgetZone = nil

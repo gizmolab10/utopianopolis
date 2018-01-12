@@ -40,7 +40,7 @@ class ZBookmarksManager: NSObject {
             dict?[link]    = zones
             registry[mode] = dict
 
-            columnarReport("   BOOKMARK", bookmark.unwrappedName)
+            columnarReport("BOOKMARK", bookmark.unwrappedName)
         }
     }
 

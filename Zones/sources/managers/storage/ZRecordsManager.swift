@@ -650,7 +650,6 @@ class ZRecordsManager: NSObject {
             zone     = Zone(record: ckRecord, storageMode: storageMode)
 
             zone?.maybeNeedFetch()
-            zone?.requireFetch()
         }
 
         return zone!

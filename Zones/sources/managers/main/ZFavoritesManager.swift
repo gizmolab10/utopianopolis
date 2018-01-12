@@ -315,7 +315,7 @@ class ZFavoritesManager: ZCloudManager {
             ////////////////////////////////
 
             for favorite in databaseRootFavorites.children {
-                if  let     mode = favorite.crossLink?.storageMode, !hasModes.contains(mode) {
+                if  let     mode = favorite.linkMode, !hasModes.contains(mode) {
                     let     root = favorite.deepCopy()
                     root.zoneName = root.bookmarkTarget?.zoneName
 

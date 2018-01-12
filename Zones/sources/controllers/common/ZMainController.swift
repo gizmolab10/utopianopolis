@@ -22,7 +22,6 @@ var gMainController: ZMainController? { return gControllersManager.controllerFor
 class ZMainController: ZGenericController {
 
 
-    override  var controllerID:       ZControllerID { return .main }
     @IBOutlet var searchBoxHeight:    NSLayoutConstraint?
     @IBOutlet var authenticationView: ZView?
     @IBOutlet var searchResultsView:  ZView?
@@ -32,6 +31,10 @@ class ZMainController: ZGenericController {
 
 
     override func awakeFromNib() {
+        super.awakeFromNib()
+
+        controllerID = .main
+
         searchBoxView?.removeConstraint(searchBoxHeight!)
         searchBoxView?.snp.makeConstraints { make in
             make.height.equalTo(0.0)

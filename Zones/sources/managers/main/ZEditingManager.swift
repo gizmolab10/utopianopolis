@@ -1579,18 +1579,35 @@ class ZEditingManager: NSObject {
         // 4. move a favorite into a normal zone -- convert favorite to a bookmark, then move the bookmark          //
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        let  toBookmark = iInto.isBookmark                   // type 2
-        let toFavorites = iInto.isInFavorites && !toBookmark // type 3
-        var     restore = [Zone: (Zone, Int?)] ()
+        let  toBookmark = iInto.isBookmark                      // type 2
+        let toFavorites = iInto.isInFavorites && !toBookmark    // type 3
         var       grabs = gSelectionManager.currentGrabs
+        var     restore = [Zone: (Zone, Int?)] ()
+        var   cyclicals = IndexSet()
+
+        for (index, zone) in grabs.enumerated() {
+            if iInto.spawnedBy(zone) {
+                cyclicals.insert(index)
+            } else if let parent = zone.parentZone {
+                let siblingIndex = zone.siblingIndex
+                restore[zone]    = (parent, siblingIndex)
+
+                zone.needProgeny()
+            }
+        }
+
+        while let index = cyclicals.last {
+            cyclicals.remove(index)
+            grabs.remove(at: index)
+        }
 
         if  let dragged = gDraggedZone, dragged.isFavorite, !toFavorites {
-            dragged.maybeNeedSave()                              // type 4
+            dragged.maybeNeedSave()                             // type 4
         }
 
         grabs.sort { (a, b) -> Bool in
             if  a.isFavorite {
-                a.maybeNeedSave()                                // type 4
+                a.maybeNeedSave()                               // type 4
             }
 
             return a.order < b.order
@@ -1599,13 +1616,6 @@ class ZEditingManager: NSObject {
         //////////////////////
         // prepare for UNDO //
         //////////////////////
-
-        for zone in grabs {
-            if  let    parent = zone.parentZone {
-                let     index = zone.siblingIndex
-                restore[zone] = (parent, index)
-            }
-        }
 
         if toBookmark {
             undoManager.beginUndoGrouping()
@@ -1626,15 +1636,11 @@ class ZEditingManager: NSObject {
 
         let finish = {
             var    done = false
-            let    into = iInto.bookmarkTarget ?? iInto // grab bookmark AFTER travel
+            let    into = iInto.bookmarkTarget ?? iInto         // grab bookmark AFTER travel
             let toTrash = into.isInTrash || into.isTrash
 
             into.displayChildren()
             into.maybeNeedChildren()
-
-            for grab in grabs {
-                grab.needProgeny()
-            }
 
             gDBOperationsManager.children(.all) { iSame in
                 if !done {
@@ -1813,15 +1819,14 @@ class ZEditingManager: NSObject {
             let snapshot = gSelectionManager.snapshot
 
             revealParentAndSiblingsOf(zone) {
-                if  let there = parent {
-                    if  isHere {
-                        gHere = there
+                let canMove = (snapshot == gSelectionManager.snapshot) && (parent?.count ?? 0) > 1
+                if  parent != nil && isHere {
+                    gHere   = parent!
 
-                        self.signalFor(nil, regarding: .redraw)
-                    }
+                    self.signalFor(nil, regarding: .redraw)
                 }
 
-                if  snapshot == gSelectionManager.snapshot, 1 < (parent?.count ?? 0) {
+                if  canMove {
                     self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme, extend: extend)
                 }
             }

@@ -17,8 +17,14 @@
 class ZSettingsController: ZGenericController {
 
 
-    @IBOutlet var    stackView: NSStackView?
-    override  var controllerID: ZControllerID { return .settings }
+    @IBOutlet var stackView: NSStackView?
+
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        controllerID = .settings
+    }
 
 
     func displayViewFor(id: ZSettingsViewID) {

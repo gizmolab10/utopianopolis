@@ -329,7 +329,10 @@ class ZCloudManager: ZRecordsManager {
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
                 gAlertManager.detectError(iError) { iHasError in
                     if  iHasError {
-                        gAlertManager.alertError("MERGE within \(self.storageMode) \(iError!)")
+                        let    zone = self.maybeZoneForRecordID(iID)
+                        let message = zone == nil ? String(describing: iError) : zone?.unwrappedName
+
+                        gAlertManager.alertError("MERGE within \(self.storageMode) \(message!)")
 
                         if let id = iID, let index = recordIDs.index(of: id) {
                             recordIDs.remove(at: index)
@@ -470,7 +473,7 @@ class ZCloudManager: ZRecordsManager {
 
                     let addToLost: RecordsClosure = { iCKRecords in
                         if iCKRecords.count > 0 {
-                            self.columnarReport("  LOSING (\(iCKRecords.count))", self.stringForCKRecords(iCKRecords))
+                            self.columnarReport("  FOUND (\(iCKRecords.count))", self.stringForCKRecords(iCKRecords))
                             for ckRecord in iCKRecords {
                                 lost.addZone(for: ckRecord)
 
@@ -679,19 +682,19 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchParents(_ onCompletion: IntClosure?) {
-        let states: [ZRecordState] = [.needsWritable, .needsParent, .needsColor, .needsRoot]
-        let         missingParentIDs = parentIDsWithMatchingStates(states)
-        let                orphans = recordIDsWithMatchingStates(states)
-        let                  count = missingParentIDs.count
+        let fetchingStates: [ZRecordState] = [.needsWritable, .needsParent, .needsColor, .needsRoot]
+        let               missingParentIDs = parentIDsWithMatchingStates(fetchingStates)
+        let                      orphanIDs = recordIDsWithMatchingStates(fetchingStates)
+        let                          count = missingParentIDs.count
 
-        if  count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            var        recordsByID = [CKRecord : CKRecordID?] ()
-            operation   .recordIDs = missingParentIDs
+        if  count > 0, let       operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
+            var         fetchedRecordsByID = [CKRecord : CKRecordID?] ()
+            operation           .recordIDs = missingParentIDs
 
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
                 gAlertManager.alertError(iError) { iHasError in
                     if  !iHasError, iRecord != nil {
-                        recordsByID[iRecord!] = iID
+                        fetchedRecordsByID[iRecord!] = iID
                     }
                 }
             }
@@ -700,32 +703,33 @@ class ZCloudManager: ZRecordsManager {
                 FOREGROUND {
                     var forReport = [Zone] ()
 
-                    for (parentRecord, parentID) in recordsByID {
+                    for (parentRecord, parentID) in fetchedRecordsByID {
                         var fetchedParent  = self.maybeZoneForRecordID(parentID)
 
                         if  fetchedParent != nil {
                             fetchedParent?.mergeIntoAndTake(parentRecord) // BROKEN: likely this does not do what's needed here .... yikes! HUH?
                         } else {
-                            fetchedParent  = self.zoneForCKRecord(parentRecord) // BAD DUMMY ?
+                            fetchedParent  = self.zoneForCKRecord(parentRecord)
                         }
 
-                        if  let         p = fetchedParent {
-                            let fetchedID = p.record.recordID
+                        if  let                 p = fetchedParent {
+                            let fetchedRecordName = p.recordName
 
-                            for orphan in orphans {
-                                if  let  child = self.maybeZoneForRecordID(orphan), let parentID = child.parentZone?.record.recordID, parentID == fetchedID {
-                                    let states = self.states(for: child.record)
+                            for orphanID in orphanIDs {
+                                if  let      orphan = self.maybeZoneForRecordID(orphanID), !p.spawnedBy(orphan),
+                                    let pRecordName = orphan.parentZone?.recordName, pRecordName == fetchedRecordName {
+                                    let      states = self.states(for: orphan.record)
 
-                                    if  child.isRoot || child == p {
-                                        child.parentZone = nil
+                                    if  orphan.isRoot || orphan == p {
+                                        orphan.parentZone = nil
 
-                                        child.maybeNeedSave()
-                                    } else if !p.children.contains(child) {
-                                        p.children.append(child)
+                                        orphan.maybeNeedSave()
+                                    } else if !p.children.contains(orphan) {
+                                        p.children.append(orphan)
                                     }
 
-                                    if !forReport.contains(child) {
-                                        forReport.append(child)
+                                    if !forReport.contains(orphan) {
+                                        forReport.append(orphan)
                                     }
 
                                     if  states.contains(.needsRoot) {
@@ -747,8 +751,8 @@ class ZCloudManager: ZRecordsManager {
                         }
                     }
                     
-                    self.columnarReport("PARENT of", self.stringForZones(forReport))
-                    self.clearRecordIDs(orphans, for: states)
+                    self.columnarReport("PARENT (\(forReport.count)) of", self.stringForZones(forReport))
+                    self.clearRecordIDs(orphanIDs, for: fetchingStates)
                     self.fetchParents(onCompletion)   // process remaining
                 }
             }
@@ -790,7 +794,7 @@ class ZCloudManager: ZRecordsManager {
                             if destroyedIDs.contains(identifier) {
                                 // self.columnarReport(" DESTROYED", child.decoratedName)
                             } else {
-                                let      child = self.zoneForCKRecord(childRecord) // BAD DUMMY ?
+                                let      child = self.zoneForCKRecord(childRecord)
                                 let     parent = child.parentZone
                                 let extraTrash = child.zoneLink == kTrashLink && parent?.isRootOfFavorites ?? false && gFavoritesManager.hasTrash
 
@@ -887,10 +891,9 @@ class ZCloudManager: ZRecordsManager {
                             if  zone   == nil {                                                 // if not already registered
                                 zone    = Zone(record: ckRecord, storageMode: self.storageMode) // create and register
                                 created = true
-
-                                zone?.maybeNeedFetch()
-                                zone?.needParent()
                             }
+
+                            zone?.needParent()
                         }
 
                         self.columnarReport("BOOKMARKS (\(count))", self.stringForCKRecords(retrieved))
@@ -1062,7 +1065,11 @@ class ZCloudManager: ZRecordsManager {
             if oldValue         != value {
                 record[property] = value as? CKRecordValue
 
-                object.maybeNeedMerge()
+                if  object.doNotSave {
+                    object.allowSave()
+                } else {
+                    object.maybeNeedMerge()
+                }
             }
         }
     }

@@ -29,7 +29,13 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var            thickness: ZSlider?
     @IBOutlet var     clearColorButton: ZButton?
     @IBOutlet var           ideasLabel: ZTextField?
-    override  var         controllerID: ZControllerID { return .preferences }
+
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        controllerID = .preferences
+    }
 
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
@@ -110,13 +116,11 @@ class ZPreferencesController: ZGenericController {
         let          selection = iControl.selectedSegment
         if  let     identifier = iControl.identifier {
             switch (identifier) {
-            case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!
+            case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; signalFor(nil, regarding: .redraw)
             case "direction": gInsertionMode = ZInsertionMode(rawValue: selection)!
             default: break
             }
         }
-
-        signalFor(nil, regarding: .data)
     }
 
 }
