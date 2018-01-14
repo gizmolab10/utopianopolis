@@ -35,7 +35,7 @@ class ZoneWidget: ZView {
     let             childrenView = ZView          ()
     private var  childrenWidgets = [ZoneWidget]   ()
     var           isInMain: Bool = false
-    var                    ratio :     CGFloat { return isInMain ? 1.0: kReductionRatio }
+    var                    ratio :     CGFloat { return isInMain ? 1.0 : kReductionRatio }
     var             parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
     weak var          widgetZone :       Zone?
 
@@ -178,7 +178,8 @@ class ZoneWidget: ZView {
 
         childrenView.snp.removeConstraints()
         childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            make.left.equalTo(textWidget.snp.right).offset(Double(ratio) * (gDotWidth + Double(gGenericOffset.height) * 1.2 - 5.0))
+            let widthRatio = isInMain ? 1.0 : kReductionRatio * 0.7
+            make.left.equalTo(textWidget.snp.right).offset(Double(widthRatio) * (gDotWidth + Double(gGenericOffset.height) * 1.2 - 5.0))
             make.bottom.top.right.equalTo(self)
         }
     }
@@ -449,25 +450,24 @@ class ZoneWidget: ZView {
 
 
     func drawSelectionHighlight() {
-        let     thickness = CGFloat(gDotWidth) / 3.5
-        let        height = gGenericOffset.height
-        let         delta = height / 8.0
-        let           dot = toggleDot.innerDot
-        let         ratio = toggleDot.ratio
-        let         inset = (height + 32.0) / -2.0
-        let      dotDelta = dot?.isHiddenToggleDot ?? false ? dot!.bounds.size.width + 3.0 : CGFloat(0.0)
-        var          rect = textWidget.frame.insetBy(dx: inset * ratio - delta, dy: -0.5 - delta)
-        let        shrink = -0.5 + (height / 6.0)
-        rect.size.height += -0.5 + gHighlightHeightOffset // + (delta / 9.5)
-        rect.size.height += isInMain ? 0.0 : 1.0
-        rect.size .width += shrink - dotDelta
-        let        radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
-        let         color = widgetZone?.color
-        let     fillColor = color?.withAlphaComponent(0.02)
-        let   strokeColor = color?.withAlphaComponent(0.2)
-        let          path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
-        path   .lineWidth = thickness
-        path    .flatness = 0.0001
+        let      thickness = CGFloat(gDotWidth) / 3.5
+        let         height = gGenericOffset.height
+        let          delta = height / 8.0
+        let            dot = toggleDot.innerDot
+        let          inset = (height + 32.0) / -2.0
+        let hiddenDotDelta = dot?.toggleDotIsVisible ?? true ? CGFloat(0.0) : dot!.bounds.size.width + 3.0
+        var           rect = textWidget.frame.insetBy(dx: inset * ratio - delta, dy: -0.5 - delta)
+        let         shrink = -0.5 + (height / 6.0)
+        rect.size .height += -0.5 + gHighlightHeightOffset // + (delta / 9.5)
+        rect.size .height += isInMain ? 0.0 : 1.0
+        rect.size  .width += shrink - hiddenDotDelta
+        let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
+        let          color = widgetZone?.color
+        let      fillColor = color?.withAlphaComponent(0.02)
+        let    strokeColor = color?.withAlphaComponent(0.2)
+        let           path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
+        path    .lineWidth = thickness
+        path     .flatness = 0.0001
 
         strokeColor?.setStroke()
         fillColor?  .setFill()

@@ -562,7 +562,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func revealParentAndSiblingsOf(_ iZone: Zone, onCompletion: Closure?) {
+    func revealParentAndSiblingsOf(_ iZone: Zone, onCompletion: BooleanClosure?) {
         if  let parent = iZone.parentZone {
             parent.displayChildren()
 
@@ -570,16 +570,21 @@ class ZEditingManager: NSObject {
                 parent.needChildren()
 
                 gDBOperationsManager.children(.restore) { iSame in
-                    onCompletion?()
+                    onCompletion?(true)
                 }
             } else {
-                onCompletion?()
+
+                ///////////////////////////////////////////////////////////////////////
+                // passing false means: did not do a cloud operation ... avoids hang //
+                ///////////////////////////////////////////////////////////////////////
+
+                onCompletion?(false)
             }
         } else {
             iZone.needParent()
 
             gDBOperationsManager.families { iSame in
-                onCompletion?()
+                onCompletion?(true)
             }
         }
     }
@@ -668,7 +673,7 @@ class ZEditingManager: NSObject {
 
             zone.hideChildren()
 
-            revealParentAndSiblingsOf(zone) {
+            revealParentAndSiblingsOf(zone) { iCloudCalled in
                 if let  parent = zone.parentZone, parent != zone {
                     if  gHere == zone {
                         gHere  = parent
@@ -838,7 +843,7 @@ class ZEditingManager: NSObject {
             if gHere != zone {
                 closure()
             } else {
-                self.revealParentAndSiblingsOf(zone) {
+                self.revealParentAndSiblingsOf(zone) { iCloudCalled in
                     gHere = zone.parentZone ?? gHere
 
                     closure()
@@ -957,7 +962,7 @@ class ZEditingManager: NSObject {
             let parent        = zone.parentZone
             if  zone         == gHere {                         // this can only happen once during recursion (multiple places, below)
                 if  let     p = parent, p != zone {
-                    revealParentAndSiblingsOf(zone) {
+                    revealParentAndSiblingsOf(zone) { iCloudCalled in
                         gHere = p
 
                         self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)   // recurse
@@ -1078,7 +1083,7 @@ class ZEditingManager: NSObject {
                 p.grab()
 
                 if  zone == gHere {
-                    revealParentAndSiblingsOf(zone) {
+                    revealParentAndSiblingsOf(zone) { iCloudCalled in
                         self.revealSiblingsOf(zone, untilReaching: p)
                     }
                 } else {
@@ -1127,7 +1132,7 @@ class ZEditingManager: NSObject {
                     }
                 }
             } else if grandParentZone != nil {
-                revealParentAndSiblingsOf(p) {
+                revealParentAndSiblingsOf(p) { iCloudCalled in
                     if  grandParentZone!.spawnedBy(gHere) {
                         self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
                     } else {
@@ -1818,16 +1823,19 @@ class ZEditingManager: NSObject {
 
             let snapshot = gSelectionManager.snapshot
 
-            revealParentAndSiblingsOf(zone) {
-                let canMove = (snapshot == gSelectionManager.snapshot) && (parent?.count ?? 0) > 1
-                if  parent != nil && isHere {
+            revealParentAndSiblingsOf(zone) { iCalledCloud in
+                let same    = (snapshot == gSelectionManager.snapshot)
+                let newHere = parent != nil && isHere
+                if  newHere {
                     gHere   = parent!
 
                     self.signalFor(nil, regarding: .redraw)
                 }
 
-                if  canMove {
+                if  same && (parent?.count ?? 0) > 1 && iCalledCloud {
                     self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme, extend: extend)
+                } else if !newHere {
+                    self.signalFor(nil, regarding: .redraw)
                 }
             }
         }

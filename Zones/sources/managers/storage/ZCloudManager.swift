@@ -632,7 +632,7 @@ class ZCloudManager: ZRecordsManager {
                     } else if let ckRecord = iRecord,
                         !retrieved.contains(ckRecord) {
                         retrieved.append(ckRecord)
-                        self.clearRecordID(ckRecord.recordID, for:[.doNotSave, .needsFetch])
+                        self.clearRecordID(ckRecord.recordID, for:[.requiresFetch, .needsFetch])
                     }
                 }
             }
@@ -1065,7 +1065,7 @@ class ZCloudManager: ZRecordsManager {
             if oldValue         != value {
                 record[property] = value as? CKRecordValue
 
-                if  object.doNotSave {
+                if !object.canSave {
                     object.allowSave()
                 } else {
                     object.maybeNeedMerge()

@@ -69,14 +69,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    var isHiddenToggleDot: Bool {
+    var toggleDotIsVisible: Bool {
+        var isHidden = false
         if  let zone = widgetZone, isInnerDot, isToggle, let mode = zone.storageMode {
-
-            return (!zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 && !isDragDrop)
-                || (!zone.isRootOfFavorites && mode == .favoritesMode)
+            isHidden = (!zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 && !isDragDrop)
+                ||     (!zone.isRootOfFavorites && mode == .favoritesMode)
         }
         
-        return false
+        return !isHidden
     }
 
 
@@ -213,10 +213,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         if  let                zone = widgetZone, isVisible(dirtyRect) {
             let highlightAsFavorite = zone.isCurrentFavorite
 
-            if !isHiddenToggleDot {
-                if isInnerDot {
+            if  toggleDotIsVisible {
+                if  isInnerDot {
                     let showTinyCenterDot = zone.canTravel && zone.fetchableCount == 0
-                    let       dotIsFilled = isToggle ? (!zone.showChildren || showTinyCenterDot || isDragDrop) : (zone.isGrabbed || highlightAsFavorite) // not highlight when editing
+                    let       dotIsFilled = isToggle ? (!zone.showChildren || zone.count == 0 || showTinyCenterDot || isDragDrop) : (zone.isGrabbed || highlightAsFavorite) // not highlight when editing
                     let       strokeColor = isToggle  && isDragDrop ? gRubberbandColor : zone.color
                     var         fillColor = dotIsFilled ? strokeColor : gBackgroundColor
                     let         thickness = CGFloat(gLineThickness)
@@ -229,7 +229,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     path.stroke()
                     path.fill()
 
-                    if isToggle {
+                    if  isToggle {
                         if  showTinyCenterDot {
                             let     inset = CGFloat(innerDotHeight / 3.0)
                             path          = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))

@@ -12,7 +12,6 @@ import CloudKit
 
 
 enum ZRecordState: Int {
-    case doNotSave
     case needsSave
     case needsRoot
     case needsMerge
@@ -26,6 +25,7 @@ enum ZRecordState: Int {
     case needsWritable
     case needsChildren
     case needsBookmarks
+    case requiresFetch
 }
 
 
