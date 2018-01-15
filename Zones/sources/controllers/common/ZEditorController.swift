@@ -122,7 +122,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     // MARK:-
 
 
-    func layoutWidgets(_ iSignalObject: Any?, _ iKind: ZSignalKind, inMainGraph: Bool) {
+    func layoutRootWidget(for iSignalObject: Any?, _ iKind: ZSignalKind, inMainGraph: Bool) {
         if !inMainGraph && (!gHasPrivateDatabase || kIsPhone) { return }
 
         let                        here = inMainGraph ? gHere : gFavoritesManager.rootZone
@@ -162,8 +162,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 }
 
                 layoutForCurrentScrollOffset()
-                layoutWidgets(iSignalObject, iKind, inMainGraph: true)
-                layoutWidgets(iSignalObject, iKind, inMainGraph: false)
+                layoutRootWidget(for: iSignalObject, iKind, inMainGraph: true)
+                layoutRootWidget(for: iSignalObject, iKind, inMainGraph: false)
                 editorView?.setAllSubviewsNeedDisplay()
             }
         }
@@ -387,9 +387,12 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                         at!         -= 1
                     }
 
-                    gEditingManager.moveGrabbedZones(into: drop, at: at) {
-                        self.restartGestureRecognition()
-                        self.redrawAndSync(nil)
+                    if  let   gesture = iGesture as? ZKeyPanGestureRecognizer,
+                        let isCommand = gesture.modifiers?.isCommand {
+                        gEditingManager.moveGrabbedZones(into: drop, at: at, isCommand: isCommand) {
+                            self.restartGestureRecognition()
+                            self.redrawAndSync(nil)
+                        }
                     }
                 }
 
@@ -424,16 +427,18 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         let      rootWidget = isMain ? editorRootWidget : favoritesRootWidget
         if  let    location = iGesture?.location(in: editorView),
             let dropNearest = rootWidget.widgetNearestTo(location, in: editorView, gHere) {
+            if  isMain, !kIsPhone, gHasPrivateDatabase,
 
-            if  isMain,
-                !kIsPhone,
-                gHasPrivateDatabase,
+                //////////////////////////////////
+                // recurse only for isMain true //
+                //////////////////////////////////
+
                 let (_, otherDrop, otherLocation) = widgetNearest(iGesture, isMain: false) {
 
-                /////////////////////////////////////////////////
-                // target zone found in both controllers' view //
-                //  deterimine which zone is closer to cursor  //
-                /////////////////////////////////////////////////
+                ///////////////////////////////////////////////
+                //     target zone found in both graphs      //
+                // deterimine which zone is closer to cursor //
+                ///////////////////////////////////////////////
 
                 let      dotN = dropNearest.dragDot
                 let      dotO = otherDrop  .dragDot

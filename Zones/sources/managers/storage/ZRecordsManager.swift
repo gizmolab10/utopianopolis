@@ -410,6 +410,35 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func pullChildrenRefsWithMatchingStates(_ states: [ZRecordState], batchSize: Int) -> [CKReference] {
+        let references = childrenRefsWithMatchingStates(states, batchSize: batchSize)
+
+        clearReferences(references, for: states)
+
+        return references
+    }
+
+
+    func childrenRefsWithMatchingStates(_ states: [ZRecordState], batchSize: Int) -> [CKReference] {
+        var references = [CKReference] ()
+        var  expecting = 0
+
+        applyToAllCKRecordsWithAnyMatchingStates(states) { iState, iCKRecord in
+            if  expecting < batchSize && !iCKRecord.isBookmark {
+                let    reference = CKReference(recordID: iCKRecord.recordID, action: .none)
+
+                if let fetchable = (iCKRecord["zoneCount"] as? NSNumber)?.intValue {
+                    expecting   += fetchable
+                }
+
+                references.append(reference)
+            }
+        }
+
+        return references
+    }
+
+
     // MARK:- batch lookup
     // MARK:-
 

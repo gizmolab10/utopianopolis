@@ -77,7 +77,7 @@ class ZManifest: ZRecord {
     func displayChildren(in iZone: Zone) {
         var expansionSet = expanded
 
-        if  let name = iZone.recordName, !expansionSet.contains(name) {
+        if  let name = iZone.recordName, !iZone.isBookmark, !expansionSet.contains(name) {
             expansionSet.append(name)
 
             zonesExpanded = expansionSet

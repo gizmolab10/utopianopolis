@@ -45,7 +45,7 @@ class Zone : ZRecord {
     var               linkName:       String? { return name(from: zoneLink) }
     var               linkMode: ZStorageMode? { return mode(from: zoneLink) }
     var          unwrappedName:       String  { return zoneName ?? kNoName }
-    var          decoratedName:       String  { return "\(unwrappedName)\(decoration)" }
+    var          decoratedName:       String  { return decoration + unwrappedName }
     var       fetchedBookmarks:       [Zone]  { return gBookmarksManager.bookmarks(for: self) ?? [] }
     var       grabbedTextColor:       ZColor  { return color.darker(by: 3.0) }
     var directChildrenWritable:         Bool  { return directAccess == .eChildrenWritable || directAccess == .eDefaultName }
@@ -239,7 +239,7 @@ class Zone : ZRecord {
         var d = ""
 
         if isInTrash {
-            d.append("D")
+            d.append("T")
         }
 
         if isInFavorites {
@@ -250,14 +250,6 @@ class Zone : ZRecord {
             d.append("B")
         }
 
-        if let link  = zoneLink {
-            if link != kNullLink {
-                d.append("L")
-            } else {
-                d.append("-")
-            }
-        }
-
         if  indirectFetchableCount != 0 {
             let s  = d == "" ? "" : " "
             let c  = s + "\(indirectFetchableCount)"
@@ -266,7 +258,7 @@ class Zone : ZRecord {
         }
 
         if  d != "" {
-            d  = "  (\(d))"
+            d  = "(\(d))  "
         }
 
         return d

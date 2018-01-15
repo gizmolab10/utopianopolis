@@ -34,6 +34,7 @@ let          kBatchSize = 250
 let         kLogTabStop = 21
 let       kMaxBatchSize = 1000
 let      kRemoteTimeout = 10.0
+let     kSmallBatchSize = 125
 let     kReductionRatio = CGFloat(0.8)
 let   kDefaultZoneColor = ZColor.blue
 

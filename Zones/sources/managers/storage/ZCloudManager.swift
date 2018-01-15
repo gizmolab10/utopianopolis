@@ -122,8 +122,8 @@ class ZCloudManager: ZRecordsManager {
                 }
             }
 
-            if   saves.count > 0 { columnarReport("SAVE \(     saves.count)", stringForCKRecords(saves)) }
-            if destroy.count > 0 { columnarReport("DESTROY \(destroy.count)", stringForRecordIDs(destroy)) }
+            if   saves.count > 0 { columnarReport("SAVE (\(     saves.count))", stringForCKRecords(saves)) }
+            if destroy.count > 0 { columnarReport("DESTROY (\(destroy.count))", stringForRecordIDs(destroy)) }
 
             start(operation)
         } else {
@@ -405,7 +405,7 @@ class ZCloudManager: ZRecordsManager {
             scan(self.manifest.hereZone)
             scan(gFavoritesManager.rootZone)
 
-            self.columnarReport("REMEMBER \(memorables.count)", "\(self.storageMode.rawValue)")
+            self.columnarReport("REMEMBER (\(memorables.count))", "\(self.storageMode.rawValue)")
             setString(memorables.joined(separator: kSeparator), for: self.refetchingName)
 
             self.isRemembering = false
@@ -574,7 +574,7 @@ class ZCloudManager: ZRecordsManager {
                         }
                     }
 
-                    self.columnarReport("FETCH \(iCKRecords.count)", self.stringForCKRecords(iCKRecords))
+                    self.columnarReport("FETCH (\(iCKRecords.count))", self.stringForCKRecords(iCKRecords))
                     self.fetch(onCompletion)                            // process remaining
                 }
             }
@@ -684,7 +684,7 @@ class ZCloudManager: ZRecordsManager {
     func fetchParents(_ onCompletion: IntClosure?) {
         let fetchingStates: [ZRecordState] = [.needsWritable, .needsParent, .needsColor, .needsRoot]
         let               missingParentIDs = parentIDsWithMatchingStates(fetchingStates)
-        let                      orphanIDs = recordIDsWithMatchingStates(fetchingStates)
+        let                    childrenIDs = recordIDsWithMatchingStates(fetchingStates)
         let                          count = missingParentIDs.count
 
         if  count > 0, let       operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
@@ -704,55 +704,54 @@ class ZCloudManager: ZRecordsManager {
                     var forReport = [Zone] ()
 
                     for (parentRecord, parentID) in fetchedRecordsByID {
-                        var fetchedParent  = self.maybeZoneForRecordID(parentID)
+                        var fetched  = self.maybeZoneForRecordID(parentID)
 
-                        if  fetchedParent != nil {
-                            fetchedParent?.mergeIntoAndTake(parentRecord) // BROKEN: likely this does not do what's needed here .... yikes! HUH?
+                        if  fetched != nil {
+                            fetched?.mergeIntoAndTake(parentRecord)
                         } else {
-                            fetchedParent  = self.zoneForCKRecord(parentRecord)
+                            fetched  = self.zoneForCKRecord(parentRecord)
                         }
 
-                        if  let                 p = fetchedParent {
-                            let fetchedRecordName = p.recordName
+                        if  let      fetchedParent = fetched {
+                            for childID in childrenIDs {
+                                if  let      child = self.maybeZoneForRecordID(childID), !fetchedParent.spawnedBy(child),
+                                    let soughtName = child.parentZone?.recordName,
+                                    soughtName    == fetchedParent.recordName {
+                                    let     states = self.states(for: child.record)
 
-                            for orphanID in orphanIDs {
-                                if  let      orphan = self.maybeZoneForRecordID(orphanID), !p.spawnedBy(orphan),
-                                    let pRecordName = orphan.parentZone?.recordName, pRecordName == fetchedRecordName {
-                                    let      states = self.states(for: orphan.record)
+                                    if  child.isRoot || child == fetchedParent {
+                                        child.parentZone = nil
 
-                                    if  orphan.isRoot || orphan == p {
-                                        orphan.parentZone = nil
-
-                                        orphan.maybeNeedSave()
-                                    } else if !p.children.contains(orphan) {
-                                        p.children.append(orphan)
+                                        child.maybeNeedSave()
+                                    } else if !fetchedParent.children.contains(child) {
+                                        fetchedParent.children.append(child)
                                     }
 
-                                    if !forReport.contains(orphan) {
-                                        forReport.append(orphan)
+                                    if !forReport.contains(child) {
+                                        forReport.append(child)
                                     }
 
                                     if  states.contains(.needsRoot) {
-                                        p.maybeNeedRoot()
-                                        p.needChildren()
+                                        fetchedParent.maybeNeedRoot()
+                                        fetchedParent.needChildren()
                                     }
 
                                     if  states.contains(.needsColor) {
-                                        p.maybeNeedColor()
+                                        fetchedParent.maybeNeedColor()
                                     }
 
                                     if  states.contains(.needsWritable) {
-                                        p.maybeNeedWritable()
+                                        fetchedParent.maybeNeedWritable()
                                     }
 
-                                    p.maybeNeedChildren()
+                                    fetchedParent.maybeNeedChildren()
                                 }
                             }
                         }
                     }
                     
                     self.columnarReport("PARENT (\(forReport.count)) of", self.stringForZones(forReport))
-                    self.clearRecordIDs(orphanIDs, for: fetchingStates)
+                    self.clearRecordIDs(childrenIDs, for: fetchingStates)
                     self.fetchParents(onCompletion)   // process remaining
                 }
             }
@@ -765,8 +764,8 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchChildren(_ onCompletion: IntClosure?) {
-        let  progenyNeeded = pullReferencesWithMatchingStates([.needsProgeny])
-        let childrenNeeded = pullReferencesWithMatchingStates([.needsChildren]) + progenyNeeded
+        let  progenyNeeded = pullChildrenRefsWithMatchingStates([.needsProgeny],  batchSize: kSmallBatchSize)
+        let childrenNeeded = pullChildrenRefsWithMatchingStates([.needsChildren], batchSize: kSmallBatchSize - progenyNeeded.count) + progenyNeeded
         let   destroyedIDs = recordIDsWithMatchingStates([.needsDestroy])
         let          count = childrenNeeded.count
 
@@ -832,7 +831,7 @@ class ZCloudManager: ZRecordsManager {
                             }
                         }
 
-                        self.columnarReport("CHILDREN of", self.stringForReferences(childrenNeeded, in: self.storageMode))
+                        self.columnarReport("CHILDREN (\(childrenNeeded.count)) of", self.stringForReferences(childrenNeeded, in: self.storageMode))
                         self.add(states: [.needsCount], to: childrenNeeded)
                         self.fetchChildren(onCompletion) // process remaining
                     }
@@ -972,13 +971,15 @@ class ZCloudManager: ZRecordsManager {
                     rootRecord  = CKRecord(recordType: kZoneName, recordID: recordID)
                 }
 
-                self.rootZone = self.zoneForCKRecord(rootRecord!)    // get / create root7
+                let      root = self.zoneForCKRecord(rootRecord!)    // get / create root7
+                self.rootZone = root
 
-                if  self.rootZone?.zoneName == nil {
-                    self.rootZone?.zoneName = "title"
+                if  root.zoneName == nil {
+                    root.zoneName = "title"
                 }
 
-                self.rootZone?.maybeNeedSave()
+                root.maybeNeedSave()
+                //root.needProgeny()
                 onCompletion?(0)
             }
         }
