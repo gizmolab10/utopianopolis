@@ -1,5 +1,5 @@
 //
-//  ZSettingsController.swift
+//  ZDetailsController.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 10/10/16.
@@ -14,21 +14,19 @@
 #endif
 
 
-class ZSettingsController: ZGenericController {
+class ZDetailsController: ZGenericController {
 
 
     @IBOutlet var stackView: NSStackView?
 
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-
-        controllerID = .settings
+    override func setup() {
+        controllerID = .details
     }
 
 
-    func displayViewFor(id: ZSettingsViewID) {
-        gSettingsViewIDs.insert(id)
+    func displayViewFor(id: ZDetailsViewID) {
+        gDetailsViewIDs.insert(id)
 
         if  let subviews = stackView?.subviews {
             for subview in subviews {

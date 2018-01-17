@@ -96,17 +96,24 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
-    var undeletedCount: Int {
-        let values = zRecordsByID.values
-        var  count = values.count
+    var undeletedCounts: (Int, Int) {
+        let zRecords = zRecordsByID.values
+        var   uCount = zRecords.count
+        var   nCount = 0
 
-        for zRecord in values {
-            if  let zone = zRecord as? Zone, !zone.isRoot, (zone.isInTrash || zone.parentZone?.storageMode != zone.storageMode) {
-                count -= 1
+        for zRecord in zRecords {
+            if  let zone = zRecord as? Zone {
+                if !zone.canSave || zone.isInTrash {
+                    uCount -= 1
+                }
+
+                if !zone.canSave {
+                    nCount += 1
+                }
             }
         }
 
-        return count
+        return (uCount, nCount)
     }
 
 

@@ -23,9 +23,9 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     @IBOutlet var searchBox: ZSearchField?
 
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-
+    override func setup() {
+        super.setup()
+        
         controllerID = .searchBox
     }
 

@@ -61,7 +61,7 @@ public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 let        gVerticalWeight = 1.0
 let gHighlightHeightOffset = CGFloat(-3.0)
 let           gApplication = NSApplication.shared()
-var    gSettingsController: ZSettingsController? { return gControllersManager.controllerForID(.settings) as? ZSettingsController }
+var     gDetailsController : ZDetailsController? { return gControllersManager.controllerForID(.details) as? ZDetailsController }
 
 
 protocol ZScrollDelegate : NSObjectProtocol {}
@@ -270,7 +270,7 @@ extension NSWindow {
     }
 
     
-    @IBAction func displayPreferences     (_ sender: Any?) { gSettingsController?.displayViewFor(id: .Preferences) }
+    @IBAction func displayPreferences     (_ sender: Any?) { gDetailsController?.displayViewFor(id: .Preferences) }
     @IBAction func displayHelp            (_ sender: Any?) { openBrowserForFocusWebsite() }
     @IBAction func printHere              (_ sender: Any?) { gEditingManager.printHere() }
     @IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gEditingManager.handleMenuItem(iItem) }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -384,7 +384,7 @@ CQ
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="194.5" y="139.5"/>
+            <point key="canvasLocation" x="192" y="224"/>
         </scene>
         <!--Editor-->
         <scene sceneID="hIz-AP-VOD">
@@ -449,7 +449,7 @@ CQ
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="708" y="1487"/>
+            <point key="canvasLocation" x="681" y="1442"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -459,7 +459,7 @@ CQ
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Settings View">
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
                                 <rect key="frame" x="0.0" y="0.0" width="226" height="300"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="226" id="us8-K9-IEo"/>
@@ -534,7 +534,7 @@ CQ
                 </viewController>
                 <customObject id="GDK-b2-17b" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="194" y="757"/>
+            <point key="canvasLocation" x="191" y="757"/>
         </scene>
         <!--Search Controller-->
         <scene sceneID="Gwm-hS-Ozn">
@@ -635,15 +635,15 @@ CQ
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="218" y="1487"/>
+            <point key="canvasLocation" x="191" y="1442"/>
         </scene>
-        <!--Settings-->
+        <!--Details-->
         <scene sceneID="gOc-vA-WsZ">
             <objects>
-                <controllerPlaceholder storyboardName="Settings" id="yWa-SA-l1V" sceneMemberID="viewController"/>
+                <controllerPlaceholder storyboardName="Details" id="yWa-SA-l1V" sceneMemberID="viewController"/>
                 <customObject id="j6X-Bm-Ffa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-101" y="1162"/>
+            <point key="canvasLocation" x="-166" y="1117"/>
         </scene>
     </scenes>
 </document>

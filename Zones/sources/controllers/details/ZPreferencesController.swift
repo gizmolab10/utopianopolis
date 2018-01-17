@@ -31,9 +31,7 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var           ideasLabel: ZTextField?
 
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-
+    override func setup() {
         controllerID = .preferences
     }
 

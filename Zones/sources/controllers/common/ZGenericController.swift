@@ -16,22 +16,14 @@ import Foundation
 #endif
 
 
-protocol ZGenericControllerProtocol {
-
-    func handleSignal(_ object: Any?, iKind: ZSignalKind)
-    func displayActivity(_ show: Bool)
-    func setup()
-}
-
-
-class ZGenericController: ZController, ZGenericControllerProtocol {
+class ZGenericController: ZController {
     var controllerID = ZControllerID.undefined 
-    override func awakeFromNib() { setup() }
     func handleSignal(_ object: Any?, iKind: ZSignalKind) {}
     func displayActivity(_ show: Bool) {}
+    func setup() {}
 
 
-    func setup() {
+    override func awakeFromNib() {
         gControllersManager.register(self, iID: controllerID) { object, kind in
             self.view.zlayer.backgroundColor = gBackgroundColor.cgColor
 
@@ -39,6 +31,8 @@ class ZGenericController: ZController, ZGenericControllerProtocol {
                 self.handleSignal(object, iKind: kind)
             }
         }
+
+        setup()
     }
 
 

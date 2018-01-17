@@ -63,15 +63,17 @@ class ZRecord: NSObject {
                 updateInstanceProperties()
                 setupLinks()
 
-                if   !canSave && alreadyExists {
-                    allowSave()
-                } else {
-                    let zone = self as? Zone
-                    let name = zone?.zoneName ?? recordName
-                    columnarReport("DON'T SAVE", name)
+                let zone = self as? Zone
+                let name = zone?.decoratedName ?? recordName
 
+                if       !canSave &&  alreadyExists {
+                    columnarReport("ALLOW SAVE", name)
+                    allowSave()
+                } else if canSave && !alreadyExists {
+                    columnarReport("DON'T SAVE", name)
                     requireFetch()
                 }
+
             }
         }
     }

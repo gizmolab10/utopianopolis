@@ -13,11 +13,11 @@
             <objects>
                 <viewController id="fxO-Qj-JeN" customClass="ZInformationController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="mbO-Ma-L1E">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="135"/>
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="175"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Idb-0r-rlP">
-                                <rect key="frame" x="-2" y="110" width="230" height="17"/>
+                                <rect key="frame" x="-2" y="150" width="230" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="qvn-RA-Skg">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -25,7 +25,7 @@
                                 </textFieldCell>
                             </textField>
                             <progressIndicator wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="Rna-eb-6vd">
-                                <rect key="frame" x="20" y="87" width="186" height="22"/>
+                                <rect key="frame" x="20" y="89" width="186" height="60"/>
                             </progressIndicator>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3v8-d2-yo8" userLabel="Total Count Label">
                                 <rect key="frame" x="-2" y="69" width="230" height="19"/>
@@ -74,7 +74,7 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="Rna-eb-6vd" firstAttribute="top" secondItem="Idb-0r-rlP" secondAttribute="bottom" constant="2" id="0yu-eb-buA"/>
-                            <constraint firstItem="3v8-d2-yo8" firstAttribute="top" secondItem="Rna-eb-6vd" secondAttribute="bottom" id="26j-Y8-hJA"/>
+                            <constraint firstItem="3v8-d2-yo8" firstAttribute="top" secondItem="Rna-eb-6vd" secondAttribute="bottom" constant="2" id="26j-Y8-hJA"/>
                             <constraint firstAttribute="trailing" secondItem="f4m-8C-5H1" secondAttribute="trailing" id="7Hf-om-7JZ"/>
                             <constraint firstAttribute="trailing" secondItem="Idb-0r-rlP" secondAttribute="trailing" id="AVU-FT-Eip"/>
                             <constraint firstAttribute="trailing" secondItem="3v8-d2-yo8" secondAttribute="trailing" id="DAS-1R-Hli"/>
@@ -88,10 +88,10 @@
                             <constraint firstItem="Idb-0r-rlP" firstAttribute="top" secondItem="mbO-Ma-L1E" secondAttribute="top" constant="8" id="X2M-SL-OUK"/>
                             <constraint firstAttribute="trailing" secondItem="Rna-eb-6vd" secondAttribute="trailing" constant="20" id="a7E-He-F0G"/>
                             <constraint firstItem="f4m-8C-5H1" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" id="c7s-4i-5FS"/>
-                            <constraint firstAttribute="bottom" secondItem="fy3-JT-P1F" secondAttribute="bottom" constant="8" id="nUl-r3-ZQs"/>
                             <constraint firstItem="fy3-JT-P1F" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" id="nss-Ne-0QM"/>
                             <constraint firstItem="f4m-8C-5H1" firstAttribute="top" secondItem="3v8-d2-yo8" secondAttribute="bottom" constant="2" id="sRb-lr-fxU"/>
                             <constraint firstItem="fy3-JT-P1F" firstAttribute="top" secondItem="BcI-eM-ytK" secondAttribute="bottom" constant="2" id="xBJ-cM-jP8"/>
+                            <constraint firstAttribute="bottom" secondItem="fy3-JT-P1F" secondAttribute="bottom" constant="8" id="zft-Tk-mWn"/>
                         </constraints>
                     </view>
                     <connections>
@@ -105,12 +105,12 @@
                 </viewController>
                 <customObject id="wYh-I6-Wpi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-278" y="1575"/>
+            <point key="canvasLocation" x="-278" y="1594.5"/>
         </scene>
-        <!--Cloud Tools Controller-->
+        <!--Tools Controller-->
         <scene sceneID="OQa-jH-o6A">
             <objects>
-                <viewController id="M1d-6V-b2Q" customClass="ZCloudToolsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="M1d-6V-b2Q" customClass="ZToolsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" focusRingType="none" id="vKP-HI-kOy">
                         <rect key="frame" x="0.0" y="0.0" width="226" height="37"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -177,19 +177,19 @@
             </objects>
             <point key="canvasLocation" x="-280" y="2116"/>
         </scene>
-        <!--Settings Controller-->
+        <!--Details Controller-->
         <scene sceneID="Tae-az-4mZ">
             <objects>
-                <viewController id="YaQ-0g-PCb" customClass="ZSettingsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="YaQ-0g-PCb" customClass="ZDetailsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="630"/>
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="681"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="0.0" width="226" height="630"/>
+                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
+                                <rect key="frame" x="0.0" y="0.0" width="226" height="681"/>
                                 <subviews>
                                     <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="516" width="226" height="114"/>
+                                        <rect key="frame" x="0.0" y="567" width="226" height="114"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="95" width="226" height="19"/>
@@ -252,7 +252,7 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="195" width="226" height="320"/>
+                                        <rect key="frame" x="0.0" y="246" width="226" height="320"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="301" width="226" height="19"/>
@@ -315,7 +315,7 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="cloud" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Cloud View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="51" width="226" height="143"/>
+                                        <rect key="frame" x="0.0" y="102" width="226" height="143"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dnz-Gb-8cH" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="124" width="226" height="19"/>
@@ -325,7 +325,7 @@
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="c3Z-ep-PLR"/>
                                                         </constraints>
-                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Cloud Tools" drawsBackground="YES" id="qf8-FE-82u">
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Tools" drawsBackground="YES" id="qf8-FE-82u">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="highlightColor" catalog="System" colorSpace="catalog"/>
@@ -378,7 +378,7 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="help" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E5h-DF-X3i" userLabel="Cheat Sheet View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="226" height="50"/>
+                                        <rect key="frame" x="0.0" y="51" width="226" height="50"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GnQ-iS-bgR" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="31" width="226" height="19"/>
@@ -419,7 +419,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EaL-XF-QhW" userLabel="Shortcuts">
-                                                <rect key="frame" x="0.0" y="0.0" width="226" height="17"/>
+                                                <rect key="frame" x="0.0" y="14" width="226" height="19"/>
                                                 <connections>
                                                     <segue destination="JfR-Ay-CUa" kind="embed" id="097-RW-51X"/>
                                                 </connections>
@@ -440,16 +440,26 @@
                                             <outlet property="toggleButton" destination="kYb-ao-3Mw" id="6zv-Ya-yNt"/>
                                         </connections>
                                     </customView>
+                                    <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UhT-Vl-h0f" userLabel="Debug View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="226" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" id="A2i-oE-bdY"/>
+                                        </constraints>
+                                    </customView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="E5h-DF-X3i" secondAttribute="bottom" id="5D1-w2-r2e"/>
                                     <constraint firstItem="M2W-8y-R0e" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="5vd-TT-dHx"/>
+                                    <constraint firstAttribute="trailing" secondItem="UhT-Vl-h0f" secondAttribute="trailing" id="94J-PE-I6g"/>
+                                    <constraint firstAttribute="bottom" secondItem="UhT-Vl-h0f" secondAttribute="bottom" id="Bef-kk-rjl"/>
                                     <constraint firstAttribute="trailing" secondItem="M2W-8y-R0e" secondAttribute="trailing" id="CkC-Ah-hqH"/>
+                                    <constraint firstItem="UhT-Vl-h0f" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="EXf-hC-Fac"/>
                                     <constraint firstItem="9j5-fI-wCz" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="NFa-oz-tCT"/>
                                     <constraint firstItem="E5h-DF-X3i" firstAttribute="top" secondItem="q69-Nq-Tsm" secondAttribute="bottom" constant="1" id="QeE-0M-0Gx"/>
                                     <constraint firstItem="q69-Nq-Tsm" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="Sns-ea-bR9"/>
                                     <constraint firstAttribute="trailing" secondItem="q69-Nq-Tsm" secondAttribute="trailing" id="ZUC-ce-LOv"/>
+                                    <constraint firstItem="UhT-Vl-h0f" firstAttribute="top" secondItem="E5h-DF-X3i" secondAttribute="bottom" constant="1" id="cbr-lU-A8U"/>
                                     <constraint firstItem="E5h-DF-X3i" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="cyO-Ii-0Xy"/>
+                                    <constraint firstItem="M2W-8y-R0e" firstAttribute="top" secondItem="1wo-H2-e9s" secondAttribute="top" id="eao-wQ-GIr"/>
                                     <constraint firstItem="9j5-fI-wCz" firstAttribute="top" secondItem="M2W-8y-R0e" secondAttribute="bottom" constant="1" id="jx7-R7-0wq"/>
                                     <constraint firstAttribute="trailing" secondItem="E5h-DF-X3i" secondAttribute="trailing" id="oIo-qu-CvC"/>
                                     <constraint firstAttribute="trailing" secondItem="9j5-fI-wCz" secondAttribute="trailing" id="pCn-yA-AaQ"/>
@@ -460,8 +470,10 @@
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
+                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
@@ -471,8 +483,8 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="1wo-H2-e9s" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" id="1WF-pU-wVa"/>
-                            <constraint firstItem="1wo-H2-e9s" firstAttribute="bottom" relation="lessThanOrEqual" secondItem="3tA-Ue-bZS" secondAttribute="bottom" id="GHX-xZ-f6z"/>
                             <constraint firstAttribute="trailing" secondItem="1wo-H2-e9s" secondAttribute="trailing" id="NxT-zU-3MZ"/>
+                            <constraint firstAttribute="bottom" secondItem="1wo-H2-e9s" secondAttribute="bottom" id="WIM-ma-dtc"/>
                             <constraint firstItem="1wo-H2-e9s" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" id="zRX-tf-U45"/>
                         </constraints>
                     </view>
@@ -909,6 +921,19 @@
                 <customObject id="rFs-5G-ygd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-278" y="2209"/>
+        </scene>
+        <!--Debug Controller-->
+        <scene sceneID="1Md-xJ-Z7k">
+            <objects>
+                <viewController id="3I5-7x-PAH" customClass="ZDebugController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="A57-Y0-NnV">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="rW8-8d-EmW" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="165" y="1594"/>
         </scene>
     </scenes>
     <resources>

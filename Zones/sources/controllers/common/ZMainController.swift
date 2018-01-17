@@ -30,9 +30,7 @@ class ZMainController: ZGenericController {
     @IBOutlet var editorView:         ZView?
 
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-
+    override func setup() {
         controllerID = .main
 
         searchBoxView?.removeConstraint(searchBoxHeight!)

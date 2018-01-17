@@ -28,7 +28,7 @@ class ZStackableView: ZView {
     // MARK:-
     
 
-    var identity: ZSettingsViewID {
+    var identity: ZDetailsViewID {
         #if os(OSX)
             if let kind = identifier {
                 switch kind {
@@ -49,14 +49,14 @@ class ZStackableView: ZView {
 
     var hideableIsHidden: Bool {
         get {
-            return gSettingsViewIDs.contains(identity)
+            return gDetailsViewIDs.contains(identity)
         }
 
         set {
             if newValue {
-                gSettingsViewIDs.insert(identity)
+                gDetailsViewIDs.insert(identity)
             } else {
-                gSettingsViewIDs.remove(identity)
+                gDetailsViewIDs.remove(identity)
             }
         }
     }

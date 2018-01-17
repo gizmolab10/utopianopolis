@@ -27,12 +27,9 @@ class ZInformationController: ZGenericController {
     @IBOutlet var          levelLabel: ZTextField?
 
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-
-        controllerID                = .information
-        view.zlayer.backgroundColor = CGColor.clear
-        fractionInMemory? .minValue = 0
+    override func setup() {
+        controllerID               = .information
+        fractionInMemory?.minValue = 0
     }
 
 
@@ -48,12 +45,12 @@ class ZInformationController: ZGenericController {
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
         if ![.search, .found].contains(iKind) {
-            let                     count = gCloudManager.undeletedCount
+            let  (count, notSavableCount) = gCloudManager.undeletedCounts
             let                     total = gRemoteStoresManager.rootProgenyCount // TODO wrong manager
             let            operationCount = gDBOperationsManager.queue.operationCount
             let                      zone = gSelectionManager.rootMostMoveable
             let                      mode = zone.storageMode
-            totalCountLabel?        .text = "of \(total), retrieved: \(count)"
+            totalCountLabel?        .text = "of \(total), retrieved: \(count) + \(notSavableCount)"
             graphNameLabel?         .text = mode == nil ? "" : "graph: \(mode!.rawValue)"
             operationCountLabel?    .text = operationCount == 0 ? "" : "\(operationCount) cloud operation\(operationCount == 1 ? "" : "s") in progress"
             versionLabel?           .text = versionText

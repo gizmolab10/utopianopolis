@@ -28,9 +28,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     @IBOutlet var    tableView: ZTableView?
 
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-
+    override func setup() {
         controllerID = .searchResults
     }
 

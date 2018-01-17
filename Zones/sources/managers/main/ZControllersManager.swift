@@ -15,13 +15,14 @@ enum ZControllerID: Int {
     case authenticate
     case information
     case preferences
-    case cloudTools
     case favorites
     case searchBox
     case shortcuts
-    case settings
+    case details
     case actions
     case editor
+    case debug
+    case tools
     case help
     case main
 }
@@ -92,9 +93,9 @@ class ZControllersManager: NSObject {
     func startupCloudAndUI() {
         gDBOperationsManager.usingDebugTimer = true
 
-        signalFor(nil, regarding: .startup) // YIKES! SHOULD NOT need manifest
-        displayActivity(true)
         gRemoteStoresManager.clear()
+      //  signalFor(nil, regarding: .startup) // YIKES! SHOULD NOT need manifest
+        displayActivity(true)
         gDBOperationsManager.startUp {
             gFavoritesManager.setup() // manifest has been fetched
             gDBOperationsManager.continueUp {
@@ -154,7 +155,7 @@ class ZControllersManager: NSObject {
 
             for (identifier, signalObject) in self.signalObjectsByControllerID {
                 switch regarding {
-                case .startup, .information: if identifier == .information { signalObject.closure(object, regarding) }
+                case .information: if identifier == .information { signalObject.closure(object, regarding) }
                 case .preferences: if identifier == .preferences { signalObject.closure(object, regarding) }
                 default:                                           signalObject.closure(object, regarding)
                 }

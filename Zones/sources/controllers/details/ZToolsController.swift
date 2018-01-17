@@ -1,5 +1,5 @@
 //
-//  ZCloudToolsController.swift
+//  ZToolsController.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 4/13/17.
@@ -16,7 +16,7 @@ import Foundation
 #endif
 
 
-class ZCloudToolsController: ZGenericTableController {
+class ZToolsController: ZGenericTableController {
 
 
     enum ZToolKind: Int {
@@ -29,10 +29,8 @@ class ZCloudToolsController: ZGenericTableController {
     }
     
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-
-        controllerID = .cloudTools
+    override func setup() {
+        controllerID = .tools
     }
 
 

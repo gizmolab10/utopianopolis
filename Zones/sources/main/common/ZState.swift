@@ -54,19 +54,19 @@ enum ZStorageMode: String {
 }
 
 
-struct ZSettingsViewID: OptionSet {
+struct ZDetailsViewID: OptionSet {
     let rawValue: Int
 
     init(rawValue: Int) {
         self.rawValue = rawValue
     }
 
-    static let Information = ZSettingsViewID(rawValue: 1 << 0)
-    static let Preferences = ZSettingsViewID(rawValue: 1 << 1)
-    static let   Favorites = ZSettingsViewID(rawValue: 1 << 2)
-    static let       Cloud = ZSettingsViewID(rawValue: 1 << 3)
-    static let        Help = ZSettingsViewID(rawValue: 1 << 4)
-    static let         All = ZSettingsViewID(rawValue: 0xFFFF)
+    static let Information = ZDetailsViewID(rawValue: 1 << 0)
+    static let Preferences = ZDetailsViewID(rawValue: 1 << 1)
+    static let   Favorites = ZDetailsViewID(rawValue: 1 << 2)
+    static let       Cloud = ZDetailsViewID(rawValue: 1 << 3)
+    static let        Help = ZDetailsViewID(rawValue: 1 << 4)
+    static let         All = ZDetailsViewID(rawValue: 0xFFFF)
 }
 
 
@@ -297,18 +297,18 @@ var gStorageMode: ZStorageMode {
 }
 
 
-var gSettingsViewIDs: ZSettingsViewID {
+var gDetailsViewIDs: ZDetailsViewID {
     get {
-        var state: ZSettingsViewID? = nil
+        var state: ZDetailsViewID? = nil
 
-        if let object = UserDefaults.standard.object(forKey:kSettingsState) {
-            state     = ZSettingsViewID(rawValue: object as! Int)
+        if let object = UserDefaults.standard.object(forKey:kDetailsState) {
+            state     = ZDetailsViewID(rawValue: object as! Int)
         }
 
         if state == nil {
             state     = .All
 
-            UserDefaults.standard.set(state!.rawValue, forKey:kSettingsState)
+            UserDefaults.standard.set(state!.rawValue, forKey:kDetailsState)
             UserDefaults.standard.synchronize()
         }
 
@@ -316,7 +316,7 @@ var gSettingsViewIDs: ZSettingsViewID {
     }
 
     set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:kSettingsState)
+        UserDefaults.standard.set(newValue.rawValue, forKey:kDetailsState)
         UserDefaults.standard.synchronize()
     }
 }

@@ -40,11 +40,10 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     @IBOutlet var  spinnerView:  ZView?
 
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-
+    override func setup() {
         controllerID = .editor
 
+        restartGestureRecognition()
         editorView?.addSubview(editorRootWidget)
 
         if gHasPrivateDatabase && !kIsPhone {
@@ -52,7 +51,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         }
     }
 
-    
+
     // MARK:- gestures
     // MARK:-
 
@@ -62,12 +61,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         favoritesRootWidget.widgetZone = nil
     }
 
-
-    override func setup() {
-        restartGestureRecognition()
-        super.setup()
-    }
-    
     
     func restartGestureRecognition() {
         editorView?.gestureHandler = self

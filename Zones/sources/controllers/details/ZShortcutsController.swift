@@ -22,9 +22,7 @@ class ZShortcutsController: ZGenericTableController {
     var tabStops = [NSTextTab]()
 
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-
+    override func setup() {
         controllerID = .shortcuts
 
         for value in [15, 73, 100] {
