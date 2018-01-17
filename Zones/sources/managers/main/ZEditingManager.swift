@@ -147,7 +147,7 @@ class ZEditingManager: NSObject {
                 switch key {
              // case "f":      if isCommand { find() }
                 case "a":      if isCommand { gSelectionManager.currentlyEditingZone?.widget?.textWidget.selectAllText() }
-             // case "?":      if isCommand { gSettingsController?.displayViewFor(id: .Help) }
+             // case "?":      if isCommand { gDetailsController?.displayViewFor(id: .Help) }
                 case kSpace:   if isControl { addIdea() }
                 default:       break
                 }
@@ -369,7 +369,10 @@ class ZEditingManager: NSObject {
             zones.updateOrder()
 
             zones.sort { (a, b) -> Bool in
-                return a.zoneName?.widthForFont(font) ?? 0 < b.zoneName?.widthForFont(font) ?? 0
+                let aLength = a.zoneName?.widthForFont(font) ?? 0
+                let bLength = b.zoneName?.widthForFont(font) ?? 0
+
+                return aLength < bLength
             }
 
             var start = 1.0
@@ -1484,7 +1487,7 @@ class ZEditingManager: NSObject {
         let grabs = gSelectionManager.simplifiedGrabs
 
         for zone in grabs {
-            zone.needProgeny()
+            zone.needChildren()
             zone.displayChildren()
         }
 
@@ -1511,8 +1514,9 @@ class ZEditingManager: NSObject {
                 }
 
                 for child in children {
-                    parent.addAndReorderChild(child, at: index)
+                    child.orphan()
                     child.addToGrab()
+                    parent.addAndReorderChild(child, at: index)
                 }
 
                 self.UNDO(self) { iUndoSelf in
