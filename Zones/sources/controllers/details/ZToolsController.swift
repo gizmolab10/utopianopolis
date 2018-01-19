@@ -23,9 +23,9 @@ class ZToolsController: ZGenericTableController {
         case eIdentifiers
         case eAccess
         case eGather
+        case eRecount
         case eRetry
         case eTrash
-        case eRecount
     }
     
 
@@ -35,7 +35,7 @@ class ZToolsController: ZGenericTableController {
 
 
     override func numberOfRows(in tableView: ZTableView) -> Int {
-        return !gIsSpecialUser ? 0 : 3 + (gIsLate ? 1 : 0)
+        return !gIsSpecialUser ? 0 : 4 + (gIsLate ? 1 : 0)
     }
 
 
@@ -129,7 +129,9 @@ class ZToolsController: ZGenericTableController {
 
 
     func recount() {
-        gSelectionManager.rootMostMoveable.fullUpdateProgenyCount()
+        for mode in gAllDatabaseModes {
+            gRemoteStoresManager.cloudManagerFor(mode).rootZone?.safeUpdateProgenyCount([])
+        }
     }
 
 

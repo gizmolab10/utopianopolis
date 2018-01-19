@@ -578,7 +578,7 @@ class ZEditingManager: NSObject {
         if  let parent = iZone.parentZone {
             parent.displayChildren()
 
-            if  parent.hasMissingChildren {
+            if  parent.hasMissingChildren() {
                 parent.needChildren()
 
                 gDBOperationsManager.children(.restore) { iSame in
@@ -608,7 +608,7 @@ class ZEditingManager: NSObject {
         descendent.traverseAllAncestors { iParent in
             iParent.displayChildren()
 
-            if iParent.hasMissingChildren {
+            if iParent.hasMissingChildren() {
                 iParent.needChildren() // need this to show "minimal flesh" on graph
             }
 
@@ -974,9 +974,9 @@ class ZEditingManager: NSObject {
             let parent        = zone.parentZone
             if  zone         == gHere {                         // this can only happen once during recursion (multiple places, below)
                 if  let     p = parent, p != zone {
-                    revealParentAndSiblingsOf(zone) { iCloudCalled in
-                        gHere = p
+                    gHere     = p
 
+                    revealParentAndSiblingsOf(zone) { iCloudCalled in
                         self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)   // recurse
                     }
                 } else {                                        // delete here but here has no parent ... so, go somewhere useful and familiar:
@@ -986,7 +986,6 @@ class ZEditingManager: NSObject {
                 }
             } else {
                 if  zone.isInTrash || permanently {
-                    zone.orphan()
                     zone.traverseAllProgeny { iZone in
                         iZone.hideChildren()                    // remove from manifest
                         iZone.needDestroy()
@@ -996,7 +995,9 @@ class ZEditingManager: NSObject {
                     moveToTrash(zone)
                 }
 
-                if  let            p = parent {
+                zone.orphan()
+
+                if  let            p = parent, p != zone {
                     p.fetchableCount = p.count                  // delete alters the count
                 }
 
@@ -1012,6 +1013,8 @@ class ZEditingManager: NSObject {
                     }
                 }
             }
+
+            signalFor(nil, regarding: .redraw)
         }
     }
 

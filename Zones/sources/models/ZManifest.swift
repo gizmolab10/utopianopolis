@@ -64,8 +64,8 @@ class ZManifest: ZRecord {
     }
 
 
-    func showsChildren(_ iZone: Zone) -> Bool {
-        if  let name = iZone.recordName,
+    func isExpanded(_ iRecordName: String?) -> Bool {
+        if  let name = iRecordName,
             let    _ = expanded.index(of: name) {
             return true
         }

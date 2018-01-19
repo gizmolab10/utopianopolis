@@ -58,8 +58,8 @@ class ZRecordsManager: NSObject {
     }
 
 
-    init(_ storageMode: ZStorageMode) {
-        self.storageMode = storageMode
+    init(_ iStorageMode: ZStorageMode) {
+        storageMode = iStorageMode
     }
 
 
@@ -86,7 +86,7 @@ class ZRecordsManager: NSObject {
     func createRandomLost() -> Zone {
         let lost = Zone.randomZone(in: storageMode)
 
-        lostAndFoundZone.add(lost, at: nil)
+        lostAndFoundZone.addChild(lost, at: nil)
 
         return lost
     }
@@ -164,14 +164,19 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func hasCKRecord(_ iRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> Bool {
+    func hasCKRecordID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> Bool {
         var found = false
 
-        applyToCKRecordByRecordID(iRecord.recordID, forAnyOf: iStates, onEach: { (state: ZRecordState, record: CKRecord) in
+        applyToCKRecordByRecordID(iRecordID, forAnyOf: iStates, onEach: { (state: ZRecordState, record: CKRecord) in
             found = true
         })
 
         return found
+    }
+
+
+    func hasCKRecord(_ iRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> Bool {
+        return hasCKRecordID(iRecord.recordID, forAnyOf: iStates)
     }
 
 
@@ -431,14 +436,11 @@ class ZRecordsManager: NSObject {
         var  expecting = 0
 
         applyToAllCKRecordsWithAnyMatchingStates(states) { iState, iCKRecord in
-            if  expecting < batchSize && !iCKRecord.isBookmark {
-                let    reference = CKReference(recordID: iCKRecord.recordID, action: .none)
+            if  let fetchable = (iCKRecord["zoneCount"] as? NSNumber)?.intValue,
+                !iCKRecord.isBookmark, (fetchable + expecting) < batchSize {
+                expecting    += fetchable
 
-                if let fetchable = (iCKRecord["zoneCount"] as? NSNumber)?.intValue {
-                    expecting   += fetchable
-                }
-
-                references.append(reference)
+                references.append(CKReference(recordID: iCKRecord.recordID, action: .none))
             }
         }
 

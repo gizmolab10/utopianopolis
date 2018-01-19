@@ -99,8 +99,7 @@ class ZControllersManager: NSObject {
         gDBOperationsManager.startUp {
             gFavoritesManager.setup() // manifest has been fetched
             gDBOperationsManager.continueUp {
-                gWorkMode                            = .graphMode
-                gDBOperationsManager.usingDebugTimer = false
+                gWorkMode = .graphMode
 
                 self.displayActivity(false)
 
@@ -112,6 +111,8 @@ class ZControllersManager: NSObject {
 
                 gDBOperationsManager.finishUp {
                     gDBOperationsManager.families() { iSame in // created bookmarks and parents of bookmarks
+                        gDBOperationsManager.usingDebugTimer = false
+
                         self.signalFor(nil, regarding: .redraw)
                     }
                 }

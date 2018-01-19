@@ -99,9 +99,10 @@ class ZRemoteStoresManager: NSObject {
 
 
     func establishRoot(_ storageMode: ZStorageMode, _ onCompletion: IntClosure?) {
-        switch storageMode {
-        case .favoritesMode: onCompletion?(0)
-        default:             cloudManagerFor(storageMode).establishRoot(onCompletion)
+        if !kFullFetch && storageMode == .favoritesMode {
+            onCompletion?(0)
+        } else {
+            cloudManagerFor(storageMode).establishRoot(onCompletion)
         }
     }
 
