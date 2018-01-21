@@ -96,23 +96,25 @@ class ZControllersManager: NSObject {
         gRemoteStoresManager.clear()
         displayActivity(true)
         gDBOperationsManager.startUp {
-            gFavoritesManager.setup() // manifest has been fetched
-            gDBOperationsManager.continueUp {
-                gWorkMode = .graphMode
+            gFavoritesManager.setup { // manifest has been fetched
+                gDBOperationsManager.continueUp {
+                    gWorkMode   = .graphMode
+                    gReadyState = true
 
-                self.displayActivity(false)
+                    self.displayActivity(false)
 
-                if gManifest.alreadyExists {
-                    gHere.grab()
-                    gFavoritesManager.updateFavorites()
-                    self.signalFor(nil, regarding: .redraw)
-                }
-
-                gDBOperationsManager.finishUp {
-                    gDBOperationsManager.families() { iSame in // created bookmarks and parents of bookmarks
-                        gDBOperationsManager.usingDebugTimer = false
-
+                    if  gManifest.alreadyExists {
+                        gHere.grab()
+                        gFavoritesManager.updateFavorites()
                         self.signalFor(nil, regarding: .redraw)
+                    }
+
+                    gDBOperationsManager.finishUp {
+                        gDBOperationsManager.families() { iSame in // created bookmarks and parents of bookmarks
+                            gDBOperationsManager.usingDebugTimer = false
+
+                            self.signalFor(nil, regarding: .redraw)
+                        }
                     }
                 }
             }

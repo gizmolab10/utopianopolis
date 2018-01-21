@@ -198,18 +198,29 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    func setup() {
+    func setup(_ onCompletion: Closure?) {
         if  gHasPrivateDatabase && rootZone == nil {
-            if let root = gRemoteStoresManager.cloudManagerFor(.mineMode).maybeZRecordForRecordName(kFavoritesRootName) as? Zone {
-                rootZone               = root
-            } else {
-                rootZone               = Zone(storageMode: .mineMode, named: kFavoritesName, identifier: kFavoritesRootName)
-                rootZone!.directAccess = .eDefaultName
+            let   mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
+            let finish = {
+                self.setupDatabaseFavorites()
+                self.rootZone!.needProgeny()
+                self.rootZone!.displayChildren()
+                onCompletion?()
             }
 
-            setupDatabaseFavorites()
-            rootZone!.needProgeny()
-            rootZone!.displayChildren()
+            if  let root = mine.maybeZRecordForRecordName(kFavoritesRootName) as? Zone {
+                rootZone = root
+
+                finish()
+            } else {
+                mine.assureRecordExists(withRecordID: CKRecordID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
+                    let          root = Zone(record: iRecord, storageMode: .mineMode)
+                    root.directAccess = .eDefaultName
+                    root.zoneName     = kFavoritesName
+                    self.rootZone     = root
+                    finish()
+                }
+            }
         }
     }
 

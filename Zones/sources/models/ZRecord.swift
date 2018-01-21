@@ -58,15 +58,19 @@ class ZRecord: NSObject {
                 let zone = self as? Zone
                 let name = zone?.zoneName
 
+//                if  zone?.badJonathan() ?? false {
+//                    zone?.orphan()
+//                }
+
                 if       !canSave &&  alreadyExists {
                     columnarReport("ALLOW SAVE", name ?? recordName)
                     allowSave()
                 } else if canSave && !alreadyExists {
-                    columnarReport("DON'T SAVE", name ?? recordName)
+//                    columnarReport("DON'T SAVE", name ?? recordName)
                     requireFetch()
 
-                    if name != nil {
-                        print("hah!")
+                    if name != nil || recordName == kRootName {
+                        bam("named ... should allow saving")
                     }
                 }
             }

@@ -390,6 +390,7 @@ class ZCloudManager: ZRecordsManager {
                             if  iZone.alreadyExists,
                                 iZone.storageMode == self.storageMode,
                                 let identifier = iZone.recordName,
+                                !iZone.isRoot,
                                 !memorables.contains(identifier) {
                                 memorables.append(identifier)
                             }
@@ -566,6 +567,10 @@ class ZCloudManager: ZRecordsManager {
                         } else {
                             zRecord?.useBest(record: ckRecord)
                         }
+
+//                        if  let zone = zRecord as? Zone, zone.badJonathan() {
+//                            zone.orphan()
+//                        }
                     }
 
                     self.columnarReport("FETCH (\(iCKRecords.count))", self.stringForCKRecords(iCKRecords))
@@ -642,7 +647,6 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-
     func fetchManifest(_ onCompletion: IntClosure?) {
         if  manifest.alreadyExists || manifest.needsMerge || manifest.needsSave {
             onCompletion?(0)
@@ -651,8 +655,8 @@ class ZCloudManager: ZRecordsManager {
             let     mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
 
             mine.assureRecordExists(withRecordID: recordID, recordType: kManifestType) { (iManifestRecord: CKRecord?) in
-                if  iManifestRecord       != nil {
-                    self.manifest  .record = iManifestRecord
+                if  let m = iManifestRecord {
+                    self.manifest  .record = m
 
                     if  let hereRecordName = self.manifest.here,
                         let           mode = self.manifest.manifestMode {

@@ -426,23 +426,54 @@ class Zone : ZRecord {
     }
 
 
+//    @discardableResult func badJonathan() -> Bool {
+//        if  let name = zoneName,
+//            ["jonathan", "saved"].contains(name) {
+//
+//            //self.bam("gotcha! " + name)
+//
+//            if name == "jonathan" && linkName == nil && parent != nil {
+//                maybeNeedSave()
+//
+//                return true
+//            }
+//        }
+//
+//        return false
+//    }
+
+
     var parentZone: Zone? {
         get {
+            var deb = 0
             if      _parentZone   == nil {
+                deb = 1
                 if  let  parentRef = parent, let mode = storageMode {
                     _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).zoneForReference(parentRef) // POTENTIALLY BAD DUMMY
+                    deb = 2
 
                     _parentZone?.requireFetch()
                 } else if let zone = zoneFrom(parentLink) {
                     _parentZone    = zone
+                    deb = 3
                 }
             }
+
+//            if badJonathan() {
+//                parent = nil
+//                _parentZone = nil
+//                parentLink = kNullLink
+//            }
 
             return _parentZone
         }
 
         set {
             _parentZone                  = newValue
+
+            if _parentZone?.zoneName == "saved" {
+                bam("created saved")
+            }
 
             if  newValue == nil {
                 if  parentLink != kNullLink || parent != nil {
@@ -1060,9 +1091,9 @@ class Zone : ZRecord {
     override func unorphan() {
         if  !needsDestroy, let p = parentZone, p != self {
 
-            if  zoneName == "laterer" {
-                print("hah!")
-            }
+//            if badJonathan() {
+//                return
+//            }
 
             p.maybeNeedFetch()
             p.addChild(self, at: siblingIndex)

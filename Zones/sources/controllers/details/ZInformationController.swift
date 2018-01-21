@@ -44,7 +44,7 @@ class ZInformationController: ZGenericController {
 
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
-        if ![.search, .found].contains(iKind) {
+        if ![.search, .found].contains(iKind) && gReadyState {
             let  (count, notSavableCount) = gCloudManager.undeletedCounts
             let                     total = gRemoteStoresManager.rootProgenyCount // TODO wrong manager
             let            operationCount = gDBOperationsManager.queue.operationCount

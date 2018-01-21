@@ -27,6 +27,7 @@ extension NSObject {
     func            note(_ iMessage: Any?)                { } // report(iMessage) }
     func     performance(_ iMessage: Any?)                { log(iMessage) }
     func textInputReport(_ iMessage: Any?)                { log(iMessage) }
+    func             bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
     func  columnarReport(_ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(iFirst, iSecond) }
     func      debugCheck()                                { gTravelManager.debugCheck() }
 
@@ -100,13 +101,11 @@ extension NSObject {
 
 
     func name(from iLink: String?) -> String? {
-        if  let       link = iLink {
-            var components =  link.components(separatedBy: kSeparator)
-
-            if  components.count > 2 {
-                let    name = components[2]
-
-                return name != "" ? name : kRootName
+        if  let        link  = iLink {
+            var  components  =  link.components(separatedBy: kSeparator)
+            if   components.count > 2 {
+                let    name  = components[2]
+                return name != "" ? name : kRootName // by design: empty component means root
             }
         }
 
@@ -117,10 +116,8 @@ extension NSObject {
     func mode(from iLink: String?) -> ZStorageMode? {
         if  let       link = iLink {
             var components =  link.components(separatedBy: kSeparator)
-
             if  components.count > 2 {
                 let    mode = components[0]
-
                 return mode == "" ? nil : ZStorageMode(rawValue: mode)
             }
         }
