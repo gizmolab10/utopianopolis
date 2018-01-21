@@ -103,7 +103,7 @@ class ZCloudManager: ZRecordsManager {
                     if  let saved = iSavedCKRecords {
                         for ckrecord: CKRecord in saved {
                             if  let zone = self.maybeZoneForRecordID(ckrecord.recordID) {
-                                zone.record = ckrecord
+                                zone.useBest(record: ckrecord)
                             }
                         }
                     }
@@ -376,61 +376,57 @@ class ZCloudManager: ZRecordsManager {
 
 
     func remember(_ onCompletion: IntClosure?) {
-        if !isRemembering {
-            isRemembering = true
-        } else {
+        if  isRemembering {
             onCompletion?(0)
+        } else {
+            isRemembering = true
 
-            return
-        }
+            BACKGROUND {     // not stall foreground processor
+                var memorables = [String] ()
 
-        BACKGROUND {     // not stall foreground processor
-            var memorables = [String] ()
-
-            let scan: ObjectClosure = { iObject in
-                if let zone = iObject as? Zone {
-                    zone.traverseAllProgeny { iZone in
-                        if  iZone.alreadyExists,
-                            iZone.storageMode == self.storageMode,
-                            let identifier = iZone.recordName,
-                            !memorables.contains(identifier) {
-                            memorables.append(identifier)
+                let scan: ObjectClosure = { iObject in
+                    if let zone = iObject as? Zone {
+                        zone.traverseAllProgeny { iZone in
+                            if  iZone.alreadyExists,
+                                iZone.storageMode == self.storageMode,
+                                let identifier = iZone.recordName,
+                                !memorables.contains(identifier) {
+                                memorables.append(identifier)
+                            }
                         }
                     }
                 }
+
+                scan(self.rootZone)
+                scan(self.manifest.hereZone)
+                scan(gFavoritesManager.rootZone)
+
+                self.columnarReport("REMEMBER (\(memorables.count))", "\(self.storageMode.rawValue)")
+                setPreferencesString(memorables.joined(separator: kSeparator), for: self.refetchingName)
+
+                self.isRemembering = false
+
+                onCompletion?(0)
             }
-
-            scan(self.rootZone)
-            scan(self.manifest.hereZone)
-            scan(gFavoritesManager.rootZone)
-
-            self.columnarReport("REMEMBER (\(memorables.count))", "\(self.storageMode.rawValue)")
-            setString(memorables.joined(separator: kSeparator), for: self.refetchingName)
-
-            self.isRemembering = false
-
-            onCompletion?(0)
         }
     }
 
 
-    func refetch(_ onCompletion: IntClosure?) {
-        if  let fetchables = getString(for: refetchingName, defaultString: "")?.components(separatedBy: kSeparator) {
-            let   fetching = [ZRecordState.needsFetch]
-
+    func refetchZones(_ onCompletion: IntClosure?) {
+        if  let fetchables = getPreferencesString(for: refetchingName, defaultString: "")?.components(separatedBy: kSeparator) {
             for fetchable in fetchables {
                 if fetchable != "" {
-                    addCKRecord(CKRecord(for: fetchable), for: fetching)
+                    addCKRecord(CKRecord(for: fetchable), for: [.needsFetch])
                 }
             }
 
-            fetch(onCompletion)
+            fetchZones(onCompletion) // includes processing logic for retrieved records
         }
     }
 
 
     func fetchLost(_ onCompletion: IntClosure?) {
-        let predicate = NSPredicate(format: kZoneName + " != \"\(kRootName)\"")
+        let predicate = NSPredicate(format: "\(kZoneName) != \"\(kRootName)\"")
         var   fetched = [CKRecord] ()
 
         self.queryWith(predicate, batchSize: kMaxBatchSize) { iRecord in
@@ -515,7 +511,7 @@ class ZCloudManager: ZRecordsManager {
                                 // until doesn't exist
                                 // add each parentless ancestor to lost
 
-                                self.fetch(needed: seekParentIDs) { iFetchedParents in
+                                self.fetchZones(needed: seekParentIDs) { iFetchedParents in
                                     parentIDs = []
                                     toLose    = []
 
@@ -554,33 +550,33 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetch(_ onCompletion: IntClosure?) {
-        let needed = recordIDsWithMatchingStates([.needsFetch], pull: true)
+    func fetchZones(_ onCompletion: IntClosure?) {
+        let needed = recordIDsWithMatchingStates([.needsFetch, .requiresFetch], pull: true)
 
-        fetch(needed: needed) { iCKRecords in
+        fetchZones(needed: needed) { iCKRecords in
             FOREGROUND {
                 if iCKRecords.count == 0 {
                     onCompletion?(0)
                 } else {
                     for ckRecord in iCKRecords {
-                        var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
+                        var zRecord  = self.maybeZRecordForRecordName(ckRecord.recordID.recordName)
 
                         if  zRecord == nil {
-                            zRecord  = ZRecord(record: ckRecord, storageMode: self.storageMode)
+                            zRecord  = Zone(record: ckRecord, storageMode: self.storageMode)
                         } else {
-                            zRecord?.record = ckRecord
+                            zRecord?.useBest(record: ckRecord)
                         }
                     }
 
                     self.columnarReport("FETCH (\(iCKRecords.count))", self.stringForCKRecords(iCKRecords))
-                    self.fetch(onCompletion)                            // process remaining
+                    self.fetchZones(onCompletion)                            // process remaining
                 }
             }
         }
     }
 
 
-    func fetch(needed: [CKRecordID], _ onCompletion: RecordsClosure?) {
+    func fetchZones(needed:  [CKRecordID], _ onCompletion: RecordsClosure?) {
         var recordIDs = [CKRecordID] ()
         var retrieved = [CKRecord] ()
         var remainder = needed
@@ -655,8 +651,8 @@ class ZCloudManager: ZRecordsManager {
             let     mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
 
             mine.assureRecordExists(withRecordID: recordID, recordType: kManifestType) { (iManifestRecord: CKRecord?) in
-                if  iManifestRecord     != nil {
-                    self.manifest.record = iManifestRecord
+                if  iManifestRecord       != nil {
+                    self.manifest  .record = iManifestRecord
 
                     if  let hereRecordName = self.manifest.here,
                         let           mode = self.manifest.manifestMode {
@@ -773,11 +769,13 @@ class ZCloudManager: ZRecordsManager {
             var  progenyNeeded = [CKReference] ()
             var      retrieved = [CKRecord] ()
 
-            for reference in childrenNeeded {
-                let identifier = reference.recordID
+            if hasMatch(with: [.needsProgeny]) {
+                for reference in childrenNeeded {
+                    let identifier = reference.recordID
 
-                if hasCKRecordID(identifier, forAnyOf: [.needsProgeny]) && !progenyNeeded.contains(reference) {
-                    progenyNeeded.append(reference)
+                    if  registeredCKRecord(for: identifier, forAnyOf: [.needsProgeny]) != nil && !progenyNeeded.contains(reference) {
+                        progenyNeeded.append(reference)
+                    }
                 }
             }
 

@@ -73,15 +73,15 @@ class ZEditingManager: NSObject {
 
     func menuType(for key: String) -> ZMenuType {
         switch key {
-        case "z":                                 return .Undo
-        case "o", "r":                            return .Sort
-        case "v", "x", "!", kSpace:               return .Child
-        case "e", "h", "l", "\r", "u", "w", "-":  return .Alter
-        case "b", "d", kTab, kBackspace, kDelete: return .Parent
-        case ";", "'", "/":                       return .Favorites
-        case "a":                                 return .SelectAll
-        case "=":                                 return .Travel
-        default:                                  return .Always
+        case "z":                                      return .Undo
+        case "o", "r":                                 return .Sort
+        case "v", "x", "!", kSpace:                    return .Child
+        case "e", "h", "l", "\r", "u", "w", "-", "$":  return .Alter
+        case "b", "d", kTab, kBackspace, kDelete:      return .Parent
+        case ";", "'", "/":                            return .Favorites
+        case "a":                                      return .SelectAll
+        case "=":                                      return .Travel
+        default:                                       return .Always
         }
     }
 
@@ -164,6 +164,7 @@ class ZEditingManager: NSObject {
                 case "p":      printHere()
                 case "b":      addBookmark()
                 case "h":      editHyperlink()
+                case "$":      mark(with: key)
                 case "!":      divideChildren()
                 case "w":      toggleWritable()
                 case "o":      orderByLength(isOption)
@@ -204,8 +205,8 @@ class ZEditingManager: NSObject {
         default:
             if !isShift {
                 switch arrow {
-                case .right: moveInto(selectionOnly: !isOption, extreme: isCommand) { self.redrawSyncRedraw() }
-                case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand) { self.redrawSyncRedraw() }
+                case .right: moveInto(selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawAndSync() }
+                case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawAndSync() }
                 default: break
                 }
             } else if !isOption {
@@ -262,6 +263,27 @@ class ZEditingManager: NSObject {
 
     // MARK:- miscellaneous features
     // MARK:-
+
+
+    func mark(with iMark: String) {
+        let  zones = gSelectionManager.currentGrabs
+        let prefix = "(" + iMark + ") "
+
+        for zone in zones {
+            if  let name = zone.zoneName {
+                if !name.starts(with: prefix) {
+                    zone .zoneName = prefix + name
+                } else {
+                    let components = name.components(separatedBy: prefix)
+                    zone .zoneName = components[1]
+                }
+
+                zone.widget?.textWidget.updateText()
+            }
+        }
+
+        signalFor(nil, regarding: .redraw)
+    }
 
 
     func editEmail() {
@@ -890,17 +912,21 @@ class ZEditingManager: NSObject {
     func delete(permanently: Bool = false, preserveChildren: Bool = false) {
         if  preserveChildren {
             preserveChildrenOfGrabbedZones {
-                gFavoritesManager.updateFavorites()
-                self.redrawSyncRedraw()
+                self.updateFavoritesRedrawAndSync()
             }
         } else {
             prepareUndoForDelete()
 
             deleteZones(gSelectionManager.simplifiedGrabs, permanently: permanently) {
-                gFavoritesManager.updateFavorites()
-                self.redrawSyncRedraw()
+                self.updateFavoritesRedrawAndSync()     // delete alters the list
             }
         }
+    }
+
+
+    func updateFavoritesRedrawAndSync() {
+        gFavoritesManager.updateFavorites()
+        redrawSyncRedraw()
     }
 
 
@@ -1008,7 +1034,6 @@ class ZEditingManager: NSObject {
                 zone.maybeNeedBookmarks()
                 gDBOperationsManager.bookmarks { iSame in
                     self.deleteZones(zone.fetchedBookmarks, permanently: permanently) {
-                        gFavoritesManager.updateFavorites()     // delete alters the list
                         onCompletion?()
                     }
                 }
@@ -1177,7 +1202,7 @@ class ZEditingManager: NSObject {
                     self.grabChild(of: zone)
                 }
 
-                self.redrawSyncRedraw()
+                self.updateFavoritesRedrawAndSync()
             }
         }
     }
@@ -1346,7 +1371,7 @@ class ZEditingManager: NSObject {
             zones     .removeLast()
         }
 
-        redrawSyncRedraw()
+        updateFavoritesRedrawAndSync()
     }
 
 
@@ -1445,7 +1470,7 @@ class ZEditingManager: NSObject {
                     self.undoManager.endUndoGrouping()
                 }
 
-                self.redrawSyncRedraw()
+                self.updateFavoritesRedrawAndSync()
             }
 
             let prepare = {

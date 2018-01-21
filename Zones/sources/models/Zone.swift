@@ -1005,14 +1005,6 @@ class Zone : ZRecord {
             needWritable()
         }
     }
-
-
-
-    func maybeNeedProgeny() {
-        if  showChildren && hasMissingChildren() {
-            needProgeny()
-        }
-    }
     
 
     func maybeNeedChildren() {
@@ -1023,12 +1015,12 @@ class Zone : ZRecord {
 
 
     func prepareForArrival() {
-        grab()
-        needChildren()
-        maybeNeedRoot()
-        maybeNeedColor()
-        displayChildren()
         maybeNeedWritable()
+        displayChildren()
+        maybeNeedColor()
+        maybeNeedRoot()
+        needChildren()
+        grab()
     }
 
 
@@ -1176,16 +1168,23 @@ class Zone : ZRecord {
     func recursivelyApplyMode(_ iMode: ZStorageMode?) {
         if let mode = iMode, mode != storageMode {
             traverseAllProgeny { iZone in
-                let            pz = iZone.parentZone
-                let        record = iZone.record
-                iZone     .record = CKRecord(recordType: kZoneType)
+                iZone.unregister()
 
-                record?.copy(to: iZone.record, properties: iZone.cloudProperties())
+                let newParentZone = iZone.parentZone                                    // (1) grab new parent zone from previous traverse (2, below)
+                let     oldRecord = iZone.record
+                let     newRecord = CKRecord(recordType: kZoneType)                     // new record id
+                iZone.storageMode = mode                                                // must happen BEFORE record assignment
+                iZone     .record = newRecord                                           // side-effect: move registration to the new mode's record manager
 
-                iZone.storageMode = mode
-                iZone.parentZone  = pz      // this will correct parent and parentLink for mode change
+                oldRecord?.copy(to: iZone.record, properties: iZone.cloudProperties())  // preserve new record id
+                iZone.maybeNeedSave()                                                   // in new mode's record manager
 
-                iZone.maybeNeedSave()            // so will be noted in new mode's record manager
+                ///////////////////////////////////////////////////////////////
+                // (2) compute parent and parentLink using iZone's new iMode //
+                //      this traverse will eventually use it (1, above)      //
+                ///////////////////////////////////////////////////////////////
+
+                iZone.parentZone  = newParentZone
             }
         }
     }

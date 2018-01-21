@@ -62,6 +62,7 @@ class ZRecursionLogic: NSObject {
             }
         } else if let progenyNeeded = iProgenyNeeded,
             let     parentReference = iChild.parent,
+            progenyNeeded.count    != 0,
             progenyNeeded.contains(parentReference) {
             iChild.needProgeny()
         }

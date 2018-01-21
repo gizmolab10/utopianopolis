@@ -200,8 +200,12 @@ class ZFavoritesManager: ZCloudManager {
 
     func setup() {
         if  gHasPrivateDatabase && rootZone == nil {
-            rootZone               = Zone(storageMode: .mineMode, named: kFavoritesName, identifier: kFavoritesRootName)
-            rootZone!.directAccess = .eDefaultName
+            if let root = gRemoteStoresManager.cloudManagerFor(.mineMode).maybeZRecordForRecordName(kFavoritesRootName) as? Zone {
+                rootZone               = root
+            } else {
+                rootZone               = Zone(storageMode: .mineMode, named: kFavoritesName, identifier: kFavoritesRootName)
+                rootZone!.directAccess = .eDefaultName
+            }
 
             setupDatabaseFavorites()
             rootZone!.needProgeny()
@@ -274,9 +278,12 @@ class ZFavoritesManager: ZCloudManager {
                         }
                     } else if let t = favorite.bookmarkTarget,
                         let    mode = t.storageMode,
-                        t.isRoot,
-                        !hasModes.contains(mode) {
-                        hasModes.append(mode)
+                        t.isRoot {
+                        if !hasModes.contains(mode) {
+                            hasModes.append(mode)
+                        } else {
+                            discardCopies.append(index)
+                        }
                     }
                 }
             }

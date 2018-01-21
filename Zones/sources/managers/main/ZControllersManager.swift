@@ -94,7 +94,6 @@ class ZControllersManager: NSObject {
         gDBOperationsManager.usingDebugTimer = true
 
         gRemoteStoresManager.clear()
-      //  signalFor(nil, regarding: .startup) // YIKES! SHOULD NOT need manifest
         displayActivity(true)
         gDBOperationsManager.startUp {
             gFavoritesManager.setup() // manifest has been fetched

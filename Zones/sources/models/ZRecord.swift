@@ -46,6 +46,9 @@ class ZRecord: NSObject {
 
         set {
             if  _record != newValue {
+                gBookmarksManager.unregisterBookmark(self as? Zone)
+                cloudManager?.unregisterCKRecord(_record)
+
                 _record  = newValue
 
                 register()
@@ -53,16 +56,19 @@ class ZRecord: NSObject {
                 setupLinks()
 
                 let zone = self as? Zone
-                let name = zone?.decoratedName ?? recordName
+                let name = zone?.zoneName
 
                 if       !canSave &&  alreadyExists {
-                    columnarReport("ALLOW SAVE", name)
+                    columnarReport("ALLOW SAVE", name ?? recordName)
                     allowSave()
                 } else if canSave && !alreadyExists {
-                    columnarReport("DON'T SAVE", name)
+                    columnarReport("DON'T SAVE", name ?? recordName)
                     requireFetch()
-                }
 
+                    if name != nil {
+                        print("hah!")
+                    }
+                }
             }
         }
     }
@@ -198,6 +204,15 @@ class ZRecord: NSObject {
     }
 
 
+    func useBest(record iRecord: CKRecord) {
+        let      myDate = record?.modificationDate
+        if  let newDate = iRecord.modificationDate,
+            (myDate    == nil || myDate!.timeIntervalSince(newDate) < 0) {
+            record      = iRecord
+        }
+    }
+
+
     func copy(into copy: ZRecord) {
         copy.maybeNeedSave() // so KVO won't set needsMerge
         updateRecordProperties()
@@ -231,7 +246,7 @@ class ZRecord: NSObject {
         }
 
         if type != nil && name != nil {
-            record = CKRecord(recordType: type!, recordID: CKRecordID(recordName: name!))
+            record = CKRecord(recordType: type!, recordID: CKRecordID(recordName: name!)) // YIKES this may be wildly out of date
 
             self.updateRecordProperties()
 

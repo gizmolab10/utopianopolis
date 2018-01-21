@@ -106,79 +106,61 @@ var       gFavoritesFont:              ZFont { return .systemFont(ofSize: fontSi
 
 
 var gUserRecordID: String? {
-    get { return getString(   for: kUserRecordID, defaultString: nil) }
-    set { setString(newValue, for: kUserRecordID) }
+    get { return getPreferencesString(   for: kUserRecordID, defaultString: nil) }
+    set { setPreferencesString(newValue, for: kUserRecordID) }
 }
 
 
 var gFavoritesAreVisible: Bool {
-    get { return getBool(   for: kfavoritesVisible, defaultBool: false) }
-    set { setBool(newValue, for: kfavoritesVisible) }
+    get { return getPreferencesBool(   for: kfavoritesVisible, defaultBool: false) }
+    set { setPreferencesBool(newValue, for: kfavoritesVisible) }
 }
 
 
 var gActionsAreVisible: Bool {
-    get { return getBool(   for: kActionsVisible, defaultBool: false) }
-    set { setBool(newValue, for: kActionsVisible) }
+    get { return getPreferencesBool(   for: kActionsVisible, defaultBool: false) }
+    set { setPreferencesBool(newValue, for: kActionsVisible) }
 }
 
 
 var gBackgroundColor: ZColor {
-    get { return   getColor( for: kBackgroundColor, defaultColor: ZColor(hue: 0.6, saturation: 0.1, brightness: kUnselectBrightness, alpha: 1)) }
-    set { setColor(newValue, for: kBackgroundColor) }
+    get { return   getPreferencesColor( for: kBackgroundColor, defaultColor: ZColor(hue: 0.6, saturation: 0.1, brightness: kUnselectBrightness, alpha: 1)) }
+    set { setPreferencesColor(newValue, for: kBackgroundColor) }
 }
 
 
 var gRubberbandColor: ZColor {
-    get { return   getColor( for: kRubberbandColor, defaultColor: ZColor.purple.darker(by: 1.5)) }
-    set { setColor(newValue, for: kRubberbandColor) }
+    get { return   getPreferencesColor( for: kRubberbandColor, defaultColor: ZColor.purple.darker(by: 1.5)) }
+    set { setPreferencesColor(newValue, for: kRubberbandColor) }
 }
 
 
 var gGenericOffset: CGSize {
     get {
-        if let string = UserDefaults.standard.object(forKey: kGenericOffset) as? String {
-            return string.cgSize
-        }
+        let size = CGSize(width: 30.0, height: 2.0)
 
-        let defaultValue = CGSize(width: 30.0, height: 2.0)
-        let       string = NSStringFromSize(defaultValue)
-
-        UserDefaults.standard.set(string, forKey: kGenericOffset)
-        UserDefaults.standard.synchronize()
-
-        return defaultValue
+        return getPreferencesString( for: kGenericOffset, defaultString: NSStringFromSize(size))?.cgSize ?? size
     }
 
     set {
         let string = NSStringFromSize(newValue)
 
-        UserDefaults.standard.set(string, forKey: kGenericOffset)
-        UserDefaults.standard.synchronize()
+        setPreferencesString(string, for: kGenericOffset)
     }
 }
 
 
 var gScrollOffset: CGPoint {
     get {
-        if let string = UserDefaults.standard.object(forKey: kScrollOffset) as? String {
-            return string.cgPoint
-        }
+        let point = CGPoint(x: 0.0, y: 0.0)
 
-        let defaultValue = CGPoint(x: 0.0, y: 0.0)
-        let       string = NSStringFromPoint(defaultValue)
-
-        UserDefaults.standard.set(string, forKey: kScrollOffset)
-        UserDefaults.standard.synchronize()
-
-        return defaultValue
+        return getPreferencesString( for: kScrollOffset, defaultString: NSStringFromPoint(point))?.cgPoint ?? point
     }
 
     set {
         let string = NSStringFromPoint(newValue)
 
-        UserDefaults.standard.set(string, forKey: kScrollOffset)
-        UserDefaults.standard.synchronize()
+        setPreferencesString(string, for: kScrollOffset)
     }
 }
 
@@ -325,18 +307,19 @@ var gDetailsViewIDs: ZDetailsViewID {
 // MARK:- internals
 // MARK:-
 
-func getColor(for key: String, defaultColor: ZColor) -> ZColor {
-    if let data = UserDefaults.standard.object(forKey: key) as? Data, let color = NSKeyedUnarchiver.unarchiveObject(with: data) as? ZColor {
+
+func getPreferencesColor(for key: String, defaultColor: ZColor) -> ZColor {
+    if  let data = UserDefaults.standard.object(forKey: key) as? Data, let color = NSKeyedUnarchiver.unarchiveObject(with: data) as? ZColor {
         return color
     }
 
-    setColor(defaultColor, for: key)
+    setPreferencesColor(defaultColor, for: key)
 
     return defaultColor
 }
 
 
-func setColor(_ iColor: ZColor, for key: String) {
+func setPreferencesColor(_ iColor: ZColor, for key: String) {
     let data: Data = NSKeyedArchiver.archivedData(withRootObject: iColor)
 
     UserDefaults.standard.set(data, forKey: key)
@@ -344,20 +327,20 @@ func setColor(_ iColor: ZColor, for key: String) {
 }
 
 
-func getString(for key: String, defaultString: String?) -> String? {
+func getPreferencesString(for key: String, defaultString: String?) -> String? {
     if  let    string = UserDefaults.standard.object(forKey: key) as? String {
         return string
     }
 
     if  let    string = defaultString {
-        setString(string, for: key)
+        setPreferencesString(string, for: key)
     }
 
     return defaultString
 }
 
 
-func setString(_ iString: String?, for key: String) {
+func setPreferencesString(_ iString: String?, for key: String) {
     if let string = iString {
         UserDefaults.standard.set(string, forKey: key)
         UserDefaults.standard.synchronize()
@@ -365,18 +348,18 @@ func setString(_ iString: String?, for key: String) {
 }
 
 
-func getBool(for key: String, defaultBool: Bool) -> Bool {
+func getPreferencesBool(for key: String, defaultBool: Bool) -> Bool {
     if  let value: NSNumber = UserDefaults.standard.object(forKey: key) as? NSNumber {
         return value.boolValue
     }
 
-    setBool(defaultBool, for: key)
+    setPreferencesBool(defaultBool, for: key)
 
     return defaultBool
 }
 
 
-func setBool(_ iBool: Bool, for key: String) {
+func setPreferencesBool(_ iBool: Bool, for key: String) {
     UserDefaults.standard.set(iBool, forKey: key)
     UserDefaults.standard.synchronize()
 }

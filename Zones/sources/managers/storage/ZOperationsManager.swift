@@ -19,10 +19,10 @@ enum ZOperationID: Int {
     case refetch    // user defaults list of record ids
     case root
     case file
+    case manifest   // show children
 
     // continue
 
-    case manifest   // zones which show children
     case here       // needs manifest
     case children
     case fetch      // after children so favorite targets resolve properly

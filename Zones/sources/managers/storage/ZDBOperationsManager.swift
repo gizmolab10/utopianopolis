@@ -83,7 +83,7 @@ class ZDBOperationsManager: ZOperationsManager {
     func      save(_ onCompletion: @escaping BooleanClosure) { batch(.save,      onCompletion) }
     func      root(_ onCompletion: @escaping BooleanClosure) { batch(.root,      onCompletion) }
     func      sync(_ onCompletion: @escaping BooleanClosure) { batch(.sync,      onCompletion) }
-    func     fetch(_ onCompletion: @escaping BooleanClosure) { batch(.fetch,     onCompletion) }
+//  func     fetch(_ onCompletion: @escaping BooleanClosure) { batch(.fetch,     onCompletion) }
     func    travel(_ onCompletion: @escaping BooleanClosure) { batch(.travel,    onCompletion) }
     func   parents(_ onCompletion: @escaping BooleanClosure) { batch(.parents,   onCompletion) }
     func  families(_ onCompletion: @escaping BooleanClosure) { batch(.families,  onCompletion) }
@@ -116,7 +116,7 @@ class ZDBOperationsManager: ZOperationsManager {
     func   pParents(_ onCompletion: @escaping Closure) { setupAndRun([                    .parents,                                   .traits, .remember]) { onCompletion() } }
     func  pFamilies(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents,                .children,         .traits, .remember]) { onCompletion() } }
     func pBookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks, .fetch,                   .save,                    .traits, .remember]) { onCompletion() } }
-    func     pFetch(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch,                                             .traits, .remember]) { onCompletion() } }
+//  func     pFetch(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch,                                             .traits, .remember]) { onCompletion() } }
     func  pChildren(_ onCompletion: @escaping Closure) { setupAndRun([.manifest,                                   .children,         .traits, .remember]) { onCompletion() } }
 
 
@@ -196,7 +196,7 @@ class ZDBOperationsManager: ZOperationsManager {
         case .save:      pSave      { onCompletion() }
         case .root:      pRoot      { onCompletion() }
         case .sync:      pSync      { onCompletion() }
-        case .fetch:     pFetch     { onCompletion() }
+        case .fetch:  /* pFetch     { onCompletion() } */ break
         case .travel:    pTravel    { onCompletion() }
         case .parents:   pParents   { onCompletion() }
         case .children:  pChildren  { onCompletion() }
@@ -226,15 +226,15 @@ class ZDBOperationsManager: ZOperationsManager {
         case .manifest:             cloudManager.fetchManifest           (               cloudCallback)
         case .children:             cloudManager.fetchChildren           (               cloudCallback)
         case .parents:              cloudManager.fetchParents            (               cloudCallback)
+        case .refetch:              cloudManager.refetchZones            (               cloudCallback)
         case .traits:               cloudManager.fetchTraits             (               cloudCallback)
         case .unsubscribe:          cloudManager.unsubscribe             (               cloudCallback)
         case .undelete:             cloudManager.undeleteAll             (               cloudCallback)
         case .emptyTrash:           cloudManager.emptyTrash              (               cloudCallback)
+        case .fetch:                cloudManager.fetchZones              (               cloudCallback)
         case .subscribe:            cloudManager.subscribe               (               cloudCallback)
         case .fetchlost:            cloudManager.fetchLost               (               cloudCallback)
-        case .refetch:              cloudManager.refetch                 (               cloudCallback)
         case .remember:             cloudManager.remember                (               cloudCallback)
-        case .fetch:                cloudManager.fetch                   (               cloudCallback)
         case .merge:                cloudManager.merge                   (               cloudCallback)
         case .save:                 cloudManager.save                    (               cloudCallback)
         default: break

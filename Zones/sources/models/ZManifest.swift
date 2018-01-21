@@ -28,7 +28,11 @@ class ZManifest: ZRecord {
 
     var hereZone: Zone {
         get {
-            if  _hereZone == nil && here != nil {
+            if  _hereZone == nil {
+                if  here  == nil {
+                    here   = kRootName
+                }
+
                 _hereZone  = Zone(record: CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: here!)), storageMode: manifestMode)
             }
 

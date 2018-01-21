@@ -141,15 +141,6 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func hasZRecord(_ iRecord: ZRecord, forAnyOf iStates: [ZRecordState]) -> Bool {
-        if let ckRecord = iRecord.record {
-            return hasCKRecord(ckRecord, forAnyOf: iStates)
-        }
-
-        return false
-    }
-
-
     func states(for iRecord: CKRecord) -> [ZRecordState] {
         let   name = iRecord.recordID.recordName
         var states = [ZRecordState] ()
@@ -164,19 +155,28 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func hasCKRecordID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> Bool {
-        var found = false
+    func hasZRecord(_ iRecord: ZRecord, forAnyOf iStates: [ZRecordState]) -> Bool {
+        if let ckRecord = iRecord.record {
+            return registeredCKRecord(ckRecord, forAnyOf: iStates) != nil
+        }
 
-        applyToCKRecordByRecordID(iRecordID, forAnyOf: iStates, onEach: { (state: ZRecordState, record: CKRecord) in
-            found = true
-        })
+        return false
+    }
+
+
+    func registeredCKRecord(for iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> CKRecord? {
+        var found: CKRecord? = nil
+
+        applyToCKRecordByRecordID(iRecordID, forAnyOf: iStates) { (state: ZRecordState, record: CKRecord) in
+            found = record
+        }
 
         return found
     }
 
 
-    func hasCKRecord(_ iRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> Bool {
-        return hasCKRecordID(iRecord.recordID, forAnyOf: iStates)
+    func registeredCKRecord(_ iRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> CKRecord? {
+        return registeredCKRecord(for: iRecord.recordID, forAnyOf: iStates)
     }
 
 
@@ -199,8 +199,17 @@ class ZRecordsManager: NSObject {
         var wasAdded = false
 
         for state in states {
-            if !hasCKRecord(iRecord, forAnyOf: [state]) {
-                var records = ckRecordsForState(state)
+            if  let  record  = registeredCKRecord(iRecord, forAnyOf: [state]) {
+                if   record != iRecord {
+                    var name =  record.decoratedName
+                    if  name == "" {
+                        name = iRecord.decoratedName
+                    }
+
+                    columnarReport("ADDING TWICE!", name + " (for: \(state))")
+                }
+            } else {
+                var records  = ckRecordsForState(state)
 
                 if !records.contains(iRecord) {
                     records.append(iRecord)
@@ -431,6 +440,17 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func hasMatch(with states: [ZRecordState]) -> Bool {
+        var found = false
+
+        applyToAllCKRecordsWithAnyMatchingStates(states) { iState, iCKRecord in
+            found = true
+        }
+
+        return found
+    }
+
+
     func childrenRefsWithMatchingStates(_ states: [ZRecordState], batchSize: Int) -> [CKReference] {
         var references = [CKReference] ()
         var  expecting = 0
@@ -498,9 +518,9 @@ class ZRecordsManager: NSObject {
 
     func stringForZones(_ zones: [Zone]?) -> String {
         return zones?.apply()  { object -> (String?) in
-            if  let    zone  = object as? Zone {
-                let    name  = zone.decoratedName
-                if     name != "" {
+            if  let zone  = object as? Zone {
+                let name  = zone.decoratedName
+                if  name != "" {
                     return name
                 }
             }
@@ -600,16 +620,18 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func unregisterZRecord(_ zRecord: ZRecord?) {
-        clearAllStatesForCKRecord(zRecord?.record)
+    func unregisterCKRecord(_ ckRecord: CKRecord?) {
+        clearAllStatesForCKRecord(ckRecord)
 
-        if  let name = zRecord?.recordName {
+        if let name = ckRecord?.recordID.recordName {
             zRecordsByID[name] = nil
         }
+    }
 
-        if  let       bookmark = zRecord as? Zone, bookmark.isBookmark {
-            gBookmarksManager.unregisterBookmark(bookmark)
-        }
+
+    func unregisterZRecord(_ zRecord: ZRecord?) {
+        unregisterCKRecord(zRecord?.record)
+        gBookmarksManager.unregisterBookmark(zRecord as? Zone)
     }
 
 
@@ -641,9 +663,9 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func maybeZoneForRecordName(_ recordName: String?) -> Zone? {
+    func maybeZRecordForRecordName(_ recordName: String?) -> ZRecord? {
         if  let id = recordName {
-            return zRecordsByID[id] as? Zone
+            return zRecordsByID[id]
         }
 
         return nil
@@ -651,7 +673,7 @@ class ZRecordsManager: NSObject {
 
 
     func maybeZoneForRecordID(_ recordID: CKRecordID?) -> Zone? {
-        return maybeZoneForRecordName(recordID?.recordName)
+        return maybeZRecordForRecordName(recordID?.recordName) as? Zone
     }
 
 
@@ -682,10 +704,10 @@ class ZRecordsManager: NSObject {
     func zoneForCKRecord(_ ckRecord: CKRecord) -> Zone {
         var     zone = maybeZoneForCKRecord(ckRecord)
 
-        if  let    z = zone {
-            z.record = ckRecord
+        if let z = zone {
+            z.useBest(record: ckRecord)
         } else {
-            zone     = Zone(record: ckRecord, storageMode: storageMode)
+            zone = Zone(record: ckRecord, storageMode: storageMode)
 
             zone?.maybeNeedFetch()
         }
