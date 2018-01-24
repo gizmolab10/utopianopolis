@@ -16,14 +16,14 @@ import Foundation
 #endif
 
 
-class ZGenericTableController: ZGenericController, ZTableViewDelegate, ZTableViewDataSource {
+class ZGenericTableController: ZGenericController, NSTableViewDelegate, NSTableViewDataSource {
 
     
     @IBOutlet var tableHeight: NSLayoutConstraint?
-    @IBOutlet var   tableView: ZTableView!
+    @IBOutlet var   tableView: NSTableView!
 
 
-    func numberOfRows(in tableView: ZTableView) -> Int { return 1 }
+    func numberOfRows(in tableView: NSTableView) -> Int { return 1 }
 
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {

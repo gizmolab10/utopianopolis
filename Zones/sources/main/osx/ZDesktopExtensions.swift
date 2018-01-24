@@ -43,6 +43,7 @@ public typealias ZController                = NSViewController
 public typealias ZEventFlags                = NSEventModifierFlags
 public typealias ZSearchField               = NSSearchField
 public typealias ZApplication               = NSApplication
+public typealias ZTableRowView              = NSTableRowView
 public typealias ZTableCellView             = NSTableCellView
 public typealias ZSegmentedControl          = NSSegmentedControl
 public typealias ZGestureRecognizer         = NSGestureRecognizer

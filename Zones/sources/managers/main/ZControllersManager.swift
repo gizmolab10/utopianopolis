@@ -62,8 +62,9 @@ class ZControllersManager: NSObject {
     }
 
 
-    func controllerForID(_ iID: ZControllerID) -> ZGenericController? {
-        if let object = signalObjectsByControllerID[iID] {
+    func controllerForID(_ iID: ZControllerID?) -> ZGenericController? {
+        if  let identifier = iID,
+            let     object = signalObjectsByControllerID[identifier] {
             return object.controller
         }
 

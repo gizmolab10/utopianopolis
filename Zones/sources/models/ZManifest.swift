@@ -40,20 +40,19 @@ class ZManifest: ZRecord {
         }
 
         set {
-            if  _hereZone != newValue {
-                _hereZone  = newValue
-            }
+            if  _hereZone     != newValue {
+                _hereZone      = newValue
+                if  let   name = _hereZone?.recordName {
+                    here       = name
 
-            if  let   name = _hereZone?.recordName {
-                here       = name
+                    maybeNeedSave()
+                }
 
-                maybeNeedSave()
-            }
+                _hereZone?.maybeNeedRoot()
 
-            _hereZone?.maybeNeedRoot()
-
-            if  manifestMode == _hereZone?.storageMode {
-                gFavoritesManager.updateCurrentFavorite() // so user will know
+                if  manifestMode == _hereZone?.storageMode {
+                    gFavoritesManager.updateCurrentFavorite() // so user will know
+                }
             }
         }
     }

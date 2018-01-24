@@ -32,11 +32,11 @@ class ZStackableView: ZView {
         #if os(OSX)
             if let kind = identifier {
                 switch kind {
-                case        "help": return .Help
                 case "preferences": return .Preferences
                 case "information": return .Information
-                case   "favorites": return .Favorites
-                case       "cloud": return .Cloud
+                case   "shortcuts": return .Shortcuts
+                case       "debug": return .Debug
+                case       "tools": return .Tools
                 case           nil: return .All
                 default:            return .All
                 }
