@@ -652,14 +652,7 @@ class ZRecordsManager: NSObject {
 
 
     func maybeZRecordForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
-        var   record = maybeZoneForRecordID(recordID) as ZRecord?
-        let manifest = gRemoteStoresManager.manifest(for: storageMode)
-
-        if  record  == nil && manifest.recordName == recordID?.recordName {
-            record   = manifest
-        }
-
-        return record
+        return maybeZoneForRecordID(recordID) as ZRecord?
     }
 
 

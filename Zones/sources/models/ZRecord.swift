@@ -108,23 +108,14 @@ class ZRecord: NSObject {
         return nil
     }
 
-
-    var manifest: ZManifest? {
-        if let mode = storageMode {
-            return gRemoteStoresManager.manifest(for: mode)
-        }
-
-        return nil
-    }
-
-
+    
     var showChildren: Bool  {
         var show = false
 
         if isRootOfFavorites {
             show = true
-        } else if let m = manifest {
-            show    = m.isExpanded(self.recordName)
+        } else {
+            show = isExpanded(self.recordName)
         }
 
         return show

@@ -164,42 +164,40 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     
     
     func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
-        
+
         ///////////////////////////////////
         // only called by gesture system //
         ///////////////////////////////////
 
-        if gManifest.alreadyExists {
-            if  gWorkMode        != .graphMode {
-                #if os(OSX)
-                    gSearchManager.exitSearchMode()
-                #endif
-            } else if let gesture = iGesture as? ZKeyPanGestureRecognizer,
-                let         flags = gesture.modifiers {
-                let      location = gesture.location(in: editorView)
-                let         state = gesture.state
+        if  gWorkMode        != .graphMode {
+            #if os(OSX)
+                gSearchManager.exitSearchMode()
+            #endif
+        } else if let gesture = iGesture as? ZKeyPanGestureRecognizer,
+            let         flags = gesture.modifiers {
+            let      location = gesture.location(in: editorView)
+            let         state = gesture.state
 
-                if isEditingText(at: location) {
-                    restartGestureRecognition()     // let text editor consume the gesture
-                } else if flags.isCommand {
-                    scrollEvent(move: state == .changed, to: location)
-                } else if gIsDragging {
-                    dragMaybeStopEvent(iGesture)
-                } else if state == .changed {       // changed
-                    rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
-                } else if state != .began {         // ended, cancelled or failed
-                    rubberbandUpdate(nil)
-                    signalFor(nil, regarding: .preferences) // so color well gets updated
-                } else if let dot = detectDot(iGesture) {
-                    if  !dot.isToggle {
-                        dragStartEvent(dot, iGesture)
-                    } else if let zone = dot.widgetZone {
-                        cleanupAfterDrag()
-                        gEditingManager.toggleDotActionOnZone(zone)   // no dragging
-                    }
-                } else {                            // began
-                    rubberbandStartEvent(location, iGesture)
+            if isEditingText(at: location) {
+                restartGestureRecognition()     // let text editor consume the gesture
+            } else if flags.isCommand {
+                scrollEvent(move: state == .changed, to: location)
+            } else if gIsDragging {
+                dragMaybeStopEvent(iGesture)
+            } else if state == .changed {       // changed
+                rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
+            } else if state != .began {         // ended, cancelled or failed
+                rubberbandUpdate(nil)
+                signalFor(nil, regarding: .preferences) // so color well gets updated
+            } else if let dot = detectDot(iGesture) {
+                if  !dot.isToggle {
+                    dragStartEvent(dot, iGesture)
+                } else if let zone = dot.widgetZone {
+                    cleanupAfterDrag()
+                    gEditingManager.toggleDotActionOnZone(zone)   // no dragging
                 }
+            } else {                            // began
+                rubberbandStartEvent(location, iGesture)
             }
         }
     }
@@ -211,7 +209,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         // called by controller and gesture system //
         /////////////////////////////////////////////
         
-        if  let             gesture = iGesture as? ZKeyClickGestureRecognizer, gManifest.alreadyExists { // avoid crash for click event before manifest is fetched
+        if  let             gesture = iGesture as? ZKeyClickGestureRecognizer { // avoid crash for click event before manifest is fetched
             let          textWidget = gEditedTextWidget
 
             if gesture.modifiers?.contains(.command) ?? false, let zone = textWidget?.widgetZone, let link = zone.hyperLink, link != kNullLink {
@@ -570,9 +568,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         if let mode = iMode {
             switch mode {
             case .favoritesMode: return gFavoritesManager.rootZone
-            default:
-                let    manifest = gRemoteStoresManager.manifest(for: mode)
-                return manifest.hereZone
+            default:             return gHere
             }
         }
 

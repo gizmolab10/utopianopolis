@@ -180,7 +180,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         clear()
         zone?.grab()
         zone?.needChildren()
-        zone?.displayChildren()
+        displayChildren(in: zone)
         signalFor(nil, regarding: .redraw)
 
         gDBOperationsManager.sync { iSame in

@@ -83,8 +83,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         delegate                   = self
         isBordered                 = false
         textAlignment              = .left
-        backgroundColor            = gClearColor
-        zlayer.backgroundColor     = gClearColor.cgColor
+        backgroundColor            = kClearColor
+        zlayer.backgroundColor     = kClearColor.cgColor
         font                       = preferredFont
 
         #if os(iOS)
@@ -227,7 +227,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 self.signalFor(iAssignee, regarding: .datum)
             }
 
-            prepareUndoForTextChange(gUndoManager) {
+            prepareUndoForTextChange(kUndoManager) {
                 self.captureText(force: true)
                 self.updateGUI()
             }

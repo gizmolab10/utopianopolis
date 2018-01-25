@@ -45,7 +45,7 @@ class ZEditingManager: NSObject {
             return w.undoManager!
         }
 
-        return gUndoManager
+        return kUndoManager
     }
 
 
@@ -178,7 +178,7 @@ class ZEditingManager: NSObject {
                 case "=":      gTravelManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawSyncRedraw() }
                 case kTab:     addNext(containing: isOption) { iChild in iChild.edit() }
                 case ",", ".": gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
-                case "z":      if isCommand { if isShift { gUndoManager.redo() } else { gUndoManager.undo() } }
+                case "z":      if isCommand { if isShift { kUndoManager.redo() } else { kUndoManager.undo() } }
                 case kSpace:   if isOption || isWindow || isControl { addIdea() }
                 case kBackspace,
                      kDelete:  if isOption || isWindow { delete(permanently: isCommand && isControl && isOption && isWindow, preserveChildren: !isCommand && !isControl && isOption && isWindow) }
@@ -510,7 +510,7 @@ class ZEditingManager: NSObject {
             gDBOperationsManager.families { iSame in
                 if  let parent = current.parentZone {
                     parent.traverseAllAncestors { iAncestor in
-                        iAncestor.displayChildren()
+                        displayChildren(in: iAncestor)
                     }
 
                     self.signalFor(nil, regarding: .redraw)
@@ -598,7 +598,7 @@ class ZEditingManager: NSObject {
 
     func revealParentAndSiblingsOf(_ iZone: Zone, onCompletion: BooleanClosure?) {
         if  let parent = iZone.parentZone {
-            parent.displayChildren()
+            displayChildren(in: parent)
 
             if  parent.hasMissingChildren() {
                 parent.needChildren()
@@ -628,7 +628,7 @@ class ZEditingManager: NSObject {
         var needRoot = true
 
         descendent.traverseAllAncestors { iParent in
-            iParent.displayChildren()
+            displayChildren(in: iParent)
 
             if iParent.hasMissingChildren() {
                 iParent.needChildren() // need this to show "minimal flesh" on graph
@@ -653,7 +653,7 @@ class ZEditingManager: NSObject {
                         if !gotThere && !iParent.alreadyExists && iParent.parentZone != nil { // reached an orphan that has not yet been fetched
                             self.recursivelyRevealSiblings(iParent, untilReaching: iAncestor, onCompletion: onCompletion)
                         } else {
-                            iAncestor.displayChildren()
+                            displayChildren(in: iAncestor)
                             FOREGROUND(after: 0.1) {
                                 onCompletion?(iAncestor)
                             }
@@ -705,7 +705,7 @@ class ZEditingManager: NSObject {
             // COLLAPSE OUTWARD INTO PARENT //
             //////////////////////////////////
 
-            zone.hideChildren()
+            hideChildren(in: zone)
 
             revealParentAndSiblingsOf(zone) { iCloudCalled in
                 if let  parent = zone.parentZone, parent != zone {
@@ -731,9 +731,9 @@ class ZEditingManager: NSObject {
                 zone.traverseAllProgeny { iChild in
                     if           !iChild.isBookmark {
                         if        iChild.level >= goal && !show {
-                                  iChild.hideChildren()
+                                  hideChildren(in: iChild)
                         } else if iChild.level  < goal && show {
-                                  iChild.displayChildren()
+                                  displayChildren(in: iChild)
                         }
                     }
                 }
@@ -825,7 +825,7 @@ class ZEditingManager: NSObject {
             if  zone  == gHere {
                 gHere  = parent
 
-                parent.displayChildren()
+                displayChildren(in: parent)
             }
 
             var index   = zone.siblingIndex
@@ -1013,7 +1013,7 @@ class ZEditingManager: NSObject {
             } else {
                 if  zone.isInTrash || permanently {
                     zone.traverseAllProgeny { iZone in
-                        iZone.hideChildren()                    // remove from manifest
+                        hideChildren(in: iZone)                    // remove from manifest
                         iZone.needDestroy()
                     }
                 } else {
@@ -1127,7 +1127,7 @@ class ZEditingManager: NSObject {
                         self.revealSiblingsOf(zone, untilReaching: p)
                     }
                 } else {
-                    p.displayChildren()
+                    displayChildren(in: p)
                     p.needChildren()
 
                     gDBOperationsManager.children(.restore) { iSame in
@@ -1193,7 +1193,7 @@ class ZEditingManager: NSObject {
             gTravelManager.maybeTravelThrough(zone, onCompletion: onCompletion)
         } else {
             zone.needChildren()
-            zone.displayChildren()
+            displayChildren(in: zone)
             grabChild(of: zone)
             signalFor(nil, regarding: .data)
 
@@ -1276,7 +1276,7 @@ class ZEditingManager: NSObject {
 
 
     func moveZones(_ zones: [Zone], into: Zone, at iIndex: Int?, orphan: Bool, onCompletion: Closure?) {
-        into.displayChildren()
+        displayChildren(in: into)
         into.needChildren()
 
         gDBOperationsManager.children(.restore) { iSame in
@@ -1313,7 +1313,7 @@ class ZEditingManager: NSObject {
                 onCompletion?(child)
             }
 
-            parent.displayChildren()
+            displayChildren(in: parent)
             gSelectionManager.stopCurrentEdit()
 
             if parent.count > 0 || parent.fetchableCount == 0 {
@@ -1452,7 +1452,7 @@ class ZEditingManager: NSObject {
                     let    into = parent != nil ? honorFormerParents ? parent! : zone : zone
 
                     pasteMe.orphan()
-                    into.displayChildren()
+                    displayChildren(in: into)
                     into.addAndReorderChild(pasteMe, at: at)
                     pasteMe.recursivelyApplyMode(into.storageMode)
                     forUndo.append(pasteMe)
@@ -1516,7 +1516,7 @@ class ZEditingManager: NSObject {
 
         for zone in grabs {
             zone.needChildren()
-            zone.displayChildren()
+            displayChildren(in: zone)
         }
 
         gDBOperationsManager.children(.all) { iSame in // to make sure all progeny are acted upon
@@ -1690,7 +1690,7 @@ class ZEditingManager: NSObject {
             let toTrash = into.isInTrash || into.isTrash
 
             if !isCommand {
-                into.displayChildren()
+                displayChildren(in: into)
             }
 
             into.maybeNeedChildren()
@@ -1760,7 +1760,7 @@ class ZEditingManager: NSObject {
             }
         }
 
-        into.displayChildren()
+        displayChildren(in: into)
         into.needChildren()
 
         gDBOperationsManager.children(.restore) { iSame in

@@ -85,7 +85,7 @@ extension NSObject {
 
 
     func UNDO<TargetType : AnyObject>(_ target: TargetType, handler: @escaping (TargetType) -> Swift.Void) {
-        gUndoManager.registerUndo(withTarget:target, handler: { iTarget in
+        kUndoManager.registerUndo(withTarget:target, handler: { iTarget in
             handler(iTarget)
         })
     }

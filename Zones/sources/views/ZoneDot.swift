@@ -126,7 +126,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         }
 
         #if os(iOS)
-            backgroundColor = gClearColor
+            backgroundColor = kClearColor
         #endif
         
         updateConstraints()

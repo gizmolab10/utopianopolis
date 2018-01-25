@@ -68,6 +68,7 @@ class ZSelectionManager: NSObject {
     var   currentlyEditingZone : Zone? = nil
     var isEditingStateChanging = false
     var         pasteableZones = [Zone: (Zone?, Int?)] ()
+    var           currentGrabs = [Zone] ()
 
 
     var snapshot : ZSnapshot {
@@ -77,12 +78,6 @@ class ZSelectionManager: NSObject {
         snap        .here = gHere
 
         return snap
-    }
-
-
-    var currentGrabs: [Zone] {
-        get { return gManifest.currentGrabs            }
-        set {        gManifest.currentGrabs = newValue }
     }
 
 

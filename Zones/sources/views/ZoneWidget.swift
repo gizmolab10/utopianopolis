@@ -75,7 +75,7 @@ class ZoneWidget: ZView {
         isInMain = isMain
 
         #if os(iOS)
-            backgroundColor = gClearColor
+            backgroundColor = kClearColor
         #endif
 
             gWidgetsManager.registerWidget(self)

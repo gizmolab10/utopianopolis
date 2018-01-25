@@ -18,20 +18,9 @@ class ZCloudManager: ZRecordsManager {
     var   cloudZonesByID = [CKRecordZoneID : CKRecordZone] ()
     var         database :  CKDatabase? { return gRemoteStoresManager.databaseForMode(storageMode) }
     var   refetchingName :       String { return "remember.\(storageMode.rawValue)" }
-    var        _manifest :   ZManifest? = nil
     var currentOperation : CKOperation? = nil
     var currentPredicate : NSPredicate? = nil
     var    isRemembering :         Bool = false
-
-
-
-    var manifest : ZManifest {
-        if  _manifest == nil {
-            _manifest = gRemoteStoresManager.manifest(for: storageMode)
-        }
-
-        return _manifest!
-    }
 
 
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
@@ -399,7 +388,7 @@ class ZCloudManager: ZRecordsManager {
                 }
 
                 scan(self.rootZone)
-                scan(self.manifest.hereZone)
+                scan(gHere)
                 scan(gFavoritesManager.rootZone)
 
                 self.columnarReport("REMEMBER (\(memorables.count))", "\(self.storageMode.rawValue)")
@@ -643,38 +632,6 @@ class ZCloudManager: ZRecordsManager {
             start(operation)
         } else {
             onCompletion?([])
-        }
-    }
-
-
-    func fetchManifest(_ onCompletion: IntClosure?) {
-        if  manifest.alreadyExists || manifest.needsMerge || manifest.needsSave {
-            onCompletion?(0)
-        } else {
-            let recordID = manifest.record.recordID
-            let     mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
-
-            mine.assureRecordExists(withRecordID: recordID, recordType: kManifestType) { (iManifestRecord: CKRecord?) in
-                if  let m = iManifestRecord {
-                    self.manifest  .record = m
-
-                    if  let hereRecordName = self.manifest.here,
-                        let           mode = self.manifest.manifestMode {
-                        let         hereID = CKRecordID(recordName: hereRecordName)
-                        let   cloudManager = gRemoteStoresManager.cloudManagerFor(mode)
-
-                        cloudManager.assureRecordExists(withRecordID: hereID, recordType: kZoneType) { iCKRecord in
-                            if  let hereRecord = iCKRecord {
-                                self.manifest._hereZone = cloudManager.zoneForCKRecord(hereRecord)
-                            }
-
-                            onCompletion?(0)
-                        }
-                    } else {
-                        onCompletion?(0)
-                    }
-                }
-            }
         }
     }
 
@@ -943,23 +900,23 @@ class ZCloudManager: ZRecordsManager {
 
     func establishHere(_ onCompletion: IntClosure?) {
         let rootCompletion = {
-            self.manifest.hereZone = gRoot!
+            gHere = gRoot!
 
             onCompletion?(0)
         }
 
-        if manifest.here == nil { // first time user
+        if gHereRecordName == kRootName { // in case it is first time for user
             rootCompletion()
         } else {
-            let recordID = CKRecordID(recordName: manifest.here!)
+            let recordID = CKRecordID(recordName: gHereRecordName)
 
             self.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { (iHereRecord: CKRecord?) in
                 if  iHereRecord == nil || iHereRecord?[kZoneName] == nil {
                     rootCompletion()
                 } else {
-                    let               here = self.zoneForCKRecord(iHereRecord!)
-                    here           .record = iHereRecord
-                    self.manifest.hereZone = here
+                    let    here = self.zoneForCKRecord(iHereRecord!)
+                    here.record = iHereRecord
+                    gHere       = here
 
                     here.maybeNeedRoot()
                     onCompletion?(0)

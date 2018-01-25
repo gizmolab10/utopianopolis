@@ -29,7 +29,7 @@ class ZGenericController: ZController {
         gControllersManager.register(self, iID: controllerID) { object, kind in
             self.view.zlayer.backgroundColor = gBackgroundColor.cgColor
 
-            if  kind != .error && gManifest.alreadyExists {
+            if  kind != .error {
                 self.handleSignal(object, iKind: kind)
             }
         }

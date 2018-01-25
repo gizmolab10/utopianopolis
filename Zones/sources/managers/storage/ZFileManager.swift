@@ -46,10 +46,9 @@ class ZFileManager: NSObject {
 
     func restore(from storageMode: ZStorageMode) {
         if gFileMode == .local && storageMode != .favoritesMode {
-            if let raw = NSDictionary(contentsOf: pathToFile(for: storageMode)) {
-                let      manifest = gRemoteStoresManager.manifest(for: storageMode)
-                let          root = Zone(dict: raw as! ZStorageDict) // broken, ignores mode
-                manifest.hereZone = root
+            if  let  raw = NSDictionary(contentsOf: pathToFile(for: storageMode)) {
+                let root = Zone(dict: raw as! ZStorageDict) // broken, ignores mode
+                gHere    = root
 
                 gRemoteStoresManager.recordsManagerFor(storageMode)?.rootZone = root
 

@@ -18,11 +18,10 @@ enum ZOperationID: Int {
     case cloud
     case root
     case file
-    case manifest   // show children
 
     // continue
 
-    case here       // needs manifest
+    case here
     case children
     case fetch      // after children so favorite targets resolve properly
     case parents    // after fetch so colors resolve properly

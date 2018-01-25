@@ -103,21 +103,21 @@ class ZDBOperationsManager: ZOperationsManager {
 
 
     func     unHang()                                  {                                                                                                     onCloudResponse?(0) }
-    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .onboard, to: .manifest,                                                       onCompletion) }
-    func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,    to: .traits,                                                         onCompletion) }
-    func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .save,    to: .subscribe,                                                      onCompletion) }
+    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .onboard,  to: .file,                                                          onCompletion) }
+    func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,     to: .traits,                                                        onCompletion) }
+    func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .save,     to: .subscribe,                                                     onCompletion) }
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash,                                                             .remember]) { onCompletion() } }
     func  fetchLost(_ onCompletion: @escaping Closure) { setupAndRun([.fetchlost,                           .save, .children,                  .remember]) { onCompletion() } }
     func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete,  .fetch, .parents,         .save, .children,         .traits, .remember]) { onCompletion() } }
     func      pSave(_ onCompletion: @escaping Closure) { setupAndRun([                                      .save                                       ]) { onCompletion() } }
     func      pRoot(_ onCompletion: @escaping Closure) { setupAndRun([.root,                                .save, .children,         .traits, .remember]) { onCompletion() } }
     func      pSync(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents, .merge, .save, .children,         .traits, .remember]) { onCompletion() } }
-    func    pTravel(_ onCompletion: @escaping Closure) { setupAndRun([.root,   .manifest, .parents,                .children, .fetch, .traits, .remember]) { onCompletion() } }
+    func    pTravel(_ onCompletion: @escaping Closure) { setupAndRun([.root,              .parents,                .children, .fetch, .traits, .remember]) { onCompletion() } }
     func   pParents(_ onCompletion: @escaping Closure) { setupAndRun([                    .parents,                                   .traits, .remember]) { onCompletion() } }
     func  pFamilies(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents,                .children,         .traits, .remember]) { onCompletion() } }
     func pBookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks, .fetch,                   .save,                    .traits, .remember]) { onCompletion() } }
 //  func     pFetch(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch,                                             .traits, .remember]) { onCompletion() } }
-    func  pChildren(_ onCompletion: @escaping Closure) { setupAndRun([.manifest,                                   .children,         .traits, .remember]) { onCompletion() } }
+    func  pChildren(_ onCompletion: @escaping Closure) { setupAndRun([                                              .children,         .traits, .remember]) { onCompletion() } }
 
 
     // MARK:- batches
@@ -215,28 +215,27 @@ class ZDBOperationsManager: ZOperationsManager {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
         switch identifier { // outer switch
-        case .file:                 gFileManager         .restore  (from: currentMode!); cloudCallback?(0)
-        case .onboard:              gOnboardingManager   .onboard        (               cloudCallback!)
-        case .here:                 remote               .establishHere  (currentMode!,  cloudCallback)
-        case .root:                 remote               .establishRoot  (currentMode!,  cloudCallback)
-        default: let cloudManager = remote               .cloudManagerFor(currentMode!)
+        case .file:                 gFileManager      .restore  (from: currentMode!); cloudCallback?(0)
+        case .onboard:              gOnboardingManager.onboard        (               cloudCallback!)
+        case .root:                 remote            .establishRoot  (currentMode!,  cloudCallback)
+        default: let cloudManager = remote            .cloudManagerFor(currentMode!)
         switch identifier { // inner switch
-        case .cloud:                cloudManager.fetchCloudZones         (               cloudCallback)
-        case .bookmarks:            cloudManager.fetchBookmarks          (               cloudCallback)
-        case .manifest:             cloudManager.fetchManifest           (               cloudCallback)
-        case .children:             cloudManager.fetchChildren           (               cloudCallback)
-        case .parents:              cloudManager.fetchParents            (               cloudCallback)
-        case .refetch:              cloudManager.refetchZones            (               cloudCallback)
-        case .traits:               cloudManager.fetchTraits             (               cloudCallback)
-        case .unsubscribe:          cloudManager.unsubscribe             (               cloudCallback)
-        case .undelete:             cloudManager.undeleteAll             (               cloudCallback)
-        case .emptyTrash:           cloudManager.emptyTrash              (               cloudCallback)
-        case .fetch:                cloudManager.fetchZones              (               cloudCallback)
-        case .subscribe:            cloudManager.subscribe               (               cloudCallback)
-        case .fetchlost:            cloudManager.fetchLost               (               cloudCallback)
-        case .remember:             cloudManager.remember                (               cloudCallback)
-        case .merge:                cloudManager.merge                   (               cloudCallback)
-        case .save:                 cloudManager.save                    (               cloudCallback)
+        case .cloud:                cloudManager.fetchCloudZones      (               cloudCallback)
+        case .bookmarks:            cloudManager.fetchBookmarks       (               cloudCallback)
+        case .children:             cloudManager.fetchChildren        (               cloudCallback)
+        case .here:                 cloudManager.establishHere        (               cloudCallback)
+        case .parents:              cloudManager.fetchParents         (               cloudCallback)
+        case .refetch:              cloudManager.refetchZones         (               cloudCallback)
+        case .traits:               cloudManager.fetchTraits          (               cloudCallback)
+        case .unsubscribe:          cloudManager.unsubscribe          (               cloudCallback)
+        case .undelete:             cloudManager.undeleteAll          (               cloudCallback)
+        case .emptyTrash:           cloudManager.emptyTrash           (               cloudCallback)
+        case .fetch:                cloudManager.fetchZones           (               cloudCallback)
+        case .subscribe:            cloudManager.subscribe            (               cloudCallback)
+        case .fetchlost:            cloudManager.fetchLost            (               cloudCallback)
+        case .remember:             cloudManager.remember             (               cloudCallback)
+        case .merge:                cloudManager.merge                (               cloudCallback)
+        case .save:                 cloudManager.save                 (               cloudCallback)
         default: break
             }               // inner switch
         }                   // outer switch
@@ -246,8 +245,8 @@ class ZDBOperationsManager: ZOperationsManager {
 
 
     override func performBlock(for operationID: ZOperationID, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {
-        let  forCurrentStorageModeOnly = [.completion, .onboard ].contains(operationID)
-        let            forMineModeOnly = [.bookmarks            ].contains(operationID)
+        let  forCurrentStorageModeOnly = [.completion, .onboard, .here].contains(operationID)
+        let            forMineModeOnly = [.bookmarks                  ].contains(operationID)
         let                     isMine = restoreToMode == .mineMode
         let            onlyCurrentMode = !gHasPrivateDatabase || forCurrentStorageModeOnly
         let              modes: ZModes = forMineModeOnly ? [.mineMode] : onlyCurrentMode ? [restoreToMode] : [.mineMode, .everyoneMode]

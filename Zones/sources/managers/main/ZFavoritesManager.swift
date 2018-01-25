@@ -204,7 +204,7 @@ class ZFavoritesManager: ZCloudManager {
             let finish = {
                 self.setupDatabaseFavorites()
                 self.rootZone!.needProgeny()
-                self.rootZone!.displayChildren()
+                displayChildren(in: self.rootZone)
                 onCompletion?()
             }
 
@@ -313,7 +313,7 @@ class ZFavoritesManager: ZCloudManager {
             if !hasTrash {
                 let          trash = Zone(storageMode: .mineMode, named: kTrashName, identifier: kTrashName + kFavoritesSuffix)
                 trash    .zoneLink = kTrashLink // convert into a bookmark
-                trash.directAccess = .eDefaultName
+                trash.directAccess = .eChildrenWritable
 
                 rootZone?.addAndReorderChild(trash, at: nil)
                 trash.clearAllStates()
@@ -322,7 +322,7 @@ class ZFavoritesManager: ZCloudManager {
             if !haveLost {
                 let          lost = Zone(storageMode: .mineMode, named: kLostAndFoundName, identifier: kLostAndFoundName + kFavoritesSuffix)
                 lost    .zoneLink = kLostAndFoundLink // convert into a bookmark
-                lost.directAccess = .eDefaultName
+                lost.directAccess = .eChildrenWritable
 
                 rootZone?.addAndReorderChild(lost, at: nil)
                 lost.clearAllStates()
@@ -413,9 +413,9 @@ class ZFavoritesManager: ZCloudManager {
                 let targetParent = bookmark.bookmarkTarget?.parentZone
                 let       parent = bookmark.parentZone
 
-                targetParent?.displayChildren()
+                displayChildren(in: targetParent)
+                displayChildren(in: parent)
                 targetParent?.needChildren()
-                parent?      .displayChildren()
                 parent?      .needChildren()
                 gTravelManager.travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
                     self.updateFavorites()

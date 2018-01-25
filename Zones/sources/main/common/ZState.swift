@@ -70,7 +70,6 @@ struct ZDetailsViewID: OptionSet {
 }
 
 
-let          gClearColor                     = ZColor(white: 1.0, alpha: 0.0)
 var            gWorkMode                     = ZWorkMode.startupMode
 var            gFileMode                     = ZFileMode.cloud
 var          gReadyState                     = false
@@ -87,6 +86,7 @@ var        gDragDropZone:              Zone? = nil
 var         gDraggedZone:              Zone? = nil
 var          gDebugTimer:             Timer? = nil
 var           gDragPoint:           CGPoint? = nil
+var            gExpanded:          [String]? = nil
 
 var              gIsLate:               Bool { return gCloudUnavailable || gDBOperationsManager.isLate }
 var          gIsDragging:               Bool { return gDraggedZone != nil }
@@ -102,8 +102,89 @@ var          gWidgetFont:              ZFont { return .systemFont(ofSize: fontSi
 var       gFavoritesFont:              ZFont { return .systemFont(ofSize: fontSize * kReductionRatio) }
 
 
+var gHere: Zone {
+    get {
+        let manager = gRemoteStoresManager.cloudManagerFor(gStorageMode)
+        let    here = manager.maybeZRecordForRecordName(gHereRecordName) as? Zone ?? gRoot!
+
+        return here
+    }
+
+    set {
+        gHereRecordName = newValue.recordName ?? kRootName
+    }
+}
+
+
+// MARK:- show children
+// MARK:-
+
+
+var gExpandedZones : [String] {
+    get {
+        if  gExpanded == nil {
+            let  value = getPreferencesString(for: kExpandedZones, defaultString: "")
+            gExpanded  = value?.components(separatedBy: kSeparator)
+        }
+
+        return gExpanded!
+    }
+    set {
+        gExpanded = newValue
+
+        setPreferencesString(newValue.joined(separator: kSeparator), for: kExpandedZones)
+    }
+}
+
+
+func isExpanded(_ iRecordName: String?) -> Bool {
+    if  let name = iRecordName,
+        let    _ = gExpandedZones.index(of: name) {
+        return true
+    }
+
+    return false
+}
+
+
+func displayChildren(in iZRecord: ZRecord?) {
+    if let zRecord = iZRecord {
+        var expansionSet = gExpandedZones
+
+        if  let name = zRecord.recordName, !zRecord.isBookmark, !expansionSet.contains(name) {
+            expansionSet.append(name)
+
+            gExpandedZones = expansionSet
+        }
+    }
+}
+
+
+func hideChildren(in iZRecord: ZRecord?) {
+    if let zRecord = iZRecord {
+        var expansionSet = gExpandedZones
+
+        if let  name = zRecord.recordName {
+            while let index = expansionSet.index(of: name) {
+                expansionSet.remove(at: index)
+            }
+        }
+
+        if  gExpandedZones.count != expansionSet.count {
+            gExpandedZones        = expansionSet
+        }
+    }
+}
+
+
 // MARK:- persistence
 // MARK:-
+
+
+var gHereRecordName: String {
+    get { return getPreferencesString(   for: kHereRecordID, defaultString: kRootName)! }
+    set { setPreferencesString(newValue, for: kHereRecordID) }
+}
 
 
 var gUserRecordID: String? {

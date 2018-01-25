@@ -629,7 +629,7 @@ class Zone : ZRecord {
 
 
     func toggleWritable() {
-        if  storageMode == .everyoneMode && !isTrash && !isRootOfFavorites {
+        if  storageMode == .everyoneMode {
             if  let t = bookmarkTarget {
                 t.toggleWritable()
             } else if isWritableByUseer {
@@ -1046,8 +1046,8 @@ class Zone : ZRecord {
 
 
     func prepareForArrival() {
+        displayChildren(in: self)
         maybeNeedWritable()
-        displayChildren()
         maybeNeedColor()
         maybeNeedRoot()
         needChildren()
@@ -1073,8 +1073,6 @@ class Zone : ZRecord {
 
 
     override func hasMissingChildren() -> Bool { return count < fetchableCount }
-    func displayChildren() { manifest?.displayChildren(in: self) }
-    func    hideChildren() { manifest?   .hideChildren(in: self) }
 
 
     override func hasMissingProgeny() -> Bool {
