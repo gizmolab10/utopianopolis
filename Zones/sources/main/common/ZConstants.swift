@@ -30,7 +30,6 @@ let kUnselectBrightness: CGFloat = 0.98
 #endif
 
 
-let       kDebugDetails = true
 let          kFullFetch = false
 let          kBatchSize = 250
 let         kLogTabStop = 21
@@ -82,6 +81,7 @@ let       kHereRecordID = "here record id"
 let       kUserRecordID = "user record id"
 let       kScrollOffset = "scroll offset"
 let       kDetailsState = "current details state"
+let       kDebugDetails = "debug details"
 let      kExpandedZones = "expanded zones"
 let      kFavoritesName = "favorites"
 let      kGenericOffset = "generic offset"

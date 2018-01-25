@@ -102,20 +102,6 @@ var          gWidgetFont:              ZFont { return .systemFont(ofSize: fontSi
 var       gFavoritesFont:              ZFont { return .systemFont(ofSize: fontSize * kReductionRatio) }
 
 
-var gHere: Zone {
-    get {
-        let manager = gRemoteStoresManager.cloudManagerFor(gStorageMode)
-        let    here = manager.maybeZRecordForRecordName(gHereRecordName) as? Zone ?? gRoot!
-
-        return here
-    }
-
-    set {
-        gHereRecordName = newValue.recordName ?? kRootName
-    }
-}
-
-
 // MARK:- show children
 // MARK:-
 
@@ -179,6 +165,26 @@ func hideChildren(in iZRecord: ZRecord?) {
 
 // MARK:- persistence
 // MARK:-
+
+
+var gHere: Zone {
+    get {
+        let manager = gRemoteStoresManager.cloudManagerFor(gStorageMode)
+        let    here = manager.maybeZRecordForRecordName(gHereRecordName) as? Zone ?? gRoot!
+
+        return here
+    }
+
+    set {
+        gHereRecordName = newValue.recordName ?? kRootName
+    }
+}
+
+
+var gDebugDetails : Bool {
+    get { return getPreferencesBool(   for: kDebugDetails, defaultBool: false) }
+    set { setPreferencesBool(newValue, for: kDebugDetails) }
+}
 
 
 var gHereRecordName: String {

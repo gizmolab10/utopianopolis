@@ -25,8 +25,10 @@ class ZDetailsController: ZGenericController {
     }
 
 
-    func displayViewFor(id: ZDetailsViewID) {
-        gDetailsViewIDs.insert(id)
+    func displayViewFor(ids: [ZDetailsViewID]) {
+        for id in ids {
+            gDetailsViewIDs.insert(id)
+        }
 
         if  let subviews = stackView?.subviews {
             for subview in subviews {

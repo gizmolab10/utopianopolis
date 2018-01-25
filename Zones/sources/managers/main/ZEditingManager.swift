@@ -147,7 +147,7 @@ class ZEditingManager: NSObject {
                 switch key {
              // case "f":      if isCommand { find() }
                 case "a":      if isCommand { gSelectionManager.currentlyEditingZone?.widget?.textWidget.selectAllText() }
-             // case "?":      if isCommand { gDetailsController?.displayViewFor(id: .Help) }
+             // case "?":      if isCommand { gDetailsController?.displayViewFor(ids: [.Help]) }
                 case kSpace:   if isControl { addIdea() }
                 default:       break
                 }

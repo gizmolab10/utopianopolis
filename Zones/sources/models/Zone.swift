@@ -1094,7 +1094,7 @@ class Zone : ZRecord {
 //            }
 
             p.maybeNeedFetch()
-            p.addChild(self, at: siblingIndex)
+            p.addChildAndRespectOrder(self)
         }
     }
 
@@ -1105,6 +1105,12 @@ class Zone : ZRecord {
         parentZone = nil
 
         updateRecordProperties()
+    }
+
+
+    func addChildAndRespectOrder(_ child: Zone?) {
+        addChild(child)
+        respectOrder()
     }
 
 

@@ -71,6 +71,20 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="II2-Qf-krY">
+                                <rect key="frame" x="-6" y="145" width="34" height="33"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="21" id="10P-ob-279"/>
+                                    <constraint firstAttribute="height" constant="21" id="xh0-PK-ZNa"/>
+                                </constraints>
+                                <buttonCell key="cell" type="round" bezelStyle="circular" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="HGg-Pn-x3Y">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="debugButtonAction:" target="fxO-Qj-JeN" id="vZp-Ab-kwm"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="Rna-eb-6vd" firstAttribute="top" secondItem="Idb-0r-rlP" secondAttribute="bottom" constant="2" id="0yu-eb-buA"/>
@@ -79,7 +93,9 @@
                             <constraint firstAttribute="trailing" secondItem="Idb-0r-rlP" secondAttribute="trailing" id="AVU-FT-Eip"/>
                             <constraint firstAttribute="trailing" secondItem="3v8-d2-yo8" secondAttribute="trailing" id="DAS-1R-Hli"/>
                             <constraint firstItem="3v8-d2-yo8" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" id="Fg1-yc-WkP"/>
+                            <constraint firstItem="II2-Qf-krY" firstAttribute="top" secondItem="mbO-Ma-L1E" secondAttribute="top" id="Joh-CX-pbH"/>
                             <constraint firstItem="BcI-eM-ytK" firstAttribute="top" secondItem="f4m-8C-5H1" secondAttribute="bottom" constant="2" id="MEl-g1-EML"/>
+                            <constraint firstItem="II2-Qf-krY" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" id="MsG-oT-THs"/>
                             <constraint firstAttribute="trailing" secondItem="fy3-JT-P1F" secondAttribute="trailing" id="OUc-LV-Ccm"/>
                             <constraint firstItem="Rna-eb-6vd" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" constant="20" id="PYj-91-grn"/>
                             <constraint firstAttribute="trailing" secondItem="BcI-eM-ytK" secondAttribute="trailing" id="SRe-Sd-lsU"/>
@@ -1034,8 +1050,8 @@
                     </view>
                     <connections>
                         <outlet property="nameLabel" destination="iC9-v4-znl" id="Hqq-sU-vMD"/>
-                        <outlet property="parentNameLabel" destination="w7H-7z-Fnj" id="8yN-7n-Mfd"/>
-                        <outlet property="wasFetchedLabel" destination="X4G-f7-aDj" id="XfV-6f-Ete"/>
+                        <outlet property="otherLabel" destination="w7H-7z-Fnj" id="8yN-7n-Mfd"/>
+                        <outlet property="statusLabel" destination="X4G-f7-aDj" id="XfV-6f-Ete"/>
                     </connections>
                 </viewController>
                 <customObject id="rW8-8d-EmW" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

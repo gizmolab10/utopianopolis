@@ -82,12 +82,14 @@ class ZStackableView: ZView {
 
 
     func update() {
-        if  kDebugDetails || !isDebugView {
+        if  isDebugView {
+            titleLabel?.superview?.isHidden = !gDebugDetails
+            hideableView?         .isHidden = !gDebugDetails
+        }
+
+        if !isDebugView || gDebugDetails {
             updateToggleImage()
             updateHideableView()
-        } else {
-            titleLabel?.superview?.isHidden = true
-            hideableView?.isHidden = true
         }
     }
 

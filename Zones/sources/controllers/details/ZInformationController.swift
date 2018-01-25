@@ -62,4 +62,11 @@ class ZInformationController: ZGenericController {
             }
         }
     }
+
+
+    @IBAction func debugButtonAction(_ sender: Any?) {
+        gDebugDetails = !gDebugDetails
+
+        gDetailsController?.displayViewFor(ids: [.Tools, .Debug])
+    }
 }

@@ -271,7 +271,7 @@ extension NSWindow {
     }
 
     
-    @IBAction func displayPreferences     (_ sender: Any?) { gDetailsController?.displayViewFor(id: .Preferences) }
+    @IBAction func displayPreferences     (_ sender: Any?) { gDetailsController?.displayViewFor(ids: [.Preferences]) }
     @IBAction func displayHelp            (_ sender: Any?) { openBrowserForFocusWebsite() }
     @IBAction func printHere              (_ sender: Any?) { gEditingManager.printHere() }
     @IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gEditingManager.handleMenuItem(iItem) }

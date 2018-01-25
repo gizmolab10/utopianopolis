@@ -337,7 +337,7 @@ class ZFavoritesManager: ZCloudManager {
                     let      favorite = template.deepCopy()
                     favorite.zoneName = favorite.bookmarkTarget?.zoneName
 
-                    rootZone?.addChild(favorite)
+                    rootZone?.addChildAndRespectOrder(favorite)
                     favorite.clearAllStates() // erase side-effect of add
                 }
             }

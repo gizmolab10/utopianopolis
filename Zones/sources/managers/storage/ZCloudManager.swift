@@ -791,8 +791,7 @@ class ZCloudManager: ZRecordsManager {
                                             target.maybeNeedWritable()
                                         }
 
-                                        p.addChild(child)
-                                        p.respectOrder()
+                                        p.addChildAndRespectOrder(child)
                                     }
                                 }
                             }
@@ -918,6 +917,7 @@ class ZCloudManager: ZRecordsManager {
                     here.record = iHereRecord
                     gHere       = here
 
+                    here.maybeNeedChildren()
                     here.maybeNeedRoot()
                     onCompletion?(0)
                 }
