@@ -523,14 +523,20 @@ class ZoneWidget: ZView {
             let        isGrabbed = zone.isGrabbed
             textWidget.textColor = isGrabbed ? zone.grabbedTextColor : ZColor.black
 
+            if gRubyStyleUI {
+                addBorder(thickness: CGFloat(gLineThickness), radius: CGFloat(50.0) / CGFloat(zone.level + 1), color: zone.color.cgColor)
+            }
+
             if  isGrabbed && !textWidget.isFirstResponder && (!kIsPhone || zone != gHere) {
                 drawSelectionHighlight()
             }
 
             if zone.showChildren {
                 if  childrenPass || gIsDragging || gEditorView?.rubberbandRect != nil {
-                    for child in childrenWidgets {
-                        drawLine(to: child)
+                    if !gRubyStyleUI {
+                        for child in childrenWidgets {
+                            drawLine(to: child)
+                        }
                     }
                 } else {
                     FOREGROUND {

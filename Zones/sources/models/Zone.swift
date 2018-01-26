@@ -1058,7 +1058,7 @@ class Zone : ZRecord {
 
 
     func prepareForArrival() {
-        displayChildren(in: self)
+        displayChildren()
         maybeNeedWritable()
         maybeNeedColor()
         maybeNeedRoot()
@@ -1073,6 +1073,7 @@ class Zone : ZRecord {
                 return .eSkip
             } else {
                 iZone.needChildren()
+                iZone.needCount()
             }
 
             return .eContinue

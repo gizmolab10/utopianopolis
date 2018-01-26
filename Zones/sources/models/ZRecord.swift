@@ -113,6 +113,42 @@ class ZRecord: NSObject {
     }
 
 
+    func isExpanded(_ iRecordName: String?) -> Bool {
+        if  let name = iRecordName,
+            let    _ = gExpandedZones.index(of: name) {
+            return true
+        }
+
+        return false
+    }
+
+
+    func displayChildren() {
+        var expansionSet = gExpandedZones
+
+        if  let name = recordName, !isBookmark, !expansionSet.contains(name) {
+            expansionSet.append(name)
+
+            gExpandedZones = expansionSet
+        }
+    }
+
+
+    func hideChildren() {
+        var expansionSet = gExpandedZones
+
+        if let  name = recordName {
+            while let index = expansionSet.index(of: name) {
+                expansionSet.remove(at: index)
+            }
+        }
+
+        if  gExpandedZones.count != expansionSet.count {
+            gExpandedZones        = expansionSet
+        }
+    }
+
+
     // MARK:- overrides
     // MARK:-
 
@@ -301,7 +337,7 @@ class ZRecord: NSObject {
 
 
     func maybeNeedSave() {
-        if !needsDestroy, !needsFetch, canSave {
+        if !needsDestroy, (alreadyExists || (!needsFetch && canSave)) {
             removeState(.needsMerge)
             addState   (.needsSave)
         }

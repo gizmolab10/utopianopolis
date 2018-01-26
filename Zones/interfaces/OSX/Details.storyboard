@@ -726,7 +726,7 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xX2-we-KBt"/>
                                                     </constraints>
-                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="2" maxValue="20" doubleValue="6" tickMarkPosition="below" sliderType="linear" id="qGt-br-s4B"/>
+                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="2" maxValue="12" doubleValue="6" tickMarkPosition="below" sliderType="linear" id="qGt-br-s4B"/>
                                                     <connections>
                                                         <action selector="sliderAction:" target="Naq-se-Exq" id="NZr-P4-M7Y"/>
                                                     </connections>

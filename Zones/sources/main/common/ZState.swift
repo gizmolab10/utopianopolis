@@ -78,6 +78,7 @@ var     gShowIdentifiers                     = false
 var    gCloudUnavailable                     = false
 var   gCrippleUserAccess                     = false
 var   gKeyboardIsVisible                     = false
+var         gRubyStyleUI                     = false
 var     gDebugOperations                     = true
 var     gDebugTimerCount                     = 0
 var     gDragDropIndices: NSMutableIndexSet? = nil
@@ -102,7 +103,7 @@ var          gWidgetFont:              ZFont { return .systemFont(ofSize: fontSi
 var       gFavoritesFont:              ZFont { return .systemFont(ofSize: fontSize * kReductionRatio) }
 
 
-// MARK:- show children
+// MARK:- persistence
 // MARK:-
 
 
@@ -115,56 +116,13 @@ var gExpandedZones : [String] {
 
         return gExpanded!
     }
+
     set {
         gExpanded = newValue
 
         setPreferencesString(newValue.joined(separator: kSeparator), for: kExpandedZones)
     }
 }
-
-
-func isExpanded(_ iRecordName: String?) -> Bool {
-    if  let name = iRecordName,
-        let    _ = gExpandedZones.index(of: name) {
-        return true
-    }
-
-    return false
-}
-
-
-func displayChildren(in iZRecord: ZRecord?) {
-    if let zRecord = iZRecord {
-        var expansionSet = gExpandedZones
-
-        if  let name = zRecord.recordName, !zRecord.isBookmark, !expansionSet.contains(name) {
-            expansionSet.append(name)
-
-            gExpandedZones = expansionSet
-        }
-    }
-}
-
-
-func hideChildren(in iZRecord: ZRecord?) {
-    if let zRecord = iZRecord {
-        var expansionSet = gExpandedZones
-
-        if let  name = zRecord.recordName {
-            while let index = expansionSet.index(of: name) {
-                expansionSet.remove(at: index)
-            }
-        }
-
-        if  gExpandedZones.count != expansionSet.count {
-            gExpandedZones        = expansionSet
-        }
-    }
-}
-
-
-// MARK:- persistence
-// MARK:-
 
 
 var gHere: Zone {
@@ -224,17 +182,14 @@ var gRubberbandColor: ZColor {
 
 
 var gGenericOffset: CGSize {
-    get {
-        let size = CGSize(width: 30.0, height: 2.0)
+    get { return getPreferencesSize(for: kGenericOffset, defaultSize: CGSize(width: 30.0, height: 2.0)) }
+    set { setPreferencesSize(newValue, for: kGenericOffset) }
+}
 
-        return getPreferencesString( for: kGenericOffset, defaultString: NSStringFromSize(size))?.cgSize ?? size
-    }
 
-    set {
-        let string = NSStringFromSize(newValue)
-
-        setPreferencesString(string, for: kGenericOffset)
-    }
+var gWindowSize: CGSize {
+    get { return getPreferencesSize(for: kWindowSize, defaultSize: CGSize(width: 300.0, height: 300.0)) }
+    set { setPreferencesSize(newValue, for: kWindowSize) }
 }
 
 
@@ -394,6 +349,16 @@ var gDetailsViewIDs: ZDetailsViewID {
 
 // MARK:- internals
 // MARK:-
+
+
+func getPreferencesSize(for key: String, defaultSize: CGSize = CGSize.zero) -> CGSize {
+    return getPreferencesString( for: key, defaultString: NSStringFromSize(defaultSize))?.cgSize ?? defaultSize
+}
+
+
+func setPreferencesSize(_ iSize: CGSize = CGSize.zero, for key: String) {
+    setPreferencesString(NSStringFromSize(iSize), for: key)
+}
 
 
 func getPreferencesColor(for key: String, defaultColor: ZColor) -> ZColor {

@@ -28,6 +28,8 @@ class ZoneWindow: ZWindow {
         standardWindowButton(NSWindow.ButtonType.zoomButton)!.isHidden = true
         standardWindowButton(NSWindow.ButtonType.closeButton)!.isHidden = true
         standardWindowButton(NSWindow.ButtonType.miniaturizeButton)!.isHidden = true
+
+        contentMinSize = gWindowSize
     }
 
 

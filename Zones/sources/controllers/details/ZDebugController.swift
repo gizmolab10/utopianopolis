@@ -28,6 +28,8 @@ class ZDebugController: ZGenericController {
         var text = " "
 
         if  let zone = grab {
+            let count = zone.fetchableCount
+
             text.append(zone.alreadyExists ? "F " : "! ")
 
             if zone.parent != nil {
@@ -38,6 +40,10 @@ class ZDebugController: ZGenericController {
 
             if zone.showChildren {
                 text.append("S ")
+            }
+
+            if count != 0 {
+                text.append("\(count) ")
             }
         }
 

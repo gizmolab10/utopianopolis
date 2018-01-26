@@ -479,7 +479,7 @@ extension ZView {
     }
 
 
-    func addBorder(thickness: CGFloat, radius: CGFloat, color: CGColor) {
+    func addBorder(thickness: CGFloat, inset: CGFloat = 0.0, radius: CGFloat, color: CGColor) {
         zlayer.cornerRadius = radius
         zlayer.borderWidth  = thickness
         zlayer.borderColor  = color

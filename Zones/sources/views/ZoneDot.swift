@@ -71,9 +71,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
     var toggleDotIsVisible: Bool {
         var isHidden = false
-        if  let zone = widgetZone, isInnerDot, isToggle, let mode = zone.storageMode {
-            isHidden = (!zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 && !isDragDrop)
-                ||     (!zone.isRootOfFavorites && mode == .favoritesMode)
+        if  let zone = widgetZone, isInnerDot, isToggle {
+            isHidden = !zone.canTravel && zone.fetchableCount == 0 && !isDragDrop
         }
         
         return !isHidden
@@ -150,7 +149,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawTinyDots(_ dirtyRect: CGRect) {
-        if  let  zone  = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showChildren || zone.isBookmark) {
+        if  let  zone  = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showChildren || zone.isBookmark || zone.hasMissingChildren()) {
             var count  = zone.indirectFetchableCount
 
             if  count == 0 {
@@ -216,7 +215,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             if  toggleDotIsVisible {
                 if  isInnerDot {
                     let showTinyCenterDot = zone.canTravel && zone.fetchableCount == 0
-                    let       dotIsFilled = isToggle ? (!zone.showChildren || zone.count == 0 || showTinyCenterDot || isDragDrop) : (zone.isGrabbed || highlightAsFavorite) // not highlight when editing
+                    let       dotIsFilled = isToggle ? (!zone.showChildren || zone.hasMissingChildren() || showTinyCenterDot || isDragDrop) : (zone.isGrabbed || highlightAsFavorite) // not highlight when editing
                     let       strokeColor = isToggle  && isDragDrop ? gRubberbandColor : zone.color
                     var         fillColor = dotIsFilled ? strokeColor : gBackgroundColor
                     let         thickness = CGFloat(gLineThickness)

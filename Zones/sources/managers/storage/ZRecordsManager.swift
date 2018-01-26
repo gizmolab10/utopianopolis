@@ -472,8 +472,7 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
-    func fullUpdate(_ onEach: StateRecordClosure) {
-        let  states = [ZRecordState.needsCount]
+    func fullUpdate(for states: [ZRecordState], _ onEach: StateRecordClosure) {
         var records = [CKRecord] ()
 
         applyToAllCKRecordsWithAnyMatchingStates(states) { state, ckrecord in
