@@ -343,7 +343,7 @@ class ZCloudManager: ZRecordsManager {
                     } else {
                         for (iRecord, iID) in recordsByID {
                             if  let zRecord = self.maybeZRecordForRecordID(iID) {
-                                zRecord.mergeIntoAndTake(iRecord)
+                                zRecord.useBest(record: iRecord)
                             }
                         }
                     }
@@ -557,6 +557,8 @@ class ZCloudManager: ZRecordsManager {
                             zRecord?.useBest(record: ckRecord)
                         }
 
+                        zRecord?.maybeNeedRoot()
+
 //                        if  let zone = zRecord as? Zone, zone.badJonathan() {
 //                            zone.orphan()
 //                        }
@@ -662,7 +664,7 @@ class ZCloudManager: ZRecordsManager {
                         var fetched  = self.maybeZoneForRecordID(parentID)
 
                         if  fetched != nil {
-                            fetched?.mergeIntoAndTake(parentRecord)
+                            fetched?.useBest(record: parentRecord)
                         } else {
                             fetched  = self.zoneForCKRecord(parentRecord)
                         }
@@ -858,7 +860,8 @@ class ZCloudManager: ZRecordsManager {
                                 created = true
                             }
 
-                            zone?.needParent()
+                            zone?.maybeNeedRoot()
+                            zone?.bookmarkTarget?.maybeNeedRoot()
                         }
 
                         self.columnarReport("BOOKMARKS (\(count))", self.stringForCKRecords(retrieved))

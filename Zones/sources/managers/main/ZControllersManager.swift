@@ -36,6 +36,7 @@ enum ZSignalKind: Int {
     case search
     case redraw
     case startup
+    case details
     case information
     case preferences
 }
@@ -154,10 +155,15 @@ class ZControllersManager: NSObject {
             self.updateCounts() // clean up after fetch children
 
             for (identifier, signalObject) in self.signalObjectsByControllerID {
+                let isInformation = identifier == .information
+                let isPreferences = identifier == .preferences
+                let      isDetail = isInformation || isPreferences
+
                 switch regarding {
-                case .information: if identifier == .information { signalObject.closure(object, regarding) }
-                case .preferences: if identifier == .preferences { signalObject.closure(object, regarding) }
-                default:                                           signalObject.closure(object, regarding)
+                case .details:     if isDetail      { signalObject.closure(object, regarding) }
+                case .information: if isInformation { signalObject.closure(object, regarding) }
+                case .preferences: if isPreferences { signalObject.closure(object, regarding) }
+                default:                              signalObject.closure(object, regarding)
                 }
             }
 

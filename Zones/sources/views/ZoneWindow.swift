@@ -24,6 +24,10 @@ class ZoneWindow: ZWindow {
         super.awakeFromNib()
 
         ZoneWindow.window = self
+
+        standardWindowButton(NSWindow.ButtonType.zoomButton)!.isHidden = true
+        standardWindowButton(NSWindow.ButtonType.closeButton)!.isHidden = true
+        standardWindowButton(NSWindow.ButtonType.miniaturizeButton)!.isHidden = true
     }
 
 

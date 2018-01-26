@@ -89,7 +89,7 @@ class ZPreferencesController: ZGenericController {
             default:             break
             }
 
-            signalFor(nil, regarding: .redraw)
+            syncToCloudAndSignalFor(nil, regarding: .redraw) {}
         }
     }
 

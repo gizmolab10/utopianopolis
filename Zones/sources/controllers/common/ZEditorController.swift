@@ -237,7 +237,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                                 zone.grab()
                             }
 
-                            signalFor(nil, regarding: .information)
+                            signalFor(nil, regarding: .details)
                         } else {
                             textWidget?.isEditingText = false
 

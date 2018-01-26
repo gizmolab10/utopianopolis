@@ -516,14 +516,6 @@ extension ZView {
         superview?.applyToAllSuperviews(closure)
     }
 
-
-    func thinStroke(_ path: ZBezierPath?) {
-        if  path != nil {
-            path!.lineWidth = CGFloat(gLineThickness)
-
-            path!.stroke()
-        }
-    }
 }
 
 

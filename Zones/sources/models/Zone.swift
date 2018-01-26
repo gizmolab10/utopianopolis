@@ -523,6 +523,18 @@ class Zone : ZRecord {
     }
 
 
+    var lineThickness: Double {
+//        var thickness = gLineThickness
+//
+//        if  let   root = gRoot, progenyCount > 1 {
+//            let  ratio = (Double(progenyCount) / Double(root.progenyCount) * 2.0) + 1.0
+//            thickness *= ratio
+//        }
+
+        return gLineThickness
+    }
+
+
     // MARK:- write access
     // MARK:-
 
@@ -1017,7 +1029,7 @@ class Zone : ZRecord {
     }
 
 
-    func maybeNeedRoot() {
+    override func maybeNeedRoot() {
         if !hasCompleteAncestorPath() {
             needRoot()
         }

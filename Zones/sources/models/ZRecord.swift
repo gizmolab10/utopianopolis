@@ -99,15 +99,6 @@ class ZRecord: NSObject {
         }
     }
 
-
-    var target: ZRecord? {
-        if  let mode = storageMode {
-            return gRemoteStoresManager.cloudManagerFor(mode).maybeZoneForRecordID(record.recordID)
-        }
-
-        return nil
-    }
-
     
     var showChildren: Bool  {
         var show = false
@@ -155,6 +146,7 @@ class ZRecord: NSObject {
 
 
     func unorphan() {}
+    func maybeNeedRoot() {}
     func debug(_  iMessage: String) {}
     func cloudProperties() -> [String] { return [] }
     func   register() { cloudManager?  .registerZRecord(self) }
