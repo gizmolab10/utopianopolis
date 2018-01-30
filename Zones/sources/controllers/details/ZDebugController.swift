@@ -55,7 +55,9 @@ class ZDebugController: ZGenericController {
         var text = ""
 
         if  let zone = grab {
-            text.append("\(zone.order)")
+            let order = Double(Int(zone.order * 100)) / 100.0
+
+            text.append("\(order) \(gWindowSize)")
         }
 
         return text

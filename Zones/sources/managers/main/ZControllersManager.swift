@@ -31,6 +31,7 @@ enum ZControllerID: Int {
 enum ZSignalKind: Int {
     case data
     case datum
+    case debug
     case error
     case found
     case search
@@ -161,9 +162,11 @@ class ZControllersManager: NSObject {
             for (identifier, signalObject) in self.signalObjectsByControllerID {
                 let isInformation = identifier == .information
                 let isPreferences = identifier == .preferences
-                let      isDetail = isInformation || isPreferences
+                let       isDebug = identifier == .debug
+                let      isDetail = isInformation || isPreferences || isDebug
 
                 switch regarding {
+                case .debug:       if isDebug       { signalObject.closure(object, regarding) }
                 case .details:     if isDetail      { signalObject.closure(object, regarding) }
                 case .information: if isInformation { signalObject.closure(object, regarding) }
                 case .preferences: if isPreferences { signalObject.closure(object, regarding) }

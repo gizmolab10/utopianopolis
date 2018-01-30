@@ -73,15 +73,16 @@ class ZEditingManager: NSObject {
 
     func menuType(for key: String) -> ZMenuType {
         switch key {
-        case "z":                                      return .Undo
-        case "o", "r":                                 return .Sort
-        case "v", "x", "!", kSpace:                    return .Child
-        case "e", "h", "l", "\r", "u", "w", "-", "$":  return .Alter
-        case "b", "d", kTab, kBackspace, kDelete:      return .Parent
-        case ";", "'", "/":                            return .Favorites
-        case "a":                                      return .SelectAll
-        case "=":                                      return .Travel
-        default:                                       return .Always
+        case "a":                                 return .SelectAll
+        case "=":                                 return .Travel
+        case "z":                                 return .Undo
+        case "o", "r":                            return .Sort
+        case "v", "x", "!", kSpace:               return .Child
+        case "b", "d", kTab, kBackspace, kDelete: return .Parent
+        case ";", "'", "/":                       return .Favorites
+        case "e", "h", "l",
+             "u", "w", "1", "-", "$", "!", "\r":  return .Alter
+        default:                                  return .Always
         }
     }
 
@@ -155,24 +156,24 @@ class ZEditingManager: NSObject {
                 handleArrow(arrow, flags: flags)
             } else {
                 switch key {
-                case "f":      find()
-                case "-":      addLine()
-                case "r":      reverse()
-                case "c":      recenter()
-                case "e":      editEmail()
-                case "d":      duplicate()
-                case "p":      printHere()
+                case "a":      selectAll  (progeny: isOption)
                 case "b":      addBookmark()
+                case "c":      recenter()
+                case "d":      duplicate()
+                case "e":      editEmail()
+                case "f":      find()
                 case "h":      editHyperlink()
-                case "$":      mark(with: key)
-                case "!":      divideChildren()
-                case "w":      toggleWritable()
                 case "o":      orderByLength(isOption)
+                case "p":      printHere()
+                case "r":      reverse()
                 case "s":      selectCurrentFavorite()
                 case "u", "l": alterCase(up: key == "u")
+                case "w":      toggleWritable()
+                case "$", "!": mark(with: key)
+                case "1":      divideChildren()
+                case "-":      addLine()
                 case ";":      doFavorites(true,    false)
                 case "?":      openBrowserForFocusWebsite()
-                case "a":      selectAll  (progeny: isOption)
                 case "'":      doFavorites(isShift, isOption)
                 case "/":      focus(on: gSelectionManager.firstGrab, isCommand)
                 case "=":      gTravelManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawSyncRedraw() }

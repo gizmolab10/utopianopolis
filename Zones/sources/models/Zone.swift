@@ -1214,25 +1214,31 @@ class Zone : ZRecord {
 
 
     func recursivelyApplyMode(_ iMode: ZStorageMode?) {
-        if let mode = iMode, mode != storageMode {
+        if  let           appliedMode = iMode,
+            let                  mode = storageMode,
+            appliedMode              != mode {
             traverseAllProgeny { iZone in
-                iZone.unregister()
+                if  let       newMode = iZone.storageMode,
+                    newMode          != mode {
+                    iZone.unregister()
 
-                let newParentZone = iZone.parentZone                                    // (1) grab new parent zone from previous traverse (2, below)
-                let     oldRecord = iZone.record
-                let     newRecord = CKRecord(recordType: kZoneType)                     // new record id
-                iZone.storageMode = mode                                                // must happen BEFORE record assignment
-                iZone     .record = newRecord                                           // side-effect: move registration to the new mode's record manager
+                    let newParentZone = iZone.parentZone                                    // (1) grab new parent zone from previous traverse (2, below)
+                    let     oldRecord = iZone.record
+                    let     newRecord = CKRecord(recordType: kZoneType)                     // new record id
+                    iZone.storageMode = appliedMode                                                // must happen BEFORE record assignment
+                    iZone     .record = newRecord                                           // side-effect: move registration to the new mode's record manager
 
-                oldRecord?.copy(to: iZone.record, properties: iZone.cloudProperties())  // preserve new record id
-                iZone.maybeNeedSave()                                                   // in new mode's record manager
+                    oldRecord?.copy(to: iZone.record, properties: iZone.cloudProperties())  // preserve new record id
+                    iZone.allowSave()
+                    iZone.maybeNeedSave()                                                   // in new mode's record manager
 
-                ///////////////////////////////////////////////////////////////
-                // (2) compute parent and parentLink using iZone's new iMode //
-                //      this traverse will eventually use it (1, above)      //
-                ///////////////////////////////////////////////////////////////
+                    ///////////////////////////////////////////////////////////////
+                    // (2) compute parent and parentLink using iZone's new iMode //
+                    //      this traverse will eventually use it (1, above)      //
+                    ///////////////////////////////////////////////////////////////
 
-                iZone.parentZone  = newParentZone
+                    iZone.parentZone  = newParentZone
+                }
             }
         }
     }

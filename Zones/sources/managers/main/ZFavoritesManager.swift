@@ -320,12 +320,17 @@ class ZFavoritesManager: ZCloudManager {
             }
 
             if !haveLost {
-                let          lost = Zone(storageMode: .mineMode, named: kLostAndFoundName, identifier: kLostAndFoundName + kFavoritesSuffix)
-                lost    .zoneLink = kLostAndFoundLink // convert into a bookmark
-                lost.directAccess = .eChildrenWritable
+                let identifier = kLostAndFoundName + kFavoritesSuffix
+                var       lost = gRemoteStoresManager.cloudManagerFor(.mineMode).maybeZRecordForRecordName(identifier) as? Zone
+                if  lost      == nil {
+                    lost       = Zone(storageMode: .mineMode, named: kLostAndFoundName, identifier: identifier)
+                }
 
-                rootZone?.addAndReorderChild(lost, at: nil)
-                lost.clearAllStates()
+                lost?    .zoneLink = kLostAndFoundLink // convert into a bookmark
+                lost?.directAccess = .eChildrenWritable
+
+                rootZone?.addAndReorderChild(lost!, at: nil)
+                lost?.clearAllStates()
             }
 
             ////////////////////////////////

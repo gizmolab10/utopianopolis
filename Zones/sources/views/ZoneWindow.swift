@@ -14,7 +14,7 @@
 #endif
 
 
-class ZoneWindow: ZWindow {
+class ZoneWindow: ZWindow, ZWindowDelegate {
 
 
     static var window: ZoneWindow?
@@ -29,7 +29,17 @@ class ZoneWindow: ZWindow {
         standardWindowButton(NSWindow.ButtonType.closeButton)!.isHidden = true
         standardWindowButton(NSWindow.ButtonType.miniaturizeButton)!.isHidden = true
 
-        contentMinSize = gWindowSize
+        contentMinSize = CGSize(width: 300, height: 300) // gWindowSize
+        delegate       = self
+    }
+
+
+    func windowDidResize(_ notification: Notification) {
+        if  let    size = contentView?.bounds.size {
+            gWindowSize = size
+
+            signalFor(nil, regarding: .debug)
+        }
     }
 
 

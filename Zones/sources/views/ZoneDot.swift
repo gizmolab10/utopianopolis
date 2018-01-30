@@ -148,8 +148,30 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
+    func drawFavoritesHighlight(in dirtyRect: CGRect) {
+        let     yInset = (dirtyRect.size.height - CGFloat(gDotHeight)) / 2.0 - 2.0
+        let     xInset = (dirtyRect.size.width  - CGFloat(gDotWidth )) / 2.0 - 2.0
+        let       path = ZBezierPath(ovalIn: dirtyRect.offsetBy(dx: 0.0, dy: 0.5).insetBy(dx: xInset, dy: yInset))
+        path.lineWidth = CGFloat(gDotWidth) / 5.0
+        path.flatness  = 0.0001
+
+        path.stroke()
+    }
+
+
+    func drawDot(in dirtyRect: CGRect) {
+        let  thickness = CGFloat(gLineThickness)
+        let       path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
+        path.lineWidth = thickness * 2.0
+        path .flatness = 0.0001
+
+        path.stroke()
+        path.fill()
+    }
+
+
     func drawTinyDots(_ dirtyRect: CGRect) {
-        if  let  zone  = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showChildren || zone.isBookmark || zone.hasMissingChildren()) {
+        if  let  zone  = widgetZone, innerDot != nil, gCountsMode == .dots, !zone.isRootOfFavorites, (!zone.showChildren || zone.isBookmark || zone.hasMissingChildren()) {
             var count  = zone.indirectFetchableCount
 
             if  count == 0 {
@@ -186,7 +208,16 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func drawAccessDecoration(of type: ZDecorationType, for zone: Zone, in dirtyRect: CGRect) {
+    func drawTinyCenterDot(in dirtyRect: CGRect) {
+        let     inset = CGFloat(innerDotHeight / 3.0)
+        let      path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
+        path.flatness = 0.0001
+
+        path.fill()
+    }
+
+
+    func drawAccessDecoration(of type: ZDecorationType, in dirtyRect: CGRect) {
         let     ratio = (widget?.isInMain ?? true) ? 1.0 : kReductionRatio
         var thickness = CGFloat(gLineThickness + 0.1) * ratio
         var      path = ZBezierPath(rect: CGRect.zero)
@@ -215,47 +246,32 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             if  toggleDotIsVisible {
                 if  isInnerDot {
                     let showTinyCenterDot = zone.canTravel && zone.fetchableCount == 0
-                    let       dotIsFilled = isToggle ? (!zone.showChildren || zone.hasMissingChildren() || showTinyCenterDot || isDragDrop) : (zone.isGrabbed || highlightAsFavorite) // not highlight when editing
+                    let       dotIsFilled = isToggle ? (!zone.isRootOfFavorites && (!zone.showChildren || zone.hasMissingChildren() || showTinyCenterDot || isDragDrop)) : (zone.isGrabbed || highlightAsFavorite)
                     let       strokeColor = isToggle  && isDragDrop ? gRubberbandColor : zone.color
                     var         fillColor = dotIsFilled ? strokeColor : gBackgroundColor
-                    let         thickness = CGFloat(gLineThickness)
-                    var              path = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: thickness, dy: thickness))
-                    path       .lineWidth = thickness * 2.0
-                    path        .flatness = 0.0001
 
                     fillColor.setFill()
                     strokeColor.setStroke()
-                    path.stroke()
-                    path.fill()
+                    drawDot(in: dirtyRect)
 
                     if  isToggle {
                         if  showTinyCenterDot {
-                            let     inset = CGFloat(innerDotHeight / 3.0)
-                            path          = ZBezierPath(ovalIn: dirtyRect.insetBy(dx: inset, dy: inset))
-                            path.flatness = 0.0001
-
                             gBackgroundColor.setFill()
-                            path.fill()
+                            drawTinyCenterDot(in: dirtyRect)
                         }
-                    } else if                       zone.hasAccessDecoration {
-                        let type: ZDecorationType = zone.directChildrenWritable ? .sideDot : .vertical
-                        fillColor                 = dotIsFilled ? gBackgroundColor : strokeColor
+                    } else if zone.hasAccessDecoration {
+                        let  type = zone.directChildrenWritable ? ZDecorationType.sideDot : ZDecorationType.vertical
+                        fillColor = dotIsFilled ? gBackgroundColor : strokeColor
 
                         fillColor.setFill()
-                        drawAccessDecoration(of: type, for: zone, in: dirtyRect)
+                        drawAccessDecoration(of: type, in: dirtyRect)
                     }
                 } else if isToggle {
                     // addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.red.cgColor)
                     drawTinyDots(dirtyRect)
                 } else if highlightAsFavorite {
-                    let     yInset = (dirtyRect.size.height - CGFloat(gDotHeight)) / 2.0 - 2.0
-                    let     xInset = (dirtyRect.size.width  - CGFloat(gDotWidth )) / 2.0 - 2.0
-                    let       path = ZBezierPath(ovalIn: dirtyRect.offsetBy(dx: 0.0, dy: 0.5).insetBy(dx: xInset, dy: yInset))
-                    path.lineWidth = CGFloat(gDotWidth) / 5.0
-                    path.flatness  = 0.0001
-
                     zone.color.withAlphaComponent(0.7).setStroke()
-                    path.stroke()
+                    drawFavoritesHighlight(in: dirtyRect)
                 }
             }
         }

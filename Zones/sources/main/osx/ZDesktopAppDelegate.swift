@@ -9,7 +9,6 @@
 
 import Cocoa
 import CloudKit
-import HockeySDK
 
 
 var gDesktopAppDelegate: ZDesktopAppDelegate? = nil
@@ -52,11 +51,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     }
 
 
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
-        BITHockeyManager.shared().configure(withIdentifier: "4edafe5a97fc4a2294094e71b11e5051")
-        // Do some additional configuration if needed here
-        BITHockeyManager.shared().start()
-    }
+    func applicationDidFinishLaunching(aNotification: NSNotification) {}
 
 
     func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
