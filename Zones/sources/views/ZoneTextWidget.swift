@@ -22,8 +22,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     override var         preferredFont : ZFont { return (widget?.isInMain ?? true) ? gWidgetFont : gFavoritesFont }
     var                     widgetZone : Zone? { return widget?.widgetZone }
     weak var                    widget : ZoneWidget?
-    var            isEditingHyperlink = false
-    var                isEditingEmail = false
+    var             isEditingHyperlink = false
+    var                 isEditingEmail = false
     var                 _isEditingText = false
     var                   originalText = ""
 
@@ -40,10 +40,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     override var isEditingText: Bool {
         get { return _isEditingText }
         set {
+            let               s = gSelectionManager
+
             if  _isEditingText != newValue {
                 _isEditingText  = newValue
                 font            = preferredFont
-                let           s = gSelectionManager
 
                 if  let   zone  = widgetZone {
                     if !_isEditingText {
@@ -74,6 +75,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 } else {
                     s.clearEdit()
                 }
+            } else if newValue, let zone = widgetZone {
+                s.currentlyEditingZone   = zone
             }
         }
     }

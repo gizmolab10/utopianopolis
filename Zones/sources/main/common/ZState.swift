@@ -63,9 +63,9 @@ struct ZDetailsViewID: OptionSet {
 
     static let Information = ZDetailsViewID(rawValue: 1 << 0)
     static let Preferences = ZDetailsViewID(rawValue: 1 << 1)
-    static let       Tools = ZDetailsViewID(rawValue: 1 << 2)
-    static let       Debug = ZDetailsViewID(rawValue: 1 << 3)
-    static let   Shortcuts = ZDetailsViewID(rawValue: 1 << 4)
+    static let   Shortcuts = ZDetailsViewID(rawValue: 1 << 2)
+    static let       Tools = ZDetailsViewID(rawValue: 1 << 3)
+    static let       Debug = ZDetailsViewID(rawValue: 1 << 4)
     static let         All = ZDetailsViewID(rawValue: 0xFFFF)
 }
 

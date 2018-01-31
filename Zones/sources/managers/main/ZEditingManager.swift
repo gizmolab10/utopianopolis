@@ -58,10 +58,10 @@ class ZEditingManager: NSObject {
         case Sort
         case Child
         case Alter
+        case Cloud
         case Always
         case Parent
         case Travel
-        case Favorites
         case SelectAll
 
         case Redo
@@ -77,11 +77,11 @@ class ZEditingManager: NSObject {
         case "=":                                 return .Travel
         case "z":                                 return .Undo
         case "o", "r":                            return .Sort
-        case "v", "x", "!", kSpace:               return .Child
+        case "v", "x", kSpace:                    return .Child
         case "b", "d", kTab, kBackspace, kDelete: return .Parent
-        case ";", "'", "/":                       return .Favorites
-        case "e", "h", "l",
-             "u", "w", "1", "-", "$", "!", "\r":  return .Alter
+        case ";", "'", "/", "?", ",", ".":        return .Cloud
+        case "e", "h", "l", "u", "w",
+             "1", "-", "$", "!", "\r":            return .Alter
         default:                                  return .Always
         }
     }
@@ -116,14 +116,14 @@ class ZEditingManager: NSObject {
             case .Multiple:  valid =  grabs > 1
             case .Sort:      valid = (shown     && sort) || (grabs > 1 && parent)
             case .SelectAll: valid =  shown
-            case .Favorites: valid = gHasPrivateDatabase
+            case .Cloud: valid = gHasPrivateDatabase
             case .Undo:      valid = undo.canUndo
             case .Redo:      valid = undo.canRedo
             case .Travel:    valid = mover.canTravel
             case .Always:    valid = true
             }
         } else if key.arrow == nil {
-            valid = [.Undo, .Redo, .Alter, .Child, .Parent, .SelectAll].contains(type)
+            valid = type != .Travel
         }
 
         return valid
@@ -146,9 +146,10 @@ class ZEditingManager: NSObject {
 
             if  gIsEditingText {
                 switch key {
-             // case "f":      if isCommand { find() }
-                case "a":      if isCommand { gSelectionManager.currentlyEditingZone?.widget?.textWidget.selectAllText() }
-             // case "?":      if isCommand { gDetailsController?.displayViewFor(ids: [.Help]) }
+                case "f":      if isCommand { find() }
+                case "a":      if isCommand { gEditedTextWidget?.selectAllText() }
+                case "?":      if isControl { gDetailsController?.displayViewFor(ids: [.Shortcuts]) }
+                case ",", ".": gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
                 case kSpace:   if isControl { addIdea() }
                 default:       break
                 }
@@ -156,7 +157,7 @@ class ZEditingManager: NSObject {
                 handleArrow(arrow, flags: flags)
             } else {
                 switch key {
-                case "a":      selectAll  (progeny: isOption)
+                case "a":      selectAll(progeny: isOption)
                 case "b":      addBookmark()
                 case "c":      recenter()
                 case "d":      duplicate()

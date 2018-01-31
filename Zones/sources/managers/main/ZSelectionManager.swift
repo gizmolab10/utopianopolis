@@ -29,7 +29,7 @@ var gEditedTextWidget: ZoneTextWidget? { return gSelectionManager.currentlyEditi
 
 class ZSnapshot: NSObject {
 
-
+    
     var currentGrabs = [Zone] ()
     var  storageMode : ZStorageMode?
     var         here : Zone?

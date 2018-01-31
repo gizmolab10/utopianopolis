@@ -38,7 +38,6 @@ class ZStackableView: ZView {
                 case   "shortcuts": return .Shortcuts
                 case       "debug": return .Debug
                 case       "tools": return .Tools
-                case           nil: return .All
                 default:            return .All
                 }
             }

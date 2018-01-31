@@ -185,14 +185,14 @@ CQ
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <menu key="submenu" title="New ideas ..." id="OBR-N9-GY7">
                                                             <items>
-                                                                <menuItem title="Follow" keyEquivalent="." id="VH7-3z-X0C">
-                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                <menuItem title="Follow" alternate="YES" keyEquivalent="." id="VH7-3z-X0C">
+                                                                    <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                                                     <connections>
                                                                         <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="nxe-Rr-q22"/>
                                                                     </connections>
                                                                 </menuItem>
-                                                                <menuItem title="Precede" keyEquivalent="," id="dHQ-7g-fgO">
-                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                <menuItem title="Precede" alternate="YES" keyEquivalent="," id="dHQ-7g-fgO">
+                                                                    <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                                                     <connections>
                                                                         <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="rWe-PO-mDa"/>
                                                                     </connections>
@@ -342,8 +342,8 @@ CQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Help" systemMenu="help" id="F2S-fz-NVQ">
                                     <items>
-                                        <menuItem title="Focus Help" keyEquivalent="?" id="FKE-Sm-Kum">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        <menuItem title="Focus Help" keyEquivalent="/" id="FKE-Sm-Kum">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES"/>
                                             <connections>
                                                 <action selector="displayHelp:" target="Ady-hI-5gd" id="yRj-nt-Ohd"/>
                                             </connections>
@@ -363,7 +363,7 @@ CQ
                 <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Focus" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="228" y="-435"/>
+            <point key="canvasLocation" x="-61" y="-398"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">

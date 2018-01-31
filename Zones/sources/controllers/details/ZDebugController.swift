@@ -57,7 +57,7 @@ class ZDebugController: ZGenericController {
         if  let zone = grab {
             let order = Double(Int(zone.order * 100)) / 100.0
 
-            text.append("\(order) \(gWindowSize)")
+            text.append("\(order) \(gEditorController!.editorRootWidget.bounds.size)")
         }
 
         return text

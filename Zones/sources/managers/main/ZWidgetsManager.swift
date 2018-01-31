@@ -31,7 +31,7 @@ class ZWidgetsManager: NSObject {
     }
 
 
-    func clear() {
+    func clearRegistry() {
         widgets = [:]
     }
 

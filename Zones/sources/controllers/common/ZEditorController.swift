@@ -151,7 +151,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 editorView?.snp.removeConstraints()
             } else if !gIsEditingText {
                 if iKind == .redraw {
-                    gWidgetsManager.clear()
+                    gWidgetsManager.clearRegistry()
                 }
 
                 layoutForCurrentScrollOffset()
