@@ -25,7 +25,7 @@ class ZShortcutsController: ZGenericTableController {
     override func setup() {
         controllerID = .shortcuts
 
-        for value in [15, 73, 125] {
+        for value in [15, 73] {
             tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
         }
     }
@@ -41,11 +41,17 @@ class ZShortcutsController: ZGenericTableController {
 
 
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        let      style = NSMutableParagraphStyle()
-        let       text = shortcutStrings[row]
-        style.tabStops = tabStops
+        let                text = shortcutStrings[row]
+        let                next = text.substring(with: NSMakeRange(1, 1))
+        let      paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.tabStops = tabStops
+        var          underlines = 0
 
-        return NSAttributedString(string: text, attributes: [NSParagraphStyleAttributeName: style])
+        if text.starts(with: kSpace) && next.lowercased().isAlphabetical && next.uppercased() == next {
+            underlines = 1
+        }
+
+        return NSAttributedString(string: text, attributes: [NSParagraphStyleAttributeName: paragraphStyle, NSUnderlineStyleAttributeName: underlines])
     }
 
 
@@ -55,19 +61,26 @@ class ZShortcutsController: ZGenericTableController {
         "    \tRETURN   \tbegin or end typing",
         "    \tTAB      \tnext idea",
         "",
+        "  KEY + CONTROL",
+        "    \tPERIOD   \tnew ideas follow",
+        "    \tCOMMA    \tnew ideas precede",
+        "    \tSPACE    \tnew idea",
+        "",
         " WHILE TYPING:",
-        "    \tCONTROL + SPACE \tnew idea",
-        "    \tCONTROL + .     \tnew ideas follow",
-        "    \tCONTROL + ,     \tnew ideas precede",
-        "    \tCOMMAND + A     \tselect all text",
-        "    \tCOMMAND + (text is selected):",
-        "    \t     L   \tlowercase",
-        "    \t     U   \tuppercase",
-        "    \t     D   \tcreate child with text",
+        "  KEY + COMMAND",
+        "    \tA        \tselect all text",
+        "",
+        " WHILE TYPING & TEXT IS SELECTED:",
+        "  KEY + COMMAND",
+        "    \tL        \tlowercase",
+        "    \tU        \tuppercase",
+        "    \tD        \tcreate child with text",
         "",
         " WHILE NOT TYPING:",
         "    \tARROWS   \tnavigate within graph",
         "    \tDELETE   \tselected idea",
+        "    \tPERIOD   \tnew ideas follow",
+        "    \tCOMMA    \tnew ideas precede",
         "    \tSPACE    \tnew idea",
         "    \tA        \tselect all ideas",
         "    \tB        \tcreate a bookmark",
@@ -87,28 +100,26 @@ class ZShortcutsController: ZGenericTableController {
         "    \t/        \tfocus or toggle favorite",
         "    \t;        \tfocus on previous favorite",
         "    \t'        \tfocus on next favorite",
-        "    \t.        \tnew ideas follow",
-        "    \t,        \tnew ideas precede",
         "    \t$        \t(un)prefix with ($)",
         "    \t!        \t(un)prefix with (!)",
         "",
-        "   OPTION:",
+        "  KEY + OPTION",
         "    \tARROWS   \trelocate selected idea",
-        "    \tDELETE   \tretaining subordinate ideas",
-        "    \tTAB      \tadd an idea containing",
+        "    \tDELETE   \tretaining children",
+        "    \tTAB      \tnew idea containing",
         "    \tO        \tsort backwards by length",
         "",
-        "   COMMAND:",
+        "  KEY + COMMAND",
         "    \tARROWS   \textend all the way",
         "    \tRETURN   \tdeselect",
         "    \t/        \trefocus current favorite",
         "",
-        "   SHIFT + ARROW:",
-        "    \tRIGHT    \treveal subordinates",
-        "    \tLEFT     \thide subordinates",
-        "    \tvertical \textend selection",
+        "  ARROW KEY + SHIFT",
+        "    \tRIGHT    \treveal children",
+        "    \tLEFT     \thide children",
+        "    \tUP DOWN  \textend selection",
         "",
-        "   SHIFT + MOUSE CLICK:",
+        "  MOUSE CLICK + SHIFT",
         "    \t         \textend selection",
         "",
     ]

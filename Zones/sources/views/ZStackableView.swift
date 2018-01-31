@@ -19,11 +19,11 @@ import SnapKit
 class ZStackableView: ZView {
 
 
-    @IBOutlet var hideableView: ZView?
-    @IBOutlet var toggleButton: ZButton?
-    @IBOutlet var   titleLabel: ZTextField?
-    let debugViewIDs : [ZDetailsViewID] = [.Debug, .Tools]
-    var  isDebugView : Bool { return debugViewIDs.contains(identity) }
+    @IBOutlet var     hideableView : ZView?
+    @IBOutlet var     toggleButton : ZButton?
+    @IBOutlet var       titleLabel : ZTextField?
+    let               debugViewIDs : [ZDetailsViewID] = [.Debug, .Tools]
+    var                isDebugView : Bool { return debugViewIDs.contains(identity) }
 
     // MARK:- identity
     // MARK:-
@@ -49,7 +49,11 @@ class ZStackableView: ZView {
 
     var hideableIsHidden: Bool {
         get {
-            return gDetailsViewIDs.contains(identity)
+            if gReadyState  {
+                return gDetailsViewIDs.contains(identity)
+            } else {
+                return true
+            }
         }
 
         set {
@@ -75,7 +79,6 @@ class ZStackableView: ZView {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        
         update()
     }
 
@@ -107,20 +110,22 @@ class ZStackableView: ZView {
 
 
     func updateHideableView() {
-        if !hideableIsHidden {
+        if  hideableIsHidden {
             hideableView?.removeFromSuperview()
             titleLabel?.snp.makeConstraints { make in
                 make.bottom.equalTo(self)
             }
-        } else if !subviews.contains(hideableView!) {
-            addSubview(hideableView!)
+        } else {
+            if !subviews.contains(hideableView!) {
+                addSubview(hideableView!)
+            }
+
             titleLabel?.snp.removeConstraints()
             hideableView?.snp.makeConstraints { make in
                 make.top.equalTo((self.toggleButton?.snp.bottom)!)
                 make.left.right.bottom.equalTo(self)
             }
 
-            signalFor(nil, regarding: .datum)
             FOREGROUND(after: 0.2) {
                 self.hideableView?.setNeedsDisplay()
             }

@@ -361,6 +361,7 @@ extension Array {
 extension String {
     var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
     var          isDigit: Bool { return "0123456789.+-=*/".contains(self[startIndex]) }
+    var   isAlphabetical: Bool { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
     var          isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
     var           length: Int  { return unicodeScalars.count }
@@ -421,11 +422,43 @@ extension String {
     }
 
 
-    func substring(with r: Range<Int>) -> String {
-        let startIndex = index(at: r.lowerBound)
-        let   endIndex = index(at: r.upperBound)
+    func ends(with: String) -> Bool {
+        let    end = substring(from: length - 1)
 
-        return substring(with: startIndex..<endIndex)
+        return end == with
+    }
+
+
+    func smartlyAppended(_ appending: String) -> String {
+        var before = self
+        var  after = appending
+
+        while (before.ends(with: kSpace) || before == "") && after.starts(with: kSpace) {
+            after = after.substring(from: 1)
+        }
+
+        while before.ends(with: kSpace) && after == "" {
+            before = before.substring(to: before.length - 1)
+        }
+
+        return before + after
+    }
+
+
+    func stringBySmartReplacing(_ range: NSRange, with replacement: String) -> String {
+        let a = substring(to:   range.lowerBound)
+        let b = replacement
+        let c = substring(from: range.upperBound)
+
+        return a.smartlyAppended(b.smartlyAppended(c))
+    }
+
+
+    func substring(with range: NSRange) -> String {
+        let iStart = index(at: range.lowerBound)
+        let   iEnd = index(at: range.upperBound)
+
+        return substring(with: iStart ..< iEnd)
     }
 
 

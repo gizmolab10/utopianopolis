@@ -268,7 +268,7 @@ extension NSView {
 extension NSWindow {
 
     override open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
-        return gEditingManager.validateKey(menuItem.keyEquivalent)
+        return gEditingManager.validateKey(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask)
     }
 
     

@@ -71,14 +71,20 @@ class ZEditingManager: NSObject {
 }
 
 
-    func menuType(for key: String) -> ZMenuType {
+    func menuType(for key: String, _ flags: NSEventModifierFlags) -> ZMenuType {
+//        let isControl = flags.isControl
+        let isCommand = flags.isCommand
+//        let  isOption = flags.isOption
+//        var   isShift = flags.isShift
+
         switch key {
         case "a":                                 return .SelectAll
         case "=":                                 return .Travel
         case "z":                                 return .Undo
         case "o", "r":                            return .Sort
         case "v", "x", kSpace:                    return .Child
-        case "b", "d", kTab, kBackspace, kDelete: return .Parent
+        case "d":                                 return  isCommand ? .Alter : .Parent
+        case "b", kTab, kBackspace, kDelete:      return .Parent
         case ";", "'", "/", "?", ",", ".":        return .Cloud
         case "e", "h", "l", "u", "w",
              "1", "-", "$", "!", "\r":            return .Alter
@@ -87,12 +93,12 @@ class ZEditingManager: NSObject {
     }
 
 
-    func validateKey(_ key: String) -> Bool {
+    func validateKey(_ key: String, _ flags: NSEventModifierFlags) -> Bool {
         if gWorkMode != .graphMode {
             return false
         }
 
-        let type = menuType(for: key)
+        let type = menuType(for: key, flags)
         var valid = !gIsEditingText
 
         if  valid {
@@ -131,7 +137,7 @@ class ZEditingManager: NSObject {
 
 
     func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) {
-        if  var       key = iKey, validateKey(key) {
+        if  var       key = iKey, validateKey(key, flags) {
             let    widget = gWidgetsManager.currentMovableWidget
             let hasWidget = widget != nil
             let isControl = flags.isControl
@@ -146,8 +152,9 @@ class ZEditingManager: NSObject {
 
             if  gIsEditingText {
                 switch key {
-                case "f":      if isCommand { find() }
                 case "a":      if isCommand { gEditedTextWidget?.selectAllText() }
+                case "d":      if isCommand { addIdeaFromSelectedText() }
+                case "f":      if isCommand { find() }
                 case "?":      if isControl { gDetailsController?.displayViewFor(ids: [.Shortcuts]) }
                 case ",", ".": gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
                 case kSpace:   if isControl { addIdea() }
@@ -429,7 +436,7 @@ class ZEditingManager: NSObject {
 
         gEditorController?.layoutForCurrentScrollOffset()
     }
-    
+
 
     func alterCase(up: Bool) {
         for grab in gSelectionManager.currentGrabs {
@@ -841,12 +848,8 @@ class ZEditingManager: NSObject {
                 index! += gInsertionsFollow ? 1 : 0
             }
 
-            addIdeaIn(parent, at: index) { iChild in
+            addIdeaIn(parent, at: index, with: name) { iChild in
                 if let child = iChild {
-                    if name != nil {
-                        child.zoneName = name
-                    }
-
                     if !containing {
                         gControllersManager.signalFor(nil, regarding: .redraw) {
                             onCompletion?(child)
@@ -858,6 +861,27 @@ class ZEditingManager: NSObject {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+
+    func addIdeaFromSelectedText() {
+        if  let w = gEditedTextWidget, let t = w.text, let e = w.currentEditor(), let z = w.widgetZone {
+            let     range = e.selectedRange
+            let childName = t.substring(with: range)
+            w.text        = t.stringBySmartReplacing(range, with: "")
+
+            gSelectionManager.clearEdit()
+            gSelectionManager.fullResign()
+            z.displayChildren()
+            z.needChildren()
+
+            gDBOperationsManager.children { iSame in
+                self.addIdeaIn(z, at: gInsertionsFollow ? nil : 0, with: childName) { iChild in
+                    self.redrawAndSync()
+                    iChild?.edit()
                 }
             }
         }
@@ -892,7 +916,7 @@ class ZEditingManager: NSObject {
             }
         }
     }
-    
+
 
     // MARK:- copy and paste
     // MARK:-
@@ -1304,10 +1328,14 @@ class ZEditingManager: NSObject {
     // MARK:-
     
 
-    func addIdeaIn(_ iParent: Zone?, at iIndex: Int?, onCompletion: ZoneMaybeClosure?) {
+    func addIdeaIn(_ iParent: Zone?, at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
         if  let       parent = iParent, parent.storageMode != .favoritesMode {
             let createAndAdd = {
                 let    child = Zone(storageMode: parent.storageMode)
+
+                if name != nil {
+                    child.zoneName = name
+                }
 
                 self.UNDO(self) { iUndoSelf in
                     iUndoSelf.deleteZones([child]) {

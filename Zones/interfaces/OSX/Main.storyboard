@@ -154,12 +154,6 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Xte-u6-NHv"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Duplicate Idea" tag="6" keyEquivalent="d" id="5hd-1O-7Z4">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="WlD-5G-cl8"/>
-                                                        </connections>
-                                                    </menuItem>
                                                     <menuItem title="Group containing" tag="7" id="E0i-4W-ZZI">
                                                         <string key="keyEquivalent" base64-UTF8="YES">
 CQ
@@ -167,6 +161,18 @@ CQ
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="bsP-FQ-jyh"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem isSeparatorItem="YES" id="MZf-mi-yuL"/>
+                                                    <menuItem title="Duplicate of Idea" tag="6" keyEquivalent="d" id="5hd-1O-7Z4">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="WlD-5G-cl8"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="New Idea from selected text" tag="6" keyEquivalent="d" id="OkO-XF-Hez">
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="G9O-zJ-ei8"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem title="Bookmark" tag="10" keyEquivalent="b" id="3wN-52-oXT">
@@ -181,6 +187,13 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Kdz-KX-lfr"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="Email" tag="10" keyEquivalent="e" id="rrJ-Ip-NPG">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="g4C-va-7w7"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem isSeparatorItem="YES" id="6UW-fU-huz"/>
                                                     <menuItem title="New ideas ..." tag="6" id="qrM-Lc-daa">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <menu key="submenu" title="New ideas ..." id="OBR-N9-GY7">

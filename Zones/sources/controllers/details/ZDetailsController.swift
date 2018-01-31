@@ -23,6 +23,20 @@ class ZDetailsController: ZGenericController {
     override func setup() {
         controllerID = .details
     }
+    
+    
+    override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
+        update()
+    }
+
+
+    func update() {
+        stackView?.applyToAllSubviews { iView in
+            if  let stackableView = iView as? ZStackableView {
+                stackableView.update()
+            }
+        }
+    }
 
 
     func displayViewFor(ids: [ZDetailsViewID]) {
@@ -30,12 +44,6 @@ class ZDetailsController: ZGenericController {
             gDetailsViewIDs.insert(id)
         }
 
-        if  let subviews = stackView?.subviews {
-            for subview in subviews {
-                if  let stackableView = subview as? ZStackableView {
-                    stackableView.update()
-                }
-            }
-        }
+        update()
     }
 }

@@ -198,17 +198,17 @@
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZDetailsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="1493"/>
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="263"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="0.0" width="226" height="1493"/>
+                                <rect key="frame" x="0.0" y="9" width="226" height="254"/>
                                 <subviews>
                                     <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="650" width="226" height="843"/>
+                                        <rect key="frame" x="0.0" y="204" width="226" height="50"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="824" width="226" height="19"/>
+                                                <rect key="frame" x="0.0" y="31" width="226" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ce9-hv-nUx" userLabel="Information">
                                                         <rect key="frame" x="0.0" y="1" width="226" height="17"/>
@@ -246,7 +246,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Information">
-                                                <rect key="frame" x="0.0" y="0.0" width="226" height="824"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="226" height="31"/>
                                                 <connections>
                                                     <segue destination="fxO-Qj-JeN" kind="embed" id="w7B-Py-09b"/>
                                                 </connections>
@@ -268,10 +268,10 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="247" width="226" height="402"/>
+                                        <rect key="frame" x="0.0" y="153" width="226" height="50"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="383" width="226" height="19"/>
+                                                <rect key="frame" x="0.0" y="31" width="226" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gUX-Sv-09B">
                                                         <rect key="frame" x="0.0" y="1" width="226" height="17"/>
@@ -309,7 +309,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="btT-FF-Ema" userLabel="Preferences">
-                                                <rect key="frame" x="0.0" y="0.0" width="226" height="383"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="226" height="31"/>
                                                 <connections>
                                                     <segue destination="Naq-se-Exq" kind="embed" id="Pht-fq-dCw"/>
                                                 </connections>
@@ -331,7 +331,7 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="shortcuts" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E5h-DF-X3i" userLabel="Shortcuts View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="196" width="226" height="50"/>
+                                        <rect key="frame" x="0.0" y="102" width="226" height="50"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="GnQ-iS-bgR" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="31" width="226" height="19"/>
@@ -394,10 +394,10 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="tools" hidden="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Tools View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="51" width="226" height="144"/>
+                                        <rect key="frame" x="0.0" y="51" width="226" height="50"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Dnz-Gb-8cH" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="125" width="226" height="19"/>
+                                                <rect key="frame" x="0.0" y="31" width="226" height="19"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UIC-Be-bJk">
                                                         <rect key="frame" x="0.0" y="1" width="226" height="17"/>
@@ -435,7 +435,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="XUr-go-ovY" userLabel="Tools">
-                                                <rect key="frame" x="0.0" y="0.0" width="226" height="125"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="226" height="31"/>
                                                 <connections>
                                                     <segue destination="M1d-6V-b2Q" kind="embed" id="B7U-nN-bjh"/>
                                                 </connections>
@@ -566,7 +566,7 @@
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-714" y="2313.5"/>
+            <point key="canvasLocation" x="-699" y="2209"/>
         </scene>
         <!--Preferences Controller-->
         <scene sceneID="n3v-Vu-MZq">
