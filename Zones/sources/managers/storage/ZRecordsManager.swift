@@ -58,6 +58,12 @@ class ZRecordsManager: NSObject {
     }
 
 
+    var hereZone: Zone {
+        get { return maybeZRecordForRecordName(gHereRecordName) as? Zone ?? rootZone! }
+        set { gHereRecordName = newValue.recordName ?? kRootName }
+    }
+
+
     init(_ iStorageMode: ZStorageMode) {
         storageMode = iStorageMode
     }

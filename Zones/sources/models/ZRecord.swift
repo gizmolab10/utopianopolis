@@ -311,6 +311,12 @@ class ZRecord: NSObject {
     func allowSave()    { removeState(.requiresFetch)}
 
 
+    func needSave() {
+        allowSave()
+        maybeNeedSave()
+    }
+
+
     func needProgeny() {
         if  !kFullFetch || hasMissingProgeny() {
             addState(.needsProgeny)

@@ -49,7 +49,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 if  let   zone  = widgetZone {
                     if !_isEditingText {
                         let            grab = s.currentlyEditingZone == zone
-                        textColor           = !grab ? ZColor.black : zone.grabbedTextColor
+                        textColor           = grab || zone.colorized ? zone.grabbedTextColor : ZColor.black
 
                         abortEditing() // NOTE: this does NOT remove selection highlight !!!!!!!
                         deselectAllText()
@@ -264,6 +264,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     override func draw(_ dirtyRect: CGRect) {
+        if  let  zone = widgetZone {
+            textColor = zone.colorized ? zone.grabbedTextColor : ZColor.black
+        }
+
         super.draw(dirtyRect)
 
         if  let zone = widgetZone,

@@ -31,6 +31,7 @@ class Zone : ZRecord {
     dynamic var      zoneOrder:     NSNumber?
     dynamic var      zoneCount:     NSNumber?
     dynamic var     zoneAccess:     NSNumber?
+    dynamic var zoneAttributes:       String?
     dynamic var     parentLink:       String?
     dynamic var    zoneProgeny:     NSNumber?
     var            _parentZone:         Zone?
@@ -184,7 +185,8 @@ class Zone : ZRecord {
                 #keyPath(zoneOwner),
                 #keyPath(zoneAccess),
                 #keyPath(parentLink),
-                #keyPath(zoneProgeny)]
+                #keyPath(zoneProgeny),
+                #keyPath(zoneAttributes)]
     }
 
 
@@ -273,6 +275,40 @@ class Zone : ZRecord {
                 zoneColor = newValue.string
 
                 maybeNeedSave()
+            }
+        }
+    }
+
+
+    let kColorized = "c"
+
+
+    var colorized: Bool {
+        get {
+            if  let attributes = zoneAttributes {
+                return attributes.contains(kColorized)
+            } else {
+                return false
+            }
+        }
+
+        set {
+            if  newValue != colorized {
+                var attributes = zoneAttributes
+
+                if  attributes == nil {
+                    attributes = ""
+                }
+
+                if  newValue {
+                    attributes?.append(kColorized)
+                } else {
+                    attributes = attributes?.replacingOccurrences(of: kColorized, with: "")
+                }
+
+                zoneAttributes = attributes
+
+                needSave()
             }
         }
     }
@@ -1229,8 +1265,7 @@ class Zone : ZRecord {
                     iZone     .record = newRecord                                           // side-effect: move registration to the new mode's record manager
 
                     oldRecord?.copy(to: iZone.record, properties: iZone.cloudProperties())  // preserve new record id
-                    iZone.allowSave()
-                    iZone.maybeNeedSave()                                                   // in new mode's record manager
+                    iZone.needSave()                                                        // in new mode's record manager
 
                     ///////////////////////////////////////////////////////////////
                     // (2) compute parent and parentLink using iZone's new iMode //
@@ -1381,12 +1416,14 @@ class Zone : ZRecord {
 
 
     func safeUpdateProgenyCount(_ iMissing: [Zone]) {
-        if !iMissing.contains(self) && count != 0 {
+        if !iMissing.contains(self) && !hasMissingChildren() { // has missing children -> incomplete count information
             let missing = iMissing + [self]
             var counter = 0
 
             for child in children {
-                if !child.isBookmark {
+                if  child.isBookmark {
+                    counter += 1
+                } else {
                     child.safeUpdateProgenyCount(missing)
 
                     counter += child.fetchableCount + child.progenyCount
@@ -1394,6 +1431,8 @@ class Zone : ZRecord {
             }
 
             progenyCount = counter
+
+            needSave()
         }
     }
 

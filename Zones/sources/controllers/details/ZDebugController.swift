@@ -21,6 +21,7 @@ class ZDebugController: ZGenericController {
     @IBOutlet var   nameLabel: ZTextField?
     @IBOutlet var  otherLabel: ZTextField?
     @IBOutlet var statusLabel: ZTextField?
+    @IBOutlet var recordLabel: ZTextField?
     var grab: Zone? = nil
 
 
@@ -57,7 +58,15 @@ class ZDebugController: ZGenericController {
         if  let zone = grab {
             let order = Double(Int(zone.order * 100)) / 100.0
 
-            text.append("\(order) \(gEditorController!.editorRootWidget.bounds.size)")
+            text.append("\(order)")
+        }
+
+        if let debugView = view.window?.contentView {
+//        if let gEditorController!.editorRootWidget {
+//        if let view.window!.contentView {
+//        if let gEditorView {
+
+            text.append(" \(debugView.bounds.size)")
         }
 
         return text
@@ -73,6 +82,7 @@ class ZDebugController: ZGenericController {
         if ![.search, .found].contains(iKind) && gReadyState {
             grab              = gSelectionManager.firstGrab
             nameLabel?  .text = grab?.unwrappedName
+            recordLabel?.text = grab?.recordName
             otherLabel? .text = otherText
             statusLabel?.text = statusText
         }

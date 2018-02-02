@@ -130,8 +130,13 @@ class ZToolsController: ZGenericTableController {
 
     func recount() {
         for mode in gAllDatabaseModes {
-            gRemoteStoresManager.cloudManagerFor(mode).rootZone?.safeUpdateProgenyCount([])
+            let manager = gRemoteStoresManager.cloudManagerFor(mode)
+            manager        .hereZone.safeUpdateProgenyCount([])
+            manager       .trashZone.safeUpdateProgenyCount([])
+            manager.lostAndFoundZone.safeUpdateProgenyCount([])
         }
+
+        syncToCloudAndSignalFor(nil, regarding: .redraw) {}
     }
 
 

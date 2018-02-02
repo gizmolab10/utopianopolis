@@ -72,23 +72,20 @@ class ZEditingManager: NSObject {
 
 
     func menuType(for key: String, _ flags: NSEventModifierFlags) -> ZMenuType {
-//        let isControl = flags.isControl
         let isCommand = flags.isCommand
-//        let  isOption = flags.isOption
-//        var   isShift = flags.isShift
 
         switch key {
-        case "a":                                 return .SelectAll
-        case "=":                                 return .Travel
-        case "z":                                 return .Undo
-        case "o", "r":                            return .Sort
-        case "v", "x", kSpace:                    return .Child
-        case "d":                                 return  isCommand ? .Alter : .Parent
-        case "b", kTab, kBackspace, kDelete:      return .Parent
-        case ";", "'", "/", "?", ",", ".":        return .Cloud
-        case "e", "h", "l", "u", "w",
-             "1", "-", "$", "!", "\r":            return .Alter
-        default:                                  return .Always
+        case "a":                            return .SelectAll
+        case "=":                            return .Travel
+        case "z":                            return .Undo
+        case "o", "r":                       return .Sort
+        case "v", "x", kSpace:               return .Child
+        case "d":                            return  isCommand ? .Alter : .Parent
+        case "b", kTab, kDelete, kBackspace: return .Parent
+        case ";", "'", "/", "?", ",", ".":   return .Cloud
+        case "e", "h", "i", "l", "u", "w",
+             "1", "-", "$", "!", "\r":       return .Alter
+        default:                             return .Always
         }
     }
 
@@ -171,6 +168,7 @@ class ZEditingManager: NSObject {
                 case "e":      editEmail()
                 case "f":      find()
                 case "h":      editHyperlink()
+                case "i":      toggleColorized()
                 case "o":      orderByLength(isOption)
                 case "p":      printHere()
                 case "r":      reverse()
@@ -272,6 +270,13 @@ class ZEditingManager: NSObject {
 
     // MARK:- miscellaneous features
     // MARK:-
+
+
+    func toggleColorized() {
+        for zone in gSelectionManager.currentGrabs {
+            zone.colorized = !zone.colorized
+        }
+    }
 
 
     func mark(with iMark: String) {
@@ -394,10 +399,11 @@ class ZEditingManager: NSObject {
             zones        = commonParent.children
         }
 
-        if zones.count > 1 {
-            let font = gWidgetFont
+        commonParent.children.updateOrder()
 
-            zones.updateOrder()
+        if zones.count > 1 {
+            let         font = gWidgetFont
+            let (start, end) = zones.orderLimits(iBackwards)
 
             zones.sort { (a, b) -> Bool in
                 let aLength = a.zoneName?.widthForFont(font) ?? 0
@@ -406,25 +412,9 @@ class ZEditingManager: NSObject {
                 return aLength < bLength
             }
 
-            var start = 1.0
-            var   end = 0.0
-
-            for child in zones {
-                let  order = child.order
-                let  after = order > end
-                let before = order < start
-
-                if  (iBackwards && before) || (!iBackwards && after) {
-                    end    = order
-                }
-
-                if  (iBackwards && after) || (!iBackwards && before) {
-                    start  = order
-                }
-            }
-
             zones.updateOrdering(start: start, end: end)
             commonParent.respectOrder()
+            commonParent.children.updateOrder()
             redrawSyncRedraw()
         }
     }
@@ -758,8 +748,8 @@ class ZEditingManager: NSObject {
                 gSelectionManager.deselectDragWithin(zone);
                 apply()
             } else {
-                zone.extendNeedForChildren(to: goal)
-                gDBOperationsManager.children(.expand, goal) { iSame in
+                zone.needProgeny()
+                gDBOperationsManager.children(.all, goal) { iSame in
                     apply()
                 }
             }

@@ -416,7 +416,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchLost(_ onCompletion: IntClosure?) {
-        let predicate = NSPredicate(format: "\(kZoneName) != \"\(kRootName)\"")
+        let predicate = NSPredicate(format: "\(kRecordName) != \"\(kRootName)\"")
         var   fetched = [CKRecord] ()
 
         self.queryWith(predicate, batchSize: kMaxBatchSize) { iRecord in
@@ -943,12 +943,21 @@ class ZCloudManager: ZRecordsManager {
 
                 let      root = self.zoneForCKRecord(rootRecord!)                       // get / create root
                 self.rootZone = root
+                root  .parent = nil
 
                 if  root.zoneName == nil {
                     root.zoneName = "title"                                             // was created
 
-                    root.maybeNeedSave()
-                } else if kFullFetch {
+                    root.needSave()
+                }
+
+                if  root.parent != nil {
+                    root.parent  = nil
+
+                    root.needSave()
+                }
+
+                if kFullFetch {
                     root.needProgeny()
                 }
 
@@ -1039,7 +1048,7 @@ class ZCloudManager: ZRecordsManager {
                 record[property] = value as? CKRecordValue
 
                 if !object.canSave {
-                    object.allowSave()
+                    object.needSave()
                 } else {
                     object.maybeNeedMerge()
                 }
