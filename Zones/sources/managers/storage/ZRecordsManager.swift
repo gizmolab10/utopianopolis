@@ -58,9 +58,15 @@ class ZRecordsManager: NSObject {
     }
 
 
+    var hereRecordName: String? {
+        get { return gSelectionManager.hereRecordName(for: storageMode) }
+        set { gSelectionManager.setHereRecordName(newValue ?? kRootName, for: storageMode) }
+    }
+
+
     var hereZone: Zone {
-        get { return maybeZRecordForRecordName(gHereRecordName) as? Zone ?? rootZone! }
-        set { gHereRecordName = newValue.recordName ?? kRootName }
+        get { return maybeZRecordForRecordName(hereRecordName) as? Zone ?? rootZone! }
+        set { hereRecordName = newValue.recordName ?? kRootName }
     }
 
 
@@ -687,7 +693,7 @@ class ZRecordsManager: NSObject {
         if  zone == nil {
             zone  = Zone(record: CKRecord(recordType: kZoneType, recordID: reference.recordID), storageMode: storageMode)
 
-            // columnarReport("REFERENCE FETCH", "\(reference.recordID.recordName)")
+            zone?.requireFetch() // POTENTIALLY BAD DUMMY
             zone?.maybeNeedFetch()
         }
 

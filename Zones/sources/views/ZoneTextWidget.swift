@@ -265,7 +265,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     override func draw(_ dirtyRect: CGRect) {
         if  let  zone = widgetZone {
-            textColor = zone.colorized ? zone.grabbedTextColor : ZColor.black
+            textColor = zone.colorized ? zone.color : ZColor.black
         }
 
         super.draw(dirtyRect)

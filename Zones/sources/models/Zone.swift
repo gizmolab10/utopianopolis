@@ -23,7 +23,7 @@ import CloudKit
 class Zone : ZRecord {
 
 
-    dynamic var         parent: CKReference?
+    dynamic var         parent:  CKReference?
     dynamic var       zoneName:       String?
     dynamic var       zoneLink:       String?
     dynamic var      zoneColor:       String?
@@ -39,12 +39,13 @@ class Zone : ZRecord {
     var             _crossLink:      ZRecord?
     var                 _color:       ZColor?
     var                 _email:       String?
-    var               children =                [Zone] ()
+    var               children = [Zone] ()
     var                 traits = [ZTraitType : ZTrait] ()
     var                  count:          Int  { return children.count }
+    var              trashZone:         Zone? { return cloudManager?.trashZone }
     var                 widget:   ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
-    var               linkName:       String? { return name(from: zoneLink) }
     var               linkMode: ZStorageMode? { return mode(from: zoneLink) }
+    var               linkName:       String? { return name(from: zoneLink) }
     var          unwrappedName:       String  { return zoneName ?? kNoName }
     var          decoratedName:       String  { return decoration + unwrappedName }
     var       fetchedBookmarks:       [Zone]  { return gBookmarksManager.bookmarks(for: self) ?? [] }
@@ -70,17 +71,6 @@ class Zone : ZRecord {
     var               hasColor:         Bool  { return zoneColor != nil && zoneColor != "" }
     var                isEmail:         Bool  { return hasTrait(for: .eEmail) && email != "" }
     var                isTrash:         Bool  { return recordName == kTrashName }
-
-
-    var trashZone: Zone? {
-        if  let       mode = storageMode {
-            let    manager = gRemoteStoresManager.cloudManagerFor(mode)
-
-            return manager.trashZone
-        }
-
-        return nil
-    }
 
 
     var email: String? {
@@ -481,60 +471,46 @@ class Zone : ZRecord {
 
     var parentZone: Zone? {
         get {
-            var deb = 0
             if      _parentZone   == nil {
-                deb = 1
-                if  let  parentRef = parent, let mode = storageMode {
-                    _parentZone    = gRemoteStoresManager.cloudManagerFor(mode).zoneForReference(parentRef) // POTENTIALLY BAD DUMMY
-                    deb = 2
-
-                    _parentZone?.requireFetch()
+                if  let  parentRef = parent {
+                    _parentZone    = cloudManager?.zoneForReference(parentRef)
                 } else if let zone = zoneFrom(parentLink) {
                     _parentZone    = zone
-                    deb = 3
                 }
             }
-
-//            if badJonathan() {
-//                parent = nil
-//                _parentZone = nil
-//                parentLink = kNullLink
-//            }
 
             return _parentZone
         }
 
         set {
-            _parentZone                  = newValue
+            if  _parentZone != newValue {
+                _parentZone  = newValue
 
-            if _parentZone?.zoneName == "saved" {
-                bam("created saved")
-            }
-
-            if  newValue == nil {
-                if  parentLink != kNullLink || parent != nil {
-                    parentLink  = kNullLink
-                    parent      = nil
-
-                    maybeNeedSave()
-                }
-            } else if let      parentRecord  = newValue?.record,
-                let                 newMode  = newValue?.storageMode {
-                if                  newMode == storageMode {
-                    if parent?.recordID.recordName != parentRecord.recordID.recordName {
-                        parentLink           = kNullLink
-                        parent               = CKReference(record: parentRecord, action: .none)
+                if  newValue == nil {
+                    if  parentLink != kNullLink || parent != nil {
+                        parentLink  = kNullLink
+                        parent      = nil
 
                         maybeNeedSave()
                     }
-                } else {                                                                                // new parent is in different db
-                    let newLink = "\(newMode.rawValue)::\(parentRecord.recordID.recordName)"
+                } else if let parentRecord  = newValue?.record,
+                    let            newMode  = newValue?.storageMode {
+                    if             newMode == storageMode {
+                        if parent?.recordID.recordName != parentRecord.recordID.recordName {
+                            parentLink      = kNullLink
+                            parent          = CKReference(record: parentRecord, action: .none)
 
-                    if  newLink != parentLink {
-                        parentLink           = newLink  // references don't work across dbs
-                        parent               = nil
+                            maybeNeedSave()
+                        }
+                    } else {                                                                                // new parent is in different db
+                        let newLink = "\(newMode.rawValue)::\(parentRecord.recordID.recordName)"
 
-                        maybeNeedSave()
+                        if  parentLink     != newLink {
+                            parentLink      = newLink  // references don't work across dbs
+                            parent          = nil
+
+                            maybeNeedSave()
+                        }
                     }
                 }
             }

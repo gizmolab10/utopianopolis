@@ -53,8 +53,8 @@ class ZTrait: ZRecord {
 
 
     var ownerZone: Zone? {
-        if  _ownerZone == nil, let mode = storageMode {
-            _ownerZone  = gRemoteStoresManager.cloudManagerFor(mode).maybeZRecordForRecordID(owner?.recordID) as? Zone
+        if  _ownerZone == nil {
+            _ownerZone  = cloudManager?.maybeZRecordForRecordID(owner?.recordID) as? Zone
         }
 
         return _ownerZone

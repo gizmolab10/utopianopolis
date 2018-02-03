@@ -307,7 +307,7 @@ extension Array {
     func updateOrder() { updateOrdering(start: 0.0, end: 1.0) }
 
 
-    func orderLimits(_ iBackwards: Bool = false) -> (start: Double, end: Double) {
+    func orderLimits() -> (start: Double, end: Double) {
         var start = 1.0
         var   end = 0.0
 
@@ -317,12 +317,12 @@ extension Array {
                 let  after = order > end
                 let before = order < start
 
-                if  (iBackwards && before) || (!iBackwards && after) {
-                    end    = order
+                if  before {
+                    start  = order
                 }
 
-                if  (iBackwards && after) || (!iBackwards && before) {
-                    start  = order
+                if  after {
+                    end    = order
                 }
             }
         }

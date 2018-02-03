@@ -324,6 +324,12 @@ CQ
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Alter" id="fYn-u6-6xn">
                                                 <items>
+                                                    <menuItem title="Alphabetize" keyEquivalent="n" id="UXb-P4-5bD">
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="7H4-rt-OwO"/>
+                                                        </connections>
+                                                    </menuItem>
                                                     <menuItem title="Color Text" keyEquivalent="i" id="DCB-ck-TIL">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>

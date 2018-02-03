@@ -169,11 +169,12 @@ class ZEditingManager: NSObject {
                 case "f":      find()
                 case "h":      editHyperlink()
                 case "i":      toggleColorized()
+                case "l", "u": alterCase(up: key == "u")
+                case "n":      alphabetize(isOption)
                 case "o":      orderByLength(isOption)
                 case "p":      printHere()
                 case "r":      reverse()
                 case "s":      selectCurrentFavorite()
-                case "u", "l": alterCase(up: key == "u")
                 case "w":      toggleWritable()
                 case "$", "!": mark(with: key)
                 case "1":      divideChildren()
@@ -187,6 +188,7 @@ class ZEditingManager: NSObject {
                 case ",", ".": gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
                 case "z":      if isCommand { if isShift { kUndoManager.redo() } else { kUndoManager.undo() } }
                 case kSpace:   if isOption || isWindow || isControl { addIdea() }
+                case kEscape:  travelToOtherMode()
                 case kBackspace,
                      kDelete:  if isOption || isWindow { delete(permanently: isCommand && isControl && isOption && isWindow, preserveChildren: !isCommand && !isControl && isOption && isWindow) }
                 case "\r":     if hasWidget { grabOrEdit(isCommand) }
@@ -270,6 +272,27 @@ class ZEditingManager: NSObject {
 
     // MARK:- miscellaneous features
     // MARK:-
+
+
+    func travelToOtherMode() {
+        let here = gHere
+
+        toggleStorageMode()
+
+        if        here.isRootOfFavorites {
+            gHere = gFavoritesManager.rootZone!
+        } else if here.isLostAndFound {
+            gHere = gLostAndFound!
+        } else if here.isTrash {
+            gHere = gTrash!
+        } else if here.isRoot {
+            gHere = gRoot!
+        }
+
+
+        gFavoritesManager.updateFavorites()
+        signalFor(nil, regarding: .redraw)
+    }
 
 
     func toggleColorized() {
@@ -384,9 +407,36 @@ class ZEditingManager: NSObject {
     }
 
 
+    func alphabetize(_ iBackwards: Bool = false) {
+        alterOrdering { iZones -> ([Zone]) in
+            return iZones.sorted { (a, b) -> Bool in
+                let aName = a.unwrappedName
+                let bName = b.unwrappedName
+
+                return iBackwards ? (aName > bName) : (aName < bName)
+            }
+        }
+    }
+
+
     func orderByLength(_ iBackwards: Bool = false) {
+        let font = gWidgetFont
+
+        alterOrdering { iZones -> ([Zone]) in
+            return iZones.sorted { (a, b) -> Bool in
+                let aLength = a.zoneName?.widthForFont(font) ?? 0
+                let bLength = b.zoneName?.widthForFont(font) ?? 0
+
+                return iBackwards ? (aLength > bLength) : (aLength < bLength)
+            }
+        }
+    }
+
+
+    func alterOrdering(_ iBackwards: Bool = false, with sortClosure: ZonesToZonesClosure) {
         var commonParent = gSelectionManager.firstGrab.parentZone ?? gSelectionManager.firstGrab
         var        zones = gSelectionManager.simplifiedGrabs
+
         for zone in zones {
             if let parent = zone.parentZone, parent != commonParent {
                 // status bar -> not all of the grabbed zones share the same parent
@@ -401,16 +451,9 @@ class ZEditingManager: NSObject {
 
         commonParent.children.updateOrder()
 
-        if zones.count > 1 {
-            let         font = gWidgetFont
-            let (start, end) = zones.orderLimits(iBackwards)
-
-            zones.sort { (a, b) -> Bool in
-                let aLength = a.zoneName?.widthForFont(font) ?? 0
-                let bLength = b.zoneName?.widthForFont(font) ?? 0
-
-                return aLength < bLength
-            }
+        if  zones.count > 1 {
+            let (start, end) = zones.orderLimits()
+            zones            = sortClosure(zones)
 
             zones.updateOrdering(start: start, end: end)
             commonParent.respectOrder()

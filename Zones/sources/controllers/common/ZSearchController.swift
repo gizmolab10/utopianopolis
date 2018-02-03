@@ -88,7 +88,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
             var combined = [ZStorageMode: [Any]] ()
             var     done = false
 
-            for mode in [ZStorageMode.mineMode, ZStorageMode.everyoneMode] {
+            for mode in gAllDatabaseModes {
                 let manager = gRemoteStoresManager.cloudManagerFor(mode)
 
                 manager.search(for: searchString) { iObject in

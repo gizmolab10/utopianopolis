@@ -35,6 +35,14 @@ enum ZCountsMode: Int {
 }
 
 
+func indexOf(_ mode: ZStorageMode) -> Int? {
+    switch mode {
+    case .everyoneMode: return 0
+    case     .mineMode: return 1
+    default:            return nil
+    }
+}
+
 
 enum ZStorageMode: String {
     case favoritesMode = "favorites"

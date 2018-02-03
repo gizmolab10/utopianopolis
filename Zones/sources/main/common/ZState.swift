@@ -50,6 +50,14 @@ var          gWidgetFont:              ZFont { return .systemFont(ofSize: fontSi
 var       gFavoritesFont:              ZFont { return .systemFont(ofSize: fontSize * kReductionRatio) }
 
 
+func toggleStorageMode() {
+    switch          gStorageMode {
+    case .mineMode: gStorageMode = .everyoneMode
+    default:        gStorageMode = .mineMode
+    }
+}
+
+
 // MARK:- persistence
 // MARK:-
 
@@ -84,9 +92,9 @@ var gDebugDetails : Bool {
 }
 
 
-var gHereRecordName: String {
-    get { return getPreferencesString(   for: kHereRecordID, defaultString: kRootName)! }
-    set { setPreferencesString(newValue, for: kHereRecordID) }
+var gHereRecordNames: String {
+    get { return getPreferencesString(   for: kHereRecordIDs, defaultString: kRootName + kSeparator + kRootName)! }
+    set { setPreferencesString(newValue, for: kHereRecordIDs) }
 }
 
 

@@ -207,6 +207,26 @@ class ZSelectionManager: NSObject {
     func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
 
 
+    func setHereRecordName(_ iName: String, for storageMode: ZStorageMode) {
+        if  let         index = indexOf(storageMode) {
+            var    references = gHereRecordNames.components(separatedBy: kSeparator)
+            references[index] = iName
+            gHereRecordNames  = references.joined(separator: kSeparator)
+        }
+    }
+
+
+    func hereRecordName(for storageMode: ZStorageMode) -> String? {
+        let references = gHereRecordNames.components(separatedBy: kSeparator)
+
+        if  let  index = indexOf(storageMode) {
+            return references[index]
+        }
+
+        return nil
+    }
+
+
     // MARK:- text edit
     // MARK:-
 

@@ -762,13 +762,16 @@ class ZCloudManager: ZRecordsManager {
                             if destroyedIDs.contains(identifier) {
                                 // self.columnarReport(" DESTROYED", child.decoratedName)
                             } else {
-                                let      child = self.zoneForCKRecord(childRecord)
+                                let child = self.zoneForCKRecord(childRecord)
+
+                                if  child.isRoot && child.parentZone != nil {
+                                    child.parentZone = nil  // avoids HANG ... a root can NOT be a child, by definition
+                                }
+
                                 let     parent = child.parentZone
                                 let extraTrash = child.zoneLink == kTrashLink && parent?.isRootOfFavorites ?? false && gFavoritesManager.hasTrash
 
-                                if  child.isRoot {
-                                    child.parent = nil  // avoids HANG ... a root can NOT be a child, by definition
-                                } else if child == parent || extraTrash {
+                                if  child == parent || extraTrash {
                                     child.needDestroy()
                                     // self-parenting causes infinite recursion AND extra trash favorites are annoying
                                     // destroy either on fetch
@@ -854,14 +857,21 @@ class ZCloudManager: ZRecordsManager {
 
                     if  count > 0 {
                         for ckRecord in retrieved {
-                            var zone    = self.maybeZoneForCKRecord(ckRecord)
-                            if  zone   == nil {                                                 // if not already registered
-                                zone    = Zone(record: ckRecord, storageMode: self.storageMode) // create and register
-                                created = true
+                            var bookmark  = self.maybeZoneForCKRecord(ckRecord)
+                            if  bookmark == nil {                                                 // if not already registered
+                                bookmark  = Zone(record: ckRecord, storageMode: self.storageMode) // create and register
+                                created   = true
                             }
 
-                            zone?.maybeNeedRoot()
-                            zone?.bookmarkTarget?.maybeNeedRoot()
+                            bookmark?.maybeNeedRoot()
+
+                            if  let t = bookmark?.bookmarkTarget {
+                                if !t.isRoot {
+                                    t.maybeNeedRoot()
+                                } else if t.parentZone != nil {
+                                    t.parentZone = nil
+                                }
+                            }
                         }
 
                         self.columnarReport("BOOKMARKS (\(count))", self.stringForCKRecords(retrieved))
@@ -907,10 +917,12 @@ class ZCloudManager: ZRecordsManager {
             onCompletion?(0)
         }
 
-        if gHereRecordName == kRootName { // in case it is first time for user
+        let name  = hereRecordName ?? kRootName
+
+        if  name == kRootName { // in case it is first time for user
             rootCompletion()
         } else {
-            let recordID = CKRecordID(recordName: gHereRecordName)
+            let recordID = CKRecordID(recordName: name)
 
             self.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { (iHereRecord: CKRecord?) in
                 if  iHereRecord == nil || iHereRecord?[kZoneName] == nil {
