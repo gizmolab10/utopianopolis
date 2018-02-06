@@ -20,7 +20,6 @@ class ZDBOperationsManager: ZOperationsManager {
         case save
         case root
         case sync
-        case fetch
         case travel
         case parents
         case children
@@ -116,8 +115,7 @@ class ZDBOperationsManager: ZOperationsManager {
     func   pParents(_ onCompletion: @escaping Closure) { setupAndRun([                    .parents,                                   .traits, .remember]) { onCompletion() } }
     func  pFamilies(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents,                .children,         .traits, .remember]) { onCompletion() } }
     func pBookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks, .fetch,                   .save,                    .traits, .remember]) { onCompletion() } }
-//  func     pFetch(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch,                                             .traits, .remember]) { onCompletion() } }
-    func  pChildren(_ onCompletion: @escaping Closure) { setupAndRun([                                              .children,         .traits, .remember]) { onCompletion() } }
+    func  pChildren(_ onCompletion: @escaping Closure) { setupAndRun([                                             .children,         .traits, .remember]) { onCompletion() } }
 
 
     // MARK:- batches
@@ -196,7 +194,6 @@ class ZDBOperationsManager: ZOperationsManager {
         case .save:      pSave      { onCompletion() }
         case .root:      pRoot      { onCompletion() }
         case .sync:      pSync      { onCompletion() }
-        case .fetch:  /* pFetch     { onCompletion() } */ break
         case .travel:    pTravel    { onCompletion() }
         case .parents:   pParents   { onCompletion() }
         case .children:  pChildren  { onCompletion() }

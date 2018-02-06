@@ -108,7 +108,7 @@ class ZToolsController: ZGenericTableController {
                 self.columnarReport(" LOST", "\(lost.count)")
 
                 lost.needChildren()
-                lost.displayChildren()
+                lost.revealChildren()
                 gDBOperationsManager.children(.all) { iSame in
                     self.grabChildless()
                 }

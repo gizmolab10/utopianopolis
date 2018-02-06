@@ -61,10 +61,9 @@ class ZDebugController: ZGenericController {
             text.append("\(order)")
         }
 
-        if let debugView = view.window?.contentView {
-//        if let gEditorController!.editorRootWidget {
-//        if let view.window!.contentView {
-//        if let gEditorView {
+//        if let debugView = view.window?.contentView {
+        if let debugView = gEditorController?.editorRootWidget {
+//        if let debugView = gEditorView {
 
             text.append(" \(debugView.bounds.size)")
         }

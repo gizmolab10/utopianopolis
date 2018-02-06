@@ -204,7 +204,7 @@ class ZFavoritesManager: ZCloudManager {
             let finish = {
                 self.setupDatabaseFavorites()
                 self.rootZone!.needProgeny()
-                self.rootZone!.displayChildren()
+                self.rootZone!.revealChildren()
                 onCompletion?()
             }
 
@@ -418,9 +418,9 @@ class ZFavoritesManager: ZCloudManager {
                 let targetParent = bookmark.bookmarkTarget?.parentZone
                 let       parent = bookmark.parentZone
 
-                targetParent?.displayChildren()
+                targetParent?.revealChildren()
                 targetParent?.needChildren()
-                parent?.displayChildren()
+                parent?.revealChildren()
                 parent?.needChildren()
                 gTravelManager.travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
                     self.updateFavorites()
@@ -431,6 +431,7 @@ class ZFavoritesManager: ZCloudManager {
             } else if let mode = bookmark.crossLink?.storageMode {
                 gStorageMode = mode
 
+                gTravelManager.pushHere()
                 gTravelManager.travel {
                     gHere.grab()
                     atArrival()

@@ -102,8 +102,11 @@ class ZShortcutsController: ZGenericTableController {
         "    \t/        \tfocus or toggle favorite",
         "    \t;        \tfocus on previous favorite",
         "    \t'        \tfocus on next favorite",
+        "    \t[        \tgo back to prior focus",
+        "    \t]        \tgo forward ... opposit of [",
         "    \t$        \t(un)prefix with ($)",
         "    \t!        \t(un)prefix with (!)",
+        "    \t`        \tswitch to other graph",
         "",
         "  KEY + OPTION",
         "    \tARROWS   \trelocate selected idea",
@@ -122,8 +125,9 @@ class ZShortcutsController: ZGenericTableController {
         "    \tLEFT     \thide children",
         "    \tUP DOWN  \textend selection",
         "",
-        "  MOUSE CLICK + SHIFT",
-        "    \t         \textend selection",
+        "  MODIFIER KEY + MOUSE CLICK",
+        "    \t         \ttoggle selection",
+        "    \tSHIFT    \t[un]extend selection",
         "",
     ]
 }

@@ -110,6 +110,7 @@ class ZControllersManager: NSObject {
                     self.signalFor(nil, regarding: .redraw)
 
                     gDBOperationsManager.finishUp {
+                        self.blankScreenDebug()
                         gDBOperationsManager.families() { iSame in // created bookmarks and parents of bookmarks
                             gDBOperationsManager.usingDebugTimer = false
 

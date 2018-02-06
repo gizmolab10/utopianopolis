@@ -123,7 +123,7 @@ class ZRecord: NSObject {
     }
 
 
-    func displayChildren() {
+    func revealChildren() {
         var expansionSet = gExpandedZones
 
         if  let name = recordName, !isBookmark, !expansionSet.contains(name) {
@@ -134,7 +134,7 @@ class ZRecord: NSObject {
     }
 
 
-    func hideChildren() {
+    func concealChildren() {
         var expansionSet = gExpandedZones
 
         if let  name = recordName {

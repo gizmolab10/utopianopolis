@@ -100,7 +100,7 @@ class ZStackableView: ZView {
         #if os(OSX)
         var image = ZImage(named: kTriangleImageName)
 
-        if hideableIsHidden {
+        if !hideableIsHidden {
             image = (image?.imageRotatedByDegrees(180.0))! as ZImage
         }
 

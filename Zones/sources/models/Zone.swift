@@ -469,9 +469,24 @@ class Zone : ZRecord {
 //    }
 
 
+    func unlinkParentAndMaybeNeedSave() {
+        if  parent     != nil ||
+            parentLink != kNullLink {
+            allowSave()
+            needSave()
+        }
+
+        parent          = nil
+        _parentZone     = nil
+        parentLink      = kNullLink
+    }
+
+
     var parentZone: Zone? {
         get {
-            if      _parentZone   == nil {
+            if  isRoot {
+                unlinkParentAndMaybeNeedSave()
+            } else if _parentZone == nil {
                 if  let  parentRef = parent {
                     _parentZone    = cloudManager?.zoneForReference(parentRef)
                 } else if let zone = zoneFrom(parentLink) {
@@ -483,20 +498,16 @@ class Zone : ZRecord {
         }
 
         set {
-            if  _parentZone != newValue {
-                _parentZone  = newValue
-
-                if  newValue == nil {
-                    if  parentLink != kNullLink || parent != nil {
-                        parentLink  = kNullLink
-                        parent      = nil
-
-                        maybeNeedSave()
-                    }
+            if  isRoot {
+                unlinkParentAndMaybeNeedSave()
+            } else if _parentZone          != newValue {
+                _parentZone                 = newValue
+                if  newValue               == nil {
+                    unlinkParentAndMaybeNeedSave()
                 } else if let parentRecord  = newValue?.record,
                     let            newMode  = newValue?.storageMode {
                     if             newMode == storageMode {
-                        if parent?.recordID.recordName != parentRecord.recordID.recordName {
+                        if  parent?.recordID.recordName != parentRecord.recordID.recordName {
                             parentLink      = kNullLink
                             parent          = CKReference(record: parentRecord, action: .none)
 
@@ -1070,7 +1081,7 @@ class Zone : ZRecord {
 
 
     func prepareForArrival() {
-        displayChildren()
+        revealChildren()
         maybeNeedWritable()
         maybeNeedColor()
         maybeNeedRoot()

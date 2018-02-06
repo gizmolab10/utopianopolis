@@ -765,7 +765,9 @@ class ZCloudManager: ZRecordsManager {
                                 let child = self.zoneForCKRecord(childRecord)
 
                                 if  child.isRoot && child.parentZone != nil {
-                                    child.parentZone = nil  // avoids HANG ... a root can NOT be a child, by definition
+                                    child.orphan()  // avoids HANG ... a root can NOT be a child, by definition
+                                    child.allowSave()
+                                    child.needSave()
                                 }
 
                                 let     parent = child.parentZone
@@ -865,11 +867,15 @@ class ZCloudManager: ZRecordsManager {
 
                             bookmark?.maybeNeedRoot()
 
-                            if  let t = bookmark?.bookmarkTarget {
-                                if !t.isRoot {
-                                    t.maybeNeedRoot()
-                                } else if t.parentZone != nil {
-                                    t.parentZone = nil
+                            if  let target = bookmark?.bookmarkTarget {
+                                if !target.isRoot {
+                                    target.maybeNeedRoot()
+                                } else {
+                                    if  target.parentZone != nil {
+                                        target.orphan()  // avoids HANG ... a root can NOT be a child, by definition
+                                        target.allowSave()
+                                        target.needSave()
+                                    }
                                 }
                             }
                         }
@@ -1021,7 +1027,7 @@ class ZCloudManager: ZRecordsManager {
         if  database == nil {
             onCompletion?(0)
         } else {
-            let classNames = [kZoneType, kManifestType]
+            let classNames = [kZoneType, kTraitType]
             var      count = classNames.count
 
             onCompletion?(-1)

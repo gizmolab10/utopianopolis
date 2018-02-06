@@ -17,6 +17,73 @@ let gTravelManager = ZTravelManager()
 class ZTravelManager: NSObject {
 
 
+    var  travelStack = [Zone] ()
+    var currentIndex = -1
+    var     topIndex : Int  { return travelStack.count - 1 }
+    var      notHere : Bool { return gHere != travelStack[currentIndex] }
+
+
+    func pushHere(updateCurrentIndex: Bool = true) {
+        let     newIndex  = currentIndex + 1
+        if      topIndex  < 0 || notHere {
+            if  topIndex == currentIndex {
+                travelStack.append(gHere)
+            } else {
+                travelStack.insert(gHere, at: updateCurrentIndex ? currentIndex : newIndex)
+            }
+
+            if  updateCurrentIndex {
+                currentIndex = newIndex
+            }
+        }
+    }
+
+
+    func goBack() {
+        let shouldPush = notHere
+        let      atTop = topIndex == currentIndex
+
+        if  shouldPush {
+            pushHere(updateCurrentIndex: false)
+        }
+
+        if  currentIndex  > 0 && (!shouldPush || !atTop) {
+            currentIndex -= 1
+        }
+
+        go()
+    }
+
+
+    func goForward() {
+        let shouldPush    = notHere
+        if  currentIndex  < topIndex {
+            currentIndex += 1
+
+            if  shouldPush {
+                pushHere()
+            }
+
+            go()
+        }
+    }
+
+
+    func go() {
+        let mode  = gHere.storageMode
+        let here  = travelStack[currentIndex]
+        if  mode != here.storageMode {
+            toggleStorageMode()         // update mode before setting gHere
+        }
+
+        gHere     = here
+
+        gHere.grab()
+        gFavoritesManager.updateFavorites()
+        signalFor(nil, regarding: .redraw)
+    }
+
+
     // MARK:- travel
     // MARK:-
 
@@ -27,6 +94,7 @@ class ZTravelManager: NSObject {
 
         UNDO(self) { iUndoSelf in
             iUndoSelf.createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
+            iUndoSelf.pushHere()
 
             gStorageMode = restoreMode
 
@@ -62,6 +130,8 @@ class ZTravelManager: NSObject {
             if bookmark.isFavorite {
                 gFavoritesManager.currentFavorite = bookmark
             }
+
+            pushHere()
 
             if  gStorageMode  != mode {
                 gStorageMode   = mode

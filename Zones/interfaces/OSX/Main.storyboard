@@ -288,12 +288,31 @@ CQ
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Focus" id="ZXK-72-mgU">
                                                 <items>
-                                                    <menuItem title="Focus, Favorite" keyEquivalent="/" id="dWE-UK-eqO">
+                                                    <menuItem title="Focus (or Create/Delete Favorite)" keyEquivalent="/" id="dWE-UK-eqO">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="AkO-Cr-b3u"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="Refocus on Current Favorite" keyEquivalent="/" id="tpQ-4P-p2y">
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="c9g-W5-Xac"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem isSeparatorItem="YES" id="yOA-3y-4ed"/>
+                                                    <menuItem title="Go Back (to prior focus)" keyEquivalent="[" id="ncz-gY-BA4">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="J8e-mE-hJU"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Go Forward (to next focus)" keyEquivalent="]" id="ZIx-9J-Wtj">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Atm-0R-Vzf"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem isSeparatorItem="YES" id="zvI-vS-GQE"/>
                                                     <menuItem title="Next Favorite" keyEquivalent="'" id="EOp-0B-lbw">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
@@ -306,15 +325,17 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="QHI-d1-ClG"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Select Current Favorite" keyEquivalent="s" id="ir8-Wk-bHQ">
+                                                    <menuItem isSeparatorItem="YES" id="aEl-vF-NGF"/>
+                                                    <menuItem title="Select within Favorites" keyEquivalent="s" id="ir8-Wk-bHQ">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="vYQ-DG-4FY"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Refocus on Current Favorite" keyEquivalent="/" id="tpQ-4P-p2y">
+                                                    <menuItem title="Switch to Other Graph" keyEquivalent="`" id="pe6-aY-Rdr">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="c9g-W5-Xac"/>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="z5c-dU-PHU"/>
                                                         </connections>
                                                     </menuItem>
                                                 </items>

@@ -24,12 +24,11 @@ typealias       ZModes = [ZStorageMode]
 extension NSObject {
 
 
-    func            note(_ iMessage: Any?)                { } // report(iMessage) }
+    func            note(_ iMessage: Any?)                { } // logk(iMessage) }
     func     performance(_ iMessage: Any?)                { log(iMessage) }
     func textInputReport(_ iMessage: Any?)                { log(iMessage) }
     func             bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
     func  columnarReport(_ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(iFirst, iSecond) }
-    func      debugCheck()                                { gTravelManager.debugCheck() }
 
 
     func rawColumnarReport(_ iFirst: Any?, _ iSecond: Any?) {
@@ -41,8 +40,15 @@ extension NSObject {
 
 
     func log(_ iMessage: Any?) {
-        if  let message = iMessage as? String, message != "" {
+        if  let   message = iMessage as? String, message != "" {
             print(message)
+        }
+    }
+
+
+    func blankScreenDebug() {
+        if  let w = gEditorController?.editorRootWidget.bounds.size.width, w < 1.0 {
+            log("ACK!")
         }
     }
 
@@ -60,7 +66,7 @@ extension NSObject {
 
 
     func signalFor(_ object: NSObject?, regarding: ZSignalKind) {
-        gControllersManager.signalFor(object, regarding: regarding, onCompletion: nil)
+        gControllersManager.signalFor(object, regarding: regarding) {}
     }
 
 
@@ -126,17 +132,17 @@ extension NSObject {
     }
 
 
-    func zoneFrom(_ link: String?) -> Zone? {
-        if  link                      != nil,
-            link                      != "",
-            let                   name = name(from: link) {
-            var components:   [String] = link!.components(separatedBy: kSeparator)
-            let identifier: CKRecordID = CKRecordID(recordName: name)
-            let   ckRecord: CKRecord   = CKRecord(recordType: kZoneType, recordID: identifier)
-            let                rawMode = components[0]
-            let    mode: ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
-            let                manager = gRemoteStoresManager.recordsManagerFor(mode)
-            let                   zone = manager?.zoneForCKRecord(ckRecord) ?? Zone(record: ckRecord, storageMode: mode) // BAD DUMMY ?
+    func zoneFrom(_ iLink: String?) -> Zone? {
+        if  iLink                   != nil,
+            iLink                   != "",
+            let                 name = name(from: iLink) {
+            var components: [String] = iLink!.components(separatedBy: kSeparator)
+            let recordID: CKRecordID = CKRecordID(recordName: name)
+            let ckRecord: CKRecord   = CKRecord(recordType: kZoneType, recordID: recordID)
+            let              rawMode = components[0]
+            let  mode: ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
+            let              manager = gRemoteStoresManager.recordsManagerFor(mode)
+            let                 zone = manager?.zoneForCKRecord(ckRecord) ?? Zone(record: ckRecord, storageMode: mode) // BAD DUMMY ?
 
             return zone
         }
