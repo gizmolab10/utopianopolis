@@ -49,9 +49,9 @@ class ZInformationController: ZGenericController {
             let                     total = gRemoteStoresManager.rootProgenyCount // TODO wrong manager
             let            operationCount = gDBOperationsManager.queue.operationCount
             let                      zone = gSelectionManager.rootMostMoveable
-            let                      mode = zone.storageMode
+            let                      dbID = zone.databaseiD
             totalCountLabel?        .text = "of \(total), retrieved: \(count) + \(notSavableCount)"
-            graphNameLabel?         .text = mode == nil ? "" : "graph: \(mode!.rawValue)"
+            graphNameLabel?         .text = dbID == nil ? "" : "graph: \(dbID!.rawValue)"
             operationCountLabel?    .text = operationCount == 0 ? "" : "\(operationCount) cloud operation\(operationCount == 1 ? "" : "s") in progress"
             versionLabel?           .text = versionText
             fractionInMemory?.doubleValue = Double(count)

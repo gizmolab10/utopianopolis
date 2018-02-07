@@ -18,7 +18,7 @@ import CloudKit
 
 
 typealias ZStorageDict = [String : NSObject]
-typealias       ZModes = [ZStorageMode]
+typealias       ZDatabaseiDs = [ZDatabaseiD]
 
 
 extension NSObject {
@@ -70,20 +70,20 @@ extension NSObject {
     }
 
 
-    @discardableResult func detectWithMode(_ mode: ZStorageMode, block: ToBooleanClosure) -> Bool {
-        gRemoteStoresManager.pushMode(mode)
+    @discardableResult func detectWithMode(_ dbID: ZDatabaseiD, block: ToBooleanClosure) -> Bool {
+        gRemoteStoresManager.pushDatabaseID(dbID)
 
         let result = block()
 
-        gRemoteStoresManager.popMode()
+        gRemoteStoresManager.popDatabaseID()
         
         return result
     }
 
 
-    func invokeUnderStorageMode(_ mode: ZStorageMode?, block: Closure) {
-        if  mode != nil && mode != gStorageMode {
-            detectWithMode(mode!) { block(); return false }
+    func invokeUnderdatabaseiD(_ dbID: ZDatabaseiD?, block: Closure) {
+        if  dbID != nil && dbID != gDatabaseiD {
+            detectWithMode(dbID!) { block(); return false }
         } else {
             block()
         }
@@ -119,12 +119,12 @@ extension NSObject {
     }
 
 
-    func mode(from iLink: String?) -> ZStorageMode? {
-        if  let       link = iLink {
-            var components =  link.components(separatedBy: kSeparator)
+    func databaseID(from iLink: String?) -> ZDatabaseiD? {
+        if  let       link   = iLink {
+            var components   =  link.components(separatedBy: kSeparator)
             if  components.count > 2 {
-                let    mode = components[0]
-                return mode == "" ? nil : ZStorageMode(rawValue: mode)
+                let    dbID  = components[0]
+                return dbID == "" ? nil : ZDatabaseiD(rawValue: dbID)
             }
         }
 
@@ -139,10 +139,10 @@ extension NSObject {
             var components: [String] = iLink!.components(separatedBy: kSeparator)
             let recordID: CKRecordID = CKRecordID(recordName: name)
             let ckRecord: CKRecord   = CKRecord(recordType: kZoneType, recordID: recordID)
-            let              rawMode = components[0]
-            let  mode: ZStorageMode? = rawMode == "" ? gStorageMode : ZStorageMode(rawValue: rawMode)
-            let              manager = gRemoteStoresManager.recordsManagerFor(mode)
-            let                 zone = manager?.zoneForCKRecord(ckRecord) ?? Zone(record: ckRecord, storageMode: mode) // BAD DUMMY ?
+            let        rawIdentifier = components[0]
+            let   dbID: ZDatabaseiD? = rawIdentifier == "" ? gDatabaseiD : ZDatabaseiD(rawValue: rawIdentifier)
+            let              manager = gRemoteStoresManager.recordsManagerFor(dbID)
+            let                 zone = manager?.zoneForCKRecord(ckRecord) ?? Zone(record: ckRecord, databaseiD: dbID) // BAD DUMMY ?
 
             return zone
         }

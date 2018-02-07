@@ -30,12 +30,12 @@ class ZFileManager: NSObject {
     // MARK:-
 
 
-    func save(to storageMode: ZStorageMode?) {
-        if !isSaving && gFileMode == .local && storageMode != nil && storageMode != .favoritesMode {
+    func save(to databaseiD: ZDatabaseiD?) {
+        if !isSaving && gFileMode == .local && databaseiD != nil && databaseiD != .favoritesID {
             isSaving               = true
-            let               root = gRemoteStoresManager.rootZone(for: storageMode!)
+            let               root = gRemoteStoresManager.rootZone(for: databaseiD!)
             let dict: NSDictionary = root!.storageDict as NSDictionary
-            let  url:          URL = pathToFile(for: storageMode!)
+            let  url:          URL = pathToFile(for: databaseiD!)
 
             dict.write(to: url, atomically: false)
 
@@ -44,13 +44,13 @@ class ZFileManager: NSObject {
     }
 
 
-    func restore(from storageMode: ZStorageMode) {
-        if gFileMode == .local && storageMode != .favoritesMode {
-            if  let  raw = NSDictionary(contentsOf: pathToFile(for: storageMode)) {
-                let root = Zone(dict: raw as! ZStorageDict) // broken, ignores mode
+    func restore(from databaseiD: ZDatabaseiD) {
+        if gFileMode == .local && databaseiD != .favoritesID {
+            if  let  raw = NSDictionary(contentsOf: pathToFile(for: databaseiD)) {
+                let root = Zone(dict: raw as! ZStorageDict) // broken, ignores database identifier
                 gHere    = root
 
-                gRemoteStoresManager.recordsManagerFor(storageMode)?.rootZone = root
+                gRemoteStoresManager.recordsManagerFor(databaseiD)?.rootZone = root
 
                 signalFor(nil, regarding: .redraw)
             }
@@ -62,16 +62,16 @@ class ZFileManager: NSObject {
     // MARK:-
 
 
-    func pathToFile(for storageMode: ZStorageMode) -> URL { return pathForZoneNamed(fileName(for: storageMode)) }
-    func pathForZoneNamed(_ iName: String)         -> URL { return createFolderNamed("zones/\(iName)"); }
+    func pathToFile(for databaseiD: ZDatabaseiD) -> URL { return pathForZoneNamed(fileName(for: databaseiD)) }
+    func pathForZoneNamed(_ iName: String)       -> URL { return createFolderNamed("zones/\(iName)"); }
 
 
-    func fileName(for storageMode: ZStorageMode) -> String {
-        switch storageMode {
-        case .favoritesMode: return "favorites.storage"
-        case  .everyoneMode: return "everyone.storage"
-        case    .sharedMode: return "shared.storage"
-        case      .mineMode: return "mine.storage"
+    func fileName(for databaseiD: ZDatabaseiD) -> String {
+        switch databaseiD {
+        case .favoritesID: return "favorites.storage"
+        case  .everyoneID: return "everyone.storage"
+        case    .sharedID: return "shared.storage"
+        case      .mineID: return "mine.storage"
         }
     }
 

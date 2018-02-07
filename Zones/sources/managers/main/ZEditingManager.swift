@@ -179,7 +179,7 @@ class ZEditingManager: NSObject {
                 case "$", "!": mark(with: key)
                 case "1":      divideChildren()
                 case "-":      addLine()
-                case "`":      travelToOtherMode()
+                case "`":      travelToOtherGraph()
                 case "[":      gTravelManager.goBack()
                 case "]":      gTravelManager.goForward()
                 case ";":      doFavorites(true,    false)
@@ -276,10 +276,10 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func travelToOtherMode() {
+    func travelToOtherGraph() {
         let here = gHere
 
-        toggleStorageMode()
+        toggledatabaseiD()
 
         if        here.isRootOfFavorites {
             gHere = gFavoritesManager.rootZone!
@@ -368,28 +368,6 @@ class ZEditingManager: NSObject {
         }
 
         redrawSyncRedraw()
-    }
-
-
-    func addLine() {
-        let   grab = gSelectionManager.currentMoveable
-
-        let assign = { (iText: String) in
-            grab.zoneName = iText
-
-            grab.widget?.textWidget.updateText()
-        }
-
-        if  grab.zoneName?.contains(kHalfLineOfDashes + " ") ?? false {
-            assign(kLineOfDashes)
-        } else if grab.zoneName?.contains(kLineOfDashes) ?? false {
-            assign(kLineWithStubTitle)
-            grab.editAndSelect(in: NSMakeRange(12, 1))
-        } else {
-            addNext(with: kLineOfDashes) { iChild in
-                iChild.grab()
-            }
-        }
     }
 
 
@@ -485,7 +463,7 @@ class ZEditingManager: NSObject {
 
 
     func find() {
-        if gStorageMode != .favoritesMode {
+        if gDatabaseiD != .favoritesID {
             gWorkMode = gWorkMode == .searchMode ? .graphMode : .searchMode
 
             signalFor(nil, regarding: .search)
@@ -838,7 +816,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    // MARK:- create
+    // MARK:- add
     // MARK:-
 
 
@@ -904,6 +882,31 @@ class ZEditingManager: NSObject {
     }
 
 
+    func addLine() {
+        let   grab = gSelectionManager.currentMoveable
+
+        let assign = { (iText: String) in
+            grab .zoneName = iText
+            grab.colorized = true
+
+            grab.widget?.textWidget.updateText()
+        }
+
+        if  grab.zoneName?.contains(kHalfLineOfDashes + " ") ?? false {
+            assign(kLineOfDashes)
+        } else if grab.zoneName?.contains(kLineOfDashes) ?? false {
+            assign(kLineWithStubTitle)
+            grab.editAndSelect(in: NSMakeRange(12, 1))
+        } else {
+            addNext(with: kLineOfDashes) { iChild in
+                iChild.colorized = true
+
+                iChild.grab()
+            }
+        }
+    }
+
+
     func addIdeaFromSelectedText() {
         if  let w = gEditedTextWidget, let t = w.text, let e = w.currentEditor(), let z = w.widgetZone {
             let     range = e.selectedRange
@@ -928,11 +931,11 @@ class ZEditingManager: NSObject {
     func addBookmark() {
         let zone = gSelectionManager.firstGrab
 
-        if zone.storageMode != .favoritesMode, !zone.isRoot {
+        if zone.databaseiD != .favoritesID, !zone.isRoot {
             let closure = {
                 var bookmark: Zone? = nil
 
-                self.invokeUnderStorageMode(.mineMode) {
+                self.invokeUnderdatabaseiD(.mineID) {
                     bookmark = gFavoritesManager.createBookmark(for: zone, style: .normal)
                 }
 
@@ -973,7 +976,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    // MARK:- destroy
+    // MARK:- delete
     // MARK:-
 
 
@@ -1296,13 +1299,13 @@ class ZEditingManager: NSObject {
 
             var         mover = zone
             let    targetLink = there.crossLink
-            let     sameGraph = zone.storageMode == targetLink?.storageMode
+            let     sameGraph = zone.databaseiD == targetLink?.databaseiD
             let grabAndTravel = {
                 gTravelManager.travelThrough(there) { object, kind in
                     let there = object as! Zone
 
                     self.moveZone(mover, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
-                        mover.recursivelyApplyMode(targetLink?.storageMode)
+                        mover.recursivelyApplyDatabaseID(targetLink?.databaseiD)
                         mover.grab()
                         onCompletion?()
                     }
@@ -1366,9 +1369,9 @@ class ZEditingManager: NSObject {
     
 
     func addIdeaIn(_ iParent: Zone?, at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
-        if  let       parent = iParent, parent.storageMode != .favoritesMode {
+        if  let       parent = iParent, parent.databaseiD != .favoritesID {
             let createAndAdd = {
-                let    child = Zone(storageMode: parent.storageMode)
+                let    child = Zone(databaseiD: parent.databaseiD)
 
                 if name != nil {
                     child.zoneName = name
@@ -1526,7 +1529,7 @@ class ZEditingManager: NSObject {
                     pasteMe.orphan()
                     into.revealChildren()
                     into.addAndReorderChild(pasteMe, at: at)
-                    pasteMe.recursivelyApplyMode(into.storageMode)
+                    pasteMe.recursivelyApplyDatabaseID(into.databaseiD)
                     forUndo.append(pasteMe)
                     pasteMe.addToGrab()
                 }
@@ -1649,7 +1652,7 @@ class ZEditingManager: NSObject {
                 completedYet     = true
                 var insert: Int? = zone.parentZone?.siblingIndex
 
-                if to.storageMode == .favoritesMode {
+                if to.databaseiD == .favoritesID {
                     insert = gFavoritesManager.nextFavoritesIndex(forward: gInsertionsFollow)
                 } else if zone.parentZone?.parentZone == to {
                     if  insert != nil {
@@ -1783,7 +1786,7 @@ class ZEditingManager: NSObject {
                         } else {
                             movable.orphan()
 
-                            if into.storageMode != movable.storageMode {
+                            if into.databaseiD != movable.databaseiD {
                                 movable.needDestroy()
                             }
 
@@ -1797,7 +1800,7 @@ class ZEditingManager: NSObject {
                         }
 
                         into.addAndReorderChild(movable, at: iIndex)
-                        movable.recursivelyApplyMode(into.storageMode)
+                        movable.recursivelyApplyDatabaseID(into.databaseiD)
                     }
 
                     if  toBookmark && self.undoManager.groupingLevel > 0 {

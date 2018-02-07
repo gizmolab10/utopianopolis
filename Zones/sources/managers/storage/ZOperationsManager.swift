@@ -68,7 +68,7 @@ class ZOperationsManager: NSObject {
 
 
     func invoke(_ identifier: ZOperationID, cloudCallback: AnyClosure?) {}
-    func performBlock(for operationID: ZOperationID, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {}
+    func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseiD, _ onCompletion: @escaping Closure) {}
 
 
     var usingDebugTimer: Bool {
@@ -107,7 +107,7 @@ class ZOperationsManager: NSObject {
         }
 
         queue.isSuspended = true
-        let         saved = gStorageMode
+        let         saved = gDatabaseiD
 
         for operationID in operationIDs + [.completion] {
             let         blockOperation = BlockOperation {
@@ -123,7 +123,7 @@ class ZOperationsManager: NSObject {
                         self.columnarReport("  " + self.operationText, message)
                     }
 
-                    self.performBlock(for: operationID, restoreToMode: saved) {
+                    self.performBlock(for: operationID, restoreToID: saved) {
                         if  gDebugOperations && false {
                             let   duration = Int(start.timeIntervalSinceNow) * -10
                             let    message = "\(Float(duration) / 10.0)"

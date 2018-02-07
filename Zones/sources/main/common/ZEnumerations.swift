@@ -35,20 +35,20 @@ enum ZCountsMode: Int {
 }
 
 
-func indexOf(_ mode: ZStorageMode) -> Int? {
-    switch mode {
-    case .everyoneMode: return 0
-    case     .mineMode: return 1
+func indexOf(_ dbID: ZDatabaseiD) -> Int? {
+    switch dbID {
+    case .everyoneID: return 0
+    case     .mineID: return 1
     default:            return nil
     }
 }
 
 
-enum ZStorageMode: String {
-    case favoritesMode = "favorites"
-    case  everyoneMode = "everyone"
-    case    sharedMode = "group"
-    case      mineMode = "mine"
+enum ZDatabaseiD: String {
+    case favoritesID = "favorites"
+    case  everyoneID = "everyone"
+    case    sharedID = "group"
+    case      mineID = "mine"
 }
 
 

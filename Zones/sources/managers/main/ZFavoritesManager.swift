@@ -18,8 +18,8 @@ enum ZFavoriteStyle: Int {
 }
 
 
-let         gFavoritesManager = ZFavoritesManager(.favoritesMode)
-let gAllDatabaseModes: ZModes = [.everyoneMode, .mineMode]
+let             gFavoritesManager = ZFavoritesManager(.favoritesID)
+let gAllDatabaseiDs: ZDatabaseiDs = [.everyoneID, .mineID]
 
 
 class ZFavoritesManager: ZCloudManager {
@@ -29,7 +29,7 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    let databaseRootFavorites = Zone(record: nil, storageMode: nil)
+    let databaseRootFavorites = Zone(record: nil, databaseiD: nil)
     var      workingFavorites = [Zone] ()
     var                 count : Int  { return rootZone?.count ?? 0 }
 
@@ -159,14 +159,14 @@ class ZFavoritesManager: ZCloudManager {
         var               found: Zone? = nil
 
         if  let                 target = iTarget,
-            let                   mode = target.storageMode,
+            let                   dbID = target.databaseiD,
             let                   name = target.recordName {
             var                  level = Int.max
 
             for favorite in workingFavorites {
                 if  let favoriteTarget = favorite.bookmarkTarget,
-                    let     targetMode = favoriteTarget.storageMode,
-                    targetMode        == mode {
+                    let       targetID = favoriteTarget.databaseiD,
+                    targetID          == dbID {
 
                     if  name == favoriteTarget.recordName {
                         return favorite
@@ -200,7 +200,7 @@ class ZFavoritesManager: ZCloudManager {
 
     func setup(_ onCompletion: Closure?) {
         if  gHasPrivateDatabase && rootZone == nil {
-            let   mine = gRemoteStoresManager.cloudManagerFor(.mineMode)
+            let   mine = gRemoteStoresManager.cloudManagerFor(.mineID)
             let finish = {
                 self.setupDatabaseFavorites()
                 self.rootZone!.needProgeny()
@@ -214,7 +214,7 @@ class ZFavoritesManager: ZCloudManager {
                 finish()
             } else {
                 mine.assureRecordExists(withRecordID: CKRecordID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
-                    let          root = Zone(record: iRecord, storageMode: .mineMode)
+                    let          root = Zone(record: iRecord, databaseiD: .mineID)
                     root.directAccess = .eDefaultName
                     root.zoneName     = kFavoritesName
                     self.rootZone     = root
@@ -227,8 +227,8 @@ class ZFavoritesManager: ZCloudManager {
 
     func setupDatabaseFavorites() {
         if databaseRootFavorites.count == 0 {
-            for (index, mode) in gAllDatabaseModes.enumerated() {
-                let          name = mode.rawValue
+            for (index, dbID) in gAllDatabaseiDs.enumerated() {
+                let          name = dbID.rawValue
                 let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: name + kFavoritesSuffix)
                 favorite.zoneLink =  "\(name)\(kSeparator)\(kSeparator)"
                 favorite   .order = Double(index) * 0.001
@@ -256,10 +256,10 @@ class ZFavoritesManager: ZCloudManager {
 
     func updateFavorites() {
         if  gHasPrivateDatabase {
-            var discardCopies = IndexPath()
-            var      hasModes = ZModes ()
-            var      hasTrash = false
-            var      haveLost = false
+            var  discardCopies = IndexPath()
+            var hasIdentifiers = ZDatabaseiDs ()
+            var       hasTrash = false
+            var       haveLost = false
 
             ////////////////////////////////////////////////
             // assure at least one root favorite per db   //
@@ -269,7 +269,7 @@ class ZFavoritesManager: ZCloudManager {
             updateWorkingFavorites()
 
             /////////////////////////////////////////
-            // detect modes which have bookmarks   //
+            // detect ids which have bookmarks     //
             // remove all leftover trash bookmarks //
             /////////////////////////////////////////
 
@@ -288,10 +288,10 @@ class ZFavoritesManager: ZCloudManager {
                             discardCopies.append(index)
                         }
                     } else if let t = favorite.bookmarkTarget,
-                        let    mode = t.storageMode,
+                        let    dbID = t.databaseiD,
                         t.isRoot {
-                        if !hasModes.contains(mode) {
-                            hasModes.append(mode)
+                        if !hasIdentifiers.contains(dbID) {
+                            hasIdentifiers.append(dbID)
                         } else {
                             discardCopies.append(index)
                         }
@@ -311,7 +311,7 @@ class ZFavoritesManager: ZCloudManager {
             /////////////////////////////////////////////////
 
             if !hasTrash {
-                let          trash = Zone(storageMode: .mineMode, named: kTrashName, identifier: kTrashName + kFavoritesSuffix)
+                let          trash = Zone(databaseiD: .mineID, named: kTrashName, identifier: kTrashName + kFavoritesSuffix)
                 trash    .zoneLink = kTrashLink // convert into a bookmark
                 trash.directAccess = .eChildrenWritable
 
@@ -321,9 +321,9 @@ class ZFavoritesManager: ZCloudManager {
 
             if !haveLost {
                 let identifier = kLostAndFoundName + kFavoritesSuffix
-                var       lost = gRemoteStoresManager.cloudManagerFor(.mineMode).maybeZRecordForRecordName(identifier) as? Zone
+                var       lost = gRemoteStoresManager.cloudManagerFor(.mineID).maybeZRecordForRecordName(identifier) as? Zone
                 if  lost      == nil {
-                    lost       = Zone(storageMode: .mineMode, named: kLostAndFoundName, identifier: identifier)
+                    lost       = Zone(databaseiD: .mineID, named: kLostAndFoundName, identifier: identifier)
                 }
 
                 lost?    .zoneLink = kLostAndFoundLink // convert into a bookmark
@@ -338,7 +338,7 @@ class ZFavoritesManager: ZCloudManager {
             ////////////////////////////////
 
             for template in databaseRootFavorites.children {
-                if  let          mode = template.linkMode, !hasModes.contains(mode) {
+                if  let          dbID = template.linkDatabaseID, !hasIdentifiers.contains(dbID) {
                     let      favorite = template.deepCopy()
                     favorite.zoneName = favorite.bookmarkTarget?.zoneName
 
@@ -428,8 +428,8 @@ class ZFavoritesManager: ZCloudManager {
                 }
 
                 return true
-            } else if let mode = bookmark.crossLink?.storageMode {
-                gStorageMode = mode
+            } else if let dbID = bookmark.crossLink?.databaseiD {
+                gDatabaseiD = dbID
 
                 gTravelManager.pushHere()
                 gTravelManager.travel {
@@ -454,7 +454,7 @@ class ZFavoritesManager: ZCloudManager {
     @discardableResult func create(withBookmark: Zone?, _ iName: String?, identifier: String? = nil) -> Zone {
         var           bookmark = withBookmark
         if  bookmark          == nil {
-            bookmark           = Zone(storageMode: .mineMode, named: iName, identifier: identifier)
+            bookmark           = Zone(databaseiD: .mineID, named: iName, identifier: identifier)
         } else if let     name = iName {
             bookmark!.zoneName = name
         }

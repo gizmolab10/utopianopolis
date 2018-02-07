@@ -61,8 +61,8 @@ class ZTrait: ZRecord {
     }
 
 
-    convenience init(storageMode: ZStorageMode?) {
-        self.init(record: CKRecord(recordType: kTraitType), storageMode: storageMode)
+    convenience init(databaseiD: ZDatabaseiD?) {
+        self.init(record: CKRecord(recordType: kTraitType), databaseiD: databaseiD)
     }
     
 

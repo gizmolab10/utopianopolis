@@ -22,7 +22,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
     var      resultsAreVisible = false
     var            inSearchBox = false
-    var           foundRecords = [ZStorageMode: [CKRecord]] ()
+    var           foundRecords = [ZDatabaseiD: [CKRecord]] ()
     var                monitor: Any?
     var       searchController: ZSearchController? { return gControllersManager.controllerForID(.searchBox) as? ZSearchController }
     @IBOutlet var    tableView: ZTableView?
@@ -52,14 +52,14 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         if iKind == .found {
             resultsAreVisible = false
             
-            if  gWorkMode == .searchMode, let recordsByMode = iObject as? [ZStorageMode: [CKRecord]] {
-                foundRecords = recordsByMode
+            if  gWorkMode == .searchMode, let recordsByDatabaseID = iObject as? [ZDatabaseiD: [CKRecord]] {
+                foundRecords = recordsByDatabaseID
 
-                for (mode, records) in recordsByMode {
+                for (dbID, records) in recordsByDatabaseID {
                     let count = records.count
 
                     if count == 1 {
-                        self.resolveRecord(mode, records[0])
+                        self.resolveRecord(dbID, records[0])
                     } else if count > 0 {
 
                         sortRecords()
@@ -103,9 +103,9 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
         var object = ""
 
-        if  let (mode, record) = modeAndRecord(at: row) {
+        if  let (dbID, record) = identifierAndRecord(at: row) {
 
-            if let zone = gRemoteStoresManager.cloudManagerFor(mode).maybeZoneForRecordID(record.recordID) {
+            if let zone = gRemoteStoresManager.cloudManagerFor(dbID).maybeZoneForRecordID(record.recordID) {
                 object  =   zone.decoratedName
             } else {
                 object  = record.decoratedName
@@ -133,7 +133,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     // MARK:-
 
 
-    func modeAndRecord(at iIndex: Int) -> (ZStorageMode, CKRecord)? {
+    func identifierAndRecord(at iIndex: Int) -> (ZDatabaseiD, CKRecord)? {
         var index = iIndex
         var count = 0
 
@@ -157,7 +157,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             if  gWorkMode         == .searchMode,
                 let          index = self.tableView?.selectedRow,
                 index             != -1,
-                let (mode, record) = modeAndRecord(at: index) {
+                let (mode, record) = identifierAndRecord(at: index) {
                 resolved           = true
 
                 resolveRecord(mode, record)
@@ -168,11 +168,11 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     }
 
 
-    func resolveRecord(_ mode: ZStorageMode, _ record: CKRecord) {
-        var zone  = gRemoteStoresManager.recordsManagerFor(mode)?.maybeZoneForRecordID(record.recordID)
+    func resolveRecord(_ dbID: ZDatabaseiD, _ record: CKRecord) {
+        var zone  = gRemoteStoresManager.recordsManagerFor(dbID)?.maybeZoneForRecordID(record.recordID)
 
         if  zone == nil {
-            zone  = Zone(record: record, storageMode: mode)
+            zone  = Zone(record: record, databaseiD: dbID)
         }
 
         gHere = zone!

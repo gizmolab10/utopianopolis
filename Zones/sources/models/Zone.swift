@@ -44,7 +44,7 @@ class Zone : ZRecord {
     var                  count:          Int  { return children.count }
     var              trashZone:         Zone? { return cloudManager?.trashZone }
     var                 widget:   ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
-    var               linkMode: ZStorageMode? { return mode(from: zoneLink) }
+    var         linkDatabaseID:  ZDatabaseiD? { return databaseID(from: zoneLink) }
     var               linkName:       String? { return name(from: zoneLink) }
     var          unwrappedName:       String  { return zoneName ?? kNoName }
     var          decoratedName:       String  { return decoration + unwrappedName }
@@ -139,7 +139,7 @@ class Zone : ZRecord {
     }
 
 
-    convenience init(storageMode: ZStorageMode?, named: String? = nil, identifier: String? = nil) {
+    convenience init(databaseiD: ZDatabaseiD?, named: String? = nil, identifier: String? = nil) {
         var newRecord : CKRecord?
 
         if  let rName = identifier {
@@ -148,7 +148,7 @@ class Zone : ZRecord {
             newRecord = CKRecord(recordType: kZoneType)
         }
 
-        self.init(record: newRecord!, storageMode: storageMode)
+        self.init(record: newRecord!, databaseiD: databaseiD)
 
         zoneName      = named
 
@@ -156,8 +156,8 @@ class Zone : ZRecord {
     }
 
 
-    class func randomZone(in mode: ZStorageMode) -> Zone {
-        return Zone(storageMode: mode, named: String(arc4random()))
+    class func randomZone(in dbID: ZDatabaseiD) -> Zone {
+        return Zone(databaseiD: dbID, named: String(arc4random()))
     }
 
 
@@ -331,7 +331,7 @@ class Zone : ZRecord {
             } else {
                 let    hasRef = newValue!.record != nil
                 let reference = !hasRef ? "" : newValue!.recordName!
-                zoneLink      = "\(newValue!.storageMode!.rawValue)::\(reference)"
+                zoneLink      = "\(newValue!.databaseiD!.rawValue)::\(reference)"
             }
 
             _crossLink = nil
@@ -505,8 +505,8 @@ class Zone : ZRecord {
                 if  newValue               == nil {
                     unlinkParentAndMaybeNeedSave()
                 } else if let parentRecord  = newValue?.record,
-                    let            newMode  = newValue?.storageMode {
-                    if             newMode == storageMode {
+                    let              newID  = newValue?.databaseiD {
+                    if               newID == databaseiD {
                         if  parent?.recordID.recordName != parentRecord.recordID.recordName {
                             parentLink      = kNullLink
                             parent          = CKReference(record: parentRecord, action: .none)
@@ -514,7 +514,7 @@ class Zone : ZRecord {
                             maybeNeedSave()
                         }
                     } else {                                                                                // new parent is in different db
-                        let newLink = "\(newMode.rawValue)::\(parentRecord.recordID.recordName)"
+                        let newLink = "\(newID.rawValue)::\(parentRecord.recordID.recordName)"
 
                         if  parentLink     != newLink {
                             parentLink      = newLink  // references don't work across dbs
@@ -664,7 +664,7 @@ class Zone : ZRecord {
 
 
     func toggleWritable() {
-        if  storageMode == .everyoneMode {
+        if  databaseiD == .everyoneID {
             if  let t = bookmarkTarget {
                 t.toggleWritable()
             } else if isWritableByUseer {
@@ -697,7 +697,7 @@ class Zone : ZRecord {
 
 
     override func debug(_  iMessage: String) {
-        note("\(iMessage) children \(count) parent \(parent != nil) is \(isInTrash ? "" : "not ")deleted  mode \(storageMode!) \(unwrappedName)")
+        note("\(iMessage) children \(count) parent \(parent != nil) is \(isInTrash ? "" : "not ") deleted identifier \(databaseiD!) \(unwrappedName)")
     }
 
 
@@ -780,7 +780,7 @@ class Zone : ZRecord {
         var trait         = traits[iType]
 
         if  trait        == nil {
-            trait         = ZTrait(storageMode: storageMode)
+            trait         = ZTrait(databaseiD: databaseiD)
         } else if  iText == nil {
             traits[iType] = nil
 
@@ -821,7 +821,7 @@ class Zone : ZRecord {
 
 
     func isABookmark(spawnedBy zone: Zone) -> Bool {
-        if  let        link = crossLink, let mode = link.storageMode {
+        if  let        link = crossLink, let dbID = link.databaseiD {
             var     probeID = link.record.recordID as CKRecordID?
             let  identifier = zone.recordName
             var     visited = [String] ()
@@ -833,7 +833,7 @@ class Zone : ZRecord {
                     return true
                 }
 
-                let zone = gRemoteStoresManager.recordsManagerFor(mode)?.maybeZoneForRecordID(probeID)
+                let zone = gRemoteStoresManager.recordsManagerFor(dbID)?.maybeZoneForRecordID(probeID)
                 probeID  = zone?.parent?.recordID
             }
         }
@@ -951,7 +951,7 @@ class Zone : ZRecord {
 
 
     func deepCopy() -> Zone {
-        let theCopy = Zone(storageMode: storageMode)
+        let theCopy = Zone(databaseiD: databaseiD)
 
         copy(into: theCopy)
 
@@ -1236,28 +1236,28 @@ class Zone : ZRecord {
     }
 
 
-    func recursivelyApplyMode(_ iMode: ZStorageMode?) {
-        if  let           appliedMode = iMode,
-            let                  mode = storageMode,
-            appliedMode              != mode {
+    func recursivelyApplyDatabaseID(_ iID: ZDatabaseiD?) {
+        if  let             appliedID = iID,
+            let                  dbID = databaseiD,
+            appliedID                != dbID {
             traverseAllProgeny { iZone in
-                if  let       newMode = iZone.storageMode,
-                    newMode          != mode {
+                if  let         newID = iZone.databaseiD,
+                    newID            != dbID {
                     iZone.unregister()
 
                     let newParentZone = iZone.parentZone                                    // (1) grab new parent zone from previous traverse (2, below)
                     let     oldRecord = iZone.record
                     let     newRecord = CKRecord(recordType: kZoneType)                     // new record id
-                    iZone.storageMode = appliedMode                                                // must happen BEFORE record assignment
-                    iZone     .record = newRecord                                           // side-effect: move registration to the new mode's record manager
+                    iZone .databaseiD = appliedID                                                // must happen BEFORE record assignment
+                    iZone     .record = newRecord                                           // side-effect: move registration to the new id's record manager
 
                     oldRecord?.copy(to: iZone.record, properties: iZone.cloudProperties())  // preserve new record id
-                    iZone.needSave()                                                        // in new mode's record manager
+                    iZone.needSave()                                                        // in new id's record manager
 
-                    ///////////////////////////////////////////////////////////////
-                    // (2) compute parent and parentLink using iZone's new iMode //
-                    //      this traverse will eventually use it (1, above)      //
-                    ///////////////////////////////////////////////////////////////
+                    /////////////////////////////////////////////////////////////
+                    // (2) compute parent and parentLink using iZone's new iID //
+                    //     this traverse will eventually use it (1, above)     //
+                    /////////////////////////////////////////////////////////////
 
                     iZone.parentZone  = newParentZone
                 }
@@ -1330,7 +1330,7 @@ class Zone : ZRecord {
     func divideEvenly() {
         let optimumSize     = 40
         if  count           > optimumSize,
-            let        mode = storageMode {
+            let        dbID = databaseiD {
             var   divisions = ((count - 1) / optimumSize) + 1
             let        size = count / divisions
             var     holders = [Zone] ()
@@ -1338,7 +1338,7 @@ class Zone : ZRecord {
             while divisions > 0 {
                 divisions  -= 1
                 var gotten  = 0
-                let holder  = Zone.randomZone(in: mode)
+                let holder  = Zone.randomZone(in: dbID)
 
                 holders.append(holder)
 
@@ -1429,7 +1429,7 @@ class Zone : ZRecord {
 
 
     convenience init(dict: ZStorageDict) {
-        self.init(record: nil, storageMode: gStorageMode)
+        self.init(record: nil, databaseiD: gDatabaseiD)
 
         storageDict = dict
     }

@@ -50,10 +50,10 @@ var          gWidgetFont:              ZFont { return .systemFont(ofSize: fontSi
 var       gFavoritesFont:              ZFont { return .systemFont(ofSize: fontSize * kReductionRatio) }
 
 
-func toggleStorageMode() {
-    switch          gStorageMode {
-    case .mineMode: gStorageMode = .everyoneMode
-    default:        gStorageMode = .mineMode
+func toggledatabaseiD() {
+    switch          gDatabaseiD {
+    case .mineID: gDatabaseiD = .everyoneID
+    default:        gDatabaseiD = .mineID
     }
 }
 
@@ -244,26 +244,26 @@ var gInsertionMode: ZInsertionMode {
 }
 
 
-var gStorageMode: ZStorageMode {
+var gDatabaseiD: ZDatabaseiD {
     get {
-        var mode: ZStorageMode? = nil
+        var dbID: ZDatabaseiD? = nil
 
-        if let object = UserDefaults.standard.object(forKey:kStorageMode) {
-            mode      = ZStorageMode(rawValue: object as! String)
+        if let object = UserDefaults.standard.object(forKey:kDatabaseiD) {
+            dbID      = ZDatabaseiD(rawValue: object as! String)
         }
 
-        if  mode     == nil || !gHasPrivateDatabase {
-            mode      = .everyoneMode
+        if  dbID     == nil || !gHasPrivateDatabase {
+            dbID      = .everyoneID
 
-            UserDefaults.standard.set(mode!.rawValue, forKey:kStorageMode)
+            UserDefaults.standard.set(dbID!.rawValue, forKey:kDatabaseiD)
             UserDefaults.standard.synchronize()
         }
 
-        return mode!
+        return dbID!
     }
 
     set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:kStorageMode)
+        UserDefaults.standard.set(newValue.rawValue, forKey:kDatabaseiD)
         UserDefaults.standard.synchronize()
     }
 }

@@ -31,20 +31,20 @@ class ZSnapshot: NSObject {
 
     
     var currentGrabs = [Zone] ()
-    var  storageMode : ZStorageMode?
+    var  databaseiD : ZDatabaseiD?
     var         here : Zone?
 
 
     static func == ( left: ZSnapshot, right: ZSnapshot) -> Bool {
-        let  goodHere = left       .here != nil && right       .here != nil
-        let goodModes = left.storageMode != nil && right.storageMode != nil
+        let   goodIDs = left.databaseiD != nil && right.databaseiD != nil
+        let  goodHere = left      .here != nil && right      .here != nil
         let sameCount = left.currentGrabs.count == right.currentGrabs.count
 
-        if  goodHere && goodModes && sameCount {
-            let  sameHere = left.here == right.here
-            let sameModes = left.storageMode == right.storageMode
+        if  goodHere && goodIDs && sameCount {
+            let sameHere = left.here == right.here
+            let  sameIDs = left.databaseiD == right.databaseiD
 
-            if sameHere && sameModes {
+            if sameHere && sameIDs {
                 for (index, grab) in left.currentGrabs.enumerated() {
                     if  grab != right.currentGrabs[index] {
                         return false
@@ -74,7 +74,7 @@ class ZSelectionManager: NSObject {
     var snapshot : ZSnapshot {
         let          snap = ZSnapshot()
         snap.currentGrabs = currentGrabs
-        snap .storageMode = gStorageMode
+        snap .databaseiD = gDatabaseiD
         snap        .here = gHere
 
         return snap
@@ -207,8 +207,8 @@ class ZSelectionManager: NSObject {
     func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
 
 
-    func setHereRecordName(_ iName: String, for storageMode: ZStorageMode) {
-        if  let         index = indexOf(storageMode) {
+    func setHereRecordName(_ iName: String, for databaseiD: ZDatabaseiD) {
+        if  let         index = indexOf(databaseiD) {
             var    references = gHereRecordNames.components(separatedBy: kSeparator)
             references[index] = iName
             gHereRecordNames  = references.joined(separator: kSeparator)
@@ -216,10 +216,10 @@ class ZSelectionManager: NSObject {
     }
 
 
-    func hereRecordName(for storageMode: ZStorageMode) -> String? {
+    func hereRecordName(for databaseiD: ZDatabaseiD) -> String? {
         let references = gHereRecordNames.components(separatedBy: kSeparator)
 
-        if  let  index = indexOf(storageMode) {
+        if  let  index = indexOf(databaseiD) {
             return references[index]
         }
 

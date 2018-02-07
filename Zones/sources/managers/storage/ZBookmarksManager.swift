@@ -16,14 +16,14 @@ let gBookmarksManager = ZBookmarksManager()
 class ZBookmarksManager: NSObject {
 
 
-    var registry = [ZStorageMode : [String : [Zone]]] ()
+    var registry = [ZDatabaseiD : [String : [Zone]]] ()
 
 
     func registerBookmark(_  iBookmark : Zone?) {
         if  let   bookmark = iBookmark,
-            let       mode = bookmark.linkMode,
+            let       dbID = bookmark.linkDatabaseID,
             let       link = bookmark.linkName {
-            var       dict = registry[mode]
+            var       dict = registry[dbID]
             var      zones = dict?[link]
 
             if  dict      == nil {
@@ -38,7 +38,7 @@ class ZBookmarksManager: NSObject {
             }
 
             dict?[link]    = zones
-            registry[mode] = dict
+            registry[dbID] = dict
 
             columnarReport("BOOKMARK", bookmark.unwrappedName)
         }
@@ -47,23 +47,23 @@ class ZBookmarksManager: NSObject {
 
     func unregisterBookmark(_ iBookmark: Zone?) {
         if  let   bookmark = iBookmark,
-            let       mode = bookmark.linkMode,
+            let       dbID = bookmark.linkDatabaseID,
             let       link = bookmark.linkName,
-            var       dict = registry[mode],
+            var       dict = registry[dbID],
             var      zones = dict[link],
             let      index = zones.index(of: bookmark) {
             zones.remove(at: index)
 
             dict[link]     = zones
-            registry[mode] = dict
+            registry[dbID] = dict
         }
     }
 
 
     func bookmarks(for iZone: Zone) -> [Zone]? {
-        if  let mode = iZone.storageMode,
+        if  let dbID = iZone.databaseiD,
             let name = iZone.recordName,
-            let dict = registry[mode] {
+            let dict = registry[dbID] {
             return dict[name]
         }
 

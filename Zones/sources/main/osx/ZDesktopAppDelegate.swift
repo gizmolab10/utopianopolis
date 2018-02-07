@@ -65,7 +65,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     
 
     func applicationWillTerminate(aNotification: NSNotification) {
-        gFileManager.save(to: gStorageMode)
+        gFileManager.save(to: gDatabaseiD)
         
         // Insert code here to tear down your application
     }

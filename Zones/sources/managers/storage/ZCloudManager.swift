@@ -16,8 +16,8 @@ let gContainer = CKContainer(identifier: kCloudID)
 
 class ZCloudManager: ZRecordsManager {
     var   cloudZonesByID = [CKRecordZoneID : CKRecordZone] ()
-    var         database :  CKDatabase? { return gRemoteStoresManager.databaseForMode(storageMode) }
-    var   refetchingName :       String { return "remember.\(storageMode.rawValue)" }
+    var         database :  CKDatabase? { return gRemoteStoresManager.databaseForID(databaseiD) }
+    var   refetchingName :       String { return "remember.\(databaseiD.rawValue)" }
     var currentOperation : CKOperation? = nil
     var currentPredicate : NSPredicate? = nil
     var    isRemembering :         Bool = false
@@ -155,8 +155,8 @@ class ZCloudManager: ZRecordsManager {
 //            if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
 //                onCompletion?(0)
 //            } else {
-//                let            root = gRemoteStoresManager.rootZone(for: self.storageMode)
-//                let         deleted = self.maybeZRecordForCKRecord(iRecord) as? Zone ?? Zone(record: iRecord, storageMode: self.storageMode)
+//                let            root = gRemoteStoresManager.rootZone(for: self.databaseiD)
+//                let         deleted = self.maybeZRecordForCKRecord(iRecord) as? Zone ?? Zone(record: iRecord, databaseiD: self.databaseiD)
 //
 //                if  deleted.parent != nil {
 //                    deleted.needParent()
@@ -201,7 +201,7 @@ class ZCloudManager: ZRecordsManager {
                                         done(nil)
                                     } else {
                                         done(savedRecord)
-                                        gFileManager.save(to: self.storageMode)
+                                        gFileManager.save(to: self.databaseiD)
                                     }
                                 }
                             }
@@ -321,7 +321,7 @@ class ZCloudManager: ZRecordsManager {
                         let    zone = self.maybeZoneForRecordID(iID)
                         let message = zone == nil ? String(describing: iError) : zone?.unwrappedName
 
-                        gAlertManager.alertError("MERGE within \(self.storageMode) \(message!)")
+                        gAlertManager.alertError("MERGE within \(self.databaseiD) \(message!)")
 
                         if let id = iID, let index = recordIDs.index(of: id) {
                             recordIDs.remove(at: index)
@@ -377,7 +377,7 @@ class ZCloudManager: ZRecordsManager {
                     if let zone = iObject as? Zone {
                         zone.traverseAllProgeny { iZone in
                             if  iZone.alreadyExists,
-                                iZone.storageMode == self.storageMode,
+                                iZone.databaseiD == self.databaseiD,
                                 let identifier = iZone.recordName,
                                 !iZone.isRoot,
                                 !memorables.contains(identifier) {
@@ -391,7 +391,7 @@ class ZCloudManager: ZRecordsManager {
                 scan(gHere)
                 scan(gFavoritesManager.rootZone)
 
-                self.columnarReport("REMEMBER (\(memorables.count))", "\(self.storageMode.rawValue)")
+                self.columnarReport("REMEMBER (\(memorables.count))", "\(self.databaseiD.rawValue)")
                 setPreferencesString(memorables.joined(separator: kSeparator), for: self.refetchingName)
 
                 self.isRemembering = false
@@ -552,7 +552,7 @@ class ZCloudManager: ZRecordsManager {
                         var zRecord  = self.maybeZRecordForRecordName(ckRecord.recordID.recordName)
 
                         if  zRecord == nil {
-                            zRecord  = Zone(record: ckRecord, storageMode: self.storageMode)
+                            zRecord  = Zone(record: ckRecord, databaseiD: self.databaseiD)
                         } else {
                             zRecord?.useBest(record: ckRecord)
                         }
@@ -804,7 +804,7 @@ class ZCloudManager: ZRecordsManager {
                             }
                         }
 
-                        self.columnarReport("CHILDREN (\(childrenNeeded.count)) of", self.stringForReferences(childrenNeeded, in: self.storageMode))
+                        self.columnarReport("CHILDREN (\(childrenNeeded.count)) of", self.stringForReferences(childrenNeeded, in: self.databaseiD))
                         self.add(states: [.needsCount], to: childrenNeeded)
                         self.fetchChildren(onCompletion) // process remaining
                     }
@@ -830,7 +830,7 @@ class ZCloudManager: ZRecordsManager {
                         var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
 
                         if  zRecord == nil {                                                   // if not already registered
-                            zRecord  = ZTrait(record: ckRecord, storageMode: self.storageMode) // register
+                            zRecord  = ZTrait(record: ckRecord, databaseiD: self.databaseiD) // register
                         }
                     }
 
@@ -861,7 +861,7 @@ class ZCloudManager: ZRecordsManager {
                         for ckRecord in retrieved {
                             var bookmark  = self.maybeZoneForCKRecord(ckRecord)
                             if  bookmark == nil {                                                 // if not already registered
-                                bookmark  = Zone(record: ckRecord, storageMode: self.storageMode) // create and register
+                                bookmark  = Zone(record: ckRecord, databaseiD: self.databaseiD) // create and register
                                 created   = true
                             }
 

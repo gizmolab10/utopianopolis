@@ -32,7 +32,7 @@ enum ZRecordState: Int {
 class ZRecordsManager: NSObject {
 
 
-    var              storageMode : ZStorageMode
+    var              databaseiD : ZDatabaseiD
     var             zRecordsByID = [String       :    ZRecord] ()
     var         ckRecordsByState = [ZRecordState : [CKRecord]] ()
     var _lostAndFoundZone: Zone? = nil
@@ -59,8 +59,8 @@ class ZRecordsManager: NSObject {
 
 
     var hereRecordName: String? {
-        get { return gSelectionManager.hereRecordName(for: storageMode) }
-        set { gSelectionManager.setHereRecordName(newValue ?? kRootName, for: storageMode) }
+        get { return gSelectionManager.hereRecordName(for: databaseiD) }
+        set { gSelectionManager.setHereRecordName(newValue ?? kRootName, for: databaseiD) }
     }
 
 
@@ -70,8 +70,8 @@ class ZRecordsManager: NSObject {
     }
 
 
-    init(_ iStorageMode: ZStorageMode) {
-        storageMode = iStorageMode
+    init(_ idatabaseiD: ZDatabaseiD) {
+        databaseiD = idatabaseiD
     }
 
 
@@ -87,7 +87,7 @@ class ZRecordsManager: NSObject {
         let      recordID = CKRecordID(recordName: iName)
         let        record = CKRecord(recordType: kZoneType, recordID: recordID)
         let          zone = zoneForCKRecord(record)    // get / create trash
-        let        prefix = (storageMode == .mineMode) ? "my " : "public "
+        let        prefix = (databaseiD == .mineID) ? "my " : "public "
         zone.directAccess = .eDefaultName
         zone    .zoneName = prefix + iName
 
@@ -96,7 +96,7 @@ class ZRecordsManager: NSObject {
 
 
     func createRandomLost() -> Zone {
-        let lost = Zone.randomZone(in: storageMode)
+        let lost = Zone.randomZone(in: databaseiD)
 
         lostAndFoundZone.addChild(lost, at: nil)
 
@@ -551,9 +551,9 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func stringForReferences(_ references: [CKReference]?, in storageMode: ZStorageMode) -> String {
+    func stringForReferences(_ references: [CKReference]?, in databaseiD: ZDatabaseiD) -> String {
         return references?.apply()  { object -> (String?) in
-            if let reference = object as? CKReference, let zone = gRemoteStoresManager.recordsManagerFor(storageMode)?.maybeZoneForReference(reference) {
+            if let reference = object as? CKReference, let zone = gRemoteStoresManager.recordsManagerFor(databaseiD)?.maybeZoneForReference(reference) {
                 let    name  = zone.decoratedName
                 if     name != "" {
                     return name
@@ -691,7 +691,7 @@ class ZRecordsManager: NSObject {
         var zone  = maybeZoneForReference(reference)
 
         if  zone == nil {
-            zone  = Zone(record: CKRecord(recordType: kZoneType, recordID: reference.recordID), storageMode: storageMode)
+            zone  = Zone(record: CKRecord(recordType: kZoneType, recordID: reference.recordID), databaseiD: databaseiD)
 
             zone?.requireFetch() // POTENTIALLY BAD DUMMY
             zone?.maybeNeedFetch()
@@ -707,7 +707,7 @@ class ZRecordsManager: NSObject {
         if let z = zone {
             z.useBest(record: ckRecord)
         } else {
-            zone = Zone(record: ckRecord, storageMode: storageMode)
+            zone = Zone(record: ckRecord, databaseiD: databaseiD)
 
             zone?.maybeNeedFetch()
         }

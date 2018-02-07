@@ -183,7 +183,7 @@ class ZControllersManager: NSObject {
     func syncAndSave(_ widget: ZoneWidget? = nil, onCompletion: Closure?) {
         gDBOperationsManager.sync { iSame in
             onCompletion?()
-            gFileManager.save(to: widget?.widgetZone?.storageMode)
+            gFileManager.save(to: widget?.widgetZone?.databaseiD)
         }
     }
 

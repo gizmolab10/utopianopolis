@@ -70,10 +70,10 @@ class ZTravelManager: NSObject {
 
 
     func go() {
-        let mode  = gHere.storageMode
+        let dbID  = gHere.databaseiD
         let here  = travelStack[currentIndex]
-        if  mode != here.storageMode {
-            toggleStorageMode()         // update mode before setting gHere
+        if  dbID != here.databaseiD {
+            toggledatabaseiD()         // update id before setting gHere
         }
 
         gHere     = here
@@ -89,14 +89,14 @@ class ZTravelManager: NSObject {
 
 
     func createUndoForTravelBackTo(_ zone: Zone, atArrival: @escaping Closure) {
-        let restoreMode = gStorageMode
+        let   restoreID = gDatabaseiD
         let restoreHere = gHere
 
         UNDO(self) { iUndoSelf in
             iUndoSelf.createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
             iUndoSelf.pushHere()
 
-            gStorageMode = restoreMode
+            gDatabaseiD = restoreID
 
             iUndoSelf.travel {
                 gHere = restoreHere
@@ -122,7 +122,7 @@ class ZTravelManager: NSObject {
 
     func travelThrough(_ bookmark: Zone, atArrival: @escaping SignalClosure) {
         if  let      crossLink = bookmark.crossLink,
-            let           mode = crossLink.storageMode,
+            let           dbID = crossLink.databaseiD,
             let         record = crossLink.record {
             let recordIDOfLink = record.recordID
             var   there: Zone? = nil
@@ -133,8 +133,8 @@ class ZTravelManager: NSObject {
 
             pushHere()
 
-            if  gStorageMode  != mode {
-                gStorageMode   = mode
+            if  gDatabaseiD  != dbID {
+                gDatabaseiD   = dbID
 
                 /////////////////////////////////
                 // TRAVEL TO A DIFFERENT GRAPH //
@@ -191,7 +191,7 @@ class ZTravelManager: NSObject {
                     gHere = there!
 
                     grabHere()
-                } else if gCloudManager.storageMode != .favoritesMode { // favorites does not have a cloud database
+                } else if gCloudManager.databaseiD != .favoritesID { // favorites does not have a cloud database
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: kZoneType) { (iRecord: CKRecord?) in
                         if  let hereRecord = iRecord {
                             gHere          = gCloudManager.zoneForCKRecord(hereRecord)
@@ -199,7 +199,7 @@ class ZTravelManager: NSObject {
                             grabHere()
                         }
                     }
-                } // else ... favorites mode with an unresolvable bookmark target
+                } // else ... favorites id with an unresolvable bookmark target
             }
         }
     }

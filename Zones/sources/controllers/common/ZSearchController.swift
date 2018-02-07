@@ -85,18 +85,18 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
     func control(_ control: ZControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
         if  gWorkMode == .searchMode, let searchString = getInput() {
-            var combined = [ZStorageMode: [Any]] ()
+            var combined = [ZDatabaseiD: [Any]] ()
             var     done = false
 
-            for mode in gAllDatabaseModes {
-                let manager = gRemoteStoresManager.cloudManagerFor(mode)
+            for dbID in gAllDatabaseiDs {
+                let manager = gRemoteStoresManager.cloudManagerFor(dbID)
 
                 manager.search(for: searchString) { iObject in
                     FOREGROUND {                                    // guarantee atomic ...
                         let    results = iObject as! [Any]
                         let hasResults = results.count != 0
                         gWorkMode      = hasResults ? .searchMode : .graphMode
-                        combined[mode] = results
+                        combined[dbID] = results
 
                         if !done {
                             done = true

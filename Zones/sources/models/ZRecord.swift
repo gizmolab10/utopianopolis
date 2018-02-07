@@ -15,7 +15,7 @@ class ZRecord: NSObject {
     
 
     var           _record: CKRecord?
-    var       storageMode: ZStorageMode?
+    var       databaseiD: ZDatabaseiD?
     var        kvoContext: UInt8 = 1
     var isRootOfFavorites: Bool             { return record != nil && recordName == kFavoritesRootName }
     var        isBookmark: Bool             { return record.isBookmark }
@@ -34,7 +34,7 @@ class ZRecord: NSObject {
     var     needsWritable: Bool             { return hasState(.needsWritable) }
     var     needsChildren: Bool             { return hasState(.needsChildren) }
     var    needsBookmarks: Bool             { return hasState(.needsBookmarks) }
-    var    recordsManager: ZRecordsManager? { return gRemoteStoresManager.recordsManagerFor(storageMode) }
+    var    recordsManager: ZRecordsManager? { return gRemoteStoresManager.recordsManagerFor(databaseiD) }
     var      cloudManager: ZCloudManager?   { return recordsManager as? ZCloudManager }
     var        recordName: String?          { return record?.recordID.recordName }
 
@@ -156,17 +156,17 @@ class ZRecord: NSObject {
     override init() {
         super.init()
 
-        self.storageMode = nil
+        self.databaseiD = nil
         self.record      = nil
 
         self.setupKVO();
     }
 
 
-    convenience init(record: CKRecord?, storageMode: ZStorageMode?) {
+    convenience init(record: CKRecord?, databaseiD: ZDatabaseiD?) {
         self.init()
 
-        self.storageMode = storageMode
+        self.databaseiD = databaseiD
 
         if record != nil {
             self.record = record
@@ -256,7 +256,7 @@ class ZRecord: NSObject {
 
 
     func setStorageDictionary(_ dict: ZStorageDict) {
-        storageMode       = gStorageMode
+        databaseiD       = gDatabaseiD
         var type: String? = nil
         var name: String? = nil
 

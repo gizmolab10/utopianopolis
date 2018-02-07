@@ -564,10 +564,10 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     }
 
     
-    func ancestor(for iMode: ZStorageMode?) -> Zone? {
-        if let mode = iMode {
-            switch mode {
-            case .favoritesMode: return gFavoritesManager.rootZone
+    func ancestor(for iID: ZDatabaseiD?) -> Zone? {
+        if let dbID = iID {
+            switch dbID {
+            case .favoritesID: return gFavoritesManager.rootZone
             default:             return gHere
             }
         }

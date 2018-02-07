@@ -69,10 +69,10 @@ class ZDBOperationsManager: ZOperationsManager {
     }
 
 
-    var  currentOps = [ZBatch] ()
-    var deferredOps = [ZBatch] ()
-    var      isLate : Bool { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
-    var currentMode : ZStorageMode? = nil
+    var        currentOps = [ZBatch] ()
+    var       deferredOps = [ZBatch] ()
+    var currentDatabaseID : ZDatabaseiD? = nil
+    var            isLate : Bool { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
 
 
     // MARK:- API
@@ -212,27 +212,27 @@ class ZDBOperationsManager: ZOperationsManager {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
         switch identifier { // outer switch
-        case .file:                 gFileManager      .restore  (from: currentMode!); cloudCallback?(0)
-        case .onboard:              gOnboardingManager.onboard        (               cloudCallback!)
-        case .root:                 remote            .establishRoot  (currentMode!,  cloudCallback)
-        default: let cloudManager = remote            .cloudManagerFor(currentMode!)
+        case .file:                 gFileManager      .restore  (from: currentDatabaseID!); cloudCallback?(0)
+        case .onboard:              gOnboardingManager.onboard        (                     cloudCallback!)
+        case .root:                 remote            .establishRoot  (currentDatabaseID!,  cloudCallback)
+        default: let cloudManager = remote            .cloudManagerFor(currentDatabaseID!)
         switch identifier { // inner switch
-        case .cloud:                cloudManager.fetchCloudZones      (               cloudCallback)
-        case .bookmarks:            cloudManager.fetchBookmarks       (               cloudCallback)
-        case .children:             cloudManager.fetchChildren        (               cloudCallback)
-        case .here:                 cloudManager.establishHere        (               cloudCallback)
-        case .parents:              cloudManager.fetchParents         (               cloudCallback)
-        case .refetch:              cloudManager.refetchZones         (               cloudCallback)
-        case .traits:               cloudManager.fetchTraits          (               cloudCallback)
-        case .unsubscribe:          cloudManager.unsubscribe          (               cloudCallback)
-        case .undelete:             cloudManager.undeleteAll          (               cloudCallback)
-        case .emptyTrash:           cloudManager.emptyTrash           (               cloudCallback)
-        case .fetch:                cloudManager.fetchZones           (               cloudCallback)
-        case .subscribe:            cloudManager.subscribe            (               cloudCallback)
-        case .fetchlost:            cloudManager.fetchLost            (               cloudCallback)
-        case .remember:             cloudManager.remember             (               cloudCallback)
-        case .merge:                cloudManager.merge                (               cloudCallback)
-        case .save:                 cloudManager.save                 (               cloudCallback)
+        case .cloud:                cloudManager.fetchCloudZones      (                     cloudCallback)
+        case .bookmarks:            cloudManager.fetchBookmarks       (                     cloudCallback)
+        case .children:             cloudManager.fetchChildren        (                     cloudCallback)
+        case .here:                 cloudManager.establishHere        (                     cloudCallback)
+        case .parents:              cloudManager.fetchParents         (                     cloudCallback)
+        case .refetch:              cloudManager.refetchZones         (                     cloudCallback)
+        case .traits:               cloudManager.fetchTraits          (                     cloudCallback)
+        case .unsubscribe:          cloudManager.unsubscribe          (                     cloudCallback)
+        case .undelete:             cloudManager.undeleteAll          (                     cloudCallback)
+        case .emptyTrash:           cloudManager.emptyTrash           (                     cloudCallback)
+        case .fetch:                cloudManager.fetchZones           (                     cloudCallback)
+        case .subscribe:            cloudManager.subscribe            (                     cloudCallback)
+        case .fetchlost:            cloudManager.fetchLost            (                     cloudCallback)
+        case .remember:             cloudManager.remember             (                     cloudCallback)
+        case .merge:                cloudManager.merge                (                     cloudCallback)
+        case .save:                 cloudManager.save                 (                     cloudCallback)
         default: break
             }               // inner switch
         }                   // outer switch
@@ -241,16 +241,16 @@ class ZDBOperationsManager: ZOperationsManager {
     }
 
 
-    override func performBlock(for operationID: ZOperationID, restoreToMode: ZStorageMode, _ onCompletion: @escaping Closure) {
-        let  forCurrentStorageModeOnly = [.completion, .onboard, .here].contains(operationID)
-        let            forMineModeOnly = [.bookmarks                  ].contains(operationID)
-        let                     isMine = restoreToMode == .mineMode
-        let            onlyCurrentMode = !gHasPrivateDatabase || forCurrentStorageModeOnly
-        let              modes: ZModes = forMineModeOnly ? [.mineMode] : onlyCurrentMode ? [restoreToMode] : [.mineMode, .everyoneMode]
-        let                     isNoop = onlyCurrentMode && isMine && !gHasPrivateDatabase
-        var  invokeModeAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
+    override func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseiD, _ onCompletion: @escaping Closure) {
+        let   forCurrentdatabaseiDOnly = [.completion, .onboard, .here].contains(operationID)
+        let              forMineIDOnly = [.bookmarks                  ].contains(operationID)
+        let                     isMine = restoreToID == .mineID
+        let              onlyCurrentID = !gHasPrivateDatabase || forCurrentdatabaseiDOnly
+        let              dbIDs: ZDatabaseiDs = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : [.mineID, .everyoneID]
+        let                     isNoop = onlyCurrentID && isMine && !gHasPrivateDatabase
+        var invokeDatabaseIDAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
 
-        invokeModeAt                   = { index in
+        invokeDatabaseIDAt             = { index in
 
             /////////////////////////////////
             // always called in foreground //
@@ -260,10 +260,10 @@ class ZDBOperationsManager: ZOperationsManager {
                 self.queue.isSuspended = false
 
                 onCompletion()
-            } else if           index >= modes.count {
+            } else if           index >= dbIDs.count {
                 self.queue.isSuspended = false
             } else {
-                self      .currentMode = modes[index]      // if hung, it happened in this mode
+                self.currentDatabaseID = dbIDs[index]      // if hung, it happened in this id
 
                 self.invoke(operationID) { (iResult: Any?) in
                     self  .lastOpStart = nil
@@ -278,14 +278,14 @@ class ZDBOperationsManager: ZOperationsManager {
                                 self.log(iResult)
                             }
 
-                            invokeModeAt?(index + 1)         // recurse
+                            invokeDatabaseIDAt?(index + 1)         // recurse
                         }
                     }
                 }
             }
         }
 
-        invokeModeAt?(0)
+        invokeDatabaseIDAt?(0)
         self.signalFor(nil, regarding: .information)
     }
 }
