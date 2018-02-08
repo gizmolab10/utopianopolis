@@ -81,15 +81,6 @@ extension NSObject {
     }
 
 
-    func invokeUnderdatabaseiD(_ dbID: ZDatabaseiD?, block: Closure) {
-        if  dbID != nil && dbID != gDatabaseiD {
-            detectWithMode(dbID!) { block(); return false }
-        } else {
-            block()
-        }
-    }
-
-
     func UNDO<TargetType : AnyObject>(_ target: TargetType, handler: @escaping (TargetType) -> Swift.Void) {
         kUndoManager.registerUndo(withTarget:target, handler: { iTarget in
             handler(iTarget)

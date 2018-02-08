@@ -279,7 +279,7 @@ class ZEditingManager: NSObject {
     func travelToOtherGraph() {
         let here = gHere
 
-        toggledatabaseiD()
+        toggleDatabaseiD()
 
         if        here.isRootOfFavorites {
             gHere = gFavoritesManager.rootZone!

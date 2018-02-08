@@ -18,7 +18,8 @@ import CloudKit
 
 
 var            gWorkMode                     = ZWorkMode.startupMode
-var            gFileMode                     = ZFileMode.cloud
+var           gFetchMode                     = ZFileMode.cloudOnly
+var           gStoreMode                     = ZFileMode.all
 var          gReadyState                     = false
 var       gTextCapturing                     = false
 var     gShowIdentifiers                     = false
@@ -50,10 +51,10 @@ var          gWidgetFont:              ZFont { return .systemFont(ofSize: fontSi
 var       gFavoritesFont:              ZFont { return .systemFont(ofSize: fontSize * kReductionRatio) }
 
 
-func toggledatabaseiD() {
-    switch          gDatabaseiD {
+func toggleDatabaseiD() {
+    switch        gDatabaseiD {
     case .mineID: gDatabaseiD = .everyoneID
-    default:        gDatabaseiD = .mineID
+    default:      gDatabaseiD = .mineID
     }
 }
 

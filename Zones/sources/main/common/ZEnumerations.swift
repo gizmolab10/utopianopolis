@@ -14,8 +14,9 @@ enum ZInsertionMode: Int {
 
 
 enum ZFileMode: Int {
-    case local
-    case cloud
+    case localOnly
+    case cloudOnly
+    case all
 }
 
 
@@ -35,11 +36,11 @@ enum ZCountsMode: Int {
 }
 
 
-func indexOf(_ dbID: ZDatabaseiD) -> Int? {
-    switch dbID {
+func indexOf(_ iID: ZDatabaseiD) -> Int? {
+    switch iID {
     case .everyoneID: return 0
     case     .mineID: return 1
-    default:            return nil
+    default:          return nil
     }
 }
 

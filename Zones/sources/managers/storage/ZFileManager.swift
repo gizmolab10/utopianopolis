@@ -31,11 +31,14 @@ class ZFileManager: NSObject {
 
 
     func save(to databaseiD: ZDatabaseiD?) {
-        if !isSaving && gFileMode == .local && databaseiD != nil && databaseiD != .favoritesID {
-            isSaving               = true
-            let               root = gRemoteStoresManager.rootZone(for: databaseiD!)
-            let dict: NSDictionary = root!.storageDict as NSDictionary
-            let  url:          URL = pathToFile(for: databaseiD!)
+        if !isSaving &&
+            gFetchMode             != .cloudOnly &&
+            databaseiD             != nil &&
+            databaseiD             != .favoritesID {
+            isSaving                = true
+            let                root = gRemoteStoresManager.rootZone(for: databaseiD!)
+            let dict:  NSDictionary = root!.storageDict as NSDictionary
+            let  url:           URL = pathToFile(for: databaseiD!)
 
             dict.write(to: url, atomically: false)
 
@@ -45,7 +48,8 @@ class ZFileManager: NSObject {
 
 
     func restore(from databaseiD: ZDatabaseiD) {
-        if gFileMode == .local && databaseiD != .favoritesID {
+        if  gStoreMode  != .cloudOnly &&
+            databaseiD  != .favoritesID {
             if  let  raw = NSDictionary(contentsOf: pathToFile(for: databaseiD)) {
                 let root = Zone(dict: raw as! ZStorageDict) // broken, ignores database identifier
                 gHere    = root

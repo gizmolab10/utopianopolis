@@ -73,7 +73,7 @@ class ZTravelManager: NSObject {
         let dbID  = gHere.databaseiD
         let here  = travelStack[currentIndex]
         if  dbID != here.databaseiD {
-            toggledatabaseiD()         // update id before setting gHere
+            toggleDatabaseiD()         // update id before setting gHere
         }
 
         gHere     = here
