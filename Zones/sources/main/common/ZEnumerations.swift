@@ -28,48 +28,21 @@ enum ZWorkMode: Int {
 }
 
 
-func typefrom(_ keyPath: String) -> ZStorageType? {
-    if  let    type = ZStorageType(rawValue: keyPath) {
-        return type
-    }
-
-    switch keyPath {
-    case kRecordName: return .recordName
-    case "children":  return .children
-    case "traits":    return .traits
-    case "parent":    return nil
-    default:
-        let closure = { (iPrefix: String) -> (ZStorageType?) in
-            let           parts = keyPath.components(separatedBy: iPrefix)
-
-            if  parts.count > 1 {
-                let      suffix = parts[1].lowercased()
-
-                if  let    type = ZStorageType(rawValue: suffix) {
-                    return type
-                }
-            }
-
-            return nil
-        }
-
-        if let type = closure("zone")   { return type }
-        if let type = closure("record") { return type }
-
-        return nil
-    }
-}
-
-
 enum ZStorageType: String {
-    case traits         = "traits"
+    case properties     = "properties"
+    case bookmarks      = "bookmarks"
+    case favorites      = "favorites"
     case children       = "children"
+    case userID         = "userID"
+    case traits         = "traits"
+    case graph          = "graph"
+    case date           = "date"
+
     case recordName     = "recordName"
-    case recordType     = "type"
-    case progenyCount   = "progeny"
     case databaseID     = "databaseID"
     case parentLink     = "parentLink"
     case attributes     = "attributes"
+    case progeny        = "progeny"
     case access         = "access"
     case owner          = "owner"
     case order          = "order"
@@ -77,14 +50,12 @@ enum ZStorageType: String {
     case count          = "count"
     case link           = "link"
     case name           = "name"
-    case composition    = "composition"
-    case hyperlink      = "hyperlink"
-    case duration       = "duration"
-    case graphic        = "graphic"
-    case email          = "email"
-    case money          = "money"
-    case time           = "time"
 
+    case asset          = "asset"
+    case time           = "time"
+    case text           = "text"
+    case data           = "data"
+    case type           = "type"
 }
 
 

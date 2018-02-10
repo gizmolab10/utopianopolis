@@ -86,19 +86,6 @@ class ZRecord: NSObject {
         return false
     }
 
-
-    var storageDict: ZStorageDict {
-        get {
-            return storageDictionary()!
-        }
-
-        set {
-            if newValue.count > 0 {
-                setStorageDictionary(newValue)
-            }
-        }
-    }
-
     
     var showChildren: Bool  {
         var show = false
@@ -255,35 +242,6 @@ class ZRecord: NSObject {
     }
 
 
-    func setStorageDictionary(_ dict: ZStorageDict) {
-        databaseiD       = gDatabaseiD
-        var type: String? = nil
-        var name: String? = nil
-
-        for (key, value) in dict {
-            switch key {
-            case .recordType: type = value as? String; break
-            case .recordName: name = value as? String; break
-            default:                                   break
-            }
-        }
-
-        if type != nil && name != nil {
-            record = CKRecord(recordType: type!, recordID: CKRecordID(recordName: name!)) // YIKES this may be wildly out of date
-
-            self.updateRecordProperties()
-
-            // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
-        }
-    }
-
-
-    func storageDictionary() -> ZStorageDict? {
-        return  record == nil ? ZStorageDict() :
-            [.recordName : recordName! as NSObject]
-    }
-
-
     // MARK:- states
     // MARK:-
 
@@ -400,4 +358,106 @@ class ZRecord: NSObject {
             }
         }
     }
+
+
+    // MARK:- files
+    // MARK:-
+
+
+    func typefrom(_ keyPath: String) -> ZStorageType? {
+        let typeFromSuffix = { (iPrefix: String) -> (ZStorageType?) in
+            let           parts = keyPath.components(separatedBy: iPrefix)
+
+            if  parts.count > 1 {
+                let      suffix = parts[1].lowercased()
+
+                if  let    type = ZStorageType(rawValue: suffix) {
+                    return type
+                }
+            }
+
+            return nil
+        }
+
+        if ["parent", "owner"].contains(keyPath) {             return nil
+        } else if let type = ZStorageType(rawValue: keyPath) { return type
+        } else if let type = typeFromSuffix("zone") {          return type
+        } else if let type = typeFromSuffix("record") {        return type
+        } else {                                               return nil
+        }
+    }
+
+
+    func extractValue(of iType: ZStorageType, at iKeyPath: String) -> NSObject? {
+        if  let           value = value(forKeyPath: iKeyPath) as? NSObject {
+            if  let    prepared = prepare(value, of: iType) {
+                return prepared
+            }
+        }
+
+        return nil
+    }
+
+
+    func prepare(_ iObject: NSObject, of iType: ZStorageType) -> NSObject? {
+        var object = iObject
+
+        switch iType {
+        case .databaseID:
+            print(object) // object = (object as ZDatabaseiD).rawValue
+        case .owner:
+            if  let  ref = object as? CKReference {
+                let name = ref.recordID.recordName as NSObject
+                object   = name
+            }
+        case .link, .parentLink:
+            if  let link = object as? String, !isValid(link) {
+                return nil
+            }
+        default: break
+        }
+
+        return object
+    }
+
+
+    func setStorageDictionary(_ dict: ZStorageDict, of iRecordType: String, into iDatabaseID: ZDatabaseiD) {
+        databaseiD        = iDatabaseID
+        var name: String? = nil
+
+        for (key, value) in dict {
+            switch key {
+            case .recordName: name = value as? String; break
+            default:                                   break
+            }
+        }
+
+        if  name != nil {
+            record = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: name!)) // YIKES this may be wildly out of date
+
+            self.updateRecordProperties()
+
+            // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
+        }
+    }
+
+
+    func storageDictionary(for iDatabaseID: ZDatabaseiD) -> ZStorageDict? {
+        var  keyPaths = cloudProperties() + [kRecordName]
+        var      dict = ZStorageDict()
+
+        if  let  dbID = databaseiD, dbID != iDatabaseID {
+            keyPaths += ["databaseID"]
+        }
+
+        for keyPath in keyPaths {
+            if  let   type = typefrom(keyPath),
+                let  value = extractValue(of: type, at: keyPath) {
+                dict[type] = value
+            }
+        }
+
+        return dict
+    }
+
 }

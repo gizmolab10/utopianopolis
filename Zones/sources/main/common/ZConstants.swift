@@ -30,7 +30,7 @@ let kUnselectBrightness: CGFloat = 0.98
 #endif
 
 
-let          kFullFetch = true
+let          kFullFetch = false
 let          kBatchSize = 250
 let         kLogTabStop = 21
 let       kMaxBatchSize = 1000

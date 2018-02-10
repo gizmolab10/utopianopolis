@@ -37,7 +37,7 @@ class ZFileManager: NSObject {
             dbID           != .favoritesID,
             gSaveMode      != .cloudOnly {
             isSaving[index] = true // prevent rewrite
-            let        dict = root.storageDict // snapshot of graph's root as of just before exit from method, down class from our smart dictionary
+            let        dict = root.storageDictionary(for: dbID)! // snapshot of graph's root as of just before exit from method, down class from our smart dictionary
 
             BACKGROUND {
                 let     path = self.pathToFile(for: dbID).path
@@ -57,25 +57,36 @@ class ZFileManager: NSObject {
 
 
     func jsonDictFrom(_ dict: ZStorageDict) -> [String : NSObject] {
-        var            result = [String : NSObject] ()
+        var deferals = [ZStorageType : NSObject] ()
+        var   result = [String       : NSObject] ()
 
-        for (key, value) in dict {
-            var goodValue: NSObject = value
-            let     stringKey = key.rawValue
+        let closure = { (key: ZStorageType, value: NSObject) in
+            var goodValue = value
+            let stringKey = key.rawValue
 
             if  let dictArray = value as? [ZStorageDict] {
                 var goodArray = [[String : NSObject]] ()
 
                 for subDict in dictArray {
-                    let  json = jsonDictFrom(subDict)
-
-                    goodArray.append(json)
+                    goodArray.append(self.jsonDictFrom(subDict))
                 }
 
                 goodValue = goodArray as NSObject
             }
 
             result[stringKey] = goodValue
+        }
+
+        for (key, value) in dict {
+            if [.children, .traits].contains(key) {
+                deferals[key] = value
+            } else {
+                closure(key, value)
+            }
+        }
+
+        for (key, value) in deferals {
+            closure(key, value)
         }
 
         return result
