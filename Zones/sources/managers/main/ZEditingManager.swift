@@ -303,6 +303,8 @@ class ZEditingManager: NSObject {
         for zone in gSelectionManager.currentGrabs {
             zone.colorized = !zone.colorized
         }
+
+        redrawAndSync()
     }
 
 
@@ -935,7 +937,7 @@ class ZEditingManager: NSObject {
             let closure = {
                 var bookmark: Zone? = nil
 
-                self.invokeUnderdatabaseiD(.mineID) {
+                self.invokeUsingDatabaseID(.mineID) {
                     bookmark = gFavoritesManager.createBookmark(for: zone, style: .normal)
                 }
 

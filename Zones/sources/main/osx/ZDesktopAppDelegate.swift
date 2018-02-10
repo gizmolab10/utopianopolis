@@ -41,7 +41,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 
 
     func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
-        let note: CKNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! ZStorageDict)
+        let note: CKNotification = CKNotification(fromRemoteNotificationDictionary: userInfo)
 
         if note.notificationType == .query {
             let queryNote: CKQueryNotification = note as! CKQueryNotification
@@ -65,7 +65,9 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     
 
     func applicationWillTerminate(aNotification: NSNotification) {
-        gFileManager.save(to: gDatabaseiD)
+        for dbID in gAllDatabaseiDs {
+            gFileManager.write(for: dbID)
+        }
         
         // Insert code here to tear down your application
     }

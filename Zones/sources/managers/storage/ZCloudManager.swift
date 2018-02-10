@@ -201,7 +201,7 @@ class ZCloudManager: ZRecordsManager {
                                         done(nil)
                                     } else {
                                         done(savedRecord)
-                                        gFileManager.save(to: self.databaseiD)
+                                        gFileManager.write(for: self.databaseiD)
                                     }
                                 }
                             }

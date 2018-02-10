@@ -17,7 +17,7 @@ enum ZOperationID: Int {
     case onboard
     case cloud
     case root
-    case file
+    case read
 
     // continue
 
@@ -29,8 +29,9 @@ enum ZOperationID: Int {
 
     // finish
 
-    case save       // zones and manifests
+    case save       // zones
     case bookmarks
+    case write
     case unsubscribe
     case subscribe
 
@@ -50,7 +51,6 @@ enum ZOperationID: Int {
     case completion
     case fetchlost
     case undelete
-    case remember
     case refetch    // user defaults list of record ids
     case merge
     case none // default operation

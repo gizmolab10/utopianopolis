@@ -17,8 +17,8 @@ import CloudKit
 #endif
 
 
-typealias ZStorageDict = [String : NSObject]
-typealias       ZDatabaseiDs = [ZDatabaseiD]
+typealias ZStorageDict = [ZStorageType : NSObject]
+typealias ZDatabaseiDs = [ZDatabaseiD]
 
 
 extension NSObject {
@@ -81,6 +81,15 @@ extension NSObject {
     }
 
 
+    func invokeUsingDatabaseID(_ dbID: ZDatabaseiD?, block: Closure) {
+        if  dbID != nil && dbID != gDatabaseiD {
+            detectWithMode(dbID!) { block(); return false }
+        } else {
+            block()
+        }
+    }
+
+
     func UNDO<TargetType : AnyObject>(_ target: TargetType, handler: @escaping (TargetType) -> Swift.Void) {
         kUndoManager.registerUndo(withTarget:target, handler: { iTarget in
             handler(iTarget)
@@ -97,12 +106,16 @@ extension NSObject {
     // MARK:-
 
 
-    func name(from iLink: String?) -> String? {
-        if  let        link  = iLink {
-            var  components  =  link.components(separatedBy: kSeparator)
-            if   components.count > 2 {
-                let    name  = components[2]
-                return name != "" ? name : kRootName // by design: empty component means root
+    func isValid(_ iLink: String?) -> Bool {
+        return components(of: iLink) != nil
+    }
+
+
+    func components(of iLink: String?) -> [String]? {
+        if  let       link = iLink {
+            let components =  link.components(separatedBy: kSeparator)
+            if  components.count > 2 {
+                return components
             }
         }
 
@@ -110,13 +123,20 @@ extension NSObject {
     }
 
 
+    func name(from iLink: String?) -> String? {
+        if  let components = components(of: iLink) {
+            let      name  = components[2]
+            return   name != "" ? name : kRootName // by design: empty component means root
+        }
+
+        return nil
+    }
+
+
     func databaseID(from iLink: String?) -> ZDatabaseiD? {
-        if  let       link   = iLink {
-            var components   =  link.components(separatedBy: kSeparator)
-            if  components.count > 2 {
-                let    dbID  = components[0]
-                return dbID == "" ? nil : ZDatabaseiD(rawValue: dbID)
-            }
+        if  let components = components(of: iLink) {
+            let      dbID  = components[0]
+            return   dbID == "" ? nil : ZDatabaseiD(rawValue: dbID)
         }
 
         return nil

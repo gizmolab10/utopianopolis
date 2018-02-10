@@ -18,8 +18,8 @@ import CloudKit
 
 
 var            gWorkMode                     = ZWorkMode.startupMode
+var            gSaveMode                     = ZFileMode.all
 var           gFetchMode                     = ZFileMode.cloudOnly
-var           gStoreMode                     = ZFileMode.all
 var          gReadyState                     = false
 var       gTextCapturing                     = false
 var     gShowIdentifiers                     = false

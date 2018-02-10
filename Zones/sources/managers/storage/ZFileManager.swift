@@ -23,34 +23,69 @@ let gFileManager = ZFileManager()
 class ZFileManager: NSObject {
 
 
-    var isSaving: Bool = false
+    var isSaving = [false, false] // not allow another save while file is being written
 
 
     // MARK:- API
     // MARK:-
 
 
-    func save(to databaseiD: ZDatabaseiD?) {
-        if !isSaving &&
-            gFetchMode             != .cloudOnly &&
-            databaseiD             != nil &&
-            databaseiD             != .favoritesID {
-            isSaving                = true
-            let                root = gRemoteStoresManager.rootZone(for: databaseiD!)
-            let dict:  NSDictionary = root!.storageDict as NSDictionary
-            let  url:           URL = pathToFile(for: databaseiD!)
+    func write(for databaseID: ZDatabaseiD?) {
+        if  let        dbID = databaseID,
+            let       index = indexOf(dbID), !isSaving[index],
+            let        root = gRemoteStoresManager.rootZone(for: dbID),
+            dbID           != .favoritesID,
+            gSaveMode      != .cloudOnly {
+            isSaving[index] = true // prevent rewrite
+            let        dict = root.storageDict // snapshot of graph's root as of just before exit from method, down class from our smart dictionary
 
-            dict.write(to: url, atomically: false)
+            BACKGROUND {
+                let     path = self.pathToFile(for: dbID).path
+                let jsonDict = self.jsonDictFrom(dict)
+                do {
+                    let data = try JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
 
-            isSaving               = false
+                    if  FileManager.default.createFile(atPath: path, contents: data) {}
+                } catch {
+                    print(error)
+                }
+
+                self.isSaving[index] = false // end prevention of rewrite of file
+            }
         }
     }
 
 
-    func restore(from databaseiD: ZDatabaseiD) {
-        if  gStoreMode  != .cloudOnly &&
+    func jsonDictFrom(_ dict: ZStorageDict) -> [String : NSObject] {
+        var            result = [String : NSObject] ()
+
+        for (key, value) in dict {
+            var goodValue: NSObject = value
+            let     stringKey = key.rawValue
+
+            if  let dictArray = value as? [ZStorageDict] {
+                var goodArray = [[String : NSObject]] ()
+
+                for subDict in dictArray {
+                    let  json = jsonDictFrom(subDict)
+
+                    goodArray.append(json)
+                }
+
+                goodValue = goodArray as NSObject
+            }
+
+            result[stringKey] = goodValue
+        }
+
+        return result
+    }
+
+
+    func read(for databaseiD: ZDatabaseiD) {
+        if  gFetchMode  != .cloudOnly &&
             databaseiD  != .favoritesID {
-            if  let  raw = NSDictionary(contentsOf: pathToFile(for: databaseiD)) {
+            if  let  raw = NSDictionary(contentsOfFile: pathToFile(for: databaseiD).path) {
                 let root = Zone(dict: raw as! ZStorageDict) // broken, ignores database identifier
                 gHere    = root
 
@@ -66,31 +101,36 @@ class ZFileManager: NSObject {
     // MARK:-
 
 
-    func pathToFile(for databaseiD: ZDatabaseiD) -> URL { return pathForZoneNamed(fileName(for: databaseiD)) }
-    func pathForZoneNamed(_ iName: String)       -> URL { return createFolderNamed("zones/\(iName)"); }
-
-
-    func fileName(for databaseiD: ZDatabaseiD) -> String {
-        switch databaseiD {
-        case .favoritesID: return "favorites.storage"
-        case  .everyoneID: return "everyone.storage"
-        case    .sharedID: return "shared.storage"
-        case      .mineID: return "mine.storage"
-        }
-    }
-
-
-    func createFolderNamed(_ iName: String) -> URL {
-        let folder = Bundle.main.resourceURL!
+    func createFileNamed(_ iName: String) -> URL {
+        let folder = try! FileManager().url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+//      let folder = Bundle.main.resourceURL!
         let    url = folder.appendingPathComponent(iName, isDirectory: false).standardizedFileURL
         let   path = url.deletingLastPathComponent().path;
 
         do {
-            try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
+            let manager = FileManager.default
+
+            try manager.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
+
+            manager.createFile(atPath: url.path, contents: nil)
         } catch {
             print(error)
         }
 
         return url;
     }
+
+
+    func pathToFile(for databaseiD: ZDatabaseiD) -> URL { return pathForZoneNamed(fileName(for: databaseiD)) }
+    func pathForZoneNamed(_ iName: String)       -> URL { return createFileNamed("graphs/\(iName)"); }
+
+
+    func fileName(for databaseiD: ZDatabaseiD) -> String {
+        var name = databaseiD.rawValue
+
+        name.append(".graph")
+
+        return name
+    }
+
 }

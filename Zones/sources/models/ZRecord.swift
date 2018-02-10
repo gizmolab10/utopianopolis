@@ -201,10 +201,10 @@ class ZRecord: NSObject {
     func updateInstanceProperties() {
         if record != nil {
             for keyPath in cloudProperties() {
-                if  let    cloudValue = record[keyPath] as! NSObject? {
-                    let propertyValue = value(forKeyPath: keyPath) as! NSObject?
+                if  let    cloudValue  = record[keyPath] as! NSObject? {
+                    let propertyValue  = value(forKeyPath: keyPath) as! NSObject?
 
-                    if propertyValue != cloudValue {
+                    if  propertyValue != cloudValue {
                         setValue(cloudValue, forKeyPath: keyPath)
                     }
                 }
@@ -216,10 +216,10 @@ class ZRecord: NSObject {
     func updateRecordProperties() {
         if record != nil {
             for keyPath in cloudProperties() {
-                let    cloudValue = record[keyPath] as! NSObject?
-                let propertyValue = value(forKeyPath: keyPath) as! NSObject?
+                let    cloudValue  = record[keyPath] as! NSObject?
+                let propertyValue  = value(forKeyPath: keyPath) as! NSObject?
 
-                if propertyValue != nil && propertyValue != cloudValue {
+                if  propertyValue != nil && propertyValue != cloudValue {
                     record[keyPath] = propertyValue as? CKRecordValue
                 }
             }
@@ -262,9 +262,9 @@ class ZRecord: NSObject {
 
         for (key, value) in dict {
             switch key {
-            case kRecordType: type = value as? String; break
-            case kRecordName: name = value as? String; break
-            default:                                     break
+            case .recordType: type = value as? String; break
+            case .recordName: name = value as? String; break
+            default:                                   break
             }
         }
 
@@ -279,9 +279,8 @@ class ZRecord: NSObject {
 
 
     func storageDictionary() -> ZStorageDict? {
-        return record == nil ? [:] :
-            [kRecordName : recordName!       as NSObject,
-             kRecordType : record.recordType as NSObject]
+        return  record == nil ? ZStorageDict() :
+            [.recordName : recordName! as NSObject]
     }
 
 

@@ -30,7 +30,7 @@ let kUnselectBrightness: CGFloat = 0.98
 #endif
 
 
-let          kFullFetch = false
+let          kFullFetch = true
 let          kBatchSize = 250
 let         kLogTabStop = 21
 let       kMaxBatchSize = 1000
@@ -66,18 +66,15 @@ let           kNullLink = "no"
 let           kRootName = "root"
 let           kZoneType = "Zone"
 let           kZoneName = "zoneName"
-let           kChildren = "children"
 let          kBackspace = "\u{8}"
 let          kThickness = "line thickness"
 let          kTraitType = "ZTrait"
 let          kSeparator = ":"
 let          kTrashName = "trash"
 let         kRecordName = "recordName"
-let         kRecordType = "recordType"
 let         kCountsMode = "counts mode"
 let         kWindowSize = "window size"
 let         kDatabaseiD = "current database identifier"
-let       kShowChildren = "showChildren"
 let       kScrollOffset = "scroll offset"
 let       kDetailsState = "current details state"
 let       kDebugDetails = "debug details"

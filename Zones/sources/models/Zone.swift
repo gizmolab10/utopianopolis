@@ -275,7 +275,7 @@ class Zone : ZRecord {
 
     var colorized: Bool {
         get {
-            if  let attributes = zoneAttributes {
+            if  let    attributes = zoneAttributes {
                 return attributes.contains(kColorized)
             } else {
                 return false
@@ -1436,9 +1436,9 @@ class Zone : ZRecord {
 
     
     override func setStorageDictionary(_ dict: ZStorageDict) {
-        if let     string = dict[kZoneName] as! String? { zoneName = string }
+        if let     string = dict[.name] as? String { zoneName = string }
 
-        if let childrenStore: [ZStorageDict] = dict[kChildren] as! [ZStorageDict]? {
+        if let childrenStore: [ZStorageDict] = dict[.children] as! [ZStorageDict]? {
             for childStore: ZStorageDict in childrenStore {
                 let child = Zone(dict: childStore)
 
@@ -1452,18 +1452,61 @@ class Zone : ZRecord {
     }
 
 
-    override func storageDictionary() -> ZStorageDict? {
-        var   childrenStore = [ZStorageDict] ()
-        var            dict = super.storageDictionary()!
-        dict[kZoneName]     = zoneName as NSObject?
-        dict[kShowChildren] = NSNumber(booleanLiteral: showChildren)
-
-
-        for child: Zone in children {
-            childrenStore.append(child.storageDictionary()!)
+    func extractValue(of iType: ZStorageType, at iKeyPath: String) -> NSObject? {
+        if  let           value = value(forKeyPath: iKeyPath) as? NSObject {
+            if  let    prepared = prepare(value, of: iType) {
+                return prepared
+            }
         }
 
-        dict[kChildren]     = childrenStore as NSObject?
+        return nil
+    }
+
+
+    func prepare(_ iObject: NSObject, of iType: ZStorageType) -> NSObject? {
+        var object = iObject
+
+        switch iType {
+        case .databaseID:
+            print(object) // object = (object as ZDatabaseiD).rawValue
+        case .owner:
+            if  let  ref = object as? CKReference {
+                let name = ref.recordID.recordName as NSObject
+                object   = name
+            }
+        case .link, .parentLink:
+            if  let link = object as? String, !isValid(link) {
+                return nil
+            }
+        default: break
+        }
+
+        return object
+    }
+
+
+    override func storageDictionary() -> ZStorageDict? {
+        let       keyPaths = cloudProperties() // + ["databaseID"]
+        var           dict = super.storageDictionary()!
+
+        for keyPath in keyPaths {
+            if  let   type = typefrom(keyPath),
+                let  value = extractValue(of: type, at: keyPath) {
+                dict[type] = value
+            }
+        }
+
+        if  count > 0 {
+            var childrenArray = [ZStorageDict] ()
+
+            for child: Zone in children {
+                if  let childDict = child.storageDictionary() {
+                    childrenArray.append(childDict)
+                }
+            }
+
+            dict[.children] = childrenArray as NSObject?
+        }
 
         return dict
     }
