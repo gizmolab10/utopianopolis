@@ -22,6 +22,7 @@ enum ZOperationID: Int {
     // continue
 
     case here
+    case bookmarks
     case children
     case fetch      // after children so favorite targets resolve properly
     case parents    // after fetch so colors resolve properly
@@ -30,7 +31,6 @@ enum ZOperationID: Int {
     // finish
 
     case save       // zones
-    case bookmarks
     case write
     case unsubscribe
     case subscribe
@@ -68,7 +68,7 @@ class ZOperationsManager: NSObject {
 
 
     func invoke(_ identifier: ZOperationID, cloudCallback: AnyClosure?) {}
-    func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseiD, _ onCompletion: @escaping Closure) {}
+    func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping Closure) {}
 
 
     var usingDebugTimer: Bool {
@@ -93,6 +93,20 @@ class ZOperationsManager: NSObject {
     }
 
 
+    func shouldPerform(_ iID: ZOperationID) -> Bool {
+        let cloudFetch = gFetchMode != .localOnly
+        let cloudSave  =  gSaveMode != .localOnly
+
+        switch iID {
+        case .save:                                                                                                                                      return cloudSave
+        case .fetch, .merge, .traits, .emptyTrash, .fetchlost, .undelete, .refetch, .onboard, .parents, .children, .bookmarks, .subscribe, .unsubscribe: return cloudFetch
+        case .setup, .internet, .ubiquity, .accountStatus, .fetchUserID, .fetchUserRecord, .fetchUserIdentity, .cloud:                                   return cloudFetch || cloudSave
+        case .write:                                                                                                                                     return gSaveMode != .cloudOnly
+        case .read, .here, .root, .none, .completion:                                                                                                    return true
+        }
+    }
+
+
     func setupAndRunUnsafe(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
         if gIsLate {
             FOREGROUND { // avoid stack overflow
@@ -107,38 +121,40 @@ class ZOperationsManager: NSObject {
         }
 
         queue.isSuspended = true
-        let         saved = gDatabaseiD
+        let         saved = gDatabaseID
 
         for operationID in operationIDs + [.completion] {
-            let         blockOperation = BlockOperation {
-                self.queue.isSuspended = true
-                let              start = Date()
+            if shouldPerform(operationID) {
+                let         blockOperation = BlockOperation {
+                    self.queue.isSuspended = true
+                    let              start = Date()
 
-                FOREGROUND {
-                    self.currentOp     = operationID        // if hung, it happened inside this op
+                    FOREGROUND {
+                        self.currentOp     = operationID        // if hung, it happened inside this op
 
-                    if  gDebugOperations {
-                        let    message = !self.usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)"
-
-                        self.columnarReport("  " + self.operationText, message)
-                    }
-
-                    self.performBlock(for: operationID, restoreToID: saved) {
-                        if  gDebugOperations && false {
-                            let   duration = Int(start.timeIntervalSinceNow) * -10
-                            let    message = "\(Float(duration) / 10.0)"
+                        if  gDebugOperations {
+                            let    message = !self.usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)"
 
                             self.columnarReport("  " + self.operationText, message)
                         }
-                        
-                        if self.currentOp == .completion {
-                            onCompletion()
+
+                        self.performBlock(for: operationID, restoreToID: saved) {
+                            if  gDebugOperations && false {
+                                let   duration = Int(start.timeIntervalSinceNow) * -10
+                                let    message = "\(Float(duration) / 10.0)"
+
+                                self.columnarReport("  " + self.operationText, message)
+                            }
+
+                            if self.currentOp == .completion {
+                                onCompletion()
+                            }
                         }
                     }
                 }
-            }
 
-            add(blockOperation)
+                add(blockOperation)
+            }
         }
 
         queue.isSuspended = false

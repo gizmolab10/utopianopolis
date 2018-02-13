@@ -34,7 +34,8 @@ class ZoneWidget: ZView {
     let               textWidget = ZoneTextWidget ()
     let             childrenView = ZView          ()
     private var  childrenWidgets = [ZoneWidget]   ()
-    var           isInMain: Bool = false
+    var                 isInMain :        Bool = false
+//  var             isNormalSize :        Bool { return isInMain || widgetZone?.isCurrentFavorite ?? false } // tried using this for isInMain in ratio. looked and felt odd
     var                    ratio :     CGFloat { return isInMain ? 1.0 : kReductionRatio }
     var             parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
     weak var          widgetZone :       Zone?
@@ -406,7 +407,7 @@ class ZoneWidget: ZView {
 
     func lineRect(to widget: ZoneWidget?) -> CGRect {
         let  hasIndent = widget?.widgetZone?.isCurrentFavorite ?? false
-        let      inset = CGFloat(hasIndent ? -3.0 : 0.0)
+        let      inset = CGFloat(hasIndent ? -5.0 : 0.0)
         var      frame = CGRect ()
         if  let    dot = widget?.dragDot.innerDot {
             let dFrame = dot.bounds.insetBy(dx: inset, dy: 0.0)

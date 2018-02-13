@@ -18,7 +18,7 @@ import CloudKit
 
 
 typealias ZStorageDict = [ZStorageType : NSObject]
-typealias ZDatabaseiDs = [ZDatabaseiD]
+typealias ZDatabaseIDs = [ZDatabaseID]
 
 
 extension NSObject {
@@ -70,7 +70,7 @@ extension NSObject {
     }
 
 
-    @discardableResult func detectWithMode(_ dbID: ZDatabaseiD, block: ToBooleanClosure) -> Bool {
+    @discardableResult func detectWithMode(_ dbID: ZDatabaseID, block: ToBooleanClosure) -> Bool {
         gRemoteStoresManager.pushDatabaseID(dbID)
 
         let result = block()
@@ -81,8 +81,8 @@ extension NSObject {
     }
 
 
-    func invokeUsingDatabaseID(_ dbID: ZDatabaseiD?, block: Closure) {
-        if  dbID != nil && dbID != gDatabaseiD {
+    func invokeUsingDatabaseID(_ dbID: ZDatabaseID?, block: Closure) {
+        if  dbID != nil && dbID != gDatabaseID {
             detectWithMode(dbID!) { block(); return false }
         } else {
             block()
@@ -133,10 +133,10 @@ extension NSObject {
     }
 
 
-    func databaseID(from iLink: String?) -> ZDatabaseiD? {
+    func databaseID(from iLink: String?) -> ZDatabaseID? {
         if  let components = components(of: iLink) {
             let      dbID  = components[0]
-            return   dbID == "" ? nil : ZDatabaseiD(rawValue: dbID)
+            return   dbID == "" ? nil : ZDatabaseID(rawValue: dbID)
         }
 
         return nil
@@ -151,9 +151,9 @@ extension NSObject {
             let recordID: CKRecordID = CKRecordID(recordName: name)
             let ckRecord: CKRecord   = CKRecord(recordType: kZoneType, recordID: recordID)
             let        rawIdentifier = components[0]
-            let   dbID: ZDatabaseiD? = rawIdentifier == "" ? gDatabaseiD : ZDatabaseiD(rawValue: rawIdentifier)
+            let   dbID: ZDatabaseID? = rawIdentifier == "" ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
             let              manager = gRemoteStoresManager.recordsManagerFor(dbID)
-            let                 zone = manager?.zoneForCKRecord(ckRecord) ?? Zone(record: ckRecord, databaseiD: dbID) // BAD DUMMY ?
+            let                 zone = manager?.zoneForCKRecord(ckRecord) ?? Zone(record: ckRecord, databaseID: dbID) // BAD DUMMY ?
 
             return zone
         }

@@ -19,7 +19,7 @@ enum ZFavoriteStyle: Int {
 
 
 let             gFavoritesManager = ZFavoritesManager(.favoritesID)
-let gAllDatabaseiDs: ZDatabaseiDs = [.everyoneID, .mineID]
+let gAllDatabaseIDs: ZDatabaseIDs = [.everyoneID, .mineID]
 
 
 class ZFavoritesManager: ZCloudManager {
@@ -29,7 +29,7 @@ class ZFavoritesManager: ZCloudManager {
     // MARK:-
 
 
-    let databaseRootFavorites = Zone(record: nil, databaseiD: nil)
+    let databaseRootFavorites = Zone(record: nil, databaseID: nil)
     var      workingFavorites = [Zone] ()
     var                 count : Int  { return rootZone?.count ?? 0 }
 
@@ -159,13 +159,13 @@ class ZFavoritesManager: ZCloudManager {
         var               found: Zone? = nil
 
         if  let                 target = iTarget,
-            let                   dbID = target.databaseiD,
+            let                   dbID = target.databaseID,
             let                   name = target.recordName {
             var                  level = Int.max
 
             for favorite in workingFavorites {
                 if  let favoriteTarget = favorite.bookmarkTarget,
-                    let       targetID = favoriteTarget.databaseiD,
+                    let       targetID = favoriteTarget.databaseID,
                     targetID          == dbID {
 
                     if  name == favoriteTarget.recordName {
@@ -214,7 +214,7 @@ class ZFavoritesManager: ZCloudManager {
                 finish()
             } else {
                 mine.assureRecordExists(withRecordID: CKRecordID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
-                    let          root = Zone(record: iRecord, databaseiD: .mineID)
+                    let          root = Zone(record: iRecord, databaseID: .mineID)
                     root.directAccess = .eDefaultName
                     root.zoneName     = kFavoritesName
                     self.rootZone     = root
@@ -227,7 +227,7 @@ class ZFavoritesManager: ZCloudManager {
 
     func setupDatabaseFavorites() {
         if databaseRootFavorites.count == 0 {
-            for (index, dbID) in gAllDatabaseiDs.enumerated() {
+            for (index, dbID) in gAllDatabaseIDs.enumerated() {
                 let          name = dbID.rawValue
                 let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: name + kFavoritesSuffix)
                 favorite.zoneLink =  "\(name)\(kSeparator)\(kSeparator)"
@@ -257,7 +257,7 @@ class ZFavoritesManager: ZCloudManager {
     func updateFavorites() {
         if  gHasPrivateDatabase {
             var  discardCopies = IndexPath()
-            var hasIdentifiers = ZDatabaseiDs ()
+            var hasIdentifiers = ZDatabaseIDs ()
             var       hasTrash = false
             var       haveLost = false
 
@@ -288,7 +288,7 @@ class ZFavoritesManager: ZCloudManager {
                             discardCopies.append(index)
                         }
                     } else if let t = favorite.bookmarkTarget,
-                        let    dbID = t.databaseiD,
+                        let    dbID = t.databaseID,
                         t.isRoot {
                         if !hasIdentifiers.contains(dbID) {
                             hasIdentifiers.append(dbID)
@@ -311,7 +311,7 @@ class ZFavoritesManager: ZCloudManager {
             /////////////////////////////////////////////////
 
             if !hasTrash {
-                let          trash = Zone(databaseiD: .mineID, named: kTrashName, identifier: kTrashName + kFavoritesSuffix)
+                let          trash = Zone(databaseID: .mineID, named: kTrashName, identifier: kTrashName + kFavoritesSuffix)
                 trash    .zoneLink = kTrashLink // convert into a bookmark
                 trash.directAccess = .eChildrenWritable
 
@@ -323,7 +323,7 @@ class ZFavoritesManager: ZCloudManager {
                 let identifier = kLostAndFoundName + kFavoritesSuffix
                 var       lost = gRemoteStoresManager.cloudManagerFor(.mineID).maybeZRecordForRecordName(identifier) as? Zone
                 if  lost      == nil {
-                    lost       = Zone(databaseiD: .mineID, named: kLostAndFoundName, identifier: identifier)
+                    lost       = Zone(databaseID: .mineID, named: kLostAndFoundName, identifier: identifier)
                 }
 
                 lost?    .zoneLink = kLostAndFoundLink // convert into a bookmark
@@ -428,8 +428,8 @@ class ZFavoritesManager: ZCloudManager {
                 }
 
                 return true
-            } else if let dbID = bookmark.crossLink?.databaseiD {
-                gDatabaseiD = dbID
+            } else if let dbID = bookmark.crossLink?.databaseID {
+                gDatabaseID = dbID
 
                 gTravelManager.pushHere()
                 gTravelManager.travel {
@@ -454,7 +454,7 @@ class ZFavoritesManager: ZCloudManager {
     @discardableResult func create(withBookmark: Zone?, _ iName: String?, identifier: String? = nil) -> Zone {
         var           bookmark = withBookmark
         if  bookmark          == nil {
-            bookmark           = Zone(databaseiD: .mineID, named: iName, identifier: identifier)
+            bookmark           = Zone(databaseID: .mineID, named: iName, identifier: identifier)
         } else if let     name = iName {
             bookmark!.zoneName = name
         }
@@ -531,7 +531,7 @@ class ZFavoritesManager: ZCloudManager {
 
     func isWorkingFavorite(_ iZone: Zone) -> Bool {
         for     iChild in workingFavorites {
-            if  iChild == iZone {
+            if  iChild == iZone || iChild.bookmarkTarget == iZone {
                 return true
             }
         }
@@ -567,4 +567,5 @@ class ZFavoritesManager: ZCloudManager {
             }
         }
     }
+
 }

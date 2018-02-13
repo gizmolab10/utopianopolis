@@ -71,7 +71,7 @@ class ZDBOperationsManager: ZOperationsManager {
 
     var        currentOps = [ZBatch] ()
     var       deferredOps = [ZBatch] ()
-    var currentDatabaseID : ZDatabaseiD? = nil
+    var currentDatabaseID : ZDatabaseID? = nil
     var            isLate : Bool { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
 
 
@@ -137,40 +137,52 @@ class ZDBOperationsManager: ZOperationsManager {
     }
 
 
-    func batch(_ iID: ZBatchOperationID, _ iCompletion: @escaping BooleanClosure) {
-        undefer()
-
-        let   doClosure = currentOps.count == 0
-        let completions = [ZBatchCompletion(iCompletion)]
-
-        // if is in current batches -> move or append to end of deferred
-        // else append to current batches
-
-        if !isBatchID(iID, containedIn: currentOps) {
-            currentOps.insert(ZBatch(iID, completions), at: 0)
-        } else if let deferal = getBatch(iID, from: deferredOps) {
-            deferal.completions.append(contentsOf: completions)
-        } else {
-            deferredOps.insert(ZBatch(iID, completions), at: 0)
+    func shouldIgnoreBatch(_ iID: ZBatchOperationID) -> Bool {
+        switch iID {
+        case .save, .sync:                                               return  gSaveMode == .localOnly
+        case .root, .travel, .parents, .children, .families, .bookmarks: return gFetchMode == .localOnly
         }
+    }
 
-        if doClosure {
-            var closure: Closure? = nil
-            closure               = {
-                if  let     batch = self.currentOps.first {
 
-                    self.currentOps.removeFirst()
-                    self.invokeBatch(batch.identifier) {
-                        batch.fireCompletions()
-                        closure?()
-                    }
-                } else if self.deferredOps.count > 0 {
-                    self.undefer()
-                    closure?()
-                }
+    func batch(_ iID: ZBatchOperationID, _ iCompletion: @escaping BooleanClosure) {
+        if  shouldIgnoreBatch(iID) {
+            iCompletion(true) // true means isSame
+        } else {
+            undefer()
+
+            let   doClosure = currentOps.count == 0
+            let completions = [ZBatchCompletion(iCompletion)]
+
+            // if is in current batches -> move or append to end of deferred
+            // else append to current batches
+
+            if !isBatchID(iID, containedIn: currentOps) {
+                currentOps.insert(ZBatch(iID, completions), at: 0)
+            } else if let deferal = getBatch(iID, from: deferredOps) {
+                deferal.completions.append(contentsOf: completions)
+            } else {
+                deferredOps.insert(ZBatch(iID, completions), at: 0)
             }
 
-            closure?()
+            if doClosure {
+                var closure: Closure? = nil
+                closure               = {
+                    if  let     batch = self.currentOps.first {
+
+                        self.currentOps.removeFirst()
+                        self.invokeBatch(batch.identifier) {
+                            batch.fireCompletions()
+                            closure?()
+                        }
+                    } else if self.deferredOps.count > 0 {
+                        self.undefer()
+                        closure?()
+                    }
+                }
+
+                closure?()
+            }
         }
     }
 
@@ -240,12 +252,12 @@ class ZDBOperationsManager: ZOperationsManager {
     }
 
 
-    override func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseiD, _ onCompletion: @escaping Closure) {
-        let   forCurrentdatabaseiDOnly = [.completion, .onboard, .here].contains(operationID)
+    override func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping Closure) {
+        let   forCurrentdatabaseIDOnly = [.completion, .onboard, .here].contains(operationID)
         let              forMineIDOnly = [.bookmarks                  ].contains(operationID)
         let                     isMine = restoreToID == .mineID
-        let              onlyCurrentID = !gHasPrivateDatabase || forCurrentdatabaseiDOnly
-        let              dbIDs: ZDatabaseiDs = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : [.mineID, .everyoneID]
+        let              onlyCurrentID = !gHasPrivateDatabase || forCurrentdatabaseIDOnly
+        let              dbIDs: ZDatabaseIDs = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : [.mineID, .everyoneID]
         let                     isNoop = onlyCurrentID && isMine && !gHasPrivateDatabase
         var invokeDatabaseIDAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
 

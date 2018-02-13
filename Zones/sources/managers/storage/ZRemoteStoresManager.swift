@@ -21,55 +21,43 @@ var                gRoot : Zone?   { get { return gRemoteStoresManager.rootZone 
 class ZRemoteStoresManager: NSObject {
 
 
-    var      databaseiDStack = ZDatabaseiDs ()
-    var       recordsManagers = [ZDatabaseiD : ZCloudManager]()
-    var currentRecordsManager: ZRecordsManager { return recordsManagerFor(gDatabaseiD)! }
-    var   currentCloudManager: ZCloudManager   { return cloudManagerFor(gDatabaseiD) }
-    var      rootProgenyCount: Int             { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
-    var      lostAndFoundZone: Zone?           { return currentRecordsManager.lostAndFoundZone }
-    var             trashZone: Zone?           { return currentRecordsManager.trashZone }
-    var              rootZone: Zone?     { get { return currentRecordsManager.rootZone }  set { currentRecordsManager.rootZone  = newValue } }
+    var       databaseIDStack = ZDatabaseIDs ()
+    var       recordsManagers = [ZDatabaseID : ZCloudManager]()
+    var currentRecordsManager : ZRecordsManager { return recordsManagerFor(gDatabaseID)! }
+    var   currentCloudManager : ZCloudManager   { return cloudManagerFor(gDatabaseID) }
+    var      rootProgenyCount : Int             { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
+    var      lostAndFoundZone : Zone?           { return currentRecordsManager.lostAndFoundZone }
+    var             trashZone : Zone?           { return currentRecordsManager.trashZone }
+    var              rootZone : Zone?     { get { return currentRecordsManager.rootZone }  set { currentRecordsManager.rootZone  = newValue } }
 
 
-    func rootZone(for dbID: ZDatabaseiD) -> Zone? { return recordsManagerFor(dbID)?.rootZone }
+    func cloudManagerFor(_   dbID: ZDatabaseID) -> ZCloudManager { return recordsManagerFor(dbID) as! ZCloudManager }
+    func rootZone       (for dbID: ZDatabaseID) -> Zone?         { return recordsManagerFor(dbID)?.rootZone }
+    func setRootZone(_ root: Zone?, for dbID: ZDatabaseID)       {        recordsManagerFor(dbID)?.rootZone = root }
+    func clear()                                                 { recordsManagers = [ZDatabaseID : ZCloudManager]() }
+    func cancel()                                                { currentCloudManager.currentOperation?.cancel() }
 
 
-    func clear() {
-        recordsManagers = [ZDatabaseiD : ZCloudManager]()
-    }
-
-
-    func cancel() {
-        currentCloudManager.currentOperation?.cancel()
-    }
-
-
-    func cloudManagerFor(_ databaseiD: ZDatabaseiD) -> ZCloudManager {
-        return recordsManagerFor(databaseiD) as! ZCloudManager
-
-    }
-
-
-    func recordsManagerFor(_ databaseiD: ZDatabaseiD?) -> ZRecordsManager? {
-        if databaseiD == nil {
+    func recordsManagerFor(_ databaseID: ZDatabaseID?) -> ZRecordsManager? {
+        if databaseID == nil {
             return nil
         }
 
-        if databaseiD == .favoritesID {
+        if databaseID == .favoritesID {
             return gFavoritesManager
         }
 
-        for databaseiD in gAllDatabaseiDs {
-            if  recordsManagers[databaseiD] == nil {
-                recordsManagers[databaseiD] = ZCloudManager(databaseiD)
+        for databaseID in gAllDatabaseIDs {
+            if  recordsManagers[databaseID] == nil {
+                recordsManagers[databaseID] = ZCloudManager(databaseID)
             }
         }
 
-        return recordsManagers[databaseiD!]!
+        return recordsManagers[databaseID!]!
     }
 
 
-    func databaseForID(_ iID: ZDatabaseiD) -> CKDatabase? {
+    func databaseForID(_ iID: ZDatabaseID) -> CKDatabase? {
         switch iID {
         case .everyoneID: return gContainer.publicCloudDatabase
         case   .sharedID: return gContainer.sharedCloudDatabase
@@ -79,25 +67,25 @@ class ZRemoteStoresManager: NSObject {
     }
 
 
-    func establishRoot(_ databaseiD: ZDatabaseiD, _ onCompletion: IntClosure?) {
-        if !kFullFetch && databaseiD == .favoritesID {
+    func establishRoot(_ databaseID: ZDatabaseID, _ onCompletion: IntClosure?) {
+        if !kFullFetch && databaseID == .favoritesID {
             onCompletion?(0)
         } else {
-            cloudManagerFor(databaseiD).establishRoot(onCompletion)
+            cloudManagerFor(databaseID).establishRoot(onCompletion)
         }
     }
 
 
-    func pushDatabaseID(_ dbID: ZDatabaseiD) {
-        databaseiDStack.append(gDatabaseiD)
+    func pushDatabaseID(_ dbID: ZDatabaseID) {
+        databaseIDStack.append(gDatabaseID)
 
-        gDatabaseiD = dbID
+        gDatabaseID = dbID
     }
 
 
     func popDatabaseID() {
-        if databaseiDStack.count > 0, let dbID = databaseiDStack.popLast() {
-            gDatabaseiD = dbID
+        if databaseIDStack.count > 0, let dbID = databaseIDStack.popLast() {
+            gDatabaseID = dbID
         }
     }
 

@@ -67,7 +67,7 @@ enum ZCountsMode: Int {
 }
 
 
-func indexOf(_ iID: ZDatabaseiD) -> Int? {
+func indexOf(_ iID: ZDatabaseID) -> Int? {
     switch iID {
     case .everyoneID: return 0
     case     .mineID: return 1
@@ -76,7 +76,7 @@ func indexOf(_ iID: ZDatabaseiD) -> Int? {
 }
 
 
-enum ZDatabaseiD: String {
+enum ZDatabaseID: String {
     case favoritesID = "favorites"
     case  everyoneID = "everyone"
     case    sharedID = "shared"

@@ -65,7 +65,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     
 
     func applicationWillTerminate(aNotification: NSNotification) {
-        for dbID in gAllDatabaseiDs {
+        for dbID in gAllDatabaseIDs {
             gFileManager.write(for: dbID)
         }
         

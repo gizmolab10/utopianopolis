@@ -129,7 +129,7 @@ class ZToolsController: ZGenericTableController {
 
 
     func recount() {
-        for dbID in gAllDatabaseiDs {
+        for dbID in gAllDatabaseIDs {
             let manager = gRemoteStoresManager.cloudManagerFor(dbID)
             manager        .hereZone.safeUpdateProgenyCount([])
             manager       .trashZone.safeUpdateProgenyCount([])

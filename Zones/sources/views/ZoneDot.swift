@@ -149,13 +149,22 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawFavoritesHighlight(in dirtyRect: CGRect) {
-        let     yInset = (dirtyRect.size.height - CGFloat(gDotHeight)) / 2.0 - 2.0
-        let     xInset = (dirtyRect.size.width  - CGFloat(gDotWidth )) / 2.0 - 2.0
-        let       path = ZBezierPath(ovalIn: dirtyRect.offsetBy(dx: 0.0, dy: 0.5).insetBy(dx: xInset, dy: yInset))
-        path.lineWidth = CGFloat(gDotWidth) / 5.0
-        path.flatness  = 0.0001
+        if  let          zone  = widgetZone, innerDot != nil, !zone.isRootOfFavorites {
+            let      dotRadius = Double(innerDotWidth / 2.0)
+            let     tinyRadius =  dotRadius * 0.7
+            let   tinyDiameter = tinyRadius * 2.0
+            let         center = innerDot!.frame.center
+            let      offCenter = CGPoint(x: center.x - CGFloat(tinyRadius), y: center.y - CGFloat(tinyRadius))
+            let    orbitRadius = CGFloat(dotRadius + tinyRadius)
+            let              x = offCenter.x - orbitRadius
+            let              y = offCenter.y
+            let           rect = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
+            let           path = ZBezierPath(ovalIn: rect)
+            path.lineWidth     = CGFloat(gLineThickness * 1.2)
+            path.flatness      = 0.0001
 
-        path.stroke()
+            path.stroke()
+        }
     }
 
 
@@ -180,12 +189,11 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             if  count > 1 {
                 let      dotRadius = Double(innerDotHeight / 2.0)
-                let     tinyRadius =  dotRadius * gLineThickness / 12.0 + 0.7
+                let     tinyRadius = (dotRadius * gLineThickness / 12.0) + 0.7
                 let   tinyDiameter = tinyRadius * 2.0
                 let         center = innerDot!.frame.center
                 let      offCenter = CGPoint(x: center.x - CGFloat(tinyRadius), y: center.y - CGFloat(tinyRadius))
-                var color: ZColor? = nil
-                var rect:  CGRect? = nil
+                let color: ZColor? = isDragDrop ? gRubberbandColor : zone.color
                 let     startAngle = Double(0)
                 let incrementAngle = Double.pi / Double(count)
                 let    orbitRadius = CGFloat(dotRadius + tinyRadius * 1.2)
@@ -195,9 +203,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     let      angle = startAngle - incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
                     let          x = offCenter.x + orbitRadius * CGFloat(cos(angle))
                     let          y = offCenter.y + orbitRadius * CGFloat(sin(angle))
-                    rect           = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
-                    color          = isDragDrop ? gRubberbandColor : zone.color
-                    let       path = ZBezierPath(ovalIn: rect!)
+                    let       rect = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
+                    let       path = ZBezierPath(ovalIn: rect)
                     path .flatness = 0.0001
 
                     color?.setFill()
@@ -250,12 +257,21 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     let       strokeColor = isToggle  && isDragDrop ? gRubberbandColor : zone.color
                     var         fillColor = dotIsFilled ? strokeColor : gBackgroundColor
 
+                    ///////////////
+                    // INNER DOT //
+                    ///////////////
+
                     fillColor.setFill()
                     strokeColor.setStroke()
                     drawDot(in: dirtyRect)
 
                     if  isToggle {
                         if  showTinyCenterDot {
+
+                            /////////////////////
+                            // TINY CENTER DOT //
+                            /////////////////////
+
                             gBackgroundColor.setFill()
                             drawTinyCenterDot(in: dirtyRect)
                         }
@@ -263,13 +279,27 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                         let  type = zone.directChildrenWritable ? ZDecorationType.sideDot : ZDecorationType.vertical
                         fillColor = dotIsFilled ? gBackgroundColor : strokeColor
 
+                        ////////////////////////
+                        // ACCESS DECORATIONS //
+                        ////////////////////////
+
                         fillColor.setFill()
                         drawAccessDecoration(of: type, in: dirtyRect)
                     }
                 } else if isToggle {
+
+                    /////////////////////
+                    // TINY OUTER DOTS //
+                    /////////////////////
+
                     // addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.red.cgColor)
                     drawTinyDots(dirtyRect)
                 } else if highlightAsFavorite {
+
+                    ////////////////////////////////
+                    // HIGHLIGHT CURRENT FAVORITE //
+                    ////////////////////////////////
+
                     zone.color.withAlphaComponent(0.7).setStroke()
                     drawFavoritesHighlight(in: dirtyRect)
                 }

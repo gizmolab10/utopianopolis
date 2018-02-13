@@ -564,7 +564,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     }
 
     
-    func ancestor(for iID: ZDatabaseiD?) -> Zone? {
+    func ancestor(for iID: ZDatabaseID?) -> Zone? {
         if let dbID = iID {
             switch dbID {
             case .favoritesID: return gFavoritesManager.rootZone

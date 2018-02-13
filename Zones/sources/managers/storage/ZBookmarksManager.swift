@@ -16,7 +16,20 @@ let gBookmarksManager = ZBookmarksManager()
 class ZBookmarksManager: NSObject {
 
 
-    var registry = [ZDatabaseiD : [String : [Zone]]] ()
+    var registry = [ZDatabaseID : [String : [Zone]]] ()
+
+
+    var allBookmarks: [Zone] {
+        var bookmarks = [Zone] ()
+
+        for dict in registry.values {
+            for zones in dict.values {
+                bookmarks += zones
+            }
+        }
+
+        return bookmarks
+    }
 
 
     func registerBookmark(_  iBookmark : Zone?) {
@@ -61,10 +74,31 @@ class ZBookmarksManager: NSObject {
 
 
     func bookmarks(for iZone: Zone) -> [Zone]? {
-        if  let dbID = iZone.databaseiD,
+        if  let dbID = iZone.databaseID,
             let name = iZone.recordName,
             let dict = registry[dbID] {
             return dict[name]
+        }
+
+        return nil
+    }
+
+
+    func storageArray(for iDatabaseID: ZDatabaseID) -> [ZStorageDict]? {
+        if  iDatabaseID        == .mineID {
+            let bookmarks       = allBookmarks
+            if  bookmarks.count > 0 {
+                var       array = [ZStorageDict] ()
+
+                for bookmark in bookmarks {
+                    if  bookmark.parent == nil,
+                        let      subDict = bookmark.storageDictionary(for: .mineID) {
+                        array.append(subDict)
+                    }
+                }
+
+                return array
+            }
         }
 
         return nil

@@ -85,10 +85,10 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
     func control(_ control: ZControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
         if  gWorkMode == .searchMode, let searchString = getInput() {
-            var combined = [ZDatabaseiD: [Any]] ()
+            var combined = [ZDatabaseID: [Any]] ()
             var     done = false
 
-            for dbID in gAllDatabaseiDs {
+            for dbID in gAllDatabaseIDs {
                 let manager = gRemoteStoresManager.cloudManagerFor(dbID)
 
                 manager.search(for: searchString) { iObject in

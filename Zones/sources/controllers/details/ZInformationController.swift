@@ -49,7 +49,7 @@ class ZInformationController: ZGenericController {
             let                     total = gRemoteStoresManager.rootProgenyCount // TODO wrong manager
             let            operationCount = gDBOperationsManager.queue.operationCount
             let                      zone = gSelectionManager.rootMostMoveable
-            let                      dbID = zone.databaseiD
+            let                      dbID = zone.databaseID
             totalCountLabel?        .text = "of \(total), retrieved: \(count) + \(notSavableCount)"
             graphNameLabel?         .text = dbID == nil ? "" : "graph: \(dbID!.rawValue)"
             operationCountLabel?    .text = operationCount == 0 ? "" : "\(operationCount) cloud operation\(operationCount == 1 ? "" : "s") in progress"

@@ -72,20 +72,24 @@ class ZEditingManager: NSObject {
 
 
     func menuType(for key: String, _ flags: NSEventModifierFlags) -> ZMenuType {
-        let isCommand = flags.isCommand
+        let  alterers = "ehiluw\r" + kMarkingCharacters
+        let  clouders = ";'/?,."
 
-        switch key {
-        case "a":                            return .SelectAll
-        case "=":                            return .Travel
-        case "z":                            return .Undo
-        case "o", "r":                       return .Sort
-        case "v", "x", kSpace:               return .Child
-        case "d":                            return  isCommand ? .Alter : .Parent
-        case "b", kTab, kDelete, kBackspace: return .Parent
-        case ";", "'", "/", "?", ",", ".":   return .Cloud
-        case "e", "h", "i", "l", "u", "w",
-             "1", "-", "$", "!", "\r":       return .Alter
-        default:                             return .Always
+        if        alterers.contains(key) { return .Alter
+        } else if clouders.contains(key) { return .Cloud
+        } else {
+            switch key {
+            case "a":                            return .SelectAll
+            case "=":                            return .Travel
+            case "z":                            return .Undo
+            case "o", "r":                       return .Sort
+            case "v", "x", kSpace:               return .Child
+            case "d":                            return  flags.isCommand ? .Alter : .Parent
+            case "b", kTab, kDelete, kBackspace: return .Parent
+            default: break
+            }
+
+            return .Always
         }
     }
 
@@ -159,6 +163,8 @@ class ZEditingManager: NSObject {
                 }
             } else if isWindow, let arrow = key.arrow {
                 handleArrow(arrow, flags: flags)
+            } else if kMarkingCharacters.contains(key) {
+                mark(with: key)
             } else {
                 switch key {
                 case "a":      selectAll(progeny: isOption)
@@ -176,8 +182,7 @@ class ZEditingManager: NSObject {
                 case "r":      reverse()
                 case "s":      selectCurrentFavorite()
                 case "w":      toggleWritable()
-                case "$", "!": mark(with: key)
-                case "1":      divideChildren()
+                case "+":      divideChildren()
                 case "-":      addLine()
                 case "`":      travelToOtherGraph()
                 case "[":      gTravelManager.goBack()
@@ -279,7 +284,7 @@ class ZEditingManager: NSObject {
     func travelToOtherGraph() {
         let here = gHere
 
-        toggleDatabaseiD()
+        toggleDatabaseID()
 
         if        here.isRootOfFavorites {
             gHere = gFavoritesManager.rootZone!
@@ -309,23 +314,43 @@ class ZEditingManager: NSObject {
 
 
     func mark(with iMark: String) {
+        let before = "("
+        let  after = ") "
+        let prefix = before + iMark + after
         let  zones = gSelectionManager.currentGrabs
-        let prefix = "(" + iMark + ") "
 
         for zone in zones {
-            if  let name = zone.zoneName {
-                if !name.starts(with: prefix) {
-                    zone .zoneName = prefix + name
+            if  var name                  = zone.zoneName {
+                if  name.starts(with: prefix) {
+                    let         nameParts = name.components(separatedBy: prefix)
+                    name                  = nameParts[1]                // remove prefix
                 } else {
-                    let components = name.components(separatedBy: prefix)
-                    zone .zoneName = components[1]
+                    if  name.starts(with: before) {
+                        var     nameParts = name.components(separatedBy: after)
+                        var         index = 0
+
+                        while nameParts.count > index + 1 {
+                            let      mark = nameParts[index]            // found: "(x"
+                            let markParts = mark.components(separatedBy: before) // markParts[1] == x
+
+                            if  markParts.count > 1 && markParts[0].count == 0 && markParts[1].count == 1 {
+                                index    += 1
+                            }
+                        }
+
+                        name              = nameParts[index]        // remove all (x) where x is any character
+                    }
+
+                    name                  = prefix + name               // replace or prepend with prefix
                 }
+
+                zone.zoneName             = name
 
                 zone.widget?.textWidget.updateText()
             }
         }
 
-        signalFor(nil, regarding: .redraw)
+        redrawAndSync()
     }
 
 
@@ -465,7 +490,7 @@ class ZEditingManager: NSObject {
 
 
     func find() {
-        if gDatabaseiD != .favoritesID {
+        if gDatabaseID != .favoritesID {
             gWorkMode = gWorkMode == .searchMode ? .graphMode : .searchMode
 
             signalFor(nil, regarding: .search)
@@ -933,7 +958,7 @@ class ZEditingManager: NSObject {
     func addBookmark() {
         let zone = gSelectionManager.firstGrab
 
-        if zone.databaseiD != .favoritesID, !zone.isRoot {
+        if zone.databaseID != .favoritesID, !zone.isRoot {
             let closure = {
                 var bookmark: Zone? = nil
 
@@ -1301,13 +1326,13 @@ class ZEditingManager: NSObject {
 
             var         mover = zone
             let    targetLink = there.crossLink
-            let     sameGraph = zone.databaseiD == targetLink?.databaseiD
+            let     sameGraph = zone.databaseID == targetLink?.databaseID
             let grabAndTravel = {
                 gTravelManager.travelThrough(there) { object, kind in
                     let there = object as! Zone
 
                     self.moveZone(mover, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
-                        mover.recursivelyApplyDatabaseID(targetLink?.databaseiD)
+                        mover.recursivelyApplyDatabaseID(targetLink?.databaseID)
                         mover.grab()
                         onCompletion?()
                     }
@@ -1371,9 +1396,9 @@ class ZEditingManager: NSObject {
     
 
     func addIdeaIn(_ iParent: Zone?, at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
-        if  let       parent = iParent, parent.databaseiD != .favoritesID {
+        if  let       parent = iParent, parent.databaseID != .favoritesID {
             let createAndAdd = {
-                let    child = Zone(databaseiD: parent.databaseiD)
+                let    child = Zone(databaseID: parent.databaseID)
 
                 if name != nil {
                     child.zoneName = name
@@ -1531,7 +1556,7 @@ class ZEditingManager: NSObject {
                     pasteMe.orphan()
                     into.revealChildren()
                     into.addAndReorderChild(pasteMe, at: at)
-                    pasteMe.recursivelyApplyDatabaseID(into.databaseiD)
+                    pasteMe.recursivelyApplyDatabaseID(into.databaseID)
                     forUndo.append(pasteMe)
                     pasteMe.addToGrab()
                 }
@@ -1654,7 +1679,7 @@ class ZEditingManager: NSObject {
                 completedYet     = true
                 var insert: Int? = zone.parentZone?.siblingIndex
 
-                if to.databaseiD == .favoritesID {
+                if to.databaseID == .favoritesID {
                     insert = gFavoritesManager.nextFavoritesIndex(forward: gInsertionsFollow)
                 } else if zone.parentZone?.parentZone == to {
                     if  insert != nil {
@@ -1788,7 +1813,7 @@ class ZEditingManager: NSObject {
                         } else {
                             movable.orphan()
 
-                            if into.databaseiD != movable.databaseiD {
+                            if into.databaseID != movable.databaseID {
                                 movable.needDestroy()
                             }
 
@@ -1802,7 +1827,7 @@ class ZEditingManager: NSObject {
                         }
 
                         into.addAndReorderChild(movable, at: iIndex)
-                        movable.recursivelyApplyDatabaseID(into.databaseiD)
+                        movable.recursivelyApplyDatabaseID(into.databaseID)
                     }
 
                     if  toBookmark && self.undoManager.groupingLevel > 0 {

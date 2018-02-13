@@ -31,18 +31,18 @@ class ZSnapshot: NSObject {
 
     
     var currentGrabs = [Zone] ()
-    var  databaseiD : ZDatabaseiD?
+    var  databaseID : ZDatabaseID?
     var         here : Zone?
 
 
     static func == ( left: ZSnapshot, right: ZSnapshot) -> Bool {
-        let   goodIDs = left.databaseiD != nil && right.databaseiD != nil
+        let   goodIDs = left.databaseID != nil && right.databaseID != nil
         let  goodHere = left      .here != nil && right      .here != nil
         let sameCount = left.currentGrabs.count == right.currentGrabs.count
 
         if  goodHere && goodIDs && sameCount {
             let sameHere = left.here == right.here
-            let  sameIDs = left.databaseiD == right.databaseiD
+            let  sameIDs = left.databaseID == right.databaseID
 
             if sameHere && sameIDs {
                 for (index, grab) in left.currentGrabs.enumerated() {
@@ -74,7 +74,7 @@ class ZSelectionManager: NSObject {
     var snapshot : ZSnapshot {
         let          snap = ZSnapshot()
         snap.currentGrabs = currentGrabs
-        snap .databaseiD = gDatabaseiD
+        snap .databaseID = gDatabaseID
         snap        .here = gHere
 
         return snap
@@ -207,8 +207,8 @@ class ZSelectionManager: NSObject {
     func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
 
 
-    func setHereRecordName(_ iName: String, for databaseiD: ZDatabaseiD) {
-        if  let         index = indexOf(databaseiD) {
+    func setHereRecordName(_ iName: String, for databaseID: ZDatabaseID) {
+        if  let         index = indexOf(databaseID) {
             var    references = gHereRecordNames.components(separatedBy: kSeparator)
             references[index] = iName
             gHereRecordNames  = references.joined(separator: kSeparator)
@@ -216,10 +216,10 @@ class ZSelectionManager: NSObject {
     }
 
 
-    func hereRecordName(for databaseiD: ZDatabaseiD) -> String? {
+    func hereRecordName(for databaseID: ZDatabaseID) -> String? {
         let references = gHereRecordNames.components(separatedBy: kSeparator)
 
-        if  let  index = indexOf(databaseiD) {
+        if  let  index = indexOf(databaseID) {
             return references[index]
         }
 

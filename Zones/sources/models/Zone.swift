@@ -44,7 +44,7 @@ class Zone : ZRecord {
     var                  count:          Int  { return children.count }
     var              trashZone:         Zone? { return cloudManager?.trashZone }
     var                 widget:   ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
-    var         linkDatabaseID:  ZDatabaseiD? { return databaseID(from: zoneLink) }
+    var         linkDatabaseID:  ZDatabaseID? { return databaseID(from: zoneLink) }
     var               linkName:       String? { return name(from: zoneLink) }
     var          unwrappedName:       String  { return zoneName ?? kNoName }
     var          decoratedName:       String  { return decoration + unwrappedName }
@@ -139,7 +139,7 @@ class Zone : ZRecord {
     }
 
 
-    convenience init(databaseiD: ZDatabaseiD?, named: String? = nil, identifier: String? = nil) {
+    convenience init(databaseID: ZDatabaseID?, named: String? = nil, identifier: String? = nil) {
         var newRecord : CKRecord?
 
         if  let rName = identifier {
@@ -148,7 +148,7 @@ class Zone : ZRecord {
             newRecord = CKRecord(recordType: kZoneType)
         }
 
-        self.init(record: newRecord!, databaseiD: databaseiD)
+        self.init(record: newRecord!, databaseID: databaseID)
 
         zoneName      = named
 
@@ -156,8 +156,8 @@ class Zone : ZRecord {
     }
 
 
-    class func randomZone(in dbID: ZDatabaseiD) -> Zone {
-        return Zone(databaseiD: dbID, named: String(arc4random()))
+    class func randomZone(in dbID: ZDatabaseID) -> Zone {
+        return Zone(databaseID: dbID, named: String(arc4random()))
     }
 
 
@@ -331,7 +331,7 @@ class Zone : ZRecord {
             } else {
                 let    hasRef = newValue!.record != nil
                 let reference = !hasRef ? "" : newValue!.recordName!
-                zoneLink      = "\(newValue!.databaseiD!.rawValue)::\(reference)"
+                zoneLink      = "\(newValue!.databaseID!.rawValue)::\(reference)"
             }
 
             _crossLink = nil
@@ -505,8 +505,8 @@ class Zone : ZRecord {
                 if  newValue               == nil {
                     unlinkParentAndMaybeNeedSave()
                 } else if let parentRecord  = newValue?.record,
-                    let              newID  = newValue?.databaseiD {
-                    if               newID == databaseiD {
+                    let              newID  = newValue?.databaseID {
+                    if               newID == databaseID {
                         if  parent?.recordID.recordName != parentRecord.recordID.recordName {
                             parentLink      = kNullLink
                             parent          = CKReference(record: parentRecord, action: .none)
@@ -664,7 +664,7 @@ class Zone : ZRecord {
 
 
     func toggleWritable() {
-        if  databaseiD == .everyoneID {
+        if  databaseID == .everyoneID {
             if  let t = bookmarkTarget {
                 t.toggleWritable()
             } else if isWritableByUseer {
@@ -697,7 +697,7 @@ class Zone : ZRecord {
 
 
     override func debug(_  iMessage: String) {
-        note("\(iMessage) children \(count) parent \(parent != nil) is \(isInTrash ? "" : "not ") deleted identifier \(databaseiD!) \(unwrappedName)")
+        note("\(iMessage) children \(count) parent \(parent != nil) is \(isInTrash ? "" : "not ") deleted identifier \(databaseID!) \(unwrappedName)")
     }
 
 
@@ -780,7 +780,7 @@ class Zone : ZRecord {
         var trait         = traits[iType]
 
         if  trait        == nil {
-            trait         = ZTrait(databaseiD: databaseiD)
+            trait         = ZTrait(databaseID: databaseID)
         } else if  iText == nil {
             traits[iType] = nil
 
@@ -821,7 +821,7 @@ class Zone : ZRecord {
 
 
     func isABookmark(spawnedBy zone: Zone) -> Bool {
-        if  let        link = crossLink, let dbID = link.databaseiD {
+        if  let        link = crossLink, let dbID = link.databaseID {
             var     probeID = link.record.recordID as CKRecordID?
             let  identifier = zone.recordName
             var     visited = [String] ()
@@ -951,7 +951,7 @@ class Zone : ZRecord {
 
 
     func deepCopy() -> Zone {
-        let theCopy = Zone(databaseiD: databaseiD)
+        let theCopy = Zone(databaseID: databaseID)
 
         copy(into: theCopy)
 
@@ -1236,19 +1236,19 @@ class Zone : ZRecord {
     }
 
 
-    func recursivelyApplyDatabaseID(_ iID: ZDatabaseiD?) {
+    func recursivelyApplyDatabaseID(_ iID: ZDatabaseID?) {
         if  let             appliedID = iID,
-            let                  dbID = databaseiD,
+            let                  dbID = databaseID,
             appliedID                != dbID {
             traverseAllProgeny { iZone in
-                if  let         newID = iZone.databaseiD,
+                if  let         newID = iZone.databaseID,
                     newID            != dbID {
                     iZone.unregister()
 
                     let newParentZone = iZone.parentZone                                    // (1) grab new parent zone from previous traverse (2, below)
                     let     oldRecord = iZone.record
                     let     newRecord = CKRecord(recordType: kZoneType)                     // new record id
-                    iZone .databaseiD = appliedID                                                // must happen BEFORE record assignment
+                    iZone .databaseID = appliedID                                                // must happen BEFORE record assignment
                     iZone     .record = newRecord                                           // side-effect: move registration to the new id's record manager
 
                     oldRecord?.copy(to: iZone.record, properties: iZone.cloudProperties())  // preserve new record id
@@ -1330,7 +1330,7 @@ class Zone : ZRecord {
     func divideEvenly() {
         let optimumSize     = 40
         if  count           > optimumSize,
-            let        dbID = databaseiD {
+            let        dbID = databaseID {
             var   divisions = ((count - 1) / optimumSize) + 1
             let        size = count / divisions
             var     holders = [Zone] ()
@@ -1428,19 +1428,19 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    convenience init(dict: ZStorageDict) {
-        self.init(record: nil, databaseiD: gDatabaseiD)
+    convenience init(dict: ZStorageDict, in dbID: ZDatabaseID) {
+        self.init(record: nil, databaseID: dbID)
 
-        setStorageDictionary(dict, of: kZoneType, into: gDatabaseiD)
+        setStorageDictionary(dict, of: kZoneType, into: dbID)
     }
 
     
-    override func setStorageDictionary(_ dict: ZStorageDict, of iRecordType: String, into iDatabaseID: ZDatabaseiD) {
+    override func setStorageDictionary(_ dict: ZStorageDict, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
         if let     string = dict[.name] as? String { zoneName = string }
 
         if let childrenStore: [ZStorageDict] = dict[.children] as! [ZStorageDict]? {
             for childStore: ZStorageDict in childrenStore {
-                let child = Zone(dict: childStore)
+                let child = Zone(dict: childStore, in: iDatabaseID)
 
                 addChild(child, at: nil)
             }
@@ -1452,31 +1452,30 @@ class Zone : ZRecord {
     }
 
 
-    override func storageDictionary(for iDatabaseID: ZDatabaseiD) -> ZStorageDict? {
+    override func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDict? {
         var              dict = super.storageDictionary(for: iDatabaseID)!
+        var             array = [ZStorageDict] ()
 
         if  count > 0 {
-            var childrenArray = [ZStorageDict] ()
-
             for child: Zone in children {
                 if  let childDict = child.storageDictionary(for: iDatabaseID) {
-                    childrenArray.append(childDict)
+                    array.append(childDict)
                 }
             }
 
-            dict[.children] = childrenArray as NSObject?
+            dict[.children]   = array as NSObject?
         }
 
-        if  traits.count > 0 {
-            var traitsArray = [ZStorageDict] ()
+        array.removeAll()
 
+        if  traits.count > 0 {
             for trait in traits.values {
                 if  let traitsDict = trait.storageDictionary(for: iDatabaseID) {
-                    traitsArray.append(traitsDict)
+                    array.append(traitsDict)
                 }
             }
 
-            dict[.traits] = traitsArray as NSObject?
+            dict[.traits]     = array as NSObject?
         }
 
         return dict

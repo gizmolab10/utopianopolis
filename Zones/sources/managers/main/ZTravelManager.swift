@@ -20,7 +20,7 @@ class ZTravelManager: NSObject {
     var  travelStack = [Zone] ()
     var currentIndex = -1
     var     topIndex : Int  { return travelStack.count - 1 }
-    var      notHere : Bool { return gHere != travelStack[currentIndex] }
+    var      notHere : Bool { return currentIndex < 0 || gHere != travelStack[currentIndex] }
 
 
     func pushHere(updateCurrentIndex: Bool = true) {
@@ -70,17 +70,19 @@ class ZTravelManager: NSObject {
 
 
     func go() {
-        let dbID  = gHere.databaseiD
-        let here  = travelStack[currentIndex]
-        if  dbID != here.databaseiD {
-            toggleDatabaseiD()         // update id before setting gHere
+        if  0        <= currentIndex {
+            let dbID  = gHere.databaseID
+            let here  = travelStack[currentIndex]
+            if  dbID != here.databaseID {
+                toggleDatabaseID()         // update id before setting gHere
+            }
+
+            gHere     = here
+
+            gHere.grab()
+            gFavoritesManager.updateFavorites()
+            signalFor(nil, regarding: .redraw)
         }
-
-        gHere     = here
-
-        gHere.grab()
-        gFavoritesManager.updateFavorites()
-        signalFor(nil, regarding: .redraw)
     }
 
 
@@ -89,14 +91,14 @@ class ZTravelManager: NSObject {
 
 
     func createUndoForTravelBackTo(_ zone: Zone, atArrival: @escaping Closure) {
-        let   restoreID = gDatabaseiD
+        let   restoreID = gDatabaseID
         let restoreHere = gHere
 
         UNDO(self) { iUndoSelf in
             iUndoSelf.createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
             iUndoSelf.pushHere()
 
-            gDatabaseiD = restoreID
+            gDatabaseID = restoreID
 
             iUndoSelf.travel {
                 gHere = restoreHere
@@ -122,7 +124,7 @@ class ZTravelManager: NSObject {
 
     func travelThrough(_ bookmark: Zone, atArrival: @escaping SignalClosure) {
         if  let      crossLink = bookmark.crossLink,
-            let           dbID = crossLink.databaseiD,
+            let           dbID = crossLink.databaseID,
             let         record = crossLink.record {
             let recordIDOfLink = record.recordID
             var   there: Zone? = nil
@@ -133,8 +135,8 @@ class ZTravelManager: NSObject {
 
             pushHere()
 
-            if  gDatabaseiD  != dbID {
-                gDatabaseiD   = dbID
+            if  gDatabaseID  != dbID {
+                gDatabaseID   = dbID
 
                 /////////////////////////////////
                 // TRAVEL TO A DIFFERENT GRAPH //
@@ -191,7 +193,7 @@ class ZTravelManager: NSObject {
                     gHere = there!
 
                     grabHere()
-                } else if gCloudManager.databaseiD != .favoritesID { // favorites does not have a cloud database
+                } else if gCloudManager.databaseID != .favoritesID { // favorites does not have a cloud database
                     gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: kZoneType) { (iRecord: CKRecord?) in
                         if  let hereRecord = iRecord {
                             gHere          = gCloudManager.zoneForCKRecord(hereRecord)

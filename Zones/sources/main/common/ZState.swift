@@ -18,8 +18,8 @@ import CloudKit
 
 
 var            gWorkMode                     = ZWorkMode.startupMode
-var            gSaveMode                     = ZFileMode.all
-var           gFetchMode                     = ZFileMode.cloudOnly
+var            gSaveMode                     = gUseCloud ? ZFileMode.all       : ZFileMode.localOnly
+var           gFetchMode                     = gUseCloud ? ZFileMode.cloudOnly : ZFileMode.localOnly
 var          gReadyState                     = false
 var       gTextCapturing                     = false
 var     gShowIdentifiers                     = false
@@ -27,6 +27,7 @@ var    gCloudUnavailable                     = false
 var   gCrippleUserAccess                     = false
 var   gKeyboardIsVisible                     = false
 var         gRubyStyleUI                     = false
+var            gUseCloud                     = false
 var     gDebugOperations                     = true
 var     gDebugTimerCount                     = 0
 var     gDragDropIndices: NSMutableIndexSet? = nil
@@ -51,10 +52,10 @@ var          gWidgetFont:              ZFont { return .systemFont(ofSize: fontSi
 var       gFavoritesFont:              ZFont { return .systemFont(ofSize: fontSize * kReductionRatio) }
 
 
-func toggleDatabaseiD() {
-    switch        gDatabaseiD {
-    case .mineID: gDatabaseiD = .everyoneID
-    default:      gDatabaseiD = .mineID
+func toggleDatabaseID() {
+    switch        gDatabaseID {
+    case .mineID: gDatabaseID = .everyoneID
+    default:      gDatabaseID = .mineID
     }
 }
 
@@ -245,18 +246,18 @@ var gInsertionMode: ZInsertionMode {
 }
 
 
-var gDatabaseiD: ZDatabaseiD {
+var gDatabaseID: ZDatabaseID {
     get {
-        var dbID: ZDatabaseiD? = nil
+        var dbID: ZDatabaseID? = nil
 
-        if let object = UserDefaults.standard.object(forKey:kDatabaseiD) {
-            dbID      = ZDatabaseiD(rawValue: object as! String)
+        if let object = UserDefaults.standard.object(forKey:kDatabaseID) {
+            dbID      = ZDatabaseID(rawValue: object as! String)
         }
 
         if  dbID     == nil || !gHasPrivateDatabase {
             dbID      = .everyoneID
 
-            UserDefaults.standard.set(dbID!.rawValue, forKey:kDatabaseiD)
+            UserDefaults.standard.set(dbID!.rawValue, forKey:kDatabaseID)
             UserDefaults.standard.synchronize()
         }
 
@@ -264,7 +265,7 @@ var gDatabaseiD: ZDatabaseiD {
     }
 
     set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:kDatabaseiD)
+        UserDefaults.standard.set(newValue.rawValue, forKey:kDatabaseID)
         UserDefaults.standard.synchronize()
     }
 }

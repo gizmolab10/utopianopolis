@@ -15,7 +15,7 @@ class ZRecord: NSObject {
     
 
     var           _record: CKRecord?
-    var       databaseiD: ZDatabaseiD?
+    var       databaseID: ZDatabaseID?
     var        kvoContext: UInt8 = 1
     var isRootOfFavorites: Bool             { return record != nil && recordName == kFavoritesRootName }
     var        isBookmark: Bool             { return record.isBookmark }
@@ -34,7 +34,7 @@ class ZRecord: NSObject {
     var     needsWritable: Bool             { return hasState(.needsWritable) }
     var     needsChildren: Bool             { return hasState(.needsChildren) }
     var    needsBookmarks: Bool             { return hasState(.needsBookmarks) }
-    var    recordsManager: ZRecordsManager? { return gRemoteStoresManager.recordsManagerFor(databaseiD) }
+    var    recordsManager: ZRecordsManager? { return gRemoteStoresManager.recordsManagerFor(databaseID) }
     var      cloudManager: ZCloudManager?   { return recordsManager as? ZCloudManager }
     var        recordName: String?          { return record?.recordID.recordName }
 
@@ -143,17 +143,17 @@ class ZRecord: NSObject {
     override init() {
         super.init()
 
-        self.databaseiD = nil
+        self.databaseID = nil
         self.record      = nil
 
         self.setupKVO();
     }
 
 
-    convenience init(record: CKRecord?, databaseiD: ZDatabaseiD?) {
+    convenience init(record: CKRecord?, databaseID: ZDatabaseID?) {
         self.init()
 
-        self.databaseiD = databaseiD
+        self.databaseID = databaseID
 
         if record != nil {
             self.record = record
@@ -404,7 +404,7 @@ class ZRecord: NSObject {
 
         switch iType {
         case .databaseID:
-            print(object) // object = (object as ZDatabaseiD).rawValue
+            print(object) // object = (object as ZDatabaseID).rawValue
         case .owner:
             if  let  ref = object as? CKReference {
                 let name = ref.recordID.recordName as NSObject
@@ -421,32 +421,35 @@ class ZRecord: NSObject {
     }
 
 
-    func setStorageDictionary(_ dict: ZStorageDict, of iRecordType: String, into iDatabaseID: ZDatabaseiD) {
-        databaseiD        = iDatabaseID
-        var name: String? = nil
+    func setStorageDictionary(_ dict: ZStorageDict, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
+        databaseID       = iDatabaseID
+        if let      name = dict[.recordName] as? String {
+            record       = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: name)) // YIKES this may be wildly out of date
+            let keyPaths = cloudProperties()
 
-        for (key, value) in dict {
-            switch key {
-            case .recordName: name = value as? String; break
-            default:                                   break
+            for keyPath in keyPaths {
+                if  let      type  = typefrom(keyPath),
+                    let    object  = dict[type],
+                    var     value  = object as? CKRecordValue {
+                    if       type == .owner,
+                        let string = object as? String {
+                        value      = CKReference(recordID: CKRecordID(recordName: string), action: .none)
+                    }
+
+                    record[keyPath] = value
+                }
             }
-        }
 
-        if  name != nil {
-            record = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: name!)) // YIKES this may be wildly out of date
-
-            self.updateRecordProperties()
-
-            // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
+            updateInstanceProperties()    // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
         }
     }
 
 
-    func storageDictionary(for iDatabaseID: ZDatabaseiD) -> ZStorageDict? {
+    func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDict? {
         var  keyPaths = cloudProperties() + [kRecordName]
         var      dict = ZStorageDict()
 
-        if  let  dbID = databaseiD, dbID != iDatabaseID {
+        if  let  dbID = databaseID, dbID != iDatabaseID {
             keyPaths += ["databaseID"]
         }
 

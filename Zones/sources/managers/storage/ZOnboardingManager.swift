@@ -68,7 +68,7 @@ class ZOnboardingManager : ZOperationsManager {
     // MARK:-
 
 
-    override func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseiD, _ onCompletion: @escaping Closure) {
+    override func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping Closure) {
         let done = {
             self.queue.isSuspended = false
 
@@ -132,7 +132,7 @@ class ZOnboardingManager : ZOperationsManager {
 
             gCloudManager.assureRecordExists(withRecordID: ckRecordID, recordType: CKRecordTypeUserRecord) { (iUserRecord: CKRecord?) in
                 if  let  record = iUserRecord {
-                    let    user = ZUser(record: record, databaseiD: gDatabaseiD)
+                    let    user = ZUser(record: record, databaseID: gDatabaseID)
                     self  .user = user
 
                     if  self.makeUserSpecial {
