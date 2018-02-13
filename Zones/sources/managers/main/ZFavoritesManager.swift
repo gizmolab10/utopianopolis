@@ -199,7 +199,9 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func setup(_ onCompletion: Closure?) {
-        if  gHasPrivateDatabase && rootZone == nil {
+        if !gHasPrivateDatabase || rootZone != nil {
+            onCompletion?()
+        } else {
             let   mine = gRemoteStoresManager.cloudManagerFor(.mineID)
             let finish = {
                 self.setupDatabaseFavorites()

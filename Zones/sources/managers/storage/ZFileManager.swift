@@ -66,18 +66,31 @@ class ZFileManager: NSObject {
 
 
     func read(for databaseID: ZDatabaseID) {
-        if  gFetchMode          != .cloudOnly &&
-            databaseID          != .favoritesID {
-            let             path = fileURL(for: databaseID).path
+        if  gFetchMode               != .cloudOnly &&
+            databaseID               != .favoritesID {
+            let                  path = fileURL(for: databaseID).path
+            let types: [ZStorageType] = [.graph, .favorites, .bookmarks]
             do {
                 if  let     data = FileManager.default.contents(atPath: path),
                     let     json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
                     let     dict = dictFromJSON(json)
-                    if let graph = dict[.graph] as? ZStorageDict {
-                        let root = Zone(dict: graph, in: databaseID)
 
-                        gRemoteStoresManager.setRootZone(root, for: databaseID)
-                        signalFor(nil, regarding: .redraw)
+                    for type in types {
+                        if  let                 value = dict[type] {
+                            if  let           subDict = value as? ZStorageDict {
+                                let              root = Zone(dict: subDict, in: databaseID)
+                                let dbID: ZDatabaseID = type == .favorites ? .favoritesID : databaseID
+
+                                gRemoteStoresManager.setRootZone(root, for: dbID)
+                                signalFor(nil, regarding: .redraw)
+                            } else if let       array = value as? [ZStorageDict] {
+                                for subDict in array {
+                                    let      bookmark = Zone(dict: subDict, in: databaseID)
+
+                                    gBookmarksManager.registerBookmark(bookmark)
+                                }
+                            }
+                        }
                     }
                 }
             } catch {

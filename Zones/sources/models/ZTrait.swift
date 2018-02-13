@@ -64,7 +64,14 @@ class ZTrait: ZRecord {
     convenience init(databaseID: ZDatabaseID?) {
         self.init(record: CKRecord(recordType: kTraitType), databaseID: databaseID)
     }
-    
+
+
+    convenience init(dict: ZStorageDict, in dbID: ZDatabaseID) {
+        self.init(record: nil, databaseID: dbID)
+
+        setStorageDictionary(dict, of: kTraitType, into: dbID)
+    }
+
 
     class func cloudProperties() -> [String] {
         return[#keyPath(type),

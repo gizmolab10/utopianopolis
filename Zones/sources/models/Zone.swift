@@ -766,6 +766,16 @@ class Zone : ZRecord {
     // MARK:-
 
 
+    func addTrait(_ trait: ZTrait) {
+        if let     type  = trait.traitType {
+            traits[type] = trait
+            trait .owner = CKReference(record: record, action: .none)
+
+            trait.updateRecordProperties()
+        }
+    }
+
+
     func hasTrait(for iType: ZTraitType) -> Bool {
         return traits[iType] != nil
     }
@@ -1434,9 +1444,11 @@ class Zone : ZRecord {
         setStorageDictionary(dict, of: kZoneType, into: dbID)
     }
 
-    
+
     override func setStorageDictionary(_ dict: ZStorageDict, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
         if let     string = dict[.name] as? String { zoneName = string }
+
+        super.setStorageDictionary(dict, of: iRecordType, into: iDatabaseID) // do this step last so the assignment above is NOT pushed to cloud
 
         if let childrenStore: [ZStorageDict] = dict[.children] as! [ZStorageDict]? {
             for childStore: ZStorageDict in childrenStore {
@@ -1448,7 +1460,13 @@ class Zone : ZRecord {
             respectOrder()
         }
 
-        super.setStorageDictionary(dict, of: iRecordType, into: iDatabaseID) // do this step last so the assignment above is NOT pushed to cloud
+        if let traitStore: [ZStorageDict] = dict[.traits] as! [ZStorageDict]? {
+            for traitStore: ZStorageDict in traitStore {
+                let trait = ZTrait(dict: traitStore, in: iDatabaseID)
+
+                addTrait(trait)
+            }
+        }
     }
 
 
