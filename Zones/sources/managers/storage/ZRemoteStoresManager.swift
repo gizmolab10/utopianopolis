@@ -68,7 +68,7 @@ class ZRemoteStoresManager: NSObject {
 
 
     func establishRoot(_ databaseID: ZDatabaseID, _ onCompletion: IntClosure?) {
-        if !kFullFetch && databaseID == .favoritesID {
+        if !gFullFetch && databaseID == .favoritesID {
             onCompletion?(0)
         } else {
             cloudManagerFor(databaseID).establishRoot(onCompletion)

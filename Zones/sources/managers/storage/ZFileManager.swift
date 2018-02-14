@@ -127,13 +127,13 @@ class ZFileManager: NSObject {
 
 
     func fileURL(for databaseID: ZDatabaseID) -> URL { return fileURLForZoneNamed(fileName(for: databaseID)) }
-    func fileURLForZoneNamed(_ iName: String) -> URL { return createFileNamed("graphs/\(iName)"); }
+    func fileURLForZoneNamed(_ iName: String) -> URL { return createFileNamed("data/\(iName)"); }
 
 
     func fileName(for databaseID: ZDatabaseID) -> String {
         var name = databaseID.rawValue
 
-        name.append(".graph")
+        name.append(".focus")
 
         return name
     }

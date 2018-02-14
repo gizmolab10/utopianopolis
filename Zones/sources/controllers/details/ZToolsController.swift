@@ -20,6 +20,8 @@ class ZToolsController: ZGenericTableController {
 
 
     enum ZToolKind: Int {
+        case eUseCloud
+        case eFullFetch
         case eIdentifiers
         case eAccess
         case eGather
@@ -35,14 +37,16 @@ class ZToolsController: ZGenericTableController {
 
 
     override func numberOfRows(in tableView: ZTableView) -> Int {
-        return !gIsSpecialUser ? 0 : 4 + (gIsLate ? 1 : 0)
+        return !gIsSpecialUser ? 0 : 6 + (gIsLate ? 1 : 0)
     }
 
 
     func text(for kind: ZToolKind) -> String {
         switch kind {
-        case .eIdentifiers: return   (gShowIdentifiers ? "Visible"  : "Hidden") + " Identifiers"
-        case .eAccess:      return (gCrippleUserAccess ? "Crippled" : "Normal") + " User Access"
+        case .eUseCloud:    return          (gUseCloud ? "Use Cloud" : "Local File Only")
+        case .eFullFetch:   return         (gFullFetch ? "Full"      : "Minimal") + " Fetch"
+        case .eIdentifiers: return   (gShowIdentifiers ? "Visible"   : "Hidden")  + " Identifiers"
+        case .eAccess:      return (gCrippleUserAccess ? "Crippled"  : "Normal")  + " User Access"
         case .eGather:      return "Gather Lost and Found"
         case .eRetry:       return "Retry Cloud"
         case .eTrash:       return "Show Trash"
@@ -66,6 +70,8 @@ class ZToolsController: ZGenericTableController {
 
             if  let kind = ZToolKind(rawValue: row) {
                 switch kind {
+                case .eUseCloud:    self.toggleUseCloud()
+                case .eFullFetch:   self.toggleFullFetch()
                 case .eIdentifiers: self.toggleShowIdentifiers()
                 case .eAccess:      self.toggleUserAccess()
                 case .eRetry:       gDBOperationsManager.unHang()
@@ -84,7 +90,9 @@ class ZToolsController: ZGenericTableController {
     // MARK:-
 
 
-    func toggleShowIdentifiers() { gShowIdentifiers   = !gShowIdentifiers }
+    func        toggleUseCloud() {          gUseCloud = !gUseCloud }
+    func       toggleFullFetch() {         gFullFetch = !gFullFetch }
+    func toggleShowIdentifiers() {   gShowIdentifiers = !gShowIdentifiers }
     func      toggleUserAccess() { gCrippleUserAccess = !gCrippleUserAccess }
 
 

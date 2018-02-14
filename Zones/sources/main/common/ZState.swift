@@ -27,7 +27,6 @@ var    gCloudUnavailable                     = false
 var   gCrippleUserAccess                     = false
 var   gKeyboardIsVisible                     = false
 var         gRubyStyleUI                     = false
-var            gUseCloud                     = false
 var     gDebugOperations                     = true
 var     gDebugTimerCount                     = 0
 var     gDragDropIndices: NSMutableIndexSet? = nil
@@ -85,6 +84,18 @@ var gExpandedZones : [String] {
 var gHere: Zone {
     get { return gCloudManager.hereZone }
     set { gCloudManager.hereZone = newValue }
+}
+
+
+var gUseCloud : Bool {
+    get { return getPreferencesBool(   for: kUseCloud, defaultBool: true) }
+    set { setPreferencesBool(newValue, for: kUseCloud) }
+}
+
+
+var gFullFetch : Bool {
+    get { return getPreferencesBool(   for: kFullFetch, defaultBool: true) }
+    set { setPreferencesBool(newValue, for: kFullFetch) }
 }
 
 

@@ -30,7 +30,6 @@ let kUnselectBrightness: CGFloat = 0.98
 #endif
 
 
-let          kFullFetch = false
 let          kBatchSize = 250
 let         kLogTabStop = 21
 let       kMaxBatchSize = 1000
@@ -62,15 +61,17 @@ let             kDelete = "\u{7F}"
 let             kEscape = "\u{1B}"
 let            kScaling = "scaling"
 let            kCloudID = "iCloud.com.zones.Zones"
-let           kNullLink = "no"
-let           kRootName = "root"
-let           kZoneType = "Zone"
+let           kUseCloud = "use cloud"
 let           kZoneName = "zoneName"
+let           kZoneType = "Zone"
+let           kRootName = "root"
+let           kNullLink = "no"
 let          kBackspace = "\u{8}"
 let          kThickness = "line thickness"
 let          kTraitType = "ZTrait"
 let          kSeparator = ":"
 let          kTrashName = "trash"
+let          kFullFetch = "full fetch"
 let         kRecordName = "recordName"
 let         kCountsMode = "counts mode"
 let         kWindowSize = "window size"

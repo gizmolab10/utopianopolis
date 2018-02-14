@@ -220,6 +220,7 @@ class ZFavoritesManager: ZCloudManager {
                     root.directAccess = .eDefaultName
                     root.zoneName     = kFavoritesName
                     self.rootZone     = root
+
                     finish()
                 }
             }

@@ -157,6 +157,8 @@ class ZTravelManager: NSObject {
                             self.travel {
                                 atArrival(gHere, .redraw)
                             }
+                        } else {
+                            atArrival(gHere, .redraw)
                         }
                     }
                 }

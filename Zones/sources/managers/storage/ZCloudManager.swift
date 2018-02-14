@@ -184,7 +184,7 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        if  database == nil {
+        if  database == nil || gFetchMode == .localOnly {
             done(nil)
         } else {
             BACKGROUND {     // not stall foreground processor
@@ -972,7 +972,7 @@ class ZCloudManager: ZRecordsManager {
                     root.needSave()
                 }
 
-                if kFullFetch {
+                if gFullFetch {
                     root.needProgeny()
                 }
 

@@ -1445,6 +1445,27 @@ class Zone : ZRecord {
     }
 
 
+    func setStates(from: String, for iDatabaseID: ZDatabaseID) {
+
+    }
+
+
+    func needsAsString(for iDatabaseID: ZDatabaseID) -> String? {
+        let states = gRemoteStoresManager.cloudManagerFor(iDatabaseID).states(for: record!)
+        var  marks = [String] ()
+
+        for state in states {
+            marks.append("\(state.rawValue)")
+        }
+
+        if  marks.count > 0 {
+            return marks.joined(separator: ",")
+        }
+
+        return nil
+    }
+
+
     override func setStorageDictionary(_ dict: ZStorageDict, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
         if let     string = dict[.name] as? String { zoneName = string }
 
@@ -1471,8 +1492,8 @@ class Zone : ZRecord {
 
 
     override func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDict? {
-        var              dict = super.storageDictionary(for: iDatabaseID)!
-        var             array = [ZStorageDict] ()
+        var  dict = super.storageDictionary(for: iDatabaseID)!
+        var array = [ZStorageDict] ()
 
         if  count > 0 {
             for child: Zone in children {
@@ -1481,7 +1502,7 @@ class Zone : ZRecord {
                 }
             }
 
-            dict[.children]   = array as NSObject?
+            dict[.children] = array as NSObject?
         }
 
         array.removeAll()
@@ -1493,7 +1514,11 @@ class Zone : ZRecord {
                 }
             }
 
-            dict[.traits]     = array as NSObject?
+            dict[.traits] = array as NSObject?
+        }
+
+        if  let   needs   = needsAsString(for: iDatabaseID) {
+            dict[.needs]  = needs as NSObject?
         }
 
         return dict

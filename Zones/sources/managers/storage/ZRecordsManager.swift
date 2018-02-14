@@ -11,21 +11,21 @@ import Foundation
 import CloudKit
 
 
-enum ZRecordState: Int {
-    case needsSave
-    case needsRoot
-    case needsMerge
-    case needsFetch
-    case needsColor
-    case needsCount
-    case needsTraits
-    case needsParent
-    case needsDestroy
-    case needsProgeny
-    case needsWritable
-    case needsChildren
-    case needsBookmarks
-    case requiresFetch
+enum ZRecordState: String {
+    case needsSave      = "s"
+    case needsRoot      = "ro"
+    case needsMerge     = "m"
+    case needsFetch     = "f"
+    case needsColor     = "co"
+    case needsCount     = "c"
+    case needsTraits    = "t"
+    case needsParent    = "p"
+    case needsDestroy   = "d"
+    case needsProgeny   = "pr"
+    case needsWritable  = "w"
+    case needsChildren  = "ch"
+    case needsBookmarks = "b"
+    case requiresFetch  = "r"
 }
 
 

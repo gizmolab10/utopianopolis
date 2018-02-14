@@ -48,6 +48,7 @@ enum ZStorageType: String {
     case order          = "order"
     case color          = "color"
     case count          = "count"
+    case needs          = "needs"
     case link           = "link"
     case name           = "name"
 

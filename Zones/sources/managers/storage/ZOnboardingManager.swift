@@ -27,7 +27,7 @@ class ZOnboardingManager : ZOperationsManager {
 
     var            user : ZUser?
     var    userIdentity : CKUserIdentity?
-    var   isSpecialUser : Bool { return user?.access == .eAccessFull }
+    var   isSpecialUser : Bool { return true } //user?.access == .eAccessFull }
     let makeUserSpecial = false
 
 

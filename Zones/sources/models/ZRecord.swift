@@ -15,7 +15,7 @@ class ZRecord: NSObject {
     
 
     var           _record: CKRecord?
-    var       databaseID: ZDatabaseID?
+    var        databaseID: ZDatabaseID?
     var        kvoContext: UInt8 = 1
     var isRootOfFavorites: Bool             { return record != nil && recordName == kFavoritesRootName }
     var        isBookmark: Bool             { return record.isBookmark }
@@ -275,7 +275,7 @@ class ZRecord: NSObject {
 
 
     func needProgeny() {
-        if  !kFullFetch || hasMissingProgeny() {
+        if  !gFullFetch || hasMissingProgeny() {
             addState(.needsProgeny)
             removeState(.needsChildren)
         }
@@ -293,7 +293,7 @@ class ZRecord: NSObject {
 
     func needChildren() {
         if   !isBookmark && // no bookmark has children, by design
-            (!kFullFetch || (showChildren && hasMissingChildren() && !needsProgeny)) {
+            (!gFullFetch || (showChildren && hasMissingChildren() && !needsProgeny)) {
             addState(.needsChildren)
         }
     }
