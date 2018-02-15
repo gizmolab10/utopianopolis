@@ -637,7 +637,7 @@ class ZEditingManager: NSObject {
             var needOp = false
 
             zone.traverseAncestors { iZone -> ZTraverseStatus in
-                if  let parentZone = iZone.parentZone, !parentZone.alreadyExists {
+                if  let parentZone = iZone.parentZone, !parentZone.isFromCloud {
                     iZone.needRoot()
 
                     needOp = true
@@ -715,7 +715,7 @@ class ZEditingManager: NSObject {
                     let gotOrphan = iParent.parentZone == nil
 
                     if  gotThere || gotOrphan {
-                        if !gotThere && !iParent.alreadyExists && iParent.parentZone != nil { // reached an orphan that has not yet been fetched
+                        if !gotThere && !iParent.isFromCloud && iParent.parentZone != nil { // reached an orphan that has not yet been fetched
                             self.recursivelyRevealSiblings(iParent, untilReaching: iAncestor, onCompletion: onCompletion)
                         } else {
                             iAncestor.revealChildren()
@@ -981,6 +981,7 @@ class ZEditingManager: NSObject {
                 }
 
                 bookmark?.grab()
+                bookmark?.record.markAsNotFromCloud(.mineID)
                 self.signalFor(nil, regarding: .redraw)
                 gBatchOperationsManager.sync { iSame in
                 }
@@ -1410,13 +1411,17 @@ class ZEditingManager: NSObject {
     
 
     func addIdeaIn(_ iParent: Zone?, at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
-        if  let       parent = iParent, parent.databaseID != .favoritesID {
+        if  let       parent = iParent,
+            let         dbID = parent.databaseID,
+            dbID            != .favoritesID {
             let createAndAdd = {
-                let    child = Zone(databaseID: parent.databaseID)
+                let    child = Zone(databaseID: dbID)
 
-                if name != nil {
+                if  name != nil {
                     child.zoneName = name
                 }
+
+                child.record.markAsNotFromCloud(dbID)
 
                 self.UNDO(self) { iUndoSelf in
                     iUndoSelf.deleteZones([child]) {

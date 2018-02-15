@@ -210,6 +210,23 @@ extension CKRecord {
     }
 
 
+    @discardableResult func copy(to iCopy: CKRecord?, properties: [String]) -> Bool {
+        var  altered = false
+        if  let copy = iCopy {
+            for keyPath in properties {
+                let        leftSide = copy[keyPath]
+                let       rightSide = self[keyPath]
+                if  leftSide?.hash != rightSide?.hash {
+                    copy[keyPath]   = rightSide
+                    altered         = true
+                }
+            }
+        }
+
+        return altered
+    }
+
+
     func hasKey(_ key: String) -> Bool {
         return allKeys().contains(key)
     }
@@ -230,20 +247,23 @@ extension CKRecord {
     }
 
 
-    @discardableResult func copy(to iCopy: CKRecord?, properties: [String]) -> Bool {
-        var  altered = false
-        if  let copy = iCopy {
-            for keyPath in properties {
-                let        leftSide = copy[keyPath]
-                let       rightSide = self[keyPath]
-                if  leftSide?.hash != rightSide?.hash {
-                    copy[keyPath]   = rightSide
-                    altered         = true
-                }
+    func markAsNotFromCloud(_ databaseID: ZDatabaseID?) {
+        if  let    dbID = databaseID {
+            let manager = gRemoteStoresManager.cloudManagerFor(dbID)
+            manager.addCKRecord(self, for: [.notFromCloud])
+        }
+    }
+
+
+    func maybeFromCloud(_ databaseID: ZDatabaseID?) {
+        if  let      dbID = databaseID,
+            creationDate != nil {
+            let    states = [ZRecordState.notFromCloud]
+            let   manager = gRemoteStoresManager.cloudManagerFor(dbID)
+            if  manager.hasCKRecord(self, forAnyOf: states) {
+                manager.clearCKRecords([self], for: states)
             }
         }
-
-        return altered
     }
 
 }

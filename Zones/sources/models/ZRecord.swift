@@ -21,6 +21,7 @@ class ZRecord: NSObject {
     var        isBookmark: Bool             { return record?.isBookmark ?? false }
     var            isRoot: Bool             { return record != nil && kRootNames.contains(recordName!) }
     var           canSave: Bool             { return !hasState(.requiresFetch) }
+    var       isFromCloud: Bool             { return !hasState(.notFromCloud) }
     var         needsSave: Bool             { return hasState(.needsSave) }
     var         needsRoot: Bool             { return hasState(.needsRoot) }
     var        needsCount: Bool             { return hasState(.needsCount) }
@@ -39,15 +40,6 @@ class ZRecord: NSObject {
     var        recordName: String?          { return record?.recordID.recordName }
 
 
-    var alreadyExists: Bool {
-        if  let    r = record {
-            return r.creationDate != nil
-        }
-
-        return false
-    }
-
-
     var record: CKRecord! {
         get {
             return _record
@@ -61,16 +53,17 @@ class ZRecord: NSObject {
                 _record  = newValue
 
                 register()
+                maybeFromCloud()
                 updateInstanceProperties()
                 setupLinks()
 
                 let zone = self as? Zone
                 let name = zone?.zoneName
 
-                if       !canSave &&  alreadyExists {
+                if       !canSave &&  isFromCloud {
                     columnarReport("ALLOW SAVE", name ?? recordName)
                     allowSave()
-                } else if canSave && !alreadyExists {
+                } else if canSave && !isFromCloud {
 //                    columnarReport("DON'T SAVE", name ?? recordName)
                     requireFetch()
 
@@ -296,7 +289,7 @@ class ZRecord: NSObject {
 
 
     func maybeNeedSave() {
-        if !needsDestroy, (alreadyExists || (!needsFetch && canSave)) {
+        if !needsDestroy, (isFromCloud || (!needsFetch && canSave)) {
             removeState(.needsMerge)
             addState   (.needsSave)
         }
@@ -304,15 +297,22 @@ class ZRecord: NSObject {
 
 
     func maybeNeedMerge() {
-        if  alreadyExists, canSave, !needsSave, !needsMerge, !needsDestroy {
+        if  isFromCloud, canSave, !needsSave, !needsMerge, !needsDestroy {
             addState(.needsMerge)
         }
     }
 
     
     func maybeNeedFetch() {
-        if !alreadyExists {
+        if !isFromCloud {
             addState(.needsFetch)
+        }
+    }
+
+
+    func maybeFromCloud() {
+        if  let r = record {
+            r.maybeFromCloud(databaseID)
         }
     }
 

@@ -12,20 +12,21 @@ import CloudKit
 
 
 enum ZRecordState: String {
-    case needsSave      = "s"
-    case needsRoot      = "ro"
-    case needsMerge     = "m"
-    case needsFetch     = "f"
-    case needsColor     = "co"
-    case needsCount     = "c"
-    case needsTraits    = "t"
-    case needsParent    = "p"
-    case needsDestroy   = "d"
-    case needsProgeny   = "pr"
-    case needsWritable  = "w"
-    case needsChildren  = "ch"
     case needsBookmarks = "b"
+    case needsCount     = "c"
+    case needsChildren  = "ch"
+    case needsColor     = "co"
+    case needsDestroy   = "d"
+    case needsFetch     = "f"
+    case needsMerge     = "m"
+    case notFromCloud   = "nc"
+    case needsParent    = "p"
+    case needsProgeny   = "pr"
     case requiresFetch  = "r"
+    case needsRoot      = "ro"
+    case needsSave      = "s"
+    case needsTraits    = "t"
+    case needsWritable  = "w"
 }
 
 
@@ -130,14 +131,14 @@ class ZRecordsManager: NSObject {
 
 
     var allStates: [ZRecordState] {
-        var states = [ZRecordState] ()
-        let   keys = ckRecordsByState.keys
+        var    all = [ZRecordState] ()
+        let states = ckRecordsByState.keys
 
-        for state in keys {
-            states.append(state)
+        for state in states {
+            all.append(state)   // funky: swift cannot convert .keys into an array
         }
 
-        return states
+        return all
     }
 
 
@@ -167,9 +168,14 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func hasCKRecord(_ ckRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> Bool {
+        return registeredCKRecord(ckRecord, forAnyOf: iStates) != nil
+    }
+
+
     func hasZRecord(_ iRecord: ZRecord, forAnyOf iStates: [ZRecordState]) -> Bool {
-        if let ckRecord = iRecord.record {
-            return registeredCKRecord(ckRecord, forAnyOf: iStates) != nil
+        if  let ckRecord = iRecord.record {
+            return hasCKRecord(ckRecord, forAnyOf: iStates)
         }
 
         return false
@@ -510,10 +516,10 @@ class ZRecordsManager: NSObject {
 
     func applyToAllCKRecordsWithAnyMatchingStates(_ iStates: [ZRecordState], onEach: StateCKRecordClosure) {
         for state in iStates {
-            let ckrecords = ckRecordsForState(state)
+            let ckRecords = ckRecordsForState(state)
 
-            for ckrecord in ckrecords {
-                onEach(state, ckrecord)
+            for ckRecord in ckRecords {
+                onEach(state, ckRecord)
             }
         }
     }

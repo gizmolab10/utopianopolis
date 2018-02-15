@@ -31,7 +31,7 @@ class ZDebugController: ZGenericController {
         if  let zone = grab {
             let count = zone.fetchableCount
 
-            text.append(zone.alreadyExists ? "F " : "! ")
+            text.append(zone.isFromCloud ? "C " : "- ")
 
             if zone.parent != nil {
                 text.append("P ")

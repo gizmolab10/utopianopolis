@@ -51,7 +51,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func save(_ onCompletion: IntClosure?) {
-        let   saves = pullCKRecordsWithMatchingStates([.needsSave])  // clears state BEFORE looking at manifest
+        let   saves = pullCKRecordsWithMatchingStates([.needsSave])
         let destroy = pullRecordIDsWithHighestLevel(for: [.needsDestroy], batchSize: 20)
         let   count = saves.count + destroy.count
 
@@ -60,10 +60,9 @@ class ZCloudManager: ZRecordsManager {
             operation           .recordsToSave = saves
             operation       .recordIDsToDelete = destroy
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
+                let                 notDestroy = iRecord == nil || !destroy.contains(iRecord!.recordID)
                 gAlertManager.detectError(iError) { iHasError in
                     if  iHasError {
-                        let notDestroy = iRecord == nil || !destroy.contains(iRecord!.recordID)
-
                         if  notDestroy,
                             let     ck = iError as? CKError,
                             ck.code   == .serverRecordChanged, // oplock error
@@ -90,9 +89,10 @@ class ZCloudManager: ZRecordsManager {
                     }
 
                     if  let saved = iSavedCKRecords {
-                        for ckrecord: CKRecord in saved {
-                            if  let zone = self.maybeZoneForRecordID(ckrecord.recordID) {
-                                zone.useBest(record: ckrecord)
+                        for ckRecord: CKRecord in saved {
+                            if  let zone = self.maybeZoneForRecordID(ckRecord.recordID) {
+                                zone.useBest(record: ckRecord)
+                                ckRecord.maybeFromCloud(self.databaseID)
                             }
                         }
                     }
@@ -178,8 +178,12 @@ class ZCloudManager: ZRecordsManager {
 
 
     func assureRecordExists(withRecordID recordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
-        let done: RecordClosure = { (iCKRecord: CKRecord?) in
+        let done:  RecordClosure = { (iCKRecord: CKRecord?) in
             FOREGROUND(canBeDirect: true) {
+                if  let ckRecord = iCKRecord {
+                    ckRecord.maybeFromCloud(self.databaseID)
+                }
+
                 onCompletion(iCKRecord)
             }
         }
@@ -196,8 +200,8 @@ class ZCloudManager: ZRecordsManager {
                             let brandNew: CKRecord = CKRecord(recordType: recordType, recordID: recordID)
 
                             self.database?.save(brandNew) { (savedRecord: CKRecord?, saveError: Error?) in
-                                gAlertManager.detectError(saveError) { iHasError in
-                                    if iHasError {
+                                gAlertManager.detectError(saveError) { iHasSaveError in
+                                    if  iHasSaveError {
                                         done(nil)
                                     } else {
                                         done(savedRecord)
@@ -376,7 +380,7 @@ class ZCloudManager: ZRecordsManager {
                 let scan: ObjectClosure = { iObject in
                     if let zone = iObject as? Zone {
                         zone.traverseAllProgeny { iZone in
-                            if  iZone.alreadyExists,
+                            if  iZone.isFromCloud,
                                 iZone.databaseID == self.databaseID,
                                 let identifier = iZone.recordName,
                                 !iZone.isRoot,

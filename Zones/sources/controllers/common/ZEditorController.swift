@@ -209,7 +209,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         // called by controller and gesture system //
         /////////////////////////////////////////////
         
-        if  let             gesture = iGesture as? ZKeyClickGestureRecognizer { // avoid crash for click event before manifest is fetched
+        if  let             gesture = iGesture as? ZKeyClickGestureRecognizer {
             let          textWidget = gEditedTextWidget
 
             if gesture.modifiers?.contains(.command) ?? false, let zone = textWidget?.widgetZone, let link = zone.hyperLink, link != kNullLink {
