@@ -80,8 +80,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     func sortRecords() {
         for (mode, records) in foundRecords {
             foundRecords[mode] = records.sorted() {
-                if  let a = $0[kZoneName] as? String,
-                    let b = $1[kZoneName] as? String {
+                if  let a = $0[kpZoneName] as? String,
+                    let b = $1[kpZoneName] as? String {
                     return a.lowercased() < b.lowercased()
                 }
 
@@ -183,7 +183,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         zone?.revealChildren()
         signalFor(nil, regarding: .redraw)
 
-        gDBOperationsManager.sync { iSame in
+        gBatchOperationsManager.sync { iSame in
             self.signalFor(nil, regarding: .redraw)
         }
     }

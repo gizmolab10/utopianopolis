@@ -18,7 +18,7 @@ class ZRecord: NSObject {
     var        databaseID: ZDatabaseID?
     var        kvoContext: UInt8 = 1
     var isRootOfFavorites: Bool             { return record != nil && recordName == kFavoritesRootName }
-    var        isBookmark: Bool             { return record.isBookmark }
+    var        isBookmark: Bool             { return record?.isBookmark ?? false }
     var            isRoot: Bool             { return record != nil && kRootNames.contains(recordName!) }
     var           canSave: Bool             { return !hasState(.requiresFetch) }
     var         needsSave: Bool             { return hasState(.needsSave) }
@@ -37,6 +37,15 @@ class ZRecord: NSObject {
     var    recordsManager: ZRecordsManager? { return gRemoteStoresManager.recordsManagerFor(databaseID) }
     var      cloudManager: ZCloudManager?   { return recordsManager as? ZCloudManager }
     var        recordName: String?          { return record?.recordID.recordName }
+
+
+    var alreadyExists: Bool {
+        if  let    r = record {
+            return r.creationDate != nil
+        }
+
+        return false
+    }
 
 
     var record: CKRecord! {
@@ -58,10 +67,6 @@ class ZRecord: NSObject {
                 let zone = self as? Zone
                 let name = zone?.zoneName
 
-//                if  zone?.badJonathan() ?? false {
-//                    zone?.orphan()
-//                }
-
                 if       !canSave &&  alreadyExists {
                     columnarReport("ALLOW SAVE", name ?? recordName)
                     allowSave()
@@ -75,15 +80,6 @@ class ZRecord: NSObject {
                 }
             }
         }
-    }
-
-
-    var alreadyExists: Bool {
-        if  let    r = record {
-            return r.creationDate != nil
-        }
-
-        return false
     }
 
     
@@ -155,8 +151,8 @@ class ZRecord: NSObject {
 
         self.databaseID = databaseID
 
-        if record != nil {
-            self.record = record
+        if  let r = record {
+            self.record = r
         }
 
         unorphan()
@@ -364,8 +360,8 @@ class ZRecord: NSObject {
     // MARK:-
 
 
-    func typefrom(_ keyPath: String) -> ZStorageType? {
-        let typeFromSuffix = { (iPrefix: String) -> (ZStorageType?) in
+    func type(from keyPath: String) -> ZStorageType? {
+        let typeFromSuffixFollowing = { (iPrefix: String) -> (ZStorageType?) in
             let           parts = keyPath.components(separatedBy: iPrefix)
 
             if  parts.count > 1 {
@@ -379,23 +375,23 @@ class ZRecord: NSObject {
             return nil
         }
 
-        if ["parent", "owner"].contains(keyPath) {             return nil
-        } else if let type = ZStorageType(rawValue: keyPath) { return type
-        } else if let type = typeFromSuffix("zone") {          return type
-        } else if let type = typeFromSuffix("record") {        return type
-        } else {                                               return nil
+        if            [kpParent, kpOwner]         .contains(keyPath) { return nil       // must be first ...
+        } else if let type = ZStorageType(rawValue: keyPath)         { return type      // ZStorageType now ignores two (zoneOwner and zoneParent)
+        } else if let type = typeFromSuffixFollowing(kpZonePrefix)   { return type      // this deals with those two
+        } else if let type = typeFromSuffixFollowing(kpRecordPrefix) { return type
+        } else                                                       { return nil
         }
     }
 
 
-    func extractValue(of iType: ZStorageType, at iKeyPath: String) -> NSObject? {
-        if  let           value = value(forKeyPath: iKeyPath) as? NSObject {
-            if  let    prepared = prepare(value, of: iType) {
-                return prepared
-            }
+    func extract(valueOf iType: ZStorageType, at iKeyPath: String) -> NSObject? {
+        var value  = record?[iKeyPath] as? NSObject     // all properties are extracted from record, using iKeyPath as key
+
+        if  value == nil, iKeyPath == kpRecordName {    // except for the record name
+            value  = recordName as NSObject?
         }
 
-        return nil
+        return value
     }
 
 
@@ -403,8 +399,6 @@ class ZRecord: NSObject {
         var object = iObject
 
         switch iType {
-        case .databaseID:
-            print(object) // object = (object as ZDatabaseID).rawValue
         case .owner:
             if  let  ref = object as? CKReference {
                 let name = ref.recordID.recordName as NSObject
@@ -421,14 +415,29 @@ class ZRecord: NSObject {
     }
 
 
-    func setStorageDictionary(_ dict: ZStorageDict, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
-        databaseID       = iDatabaseID
-        if let      name = dict[.recordName] as? String {
-            record       = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: name)) // YIKES this may be wildly out of date
-            let keyPaths = cloudProperties()
+    func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDict? {
+        let  keyPaths = cloudProperties() + [kpRecordName]
+        var      dict = ZStorageDict()
 
-            for keyPath in keyPaths {
-                if  let      type  = typefrom(keyPath),
+        for keyPath in keyPaths {
+            if  let       type = type(from: keyPath),
+                let    extract = extract(valueOf: type, at: keyPath) ,
+                let   prepared = prepare(extract, of: type) {
+                    dict[type] = prepared
+                }
+            }
+
+            return dict
+        }
+
+
+    func setStorageDictionary(_ dict: ZStorageDict, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
+        databaseID  = iDatabaseID
+        if let name = dict[.recordName] as? String {
+            record  = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: name)) // YIKES this may be wildly out of date
+
+            for keyPath in cloudProperties() {
+                if  let      type  = type(from: keyPath),
                     let    object  = dict[type],
                     var     value  = object as? CKRecordValue {
                     if       type == .owner,
@@ -442,25 +451,6 @@ class ZRecord: NSObject {
 
             updateInstanceProperties()    // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
         }
-    }
-
-
-    func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDict? {
-        var  keyPaths = cloudProperties() + [kRecordName]
-        var      dict = ZStorageDict()
-
-        if  let  dbID = databaseID, dbID != iDatabaseID {
-            keyPaths += ["databaseID"]
-        }
-
-        for keyPath in keyPaths {
-            if  let   type = typefrom(keyPath),
-                let  value = extractValue(of: type, at: keyPath) {
-                dict[type] = value
-            }
-        }
-
-        return dict
     }
 
 }

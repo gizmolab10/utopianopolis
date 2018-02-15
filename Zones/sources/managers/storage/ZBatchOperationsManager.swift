@@ -1,5 +1,5 @@
 //
-//  ZDBOperationsManager.swift
+//  ZBatchOperationsManager.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 11/21/16.
@@ -10,10 +10,10 @@
 import Foundation
 
 
-let gDBOperationsManager = ZDBOperationsManager()
+let gBatchOperationsManager = ZBatchOperationsManager()
 
 
-class ZDBOperationsManager: ZOperationsManager {
+class ZBatchOperationsManager: ZOperationsManager {
 
 
     enum ZBatchOperationID: Int {
@@ -139,8 +139,8 @@ class ZDBOperationsManager: ZOperationsManager {
 
     func shouldIgnoreBatch(_ iID: ZBatchOperationID) -> Bool {
         switch iID {
-        case .save, .sync:                                               return  gSaveMode == .localOnly
         case .root, .travel, .parents, .children, .families, .bookmarks: return gFetchMode == .localOnly
+        default:                                                         return false
         }
     }
 

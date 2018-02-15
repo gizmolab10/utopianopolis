@@ -164,7 +164,7 @@ class ZEditingManager: NSObject {
             } else if isWindow, let arrow = key.arrow {
                 handleArrow(arrow, flags: flags)
             } else if kMarkingCharacters.contains(key) {
-                mark(with: key)
+                prefix(with: key)
             } else {
                 switch key {
                 case "a":      selectAll(progeny: isOption)
@@ -313,14 +313,18 @@ class ZEditingManager: NSObject {
     }
 
 
-    func mark(with iMark: String) {
+    func prefix(with iMark: String) {
         let before = "("
         let  after = ") "
-        let prefix = before + iMark + after
         let  zones = gSelectionManager.currentGrabs
+        var  digit = 0
+        let  count = iMark == "#"
 
         for zone in zones {
             if  var name                  = zone.zoneName {
+                var prefix                = before + iMark + after
+                var add                   = true
+                digit                    += 1
                 if  name.starts(with: prefix) {
                     let         nameParts = name.components(separatedBy: prefix)
                     name                  = nameParts[1]                // remove prefix
@@ -335,13 +339,23 @@ class ZEditingManager: NSObject {
 
                             if  markParts.count > 1 && markParts[0].count == 0 && markParts[1].count == 1 {
                                 index    += 1
+
+                                if  markParts[1] == "\(digit)" {
+                                    add   = false
+                                }
                             }
                         }
 
-                        name              = nameParts[index]        // remove all (x) where x is any character
+                        name              = nameParts[index]            // remove all (x) where x is any character
                     }
 
-                    name                  = prefix + name               // replace or prepend with prefix
+                    if  add {
+                        if  count {
+                            prefix        = before + "\(digit)" + after  // increment prefix
+                        }
+
+                        name              = prefix + name               // replace or prepend with prefix
+                    }
                 }
 
                 zone.zoneName             = name
@@ -379,7 +393,7 @@ class ZEditingManager: NSObject {
             zone.needChildren()
         }
 
-        gDBOperationsManager.children { iSame in
+        gBatchOperationsManager.children { iSame in
             for zone in grabs {
                 zone.divideEvenly()
             }
@@ -558,7 +572,7 @@ class ZEditingManager: NSObject {
     func selectCurrentFavorite() {
         if  let current = gFavoritesManager.currentFavorite {
             current.needRoot()
-            gDBOperationsManager.families { iSame in
+            gBatchOperationsManager.families { iSame in
                 if  let parent = current.parentZone {
                     parent.traverseAllAncestors { iAncestor in
                         iAncestor.revealChildren()
@@ -639,7 +653,7 @@ class ZEditingManager: NSObject {
 
                 onCompletion?()
             } else {
-                gDBOperationsManager.root { iSame in
+                gBatchOperationsManager.root { iSame in
                     onCompletion?()
                 }
             }
@@ -654,7 +668,7 @@ class ZEditingManager: NSObject {
             if  parent.hasMissingChildren() {
                 parent.needChildren()
 
-                gDBOperationsManager.children(.restore) { iSame in
+                gBatchOperationsManager.children(.restore) { iSame in
                     onCompletion?(true)
                 }
             } else {
@@ -668,7 +682,7 @@ class ZEditingManager: NSObject {
         } else {
             iZone.needParent()
 
-            gDBOperationsManager.families { iSame in
+            gBatchOperationsManager.families { iSame in
                 onCompletion?(true)
             }
         }
@@ -694,7 +708,7 @@ class ZEditingManager: NSObject {
             descendent.needRoot()
         }
 
-        gDBOperationsManager.families { iSame in
+        gBatchOperationsManager.families { iSame in
             FOREGROUND {
                 descendent.traverseAncestors { iParent -> ZTraverseStatus in
                     let  gotThere = iParent == iAncestor || iParent.isRoot    // reached the ancestor or the root
@@ -801,7 +815,7 @@ class ZEditingManager: NSObject {
                 apply()
             } else {
                 zone.needProgeny()
-                gDBOperationsManager.children(.all, goal) { iSame in
+                gBatchOperationsManager.children(.all, goal) { iSame in
                     apply()
                 }
             }
@@ -829,7 +843,7 @@ class ZEditingManager: NSObject {
                 }
             } else if zone.showChildren && zone.hasMissingChildren() {
                 zone.needChildren()
-                gDBOperationsManager.children { iSame in
+                gBatchOperationsManager.children { iSame in
                     self.signalFor(nil, regarding: .redraw)
                 }
             } else {
@@ -945,7 +959,7 @@ class ZEditingManager: NSObject {
             z.revealChildren()
             z.needChildren()
 
-            gDBOperationsManager.children { iSame in
+            gBatchOperationsManager.children { iSame in
                 self.addIdeaIn(z, at: gInsertionsFollow ? nil : 0, with: childName) { iChild in
                     self.redrawAndSync()
                     iChild?.edit()
@@ -968,7 +982,7 @@ class ZEditingManager: NSObject {
 
                 bookmark?.grab()
                 self.signalFor(nil, regarding: .redraw)
-                gDBOperationsManager.sync { iSame in
+                gBatchOperationsManager.sync { iSame in
                 }
             }
 
@@ -1037,7 +1051,7 @@ class ZEditingManager: NSObject {
             zone.needProgeny()
         }
 
-        gDBOperationsManager.children(.all) { iSame in // to make sure all progeny are acted upon
+        gBatchOperationsManager.children(.all) { iSame in // to make sure all progeny are acted upon
             if !done {
                 done      = true
                 var count = zones.count
@@ -1053,7 +1067,7 @@ class ZEditingManager: NSObject {
                                 grab?.grab()
                             }
 
-                            gDBOperationsManager.bookmarks { iSame in
+                            gBatchOperationsManager.bookmarks { iSame in
                                 var bookmarks = [Zone] ()
 
                                 for zone in zones {
@@ -1130,7 +1144,7 @@ class ZEditingManager: NSObject {
                 /////////////////////////////////////////////////////////
 
                 zone.maybeNeedBookmarks()
-                gDBOperationsManager.bookmarks { iSame in
+                gBatchOperationsManager.bookmarks { iSame in
                     self.deleteZones(zone.fetchedBookmarks, permanently: permanently) {
                         onCompletion?()
                     }
@@ -1228,7 +1242,7 @@ class ZEditingManager: NSObject {
                     p.revealChildren()
                     p.needChildren()
 
-                    gDBOperationsManager.children(.restore) { iSame in
+                    gBatchOperationsManager.children(.restore) { iSame in
                         onCompletion?()
                     }
                 }
@@ -1237,7 +1251,7 @@ class ZEditingManager: NSObject {
                 // change focus to bookmark of zone
 
                 zone.maybeNeedBookmarks()
-                gDBOperationsManager.bookmarks { iSame in
+                gBatchOperationsManager.bookmarks { iSame in
                     if  let bookmark = zone.fetchedBookmark {
                         gHere        = bookmark
                     }
@@ -1295,7 +1309,7 @@ class ZEditingManager: NSObject {
             grabChild(of: zone)
             signalFor(nil, regarding: .data)
 
-            gDBOperationsManager.children(.restore) { iSame in
+            gBatchOperationsManager.children(.restore) { iSame in
                 if  iSame {
                     self.grabChild(of: zone)
                 }
@@ -1348,7 +1362,7 @@ class ZEditingManager: NSObject {
 
                 mover = mover.deepCopy()
 
-                gDBOperationsManager.sync { iSame in
+                gBatchOperationsManager.sync { iSame in
                     grabAndTravel()
                 }
             }
@@ -1377,7 +1391,7 @@ class ZEditingManager: NSObject {
         into.revealChildren()
         into.needChildren()
 
-        gDBOperationsManager.children(.restore) { iSame in
+        gBatchOperationsManager.children(.restore) { iSame in
             for zone in zones {
                 if orphan {
                     zone.orphan()
@@ -1425,7 +1439,7 @@ class ZEditingManager: NSObject {
 
                 var     isFirstTime = true
 
-                gDBOperationsManager.children(.restore) { iSame in
+                gBatchOperationsManager.children(.restore) { iSame in
                     if  isFirstTime {
                         isFirstTime = false
 
@@ -1591,7 +1605,7 @@ class ZEditingManager: NSObject {
                 } else {
                     var once = true
 
-                    gDBOperationsManager.children(.all) { iSame in
+                    gBatchOperationsManager.children(.all) { iSame in
                         if  once {
                             once = false
 
@@ -1621,7 +1635,7 @@ class ZEditingManager: NSObject {
             zone.revealChildren()
         }
 
-        gDBOperationsManager.children(.all) { iSame in // to make sure all progeny are acted upon
+        gBatchOperationsManager.children(.all) { iSame in // to make sure all progeny are acted upon
             let    candidate = gSelectionManager.rootMostMoveable
             if  let   parent = candidate.parentZone {
                 let    index = candidate.siblingIndex
@@ -1797,7 +1811,7 @@ class ZEditingManager: NSObject {
 
             into.maybeNeedChildren()
 
-            gDBOperationsManager.children(.all) { iSame in
+            gBatchOperationsManager.children(.all) { iSame in
                 if !done {
                     done = true
 
@@ -1865,7 +1879,7 @@ class ZEditingManager: NSObject {
         into.revealChildren()
         into.needChildren()
 
-        gDBOperationsManager.children(.restore) { iSame in
+        gBatchOperationsManager.children(.restore) { iSame in
             if orphan {
                 zone.orphan()
             }

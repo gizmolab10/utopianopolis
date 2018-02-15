@@ -77,7 +77,7 @@ class ZActionsController : ZGenericController {
             case .eRefresh: refresh()
             case .eCut:     gEditingManager.delete()
             case .eNew:     gEditingManager.addIdea()
-            case .eHang:    gDBOperationsManager.unHang()
+            case .eHang:    gBatchOperationsManager.unHang()
             case .eUndo:    gEditingManager.undoManager.undo()
             case .eNext:    gEditingManager.addNext() { iChild in iChild.edit() }
             case .eFocus:   gEditingManager.focus(on: gSelectionManager.firstGrab)
@@ -90,7 +90,7 @@ class ZActionsController : ZGenericController {
 
 
     func refresh() {
-        gDBOperationsManager.unHang()
+        gBatchOperationsManager.unHang()
         gWidgetsManager     .clear()
         gEditorController?  .clear()
         gControllersManager .startupCloudAndUI()

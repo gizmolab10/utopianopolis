@@ -129,7 +129,7 @@ class ZCloudManager: ZRecordsManager {
 //            // iRecord == nil means: end of response to this particular query
 //
 //            if iRecord != nil {
-//                self.columnarReport("DELETE", String(describing: iRecord![kZoneName]))
+//                self.columnarReport("DELETE", String(describing: iRecord![pZoneName]))
 //                toBeDeleted.append((iRecord?.recordID)!)
 //
 //            } else if (toBeDeleted.count) > 0, let operation = self.configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
@@ -416,7 +416,8 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchLost(_ onCompletion: IntClosure?) {
-        let predicate = NSPredicate(format: "\(kRecordName) != \"\(kRootName)\"")
+        let    format = kpRecordName + " != \"" + kRootName + "\""
+        let predicate = NSPredicate(format: format)
         var   fetched = [CKRecord] ()
 
         self.queryWith(predicate, batchSize: kMaxBatchSize) { iRecord in
@@ -928,7 +929,7 @@ class ZCloudManager: ZRecordsManager {
             let recordID = CKRecordID(recordName: name)
 
             self.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { (iHereRecord: CKRecord?) in
-                if  iHereRecord == nil || iHereRecord?[kZoneName] == nil {
+                if  iHereRecord == nil || iHereRecord?[kpZoneName] == nil {
                     rootCompletion()
                 } else {
                     let    here = self.zoneForCKRecord(iHereRecord!)
@@ -953,7 +954,7 @@ class ZCloudManager: ZRecordsManager {
             assureRecordExists(withRecordID: recordID, recordType: kZoneType) { (iRecord: CKRecord?) in
                 var rootRecord  = iRecord
                 if  rootRecord == nil {
-                    rootRecord  = CKRecord(recordType: kZoneName, recordID: recordID)   // will create
+                    rootRecord  = CKRecord(recordType: kZoneType, recordID: recordID)   // will create
                 }
 
                 let      root = self.zoneForCKRecord(rootRecord!)                       // get / create root

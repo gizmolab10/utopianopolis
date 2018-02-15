@@ -74,7 +74,7 @@ class ZToolsController: ZGenericTableController {
                 case .eFullFetch:   self.toggleFullFetch()
                 case .eIdentifiers: self.toggleShowIdentifiers()
                 case .eAccess:      self.toggleUserAccess()
-                case .eRetry:       gDBOperationsManager.unHang()
+                case .eRetry:       gBatchOperationsManager.unHang()
                 case .eTrash:       self.showTrashCan()
                 case .eGather:      self.gatherAndShowLost()
                 case .eRecount:     self.recount()
@@ -101,7 +101,7 @@ class ZToolsController: ZGenericTableController {
             gHere = trash
 
             gHere.needChildren()
-            gDBOperationsManager.children(.restore) { iSame in
+            gBatchOperationsManager.children(.restore) { iSame in
                 self.redrawAndSync()
             }
         }
@@ -109,7 +109,7 @@ class ZToolsController: ZGenericTableController {
 
 
     func gatherAndShowLost() {
-        gDBOperationsManager.fetchLost {
+        gBatchOperationsManager.fetchLost {
             if  let lost = gLostAndFound {
                 gHere    = lost
 
@@ -117,7 +117,7 @@ class ZToolsController: ZGenericTableController {
 
                 lost.needChildren()
                 lost.revealChildren()
-                gDBOperationsManager.children(.all) { iSame in
+                gBatchOperationsManager.children(.all) { iSame in
                     self.grabChildless()
                 }
             }
@@ -149,7 +149,7 @@ class ZToolsController: ZGenericTableController {
 
 
     func restoreFromTrash() {
-        gDBOperationsManager.undelete {
+        gBatchOperationsManager.undelete {
             self.signalFor(nil, regarding: .redraw)
         }
 
@@ -160,7 +160,7 @@ class ZToolsController: ZGenericTableController {
 
         // needs elaborate gui, like search results, but with checkboxes and [de]select all checkbox
 
-        //gDBOperationsManager.emptyTrash {
+        //gBatchOperationsManager.emptyTrash {
         //    self.note("eliminated")
         //}
     }

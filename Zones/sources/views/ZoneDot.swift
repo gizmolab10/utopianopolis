@@ -154,16 +154,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             let     tinyRadius =  dotRadius * 0.7
             let   tinyDiameter = tinyRadius * 2.0
             let         center = innerDot!.frame.center
-            let      offCenter = CGPoint(x: center.x - CGFloat(tinyRadius), y: center.y - CGFloat(tinyRadius))
-            let    orbitRadius = CGFloat(dotRadius + tinyRadius)
-            let              x = offCenter.x - orbitRadius
-            let              y = offCenter.y
+            let              x = center.x - CGFloat(tinyDiameter + dotRadius)
+            let              y = center.y - CGFloat(tinyRadius)
             let           rect = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
             let           path = ZBezierPath(ovalIn: rect)
             path.lineWidth     = CGFloat(gLineThickness * 1.2)
             path.flatness      = 0.0001
 
-            path.stroke()
+            path.fill()
         }
     }
 
@@ -300,7 +298,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     // HIGHLIGHT CURRENT FAVORITE //
                     ////////////////////////////////
 
-                    zone.color.withAlphaComponent(0.7).setStroke()
+                    zone.color.withAlphaComponent(0.7).setFill()
                     drawFavoritesHighlight(in: dirtyRect)
                 }
             }

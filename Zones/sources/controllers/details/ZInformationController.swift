@@ -47,7 +47,7 @@ class ZInformationController: ZGenericController {
         if ![.search, .found].contains(iKind) && gReadyState {
             let  (count, notSavableCount) = gCloudManager.undeletedCounts
             let                     total = gRemoteStoresManager.rootProgenyCount // TODO wrong manager
-            let            operationCount = gDBOperationsManager.queue.operationCount
+            let            operationCount = gBatchOperationsManager.queue.operationCount
             let                      zone = gSelectionManager.rootMostMoveable
             let                      dbID = zone.databaseID
             totalCountLabel?        .text = "of \(total), retrieved: \(count) + \(notSavableCount)"

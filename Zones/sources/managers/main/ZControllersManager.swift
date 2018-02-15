@@ -94,13 +94,13 @@ class ZControllersManager: NSObject {
     
 
     func startupCloudAndUI() {
-        gDBOperationsManager.usingDebugTimer = true
+        gBatchOperationsManager.usingDebugTimer = true
 
         gRemoteStoresManager.clear()
         displayActivity(true)
-        gDBOperationsManager.startUp {
+        gBatchOperationsManager.startUp {
             gFavoritesManager.setup {
-                gDBOperationsManager.continueUp {
+                gBatchOperationsManager.continueUp {
                     gWorkMode   = .graphMode
                     gReadyState = true
 
@@ -109,10 +109,10 @@ class ZControllersManager: NSObject {
                     gFavoritesManager.updateFavorites()
                     self.signalFor(nil, regarding: .redraw)
 
-                    gDBOperationsManager.finishUp {
+                    gBatchOperationsManager.finishUp {
                         self.blankScreenDebug()
-                        gDBOperationsManager.families() { iSame in // created bookmarks and parents of bookmarks
-                            gDBOperationsManager.usingDebugTimer = false
+                        gBatchOperationsManager.families() { iSame in // created bookmarks and parents of bookmarks
+                            gBatchOperationsManager.usingDebugTimer = false
 
                             self.signalFor(nil, regarding: .redraw)
                         }
@@ -181,7 +181,7 @@ class ZControllersManager: NSObject {
 
 
     func syncAndSave(_ widget: ZoneWidget? = nil, onCompletion: Closure?) {
-        gDBOperationsManager.sync { iSame in
+        gBatchOperationsManager.sync { iSame in
             onCompletion?()
         }
     }

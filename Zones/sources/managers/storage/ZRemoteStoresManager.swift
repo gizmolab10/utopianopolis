@@ -125,7 +125,7 @@ class ZRemoteStoresManager: NSObject {
                     FOREGROUND {
                         self.signalFor(parent, regarding: .redraw)
 
-                        gDBOperationsManager.children(.restore) { iSame in
+                        gBatchOperationsManager.children(.restore) { iSame in
                             self.signalFor(parent, regarding: .redraw)
                         }
                     }

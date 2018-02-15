@@ -452,23 +452,6 @@ class Zone : ZRecord {
     }
 
 
-//    @discardableResult func badJonathan() -> Bool {
-//        if  let name = zoneName,
-//            ["jonathan", "saved"].contains(name) {
-//
-//            //self.bam("gotcha! " + name)
-//
-//            if name == "jonathan" && linkName == nil && parent != nil {
-//                maybeNeedSave()
-//
-//                return true
-//            }
-//        }
-//
-//        return false
-//    }
-
-
     func unlinkParentAndMaybeNeedSave() {
         if  parent     != nil ||
             parentLink != kNullLink {
@@ -1134,11 +1117,6 @@ class Zone : ZRecord {
 
     override func unorphan() {
         if  !needsDestroy, let p = parentZone, p != self {
-
-//            if badJonathan() {
-//                return
-//            }
-
             p.maybeNeedFetch()
             p.addChildAndRespectOrder(self)
         }
@@ -1378,7 +1356,7 @@ class Zone : ZRecord {
             fastUpdateProgenyCount()
         } else {
             needChildren()
-            gDBOperationsManager.children(.restore) { iSame in
+            gBatchOperationsManager.children(.restore) { iSame in
                 self.fastUpdateProgenyCount()
             }
         }
@@ -1451,15 +1429,18 @@ class Zone : ZRecord {
 
 
     func needsAsString(for iDatabaseID: ZDatabaseID) -> String? {
-        let states = gRemoteStoresManager.cloudManagerFor(iDatabaseID).states(for: record!)
-        var  marks = [String] ()
+        if  let       r = record {
+            let manager = gRemoteStoresManager.cloudManagerFor(iDatabaseID)
+            let  states = manager.states(for: r)
+            var   marks = [String] ()
 
-        for state in states {
-            marks.append("\(state.rawValue)")
-        }
+            for state in states {
+                marks.append("\(state.rawValue)")
+            }
 
-        if  marks.count > 0 {
-            return marks.joined(separator: ",")
+            if  marks.count > 0 {
+                return marks.joined(separator: ",")
+            }
         }
 
         return nil
@@ -1467,7 +1448,7 @@ class Zone : ZRecord {
 
 
     override func setStorageDictionary(_ dict: ZStorageDict, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
-        if let     string = dict[.name] as? String { zoneName = string }
+        if let       name = dict[.name] as? String { zoneName = name }
 
         super.setStorageDictionary(dict, of: iRecordType, into: iDatabaseID) // do this step last so the assignment above is NOT pushed to cloud
 

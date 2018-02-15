@@ -37,7 +37,7 @@ var          gDebugTimer:             Timer? = nil
 var           gDragPoint:           CGPoint? = nil
 var            gExpanded:          [String]? = nil
 
-var              gIsLate:               Bool { return gCloudUnavailable || gDBOperationsManager.isLate }
+var              gIsLate:               Bool { return gCloudUnavailable || gBatchOperationsManager.isLate }
 var          gIsDragging:               Bool { return gDraggedZone != nil }
 var       gIsEditingText:               Bool { return gEditorView?.window?.firstResponder?.isKind(of: ZTextView.self) ?? false }
 var    gInsertionsFollow:               Bool { return gInsertionMode == .follow }

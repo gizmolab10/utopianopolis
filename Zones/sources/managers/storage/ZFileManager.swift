@@ -66,24 +66,24 @@ class ZFileManager: NSObject {
 
 
     func read(for databaseID: ZDatabaseID) {
-        if  gFetchMode               != .cloudOnly &&
-            databaseID               != .favoritesID {
-            let                  path = fileURL(for: databaseID).path
-            let types: [ZStorageType] = [.graph, .favorites, .bookmarks]
+        if  gFetchMode                  != .cloudOnly &&
+            databaseID                  != .favoritesID {
+            let                     path = fileURL(for: databaseID).path
+            let sections: [ZStorageType] = [.graph, .favorites, .bookmarks]
             do {
                 if  let     data = FileManager.default.contents(atPath: path),
                     let     json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
                     let     dict = dictFromJSON(json)
 
-                    for type in types {
-                        if  let                 value = dict[type] {
+                    for section in sections {
+                        if  let                 value = dict[section] {
                             if  let           subDict = value as? ZStorageDict {
                                 let              root = Zone(dict: subDict, in: databaseID)
-                                let dbID: ZDatabaseID = type == .favorites ? .favoritesID : databaseID
+                                let dbID: ZDatabaseID = section == .favorites ? .favoritesID : databaseID
 
                                 gRemoteStoresManager.setRootZone(root, for: dbID)
                                 signalFor(nil, regarding: .redraw)
-                            } else if let       array = value as? [ZStorageDict] {
+                            } else if let      array  = value as? [ZStorageDict] {
                                 for subDict in array {
                                     let      bookmark = Zone(dict: subDict, in: databaseID)
 
@@ -140,22 +140,35 @@ class ZFileManager: NSObject {
 
 
     func dictFromJSON(_ dict: [String : NSObject]) -> ZStorageDict {
-        var                  result = ZStorageDict ()
+        var                   result = ZStorageDict ()
 
         for (key, value) in dict {
-            if  let      storageKey = ZStorageType(rawValue: key) {
-                var       goodValue = value
+            if  let       storageKey = ZStorageType(rawValue: key) {
+                var        goodValue = value
+                var       translated = false
 
-                if  let     subDict = value as? [String : NSObject] {
-                    goodValue       = dictFromJSON(subDict) as NSObject
-                } else if let array = value as? [[String : NSObject]] {
-                    var   goodArray = [ZStorageDict] ()
-
-                    for subDict in array {
-                        goodArray.append(dictFromJSON(subDict))
+                if  let string       = value as? String {
+                    let parts        = string.components(separatedBy: kTimeInterval + ":")
+                    if  parts.count > 1,
+                        parts[0]    == "",
+                        let interval = TimeInterval(parts[1]) {
+                        goodValue    = Date(timeIntervalSinceReferenceDate: interval) as NSObject
+                        translated   = true
                     }
+                }
 
-                    goodValue       = goodArray as NSObject
+                if !translated {
+                    if  let     subDict = value as? [String : NSObject] {
+                        goodValue       = dictFromJSON(subDict) as NSObject
+                    } else if let array = value as? [[String : NSObject]] {
+                        var   goodArray = [ZStorageDict] ()
+
+                        for subDict in array {
+                            goodArray.append(dictFromJSON(subDict))
+                        }
+
+                        goodValue       = goodArray as NSObject
+                    }
                 }
 
                 result[storageKey]  = goodValue
@@ -170,23 +183,23 @@ class ZFileManager: NSObject {
         var deferals = ZStorageDict ()
         var   result = [String : NSObject] ()
 
-        let closure = { (key: ZStorageType, value: NSObject) in
-            var goodValue = value
-            let stringKey = key.rawValue
+        let closure = { (key: ZStorageType, value: Any) in
+            var goodValue       = value
+            if  let     subDict = value as? ZStorageDict {
+                goodValue       = self.jsonDictFrom(subDict)
+            } else if let  date = value as? Date {
+                goodValue       = kTimeInterval + ":\(date.timeIntervalSinceReferenceDate)"
+            } else if let array = value as? [ZStorageDict] {
+                var jsonArray   = [[String : NSObject]] ()
 
-            if  let   subDict = value as? ZStorageDict {
-                goodValue     = self.jsonDictFrom(subDict) as NSObject
-            } else if let dictArray = value as? [ZStorageDict] {
-                var goodArray = [[String : NSObject]] ()
-
-                for subDict in dictArray {
-                    goodArray.append(self.jsonDictFrom(subDict))
+                for subDict in array {
+                    jsonArray.append(self.jsonDictFrom(subDict))
                 }
 
-                goodValue     = goodArray as NSObject
+                goodValue       = jsonArray
             }
 
-            result[stringKey] = goodValue
+            result[key.rawValue]   = (goodValue as! NSObject)
         }
 
         for (key, value) in dict {

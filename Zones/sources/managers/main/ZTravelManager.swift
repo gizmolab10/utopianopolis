@@ -114,9 +114,9 @@ class ZTravelManager: NSObject {
         createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
 
         gSelectionManager.clearEdit()
-        gDBOperationsManager.travel { iSame in
+        gBatchOperationsManager.travel { iSame in
             atArrival()
-            gDBOperationsManager.save { iSaveSame in
+            gBatchOperationsManager.save { iSaveSame in
             }
         }
     }
@@ -186,7 +186,7 @@ class ZTravelManager: NSObject {
                 let grabHere = {
                     gHere.prepareForArrival()
 
-                    gDBOperationsManager.children(.restore) { iSame in
+                    gBatchOperationsManager.children(.restore) { iSame in
                         atArrival(gHere, .redraw)
                     }
                 }

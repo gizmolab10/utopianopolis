@@ -39,7 +39,6 @@ enum ZStorageType: String {
     case date           = "date"
 
     case recordName     = "recordName"
-    case databaseID     = "databaseID"
     case parentLink     = "parentLink"
     case attributes     = "attributes"
     case progeny        = "progeny"

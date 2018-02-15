@@ -167,7 +167,7 @@ extension NSObject {
 extension CKRecord {
 
     var isBookmark: Bool {
-        if  let    link = self["zoneLink"] as? String {
+        if  let    link = self[kpZoneLink] as? String {
             return link.contains(kSeparator)
         }
 
@@ -178,7 +178,7 @@ extension CKRecord {
     var decoratedName: String {
         if recordType     != kZoneType {
             return recordID.recordName
-        } else if let name = self[ kZoneName] as? String {
+        } else if let name = self[kpZoneName] as? String {
             let  separator = " "
             var     prefix = ""
 
@@ -186,7 +186,7 @@ extension CKRecord {
                 prefix.append("L")
             }
 
-            if  let fetchable = self["zoneCount"] as? Int, fetchable > 1 {
+            if  let fetchable = self[kpZoneCount] as? Int, fetchable > 1 {
                 if  prefix != "" {
                     prefix.append(separator)
                 }

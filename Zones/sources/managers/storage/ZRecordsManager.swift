@@ -318,7 +318,7 @@ class ZRecordsManager: NSObject {
         applyToAllCKRecordsWithAnyMatchingStates(states) { iState, iCKRecord in
             var       zoneLevel = 0
 
-            if  let levelString = iCKRecord["zoneLevel"] as? String,
+            if  let levelString = iCKRecord[kpZoneLevel] as? String,
                 let zLevel      = levelString.integerValue {
                 zoneLevel       = zLevel
             }
@@ -464,7 +464,7 @@ class ZRecordsManager: NSObject {
         var  expecting = 0
 
         applyToAllCKRecordsWithAnyMatchingStates(states) { iState, iCKRecord in
-            if  let fetchable = (iCKRecord["zoneCount"] as? NSNumber)?.intValue,
+            if  let fetchable = (iCKRecord[kpZoneCount] as? NSNumber)?.intValue,
                 !iCKRecord.isBookmark, (fetchable + expecting) < batchSize {
                 expecting    += fetchable
 
