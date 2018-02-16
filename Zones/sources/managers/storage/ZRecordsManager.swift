@@ -17,12 +17,12 @@ enum ZRecordState: String {
     case needsChildren  = "ch"
     case needsColor     = "co"
     case needsDestroy   = "d"
-    case needsFetch     = "f"
+    case needsFetch     = "f"   //
     case needsMerge     = "m"
-    case notFromCloud   = "nc"
+    case notFetched   = "nc"  //
     case needsParent    = "p"
     case needsProgeny   = "pr"
-    case requiresFetch  = "r"
+    case requiresFetch  = "r"   //
     case needsRoot      = "ro"
     case needsSave      = "s"
     case needsTraits    = "t"
@@ -34,8 +34,8 @@ class ZRecordsManager: NSObject {
 
 
     var               databaseID : ZDatabaseID
-    var             zRecordsByID = [String       :    ZRecord] ()
-    var         ckRecordsByState = [ZRecordState : [CKRecord]] ()
+    var                 registry = [String       :  ZRecord] ()
+    var       recordNamesByState = [ZRecordState : [String]] ()
     var _lostAndFoundZone: Zone? = nil
     var        _trashZone: Zone? = nil
     var          rootZone: Zone? = nil
@@ -77,10 +77,10 @@ class ZRecordsManager: NSObject {
 
 
     func clear() {
-        rootZone         = nil
-        _trashZone       = nil
-        ckRecordsByState = [ZRecordState : [CKRecord]] ()
-        zRecordsByID     = [String       :    ZRecord] ()
+        rootZone           = nil
+        _trashZone         = nil
+        recordNamesByState = [ZRecordState : [String]] ()
+        registry           = [String       :  ZRecord] ()
     }
 
 
@@ -110,7 +110,7 @@ class ZRecordsManager: NSObject {
 
 
     var undeletedCounts: (Int, Int) {
-        let zRecords = zRecordsByID.values
+        let zRecords = registry.values
         var   uCount = zRecords.count
         var   nCount = 0
 
@@ -132,7 +132,7 @@ class ZRecordsManager: NSObject {
 
     var allStates: [ZRecordState] {
         var    all = [ZRecordState] ()
-        let states = ckRecordsByState.keys
+        let states = recordNamesByState.keys
 
         for state in states {
             all.append(state)   // funky: swift cannot convert .keys into an array
@@ -142,15 +142,15 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func ckRecordsForState(_ state: ZRecordState) -> [CKRecord] {
-        var records                 = ckRecordsByState[state]
+    func recordNamesForState(_ state: ZRecordState) -> [String] {
+        var recordNames               = recordNamesByState[state]
 
-        if  records                == nil {
-            records                 = []
-            ckRecordsByState[state] = records
+        if  recordNames              == nil {
+            recordNames               = []
+            recordNamesByState[state] = recordNames
         }
 
-        return records!
+        return recordNames!
     }
 
 
@@ -158,13 +158,23 @@ class ZRecordsManager: NSObject {
         let   name = iRecord.recordID.recordName
         var states = [ZRecordState] ()
 
-        applyToAllCKRecordsWithAnyMatchingStates(allStates) { (iState, iCKRecord) in
-            if !states.contains(iState) && iCKRecord.recordID.recordName == name {
+        applyToAllRecordNamesWithAnyMatchingStates(allStates) { (iState, iName) in
+            if !states.contains(iState) && iName == name {
                 states.append(iState)
             }
         }
 
         return states
+    }
+
+
+    func hasCKRecordName(_ iName: String, forAnyOf iStates: [ZRecordState]) -> Bool {
+        return registeredCKRecordForName(iName, forAnyOf: iStates) != nil
+    }
+
+
+    func hasCKRecordID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> Bool {
+        return registeredCKRecordForID(iRecordID, forAnyOf: iStates) != nil
     }
 
 
@@ -182,10 +192,10 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func registeredCKRecord(for iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> CKRecord? {
+    func registeredCKRecordForName(_ iName: String, forAnyOf iStates: [ZRecordState]) -> CKRecord? {
         var found: CKRecord? = nil
 
-        applyToCKRecordByRecordID(iRecordID, forAnyOf: iStates) { (state: ZRecordState, record: CKRecord) in
+        applyToCKRecordByRecordName(iName, forAnyOf: iStates) { (state: ZRecordState, record: CKRecord) in
             found = record
         }
 
@@ -193,8 +203,13 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func registeredCKRecordForID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> CKRecord? {
+        return registeredCKRecordForName(iRecordID.recordName, forAnyOf: iStates)
+    }
+
+
     func registeredCKRecord(_ iRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> CKRecord? {
-        return registeredCKRecord(for: iRecord.recordID, forAnyOf: iStates)
+        return registeredCKRecordForID(iRecord.recordID, forAnyOf: iStates)
     }
 
 
@@ -223,15 +238,16 @@ class ZRecordsManager: NSObject {
                     columnarReport("ADDING TWICE!", name + " (for: \(state))")
                 }
             } else {
-                var records  = ckRecordsForState(state)
+                var names = recordNamesForState(state)
+                let  name = iRecord.recordID.recordName
 
-                if !records.contains(iRecord) {
-                    records.append(iRecord)
+                if !names.contains(name) {
+                    names.append(name)
 
                     wasAdded = true
                 }
 
-                ckRecordsByState[state] = records
+                recordNamesByState[state] = names
             }
         }
 
@@ -253,7 +269,7 @@ class ZRecordsManager: NSObject {
 
 
     func clearAllStatesForAllRecords() {
-        ckRecordsByState.removeAll()
+        recordNamesByState.removeAll()
     }
 
 
@@ -265,55 +281,59 @@ class ZRecordsManager: NSObject {
 
 
     func clearState(_ state: ZRecordState) {
-        ckRecordsByState[state] = []
+        recordNamesByState[state] = []
     }
 
 
     func clearReferences(_ references: [CKReference], for states: [ZRecordState]) {
         for reference in references {
-            clearRecordID(reference.recordID, for:states)
+            clearRecordName(reference.recordID.recordName, for:states)
         }
     }
 
 
     func clearRecordIDs(_ recordIDs: [CKRecordID], for states: [ZRecordState]) {
         for recordID in recordIDs {
-            clearRecordID(recordID, for:states)
+            clearRecordName(recordID.recordName, for:states)
         }
     }
 
 
-    func clearCKRecords(_ records: [CKRecord], for states: [ZRecordState]) {
-        for record in records {
-            clearRecordID(record.recordID, for: states)
+    func clearCKRecords(_ iRecords: [CKRecord], for states: [ZRecordState]) {
+        for record in iRecords {
+            clearRecordName(record.recordID.recordName, for: states)
+        }
+    }
+
+
+    func clearRecordNames(_ iNames: [String], for iStates: [ZRecordState]) {
+        for name in iNames {
+            clearRecordName(name, for: iStates)
         }
     }
 
 
     func clearZRecords(_ records: [ZRecord], for states: [ZRecordState]) {
         for record in records {
-            if let identifier = record.record?.recordID {
-                clearRecordID(identifier, for: states)
+            if let name = record.recordName {
+                clearRecordName(name, for: states)
             }
         }
     }
 
 
-    func clearAllStatesForCKRecord(_ iRecord: CKRecord?) {
-        clearRecordID(iRecord?.recordID, for: allStates)
-    }
+    func clearRecordName(_ iName: String?, for iStates: [ZRecordState]) {
+        if  let name   = iName {
+            for state in iStates {
+                var names = self.recordNamesForState(state)
 
+                if let index = names.index(of: name) {
+                    names.remove(at: index)
 
-    func clearRecordID(_ iRecordID: CKRecordID?, for states: [ZRecordState]) {
-        applyToCKRecordByRecordID(iRecordID, forAnyOf: states, onEach: { (iState: ZRecordState, iCKRecord: CKRecord) in
-            var records = self.ckRecordsForState(iState)
-
-            if let index = records.index(of: iCKRecord) {
-                records.remove(at: index)
-
-                self.ckRecordsByState[iState] = records
+                    self.recordNamesByState[state] = names
+                }
             }
-        })
+        }
     }
 
 
@@ -342,7 +362,7 @@ class ZRecordsManager: NSObject {
             for identifier in identifiers {
                 if  results.count < batchSize {
                     results.append(identifier)
-                    clearRecordID(identifier, for: states)
+                    clearRecordName(identifier.recordName, for: states)
                 }
             }
 
@@ -360,9 +380,9 @@ class ZRecordsManager: NSObject {
     func recordIDsWithMatchingStates( _ states: [ZRecordState], pull: Bool = false, batchSize: Int = kBatchSize) -> [CKRecordID] {
         var identifiers = [CKRecordID] ()
 
-        applyToAllCKRecordsWithAnyMatchingStates(states) { state, ckrecord in
-            let identifier = ckrecord.recordID
-            let       name = identifier.recordName
+        applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iName in
+            let identifier = CKRecordID(recordName: iName)
+            let       name = iName
 
             if  identifiers.count < batchSize {
                 var appended = false
@@ -392,8 +412,10 @@ class ZRecordsManager: NSObject {
     func parentIDsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecordID] {
         var parents = [CKRecordID] ()
 
-        applyToAllCKRecordsWithAnyMatchingStates(states) { state, ckrecord in
-            if  parents.count < kBatchSize, let zone = maybeZRecordForCKRecord(ckrecord) as? Zone, let reference = zone.parent {
+        applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iName in
+            if  parents.count < kBatchSize,
+                let      zone = maybeZRecordForRecordName(iName) as? Zone,
+                let reference = zone.parent {
                 let  parentID = reference.recordID
 
                 if !parents.contains(parentID) {
@@ -409,9 +431,9 @@ class ZRecordsManager: NSObject {
     func pullCKRecordsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecord] {
         var results = [CKRecord] ()
 
-        applyToAllCKRecordsWithAnyMatchingStates(states) { state, ckrecord in
-            if  results.count < kBatchSize && !results.contains(ckrecord) {
-                results.append(ckrecord)
+        applyToAllCKRecordsWithAnyMatchingStates(states) { iState, iCKRecord in
+            if  results.count < kBatchSize && !results.contains(iCKRecord) {
+                results.append(iCKRecord)
             }
         }
 
@@ -433,9 +455,9 @@ class ZRecordsManager: NSObject {
     func referencesWithMatchingStates(_ states: [ZRecordState]) -> [CKReference] {
         var references = [CKReference] ()
 
-        applyToAllCKRecordsWithAnyMatchingStates(states) { state, ckrecord in
+        applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iName in
             if  references.count < kBatchSize {
-                let reference = CKReference(recordID: ckrecord.recordID, action: .none)
+                let reference = CKReference(recordID: CKRecordID(recordName: iName), action: .none)
 
                 references.append(reference)
             }
@@ -454,10 +476,10 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func hasMatch(with states: [ZRecordState]) -> Bool {
+    func hasAnyRecordsMarked(with states: [ZRecordState]) -> Bool {
         var found = false
 
-        applyToAllCKRecordsWithAnyMatchingStates(states) { iState, iCKRecord in
+        applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iName in
             found = true
         }
 
@@ -487,27 +509,27 @@ class ZRecordsManager: NSObject {
 
 
     func fullUpdate(for states: [ZRecordState], _ onEach: StateRecordClosure) {
-        var records = [CKRecord] ()
+        var names = [String] ()
 
-        applyToAllCKRecordsWithAnyMatchingStates(states) { state, ckrecord in
-            if let record = maybeZRecordForCKRecord(ckrecord) {
-                onEach(state, record)
+        applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iName in
+            if let record = maybeZRecordForRecordName(iName) {
+                onEach(iState, record)
             }
 
-            records.append(ckrecord)
+            names.append(iName)
         }
 
-        clearCKRecords(records, for: states)
+        clearRecordNames(names, for: states)
     }
 
 
-    func applyToCKRecordByRecordID(_ iRecordID: CKRecordID?, forAnyOf iStates: [ZRecordState], onEach: StateCKRecordClosure?) {
-        if let soughtName = iRecordID?.recordName {
-            applyToAllCKRecordsWithAnyMatchingStates(iStates) { state, ckrecord in
-                let name = ckrecord.recordID.recordName
+    func applyToCKRecordByRecordName(_ iName: String?, forAnyOf iStates: [ZRecordState], onEach: StateCKRecordClosure?) {
+        for state in iStates {
+            let names = recordNamesForState(state)
 
-                if  name == soughtName {
-                    onEach?(state, ckrecord)
+            for name in names {
+                if name == iName, let ckRecord = maybeCKRecordForRecordName(name) {
+                    onEach!(state, ckRecord)
                 }
             }
         }
@@ -516,10 +538,23 @@ class ZRecordsManager: NSObject {
 
     func applyToAllCKRecordsWithAnyMatchingStates(_ iStates: [ZRecordState], onEach: StateCKRecordClosure) {
         for state in iStates {
-            let ckRecords = ckRecordsForState(state)
+            let names = recordNamesForState(state)
 
-            for ckRecord in ckRecords {
-                onEach(state, ckRecord)
+            for name in names {
+                if let ckRecord = maybeCKRecordForRecordName(name) {
+                    onEach(state, ckRecord)
+                }
+            }
+        }
+    }
+
+
+    func applyToAllRecordNamesWithAnyMatchingStates(_ iStates: [ZRecordState], onEach: StateRecordNameClosure) {
+        for state in iStates {
+            let names = recordNamesForState(state)
+
+            for name in names {
+                onEach(state, name)
             }
         }
     }
@@ -601,11 +636,11 @@ class ZRecordsManager: NSObject {
 
 
     func isRegistered(_ zRecord: ZRecord) -> String? {
-        if  zRecordsByID.values.contains(zRecord) {
+        if  registry.values.contains(zRecord) {
             let hash = zRecord.hash
 
-            for key in zRecordsByID.keys {
-                let examined = zRecordsByID[key]
+            for key in registry.keys {
+                let examined = registry[key]
 
                 if  examined?.hash == hash {
                     return key
@@ -618,26 +653,25 @@ class ZRecordsManager: NSObject {
 
 
     func registerZRecord(_  iRecord : ZRecord?) {
-        if  let           zRecord = iRecord,
-            let                id = zRecord.recordName {
-            if  let           rid = isRegistered(zRecord), rid != id {
-                zRecordsByID[rid] = nil
+        if  let       zRecord = iRecord,
+            let            id = zRecord.recordName {
+            if  let       rid = isRegistered(zRecord), rid != id {
+                registry[rid] = nil
             }
 
-            if  let      bookmark = zRecord as? Zone, bookmark.isBookmark {
+            if  let  bookmark = zRecord as? Zone, bookmark.isBookmark {
                 gBookmarksManager.registerBookmark(bookmark)
             }
 
-            zRecordsByID[id]      = zRecord
+            registry[id]      = zRecord
         }
     }
 
 
     func unregisterCKRecord(_ ckRecord: CKRecord?) {
-        clearAllStatesForCKRecord(ckRecord)
-
-        if let name = ckRecord?.recordID.recordName {
-            zRecordsByID[name] = nil
+        if  let      name  = ckRecord?.recordID.recordName {
+            clearRecordName(name, for: allStates)
+            registry[name] = nil
         }
     }
 
@@ -669,12 +703,13 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func maybeZRecordForRecordName(_ recordName: String?) -> ZRecord? {
-        if  let id = recordName {
-            return zRecordsByID[id]
-        }
+    func maybeCKRecordForRecordName(_ recordName: String?) -> CKRecord? {
+        return maybeZRecordForRecordName(recordName)?.record
+    }
 
-        return nil
+
+    func maybeZRecordForRecordName(_ iRecordName: String?) -> ZRecord? {
+        return iRecordName == nil ? nil : registry[iRecordName!]
     }
 
 
@@ -700,7 +735,7 @@ class ZRecordsManager: NSObject {
             zone  = Zone(record: CKRecord(recordType: kZoneType, recordID: reference.recordID), databaseID: databaseID)
 
             zone?.requireFetch() // POTENTIALLY BAD DUMMY
-            zone?.maybeNeedFetch()
+            zone?.needFetch()
         }
 
         return zone!
@@ -715,7 +750,8 @@ class ZRecordsManager: NSObject {
         } else {
             zone = Zone(record: ckRecord, databaseID: databaseID)
 
-            zone?.maybeNeedFetch()
+            zone?.requireFetch() // POTENTIALLY BAD DUMMY
+            zone?.needFetch()
         }
 
         return zone!

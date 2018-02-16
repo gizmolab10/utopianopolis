@@ -1117,7 +1117,7 @@ class Zone : ZRecord {
 
     override func unorphan() {
         if  !needsDestroy, let p = parentZone, p != self {
-            p.maybeNeedFetch()
+            p.needFetch()
             p.addChildAndRespectOrder(self)
         }
     }

@@ -29,6 +29,10 @@ class ZTravelManager: NSObject {
             if  topIndex == currentIndex {
                 travelStack.append(gHere)
             } else {
+                if  currentIndex < 0 {
+                    bam("currentIndex (\(currentIndex)) is less than zero")
+                    currentIndex = 0
+                }
                 travelStack.insert(gHere, at: updateCurrentIndex ? currentIndex : newIndex)
             }
 

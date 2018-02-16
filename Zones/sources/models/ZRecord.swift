@@ -21,20 +21,21 @@ class ZRecord: NSObject {
     var        isBookmark: Bool             { return record?.isBookmark ?? false }
     var            isRoot: Bool             { return record != nil && kRootNames.contains(recordName!) }
     var           canSave: Bool             { return !hasState(.requiresFetch) }
-    var       isFromCloud: Bool             { return !hasState(.notFromCloud) }
-    var         needsSave: Bool             { return hasState(.needsSave) }
-    var         needsRoot: Bool             { return hasState(.needsRoot) }
-    var        needsCount: Bool             { return hasState(.needsCount) }
-    var        needsColor: Bool             { return hasState(.needsColor) }
-    var        needsFetch: Bool             { return hasState(.needsFetch) }
-    var        needsMerge: Bool             { return hasState(.needsMerge) }
-    var       needsTraits: Bool             { return hasState(.needsTraits) }
-    var       needsParent: Bool             { return hasState(.needsParent) }
-    var      needsDestroy: Bool             { return hasState(.needsDestroy) }
-    var      needsProgeny: Bool             { return hasState(.needsProgeny) }
-    var     needsWritable: Bool             { return hasState(.needsWritable) }
-    var     needsChildren: Bool             { return hasState(.needsChildren) }
-    var    needsBookmarks: Bool             { return hasState(.needsBookmarks) }
+    var       isFromCloud: Bool             { return !hasState(.notFetched) }
+    var         needsSave: Bool             { return  hasState(.needsSave) }
+    var         needsRoot: Bool             { return  hasState(.needsRoot) }
+    var        notFetched: Bool             { return  hasState(.notFetched) }
+    var        needsCount: Bool             { return  hasState(.needsCount) }
+    var        needsColor: Bool             { return  hasState(.needsColor) }
+    var        needsFetch: Bool             { return  hasState(.needsFetch) }
+    var        needsMerge: Bool             { return  hasState(.needsMerge) }
+    var       needsTraits: Bool             { return  hasState(.needsTraits) }
+    var       needsParent: Bool             { return  hasState(.needsParent) }
+    var      needsDestroy: Bool             { return  hasState(.needsDestroy) }
+    var      needsProgeny: Bool             { return  hasState(.needsProgeny) }
+    var     needsWritable: Bool             { return  hasState(.needsWritable) }
+    var     needsChildren: Bool             { return  hasState(.needsChildren) }
+    var    needsBookmarks: Bool             { return  hasState(.needsBookmarks) }
     var    recordsManager: ZRecordsManager? { return gRemoteStoresManager.recordsManagerFor(databaseID) }
     var      cloudManager: ZCloudManager?   { return recordsManager as? ZCloudManager }
     var        recordName: String?          { return record?.recordID.recordName }
@@ -63,7 +64,7 @@ class ZRecord: NSObject {
                 if       !canSave &&  isFromCloud {
                     columnarReport("ALLOW SAVE", name ?? recordName)
                     allowSave()
-                } else if canSave && !isFromCloud {
+                } else if canSave && notFetched {
 //                    columnarReport("DON'T SAVE", name ?? recordName)
                     requireFetch()
 
@@ -206,7 +207,7 @@ class ZRecord: NSObject {
     func useBest(record iRecord: CKRecord) {
         let      myDate = record?.modificationDate
         if  let newDate = iRecord.modificationDate,
-            (myDate    == nil || myDate!.timeIntervalSince(newDate) < 0) {
+            (myDate    == nil || myDate!.timeIntervalSince(newDate) < 0.000001) {
             record      = iRecord
         }
     }
@@ -235,26 +236,22 @@ class ZRecord: NSObject {
     // MARK:-
 
 
-    func hasState(_ state: ZRecordState) -> Bool { return recordsManager?.hasZRecord(self, forAnyOf:[state]) ?? false }
-    func addState(_ state: ZRecordState)         {        recordsManager?.addZRecord(self,     for: [state]) }
-    func clearAllStates()                        {        recordsManager?.clearAllStatesForCKRecord(self.record) }
+    func    hasState(_ state: ZRecordState) -> Bool { return recordsManager?.hasZRecord(self, forAnyOf:[state]) ?? false }
+    func    addState(_ state: ZRecordState)         {        recordsManager?.addZRecord(self,     for: [state]) }
+    func removeState(_ state: ZRecordState)         {        recordsManager?.clearRecordName(recordName, for:[state]) }
+    func clearAllStates()                           {        recordsManager?.clearRecordName(recordName, for: recordsManager?.allStates ?? []) }
 
 
-    func removeState(_ state: ZRecordState) {
-        if let identifier = self.record?.recordID {
-            recordsManager?.clearRecordID(identifier, for:[state])
-        }
-    }
-
-
-    func needRoot()     { addState(.needsRoot) }
-    func needCount()    { addState(.needsCount) }
-    func needColor()    { addState(.needsColor) }
-    func needTraits()   { addState(.needsTraits) }
-    func needParent()   { addState(.needsParent) }
-    func needWritable() { addState(.needsWritable) }
-    func requireFetch() { addState(.requiresFetch) }
-    func allowSave()    { removeState(.requiresFetch)}
+    func needRoot()       { addState(.needsRoot) }
+    func needFetch()      { addState(.needsFetch) }
+    func needCount()      { addState(.needsCount) }
+    func needColor()      { addState(.needsColor) }
+    func needTraits()     { addState(.needsTraits) }
+    func needParent()     { addState(.needsParent) }
+    func needWritable()   { addState(.needsWritable) }
+    func requireFetch()   { addState(.requiresFetch) }
+    func markNotFetched() { addState(.notFetched) }
+    func allowSave()      { removeState(.requiresFetch)}
 
 
     func needSave() {
@@ -281,9 +278,16 @@ class ZRecord: NSObject {
 
 
     func needChildren() {
-        if   !isBookmark && // no bookmark has children, by design
+        if   !isBookmark && // all bookmarks are childless, by design
             (!gFullFetch || (showChildren && hasMissingChildren() && !needsProgeny)) {
             addState(.needsChildren)
+        }
+    }
+
+
+    func maybeMarkNotFetched() {
+        if  record?.creationDate == nil {
+            markNotFetched()
         }
     }
 
@@ -299,13 +303,6 @@ class ZRecord: NSObject {
     func maybeNeedMerge() {
         if  isFromCloud, canSave, !needsSave, !needsMerge, !needsDestroy {
             addState(.needsMerge)
-        }
-    }
-
-    
-    func maybeNeedFetch() {
-        if !isFromCloud {
-            addState(.needsFetch)
         }
     }
 

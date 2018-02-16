@@ -25,26 +25,26 @@ class ZDebugController: ZGenericController {
     var grab: Zone? = nil
 
 
-    var statusText: String {
-        var text = " "
+    var statusText: [String] {
+        var text = [String] ()
 
         if  let zone = grab {
             let count = zone.fetchableCount
 
-            text.append(zone.isFromCloud ? "C " : "- ")
+            text.append(zone.isFromCloud ? "cloud" : "local")
 
             if zone.parent != nil {
-                text.append("P ")
+                text.append("p.ref")
             } else if zone.name(from: zone.parentLink) != nil {
-                text.append("L ")
+                text.append("p.link")
             }
 
             if zone.showChildren {
-                text.append("S ")
+                text.append("show")
             }
 
             if count != 0 {
-                text.append("\(count) ")
+                text.append("fetch \(count)")
             }
         }
 
@@ -52,20 +52,20 @@ class ZDebugController: ZGenericController {
     }
 
 
-    var otherText: String {
-        var text = ""
+    var otherText: [String] {
+        var text = [String] ()
 
         if  let zone = grab {
             let order = Double(Int(zone.order * 100)) / 100.0
 
-            text.append("\(order)")
+            text.append("order \(order)")
         }
 
 //        if let debugView = view.window?.contentView {
         if let debugView = gEditorController?.editorRootWidget {
 //        if let debugView = gEditorView {
 
-            text.append(" \(debugView.bounds.size)")
+            text.append("view \(debugView.bounds.size)")
         }
 
         return text
@@ -82,8 +82,8 @@ class ZDebugController: ZGenericController {
             grab              = gSelectionManager.firstGrab
             nameLabel?  .text = grab?.unwrappedName
             recordLabel?.text = grab?.recordName
-            otherLabel? .text = otherText
-            statusLabel?.text = statusText
+            otherLabel? .text =  otherText.joined(separator: ", ")
+            statusLabel?.text = statusText.joined(separator: ", ")
         }
     }
     

@@ -163,7 +163,7 @@ class ZCloudManager: ZRecordsManager {
 //                } else {
 //                    deleted.parentZone = root
 //
-//                    root?.maybeNeedFetch()
+//                    root?.needFetch()
 //                }
 //
 //                deleted.maybeNeedMerge()
@@ -177,7 +177,7 @@ class ZCloudManager: ZRecordsManager {
     // MARK:-
 
 
-    func assureRecordExists(withRecordID recordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
+    func assureRecordExists(withRecordID iCKRecordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
         let done:  RecordClosure = { (iCKRecord: CKRecord?) in
             FOREGROUND(canBeDirect: true) {
                 if  let ckRecord = iCKRecord {
@@ -188,23 +188,30 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        if  database == nil || gFetchMode == .localOnly {
+        if      database    == nil,
+                gFetchMode  == .localOnly {
+            if  gFetchMode  == .localOnly,
+                let ckRecord = maybeCKRecordForRecordName(iCKRecordID.recordName),
+                !hasCKRecordName(iCKRecordID.recordName, forAnyOf: [.notFetched]) {
+                done(ckRecord)
+            }
+
             done(nil)
         } else {
             BACKGROUND {     // not stall foreground processor
-                self.database?.fetch(withRecordID: recordID) { (fetchedCKRecord: CKRecord?, fetchError: Error?) in
-                    gAlertManager.alertError(fetchError) { iHasError in
+                self.database?.fetch(withRecordID: iCKRecordID) { (iFetchedCKRecord: CKRecord?, iFetchError: Error?) in
+                    gAlertManager.alertError(iFetchError) { iHasError in
                         if !iHasError {
-                            done(fetchedCKRecord)
+                            done(iFetchedCKRecord)
                         } else {
-                            let brandNew: CKRecord = CKRecord(recordType: recordType, recordID: recordID)
+                            let brandNew: CKRecord = CKRecord(recordType: recordType, recordID: iCKRecordID)
 
-                            self.database?.save(brandNew) { (savedRecord: CKRecord?, saveError: Error?) in
-                                gAlertManager.detectError(saveError) { iHasSaveError in
+                            self.database?.save(brandNew) { (iSavedRecord: CKRecord?, iSaveError: Error?) in
+                                gAlertManager.detectError(iSaveError) { iHasSaveError in
                                     if  iHasSaveError {
                                         done(nil)
                                     } else {
-                                        done(savedRecord)
+                                        done(iSavedRecord)
                                         gFileManager.write(for: self.databaseID)
                                     }
                                 }
@@ -335,14 +342,14 @@ class ZCloudManager: ZRecordsManager {
                     }
                 }
 
-                self.clearRecordID(iID, for:[.needsMerge])
+                self.clearRecordName(iID?.recordName, for:[.needsMerge])
             }
 
             operation.completionBlock = {
                 FOREGROUND {
                     if  recordsByID.count == 0 {
                         for ckRecordID in recordIDs {
-                            self.clearRecordID(ckRecordID, for: [.needsMerge])
+                            self.clearRecordName(ckRecordID.recordName, for: [.needsMerge])
                         }
                     } else {
                         for (iRecord, iID) in recordsByID {
@@ -619,12 +626,12 @@ class ZCloudManager: ZRecordsManager {
                         if  let bad = self.maybeZoneForRecordID(iID) {
                             bad.unregister()    // makes sure we do not save it to cloud
                         } else {
-                            self.clearRecordID(iID, for: [.needsFetch])
+                            self.clearRecordName(iID?.recordName, for: [.needsFetch])
                         }
                     } else if let ckRecord = iRecord,
                         !retrieved.contains(ckRecord) {
                         retrieved.append(ckRecord)
-                        self.clearRecordID(ckRecord.recordID, for:[.requiresFetch, .needsFetch])
+                        self.clearRecordName(ckRecord.recordID.recordName, for:[.requiresFetch, .needsFetch])
                     }
                 }
             }
@@ -660,30 +667,32 @@ class ZCloudManager: ZRecordsManager {
 
             operation.completionBlock = {
                 FOREGROUND {
-                    var forReport = [Zone] ()
+                    var forReport  = [Zone] ()
 
-                    for (parentRecord, parentID) in fetchedRecordsByID {
-                        var fetched  = self.maybeZoneForRecordID(parentID)
-
-                        if  fetched != nil {
-                            fetched?.useBest(record: parentRecord)
+                    for (fetchedRecord, fetchedID) in fetchedRecordsByID {
+                        var maybe  = self.maybeZoneForRecordID(fetchedID)
+                        if  maybe != nil {
+                            maybe?.useBest(record: fetchedRecord)
                         } else {
-                            fetched  = self.zoneForCKRecord(parentRecord)
+                            maybe  = self.zoneForCKRecord(fetchedRecord)
                         }
 
-                        if  let      fetchedParent = fetched {
-                            for childID in childrenIDs {
-                                if  let      child = self.maybeZoneForRecordID(childID), !fetchedParent.spawnedBy(child),
-                                    let soughtName = child.parentZone?.recordName,
-                                    soughtName    == fetchedParent.recordName {
-                                    let     states = self.states(for: child.record)
+                        if  let    fetched = maybe,     // always not nil
+                            let recordName = fetched.recordName {
 
-                                    if  child.isRoot || child == fetchedParent {
+                            fetched.maybeNeedChildren()
+
+                            for childID in childrenIDs {
+                                if  let   child = self.maybeZoneForRecordID(childID), !fetched.spawnedBy(child),
+                                    recordName == child.parentZone?.recordName {
+                                    let  states = self.states(for: child.record)
+
+                                    if  child.isRoot || child == fetched {
                                         child.parentZone = nil
 
                                         child.maybeNeedSave()
-                                    } else if !fetchedParent.children.contains(child) {
-                                        fetchedParent.children.append(child)
+                                    } else if !fetched.children.contains(child) {
+                                        fetched.children.append(child)
                                     }
 
                                     if !forReport.contains(child) {
@@ -691,19 +700,17 @@ class ZCloudManager: ZRecordsManager {
                                     }
 
                                     if  states.contains(.needsRoot) {
-                                        fetchedParent.maybeNeedRoot()
-                                        fetchedParent.needChildren()
+                                        fetched.maybeNeedRoot()
+                                        fetched.needChildren()
                                     }
 
                                     if  states.contains(.needsColor) {
-                                        fetchedParent.maybeNeedColor()
+                                        fetched.maybeNeedColor()
                                     }
 
                                     if  states.contains(.needsWritable) {
-                                        fetchedParent.maybeNeedWritable()
+                                        fetched.maybeNeedWritable()
                                     }
-
-                                    fetchedParent.maybeNeedChildren()
                                 }
                             }
                         }
@@ -734,11 +741,11 @@ class ZCloudManager: ZRecordsManager {
             var  progenyNeeded = [CKReference] ()
             var      retrieved = [CKRecord] ()
 
-            if hasMatch(with: [.needsProgeny]) {
+            if hasAnyRecordsMarked(with: [.needsProgeny]) {
                 for reference in childrenNeeded {
                     let identifier = reference.recordID
 
-                    if  registeredCKRecord(for: identifier, forAnyOf: [.needsProgeny]) != nil && !progenyNeeded.contains(reference) {
+                    if  registeredCKRecordForID(identifier, forAnyOf: [.needsProgeny]) != nil && !progenyNeeded.contains(reference) {
                         progenyNeeded.append(reference)
                     }
                 }
@@ -791,11 +798,11 @@ class ZCloudManager: ZRecordsManager {
 
                                         if  let target = child.bookmarkTarget {
 
-                                            ///////////////////////////////////////////////////////////
-                                            // bookmark targets need writable, color and maybe fetch //
-                                            ///////////////////////////////////////////////////////////
+                                            /////////////////////////////////////////////////////
+                                            // bookmark targets need writable, color and fetch //
+                                            /////////////////////////////////////////////////////
 
-                                            target.maybeNeedFetch()
+                                            target.needFetch()
                                             target.maybeNeedColor()
                                             target.maybeNeedWritable()
                                         }
@@ -862,23 +869,31 @@ class ZCloudManager: ZRecordsManager {
                     if  count > 0 {
                         for ckRecord in retrieved {
                             var bookmark  = self.maybeZoneForCKRecord(ckRecord)
-                            if  bookmark == nil {                                                 // if not already registered
-                                bookmark  = Zone(record: ckRecord, databaseID: self.databaseID) // create and register
+                            if  bookmark == nil {                                                   // if not already registered
+                                bookmark  = Zone(record: ckRecord, databaseID: self.databaseID)     // create and register
                                 created   = true
                             }
 
                             bookmark?.maybeNeedRoot()
 
                             if  let target = bookmark?.bookmarkTarget {
-                                if !target.isRoot {
-                                    target.maybeNeedFetch()
-                                    target.maybeNeedRoot()
-                                    target.needChildren()
-                                } else if target.parentZone != nil {
-                                    target.orphan()  // avoids HANG ... a root can NOT be a child, by definition
-                                    target.allowSave()
-                                    target.needSave()
+                                target.requireFetch()
+
+                                if  let parent = target.parentZone {
+                                    if  target.isRoot || target == parent { // no roots have a parent, by definition
+                                        target.orphan()                     // avoid HANG ... unwire parent cycle
+                                        target.allowSave()
+                                        target.needSave()
+                                    } else {
+                                        parent.maybeNeedRoot()
+                                        parent.needChildren()
+                                        parent.requireFetch()
+                                        parent.needFetch()
+                                    }
                                 }
+
+                                target.maybeNeedRoot()
+                                target.needChildren()
                             }
                         }
 
@@ -942,6 +957,7 @@ class ZCloudManager: ZRecordsManager {
 
                     here.maybeNeedChildren()
                     here.maybeNeedRoot()
+                    here.requireFetch()
                     onCompletion?(0)
                 }
             }

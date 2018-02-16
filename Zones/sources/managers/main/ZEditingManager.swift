@@ -981,7 +981,7 @@ class ZEditingManager: NSObject {
                 }
 
                 bookmark?.grab()
-                bookmark?.record.markAsNotFromCloud(.mineID)
+                bookmark?.markNotFetched()
                 self.signalFor(nil, regarding: .redraw)
                 gBatchOperationsManager.sync { iSame in
                 }
@@ -1421,7 +1421,7 @@ class ZEditingManager: NSObject {
                     child.zoneName = name
                 }
 
-                child.record.markAsNotFromCloud(dbID)
+                child.markNotFetched()
 
                 self.UNDO(self) { iUndoSelf in
                     iUndoSelf.deleteZones([child]) {

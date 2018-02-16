@@ -46,5 +46,6 @@ typealias ZonesToZonesClosure     = ([Zone])                          -> ([Zone]
 typealias StateCKRecordClosure    = (ZRecordState,          CKRecord) -> (Void)
 typealias ObjectToObjectClosure   = (NSObject)                        -> (NSObject)
 typealias ObjectToStringClosure   = (NSObject)                        -> (String)
+typealias StateRecordNameClosure  = (ZRecordState,            String) -> (Void)
 typealias BooleanToBooleanClosure = (ObjCBool)                        -> (ObjCBool)
 

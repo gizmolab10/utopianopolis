@@ -247,18 +247,10 @@ extension CKRecord {
     }
 
 
-    func markAsNotFromCloud(_ databaseID: ZDatabaseID?) {
-        if  let    dbID = databaseID {
-            let manager = gRemoteStoresManager.cloudManagerFor(dbID)
-            manager.addCKRecord(self, for: [.notFromCloud])
-        }
-    }
-
-
     func maybeFromCloud(_ databaseID: ZDatabaseID?) {
         if  let      dbID = databaseID,
             creationDate != nil {
-            let    states = [ZRecordState.notFromCloud]
+            let    states = [ZRecordState.notFetched]
             let   manager = gRemoteStoresManager.cloudManagerFor(dbID)
             if  manager.hasCKRecord(self, forAnyOf: states) {
                 manager.clearCKRecords([self], for: states)
