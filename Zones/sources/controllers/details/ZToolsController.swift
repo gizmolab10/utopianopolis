@@ -22,10 +22,10 @@ class ZToolsController: ZGenericTableController {
     enum ZToolKind: Int {
         case eUseCloud
         case eFullFetch
-        case eIdentifiers
-        case eAccess
-        case eGather
         case eRecount
+        case eAccess
+        case eIdentifiers
+        case eGather
         case eRetry
         case eTrash
     }
@@ -37,7 +37,7 @@ class ZToolsController: ZGenericTableController {
 
 
     override func numberOfRows(in tableView: ZTableView) -> Int {
-        return !gIsSpecialUser ? 0 : 6 + (gIsLate ? 1 : 0)
+        return !gIsSpecialUser ? 0 : 2 + (gIsLate ? 1 : 0)
     }
 
 
@@ -90,7 +90,7 @@ class ZToolsController: ZGenericTableController {
     // MARK:-
 
 
-    func        toggleUseCloud() {          gUseCloud = !gUseCloud }
+    func        toggleUseCloud() {          gUseCloud = !gUseCloud; syncToCloudAndSignalFor(nil, regarding: .information) {} }
     func       toggleFullFetch() {         gFullFetch = !gFullFetch }
     func toggleShowIdentifiers() {   gShowIdentifiers = !gShowIdentifiers }
     func      toggleUserAccess() { gCrippleUserAccess = !gCrippleUserAccess }

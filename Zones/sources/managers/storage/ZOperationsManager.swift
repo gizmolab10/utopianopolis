@@ -96,14 +96,17 @@ class ZOperationsManager: NSObject {
     func shouldPerform(_ iID: ZOperationID) -> Bool {
         let cloudFetch = gFetchMode != .localOnly
         let cloudSave  =  gSaveMode != .localOnly
+        var   decision = true
 
         switch iID {
-        case .save:                                                                                                                                      return cloudSave
-        case .fetch, .merge, .traits, .emptyTrash, .fetchlost, .undelete, .refetch, .onboard, .parents, .children, .bookmarks, .subscribe, .unsubscribe: return cloudFetch
-        case .setup, .internet, .ubiquity, .accountStatus, .fetchUserID, .fetchUserRecord, .fetchUserIdentity, .cloud:                                   return cloudFetch || cloudSave
-        case .write:                                                                                                                                     return gSaveMode != .cloudOnly
-        case .read, .here, .root, .none, .completion:                                                                                                    return true
+        case .save:                                                                                                                                      decision = cloudSave
+        case .fetch, .merge, .traits, .emptyTrash, .fetchlost, .undelete, .refetch, .onboard, .parents, .children, .bookmarks, .subscribe, .unsubscribe: decision = cloudFetch
+        case .setup, .internet, .ubiquity, .accountStatus, .fetchUserID, .fetchUserRecord, .fetchUserIdentity, .cloud:                                   decision = cloudFetch || cloudSave
+        case .write:                                                                                                                                     decision = gSaveMode != .cloudOnly
+        default: break
         }
+
+        return decision
     }
 
 

@@ -12,21 +12,21 @@ import CloudKit
 
 
 enum ZRecordState: String {
-    case needsBookmarks = "b"
-    case needsCount     = "c"
-    case needsChildren  = "ch"
-    case needsColor     = "co"
-    case needsDestroy   = "d"
-    case needsFetch     = "f"   //
-    case needsMerge     = "m"
-    case notFetched   = "nc"  //
-    case needsParent    = "p"
-    case needsProgeny   = "pr"
-    case requiresFetch  = "r"   //
-    case needsRoot      = "ro"
-    case needsSave      = "s"
-    case needsTraits    = "t"
-    case needsWritable  = "w"
+    case needsBookmarks = "bookmarks"
+    case needsCount     = "count"
+    case needsChildren  = "children"
+    case needsColor     = "color"
+    case needsDestroy   = "destroy"
+    case needsFetch     = "fetch"           //
+    case needsMerge     = "merge"
+    case notFetched     = "not fetched"     //
+    case needsParent    = "parent"
+    case needsProgeny   = "progeny"
+    case requiresFetch  = "requires fetch"  //
+    case needsRoot      = "root"
+    case needsSave      = "save"
+    case needsTraits    = "traits"
+    case needsWritable  = "writable"
 }
 
 
@@ -734,7 +734,7 @@ class ZRecordsManager: NSObject {
         if  zone == nil {
             zone  = Zone(record: CKRecord(recordType: kZoneType, recordID: reference.recordID), databaseID: databaseID)
 
-            zone?.requireFetch() // POTENTIALLY BAD DUMMY
+            zone?.fetchBeforeSave() // POTENTIALLY BAD DUMMY
             zone?.needFetch()
         }
 
@@ -750,7 +750,7 @@ class ZRecordsManager: NSObject {
         } else {
             zone = Zone(record: ckRecord, databaseID: databaseID)
 
-            zone?.requireFetch() // POTENTIALLY BAD DUMMY
+            zone?.fetchBeforeSave() // POTENTIALLY BAD DUMMY
             zone?.needFetch()
         }
 

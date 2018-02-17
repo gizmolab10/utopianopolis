@@ -56,17 +56,21 @@ class ZRecord: NSObject {
                 register()
                 maybeFromCloud()
                 updateInstanceProperties()
-                setupLinks()
+                gBookmarksManager.registerBookmark(self as? Zone)
 
                 let zone = self as? Zone
                 let name = zone?.zoneName
 
-                if       !canSave &&  isFromCloud {
+                if !isFromCloud {
+                    setupLinks()
+                }
+
+                if       !canSave && isFromCloud {
                     columnarReport("ALLOW SAVE", name ?? recordName)
                     allowSave()
                 } else if canSave && notFetched {
 //                    columnarReport("DON'T SAVE", name ?? recordName)
-                    requireFetch()
+                    fetchBeforeSave()
 
                     if name != nil || recordName == kRootName {
                         bam("named ... should allow saving")
@@ -242,16 +246,16 @@ class ZRecord: NSObject {
     func clearAllStates()                           {        recordsManager?.clearRecordName(recordName, for: recordsManager?.allStates ?? []) }
 
 
-    func needRoot()       { addState(.needsRoot) }
-    func needFetch()      { addState(.needsFetch) }
-    func needCount()      { addState(.needsCount) }
-    func needColor()      { addState(.needsColor) }
-    func needTraits()     { addState(.needsTraits) }
-    func needParent()     { addState(.needsParent) }
-    func needWritable()   { addState(.needsWritable) }
-    func requireFetch()   { addState(.requiresFetch) }
-    func markNotFetched() { addState(.notFetched) }
-    func allowSave()      { removeState(.requiresFetch)}
+    func needRoot()        { addState(.needsRoot) }
+    func needFetch()       { addState(.needsFetch) }
+    func needCount()       { addState(.needsCount) }
+    func needColor()       { addState(.needsColor) }
+    func needTraits()      { addState(.needsTraits) }
+    func needParent()      { addState(.needsParent) }
+    func needWritable()    { addState(.needsWritable) }
+    func markNotFetched()  { addState(.notFetched) }
+    func fetchBeforeSave() { addState(.requiresFetch) }
+    func allowSave()       { removeState(.requiresFetch)}
 
 
     func needSave() {
@@ -293,7 +297,7 @@ class ZRecord: NSObject {
 
 
     func maybeNeedSave() {
-        if !needsDestroy, (isFromCloud || (!needsFetch && canSave)) {
+        if !needsDestroy, !needsFetch, !needsSave, canSave {
             removeState(.needsMerge)
             addState   (.needsSave)
         }

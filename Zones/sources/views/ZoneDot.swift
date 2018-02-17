@@ -178,7 +178,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawTinyDots(_ dirtyRect: CGRect) {
-        if  let  zone  = widgetZone, innerDot != nil, gCountsMode == .dots, !zone.isRootOfFavorites, (!zone.showChildren || zone.isBookmark || zone.hasMissingChildren()) {
+        if  let  zone  = widgetZone, innerDot != nil, gCountsMode == .dots, !zone.isRootOfFavorites, (!zone.showChildren || zone.isBookmark) {
             var count  = zone.indirectFetchableCount
 
             if  count == 0 {
@@ -245,19 +245,25 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        if  let                zone = widgetZone, isVisible(dirtyRect) {
-            let highlightAsFavorite = zone.isCurrentFavorite
+        if  let              zone = widgetZone, isVisible(dirtyRect) {
+            let isCurrentFavorite = zone.isCurrentFavorite
+            let          bammable = zone.isInFavorites && !zone.isBookmark
+            let              name = zone.zoneName
 
             if  toggleDotIsVisible {
                 if  isInnerDot {
                     let showTinyCenterDot = zone.canTravel && zone.fetchableCount == 0
-                    let       dotIsFilled = isToggle ? (!zone.isRootOfFavorites && (!zone.showChildren || zone.hasMissingChildren() || showTinyCenterDot || isDragDrop)) : (zone.isGrabbed || highlightAsFavorite)
-                    let       strokeColor = isToggle  && isDragDrop ? gRubberbandColor : zone.color
+                    let       dotIsFilled = isToggle ? (!zone.isRootOfFavorites && (!zone.showChildren || zone.hasMissingChildren() || showTinyCenterDot || isDragDrop)) : (zone.isGrabbed || isCurrentFavorite)
+                    let       strokeColor = isToggle && isDragDrop ?    gRubberbandColor : zone.color
                     var         fillColor = dotIsFilled ? strokeColor : gBackgroundColor
 
-                    ///////////////
-                    // INNER DOT //
-                    ///////////////
+                    if  bammable && name == "files" {
+                        bam("gotcha!")
+                    }
+
+                    /////////
+                    // DOT //
+                    /////////
 
                     fillColor.setFill()
                     strokeColor.setStroke()
@@ -290,9 +296,13 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     // TINY OUTER DOTS //
                     /////////////////////
 
+                    if  bammable && name == "publish" {
+                        bam("gotcha!")
+                    }
+
                     // addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.red.cgColor)
                     drawTinyDots(dirtyRect)
-                } else if highlightAsFavorite {
+                } else if isCurrentFavorite {
 
                     ////////////////////////////////
                     // HIGHLIGHT CURRENT FAVORITE //

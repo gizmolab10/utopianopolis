@@ -18,8 +18,6 @@ import CloudKit
 
 
 var            gWorkMode                     = ZWorkMode.startupMode
-var            gSaveMode                     = gUseCloud ? ZFileMode.all       : ZFileMode.localOnly
-var           gFetchMode                     = gUseCloud ? ZFileMode.cloudOnly : ZFileMode.localOnly
 var          gReadyState                     = false
 var       gTextCapturing                     = false
 var     gShowIdentifiers                     = false
@@ -42,6 +40,8 @@ var          gIsDragging:               Bool { return gDraggedZone != nil }
 var       gIsEditingText:               Bool { return gEditorView?.window?.firstResponder?.isKind(of: ZTextView.self) ?? false }
 var    gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var  gHasPrivateDatabase:               Bool { return gUserRecordID != nil }
+var            gSaveMode:          ZFileMode { return gUseCloud ? .all       : .localOnly }
+var           gFetchMode:          ZFileMode { return gUseCloud ? .cloudOnly : .localOnly }
 var    gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor) as? ZEditorController }
 var          gEditorView:      ZoneDragView? { return gEditorController?.editorView }
 var           gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }

@@ -877,7 +877,7 @@ class ZCloudManager: ZRecordsManager {
                             bookmark?.maybeNeedRoot()
 
                             if  let target = bookmark?.bookmarkTarget {
-                                target.requireFetch()
+                                target.fetchBeforeSave()
 
                                 if  let parent = target.parentZone {
                                     if  target.isRoot || target == parent { // no roots have a parent, by definition
@@ -887,7 +887,7 @@ class ZCloudManager: ZRecordsManager {
                                     } else {
                                         parent.maybeNeedRoot()
                                         parent.needChildren()
-                                        parent.requireFetch()
+                                        parent.fetchBeforeSave()
                                         parent.needFetch()
                                     }
                                 }
@@ -957,7 +957,7 @@ class ZCloudManager: ZRecordsManager {
 
                     here.maybeNeedChildren()
                     here.maybeNeedRoot()
-                    here.requireFetch()
+                    here.fetchBeforeSave()
                     onCompletion?(0)
                 }
             }
@@ -977,18 +977,18 @@ class ZCloudManager: ZRecordsManager {
                     rootRecord  = CKRecord(recordType: kZoneType, recordID: recordID)   // will create
                 }
 
-                let      root = self.zoneForCKRecord(rootRecord!)                       // get / create root
-                self.rootZone = root
-                root  .parent = nil
+                let        root = self.zoneForCKRecord(rootRecord!)                       // get / create root
+                self  .rootZone = root
+                root    .parent = nil
 
                 if  root.zoneName == nil {
-                    root.zoneName = "title"                                             // was created
+                    root.zoneName  = "title"                                             // was created
 
                     root.needSave()
                 }
 
-                if  root.parent != nil {
-                    root.parent  = nil
+                if  root.parent   != nil {
+                    root.parent    = nil
 
                     root.needSave()
                 }
@@ -1080,10 +1080,10 @@ class ZCloudManager: ZRecordsManager {
         if  let   record = object.record, database != nil {
             let oldValue = record[property] as? NSObject
 
-            if oldValue         != value {
+            if  oldValue        != value {
                 record[property] = value as? CKRecordValue
 
-                if !object.canSave {
+                if  object.canSave {
                     object.needSave()
                 } else {
                     object.maybeNeedMerge()

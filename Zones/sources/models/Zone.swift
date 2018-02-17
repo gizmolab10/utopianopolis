@@ -453,9 +453,9 @@ class Zone : ZRecord {
 
 
     func unlinkParentAndMaybeNeedSave() {
-        if  parent     != nil ||
-            parentLink != kNullLink {
-            allowSave()
+        if (parentLink != kNullLink ||
+            parent     != nil) &&
+            canSave {
             needSave()
         }
 
@@ -685,26 +685,22 @@ class Zone : ZRecord {
 
 
     override func setupLinks() {
-        if  record                != nil {
-            let           badLinks = ["", "-", "no"]
+        if  record != nil {
 
-            if  let link           = zoneLink {
-                if  badLinks.contains(link) {
-                    zoneLink       = kNullLink
-                }
-            } else {
-                zoneLink           = kNullLink
+            let isBad: StringToBooleanClosure = { iString -> Bool in
+                let badLinks = ["", "-", "not"]
+
+                return iString == nil || badLinks.contains(iString!)
             }
 
-            if  let pLink          = parentLink {
-                if  badLinks.contains(pLink) {
-                    parentLink     = kNullLink
-                }
-            } else {
-                parentLink         = kNullLink
+            if  isBad(zoneLink) {
+                zoneLink = kNullLink
             }
 
-            gBookmarksManager.registerBookmark(self)
+            if  isBad(parentLink) {
+                parentLink = kNullLink
+            }
+
         }
     }
 
@@ -1428,7 +1424,7 @@ class Zone : ZRecord {
     }
 
 
-    func needsAsString(for iDatabaseID: ZDatabaseID) -> String? {
+    func stringForNeeds(in iDatabaseID: ZDatabaseID) -> String? {
         if  let       r = record {
             let manager = gRemoteStoresManager.cloudManagerFor(iDatabaseID)
             let  states = manager.states(for: r)
@@ -1498,7 +1494,7 @@ class Zone : ZRecord {
             dict[.traits] = array as NSObject?
         }
 
-        if  let   needs   = needsAsString(for: iDatabaseID) {
+        if  let   needs   = stringForNeeds(in: iDatabaseID) {
             dict[.needs]  = needs as NSObject?
         }
 

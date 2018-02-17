@@ -337,7 +337,7 @@ class ZEditingManager: NSObject {
                             let      mark = nameParts[index]            // found: "(x"
                             let markParts = mark.components(separatedBy: before) // markParts[1] == x
 
-                            if  markParts.count > 1 && markParts[0].count == 0 && markParts[1].count == 1 {
+                            if  markParts.count > 1 && markParts[0].count == 0 && markParts[1].count <= 2 {
                                 index    += 1
 
                                 if  markParts[1] == "\(digit)" {
