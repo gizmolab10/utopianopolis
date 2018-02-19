@@ -190,11 +190,11 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 rubberbandUpdate(nil)
                 signalFor(nil, regarding: .preferences) // so color well gets updated
             } else if let dot = detectDot(iGesture) {
-                if  !dot.isToggle {
+                if  !dot.isReveal {
                     dragStartEvent(dot, iGesture)
                 } else if let zone = dot.widgetZone {
                     cleanupAfterDrag()
-                    gEditingManager.toggleDotActionOnZone(zone)   // no dragging
+                    gEditingManager.revealDotClickAction(for: zone)   // no dragging
                 }
             } else {                            // began
                 rubberbandStartEvent(location, iGesture)
@@ -227,8 +227,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                     if  let  widget = detectWidget(gesture) {
                         if let zone = widget.widgetZone,
                             let dot = detectDotIn(widget, gesture) {
-                            if  dot.isToggle {
-                                gEditingManager.toggleDotActionOnZone(zone)
+                            if  dot.isReveal {
+                                gEditingManager.revealDotClickAction(for: zone)
                             } else if zone.isGrabbed {
                                 zone.ungrab()
                             } else if gesture.isShiftDown {

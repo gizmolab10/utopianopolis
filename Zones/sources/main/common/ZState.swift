@@ -24,7 +24,6 @@ var     gShowIdentifiers                     = false
 var    gCloudUnavailable                     = false
 var   gCrippleUserAccess                     = false
 var   gKeyboardIsVisible                     = false
-var         gRubyStyleUI                     = false
 var     gDebugOperations                     = true
 var     gDebugTimerCount                     = 0
 var     gDragDropIndices: NSMutableIndexSet? = nil
@@ -40,13 +39,13 @@ var          gIsDragging:               Bool { return gDraggedZone != nil }
 var       gIsEditingText:               Bool { return gEditorView?.window?.firstResponder?.isKind(of: ZTextView.self) ?? false }
 var    gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var  gHasPrivateDatabase:               Bool { return gUserRecordID != nil }
-var            gSaveMode:          ZFileMode { return gUseCloud ? .all       : .localOnly }
-var           gFetchMode:          ZFileMode { return gUseCloud ? .cloudOnly : .localOnly }
 var    gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor) as? ZEditorController }
 var          gEditorView:      ZoneDragView? { return gEditorController?.editorView }
 var           gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var            gDotWidth:             Double { return gDotHeight * 0.75 }
 var             fontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
+var            gSaveMode:          ZFileMode { return gUseCloud ? .all       : .localOnly }
+var           gFetchMode:          ZFileMode { return gUseCloud ? .cloudOnly : .localOnly }
 var          gWidgetFont:              ZFont { return .systemFont(ofSize: fontSize) }
 var       gFavoritesFont:              ZFont { return .systemFont(ofSize: fontSize * kReductionRatio) }
 
@@ -84,6 +83,12 @@ var gExpandedZones : [String] {
 var gHere: Zone {
     get { return gCloudManager.hereZone }
     set { gCloudManager.hereZone = newValue }
+}
+
+
+var gMathewStyleUI : Bool {
+    get { return getPreferencesBool(   for: kMathewStyle, defaultBool: false) }
+    set { setPreferencesBool(newValue, for: kMathewStyle) }
 }
 
 

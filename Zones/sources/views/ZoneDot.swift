@@ -26,11 +26,11 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     weak var     widget: ZoneWidget?
     var        innerDot: ZoneDot?
     var       dragStart: CGPoint? = nil
-    var        isToggle:  Bool = true
+    var        isReveal:  Bool = true
     var      isInnerDot:  Bool = false
     var      isDragDrop:  Bool { return widgetZone == gDragDropZone }
     var      widgetZone: Zone? { return widget?.widgetZone }
-    var isDragDotHidden:  Bool { return widgetZone?.onlyShowToggleDot ?? true }
+    var isDragDotHidden:  Bool { return widgetZone?.onlyShowRevealDot ?? true }
 
 
     var innerOrigin: CGPoint? {
@@ -56,7 +56,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     var isDropTarget: Bool {
-        if  let   index = widgetZone?.siblingIndex, !isToggle {
+        if  let   index = widgetZone?.siblingIndex, !isReveal {
             let isIndex = gDragDropIndices?.contains(index)
             let  isDrop = widgetZone?.parentZone == gDragDropZone
 
@@ -71,7 +71,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
     var toggleDotIsVisible: Bool {
         var isHidden = false
-        if  let zone = widgetZone, isInnerDot, isToggle {
+        if  let zone = widgetZone, isInnerDot, isReveal {
             isHidden = !zone.canTravel && zone.fetchableCount == 0 && !isDragDrop
         }
         
@@ -84,12 +84,12 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     var         ratio:  CGFloat { return widget?.ratio ?? 1.0 }
-    var innerDotWidth:  CGFloat { return ratio * CGFloat(isToggle ? gDotHeight : isDragDotHidden ? 0.0 : gDotWidth) }
+    var innerDotWidth:  CGFloat { return ratio * CGFloat(isReveal ? gDotHeight : isDragDotHidden ? 0.0 : gDotWidth) }
     var innerDotHeight: CGFloat { return ratio * CGFloat(gDotHeight) }
 
 
-    func setupForWidget(_ iWidget: ZoneWidget, asToggle: Bool) {
-        isToggle = asToggle
+    func setupForWidget(_ iWidget: ZoneWidget, asReveal: Bool) {
+        isReveal = asReveal
         widget   = iWidget
 
         if isInnerDot {
@@ -109,10 +109,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 addSubview(innerDot!)
             }
 
-            innerDot!.setupForWidget(iWidget, asToggle: isToggle)
+            innerDot!.setupForWidget(iWidget, asReveal: isReveal)
             snp.removeConstraints()
             snp.makeConstraints { make in
-                var   width = !isToggle && isDragDotHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) - 42.0 + innerDotWidth
+                var   width = !isReveal && isDragDotHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) - 42.0 + innerDotWidth
                 let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
 
                 if !iWidget.isInMain {
@@ -247,19 +247,13 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
         if  let              zone = widgetZone, isVisible(dirtyRect) {
             let isCurrentFavorite = zone.isCurrentFavorite
-            let          bammable = zone.isInFavorites && !zone.isBookmark
-            let              name = zone.zoneName
 
             if  toggleDotIsVisible {
                 if  isInnerDot {
                     let showTinyCenterDot = zone.canTravel && zone.fetchableCount == 0
-                    let       dotIsFilled = isToggle ? (!zone.isRootOfFavorites && (!zone.showChildren || zone.hasMissingChildren() || showTinyCenterDot || isDragDrop)) : (zone.isGrabbed || isCurrentFavorite)
-                    let       strokeColor = isToggle && isDragDrop ?    gRubberbandColor : zone.color
+                    let       dotIsFilled = isReveal ? (!zone.isRootOfFavorites && (!zone.showChildren || showTinyCenterDot || isDragDrop)) : (zone.isGrabbed || isCurrentFavorite)
+                    let       strokeColor = isReveal && isDragDrop ?    gRubberbandColor : zone.color
                     var         fillColor = dotIsFilled ? strokeColor : gBackgroundColor
-
-                    if  bammable && name == "files" {
-                        bam("gotcha!")
-                    }
 
                     /////////
                     // DOT //
@@ -269,7 +263,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     strokeColor.setStroke()
                     drawDot(in: dirtyRect)
 
-                    if  isToggle {
+                    if  isReveal {
                         if  showTinyCenterDot {
 
                             /////////////////////
@@ -290,15 +284,11 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                         fillColor.setFill()
                         drawAccessDecoration(of: type, in: dirtyRect)
                     }
-                } else if isToggle {
+                } else if isReveal {
 
                     /////////////////////
                     // TINY OUTER DOTS //
                     /////////////////////
-
-                    if  bammable && name == "publish" {
-                        bam("gotcha!")
-                    }
 
                     // addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.red.cgColor)
                     drawTinyDots(dirtyRect)

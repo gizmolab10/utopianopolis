@@ -52,7 +52,7 @@ class Zone : ZRecord {
     var       grabbedTextColor:       ZColor  { return color.darker(by: 3.0) }
     var directChildrenWritable:         Bool  { return directAccess == .eChildrenWritable || directAccess == .eDefaultName }
     var    hasAccessDecoration:         Bool  { return !isTextEditable || directChildrenWritable }
-    var      onlyShowToggleDot:         Bool  { return (isRootOfFavorites && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
+    var      onlyShowRevealDot:         Bool  { return (isRootOfFavorites && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
     var      isWritableByUseer:         Bool  { return isTextEditable || userHasAccess }
     var      isCurrentFavorite:         Bool  { return self == gFavoritesManager.currentFavorite }
     var       accessIsChanging:         Bool  { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
@@ -1079,20 +1079,6 @@ class Zone : ZRecord {
     }
 
 
-    func extendNeedForChildren(to iLevel: Int) {
-        traverseProgeny { iZone -> ZTraverseStatus in
-            if iLevel < iZone.level {
-                return .eSkip
-            } else {
-                iZone.needChildren()
-                iZone.needCount()
-            }
-
-            return .eContinue
-        }
-    }
-
-
     // MARK:- children
     // MARK:-
 
@@ -1143,6 +1129,7 @@ class Zone : ZRecord {
         if  let child = iChild,
             addChild(child, at: iIndex) != nil {
 
+            needCount()
             children.updateOrder()
         }
     }
@@ -1195,8 +1182,6 @@ class Zone : ZRecord {
             }
 
             newChild.parentZone = self
-
-            needCount()
 
             // self.columnarReport(" ADDED", child.decoratedName)
 
@@ -1381,29 +1366,37 @@ class Zone : ZRecord {
 
 
     func fullUpdateProgenyCount() {
-        safeUpdateProgenyCount([])
+        safeUpdateCounts([])
         // fastUpdateProgenyCount()
     }
 
 
-    func safeUpdateProgenyCount(_ iMissing: [Zone]) {
-        if !iMissing.contains(self) && !hasMissingChildren() { // has missing children -> incomplete count information
-            let missing = iMissing + [self]
-            var counter = 0
+    func safeUpdateCounts(_ iVisited: [Zone], includingFetchable: Bool = false) {
+        if !iVisited.contains(self) { // && !hasMissingChildren() { // has missing children -> incomplete count information
+            let inclusive = iVisited + [self]
+            var   counter = 0
 
             for child in children {
                 if  child.isBookmark {
                     counter += 1
                 } else {
-                    child.safeUpdateProgenyCount(missing)
+                    child.safeUpdateCounts(inclusive, includingFetchable: includingFetchable)
 
                     counter += child.fetchableCount + child.progenyCount
                 }
             }
 
-            progenyCount = counter
+            if  fetchableCount != count && includingFetchable {
+                fetchableCount  = count
 
-            needSave()
+                needSave()
+            }
+
+            if  progenyCount != counter {
+                progenyCount  = counter
+
+                needSave()
+            }
         }
     }
 

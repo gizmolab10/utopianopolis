@@ -225,8 +225,6 @@ class ZRecordsManager: NSObject {
 
 
     @discardableResult func addCKRecord(_ iRecord: CKRecord, for states: [ZRecordState]) -> Bool {
-        var wasAdded = false
-
         for state in states {
             if  let  record  = registeredCKRecord(iRecord, forAnyOf: [state]) {
                 if   record != iRecord {
@@ -235,7 +233,9 @@ class ZRecordsManager: NSObject {
                         name = iRecord.decoratedName
                     }
 
-                    columnarReport("ADDING TWICE!", name + " (for: \(state))")
+                    columnarReport("PREVENTING ADDING TWICE!", name + " (for: \(state))")
+
+                    return false
                 }
             } else {
                 var names = recordNamesForState(state)
@@ -244,14 +244,14 @@ class ZRecordsManager: NSObject {
                 if !names.contains(name) {
                     names.append(name)
 
-                    wasAdded = true
-                }
+                    recordNamesByState[state] = names
 
-                recordNamesByState[state] = names
+                    return true
+                }
             }
         }
 
-        return wasAdded
+        return false
     }
 
 

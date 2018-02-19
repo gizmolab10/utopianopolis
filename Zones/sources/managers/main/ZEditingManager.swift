@@ -412,24 +412,6 @@ class ZEditingManager: NSObject {
     }
 
 
-    func applyGenerationally(_ show: Bool, extreme: Bool = false) {
-        let       zone = gSelectionManager.rootMostMoveable
-        var goal: Int? = nil
-
-        if !show {
-            goal = extreme ? zone.level - 1 : zone.highestExposed - 1
-        } else if  extreme {
-            goal = Int.max
-        } else if let lowest = zone.lowestExposed {
-            goal = lowest + 1
-        }
-
-        toggleDotUpdate(show: show, zone: zone, to: goal) {
-            self.redrawSyncRedraw()
-        }
-    }
-
-
     func alphabetize(_ iBackwards: Bool = false) {
         alterOrdering { iZones -> ([Zone]) in
             return iZones.sorted { (a, b) -> Bool in
@@ -747,12 +729,30 @@ class ZEditingManager: NSObject {
     }
 
 
-    // MARK:- toggle dot
+    // MARK:- reveal dot
     // MARK:-
 
 
-    func toggleDotUpdate(show: Bool, zone: Zone, to iGoal: Int? = nil, onCompletion: Closure?) {
-        toggleDotRecurse(show, zone, to: iGoal) {
+    func applyGenerationally(_ show: Bool, extreme: Bool = false) {
+        let        zone = gSelectionManager.rootMostMoveable
+        var level: Int? = nil
+
+        if !show {
+            level = extreme ? zone.level - 1 : zone.highestExposed - 1
+        } else if  extreme {
+            level = Int.max
+        } else if let lowest = zone.lowestExposed {
+            level = lowest + 1
+        }
+
+        generationalUpdate(show: show, zone: zone, to: level) {
+            self.redrawSyncRedraw()
+        }
+    }
+
+
+    func generationalUpdate(show: Bool, zone: Zone, to iLevel: Int? = nil, onCompletion: Closure?) {
+        recursiveUpdate(show, zone, to: iLevel) {
 
             ///////////////////////////////////////////////////////////
             // delay executing this until the last time it is called //
@@ -763,7 +763,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func toggleDotRecurse(_ show: Bool, _ zone: Zone, to iGoal: Int?, onCompletion: Closure?) {
+    func recursiveUpdate(_ show: Bool, _ zone: Zone, to iLevel: Int?, onCompletion: Closure?) {
         if !show && zone.isGrabbed && (zone.count == 0 || !zone.showChildren) {
 
             //////////////////////////////////
@@ -780,7 +780,7 @@ class ZEditingManager: NSObject {
 
                     parent.grab()
                     
-                    self.toggleDotRecurse(show, parent, to: iGoal, onCompletion: onCompletion)
+                    self.recursiveUpdate(show, parent, to: iLevel, onCompletion: onCompletion)
                 } else {
                     onCompletion?()
                 }
@@ -791,13 +791,13 @@ class ZEditingManager: NSObject {
             // ALTER CHILDREN //
             ////////////////////
 
-            let  goal = iGoal ?? zone.level + (show ? 1 : -1)
+            let level = iLevel ?? zone.level + (show ? 1 : -1)
             let apply = {
                 zone.traverseAllProgeny { iChild in
                     if           !iChild.isBookmark {
-                        if        iChild.level >= goal && !show {
+                        if        iChild.level >= level && !show {
                                   iChild.concealChildren()
-                        } else if iChild.level  < goal && show {
+                        } else if iChild.level  < level && show {
                                   iChild.revealChildren()
                         }
                     }
@@ -815,7 +815,7 @@ class ZEditingManager: NSObject {
                 apply()
             } else {
                 zone.needProgeny()
-                gBatchOperationsManager.children(.all, goal) { iSame in
+                gBatchOperationsManager.children(.all, level) { iSame in
                     apply()
                 }
             }
@@ -823,8 +823,8 @@ class ZEditingManager: NSObject {
     }
 
 
-    func toggleDotActionOnZone(_ iZone: Zone?) {
-        if  let zone = iZone, !zone.onlyShowToggleDot {
+    func revealDotClickAction(for iZone: Zone?) {
+        if  let zone = iZone, !zone.onlyShowRevealDot {
             let    s = gSelectionManager
 
             if gIsEditingText {
@@ -838,18 +838,13 @@ class ZEditingManager: NSObject {
             }
 
             if  zone.fetchableCount == 0 && zone.count == 0 {
-                gTravelManager.maybeTravelThrough(zone) {
+                gTravelManager.maybeTravelThrough(zone) { // email, hyperlink, bookmark
                     self.redrawSyncRedraw()
-                }
-            } else if zone.showChildren && zone.hasMissingChildren() {
-                zone.needChildren()
-                gBatchOperationsManager.children { iSame in
-                    self.signalFor(nil, regarding: .redraw)
                 }
             } else {
                 let show = !zone.showChildren
 
-                toggleDotUpdate(show: show, zone: zone) {
+                self.generationalUpdate(show: show, zone: zone) {
                     self.redrawSyncRedraw()
                 }
             }
@@ -1339,29 +1334,29 @@ class ZEditingManager: NSObject {
             // MOVE ZONE THROUGH A BOOKMARK //
             //////////////////////////////////
 
-            var         mover = zone
+            var     movedZone = zone
             let    targetLink = there.crossLink
             let     sameGraph = zone.databaseID == targetLink?.databaseID
             let grabAndTravel = {
                 gTravelManager.travelThrough(there) { object, kind in
                     let there = object as! Zone
 
-                    self.moveZone(mover, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
-                        mover.recursivelyApplyDatabaseID(targetLink?.databaseID)
-                        mover.grab()
+                    self.moveZone(movedZone, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
+                        movedZone.recursivelyApplyDatabaseID(targetLink?.databaseID)
+                        movedZone.grab()
                         onCompletion?()
                     }
                 }
             }
 
-            mover.orphan()
+            movedZone.orphan()
 
             if sameGraph {
                 grabAndTravel()
             } else {
-                mover.needDestroy()
+                movedZone.needDestroy()
 
-                mover = mover.deepCopy()
+                movedZone = movedZone.deepCopy()
 
                 gBatchOperationsManager.sync { iSame in
                     grabAndTravel()

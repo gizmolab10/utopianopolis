@@ -136,29 +136,31 @@ class ZControllersManager: NSObject {
     }
 
 
-    func updateCounts() {
-        var alsoProgenyCounts = false
+    func updateNeededCounts() {
+        for dbID in gAllDatabaseIDs {
+            var alsoProgenyCounts = false
+            let           manager = gRemoteStoresManager.cloudManagerFor(dbID)
+            manager.fullUpdate(for: [.needsCount]) { state, iZRecord in
+                if  let zone                 = iZRecord as? Zone {
+                    if  zone.fetchableCount != zone.count {
+                        zone.fetchableCount  = zone.count
+                        alsoProgenyCounts    = true
 
-        gCloudManager.fullUpdate(for: [.needsCount]) { state, record in
-            if  let zone            = record as? Zone {
-                if  zone    .count != zone.fetchableCount {
-                    zone.maybeNeedSave()
+                        zone.maybeNeedSave()
+                    }
                 }
-
-                zone.fetchableCount = zone.count
-                alsoProgenyCounts   = true
             }
-        }
 
-        if alsoProgenyCounts {
-            gRoot?.safeUpdateProgenyCount([])
+            if  alsoProgenyCounts {
+                manager.rootZone?.safeUpdateCounts([])
+            }
         }
     }
 
 
     func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
         FOREGROUND(canBeDirect: true) {
-            self.updateCounts() // clean up after fetch children
+            self.updateNeededCounts() // clean up after adding or removing children
 
             for (identifier, signalObject) in self.signalObjectsByControllerID {
                 let isInformation = identifier == .information

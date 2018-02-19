@@ -104,17 +104,17 @@ class ZBatchOperationsManager: ZOperationsManager {
     func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .onboard,  to: .read,                                                      onCompletion) }
     func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,     to: .traits,                                                    onCompletion) }
     func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .save,     to: .subscribe,                                                 onCompletion) }
-    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash,                                                             .write]) { onCompletion() } }
-    func  fetchLost(_ onCompletion: @escaping Closure) { setupAndRun([.fetchlost,                           .save, .children,                  .write]) { onCompletion() } }
-    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete,  .fetch, .parents,         .save, .children,         .traits, .write]) { onCompletion() } }
+    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash,                                                                   ]) { onCompletion() } }
+    func  fetchLost(_ onCompletion: @escaping Closure) { setupAndRun([.fetchlost,                           .save, .children,                        ]) { onCompletion() } }
+    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete,  .fetch, .parents,         .save, .children,         .traits        ]) { onCompletion() } }
     func      pSave(_ onCompletion: @escaping Closure) { setupAndRun([                                      .save,                             .write]) { onCompletion() } }
-    func      pRoot(_ onCompletion: @escaping Closure) { setupAndRun([.root,                                .save, .children,         .traits, .write]) { onCompletion() } }
+    func      pRoot(_ onCompletion: @escaping Closure) { setupAndRun([.root,                                .save, .children,         .traits        ]) { onCompletion() } }
     func      pSync(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents, .merge, .save, .children,         .traits, .write]) { onCompletion() } }
-    func    pTravel(_ onCompletion: @escaping Closure) { setupAndRun([.root,              .parents,                .children, .fetch, .traits, .write]) { onCompletion() } }
-    func   pParents(_ onCompletion: @escaping Closure) { setupAndRun([                    .parents,                                   .traits, .write]) { onCompletion() } }
-    func  pFamilies(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents,                .children,         .traits, .write]) { onCompletion() } }
-    func pBookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks, .fetch,                   .save,                    .traits, .write]) { onCompletion() } }
-    func  pChildren(_ onCompletion: @escaping Closure) { setupAndRun([                                             .children,         .traits, .write]) { onCompletion() } }
+    func    pTravel(_ onCompletion: @escaping Closure) { setupAndRun([.root,              .parents,                .children, .fetch, .traits        ]) { onCompletion() } }
+    func   pParents(_ onCompletion: @escaping Closure) { setupAndRun([                    .parents,                                   .traits        ]) { onCompletion() } }
+    func  pFamilies(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents,                .children,         .traits        ]) { onCompletion() } }
+    func pBookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks, .fetch,                   .save,                    .traits        ]) { onCompletion() } }
+    func  pChildren(_ onCompletion: @escaping Closure) { setupAndRun([                                             .children,         .traits        ]) { onCompletion() } }
 
 
     // MARK:- batches

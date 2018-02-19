@@ -24,15 +24,34 @@ class ZFileManager: NSObject {
 
 
     var isSaving = [false, false] // not allow another save while file is being written
+    var  doWrite = [false, false]
 
 
     // MARK:- API
     // MARK:-
 
 
+    func needWrite(for  databaseID: ZDatabaseID?) {
+        if  let  dbID = databaseID,
+            let index = indexOf(dbID) {
+            doWrite[index] = true
+        }
+    }
+
+
+    func needsWrite(for  databaseID: ZDatabaseID?) -> Bool {
+        if  let  dbID = databaseID,
+            let index = indexOf(dbID) {
+            return doWrite[index]
+        }
+
+        return false
+    }
+
+
     func write(for databaseID: ZDatabaseID?) {
         if  let        dbID = databaseID,
-            let       index = indexOf(dbID), !isSaving[index],
+            let       index = indexOf(dbID), !isSaving[index], doWrite[index],
             let        root = gRemoteStoresManager.rootZone(for: dbID),
             dbID           != .favoritesID,
             gSaveMode      != .cloudOnly {
@@ -59,7 +78,8 @@ class ZFileManager: NSObject {
 
                 if  FileManager.default.createFile(atPath: path, contents: data) {}
 
-                self.isSaving[index] = false // end prevention of rewrite of file
+                self  .isSaving[index] = false // end prevention of rewrite of file
+                self.doWrite[index] = false
             }
         }
     }

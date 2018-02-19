@@ -114,7 +114,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             snp.removeConstraints()
             snp.makeConstraints { make in
                 let textWidth = text!.widthForFont(preferredFont)
-                let  hideText = widgetZone?.onlyShowToggleDot ?? true
+                let  hideText = widgetZone?.onlyShowRevealDot ?? true
                 let    height = gGenericOffset.height
                 let     width = hideText ? 0.0 : textWidth + 5.0
 

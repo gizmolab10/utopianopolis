@@ -37,7 +37,7 @@ class ZToolsController: ZGenericTableController {
 
 
     override func numberOfRows(in tableView: ZTableView) -> Int {
-        return !gIsSpecialUser ? 0 : 2 + (gIsLate ? 1 : 0)
+        return !gIsSpecialUser ? 0 : 3 + (gIsLate ? 1 : 0)
     }
 
 
@@ -139,10 +139,12 @@ class ZToolsController: ZGenericTableController {
     func recount() {
         for dbID in gAllDatabaseIDs {
             let manager = gRemoteStoresManager.cloudManagerFor(dbID)
-            manager        .hereZone.safeUpdateProgenyCount([])
-            manager       .trashZone.safeUpdateProgenyCount([])
-            manager.lostAndFoundZone.safeUpdateProgenyCount([])
+            manager        .hereZone.safeUpdateCounts([], includingFetchable: true)
+            manager       .trashZone.safeUpdateCounts([], includingFetchable: true)
+            manager.lostAndFoundZone.safeUpdateCounts([], includingFetchable: true)
         }
+
+        gFavoritesManager .rootZone?.safeUpdateCounts([], includingFetchable: true)
 
         syncToCloudAndSignalFor(nil, regarding: .redraw) {}
     }

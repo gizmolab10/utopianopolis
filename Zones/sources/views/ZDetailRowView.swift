@@ -102,12 +102,12 @@ class ZDetailRowView: ZTableRowView {
 
 
     func update() {
-        updateToggleImage()
+        updateRevealImage()
         updateHideableView()
     }
 
 
-    func updateToggleImage() {
+    func updateRevealImage() {
         #if os(OSX)
             if  var image = ZImage(named: "yangle.png") {
                 if  hideableIsHidden {

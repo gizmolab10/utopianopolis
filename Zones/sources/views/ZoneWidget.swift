@@ -137,7 +137,7 @@ class ZoneWidget: ZView {
         }
 
         dragDot.innerDot?.snp.removeConstraints()
-        dragDot.setupForWidget(self, asToggle: false)
+        dragDot.setupForWidget(self, asReveal: false)
         dragDot.innerDot?.snp.makeConstraints { make in
             make.right.equalTo(textWidget.snp.left).offset(-4.0)
             make.centerY.equalTo(textWidget).offset(verticalTextOffset)
@@ -148,7 +148,7 @@ class ZoneWidget: ZView {
         }
 
         toggleDot.innerDot?.snp.removeConstraints()
-        toggleDot.setupForWidget(self, asToggle: true)
+        toggleDot.setupForWidget(self, asReveal: true)
         toggleDot.innerDot?.snp.makeConstraints { make in
             make.left.equalTo(textWidget.snp.right).offset(-1.0)
             make.right.lessThanOrEqualToSuperview().offset(-1.0)
@@ -524,7 +524,7 @@ class ZoneWidget: ZView {
             let        isGrabbed = zone.isGrabbed
             textWidget.textColor = isGrabbed ? zone.grabbedTextColor : ZColor.black
 
-            if gRubyStyleUI {
+            if gMathewStyleUI {
                 addBorder(thickness: CGFloat(gLineThickness), radius: CGFloat(50.0) / CGFloat(zone.level + 1), color: zone.color.cgColor)
             }
 
@@ -534,7 +534,7 @@ class ZoneWidget: ZView {
 
             if zone.showChildren {
                 if  childrenPass || gIsDragging || gEditorView?.rubberbandRect != nil {
-                    if !gRubyStyleUI {
+                    if !gMathewStyleUI {
                         for child in childrenWidgets {
                             drawLine(to: child)
                         }

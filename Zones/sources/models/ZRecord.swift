@@ -168,8 +168,8 @@ class ZRecord: NSObject {
     func cloudProperties() -> [String] { return [] }
     func   register() { cloudManager?  .registerZRecord(self) }
     func unregister() { cloudManager?.unregisterZRecord(self) }
-    func hasMissingChildren() -> Bool { return false }
-    func hasMissingProgeny()  -> Bool { return false }
+    func hasMissingChildren() -> Bool { return true }
+    func hasMissingProgeny()  -> Bool { return true }
 
 
     // MARK:- properties
@@ -265,10 +265,8 @@ class ZRecord: NSObject {
 
 
     func needProgeny() {
-        if  !gFullFetch || hasMissingProgeny() {
-            addState(.needsProgeny)
-            removeState(.needsChildren)
-        }
+        addState(.needsProgeny)
+        removeState(.needsChildren)
     }
 
 
@@ -282,9 +280,18 @@ class ZRecord: NSObject {
 
 
     func needChildren() {
-        if   !isBookmark && // all bookmarks are childless, by design
-            (!gFullFetch || (showChildren && hasMissingChildren() && !needsProgeny)) {
+        if !isBookmark && // all bookmarks are childless, by design
+            showChildren &&
+            hasMissingChildren() &&
+            !needsProgeny {
             addState(.needsChildren)
+        }
+    }
+
+    
+    func maybeNeedProgeny() {
+        if  hasMissingProgeny() {
+            needProgeny()
         }
     }
 
@@ -300,6 +307,7 @@ class ZRecord: NSObject {
         if !needsDestroy, !needsFetch, !needsSave, canSave {
             removeState(.needsMerge)
             addState   (.needsSave)
+            gFileManager.needWrite(for: databaseID)
         }
     }
 

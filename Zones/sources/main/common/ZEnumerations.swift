@@ -24,42 +24,12 @@ enum ZWorkMode: Int {
     case startupMode
     case searchMode
     case graphMode
-    case essayMode
+    // case essayMode
+    // case outlineMosw
 }
 
 
-enum ZStorageType: String {
-    case properties     = "properties"
-    case bookmarks      = "bookmarks"
-    case favorites      = "favorites"
-    case children       = "children"
-    case userID         = "userID"
-    case traits         = "traits"
-    case graph          = "graph"
-    case date           = "date"
-
-    case recordName     = "recordName"
-    case parentLink     = "parentLink"
-    case attributes     = "attributes"
-    case progeny        = "progeny"
-    case access         = "access"
-    case owner          = "owner"
-    case order          = "order"
-    case color          = "color"
-    case count          = "count"
-    case needs          = "needs"
-    case link           = "link"
-    case name           = "name"
-
-    case asset          = "asset"
-    case time           = "time"
-    case text           = "text"
-    case data           = "data"
-    case type           = "type"
-}
-
-
-enum ZCountsMode: Int {
+enum ZCountsMode: Int { // do not change the order, they are persisted
     case none
     case dots
     case fetchable
@@ -97,5 +67,35 @@ struct ZDetailsViewID: OptionSet {
     static let       Tools = ZDetailsViewID(rawValue: 1 << 3)
     static let       Debug = ZDetailsViewID(rawValue: 1 << 4)
     static let         All = ZDetailsViewID(rawValue: 0xFFFF)
+}
+
+
+enum ZStorageType: String {
+    case bookmarks  = "bookmarks"   // general
+    case favorites  = "favorites"
+    case userID     = "userID"
+    case graph      = "graph"
+    case date       = "date"
+
+    case recordName = "recordName"  // zones
+    case parentLink = "parentLink"
+    case attributes = "attributes"
+    case children   = "children"
+    case progeny    = "progeny"
+    case traits     = "traits"
+    case access     = "access"
+    case owner      = "owner"
+    case order      = "order"
+    case color      = "color"
+    case count      = "count"
+    case needs      = "needs"
+    case link       = "link"
+    case name       = "name"
+
+    case asset      = "asset"       // traits
+    case time       = "time"
+    case text       = "text"
+    case data       = "data"
+    case type       = "type"
 }
 
