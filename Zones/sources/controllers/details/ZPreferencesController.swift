@@ -83,9 +83,9 @@ class ZPreferencesController: ZGenericController {
 
         if  let     identifier = iColorBox.identifier {
             switch (identifier) {
-            case "drag targets":                  gRubberbandColor = color
-            case   "background":                  gBackgroundColor = color
-            case        "zones": gSelectionManager.firstGrab.color = color
+            case "drag targets":               gRubberbandColor = color
+            case   "background":               gBackgroundColor = color
+            case        "zones": gSelectionManager.grabbedColor = color
             default:             break
             }
 

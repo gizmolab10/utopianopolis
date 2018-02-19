@@ -71,6 +71,9 @@ class Zone : ZRecord {
     var               hasColor:         Bool  { return zoneColor != nil && zoneColor != "" }
     var                isEmail:         Bool  { return hasTrait(for: .eEmail) && email != "" }
     var                isTrash:         Bool  { return recordName == kTrashName }
+    var              isInTrash:         Bool  { return root?.isTrash           ?? false }
+    var          isInFavorites:         Bool  { return root?.isRootOfFavorites ?? false }
+    var       isInLostAndFound:         Bool  { return root?.isLostAndFound    ?? false }
 
 
     var email: String? {
@@ -111,31 +114,16 @@ class Zone : ZRecord {
     }
 
 
-    var isInTrash: Bool {
-        var result = false
-
-        if !isTrash {
-            traverseAllAncestors { iZone in
-                if iZone.isTrash {
-                    result = true
-                }
-            }
-        }
-
-        return result
-    }
-
-
-    var isInFavorites: Bool {
-        var result = false
+    var root: Zone? {
+        var base: Zone? = nil
 
         traverseAllAncestors { iZone in
-            if iZone.isRootOfFavorites {
-                result = true
+            if iZone.isRoot {
+                base = iZone
             }
         }
 
-        return result
+        return base
     }
 
 

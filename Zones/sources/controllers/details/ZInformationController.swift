@@ -19,7 +19,6 @@ import Foundation
 class ZInformationController: ZGenericController {
 
 
-    @IBOutlet var    fractionInMemory: ZProgressIndicator?
     @IBOutlet var operationCountLabel: ZTextField?
     @IBOutlet var     totalCountLabel: ZTextField?
     @IBOutlet var      graphNameLabel: ZTextField?
@@ -28,8 +27,7 @@ class ZInformationController: ZGenericController {
 
 
     override func setup() {
-        controllerID               = .information
-        fractionInMemory?.minValue = 0
+        controllerID = .information
     }
 
 
@@ -46,16 +44,14 @@ class ZInformationController: ZGenericController {
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
         if ![.search, .found].contains(iKind) && gReadyState {
             let  (count, notSavableCount) = gCloudManager.undeletedCounts
-            let                     total = gRemoteStoresManager.rootProgenyCount // TODO wrong manager
+            let                     total = gRemoteStoresManager.rootProgenyCount
             let            operationCount = gBatchOperationsManager.queue.operationCount
             let                      zone = gSelectionManager.rootMostMoveable
             let                      dbID = zone.databaseID
+            graphNameLabel?         .text = dbID == nil ? "" : dbID!.rawValue + " database"
             totalCountLabel?        .text = "of \(total), retrieved: \(count) + \(notSavableCount)"
-            graphNameLabel?         .text = dbID == nil ? "" : "graph: \(dbID!.rawValue)"
             operationCountLabel?    .text = operationCount == 0 ? "" : "\(operationCount) cloud operation\(operationCount == 1 ? "" : "s") in progress"
             versionLabel?           .text = versionText
-            fractionInMemory?.doubleValue = Double(count)
-            fractionInMemory?   .maxValue = Double(total)
 
             if iKind != .startup {
                 levelLabel?         .text = "level: \(zone.level)"

@@ -132,6 +132,16 @@ class ZSelectionManager: NSObject {
     }
 
 
+    var grabbedColor: ZColor {
+        get { return firstGrab.color }
+        set {
+            for grab in currentGrabs {
+                grab.color = newValue
+            }
+        }
+    }
+
+
     var firstGrab: Zone {
         var grabbed: Zone? = nil
 

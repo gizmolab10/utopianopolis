@@ -37,7 +37,7 @@ class ZToolsController: ZGenericTableController {
 
 
     override func numberOfRows(in tableView: ZTableView) -> Int {
-        return !gIsSpecialUser ? 0 : 3 + (gIsLate ? 1 : 0)
+        return !gIsSpecialUser ? 0 : 2 + (gIsLate ? 1 : 0)
     }
 
 

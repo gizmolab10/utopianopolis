@@ -116,17 +116,17 @@ class ZRecordsManager: NSObject {
 
         for zRecord in zRecords {
             if  let zone = zRecord as? Zone {
-                if !zone.canSave || zone.isInTrash {
-                    uCount -= 1
-                }
-
                 if !zone.canSave {
                     nCount += 1
+                } else if let root = zone.root, !root.isTrash, !root.isLostAndFound, !root.isRootOfFavorites {
+                    continue
                 }
+
+                uCount -= 1
             }
         }
 
-        return (uCount, nCount)
+        return (uCount - 2, nCount)
     }
 
 

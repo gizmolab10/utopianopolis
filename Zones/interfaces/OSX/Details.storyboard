@@ -13,22 +13,22 @@
             <objects>
                 <viewController id="fxO-Qj-JeN" customClass="ZInformationController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="mbO-Ma-L1E">
-                        <rect key="frame" x="0.0" y="0.0" width="228" height="175"/>
+                        <rect key="frame" x="0.0" y="0.0" width="228" height="121"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Idb-0r-rlP">
-                                <rect key="frame" x="-2" y="150" width="232" height="17"/>
+                                <rect key="frame" x="-2" y="100" width="232" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="qvn-RA-Skg">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <progressIndicator wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="Rna-eb-6vd">
-                                <rect key="frame" x="20" y="89" width="188" height="60"/>
-                            </progressIndicator>
+                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="3Ux-1f-iYa">
+                                <rect key="frame" x="0.0" y="93" width="228" height="5"/>
+                            </box>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3v8-d2-yo8" userLabel="Total Count Label">
-                                <rect key="frame" x="-2" y="69" width="232" height="19"/>
+                                <rect key="frame" x="-2" y="72" width="232" height="19"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="19" id="iSu-QB-gpG"/>
                                 </constraints>
@@ -39,7 +39,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="f4m-8C-5H1">
-                                <rect key="frame" x="-2" y="48" width="232" height="19"/>
+                                <rect key="frame" x="-2" y="51" width="232" height="19"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="19" id="fsf-bJ-Uu6"/>
                                 </constraints>
@@ -50,7 +50,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BcI-eM-ytK">
-                                <rect key="frame" x="-2" y="27" width="232" height="19"/>
+                                <rect key="frame" x="-2" y="30" width="232" height="19"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="19" id="G6i-MA-0f5"/>
                                 </constraints>
@@ -60,8 +60,11 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="GqX-A4-bJr">
+                                <rect key="frame" x="0.0" y="23" width="228" height="5"/>
+                            </box>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fy3-JT-P1F">
-                                <rect key="frame" x="-2" y="8" width="232" height="17"/>
+                                <rect key="frame" x="-2" y="4" width="232" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="am7-ij-t8n"/>
                                 </constraints>
@@ -72,7 +75,7 @@
                                 </textFieldCell>
                             </textField>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="II2-Qf-krY">
-                                <rect key="frame" x="-6" y="145" width="34" height="33"/>
+                                <rect key="frame" x="-6" y="91" width="34" height="33"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="21" id="10P-ob-279"/>
                                     <constraint firstAttribute="height" constant="21" id="xh0-PK-ZNa"/>
@@ -87,31 +90,33 @@
                             </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="Rna-eb-6vd" firstAttribute="top" secondItem="Idb-0r-rlP" secondAttribute="bottom" constant="2" id="0yu-eb-buA"/>
-                            <constraint firstItem="3v8-d2-yo8" firstAttribute="top" secondItem="Rna-eb-6vd" secondAttribute="bottom" constant="2" id="26j-Y8-hJA"/>
                             <constraint firstAttribute="trailing" secondItem="f4m-8C-5H1" secondAttribute="trailing" id="7Hf-om-7JZ"/>
                             <constraint firstAttribute="trailing" secondItem="Idb-0r-rlP" secondAttribute="trailing" id="AVU-FT-Eip"/>
                             <constraint firstAttribute="trailing" secondItem="3v8-d2-yo8" secondAttribute="trailing" id="DAS-1R-Hli"/>
                             <constraint firstItem="3v8-d2-yo8" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" id="Fg1-yc-WkP"/>
+                            <constraint firstAttribute="trailing" secondItem="3Ux-1f-iYa" secondAttribute="trailing" id="GJj-6h-bG5"/>
+                            <constraint firstItem="GqX-A4-bJr" firstAttribute="top" secondItem="BcI-eM-ytK" secondAttribute="bottom" constant="4" id="HoY-HJ-KzO"/>
                             <constraint firstItem="II2-Qf-krY" firstAttribute="top" secondItem="mbO-Ma-L1E" secondAttribute="top" id="Joh-CX-pbH"/>
                             <constraint firstItem="BcI-eM-ytK" firstAttribute="top" secondItem="f4m-8C-5H1" secondAttribute="bottom" constant="2" id="MEl-g1-EML"/>
                             <constraint firstItem="II2-Qf-krY" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" id="MsG-oT-THs"/>
                             <constraint firstAttribute="trailing" secondItem="fy3-JT-P1F" secondAttribute="trailing" id="OUc-LV-Ccm"/>
-                            <constraint firstItem="Rna-eb-6vd" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" constant="20" id="PYj-91-grn"/>
                             <constraint firstAttribute="trailing" secondItem="BcI-eM-ytK" secondAttribute="trailing" id="SRe-Sd-lsU"/>
+                            <constraint firstItem="3Ux-1f-iYa" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" id="T0t-SA-5dY"/>
+                            <constraint firstItem="fy3-JT-P1F" firstAttribute="top" secondItem="GqX-A4-bJr" secondAttribute="bottom" constant="4" id="TX2-Xc-nAP"/>
                             <constraint firstItem="Idb-0r-rlP" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" id="VWy-93-xgo"/>
                             <constraint firstItem="BcI-eM-ytK" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" id="WMg-vr-Un4"/>
-                            <constraint firstItem="Idb-0r-rlP" firstAttribute="top" secondItem="mbO-Ma-L1E" secondAttribute="top" constant="8" id="X2M-SL-OUK"/>
-                            <constraint firstAttribute="trailing" secondItem="Rna-eb-6vd" secondAttribute="trailing" constant="20" id="a7E-He-F0G"/>
+                            <constraint firstItem="Idb-0r-rlP" firstAttribute="top" secondItem="mbO-Ma-L1E" secondAttribute="top" constant="4" id="X2M-SL-OUK"/>
+                            <constraint firstAttribute="trailing" secondItem="GqX-A4-bJr" secondAttribute="trailing" id="ZrK-vn-0im"/>
+                            <constraint firstItem="3v8-d2-yo8" firstAttribute="top" secondItem="3Ux-1f-iYa" secondAttribute="bottom" constant="4" id="al1-c5-JNX"/>
                             <constraint firstItem="f4m-8C-5H1" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" id="c7s-4i-5FS"/>
+                            <constraint firstItem="3Ux-1f-iYa" firstAttribute="top" secondItem="Idb-0r-rlP" secondAttribute="bottom" constant="4" id="fgi-nZ-8sr"/>
                             <constraint firstItem="fy3-JT-P1F" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" id="nss-Ne-0QM"/>
+                            <constraint firstItem="GqX-A4-bJr" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" id="qhQ-fA-aM8"/>
                             <constraint firstItem="f4m-8C-5H1" firstAttribute="top" secondItem="3v8-d2-yo8" secondAttribute="bottom" constant="2" id="sRb-lr-fxU"/>
-                            <constraint firstItem="fy3-JT-P1F" firstAttribute="top" secondItem="BcI-eM-ytK" secondAttribute="bottom" constant="2" id="xBJ-cM-jP8"/>
-                            <constraint firstAttribute="bottom" secondItem="fy3-JT-P1F" secondAttribute="bottom" constant="8" id="zft-Tk-mWn"/>
+                            <constraint firstAttribute="bottom" secondItem="fy3-JT-P1F" secondAttribute="bottom" constant="4" id="zft-Tk-mWn"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="fractionInMemory" destination="Rna-eb-6vd" id="1H8-rg-5qH"/>
                         <outlet property="graphNameLabel" destination="f4m-8C-5H1" id="Wu5-yB-FmB"/>
                         <outlet property="levelLabel" destination="BcI-eM-ytK" id="l2l-bk-3KS"/>
                         <outlet property="operationCountLabel" destination="fy3-JT-P1F" id="bJt-yR-hPf"/>
@@ -121,7 +126,7 @@
                 </viewController>
                 <customObject id="wYh-I6-Wpi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-279" y="1614"/>
+            <point key="canvasLocation" x="-279" y="1613"/>
         </scene>
         <!--Tools Controller-->
         <scene sceneID="OQa-jH-o6A">
