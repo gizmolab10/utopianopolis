@@ -117,7 +117,7 @@ class ZTravelManager: NSObject {
     func travel(_ atArrival: @escaping Closure) {
         createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
 
-        gSelectionManager.clearEdit()
+        gTextManager.clearEdit()
         gBatchOperationsManager.travel { iSame in
             atArrival()
             gBatchOperationsManager.save { iSaveSame in

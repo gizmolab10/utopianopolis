@@ -24,7 +24,7 @@ enum ZRelation: Int {
 
 
 let gSelectionManager = ZSelectionManager()
-var gEditedTextWidget: ZoneTextWidget? { return gSelectionManager.currentlyEditingZone?.widget?.textWidget }
+var gEditedTextWidget: ZoneTextWidget? { return gTextManager.isEditing?.widget?.textWidget }
 
 
 class ZSnapshot: NSObject {
@@ -64,17 +64,15 @@ class ZSnapshot: NSObject {
 class ZSelectionManager: NSObject {
 
 
-    var                hasGrab : Bool { return currentGrabs.count > 0 }
-    var   currentlyEditingZone : Zone? = nil
-    var isEditingStateChanging = false
-    var         pasteableZones = [Zone: (Zone?, Int?)] ()
-    var           currentGrabs = [Zone] ()
+    var        hasGrab : Bool { return currentGrabs.count > 0 }
+    var pasteableZones = [Zone: (Zone?, Int?)] ()
+    var   currentGrabs = [Zone] ()
 
 
     var snapshot : ZSnapshot {
         let          snap = ZSnapshot()
         snap.currentGrabs = currentGrabs
-        snap .databaseID = gDatabaseID
+        snap  .databaseID = gDatabaseID
         snap        .here = gHere
 
         return snap
@@ -191,8 +189,8 @@ class ZSelectionManager: NSObject {
 
         if currentGrabs.count > 0 {
             movable = firstGrab
-        } else if currentlyEditingZone != nil {
-            movable = currentlyEditingZone
+        } else if let zone = gTextManager.isEditing {
+            movable = zone
         }
 
         if  movable == nil {
@@ -209,11 +207,8 @@ class ZSelectionManager: NSObject {
 
     func clearGrab()   { currentGrabs          = [ ] }
     func clearPaste()  { pasteableZones        = [:] }
-    func clearEdit()   { currentlyEditingZone  = nil }
-    func fullResign()  { assignAsFirstResponder (nil) } // ios broken
     func editCurrent() { edit(currentMoveable) }
-    func isEditing (_ zone: Zone) -> Bool { return currentlyEditingZone == zone }
-    func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || isEditing(zone) }
+    func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || gTextManager.isEditing == zone }
     func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
 
 
@@ -241,43 +236,34 @@ class ZSelectionManager: NSObject {
     // MARK:-
 
 
-    func deferEditingStateChange() {
-        isEditingStateChanging          = true
-
-        FOREGROUND(after: 0.1) {
-            self.isEditingStateChanging = false
-        }
-    }
-
-
     func edit(_ iZone: Zone) {
         if  let     textWidget = iZone.widget?.textWidget,
             textWidget.window != nil,
             !textWidget.isFirstResponder,
-            !isEditingStateChanging,
+            !gTextManager.isEditingStateChanging,
             iZone.isWritableByUseer {
 
             assignAsFirstResponder(textWidget)
-            deferEditingStateChange()
+            gTextManager.deferEditingStateChange()
         }
 
         deselectGrabs()
 
-        currentlyEditingZone = iZone
+        gTextManager.isEditing = iZone
     }
 
 
     func stopCurrentEdit() {
-        if currentlyEditingZone != nil {
-            stopEdit(for: currentlyEditingZone!)
+        if let zone = gTextManager.isEditing {
+            stopEdit(for: zone)
         }
     }
 
 
     func stopEdit(for iZone: Zone) {
-        if  let textWidget = iZone.widget?.textWidget, textWidget.isEditingText, !isEditingStateChanging {
-            clearEdit()
-            fullResign()
+        if  let textWidget = iZone.widget?.textWidget, textWidget.isEditingText, !gTextManager.isEditingStateChanging {
+            gTextManager.clearEdit()
+            gTextManager.fullResign()
         }
     }
 
@@ -307,16 +293,18 @@ class ZSelectionManager: NSObject {
 
 
     func deselect(retaining zones: [Zone]? = nil) {
-        if  let editingZone = currentlyEditingZone {
-            if  let  widget = editingZone.widget {
-                widget.setNeedsDisplay()
-                widget.textWidget.captureText()
+        if  let editingZone = gTextManager.isEditing {
+            if  let  widget = editingZone.widget?.textWidget {
+                widget.captureText()
+                widget.clearEditState()
+                widget.layoutText()
+                editingZone.widget?.setNeedsDisplay()
             }
 
-            clearEdit()
+            gTextManager.clearEdit()
         }
 
-        fullResign()
+        gTextManager.fullResign()
         deselectGrabs(retaining: zones)
     }
 

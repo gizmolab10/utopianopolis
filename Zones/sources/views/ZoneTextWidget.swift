@@ -40,16 +40,16 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     override var isEditingText: Bool {
         get { return _isEditingText }
         set {
-            let               s = gSelectionManager
+            let                 s = gTextManager
 
-            if  _isEditingText != newValue {
-                _isEditingText  = newValue
-                font            = preferredFont
+            if  _isEditingText   != newValue {
+                _isEditingText    = newValue
+                font              = preferredFont
 
-                if  let   zone  = widgetZone {
+                if  let     zone  = widgetZone {
                     if !_isEditingText {
-                        let            grab = s.currentlyEditingZone == zone
-                        textColor           = grab || zone.colorized ? zone.grabbedTextColor : ZColor.black
+                        let  grab = s.isEditing == zone
+                        textColor = grab || zone.colorized ? zone.grabbedTextColor : ZColor.black
 
                         abortEditing() // NOTE: this does NOT remove selection highlight !!!!!!!
                         deselectAllText()
@@ -60,14 +60,15 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                             zone.grab()
                         }
 
-                        isEditingEmail        = false
-                        isEditingHyperlink    = false
+                        clearEditState()
+
+                        text                   = zone.unwrappedName
                     } else {
-                        s.currentlyEditingZone = zone
+                        s.isEditing = zone
                         textColor              = ZColor.black
                         originalText           = textToEdit
 
-                        s.deselectGrabs()
+                        gSelectionManager.deselectGrabs()
                         enableUndo()
                     }
 
@@ -76,7 +77,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     s.clearEdit()
                 }
             } else if newValue, let zone = widgetZone {
-                s.currentlyEditingZone   = zone
+                s.isEditing   = zone
             }
         }
     }
@@ -129,10 +130,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-        if !gSelectionManager.isEditingStateChanging && widgetZone?.isWritableByUseer ?? false {
+        if !gTextManager.isEditingStateChanging && widgetZone?.isWritableByUseer ?? false {
 
             if  isFirstResponder {
-                gSelectionManager.deferEditingStateChange()
+                gTextManager.deferEditingStateChange()
             }
 
             isEditingText = super.becomeFirstResponder() // becomeFirstResponder is called first so delegate methods will be called
@@ -203,7 +204,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-
     func assign(_ iText: String?, to iZone: Zone?) {
         if  let t = iText, var  zone = iZone, t != kNoName {
             gTextCapturing           = true
@@ -235,24 +235,26 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 self.updateGUI()
             }
 
-            if  isEditingHyperlink || isEditingEmail {
-                assignTextTo(zone)
-            } else {
-                if  let target = zone.bookmarkTarget {
-                    zone       = target
-                }
+            if  !isEditingHyperlink, !isEditingEmail, let target = zone.bookmarkTarget {
+                zone = target
+            }
 
-                assignTextTo(zone)
+            assignTextTo(zone)
 
-                for bookmark in zone.fetchedBookmarks {
-                    assignTextTo(bookmark)
-                }
+            for bookmark in zone.fetchedBookmarks {
+                assignTextTo(bookmark)
             }
 
             gTextCapturing = false
 
             redrawAndSync()
         }
+    }
+
+
+    func clearEditState() {
+        isEditingEmail     = false
+        isEditingHyperlink = false
     }
 
 

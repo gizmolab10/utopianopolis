@@ -305,7 +305,7 @@ extension UIWindow {
 
 
     override open var keyCommands: [UIKeyCommand]? {
-        if gSelectionManager.currentlyEditingZone != nil {
+        if gTextManager.isEditing != nil {
             return nil
         }
 

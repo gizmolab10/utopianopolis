@@ -949,8 +949,8 @@ class ZEditingManager: NSObject {
             let childName = t.substring(with: range)
             w.text        = t.stringBySmartReplacing(range, with: "")
 
-            gSelectionManager.clearEdit()
-            gSelectionManager.fullResign()
+            gTextManager.clearEdit()
+            gTextManager.fullResign()
             z.revealChildren()
             z.needChildren()
 

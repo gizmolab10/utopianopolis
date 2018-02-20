@@ -24,6 +24,7 @@ var     gShowIdentifiers                     = false
 var    gCloudUnavailable                     = false
 var   gCrippleUserAccess                     = false
 var   gKeyboardIsVisible                     = false
+var   gUseNewTextManager                     = false
 var     gDebugOperations                     = true
 var     gDebugTimerCount                     = 0
 var     gDragDropIndices: NSMutableIndexSet? = nil
@@ -36,7 +37,6 @@ var            gExpanded:          [String]? = nil
 
 var              gIsLate:               Bool { return gCloudUnavailable || gBatchOperationsManager.isLate }
 var          gIsDragging:               Bool { return gDraggedZone != nil }
-var       gIsEditingText:               Bool { return gEditorView?.window?.firstResponder?.isKind(of: ZTextView.self) ?? false }
 var    gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var  gHasPrivateDatabase:               Bool { return gUserRecordID != nil }
 var    gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor) as? ZEditorController }

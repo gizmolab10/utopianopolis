@@ -357,13 +357,16 @@ extension ZoneTextWidget {
 
     override func textDidEndEditing(_ notification: Notification) {
         if  let       number = notification.userInfo?["NSTextMovement"] as? NSNumber {
+            let        value = number.intValue
             let      isShift = NSEvent.modifierFlags().isShift
+            let       editor = currentEditor()
+            let    responder = window?.firstResponder
+            let    isEditing = value == NSOtherTextMovement && responder != nil && responder == editor
+            var key: String? = nil
 
             captureText(force: isShift) // do this before setting isEditingText so isHyperlink will not yet change
 
-            let        value = number.intValue
-            isEditingText    = value == NSOtherTextMovement
-            var key: String? = nil
+            isEditingText    = isEditing
 
             resignFirstResponder()
             deselectAllText()
@@ -384,7 +387,7 @@ extension ZoneTextWidget {
 
     override func selectAllText() {
         if  text != nil, let editor = currentEditor() {
-            gSelectionManager.deferEditingStateChange()
+            gTextManager.deferEditingStateChange()
             select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: text!.length)
         }
     }
