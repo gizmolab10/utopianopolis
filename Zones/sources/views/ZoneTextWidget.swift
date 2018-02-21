@@ -27,19 +27,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     var                 _isEditingText = false
 
 
-    var textToEdit: String {
-        if  let    name = isEditingHyperlink ? widgetZone?.hyperLink: isEditingEmail ? widgetZone?.email : widgetZone?.unwrappedName, name != kNullLink {
-            return name
-        }
-
-        return kNoName
-    }
-
-
     override var isEditingText: Bool {
         get { return _isEditingText }
         set {
-            let                 s = gTextManager
+            let                 t = gTextManager
 
             if  _isEditingText   != newValue {
                 _isEditingText    = newValue
@@ -47,14 +38,14 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
                 if  let     zone  = widgetZone {
                     if !_isEditingText {
-                        let  grab = s.currentlyEditingZone == zone
+                        let  grab = t.currentlyEditingZone == zone
                         textColor = grab || zone.colorized ? zone.grabbedTextColor : ZColor.black
 
                         abortEditing() // NOTE: this does NOT remove selection highlight !!!!!!!
                         deselectAllText()
 
                         if  grab {
-                            s.clearEdit()
+                            t.clearEdit()
 
                             zone.grab()
                         }
@@ -63,19 +54,19 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
                         text      = zone.unwrappedName
                     } else {
-                        s.edit(zone)
+                        t.edit(zone)
                         textColor = ZColor.black
 
                         gSelectionManager.deselectGrabs()
                         enableUndo()
                     }
 
-                    layoutText()
+                    layoutText(isEditing: true)
                 } else {
-                    s.clearEdit()
+                    t.clearEdit()
                 }
             } else if newValue, let zone = widgetZone {
-                s.edit(zone)
+                t.edit(zone)
             }
         }
     }
@@ -97,8 +88,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-    func layoutText() {
-        updateText()
+    func layoutText(isEditing: Bool = false) {
+        gTextManager.updateText(inZone: widgetZone, isEditing: isEditing)
         layoutTextField()
     }
 
@@ -152,35 +143,36 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 
-    override func updateText() {
-        if  let   zone = widgetZone {
-            text       = textToEdit
-            var   need = 0
+    var textWithSuffix: String {
+        var   result = widgetZone?.unwrappedName ?? kNoName
+
+        if  let zone = widgetZone {
+            var need = 0
 
             switch gCountsMode {
             case .fetchable: need = zone.indirectFetchableCount
             case .progeny:   need = zone.indirectFetchableCount + zone.progenyCount
-            default:         return
+            default:         return result
             }
 
-            if !isFirstResponder {
-                var decoration: String? = nil
+            var suffix: String? = nil
 
-                /////////////////////////////////////////
-                // add decoration for "show counts as" //
-                /////////////////////////////////////////
+            /////////////////////////////////////
+            // add suffix for "show counts as" //
+            /////////////////////////////////////
 
-                if  gShowIdentifiers, let id = widgetZone?.record.recordID {
-                    decoration = id.recordName
-                } else if (need > 1) && (!zone.showChildren || (gCountsMode == .progeny)) {
-                    decoration = String(describing: need)
-                }
+            if  gDebugShowIdentifiers && zone.record != nil {
+                suffix = zone.recordName
+            } else if (need > 1) && (!zone.showChildren || (gCountsMode == .progeny)) {
+                suffix = String(describing: need)
+            }
 
-                if  let d = decoration {
-                    text?.append("  (" + d + ")")
-                }
+            if  let s = suffix {
+                result.append("  (" + s + ")")
             }
         }
+
+        return result
     }
 
 

@@ -612,7 +612,6 @@ extension ZTextField {
 
     func selectCharacter(in range: NSRange) {}
     func alterCase(up: Bool) {}
-    func updateText() {}
     func setup() {}
 }
 

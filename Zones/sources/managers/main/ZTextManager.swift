@@ -15,29 +15,63 @@ var gEditedTextWidget: ZoneTextWidget? { return gTextManager.currentEdit?.textWi
 
 var gIsEditingText: Bool {
     if  gUseNewTextManager {
-        return gTextManager.currentEdit?.isEditing != nil
+        return gTextManager.currentEdit?.wrappedZone != nil
     } else {
         return gEditorView?.window?.firstResponder?.isKind(of: ZTextView.self) ?? false
     }
 }
 
 
-class ZEditPack: NSObject {
-    var          isEditing:           Zone? = nil
-    var     isEditingTrait:         ZTrait? = nil
+class ZWidgetWrapper: NSObject {
+    var        wrappedZone:           Zone? = nil
+    var       wrappedTrait:         ZTrait? = nil
     var       originalText:         String? = nil
     var         textWidget: ZoneTextWidget? { return widget?.textWidget }
-    var             widget:     ZoneWidget? { return gWidgetsManager.widgetForZone(isEditing) }
-    var isEditingHyperlink:            Bool { return isEditingTrait?.traitType == .eHyperlink }
-    var     isEditingEmail:            Bool { return isEditingTrait?.traitType == .eEmail }
+    var             widget:     ZoneWidget? { return gWidgetsManager.widgetForZone(wrappedZone) }
+    var isEditingHyperlink:            Bool { return wrappedTrait?.traitType == .eHyperlink }
+    var     isEditingEmail:            Bool { return wrappedTrait?.traitType == .eEmail }
 
 
     var textToEdit: String {
-        if  let    name = isEditingTrait?.text ?? isEditing?.unwrappedName, name != kNullLink {
+        if  let    name = wrappedTrait?.text ?? wrappedZone?.unwrappedName, name != kNullLink {
             return name
         }
 
         return kNoName
+    }
+
+
+    var textWithSuffix: String {
+        var   result = kNoName
+
+        if  let zone = wrappedZone {
+            result   = zone.unwrappedName
+            var need = 0
+
+            switch gCountsMode {
+            case .fetchable: need = zone.indirectFetchableCount
+            case .progeny:   need = zone.indirectFetchableCount + zone.progenyCount
+            default:         return result
+            }
+
+            var suffix: String? = nil
+
+            /////////////////////////////////////
+            // add suffix for "show counts as" //
+            /////////////////////////////////////
+
+            if  gDebugShowIdentifiers && zone.record != nil {
+                suffix = zone.recordName
+            } else if (need > 1) && (!zone.showChildren || (gCountsMode == .progeny)) {
+                suffix = String(describing: need)
+            }
+
+            if  let s = suffix {
+                result.append("  (" + s + ")")
+            }
+        }
+
+        return result
     }
 
 
@@ -47,26 +81,31 @@ class ZEditPack: NSObject {
     }
 
 
+    func updateText(isEditing: Bool = false) {
+        textWidget?.text = isEditing ? textToEdit : textWithSuffix
+    }
+
+
     func edit(_ iZRecord: ZRecord) {
-        isEditingTrait   = iZRecord as? ZTrait
-        isEditing        = iZRecord as? Zone ?? isEditingTrait?.ownerZone
+        wrappedTrait   = iZRecord as? ZTrait
+        wrappedZone        = iZRecord as? Zone ?? wrappedTrait?.ownerZone
         originalText     = textToEdit
         textWidget?.text = originalText
     }
 
 
     func clearEdit() {
-        isEditing      = nil
-        isEditingTrait = nil
+        wrappedZone      = nil
+        wrappedTrait = nil
     }
 
 
     func newCapture(_ iText: String?) -> ZRecord? {
-        if  let  trait = isEditingTrait { // this takes logical priority
+        if  let  trait = wrappedTrait { // this takes logical priority
             trait.text = iText
 
             return trait
-        } else if let zone = isEditing { // do not process if editing a trait, above
+        } else if let zone = wrappedZone { // do not process if editing a trait, above
             zone.zoneName  = iText
 
             return zone
@@ -97,7 +136,7 @@ class ZEditPack: NSObject {
 
 
     func assignTextAndSync(_ iText: String?) {
-        if  let t = iText, var  zone = isEditing, t != kNoName {
+        if  let t = iText, var  zone = wrappedZone, t != kNoName {
             let              newText = disassembleText(t)
             gTextCapturing           = true
 
@@ -116,7 +155,7 @@ class ZEditPack: NSObject {
             }
 
             for bookmark in zone.fetchedBookmarks {
-                ZEditPack(bookmark).assignAndSignal(newText)
+                ZWidgetWrapper(bookmark).assignAndSignal(newText)
             }
 
             gTextCapturing = false
@@ -144,14 +183,15 @@ class ZEditPack: NSObject {
 class ZTextManager: NSObject {
 
 
-    var currentEdit: ZEditPack? = nil
+    var currentEdit: ZWidgetWrapper? = nil
     var isEditingStateChanging = false
-    var currentlyEditingZone: Zone? { return currentEdit?.isEditing }
+    var currentlyEditingZone: Zone? { return currentEdit?.wrappedZone }
 
 
     func clearEdit() { currentEdit = nil }
     func fullResign() { assignAsFirstResponder (nil) } // ios broken
-    func edit(_ zRecord: ZRecord) { currentEdit = ZEditPack(zRecord) }
+    func edit(_ zRecord: ZRecord) { currentEdit = ZWidgetWrapper(zRecord) }
+    func updateText(inZone: Zone?, isEditing: Bool = false) { if let z = inZone { ZWidgetWrapper(z).updateText(isEditing: isEditing) } }
 
 
     func deferEditingStateChange() {
@@ -164,15 +204,15 @@ class ZTextManager: NSObject {
 
 
     func capture(force: Bool = false) {
-        if  let pack = currentEdit, let text = pack.textWidget?.text, pack.originalText != text, (!gTextCapturing || force) {
-            pack.assignTextAndSync(text)
+        if  let current = currentEdit, let text = current.textWidget?.text, current.originalText != text, (!gTextCapturing || force) {
+            current.assignTextAndSync(text)
         }
     }
 
 
     func assign(_ iText: String?, to iZone: Zone?) {
         if  let zone = iZone {
-            ZEditPack(zone).assignTextAndSync(iText)
+            ZWidgetWrapper(zone).assignTextAndSync(iText)
         }
     }
 

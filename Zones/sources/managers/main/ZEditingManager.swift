@@ -360,7 +360,7 @@ class ZEditingManager: NSObject {
 
                 zone.zoneName             = name
 
-                zone.widget?.textWidget.updateText()
+                gTextManager.updateText(inZone: zone)
             }
         }
 
@@ -925,7 +925,7 @@ class ZEditingManager: NSObject {
             grab .zoneName = iText
             grab.colorized = true
 
-            grab.widget?.textWidget.updateText()
+            gTextManager.updateText(inZone: grab)
         }
 
         if  grab.zoneName?.contains(kHalfLineOfDashes + " ") ?? false {

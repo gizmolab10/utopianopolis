@@ -45,7 +45,7 @@ class ZToolsController: ZGenericTableController {
         switch kind {
         case .eUseCloud:    return          (gUseCloud ? "Use Cloud" : "Local File Only")
         case .eFullFetch:   return         (gFullFetch ? "Full"      : "Minimal") + " Fetch"
-        case .eIdentifiers: return   (gShowIdentifiers ? "Visible"   : "Hidden")  + " Identifiers"
+        case .eIdentifiers: return   (gDebugShowIdentifiers ? "Visible"   : "Hidden")  + " Identifiers"
         case .eAccess:      return (gCrippleUserAccess ? "Crippled"  : "Normal")  + " User Access"
         case .eGather:      return "Gather Lost and Found"
         case .eRetry:       return "Retry Cloud"
@@ -92,7 +92,7 @@ class ZToolsController: ZGenericTableController {
 
     func        toggleUseCloud() {          gUseCloud = !gUseCloud; syncToCloudAndSignalFor(nil, regarding: .information) {} }
     func       toggleFullFetch() {         gFullFetch = !gFullFetch }
-    func toggleShowIdentifiers() {   gShowIdentifiers = !gShowIdentifiers }
+    func toggleShowIdentifiers() {   gDebugShowIdentifiers = !gDebugShowIdentifiers }
     func      toggleUserAccess() { gCrippleUserAccess = !gCrippleUserAccess }
 
 

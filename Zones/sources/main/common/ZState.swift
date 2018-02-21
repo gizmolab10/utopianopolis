@@ -17,37 +17,37 @@ import CloudKit
 #endif
 
 
-var            gWorkMode                     = ZWorkMode.startupMode
-var          gReadyState                     = false
-var       gTextCapturing                     = false
-var     gShowIdentifiers                     = false
-var    gCloudUnavailable                     = false
-var   gCrippleUserAccess                     = false
-var   gKeyboardIsVisible                     = false
-var   gUseNewTextManager                     = false
-var     gDebugOperations                     = true
-var     gDebugTimerCount                     = 0
-var     gDragDropIndices: NSMutableIndexSet? = nil
-var        gDragRelation:         ZRelation? = nil
-var        gDragDropZone:              Zone? = nil
-var         gDraggedZone:              Zone? = nil
-var          gDebugTimer:             Timer? = nil
-var           gDragPoint:           CGPoint? = nil
-var            gExpanded:          [String]? = nil
+var             gWorkMode                     = ZWorkMode.startupMode
+var           gReadyState                     = false
+var        gTextCapturing                     = false
+var     gCloudUnavailable                     = false
+var    gCrippleUserAccess                     = false
+var    gKeyboardIsVisible                     = false
+var gDebugShowIdentifiers                     = false
+var    gUseNewTextManager                     = false
+var      gDebugOperations                     = true
+var      gDebugTimerCount                     = 0
+var      gDragDropIndices: NSMutableIndexSet? = nil
+var         gDragRelation:         ZRelation? = nil
+var         gDragDropZone:              Zone? = nil
+var          gDraggedZone:              Zone? = nil
+var           gDebugTimer:             Timer? = nil
+var            gDragPoint:           CGPoint? = nil
+var             gExpanded:          [String]? = nil
 
-var              gIsLate:               Bool { return gCloudUnavailable || gBatchOperationsManager.isLate }
-var          gIsDragging:               Bool { return gDraggedZone != nil }
-var    gInsertionsFollow:               Bool { return gInsertionMode == .follow }
-var  gHasPrivateDatabase:               Bool { return gUserRecordID != nil }
-var    gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor) as? ZEditorController }
-var          gEditorView:      ZoneDragView? { return gEditorController?.editorView }
-var           gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
-var            gDotWidth:             Double { return gDotHeight * 0.75 }
-var             fontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
-var            gSaveMode:          ZFileMode { return gUseCloud ? .all       : .localOnly }
-var           gFetchMode:          ZFileMode { return gUseCloud ? .cloudOnly : .localOnly }
-var          gWidgetFont:              ZFont { return .systemFont(ofSize: fontSize) }
-var       gFavoritesFont:              ZFont { return .systemFont(ofSize: fontSize * kReductionRatio) }
+var               gIsLate:               Bool { return gCloudUnavailable || gBatchOperationsManager.isLate }
+var           gIsDragging:               Bool { return gDraggedZone != nil }
+var     gInsertionsFollow:               Bool { return gInsertionMode == .follow }
+var   gHasPrivateDatabase:               Bool { return gUserRecordID != nil }
+var     gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor) as? ZEditorController }
+var           gEditorView:      ZoneDragView? { return gEditorController?.editorView }
+var            gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
+var             gDotWidth:             Double { return gDotHeight * 0.75 }
+var             gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
+var             gSaveMode:          ZFileMode { return gUseCloud ? .all       : .localOnly }
+var            gFetchMode:          ZFileMode { return gUseCloud ? .cloudOnly : .localOnly }
+var           gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
+var        gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kReductionRatio) }
 
 
 func toggleDatabaseID() {

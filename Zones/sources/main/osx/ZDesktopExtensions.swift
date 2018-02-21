@@ -346,11 +346,11 @@ extension ZoneTextWidget {
             widgetZone?.zoneName = kLineOfDashes
             isEditingText        = false
 
-            updateText()
-//        } else {
+            gTextManager.updateText(inZone: widgetZone)
+        } else {
 //            isEditingText        = true
-//
-//            updateGUI()
+
+            updateGUI()
         }
     }
 
