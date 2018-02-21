@@ -25,7 +25,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     var             isEditingHyperlink = false
     var                 isEditingEmail = false
     var                 _isEditingText = false
-    var                   originalText = ""
 
 
     var textToEdit: String {
@@ -48,7 +47,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
                 if  let     zone  = widgetZone {
                     if !_isEditingText {
-                        let  grab = s.isEditing == zone
+                        let  grab = s.currentlyEditingZone == zone
                         textColor = grab || zone.colorized ? zone.grabbedTextColor : ZColor.black
 
                         abortEditing() // NOTE: this does NOT remove selection highlight !!!!!!!
@@ -62,11 +61,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
                         clearEditState()
 
-                        text                   = zone.unwrappedName
+                        text      = zone.unwrappedName
                     } else {
-                        s.isEditing = zone
-                        textColor              = ZColor.black
-                        originalText           = textToEdit
+                        s.edit(zone)
+                        textColor = ZColor.black
 
                         gSelectionManager.deselectGrabs()
                         enableUndo()
@@ -77,7 +75,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     s.clearEdit()
                 }
             } else if newValue, let zone = widgetZone {
-                s.isEditing   = zone
+                s.edit(zone)
             }
         }
     }
@@ -157,7 +155,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     override func updateText() {
         if  let   zone = widgetZone {
             text       = textToEdit
-            var suffix = ""
             var   need = 0
 
             switch gCountsMode {
@@ -167,14 +164,20 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             }
 
             if !isFirstResponder {
+                var decoration: String? = nil
+
+                /////////////////////////////////////////
+                // add decoration for "show counts as" //
+                /////////////////////////////////////////
+
                 if  gShowIdentifiers, let id = widgetZone?.record.recordID {
-                    suffix = id.recordName
+                    decoration = id.recordName
                 } else if (need > 1) && (!zone.showChildren || (gCountsMode == .progeny)) {
-                    suffix = String(describing: need)
+                    decoration = String(describing: need)
                 }
 
-                if suffix.count > 0 {
-                    text?.append("  (\(suffix))")
+                if  let d = decoration {
+                    text?.append("  (" + d + ")")
                 }
             }
         }
@@ -185,69 +188,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         if  var t = text {
             t = up ? t.uppercased() : t.lowercased()
 
-            assign(t, to: widgetZone)
+            gTextManager.assign(t, to: widgetZone)
             updateGUI()
-        }
-    }
-    
-
-    func prepareUndoForTextChange(_ manager: UndoManager?,_ onUndo: @escaping Closure) {
-        if originalText != text {
-            manager?.registerUndo(withTarget:self) { iUndoSelf in
-                let            newText = iUndoSelf.text ?? ""
-                iUndoSelf        .text = iUndoSelf.originalText
-                iUndoSelf.originalText = newText
-
-                onUndo()
-            }
-        }
-    }
-
-
-    func assign(_ iText: String?, to iZone: Zone?) {
-        if  let t = iText, var  zone = iZone, t != kNoName {
-            gTextCapturing           = true
-
-            let         assignTextTo = { (iAssignee: Zone) in
-                let       components = t.components(separatedBy: "  (")
-                var newText: String? = components[0]
-
-                if  newText == kNoName || newText == kNullLink || newText == "" {
-                    newText  = nil
-                }
-
-                if self.isEditingHyperlink {
-                    iAssignee.hyperLink = newText
-                    iAssignee    .email = nil
-                } else if self.isEditingEmail {
-                    iAssignee.hyperLink = nil
-                    iAssignee    .email = newText
-                } else {
-                    iAssignee .zoneName = newText
-                }
-
-                iAssignee.maybeNeedSave()
-                self.signalFor(iAssignee, regarding: .datum)
-            }
-
-            prepareUndoForTextChange(kUndoManager) {
-                self.captureText(force: true)
-                self.updateGUI()
-            }
-
-            if  !isEditingHyperlink, !isEditingEmail, let target = zone.bookmarkTarget {
-                zone = target
-            }
-
-            assignTextTo(zone)
-
-            for bookmark in zone.fetchedBookmarks {
-                assignTextTo(bookmark)
-            }
-
-            gTextCapturing = false
-
-            redrawAndSync()
         }
     }
 
@@ -255,13 +197,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     func clearEditState() {
         isEditingEmail     = false
         isEditingHyperlink = false
-    }
-
-
-    override func captureText(force: Bool = false) {
-        if (!gTextCapturing && originalText != text!) || force {
-            assign(text, to: widgetZone)
-        }
     }
 
 

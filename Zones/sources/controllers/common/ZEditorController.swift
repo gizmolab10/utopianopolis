@@ -46,7 +46,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         restartGestureRecognition()
         editorView?.addSubview(editorRootWidget)
 
-        if gHasPrivateDatabase && !kIsPhone {
+        if  gHasPrivateDatabase && !kIsPhone {
             editorView?.addSubview(favoritesRootWidget)
         }
     }
@@ -67,7 +67,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     }
     
     
-    #if os(iOS)
+    #if os(iOS) && false
     private func updateMinZoomScaleForSize(_ size: CGSize) {
         let           w = editorRootWidget
         let heightScale = size.height / w.bounds.height

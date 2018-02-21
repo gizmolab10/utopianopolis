@@ -338,7 +338,7 @@ extension ZoneTextWidget {
 
 
     override func textDidChange(_ iNote: Notification) {
-        prepareUndoForTextChange(undoManager) {
+        gTextManager.prepareUndoForTextChange(undoManager) {
             self.textDidChange(iNote)
         }
 
@@ -347,10 +347,10 @@ extension ZoneTextWidget {
             isEditingText        = false
 
             updateText()
-        } else {
-            isEditingText        = true
-
-            updateGUI()
+//        } else {
+//            isEditingText        = true
+//
+//            updateGUI()
         }
     }
 
@@ -364,7 +364,7 @@ extension ZoneTextWidget {
             let    isEditing = value == NSOtherTextMovement && responder != nil && responder == editor
             var key: String? = nil
 
-            captureText(force: isShift) // do this before setting isEditingText so isHyperlink will not yet change
+            gTextManager.capture(force: isShift) // do this before setting isEditingText so isHyperlink will not yet change
 
             isEditingText    = isEditing
 

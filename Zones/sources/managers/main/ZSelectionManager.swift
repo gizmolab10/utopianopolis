@@ -24,7 +24,6 @@ enum ZRelation: Int {
 
 
 let gSelectionManager = ZSelectionManager()
-var gEditedTextWidget: ZoneTextWidget? { return gTextManager.isEditing?.widget?.textWidget }
 
 
 class ZSnapshot: NSObject {
@@ -189,7 +188,7 @@ class ZSelectionManager: NSObject {
 
         if currentGrabs.count > 0 {
             movable = firstGrab
-        } else if let zone = gTextManager.isEditing {
+        } else if let zone = gTextManager.currentlyEditingZone {
             movable = zone
         }
 
@@ -208,7 +207,7 @@ class ZSelectionManager: NSObject {
     func clearGrab()   { currentGrabs          = [ ] }
     func clearPaste()  { pasteableZones        = [:] }
     func editCurrent() { edit(currentMoveable) }
-    func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || gTextManager.isEditing == zone }
+    func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || gTextManager.currentlyEditingZone == zone }
     func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
 
 
@@ -248,13 +247,12 @@ class ZSelectionManager: NSObject {
         }
 
         deselectGrabs()
-
-        gTextManager.isEditing = iZone
+        gTextManager.edit(iZone)
     }
 
 
     func stopCurrentEdit() {
-        if let zone = gTextManager.isEditing {
+        if  let zone = gTextManager.currentlyEditingZone {
             stopEdit(for: zone)
         }
     }
@@ -293,9 +291,9 @@ class ZSelectionManager: NSObject {
 
 
     func deselect(retaining zones: [Zone]? = nil) {
-        if  let editingZone = gTextManager.isEditing {
+        if  let editingZone = gTextManager.currentlyEditingZone {
             if  let  widget = editingZone.widget?.textWidget {
-                widget.captureText()
+                gTextManager.capture()
                 widget.clearEditState()
                 widget.layoutText()
                 editingZone.widget?.setNeedsDisplay()

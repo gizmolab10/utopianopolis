@@ -611,7 +611,6 @@ extension ZTextField {
     var  preferredFont: ZFont { return gWidgetFont }
 
     func selectCharacter(in range: NSRange) {}
-    func captureText(force: Bool = false) {}
     func alterCase(up: Bool) {}
     func updateText() {}
     func setup() {}
