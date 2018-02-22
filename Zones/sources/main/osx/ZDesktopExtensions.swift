@@ -327,7 +327,15 @@ extension ZAlert {
 extension ZoneTextWidget {
     // override open var acceptsFirstResponder: Bool { return gBatchOperationsManager.isReady }    // fix a bug where root zone is editing on launch
     override var acceptsFirstResponder : Bool  { return widgetZone?.isWritableByUseer ?? false }
-    var               isFirstResponder : Bool  { if let first = window?.firstResponder { return first == currentEditor() } else { return false } }
+
+
+    var isFirstResponder : Bool {
+        if  let    first = window?.firstResponder {
+            return first == currentEditor()
+        }
+
+        return false
+    }
 
 
     func deselectAllText() {
@@ -344,12 +352,10 @@ extension ZoneTextWidget {
 
         if  text?.contains(kHalfLineOfDashes + " - ") ?? false {
             widgetZone?.zoneName = kLineOfDashes
-            isEditingText        = false
 
             gTextManager.updateText(inZone: widgetZone)
-        } else {
-//            isEditingText        = true
 
+        } else {
             updateGUI()
         }
     }
@@ -359,17 +365,12 @@ extension ZoneTextWidget {
         if  let       number = notification.userInfo?["NSTextMovement"] as? NSNumber {
             let        value = number.intValue
             let      isShift = NSEvent.modifierFlags().isShift
-            let       editor = currentEditor()
-            let    responder = window?.firstResponder
-            let    isEditing = value == NSOtherTextMovement && responder != nil && responder == editor
+//            let       editor = currentEditor()
+//            let    responder = window?.firstResponder
+//            let    isEditing = value == NSOtherTextMovement && responder != nil && responder == editor
             var key: String? = nil
 
-            gTextManager.capture(force: isShift) // do this before setting isEditingText so isHyperlink will not yet change
-
-            isEditingText    = isEditing
-
-            resignFirstResponder()
-            deselectAllText()
+            gTextManager.stopCurrentEdit(forceCapture: isShift)
 
             switch value {
             case NSBacktabTextMovement: key = kSpace
@@ -386,9 +387,9 @@ extension ZoneTextWidget {
 
 
     override func selectAllText() {
-        if  text != nil, let editor = currentEditor() {
+        if  let t = text, let e = currentEditor() {
             gTextManager.deferEditingStateChange()
-            select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: text!.length)
+            select(withFrame: bounds, editor: e, delegate: self, start: 0, length: t.length)
         }
     }
 

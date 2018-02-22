@@ -815,9 +815,7 @@ class ZEditingManager: NSObject {
 
     func revealDotClickAction(for iZone: Zone?) {
         if  let zone = iZone, !zone.onlyShowRevealDot {
-            if gIsEditingText {
-                gTextManager.stopCurrentEdit()
-            }
+            gTextManager.stopCurrentEdit()
 
             for     grabbed in gSelectionManager.currentGrabs {
                 if  grabbed != zone && grabbed.spawnedBy(zone) {
@@ -937,6 +935,7 @@ class ZEditingManager: NSObject {
 
             gTextManager.clearEdit()
             gTextManager.fullResign()
+            gSelectionManager.deselectGrabs()
             z.revealChildren()
             z.needChildren()
 

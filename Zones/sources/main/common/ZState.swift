@@ -24,7 +24,6 @@ var     gCloudUnavailable                     = false
 var    gCrippleUserAccess                     = false
 var    gKeyboardIsVisible                     = false
 var gDebugShowIdentifiers                     = false
-var    gUseNewTextManager                     = false
 var      gDebugOperations                     = true
 var      gDebugTimerCount                     = 0
 var      gDragDropIndices: NSMutableIndexSet? = nil

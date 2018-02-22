@@ -19,50 +19,9 @@ import Foundation
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
-    override var         preferredFont : ZFont { return (widget?.isInMain ?? true) ? gWidgetFont : gFavoritesFont }
-    var                     widgetZone : Zone? { return widget?.widgetZone }
-    weak var                    widget : ZoneWidget?
-    var                 _isEditingText = false
-
-
-    override var isEditingText: Bool {
-        get { return _isEditingText }
-        set {
-            let                 t = gTextManager
-
-            if  _isEditingText   != newValue {
-                _isEditingText    = newValue
-                font              = preferredFont
-
-                if  let     zone  = widgetZone {
-                    if !_isEditingText {
-                        let  grab = t.currentlyEditingZone == zone
-                        abortEditing() // NOTE: this does NOT remove selection highlight !!!!!!!
-                        deselectAllText()
-
-                        if  grab {
-                            t.clearEdit()
-
-                            zone.grab()
-                        }
-
-                        text      = zone.unwrappedName
-                    } else {
-                        t.edit(zone)
-
-                        gSelectionManager.deselectGrabs()
-                        enableUndo()
-                    }
-
-                    layoutText(isEditing: true)
-                } else {
-                    t.clearEdit()
-                }
-            } else if newValue, let zone = widgetZone {
-                t.edit(zone)
-            }
-        }
-    }
+    override var preferredFont : ZFont { return (widget?.isInMain ?? true) ? gWidgetFont : gFavoritesFont }
+    var             widgetZone : Zone? { return widget?.widgetZone }
+    weak var            widget : ZoneWidget?
 
 
     func updateTextColor() {
@@ -100,7 +59,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func layoutTextField() {
-        if  let           view = superview {
+        if  let          view = superview {
             snp.removeConstraints()
             snp.makeConstraints { make in
                 let textWidth = text!.widthForFont(preferredFont)
@@ -119,15 +78,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-        if !gTextManager.isEditingStateChanging && widgetZone?.isWritableByUseer ?? false {
+        if  gTextManager.allowAsFirstResponder(self), let zone = widgetZone,
+            super.becomeFirstResponder() {  // becomeFirstResponder is called first so delegate methods will be called
+            gTextManager.edit(zone)
 
-            if  isFirstResponder {
-                gTextManager.deferEditingStateChange()
-            }
-
-            isEditingText = super.becomeFirstResponder() // becomeFirstResponder is called first so delegate methods will be called
-
-            return isEditingText
+            return true
         }
 
         return false
@@ -136,43 +91,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     override func selectCharacter(in range: NSRange) {
         #if os(OSX)
-        if let textInput = currentEditor() {
-            textInput.selectedRange = range
+        if  let e = currentEditor() {
+            e.selectedRange = range
         }
         #endif
-    }
-
-
-    var textWithSuffix: String {
-        var   result = widgetZone?.unwrappedName ?? kNoName
-
-        if  let zone = widgetZone {
-            var need = 0
-
-            switch gCountsMode {
-            case .fetchable: need = zone.indirectFetchableCount
-            case .progeny:   need = zone.indirectFetchableCount + zone.progenyCount
-            default:         return result
-            }
-
-            var suffix: String? = nil
-
-            /////////////////////////////////////
-            // add suffix for "show counts as" //
-            /////////////////////////////////////
-
-            if  gDebugShowIdentifiers && zone.record != nil {
-                suffix = zone.recordName
-            } else if (need > 1) && (!zone.showChildren || (gCountsMode == .progeny)) {
-                suffix = String(describing: need)
-            }
-
-            if  let s = suffix {
-                result.append("  (" + s + ")")
-            }
-        }
-
-        return result
     }
 
 

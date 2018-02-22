@@ -239,8 +239,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
                             signalFor(nil, regarding: .details)
                         } else {
-                            textWidget?.isEditingText = false
-
+                            gTextManager.stopCurrentEdit()
                             gSelectionManager.deselect()
                             widget.widgetZone?.grab()
                             signalFor(nil, regarding: .search)
