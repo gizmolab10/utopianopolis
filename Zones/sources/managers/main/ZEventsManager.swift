@@ -61,7 +61,7 @@ class ZEventsManager: NSObject {
                         let    key = event.charactersIgnoringModifiers {
                         switch key {
                         case "f":
-                            gSelectionManager.stopCurrentEdit()
+                            gTextManager.stopCurrentEdit()
                             gEditingManager.handleKey(key, flags: flags, isWindow: false)
 
                             return nil

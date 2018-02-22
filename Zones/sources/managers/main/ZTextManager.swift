@@ -87,15 +87,23 @@ class ZWidgetWrapper: NSObject {
 
 
     func edit(_ iZRecord: ZRecord) {
-        wrappedTrait   = iZRecord as? ZTrait
-        wrappedZone        = iZRecord as? Zone ?? wrappedTrait?.ownerZone
+        wrappedTrait     = iZRecord as? ZTrait
+        wrappedZone      = iZRecord as? Zone ?? wrappedTrait?.ownerZone
         originalText     = textToEdit
         textWidget?.text = originalText
     }
 
 
+    func updateWidgets() {
+        textWidget?.deselectAllText()
+        textWidget?.updateTextColor()
+        textWidget?.layoutText()
+        widget?.setNeedsDisplay()
+    }
+
+
     func clearEdit() {
-        wrappedZone      = nil
+        wrappedZone  = nil
         wrappedTrait = nil
     }
 
@@ -190,8 +198,32 @@ class ZTextManager: NSObject {
 
     func clearEdit() { currentEdit = nil }
     func fullResign() { assignAsFirstResponder (nil) } // ios broken
-    func edit(_ zRecord: ZRecord) { currentEdit = ZWidgetWrapper(zRecord) }
     func updateText(inZone: Zone?, isEditing: Bool = false) { if let z = inZone { ZWidgetWrapper(z).updateText(isEditing: isEditing) } }
+
+
+    func edit(_ zRecord: ZRecord) {
+        if currentEdit == nil {
+            let wrapper = ZWidgetWrapper(zRecord)
+
+            if let t = wrapper.textWidget, t.window != nil,
+                //!t.isFirstResponder,
+                !isEditingStateChanging,
+                wrapper.wrappedZone?.isWritableByUseer ?? false {
+                currentEdit = wrapper
+
+                gSelectionManager.deselectGrabs()
+                t.becomeFirstResponder()
+            }
+        }
+    }
+
+
+    func stopCurrentEdit(force: Bool = false) {
+        capture(force: force)
+        fullResign()
+        currentEdit?.updateWidgets()
+        clearEdit()
+    }
 
 
     func deferEditingStateChange() {

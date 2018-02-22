@@ -664,7 +664,7 @@ class Zone : ZRecord {
     func  addToGrab() { gSelectionManager.addToGrab(self) }
     func     ungrab() { gSelectionManager   .ungrab(self) }
     func       grab() { gSelectionManager     .grab(self) }
-    func       edit() { gSelectionManager     .edit(self) }
+    func       edit() { gTextManager          .edit(self) }
 
 
     override func debug(_  iMessage: String) {
@@ -753,26 +753,34 @@ class Zone : ZRecord {
     }
 
 
-    func setTraitText(_ iText: String?, for iType: ZTraitType) {
+    func trait(for iType: ZTraitType) -> ZTrait {
         var trait         = traits[iType]
 
         if  trait        == nil {
             trait         = ZTrait(databaseID: databaseID)
-        } else if  iText == nil {
-            traits[iType] = nil
-
-            trait?.needDestroy()
-
-            return
         }
 
         traits   [iType] = trait
         trait?.traitType = iType
         trait?    .owner = CKReference(record: record, action: .none)
-        trait?     .text = iText
 
-        trait?.updateRecordProperties()
-        trait?.maybeNeedSave()
+        return trait!
+    }
+
+
+    func setTraitText(_ iText: String?, for iType: ZTraitType) {
+        let trait = self.trait(for: iType)
+
+        if  iText == nil {
+            traits[iType] = nil
+
+            trait.needDestroy()
+        } else {
+            trait.text = iText
+
+            trait.updateRecordProperties()
+            trait.maybeNeedSave()
+        }
     }
 
 

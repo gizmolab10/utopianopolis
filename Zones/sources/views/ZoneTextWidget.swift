@@ -22,8 +22,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     override var         preferredFont : ZFont { return (widget?.isInMain ?? true) ? gWidgetFont : gFavoritesFont }
     var                     widgetZone : Zone? { return widget?.widgetZone }
     weak var                    widget : ZoneWidget?
-    var             isEditingHyperlink = false
-    var                 isEditingEmail = false
     var                 _isEditingText = false
 
 
@@ -39,8 +37,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 if  let     zone  = widgetZone {
                     if !_isEditingText {
                         let  grab = t.currentlyEditingZone == zone
-                        textColor = grab || zone.colorized ? zone.grabbedTextColor : ZColor.black
-
                         abortEditing() // NOTE: this does NOT remove selection highlight !!!!!!!
                         deselectAllText()
 
@@ -50,12 +46,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                             zone.grab()
                         }
 
-                        clearEditState()
-
                         text      = zone.unwrappedName
                     } else {
                         t.edit(zone)
-                        textColor = ZColor.black
 
                         gSelectionManager.deselectGrabs()
                         enableUndo()
@@ -68,6 +61,13 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             } else if newValue, let zone = widgetZone {
                 t.edit(zone)
             }
+        }
+    }
+
+
+    func updateTextColor() {
+        if  let  zone = widgetZone {
+            textColor = zone.colorized ? zone.grabbedTextColor : ZColor.black
         }
     }
 
@@ -183,12 +183,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             gTextManager.assign(t, to: widgetZone)
             updateGUI()
         }
-    }
-
-
-    func clearEditState() {
-        isEditingEmail     = false
-        isEditingHyperlink = false
     }
 
 

@@ -171,9 +171,9 @@ class ZEditingManager: NSObject {
                 case "b":      addBookmark()
                 case "c":      recenter()
                 case "d":      duplicate()
-                case "e":      editEmail()
+                case "e":      editTrait(for: .eEmail)
                 case "f":      find()
-                case "h":      editHyperlink()
+                case "h":      editTrait(for: .eHyperlink)
                 case "i":      toggleColorized()
                 case "l", "u": alterCase(up: key == "u")
                 case "n":      alphabetize(isOption)
@@ -368,21 +368,11 @@ class ZEditingManager: NSObject {
     }
 
 
-    func editEmail() {
-        let       zone = gSelectionManager.firstGrab
-        if  let widget = gWidgetsManager.widgetForZone(zone) {
-            widget.textWidget.isEditingEmail = true
-            zone.edit()
-        }
-    }
+    func editTrait(for iType: ZTraitType) {
+        let  zone = gSelectionManager.firstGrab
+        let trait = zone.trait(for: iType)
 
-
-    func editHyperlink() {
-        let       zone = gSelectionManager.firstGrab
-        if  let widget = gWidgetsManager.widgetForZone(zone) {
-            widget.textWidget.isEditingHyperlink = true
-            zone.edit()
-        }
+        gTextManager.edit(trait)
     }
 
 
@@ -542,7 +532,7 @@ class ZEditingManager: NSObject {
         } else if isCommand {
             gSelectionManager.deselect()
         } else {
-            gSelectionManager.editCurrent()
+            gTextManager.edit(gSelectionManager.currentMoveable)
         }
     }
 
@@ -825,13 +815,11 @@ class ZEditingManager: NSObject {
 
     func revealDotClickAction(for iZone: Zone?) {
         if  let zone = iZone, !zone.onlyShowRevealDot {
-            let    s = gSelectionManager
-
             if gIsEditingText {
-                s.stopCurrentEdit()
+                gTextManager.stopCurrentEdit()
             }
 
-            for     grabbed in s.currentGrabs {
+            for     grabbed in gSelectionManager.currentGrabs {
                 if  grabbed != zone && grabbed.spawnedBy(zone) {
                     grabbed.ungrab()
                 }
@@ -884,8 +872,6 @@ class ZEditingManager: NSObject {
                     return a.order < b.order
                 }
             }
-
-            gSelectionManager.stopCurrentEdit()
 
             if  zone  == gHere {
                 gHere  = parent
@@ -1430,7 +1416,7 @@ class ZEditingManager: NSObject {
             }
 
             parent.revealChildren()
-            gSelectionManager.stopCurrentEdit()
+            gTextManager.stopCurrentEdit()
 
             if parent.count > 0 || parent.fetchableCount == 0 {
                 createAndAdd()

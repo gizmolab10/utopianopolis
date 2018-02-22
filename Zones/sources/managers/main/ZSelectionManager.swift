@@ -206,7 +206,6 @@ class ZSelectionManager: NSObject {
 
     func clearGrab()   { currentGrabs          = [ ] }
     func clearPaste()  { pasteableZones        = [:] }
-    func editCurrent() { edit(currentMoveable) }
     func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || gTextManager.currentlyEditingZone == zone }
     func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
 
@@ -228,41 +227,6 @@ class ZSelectionManager: NSObject {
         }
 
         return nil
-    }
-
-
-    // MARK:- text edit
-    // MARK:-
-
-
-    func edit(_ iZone: Zone) {
-        if  let     textWidget = iZone.widget?.textWidget,
-            textWidget.window != nil,
-            !textWidget.isFirstResponder,
-            !gTextManager.isEditingStateChanging,
-            iZone.isWritableByUseer {
-
-            assignAsFirstResponder(textWidget)
-            gTextManager.deferEditingStateChange()
-        }
-
-        deselectGrabs()
-        gTextManager.edit(iZone)
-    }
-
-
-    func stopCurrentEdit() {
-        if  let zone = gTextManager.currentlyEditingZone {
-            stopEdit(for: zone)
-        }
-    }
-
-
-    func stopEdit(for iZone: Zone) {
-        if  let textWidget = iZone.widget?.textWidget, textWidget.isEditingText, !gTextManager.isEditingStateChanging {
-            gTextManager.clearEdit()
-            gTextManager.fullResign()
-        }
     }
 
 
@@ -291,18 +255,7 @@ class ZSelectionManager: NSObject {
 
 
     func deselect(retaining zones: [Zone]? = nil) {
-        if  let editingZone = gTextManager.currentlyEditingZone {
-            if  let  widget = editingZone.widget?.textWidget {
-                gTextManager.capture()
-                widget.clearEditState()
-                widget.layoutText()
-                editingZone.widget?.setNeedsDisplay()
-            }
-
-            gTextManager.clearEdit()
-        }
-
-        gTextManager.fullResign()
+        gTextManager.stopCurrentEdit()
         deselectGrabs(retaining: zones)
     }
 
@@ -340,7 +293,7 @@ class ZSelectionManager: NSObject {
 
     func addToGrab(_ iZone: Zone?) {
         if let zone = iZone, !currentGrabs.contains(zone) {
-            stopCurrentEdit()
+            gTextManager.stopCurrentEdit()
             currentGrabs.append(zone)
             // columnarReport("grab", zone.unwrappedName)
 
