@@ -54,7 +54,7 @@ class ZRecord: NSObject {
                 _record  = newValue
 
                 register()
-                maybeFromCloud()
+                maybeMarkFromCloud()
                 updateInstanceProperties()
                 gBookmarksManager.registerBookmark(self as? Zone)
 
@@ -253,6 +253,7 @@ class ZRecord: NSObject {
     func needTraits()      { addState(.needsTraits) }
     func needParent()      { addState(.needsParent) }
     func needWritable()    { addState(.needsWritable) }
+    func needUnorphan()    { addState(.needsUnorphan) }
     func markNotFetched()  { addState(.notFetched) }
     func fetchBeforeSave() { addState(.requiresFetch) }
     func allowSave()       { removeState(.requiresFetch)}
@@ -307,8 +308,9 @@ class ZRecord: NSObject {
         if !needsDestroy, !needsFetch, !needsSave, canSave {
             removeState(.needsMerge)
             addState   (.needsSave)
-            gFileManager.needWrite(for: databaseID)
         }
+
+        gFileManager.needWrite(for: databaseID)
     }
 
 
@@ -319,9 +321,9 @@ class ZRecord: NSObject {
     }
 
 
-    func maybeFromCloud() {
+    func maybeMarkFromCloud() {
         if  let r = record {
-            r.maybeFromCloud(databaseID)
+            r.maybeMarkFromCloud(databaseID)
         }
     }
 

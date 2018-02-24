@@ -46,7 +46,7 @@ class Zone : ZRecord {
     var                 widget:   ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var         linkDatabaseID:  ZDatabaseID? { return databaseID(from: zoneLink) }
     var               linkName:       String? { return name(from: zoneLink) }
-    var          unwrappedName:       String  { return zoneName ?? kNoName }
+    var          unwrappedName:       String  { return zoneName ?? kNoValue }
     var          decoratedName:       String  { return decoration + unwrappedName }
     var       fetchedBookmarks:       [Zone]  { return gBookmarksManager.bookmarks(for: self) ?? [] }
     var       grabbedTextColor:       ZColor  { return color.darker(by: 3.0) }
@@ -753,34 +753,33 @@ class Zone : ZRecord {
     }
 
 
-    func trait(for iType: ZTraitType) -> ZTrait {
-        var trait         = traits[iType]
+    func setTraitText(_ iText: String?, for iType: ZTraitType?) {
+        if  let  type        = iType {
+            if  iText       == nil {
+                traits[type]?.needDestroy()
 
-        if  trait        == nil {
-            trait         = ZTrait(databaseID: databaseID)
+                traits[type] = nil
+            } else {
+                let    trait = self.trait(for: type)
+                trait.text   = iText
+
+                trait.updateRecordProperties()
+                trait.maybeNeedSave()
+            }
         }
-
-        traits   [iType] = trait
-        trait?.traitType = iType
-        trait?    .owner = CKReference(record: record, action: .none)
-
-        return trait!
     }
 
 
-    func setTraitText(_ iText: String?, for iType: ZTraitType) {
-        let trait = self.trait(for: iType)
-
-        if  iText == nil {
-            traits[iType] = nil
-
-            trait.needDestroy()
-        } else {
-            trait.text = iText
-
-            trait.updateRecordProperties()
-            trait.maybeNeedSave()
+    func trait(for iType: ZTraitType) -> ZTrait {
+        var trait            = traits[iType]
+        if  trait           == nil {
+            trait            = ZTrait(databaseID: databaseID)
+            trait?.owner     = CKReference(record: record, action: .none)
+            trait?.traitType = iType
+            traits[iType]    = trait
         }
+
+        return trait!
     }
 
 

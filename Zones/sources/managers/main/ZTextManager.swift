@@ -25,16 +25,20 @@ class ZTextPack: NSObject {
 
 
     var textToEdit: String {
-        if  let    name = packedTrait?.text ?? packedZone?.unwrappedName, name != kNullLink {
-            return name
+        if  let        trait = packedTrait {
+            if  let    tName = trait.text {
+                return tName
+            }
+        } else if let  zone = packedZone {
+            return     zone.unwrappedName
         }
 
-        return kNoName
+        return kNoValue
     }
 
 
     var textWithSuffix: String {
-        var   result = kNoName
+        var   result = kNoValue
 
         if  let zone = packedZone {
             result   = zone.unwrappedName
@@ -101,27 +105,28 @@ class ZTextPack: NSObject {
     }
 
 
-    func newCapture(_ iText: String?) -> ZRecord? {
-        if  let  trait = packedTrait { // this takes logical priority
-            trait.text = iText
+    func capture(_ iText: String?) {
+        let text           = iText == kNoValue ? nil : iText
 
-            return trait
-        } else if let zone = packedZone { // do not process if editing a trait, above
-            zone.zoneName  = iText
+        if  let     trait  = packedTrait {      // traits take logical priority
+            trait.ownerZone?.setTraitText(text, for: trait.traitType)
+        } else if let zone = packedZone {       // ignore zone if editing a trait, above
+            zone.zoneName  = text
 
-            return zone
+            zone.maybeNeedSave()
         }
-
-        return nil
     }
 
 
-    func disassembleText(_ iText: String) -> String? {
-        let        components = iText.components(separatedBy: "  (")
-        var newText:  String? = components[0]
+    func removeSuffix(from iText: String?) -> String? {
+        var newText: String? = nil
 
-        if  newText == kNoName || newText == kNullLink || newText == "" {
-            newText  = nil
+        if  let components = iText?.components(separatedBy: "  (") {
+            newText        = components[0]
+
+            if  newText == kNoValue || newText == kNullLink || newText == "" {
+                newText  = nil
+            }
         }
 
         return newText
@@ -129,21 +134,21 @@ class ZTextPack: NSObject {
 
 
     func assignAndSignal(_ iText: String?) {
-        let captured = newCapture(iText)
-
-        captured?.maybeNeedSave()
-        self.signalFor(captured, regarding: .datum)
+        capture(iText)
+        signalFor(packedZone, regarding: .datum)
     }
 
 
     func assignTextAndSync(_ iText: String?) {
-        if  let t = iText, var  zone = packedZone, t != kNoName {
-            let              newText = disassembleText(t)
-            gTextCapturing           = true
+        if  (originalText != iText || originalText == kNoValue) {
+            let               newText = removeSuffix(from: iText)
+            gTextCapturing            = true
 
-            if  let  tWidget = textWidget {
-                let original = originalText
+            if  let           tWidget = textWidget {
+                let          original = originalText
                 prepareUndoForTextChange(kUndoManager) {
+                    self.originalText = tWidget.text
+
                     self.assignTextAndSync(original)
                     tWidget.updateGUI()
                 }
@@ -151,12 +156,15 @@ class ZTextPack: NSObject {
 
             assignAndSignal(newText)
 
-            if  let    target = zone.bookmarkTarget {
-                zone = target
-            }
+            if  packedTrait == nil, // only if zone name is being edited
+                var zone = packedZone {
+                if  let    target = zone.bookmarkTarget {
+                    zone = target
+                }
 
-            for bookmark in zone.fetchedBookmarks {
-                ZTextPack(bookmark).assignAndSignal(newText)
+                for bookmark in zone.fetchedBookmarks {
+                    ZTextPack(bookmark).assignAndSignal(newText)
+                }
             }
 
             gTextCapturing = false
@@ -192,7 +200,13 @@ class ZTextManager: NSObject {
 
     func clearEdit() { currentEdit = nil }
     func fullResign() { assignAsFirstResponder (nil) } // ios broken
-    func updateText(inZone: Zone?, isEditing: Bool = false) { if let zone = inZone { ZTextPack(zone).updateText(isEditing: isEditing) } }
+
+
+    func updateText(inZone: Zone?, isEditing: Bool = false) {
+        if  let zone = inZone {
+            ZTextPack(zone).updateText(isEditing: isEditing)
+        }
+    }
 
     
     func allowAsFirstResponder(_ iTextWidget: ZoneTextWidget) -> Bool {
@@ -201,25 +215,30 @@ class ZTextManager: NSObject {
 
 
     func edit(_ zRecord: ZRecord) {
-        if  !isEditingStateChanging &&
-            (currentEdit  == nil || !currentEdit!.isEditing(zRecord)) { // prevent infinite recursion inside becomeFirstResponder, called below
+        if (currentEdit  == nil || !currentEdit!.isEditing(zRecord)) { // prevent infinite recursion inside becomeFirstResponder, called below
             let      pack = ZTextPack(zRecord)
             if  let     t = pack.textWidget,
                 t.window != nil,
                 pack.packedZone?.isWritableByUseer ?? false {
                 currentEdit = pack
 
+                pack.updateText(isEditing: true)
                 gSelectionManager.deselectGrabs()
                 t.enableUndo()
-                t.layoutText(isEditing: true)
+                t.layoutTextField()
                 t.becomeFirstResponder()
+                deferEditingStateChange()
             }
         }
     }
 
 
     func stopCurrentEdit(forceCapture: Bool = false) {
-        if  let e = currentEdit {
+        if  let e = currentEdit, !isEditingStateChanging {
+            // deferEditingStateChange()
+
+            bam("capturing " + (e.originalText ?? ""))
+
             capture(force: forceCapture)
             fullResign()
             clearEdit()
@@ -239,7 +258,7 @@ class ZTextManager: NSObject {
 
 
     func capture(force: Bool = false) {
-        if  let current = currentEdit, let text = current.textWidget?.text, current.originalText != text, (!gTextCapturing || force) {
+        if  let current = currentEdit, let text = current.textWidget?.text, (!gTextCapturing || force) {
             current.assignTextAndSync(text)
         }
     }

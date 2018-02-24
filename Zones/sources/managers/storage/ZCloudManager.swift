@@ -82,8 +82,8 @@ class ZCloudManager: ZRecordsManager {
                 FOREGROUND {
                     if  let destroyed = iDeletedRecordIDs {
                         for recordID: CKRecordID in destroyed {
-                            if  let zone = self.maybeZoneForRecordID(recordID) {
-                                self.unregisterZRecord(zone)
+                            if  let zRecord = self.maybeZRecordForRecordID(recordID) { // zones AND traits
+                                self.unregisterZRecord(zRecord)
                             }
                         }
                     }
@@ -92,7 +92,7 @@ class ZCloudManager: ZRecordsManager {
                         for ckRecord: CKRecord in saved {
                             if  let zone = self.maybeZoneForRecordID(ckRecord.recordID) {
                                 zone.useBest(record: ckRecord)
-                                ckRecord.maybeFromCloud(self.databaseID)
+                                ckRecord.maybeMarkFromCloud(self.databaseID)
                             }
                         }
                     }
@@ -181,7 +181,7 @@ class ZCloudManager: ZRecordsManager {
         let done:  RecordClosure = { (iCKRecord: CKRecord?) in
             FOREGROUND(canBeDirect: true) {
                 if  let ckRecord = iCKRecord {
-                    ckRecord.maybeFromCloud(self.databaseID)
+                    ckRecord.maybeMarkFromCloud(self.databaseID)
                 }
 
                 onCompletion(iCKRecord)
@@ -574,6 +574,7 @@ class ZCloudManager: ZRecordsManager {
                     }
 
                     self.columnarReport("FETCH (\(iCKRecords.count))", self.stringForCKRecords(iCKRecords))
+                    self.unorphanAll()
                     self.fetchZones(onCompletion)                            // process remaining
                 }
             }
@@ -718,6 +719,7 @@ class ZCloudManager: ZRecordsManager {
                     
                     self.columnarReport("PARENT (\(forReport.count)) of", self.stringForZones(forReport))
                     self.clearRecordIDs(childrenIDs, for: fetchingStates)
+                    self.unorphanAll()
                     self.fetchParents(onCompletion)   // process remaining
                 }
             }
@@ -814,6 +816,7 @@ class ZCloudManager: ZRecordsManager {
                         }
 
                         self.columnarReport("CHILDREN (\(childrenNeeded.count)) of", self.stringForReferences(childrenNeeded, in: self.databaseID))
+                        self.unorphanAll()
                         self.add(states: [.needsCount], to: childrenNeeded)
                         self.fetchChildren(onCompletion) // process remaining
                     }
@@ -838,11 +841,13 @@ class ZCloudManager: ZRecordsManager {
                     for ckRecord in retrieved {
                         var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
 
-                        if  zRecord == nil {                                                   // if not already registered
-                            zRecord  = ZTrait(record: ckRecord, databaseID: self.databaseID) // register
+                        if  zRecord == nil {                                                    // if not already registered
+                            zRecord  = ZTrait(record: ckRecord, databaseID: self.databaseID)    // register
                         }
                     }
 
+                    self.columnarReport("TRAITS (\(retrieved.count))", self.stringForCKRecords(retrieved))
+                    self.unorphanAll()
                     onCompletion?(0)
                 }
             }

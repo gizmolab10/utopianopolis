@@ -126,7 +126,7 @@
                 </viewController>
                 <customObject id="wYh-I6-Wpi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-279" y="1613"/>
+            <point key="canvasLocation" x="-222" y="1611"/>
         </scene>
         <!--Tools Controller-->
         <scene sceneID="OQa-jH-o6A">
@@ -196,7 +196,7 @@
                 </viewController>
                 <customObject id="yrI-wS-bc9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-279" y="2182"/>
+            <point key="canvasLocation" x="-222" y="2156"/>
         </scene>
         <!--Details Controller-->
         <scene sceneID="Tae-az-4mZ">
@@ -926,7 +926,7 @@
                 </viewController>
                 <customObject id="JO0-BM-25B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-279" y="1894.5"/>
+            <point key="canvasLocation" x="-222" y="1869"/>
         </scene>
         <!--Shortcuts Controller-->
         <scene sceneID="45A-WG-zgj">
@@ -997,18 +997,18 @@
                 </viewController>
                 <customObject id="rFs-5G-ygd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-279" y="2099"/>
+            <point key="canvasLocation" x="-222" y="2073"/>
         </scene>
         <!--Debug Controller-->
         <scene sceneID="1Md-xJ-Z7k">
             <objects>
                 <viewController id="3I5-7x-PAH" customClass="ZDebugController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="A57-Y0-NnV">
-                        <rect key="frame" x="0.0" y="0.0" width="228" height="96"/>
+                        <rect key="frame" x="0.0" y="0.0" width="228" height="117"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iC9-v4-znl">
-                                <rect key="frame" x="6" y="71" width="216" height="17"/>
+                                <rect key="frame" x="6" y="92" width="216" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="0tt-09-UAM"/>
                                 </constraints>
@@ -1019,7 +1019,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w7H-7z-Fnj">
-                                <rect key="frame" x="6" y="50" width="216" height="17"/>
+                                <rect key="frame" x="6" y="71" width="216" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="2PD-qx-Gsr"/>
                                 </constraints>
@@ -1030,7 +1030,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X4G-f7-aDj">
-                                <rect key="frame" x="6" y="29" width="216" height="17"/>
+                                <rect key="frame" x="6" y="50" width="216" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="KQh-eC-q3h"/>
                                 </constraints>
@@ -1041,7 +1041,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YfI-Um-sfA">
-                                <rect key="frame" x="6" y="8" width="216" height="17"/>
+                                <rect key="frame" x="6" y="29" width="216" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="KIe-Bj-23L"/>
                                 </constraints>
@@ -1051,21 +1051,35 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kW5-Ti-rEG">
+                                <rect key="frame" x="6" y="8" width="216" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="0lq-Bs-9Mt"/>
+                                </constraints>
+                                <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" placeholderString="traits" id="mbp-yg-72l">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="kW5-Ti-rEG" firstAttribute="leading" secondItem="A57-Y0-NnV" secondAttribute="leading" constant="8" id="6D7-yo-txw"/>
                             <constraint firstItem="YfI-Um-sfA" firstAttribute="leading" secondItem="A57-Y0-NnV" secondAttribute="leading" constant="8" id="6jg-Vy-9Rg"/>
+                            <constraint firstItem="kW5-Ti-rEG" firstAttribute="top" secondItem="YfI-Um-sfA" secondAttribute="bottom" constant="4" id="AP2-n1-9q6"/>
+                            <constraint firstAttribute="trailing" secondItem="kW5-Ti-rEG" secondAttribute="trailing" constant="8" id="GAi-OI-wgY"/>
                             <constraint firstItem="iC9-v4-znl" firstAttribute="top" secondItem="A57-Y0-NnV" secondAttribute="top" constant="8" id="HWh-Ht-bqq"/>
                             <constraint firstAttribute="trailing" secondItem="iC9-v4-znl" secondAttribute="trailing" constant="8" id="Hjo-Nw-uDd"/>
+                            <constraint firstItem="YfI-Um-sfA" firstAttribute="top" secondItem="X4G-f7-aDj" secondAttribute="bottom" constant="4" id="M4b-ZS-6EO"/>
                             <constraint firstAttribute="trailing" secondItem="X4G-f7-aDj" secondAttribute="trailing" constant="8" id="MlJ-1P-Zkc"/>
                             <constraint firstAttribute="trailing" secondItem="w7H-7z-Fnj" secondAttribute="trailing" constant="8" id="XmJ-J5-HaZ"/>
                             <constraint firstItem="iC9-v4-znl" firstAttribute="leading" secondItem="A57-Y0-NnV" secondAttribute="leading" constant="8" id="cRh-4B-aJa"/>
                             <constraint firstAttribute="trailing" secondItem="YfI-Um-sfA" secondAttribute="trailing" constant="8" id="eU7-tC-gxq"/>
                             <constraint firstItem="X4G-f7-aDj" firstAttribute="leading" secondItem="A57-Y0-NnV" secondAttribute="leading" constant="8" id="iBA-UN-4OJ"/>
-                            <constraint firstAttribute="bottom" secondItem="YfI-Um-sfA" secondAttribute="bottom" constant="8" id="l3N-pe-fHg"/>
                             <constraint firstItem="w7H-7z-Fnj" firstAttribute="top" secondItem="iC9-v4-znl" secondAttribute="bottom" constant="4" id="nMg-GS-WSI"/>
                             <constraint firstItem="w7H-7z-Fnj" firstAttribute="leading" secondItem="A57-Y0-NnV" secondAttribute="leading" constant="8" id="qi5-bz-7om"/>
-                            <constraint firstItem="YfI-Um-sfA" firstAttribute="top" secondItem="X4G-f7-aDj" secondAttribute="bottom" constant="4" id="seJ-OA-1Sv"/>
                             <constraint firstItem="X4G-f7-aDj" firstAttribute="top" secondItem="w7H-7z-Fnj" secondAttribute="bottom" constant="4" id="uLG-bl-pBX"/>
+                            <constraint firstAttribute="bottom" secondItem="kW5-Ti-rEG" secondAttribute="bottom" constant="8" id="vla-dg-6Xr"/>
                         </constraints>
                     </view>
                     <connections>
@@ -1073,11 +1087,12 @@
                         <outlet property="otherLabel" destination="w7H-7z-Fnj" id="8yN-7n-Mfd"/>
                         <outlet property="recordLabel" destination="YfI-Um-sfA" id="crx-3k-eRa"/>
                         <outlet property="statusLabel" destination="X4G-f7-aDj" id="XfV-6f-Ete"/>
+                        <outlet property="traitsLabel" destination="kW5-Ti-rEG" id="XKJ-Wi-raU"/>
                     </connections>
                 </viewController>
                 <customObject id="rW8-8d-EmW" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-279" y="2302"/>
+            <point key="canvasLocation" x="-222" y="2293"/>
         </scene>
     </scenes>
     <resources>

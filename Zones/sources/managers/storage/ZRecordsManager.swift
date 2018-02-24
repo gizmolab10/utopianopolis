@@ -27,6 +27,7 @@ enum ZRecordState: String {
     case needsSave      = "save"
     case needsTraits    = "traits"
     case needsWritable  = "writable"
+    case needsUnorphan  = "unorphan"
 }
 
 
@@ -165,6 +166,18 @@ class ZRecordsManager: NSObject {
         }
 
         return states
+    }
+
+
+    func unorphanAll() {
+        let states = [ZRecordState.needsUnorphan]
+
+        applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iRecordName in
+            if  let zRecord = maybeZRecordForRecordName(iRecordName) {
+                clearRecordName(iRecordName, for: states)
+                zRecord.unorphan()
+            }
+        }
     }
 
 
@@ -635,35 +648,15 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
-    func isRegistered(_ zRecord: ZRecord) -> String? {
-        if  registry.values.contains(zRecord) {
-            let hash = zRecord.hash
-
-            for key in registry.keys {
-                let examined = registry[key]
-
-                if  examined?.hash == hash {
-                    return key
-                }
-            }
-        }
-
-        return nil
-    }
-
-
     func registerZRecord(_  iRecord : ZRecord?) {
-        if  let       zRecord = iRecord,
-            let            id = zRecord.recordName {
-            if  let       rid = isRegistered(zRecord), rid != id {
-                registry[rid] = nil
-            }
+        if  let      zRecord = iRecord,
+            let           id = zRecord.recordName {
 
-            if  let  bookmark = zRecord as? Zone, bookmark.isBookmark {
+            if  let bookmark = zRecord as? Zone, bookmark.isBookmark {
                 gBookmarksManager.registerBookmark(bookmark)
             }
 
-            registry[id]      = zRecord
+            registry[id]     = zRecord
         }
     }
 
@@ -699,7 +692,7 @@ class ZRecordsManager: NSObject {
 
 
     func maybeZRecordForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
-        return maybeZoneForRecordID(recordID) as ZRecord?
+        return maybeZRecordForRecordName(recordID?.recordName)
     }
 
 
@@ -714,7 +707,7 @@ class ZRecordsManager: NSObject {
 
 
     func maybeZoneForRecordID(_ recordID: CKRecordID?) -> Zone? {
-        return maybeZRecordForRecordName(recordID?.recordName) as? Zone
+        return maybeZRecordForRecordID(recordID) as? Zone
     }
 
 

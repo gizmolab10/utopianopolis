@@ -21,6 +21,7 @@ class ZDebugController: ZGenericController {
     @IBOutlet var   nameLabel: ZTextField?
     @IBOutlet var  otherLabel: ZTextField?
     @IBOutlet var statusLabel: ZTextField?
+    @IBOutlet var traitsLabel: ZTextField?
     @IBOutlet var recordLabel: ZTextField?
     var grab: Zone? = nil
 
@@ -72,6 +73,21 @@ class ZDebugController: ZGenericController {
     }
 
 
+    var traitsText: [String] {
+        var text = [String] ()
+
+        if  let zone = grab {
+            let traits = zone.traits
+
+            for type in traits.keys {
+                text.append(type.rawValue)
+            }
+        }
+
+        return text
+    }
+
+
     override func setup() {
         controllerID = .debug
     }
@@ -82,8 +98,9 @@ class ZDebugController: ZGenericController {
             grab              = gSelectionManager.firstGrab
             nameLabel?  .text = grab?.unwrappedName
             recordLabel?.text = grab?.recordName
-            otherLabel? .text =  otherText.joined(separator: ", ")
-            statusLabel?.text = statusText.joined(separator: ", ")
+            otherLabel? .text =               otherText.joined(separator: ", ")
+            statusLabel?.text =              statusText.joined(separator: ", ")
+            traitsLabel?.text = "traits: " + traitsText.joined(separator: ", ")
         }
     }
     

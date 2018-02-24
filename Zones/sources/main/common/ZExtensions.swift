@@ -176,32 +176,38 @@ extension CKRecord {
 
 
     var decoratedName: String {
-        if recordType     != kZoneType {
-            return recordID.recordName
-        } else if let name = self[kpZoneName] as? String {
-            let  separator = " "
-            var     prefix = ""
+        switch recordType {
+        case kTraitType:
+            let text = self["text"] as? String ?? kNoValue
+            return    (self["type"] as? String ?? "") + " " + text
+        case kZoneType:
+            if  let      name = self[kpZoneName] as? String {
+                let separator = " "
+                var    prefix = ""
 
-            if  isBookmark {
-                prefix.append("L")
-            }
-
-            if  let fetchable = self[kpZoneCount] as? Int, fetchable > 1 {
-                if  prefix != "" {
-                    prefix.append(separator)
+                if  isBookmark {
+                    prefix.append("L")
                 }
 
-                prefix.append("\(fetchable)")
-            }
+                if  let fetchable = self[kpZoneCount] as? Int, fetchable > 1 {
+                    if  prefix != "" {
+                        prefix.append(separator)
+                    }
 
-            if  prefix != "" {
-                prefix  = "(" + prefix + ")  "
-            }
+                    prefix.append("\(fetchable)")
+                }
 
-            return prefix.appending(name)
+                if  prefix != "" {
+                    prefix  = "(" + prefix + ")  "
+                }
+
+                return prefix.appending(name)
+            }
+        default:
+            return recordID.recordName
         }
 
-        return ""
+        return kNoValue
     }
 
 
@@ -247,11 +253,11 @@ extension CKRecord {
     }
 
 
-    func maybeFromCloud(_ databaseID: ZDatabaseID?) {
-        if  let      dbID = databaseID,
+    func maybeMarkFromCloud(_ databaseID: ZDatabaseID?) {
+        if  let dbID      = databaseID,
             creationDate != nil {
-            let    states = [ZRecordState.notFetched]
-            let   manager = gRemoteStoresManager.cloudManagerFor(dbID)
+            let states    = [ZRecordState.notFetched]
+            let manager   = gRemoteStoresManager.cloudManagerFor(dbID)
             if  manager.hasCKRecord(self, forAnyOf: states) {
                 manager.clearCKRecords([self], for: states)
             }

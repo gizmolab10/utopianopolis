@@ -90,6 +90,8 @@ class ZTrait: ZRecord {
     override func unorphan() {
         if  let traits = ownerZone?.traits, let t = traitType, traits[t] == nil {
             ownerZone?.traits[t] = self
+        } else {
+            needUnorphan()
         }
     }
 

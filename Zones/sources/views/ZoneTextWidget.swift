@@ -82,6 +82,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             super.becomeFirstResponder() {  // becomeFirstResponder is called first so delegate methods will be called
             gTextManager.edit(zone)
 
+            bam("editing " + zone.unwrappedName)
+
             return true
         }
 
