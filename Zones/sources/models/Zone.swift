@@ -173,6 +173,17 @@ class Zone : ZRecord {
     }
 
 
+    var traitValues: [ZTrait] {
+        var values = [ZTrait] ()
+
+        for trait in traits.values {
+            values.append(trait)
+        }
+
+        return values
+    }
+
+
     var fetchedBookmark: Zone? {
         let    bookmarks = fetchedBookmarks
 
@@ -1412,25 +1423,6 @@ class Zone : ZRecord {
     }
 
 
-    func stringForNeeds(in iDatabaseID: ZDatabaseID) -> String? {
-        if  let       r = record {
-            let manager = gRemoteStoresManager.cloudManagerFor(iDatabaseID)
-            let  states = manager.states(for: r)
-            var   marks = [String] ()
-
-            for state in states {
-                marks.append("\(state.rawValue)")
-            }
-
-            if  marks.count > 0 {
-                return marks.joined(separator: ",")
-            }
-        }
-
-        return nil
-    }
-
-
     override func setStorageDictionary(_ dict: ZStorageDict, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
         if let       name = dict[.name] as? String { zoneName = name }
 
@@ -1458,34 +1450,17 @@ class Zone : ZRecord {
 
     override func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDict? {
         var  dict = super.storageDictionary(for: iDatabaseID)!
-        var array = [ZStorageDict] ()
 
-        if  count > 0 {
-            for child: Zone in children {
-                if  let childDict = child.storageDictionary(for: iDatabaseID) {
-                    array.append(childDict)
-                }
-            }
-
-            dict[.children] = array as NSObject?
+        if  let   childDict = Zone.storageArray(for: children, from: iDatabaseID) {
+            dict[.children] = childDict as NSObject?
         }
 
-        array.removeAll()
-
-        if  traits.count > 0 {
-            for trait in traits.values {
-                if  let traitsDict = trait.storageDictionary(for: iDatabaseID) {
-                    array.append(traitsDict)
-                }
-            }
-
-            dict[.traits] = array as NSObject?
-        }
-
-        if  let   needs   = stringForNeeds(in: iDatabaseID) {
-            dict[.needs]  = needs as NSObject?
+        if  let  traitsDict = Zone.storageArray(for: traitValues, from: iDatabaseID) {
+            dict  [.traits] = traitsDict as NSObject?
         }
 
         return dict
     }
+
+
 }

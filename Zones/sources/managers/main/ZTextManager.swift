@@ -135,6 +135,7 @@ class ZTextPack: NSObject {
 
     func assignAndSignal(_ iText: String?) {
         capture(iText)
+        updateWidgetsForEndEdit()
         signalFor(packedZone, regarding: .datum)
     }
 
@@ -235,10 +236,6 @@ class ZTextManager: NSObject {
 
     func stopCurrentEdit(forceCapture: Bool = false) {
         if  let e = currentEdit, !isEditingStateChanging {
-            // deferEditingStateChange()
-
-            bam("capturing " + (e.originalText ?? ""))
-
             capture(force: forceCapture)
             fullResign()
             clearEdit()

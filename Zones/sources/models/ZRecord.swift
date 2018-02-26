@@ -426,20 +426,58 @@ class ZRecord: NSObject {
     }
 
 
+    let kNeedsSeparator = ","
+
+
+    func stringForNeeds(in iDatabaseID: ZDatabaseID) -> String? {
+        if  let       r = record {
+            let manager = gRemoteStoresManager.cloudManagerFor(iDatabaseID)
+            let  states = manager.states(for: r)
+            var   marks = [String] ()
+
+            for state in states {
+                marks.append("\(state.rawValue)")
+            }
+
+            if  marks.count > 0 {
+                return marks.joined(separator: kNeedsSeparator)
+            }
+        }
+
+        return nil
+    }
+
+
+    func setNeedsFromString(_ iNeeds: String) {
+        let needs = iNeeds.components(separatedBy: kNeedsSeparator)
+
+        for need in needs {
+            if  let state = ZRecordState(rawValue: need) {
+                addState(state)
+            }
+        }
+    }
+
+
+
     func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDict? {
         let  keyPaths = cloudProperties() + [kpRecordName]
         var      dict = ZStorageDict()
-
+        
         for keyPath in keyPaths {
             if  let       type = type(from: keyPath),
                 let    extract = extract(valueOf: type, at: keyPath) ,
                 let   prepared = prepare(extract, of: type) {
-                    dict[type] = prepared
-                }
+                dict[type]     = prepared
             }
-
-            return dict
         }
+
+        if  let   needs  = stringForNeeds(in: iDatabaseID) {
+            dict[.needs] = needs as NSObject?
+        }
+
+        return dict
+    }
 
 
     func setStorageDictionary(_ dict: ZStorageDict, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
@@ -461,7 +499,29 @@ class ZRecord: NSObject {
             }
 
             updateInstanceProperties()    // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
+
+            if  let needs = dict[.needs] as? String {
+                setNeedsFromString(needs)
+            }
         }
+    }
+
+
+    class func storageArray(for items: [ZRecord], from dbID: ZDatabaseID, allowEach: ZRecordToBooleanClosure? = nil) -> [ZStorageDict]? {
+        if  items.count > 0 {
+            var array = [ZStorageDict] ()
+
+            for item in items {
+                if  (allowEach == nil || allowEach!(item)),
+                    let subDict = item.storageDictionary(for: dbID) {
+                    array.append(subDict)
+                }
+            }
+
+            return array
+        }
+
+        return nil
     }
 
 }

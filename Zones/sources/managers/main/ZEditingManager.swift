@@ -1091,41 +1091,70 @@ class ZEditingManager: NSObject {
             onCompletion?()
         } else {
             let parent        = zone.parentZone
-            if  zone         == gHere {                         // this can only happen once during recursion (multiple places, below)
+            if  zone         == gHere {                         // this can only happen ONCE during recursion (multiple places, below)
                 if  let     p = parent, p != zone {
                     gHere     = p
 
                     revealParentAndSiblingsOf(zone) { iCloudCalled in
-                        self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)   // recurse
+
+                        /////////////
+                        // RECURSE //
+                        /////////////
+
+                        self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)
                     }
-                } else {                                        // delete here but here has no parent ... so, go somewhere useful and familiar:
-                    gFavoritesManager.refocus {                 // travel to current favorite
-                        self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)   // then, recurse
+                } else {
+
+                    ///////////////////////////////////////////////////////////////////////////////////////////////
+                    // SPECIAL CASE: delete here but here has no parent ... so, go somewhere useful and familiar //
+                    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+                    gFavoritesManager.refocus {                 // travel to current favorite, then ...
+
+                        /////////////
+                        // RECURSE //
+                        /////////////
+
+                        self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)
                     }
                 }
             } else {
-                if  zone.isInTrash || permanently {
-                    zone.traverseAllProgeny { iZone in
-                        iZone.concealChildren()                 // remove from list
-                        iZone.needDestroy()
-                    }
-                } else {
-                    zone.addToPaste()
+                let eventuallyDestroy = zone.isInTrash || permanently
+                let        destroyNow = eventuallyDestroy && gUseCloud
+
+                zone.addToPaste()
+
+                if !destroyNow {
                     moveToTrash(zone)
                 }
 
-                zone.orphan()
+                zone.traverseAllProgeny { iZone in
+                    if  eventuallyDestroy {
+                        iZone.needDestroy()                     // gets written in file
+                    }
+
+                    if  destroyNow {
+                        iZone.concealChildren()                 // prevent gExpandedZones list from getting clogged with stale references
+                        iZone.orphan()
+                    }
+                }
 
                 if  let            p = parent, p != zone {
                     p.fetchableCount = p.count                  // delete alters the count
                 }
 
-                /////////////////////////////////////////////////////////
-                // remove all bookmarks for which their target is zone //
-                /////////////////////////////////////////////////////////
+                ///////////////////////////////////////////
+                // remove all bookmarks that target zone //
+                ///////////////////////////////////////////
 
+                zone.addToPaste()
                 zone.maybeNeedBookmarks()
                 gBatchOperationsManager.bookmarks { iSame in
+
+                    /////////////
+                    // RECURSE //
+                    /////////////
+
                     self.deleteZones(zone.fetchedBookmarks, permanently: permanently) {
                         onCompletion?()
                     }

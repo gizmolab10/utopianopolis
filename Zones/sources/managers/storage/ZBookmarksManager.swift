@@ -85,23 +85,14 @@ class ZBookmarksManager: NSObject {
 
 
     func storageArray(for iDatabaseID: ZDatabaseID) -> [ZStorageDict]? {
-        if  iDatabaseID        == .mineID {
-            let bookmarks       = allBookmarks
-            if  bookmarks.count > 0 {
-                var       array = [ZStorageDict] ()
-
-                for bookmark in bookmarks {
-                    if  bookmark.parent == nil,
-                        let      subDict = bookmark.storageDictionary(for: .mineID) {
-                        array.append(subDict)
-                    }
-                }
-
-                return array
+        return Zone.storageArray(for: allBookmarks, from: iDatabaseID) { zRecord -> Bool in
+            if  let    bookmark = zRecord as? Zone,
+                let        root = bookmark.root {
+                return root.databaseID != iDatabaseID && !root.isRootOfFavorites // only store cross-linked, non-favorite bookarks
             }
-        }
 
-        return nil
+            return false
+        }
     }
 
 }

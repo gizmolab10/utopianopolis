@@ -23,8 +23,8 @@ let gFileManager = ZFileManager()
 class ZFileManager: NSObject {
 
 
-    var isSaving = [false, false] // not allow another save while file is being written
-    var  doWrite = [false, false]
+    var  isWriting = [false, false] // not allow another save while file is being written
+    var needsWrite = [false, false]
 
 
     // MARK:- API
@@ -34,7 +34,7 @@ class ZFileManager: NSObject {
     func needWrite(for  databaseID: ZDatabaseID?) {
         if  let  dbID = databaseID,
             let index = indexOf(dbID) {
-            doWrite[index] = true
+            needsWrite[index] = true
         }
     }
 
@@ -42,7 +42,7 @@ class ZFileManager: NSObject {
     func needsWrite(for  databaseID: ZDatabaseID?) -> Bool {
         if  let  dbID = databaseID,
             let index = indexOf(dbID) {
-            return doWrite[index]
+            return needsWrite[index]
         }
 
         return false
@@ -50,25 +50,41 @@ class ZFileManager: NSObject {
 
 
     func write(for databaseID: ZDatabaseID?) {
-        if  let        dbID = databaseID,
-            let       index = indexOf(dbID), !isSaving[index], doWrite[index],
-            let        root = gRemoteStoresManager.rootZone(for: dbID),
-            dbID           != .favoritesID,
-            gSaveMode      != .cloudOnly {
-            isSaving[index] = true // prevent rewrite
-            var        dict = ZStorageDict ()
+        if  let           dbID = databaseID,
+            dbID              != .favoritesID,
+            gSaveMode         != .cloudOnly,
+            let        index   = indexOf(dbID),
+            needsWrite[index] == true,
+            isWriting [index] == false {    // prevent write during write
+            isWriting [index]  = true
+            needsWrite[index]  = false
+            var           dict = ZStorageDict ()
+            let        manager = gRemoteStoresManager.cloudManagerFor(dbID)
 
-            if  let        graph  = root.storageDictionary(for: dbID)  { // snapshot of graph's root as of just before exit from method, down class from our smart dictionary
-                dict     [.graph] = graph as NSObject
+            //////////////////////////////////////////////////
+            // taake snapshots just before exit from method //
+            //////////////////////////////////////////////////
+
+            if  let   graph  = manager.rootZone?.storageDictionary(for: dbID)  {
+                dict[.graph] = graph as NSObject
             }
 
-            if  dbID             == .mineID,
-                let    favorites  = gFavoritesManager.rootZone?.storageDictionary(for: dbID) {
-                dict [.favorites] = favorites as NSObject
+            if  let   trash  = Zone.storageArray(for: manager.trashZone.children, from: dbID) {
+                dict[.trash] = trash as NSObject
             }
 
-            if  let    bookmarks  = gBookmarksManager.storageArray(for: dbID) {
-                dict [.bookmarks] = bookmarks as NSObject
+            if  let   found  = Zone.storageArray(for: manager.lostAndFoundZone.children, from: dbID) {
+                dict[.found] = found as NSObject
+            }
+
+            if  dbID                 == .mineID {
+                if  let    favorites  = gFavoritesManager.rootZone?.storageDictionary(for: dbID) {
+                    dict [.favorites] = favorites as NSObject
+                }
+
+                if  let    bookmarks  = gBookmarksManager.storageArray(for: dbID) {
+                    dict [.bookmarks] = bookmarks as NSObject
+                }
             }
 
             BACKGROUND {
@@ -78,8 +94,7 @@ class ZFileManager: NSObject {
 
                 if  FileManager.default.createFile(atPath: path, contents: data) {}
 
-                self  .isSaving[index] = false // end prevention of rewrite of file
-                self.doWrite[index] = false
+                self .isWriting[index] = false // end prevention of write during write
             }
         }
     }
@@ -89,25 +104,36 @@ class ZFileManager: NSObject {
         if  gFetchMode                  != .cloudOnly &&
             databaseID                  != .favoritesID {
             let                     path = fileURL(for: databaseID).path
-            let sections: [ZStorageType] = [.graph, .favorites, .bookmarks]
+            let sections: [ZStorageType] = [.graph, .trash, .favorites, .bookmarks, .found]
             do {
-                if  let     data = FileManager.default.contents(atPath: path),
-                    let     json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
-                    let     dict = dictFromJSON(json)
+                if  let data = FileManager.default.contents(atPath: path),
+                    let json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
+                    let dict = dictFromJSON(json)
 
                     for section in sections {
-                        if  let                 value = dict[section] {
-                            if  let           subDict = value as? ZStorageDict {
-                                let              root = Zone(dict: subDict, in: databaseID)
-                                let dbID: ZDatabaseID = section == .favorites ? .favoritesID : databaseID
+                        let dbID: ZDatabaseID = section == .favorites ? .favoritesID : databaseID
+                        let           manager = gRemoteStoresManager.cloudManagerFor(dbID)
+                        let  bookmarksSection = section == .bookmarks
+                        var     parent: Zone? = nil
 
-                                gRemoteStoresManager.setRootZone(root, for: dbID)
-                                signalFor(nil, regarding: .redraw)
-                            } else if let      array  = value as? [ZStorageDict] {
+                        switch section {
+                        case .found:   parent = manager.lostAndFoundZone
+                        case .trash:   parent = manager.trashZone
+                        default: break
+                        }
+
+                        if  let            value = dict[section] {
+                            if  let      subDict = value as? ZStorageDict {
+                                manager.rootZone = Zone(dict: subDict, in: databaseID)
+                            } else if let  array = value as? [ZStorageDict], (parent != nil || bookmarksSection) {
                                 for subDict in array {
-                                    let      bookmark = Zone(dict: subDict, in: databaseID)
+                                    let zone = Zone(dict: subDict, in: databaseID)
 
-                                    gBookmarksManager.registerBookmark(bookmark)
+                                    if bookmarksSection {
+                                        gBookmarksManager.registerBookmark(zone)
+                                    } else {
+                                        parent?.addChildAndRespectOrder(zone)
+                                    }
                                 }
                             }
                         }

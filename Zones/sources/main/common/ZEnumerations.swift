@@ -71,13 +71,15 @@ struct ZDetailsViewID: OptionSet {
 
 
 enum ZStorageType: String {
-    case bookmarks  = "bookmarks"   // general
+    case found      = "lostAndFound"    // general
+    case bookmarks  = "bookmarks"
     case favorites  = "favorites"
-    case userID     = "userID"
+    case userID     = "user ID"
     case graph      = "graph"
+    case trash      = "trash"
     case date       = "date"
 
-    case recordName = "recordName"  // zones
+    case recordName = "recordName"      // zones
     case parentLink = "parentLink"
     case attributes = "attributes"
     case children   = "children"
@@ -92,7 +94,7 @@ enum ZStorageType: String {
     case link       = "link"
     case name       = "name"
 
-    case asset      = "asset"       // traits
+    case asset      = "asset"           // traits
     case time       = "time"
     case text       = "text"
     case data       = "data"
