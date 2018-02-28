@@ -17,6 +17,7 @@ enum ZOperationID: Int {
     case onboard
     case cloud
     case read
+    case save       // zones
     case root
 
     // continue
@@ -30,7 +31,6 @@ enum ZOperationID: Int {
 
     // finish
 
-    case save       // zones
     case write
     case unsubscribe
     case subscribe

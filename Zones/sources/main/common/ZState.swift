@@ -43,8 +43,8 @@ var           gEditorView:      ZoneDragView? { return gEditorController?.editor
 var            gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var             gDotWidth:             Double { return gDotHeight * 0.75 }
 var             gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
-var             gSaveMode:          ZFileMode { return gUseCloud ? .all       : .localOnly }
-var            gFetchMode:          ZFileMode { return gUseCloud ? .cloudOnly : .localOnly }
+var             gSaveMode:          ZFileMode { return gUseCloud ? .all : .localOnly }
+var            gFetchMode:          ZFileMode { return gUseCloud ? .all : .localOnly }
 var           gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var        gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kReductionRatio) }
 
@@ -92,7 +92,7 @@ var gMathewStyleUI : Bool {
 
 
 var gUseCloud : Bool {
-    get { return false } // getPreferencesBool(   for: kUseCloud, defaultBool: true) }
+    get { return getPreferencesBool(   for: kUseCloud, defaultBool: true) }
     set { setPreferencesBool(newValue, for: kUseCloud) }
 }
 

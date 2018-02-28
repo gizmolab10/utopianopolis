@@ -120,7 +120,7 @@ class ZFileManager: NSObject {
 
 
     func read(for databaseID: ZDatabaseID) {
-        if  gFetchMode                  != .cloudOnly &&
+        if  gFetchMode                  != .cloudOnly,
             databaseID                  != .favoritesID,
             let                  index   = indexOf(databaseID) {
             let                     path = filePath(for: index)
@@ -171,8 +171,8 @@ class ZFileManager: NSObject {
 
 
     func createDataDirectory() -> URL {
-        let cacheURL = try! FileManager().url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)//.standardizedFileURL.path
-        let directoryURL = cacheURL.appendingPathComponent("data", isDirectory: true)
+        let cacheURL = try! FileManager().url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let directoryURL = cacheURL.appendingPathComponent("Focus", isDirectory: true)
 
         do {
 
@@ -185,36 +185,59 @@ class ZFileManager: NSObject {
     }
 
 
+    let normalExtension = ".focus"
+    let backupExtension = ".backup"
+
+
     func filePath(for index: Int) -> String {
-        var               path  = filePaths[index]
-        if  path               == nil,
-            let           name  = fileName(for: index) {
-            let        fileURL  = directoryURL.appendingPathComponent(name)
-            let  genericExists  = manager.fileExists(atPath: fileURL.path)
-            let   canUseGeneric = index == 0 || gUserRecordID == nil
-            path                = fileURL.path
+        var                   path  = filePaths[index]
+        if  path                   == nil,
+            let               name  = fileName(for: index) {
+            let            fileURL  = directoryURL.appendingPathComponent(name + normalExtension)
+            let          backupURL  = directoryURL.appendingPathComponent(name + backupExtension)
+            let       backupExists  = manager.fileExists(atPath: backupURL.path)
+            let      genericExists  = manager.fileExists(atPath:   fileURL.path)
+            let      canUseGeneric  = index == 0 || gUserRecordID == nil
+            path                    = fileURL.path
 
-            if    canUseGeneric {
-                if !genericExists {
-                    manager.createFile(atPath: fileURL.path, contents: nil)
-                }
-            } else {
-                let     newName = fileName(for: index, isGeneric: false)!
-                let  newFileURL = directoryURL.appendingPathComponent(newName)
-                let   newExists = manager.fileExists(atPath: newFileURL.path)
-                path            = newFileURL.path
-
-                if !newExists {
-                    if  genericExists {
-                        do {
-                            try manager.moveItem(at: fileURL, to: newFileURL)
-                        } catch {
-                            print(error)
+            do {
+                if           canUseGeneric {
+                    if       genericExists {
+                        if    backupExists {
+                            try manager.removeItem(at: backupURL)
                         }
+
+                        try manager.copyItem(at: fileURL, to: backupURL)
+                    } else if backupExists {
+                        try manager.copyItem(at: backupURL, to: fileURL)        // should only happen when prior write fails due to power failure
                     } else {
+                        manager.createFile(atPath: fileURL.path, contents: nil)
+                    }
+                } else {
+                    let         newName = fileName(for: index, isGeneric: false)!
+                    let      newFileURL = directoryURL.appendingPathComponent(newName + normalExtension)
+                    let    newBackupURL = directoryURL.appendingPathComponent(newName + backupExtension)
+                    let newBackupExists = manager.fileExists(atPath: newBackupURL.path)
+                    let       newExists = manager.fileExists(atPath:   newFileURL.path)
+                    path                = newFileURL.path
+
+                    if              newExists {
+                        if    newBackupExists {
+                            try manager.removeItem(at: newBackupURL)
+                        }
+
+                        try manager.copyItem(at: newFileURL, to: newBackupURL)
+                    } else if newBackupExists {
+                        try manager.copyItem(at: newBackupURL, to: newFileURL)  // should only happen when prior write fails due to power failure
+                    } else if  !genericExists {
                         manager.createFile(atPath: newFileURL.path, contents: nil)
+                    } else {
+                        try manager.moveItem(at: fileURL, to: newFileURL)
+                        try manager.copyItem(at: newFileURL, to: newBackupURL)
                     }
                 }
+            } catch {
+                print(error)
             }
 
             filePaths[index] = path
@@ -241,8 +264,6 @@ class ZFileManager: NSObject {
                 let userID = gUserRecordID {
                 name       = "\(userID.hashValue)"
             }
-
-            name.append(".focus")
 
             return name
         }

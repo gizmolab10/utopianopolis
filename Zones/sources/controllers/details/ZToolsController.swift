@@ -22,11 +22,11 @@ class ZToolsController: ZGenericTableController {
     enum ZToolKind: Int {
         case eUseCloud
         case eFullFetch
+        case eRetry
         case eRecount
         case eAccess
         case eIdentifiers
         case eGather
-        case eRetry
         case eTrash
     }
     
@@ -37,7 +37,7 @@ class ZToolsController: ZGenericTableController {
 
 
     override func numberOfRows(in tableView: ZTableView) -> Int {
-        return !gIsSpecialUser ? 0 : 2 + (gIsLate ? 1 : 0)
+        return 2 + (gIsLate ? 1 : 0)
     }
 
 
@@ -45,7 +45,7 @@ class ZToolsController: ZGenericTableController {
         switch kind {
         case .eUseCloud:    return          (gUseCloud ? "Use Cloud" : "Local File Only")
         case .eFullFetch:   return         (gFullFetch ? "Full"      : "Minimal") + " Fetch"
-        case .eIdentifiers: return   (gDebugShowIdentifiers ? "Visible"   : "Hidden")  + " Identifiers"
+        case .eIdentifiers: return (gDebugShowIdentifiers ? "Visible"   : "Hidden")  + " Identifiers"
         case .eAccess:      return (gCrippleUserAccess ? "Crippled"  : "Normal")  + " User Access"
         case .eGather:      return "Gather Lost and Found"
         case .eRetry:       return "Retry Cloud"
