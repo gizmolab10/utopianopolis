@@ -84,7 +84,7 @@ class ZBookmarksManager: NSObject {
     }
 
 
-    func storageArray(for iDatabaseID: ZDatabaseID) -> [ZStorageDict]? {
+    func storageArray(for iDatabaseID: ZDatabaseID) -> [ZStorageDictionary]? {
         return Zone.storageArray(for: allBookmarks, from: iDatabaseID) { zRecord -> Bool in
             if  let    bookmark = zRecord as? Zone,
                 let        root = bookmark.root {

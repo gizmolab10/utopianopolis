@@ -16,8 +16,8 @@ enum ZOperationID: Int {
 
     case onboard
     case cloud
-    case root
     case read
+    case root
 
     // continue
 
@@ -38,10 +38,10 @@ enum ZOperationID: Int {
     // onboarding
 
     case setup
-    case internet
-    case ubiquity
     case accountStatus      // vs no account
     case fetchUserID
+    case internet
+    case ubiquity
     case fetchUserRecord
     case fetchUserIdentity
 
@@ -96,17 +96,19 @@ class ZOperationsManager: NSObject {
     func shouldPerform(_ iID: ZOperationID) -> Bool {
         let cloudFetch = gFetchMode != .localOnly
         let cloudSave  =  gSaveMode != .localOnly
-        var   decision = true
+        var yesPerform = true
 
         switch iID {
-        case .save:                                                                                                                                      decision = cloudSave
-        case .fetch, .merge, .traits, .emptyTrash, .fetchlost, .undelete, .refetch, .onboard, .parents, .children, .bookmarks, .subscribe, .unsubscribe: decision = cloudFetch
-        case .setup, .internet, .ubiquity, .accountStatus, .fetchUserID, .fetchUserRecord, .fetchUserIdentity, .cloud:                                   decision = cloudFetch || cloudSave
-        case .write:                                                                                                                                     decision = gSaveMode != .cloudOnly
+        case .save:                                                                                                                                      yesPerform = cloudSave
+        case .fetch, .merge, .traits, .emptyTrash, .fetchlost, .undelete, .refetch, .parents, .children, .bookmarks, .subscribe, .unsubscribe: yesPerform = cloudFetch
+        case .cloud, .internet, .ubiquity, .fetchUserRecord, .fetchUserIdentity:                                   yesPerform = cloudFetch || cloudSave
+        //case .write:                                                                                                                                     yesPerform = gSaveMode != .cloudOnly
         default: break
         }
 
-        return decision
+        // .setup, .accountStatus, .fetchUserID, .onboard,
+
+        return yesPerform
     }
 
 

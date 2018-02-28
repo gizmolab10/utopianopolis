@@ -21,7 +21,7 @@ class ZRecord: NSObject {
     var        isBookmark: Bool             { return record?.isBookmark ?? false }
     var            isRoot: Bool             { return record != nil && kRootNames.contains(recordName!) }
     var           canSave: Bool             { return !hasState(.requiresFetch) }
-    var       isFromCloud: Bool             { return !hasState(.notFetched) }
+    var       isFetched: Bool             { return !hasState(.notFetched) }
     var         needsSave: Bool             { return  hasState(.needsSave) }
     var         needsRoot: Bool             { return  hasState(.needsRoot) }
     var        notFetched: Bool             { return  hasState(.notFetched) }
@@ -48,32 +48,42 @@ class ZRecord: NSObject {
 
         set {
             if  _record != newValue {
+
+                ///////////////////////////////////////////
+                // old registrations are no longer valid //
+                ///////////////////////////////////////////
+
+                clearAllStates() // is this needed?
                 gBookmarksManager.unregisterBookmark(self as? Zone)
                 cloudManager?.unregisterCKRecord(_record)
 
-                _record  = newValue
+                _record = newValue
 
                 register()
-                maybeMarkFromCloud()
+                maybeMarkAsFetched()
                 updateInstanceProperties()
                 gBookmarksManager.registerBookmark(self as? Zone)
 
                 let zone = self as? Zone
-                let name = zone?.zoneName
+                let name = zone?.zoneName ?? recordName ?? kNoValue
 
-                if !isFromCloud {
+                if  notFetched {
                     setupLinks()
                 }
 
-                if       !canSave && isFromCloud {
-                    columnarReport("ALLOW SAVE", name ?? recordName)
+                /////////////////////
+                // debugging tests //
+                /////////////////////
+
+                if       !canSave &&  isFetched {
+                    bam("new record, ALLOW SAVE " + name)
                     allowSave()
                 } else if canSave && notFetched {
-//                    columnarReport("DON'T SAVE", name ?? recordName)
+                    bam("require FETCH BEFORE SAVE " + name)
                     fetchBeforeSave()
 
-                    if name != nil || recordName == kRootName {
-                        bam("named ... should allow saving")
+                    if  name != kNoValue || recordName == kRootName {
+                        bam("new named record, should ALLOW SAVING")
                     }
                 }
             }
@@ -162,6 +172,7 @@ class ZRecord: NSObject {
     }
 
 
+    func orphan() {}
     func unorphan() {}
     func maybeNeedRoot() {}
     func debug(_  iMessage: String) {}
@@ -315,15 +326,15 @@ class ZRecord: NSObject {
 
 
     func maybeNeedMerge() {
-        if  isFromCloud, canSave, !needsSave, !needsMerge, !needsDestroy {
+        if  isFetched, canSave, !needsSave, !needsMerge, !needsDestroy {
             addState(.needsMerge)
         }
     }
 
 
-    func maybeMarkFromCloud() {
+    func maybeMarkAsFetched() {
         if  let r = record {
-            r.maybeMarkFromCloud(databaseID)
+            r.maybeMarkAsFetched(databaseID)
         }
     }
 
@@ -460,9 +471,9 @@ class ZRecord: NSObject {
 
 
 
-    func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDict? {
+    func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDictionary? {
         let  keyPaths = cloudProperties() + [kpRecordName]
-        var      dict = ZStorageDict()
+        var      dict = ZStorageDictionary()
         
         for keyPath in keyPaths {
             if  let       type = type(from: keyPath),
@@ -480,7 +491,7 @@ class ZRecord: NSObject {
     }
 
 
-    func setStorageDictionary(_ dict: ZStorageDict, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
+    func setStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
         databaseID  = iDatabaseID
         if let name = dict[.recordName] as? String {
             record  = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: name)) // YIKES this may be wildly out of date
@@ -507,9 +518,9 @@ class ZRecord: NSObject {
     }
 
 
-    class func storageArray(for items: [ZRecord], from dbID: ZDatabaseID, allowEach: ZRecordToBooleanClosure? = nil) -> [ZStorageDict]? {
+    class func storageArray(for items: [ZRecord], from dbID: ZDatabaseID, allowEach: ZRecordToBooleanClosure? = nil) -> [ZStorageDictionary]? {
         if  items.count > 0 {
-            var array = [ZStorageDict] ()
+            var array = [ZStorageDictionary] ()
 
             for item in items {
                 if  (allowEach == nil || allowEach!(item)),
@@ -518,7 +529,9 @@ class ZRecord: NSObject {
                 }
             }
 
-            return array
+            if  array.count > 0 {
+                return array
+            }
         }
 
         return nil

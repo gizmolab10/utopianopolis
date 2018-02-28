@@ -100,10 +100,10 @@ class ZBatchOperationsManager: ZOperationsManager {
     // MARK:-
 
 
-    func     unHang()                                  {                                                                                                 onCloudResponse?(0) }
-    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .onboard,  to: .read,                                                      onCompletion) }
-    func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,     to: .traits,                                                    onCompletion) }
-    func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .save,     to: .subscribe,                                                 onCompletion) }
+    func     unHang()                                  {                                                                                                  onCloudResponse?(0) }
+    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .onboard,  to: .read,                                                       onCompletion) }
+    func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,     to: .traits,                                                     onCompletion) }
+    func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .save,     to: .subscribe,                                                  onCompletion) }
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash,                                                                   ]) { onCompletion() } }
     func  fetchLost(_ onCompletion: @escaping Closure) { setupAndRun([.fetchlost,                           .save, .children,                        ]) { onCompletion() } }
     func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete,  .fetch, .parents,         .save, .children,         .traits        ]) { onCompletion() } }

@@ -92,7 +92,7 @@ var gMathewStyleUI : Bool {
 
 
 var gUseCloud : Bool {
-    get { return getPreferencesBool(   for: kUseCloud, defaultBool: true) }
+    get { return false } // getPreferencesBool(   for: kUseCloud, defaultBool: true) }
     set { setPreferencesBool(newValue, for: kUseCloud) }
 }
 

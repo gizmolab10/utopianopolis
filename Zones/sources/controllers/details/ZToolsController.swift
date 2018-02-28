@@ -90,7 +90,7 @@ class ZToolsController: ZGenericTableController {
     // MARK:-
 
 
-    func        toggleUseCloud() {          gUseCloud = !gUseCloud; syncToCloudAndSignalFor(nil, regarding: .information) {} }
+    func        toggleUseCloud() {          gUseCloud = !gUseCloud; redrawSyncRedraw() }
     func       toggleFullFetch() {         gFullFetch = !gFullFetch }
     func toggleShowIdentifiers() {   gDebugShowIdentifiers = !gDebugShowIdentifiers }
     func      toggleUserAccess() { gCrippleUserAccess = !gCrippleUserAccess }

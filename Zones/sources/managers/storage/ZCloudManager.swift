@@ -83,6 +83,7 @@ class ZCloudManager: ZRecordsManager {
                     if  let destroyed = iDeletedRecordIDs {
                         for recordID: CKRecordID in destroyed {
                             if  let zRecord = self.maybeZRecordForRecordID(recordID) { // zones AND traits
+                                zRecord.orphan()
                                 self.unregisterZRecord(zRecord)
                             }
                         }
@@ -92,7 +93,7 @@ class ZCloudManager: ZRecordsManager {
                         for ckRecord: CKRecord in saved {
                             if  let zone = self.maybeZoneForRecordID(ckRecord.recordID) {
                                 zone.useBest(record: ckRecord)
-                                ckRecord.maybeMarkFromCloud(self.databaseID)
+                                ckRecord.maybeMarkAsFetched(self.databaseID)
                             }
                         }
                     }
@@ -181,7 +182,7 @@ class ZCloudManager: ZRecordsManager {
         let done:  RecordClosure = { (iCKRecord: CKRecord?) in
             FOREGROUND(canBeDirect: true) {
                 if  let ckRecord = iCKRecord {
-                    ckRecord.maybeMarkFromCloud(self.databaseID)
+                    ckRecord.maybeMarkAsFetched(self.databaseID)
                 }
 
                 onCompletion(iCKRecord)
@@ -268,9 +269,9 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func traitsPredicate(specificTo iRecordIDs: [CKRecordID]) -> NSPredicate {
+    func traitsPredicate(specificTo iRecordIDs: [CKRecordID]) -> NSPredicate? {
         if  iRecordIDs.count == 0 {
-            return NSPredicate(value: true)
+            return gReadyState ? nil : NSPredicate(value: true)
         } else {
             var predicate = ""
             var separator = ""
@@ -387,7 +388,7 @@ class ZCloudManager: ZRecordsManager {
                 let scan: ObjectClosure = { iObject in
                     if let zone = iObject as? Zone {
                         zone.traverseAllProgeny { iZone in
-                            if  iZone.isFromCloud,
+                            if  iZone.isFetched,
                                 iZone.databaseID == self.databaseID,
                                 let identifier = iZone.recordName,
                                 !iZone.isRoot,
@@ -827,30 +828,32 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchTraits(_ onCompletion: IntClosure?) {
-        let recordIDs = recordIDsWithMatchingStates([.needsTraits], pull: true)
-        let predicate = traitsPredicate(specificTo: recordIDs)
-        var retrieved = [CKRecord] ()
-
-        queryWith(predicate, recordType: kTraitType, properties: ZTrait.cloudProperties()) { iRecord in
-            if let ckRecord = iRecord {
-                if !retrieved.contains(ckRecord) {
-                    retrieved.append(ckRecord)
-                }
-            } else { // nil means done
-                FOREGROUND {
-                    for ckRecord in retrieved {
-                        var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
-
-                        if  zRecord == nil {                                                    // if not already registered
-                            zRecord  = ZTrait(record: ckRecord, databaseID: self.databaseID)    // register
-                        }
+        let    recordIDs = recordIDsWithMatchingStates([.needsTraits], pull: true)
+        var    retrieved = [CKRecord] ()
+        if let predicate = traitsPredicate(specificTo: recordIDs) {
+            queryWith(predicate, recordType: kTraitType, properties: ZTrait.cloudProperties()) { iRecord in
+                if let ckRecord = iRecord {
+                    if !retrieved.contains(ckRecord) {
+                        retrieved.append(ckRecord)
                     }
+                } else { // nil means done
+                    FOREGROUND {
+                        for ckRecord in retrieved {
+                            var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
 
-                    self.columnarReport("TRAITS (\(retrieved.count))", self.stringForCKRecords(retrieved))
-                    self.unorphanAll()
-                    onCompletion?(0)
+                            if  zRecord == nil {                                                    // if not already registered
+                                zRecord  = ZTrait(record: ckRecord, databaseID: self.databaseID)    // register
+                            }
+                        }
+
+                        self.columnarReport("TRAITS (\(retrieved.count))", self.stringForCKRecords(retrieved))
+                        self.unorphanAll()
+                        onCompletion?(0)
+                    }
                 }
             }
+        } else {
+            onCompletion?(0)
         }
     }
 
@@ -949,6 +952,10 @@ class ZCloudManager: ZRecordsManager {
 
         if  name == kRootName { // in case it is first time for user
             rootCompletion()
+        } else if let here = maybeZRecordForRecordName(name) as? Zone {
+            gHere = here
+
+            onCompletion?(0)
         } else {
             let recordID = CKRecordID(recordName: name)
 
@@ -982,12 +989,12 @@ class ZCloudManager: ZRecordsManager {
                     rootRecord  = CKRecord(recordType: kZoneType, recordID: recordID)   // will create
                 }
 
-                let        root = self.zoneForCKRecord(rootRecord!)                       // get / create root
+                let        root = self.zoneForCKRecord(rootRecord!)                     // get / create root
                 self  .rootZone = root
                 root    .parent = nil
 
                 if  root.zoneName == nil {
-                    root.zoneName  = "title"                                             // was created
+                    root.zoneName  = "title"                                            // was created
 
                     root.needSave()
                 }

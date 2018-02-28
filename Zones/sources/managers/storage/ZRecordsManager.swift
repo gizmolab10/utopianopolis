@@ -31,12 +31,20 @@ enum ZRecordState: String {
 }
 
 
+enum ZSyncDateType: String {
+    case saves          = "saves"
+    case traits         = "traits"
+    case bookmarks      = "bookmarks"
+}
+
+
 class ZRecordsManager: NSObject {
 
 
     var               databaseID : ZDatabaseID
-    var                 registry = [String       :  ZRecord] ()
-    var       recordNamesByState = [ZRecordState : [String]] ()
+    var                 registry = [String        :  ZRecord] ()
+    var       recordNamesByState = [ZRecordState  : [String]] ()
+    var            lastSyncDates = [ZSyncDateType :     Date] ()
     var _lostAndFoundZone: Zone? = nil
     var        _trashZone: Zone? = nil
     var          rootZone: Zone? = nil
@@ -104,6 +112,21 @@ class ZRecordsManager: NSObject {
 
         return lost
     }
+
+
+    // MARK:- fetch dates
+    // MARK:-
+
+
+    func lastFetchDate(for type: ZSyncDateType) -> Date? {
+        return lastSyncDates[type]
+    }
+
+
+    func setLastFetchDate(_ date: Date, for type: ZSyncDateType) {
+        lastSyncDates[type] = date
+    }
+
 
 
     // MARK:- record state

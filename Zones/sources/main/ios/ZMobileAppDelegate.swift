@@ -38,7 +38,7 @@ class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
 
 
     public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
-        let note: CKNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! ZStorageDict)
+        let note: CKNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! ZStorageDictionary)
 
         if note.notificationType == .query {
             let queryNote: CKQueryNotification = note as! CKQueryNotification

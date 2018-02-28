@@ -17,8 +17,8 @@ import CloudKit
 #endif
 
 
-typealias ZStorageDict = [ZStorageType : NSObject]
-typealias ZDatabaseIDs = [ZDatabaseID]
+typealias ZStorageDictionary = [ZStorageType : NSObject]
+typealias       ZDatabaseIDs = [ZDatabaseID]
 
 
 extension NSObject {
@@ -253,7 +253,7 @@ extension CKRecord {
     }
 
 
-    func maybeMarkFromCloud(_ databaseID: ZDatabaseID?) {
+    func maybeMarkAsFetched(_ databaseID: ZDatabaseID?) {
         if  let dbID      = databaseID,
             creationDate != nil {
             let states    = [ZRecordState.notFetched]

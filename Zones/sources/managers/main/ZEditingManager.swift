@@ -609,7 +609,7 @@ class ZEditingManager: NSObject {
             var needOp = false
 
             zone.traverseAncestors { iZone -> ZTraverseStatus in
-                if  let parentZone = iZone.parentZone, !parentZone.isFromCloud {
+                if  let parentZone = iZone.parentZone, !parentZone.isFetched {
                     iZone.needRoot()
 
                     needOp = true
@@ -687,7 +687,7 @@ class ZEditingManager: NSObject {
                     let gotOrphan = iParent.parentZone == nil
 
                     if  gotThere || gotOrphan {
-                        if !gotThere && !iParent.isFromCloud && iParent.parentZone != nil { // reached an orphan that has not yet been fetched
+                        if !gotThere && !iParent.isFetched && iParent.parentZone != nil { // reached an orphan that has not yet been fetched
                             self.recursivelyRevealSiblings(iParent, untilReaching: iAncestor, onCompletion: onCompletion)
                         } else {
                             iAncestor.revealChildren()
@@ -2010,7 +2010,7 @@ class ZEditingManager: NSObject {
                 if  setHere {
                     gHere   = parent!
 
-                    self.signalFor(nil, regarding: .redraw)
+                    self.updateFavoritesRedrawAndSync()
                 }
 
                 if  same && (parent?.count ?? 0) > 1 && (setHere || iCalledCloud) {

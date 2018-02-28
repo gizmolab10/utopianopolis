@@ -32,7 +32,7 @@ class ZDebugController: ZGenericController {
         if  let zone = grab {
             let count = zone.fetchableCount
 
-            text.append(zone.isFromCloud ? "cloud" : "local")
+            text.append(zone.isFetched ? "cloud" : "local")
 
             if zone.parent != nil {
                 text.append("p.ref")

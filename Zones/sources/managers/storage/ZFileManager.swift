@@ -23,8 +23,22 @@ let gFileManager = ZFileManager()
 class ZFileManager: NSObject {
 
 
-    var  isWriting = [false, false] // not allow another save while file is being written
-    var needsWrite = [false, false]
+    var            isWriting = [false, false] // not allow another save while file is being written
+    var           needsWrite = [false, false]
+    var filePaths: [String?] = [nil, nil]
+    var _directoryURL : URL? = nil
+    let              manager = FileManager.default
+
+
+    var directoryURL: URL {
+        get {
+            if  _directoryURL == nil {
+                _directoryURL  = createDataDirectory()
+            }
+
+            return _directoryURL!
+        }
+    }
 
 
     // MARK:- API
@@ -58,7 +72,7 @@ class ZFileManager: NSObject {
             isWriting [index] == false {    // prevent write during write
             isWriting [index]  = true
             needsWrite[index]  = false
-            var           dict = ZStorageDict ()
+            var           dict = ZStorageDictionary ()
             let        manager = gRemoteStoresManager.cloudManagerFor(dbID)
 
             //////////////////////////////////////////////////
@@ -77,7 +91,11 @@ class ZFileManager: NSObject {
                 dict[.found] = found as NSObject
             }
 
-            if  dbID                 == .mineID {
+            if  let   userID  = gUserRecordID {
+                dict[.userID] = userID as NSObject
+            }
+
+            if                  dbID == .mineID {
                 if  let    favorites  = gFavoritesManager.rootZone?.storageDictionary(for: dbID) {
                     dict [.favorites] = favorites as NSObject
                 }
@@ -88,8 +106,9 @@ class ZFileManager: NSObject {
             }
 
             BACKGROUND {
+                dict[.date]  = Date().description as NSObject
                 let jsonDict = self.jsonDictFrom(dict)
-                let     path = self.fileURL(for: dbID).path
+                let     path = self.filePath(for: index)
                 let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
 
                 if  FileManager.default.createFile(atPath: path, contents: data) {}
@@ -102,8 +121,9 @@ class ZFileManager: NSObject {
 
     func read(for databaseID: ZDatabaseID) {
         if  gFetchMode                  != .cloudOnly &&
-            databaseID                  != .favoritesID {
-            let                     path = fileURL(for: databaseID).path
+            databaseID                  != .favoritesID,
+            let                  index   = indexOf(databaseID) {
+            let                     path = filePath(for: index)
             let sections: [ZStorageType] = [.graph, .trash, .favorites, .bookmarks, .found]
             do {
                 if  let data = FileManager.default.contents(atPath: path),
@@ -123,9 +143,9 @@ class ZFileManager: NSObject {
                         }
 
                         if  let            value = dict[section] {
-                            if  let      subDict = value as? ZStorageDict {
+                            if  let      subDict = value as? ZStorageDictionary {
                                 manager.rootZone = Zone(dict: subDict, in: databaseID)
-                            } else if let  array = value as? [ZStorageDict], (parent != nil || bookmarksSection) {
+                            } else if let  array = value as? [ZStorageDictionary], (parent != nil || bookmarksSection) {
                                 for subDict in array {
                                     let zone = Zone(dict: subDict, in: databaseID)
 
@@ -150,43 +170,89 @@ class ZFileManager: NSObject {
     // MARK:-
 
 
-    func createFileNamed(_ iName: String) -> URL {
-        let folder = try! FileManager().url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-//      let folder = Bundle.main.resourceURL!
-        let    url = folder.appendingPathComponent(iName, isDirectory: false).standardizedFileURL
-        let   path = url.deletingLastPathComponent().path;
+    func createDataDirectory() -> URL {
+        let cacheURL = try! FileManager().url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)//.standardizedFileURL.path
+        let directoryURL = cacheURL.appendingPathComponent("data", isDirectory: true)
 
         do {
-            let manager = FileManager.default
 
-            try manager.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
-
-            if !manager.fileExists(atPath: url.path) {
-                manager.createFile(atPath: url.path, contents: nil)
-            }
+            try manager.createDirectory(atPath: directoryURL.path, withIntermediateDirectories: true, attributes: nil)
         } catch {
             print(error)
         }
 
-        return url;
+        return directoryURL
     }
 
 
-    func fileURL(for databaseID: ZDatabaseID) -> URL { return fileURLForZoneNamed(fileName(for: databaseID)) }
-    func fileURLForZoneNamed(_ iName: String) -> URL { return createFileNamed("data/\(iName)"); }
+    func filePath(for index: Int) -> String {
+        var               path  = filePaths[index]
+        if  path               == nil,
+            let           name  = fileName(for: index) {
+            let        fileURL  = directoryURL.appendingPathComponent(name)
+            let  genericExists  = manager.fileExists(atPath: fileURL.path)
+            let   canUseGeneric = index == 0 || gUserRecordID == nil
+            path                = fileURL.path
 
+            if    canUseGeneric {
+                if !genericExists {
+                    manager.createFile(atPath: fileURL.path, contents: nil)
+                }
+            } else {
+                let     newName = fileName(for: index, isGeneric: false)!
+                let  newFileURL = directoryURL.appendingPathComponent(newName)
+                let   newExists = manager.fileExists(atPath: newFileURL.path)
+                path            = newFileURL.path
 
-    func fileName(for databaseID: ZDatabaseID) -> String {
-        var name = databaseID.rawValue
+                if !newExists {
+                    if  genericExists {
+                        do {
+                            try manager.moveItem(at: fileURL, to: newFileURL)
+                        } catch {
+                            print(error)
+                        }
+                    } else {
+                        manager.createFile(atPath: newFileURL.path, contents: nil)
+                    }
+                }
+            }
 
-        name.append(".focus")
+            filePaths[index] = path
+        }
 
-        return name
+        return path!
     }
 
 
-    func dictFromJSON(_ dict: [String : NSObject]) -> ZStorageDict {
-        var                   result = ZStorageDict ()
+    func databaseID(from index: Int) -> ZDatabaseID? {
+        switch index {
+        case 0:  return .everyoneID
+        case 1:  return .mineID
+        default: return nil
+        }
+    }
+
+
+    func fileName(for index: Int, isGeneric: Bool = true) -> String? {
+        if  let dbID = databaseID(from: index) {
+            var name = dbID.rawValue
+
+            if  dbID      == .mineID, !isGeneric,
+                let userID = gUserRecordID {
+                name       = "\(userID.hashValue)"
+            }
+
+            name.append(".focus")
+
+            return name
+        }
+
+        return nil
+    }
+
+
+    func dictFromJSON(_ dict: [String : NSObject]) -> ZStorageDictionary {
+        var                   result = ZStorageDictionary ()
 
         for (key, value) in dict {
             if  let       storageKey = ZStorageType(rawValue: key) {
@@ -207,7 +273,7 @@ class ZFileManager: NSObject {
                     if  let     subDict = value as? [String : NSObject] {
                         goodValue       = dictFromJSON(subDict) as NSObject
                     } else if let array = value as? [[String : NSObject]] {
-                        var   goodArray = [ZStorageDict] ()
+                        var   goodArray = [ZStorageDictionary] ()
 
                         for subDict in array {
                             goodArray.append(dictFromJSON(subDict))
@@ -225,17 +291,17 @@ class ZFileManager: NSObject {
     }
 
 
-    func jsonDictFrom(_ dict: ZStorageDict) -> [String : NSObject] {
-        var deferals = ZStorageDict ()
+    func jsonDictFrom(_ dict: ZStorageDictionary) -> [String : NSObject] {
+        var deferals = ZStorageDictionary ()
         var   result = [String : NSObject] ()
 
         let closure = { (key: ZStorageType, value: Any) in
             var goodValue       = value
-            if  let     subDict = value as? ZStorageDict {
+            if  let     subDict = value as? ZStorageDictionary {
                 goodValue       = self.jsonDictFrom(subDict)
             } else if let  date = value as? Date {
                 goodValue       = kTimeInterval + ":\(date.timeIntervalSinceReferenceDate)"
-            } else if let array = value as? [ZStorageDict] {
+            } else if let array = value as? [ZStorageDictionary] {
                 var jsonArray   = [[String : NSObject]] ()
 
                 for subDict in array {

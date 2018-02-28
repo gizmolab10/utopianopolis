@@ -66,7 +66,7 @@ class ZTrait: ZRecord {
     }
 
 
-    convenience init(dict: ZStorageDict, in dbID: ZDatabaseID) {
+    convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
         self.init(record: nil, databaseID: dbID)
 
         setStorageDictionary(dict, of: kTraitType, into: dbID)
@@ -84,6 +84,15 @@ class ZTrait: ZRecord {
 
     override func cloudProperties() -> [String] {
         return super.cloudProperties() + ZTrait.cloudProperties()
+    }
+
+
+    override func orphan() {
+        ownerZone?.setTraitText(nil, for: traitType)
+
+        owner = nil
+
+        updateRecordProperties()
     }
 
 

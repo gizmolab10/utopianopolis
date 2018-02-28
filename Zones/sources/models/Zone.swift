@@ -1111,12 +1111,10 @@ class Zone : ZRecord {
     }
 
 
-    func orphan() {
+   override func orphan() {
         parentZone?.removeChild(self)
 
         parentZone = nil
-
-        updateRecordProperties()
     }
 
 
@@ -1411,7 +1409,7 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    convenience init(dict: ZStorageDict, in dbID: ZDatabaseID) {
+    convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
         self.init(record: nil, databaseID: dbID)
 
         setStorageDictionary(dict, of: kZoneType, into: dbID)
@@ -1423,13 +1421,13 @@ class Zone : ZRecord {
     }
 
 
-    override func setStorageDictionary(_ dict: ZStorageDict, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
+    override func setStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
         if let       name = dict[.name] as? String { zoneName = name }
 
         super.setStorageDictionary(dict, of: iRecordType, into: iDatabaseID) // do this step last so the assignment above is NOT pushed to cloud
 
-        if let childrenStore: [ZStorageDict] = dict[.children] as! [ZStorageDict]? {
-            for childStore: ZStorageDict in childrenStore {
+        if let childrenStore: [ZStorageDictionary] = dict[.children] as! [ZStorageDictionary]? {
+            for childStore: ZStorageDictionary in childrenStore {
                 let child = Zone(dict: childStore, in: iDatabaseID)
 
                 addChild(child, at: nil)
@@ -1438,8 +1436,8 @@ class Zone : ZRecord {
             respectOrder()
         }
 
-        if let traitStore: [ZStorageDict] = dict[.traits] as! [ZStorageDict]? {
-            for traitStore: ZStorageDict in traitStore {
+        if let traitStore: [ZStorageDictionary] = dict[.traits] as! [ZStorageDictionary]? {
+            for traitStore: ZStorageDictionary in traitStore {
                 let trait = ZTrait(dict: traitStore, in: iDatabaseID)
 
                 addTrait(trait)
@@ -1448,7 +1446,7 @@ class Zone : ZRecord {
     }
 
 
-    override func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDict? {
+    override func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDictionary? {
         var  dict = super.storageDictionary(for: iDatabaseID)!
 
         if  let   childDict = Zone.storageArray(for: children, from: iDatabaseID) {
