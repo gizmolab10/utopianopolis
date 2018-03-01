@@ -115,6 +115,7 @@ class ZControllersManager: NSObject {
                             gBatchOperationsManager.usingDebugTimer = false
 
                             self.signalFor(nil, regarding: .redraw)
+                            gRemoteStoresManager.updateLastSyncDates()
                         }
                     }
                 }

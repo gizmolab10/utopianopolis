@@ -91,22 +91,24 @@ class ZFileManager: NSObject {
                 dict[.found] = found as NSObject
             }
 
-            if  let   userID  = gUserRecordID {
-                dict[.userID] = userID as NSObject
-            }
-
-            if                  dbID == .mineID {
-                if  let    favorites  = gFavoritesManager.rootZone?.storageDictionary(for: dbID) {
-                    dict [.favorites] = favorites as NSObject
+            if                 dbID == .mineID {
+                if  let   favorites  = gFavoritesManager.rootZone?.storageDictionary(for: dbID) {
+                    dict[.favorites] = favorites as NSObject
                 }
 
-                if  let    bookmarks  = gBookmarksManager.storageArray(for: dbID) {
-                    dict [.bookmarks] = bookmarks as NSObject
+                if  let   bookmarks  = gBookmarksManager.storageArray(for: dbID) {
+                    dict[.bookmarks] = bookmarks as NSObject
+                }
+
+                if  let       userID  = gUserRecordID {
+                    dict    [.userID] = userID as NSObject
                 }
             }
+
+            manager.updateLastSyncDate()
 
             BACKGROUND {
-                dict[.date]  = Date().description as NSObject
+                dict [.date] = manager.lastSyncDate as NSObject
                 let jsonDict = self.jsonDictFrom(dict)
                 let     path = self.filePath(for: index)
                 let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
@@ -124,26 +126,28 @@ class ZFileManager: NSObject {
             databaseID                  != .favoritesID,
             let                  index   = indexOf(databaseID) {
             let                     path = filePath(for: index)
-            let sections: [ZStorageType] = [.graph, .trash, .favorites, .bookmarks, .found]
+            let sections: [ZStorageType] = [.graph, .trash, .favorites, .bookmarks, .found, .date]
             do {
                 if  let data = FileManager.default.contents(atPath: path),
                     let json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
                     let dict = dictFromJSON(json)
 
                     for section in sections {
-                        let dbID: ZDatabaseID = section == .favorites ? .favoritesID : databaseID
-                        let           manager = gRemoteStoresManager.cloudManagerFor(dbID)
-                        let  bookmarksSection = section == .bookmarks
-                        var     parent: Zone? = nil
+                        let    dbID: ZDatabaseID = section == .favorites ? .favoritesID : databaseID
+                        let              manager = gRemoteStoresManager.cloudManagerFor(dbID)
+                        let     bookmarksSection = section == .bookmarks
+                        var        parent: Zone? = nil
 
                         switch section {
-                        case .found:   parent = manager.lostAndFoundZone
-                        case .trash:   parent = manager.trashZone
+                        case .found:      parent = manager.lostAndFoundZone
+                        case .trash:      parent = manager.trashZone
                         default: break
                         }
 
-                        if  let            value = dict[section] {
-                            if  let      subDict = value as? ZStorageDictionary {
+                        if  let value  = dict[section] {
+                            if  let date = value as? Date {
+                                manager.lastSyncDate = date
+                            } else if let subDict  = value as? ZStorageDictionary {
                                 manager.rootZone = Zone(dict: subDict, in: databaseID)
                             } else if let  array = value as? [ZStorageDictionary], (parent != nil || bookmarksSection) {
                                 for subDict in array {
@@ -152,7 +156,9 @@ class ZFileManager: NSObject {
                                     if bookmarksSection {
                                         gBookmarksManager.registerBookmark(zone)
                                     } else {
-                                        parent?.addChildAndRespectOrder(zone)
+                                        zone.temporarilyDisableNeeds {
+                                            parent?.addChildAndRespectOrder(zone)
+                                        }
                                     }
                                 }
                             }

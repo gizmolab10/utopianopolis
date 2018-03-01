@@ -31,20 +31,13 @@ enum ZRecordState: String {
 }
 
 
-enum ZSyncDateType: String {
-    case saves          = "saves"
-    case traits         = "traits"
-    case bookmarks      = "bookmarks"
-}
-
-
 class ZRecordsManager: NSObject {
 
 
     var               databaseID : ZDatabaseID
-    var                 registry = [String        :  ZRecord] ()
-    var       recordNamesByState = [ZRecordState  : [String]] ()
-    var            lastSyncDates = [ZSyncDateType :     Date] ()
+    var                 registry = [String       :  ZRecord] ()
+    var       recordNamesByState = [ZRecordState : [String]] ()
+    var             lastSyncDate = Date.distantPast
     var _lostAndFoundZone: Zone? = nil
     var        _trashZone: Zone? = nil
     var          rootZone: Zone? = nil
@@ -52,7 +45,7 @@ class ZRecordsManager: NSObject {
 
     var lostAndFoundZone: Zone {
         if  _lostAndFoundZone == nil {
-            _lostAndFoundZone = prefixedZone(for: kLostAndFoundName)
+            _lostAndFoundZone = prefixedZone(for: kLostAndFoundName)        // N.B. unnecessarily becomes needsSave !!!!
         }
 
         return _lostAndFoundZone!
@@ -61,7 +54,7 @@ class ZRecordsManager: NSObject {
 
     var trashZone: Zone {
         if  _trashZone == nil {
-            _trashZone  = prefixedZone(for: kTrashName)
+            _trashZone  = prefixedZone(for: kTrashName)         // N.B. unnecessarily becomes needsSave !!!!
         }
 
         return _trashZone!
@@ -114,19 +107,21 @@ class ZRecordsManager: NSObject {
     }
 
 
-    // MARK:- fetch dates
-    // MARK:-
+    func updateLastSyncDate() {
+        if  gUseCloud {
+            var date = lastSyncDate
 
+            for zRecord in registry.values {
+                if  let modificationDate = zRecord.record.modificationDate,
+                    modificationDate.timeIntervalSince(date) > 0 {
 
-    func lastFetchDate(for type: ZSyncDateType) -> Date? {
-        return lastSyncDates[type]
+                    date = modificationDate
+                }
+            }
+
+            lastSyncDate = date
+        }
     }
-
-
-    func setLastFetchDate(_ date: Date, for type: ZSyncDateType) {
-        lastSyncDates[type] = date
-    }
-
 
 
     // MARK:- record state
@@ -145,9 +140,9 @@ class ZRecordsManager: NSObject {
                 } else if let root = zone.root, !root.isTrash, !root.isLostAndFound, !root.isRootOfFavorites {
                     continue
                 }
-
-                uCount -= 1
             }
+
+            uCount -= 1 // traits, trash, favorites, lost and found
         }
 
         return (uCount - 2, nCount)
@@ -253,6 +248,16 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
+    var addingZRecordsDisabledOn: String? = nil
+
+
+    func temporarilyDisableNeeds(on zRecord: ZRecord, _ closure: Closure) {
+        addingZRecordsDisabledOn = zRecord.recordName
+        closure()
+        addingZRecordsDisabledOn = nil
+    }
+
+
     func addZRecord(_ iRecord: ZRecord, for states: [ZRecordState]) {
         if  let ckrecord = iRecord.record {
             addCKRecord(ckrecord, for: states)
@@ -261,33 +266,35 @@ class ZRecordsManager: NSObject {
 
 
     @discardableResult func addCKRecord(_ iRecord: CKRecord, for states: [ZRecordState]) -> Bool {
-        for state in states {
-            if  let  record  = registeredCKRecord(iRecord, forAnyOf: [state]) {
-                if   record != iRecord {
-                    var name =  record.decoratedName
-                    if  name == "" {
-                        name = iRecord.decoratedName
+        var added = false
+
+        if addingZRecordsDisabledOn != iRecord.recordID.recordName {
+            for state in states {
+                if  let  record  = registeredCKRecord(iRecord, forAnyOf: [state]) {
+                    if   record != iRecord {
+                        var name =  record.decoratedName
+                        if  name == "" {
+                            name = iRecord.decoratedName
+                        }
+
+                        columnarReport("PREVENTING ADDING TWICE!", name + " (for: \(state))")
                     }
+                } else {
+                    var names = recordNamesForState(state)
+                    let  name = iRecord.recordID.recordName
 
-                    columnarReport("PREVENTING ADDING TWICE!", name + " (for: \(state))")
+                    if !names.contains(name) {
+                        names.append(name)
 
-                    return false
-                }
-            } else {
-                var names = recordNamesForState(state)
-                let  name = iRecord.recordID.recordName
+                        recordNamesByState[state] = names
 
-                if !names.contains(name) {
-                    names.append(name)
-
-                    recordNamesByState[state] = names
-
-                    return true
+                        added = true
+                    }
                 }
             }
         }
 
-        return false
+        return added
     }
 
 

@@ -38,6 +38,15 @@ class ZRemoteStoresManager: NSObject {
     func cancel()                                                { currentCloudManager.currentOperation?.cancel()     }
 
 
+    func updateLastSyncDates() {
+        for dbID in gAllDatabaseIDs {
+            if let manager = recordsManagerFor(dbID) {
+                manager.updateLastSyncDate()
+            }
+        }
+    }
+    
+
     func recordsManagerFor(_ databaseID: ZDatabaseID?) -> ZRecordsManager? {
         if databaseID == nil {
             return nil

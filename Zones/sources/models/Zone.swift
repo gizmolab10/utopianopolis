@@ -452,8 +452,8 @@ class Zone : ZRecord {
 
 
     func unlinkParentAndMaybeNeedSave() {
-        if (parentLink != kNullLink ||
-            parent     != nil) &&
+        if (name(from: parentLink) != nil ||
+            parent                 != nil) &&
             canSave {
             needSave()
         }
@@ -1412,12 +1412,9 @@ class Zone : ZRecord {
     convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
         self.init(record: nil, databaseID: dbID)
 
-        setStorageDictionary(dict, of: kZoneType, into: dbID)
-    }
-
-
-    func setStates(from: String, for iDatabaseID: ZDatabaseID) {
-
+        temporarilyDisableNeeds {
+            setStorageDictionary(dict, of: kZoneType, into: dbID)
+        }
     }
 
 
@@ -1426,11 +1423,13 @@ class Zone : ZRecord {
 
         super.setStorageDictionary(dict, of: iRecordType, into: iDatabaseID) // do this step last so the assignment above is NOT pushed to cloud
 
-        if let childrenStore: [ZStorageDictionary] = dict[.children] as! [ZStorageDictionary]? {
-            for childStore: ZStorageDictionary in childrenStore {
-                let child = Zone(dict: childStore, in: iDatabaseID)
+        if let childrenDict: [ZStorageDictionary] = dict[.children] as! [ZStorageDictionary]? {
+            for childDict: ZStorageDictionary in childrenDict {
+                let child = Zone(dict: childDict, in: iDatabaseID)
 
-                addChild(child, at: nil)
+                child.temporarilyDisableNeeds {       // // prevent needsSave caused by child's parent (intentionally) not being in childDict
+                    addChild(child, at: nil)
+                }
             }
 
             respectOrder()
@@ -1440,7 +1439,9 @@ class Zone : ZRecord {
             for traitStore: ZStorageDictionary in traitStore {
                 let trait = ZTrait(dict: traitStore, in: iDatabaseID)
 
-                addTrait(trait)
+                trait.temporarilyDisableNeeds {       // // prevent needsSave caused by child's parent (intentionally) not being in childDict
+                    addTrait(trait)
+                }
             }
         }
     }

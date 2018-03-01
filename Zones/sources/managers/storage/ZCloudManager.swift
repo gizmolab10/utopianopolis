@@ -1095,7 +1095,9 @@ class ZCloudManager: ZRecordsManager {
             if  oldValue        != value {
                 record[property] = value as? CKRecordValue
 
-                if  object.canSave {
+                if  let string = value as? String, string == kNullLink {
+                    // stupid freakin icloud does not store this value. ack!!!!!!
+                } else if object.canSave {
                     object.needSave()
                 } else {
                     object.maybeNeedMerge()

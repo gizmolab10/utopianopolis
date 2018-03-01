@@ -190,6 +190,11 @@ class ZRecord: NSObject {
     func setupLinks() {}
 
 
+    func temporarilyDisableNeeds(_ closure: Closure) {
+        cloudManager?.temporarilyDisableNeeds(on: self, closure)
+    }
+
+
     func updateInstanceProperties() {
         if record != nil {
             for keyPath in cloudProperties() {

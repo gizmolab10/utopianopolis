@@ -40,7 +40,7 @@ class ZPreferencesController: ZGenericController {
         if  iKind != .startup {
             let                           grabbed = gSelectionManager.firstGrab
             let                    hideIdeasColor = grabbed.isBookmark || grabbed.isRootOfFavorites
-            view          .zlayer.backgroundColor = CGColor.clear
+           // view          .zlayer.backgroundColor = CGColor.clear
             insertionModeControl?.selectedSegment = gInsertionMode.rawValue
             countsModeControl?   .selectedSegment = gCountsMode.rawValue
             thickness?               .doubleValue = gLineThickness
