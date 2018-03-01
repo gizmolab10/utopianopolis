@@ -34,7 +34,7 @@ class ZRemoteStoresManager: NSObject {
     func cloudManagerFor(_   dbID: ZDatabaseID) -> ZCloudManager { return recordsManagerFor(dbID) as! ZCloudManager }
     func rootZone       (for dbID: ZDatabaseID) -> Zone?         { return recordsManagerFor(dbID)?.rootZone }
     func setRootZone(_ root: Zone?, for dbID: ZDatabaseID)       {        recordsManagerFor(dbID)?.rootZone = root }
-    func clear()                                                 { recordsManagers = [ZDatabaseID : ZCloudManager]() }
+    func clear()                                                 { recordsManagers = [ZDatabaseID : ZCloudManager] () }
     func cancel()                                                { currentCloudManager.currentOperation?.cancel()     }
 
 
@@ -76,11 +76,11 @@ class ZRemoteStoresManager: NSObject {
     }
 
 
-    func establishRoot(_ databaseID: ZDatabaseID, _ onCompletion: IntClosure?) {
+    func establishRoots(_ databaseID: ZDatabaseID, _ onCompletion: IntClosure?) {
         if !gFullFetch && databaseID == .favoritesID {
             onCompletion?(0)
         } else {
-            cloudManagerFor(databaseID).establishRoot(onCompletion)
+            cloudManagerFor(databaseID).establishRoots(onCompletion)
         }
     }
 

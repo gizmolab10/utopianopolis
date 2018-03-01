@@ -14,31 +14,31 @@ import CloudKit
 class ZRecord: NSObject {
     
 
-    var           _record: CKRecord?
-    var        databaseID: ZDatabaseID?
-    var        kvoContext: UInt8 = 1
-    var isRootOfFavorites: Bool             { return record != nil && recordName == kFavoritesRootName }
-    var        isBookmark: Bool             { return record?.isBookmark ?? false }
-    var            isRoot: Bool             { return record != nil && kRootNames.contains(recordName!) }
-    var           canSave: Bool             { return !hasState(.requiresFetch) }
-    var       isFetched: Bool             { return !hasState(.notFetched) }
-    var         needsSave: Bool             { return  hasState(.needsSave) }
-    var         needsRoot: Bool             { return  hasState(.needsRoot) }
-    var        notFetched: Bool             { return  hasState(.notFetched) }
-    var        needsCount: Bool             { return  hasState(.needsCount) }
-    var        needsColor: Bool             { return  hasState(.needsColor) }
-    var        needsFetch: Bool             { return  hasState(.needsFetch) }
-    var        needsMerge: Bool             { return  hasState(.needsMerge) }
-    var       needsTraits: Bool             { return  hasState(.needsTraits) }
-    var       needsParent: Bool             { return  hasState(.needsParent) }
-    var      needsDestroy: Bool             { return  hasState(.needsDestroy) }
-    var      needsProgeny: Bool             { return  hasState(.needsProgeny) }
-    var     needsWritable: Bool             { return  hasState(.needsWritable) }
-    var     needsChildren: Bool             { return  hasState(.needsChildren) }
-    var    needsBookmarks: Bool             { return  hasState(.needsBookmarks) }
-    var    recordsManager: ZRecordsManager? { return gRemoteStoresManager.recordsManagerFor(databaseID) }
-    var      cloudManager: ZCloudManager?   { return recordsManager as? ZCloudManager }
-    var        recordName: String?          { return record?.recordID.recordName }
+    var             _record: CKRecord?
+    var          databaseID: ZDatabaseID?
+    var          kvoContext: UInt8 = 1
+    var   isRootOfFavorites: Bool             { return record != nil && recordName == kFavoritesRootName }
+    var          isBookmark: Bool             { return record?.isBookmark ?? false }
+    var              isRoot: Bool             { return record != nil && kRootNames.contains(recordName!) }
+    var           isFetched: Bool             { return !hasState(.notFetched) }
+    var           needsSave: Bool             { return  hasState(.needsSave) }
+    var           needsRoot: Bool             { return  hasState(.needsRoot) }
+    var          notFetched: Bool             { return  hasState(.notFetched) }
+    var          needsCount: Bool             { return  hasState(.needsCount) }
+    var          needsColor: Bool             { return  hasState(.needsColor) }
+    var          needsFetch: Bool             { return  hasState(.needsFetch) }
+    var          needsMerge: Bool             { return  hasState(.needsMerge) }
+    var         needsTraits: Bool             { return  hasState(.needsTraits) }
+    var         needsParent: Bool             { return  hasState(.needsParent) }
+    var        needsDestroy: Bool             { return  hasState(.needsDestroy) }
+    var        needsProgeny: Bool             { return  hasState(.needsProgeny) }
+    var       needsWritable: Bool             { return  hasState(.needsWritable) }
+    var       needsChildren: Bool             { return  hasState(.needsChildren) }
+    var      needsBookmarks: Bool             { return  hasState(.needsBookmarks) }
+    var canSaveWithoutFetch: Bool             { return !hasState(.requiresFetchBeforeSave) }
+    var      recordsManager: ZRecordsManager? { return gRemoteStoresManager.recordsManagerFor(databaseID) }
+    var        cloudManager: ZCloudManager?   { return recordsManager as? ZCloudManager }
+    var          recordName: String?          { return record?.recordID.recordName }
 
 
     var record: CKRecord! {
@@ -75,10 +75,10 @@ class ZRecord: NSObject {
                 // debugging tests //
                 /////////////////////
 
-                if       !canSave &&  isFetched {
-                    bam("new record, ALLOW SAVE " + name)
-                    allowSave()
-                } else if canSave && notFetched {
+                if       !canSaveWithoutFetch &&  isFetched {
+                    bam("new record, ALLOW SAVE WITHOUT FETCH " + name)
+                    allowSaveWithoutFetch()
+                } else if canSaveWithoutFetch && notFetched {
                     bam("require FETCH BEFORE SAVE " + name)
                     fetchBeforeSave()
 
@@ -190,8 +190,8 @@ class ZRecord: NSObject {
     func setupLinks() {}
 
 
-    func temporarilyDisableNeeds(_ closure: Closure) {
-        cloudManager?.temporarilyDisableNeeds(on: self, closure)
+    func temporarilyIgnoreNeedsFor(_ closure: Closure) {
+        cloudManager?.temporarilyIgnoreNeedsForRecordNamed(recordName, closure)
     }
 
 
@@ -262,21 +262,21 @@ class ZRecord: NSObject {
     func clearAllStates()                           {        recordsManager?.clearRecordName(recordName, for: recordsManager?.allStates ?? []) }
 
 
-    func needRoot()        { addState(.needsRoot) }
-    func needFetch()       { addState(.needsFetch) }
-    func needCount()       { addState(.needsCount) }
-    func needColor()       { addState(.needsColor) }
-    func needTraits()      { addState(.needsTraits) }
-    func needParent()      { addState(.needsParent) }
-    func needWritable()    { addState(.needsWritable) }
-    func needUnorphan()    { addState(.needsUnorphan) }
-    func markNotFetched()  { addState(.notFetched) }
-    func fetchBeforeSave() { addState(.requiresFetch) }
-    func allowSave()       { removeState(.requiresFetch)}
+    func needRoot()              {    addState(.needsRoot) }
+    func needFetch()             {    addState(.needsFetch) }
+    func needCount()             {    addState(.needsCount) }
+    func needColor()             {    addState(.needsColor) }
+    func needTraits()            {    addState(.needsTraits) }
+    func needParent()            {    addState(.needsParent) }
+    func needWritable()          {    addState(.needsWritable) }
+    func needUnorphan()          {    addState(.needsUnorphan) }
+    func markNotFetched()        {    addState(.notFetched) }
+    func fetchBeforeSave()       {    addState(.requiresFetchBeforeSave) }
+    func allowSaveWithoutFetch() { removeState(.requiresFetchBeforeSave)}
 
 
     func needSave() {
-        allowSave()
+        allowSaveWithoutFetch()
         maybeNeedSave()
     }
 
@@ -288,7 +288,7 @@ class ZRecord: NSObject {
 
 
     func needDestroy() {
-        if  canSave {
+        if  canSaveWithoutFetch {
             addState   (.needsDestroy)
             removeState(.needsSave)
             removeState(.needsMerge)
@@ -321,7 +321,7 @@ class ZRecord: NSObject {
 
 
     func maybeNeedSave() {
-        if !needsDestroy, !needsFetch, !needsSave, canSave {
+        if !needsDestroy, !needsFetch, !needsSave, canSaveWithoutFetch {
             removeState(.needsMerge)
             addState   (.needsSave)
         }
@@ -331,7 +331,7 @@ class ZRecord: NSObject {
 
 
     func maybeNeedMerge() {
-        if  isFetched, canSave, !needsSave, !needsMerge, !needsDestroy {
+        if  isFetched, canSaveWithoutFetch, !needsSave, !needsMerge, !needsDestroy {
             addState(.needsMerge)
         }
     }
@@ -523,9 +523,10 @@ class ZRecord: NSObject {
     }
 
 
-    class func storageArray(for items: [ZRecord], from dbID: ZDatabaseID, allowEach: ZRecordToBooleanClosure? = nil) -> [ZStorageDictionary]? {
-        if  items.count > 0 {
-            var array = [ZStorageDictionary] ()
+    class func storageArray(for iItems: [ZRecord]?, from dbID: ZDatabaseID, allowEach: ZRecordToBooleanClosure? = nil) -> [ZStorageDictionary]? {
+        if  let   items = iItems,
+            items.count > 0 {
+            var   array = [ZStorageDictionary] ()
 
             for item in items {
                 if  (allowEach == nil || allowEach!(item)),

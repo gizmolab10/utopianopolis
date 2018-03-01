@@ -226,7 +226,7 @@ class ZBatchOperationsManager: ZOperationsManager {
         case .read:                 gFileManager      .read (for:      currentDatabaseID!); cloudCallback?(0)
         case .write:                gFileManager      .write(for:      currentDatabaseID!); cloudCallback?(0)
         case .onboard:              gOnboardingManager.onboard        (                     cloudCallback!)
-        case .root:                 remote            .establishRoot  (currentDatabaseID!,  cloudCallback)
+        case .root:                 remote            .establishRoots (currentDatabaseID!,  cloudCallback)
         default: let cloudManager = remote            .cloudManagerFor(currentDatabaseID!)
         switch identifier { // inner switch
         case .cloud:                cloudManager.fetchCloudZones      (                     cloudCallback)

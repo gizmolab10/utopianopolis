@@ -554,7 +554,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchZones(_ onCompletion: IntClosure?) {
-        let needed = recordIDsWithMatchingStates([.needsFetch, .requiresFetch], pull: true)
+        let needed = recordIDsWithMatchingStates([.needsFetch, .requiresFetchBeforeSave], pull: true)
 
         fetchZones(needed: needed) { iCKRecords in
             FOREGROUND {
@@ -633,7 +633,7 @@ class ZCloudManager: ZRecordsManager {
                     } else if let ckRecord = iRecord,
                         !retrieved.contains(ckRecord) {
                         retrieved.append(ckRecord)
-                        self.clearRecordName(ckRecord.recordID.recordName, for:[.requiresFetch, .needsFetch])
+                        self.clearRecordName(ckRecord.recordID.recordName, for:[.requiresFetchBeforeSave, .needsFetch])
                     }
                 }
             }
@@ -778,7 +778,7 @@ class ZCloudManager: ZRecordsManager {
 
                                 if  child.isRoot && child.parentZone != nil {
                                     child.orphan()  // avoids HANG ... a root can NOT be a child, by definition
-                                    child.allowSave()
+                                    child.allowSaveWithoutFetch()
                                     child.needSave()
                                 }
 
@@ -890,7 +890,7 @@ class ZCloudManager: ZRecordsManager {
                                 if  let parent = target.parentZone {
                                     if  target.isRoot || target == parent { // no roots have a parent, by definition
                                         target.orphan()                     // avoid HANG ... unwire parent cycle
-                                        target.allowSave()
+                                        target.allowSaveWithoutFetch()
                                         target.needSave()
                                     } else {
                                         parent.maybeNeedRoot()
@@ -977,40 +977,77 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func establishRoot(_ onCompletion: IntClosure?) {
-        if  rootZone != nil {
-            onCompletion?(0)
-        } else {
-            let recordID = CKRecordID(recordName: kRootName)
+    func establishRoots(_ onCompletion: IntClosure?) {
+        let prefix = (databaseID == .mineID) ? "my " : "public "
 
-            assureRecordExists(withRecordID: recordID, recordType: kZoneType) { (iRecord: CKRecord?) in
-                var rootRecord  = iRecord
-                if  rootRecord == nil {
-                    rootRecord  = CKRecord(recordType: kZoneType, recordID: recordID)   // will create
-                }
-
-                let        root = self.zoneForCKRecord(rootRecord!)                     // get / create root
-                self  .rootZone = root
-                root    .parent = nil
-
-                if  root.zoneName == nil {
-                    root.zoneName  = "title"                                            // was created
-
-                    root.needSave()
-                }
-
-                if  root.parent   != nil {
-                    root.parent    = nil
-
-                    root.needSave()
-                }
-
-                if gFullFetch {
-                    root.needProgeny()
-                }
-
+        let lostClosure = {
+            if  self.lostAndFoundZone != nil {
                 onCompletion?(0)
+            } else {
+                self.establishRootFor(name: prefix + kLostAndFoundName, recordName: kLostAndFoundName) { iZone in
+                    iZone.directAccess    = .eDefaultName
+                    self.lostAndFoundZone = iZone
+
+                    onCompletion?(0)
+                }
             }
+        }
+
+        let trashClosure = {
+            if  self.trashZone != nil {
+
+                lostClosure()
+            } else {
+                self.establishRootFor(name: prefix + kTrashName, recordName: kTrashName) { iZone in
+                    iZone.directAccess = .eDefaultName
+                    self.trashZone     = iZone
+
+                    lostClosure()
+                }
+            }
+        }
+
+        if  self.rootZone != nil {
+            trashClosure()
+        } else {
+            self.establishRootFor(name: "title", recordName: kRootName) { iZone in
+                self.rootZone = iZone
+
+                trashClosure()
+            }
+        }
+    }
+
+
+    func establishRootFor(name: String, recordName: String, _ onCompletion: ZoneClosure?) {
+        let recordID = CKRecordID(recordName: recordName)
+
+        assureRecordExists(withRecordID: recordID, recordType: kZoneType) { (iRecord: CKRecord?) in
+            var record  = iRecord
+            if  record == nil {
+                record  = CKRecord(recordType: kZoneType, recordID: recordID)       // will create
+            }
+
+            let           zone = self.zoneForCKRecord(record!)                      // get / create
+            zone       .parent = nil
+
+            if  zone.zoneName == nil {
+                zone.zoneName  = name                                               // was created
+
+                zone.needSave()
+            }
+
+            if  zone.parent   != nil {
+                zone.parent    = nil
+
+                zone.needSave()
+            }
+
+            if gFullFetch {
+                zone.needProgeny()
+            }
+
+            onCompletion?(zone)
         }
     }
 
@@ -1097,7 +1134,7 @@ class ZCloudManager: ZRecordsManager {
 
                 if  let string = value as? String, string == kNullLink {
                     // stupid freakin icloud does not store this value. ack!!!!!!
-                } else if object.canSave {
+                } else if object.canSaveWithoutFetch {
                     object.needSave()
                 } else {
                     object.maybeNeedMerge()

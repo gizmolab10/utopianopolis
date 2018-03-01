@@ -83,11 +83,11 @@ class ZFileManager: NSObject {
                 dict[.graph] = graph as NSObject
             }
 
-            if  let   trash  = Zone.storageArray(for: manager.trashZone.children, from: dbID) {
+            if  let   trash  = manager.trashZone?.storageDictionary(for: dbID) {
                 dict[.trash] = trash as NSObject
             }
 
-            if  let   found  = Zone.storageArray(for: manager.lostAndFoundZone.children, from: dbID) {
+            if  let   found  = manager.lostAndFoundZone?.storageDictionary(for: dbID) {
                 dict[.found] = found as NSObject
             }
 
@@ -126,7 +126,7 @@ class ZFileManager: NSObject {
             databaseID                  != .favoritesID,
             let                  index   = indexOf(databaseID) {
             let                     path = filePath(for: index)
-            let sections: [ZStorageType] = [.graph, .trash, .favorites, .bookmarks, .found, .date]
+            let sections: [ZStorageType] = [.graph, .favorites, .bookmarks, .date, .found, .trash ]
             do {
                 if  let data = FileManager.default.contents(atPath: path),
                     let json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
@@ -135,31 +135,25 @@ class ZFileManager: NSObject {
                     for section in sections {
                         let    dbID: ZDatabaseID = section == .favorites ? .favoritesID : databaseID
                         let              manager = gRemoteStoresManager.cloudManagerFor(dbID)
-                        let     bookmarksSection = section == .bookmarks
-                        var        parent: Zone? = nil
-
-                        switch section {
-                        case .found:      parent = manager.lostAndFoundZone
-                        case .trash:      parent = manager.trashZone
-                        default: break
-                        }
 
                         if  let value  = dict[section] {
                             if  let date = value as? Date {
                                 manager.lastSyncDate = date
                             } else if let subDict  = value as? ZStorageDictionary {
-                                manager.rootZone = Zone(dict: subDict, in: databaseID)
-                            } else if let  array = value as? [ZStorageDictionary], (parent != nil || bookmarksSection) {
+                                let zone = Zone(dict: subDict, in: databaseID)
+
+                                switch section {
+                                case .favorites,
+                                     .graph:     manager          .rootZone = zone
+                                case .trash:     manager         .trashZone = zone
+                                case .found:     manager  .lostAndFoundZone = zone
+                                default: break
+                                }
+                            } else if let array = value as? [ZStorageDictionary] {
                                 for subDict in array {
                                     let zone = Zone(dict: subDict, in: databaseID)
 
-                                    if bookmarksSection {
-                                        gBookmarksManager.registerBookmark(zone)
-                                    } else {
-                                        zone.temporarilyDisableNeeds {
-                                            parent?.addChildAndRespectOrder(zone)
-                                        }
-                                    }
+                                    gBookmarksManager.registerBookmark(zone)
                                 }
                             }
                         }

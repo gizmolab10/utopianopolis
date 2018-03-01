@@ -454,7 +454,7 @@ class Zone : ZRecord {
     func unlinkParentAndMaybeNeedSave() {
         if (name(from: parentLink) != nil ||
             parent                 != nil) &&
-            canSave {
+            canSaveWithoutFetch {
             needSave()
         }
 
@@ -1412,7 +1412,7 @@ class Zone : ZRecord {
     convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
         self.init(record: nil, databaseID: dbID)
 
-        temporarilyDisableNeeds {
+        temporarilyIgnoreNeedsFor {
             setStorageDictionary(dict, of: kZoneType, into: dbID)
         }
     }
@@ -1427,7 +1427,7 @@ class Zone : ZRecord {
             for childDict: ZStorageDictionary in childrenDict {
                 let child = Zone(dict: childDict, in: iDatabaseID)
 
-                child.temporarilyDisableNeeds {       // // prevent needsSave caused by child's parent (intentionally) not being in childDict
+                child.temporarilyIgnoreNeedsFor {       // // prevent needsSave caused by child's parent (intentionally) not being in childDict
                     addChild(child, at: nil)
                 }
             }
@@ -1439,7 +1439,7 @@ class Zone : ZRecord {
             for traitStore: ZStorageDictionary in traitStore {
                 let trait = ZTrait(dict: traitStore, in: iDatabaseID)
 
-                trait.temporarilyDisableNeeds {       // // prevent needsSave caused by child's parent (intentionally) not being in childDict
+                trait.temporarilyIgnoreNeedsFor {       // // prevent needsSave caused by child's parent (intentionally) not being in childDict
                     addTrait(trait)
                 }
             }

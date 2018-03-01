@@ -12,53 +12,35 @@ import CloudKit
 
 
 enum ZRecordState: String {
-    case needsBookmarks = "bookmarks"
-    case needsCount     = "count"
-    case needsChildren  = "children"
-    case needsColor     = "color"
-    case needsDestroy   = "destroy"
-    case needsFetch     = "fetch"           //
-    case needsMerge     = "merge"
-    case notFetched     = "not fetched"     //
-    case needsParent    = "parent"
-    case needsProgeny   = "progeny"
-    case requiresFetch  = "requires fetch"  //
-    case needsRoot      = "root"
-    case needsSave      = "save"
-    case needsTraits    = "traits"
-    case needsWritable  = "writable"
-    case needsUnorphan  = "unorphan"
+    case requiresFetchBeforeSave = "requires fetch before save"     //
+    case needsFetch              = "fetch"                          //
+    case notFetched              = "not fetched"                    //
+    case needsBookmarks          = "bookmarks"
+    case needsCount              = "count"
+    case needsChildren           = "children"
+    case needsColor              = "color"
+    case needsDestroy            = "destroy"
+    case needsMerge              = "merge"
+    case needsParent             = "parent"
+    case needsProgeny            = "progeny"
+    case needsRoot               = "root"
+    case needsSave               = "save"
+    case needsTraits             = "traits"
+    case needsWritable           = "writable"
+    case needsUnorphan           = "unorphan"
 }
 
 
 class ZRecordsManager: NSObject {
 
 
-    var               databaseID : ZDatabaseID
-    var                 registry = [String       :  ZRecord] ()
-    var       recordNamesByState = [ZRecordState : [String]] ()
-    var             lastSyncDate = Date.distantPast
-    var _lostAndFoundZone: Zone? = nil
-    var        _trashZone: Zone? = nil
-    var          rootZone: Zone? = nil
-
-
-    var lostAndFoundZone: Zone {
-        if  _lostAndFoundZone == nil {
-            _lostAndFoundZone = prefixedZone(for: kLostAndFoundName)        // N.B. unnecessarily becomes needsSave !!!!
-        }
-
-        return _lostAndFoundZone!
-    }
-
-
-    var trashZone: Zone {
-        if  _trashZone == nil {
-            _trashZone  = prefixedZone(for: kTrashName)         // N.B. unnecessarily becomes needsSave !!!!
-        }
-
-        return _trashZone!
-    }
+    var              databaseID : ZDatabaseID
+    var                registry = [String       :  ZRecord] ()
+    var      recordNamesByState = [ZRecordState : [String]] ()
+    var            lastSyncDate = Date.distantPast
+    var lostAndFoundZone: Zone? = nil
+    var        trashZone: Zone? = nil
+    var         rootZone: Zone? = nil
 
 
     var hereRecordName: String? {
@@ -78,30 +60,10 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func clear() {
-        rootZone           = nil
-        _trashZone         = nil
-        recordNamesByState = [ZRecordState : [String]] ()
-        registry           = [String       :  ZRecord] ()
-    }
-
-
-    func prefixedZone(for iName: String) -> Zone {
-        let      recordID = CKRecordID(recordName: iName)
-        let        record = CKRecord(recordType: kZoneType, recordID: recordID)
-        let          zone = zoneForCKRecord(record)    // get / create trash
-        let        prefix = (databaseID == .mineID) ? "my " : "public "
-        zone.directAccess = .eDefaultName
-        zone    .zoneName = prefix + iName
-
-        return zone
-    }
-
-
     func createRandomLost() -> Zone {
         let lost = Zone.randomZone(in: databaseID)
 
-        lostAndFoundZone.addChild(lost, at: nil)
+        lostAndFoundZone?.addChild(lost, at: nil)
 
         return lost
     }
@@ -135,7 +97,7 @@ class ZRecordsManager: NSObject {
 
         for zRecord in zRecords {
             if  let zone = zRecord as? Zone {
-                if !zone.canSave {
+                if !zone.canSaveWithoutFetch {
                     nCount += 1
                 } else if let root = zone.root, !root.isTrash, !root.isLostAndFound, !root.isRootOfFavorites {
                     continue
@@ -248,13 +210,25 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
-    var addingZRecordsDisabledOn: String? = nil
+    var ignoredRecordName: String? = nil
+    let kIgnoreAllRecordNames = "all record names"
 
 
-    func temporarilyDisableNeeds(on zRecord: ZRecord, _ closure: Closure) {
-        addingZRecordsDisabledOn = zRecord.recordName
+    func temporarilyIgnoreNeedsForRecordNamed(_ iRecordName: String?, _ closure: Closure) {
+        let         saved = ignoredRecordName
+        ignoredRecordName = iRecordName ?? kIgnoreAllRecordNames
         closure()
-        addingZRecordsDisabledOn = nil
+        ignoredRecordName = saved
+    }
+
+
+    func temporarilyIgnoring(_ iName: String?) -> Bool {
+        if  let   ignore = ignoredRecordName {
+            let    names = [kIgnoreAllRecordNames] + (iName == nil ? [] : [iName!])
+            return names.contains(ignore)
+        }
+
+        return false
     }
 
 
@@ -268,7 +242,7 @@ class ZRecordsManager: NSObject {
     @discardableResult func addCKRecord(_ iRecord: CKRecord, for states: [ZRecordState]) -> Bool {
         var added = false
 
-        if addingZRecordsDisabledOn != iRecord.recordID.recordName {
+        if !temporarilyIgnoring(iRecord.recordID.recordName) {
             for state in states {
                 if  let  record  = registeredCKRecord(iRecord, forAnyOf: [state]) {
                     if   record != iRecord {

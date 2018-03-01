@@ -139,9 +139,9 @@ class ZToolsController: ZGenericTableController {
     func recount() {
         for dbID in gAllDatabaseIDs {
             let manager = gRemoteStoresManager.cloudManagerFor(dbID)
-            manager        .hereZone.safeUpdateCounts([], includingFetchable: true)
-            manager       .trashZone.safeUpdateCounts([], includingFetchable: true)
-            manager.lostAndFoundZone.safeUpdateCounts([], includingFetchable: true)
+            manager        .hereZone .safeUpdateCounts([], includingFetchable: true)
+            manager       .trashZone?.safeUpdateCounts([], includingFetchable: true)
+            manager.lostAndFoundZone?.safeUpdateCounts([], includingFetchable: true)
         }
 
         gFavoritesManager .rootZone?.safeUpdateCounts([], includingFetchable: true)
