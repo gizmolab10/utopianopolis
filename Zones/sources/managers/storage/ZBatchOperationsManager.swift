@@ -102,7 +102,7 @@ class ZBatchOperationsManager: ZOperationsManager {
 
     func     unHang()                                  {                                                                                                  onCloudResponse?(0) }
     func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .onboard,  to: .root,                                                       onCompletion) }
-    func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,     to: .traits,                                                     onCompletion) }
+    func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,     to: .fetchNew,                                                   onCompletion) }
     func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .write,    to: .subscribe,                                                  onCompletion) }
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash,                                                                   ]) { onCompletion() } }
     func  fetchLost(_ onCompletion: @escaping Closure) { setupAndRun([.fetchlost,                           .save, .children,                        ]) { onCompletion() } }
@@ -226,11 +226,11 @@ class ZBatchOperationsManager: ZOperationsManager {
         case .read:                 gFileManager      .read (for:      currentDatabaseID!); cloudCallback?(0)
         case .write:                gFileManager      .write(for:      currentDatabaseID!); cloudCallback?(0)
         case .onboard:              gOnboardingManager.onboard        (                     cloudCallback!)
-        case .root:                 remote            .establishRoots (currentDatabaseID!,  cloudCallback)
         default: let cloudManager = remote            .cloudManagerFor(currentDatabaseID!)
         switch identifier { // inner switch
         case .cloud:                cloudManager.fetchCloudZones      (                     cloudCallback)
         case .bookmarks:            cloudManager.fetchBookmarks       (                     cloudCallback)
+        case .root:                 cloudManager.establishRoots       (                     cloudCallback)
         case .children:             cloudManager.fetchChildren        (                     cloudCallback)
         case .here:                 cloudManager.establishHere        (                     cloudCallback)
         case .parents:              cloudManager.fetchParents         (                     cloudCallback)
@@ -242,6 +242,7 @@ class ZBatchOperationsManager: ZOperationsManager {
         case .fetch:                cloudManager.fetchZones           (                     cloudCallback)
         case .subscribe:            cloudManager.subscribe            (                     cloudCallback)
         case .fetchlost:            cloudManager.fetchLost            (                     cloudCallback)
+        case .fetchNew:             cloudManager.fetchNew             (                     cloudCallback)
         case .merge:                cloudManager.merge                (                     cloudCallback)
         case .save:                 cloudManager.save                 (                     cloudCallback)
         default: break

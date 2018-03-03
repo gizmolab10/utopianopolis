@@ -76,15 +76,6 @@ class ZRemoteStoresManager: NSObject {
     }
 
 
-    func establishRoots(_ databaseID: ZDatabaseID, _ onCompletion: IntClosure?) {
-        if !gFullFetch && databaseID == .favoritesID {
-            onCompletion?(0)
-        } else {
-            cloudManagerFor(databaseID).establishRoots(onCompletion)
-        }
-    }
-
-
     func pushDatabaseID(_ dbID: ZDatabaseID) {
         databaseIDStack.append(gDatabaseID)
 

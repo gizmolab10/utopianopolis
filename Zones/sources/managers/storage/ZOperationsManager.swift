@@ -17,17 +17,13 @@ enum ZOperationID: Int {
     case onboard
     case cloud
     case read
-    case save       // zones
+    case save               // zones, traits, destroy
     case root
 
     // continue
 
     case here
-    case bookmarks
-    case children
-    case fetch      // after children so favorite targets resolve properly
-    case parents    // after fetch so colors resolve properly
-    case traits
+    case fetchNew
 
     // finish
 
@@ -50,10 +46,15 @@ enum ZOperationID: Int {
     case emptyTrash
     case completion
     case fetchlost
+    case bookmarks
     case undelete
-    case refetch    // user defaults list of record ids
+    case children
+    case parents            // after fetch so colors resolve properly
+    case refetch            // user defaults list of record ids
+    case traits
+    case fetch              // after children so favorite targets resolve properly
     case merge
-    case none // default operation
+    case none               // default operation
 }
 
 

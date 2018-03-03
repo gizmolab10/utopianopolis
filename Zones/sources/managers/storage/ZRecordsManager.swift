@@ -107,7 +107,7 @@ class ZRecordsManager: NSObject {
             uCount -= 1 // traits, trash, favorites, lost and found
         }
 
-        return (uCount - 2, nCount)
+        return (uCount, nCount)
     }
 
 
