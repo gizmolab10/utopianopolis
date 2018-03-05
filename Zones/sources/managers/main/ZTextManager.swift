@@ -161,6 +161,8 @@ class ZTextPack: NSObject {
                 var zone = packedZone {
                 if  let    target = zone.bookmarkTarget {
                     zone = target
+
+                    ZTextPack(target).assignAndSignal(newText)
                 }
 
                 for bookmark in zone.fetchedBookmarks {

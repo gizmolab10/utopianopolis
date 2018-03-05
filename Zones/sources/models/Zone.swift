@@ -1105,8 +1105,10 @@ class Zone : ZRecord {
 
     override func unorphan() {
         if  !needsDestroy, let p = parentZone, p != self {
-            p.needFetch()
+            p.maybeMarkNotFetched()
             p.addChildAndRespectOrder(self)
+        } else if !isRoot {
+            needUnorphan()
         }
     }
 
@@ -1129,7 +1131,7 @@ class Zone : ZRecord {
     }
 
 
-    func addAndReorderChild(_ iChild: Zone?, at iIndex: Int?) {
+    func addAndReorderChild(_ iChild: Zone?, at iIndex: Int? = nil) {
         if  let child = iChild,
             addChild(child, at: iIndex) != nil {
 
@@ -1427,7 +1429,7 @@ class Zone : ZRecord {
             for childDict: ZStorageDictionary in childrenDict {
                 let child = Zone(dict: childDict, in: iDatabaseID)
 
-                child.temporarilyIgnoreNeedsFor {       // // prevent needsSave caused by child's parent (intentionally) not being in childDict
+                child.temporarilyIgnoreNeedsFor {       // prevent needsSave caused by child's parent (intentionally) not being in childDict
                     addChild(child, at: nil)
                 }
             }
@@ -1439,7 +1441,7 @@ class Zone : ZRecord {
             for traitStore: ZStorageDictionary in traitStore {
                 let trait = ZTrait(dict: traitStore, in: iDatabaseID)
 
-                trait.temporarilyIgnoreNeedsFor {       // // prevent needsSave caused by child's parent (intentionally) not being in childDict
+                trait.temporarilyIgnoreNeedsFor {       // prevent needsSave caused by child's parent (intentionally) not being in childDict
                     addTrait(trait)
                 }
             }

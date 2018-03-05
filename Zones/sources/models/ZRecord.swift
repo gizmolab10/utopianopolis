@@ -497,9 +497,9 @@ class ZRecord: NSObject {
 
 
     func setStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
-        databaseID  = iDatabaseID
-        if let name = dict[.recordName] as? String {
-            record  = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: name)) // YIKES this may be wildly out of date
+        databaseID       = iDatabaseID
+        if  let     name = dict[.recordName] as? String {
+            let ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: name)) // YIKES this may be wildly out of date
 
             for keyPath in cloudProperties() {
                 if  let      type  = type(from: keyPath),
@@ -510,11 +510,11 @@ class ZRecord: NSObject {
                         value      = CKReference(recordID: CKRecordID(recordName: string), action: .none)
                     }
 
-                    record[keyPath] = value
+                    ckRecord[keyPath] = value
                 }
             }
 
-            updateInstanceProperties()    // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
+            record = ckRecord    // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
 
             if  let needs = dict[.needs] as? String {
                 setNeedsFromString(needs)

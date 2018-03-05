@@ -36,7 +36,7 @@ class ZBookmarksManager: NSObject {
         if  let   bookmark = iBookmark,
             let       dbID = bookmark.linkDatabaseID,
             let       link = bookmark.linkName {
-            var       dict = registry[dbID]
+            var       dict = registry[dbID] // returns nil for first registration
             var      zones = dict?[link]
 
             if  dict      == nil {

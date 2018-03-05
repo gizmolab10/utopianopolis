@@ -1577,13 +1577,13 @@ class ZEditingManager: NSObject {
                 gSelectionManager.deselectGrabs()
 
                 for (pastable, (parent, index)) in pastables {
-                    let pasteMe = pastable.isInTrash ? pastable : pastable.deepCopy() // for zones not in trash, paste a deep copy
-                    let      at = index  != nil ? index : gInsertionsFollow ? nil : 0
-                    let    into = parent != nil ? honorFormerParents ? parent! : zone : zone
+                    let  pasteMe = pastable.isInTrash ? pastable : pastable.deepCopy() // for zones not in trash, paste a deep copy
+                    let insertAt = index  != nil ? index : gInsertionsFollow ? nil : 0
+                    let     into = parent != nil ? honorFormerParents ? parent! : zone : zone
 
                     pasteMe.orphan()
                     into.revealChildren()
-                    into.addAndReorderChild(pasteMe, at: at)
+                    into.addAndReorderChild(pasteMe, at: insertAt)
                     pasteMe.recursivelyApplyDatabaseID(into.databaseID)
                     forUndo.append(pasteMe)
                     pasteMe.addToGrab()

@@ -37,7 +37,7 @@ class ZRecordsManager: NSObject {
     var              databaseID : ZDatabaseID
     var                registry = [String       :  ZRecord] ()
     var      recordNamesByState = [ZRecordState : [String]] ()
-    var            lastSyncDate = Date.distantPast
+    var            lastSyncDate = Date(timeIntervalSince1970: 0)
     var lostAndFoundZone: Zone? = nil
     var        trashZone: Zone? = nil
     var         rootZone: Zone? = nil

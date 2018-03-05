@@ -414,6 +414,18 @@ extension Array {
 
         return string
     }
+
+
+    mutating func appendUnique(contentsOf: Array) {
+        let array = self as NSArray
+
+        for item in contentsOf {
+            if !array.contains(item) {
+                append(item)
+            }
+        }
+    }
+
 }
 
 
@@ -542,6 +554,18 @@ extension Character {
     var asciiValue: UInt32? {
         return String(self).unicodeScalars.first?.value
     }
+}
+
+
+extension Date {
+
+    func mid(to iEnd: Date?) -> Date {
+        let      end = iEnd ?? Date()
+        let duration = timeIntervalSince(end) / 2.0
+
+        return addingTimeInterval(duration)
+    }
+
 }
 
 

@@ -318,7 +318,7 @@ class ZFavoritesManager: ZCloudManager {
                 trash    .zoneLink = kTrashLink // convert into a bookmark
                 trash.directAccess = .eChildrenWritable
 
-                rootZone?.addAndReorderChild(trash, at: nil)
+                rootZone?.addAndReorderChild(trash)
                 trash.clearAllStates()
             }
 
@@ -332,7 +332,7 @@ class ZFavoritesManager: ZCloudManager {
                 lost?    .zoneLink = kLostAndFoundLink // convert into a bookmark
                 lost?.directAccess = .eChildrenWritable
 
-                rootZone?.addAndReorderChild(lost!, at: nil)
+                rootZone?.addAndReorderChild(lost!)
                 lost?.clearAllStates()
             }
 
