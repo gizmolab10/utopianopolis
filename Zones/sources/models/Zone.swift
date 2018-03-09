@@ -52,7 +52,7 @@ class Zone : ZRecord {
     var       grabbedTextColor:       ZColor  { return color.darker(by: 3.0) }
     var directChildrenWritable:         Bool  { return directAccess == .eChildrenWritable || directAccess == .eDefaultName }
     var    hasAccessDecoration:         Bool  { return !isTextEditable || directChildrenWritable }
-    var      onlyShowRevealDot:         Bool  { return (isRootOfFavorites && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
+    var      onlyShowRevealDot:         Bool  { return (isRootOfFavorites && showChildren && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
     var      isWritableByUseer:         Bool  { return isTextEditable || userHasAccess }
     var      isCurrentFavorite:         Bool  { return self == gFavoritesManager.currentFavorite }
     var       accessIsChanging:         Bool  { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
@@ -645,6 +645,11 @@ class Zone : ZRecord {
     }
 
 
+    override var hasParent: Bool {
+        return parent != nil || name(from: parentLink) != nil
+    }
+
+
     func toggleWritable() {
         if  databaseID == .everyoneID {
             if  let t = bookmarkTarget {
@@ -1041,7 +1046,7 @@ class Zone : ZRecord {
 
 
     func maybeNeedBookmarks() {
-        if !isBookmark {
+        if !isBookmark && !gAssumeAllFetched {
             addState(.needsBookmarks)
         }
     }
@@ -1414,7 +1419,7 @@ class Zone : ZRecord {
     convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
         self.init(record: nil, databaseID: dbID)
 
-        temporarilyIgnoreNeedsFor {
+        temporarilyIgnoreNeeds {
             setStorageDictionary(dict, of: kZoneType, into: dbID)
         }
     }
@@ -1425,11 +1430,11 @@ class Zone : ZRecord {
 
         super.setStorageDictionary(dict, of: iRecordType, into: iDatabaseID) // do this step last so the assignment above is NOT pushed to cloud
 
-        if let childrenDict: [ZStorageDictionary] = dict[.children] as! [ZStorageDictionary]? {
-            for childDict: ZStorageDictionary in childrenDict {
+        if let childrenDicts: [ZStorageDictionary] = dict[.children] as! [ZStorageDictionary]? {
+            for childDict: ZStorageDictionary in childrenDicts {
                 let child = Zone(dict: childDict, in: iDatabaseID)
 
-                child.temporarilyIgnoreNeedsFor {       // prevent needsSave caused by child's parent (intentionally) not being in childDict
+                child.temporarilyIgnoreNeeds {       // prevent needsSave caused by child's parent (intentionally) not being in childDict
                     addChild(child, at: nil)
                 }
             }
@@ -1441,7 +1446,7 @@ class Zone : ZRecord {
             for traitStore: ZStorageDictionary in traitStore {
                 let trait = ZTrait(dict: traitStore, in: iDatabaseID)
 
-                trait.temporarilyIgnoreNeedsFor {       // prevent needsSave caused by child's parent (intentionally) not being in childDict
+                trait.temporarilyIgnoreNeeds {       // prevent needsSave caused by child's parent (intentionally) not being in childDict
                     addTrait(trait)
                 }
             }

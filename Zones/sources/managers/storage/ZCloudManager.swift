@@ -307,10 +307,12 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func bookmarkPredicate(specificTo iRecordIDs: [CKRecordID]) -> NSPredicate {
+    func bookmarkPredicate(specificTo iRecordIDs: [CKRecordID]) -> NSPredicate? {
         var  predicate    = ""
 
-        if  iRecordIDs.count == 0 {
+        if gAssumeAllFetched {
+            return nil
+        } else if  iRecordIDs.count == 0 {
             predicate     = String(format: "zoneLink != '\(kNullLink)'")
         } else {
             var separator = ""
@@ -448,6 +450,22 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
+    func found(_ onCompletion: IntClosure?) {
+        let states = [ZRecordState.needsFound]
+
+        applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iRecordName in
+            if  let zone = maybeZRecordForRecordName(iRecordName) as? Zone {
+                clearRecordName(iRecordName, for: states)
+                lostAndFoundZone?.addAndReorderChild(zone)
+                lostAndFoundZone?.needSave()
+                zone.needSave()
+            }
+        }
+
+        onCompletion?(0)
+    }
+
+
     func fetchLost(_ onCompletion: IntClosure?) {
         let    format = kpRecordName + " != \"" + kRootName + "\""
         let predicate = NSPredicate(format: format)
@@ -575,26 +593,30 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetch(for type: String, properties: [String], since: Date, before: Date?, _ onCompletion: RecordsClosure?) {
-        let predicate = self.predicate(since: since, before: before)
-        var retrieved = [CKRecord] ()
+        if !(rootZone?.hasMissingProgeny() ?? true) {
+            onCompletion?([])
+        } else {
+            let predicate = NSPredicate(value: true) // self.predicate(since: since, before: before)
+            var retrieved = [CKRecord] ()
 
-        queryFor(type, with: predicate, properties: properties, batchSize: CKQueryOperationMaximumResults) { (iRecord, iError) in
-            if  iError    != nil {
-                let middle = since.mid(to: before)                   // if error, fetch split by two
+            queryFor(type, with: predicate, properties: properties, batchSize: CKQueryOperationMaximumResults) { (iRecord, iError) in
+                if  iError    != nil {
+                    let middle = since.mid(to: before)                   // if error, fetch split by two
 
-                self.fetch(for: type, properties: properties, since: since, before: middle) { iCKRecords in
-                    retrieved.appendUnique(contentsOf: iCKRecords)
-
-                    self.fetch(for: type, properties: properties, since: middle, before: before) { iCKRecords in
+                    self.fetch(for: type, properties: properties, since: since, before: middle) { iCKRecords in
                         retrieved.appendUnique(contentsOf: iCKRecords)
 
-                        onCompletion?(retrieved)
+                        self.fetch(for: type, properties: properties, since: middle, before: before) { iCKRecords in
+                            retrieved.appendUnique(contentsOf: iCKRecords)
+
+                            onCompletion?(retrieved)
+                        }
                     }
+                } else if let ckRecord = iRecord {
+                    retrieved.appendUnique(contentsOf: [ckRecord])
+                } else { // nil means: we already received full response from cloud for this particular fetch
+                    onCompletion?(retrieved)
                 }
-            } else if let ckRecord = iRecord {
-                retrieved.appendUnique(contentsOf: [ckRecord])
-            } else { // nil means: we already received full response from cloud for this particular fetch
-                onCompletion?(retrieved)
             }
         }
     }
@@ -712,7 +734,7 @@ class ZCloudManager: ZRecordsManager {
                                 for orphan in bad.children {
                                     orphan.orphan()
                                     orphan.needSave()
-                                    gLostAndFound?.addAndReorderChild(orphan)
+                                    self.lostAndFoundZone?.addAndReorderChild(orphan)
                                 }
                             } else {
                                 self.clearRecordName(name, for: [.needsFetch])
@@ -948,65 +970,68 @@ class ZCloudManager: ZRecordsManager {
 
     func fetchBookmarks(_ onCompletion: IntClosure?) {
         let targetIDs = recordIDsWithMatchingStates([.needsBookmarks], pull: true)
-        let predicate = bookmarkPredicate(specificTo: targetIDs)
-        let specified = targetIDs.count != 0
-        var retrieved = [CKRecord] ()
+        if let predicate = bookmarkPredicate(specificTo: targetIDs) {
+            let specified = targetIDs.count != 0
+            var retrieved = [CKRecord] ()
 
-        queryForZonesWith(predicate) { (iRecord, iError) in
-            if  let ckRecord = iRecord {
-                if !retrieved.contains(ckRecord) && ckRecord.isBookmark {
-                    retrieved.append(ckRecord)
-                }
-            } else { // nil means done
-                FOREGROUND {
-                    var created = false
-                    let   count = retrieved.count
+            queryForZonesWith(predicate) { (iRecord, iError) in
+                if  let ckRecord = iRecord {
+                    if !retrieved.contains(ckRecord) && ckRecord.isBookmark {
+                        retrieved.append(ckRecord)
+                    }
+                } else { // nil means done
+                    FOREGROUND {
+                        var created = false
+                        let   count = retrieved.count
 
-                    if  count > 0 {
-                        for ckRecord in retrieved {
-                            var bookmark  = self.maybeZoneForCKRecord(ckRecord)
-                            if  bookmark == nil {                                                   // if not already registered
-                                bookmark  = Zone(record: ckRecord, databaseID: self.databaseID)     // create and register
-                                created   = true
-                            }
-
-                            bookmark?.maybeNeedRoot()
-
-                            if  let target = bookmark?.bookmarkTarget {
-                                target.fetchBeforeSave()
-
-                                if  let parent = target.parentZone {
-                                    if  target.isRoot || target == parent { // no roots have a parent, by definition
-                                        target.orphan()                     // avoid HANG ... unwire parent cycle
-                                        target.allowSaveWithoutFetch()
-                                        target.needSave()
-                                    } else {
-                                        parent.maybeNeedRoot()
-                                        parent.needChildren()
-                                        parent.fetchBeforeSave()
-                                        parent.needFetch()
-                                    }
+                        if  count > 0 {
+                            for ckRecord in retrieved {
+                                var bookmark  = self.maybeZoneForCKRecord(ckRecord)
+                                if  bookmark == nil {                                                   // if not already registered
+                                    bookmark  = Zone(record: ckRecord, databaseID: self.databaseID)     // create and register
+                                    created   = true
                                 }
 
-                                target.maybeNeedRoot()
-                                target.needChildren()
+                                bookmark?.maybeNeedRoot()
+
+                                if  let target = bookmark?.bookmarkTarget {
+                                    target.fetchBeforeSave()
+
+                                    if  let parent = target.parentZone {
+                                        if  target.isRoot || target == parent { // no roots have a parent, by definition
+                                            target.orphan()                     // avoid HANG ... unwire parent cycle
+                                            target.allowSaveWithoutFetch()
+                                            target.needSave()
+                                        } else {
+                                            parent.maybeNeedRoot()
+                                            parent.needChildren()
+                                            parent.fetchBeforeSave()
+                                            parent.needFetch()
+                                        }
+                                    }
+
+                                    target.maybeNeedRoot()
+                                    target.needChildren()
+                                }
                             }
+
+                            self.columnarReport("BOOKMARKS (\(count))", self.stringForCKRecords(retrieved))
                         }
 
-                        self.columnarReport("BOOKMARKS (\(count))", self.stringForCKRecords(retrieved))
-                    }
-
-                    if !created && !specified {
-                        onCompletion?(0)                            // only async exit
-                    } else {
-                        self.save { iCount in                       // no-op if no zones need to be saved, in which case falls through ...
-                            if      iCount == 0 {
-                                self.fetchBookmarks(onCompletion)   // process remaining (or no-op)
+                        if !created && !specified {
+                            onCompletion?(0)                            // only async exit
+                        } else {
+                            self.save { iCount in                       // no-op if no zones need to be saved, in which case falls through ...
+                                if      iCount == 0 {
+                                    self.fetchBookmarks(onCompletion)   // process remaining (or no-op)
+                                }
                             }
                         }
                     }
                 }
             }
+        } else {
+            onCompletion?(0)
         }
     }
 

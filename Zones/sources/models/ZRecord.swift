@@ -17,6 +17,8 @@ class ZRecord: NSObject {
     var             _record: CKRecord?
     var          databaseID: ZDatabaseID?
     var          kvoContext: UInt8 = 1
+    var           hasParent: Bool             { return false }
+    var        showChildren: Bool             { return isExpanded(self.recordName) }
     var   isRootOfFavorites: Bool             { return record != nil && recordName == kFavoritesRootName }
     var          isBookmark: Bool             { return record?.isBookmark ?? false }
     var              isRoot: Bool             { return record != nil && kRootNames.contains(recordName!) }
@@ -59,54 +61,44 @@ class ZRecord: NSObject {
 
                 _record = newValue
 
-                register()
-                maybeMarkAsFetched()
                 updateInstanceProperties()
-                gBookmarksManager.registerBookmark(self as? Zone)
 
-                let zone = self as? Zone
-                let name = zone?.zoneName ?? recordName ?? kNoValue
+                if !register() {
+                    // zone is a duplicate
+                } else {
+                    maybeMarkAsFetched()
 
-                if  notFetched {
-                    setupLinks()
-                }
+                    let zone = self as? Zone
+                    let name = zone?.zoneName ?? recordName ?? kNoValue
 
-                /////////////////////
-                // debugging tests //
-                /////////////////////
+                    if  notFetched {
+                        setupLinks()
+                    }
 
-                if       !canSaveWithoutFetch &&  isFetched {
-                    bam("new record, ALLOW SAVE WITHOUT FETCH " + name)
-                    allowSaveWithoutFetch()
-                } else if canSaveWithoutFetch && notFetched {
-                    bam("require FETCH BEFORE SAVE " + name)
-                    fetchBeforeSave()
+                    /////////////////////
+                    // debugging tests //
+                    /////////////////////
 
-                    if  name != kNoValue || recordName == kRootName {
-                        bam("new named record, should ALLOW SAVING")
+                    if       !canSaveWithoutFetch &&  isFetched {
+                        bam("new record, ALLOW SAVE WITHOUT FETCH " + name)
+                        allowSaveWithoutFetch()
+                    } else if canSaveWithoutFetch && notFetched {
+                        bam("require FETCH BEFORE SAVE " + name)
+                        fetchBeforeSave()
+
+                        if  name != kNoValue || recordName == kRootName {
+                            bam("new named record, should ALLOW SAVING")
+                        }
                     }
                 }
             }
         }
     }
 
-    
-    var showChildren: Bool  {
-        var show = false
-
-        if isRootOfFavorites {
-            show = true
-        } else {
-            show = isExpanded(self.recordName)
-        }
-
-        return show
-    }
-
 
     func isExpanded(_ iRecordName: String?) -> Bool {
-        if  let name = iRecordName,
-            let    _ = gExpandedZones.index(of: name) {
+        if  let                      name   = iRecordName,
+            gExpandedZones.index(of: name) != nil {
             return true
         }
 
@@ -177,7 +169,7 @@ class ZRecord: NSObject {
     func maybeNeedRoot() {}
     func debug(_  iMessage: String) {}
     func cloudProperties() -> [String] { return [] }
-    func   register() { cloudManager?  .registerZRecord(self) }
+    func   register() -> Bool { return cloudManager?.registerZRecord(self) ?? false }
     func unregister() { cloudManager?.unregisterZRecord(self) }
     func hasMissingChildren() -> Bool { return true }
     func hasMissingProgeny()  -> Bool { return true }
@@ -190,8 +182,13 @@ class ZRecord: NSObject {
     func setupLinks() {}
 
 
-    func temporarilyIgnoreNeedsFor(_ closure: Closure) {
-        cloudManager?.temporarilyIgnoreNeedsForRecordNamed(recordName, closure)
+    func temporarilyMarkNeeds(_ closure: Closure) {
+        cloudManager?.temporarilyForRecordNamed(recordName, ignoreNeeds: false, closure)
+    }
+
+
+    func temporarilyIgnoreNeeds(_ closure: Closure) {
+        cloudManager?.temporarilyForRecordNamed(recordName, ignoreNeeds: true, closure)
     }
 
 
@@ -263,16 +260,17 @@ class ZRecord: NSObject {
 
 
     func needRoot()              {    addState(.needsRoot) }
+    func needFound()             {    addState(.needsFound) }
     func needFetch()             {    addState(.needsFetch) }
-    func needCount()             {    addState(.needsCount) }
-    func needColor()             {    addState(.needsColor) }
-    func needTraits()            {    addState(.needsTraits) }
-    func needParent()            {    addState(.needsParent) }
-    func needWritable()          {    addState(.needsWritable) }
     func needUnorphan()          {    addState(.needsUnorphan) }
     func markNotFetched()        {    addState(.notFetched) }
     func fetchBeforeSave()       {    addState(.requiresFetchBeforeSave) }
     func allowSaveWithoutFetch() { removeState(.requiresFetchBeforeSave)}
+    func needCount()             {    if !gAssumeAllFetched { addState(.needsCount) } }
+    func needColor()             {    if !gAssumeAllFetched { addState(.needsColor) } }
+    func needTraits()            {    if !gAssumeAllFetched { addState(.needsTraits) } }
+    func needParent()            {    if !gAssumeAllFetched { addState(.needsParent) } }
+    func needWritable()          {    if !gAssumeAllFetched { addState(.needsWritable) } }
 
 
     func needSave() {
@@ -282,8 +280,10 @@ class ZRecord: NSObject {
 
 
     func needProgeny() {
-        addState(.needsProgeny)
-        removeState(.needsChildren)
+        if !gAssumeAllFetched {
+            addState(.needsProgeny)
+            removeState(.needsChildren)
+        }
     }
 
 
@@ -300,6 +300,7 @@ class ZRecord: NSObject {
         if !isBookmark && // all bookmarks are childless, by design
             showChildren &&
             hasMissingChildren() &&
+            !gAssumeAllFetched &&
             !needsProgeny {
             addState(.needsChildren)
         }
@@ -307,7 +308,7 @@ class ZRecord: NSObject {
 
     
     func maybeNeedProgeny() {
-        if  hasMissingProgeny() {
+        if  hasMissingProgeny() && !gAssumeAllFetched {
             needProgeny()
         }
     }
@@ -331,7 +332,7 @@ class ZRecord: NSObject {
 
 
     func maybeNeedMerge() {
-        if  isFetched, canSaveWithoutFetch, !needsSave, !needsMerge, !needsDestroy {
+        if  isFetched, canSaveWithoutFetch, !needsSave, !needsMerge, !needsDestroy, !gAssumeAllFetched {
             addState(.needsMerge)
         }
     }
@@ -464,7 +465,7 @@ class ZRecord: NSObject {
     }
 
 
-    func setNeedsFromString(_ iNeeds: String) {
+    func addNeedsFromString(_ iNeeds: String) {
         let needs = iNeeds.components(separatedBy: kNeedsSeparator)
 
         for need in needs {
@@ -477,24 +478,27 @@ class ZRecord: NSObject {
 
 
     func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDictionary? {
-        let  keyPaths = cloudProperties() + [kpRecordName]
-        var      dict = ZStorageDictionary()
-        
-        for keyPath in keyPaths {
-            if  let       type = type(from: keyPath),
-                let    extract = extract(valueOf: type, at: keyPath) ,
-                let   prepared = prepare(extract, of: type) {
-                dict[type]     = prepared
+        if  let      name = recordName, !gFileManager.writtenRecordNames.contains(name) {
+            let  keyPaths = cloudProperties() + [kpRecordName]
+            var      dict = ZStorageDictionary()
+
+            for keyPath in keyPaths {
+                if  let       type = type(from: keyPath),
+                    let    extract = extract(valueOf: type, at: keyPath) ,
+                    let   prepared = prepare(extract, of: type) {
+                    dict[type]     = prepared
+                }
             }
-        }
 
-        if  let   needs  = stringForNeeds(in: iDatabaseID) {
-            dict[.needs] = needs as NSObject?
-        }
+            if  let   needs  = stringForNeeds(in: iDatabaseID) {
+                dict[.needs] = needs as NSObject?
+            }
 
-        return dict
+            return dict
+        } else {
+            return nil
+        }
     }
-
 
     func setStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
         databaseID       = iDatabaseID
@@ -517,7 +521,7 @@ class ZRecord: NSObject {
             record = ckRecord    // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
 
             if  let needs = dict[.needs] as? String {
-                setNeedsFromString(needs)
+                addNeedsFromString(needs)
             }
         }
     }

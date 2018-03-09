@@ -72,7 +72,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var toggleDotIsVisible: Bool {
         var isHidden = false
         if  let zone = widgetZone, isInnerDot, isReveal {
-            isHidden = !zone.canTravel && zone.fetchableCount == 0 && !isDragDrop
+            isHidden = !zone.canTravel && zone.count == 0 && zone.fetchableCount == 0 && !isDragDrop
         }
         
         return !isHidden

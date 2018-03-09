@@ -803,6 +803,8 @@ class ZEditingManager: NSObject {
             if !show {
                 gSelectionManager.deselectDragWithin(zone);
                 apply()
+            } else if gAssumeAllFetched {
+                apply()
             } else {
                 zone.needProgeny()
                 gBatchOperationsManager.children(.all, level) { iSame in
@@ -814,7 +816,7 @@ class ZEditingManager: NSObject {
 
 
     func revealDotClickAction(for iZone: Zone?) {
-        if  let zone = iZone, !zone.onlyShowRevealDot {
+        if  let zone = iZone { // , !zone.onlyShowRevealDot {
             gTextManager.stopCurrentEdit()
 
             for     grabbed in gSelectionManager.currentGrabs {

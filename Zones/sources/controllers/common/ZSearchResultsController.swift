@@ -157,10 +157,10 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             if  gWorkMode         == .searchMode,
                 let          index = self.tableView?.selectedRow,
                 index             != -1,
-                let (mode, record) = identifierAndRecord(at: index) {
+                let (dbID, record) = identifierAndRecord(at: index) {
                 resolved           = true
 
-                resolveRecord(mode, record)
+                resolveRecord(dbID, record)
             }
         #endif
 
@@ -169,13 +169,14 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
 
     func resolveRecord(_ dbID: ZDatabaseID, _ record: CKRecord) {
-        var zone  = gRemoteStoresManager.recordsManagerFor(dbID)?.maybeZoneForRecordID(record.recordID)
+        gDatabaseID = dbID
+        var zone    = gCloudManager.maybeZoneForRecordID(record.recordID)
 
-        if  zone == nil {
-            zone  = Zone(record: record, databaseID: dbID)
+        if  zone   == nil {
+            zone    = Zone(record: record, databaseID: dbID)
         }
 
-        gHere = zone!
+        gHere       = zone!
 
         clear()
         zone?.grab()

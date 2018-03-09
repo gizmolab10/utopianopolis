@@ -25,6 +25,7 @@ enum ZRecordState: String {
     case needsProgeny            = "progeny"
     case needsRoot               = "root"
     case needsSave               = "save"
+    case needsFound               = "found"
     case needsTraits             = "traits"
     case needsWritable           = "writable"
     case needsUnorphan           = "unorphan"
@@ -37,6 +38,7 @@ class ZRecordsManager: NSObject {
     var              databaseID : ZDatabaseID
     var                registry = [String       :  ZRecord] ()
     var      recordNamesByState = [ZRecordState : [String]] ()
+    var    duplicates =                 [ZRecord] ()
     var            lastSyncDate = Date(timeIntervalSince1970: 0)
     var lostAndFoundZone: Zone? = nil
     var        trashZone: Zone? = nil
@@ -214,9 +216,9 @@ class ZRecordsManager: NSObject {
     let kIgnoreAllRecordNames = "all record names"
 
 
-    func temporarilyIgnoreNeedsForRecordNamed(_ iRecordName: String?, _ closure: Closure) {
+    func temporarilyForRecordNamed(_ iRecordName: String?, ignoreNeeds: Bool, _ closure: Closure) {
         let         saved = ignoredRecordName
-        ignoredRecordName = iRecordName ?? kIgnoreAllRecordNames
+        ignoredRecordName = ignoreNeeds ? iRecordName ?? kIgnoreAllRecordNames : nil
         closure()
         ignoredRecordName = saved
     }
@@ -251,7 +253,7 @@ class ZRecordsManager: NSObject {
                             name = iRecord.decoratedName
                         }
 
-                        columnarReport("PREVENTING ADDING TWICE!", name + " (for: \(state))")
+//                        columnarReport("PREVENTING ADDING TWICE!", name + " (for: \(state))")
                     }
                 } else {
                     var names = recordNamesForState(state)
@@ -652,16 +654,30 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
-    func registerZRecord(_  iRecord : ZRecord?) {
-        if  let      zRecord = iRecord,
-            let           id = zRecord.recordName {
+    func registerZRecord(_  iRecord : ZRecord?) -> Bool {
+        if  let      zRecord  = iRecord,
+            let           id  = zRecord.recordName {
+            if let oldRecord  = registry[id] {
+                if oldRecord != zRecord {
 
-            if  let bookmark = zRecord as? Zone, bookmark.isBookmark {
-                gBookmarksManager.registerBookmark(bookmark)
+                    ///////////////////////////////////////
+                    // if already registered, must erase //
+                    ///////////////////////////////////////
+
+                    duplicates.append(zRecord)
+                }
+            } else {
+                if  let bookmark = zRecord as? Zone, bookmark.isBookmark {
+                    gBookmarksManager.registerBookmark(bookmark)
+                }
+
+                registry[id]  = zRecord
+
+                return true
             }
-
-            registry[id]     = zRecord
         }
+
+        return false
     }
 
 
@@ -682,6 +698,23 @@ class ZRecordsManager: NSObject {
     func notRegistered(_ recordID: CKRecordID?) -> Bool {
         return maybeZoneForRecordID(recordID) == nil
     }
+
+
+    func removeDuplicates() {
+        for duplicate in duplicates {
+            duplicate.orphan()
+
+            if  let zone = duplicate as? Zone {
+                zone.children.removeAll()
+            }
+        }
+
+        duplicates.removeAll()
+    }
+
+
+    // MARK:- lookups
+    // MARK:-
 
 
     func maybeZRecordForCKRecord(_ record: CKRecord?) -> ZRecord? {

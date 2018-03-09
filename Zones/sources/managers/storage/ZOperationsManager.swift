@@ -17,6 +17,7 @@ enum ZOperationID: Int {
     case onboard
     case cloud
     case read
+    case found
     case save               // zones, traits, destroy
     case root
 
@@ -100,14 +101,11 @@ class ZOperationsManager: NSObject {
         var yesPerform = true
 
         switch iID {
-        case .save:                                                                                                                                      yesPerform = cloudSave
-        case .fetch, .merge, .traits, .emptyTrash, .fetchlost, .undelete, .refetch, .parents, .children, .bookmarks, .subscribe, .unsubscribe: yesPerform = cloudFetch
-        case .cloud, .internet, .ubiquity, .fetchUserRecord, .fetchUserIdentity:                                   yesPerform = cloudFetch || cloudSave
-        //case .write:                                                                                                                                     yesPerform = gSaveMode != .cloudOnly
+        case .save:                                                                                                                            yesPerform = cloudSave
+        case .fetch, .merge, .traits, .emptyTrash, .fetchlost, .undelete, .refetch, .parents, .children, .bookmarks, .subscribe, .unsubscribe: yesPerform = cloudFetch && !gAssumeAllFetched
+        case .cloud, .internet, .ubiquity, .fetchUserRecord, .fetchUserIdentity:                                                               yesPerform = cloudFetch || cloudSave
         default: break
         }
-
-        // .setup, .accountStatus, .fetchUserID, .onboard,
 
         return yesPerform
     }

@@ -139,7 +139,7 @@ class ZBatchOperationsManager: ZOperationsManager {
 
     func shouldIgnoreBatch(_ iID: ZBatchOperationID) -> Bool {
         switch iID {
-        case .root, .travel, .parents, .children, .families, .bookmarks: return gFetchMode == .localOnly
+        case .root, .travel, .parents, .children, .families, .bookmarks: return (gFetchMode == .localOnly) || gAssumeAllFetched
         default:                                                         return false
         }
     }
@@ -244,6 +244,7 @@ class ZBatchOperationsManager: ZOperationsManager {
         case .fetchlost:            cloudManager.fetchLost            (                     cloudCallback)
         case .fetchNew:             cloudManager.fetchNew             (                     cloudCallback)
         case .merge:                cloudManager.merge                (                     cloudCallback)
+        case .found:                cloudManager.found                (                     cloudCallback)
         case .save:                 cloudManager.save                 (                     cloudCallback)
         default: break
             }               // inner switch

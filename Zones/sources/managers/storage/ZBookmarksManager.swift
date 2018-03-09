@@ -43,8 +43,28 @@ class ZBookmarksManager: NSObject {
                 dict       = [:]
                 zones      = [bookmark]
             } else {
+                let markNeedFound = {
+                    bookmark.temporarilyMarkNeeds {
+                        bookmark.needFound()
+                    }
+                }
+
                 if  zones == nil {
                     zones  = []
+                } else if let      parent = bookmark.parentZone {
+                    if parent.recordName != kLostAndFoundName {
+                        for     zone in zones! {
+                            if  zone.parentZone?.recordName == parent.recordName {
+                                markNeedFound()
+
+                                return
+                            }
+                        }
+                    }
+                } else if !gFileManager.isReading(for: bookmark.databaseID) {
+                    markNeedFound()
+
+                    return
                 }
 
                 zones?.append(bookmark)
@@ -53,7 +73,7 @@ class ZBookmarksManager: NSObject {
             dict?[link]    = zones
             registry[dbID] = dict
 
-            columnarReport("BOOKMARK", bookmark.unwrappedName)
+//            columnarReport("BOOKMARK", bookmark.unwrappedName)
         }
     }
 

@@ -91,6 +91,12 @@ var gMathewStyleUI : Bool {
 }
 
 
+var gAssumeAllFetched : Bool {
+    get { return getPreferencesBool(   for: kAssumeAllFetched, defaultBool: true) }
+    set { setPreferencesBool(newValue, for: kAssumeAllFetched) }
+}
+
+
 var gUseCloud : Bool {
     get { return getPreferencesBool(   for: kUseCloud, defaultBool: true) }
     set { setPreferencesBool(newValue, for: kUseCloud) }

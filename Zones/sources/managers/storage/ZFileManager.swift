@@ -23,8 +23,10 @@ let gFileManager = ZFileManager()
 class ZFileManager: NSObject {
 
 
+    var            isReading = [false, false]
     var            isWriting = [false, false] // not allow another save while file is being written
     var           needsWrite = [false, false]
+    var   writtenRecordNames = [String] ()
     var filePaths: [String?] = [nil, nil]
     var _directoryURL : URL? = nil
     let              manager = FileManager.default
@@ -75,6 +77,8 @@ class ZFileManager: NSObject {
             var           dict = ZStorageDictionary ()
             let        manager = gRemoteStoresManager.cloudManagerFor(dbID)
 
+            writtenRecordNames.removeAll()
+
             //////////////////////////////////////////////////
             // taake snapshots just before exit from method //
             //////////////////////////////////////////////////
@@ -121,16 +125,28 @@ class ZFileManager: NSObject {
     }
 
 
+    func isReading(for iDatabaseID: ZDatabaseID?) -> Bool {
+        if  let databaseID = iDatabaseID,
+            let      index = indexOf(databaseID) {
+            return isReading[index]
+        }
+
+        return false
+    }
+
+
     func read(for databaseID: ZDatabaseID) {
         if  gFetchMode                  != .cloudOnly,
             databaseID                  != .favoritesID,
-            let                  index   = indexOf(databaseID) {
+            let                    index = indexOf(databaseID) {
+            isReading[index]             = true
             let                     path = filePath(for: index)
             let sections: [ZStorageType] = [.graph, .favorites, .bookmarks, .date, .found, .trash ]
             do {
-                if  let data = FileManager.default.contents(atPath: path),
-                    let json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
-                    let dict = dictFromJSON(json)
+                if  let   data = FileManager.default.contents(atPath: path),
+                    data.count > 0,
+                    let   json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
+                    let   dict = dictFromJSON(json)
 
                     for section in sections {
                         let    dbID: ZDatabaseID = section == .favorites ? .favoritesID : databaseID
@@ -162,6 +178,11 @@ class ZFileManager: NSObject {
             } catch {
                 print(error)    // de-serialization
             }
+
+            gRemoteStoresManager.recordsManagerFor(databaseID)?.removeDuplicates()
+
+            isReading[index] = false
+
         }
     }
     
