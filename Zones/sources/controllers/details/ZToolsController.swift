@@ -74,7 +74,7 @@ class ZToolsController: ZGenericTableController {
                 case .eFullFetch:   self.toggleFullFetch()
                 case .eIdentifiers: self.toggleShowIdentifiers()
                 case .eAccess:      self.toggleUserAccess()
-                case .eRetry:       gBatchOperationsManager.unHang()
+                case .eRetry:       gBatchManager.unHang()
                 case .eTrash:       self.showTrashCan()
                 case .eGather:      self.gatherAndShowLost()
                 case .eRecount:     self.recount()
@@ -101,7 +101,7 @@ class ZToolsController: ZGenericTableController {
             gHere = trash
 
             gHere.needChildren()
-            gBatchOperationsManager.children(.restore) { iSame in
+            gBatchManager.children(.restore) { iSame in
                 self.redrawAndSync()
             }
         }
@@ -109,7 +109,7 @@ class ZToolsController: ZGenericTableController {
 
 
     func gatherAndShowLost() {
-        gBatchOperationsManager.fetchLost {
+        gBatchManager.fetchLost {
             if  let lost = gLostAndFound {
                 gHere    = lost
 
@@ -117,7 +117,7 @@ class ZToolsController: ZGenericTableController {
 
                 lost.needChildren()
                 lost.revealChildren()
-                gBatchOperationsManager.children(.all) { iSame in
+                gBatchManager.children(.all) { iSame in
                     self.grabChildless()
                 }
             }
@@ -151,7 +151,7 @@ class ZToolsController: ZGenericTableController {
 
 
     func restoreFromTrash() {
-        gBatchOperationsManager.undelete {
+        gBatchManager.undelete {
             self.signalFor(nil, regarding: .redraw)
         }
 
@@ -162,7 +162,7 @@ class ZToolsController: ZGenericTableController {
 
         // needs elaborate gui, like search results, but with checkboxes and [de]select all checkbox
 
-        //gBatchOperationsManager.emptyTrash {
+        //gBatchManager.emptyTrash {
         //    self.note("eliminated")
         //}
     }

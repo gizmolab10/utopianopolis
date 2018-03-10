@@ -325,7 +325,7 @@ extension ZAlert {
 
 
 extension ZoneTextWidget {
-    // override open var acceptsFirstResponder: Bool { return gBatchOperationsManager.isReady }    // fix a bug where root zone is editing on launch
+    // override open var acceptsFirstResponder: Bool { return gBatchManager.isReady }    // fix a bug where root zone is editing on launch
     override var acceptsFirstResponder : Bool  { return widgetZone?.isWritableByUseer ?? false }
 
 

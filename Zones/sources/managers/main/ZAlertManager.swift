@@ -67,7 +67,7 @@ class ZAlertManager : NSObject {
 
 
     private func report(error iError: Any? = nil, _ iMessage: String? = nil, _ closure: AnyClosure? = nil) {
-        let   message = iMessage ?? gBatchOperationsManager.operationText
+        let   message = iMessage ?? gBatchManager.operationText
         let      text = " " + (iMessage ?? "")
 
         if  let ckError: CKError = iError as? CKError {

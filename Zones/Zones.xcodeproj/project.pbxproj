@@ -138,6 +138,9 @@
 		0C4C23A22016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
 		0C4C23A32016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
 		0C4C23A42016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
+		0C50FD2F2053491000E1D9A9 /* everyone.focus in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.focus */; };
+		0C50FD302053491000E1D9A9 /* everyone.focus in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.focus */; };
+		0C50FD312053491000E1D9A9 /* everyone.focus in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.focus */; };
 		0C60B6731DBDB8A0005D99F9 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C60B6791DBE84DF005D99F9 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; };
 		0C63DA6D1FCF837D005EC548 /* ZFavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C63DA6C1FCF837C005EC548 /* ZFavoritesManager.swift */; };
@@ -146,9 +149,9 @@
 		0C6415721FA977EB0043E1CC /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */; };
 		0C6CAE211F88308E001960F7 /* ZSearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */; };
 		0C71172B1FA980D400603017 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		0C7117351FAE7F9900603017 /* ZBatchOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZBatchOperationsManager.swift */; };
-		0C7117361FAE7F9900603017 /* ZBatchOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZBatchOperationsManager.swift */; };
-		0C7117371FAE7F9900603017 /* ZBatchOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZBatchOperationsManager.swift */; };
+		0C7117351FAE7F9900603017 /* ZBatchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZBatchManager.swift */; };
+		0C7117361FAE7F9900603017 /* ZBatchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZBatchManager.swift */; };
+		0C7117371FAE7F9900603017 /* ZBatchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7117341FAE7F9900603017 /* ZBatchManager.swift */; };
 		0C71173B1FAFC50500603017 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0C7126CD1FB39C5200CD3E76 /* ZDesktopExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */; };
 		0C71521B1FD778BB00C7DA61 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; };
@@ -306,12 +309,13 @@
 		0C48B0941F87197B00A247BC /* ZEventsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEventsManager.swift; sourceTree = "<group>"; };
 		0C4C239F20155C7C0025E4DF /* ZDetailRowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDetailRowView.swift; sourceTree = "<group>"; };
 		0C4C23A12016B0930025E4DF /* ZContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZContainerView.swift; sourceTree = "<group>"; };
+		0C50FD2E2053491000E1D9A9 /* everyone.focus */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = everyone.focus; sourceTree = "<group>"; };
 		0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = PadZones/Frameworks/SnapKit.framework; sourceTree = "<group>"; };
 		0C60B6751DBDB8DB005D99F9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Zones/Frameworks/SnapKit.framework; sourceTree = "<group>"; };
 		0C63DA6C1FCF837C005EC548 /* ZFavoritesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFavoritesManager.swift; sourceTree = "<group>"; };
 		0C69C9DF1F09CD95004D026D /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSearchManager.swift; sourceTree = "<group>"; };
-		0C7117341FAE7F9900603017 /* ZBatchOperationsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZBatchOperationsManager.swift; sourceTree = "<group>"; };
+		0C7117341FAE7F9900603017 /* ZBatchManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZBatchManager.swift; sourceTree = "<group>"; };
 		0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDesktopExtensions.swift; sourceTree = "<group>"; };
 		0C7152221FD8A1E400C7DA61 /* ZTravelManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTravelManager.swift; sourceTree = "<group>"; };
 		0CA04B141D2ECF1A001892E5 /* Focus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Focus.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -547,7 +551,7 @@
 		0C39B24B1F182EBB0091F4D1 /* storage */ = {
 			isa = PBXGroup;
 			children = (
-				0C7117341FAE7F9900603017 /* ZBatchOperationsManager.swift */,
+				0C7117341FAE7F9900603017 /* ZBatchManager.swift */,
 				0CAC18E02006A84800D641C4 /* ZBookmarksManager.swift */,
 				0C39B24C1F182EBB0091F4D1 /* ZCloudManager.swift */,
 				0C39B24E1F182EBB0091F4D1 /* ZFileManager.swift */,
@@ -692,9 +696,18 @@
 			name = tests;
 			sourceTree = "<group>";
 		};
+		0C50FD2D2053467600E1D9A9 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				0C50FD2E2053491000E1D9A9 /* everyone.focus */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
 		0CA04B0B1D2ECF1A001892E5 = {
 			isa = PBXGroup;
 			children = (
+				0C50FD2D2053467600E1D9A9 /* data */,
 				0C39B21E1F182EBB0091F4D1 /* sources */,
 				0C39B3C11F198BAA0091F4D1 /* configuration */,
 				0CD921761D8F4C2500F80964 /* frameworks */,
@@ -790,6 +803,7 @@
 			buildConfigurationList = 0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Focus" */;
 			buildPhases = (
 				0CA04B101D2ECF1A001892E5 /* Sources */,
+				0C50FD2C20532B6300E1D9A9 /* ShellScript */,
 				0CA04B111D2ECF1A001892E5 /* Frameworks */,
 				0CA04B121D2ECF1A001892E5 /* Resources */,
 				0C401E761D2F635A000B9864 /* Embed Frameworks */,
@@ -998,6 +1012,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C39B3AE1F1988380091F4D1 /* LaunchScreen.storyboard in Resources */,
+				0C50FD2F2053491000E1D9A9 /* everyone.focus in Resources */,
 				0C39B3A81F1988380091F4D1 /* Assets.xcassets in Resources */,
 				0C39B3AB1F1988380091F4D1 /* iPhone.storyboard in Resources */,
 			);
@@ -1008,6 +1023,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C39B3B61F1988380091F4D1 /* Main.storyboard in Resources */,
+				0C50FD312053491000E1D9A9 /* everyone.focus in Resources */,
 				0C1ABAAC1FB144E400D62947 /* Assets.xcassets in Resources */,
 				0CAC18ED200ED6F700D641C4 /* Details.storyboard in Resources */,
 			);
@@ -1032,6 +1048,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C39B3A61F1988380091F4D1 /* Main.storyboard in Resources */,
+				0C50FD302053491000E1D9A9 /* everyone.focus in Resources */,
 				0C1ABAAB1FB144E300D62947 /* Assets.xcassets in Resources */,
 				0C39B3A31F1988380091F4D1 /* LaunchScreen.storyboard in Resources */,
 			);
@@ -1052,6 +1069,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0C50FD2C20532B6300E1D9A9 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd ~/Library/Containers/com.zones.focus.mac/Data/Library/Caches\nfile=\"Focus/everyone.focus\"\nif -e $file\nthen\n   cp $file ${SRCROOT}/data\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0C69C9871F09CD95004D026D /* Sources */ = {
@@ -1095,7 +1128,7 @@
 				0C39B3881F182EBB0091F4D1 /* ZoneWidget.swift in Sources */,
 				0C39B2BC1F182EBB0091F4D1 /* ZState.swift in Sources */,
 				0C39B3011F182EBB0091F4D1 /* ZRemoteStoresManager.swift in Sources */,
-				0C7117351FAE7F9900603017 /* ZBatchOperationsManager.swift in Sources */,
+				0C7117351FAE7F9900603017 /* ZBatchManager.swift in Sources */,
 				0C39B2B61F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C39B3131F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				0C39B2EC1F182EBB0091F4D1 /* ZWidgetsManager.swift in Sources */,
@@ -1150,7 +1183,7 @@
 				0C39B2BE1F182EBB0091F4D1 /* ZState.swift in Sources */,
 				0C4C23A42016B0930025E4DF /* ZContainerView.swift in Sources */,
 				0C48B0951F87197B00A247BC /* ZEventsManager.swift in Sources */,
-				0C7117371FAE7F9900603017 /* ZBatchOperationsManager.swift in Sources */,
+				0C7117371FAE7F9900603017 /* ZBatchManager.swift in Sources */,
 				0C39B3031F182EBB0091F4D1 /* ZRemoteStoresManager.swift in Sources */,
 				0C39B2B81F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C39B2D31F182EBB0091F4D1 /* ZDesktopAppDelegate.swift in Sources */,
@@ -1206,7 +1239,7 @@
 				0C2E22D31F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,
 				0C39B2CF1F182EBB0091F4D1 /* ZMobileExtensions.swift in Sources */,
 				0C2E22CA1F75BB7E00B50A71 /* ZMainController.swift in Sources */,
-				0C7117361FAE7F9900603017 /* ZBatchOperationsManager.swift in Sources */,
+				0C7117361FAE7F9900603017 /* ZBatchManager.swift in Sources */,
 				0C39B31A1F182EBB0091F4D1 /* Zone.swift in Sources */,
 				0C39B2C91F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0CB619A01FB3C4660087B066 /* ZEditorController.swift in Sources */,

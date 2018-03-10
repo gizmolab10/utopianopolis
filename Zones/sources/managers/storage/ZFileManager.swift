@@ -49,7 +49,7 @@ class ZFileManager: NSObject {
 
     func needWrite(for  databaseID: ZDatabaseID?) {
         if  let  dbID = databaseID,
-            let index = indexOf(dbID) {
+            let index = index(of: dbID) {
             needsWrite[index] = true
         }
     }
@@ -57,7 +57,7 @@ class ZFileManager: NSObject {
 
     func needsWrite(for  databaseID: ZDatabaseID?) -> Bool {
         if  let  dbID = databaseID,
-            let index = indexOf(dbID) {
+            let index = index(of: dbID) {
             return needsWrite[index]
         }
 
@@ -69,7 +69,8 @@ class ZFileManager: NSObject {
         if  let           dbID = databaseID,
             dbID              != .favoritesID,
             gSaveMode         != .cloudOnly,
-            let        index   = indexOf(dbID),
+            let        index   = index(of: dbID),
+            let      dbIndex   = ZDatabaseIndex(rawValue: index),
             needsWrite[index] == true,
             isWriting [index] == false {    // prevent write during write
             isWriting [index]  = true
@@ -114,8 +115,8 @@ class ZFileManager: NSObject {
             BACKGROUND {
                 dict [.date] = manager.lastSyncDate as NSObject
                 let jsonDict = self.jsonDictFrom(dict)
-                let     path = self.filePath(for: index)
                 let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
+                let     path = self.filePath(for: dbIndex)
 
                 if  FileManager.default.createFile(atPath: path, contents: data) {}
 
@@ -127,7 +128,7 @@ class ZFileManager: NSObject {
 
     func isReading(for iDatabaseID: ZDatabaseID?) -> Bool {
         if  let databaseID = iDatabaseID,
-            let      index = indexOf(databaseID) {
+            let      index = index(of: databaseID) {
             return isReading[index]
         }
 
@@ -138,9 +139,10 @@ class ZFileManager: NSObject {
     func read(for databaseID: ZDatabaseID) {
         if  gFetchMode                  != .cloudOnly,
             databaseID                  != .favoritesID,
-            let                    index = indexOf(databaseID) {
+            let                    index = index(of: databaseID),
+            let                  dbIndex = ZDatabaseIndex(rawValue: index) {
             isReading[index]             = true
-            let                     path = filePath(for: index)
+            let                     path = filePath(for: dbIndex)
             let sections: [ZStorageType] = [.graph, .favorites, .bookmarks, .date, .found, .trash ]
             do {
                 if  let   data = FileManager.default.contents(atPath: path),
@@ -210,29 +212,32 @@ class ZFileManager: NSObject {
     let backupExtension = ".backup"
 
 
-    func filePath(for index: Int) -> String {
-        var                   path  = filePaths[index]
-        if  path                   == nil,
-            let               name  = fileName(for: index) {
-            let            fileURL  = directoryURL.appendingPathComponent(name + normalExtension)
-            let          backupURL  = directoryURL.appendingPathComponent(name + backupExtension)
-            let       backupExists  = manager.fileExists(atPath: backupURL.path)
-            let      genericExists  = manager.fileExists(atPath:   fileURL.path)
-            let      canUseGeneric  = index == 0 || gUserRecordID == nil
-            path                    = fileURL.path
+    func filePath(for index: ZDatabaseIndex) -> String {
+        var                   path = filePaths[index.rawValue]
+        if  path                  == nil,
+            let               name = fileName(for: index) {
+            let          backupURL = directoryURL.appendingPathComponent(name + backupExtension)
+            let     genericFileURL = directoryURL.appendingPathComponent(name + normalExtension)
+            let      genericExists = manager.fileExists(atPath:genericFileURL.path)
+            let       backupExists = manager.fileExists(atPath:     backupURL.path)
+            let         isEveryone = index == .everyone
+            let      canUseGeneric = isEveryone || gUserRecordID == nil
+            path                   = genericFileURL.path
 
             do {
                 if           canUseGeneric {
                     if       genericExists {
                         if    backupExists {
-                            try manager.removeItem(at: backupURL)
+                            try manager.removeItem(at: backupURL) // remove before replacing, below
                         }
 
-                        try manager.copyItem(at: fileURL, to: backupURL)
+                        try manager.copyItem(at: genericFileURL, to: backupURL)
                     } else if backupExists {
-                        try manager.copyItem(at: backupURL, to: fileURL)        // should only happen when prior write fails due to power failure
+                        try manager.copyItem(at: backupURL, to: genericFileURL)        // should only happen when prior write fails due to power failure
+                    } else if isEveryone, let bundleFileURL = Bundle.main.url(forResource: "everyone", withExtension: "focus") {
+                        try manager.copyItem(at: bundleFileURL, to: genericFileURL)
                     } else {
-                        manager.createFile(atPath: fileURL.path, contents: nil)
+                        manager.createFile(atPath: genericFileURL.path, contents: nil)
                     }
                 } else {
                     let         newName = fileName(for: index, isGeneric: false)!
@@ -250,35 +255,26 @@ class ZFileManager: NSObject {
                         try manager.copyItem(at: newFileURL, to: newBackupURL)
                     } else if newBackupExists {
                         try manager.copyItem(at: newBackupURL, to: newFileURL)  // should only happen when prior write fails due to power failure
-                    } else if  !genericExists {
-                        manager.createFile(atPath: newFileURL.path, contents: nil)
-                    } else {
-                        try manager.moveItem(at: fileURL, to: newFileURL)
+                    } else if   genericExists {
+                        try manager.moveItem(at: genericFileURL, to: newFileURL)
                         try manager.copyItem(at: newFileURL, to: newBackupURL)
+                    } else {
+                        manager.createFile(atPath: newFileURL.path, contents: nil)
                     }
                 }
             } catch {
                 print(error)
             }
 
-            filePaths[index] = path
+            filePaths[index.rawValue] = path
         }
 
         return path!
     }
 
 
-    func databaseID(from index: Int) -> ZDatabaseID? {
-        switch index {
-        case 0:  return .everyoneID
-        case 1:  return .mineID
-        default: return nil
-        }
-    }
-
-
-    func fileName(for index: Int, isGeneric: Bool = true) -> String? {
-        if  let dbID = databaseID(from: index) {
+    func fileName(for index: ZDatabaseIndex, isGeneric: Bool = true) -> String? {
+        if  let dbID = databaseIDFrom(index) {
             var name = dbID.rawValue
 
             if  dbID      == .mineID, !isGeneric,

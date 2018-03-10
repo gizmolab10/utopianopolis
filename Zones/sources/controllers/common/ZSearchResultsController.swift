@@ -184,7 +184,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         zone?.revealChildren()
         signalFor(nil, regarding: .redraw)
 
-        gBatchOperationsManager.sync { iSame in
+        gBatchManager.sync { iSame in
             self.signalFor(nil, regarding: .redraw)
         }
     }

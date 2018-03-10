@@ -1348,7 +1348,7 @@ class Zone : ZRecord {
             fastUpdateProgenyCount()
         } else {
             needChildren()
-            gBatchOperationsManager.children(.restore) { iSame in
+            gBatchManager.children(.restore) { iSame in
                 self.fastUpdateProgenyCount()
             }
         }

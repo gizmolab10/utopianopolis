@@ -64,7 +64,7 @@ class ZRecord: NSObject {
                 updateInstanceProperties()
 
                 if !register() {
-                    // zone is a duplicate
+                    bam("zone is a duplicate")
                 } else {
                     maybeMarkAsFetched()
 
@@ -482,6 +482,8 @@ class ZRecord: NSObject {
             let  keyPaths = cloudProperties() + [kpRecordName]
             var      dict = ZStorageDictionary()
 
+            gFileManager.writtenRecordNames.append(name)
+
             for keyPath in keyPaths {
                 if  let       type = type(from: keyPath),
                     let    extract = extract(valueOf: type, at: keyPath) ,
@@ -502,7 +504,7 @@ class ZRecord: NSObject {
 
     func setStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
         databaseID       = iDatabaseID
-        if  let     name = dict[.recordName] as? String {
+        if  let     name = dict[.recordName] as? String, gRemoteStoresManager.recordsManagerFor(iDatabaseID)?.maybeCKRecordForRecordName(name) == nil {
             let ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: name)) // YIKES this may be wildly out of date
 
             for keyPath in cloudProperties() {

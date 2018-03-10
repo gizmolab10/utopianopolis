@@ -211,7 +211,7 @@ class ZSelectionManager: NSObject {
 
 
     func setHereRecordName(_ iName: String, for databaseID: ZDatabaseID) {
-        if  let         index = indexOf(databaseID) {
+        if  let         index = index(of: databaseID) {
             var    references = gHereRecordNames.components(separatedBy: kSeparator)
             references[index] = iName
             gHereRecordNames  = references.joined(separator: kSeparator)
@@ -222,7 +222,7 @@ class ZSelectionManager: NSObject {
     func hereRecordName(for databaseID: ZDatabaseID) -> String? {
         let references = gHereRecordNames.components(separatedBy: kSeparator)
 
-        if  let  index = indexOf(databaseID) {
+        if  let  index = index(of: databaseID) {
             return references[index]
         }
 

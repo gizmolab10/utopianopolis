@@ -37,20 +37,39 @@ enum ZCountsMode: Int { // do not change the order, they are persisted
 }
 
 
-func indexOf(_ iID: ZDatabaseID) -> Int? {
-    switch iID {
-    case .everyoneID: return 0
-    case     .mineID: return 1
-    default:          return nil
-    }
-}
-
-
 enum ZDatabaseID: String {
     case favoritesID = "favorites"
     case  everyoneID = "everyone"
     case    sharedID = "shared"
     case      mineID = "mine"
+}
+
+
+enum ZDatabaseIndex: Int {
+    case everyone
+    case mine
+}
+
+
+func index(of databaseID: ZDatabaseID) -> Int? {
+    return databaseIndex(from: databaseID)?.rawValue
+}
+
+
+func databaseIndex(from iID: ZDatabaseID) -> ZDatabaseIndex? {
+    switch iID {
+    case .everyoneID: return .everyone
+    case     .mineID: return .mine
+    default:          return nil
+    }
+}
+
+
+func databaseIDFrom(_ index: ZDatabaseIndex) -> ZDatabaseID? {
+    switch index {
+    case .everyone: return .everyoneID
+    case .mine:     return .mineID
+    }
 }
 
 

@@ -45,7 +45,7 @@ class ZInformationController: ZGenericController {
         if ![.search, .found].contains(iKind) && gReadyState {
             let  (count, notSavableCount) = gCloudManager.undeletedCounts
             let                     total = gRemoteStoresManager.rootProgenyCount
-            let            operationCount = gBatchOperationsManager.queue.operationCount
+            let            operationCount = gBatchManager.queue.operationCount
             let                      zone = gSelectionManager.rootMostMoveable
             let                      dbID = zone.databaseID
             graphNameLabel?         .text = dbID == nil ? "" : dbID!.rawValue + " database"
