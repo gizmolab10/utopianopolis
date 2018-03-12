@@ -38,11 +38,6 @@ class ZGenericController: ZController {
     }
 
 
-    func syncToCloudAndSignalFor(_ widget: ZoneWidget?, regarding: ZSignalKind,  onCompletion: Closure?) {
-        gControllersManager.syncToCloudAndSignalFor(widget, regarding: regarding, onCompletion: onCompletion)
-    }
-
-
 #if os(OSX)
 
     override func viewDidAppear() {

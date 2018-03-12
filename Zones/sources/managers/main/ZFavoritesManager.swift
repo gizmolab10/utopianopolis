@@ -18,8 +18,7 @@ enum ZFavoriteStyle: Int {
 }
 
 
-let             gFavoritesManager = ZFavoritesManager(.favoritesID)
-let gAllDatabaseIDs: ZDatabaseIDs = [.everyoneID, .mineID]
+let gFavoritesManager = ZFavoritesManager(.favoritesID)
 
 
 class ZFavoritesManager: ZCloudManager {
@@ -216,7 +215,8 @@ class ZFavoritesManager: ZCloudManager {
                 finish()
             } else {
                 mine.assureRecordExists(withRecordID: CKRecordID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
-                    let          root = Zone(record: iRecord, databaseID: .mineID)
+                    let      ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: kFavoritesRootName))
+                    let          root = Zone(record: ckRecord, databaseID: .mineID)
                     root.directAccess = .eDefaultName
                     root.zoneName     = kFavoritesName
                     self.rootZone     = root
@@ -230,7 +230,7 @@ class ZFavoritesManager: ZCloudManager {
 
     func setupDatabaseFavorites() {
         if databaseRootFavorites.count == 0 {
-            for (index, dbID) in gAllDatabaseIDs.enumerated() {
+            for (index, dbID) in kAllDatabaseIDs.enumerated() {
                 let          name = dbID.rawValue
                 let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: name + kFavoritesSuffix)
                 favorite.zoneLink =  "\(name)\(kSeparator)\(kSeparator)"

@@ -117,9 +117,9 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="cloudStatusLabel" destination="fy3-JT-P1F" id="bJt-yR-hPf"/>
                         <outlet property="graphNameLabel" destination="f4m-8C-5H1" id="Wu5-yB-FmB"/>
                         <outlet property="levelLabel" destination="BcI-eM-ytK" id="l2l-bk-3KS"/>
-                        <outlet property="operationCountLabel" destination="fy3-JT-P1F" id="bJt-yR-hPf"/>
                         <outlet property="totalCountLabel" destination="3v8-d2-yo8" id="8GP-Ce-9m4"/>
                         <outlet property="versionLabel" destination="Idb-0r-rlP" id="3Jz-SU-pUK"/>
                     </connections>

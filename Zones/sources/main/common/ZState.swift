@@ -20,21 +20,18 @@ import CloudKit
 var             gWorkMode                     = ZWorkMode.startupMode
 var           gReadyState                     = false
 var        gTextCapturing                     = false
-var     gCloudUnavailable                     = false
 var    gCrippleUserAccess                     = false
 var    gKeyboardIsVisible                     = false
 var gDebugShowIdentifiers                     = false
 var      gDebugOperations                     = true
-var      gDebugTimerCount                     = 0
 var      gDragDropIndices: NSMutableIndexSet? = nil
 var         gDragRelation:         ZRelation? = nil
 var         gDragDropZone:              Zone? = nil
 var          gDraggedZone:              Zone? = nil
-var           gDebugTimer:             Timer? = nil
 var            gDragPoint:           CGPoint? = nil
 var             gExpanded:          [String]? = nil
 
-var               gIsLate:               Bool { return gCloudUnavailable || gBatchManager.isLate }
+var               gIsLate:               Bool { return gBatchManager.isLate }
 var           gIsDragging:               Bool { return gDraggedZone != nil }
 var     gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var   gHasPrivateDatabase:               Bool { return gUserRecordID != nil }

@@ -8,6 +8,7 @@
 
 
 import Foundation
+import SystemConfiguration.SCNetworkConnection
 
 
 enum ZOperationID: Int {
@@ -59,6 +60,13 @@ enum ZOperationID: Int {
 }
 
 
+var gDebugTimerCount          = 0
+var gDebugTimer:       Timer? = nil
+var gCloudTimer:       Timer? = nil
+var gCloudFire: TimerClosure? = nil
+var gNoInternet             = false
+
+
 class ZOperationsManager: NSObject {
 
 
@@ -69,8 +77,19 @@ class ZOperationsManager: NSObject {
     let           queue = OperationQueue()
 
 
-    func invoke(_ identifier: ZOperationID, cloudCallback: AnyClosure?) {}
-    func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping Closure) {}
+    var isConnectedToNetwork: Bool {
+        var flags: SCNetworkReachabilityFlags = SCNetworkReachabilityFlags(rawValue: 0)
+
+        if let host = SCNetworkReachabilityCreateWithName(nil, "www.apple.com"),
+            !SCNetworkReachabilityGetFlags(host, &flags) {
+            return false
+        }
+
+        let     isReachable = flags.contains(.reachable)
+        let needsConnection = flags.contains(.connectionRequired)
+
+        return isReachable && !needsConnection
+    }
 
 
     var usingDebugTimer: Bool {
@@ -95,26 +114,60 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func shouldPerform(_ iID: ZOperationID) -> Bool {
-        let cloudFetch = gFetchMode != .localOnly
-        let cloudSave  =  gSaveMode != .localOnly
-        var yesPerform = true
+    func updateInternetStatus(_ onCompletion: BooleanClosure?) {
+        let  noInternet = !isConnectedToNetwork
+        let     changed = noInternet != gNoInternet
 
-        switch iID {
-        case .save:                                                                                                                            yesPerform = cloudSave
-        case .fetch, .merge, .traits, .emptyTrash, .fetchlost, .undelete, .refetch, .parents, .children, .bookmarks, .subscribe, .unsubscribe: yesPerform = cloudFetch && !gAssumeAllFetched
-        case .cloud, .internet, .ubiquity, .fetchUserRecord, .fetchUserIdentity:                                                               yesPerform = cloudFetch || cloudSave
+        if      changed {
+            gNoInternet = noInternet
+        }
+
+        onCompletion?(changed)
+    }
+
+
+    func setupCloudTimer() {
+        if  gCloudTimer == nil {
+            gCloudFire   = { iTimer in
+                self.updateInternetStatus { iChangeHappened in
+                    if  iChangeHappened {
+                        self.signalFor(nil, regarding: .information) // inform user of change in cloud status
+                    }
+                }
+            }
+
+            gCloudTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: gCloudFire!)
+            gCloudFire?(gCloudTimer!)
+        }
+    }
+
+
+    func invoke(_ identifier: ZOperationID, cloudCallback: AnyClosure?) {}
+    func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping Closure) {}
+    func isCloudOp(_ iOP: ZOperationID) -> Bool {
+        switch iOP {
+        case .read, .write, .found, .setup, .onboard, .internet, .completion, .fetchUserID, .accountStatus: return false
         default: break
         }
 
-        return yesPerform
+        return true
+    }
+
+
+    func shouldPerform(_ iID: ZOperationID) -> Bool {
+        switch iID {
+        case .read, .write, .onboard, .setup, .accountStatus, .fetchUserID, .internet, .ubiquity, .completion: return true
+        default:                                                                                               return !gNoInternet
+        }
     }
 
 
     func setupAndRunUnsafe(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
-        if gIsLate {
+        setupCloudTimer()
+
+        if gIsLate || !isConnectedToNetwork {
             FOREGROUND { // avoid stack overflow
-                onCompletion()
+                onCompletion() // avoid operation overflow NOTE: THESE OPS GET TOSSED ... BAAAAAD!!!!
             }
         }
 

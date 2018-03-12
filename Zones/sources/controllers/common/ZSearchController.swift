@@ -88,7 +88,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
             var combined = [ZDatabaseID: [Any]] ()
             var     done = false
 
-            for dbID in gAllDatabaseIDs {
+            for dbID in kAllDatabaseIDs {
                 let manager = gRemoteStoresManager.cloudManagerFor(dbID)
 
                 manager.search(for: searchString) { iObject in

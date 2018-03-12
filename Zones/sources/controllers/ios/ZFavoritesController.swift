@@ -59,7 +59,7 @@ class ZFavoritesController : ZGenericController {
         let favorite = favorites[index]
 
         gFavoritesManager.travel(into: favorite) {
-            self.syncToCloudAndSignalFor(nil, regarding: .redraw, onCompletion: nil)
+            gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .redraw, onCompletion: nil)
         }
     }
 

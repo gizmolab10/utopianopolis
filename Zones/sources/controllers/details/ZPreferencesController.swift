@@ -89,7 +89,7 @@ class ZPreferencesController: ZGenericController {
             default:             break
             }
 
-            syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+            gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .redraw) {}
         }
     }
 
@@ -101,12 +101,12 @@ class ZPreferencesController: ZGenericController {
             UNDO(self) { iUndoSelf in
                 grab.color = color
 
-                iUndoSelf.syncToCloudAndSignalFor(widget, regarding: .redraw) {}
+                gControllersManager.syncToCloudAfterSignalFor(widget, regarding: .redraw) {}
             }
         }
 
         grab.clearColor()
-        syncToCloudAndSignalFor(widget, regarding: .redraw) {}
+        gControllersManager.syncToCloudAfterSignalFor(widget, regarding: .redraw) {}
     }
 
 

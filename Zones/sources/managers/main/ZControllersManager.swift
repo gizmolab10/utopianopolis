@@ -138,7 +138,7 @@ class ZControllersManager: NSObject {
 
 
     func updateNeededCounts() {
-        for dbID in gAllDatabaseIDs {
+        for dbID in kAllDatabaseIDs {
             var alsoProgenyCounts = false
             let           manager = gRemoteStoresManager.cloudManagerFor(dbID)
             manager.fullUpdate(for: [.needsCount]) { state, iZRecord in
@@ -183,15 +183,10 @@ class ZControllersManager: NSObject {
     }
 
 
-    func syncAndSave(_ widget: ZoneWidget? = nil, onCompletion: Closure?) {
+    func syncToCloudAfterSignalFor(_ widget: ZoneWidget?, regarding: ZSignalKind,  onCompletion: Closure?) {
+        signalFor(widget, regarding: regarding, onCompletion: onCompletion)
         gBatchManager.sync { iSame in
             onCompletion?()
         }
-    }
-
-
-    func syncToCloudAndSignalFor(_ widget: ZoneWidget?, regarding: ZSignalKind,  onCompletion: Closure?) {
-        signalFor(widget, regarding: regarding, onCompletion: onCompletion)
-        syncAndSave(widget, onCompletion: onCompletion)
     }
 }

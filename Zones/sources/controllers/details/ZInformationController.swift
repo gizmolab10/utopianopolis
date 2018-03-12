@@ -19,11 +19,11 @@ import Foundation
 class ZInformationController: ZGenericController {
 
 
-    @IBOutlet var operationCountLabel: ZTextField?
-    @IBOutlet var     totalCountLabel: ZTextField?
-    @IBOutlet var      graphNameLabel: ZTextField?
-    @IBOutlet var        versionLabel: ZTextField?
-    @IBOutlet var          levelLabel: ZTextField?
+    @IBOutlet var cloudStatusLabel: ZTextField?
+    @IBOutlet var  totalCountLabel: ZTextField?
+    @IBOutlet var   graphNameLabel: ZTextField?
+    @IBOutlet var     versionLabel: ZTextField?
+    @IBOutlet var       levelLabel: ZTextField?
 
 
     override func setup() {
@@ -43,15 +43,16 @@ class ZInformationController: ZGenericController {
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
         if ![.search, .found].contains(iKind) && gReadyState {
-            let  (count, notSavableCount) = gCloudManager.undeletedCounts
-            let                     total = gRemoteStoresManager.rootProgenyCount
-            let            operationCount = gBatchManager.queue.operationCount
-            let                      zone = gSelectionManager.rootMostMoveable
-            let                      dbID = zone.databaseID
-            graphNameLabel?         .text = dbID == nil ? "" : dbID!.rawValue + " database"
-            totalCountLabel?        .text = "of \(total), retrieved: \(count) + \(notSavableCount)"
-            operationCountLabel?    .text = operationCount == 0 ? "" : "\(operationCount) cloud operation\(operationCount == 1 ? "" : "s") in progress"
-            versionLabel?           .text = versionText
+            let (count, notSavableCount) = gCloudManager.undeletedCounts
+            let                    total = gRemoteStoresManager.rootProgenyCount
+            let           operationCount = gBatchManager.queue.operationCount
+            let      operationsCountText = operationCount == 0 ? "" : "\(operationCount) cloud operation\(operationCount == 1 ? "" : "s") in progress"
+            let                     zone = gSelectionManager.rootMostMoveable
+            let                     dbID = zone.databaseID
+            versionLabel?          .text = versionText
+            graphNameLabel?        .text = dbID == nil ? "" : dbID!.rawValue + " database"
+            totalCountLabel?       .text = "of \(total), retrieved: \(count) + \(notSavableCount)"
+            cloudStatusLabel?      .text = gNoInternet ? "no internet" : operationsCountText
 
             if iKind != .startup {
                 levelLabel?         .text = "level: \(zone.level)"

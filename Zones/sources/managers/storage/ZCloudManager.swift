@@ -593,7 +593,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetch(for type: String, properties: [String], since: Date, before: Date?, _ onCompletion: RecordsClosure?) {
-        if !(rootZone?.hasMissingProgeny() ?? true) {
+        if  type == kZoneType, let missing = rootZone?.hasMissingProgeny(), !missing {
             onCompletion?([])
         } else {
             let predicate = NSPredicate(value: true) // self.predicate(since: since, before: before)
@@ -1170,7 +1170,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func unsubscribe(_ onCompletion: IntClosure?) {
-        if  database == nil {
+        if  gNoInternet {
             onCompletion?(0)
         } else {
             onCompletion?(-1)
@@ -1204,7 +1204,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func subscribe(_ onCompletion: IntClosure?) {
-        if  database == nil {
+        if  gNoInternet {
             onCompletion?(0)
         } else {
             let classNames = [kZoneType, kTraitType]

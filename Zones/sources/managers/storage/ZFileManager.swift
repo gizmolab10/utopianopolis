@@ -49,26 +49,16 @@ class ZFileManager: NSObject {
 
     func needWrite(for  databaseID: ZDatabaseID?) {
         if  let  dbID = databaseID,
-            let index = index(of: dbID) {
+            let index = index(of: dbID),
+            !needsWrite[index] {
             needsWrite[index] = true
         }
-    }
-
-
-    func needsWrite(for  databaseID: ZDatabaseID?) -> Bool {
-        if  let  dbID = databaseID,
-            let index = index(of: dbID) {
-            return needsWrite[index]
-        }
-
-        return false
     }
 
 
     func write(for databaseID: ZDatabaseID?) {
         if  let           dbID = databaseID,
             dbID              != .favoritesID,
-            gSaveMode         != .cloudOnly,
             let        index   = index(of: dbID),
             let      dbIndex   = ZDatabaseIndex(rawValue: index),
             needsWrite[index] == true,
@@ -79,6 +69,7 @@ class ZFileManager: NSObject {
             let        manager = gRemoteStoresManager.cloudManagerFor(dbID)
 
             writtenRecordNames.removeAll()
+            manager.rootZone?.safeUpdateCounts([]) // all progenyCounts for all progeny
 
             //////////////////////////////////////////////////
             // taake snapshots just before exit from method //

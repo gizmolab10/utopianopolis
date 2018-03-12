@@ -54,7 +54,7 @@ extension NSObject {
 
 
     func redrawAndSync(_ widget: ZoneWidget? = nil, _ onCompletion: Closure? = nil) {
-        gControllersManager.syncToCloudAndSignalFor(widget, regarding: .redraw, onCompletion: onCompletion)
+        gControllersManager.syncToCloudAfterSignalFor(widget, regarding: .redraw, onCompletion: onCompletion)
     }
 
 

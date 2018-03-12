@@ -7,7 +7,6 @@
 //
 
 
-import SystemConfiguration.SCNetworkConnection
 import Foundation
 import CloudKit
 
@@ -29,21 +28,6 @@ class ZOnboardingManager : ZOperationsManager {
     var    userIdentity : CKUserIdentity?
     var   isSpecialUser : Bool { return user?.access == .eAccessFull }
     let makeUserSpecial = false
-
-
-    var isConnectedToNetwork: Bool {
-        var flags: SCNetworkReachabilityFlags = SCNetworkReachabilityFlags(rawValue: 0)
-
-        if let host = SCNetworkReachabilityCreateWithName(nil, "www.apple.com"),
-            !SCNetworkReachabilityGetFlags(host, &flags) {
-            return false
-        }
-
-        let     isReachable = flags.contains(.reachable)
-        let needsConnection = flags.contains(.connectionRequired)
-
-        return isReachable && !needsConnection
-    }
 
 
     // MARK:- API
@@ -88,23 +72,23 @@ class ZOnboardingManager : ZOperationsManager {
     }
 
 
+    func internet(_ onCompletion: @escaping Closure) {
+        updateInternetStatus { iChanged in
+            onCompletion()
+        }
+    }
+
+
     func setup() {
         NotificationCenter.default.addObserver(self, selector: #selector(ZOnboardingManager.cloudStateChanged), name: .NSUbiquityIdentityDidChange, object: nil)
     }
 
 
-    func internet(_ onCompletion: @escaping Closure) {
-        if isConnectedToNetwork {
-            onCompletion()
-        } else {
-            gAlertManager.alertNoInternet(onCompletion)
-        }
-    }
-
-
     func ubiquity(_ onCompletion: @escaping Closure) {
         if FileManager.default.ubiquityIdentityToken == nil {
-            gAlertManager.alertSystemPreferences(onCompletion)
+            updateInternetStatus { iChangesOccured in
+                onCompletion()
+            }
         } else {
             onCompletion()
         }

@@ -120,8 +120,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
         let                        here = inMainGraph ? gHere : gFavoritesManager.rootZone
         var specificWidget: ZoneWidget? = inMainGraph ? editorRootWidget : favoritesRootWidget
-        var   specificView:      ZView? = editorView
-        var  specificindex:        Int? = nil
+        var specificView:        ZView? = editorView
+        var specificIndex:         Int? = nil
         var                   recursing = true
         gTextCapturing                  = false
         specificWidget?     .widgetZone = here
@@ -130,7 +130,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             let       zone = widget.widgetZone,
             zone          == here {
             specificWidget = widget
-            specificindex  = zone.siblingIndex
+            specificIndex  = zone.siblingIndex
             specificView   = specificWidget?.superview
             recursing      = [.data, .redraw].contains(iKind)
         }
@@ -138,7 +138,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         note("<  <  -  >  >  \(specificWidget?.widgetZone?.zoneName ?? "---")")
 
         if iKind == .redraw {
-            specificWidget?.layoutInView(specificView, atIndex: specificindex, recursing: recursing, iKind, isMain: inMainGraph, visited: [])
+            specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isMain: inMainGraph, visited: [])
         } else {
             specificWidget?.setNeedsDisplay()
         }
@@ -369,19 +369,19 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
                 if dropNow, let drop = dropZone, !isNoop {
                     let   toBookmark = drop.isBookmark
-                    var     at: Int? = index
+                    var dropAt: Int? = index
 
                     if toBookmark {
-                        at           = gInsertionsFollow ? nil : 0
+                        dropAt       = gInsertionsFollow ? nil : 0
                     } else if dragIndex != nil && dragIndex! <= index && dropIsParent {
-                        at!         -= 1
+                        dropAt!     -= 1
                     }
 
                     if  let   gesture = iGesture as? ZKeyPanGestureRecognizer,
                         let isCommand = gesture.modifiers?.isCommand {
-                        gEditingManager.moveGrabbedZones(into: drop, at: at, isCommand: isCommand) {
+                        gEditingManager.moveGrabbedZones(into: drop, at: dropAt, isCommand: isCommand) {
                             self.restartGestureRecognition()
-                            self.redrawAndSync(nil)
+                            self.redrawAndSync()
                         }
                     }
                 }

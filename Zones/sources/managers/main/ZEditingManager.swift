@@ -221,8 +221,8 @@ class ZEditingManager: NSObject {
         default:
             if !isShift {
                 switch arrow {
-                case .right: moveInto(selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawAndSync() }
-                case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawAndSync() }
+                case .right: moveInto(selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawSyncRedraw() }
+                case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawSyncRedraw() }
                 default: break
                 }
             } else if !isOption {
@@ -286,16 +286,15 @@ class ZEditingManager: NSObject {
 
         toggleDatabaseID()
 
-        if        here.isRootOfFavorites {
-            gHere = gFavoritesManager.rootZone!
-        } else if here.isLostAndFound {
-            gHere = gLostAndFound!
-        } else if here.isTrash {
-            gHere = gTrash!
-        } else if here.isRoot {
-            gHere = gRoot!
+        if    !here.isRootOfFavorites {
+            if here.isRootOfLostAndFound {
+                gHere = gLostAndFound!
+            } else if here.isTrash {
+                gHere = gTrash!
+            } else if here.isRoot {
+                gHere = gRoot!
+            }
         }
-
 
         gHere.grab()
         gHere.revealChildren()
@@ -893,7 +892,7 @@ class ZEditingManager: NSObject {
                         }
                     } else {
                         self.moveZones(zones, into: child, at: nil, orphan: true) {
-                            gControllersManager.syncToCloudAndSignalFor(nil, regarding: .redraw) {
+                            self.redrawAndSync() {
                                 onCompletion?(child)
                             }
                         }
@@ -1007,19 +1006,19 @@ class ZEditingManager: NSObject {
     func delete(permanently: Bool = false, preserveChildren: Bool = false) {
         if  preserveChildren {
             preserveChildrenOfGrabbedZones {
-                self.updateFavoritesRedrawAndSync()
+                self.updateFavoritesRedrawSyncRedraw()
             }
         } else {
             prepareUndoForDelete()
 
             deleteZones(gSelectionManager.simplifiedGrabs, permanently: permanently) {
-                self.updateFavoritesRedrawAndSync()     // delete alters the list
+                self.updateFavoritesRedrawSyncRedraw()     // delete alters the list
             }
         }
     }
 
 
-    func updateFavoritesRedrawAndSync() {
+    func updateFavoritesRedrawSyncRedraw() {
         gFavoritesManager.updateFavorites()
         redrawSyncRedraw()
     }
@@ -1122,7 +1121,7 @@ class ZEditingManager: NSObject {
                 }
             } else {
                 let eventuallyDestroy = zone.isInTrash || permanently
-                let        destroyNow = eventuallyDestroy && gUseCloud
+                let        destroyNow = eventuallyDestroy && !gNoInternet
 
                 zone.addToPaste()
 
@@ -1326,7 +1325,7 @@ class ZEditingManager: NSObject {
                     self.grabChild(of: zone)
                 }
 
-                self.updateFavoritesRedrawAndSync()
+                self.updateFavoritesRedrawSyncRedraw()
             }
         }
     }
@@ -1503,7 +1502,7 @@ class ZEditingManager: NSObject {
             zones     .removeLast()
         }
 
-        updateFavoritesRedrawAndSync()
+        updateFavoritesRedrawSyncRedraw()
     }
 
 
@@ -1602,7 +1601,7 @@ class ZEditingManager: NSObject {
                     self.undoManager.endUndoGrouping()
                 }
 
-                self.updateFavoritesRedrawAndSync()
+                self.updateFavoritesRedrawSyncRedraw()
             }
 
             let prepare = {
@@ -1757,11 +1756,12 @@ class ZEditingManager: NSObject {
         // 4. move a favorite into a normal zone -- convert favorite to a bookmark, then move the bookmark          //
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        let  toBookmark = iInto.isBookmark                      // type 2
-        let toFavorites = iInto.isInFavorites && !toBookmark    // type 3
-        var       grabs = gSelectionManager.currentGrabs
-        var     restore = [Zone: (Zone, Int?)] ()
-        var   cyclicals = IndexSet()
+        let   toBookmark = iInto.isBookmark                      // type 2
+        let  toFavorites = iInto.isInFavorites && !toBookmark    // type 3
+        let         into = iInto.bookmarkTarget ?? iInto         // grab bookmark AFTER travel
+        var        grabs = gSelectionManager.currentGrabs
+        var      restore = [Zone: (Zone, Int?)] ()
+        var    cyclicals = IndexSet()
 
         for (index, zone) in grabs.enumerated() {
             if iInto.spawnedBy(zone) {
@@ -1817,9 +1817,7 @@ class ZEditingManager: NSObject {
         ////////////////
 
         let finish = {
-            var    done = false
-            let    into = iInto.bookmarkTarget ?? iInto         // grab bookmark AFTER travel
-            let toTrash = into.isInTrash || into.isTrash
+            var done = false
 
             if !isCommand {
                 into.revealChildren()
@@ -1832,22 +1830,20 @@ class ZEditingManager: NSObject {
                     done = true
 
                     for grab in grabs {
-                        var      movable = grab
-                        let    fromTrash = movable.isInTrash
-                        let fromFavorite = movable.isInFavorites
+                        var movable = grab
 
-                        if  toFavorites, !fromFavorite, !fromTrash {
-                            movable = gFavoritesManager.createBookmark(for: grab, style: .favorite)
+                        if  toFavorites && !movable.isInFavorites && !movable.isBookmark && !movable.isInTrash {
+                            movable = gFavoritesManager.createBookmark(for: movable, style: .favorite)
 
                             movable.maybeNeedSave()
                         } else {
                             movable.orphan()
 
-                            if into.databaseID != movable.databaseID {
-                                movable.needDestroy()
-                            }
+                            if  movable.databaseID != into.databaseID {
+                                movable.traverseAllProgeny { iChild in
+                                    iChild.needDestroy()
+                                }
 
-                            if  fromFavorite, !toFavorites, !toTrash, !fromTrash {
                                 movable = movable.deepCopy()
                             }
                         }
@@ -2012,7 +2008,7 @@ class ZEditingManager: NSObject {
                 if  setHere {
                     gHere   = parent!
 
-                    self.updateFavoritesRedrawAndSync()
+                    self.updateFavoritesRedrawSyncRedraw()
                 }
 
                 if  same && (parent?.count ?? 0) > 1 && (setHere || iCalledCloud) {

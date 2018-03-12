@@ -39,7 +39,7 @@ class ZRemoteStoresManager: NSObject {
 
 
     func updateLastSyncDates() {
-        for dbID in gAllDatabaseIDs {
+        for dbID in kAllDatabaseIDs {
             if let manager = recordsManagerFor(dbID) {
                 manager.updateLastSyncDate()
             }
@@ -56,7 +56,7 @@ class ZRemoteStoresManager: NSObject {
             return gFavoritesManager
         }
 
-        for databaseID in gAllDatabaseIDs {
+        for databaseID in kAllDatabaseIDs {
             if  recordsManagers[databaseID] == nil {
                 recordsManagers[databaseID] = ZCloudManager(databaseID)
             }

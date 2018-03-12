@@ -72,19 +72,17 @@ class ZRecordsManager: NSObject {
 
 
     func updateLastSyncDate() {
-        if  gUseCloud {
-            var date = lastSyncDate
+        var date = lastSyncDate
 
-            for zRecord in registry.values {
-                if  let modificationDate = zRecord.record.modificationDate,
-                    modificationDate.timeIntervalSince(date) > 0 {
+        for zRecord in registry.values {
+            if  let modificationDate = zRecord.record.modificationDate,
+                modificationDate.timeIntervalSince(date) > 0 {
 
-                    date = modificationDate
-                }
+                date = modificationDate
             }
-
-            lastSyncDate = date
         }
+
+        lastSyncDate = date
     }
 
 
@@ -98,10 +96,10 @@ class ZRecordsManager: NSObject {
         var   nCount = 0
 
         for zRecord in zRecords {
-            if  let zone = zRecord as? Zone {
+            if  let zone = zRecord as? Zone { // ONLY count zones
                 if !zone.canSaveWithoutFetch {
                     nCount += 1
-                } else if let root = zone.root, !root.isTrash, !root.isLostAndFound, !root.isRootOfFavorites {
+                } else if let root = zone.root, !root.isTrash, !root.isRootOfFavorites, !root.isRootOfLostAndFound {
                     continue
                 }
             }

@@ -20,9 +20,9 @@ class ZToolsController: ZGenericTableController {
 
 
     enum ZToolKind: Int {
+        case eRetry
         case eUseCloud
         case eFullFetch
-        case eRetry
         case eRecount
         case eAccess
         case eIdentifiers
@@ -37,16 +37,16 @@ class ZToolsController: ZGenericTableController {
 
 
     override func numberOfRows(in tableView: ZTableView) -> Int {
-        return 2 + (gIsLate ? 1 : 0)
+        return 0 + (gIsLate ? 1 : 0)
     }
 
 
     func text(for kind: ZToolKind) -> String {
         switch kind {
-        case .eUseCloud:    return          (gUseCloud ? "Use Cloud" : "Local File Only")
-        case .eFullFetch:   return         (gFullFetch ? "Full"      : "Minimal") + " Fetch"
+        case .eUseCloud:    return "" //       (gUseCloud ? "Use Cloud" : "Local File Only")
+        case .eFullFetch:   return "" //      (gFullFetch ? "Full"      : "Minimal") + " Fetch"
         case .eIdentifiers: return (gDebugShowIdentifiers ? "Visible"   : "Hidden")  + " Identifiers"
-        case .eAccess:      return (gCrippleUserAccess ? "Crippled"  : "Normal")  + " User Access"
+        case .eAccess:      return (gCrippleUserAccess    ? "Crippled"  : "Normal")  + " User Access"
         case .eGather:      return "Gather Lost and Found"
         case .eRetry:       return "Retry Cloud"
         case .eTrash:       return "Show Trash"
@@ -90,8 +90,8 @@ class ZToolsController: ZGenericTableController {
     // MARK:-
 
 
-    func        toggleUseCloud() {          gUseCloud = !gUseCloud; redrawSyncRedraw() }
-    func       toggleFullFetch() {         gFullFetch = !gFullFetch }
+    func        toggleUseCloud() {} //          gUseCloud = !gUseCloud; redrawSyncRedraw() }
+    func       toggleFullFetch() {} //         gFullFetch = !gFullFetch }
     func toggleShowIdentifiers() {   gDebugShowIdentifiers = !gDebugShowIdentifiers }
     func      toggleUserAccess() { gCrippleUserAccess = !gCrippleUserAccess }
 
@@ -137,16 +137,15 @@ class ZToolsController: ZGenericTableController {
 
 
     func recount() {
-        for dbID in gAllDatabaseIDs {
+        for dbID in kAllDatabaseIDs {
             let manager = gRemoteStoresManager.cloudManagerFor(dbID)
             manager        .hereZone .safeUpdateCounts([], includingFetchable: true)
             manager       .trashZone?.safeUpdateCounts([], includingFetchable: true)
             manager.lostAndFoundZone?.safeUpdateCounts([], includingFetchable: true)
         }
 
-        gFavoritesManager .rootZone?.safeUpdateCounts([], includingFetchable: true)
-
-        syncToCloudAndSignalFor(nil, regarding: .redraw) {}
+        gFavoritesManager.rootZone?.safeUpdateCounts([], includingFetchable: true)
+        gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .redraw) {}
     }
 
 

@@ -60,7 +60,6 @@ class Zone : ZRecord {
     var        directRecursive:         Bool  { return directAccess == .eRecurse }
     var         directWritable:         Bool  { return directAccess == .eFullWritable }
     var         directReadOnly:         Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
-    var         isLostAndFound:         Bool  { return recordName == kLostAndFoundName }
     var          hasZonesBelow:         Bool  { return hasAnyZonesAbove(false) }
     var          hasZonesAbove:         Bool  { return hasAnyZonesAbove(true) }
     var            isHyperlink:         Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
@@ -71,9 +70,10 @@ class Zone : ZRecord {
     var               hasColor:         Bool  { return zoneColor != nil && zoneColor != "" }
     var                isEmail:         Bool  { return hasTrait(for: .eEmail) && email != "" }
     var                isTrash:         Bool  { return recordName == kTrashName }
-    var              isInTrash:         Bool  { return root?.isTrash           ?? false }
-    var          isInFavorites:         Bool  { return root?.isRootOfFavorites ?? false }
-    var       isInLostAndFound:         Bool  { return root?.isLostAndFound    ?? false }
+    var              isInTrash:         Bool  { return root?.isTrash              ?? false }
+    var          isInFavorites:         Bool  { return root?.isRootOfFavorites    ?? false }
+    var       isInLostAndFound:         Bool  { return root?.isRootOfLostAndFound ?? false }
+    var   isRootOfLostAndFound:         Bool  { return recordName == kLostAndFoundName }
 
 
     var email: String? {
@@ -587,7 +587,7 @@ class Zone : ZRecord {
             return t.userHasAccess
         }
 
-        return (!isTrash && !isRootOfFavorites && !isLostAndFound && ownerID == nil)
+        return (!isTrash && !isRootOfFavorites && !isRootOfLostAndFound && ownerID == nil)
             || (!gCrippleUserAccess && (ownerID?.recordName == gUserRecordID || gIsSpecialUser))
     }
 
@@ -1222,22 +1222,22 @@ class Zone : ZRecord {
             appliedID                != dbID {
             traverseAllProgeny { iZone in
                 if  let         newID = iZone.databaseID,
-                    newID            != dbID {
+                    newID            != appliedID {
                     iZone.unregister()
 
-                    let newParentZone = iZone.parentZone                                    // (1) grab new parent zone from previous traverse (2, below)
+                    let newParentZone = iZone.parentZone                                    // (1) grab new parent zone asssigned during a previous traverse (2, below)
                     let     oldRecord = iZone.record
                     let     newRecord = CKRecord(recordType: kZoneType)                     // new record id
-                    iZone .databaseID = appliedID                                                // must happen BEFORE record assignment
+                    iZone .databaseID = appliedID                                           // must happen BEFORE record assignment
                     iZone     .record = newRecord                                           // side-effect: move registration to the new id's record manager
 
                     oldRecord?.copy(to: iZone.record, properties: iZone.cloudProperties())  // preserve new record id
                     iZone.needSave()                                                        // in new id's record manager
 
-                    /////////////////////////////////////////////////////////////
-                    // (2) compute parent and parentLink using iZone's new iID //
-                    //     this traverse will eventually use it (1, above)     //
-                    /////////////////////////////////////////////////////////////
+                    ////////////////////////////////////////////////////////////////////
+                    // (2) compute parent and parentLink using iZone's new databaseID //
+                    //     a subsequent traverse will eventually use it (1, above)    //
+                    ////////////////////////////////////////////////////////////////////
 
                     iZone.parentZone  = newParentZone
                 }
@@ -1376,12 +1376,6 @@ class Zone : ZRecord {
     }
 
 
-    func fullUpdateProgenyCount() {
-        safeUpdateCounts([])
-        // fastUpdateProgenyCount()
-    }
-
-
     func safeUpdateCounts(_ iVisited: [Zone], includingFetchable: Bool = false) {
         if !iVisited.contains(self) { // && !hasMissingChildren() { // has missing children -> incomplete count information
             let inclusive = iVisited + [self]
@@ -1455,7 +1449,7 @@ class Zone : ZRecord {
 
 
     override func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDictionary? {
-        var  dict = super.storageDictionary(for: iDatabaseID)!
+        var dict            = super.storageDictionary(for: iDatabaseID) ?? ZStorageDictionary ()
 
         if  let   childDict = Zone.storageArray(for: children, from: iDatabaseID) {
             dict[.children] = childDict as NSObject?

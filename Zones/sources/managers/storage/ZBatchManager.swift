@@ -100,6 +100,16 @@ class ZBatchManager: ZOperationsManager {
     // MARK:-
 
 
+    func isCloudBatch(_ iBatchID: ZBatchOperationID) -> Bool {
+        switch iBatchID {
+        case .sync: return false
+        default: break
+        }
+
+        return true
+    }
+
+
     func     unHang()                                  {                                                                                                  onCloudResponse?(0) }
     func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .onboard,  to: .root,                                                       onCompletion) }
     func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,     to: .fetchNew,                                                   onCompletion) }
@@ -139,7 +149,7 @@ class ZBatchManager: ZOperationsManager {
 
     func shouldIgnoreBatch(_ iID: ZBatchOperationID) -> Bool {
         switch iID {
-        case .root, .travel, .parents, .children, .families, .bookmarks: return (gFetchMode == .localOnly) || gAssumeAllFetched
+        case .root, .travel, .parents, .children, .families, .bookmarks: return gAssumeAllFetched || gNoInternet
         default:                                                         return false
         }
     }
@@ -259,7 +269,7 @@ class ZBatchManager: ZOperationsManager {
         let              forMineIDOnly = [.bookmarks                  ].contains(operationID)
         let                     isMine = restoreToID == .mineID
         let              onlyCurrentID = !gHasPrivateDatabase || forCurrentdatabaseIDOnly
-        let              dbIDs: ZDatabaseIDs = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : [.mineID, .everyoneID]
+        let  databaseIDs: ZDatabaseIDs = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
         let                     isNoop = onlyCurrentID && isMine && !gHasPrivateDatabase
         var invokeDatabaseIDAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
 
@@ -273,10 +283,10 @@ class ZBatchManager: ZOperationsManager {
                 self.queue.isSuspended = false
 
                 onCompletion()
-            } else if           index >= dbIDs.count {
+            } else if           index >= databaseIDs.count {
                 self.queue.isSuspended = false
             } else {
-                self.currentDatabaseID = dbIDs[index]      // if hung, it happened in this id
+                self.currentDatabaseID = databaseIDs[index]      // if hung, it happened in this id
 
                 self.invoke(operationID) { (iResult: Any?) in
                     self  .lastOpStart = nil
