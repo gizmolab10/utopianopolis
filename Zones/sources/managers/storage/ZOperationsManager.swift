@@ -64,7 +64,9 @@ var gDebugTimerCount          = 0
 var gDebugTimer:       Timer? = nil
 var gCloudTimer:       Timer? = nil
 var gCloudFire: TimerClosure? = nil
-var gNoInternet             = false
+var gHasCloudAccount          = false
+var gNoInternet               = false
+var observingHasUser          = gHasCloudAccount
 
 
 class ZOperationsManager: NSObject {
@@ -115,14 +117,19 @@ class ZOperationsManager: NSObject {
 
 
     func updateInternetStatus(_ onCompletion: BooleanClosure?) {
-        let  noInternet = !isConnectedToNetwork
-        let     changed = noInternet != gNoInternet
+        let      noInternet = !isConnectedToNetwork
+        let changedInternet = noInternet != gNoInternet
+        let     changedUser = observingHasUser != gHasCloudAccount
 
-        if      changed {
+        if  changedInternet {
             gNoInternet = noInternet
         }
 
-        onCompletion?(changed)
+        if  changedUser {
+            observingHasUser = gHasCloudAccount
+        }
+
+        onCompletion?(changedInternet || changedUser)
     }
 
 

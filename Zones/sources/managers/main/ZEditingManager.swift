@@ -759,7 +759,7 @@ class ZEditingManager: NSObject {
             // COLLAPSE OUTWARD INTO PARENT //
             //////////////////////////////////
 
-            zone.concealChildren()
+            zone.concealAllProgeny()
 
             revealParentAndSiblingsOf(zone) { iCloudCalled in
                 if let  parent = zone.parentZone, parent != zone {
@@ -802,13 +802,13 @@ class ZEditingManager: NSObject {
             if !show {
                 gSelectionManager.deselectDragWithin(zone);
                 apply()
-            } else if gAssumeAllFetched {
-                apply()
             } else {
-                zone.needProgeny()
-                gBatchManager.children(.all, level) { iSame in
-                    apply()
-                }
+                apply()
+//            } else {
+//                zone.needProgeny()
+//                gBatchManager.children(.all, level) { iSame in
+//                    apply()
+//                }
             }
         }
     }
@@ -1120,8 +1120,9 @@ class ZEditingManager: NSObject {
                     }
                 }
             } else {
-                let eventuallyDestroy = zone.isInTrash || permanently
-                let        destroyNow = eventuallyDestroy && !gNoInternet
+                let eventuallyDestroy = permanently      || zone.isInTrash
+                let     canDestroyNow = gHasCloudAccount || zone.databaseID != .mineID
+                let        destroyNow = eventuallyDestroy && gNoInternet && canDestroyNow
 
                 zone.addToPaste()
 
@@ -1135,7 +1136,7 @@ class ZEditingManager: NSObject {
                     }
 
                     if  destroyNow {
-                        iZone.concealChildren()                 // prevent gExpandedZones list from getting clogged with stale references
+                        iZone.concealAllProgeny()               // prevent gExpandedZones list from getting clogged with stale references
                         iZone.orphan()
                     }
                 }
@@ -1149,16 +1150,13 @@ class ZEditingManager: NSObject {
                 ///////////////////////////////////////////
 
                 zone.addToPaste()
-                zone.maybeNeedBookmarks()
-                gBatchManager.bookmarks { iSame in
 
-                    /////////////
-                    // RECURSE //
-                    /////////////
+                /////////////
+                // RECURSE //
+                /////////////
 
-                    self.deleteZones(zone.fetchedBookmarks, permanently: permanently) {
-                        onCompletion?()
-                    }
+                self.deleteZones(zone.fetchedBookmarks, permanently: permanently) {
+                    onCompletion?()
                 }
             }
 
@@ -1261,14 +1259,11 @@ class ZEditingManager: NSObject {
                 // zone is an orphan
                 // change focus to bookmark of zone
 
-                zone.maybeNeedBookmarks()
-                gBatchManager.bookmarks { iSame in
-                    if  let bookmark = zone.fetchedBookmark {
-                        gHere        = bookmark
-                    }
-
-                    onCompletion?()
+                if  let bookmark = zone.fetchedBookmark {
+                    gHere        = bookmark
                 }
+
+                onCompletion?()
             }
         } else if let p = parentZone, !p.isRoot {
 

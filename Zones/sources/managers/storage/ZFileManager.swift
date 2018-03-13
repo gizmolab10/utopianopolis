@@ -128,8 +128,8 @@ class ZFileManager: NSObject {
 
 
     func read(for databaseID: ZDatabaseID) {
-        if  gFetchMode                  != .cloudOnly,
-            databaseID                  != .favoritesID,
+//        if  gFetchMode                  != .cloudOnly,
+        if  databaseID                  != .favoritesID,
             let                    index = index(of: databaseID),
             let                  dbIndex = ZDatabaseIndex(rawValue: index) {
             isReading[index]             = true

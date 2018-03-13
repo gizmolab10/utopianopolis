@@ -149,7 +149,7 @@ class ZBatchManager: ZOperationsManager {
 
     func shouldIgnoreBatch(_ iID: ZBatchOperationID) -> Bool {
         switch iID {
-        case .root, .travel, .parents, .children, .families, .bookmarks: return gAssumeAllFetched || gNoInternet
+        case .root, .travel, .parents, .children, .families, .bookmarks: return true
         default:                                                         return false
         }
     }

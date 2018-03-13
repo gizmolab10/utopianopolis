@@ -178,6 +178,9 @@ class ZCloudManager: ZRecordsManager {
     // MARK:-
 
 
+    var forLocalOnly: Bool { return gNoInternet || (databaseID == .mineID && !gHasCloudAccount) }
+
+
     func assureRecordExists(withRecordID iCKRecordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
         let done:  RecordClosure = { (iCKRecord: CKRecord?) in
             FOREGROUND(canBeDirect: true) {
@@ -189,10 +192,8 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        if      database    == nil,
-                gFetchMode  == .localOnly {
-            if  gFetchMode  == .localOnly,
-                let ckRecord = maybeCKRecordForRecordName(iCKRecordID.recordName),
+        if      forLocalOnly {
+            if  let ckRecord = maybeCKRecordForRecordName(iCKRecordID.recordName),
                 !hasCKRecordName(iCKRecordID.recordName, forAnyOf: [.notFetched]) {
                 done(ckRecord)
             }
@@ -310,7 +311,7 @@ class ZCloudManager: ZRecordsManager {
     func bookmarkPredicate(specificTo iRecordIDs: [CKRecordID]) -> NSPredicate? {
         var  predicate    = ""
 
-        if gAssumeAllFetched {
+        if  forLocalOnly {
             return nil
         } else if  iRecordIDs.count == 0 {
             predicate     = String(format: "zoneLink != '\(kNullLink)'")
@@ -1156,9 +1157,9 @@ class ZCloudManager: ZRecordsManager {
                 zone.needSave()
             }
 
-            if gFullFetch {
-                zone.needProgeny()
-            }
+//            if gFullFetch {
+//                zone.needProgeny()
+//            }
 
             onCompletion?(zone)
         }
@@ -1170,7 +1171,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func unsubscribe(_ onCompletion: IntClosure?) {
-        if  gNoInternet {
+        if  forLocalOnly {
             onCompletion?(0)
         } else {
             onCompletion?(-1)
@@ -1204,7 +1205,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func subscribe(_ onCompletion: IntClosure?) {
-        if  gNoInternet {
+        if  forLocalOnly {
             onCompletion?(0)
         } else {
             let classNames = [kZoneType, kTraitType]

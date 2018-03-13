@@ -904,6 +904,13 @@ class Zone : ZRecord {
     }
 
 
+    func concealAllProgeny() {
+        traverseAllProgeny { iChild in
+            iChild.concealChildren()
+        }
+    }
+
+
     func traverseAllProgeny(_ block: ZoneClosure) {
         safeTraverseProgeny(visited: []) { iZone -> ZTraverseStatus in
             block(iZone)
@@ -1043,13 +1050,6 @@ class Zone : ZRecord {
     
     // MARK:- state
     // MARK:-
-
-
-    func maybeNeedBookmarks() {
-        if !isBookmark && !gAssumeAllFetched {
-            addState(.needsBookmarks)
-        }
-    }
 
 
     override func maybeNeedRoot() {

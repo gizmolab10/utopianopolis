@@ -33,6 +33,7 @@ var             gExpanded:          [String]? = nil
 
 var               gIsLate:               Bool { return gBatchManager.isLate }
 var           gIsDragging:               Bool { return gDraggedZone != nil }
+var         gForLocalOnly:               Bool { return gCloudManager.forLocalOnly }
 var     gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var   gHasPrivateDatabase:               Bool { return gUserRecordID != nil }
 var     gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor) as? ZEditorController }
@@ -40,8 +41,6 @@ var           gEditorView:      ZoneDragView? { return gEditorController?.editor
 var            gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var             gDotWidth:             Double { return gDotHeight * 0.75 }
 var             gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
-var             gSaveMode:          ZFileMode { return gUseCloud ? .all : .localOnly }
-var            gFetchMode:          ZFileMode { return gUseCloud ? .all : .localOnly }
 var           gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var        gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kReductionRatio) }
 
@@ -85,24 +84,6 @@ var gHere: Zone {
 var gMathewStyleUI : Bool {
     get { return getPreferencesBool(   for: kMathewStyle, defaultBool: false) }
     set { setPreferencesBool(newValue, for: kMathewStyle) }
-}
-
-
-var gAssumeAllFetched : Bool {
-    get { return getPreferencesBool(   for: kAssumeAllFetched, defaultBool: true) }
-    set { setPreferencesBool(newValue, for: kAssumeAllFetched) }
-}
-
-
-var gUseCloud : Bool {
-    get { return getPreferencesBool(   for: kUseCloud, defaultBool: true) }
-    set { setPreferencesBool(newValue, for: kUseCloud) }
-}
-
-
-var gFullFetch : Bool {
-    get { return getPreferencesBool(   for: kFullFetch, defaultBool: true) }
-    set { setPreferencesBool(newValue, for: kFullFetch) }
 }
 
 

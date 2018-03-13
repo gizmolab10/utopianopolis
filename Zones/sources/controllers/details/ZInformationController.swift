@@ -24,6 +24,7 @@ class ZInformationController: ZGenericController {
     @IBOutlet var   graphNameLabel: ZTextField?
     @IBOutlet var     versionLabel: ZTextField?
     @IBOutlet var       levelLabel: ZTextField?
+    var                currentZone: Zone { return gSelectionManager.rootMostMoveable }
 
 
     override func setup() {
@@ -41,21 +42,41 @@ class ZInformationController: ZGenericController {
     }
 
 
+    var cloudStatusText: String {
+        let      operationCount = gBatchManager.queue.operationCount
+        let    countsSuffixText = operationCount == 1 ? "" : "s"
+        let operationsCountText = operationCount == 0 ? "" : "\(operationCount) cloud operation\(countsSuffixText) in progress"
+
+        return gNoInternet ? "no internet" : !gHasCloudAccount ? "missing or invalid Apple ID" : operationsCountText
+    }
+
+
+    var totalCountsText: String {
+        let (count, notSavableCount) = gCloudManager.undeletedCounts
+        let                    total = gRemoteStoresManager.rootProgenyCount
+
+        return "of \(total), retrieved: \(count) + \(notSavableCount)"
+    }
+
+
+    var graphNameText: String {
+        if let dbID = currentZone.databaseID {
+            return dbID.rawValue + " database"
+        }
+
+        return ""
+    }
+
+
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
         if ![.search, .found].contains(iKind) && gReadyState {
-            let (count, notSavableCount) = gCloudManager.undeletedCounts
-            let                    total = gRemoteStoresManager.rootProgenyCount
-            let           operationCount = gBatchManager.queue.operationCount
-            let      operationsCountText = operationCount == 0 ? "" : "\(operationCount) cloud operation\(operationCount == 1 ? "" : "s") in progress"
-            let                     zone = gSelectionManager.rootMostMoveable
-            let                     dbID = zone.databaseID
-            versionLabel?          .text = versionText
-            graphNameLabel?        .text = dbID == nil ? "" : dbID!.rawValue + " database"
-            totalCountLabel?       .text = "of \(total), retrieved: \(count) + \(notSavableCount)"
-            cloudStatusLabel?      .text = gNoInternet ? "no internet" : operationsCountText
+            cloudStatusLabel?.text = cloudStatusText
+            totalCountLabel? .text = totalCountsText
+            graphNameLabel?  .text = graphNameText
+            versionLabel?    .text = versionText
 
             if iKind != .startup {
-                levelLabel?         .text = "level: \(zone.level)"
+                levelLabel?  .text = "level: \(currentZone.level)"
             }
         }
     }

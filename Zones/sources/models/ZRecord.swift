@@ -266,11 +266,11 @@ class ZRecord: NSObject {
     func markNotFetched()        {    addState(.notFetched) }
     func fetchBeforeSave()       {    addState(.requiresFetchBeforeSave) }
     func allowSaveWithoutFetch() { removeState(.requiresFetchBeforeSave)}
-    func needCount()             {    if !gAssumeAllFetched { addState(.needsCount) } }
-    func needColor()             {    if !gAssumeAllFetched { addState(.needsColor) } }
-    func needTraits()            {    if !gAssumeAllFetched { addState(.needsTraits) } }
-    func needParent()            {    if !gAssumeAllFetched { addState(.needsParent) } }
-    func needWritable()          {    if !gAssumeAllFetched { addState(.needsWritable) } }
+    func needCount()             {} //    if !gAssumeAllFetched { addState(.needsCount) } }
+    func needColor()             {} //    if !gAssumeAllFetched { addState(.needsColor) } }
+    func needTraits()            {} //    if !gAssumeAllFetched { addState(.needsTraits) } }
+    func needParent()            {} //    if !gAssumeAllFetched { addState(.needsParent) } }
+    func needWritable()          {} //    if !gAssumeAllFetched { addState(.needsWritable) } }
 
 
     func needSave() {
@@ -280,10 +280,10 @@ class ZRecord: NSObject {
 
 
     func needProgeny() {
-        if !gAssumeAllFetched {
-            addState(.needsProgeny)
-            removeState(.needsChildren)
-        }
+//        if !gAssumeAllFetched {
+//            addState(.needsProgeny)
+//            removeState(.needsChildren)
+//        }
     }
 
 
@@ -300,7 +300,7 @@ class ZRecord: NSObject {
         if !isBookmark && // all bookmarks are childless, by design
             showChildren &&
             hasMissingChildren() &&
-            !gAssumeAllFetched &&
+            false, // !gAssumeAllFetched &&
             !needsProgeny {
             addState(.needsChildren)
         }
@@ -308,9 +308,9 @@ class ZRecord: NSObject {
 
     
     func maybeNeedProgeny() {
-        if  hasMissingProgeny() && !gAssumeAllFetched {
-            needProgeny()
-        }
+//        if  hasMissingProgeny() && !gAssumeAllFetched {
+//            needProgeny()
+//        }
     }
 
 
@@ -332,9 +332,9 @@ class ZRecord: NSObject {
 
 
     func maybeNeedMerge() {
-        if  isFetched, canSaveWithoutFetch, !needsSave, !needsMerge, !needsDestroy, !gAssumeAllFetched {
-            addState(.needsMerge)
-        }
+//        if  isFetched, canSaveWithoutFetch, !needsSave, !needsMerge, !needsDestroy, !gAssumeAllFetched {
+//            addState(.needsMerge)
+//        }
     }
 
 
