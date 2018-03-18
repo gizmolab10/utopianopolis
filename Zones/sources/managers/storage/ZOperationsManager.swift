@@ -13,6 +13,15 @@ import SystemConfiguration.SCNetworkConnection
 
 enum ZOperationID: Int {
 
+    // onboard
+
+    case observeUbiquity
+    case accountStatus      // vs no account
+    case fetchUserID
+    case internet
+    case ubiquity
+    case fetchUserRecord
+
     // startup
 
     case cloud
@@ -20,6 +29,7 @@ enum ZOperationID: Int {
     case found              // LOCAL
     case save               // zones, traits, destroy
     case root
+    case favorites
 
     // continue
 
@@ -32,15 +42,6 @@ enum ZOperationID: Int {
     case write              // LOCAL
     case unsubscribe
     case subscribe
-
-    // onboard
-
-    case observeUbiquity
-    case accountStatus      // vs no account
-    case fetchUserID
-    case internet
-    case ubiquity
-    case fetchUserRecord
 
     // miscellaneous
 
@@ -117,9 +118,8 @@ class ZOperationsManager: NSObject {
 
 
     func     unHang()                                  {                                                                                                  onCloudResponse?(0) }
-    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .cloud, to: .root,                                                          onCompletion) }
-    func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,  to: .fetchAll,                                                      onCompletion) }
-    func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .write, to: .subscribe,                                                     onCompletion) }
+    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .observeUbiquity, to: .fetchAll,                                            onCompletion) }
+    func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .write,           to: .subscribe,                                           onCompletion) }
     func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                                                    ]) { onCompletion() } }
     func  fetchLost(_ onCompletion: @escaping Closure) { setupAndRun([.fetchlost,                           .save, .children                         ]) { onCompletion() } }
     func newAppleID(_ onCompletion: @escaping Closure) { setupAndRun([.onboard,   .read,                    .root, .fetchNew,                  .write]) { onCompletion() } }
@@ -187,20 +187,6 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func stringForOperationIDs (_ iIDs: [ZOperationID]?) -> String {
-        return iIDs?.apply()  { object -> (String?) in
-            if  let operation  = object as? ZOperationID {
-                let name  = "\(operation)"
-                if  name != "" {
-                    return name
-                }
-            }
-
-            return nil
-            } ?? ""
-    }
-
-
     func setupAndRunUnsafe(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
         setupCloudTimer()
 
@@ -212,8 +198,6 @@ class ZOperationsManager: NSObject {
 
         queue.isSuspended = true
         let         saved = gDatabaseID
-
-//        columnarReport("", stringForOperationIDs(operationIDs))
 
         for operationID in operationIDs + [.completion] {
             let blockOperation = BlockOperation {

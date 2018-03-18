@@ -582,48 +582,6 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
-    func stringForZones(_ zones: [Zone]?) -> String {
-        return zones?.apply()  { object -> (String?) in
-            if  let zone  = object as? Zone {
-                let name  = zone.decoratedName
-                if  name != "" {
-                    return name
-                }
-            }
-
-            return nil
-        } ?? ""
-    }
-
-
-    func stringForCKRecords(_ records: [CKRecord]?) -> String {
-        return records?.apply() { object -> (String?) in
-            if  let  record  = object as? CKRecord {
-                let    name  = record.decoratedName
-                if     name != "" {
-                    return name
-                }
-            }
-
-            return nil
-        } ?? ""
-    }
-
-
-    func stringForReferences(_ references: [CKReference]?, in databaseID: ZDatabaseID) -> String {
-        return references?.apply()  { object -> (String?) in
-            if let reference = object as? CKReference, let zone = gRemoteStoresManager.recordsManagerFor(databaseID)?.maybeZoneForReference(reference) {
-                let    name  = zone.decoratedName
-                if     name != "" {
-                    return name
-                }
-            }
-
-            return nil
-        } ?? ""
-    }
-
-
     func stringForRecordIDs(_ recordIDs: [CKRecordID]?) -> String {
         return recordIDs?.apply()  { object -> (String?) in
             if  let recordID = object as? CKRecordID,

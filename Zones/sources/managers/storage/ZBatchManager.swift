@@ -204,6 +204,7 @@ class ZBatchManager: ZOnboardingManager {
         switch identifier { // outer switch
         case .read:                 gFileManager      .read (for:      currentDatabaseID!); cloudCallback?(0)
         case .write:                gFileManager      .write(for:      currentDatabaseID!); cloudCallback?(0)
+        case .favorites:            gFavoritesManager .setup(                               cloudCallback)
         default: let cloudManager = remote            .cloudManagerFor(currentDatabaseID!)
         switch identifier { // inner switch
         case .cloud:                cloudManager.fetchCloudZones      (                     cloudCallback)
@@ -243,8 +244,8 @@ class ZBatchManager: ZOnboardingManager {
             if  iCompleted {
                 onCompletion(true)
             } else {
-                let    forCurrentdatabaseIDOnly = [.completion, .onboard, .here].contains(operationID)
-                let               forMineIDOnly = [.bookmarks                  ].contains(operationID)
+                let    forCurrentdatabaseIDOnly = [.completion, .favorites, .here      ].contains(operationID)
+                let               forMineIDOnly = [.bookmarks, .subscribe, .unsubscribe].contains(operationID)
                 let                      isMine = restoreToID == .mineID
                 let               onlyCurrentID = !gHasPrivateDatabase || forCurrentdatabaseIDOnly
                 let   databaseIDs: ZDatabaseIDs = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs

@@ -547,6 +547,64 @@ extension String {
             }
         }
     }
+
+
+    static func forZones(_ zones: [Zone]?) -> String {
+        return zones?.apply()  { object -> (String?) in
+            if  let zone  = object as? Zone {
+                let name  = zone.decoratedName
+                if  name != "" {
+                    return name
+                }
+            }
+
+            return nil
+            } ?? ""
+    }
+
+
+    static func forCKRecords(_ records: [CKRecord]?) -> String {
+        return records?.apply() { object -> (String?) in
+            if  let  record  = object as? CKRecord {
+                let    name  = record.decoratedName
+                if     name != "" {
+                    return name
+                }
+            }
+
+            return nil
+            } ?? ""
+    }
+
+
+    static func forReferences(_ references: [CKReference]?, in databaseID: ZDatabaseID) -> String {
+        return references?.apply()  { object -> (String?) in
+            if let reference = object as? CKReference, let zone = gRemoteStoresManager.recordsManagerFor(databaseID)?.maybeZoneForReference(reference) {
+                let    name  = zone.decoratedName
+                if     name != "" {
+                    return name
+                }
+            }
+
+            return nil
+            } ?? ""
+    }
+
+
+    static func forOperationIDs (_ iIDs: [ZOperationID]?) -> String {
+        return iIDs?.apply()  { object -> (String?) in
+            if  let operation  = object as? ZOperationID {
+                let name  = "\(operation)"
+                if  name != "" {
+                    return name
+                }
+            }
+
+            return nil
+            } ?? ""
+    }
+
+
 }
 
 

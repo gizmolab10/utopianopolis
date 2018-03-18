@@ -124,9 +124,8 @@ class ZShortcutsController: ZGenericTableController {
         "    \tLEFT     \thide children",
         "    \tUP DOWN  \textend selection",
         "",
-        "  MODIFIER KEY + MOUSE CLICK",
-        "    \t         \ttoggle selection",
-        "    \tSHIFT    \t[un]extend selection",
+        "  tMOUSE CLICK + SHIFT",
+        "    \t         \t[un]extend selection",
         "",
     ]
 }

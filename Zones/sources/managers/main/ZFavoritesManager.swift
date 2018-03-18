@@ -203,18 +203,18 @@ class ZFavoritesManager: NSObject {
     // MARK:-
 
 
-    func setup(_ onCompletion: Closure?) {
+    func setup(_ onCompletion: IntClosure?) {
         let rootZone = gMineCloudManager.favoritesZone
 
         if !gHasPrivateDatabase || rootZone != nil {
-            onCompletion?()
+            onCompletion?(0)
         } else {
             let   mine = gMineCloudManager
             let finish = {
                 self.setupDatabaseFavorites()
                 rootZone?.needProgeny()
                 rootZone?.revealChildren()
-                onCompletion?()
+                onCompletion?(0)
             }
 
             if  let root = mine.maybeZoneForRecordName(kFavoritesRootName) {

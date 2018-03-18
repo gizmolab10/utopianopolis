@@ -28,17 +28,6 @@ class ZOnboardingManager : ZOperationsManager {
     let makeUserSpecial = false
 
 
-    // MARK:- API
-    // MARK:-
-
-
-    func onboard(_ onCompletion: Closure?) {
-        setupAndRunOps(from: .observeUbiquity, to: .fetchUserRecord) {
-            onCompletion?()
-        }
-    }
-
-
     // MARK:- internals
     // MARK:-
 

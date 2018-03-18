@@ -83,28 +83,24 @@ class ZControllersManager: NSObject {
 
         gRemoteStoresManager.clear()
         displayActivity(true)
-        gBatchManager.onboard {
-            gBatchManager.startUp {
-                gFavoritesManager.setup {
-                    gBatchManager.continueUp {
-                        gWorkMode        = .graphMode
-                        gIsReadyToShowUI = true
+        gBatchManager.startUp {
+            gWorkMode        = .graphMode
+            gIsReadyToShowUI = true
 
-                        self.displayActivity(false)
-                        gHere.grab()
-                        gFavoritesManager.updateFavorites()
-                        self.signalFor(nil, regarding: .redraw)
+            FOREGROUND {
+                self.displayActivity(false)
+                gHere.grab()
+                gFavoritesManager.updateFavorites()
+                self.signalFor(nil, regarding: .redraw)
+            }
 
-                        gBatchManager.finishUp {
-                            self.blankScreenDebug()
-                            gBatchManager.families() { iSame in // created bookmarks and parents of bookmarks
-                                gBatchManager.usingDebugTimer = false
+            gBatchManager.finishUp {
+                gBatchManager.families() { iSame in // created bookmarks and parents of bookmarks
+                    gBatchManager.usingDebugTimer = false
 
-                                self.signalFor(nil, regarding: .redraw)
-                                gRemoteStoresManager.updateLastSyncDates()
-                            }
-                        }
-                    }
+                    self.blankScreenDebug()
+                    self.signalFor(nil, regarding: .redraw)
+                    gRemoteStoresManager.updateLastSyncDates()
                 }
             }
         }

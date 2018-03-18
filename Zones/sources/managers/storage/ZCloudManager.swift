@@ -112,7 +112,7 @@ class ZCloudManager: ZRecordsManager {
                 }
             }
 
-            if   saves.count > 0 { columnarReport("SAVE (\(     saves.count))", stringForCKRecords(saves)) }
+            if   saves.count > 0 { columnarReport("SAVE (\(     saves.count))", String.forCKRecords(saves)) }
             if destroy.count > 0 { columnarReport("DESTROY (\(destroy.count))", stringForRecordIDs(destroy)) }
 
             start(operation)
@@ -514,7 +514,7 @@ class ZCloudManager: ZRecordsManager {
 
                     let addToLost: RecordsClosure = { iCKRecords in
                         if iCKRecords.count > 0 {
-                            self.columnarReport("  FOUND (\(iCKRecords.count))", self.stringForCKRecords(iCKRecords))
+                            self.columnarReport("  FOUND (\(iCKRecords.count))", String.forCKRecords(iCKRecords))
                             for ckRecord in iCKRecords {
                                 lost.addChild(for: ckRecord)
 
@@ -562,7 +562,7 @@ class ZCloudManager: ZRecordsManager {
                                     parentIDs = []
                                     toLose    = []
 
-                                    self.columnarReport("  FETCHED (\(iFetchedParents.count))", self.stringForCKRecords(iFetchedParents))
+                                    self.columnarReport("  FETCHED (\(iFetchedParents.count))", String.forCKRecords(iFetchedParents))
                                     for ckParent in iFetchedParents {
                                         if  let index = seekParentIDs.index(of: ckParent.recordID) {
                                             seekParentIDs.remove(at: index)
@@ -645,7 +645,7 @@ class ZCloudManager: ZRecordsManager {
                 zRecord?.unorphan()
             }
 
-            self.columnarReport("FETCH\(iTitle ?? "") (\(iCKRecords.count))", self.stringForCKRecords(iCKRecords))
+            self.columnarReport("FETCH\(iTitle ?? "") (\(iCKRecords.count))", String.forCKRecords(iCKRecords))
         }
     }
 
@@ -845,7 +845,7 @@ class ZCloudManager: ZRecordsManager {
                         }
                     }
                     
-                    self.columnarReport("PARENT (\(forReport.count)) of", self.stringForZones(forReport))
+                    self.columnarReport("PARENT (\(forReport.count)) of", String.forZones(forReport))
                     self.clearRecordIDs(childrenIDs, for: fetchingStates)
                     self.unorphanAll()
                     self.fetchParents(onCompletion)   // process remaining
@@ -943,7 +943,7 @@ class ZCloudManager: ZRecordsManager {
                             }
                         }
 
-                        self.columnarReport("CHILDREN (\(childrenNeeded.count)) of", self.stringForReferences(childrenNeeded, in: self.databaseID))
+                        self.columnarReport("CHILDREN (\(childrenNeeded.count)) of", String.forReferences(childrenNeeded, in: self.databaseID))
                         self.unorphanAll()
                         self.add(states: [.needsCount], to: childrenNeeded)
                         self.fetchChildren(onCompletion) // process remaining
@@ -973,7 +973,7 @@ class ZCloudManager: ZRecordsManager {
                             }
                         }
 
-                        self.columnarReport("TRAITS (\(retrieved.count))", self.stringForCKRecords(retrieved))
+                        self.columnarReport("TRAITS (\(retrieved.count))", String.forCKRecords(retrieved))
                         self.unorphanAll()
                         onCompletion?(0)
                     }
@@ -1032,7 +1032,7 @@ class ZCloudManager: ZRecordsManager {
                                 }
                             }
 
-                            self.columnarReport("BOOKMARKS (\(count))", self.stringForCKRecords(retrieved))
+                            self.columnarReport("BOOKMARKS (\(count))", String.forCKRecords(retrieved))
                         }
 
                         if !created && !specified {
