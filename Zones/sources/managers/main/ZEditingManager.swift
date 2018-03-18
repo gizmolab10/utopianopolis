@@ -197,7 +197,7 @@ class ZEditingManager: NSObject {
                 case "z":      if isCommand { if isShift { kUndoManager.redo() } else { kUndoManager.undo() } }
                 case kSpace:   if isOption || isWindow || isControl { addIdea() }
                 case kBackspace,
-                     kDelete:  if isOption || isWindow { delete(permanently: isCommand && isControl && isOption && isWindow, preserveChildren: !isCommand && !isControl && isOption && isWindow) }
+                     kDelete:  if isOption || isWindow || isCommand { delete(permanently: isCommand && isControl && isOption && isWindow, preserveChildren: (isControl || isOption || isCommand) && isWindow) }
                 case "\r":     if hasWidget { grabOrEdit(isCommand) }
                 default:       break
                 }
@@ -1120,9 +1120,9 @@ class ZEditingManager: NSObject {
                     }
                 }
             } else {
-                let eventuallyDestroy = permanently      || zone.isInTrash
-                let     canDestroyNow = gHasCloudAccount || zone.databaseID != .mineID
-                let        destroyNow = eventuallyDestroy && gNoInternet && canDestroyNow
+                let eventuallyDestroy = permanently                 || zone.isInTrash
+                let     canDestroyNow = gCloudAccountStatus == .active || zone.databaseID != .mineID
+                let        destroyNow = eventuallyDestroy && !gHasInternet && canDestroyNow
 
                 zone.addToPaste()
 
@@ -1219,7 +1219,7 @@ class ZEditingManager: NSObject {
         let zone: Zone = gSelectionManager.firstGrab
         let parentZone = zone.parentZone
 
-        if zone.isRoot || zone.isTrash || parentZone == gFavoritesManager.rootZone {
+        if zone.isRoot || zone.isTrash || parentZone == gMineCloudManager.favoritesZone {
             onCompletion?() // avoid disasters
         } else if selectionOnly {
 
@@ -1956,7 +1956,7 @@ class ZEditingManager: NSObject {
                         
                         grab.grab()
                         newHere.children.updateOrder()
-                        redrawSyncRedraw(newHere.widget)
+                        redrawSyncRedraw(newHere)
                     }
                 } else {
                     let  grabThis = newHere.children[newIndex]

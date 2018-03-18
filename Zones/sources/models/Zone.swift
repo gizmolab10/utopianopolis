@@ -1112,6 +1112,12 @@ class Zone : ZRecord {
         if  !needsDestroy, let p = parentZone, p != self {
             p.maybeMarkNotFetched()
             p.addChildAndRespectOrder(self)
+
+
+            if  p.recordName == kFavoritesRootName, let b = bookmarkTarget, !b.isRoot {
+                bam(decoratedName)
+            }
+
         } else if !isRoot {
             needUnorphan()
         }

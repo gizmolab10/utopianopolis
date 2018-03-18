@@ -13,7 +13,7 @@ import Foundation
 let gBatchManager = ZBatchManager()
 
 
-class ZBatchManager: ZOperationsManager {
+class ZBatchManager: ZOnboardingManager {
 
 
     enum ZBatchOperationID: Int {
@@ -96,37 +96,6 @@ class ZBatchManager: ZOperationsManager {
     }
 
 
-    // MARK:- internals
-    // MARK:-
-
-
-    func isCloudBatch(_ iBatchID: ZBatchOperationID) -> Bool {
-        switch iBatchID {
-        case .sync: return false
-        default: break
-        }
-
-        return true
-    }
-
-
-    func     unHang()                                  {                                                                                                  onCloudResponse?(0) }
-    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .onboard,  to: .root,                                                       onCompletion) }
-    func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,     to: .fetchNew,                                                   onCompletion) }
-    func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .write,    to: .subscribe,                                                  onCompletion) }
-    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash,                                                                   ]) { onCompletion() } }
-    func  fetchLost(_ onCompletion: @escaping Closure) { setupAndRun([.fetchlost,                           .save, .children,                        ]) { onCompletion() } }
-    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete,  .fetch, .parents,         .save, .children,         .traits        ]) { onCompletion() } }
-    func      pSave(_ onCompletion: @escaping Closure) { setupAndRun([                                      .save,                             .write]) { onCompletion() } }
-    func      pRoot(_ onCompletion: @escaping Closure) { setupAndRun([.root,                                .save, .children,         .traits        ]) { onCompletion() } }
-    func      pSync(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents, .merge, .save, .children,         .traits, .write]) { onCompletion() } }
-    func    pTravel(_ onCompletion: @escaping Closure) { setupAndRun([.root,              .parents,                .children, .fetch, .traits        ]) { onCompletion() } }
-    func   pParents(_ onCompletion: @escaping Closure) { setupAndRun([                    .parents,                                   .traits        ]) { onCompletion() } }
-    func  pFamilies(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents,                .children,         .traits        ]) { onCompletion() } }
-    func pBookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks, .fetch,                   .save,                    .traits        ]) { onCompletion() } }
-    func  pChildren(_ onCompletion: @escaping Closure) { setupAndRun([                                             .children,         .traits        ]) { onCompletion() } }
-
-
     // MARK:- batches
     // MARK:-
 
@@ -149,8 +118,8 @@ class ZBatchManager: ZOperationsManager {
 
     func shouldIgnoreBatch(_ iID: ZBatchOperationID) -> Bool {
         switch iID {
-        case .root, .travel, .parents, .children, .families, .bookmarks: return true
-        default:                                                         return false
+        case .sync, .save: return false
+        default:           return true
         }
     }
 
@@ -235,7 +204,6 @@ class ZBatchManager: ZOperationsManager {
         switch identifier { // outer switch
         case .read:                 gFileManager      .read (for:      currentDatabaseID!); cloudCallback?(0)
         case .write:                gFileManager      .write(for:      currentDatabaseID!); cloudCallback?(0)
-        case .onboard:              gOnboardingManager.onboard        (                     cloudCallback!)
         default: let cloudManager = remote            .cloudManagerFor(currentDatabaseID!)
         switch identifier { // inner switch
         case .cloud:                cloudManager.fetchCloudZones      (                     cloudCallback)
@@ -253,6 +221,7 @@ class ZBatchManager: ZOperationsManager {
         case .subscribe:            cloudManager.subscribe            (                     cloudCallback)
         case .fetchlost:            cloudManager.fetchLost            (                     cloudCallback)
         case .fetchNew:             cloudManager.fetchNew             (                     cloudCallback)
+        case .fetchAll:             cloudManager.fetchAll             (                     cloudCallback)
         case .merge:                cloudManager.merge                (                     cloudCallback)
         case .found:                cloudManager.found                (                     cloudCallback)
         case .save:                 cloudManager.save                 (                     cloudCallback)
@@ -264,51 +233,57 @@ class ZBatchManager: ZOperationsManager {
     }
 
 
-    override func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping Closure) {
-        let   forCurrentdatabaseIDOnly = [.completion, .onboard, .here].contains(operationID)
-        let              forMineIDOnly = [.bookmarks                  ].contains(operationID)
-        let                     isMine = restoreToID == .mineID
-        let              onlyCurrentID = !gHasPrivateDatabase || forCurrentdatabaseIDOnly
-        let  databaseIDs: ZDatabaseIDs = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
-        let                     isNoop = onlyCurrentID && isMine && !gHasPrivateDatabase
-        var invokeDatabaseIDAt: IntClosure? = nil                // declare closure first, so compiler will let it recurse
+    override func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
 
-        invokeDatabaseIDAt             = { index in
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // onboarding is a superclass. allow it to perform block first. if it does not handle the operation id, it will return false //
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            /////////////////////////////////
-            // always called in foreground //
-            /////////////////////////////////
-
-            if operationID == .completion || isNoop {
-                self.queue.isSuspended = false
-
-                onCompletion()
-            } else if           index >= databaseIDs.count {
-                self.queue.isSuspended = false
+        super.performBlock(for: operationID, restoreToID: restoreToID) { iCompleted in
+            if  iCompleted {
+                onCompletion(true)
             } else {
-                self.currentDatabaseID = databaseIDs[index]      // if hung, it happened in this id
+                let    forCurrentdatabaseIDOnly = [.completion, .onboard, .here].contains(operationID)
+                let               forMineIDOnly = [.bookmarks                  ].contains(operationID)
+                let                      isMine = restoreToID == .mineID
+                let               onlyCurrentID = !gHasPrivateDatabase || forCurrentdatabaseIDOnly
+                let   databaseIDs: ZDatabaseIDs = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
+                let                      isNoop = onlyCurrentID && isMine && !gHasPrivateDatabase
+                var invokeForIndex: IntClosure? = nil                // declare closure first, so compiler will let it recurse
+                invokeForIndex                  = { index in
 
-                self.invoke(operationID) { (iResult: Any?) in
-                    self  .lastOpStart = nil
+                    /////////////////////////////////
+                    // always called in foreground //
+                    /////////////////////////////////
 
-                    FOREGROUND(canBeDirect: true) {
-                        let      error = iResult as? Error
-                        let      value = iResult as? Int
-                        let    isError = error != nil
+                    if  operationID == .completion || isNoop || index >= databaseIDs.count {
+                        onCompletion(true)
+                    } else {
+                        self.currentDatabaseID = databaseIDs[index]      // if hung, it happened in this id
 
-                        if     isError || value == 0 {
-                            if isError {
-                                self.log(iResult)
+                        self.invoke(operationID) { (iResult: Any?) in
+                            self  .lastOpStart = nil
+
+                            FOREGROUND(canBeDirect: true) {
+                                let      error = iResult as? Error
+                                let      value = iResult as? Int
+                                let    isError = error != nil
+
+                                if     isError || value == 0 {
+                                    if isError {
+                                        self.log(iResult)
+                                    }
+
+                                    invokeForIndex?(index + 1)         // recurse
+                                }
                             }
-
-                            invokeDatabaseIDAt?(index + 1)         // recurse
                         }
                     }
                 }
+
+                invokeForIndex?(0)
+                self.signalFor(nil, regarding: .information)
             }
         }
-
-        invokeDatabaseIDAt?(0)
-        self.signalFor(nil, regarding: .information)
     }
 }

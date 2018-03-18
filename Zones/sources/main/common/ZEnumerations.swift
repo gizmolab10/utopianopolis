@@ -7,6 +7,14 @@
 //
 
 
+enum ZCloudAccountStatus: Int {
+    case none
+    case begin
+    case available
+    case active
+}
+
+
 enum ZInsertionMode: Int {
     case precede
     case follow

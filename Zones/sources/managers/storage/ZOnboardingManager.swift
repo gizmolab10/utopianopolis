@@ -17,15 +17,13 @@ import CloudKit
 #endif
 
 
-let gOnboardingManager = ZOnboardingManager()
-var gIsSpecialUser: Bool { return gOnboardingManager.isSpecialUser }
+var gIsSpecialUser: Bool { return gBatchManager.isSpecialUser }
 
 
 class ZOnboardingManager : ZOperationsManager {
 
 
     var            user : ZUser?
-    var    userIdentity : CKUserIdentity?
     var   isSpecialUser : Bool { return user?.access == .eAccessFull }
     let makeUserSpecial = false
 
@@ -34,8 +32,10 @@ class ZOnboardingManager : ZOperationsManager {
     // MARK:-
 
 
-    func onboard(_ onCompletion: AnyClosure?) {
-        setupAndRunOps(from: .setup, to: .fetchUserIdentity) { onCompletion?(0) }
+    func onboard(_ onCompletion: Closure?) {
+        setupAndRunOps(from: .observeUbiquity, to: .fetchUserRecord) {
+            onCompletion?()
+        }
     }
 
 
@@ -43,8 +43,8 @@ class ZOnboardingManager : ZOperationsManager {
     // MARK:-
 
 
-    func cloudStateChanged(_ notification: Notification) {
-        setupAndRunOps(from: .internet, to: .fetchUserIdentity) {}
+    func completeOnboarding(_ notification: Notification) {
+        setupAndRun([.fetchUserRecord]) {}
     }
 
 
@@ -52,85 +52,41 @@ class ZOnboardingManager : ZOperationsManager {
     // MARK:-
 
 
-    override func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping Closure) {
-        let done = {
-            self.queue.isSuspended = false
-
-            onCompletion()
-        }
-
+    override func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
         switch operationID {
-        case .setup:             setup();            done()
-        case .internet:          internet          { done() }
-        case .ubiquity:          ubiquity          { done() }
-        case .accountStatus:     accountStatus     { done() }
-        case .fetchUserID:       fetchUserID       { done() }
-        case .fetchUserRecord:   fetchUserRecord   { done() }
-        case .fetchUserIdentity: fetchUserIdentity { done() }
-        default:                                     done()
+        case .observeUbiquity:  observeUbiquity();  onCompletion(true)      // true means op is handled
+        case .accountStatus:    accountStatus     { onCompletion(true) }
+        case .fetchUserID:      fetchUserID       { onCompletion(true) }
+        case .internet:         internet          { onCompletion(true) }
+        case .ubiquity:         ubiquity          { onCompletion(true) }
+        case .fetchUserRecord:  fetchUserRecord   { onCompletion(true) }
+        default:                                    onCompletion(false)     // false means op is not handled, so super should proceed
         }
     }
 
 
     func internet(_ onCompletion: @escaping Closure) {
-        updateInternetStatus { iChanged in
+        updateCloudStatus { iChanged in
             onCompletion()
         }
     }
 
 
-    func setup() {
-        NotificationCenter.default.addObserver(self, selector: #selector(ZOnboardingManager.cloudStateChanged), name: .NSUbiquityIdentityDidChange, object: nil)
-    }
-
-
-    func ubiquity(_ onCompletion: @escaping Closure) {
-        if FileManager.default.ubiquityIdentityToken == nil {
-            updateInternetStatus { iChangesOccured in
-                onCompletion()
-            }
-        } else {
-            onCompletion()
-        }
+    func observeUbiquity() {
+        NotificationCenter.default.addObserver(self, selector: #selector(ZOnboardingManager.completeOnboarding), name: .NSUbiquityIdentityDidChange, object: nil)
     }
 
 
     func accountStatus(_ onCompletion: @escaping Closure) {
         gContainer.accountStatus { (iStatus, iError) in
-            FOREGROUND {
-                switch iStatus {
-                case .available:
-                    onCompletion()
-                default:
-                    // alert system prefs
-                    break
-                }
+            switch iStatus {
+            case .available:
+                gCloudAccountStatus = .available
+            default:
+                break
             }
-        }
-    }
 
-
-    func fetchUserRecord(_ onCompletion: @escaping Closure) {
-        if  let recordName = gUserRecordID {
-            let ckRecordID = CKRecordID(recordName: recordName)
-
-            gCloudManager.assureRecordExists(withRecordID: ckRecordID, recordType: CKRecordTypeUserRecord) { (iUserRecord: CKRecord?) in
-                if  let       record = iUserRecord {
-                    let         user = ZUser(record: record, databaseID: gDatabaseID)
-                    self       .user = user
-                    gHasCloudAccount = true
-
-                    if  self.makeUserSpecial {
-                        user.access = .eAccessFull
-
-                        user.maybeNeedSave()
-                    }
-
-                    onCompletion()
-                } else {
-                    print("alert: user record does not exist")
-                }
-            }
+            onCompletion()
         }
     }
 
@@ -148,25 +104,54 @@ class ZOnboardingManager : ZOperationsManager {
     }
 
 
-    func fetchUserIdentity(_ onCompletion: @escaping Closure) {
-        if  let recordName = gUserRecordID {
+    func ubiquity(_ onCompletion: @escaping Closure) {
+        if FileManager.default.ubiquityIdentityToken == nil {
+            updateCloudStatus { iChangesOccured in
+                onCompletion()
+            }
+        } else {
+            onCompletion()
+        }
+    }
+
+
+    func fetchUserRecord(_ onCompletion: @escaping Closure) {
+        if  let recordName = gUserRecordID,
+            gCloudAccountStatus.rawValue >= ZCloudAccountStatus.available.rawValue {
             let ckRecordID = CKRecordID(recordName: recordName)
-            let  debugAuth = false
 
-            gContainer.discoverUserIdentity(withUserRecordID: ckRecordID) { (iCKUserIdentity, iError) in
-                let message = "failed to fetch user id; reason unknown"
+            gCloudManager.assureRecordExists(withRecordID: ckRecordID, recordType: CKRecordTypeUserRecord) { (iUserRecord: CKRecord?) in
+                if  let          record = iUserRecord {
+                    let            user = ZUser(record: record, databaseID: gDatabaseID)
+                    self          .user = user
+                    gCloudAccountStatus = .active
 
-                if  iError != nil {
-                    gAlertManager.alertError(iError, message)
-                    gAlertManager.openSystemPreferences()
-                } else if iCKUserIdentity != nil {
-                    self.userIdentity = iCKUserIdentity
-                } else if debugAuth {
-                    gAlertManager.alertSystemPreferences(onCompletion)
+                    //////////////////////////
+                    // ONBOARDING CONTINUES //
+                    //////////////////////////
+
+                    if  self.makeUserSpecial {
+                        user.access = .eAccessFull
+
+                        user.maybeNeedSave()
+                    }
+                } else {
+                    let            name = ckRecordID.recordName
+                    gCloudAccountStatus = .none
+
+                    ////////////////////////
+                    //  ONBOARDING STOPS  //
+                    ////////////////////////
+
+                    // see: shouldPerform
+
+                    print("alert: user record \(name) does not exist")
                 }
 
                 onCompletion()
             }
+        } else {
+            onCompletion()
         }
     }
 

@@ -11,11 +11,13 @@ import Foundation
 import CloudKit
 
 
-let gRemoteStoresManager = ZRemoteStoresManager()
-var        gCloudManager : ZCloudManager { return gRemoteStoresManager.currentCloudManager }
-var        gLostAndFound : Zone?         { return gRemoteStoresManager.lostAndFoundZone }
-var               gTrash : Zone?         { return gRemoteStoresManager.trashZone }
-var                gRoot : Zone?   { get { return gRemoteStoresManager.rootZone } set { gRemoteStoresManager.rootZone  = newValue } }
+let  gRemoteStoresManager = ZRemoteStoresManager()
+var gEveryoneCloudManager : ZCloudManager { return gRemoteStoresManager.cloudManagerFor(.everyoneID) }
+var     gMineCloudManager : ZCloudManager { return gRemoteStoresManager.cloudManagerFor(.mineID) }
+var         gCloudManager : ZCloudManager { return gRemoteStoresManager.currentCloudManager }
+var         gLostAndFound : Zone?         { return gRemoteStoresManager.lostAndFoundZone }
+var                gTrash : Zone?         { return gRemoteStoresManager.trashZone }
+var                 gRoot : Zone?   { get { return gRemoteStoresManager.rootZone } set { gRemoteStoresManager.rootZone  = newValue } }
 
 
 class ZRemoteStoresManager: NSObject {
@@ -53,7 +55,7 @@ class ZRemoteStoresManager: NSObject {
         }
 
         if databaseID == .favoritesID {
-            return gFavoritesManager
+            return nil
         }
 
         for databaseID in kAllDatabaseIDs {
@@ -91,20 +93,18 @@ class ZRemoteStoresManager: NSObject {
 
 
     func resetBadgeCounter() {
-        gContainer.accountStatus { (iStatus, iError) in
-            if iStatus == .available {
-                let badgeResetOperation = CKModifyBadgeOperation(badgeValue: 0)
+        if  gCloudAccountStatus == .available {
+            let badgeResetOperation = CKModifyBadgeOperation(badgeValue: 0)
 
-                badgeResetOperation.modifyBadgeCompletionBlock = { (error) -> Void in
-                    if error == nil {
-                        FOREGROUND {
-                            gApplication.clearBadge()
-                        }
+            badgeResetOperation.modifyBadgeCompletionBlock = { (error) -> Void in
+                if error == nil {
+                    FOREGROUND {
+                        gApplication.clearBadge()
                     }
                 }
-
-                gContainer.add(badgeResetOperation)
             }
+
+            gContainer.add(badgeResetOperation)
         }
     }
 
@@ -115,6 +115,11 @@ class ZRemoteStoresManager: NSObject {
 
     func receivedUpdateFor(_ recordID: CKRecordID) {
         resetBadgeCounter()
+
+        ////////////////////////////////////////////////////////////////////////////////////
+        // BUG: record may be from the non-current cloud manager (i.e., != gCloudManager) //
+        ////////////////////////////////////////////////////////////////////////////////////
+
         gCloudManager.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
             if iUpdatedRecord != nil {                                                   // TODO: extract database identifier from record id, i.e., the database
                 let    zone = self.currentCloudManager.zoneForCKRecord(iUpdatedRecord!)  // TODO: currentCloudManager is wrong here

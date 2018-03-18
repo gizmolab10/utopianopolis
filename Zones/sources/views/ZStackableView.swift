@@ -49,7 +49,7 @@ class ZStackableView: ZView {
 
     var hideableIsHidden: Bool {
         get {
-            if gReadyState  {
+            if gIsReadyToShowUI  {
                 return gDetailsViewIDs.contains(identity)
             } else {
                 return true

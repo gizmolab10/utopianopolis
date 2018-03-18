@@ -54,7 +54,7 @@ class ZTrait: ZRecord {
 
     var ownerZone: Zone? {
         if  _ownerZone == nil {
-            _ownerZone  = cloudManager?.maybeZRecordForRecordID(owner?.recordID) as? Zone
+            _ownerZone  = cloudManager?.maybeZoneForRecordID(owner?.recordID)
         }
 
         return _ownerZone

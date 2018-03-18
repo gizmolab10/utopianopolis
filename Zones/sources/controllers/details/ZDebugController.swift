@@ -94,7 +94,7 @@ class ZDebugController: ZGenericController {
 
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
-        if ![.search, .found].contains(iKind) && gReadyState {
+        if ![.search, .found].contains(iKind) && gIsReadyToShowUI {
             grab              = gSelectionManager.firstGrab
             nameLabel?  .text = grab?.unwrappedName
             recordLabel?.text = grab?.recordName

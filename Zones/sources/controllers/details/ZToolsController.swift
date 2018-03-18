@@ -144,7 +144,7 @@ class ZToolsController: ZGenericTableController {
             manager.lostAndFoundZone?.safeUpdateCounts([], includingFetchable: true)
         }
 
-        gFavoritesManager.rootZone?.safeUpdateCounts([], includingFetchable: true)
+        gMineCloudManager.favoritesZone?.safeUpdateCounts([], includingFetchable: true)
         gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .redraw) {}
     }
 

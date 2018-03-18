@@ -15,10 +15,9 @@ enum ZOperationID: Int {
 
     // startup
 
-    case onboard
     case cloud
-    case read
-    case found
+    case read               // LOCAL
+    case found              // LOCAL
     case save               // zones, traits, destroy
     case root
 
@@ -26,22 +25,22 @@ enum ZOperationID: Int {
 
     case here
     case fetchNew
+    case fetchAll
 
     // finish
 
-    case write
+    case write              // LOCAL
     case unsubscribe
     case subscribe
 
-    // onboarding
+    // onboard
 
-    case setup
+    case observeUbiquity
     case accountStatus      // vs no account
     case fetchUserID
     case internet
     case ubiquity
     case fetchUserRecord
-    case fetchUserIdentity
 
     // miscellaneous
 
@@ -53,6 +52,7 @@ enum ZOperationID: Int {
     case children
     case parents            // after fetch so colors resolve properly
     case refetch            // user defaults list of record ids
+    case onboard            // LOCAL (partially)
     case traits
     case fetch              // after children so favorite targets resolve properly
     case merge
@@ -64,9 +64,9 @@ var gDebugTimerCount          = 0
 var gDebugTimer:       Timer? = nil
 var gCloudTimer:       Timer? = nil
 var gCloudFire: TimerClosure? = nil
-var gHasCloudAccount          = false
-var gNoInternet               = false
-var observingHasUser          = gHasCloudAccount
+var gHasInternet              = true
+var gCloudAccountStatus       = ZCloudAccountStatus.begin
+var recentCloudAccountStatus  = gCloudAccountStatus
 
 
 class ZOperationsManager: NSObject {
@@ -105,7 +105,7 @@ class ZOperationsManager: NSObject {
                 gDebugTimerCount += 1
             }
 
-            if  gDebugOperations && newValue {
+            if  gMeasureOpsPerformance && newValue {
                 gDebugTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: fire)
                 fire(gDebugTimer!)
             } else if gDebugTimer != nil && !newValue {
@@ -116,18 +116,31 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func updateInternetStatus(_ onCompletion: BooleanClosure?) {
-        let      noInternet = !isConnectedToNetwork
-        let changedInternet = noInternet != gNoInternet
-        let     changedUser = observingHasUser != gHasCloudAccount
+    func     unHang()                                  {                                                                                                  onCloudResponse?(0) }
+    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .cloud, to: .root,                                                          onCompletion) }
+    func continueUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .here,  to: .fetchAll,                                                      onCompletion) }
+    func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .write, to: .subscribe,                                                     onCompletion) }
+    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                                                    ]) { onCompletion() } }
+    func  fetchLost(_ onCompletion: @escaping Closure) { setupAndRun([.fetchlost,                           .save, .children                         ]) { onCompletion() } }
+    func newAppleID(_ onCompletion: @escaping Closure) { setupAndRun([.onboard,   .read,                    .root, .fetchNew,                  .write]) { onCompletion() } }
+    func   pOldSync(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents, .merge, .save, .children,         .traits, .write]) { onCompletion() } }
+    func      pSave(_ onCompletion: @escaping Closure) { setupAndRun([                                      .save,                             .write]) { onCompletion() } }
+    func      pSync(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch,           .merge, .save,                             .write]) { onCompletion() } }
+    func      pRoot(_ onCompletion: @escaping Closure) { setupAndRun([.root,                                .save, .children,         .traits        ]) { onCompletion() } }
+    func    pTravel(_ onCompletion: @escaping Closure) { setupAndRun([.root,              .parents,                .children, .fetch, .traits        ]) { onCompletion() } }
+    func   pParents(_ onCompletion: @escaping Closure) { setupAndRun([                    .parents,                                   .traits        ]) { onCompletion() } }
+    func  pFamilies(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents,                .children,         .traits        ]) { onCompletion() } }
+    func pBookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks, .fetch,                   .save,                    .traits        ]) { onCompletion() } }
+    func  pChildren(_ onCompletion: @escaping Closure) { setupAndRun([                                             .children,         .traits        ]) { onCompletion() } }
+    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete,  .fetch, .parents,         .save, .children,         .traits        ]) { onCompletion() } }
 
-        if  changedInternet {
-            gNoInternet = noInternet
-        }
 
-        if  changedUser {
-            observingHasUser = gHasCloudAccount
-        }
+    func updateCloudStatus(_ onCompletion: BooleanClosure?) {
+        let          hasInternet = isConnectedToNetwork
+        let      changedInternet =              hasInternet != gHasInternet
+        let      changedUser     = recentCloudAccountStatus != gCloudAccountStatus
+        gHasInternet             = hasInternet
+        recentCloudAccountStatus = gCloudAccountStatus
 
         onCompletion?(changedInternet || changedUser)
     }
@@ -136,9 +149,21 @@ class ZOperationsManager: NSObject {
     func setupCloudTimer() {
         if  gCloudTimer == nil {
             gCloudFire   = { iTimer in
-                self.updateInternetStatus { iChangeHappened in
-                    if  iChangeHappened {
-                        self.signalFor(nil, regarding: .information) // inform user of change in cloud status
+                FOREGROUND {
+                    self.updateCloudStatus { iChangeHappened in
+                        if  iChangeHappened {
+                            self.signalFor(nil, regarding: .information) // inform user of change in cloud status
+
+                            /////////////////////////////////////////////////
+                            // assure that we can perform cloud operations //
+                            /////////////////////////////////////////////////
+
+                            if  gHasInternet && gCloudAccountStatus != .active && gIsReadyToShowUI {
+                                self.setupAndRunOps(from: .internet, to: .fetchUserRecord) {
+                                    self.signalFor(nil, regarding: .redraw)
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -150,33 +175,34 @@ class ZOperationsManager: NSObject {
 
 
     func invoke(_ identifier: ZOperationID, cloudCallback: AnyClosure?) {}
-    func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping Closure) {}
-    func isCloudOp(_ iOP: ZOperationID) -> Bool {
-        switch iOP {
-        case .read, .write, .found, .setup, .onboard, .internet, .completion, .fetchUserID, .accountStatus: return false
-        default: break
-        }
+    func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
 
-        return true
+
+    func shouldIgnoreOperation(_ iID: ZOperationID) -> Bool {
+        switch iID {
+        case .read, .write, .found, .observeUbiquity, .accountStatus, .fetchUserID, .internet, .ubiquity, .completion: return false
+     //   case .fetchUserRecord:                                                                                         return gCloudAccountStatus.rawValue < ZCloudAccountStatus.available.rawValue
+        default:                                                                                                       return !gHasInternet
+        }
     }
 
 
-    func shouldPerform(_ iID: ZOperationID) -> Bool {
-        switch iID {
-        case .read, .write, .onboard, .setup, .accountStatus, .fetchUserID, .internet, .ubiquity, .completion: return true
-        default:                                                                                               return !gNoInternet
-        }
+    func stringForOperationIDs (_ iIDs: [ZOperationID]?) -> String {
+        return iIDs?.apply()  { object -> (String?) in
+            if  let operation  = object as? ZOperationID {
+                let name  = "\(operation)"
+                if  name != "" {
+                    return name
+                }
+            }
+
+            return nil
+            } ?? ""
     }
 
 
     func setupAndRunUnsafe(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
         setupCloudTimer()
-
-        if gIsLate || !isConnectedToNetwork {
-            FOREGROUND { // avoid stack overflow
-                onCompletion() // avoid operation overflow NOTE: THESE OPS GET TOSSED ... BAAAAAD!!!!
-            }
-        }
 
         if queue.operationCount > 1500 {
             gAlertManager.alertWith("overloading queue", "programmer error", "send an email to sand@gizmolab.com") { iObject in
@@ -187,41 +213,68 @@ class ZOperationsManager: NSObject {
         queue.isSuspended = true
         let         saved = gDatabaseID
 
+//        columnarReport("", stringForOperationIDs(operationIDs))
+
         for operationID in operationIDs + [.completion] {
-            if shouldPerform(operationID) {
-                let         blockOperation = BlockOperation {
+            let blockOperation = BlockOperation {
+                if !self.shouldIgnoreOperation(operationID) {
+
+                    //////////////////////////////////////////////////////////////////
+                    // susend queue until operation function calls its onCompletion //
+                    //////////////////////////////////////////////////////////////////
+
                     self.queue.isSuspended = true
                     let              start = Date()
+                    self.currentOp         = operationID        // if hung, it happened inside this op
 
-                    FOREGROUND {
-                        self.currentOp     = operationID        // if hung, it happened inside this op
+                    self.reportBeforePerformBlock()
 
-                        if  gDebugOperations {
-                            let    message = !self.usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)"
+                    self.performBlock(for: operationID, restoreToID: saved) { iResult in
+                        self.reportOnCompletionOfPerformBlock(start)        // says nothing
 
-                            self.columnarReport("  " + self.operationText, message)
-                        }
-
-                        self.performBlock(for: operationID, restoreToID: saved) {
-                            if  gDebugOperations && false {
-                                let   duration = Int(start.timeIntervalSinceNow) * -10
-                                let    message = "\(Float(duration) / 10.0)"
-
-                                self.columnarReport("  " + self.operationText, message)
-                            }
-
+                        FOREGROUND {
                             if self.currentOp == .completion {
+
+                                //////////////////////////////////////
+                                // done with this set of operations //
+                                //////////////////////////////////////
+
                                 onCompletion()
                             }
+
+                            ////////////////////////
+                            // release suspension //
+                            ////////////////////////
+
+                            self.queue.isSuspended = false
                         }
                     }
                 }
-
-                add(blockOperation)
             }
+
+            add(blockOperation)
         }
 
         queue.isSuspended = false
+    }
+
+
+    func reportBeforePerformBlock() {
+        if  gMeasureOpsPerformance {
+            let timeText = !self.usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)"
+
+            self.columnarReport("  " + self.operationText, timeText)
+        }
+    }
+
+
+    func reportOnCompletionOfPerformBlock(_ start: Date) {
+        if  gMeasureOpsPerformance && false {
+            let   duration = Int(start.timeIntervalSinceNow) * -10
+            let    message = "\(Float(duration) / 10.0)"
+
+            self.columnarReport("  " + self.operationText, message)
+        }
     }
 
 

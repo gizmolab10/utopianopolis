@@ -74,7 +74,7 @@ class ZAlertManager : NSObject {
             switch ckError.code {
 //          case .serviceUnavailable:
             case .notAuthenticated: closure?(true) // was alertWith("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?", closure)
-            case .networkFailure:   gNoInternet = true; closure?(true) // was alertNoInternet
+            case .networkFailure:   gHasInternet = false; closure?(true) // was alertNoInternet
             default:
                 print(ckError.localizedDescription + text)
                 closure?(true)

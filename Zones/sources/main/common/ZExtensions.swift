@@ -53,14 +53,14 @@ extension NSObject {
     }
 
 
-    func redrawAndSync(_ widget: ZoneWidget? = nil, _ onCompletion: Closure? = nil) {
-        gControllersManager.syncToCloudAfterSignalFor(widget, regarding: .redraw, onCompletion: onCompletion)
+    func redrawAndSync(_ zone: Zone? = nil, _ onCompletion: Closure? = nil) {
+        gControllersManager.syncToCloudAfterSignalFor(zone, regarding: .redraw, onCompletion: onCompletion)
     }
 
 
-    func redrawSyncRedraw(_ widget: ZoneWidget? = nil) {
-        redrawAndSync(widget) {
-            self.signalFor(widget, regarding: .redraw)
+    func redrawSyncRedraw(_ zone: Zone? = nil) {
+        redrawAndSync(zone) {
+            self.signalFor(zone, regarding: .redraw)
         }
     }
 

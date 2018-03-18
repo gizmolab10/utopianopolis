@@ -178,7 +178,7 @@ class ZCloudManager: ZRecordsManager {
     // MARK:-
 
 
-    var forLocalOnly: Bool { return gNoInternet || (databaseID == .mineID && !gHasCloudAccount) }
+    var forLocalOnly: Bool { return !gHasInternet || (databaseID == .mineID && gCloudAccountStatus == .none) }
 
 
     func assureRecordExists(withRecordID iCKRecordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
@@ -263,12 +263,16 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func predicate(since: Date, before: Date?) -> NSPredicate {
-        var predicate = NSPredicate(format: "modificationDate > %@", since as NSDate)
+    func predicate(since iStart: Date?, before iEnd: Date?) -> NSPredicate {
+        var predicate = NSPredicate(value: true)
 
-        if  let date = before {
-            let predicate2 = NSPredicate(format: "modificationDate <= %@", date as NSDate)
-            predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, predicate2])
+        if  let start = iStart {
+            predicate = NSPredicate(format: "modificationDate > %@", start as NSDate)
+
+            if  let          end = iEnd {
+                let endPredicate = NSPredicate(format: "modificationDate <= %@", end as NSDate)
+                predicate        = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, endPredicate])
+            }
         }
 
         return predicate
@@ -277,8 +281,8 @@ class ZCloudManager: ZRecordsManager {
 
     func searchPredicateFrom(_ searchString: String) -> NSPredicate {
         let    tokens = searchString.components(separatedBy: " ")
-        var separator = ""
         var    string = ""
+        var separator = ""
 
         for token in tokens {
             if  token    != "" {
@@ -293,7 +297,7 @@ class ZCloudManager: ZRecordsManager {
 
     func traitsPredicate(specificTo iRecordIDs: [CKRecordID]) -> NSPredicate? {
         if  iRecordIDs.count == 0 {
-            return gReadyState ? nil : NSPredicate(value: true)
+            return gIsReadyToShowUI ? nil : NSPredicate(value: true)
         } else {
             var predicate = ""
             var separator = ""
@@ -425,7 +429,7 @@ class ZCloudManager: ZRecordsManager {
 
                 scan(self.rootZone)
                 scan(gHere)
-                scan(gFavoritesManager.rootZone)
+                scan(gMineCloudManager.favoritesZone)
 
                 self.columnarReport("REMEMBER (\(memorables.count))", "\(self.databaseID.rawValue)")
                 setPreferencesString(memorables.joined(separator: kSeparator), for: self.refetchingName)
@@ -455,7 +459,7 @@ class ZCloudManager: ZRecordsManager {
         let states = [ZRecordState.needsFound]
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iRecordName in
-            if  let zone = maybeZRecordForRecordName(iRecordName) as? Zone {
+            if  let zone = maybeZoneForRecordName(iRecordName) {
                 clearRecordName(iRecordName, for: states)
                 lostAndFoundZone?.addAndReorderChild(zone)
                 lostAndFoundZone?.needSave()
@@ -593,16 +597,16 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetch(for type: String, properties: [String], since: Date, before: Date?, _ onCompletion: RecordsClosure?) {
-        if  type == kZoneType, let missing = rootZone?.hasMissingProgeny(), !missing {
-            onCompletion?([])
-        } else {
-            let predicate = NSPredicate(value: true) // self.predicate(since: since, before: before)
-            var retrieved = [CKRecord] ()
+    func fetch(for type: String, properties: [String], since: Date?, before: Date?, _ onCompletion: RecordsClosure?) {
+        let predicate = self.predicate(since: since, before: before)
+        var retrieved = [CKRecord] ()
 
-            queryFor(type, with: predicate, properties: properties, batchSize: CKQueryOperationMaximumResults) { (iRecord, iError) in
-                if  iError    != nil {
-                    let middle = since.mid(to: before)                   // if error, fetch split by two
+        queryFor(type, with: predicate, properties: properties, batchSize: CKQueryOperationMaximumResults) { (iRecord, iError) in
+            if  iError   != nil {
+                if since == nil {
+                    onCompletion?(retrieved) // NEED BETTER ERROR HANDLING
+                } else {
+                    let middle = since?.mid(to: before)                   // if error, fetch split by two
 
                     self.fetch(for: type, properties: properties, since: since, before: middle) { iCKRecords in
                         retrieved.appendUnique(contentsOf: iCKRecords)
@@ -613,11 +617,11 @@ class ZCloudManager: ZRecordsManager {
                             onCompletion?(retrieved)
                         }
                     }
-                } else if let ckRecord = iRecord {
-                    retrieved.appendUnique(contentsOf: [ckRecord])
-                } else { // nil means: we already received full response from cloud for this particular fetch
-                    onCompletion?(retrieved)
                 }
+            } else if let ckRecord = iRecord {
+                retrieved.appendUnique(contentsOf: [ckRecord])
+            } else { // nil means: we already received full response from cloud for this particular fetch
+                onCompletion?(retrieved)
             }
         }
     }
@@ -646,11 +650,23 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
+    func fetchAll(_ onCompletion: IntClosure?) {
+        if registry.values.count > 10 {
+            onCompletion?(0)
+        } else {
+            fetchSince(nil, onCompletion)
+        }
+    }
+
+
     func fetchNew(_ onCompletion: IntClosure?) {
-        let date = lastSyncDate
+        fetchSince(lastSyncDate, onCompletion)
+    }
+
+
+    func fetchSince(_ date: Date?, _ onCompletion: IntClosure?) {
         // for zones, traits, destroy
-        // get T = lastSyncDate
-        // fetch since T
+        // if date is nil, fetch all
 
         fetch(for: kTraitType, properties: ZTrait.cloudProperties(), since: date, before: nil) { iTraitCKRecords in
             FOREGROUND {
@@ -1066,7 +1082,7 @@ class ZCloudManager: ZRecordsManager {
 
         if  name == kRootName { // in case it is first time for user
             rootCompletion()
-        } else if let here = maybeZRecordForRecordName(name) as? Zone {
+        } else if let here = maybeZoneForRecordName(name) {
             gHere = here
 
             onCompletion?(0)
@@ -1094,15 +1110,28 @@ class ZCloudManager: ZRecordsManager {
     func establishRoots(_ onCompletion: IntClosure?) {
         let prefix = (databaseID == .mineID) ? "my " : "public "
 
+        let favoritesClosure = {
+            if  gMineCloudManager.favoritesZone != nil || self.databaseID != .mineID {
+                onCompletion?(0)
+            } else {
+                self.establishRootFor(name: kFavoritesName, recordName: kFavoritesRootName) { iZone in
+                    iZone.directAccess              = .eDefaultName
+                    gMineCloudManager.favoritesZone = iZone
+
+                    onCompletion?(0)
+                }
+            }
+        }
+
         let lostClosure = {
             if  self.lostAndFoundZone != nil {
-                onCompletion?(0)
+                favoritesClosure()
             } else {
                 self.establishRootFor(name: prefix + kLostAndFoundName, recordName: kLostAndFoundName) { iZone in
                     iZone.directAccess    = .eDefaultName
                     self.lostAndFoundZone = iZone
 
-                    onCompletion?(0)
+                    favoritesClosure()
                 }
             }
         }
@@ -1121,10 +1150,10 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        if  self.rootZone != nil {
+        if  rootZone != nil {
             trashClosure()
         } else {
-            self.establishRootFor(name: "title", recordName: kRootName) { iZone in
+            establishRootFor(name: "title", recordName: kRootName) { iZone in
                 self.rootZone = iZone
 
                 trashClosure()

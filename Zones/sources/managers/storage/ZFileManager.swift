@@ -56,6 +56,16 @@ class ZFileManager: NSObject {
     }
 
 
+    func isReading(for iDatabaseID: ZDatabaseID?) -> Bool {
+        if  let databaseID = iDatabaseID,
+            let      index = index(of: databaseID) {
+            return isReading[index]
+        }
+
+        return false
+    }
+
+
     func write(for databaseID: ZDatabaseID?) {
         if  let           dbID = databaseID,
             dbID              != .favoritesID,
@@ -88,7 +98,7 @@ class ZFileManager: NSObject {
             }
 
             if                 dbID == .mineID {
-                if  let   favorites  = gFavoritesManager.rootZone?.storageDictionary(for: dbID) {
+                if  let   favorites  = manager.favoritesZone?.storageDictionary(for: dbID) {
                     dict[.favorites] = favorites as NSObject
                 }
 
@@ -117,45 +127,35 @@ class ZFileManager: NSObject {
     }
 
 
-    func isReading(for iDatabaseID: ZDatabaseID?) -> Bool {
-        if  let databaseID = iDatabaseID,
-            let      index = index(of: databaseID) {
-            return isReading[index]
-        }
-
-        return false
-    }
-
-
     func read(for databaseID: ZDatabaseID) {
-//        if  gFetchMode                  != .cloudOnly,
-        if  databaseID                  != .favoritesID,
-            let                    index = index(of: databaseID),
-            let                  dbIndex = ZDatabaseIndex(rawValue: index) {
-            isReading[index]             = true
-            let                     path = filePath(for: dbIndex)
-            let sections: [ZStorageType] = [.graph, .favorites, .bookmarks, .date, .found, .trash ]
+        if  databaseID      != .favoritesID,
+            let        index = index(of: databaseID),
+            let      dbIndex = ZDatabaseIndex(rawValue: index) {
+            isReading[index] = true
+            let         path = filePath(for: dbIndex)
+            typealias  types = [ZStorageType]
+            let  keys: types = [.graph, .favorites, .bookmarks, .date, .found, .trash ]
+
             do {
                 if  let   data = FileManager.default.contents(atPath: path),
                     data.count > 0,
                     let   json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
                     let   dict = dictFromJSON(json)
 
-                    for section in sections {
-                        let    dbID: ZDatabaseID = section == .favorites ? .favoritesID : databaseID
-                        let              manager = gRemoteStoresManager.cloudManagerFor(dbID)
+                    for key in keys {
+                        if  let   value = dict[key] {
+                            let manager = gRemoteStoresManager.cloudManagerFor(databaseID)
 
-                        if  let value  = dict[section] {
-                            if  let date = value as? Date {
+                            if let date = value as? Date {
                                 manager.lastSyncDate = date
-                            } else if let subDict  = value as? ZStorageDictionary {
+                            } else if let subDict = value as? ZStorageDictionary {
                                 let zone = Zone(dict: subDict, in: databaseID)
 
-                                switch section {
-                                case .favorites,
-                                     .graph:     manager          .rootZone = zone
-                                case .trash:     manager         .trashZone = zone
-                                case .found:     manager  .lostAndFoundZone = zone
+                                switch key {
+                                case .graph:     manager               .rootZone = zone
+                                case .trash:     manager              .trashZone = zone
+                                case .found:     manager       .lostAndFoundZone = zone
+                                case .favorites: gMineCloudManager.favoritesZone = zone
                                 default: break
                                 }
                             } else if let array = value as? [ZStorageDictionary] {

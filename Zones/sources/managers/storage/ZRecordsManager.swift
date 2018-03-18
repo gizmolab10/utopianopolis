@@ -38,9 +38,10 @@ class ZRecordsManager: NSObject {
     var              databaseID : ZDatabaseID
     var                registry = [String       :  ZRecord] ()
     var      recordNamesByState = [ZRecordState : [String]] ()
-    var    duplicates =                 [ZRecord] ()
+    var              duplicates =                 [ZRecord] ()
     var            lastSyncDate = Date(timeIntervalSince1970: 0)
     var lostAndFoundZone: Zone? = nil
+    var    favoritesZone: Zone? = nil // only for .mineID manager
     var        trashZone: Zone? = nil
     var         rootZone: Zone? = nil
 
@@ -52,7 +53,7 @@ class ZRecordsManager: NSObject {
 
 
     var hereZone: Zone {
-        get { return maybeZRecordForRecordName(hereRecordName) as? Zone ?? rootZone! }
+        get { return maybeZoneForRecordName(hereRecordName) ?? rootZone! }
         set { hereRecordName = newValue.recordName ?? kRootName }
     }
 
@@ -431,7 +432,7 @@ class ZRecordsManager: NSObject {
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iName in
             if  parents.count < kBatchSize,
-                let      zone = maybeZRecordForRecordName(iName) as? Zone,
+                let      zone = maybeZoneForRecordName(iName),
                 let reference = zone.parent {
                 let  parentID = reference.recordID
 
@@ -715,45 +716,14 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
-    func maybeZRecordForCKRecord(_ record: CKRecord?) -> ZRecord? {
-        var zRecord: ZRecord? = nil
-
-        if  let recordID = record?.recordID {
-            zRecord      = maybeZRecordForRecordID(recordID)
-        }
-
-        return zRecord
-    }
-
-
-    func maybeZRecordForRecordID(_ recordID: CKRecordID?) -> ZRecord? {
-        return maybeZRecordForRecordName(recordID?.recordName)
-    }
-
-
-    func maybeCKRecordForRecordName(_ recordName: String?) -> CKRecord? {
-        return maybeZRecordForRecordName(recordName)?.record
-    }
-
-
-    func maybeZRecordForRecordName(_ iRecordName: String?) -> ZRecord? {
-        return iRecordName == nil ? nil : registry[iRecordName!]
-    }
-
-
-    func maybeZoneForRecordID(_ recordID: CKRecordID?) -> Zone? {
-        return maybeZRecordForRecordID(recordID) as? Zone
-    }
-
-
-    func maybeZoneForReference(_ reference: CKReference) -> Zone? {
-        return maybeZoneForRecordID(reference.recordID)
-    }
-
-
-    func maybeZoneForCKRecord(_ record: CKRecord?) -> Zone? {
-        return maybeZoneForRecordID(record?.recordID)
-    }
+    func  maybeZRecordForRecordName (_ iRecordName:    String?) ->  ZRecord? { return iRecordName == nil ? nil : registry[iRecordName!] }
+    func maybeCKRecordForRecordName (_ iRecordName:    String?) -> CKRecord? { return maybeZRecordForRecordName (iRecordName)?.record }
+    func     maybeZoneForRecordName (_ iRecordName:    String?) ->     Zone? { return maybeZRecordForRecordName (iRecordName) as? Zone }
+    func       maybeZoneForRecordID (_ iRecordID:  CKRecordID?) ->     Zone? { return maybeZRecordForRecordID   (iRecordID)   as? Zone }
+    func      maybeZoneForReference (_ iReference: CKReference) ->     Zone? { return maybeZoneForRecordID      (iReference.recordID) }
+    func       maybeZoneForCKRecord (_ iRecord:      CKRecord?) ->     Zone? { return maybeZoneForRecordID      (iRecord?.recordID) }
+    func    maybeZRecordForCKRecord (_ iRecord:      CKRecord?) ->  ZRecord? { return maybeZRecordForRecordName (iRecord?.recordID.recordName) }
+    func    maybeZRecordForRecordID (_ iRecordID:  CKRecordID?) ->  ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName) }
 
 
     func zoneForReference(_ reference: CKReference) -> Zone {

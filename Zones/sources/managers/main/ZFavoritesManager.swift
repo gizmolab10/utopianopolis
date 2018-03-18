@@ -18,10 +18,10 @@ enum ZFavoriteStyle: Int {
 }
 
 
-let gFavoritesManager = ZFavoritesManager(.favoritesID)
+let gFavoritesManager = ZFavoritesManager()
 
 
-class ZFavoritesManager: ZCloudManager {
+class ZFavoritesManager: NSObject {
 
 
     // MARK:- initialization
@@ -30,8 +30,14 @@ class ZFavoritesManager: ZCloudManager {
 
     let databaseRootFavorites = Zone(record: nil, databaseID: nil)
     var      workingFavorites = [Zone] ()
-    var                 count : Int  { return rootZone?.count ?? 0 }
+    var                 count : Int { return gMineCloudManager.favoritesZone?.count ?? 0 }
 
+//
+//    var rootZone : Zone? {
+//        get { return gMineCloudManager.favoritesZone }
+//        set { gMineCloudManager.favoritesZone = newValue }
+//    }
+//
 
     var hasTrash: Bool {
         for favorite in workingFavorites {
@@ -198,28 +204,30 @@ class ZFavoritesManager: ZCloudManager {
 
 
     func setup(_ onCompletion: Closure?) {
+        let rootZone = gMineCloudManager.favoritesZone
+
         if !gHasPrivateDatabase || rootZone != nil {
             onCompletion?()
         } else {
-            let   mine = gRemoteStoresManager.cloudManagerFor(.mineID)
+            let   mine = gMineCloudManager
             let finish = {
                 self.setupDatabaseFavorites()
-                self.rootZone!.needProgeny()
-                self.rootZone!.revealChildren()
+                rootZone?.needProgeny()
+                rootZone?.revealChildren()
                 onCompletion?()
             }
 
-            if  let root = mine.maybeZRecordForRecordName(kFavoritesRootName) as? Zone {
-                rootZone = root
+            if  let root = mine.maybeZoneForRecordName(kFavoritesRootName) {
+                gMineCloudManager.favoritesZone = root
 
                 finish()
             } else {
                 mine.assureRecordExists(withRecordID: CKRecordID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
-                    let      ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: kFavoritesRootName))
-                    let          root = Zone(record: ckRecord, databaseID: .mineID)
-                    root.directAccess = .eDefaultName
-                    root.zoneName     = kFavoritesName
-                    self.rootZone     = root
+                    let                    ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: kFavoritesRootName))
+                    let                        root = Zone(record: ckRecord, databaseID: .mineID)
+                    root.directAccess               = .eDefaultName
+                    root.zoneName                   = kFavoritesName
+                    gMineCloudManager.favoritesZone = root
 
                     finish()
                 }
@@ -249,7 +257,7 @@ class ZFavoritesManager: ZCloudManager {
     func updateWorkingFavorites() {
         workingFavorites.removeAll()
 
-        rootZone?.traverseAllProgeny { iChild in
+        gMineCloudManager.favoritesZone?.traverseAllProgeny { iChild in
             if iChild.isBookmark {
                 self.workingFavorites.append(iChild)
             }
@@ -318,13 +326,13 @@ class ZFavoritesManager: ZCloudManager {
                 trash    .zoneLink = kTrashLink // convert into a bookmark
                 trash.directAccess = .eChildrenWritable
 
-                rootZone?.addAndReorderChild(trash)
+                gMineCloudManager.favoritesZone?.addAndReorderChild(trash)
                 trash.clearAllStates()
             }
 
             if !haveLost {
                 let identifier = kLostAndFoundName + kFavoritesSuffix
-                var       lost = gRemoteStoresManager.cloudManagerFor(.mineID).maybeZRecordForRecordName(identifier) as? Zone
+                var       lost = gMineCloudManager.maybeZoneForRecordName(identifier)
                 if  lost      == nil {
                     lost       = Zone(databaseID: .mineID, named: kLostAndFoundName, identifier: identifier)
                 }
@@ -332,7 +340,7 @@ class ZFavoritesManager: ZCloudManager {
                 lost?    .zoneLink = kLostAndFoundLink // convert into a bookmark
                 lost?.directAccess = .eChildrenWritable
 
-                rootZone?.addAndReorderChild(lost!)
+                gMineCloudManager.favoritesZone?.addAndReorderChild(lost!)
                 lost?.clearAllStates()
             }
 
@@ -345,7 +353,7 @@ class ZFavoritesManager: ZCloudManager {
                     let      favorite = template.deepCopy()
                     favorite.zoneName = favorite.bookmarkTarget?.zoneName
 
-                    rootZone?.addChildAndRespectOrder(favorite)
+                    gMineCloudManager.favoritesZone?.addChildAndRespectOrder(favorite)
                     favorite.clearAllStates() // erase side-effect of add
                 }
             }
@@ -481,7 +489,7 @@ class ZFavoritesManager: ZCloudManager {
 
 
     @discardableResult func createBookmark(for iZone: Zone, style: ZFavoriteStyle) -> Zone {
-        var parent: Zone = iZone.parentZone ?? rootZone!
+        var parent: Zone = iZone.parentZone ?? gMineCloudManager.favoritesZone!
         let   isBookmark = iZone.isBookmark
         let     isNormal = style == .normal
 
@@ -489,7 +497,7 @@ class ZFavoritesManager: ZCloudManager {
             let basis: ZRecord = isBookmark ? iZone.crossLink! : iZone
 
             if  let recordName = basis.recordName {
-                parent         = rootZone!
+                parent         = gMineCloudManager.favoritesZone!
 
                 for bookmark in workingFavorites {
                     if recordName == bookmark.linkName, !bookmark.bookmarkTarget!.isRoot {

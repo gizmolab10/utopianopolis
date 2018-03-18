@@ -74,6 +74,43 @@ class ZControllersManager: NSObject {
     }
 
 
+    // MARK:- startup
+    // MARK:-
+
+
+    func startupCloudAndUI() {
+        gBatchManager.usingDebugTimer = true
+
+        gRemoteStoresManager.clear()
+        displayActivity(true)
+        gBatchManager.onboard {
+            gBatchManager.startUp {
+                gFavoritesManager.setup {
+                    gBatchManager.continueUp {
+                        gWorkMode        = .graphMode
+                        gIsReadyToShowUI = true
+
+                        self.displayActivity(false)
+                        gHere.grab()
+                        gFavoritesManager.updateFavorites()
+                        self.signalFor(nil, regarding: .redraw)
+
+                        gBatchManager.finishUp {
+                            self.blankScreenDebug()
+                            gBatchManager.families() { iSame in // created bookmarks and parents of bookmarks
+                                gBatchManager.usingDebugTimer = false
+
+                                self.signalFor(nil, regarding: .redraw)
+                                gRemoteStoresManager.updateLastSyncDates()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
     // MARK:- registry
     // MARK:-
 
@@ -86,41 +123,6 @@ class ZControllersManager: NSObject {
 
     func unregister(_ at: ZControllerID) {
         signalObjectsByControllerID[at] = nil
-    }
-
-
-    // MARK:- startup
-    // MARK:-
-    
-
-    func startupCloudAndUI() {
-        gBatchManager.usingDebugTimer = true
-
-        gRemoteStoresManager.clear()
-        displayActivity(true)
-        gBatchManager.startUp {
-            gFavoritesManager.setup {
-                gBatchManager.continueUp {
-                    gWorkMode   = .graphMode
-                    gReadyState = true
-
-                    self.displayActivity(false)
-                    gHere.grab()
-                    gFavoritesManager.updateFavorites()
-                    self.signalFor(nil, regarding: .redraw)
-
-                    gBatchManager.finishUp {
-                        self.blankScreenDebug()
-                        gBatchManager.families() { iSame in // created bookmarks and parents of bookmarks
-                            gBatchManager.usingDebugTimer = false
-
-                            self.signalFor(nil, regarding: .redraw)
-                            gRemoteStoresManager.updateLastSyncDates()
-                        }
-                    }
-                }
-            }
-        }
     }
 
 
@@ -183,8 +185,8 @@ class ZControllersManager: NSObject {
     }
 
 
-    func syncToCloudAfterSignalFor(_ widget: ZoneWidget?, regarding: ZSignalKind,  onCompletion: Closure?) {
-        signalFor(widget, regarding: regarding, onCompletion: onCompletion)
+    func syncToCloudAfterSignalFor(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
+        signalFor(zone, regarding: regarding, onCompletion: onCompletion)
         gBatchManager.sync { iSame in
             onCompletion?()
         }

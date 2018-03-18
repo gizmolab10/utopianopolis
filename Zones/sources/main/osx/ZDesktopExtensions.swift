@@ -307,7 +307,7 @@ extension NSButton {
 
 
 extension NSTextField {
-    var          text:         String? { get { return stringValue } set { stringValue = newValue! } }
+    var          text:         String? { get { return stringValue } set { stringValue = newValue ?? "" } }
     var textAlignment: NSTextAlignment { get { return alignment }   set { alignment = newValue } }
     func enableUndo()                  { cell?.allowsUndo = true }
     func selectAllText()               {}

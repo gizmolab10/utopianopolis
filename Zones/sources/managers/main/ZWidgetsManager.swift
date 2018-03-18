@@ -25,7 +25,7 @@ class ZWidgetsManager: NSObject {
 
 
     var visibleWidgets: [ZoneWidget] {
-        let favorites = gFavoritesManager.rootZone?.visibleWidgets ?? []
+        let favorites = gMineCloudManager.favoritesZone?.visibleWidgets ?? []
 
         return gHere.visibleWidgets + favorites
     }

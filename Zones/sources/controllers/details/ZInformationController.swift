@@ -42,20 +42,11 @@ class ZInformationController: ZGenericController {
     }
 
 
-    var cloudStatusText: String {
-        let      operationCount = gBatchManager.queue.operationCount
-        let    countsSuffixText = operationCount == 1 ? "" : "s"
-        let operationsCountText = operationCount == 0 ? "" : "\(operationCount) cloud operation\(countsSuffixText) in progress"
-
-        return gNoInternet ? "no internet" : !gHasCloudAccount ? "missing or invalid Apple ID" : operationsCountText
-    }
-
-
     var totalCountsText: String {
         let (count, notSavableCount) = gCloudManager.undeletedCounts
         let                    total = gRemoteStoresManager.rootProgenyCount
 
-        return "of \(total), retrieved: \(count) + \(notSavableCount)"
+        return "of roughly \(total), have: \(count) + \(notSavableCount)"
     }
 
 
@@ -68,8 +59,17 @@ class ZInformationController: ZGenericController {
     }
 
 
+    var cloudStatusText: String {
+        let  count = gBatchManager.queue.operationCount
+        let plural = count == 1 ? "" : "s"
+        let   text = count == 0 ? "" : "\(count) cloud operation\(plural) in progress"
+
+        return !gHasInternet ? "no internet" : gCloudAccountStatus != .active ? "missing or invalid Apple ID" : text
+    }
+
+
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
-        if ![.search, .found].contains(iKind) && gReadyState {
+        if ![.search, .found].contains(iKind) && gIsReadyToShowUI {
             cloudStatusLabel?.text = cloudStatusText
             totalCountLabel? .text = totalCountsText
             graphNameLabel?  .text = graphNameText
