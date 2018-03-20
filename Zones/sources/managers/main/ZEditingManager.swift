@@ -1110,13 +1110,15 @@ class ZEditingManager: NSObject {
                     // SPECIAL CASE: delete here but here has no parent ... so, go somewhere useful and familiar //
                     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-                    gFavoritesManager.refocus {                 // travel to current favorite, then ...
+                    gFavoritesManager.refocus {                 // travel through current favorite, then ...
 
                         /////////////
                         // RECURSE //
                         /////////////
 
-                        self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)
+                        if  gHere != zone {
+                            self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)
+                        }
                     }
                 }
             } else {
@@ -1128,14 +1130,9 @@ class ZEditingManager: NSObject {
 
                 if !destroyNow {
                     moveToTrash(zone)
-                }
-
-                zone.traverseAllProgeny { iZone in
-                    if  eventuallyDestroy {
+                } else {
+                    zone.traverseAllProgeny { iZone in
                         iZone.needDestroy()                     // gets written in file
-                    }
-
-                    if  destroyNow {
                         iZone.concealAllProgeny()               // prevent gExpandedZones list from getting clogged with stale references
                         iZone.orphan()
                     }
@@ -1144,12 +1141,6 @@ class ZEditingManager: NSObject {
                 if  let            p = parent, p != zone {
                     p.fetchableCount = p.count                  // delete alters the count
                 }
-
-                ///////////////////////////////////////////
-                // remove all bookmarks that target zone //
-                ///////////////////////////////////////////
-
-                zone.addToPaste()
 
                 /////////////
                 // RECURSE //

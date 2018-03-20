@@ -109,7 +109,7 @@ class ZToolsController: ZGenericTableController {
 
 
     func gatherAndShowLost() {
-        gBatchManager.fetchLost {
+        gBatchManager.fetchLost { iSame in
             if  let lost = gLostAndFound {
                 gHere    = lost
 
@@ -150,7 +150,7 @@ class ZToolsController: ZGenericTableController {
 
 
     func restoreFromTrash() {
-        gBatchManager.undelete {
+        gBatchManager.undelete { iSame in
             self.signalFor(nil, regarding: .redraw)
         }
 

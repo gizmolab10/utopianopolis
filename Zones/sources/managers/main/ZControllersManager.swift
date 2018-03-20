@@ -83,7 +83,7 @@ class ZControllersManager: NSObject {
 
         gRemoteStoresManager.clear()
         displayActivity(true)
-        gBatchManager.startUp {
+        gBatchManager.startUp { iSame in
             gWorkMode        = .graphMode
             gIsReadyToShowUI = true
 
@@ -94,7 +94,7 @@ class ZControllersManager: NSObject {
                 self.signalFor(nil, regarding: .redraw)
             }
 
-            gBatchManager.finishUp {
+            gBatchManager.finishUp { iSame in
                 gBatchManager.families() { iSame in // created bookmarks and parents of bookmarks
                     gBatchManager.usingDebugTimer = false
 

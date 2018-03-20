@@ -30,7 +30,7 @@ class ZSnapshot: NSObject {
 
     
     var currentGrabs = [Zone] ()
-    var  databaseID : ZDatabaseID?
+    var   databaseID : ZDatabaseID?
     var         here : Zone?
 
 
@@ -72,7 +72,7 @@ class ZSelectionManager: NSObject {
         let          snap = ZSnapshot()
         snap.currentGrabs = currentGrabs
         snap  .databaseID = gDatabaseID
-        snap        .here = gHere
+        snap        .here = gCloudManager.validHere ? gHere : nil
 
         return snap
     }

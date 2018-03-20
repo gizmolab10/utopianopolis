@@ -1081,8 +1081,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd ~/Library/Containers/com.zones.focus.mac/Data/Library/Caches\nfile=\"Focus/everyone.focus\"\nif -e $file\nthen\n   cp $file ${SRCROOT}/data\nfi";
+			shellPath = /bin/bash;
+			shellScript = "cd ~/Library/Containers/com.zones.focus.mac/Data/Library/Caches/Focus\nfile=\"everyone.focus\"\nif [ -f $file ]; then\n   cp $file ${SRCROOT}/data\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -30,9 +30,6 @@ enum ZOperationID: Int {
     case save               // zones, traits, destroy
     case root
     case favorites
-
-    // continue
-
     case here
     case fetchNew
     case fetchAll
@@ -53,11 +50,18 @@ enum ZOperationID: Int {
     case children
     case parents            // after fetch so colors resolve properly
     case refetch            // user defaults list of record ids
-    case onboard            // LOCAL (partially)
     case traits
     case fetch              // after children so favorite targets resolve properly
     case merge
     case none               // default operation
+
+    var isLocal: Bool {
+        switch self {
+        case .read, .write, .found, .internet, .ubiquity, .completion, .fetchUserID, .accountStatus, .observeUbiquity: return true
+        default:                                                                                                       return false
+        }
+    }
+
 }
 
 
@@ -117,22 +121,7 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func     unHang()                                  {                                                                                                  onCloudResponse?(0) }
-    func    startUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .observeUbiquity, to: .fetchAll,                                            onCompletion) }
-    func   finishUp(_ onCompletion: @escaping Closure) { setupAndRunOps(from: .write,           to: .subscribe,                                           onCompletion) }
-    func emptyTrash(_ onCompletion: @escaping Closure) { setupAndRun([.emptyTrash                                                                    ]) { onCompletion() } }
-    func  fetchLost(_ onCompletion: @escaping Closure) { setupAndRun([.fetchlost,                           .save, .children                         ]) { onCompletion() } }
-    func newAppleID(_ onCompletion: @escaping Closure) { setupAndRun([.onboard,   .read,                    .root, .fetchNew,                  .write]) { onCompletion() } }
-    func   pOldSync(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents, .merge, .save, .children,         .traits, .write]) { onCompletion() } }
-    func      pSave(_ onCompletion: @escaping Closure) { setupAndRun([                                      .save,                             .write]) { onCompletion() } }
-    func      pSync(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch,           .merge, .save,                             .write]) { onCompletion() } }
-    func      pRoot(_ onCompletion: @escaping Closure) { setupAndRun([.root,                                .save, .children,         .traits        ]) { onCompletion() } }
-    func    pTravel(_ onCompletion: @escaping Closure) { setupAndRun([.root,              .parents,                .children, .fetch, .traits        ]) { onCompletion() } }
-    func   pParents(_ onCompletion: @escaping Closure) { setupAndRun([                    .parents,                                   .traits        ]) { onCompletion() } }
-    func  pFamilies(_ onCompletion: @escaping Closure) { setupAndRun([            .fetch, .parents,                .children,         .traits        ]) { onCompletion() } }
-    func pBookmarks(_ onCompletion: @escaping Closure) { setupAndRun([.bookmarks, .fetch,                   .save,                    .traits        ]) { onCompletion() } }
-    func  pChildren(_ onCompletion: @escaping Closure) { setupAndRun([                                             .children,         .traits        ]) { onCompletion() } }
-    func   undelete(_ onCompletion: @escaping Closure) { setupAndRun([.undelete,  .fetch, .parents,         .save, .children,         .traits        ]) { onCompletion() } }
+    func unHang() { onCloudResponse?(0) }
 
 
     func updateCloudStatus(_ onCompletion: BooleanClosure?) {
@@ -158,8 +147,11 @@ class ZOperationsManager: NSObject {
                             // assure that we can perform cloud operations //
                             /////////////////////////////////////////////////
 
-                            if  gHasInternet && gCloudAccountStatus != .active && gIsReadyToShowUI {
-                                self.setupAndRunOps(from: .internet, to: .fetchUserRecord) {
+                            if  gHasInternet && gIsReadyToShowUI {
+                                let      hasActiveStatus = gCloudAccountStatus == .active
+                                let identifier: ZBatchID = hasActiveStatus ? .resumeCloud : .newAppleID
+
+                                gBatchManager.batch(identifier) { iResult in
                                     self.signalFor(nil, regarding: .redraw)
                                 }
                             }
@@ -178,19 +170,10 @@ class ZOperationsManager: NSObject {
     func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
 
 
-    func shouldIgnoreOperation(_ iID: ZOperationID) -> Bool {
-        switch iID {
-        case .read, .write, .found, .observeUbiquity, .accountStatus, .fetchUserID, .internet, .ubiquity, .completion: return false
-     //   case .fetchUserRecord:                                                                                         return gCloudAccountStatus.rawValue < ZCloudAccountStatus.available.rawValue
-        default:                                                                                                       return !gHasInternet
-        }
-    }
-
-
-    func setupAndRunUnsafe(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
+    func setupAndRun(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
         setupCloudTimer()
 
-        if queue.operationCount > 1500 {
+        if queue.operationCount > 10 {
             gAlertManager.alertWith("overloading queue", "programmer error", "send an email to sand@gizmolab.com") { iObject in
                // onCompletion()
             }
@@ -201,7 +184,12 @@ class ZOperationsManager: NSObject {
 
         for operationID in operationIDs + [.completion] {
             let blockOperation = BlockOperation {
-                if !self.shouldIgnoreOperation(operationID) {
+
+                ////////////////////////////////////////////////////////////////
+                // ignore operations that are not local when have no internet //
+                ////////////////////////////////////////////////////////////////
+
+                if  operationID.isLocal || gHasInternet {
 
                     //////////////////////////////////////////////////////////////////
                     // susend queue until operation function calls its onCompletion //
@@ -259,24 +247,6 @@ class ZOperationsManager: NSObject {
 
             self.columnarReport("  " + self.operationText, message)
         }
-    }
-
-
-    func setupAndRun(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
-        FOREGROUND(canBeDirect: true) {
-            self.setupAndRunUnsafe(operationIDs, onCompletion: onCompletion)
-        }
-    }
-
-
-    func setupAndRunOps(from: ZOperationID, to: ZOperationID, _ onCompletion: @escaping Closure) {
-        var operationIDs = [ZOperationID] ()
-
-        for sync in from.rawValue...to.rawValue {
-            operationIDs.append(ZOperationID(rawValue: sync)!)
-        }
-
-        setupAndRun(operationIDs) { onCompletion() }
     }
 
 

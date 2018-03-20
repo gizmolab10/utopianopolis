@@ -33,7 +33,9 @@ class ZOnboardingManager : ZOperationsManager {
 
 
     func completeOnboarding(_ notification: Notification) {
-        setupAndRun([.fetchUserRecord]) {}
+        FOREGROUND(canBeDirect: true) {
+            self.setupAndRun([.fetchUserRecord]) {}
+        }
     }
 
 

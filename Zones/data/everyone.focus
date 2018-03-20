@@ -1,5 +1,119 @@
 {
   "trash" : {
+    "children" : [
+      {
+        "count" : 0,
+        "name" : "op G needs state C",
+        "progeny" : 0,
+        "recordName" : "69A4E119-CCF4-4138-BBF6-AF9DD264271E",
+        "order" : 0.076923076923076927
+      },
+      {
+        "children" : [
+          {
+            "count" : 0,
+            "name" : "test",
+            "progeny" : 0,
+            "recordName" : "CD7DF30B-39CA-4A1E-93CC-A0B7C0FCBDB8",
+            "order" : 0.076923076923076927
+          },
+          {
+            "count" : 0,
+            "name" : "test",
+            "progeny" : 0,
+            "recordName" : "14B76220-4242-4001-A99D-E90EEBB063C5",
+            "order" : 0.090909090909090912
+          },
+          {
+            "count" : 0,
+            "name" : "test",
+            "progeny" : 0,
+            "recordName" : "D2018E43-0C86-44FA-B6DD-C42611D1EAAA",
+            "order" : 0.125
+          },
+          {
+            "count" : 0,
+            "name" : "test",
+            "progeny" : 0,
+            "recordName" : "CB66331E-335D-4962-AE51-402A9D98EDE7",
+            "order" : 0.15384615384615385
+          },
+          {
+            "count" : 0,
+            "name" : "test",
+            "progeny" : 0,
+            "recordName" : "9669A8F3-7173-4C1B-ABF1-1910C8A93477",
+            "order" : 0.25
+          }
+        ],
+        "order" : 0.15384615384615385,
+        "recordName" : "BF6EBDD7-146A-4A79-AA9D-773D0C02143E"
+      },
+      {
+        "count" : 0,
+        "name" : "----------- done -----------",
+        "attributes" : "c",
+        "progeny" : 0,
+        "recordName" : "D2D5F81C-6947-47E7-9B34-2A90AA3824CA",
+        "order" : 0.23076923076923078
+      },
+      {
+        "count" : 0,
+        "name" : "done",
+        "progeny" : 0,
+        "recordName" : "1B7F68F6-263F-499B-B005-514078F976FA",
+        "order" : 0.30769230769230771
+      },
+      {
+        "count" : 0,
+        "name" : "alert about no internet appears -> ANNOYING",
+        "progeny" : 0,
+        "recordName" : "E8F8568A-2993-4666-900F-B36ACBA10B33",
+        "order" : 0.38461538461538464
+      },
+      {
+        "count" : 0,
+        "name" : "operations manager",
+        "progeny" : 0,
+        "recordName" : "3E5A4DF4-C6E7-44F0-9A72-7D36D16DF836",
+        "order" : 0.46153846153846156
+      },
+      {
+        "count" : 0,
+        "name" : "unstall",
+        "progeny" : 0,
+        "recordName" : "0EDCEB83-BE20-470E-A016-46AE2A039CC4",
+        "order" : 0.53846153846153855
+      },
+      {
+        "count" : 0,
+        "name" : "timer",
+        "progeny" : 0,
+        "recordName" : "F0F56248-3941-4885-912D-9FE48F83EC47",
+        "order" : 0.61538461538461542
+      },
+      {
+        "count" : 0,
+        "name" : "test",
+        "progeny" : 0,
+        "recordName" : "516600D6-D400-4A60-945F-54717D698649",
+        "order" : 0.69230769230769229
+      },
+      {
+        "count" : 0,
+        "name" : "operation bugs",
+        "progeny" : 0,
+        "recordName" : "671D1F28-11B3-42AE-9D55-0E463D831E07",
+        "order" : 0.76923076923076927
+      },
+      {
+        "count" : 0,
+        "name" : "no files, no internet, launch -> no favorites nor root of favorites",
+        "progeny" : 0,
+        "recordName" : "87468D8B-081C-4054-8086-FF0E3EFF422C",
+        "order" : 0.84615384615384626
+      }
+    ],
     "name" : "public trash",
     "access" : 4,
     "count" : 0,
@@ -8,7 +122,7 @@
     "recordName" : "trash",
     "order" : 0
   },
-  "date" : "TimeInterval:542353414.82",
+  "date" : "TimeInterval:543264080.396",
   "lostAndFound" : {
     "children" : [
       {
@@ -656,10 +770,10 @@
           }
         ],
         "recordName" : "6C798690-394B-4D14-B0B9-A2A190C53ED3",
-        "order" : 0.090909090909090912
+        "order" : 0.125
       },
       {
-        "count" : 49,
+        "count" : 14,
         "name" : "1",
         "progeny" : 0,
         "children" : [
@@ -1495,9 +1609,9 @@
           {
             "count" : 0,
             "name" : "UPPERCASE NOT VERTICALLY CENTERED IN DRAG HIGHLIGHT",
-            "progeny" : 1,
+            "progeny" : 0,
             "recordName" : "D01FBD66-2FB0-47F2-8675-6C69A8863F64",
-            "order" : 0.76470588235294112
+            "order" : 0.75
           },
           {
             "count" : 0,
@@ -1571,7 +1685,7 @@
           }
         ],
         "recordName" : "D0FE9C22-C770-4199-B513-D8BDEC9CB391",
-        "order" : 0.18181818181818182
+        "order" : 0.25
       },
       {
         "count" : 50,
@@ -1929,7 +2043,7 @@
           }
         ],
         "recordName" : "4C7A0B50-E1FF-4CA6-A52F-F877987F5CB9",
-        "order" : 0.27272727272727271
+        "order" : 0.375
       },
       {
         "count" : 49,
@@ -2274,7 +2388,7 @@
           }
         ],
         "recordName" : "927A57B3-BB02-4DC3-9B6B-4CEB7A398A15",
-        "order" : 0.36363636363636365
+        "order" : 0.5
       },
       {
         "count" : 38,
@@ -2547,12 +2661,19 @@
           }
         ],
         "recordName" : "567EE91C-C3E2-40DF-B219-4FCE79D85DCC",
-        "order" : 0.45454545454545459
+        "order" : 0.625
+      },
+      {
+        "count" : 0,
+        "name" : "explain it slows things down",
+        "progeny" : 0,
+        "recordName" : "29D07BB7-849F-4C74-8232-537E5420E9A0",
+        "order" : 0.75
       }
     ],
     "name" : "public lost and found",
     "access" : 4,
-    "count" : 5,
+    "count" : 1,
     "owner" : "_331fc129da5bed513a4026e9bcf56dba",
     "progeny" : 0,
     "recordName" : "lost and found",
@@ -2563,9 +2684,6 @@
     "name" : "focus",
     "children" : [
       {
-        "count" : 9,
-        "name" : "user guide",
-        "progeny" : 185,
         "children" : [
           {
             "count" : 3,
@@ -4072,6 +4190,11 @@
             "color" : "red:0.1454872432,blue:0.6520729158,green:0.875168679"
           }
         ],
+        "name" : "user guide",
+        "access" : 1,
+        "count" : 9,
+        "owner" : "_331fc129da5bed513a4026e9bcf56dba",
+        "progeny" : 185,
         "recordName" : "C973DB9D-A5D4-451B-B031-2745DF831D24",
         "order" : 0.40000000000000002
       },
@@ -4088,296 +4211,17 @@
                 "name" : "OSX bugs",
                 "children" : [
                   {
-                    "count" : 7,
-                    "name" : "vital bugs",
-                    "progeny" : 111,
                     "children" : [
                       {
                         "count" : 0,
-                        "name" : "go back and go forth seem wonky",
-                        "attributes" : "c",
-                        "progeny" : 0,
-                        "recordName" : "22BBDF60-95AB-468C-ACD7-6AD16186DC57",
-                        "order" : 0.16666666666666666
-                      },
-                      {
-                        "count" : 0,
-                        "name" : "sometimes launch to empty screen !!!!!",
-                        "attributes" : "c",
-                        "progeny" : 0,
-                        "recordName" : "6023BAA8-5516-48EE-8390-941068D2FCA3",
-                        "order" : 0.33333333333333331
-                      },
-                      {
-                        "count" : 7,
-                        "name" : "publish",
-                        "progeny" : 68,
+                        "name" : "next features",
+                        "progeny" : 112,
                         "children" : [
                           {
+                            "count" : 0,
+                            "name" : "stall ops design",
+                            "progeny" : 18,
                             "children" : [
-                              {
-                                "count" : 0,
-                                "name" : "resources",
-                                "progeny" : 0,
-                                "recordName" : "068B2547-F8E8-4DD2-8056-9F7B2002F146",
-                                "order" : 0.20000000000000001
-                              },
-                              {
-                                "count" : 0,
-                                "name" : "launch from internal file",
-                                "progeny" : 0,
-                                "recordName" : "7732EE9B-81E2-4AB9-9B51-08C923CB7BB0",
-                                "order" : 0.40000000000000002
-                              },
-                              {
-                                "count" : 3,
-                                "name" : "create folder during app build",
-                                "progeny" : 0,
-                                "children" : [
-                                  {
-                                    "count" : 0,
-                                    "name" : "everyone write permission",
-                                    "progeny" : 0,
-                                    "recordName" : "B8829B02-6DA5-4657-858A-B43B3618913E",
-                                    "order" : 0.20000000000000001
-                                  },
-                                  {
-                                    "count" : 0,
-                                    "name" : " SPACE -> edit has no text",
-                                    "progeny" : 0,
-                                    "recordName" : "DA624FF3-26BE-4505-B7F4-FF970743B5D5",
-                                    "order" : 0.40000000000000002
-                                  },
-                                  {
-                                    "count" : 0,
-                                    "name" : "on first launch copy everyone graph file",
-                                    "progeny" : 0,
-                                    "recordName" : "F0BE5CC7-4F6B-453A-89EC-7516417C2B0F",
-                                    "order" : 0.60000000000000009
-                                  }
-                                ],
-                                "recordName" : "AA74709F-1C1F-40AD-9093-0E117B9B950B",
-                                "order" : 0.60000000000000009
-                              }
-                            ],
-                            "name" : "ship everyone.graph file inside app",
-                            "attributes" : "c",
-                            "count" : 3,
-                            "progeny" : 3,
-                            "recordName" : "B5ECFC62-48B8-4991-96E2-86AF8B482801",
-                            "order" : 0.1111111111111111
-                          },
-                          {
-                            "children" : [
-                              {
-                                "count" : 1,
-                                "name" : "open file dialog",
-                                "progeny" : 0,
-                                "children" : [
-                                  {
-                                    "count" : 0,
-                                    "name" : "place inside (and focus on) lost and found of current database id",
-                                    "progeny" : 0,
-                                    "recordName" : "271ECF2C-ED61-4D84-817C-93AF7ED1E4F8",
-                                    "order" : 0.25
-                                  },
-                                  {
-                                    "count" : 0,
-                                    "name" : "GUID conflict?",
-                                    "recordName" : "2B4F2A6D-AB42-434B-90C2-C8D4F2013525",
-                                    "order" : 0.5
-                                  }
-                                ],
-                                "recordName" : "0A88557D-47CE-410F-BE42-628D83E9A573",
-                                "order" : 0.33333333333333331
-                              },
-                              {
-                                "count" : 0,
-                                "name" : "save to file dialog",
-                                "progeny" : 0,
-                                "recordName" : "263C60AB-6FBA-4D27-A9AA-2ADB52F46E71",
-                                "order" : 0.66666666666666663
-                              }
-                            ],
-                            "name" : "read\/write focus subgraph file",
-                            "attributes" : "c",
-                            "count" : 2,
-                            "progeny" : 1,
-                            "recordName" : "E3A7CCB4-C916-40EA-9907-FEB270652E3D",
-                            "order" : 0.22222222222222221
-                          },
-                          {
-                            "count" : 11,
-                            "name" : "icloud resumes",
-                            "progeny" : 45,
-                            "children" : [
-                              {
-                                "children" : [
-                                  {
-                                    "count" : 0,
-                                    "name" : "bookmarks T",
-                                    "progeny" : 0,
-                                    "recordName" : "299431CA-8E7A-4206-806D-9F1D37135ABD",
-                                    "order" : 0.16666666666666666
-                                  },
-                                  {
-                                    "count" : 5,
-                                    "name" : "graph T",
-                                    "progeny" : 0,
-                                    "children" : [
-                                      {
-                                        "count" : 0,
-                                        "name" : "traits",
-                                        "progeny" : 0,
-                                        "recordName" : "58FF81A2-0229-47D4-8490-EBF65704C36E",
-                                        "order" : 0.14285714285714285
-                                      },
-                                      {
-                                        "count" : 0,
-                                        "name" : "zones",
-                                        "progeny" : 0,
-                                        "recordName" : "42C915AA-B1B3-4829-836E-932AE90B0A2C",
-                                        "order" : 0.2857142857142857
-                                      },
-                                      {
-                                        "count" : 0,
-                                        "name" : "deletes",
-                                        "progeny" : 0,
-                                        "recordName" : "02FD64A5-6FF7-4183-A0E7-395FA7CC1B84",
-                                        "order" : 0.42857142857142855
-                                      },
-                                      {
-                                        "count" : 0,
-                                        "name" : "parents",
-                                        "progeny" : 0,
-                                        "recordName" : "EB37DC92-81B9-4855-B64A-1FA91CE74887",
-                                        "order" : 0.5714285714285714
-                                      },
-                                      {
-                                        "count" : 0,
-                                        "name" : "children",
-                                        "progeny" : 0,
-                                        "recordName" : "0EA47C8C-2067-4305-A561-636E8296A8BE",
-                                        "order" : 0.71428571428571419
-                                      }
-                                    ],
-                                    "recordName" : "07E5A9CF-9673-4034-9176-44A2AB7E9F78",
-                                    "order" : 0.33333333333333331
-                                  },
-                                  {
-                                    "count" : 0,
-                                    "name" : "modification date is after T",
-                                    "progeny" : 0,
-                                    "recordName" : "EEF56BDE-41D7-42FE-83EB-7161EF314759",
-                                    "order" : 0.5
-                                  },
-                                  {
-                                    "count" : 2,
-                                    "name" : "time acquisition",
-                                    "progeny" : 0,
-                                    "children" : [
-                                      {
-                                        "count" : 0,
-                                        "name" : "compare each fetched item's modification date with T, update if more recent",
-                                        "progeny" : 0,
-                                        "recordName" : "82C3D7F1-F26E-4828-BE19-67268916AAF5",
-                                        "order" : 0.25
-                                      },
-                                      {
-                                        "count" : 0,
-                                        "name" : "do this in one go once ALL items have been fetched",
-                                        "progeny" : 0,
-                                        "recordName" : "2FAE119E-1180-4559-8751-09BBE918DC2A",
-                                        "order" : 0.5
-                                      }
-                                    ],
-                                    "recordName" : "ED7D996B-2951-41C5-A9DC-07495AB1E5F2",
-                                    "order" : 0.66666666666666663
-                                  }
-                                ],
-                                "name" : "\"what's new\" == records since date T (from file)",
-                                "attributes" : "c",
-                                "count" : 4,
-                                "progeny" : 7,
-                                "recordName" : "417892DF-76E0-4A3F-8C81-E927EDDDAB0B",
-                                "order" : 0.076923076923076927
-                              },
-                              {
-                                "count" : 0,
-                                "name" : "transition app -> HIGH PERFORMING icloud",
-                                "progeny" : 0,
-                                "recordName" : "27CF46E1-9B48-462F-B628-00CD4EE2ED68",
-                                "order" : 0.15384615384615385
-                              },
-                              {
-                                "count" : 0,
-                                "name" : "cloud sync after period of inactivity",
-                                "progeny" : 0,
-                                "recordName" : "EE550C29-82DD-4B22-99F6-4F0C4A332D77",
-                                "order" : 0.23076923076923078
-                              },
-                              {
-                                "count" : 0,
-                                "name" : "assume all data is already in memory",
-                                "progeny" : 0,
-                                "recordName" : "B61C242F-CB71-49B8-B1E0-E9FDCC3ED934",
-                                "order" : 0.30769230769230771
-                              },
-                              {
-                                "count" : 3,
-                                "name" : "use cases",
-                                "progeny" : 3,
-                                "children" : [
-                                  {
-                                    "count" : 2,
-                                    "name" : "no internet or no apple id",
-                                    "progeny" : 0,
-                                    "children" : [
-                                      {
-                                        "count" : 0,
-                                        "name" : "use file named \"mine.focus\"",
-                                        "progeny" : 0,
-                                        "recordName" : "1ED43DBD-E162-4C17-B88F-33329DC56644",
-                                        "order" : 0.25
-                                      },
-                                      {
-                                        "count" : 0,
-                                        "name" : "LOCAL ONLY",
-                                        "progeny" : 0,
-                                        "recordName" : "4305ACE7-58DB-4DC7-8570-7AE62A03EE04",
-                                        "order" : 0.5
-                                      }
-                                    ],
-                                    "recordName" : "6776570B-01FC-44C6-B0B8-761A86BB48D3",
-                                    "order" : 0.16666666666666666
-                                  },
-                                  {
-                                    "count" : 1,
-                                    "name" : "launch on new device (twenty seconds)",
-                                    "progeny" : 0,
-                                    "children" : [
-                                      {
-                                        "count" : 0,
-                                        "name" : "FETCH since T",
-                                        "progeny" : 0,
-                                        "recordName" : "FDD5C6CA-024A-47A2-90C3-4508D2982D79",
-                                        "order" : 0.33333333333333331
-                                      }
-                                    ],
-                                    "recordName" : "4CBD8DDC-CE28-434D-9FF6-70370CDDB40D",
-                                    "order" : 0.33333333333333331
-                                  },
-                                  {
-                                    "count" : 0,
-                                    "name" : "normal HIGH PERFORMANT UI",
-                                    "progeny" : 0,
-                                    "recordName" : "64B33484-2069-4362-8CA5-7FD273D3EF4C",
-                                    "order" : 0.66666666666666663
-                                  }
-                                ],
-                                "recordName" : "CF426D90-DCA8-40A5-A010-644578BCB27B",
-                                "order" : 0.38461538461538464
-                              },
                               {
                                 "count" : 5,
                                 "name" : "eliminate op ids",
@@ -4387,465 +4231,1322 @@
                                     "count" : 0,
                                     "name" : "bookmarks",
                                     "progeny" : 0,
-                                    "recordName" : "0A07FC67-9F01-45DD-B515-82FDB870694E",
-                                    "order" : 0.125
+                                    "recordName" : "4E126E26-3F2D-49EC-A2E2-EBA72E6BE4DB",
+                                    "order" : 0.25
                                   },
                                   {
                                     "count" : 0,
                                     "name" : "children",
                                     "progeny" : 0,
-                                    "recordName" : "DE3D41E4-A89D-4FE4-8135-AD79620E1755",
-                                    "order" : 0.25
+                                    "recordName" : "31148142-AB60-405D-9385-602617D1BBF1",
+                                    "order" : 0.375
                                   },
                                   {
                                     "count" : 0,
                                     "name" : "to root",
                                     "progeny" : 0,
-                                    "recordName" : "2A1C94DE-0CAC-4FBB-92A7-3878A2B7FA6F",
-                                    "order" : 0.375
+                                    "recordName" : "AF72281E-835B-46AE-BAE4-02A0FCD3A23A",
+                                    "order" : 0.5
                                   },
                                   {
                                     "count" : 0,
                                     "name" : "parent",
                                     "progeny" : 0,
-                                    "recordName" : "13C4AED7-A4DE-424F-99B5-5DAB734D39B6",
-                                    "order" : 0.5
+                                    "recordName" : "21AD4128-A680-4D66-B080-AA02169C98D8",
+                                    "order" : 0.625
                                   },
                                   {
                                     "count" : 0,
                                     "name" : "color",
                                     "progeny" : 0,
-                                    "recordName" : "C470E2AC-A44F-43C7-A8A8-1B1042B094ED",
-                                    "order" : 0.625
+                                    "recordName" : "0017ADEF-1A98-4B52-B9F7-73D295FE5E51",
+                                    "order" : 0.75
                                   }
                                 ],
-                                "recordName" : "E9514162-728A-4AB6-AEED-A8187653DAF8",
-                                "order" : 0.46153846153846156
+                                "recordName" : "857FF0D9-2641-4AD5-B4BF-43EBC1970CD6",
+                                "order" : 0.20000000000000001
                               },
                               {
                                 "count" : 0,
-                                "name" : "----------- tasks -----------",
-                                "attributes" : "c",
-                                "progeny" : 0,
-                                "recordName" : "87D64747-7F08-450F-9BBD-78ADEAFBF773",
-                                "order" : 0.53846153846153855
-                              },
-                              {
-                                "count" : 3,
-                                "name" : "LAUNCH: observe when \"mine\" file missing",
-                                "progeny" : 3,
+                                "name" : "detection",
+                                "progeny" : 13,
                                 "children" : [
                                   {
-                                    "count" : 1,
-                                    "name" : "no internet or no apple id",
+                                    "count" : 0,
+                                    "name" : "----------- detection -----------",
+                                    "attributes" : "c",
                                     "progeny" : 0,
-                                    "children" : [
-                                      {
-                                        "count" : 0,
-                                        "name" : "use file named \"mine.focus\"",
-                                        "progeny" : 0,
-                                        "recordName" : "0315D90F-AFDF-4BB7-9379-9067863EBC4A",
-                                        "order" : 0.33333333333333331
-                                      }
-                                    ],
-                                    "recordName" : "DA13667E-7B48-4E55-97D9-3C9ABDBEF934",
-                                    "order" : 0.16666666666666666
+                                    "recordName" : "27D4A027-B46E-44D6-96EB-43972B428770",
+                                    "order" : 0.125
                                   },
                                   {
-                                    "count" : 1,
-                                    "name" : "new user",
+                                    "count" : 0,
+                                    "name" : "last timer or batch or op",
                                     "progeny" : 0,
-                                    "children" : [
-                                      {
-                                        "count" : 0,
-                                        "name" : "create new cloud database",
-                                        "progeny" : 0,
-                                        "recordName" : "DA4887BD-7766-42D4-B383-B4AD74CEB928",
-                                        "order" : 0.33333333333333331
-                                      }
-                                    ],
-                                    "recordName" : "1D78D0E1-7A39-4EB9-BF29-E924CAD70DAA",
-                                    "order" : 0.5
+                                    "recordName" : "BD66825C-D8A6-447B-8203-9C9B1CA2BADE",
+                                    "order" : 0.25
                                   },
                                   {
-                                    "count" : 1,
-                                    "name" : "new device",
-                                    "progeny" : 0,
+                                    "count" : 7,
+                                    "name" : "detect internet unstall",
+                                    "progeny" : 5,
                                     "children" : [
                                       {
                                         "count" : 0,
-                                        "name" : "FULL FETCH (takes twenty seconds)",
-                                        "progeny" : 0,
-                                        "recordName" : "0F3C214E-B8FE-4E14-BFA9-07401386693C",
-                                        "order" : 0.33333333333333331
-                                      }
-                                    ],
-                                    "recordName" : "1642A365-9D27-4124-BAFB-F501CB13BCDF",
-                                    "order" : 0.66666666666666663
-                                  }
-                                ],
-                                "recordName" : "6C7B5C89-5871-4162-A395-37C7C2BB4C16",
-                                "order" : 0.61538461538461542
-                              },
-                              {
-                                "count" : 2,
-                                "name" : "new: SYNC",
-                                "progeny" : 9,
-                                "children" : [
-                                  {
-                                    "count" : 2,
-                                    "name" : "SAVE",
-                                    "progeny" : 0,
-                                    "children" : [
-                                      {
-                                        "count" : 0,
-                                        "name" : "save",
-                                        "progeny" : 0,
-                                        "recordName" : "E1022A37-1EFF-487B-BCEF-0BE37E722727",
-                                        "order" : 0.25
-                                      },
-                                      {
-                                        "count" : 0,
-                                        "name" : "destroy",
-                                        "progeny" : 0,
-                                        "recordName" : "BFF6B849-5C0D-4BFD-BEAD-2FD3EE06C977",
-                                        "order" : 0.5
-                                      }
-                                    ],
-                                    "recordName" : "6A6CB5DE-9346-41F1-BBFA-7ED0C7CCB86D",
-                                    "order" : 0.20000000000000001
-                                  },
-                                  {
-                                    "count" : 5,
-                                    "name" : "FETCH",
-                                    "progeny" : 2,
-                                    "children" : [
-                                      {
-                                        "count" : 0,
-                                        "name" : "traits",
-                                        "progeny" : 0,
-                                        "recordName" : "D4DEB94E-5868-4BDC-9C9D-15F3336D716D",
-                                        "order" : 0.14285714285714285
-                                      },
-                                      {
-                                        "count" : 0,
-                                        "name" : "zones",
-                                        "progeny" : 0,
-                                        "recordName" : "B0A8B3C2-A368-4837-9215-3A1E26AB9B66",
-                                        "order" : 0.2857142857142857
-                                      },
-                                      {
-                                        "count" : 0,
-                                        "name" : "deletes",
-                                        "progeny" : 0,
-                                        "recordName" : "8A5F0C9D-5ED9-4228-93FF-CEB38C5480EC",
-                                        "order" : 0.42857142857142855
-                                      },
-                                      {
-                                        "count" : 0,
-                                        "name" : "no file, new device \/ user",
-                                        "progeny" : 0,
-                                        "recordName" : "341409D2-E0CE-4ED8-8D8B-92611A8F971D",
-                                        "order" : 0.5714285714285714
-                                      },
-                                      {
-                                        "count" : 2,
-                                        "name" : "push update from other device \/ user",
+                                        "name" : "error handling",
                                         "progeny" : 0,
                                         "children" : [
                                           {
                                             "count" : 0,
-                                            "name" : "parent",
+                                            "name" : "internet disappears",
                                             "progeny" : 0,
-                                            "recordName" : "F7F18E02-CD19-400A-918D-9E0A17E9199B",
-                                            "order" : 0.20000000000000001
+                                            "recordName" : "6BD64E83-C331-4771-9FD6-47EF92D7BF73",
+                                            "order" : 0.25
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "apple id changes",
+                                            "progeny" : 0,
+                                            "recordName" : "9A4571B7-95C5-47F6-A203-E333ED8EFDEA",
+                                            "order" : 0.5
+                                          }
+                                        ],
+                                        "recordName" : "ADB50BDC-F1A9-406D-8C0D-228ED4D7BBEA",
+                                        "order" : 0.30000000000000004
+                                      },
+                                      {
+                                        "count" : 3,
+                                        "name" : "state",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "gNoInternet",
+                                            "progeny" : 0,
+                                            "recordName" : "65A1408A-229F-44B6-8096-0A834B4A647B",
+                                            "order" : 0.1111111111111111
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "gHasUserAccount",
+                                            "progeny" : 0,
+                                            "recordName" : "2E5BAA6C-28D9-484A-A31E-685FEDDBE340",
+                                            "order" : 0.22222222222222221
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "need to reinvoke startup logic",
+                                            "progeny" : 0,
+                                            "recordName" : "A6A94B67-2F98-4EE9-929A-D0E17C5A69B1",
+                                            "order" : 0.33333333333333331
+                                          }
+                                        ],
+                                        "recordName" : "ABAA61E4-24C1-47C8-9A37-851B8722F4C9",
+                                        "order" : 0.40000000000000002
+                                      },
+                                      {
+                                        "count" : 2,
+                                        "name" : "bugs",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "internet reappears -> lots of duplicated traits",
+                                            "progeny" : 0,
+                                            "recordName" : "EA4D822E-D3E6-4EAC-A0AB-9A902658A57B",
+                                            "order" : 0.33333333333333331
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "with no internet, should NOT SAVE",
+                                            "progeny" : 0,
+                                            "recordName" : "22B9EF48-5F81-4950-B09B-424806EEE5EB",
+                                            "order" : 0.40000000000000002
+                                          }
+                                        ],
+                                        "recordName" : "8E58DCBE-258E-4539-AF2A-3778F3CEED50",
+                                        "order" : 0.5
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "----------- done -----------",
+                                        "attributes" : "c",
+                                        "progeny" : 0,
+                                        "recordName" : "10CF1A6B-5596-4C77-8707-0F2E405BDB4A",
+                                        "order" : 0.60000000000000009
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "NOT STALL non-cloud ops",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "if state is healthy",
+                                            "progeny" : 0,
+                                            "recordName" : "48E1911D-0050-487E-BF91-00312E6DDFDF",
+                                            "order" : 0.33333333333333331
+                                          }
+                                        ],
+                                        "recordName" : "89617F7E-D0A9-4B6B-A073-DDAFEA4643A6",
+                                        "order" : 0.70000000000000007
+                                      }
+                                    ],
+                                    "recordName" : "FB96BF0A-EC37-4C07-8590-6B57A3DE8C3D",
+                                    "order" : 0.375
+                                  },
+                                  {
+                                    "count" : 1,
+                                    "name" : "timer",
+                                    "progeny" : 0,
+                                    "children" : [
+                                      {
+                                        "count" : 0,
+                                        "name" : "stall ops and batches",
+                                        "progeny" : 0,
+                                        "recordName" : "6BBC105F-5159-49E2-A5F2-502236AB01E5",
+                                        "order" : 0.20000000000000001
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "detect apple id changed",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "abandon",
+                                            "progeny" : 0,
+                                            "children" : [
+                                              {
+                                                "count" : 0,
+                                                "name" : "file",
+                                                "progeny" : 0,
+                                                "recordName" : "56C2EABD-8C44-474B-927C-AC32FFA1CA31",
+                                                "order" : 0.25
+                                              },
+                                              {
+                                                "count" : 0,
+                                                "name" : "graph",
+                                                "progeny" : 0,
+                                                "recordName" : "5CCACD8B-BD81-4A0F-BF0F-08B7D21E25B3",
+                                                "order" : 0.5
+                                              }
+                                            ],
+                                            "recordName" : "8A9A7F32-229E-49BB-BC21-A645411C9BA4",
+                                            "order" : 0.25
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "go through UI startup",
+                                            "progeny" : 0,
+                                            "recordName" : "F103F120-D731-4134-B24A-0F5B0541C283",
+                                            "order" : 0.5
+                                          }
+                                        ],
+                                        "recordName" : "2EF28F40-1B71-4961-9D64-55E176EEC15F",
+                                        "order" : 0.40000000000000002
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "respond to internet resumption",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "save",
+                                            "progeny" : 0,
+                                            "recordName" : "D52F4EB7-9CE2-4F6B-B7CA-79F5D7617BFA",
+                                            "order" : 0.25
+                                          }
+                                        ],
+                                        "recordName" : "775172DB-ED2E-4FEB-96A8-F411EC9CD3EE",
+                                        "order" : 0.60000000000000009
+                                      }
+                                    ],
+                                    "recordName" : "216EB710-E799-44BA-8AA0-5DF64EAF7576",
+                                    "order" : 0.5
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "gIsLate (may become stalled)",
+                                    "progeny" : 0,
+                                    "children" : [
+                                      {
+                                        "count" : 0,
+                                        "name" : "instantaneous",
+                                        "progeny" : 0,
+                                        "recordName" : "73132402-C56D-401E-ACE8-26D3F0FE1D85",
+                                        "order" : 0.33333333333333331
+                                      }
+                                    ],
+                                    "recordName" : "F72EE9B9-D519-410E-AFA8-F95399343CF6",
+                                    "order" : 0.625
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "show batches queued",
+                                    "progeny" : 0,
+                                    "recordName" : "2CE8F907-3673-45DC-8127-C8EA137770F0",
+                                    "order" : 0.75
+                                  }
+                                ],
+                                "recordName" : "31799324-351D-417C-AA08-7B8CF95B797F",
+                                "order" : 0.40000000000000002
+                              },
+                              {
+                                "count" : 0,
+                                "name" : "current operation queue does what?",
+                                "progeny" : 0,
+                                "children" : [
+                                  {
+                                    "count" : 0,
+                                    "name" : "avoid operation overflow NOTE: THESE OPS GET TOSSED ... BAAAAAD!!!!",
+                                    "progeny" : 0,
+                                    "recordName" : "66EDA334-21D7-4179-A0F7-F047AFA14AA9",
+                                    "order" : 0.33333333333333331
+                                  }
+                                ],
+                                "recordName" : "03B8007D-6CE1-49BA-89EB-DDCA6231BB9B",
+                                "order" : 0.60000000000000009
+                              }
+                            ],
+                            "recordName" : "34AAE274-80A8-46E8-9F86-9D4C78DF33DA",
+                            "order" : 0.16666666666666666
+                          },
+                          {
+                            "count" : 0,
+                            "name" : "ideas",
+                            "progeny" : 0,
+                            "children" : [
+                              {
+                                "count" : 0,
+                                "name" : "SOON: UI for focus stack",
+                                "progeny" : 0,
+                                "recordName" : "738A388F-5B03-4E88-AF93-4DB8AB56CC25",
+                                "order" : 0.33333333333333331
+                              },
+                              {
+                                "count" : 0,
+                                "name" : "how can an idea have multiple parents ?",
+                                "progeny" : 0,
+                                "recordName" : "4D2FF60B-DF53-48D5-B322-A69534564BC1",
+                                "order" : 0.40000000000000002
+                              },
+                              {
+                                "count" : 0,
+                                "name" : "remote receive ckrecord id -> determine public or private?",
+                                "progeny" : 0,
+                                "recordName" : "1F98FC7F-1F88-4871-BBAD-26F63DFE0783",
+                                "order" : 0.60000000000000009
+                              }
+                            ],
+                            "recordName" : "9F8B8DC1-446D-458A-80BD-302548328926",
+                            "order" : 0.33333333333333331
+                          },
+                          {
+                            "count" : 7,
+                            "name" : "publish",
+                            "progeny" : 68,
+                            "children" : [
+                              {
+                                "count" : 0,
+                                "name" : "new needs",
+                                "progeny" : 0,
+                                "recordName" : "E658EF85-A940-43A2-9BA0-5CB6B75B0B5B",
+                                "order" : 0.125
+                              },
+                              {
+                                "count" : 11,
+                                "name" : "icloud resumes",
+                                "progeny" : 45,
+                                "children" : [
+                                  {
+                                    "children" : [
+                                      {
+                                        "count" : 0,
+                                        "name" : "bookmarks T",
+                                        "progeny" : 0,
+                                        "recordName" : "299431CA-8E7A-4206-806D-9F1D37135ABD",
+                                        "order" : 0.16666666666666666
+                                      },
+                                      {
+                                        "count" : 5,
+                                        "name" : "graph T",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "traits",
+                                            "progeny" : 0,
+                                            "recordName" : "58FF81A2-0229-47D4-8490-EBF65704C36E",
+                                            "order" : 0.14285714285714285
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "zones",
+                                            "progeny" : 0,
+                                            "recordName" : "42C915AA-B1B3-4829-836E-932AE90B0A2C",
+                                            "order" : 0.2857142857142857
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "deletes",
+                                            "progeny" : 0,
+                                            "recordName" : "02FD64A5-6FF7-4183-A0E7-395FA7CC1B84",
+                                            "order" : 0.42857142857142855
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "parents",
+                                            "progeny" : 0,
+                                            "recordName" : "EB37DC92-81B9-4855-B64A-1FA91CE74887",
+                                            "order" : 0.5714285714285714
                                           },
                                           {
                                             "count" : 0,
                                             "name" : "children",
                                             "progeny" : 0,
-                                            "recordName" : "586BFFCC-72F8-4A39-97B6-92E88BCB0D1A",
-                                            "order" : 0.40000000000000002
+                                            "recordName" : "0EA47C8C-2067-4305-A561-636E8296A8BE",
+                                            "order" : 0.71428571428571419
                                           }
                                         ],
-                                        "recordName" : "D079FC78-6625-4D8A-BA33-3B066C0DB502",
-                                        "order" : 0.71428571428571419
-                                      }
-                                    ],
-                                    "recordName" : "C6FBF32C-06B0-4020-8F2A-839F356747E9",
-                                    "order" : 0.40000000000000002
-                                  }
-                                ],
-                                "recordName" : "248962F2-B63B-4732-B5FE-20AC502080C4",
-                                "order" : 0.69230769230769229
-                              },
-                              {
-                                "count" : 1,
-                                "name" : "new MERGE",
-                                "progeny" : 0,
-                                "children" : [
-                                  {
-                                    "count" : 0,
-                                    "name" : "only \"modified\" properties",
-                                    "progeny" : 0,
-                                    "recordName" : "FE4C0CCF-3438-4BB6-832C-D89DE2FCE660",
-                                    "order" : 0.33333333333333331
-                                  }
-                                ],
-                                "recordName" : "92647A0E-0FA2-485D-A7D3-D1E7142DC21D",
-                                "order" : 0.76923076923076927
-                              },
-                              {
-                                "count" : 2,
-                                "name" : "new NEED: \"merge before edit\"",
-                                "progeny" : 3,
-                                "children" : [
-                                  {
-                                    "count" : 1,
-                                    "name" : "apply to everything visible",
-                                    "progeny" : 0,
-                                    "children" : [
-                                      {
-                                        "count" : 0,
-                                        "name" : "always replace client with cloud version",
-                                        "progeny" : 0,
-                                        "recordName" : "C5B5E7C8-2AE1-4F45-9456-9659A19C138A",
+                                        "recordName" : "07E5A9CF-9673-4034-9176-44A2AB7E9F78",
                                         "order" : 0.33333333333333331
-                                      }
-                                    ],
-                                    "recordName" : "C5160D8A-BF2B-426D-9C1B-2CC08914412A",
-                                    "order" : 0.25
-                                  },
-                                  {
-                                    "count" : 2,
-                                    "name" : "overwriting a zone HAPPENS",
-                                    "progeny" : 0,
-                                    "children" : [
-                                      {
-                                        "count" : 0,
-                                        "name" : "yes, and this is VERY BAD",
-                                        "progeny" : 0,
-                                        "recordName" : "CB7D7557-DD0C-45E0-910B-D0867704F62E",
-                                        "order" : 0.16666666666666666
                                       },
                                       {
                                         "count" : 0,
-                                        "name" : "need a merge policy for EVERY SAVE",
+                                        "name" : "modification date is after T",
                                         "progeny" : 0,
-                                        "recordName" : "12BDA8B2-AEA7-4D47-9D27-ED8837556966",
+                                        "recordName" : "EEF56BDE-41D7-42FE-83EB-7161EF314759",
+                                        "order" : 0.5
+                                      },
+                                      {
+                                        "count" : 2,
+                                        "name" : "time acquisition",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "compare each fetched item's modification date with T, update if more recent",
+                                            "progeny" : 0,
+                                            "recordName" : "82C3D7F1-F26E-4828-BE19-67268916AAF5",
+                                            "order" : 0.25
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "do this in one go once ALL items have been fetched",
+                                            "progeny" : 0,
+                                            "recordName" : "2FAE119E-1180-4559-8751-09BBE918DC2A",
+                                            "order" : 0.5
+                                          }
+                                        ],
+                                        "recordName" : "ED7D996B-2951-41C5-A9DC-07495AB1E5F2",
+                                        "order" : 0.66666666666666663
+                                      }
+                                    ],
+                                    "name" : "\"what's new\" == records since date T (from file)",
+                                    "attributes" : "c",
+                                    "count" : 4,
+                                    "progeny" : 7,
+                                    "recordName" : "417892DF-76E0-4A3F-8C81-E927EDDDAB0B",
+                                    "order" : 0.076923076923076927
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "transition app -> HIGH PERFORMING icloud",
+                                    "progeny" : 0,
+                                    "recordName" : "27CF46E1-9B48-462F-B628-00CD4EE2ED68",
+                                    "order" : 0.15384615384615385
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "cloud sync after period of inactivity",
+                                    "progeny" : 0,
+                                    "recordName" : "EE550C29-82DD-4B22-99F6-4F0C4A332D77",
+                                    "order" : 0.23076923076923078
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "assume all data is already in memory",
+                                    "progeny" : 0,
+                                    "recordName" : "B61C242F-CB71-49B8-B1E0-E9FDCC3ED934",
+                                    "order" : 0.30769230769230771
+                                  },
+                                  {
+                                    "count" : 3,
+                                    "name" : "use cases",
+                                    "progeny" : 3,
+                                    "children" : [
+                                      {
+                                        "count" : 2,
+                                        "name" : "no internet or no apple id",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "use file named \"mine.focus\"",
+                                            "progeny" : 0,
+                                            "recordName" : "1ED43DBD-E162-4C17-B88F-33329DC56644",
+                                            "order" : 0.25
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "LOCAL ONLY",
+                                            "progeny" : 0,
+                                            "recordName" : "4305ACE7-58DB-4DC7-8570-7AE62A03EE04",
+                                            "order" : 0.5
+                                          }
+                                        ],
+                                        "recordName" : "6776570B-01FC-44C6-B0B8-761A86BB48D3",
+                                        "order" : 0.16666666666666666
+                                      },
+                                      {
+                                        "count" : 1,
+                                        "name" : "launch on new device (twenty seconds)",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "FETCH since T",
+                                            "progeny" : 0,
+                                            "recordName" : "FDD5C6CA-024A-47A2-90C3-4508D2982D79",
+                                            "order" : 0.33333333333333331
+                                          }
+                                        ],
+                                        "recordName" : "4CBD8DDC-CE28-434D-9FF6-70370CDDB40D",
+                                        "order" : 0.33333333333333331
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "normal HIGH PERFORMANT UI",
+                                        "progeny" : 0,
+                                        "recordName" : "64B33484-2069-4362-8CA5-7FD273D3EF4C",
+                                        "order" : 0.66666666666666663
+                                      }
+                                    ],
+                                    "recordName" : "CF426D90-DCA8-40A5-A010-644578BCB27B",
+                                    "order" : 0.38461538461538464
+                                  },
+                                  {
+                                    "count" : 5,
+                                    "name" : "eliminate op ids",
+                                    "progeny" : 0,
+                                    "children" : [
+                                      {
+                                        "count" : 0,
+                                        "name" : "bookmarks",
+                                        "progeny" : 0,
+                                        "recordName" : "0A07FC67-9F01-45DD-B515-82FDB870694E",
+                                        "order" : 0.125
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "children",
+                                        "progeny" : 0,
+                                        "recordName" : "DE3D41E4-A89D-4FE4-8135-AD79620E1755",
+                                        "order" : 0.25
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "to root",
+                                        "progeny" : 0,
+                                        "recordName" : "2A1C94DE-0CAC-4FBB-92A7-3878A2B7FA6F",
+                                        "order" : 0.375
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "parent",
+                                        "progeny" : 0,
+                                        "recordName" : "13C4AED7-A4DE-424F-99B5-5DAB734D39B6",
+                                        "order" : 0.5
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "color",
+                                        "progeny" : 0,
+                                        "recordName" : "C470E2AC-A44F-43C7-A8A8-1B1042B094ED",
+                                        "order" : 0.625
+                                      }
+                                    ],
+                                    "recordName" : "E9514162-728A-4AB6-AEED-A8187653DAF8",
+                                    "order" : 0.46153846153846156
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "----------- tasks -----------",
+                                    "attributes" : "c",
+                                    "progeny" : 0,
+                                    "recordName" : "87D64747-7F08-450F-9BBD-78ADEAFBF773",
+                                    "order" : 0.53846153846153855
+                                  },
+                                  {
+                                    "count" : 3,
+                                    "name" : "LAUNCH: observe when \"mine\" file missing",
+                                    "progeny" : 3,
+                                    "children" : [
+                                      {
+                                        "count" : 1,
+                                        "name" : "no internet or no apple id",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "use file named \"mine.focus\"",
+                                            "progeny" : 0,
+                                            "recordName" : "0315D90F-AFDF-4BB7-9379-9067863EBC4A",
+                                            "order" : 0.33333333333333331
+                                          }
+                                        ],
+                                        "recordName" : "DA13667E-7B48-4E55-97D9-3C9ABDBEF934",
+                                        "order" : 0.16666666666666666
+                                      },
+                                      {
+                                        "count" : 1,
+                                        "name" : "new user",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "create new cloud database",
+                                            "progeny" : 0,
+                                            "recordName" : "DA4887BD-7766-42D4-B383-B4AD74CEB928",
+                                            "order" : 0.33333333333333331
+                                          }
+                                        ],
+                                        "recordName" : "1D78D0E1-7A39-4EB9-BF29-E924CAD70DAA",
+                                        "order" : 0.5
+                                      },
+                                      {
+                                        "count" : 1,
+                                        "name" : "new device",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "FULL FETCH (takes twenty seconds)",
+                                            "progeny" : 0,
+                                            "recordName" : "0F3C214E-B8FE-4E14-BFA9-07401386693C",
+                                            "order" : 0.33333333333333331
+                                          }
+                                        ],
+                                        "recordName" : "1642A365-9D27-4124-BAFB-F501CB13BCDF",
+                                        "order" : 0.66666666666666663
+                                      }
+                                    ],
+                                    "recordName" : "6C7B5C89-5871-4162-A395-37C7C2BB4C16",
+                                    "order" : 0.61538461538461542
+                                  },
+                                  {
+                                    "count" : 2,
+                                    "name" : "new: SYNC",
+                                    "progeny" : 9,
+                                    "children" : [
+                                      {
+                                        "count" : 2,
+                                        "name" : "SAVE",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "save",
+                                            "progeny" : 0,
+                                            "recordName" : "E1022A37-1EFF-487B-BCEF-0BE37E722727",
+                                            "order" : 0.25
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "destroy",
+                                            "progeny" : 0,
+                                            "recordName" : "BFF6B849-5C0D-4BFD-BEAD-2FD3EE06C977",
+                                            "order" : 0.5
+                                          }
+                                        ],
+                                        "recordName" : "6A6CB5DE-9346-41F1-BBFA-7ED0C7CCB86D",
+                                        "order" : 0.20000000000000001
+                                      },
+                                      {
+                                        "count" : 5,
+                                        "name" : "FETCH",
+                                        "progeny" : 2,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "traits",
+                                            "progeny" : 0,
+                                            "recordName" : "D4DEB94E-5868-4BDC-9C9D-15F3336D716D",
+                                            "order" : 0.14285714285714285
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "zones",
+                                            "progeny" : 0,
+                                            "recordName" : "B0A8B3C2-A368-4837-9215-3A1E26AB9B66",
+                                            "order" : 0.2857142857142857
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "deletes",
+                                            "progeny" : 0,
+                                            "recordName" : "8A5F0C9D-5ED9-4228-93FF-CEB38C5480EC",
+                                            "order" : 0.42857142857142855
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "no file, new device \/ user",
+                                            "progeny" : 0,
+                                            "recordName" : "341409D2-E0CE-4ED8-8D8B-92611A8F971D",
+                                            "order" : 0.5714285714285714
+                                          },
+                                          {
+                                            "count" : 2,
+                                            "name" : "push update from other device \/ user",
+                                            "progeny" : 0,
+                                            "children" : [
+                                              {
+                                                "count" : 0,
+                                                "name" : "parent",
+                                                "progeny" : 0,
+                                                "recordName" : "F7F18E02-CD19-400A-918D-9E0A17E9199B",
+                                                "order" : 0.20000000000000001
+                                              },
+                                              {
+                                                "count" : 0,
+                                                "name" : "children",
+                                                "progeny" : 0,
+                                                "recordName" : "586BFFCC-72F8-4A39-97B6-92E88BCB0D1A",
+                                                "order" : 0.40000000000000002
+                                              }
+                                            ],
+                                            "recordName" : "D079FC78-6625-4D8A-BA33-3B066C0DB502",
+                                            "order" : 0.71428571428571419
+                                          }
+                                        ],
+                                        "recordName" : "C6FBF32C-06B0-4020-8F2A-839F356747E9",
+                                        "order" : 0.40000000000000002
+                                      }
+                                    ],
+                                    "recordName" : "248962F2-B63B-4732-B5FE-20AC502080C4",
+                                    "order" : 0.69230769230769229
+                                  },
+                                  {
+                                    "count" : 1,
+                                    "name" : "new MERGE",
+                                    "progeny" : 0,
+                                    "children" : [
+                                      {
+                                        "count" : 0,
+                                        "name" : "only \"modified\" properties",
+                                        "progeny" : 0,
+                                        "recordName" : "FE4C0CCF-3438-4BB6-832C-D89DE2FCE660",
                                         "order" : 0.33333333333333331
                                       }
                                     ],
-                                    "recordName" : "8547989D-E3D2-4059-AE65-388ABF906F34",
-                                    "order" : 0.5
+                                    "recordName" : "92647A0E-0FA2-485D-A7D3-D1E7142DC21D",
+                                    "order" : 0.76923076923076927
+                                  },
+                                  {
+                                    "count" : 2,
+                                    "name" : "new NEED: \"merge before edit\"",
+                                    "progeny" : 3,
+                                    "children" : [
+                                      {
+                                        "count" : 1,
+                                        "name" : "apply to everything visible",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "always replace client with cloud version",
+                                            "progeny" : 0,
+                                            "recordName" : "C5B5E7C8-2AE1-4F45-9456-9659A19C138A",
+                                            "order" : 0.33333333333333331
+                                          }
+                                        ],
+                                        "recordName" : "C5160D8A-BF2B-426D-9C1B-2CC08914412A",
+                                        "order" : 0.25
+                                      },
+                                      {
+                                        "count" : 2,
+                                        "name" : "overwriting a zone HAPPENS",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "yes, and this is VERY BAD",
+                                            "progeny" : 0,
+                                            "recordName" : "CB7D7557-DD0C-45E0-910B-D0867704F62E",
+                                            "order" : 0.16666666666666666
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "need a merge policy for EVERY SAVE",
+                                            "progeny" : 0,
+                                            "recordName" : "12BDA8B2-AEA7-4D47-9D27-ED8837556966",
+                                            "order" : 0.33333333333333331
+                                          }
+                                        ],
+                                        "recordName" : "8547989D-E3D2-4059-AE65-388ABF906F34",
+                                        "order" : 0.5
+                                      }
+                                    ],
+                                    "recordName" : "93D9E5A2-53C5-4ACC-9B16-4D09CAFB07F9",
+                                    "order" : 0.84615384615384626
                                   }
                                 ],
-                                "recordName" : "93D9E5A2-53C5-4ACC-9B16-4D09CAFB07F9",
-                                "order" : 0.84615384615384626
-                              }
-                            ],
-                            "recordName" : "E7BA4475-0658-4CDF-A140-BF86EC3D5461",
-                            "order" : 0.33333333333333331
-                          },
-                          {
-                            "count" : 0,
-                            "name" : "test",
-                            "needs" : "unorphan",
-                            "recordName" : "1A16FBB9-8110-4A9D-AA3F-A1B4310F0D00",
-                            "order" : 0.44444444444444442
-                          },
-                          {
-                            "count" : 0,
-                            "name" : "using: to start a great new idea -> where do you put stuff? how do you not lose your place?",
-                            "attributes" : "c",
-                            "progeny" : 0,
-                            "recordName" : "7C112ED7-6917-4D51-AA35-33B88A8828D3",
-                            "order" : 0.55555555555555558
-                          },
-                          {
-                            "order" : 0.66666666666666663,
-                            "name" : "better strategy for write interrupting write",
-                            "attributes" : "",
-                            "children" : [
-                              {
-                                "count" : 0,
-                                "name" : "cancel and start over",
-                                "attributes" : "c",
-                                "progeny" : 0,
-                                "recordName" : "2B636224-F8B0-499F-A62D-5C8EE5FA2302",
+                                "recordName" : "E7BA4475-0658-4CDF-A140-BF86EC3D5461",
                                 "order" : 0.33333333333333331
-                              }
-                            ],
-                            "count" : 1,
-                            "progeny" : 0,
-                            "recordName" : "F600B6B8-C4FF-4FF4-94F2-656453C8BC6A",
-                            "color" : "red:0.6338172411,blue:0.4425406133,green:0.01410813476"
-                          },
-                          {
-                            "count" : 1,
-                            "name" : "dialog to use cloud",
-                            "progeny" : 0,
-                            "children" : [
-                              {
-                                "count" : 0,
-                                "name" : "explain it slows things down",
-                                "progeny" : 0,
-                                "recordName" : "92ED962A-EEB4-4580-9F28-162B12BF6937",
-                                "order" : 0.33333333333333331
-                              }
-                            ],
-                            "recordName" : "154C3570-FFF0-46B5-BB03-C48A6003D9B4",
-                            "order" : 0.77777777777777768
-                          }
-                        ],
-                        "recordName" : "FF5397CA-2807-4706-80C0-F0C8E1A1A0AC",
-                        "order" : 0.5
-                      },
-                      {
-                        "recordName" : "D266230B-7970-4D69-B472-8C33128D6AB1",
-                        "name" : "performance",
-                        "attributes" : "c",
-                        "children" : [
-                          {
-                            "count" : 6,
-                            "name" : "symptoms",
-                            "progeny" : 3,
-                            "children" : [
-                              {
-                                "count" : 0,
-                                "name" : "traits are ALWAYS being fetched",
-                                "progeny" : 0,
-                                "recordName" : "B57E9FB1-B75D-44EA-8A6C-4798B31A660E",
-                                "order" : 0.10000000000000001
                               },
                               {
-                                "count" : 1,
-                                "name" : "BAD: OPTION DELETE gHere",
+                                "count" : 0,
+                                "name" : "test",
                                 "progeny" : 0,
-                                "children" : [
-                                  {
-                                    "count" : 0,
-                                    "name" : "invokes hundreds of operations",
-                                    "progeny" : 0,
-                                    "recordName" : "24C1B350-B36C-4FE2-AEE1-E04654F883A3",
-                                    "order" : 0.33333333333333331
-                                  }
-                                ],
-                                "recordName" : "0260E273-7645-4301-A45D-C79D10191CA7",
-                                "order" : 0.20000000000000001
-                              },
-                              {
-                                "count" : 1,
-                                "name" : "delete is slow",
-                                "progeny" : 0,
-                                "children" : [
-                                  {
-                                    "count" : 0,
-                                    "name" : "not update gui soon enough",
-                                    "progeny" : 0,
-                                    "recordName" : "2C3B0045-752B-4792-BF3D-69713A1CE222",
-                                    "order" : 0.33333333333333331
-                                  }
-                                ],
-                                "recordName" : "6E6B1F3E-F2D9-47BD-9BF8-1539DB546502",
-                                "order" : 0.30000000000000004
+                                "recordName" : "1A16FBB9-8110-4A9D-AA3F-A1B4310F0D00",
+                                "order" : 0.44444444444444442
                               },
                               {
                                 "children" : [
                                   {
-                                    "count" : 0,
-                                    "name" : "j-k indexing",
+                                    "count" : 1,
+                                    "name" : "open file dialog",
                                     "progeny" : 0,
-                                    "recordName" : "416ABD37-CC90-415B-B6CE-291F19EDB4A5",
+                                    "children" : [
+                                      {
+                                        "count" : 0,
+                                        "name" : "place inside (and focus on) lost and found of current database id",
+                                        "progeny" : 0,
+                                        "recordName" : "271ECF2C-ED61-4D84-817C-93AF7ED1E4F8",
+                                        "order" : 0.25
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "GUID conflict?",
+                                        "progeny" : 0,
+                                        "recordName" : "2B4F2A6D-AB42-434B-90C2-C8D4F2013525",
+                                        "order" : 0.5
+                                      }
+                                    ],
+                                    "recordName" : "0A88557D-47CE-410F-BE42-628D83E9A573",
                                     "order" : 0.33333333333333331
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "save to file dialog",
+                                    "progeny" : 0,
+                                    "recordName" : "263C60AB-6FBA-4D27-A9AA-2ADB52F46E71",
+                                    "order" : 0.66666666666666663
                                   }
                                 ],
-                                "name" : "rubberband is jerky",
-                                "count" : 1,
-                                "owner" : "_331fc129da5bed513a4026e9bcf56dba",
-                                "progeny" : 0,
-                                "recordName" : "B87768F5-44DE-41BE-815C-8B154E2BA4B2",
-                                "order" : 0.40000000000000002
-                              },
-                              {
-                                "count" : 0,
-                                "name" : "go out from here is slow",
-                                "progeny" : 0,
-                                "recordName" : "9026566C-6717-4307-AD64-8A8A8EDB1CB7",
+                                "name" : "read\/write focus subgraph file",
+                                "attributes" : "",
+                                "count" : 2,
+                                "progeny" : 1,
+                                "recordName" : "E3A7CCB4-C916-40EA-9907-FEB270652E3D",
                                 "order" : 0.5
                               },
                               {
                                 "count" : 0,
-                                "name" : "move up or down slow but does not require any iCloud operations",
+                                "name" : "using: to start a great new idea -> where do you put stuff? how do you not lose your place?",
+                                "attributes" : "c",
                                 "progeny" : 0,
-                                "recordName" : "1F2F8B3A-2CE2-4BF4-90E9-CBF5B52B17B6",
+                                "recordName" : "7C112ED7-6917-4D51-AA35-33B88A8828D3",
+                                "order" : 0.625
+                              },
+                              {
+                                "order" : 0.75,
+                                "name" : "better strategy for write interrupting write",
+                                "attributes" : "",
+                                "children" : [
+                                  {
+                                    "count" : 0,
+                                    "name" : "cancel and start over",
+                                    "attributes" : "c",
+                                    "progeny" : 0,
+                                    "recordName" : "2B636224-F8B0-499F-A62D-5C8EE5FA2302",
+                                    "order" : 0.33333333333333331
+                                  }
+                                ],
+                                "count" : 1,
+                                "progeny" : 0,
+                                "recordName" : "F600B6B8-C4FF-4FF4-94F2-656453C8BC6A",
+                                "color" : "red:0.6338172411,blue:0.4425406133,green:0.01410813476"
+                              },
+                              {
+                                "count" : 1,
+                                "name" : "dialog to use cloud",
+                                "progeny" : 0,
+                                "children" : [
+                                  {
+                                    "count" : 0,
+                                    "name" : "explain it slows things down",
+                                    "progeny" : 0,
+                                    "recordName" : "21B13E67-645F-491C-86DE-C567B7372ECB",
+                                    "order" : 0.33333333333333331
+                                  }
+                                ],
+                                "recordName" : "8416F8BC-0FB0-4762-B58F-629621776DE0",
+                                "order" : 0.77777777777777768
+                              },
+                              {
+                                "count" : 1,
+                                "name" : "dialog to use cloud",
+                                "progeny" : 0,
+                                "children" : [
+                                  {
+                                    "count" : 0,
+                                    "name" : "explain it slows things down",
+                                    "progeny" : 0,
+                                    "recordName" : "92ED962A-EEB4-4580-9F28-162B12BF6937",
+                                    "order" : 0.33333333333333331
+                                  }
+                                ],
+                                "recordName" : "154C3570-FFF0-46B5-BB03-C48A6003D9B4",
+                                "order" : 0.77777777777777768
+                              },
+                              {
+                                "children" : [
+                                  {
+                                    "count" : 0,
+                                    "name" : "resources",
+                                    "progeny" : 0,
+                                    "recordName" : "068B2547-F8E8-4DD2-8056-9F7B2002F146",
+                                    "order" : 0.20000000000000001
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "launch from internal file",
+                                    "progeny" : 0,
+                                    "recordName" : "7732EE9B-81E2-4AB9-9B51-08C923CB7BB0",
+                                    "order" : 0.40000000000000002
+                                  },
+                                  {
+                                    "count" : 3,
+                                    "name" : "create folder during app build",
+                                    "progeny" : 0,
+                                    "children" : [
+                                      {
+                                        "count" : 0,
+                                        "name" : "everyone write permission",
+                                        "progeny" : 0,
+                                        "recordName" : "B8829B02-6DA5-4657-858A-B43B3618913E",
+                                        "order" : 0.20000000000000001
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : " SPACE -> edit has no text",
+                                        "progeny" : 0,
+                                        "recordName" : "DA624FF3-26BE-4505-B7F4-FF970743B5D5",
+                                        "order" : 0.42857142857142855
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "on first launch",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "i.e., when all everyone.* files are all missing",
+                                            "progeny" : 0,
+                                            "recordName" : "D74EBC89-DBC9-40EB-8F18-FE8D4BFAF4E6",
+                                            "order" : 0.25
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "copy everyone graph file",
+                                            "progeny" : 0,
+                                            "recordName" : "92D24CD5-00D2-4803-9467-81A24868DCEA",
+                                            "order" : 0.5
+                                          }
+                                        ],
+                                        "recordName" : "F0BE5CC7-4F6B-453A-89EC-7516417C2B0F",
+                                        "order" : 0.60000000000000009
+                                      }
+                                    ],
+                                    "recordName" : "AA74709F-1C1F-40AD-9093-0E117B9B950B",
+                                    "order" : 0.60000000000000009
+                                  }
+                                ],
+                                "name" : "ship everyone.graph file inside app",
+                                "attributes" : "",
+                                "count" : 3,
+                                "progeny" : 3,
+                                "recordName" : "B5ECFC62-48B8-4991-96E2-86AF8B482801",
+                                "order" : 0.82352941176470584
+                              }
+                            ],
+                            "recordName" : "FF5397CA-2807-4706-80C0-F0C8E1A1A0AC",
+                            "order" : 0.5
+                          },
+                          {
+                            "recordName" : "D266230B-7970-4D69-B472-8C33128D6AB1",
+                            "name" : "performance",
+                            "attributes" : "c",
+                            "children" : [
+                              {
+                                "count" : 6,
+                                "name" : "symptoms",
+                                "progeny" : 3,
+                                "children" : [
+                                  {
+                                    "count" : 0,
+                                    "name" : "traits are ALWAYS being fetched",
+                                    "progeny" : 0,
+                                    "recordName" : "B57E9FB1-B75D-44EA-8A6C-4798B31A660E",
+                                    "order" : 0.10000000000000001
+                                  },
+                                  {
+                                    "count" : 1,
+                                    "name" : "BAD: OPTION DELETE gHere",
+                                    "progeny" : 0,
+                                    "children" : [
+                                      {
+                                        "count" : 0,
+                                        "name" : "invokes hundreds of operations",
+                                        "progeny" : 0,
+                                        "recordName" : "24C1B350-B36C-4FE2-AEE1-E04654F883A3",
+                                        "order" : 0.33333333333333331
+                                      }
+                                    ],
+                                    "recordName" : "0260E273-7645-4301-A45D-C79D10191CA7",
+                                    "order" : 0.20000000000000001
+                                  },
+                                  {
+                                    "count" : 1,
+                                    "name" : "delete is slow",
+                                    "progeny" : 0,
+                                    "children" : [
+                                      {
+                                        "count" : 0,
+                                        "name" : "not update gui soon enough",
+                                        "progeny" : 0,
+                                        "recordName" : "2C3B0045-752B-4792-BF3D-69713A1CE222",
+                                        "order" : 0.33333333333333331
+                                      }
+                                    ],
+                                    "recordName" : "6E6B1F3E-F2D9-47BD-9BF8-1539DB546502",
+                                    "order" : 0.30000000000000004
+                                  },
+                                  {
+                                    "children" : [
+                                      {
+                                        "count" : 0,
+                                        "name" : "j-k indexing",
+                                        "progeny" : 0,
+                                        "recordName" : "416ABD37-CC90-415B-B6CE-291F19EDB4A5",
+                                        "order" : 0.33333333333333331
+                                      }
+                                    ],
+                                    "name" : "rubberband is jerky",
+                                    "count" : 1,
+                                    "owner" : "_331fc129da5bed513a4026e9bcf56dba",
+                                    "progeny" : 0,
+                                    "recordName" : "B87768F5-44DE-41BE-815C-8B154E2BA4B2",
+                                    "order" : 0.40000000000000002
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "go out from here is slow",
+                                    "progeny" : 0,
+                                    "recordName" : "9026566C-6717-4307-AD64-8A8A8EDB1CB7",
+                                    "order" : 0.5
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "move up or down slow but does not require any iCloud operations",
+                                    "progeny" : 0,
+                                    "recordName" : "1F2F8B3A-2CE2-4BF4-90E9-CBF5B52B17B6",
+                                    "order" : 0.60000000000000009
+                                  }
+                                ],
+                                "recordName" : "4BE83D2D-74F3-4513-9CB1-96E1157032CD",
+                                "order" : 0.20000000000000001
+                              },
+                              {
+                                "count" : 3,
+                                "name" : "solutions",
+                                "progeny" : 0,
+                                "children" : [
+                                  {
+                                    "count" : 0,
+                                    "name" : "signalFor BOTH before and after receiving response from cloud",
+                                    "progeny" : 0,
+                                    "recordName" : "6CFEBF74-F070-4B7E-A37D-0B72415F74D6",
+                                    "order" : 0.16666666666666666
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "don't lock operations manager if push only",
+                                    "progeny" : 0,
+                                    "recordName" : "6888EF74-16F3-4807-BB6B-103EF9725976",
+                                    "order" : 0.33333333333333331
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "NOT SHOW SETTINGS until further in launch ???",
+                                    "progeny" : 0,
+                                    "recordName" : "9B94DBF3-34A0-47C4-AF99-514E3AB3E2D3",
+                                    "order" : 0.42857142857142855
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "only not move selection in until after fetch if no children yet in memory",
+                                    "progeny" : 0,
+                                    "recordName" : "5ABA1E3F-CBA0-4D7F-8547-8F6A33AE359B",
+                                    "order" : 0.5
+                                  }
+                                ],
+                                "recordName" : "BAB680BA-4489-43C9-8471-99589E3CB646",
+                                "order" : 0.40000000000000002
+                              },
+                              {
+                                "count" : 5,
+                                "name" : "tasks",
+                                "progeny" : 0,
+                                "children" : [
+                                  {
+                                    "count" : 0,
+                                    "name" : "save + write AFTER redraw",
+                                    "progeny" : 0,
+                                    "recordName" : "17C7735F-F6B2-4072-850D-992FE0B165B2",
+                                    "order" : 0.083333333333333329
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "speed up redraw",
+                                    "progeny" : 0,
+                                    "recordName" : "E4BE74A8-6061-40B6-BD7F-B159F66DC21A",
+                                    "order" : 0.16666666666666666
+                                  }
+                                ],
+                                "recordName" : "D3C87B2F-8D00-44A6-A10C-7E6E269E5C6D",
                                 "order" : 0.60000000000000009
                               }
                             ],
-                            "recordName" : "4BE83D2D-74F3-4513-9CB1-96E1157032CD",
-                            "order" : 0.20000000000000001
-                          },
+                            "access" : 1,
+                            "count" : 2,
+                            "owner" : "_331fc129da5bed513a4026e9bcf56dba",
+                            "progeny" : 17,
+                            "order" : 0.66666666666666663,
+                            "color" : "red:0.7155288423,blue:0.5441199839,green:0.2979248817"
+                          }
+                        ],
+                        "recordName" : "DBBAA04E-09E2-48CA-A308-C70DB8B2ED51",
+                        "order" : 0.10000000000000001
+                      },
+                      {
+                        "count" : 0,
+                        "name" : "latest bugs",
+                        "progeny" : 3,
+                        "children" : [
                           {
-                            "count" : 4,
-                            "name" : "solutions",
+                            "count" : 3,
+                            "name" : "launch",
                             "progeny" : 0,
                             "children" : [
                               {
                                 "count" : 0,
-                                "name" : "signalFor both before and after receiving response from cloud",
+                                "name" : "no files, no internet -> no favorites & no root of favorites",
                                 "progeny" : 0,
-                                "recordName" : "6CFEBF74-F070-4B7E-A37D-0B72415F74D6",
-                                "order" : 0.14285714285714285
+                                "recordName" : "7D84D414-30C8-4743-A1F2-8C0BC9BB056C",
+                                "order" : 0.33333333333333331
                               },
                               {
                                 "count" : 0,
-                                "name" : "don't lock operations manager if push only",
+                                "name" : "discard files",
                                 "progeny" : 0,
-                                "recordName" : "6888EF74-16F3-4807-BB6B-103EF9725976",
-                                "order" : 0.2857142857142857
+                                "children" : [
+                                  {
+                                    "count" : 0,
+                                    "name" : "all favorites are lost",
+                                    "progeny" : 0,
+                                    "children" : [
+                                      {
+                                        "count" : 0,
+                                        "name" : "solution: eliminate .favoritesID records manager (obsolete)",
+                                        "progeny" : 0,
+                                        "recordName" : "19F4DFE4-4088-45C1-9A9C-7616B20E764C",
+                                        "order" : 0.16666666666666666
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "two favorites roots",
+                                        "progeny" : 0,
+                                        "children" : [
+                                          {
+                                            "count" : 0,
+                                            "name" : "one in .favoritesID",
+                                            "progeny" : 0,
+                                            "recordName" : "374E0AAD-B9BA-40D3-86B7-AFA36F4CEC75",
+                                            "order" : 0.25
+                                          },
+                                          {
+                                            "count" : 0,
+                                            "name" : "one in .mineID",
+                                            "progeny" : 0,
+                                            "recordName" : "79A4DF17-BC1B-4590-B755-88E557394290",
+                                            "order" : 0.5
+                                          }
+                                        ],
+                                        "recordName" : "3FF5939C-9CE7-41F2-BA8D-279A80D559FD",
+                                        "order" : 0.33333333333333331
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "favorite zone is fetched AFTER its children, so former children are lost",
+                                        "progeny" : 0,
+                                        "recordName" : "0768D000-37FA-45A7-A055-6893159CB47A",
+                                        "order" : 0.5
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "even though they ARE fetched by fetch all",
+                                        "progeny" : 0,
+                                        "recordName" : "31391FBE-632E-4A32-9FBB-42A96B7C697B",
+                                        "order" : 0.66666666666666663
+                                      }
+                                    ],
+                                    "recordName" : "547B6AC9-A6AD-4F27-AFD6-EDAD5FF1364C",
+                                    "order" : 0.25
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "use a root favorite, edit its name -> favorite is unchanged",
+                                    "progeny" : 0,
+                                    "recordName" : "FB9C2EAD-A2E9-41E5-92A2-E6439B80D297",
+                                    "order" : 0.5
+                                  }
+                                ],
+                                "recordName" : "E91D28C5-546C-4B29-8DA4-01B5487E925B",
+                                "order" : 0.5
                               },
                               {
                                 "count" : 0,
-                                "name" : "NOT SHOW SETTINGS until further in launch ???",
+                                "name" : "crash",
                                 "progeny" : 0,
-                                "recordName" : "9B94DBF3-34A0-47C4-AF99-514E3AB3E2D3",
-                                "order" : 0.42857142857142855
-                              },
-                              {
-                                "count" : 0,
-                                "name" : "only not move selection in until after fetch if no children yet in memory",
-                                "progeny" : 0,
-                                "recordName" : "5ABA1E3F-CBA0-4D7F-8547-8F6A33AE359B",
-                                "order" : 0.5714285714285714
+                                "children" : [
+                                  {
+                                    "count" : 0,
+                                    "name" : "sometimes root is not established before establish here is invoked",
+                                    "progeny" : 0,
+                                    "recordName" : "C9BDB907-BF4B-4FFC-B11A-37E10536D063",
+                                    "order" : 0.25
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "disconnect ethernet cable",
+                                    "progeny" : 0,
+                                    "recordName" : "868DD751-04C9-4E0D-B571-9857707BEE38",
+                                    "order" : 0.5
+                                  }
+                                ],
+                                "recordName" : "9B2C5981-4912-4924-B06B-5E391223DFD2",
+                                "order" : 0.66666666666666663
                               }
                             ],
-                            "recordName" : "BAB680BA-4489-43C9-8471-99589E3CB646",
-                            "order" : 0.40000000000000002
+                            "recordName" : "9405B51B-3EFE-4933-A4D5-83366C479975",
+                            "order" : 0.10000000000000001
+                          },
+                          {
+                            "count" : 0,
+                            "name" : "----------- older -----------",
+                            "attributes" : "c",
+                            "progeny" : 0,
+                            "recordName" : "C45022B1-4FB9-4771-8DB8-79CBB46FAEAD",
+                            "order" : 0.20000000000000001
+                          },
+                          {
+                            "count" : 0,
+                            "name" : "BUG: focus go back\/forward",
+                            "progeny" : 0,
+                            "children" : [
+                              {
+                                "count" : 0,
+                                "name" : "UI for focus stack",
+                                "attributes" : "",
+                                "progeny" : 0,
+                                "recordName" : "22BBDF60-95AB-468C-ACD7-6AD16186DC57",
+                                "order" : 0.33333333333333331
+                              }
+                            ],
+                            "recordName" : "C897291A-CC17-4FFC-8DE0-F08A95B8DFC2",
+                            "order" : 0.30000000000000004
+                          },
+                          {
+                            "count" : 0,
+                            "name" : "arrow",
+                            "progeny" : 0,
+                            "children" : [
+                              {
+                                "count" : 0,
+                                "name" : "BUG: UP is SLOOOOOW",
+                                "progeny" : 0,
+                                "recordName" : "2BD7795A-8A57-478B-96CC-4B71A8FBFE3E",
+                                "order" : 0.25
+                              },
+                              {
+                                "count" : 0,
+                                "name" : "BUG: select favorites root, RIGHT -> uses graph's here",
+                                "progeny" : 0,
+                                "recordName" : "A59B39DD-4D62-482F-9C74-D63CF0CDA833",
+                                "order" : 0.5
+                              }
+                            ],
+                            "recordName" : "1BCA0691-12AE-4D6E-8B04-14042C5E9865",
+                            "order" : 0.5
+                          },
+                          {
+                            "count" : 0,
+                            "name" : "BUG: undo of delete crashes -> group undo is nil",
+                            "progeny" : 0,
+                            "recordName" : "BED394F8-F52C-4A6A-BA22-EEB7FF5A2A00",
+                            "order" : 0.60000000000000009
+                          },
+                          {
+                            "count" : 0,
+                            "name" : "BUG: while editing, click another drag dot -> both are selected",
+                            "progeny" : 0,
+                            "recordName" : "F2DFA228-CA0D-4521-B26A-AB16861D56DD",
+                            "order" : 0.80000000000000004
                           }
                         ],
-                        "access" : 1,
-                        "count" : 2,
-                        "owner" : "_331fc129da5bed513a4026e9bcf56dba",
-                        "progeny" : 13,
-                        "order" : 0.66666666666666663,
-                        "color" : "red:0.7155288423,blue:0.5441199839,green:0.2979248817"
+                        "recordName" : "7069251A-6978-459C-A094-A8C9B710B7C3",
+                        "order" : 0.20000000000000001
+                      },
+                      {
+                        "count" : 0,
+                        "name" : "----------- YIKES! -----------",
+                        "attributes" : "c",
+                        "progeny" : 0,
+                        "recordName" : "A3980214-B9FA-468E-A88A-CD724ED021C0",
+                        "order" : 0.5
+                      },
+                      {
+                        "count" : 0,
+                        "name" : "sometimes launch to empty screen !!!!!",
+                        "attributes" : "c",
+                        "progeny" : 0,
+                        "recordName" : "6023BAA8-5516-48EE-8390-941068D2FCA3",
+                        "order" : 0.70000000000000007
                       }
                     ],
+                    "name" : "vital bugs",
+                    "access" : 1,
+                    "count" : 7,
+                    "owner" : "_331fc129da5bed513a4026e9bcf56dba",
+                    "progeny" : 115,
                     "recordName" : "564C6EDB-2275-462C-B97E-A5103767A5F2",
                     "order" : 0.090909090909090912
                   },
                   {
-                    "count" : 0,
                     "name" : "----------- next -----------",
                     "attributes" : "c",
+                    "access" : 1,
+                    "count" : 0,
+                    "owner" : "_331fc129da5bed513a4026e9bcf56dba",
                     "progeny" : 0,
                     "recordName" : "653566C4-FB92-4514-913D-F161D43473BE",
                     "order" : 0.18181818181818182
                   },
                   {
-                    "count" : 13,
-                    "name" : "soon",
-                    "progeny" : 5,
                     "children" : [
                       {
                         "count" : 0,
@@ -4985,13 +5686,15 @@
                         "order" : 0.8571428571428571
                       }
                     ],
+                    "name" : "soon",
+                    "access" : 1,
+                    "count" : 13,
+                    "owner" : "_331fc129da5bed513a4026e9bcf56dba",
+                    "progeny" : 5,
                     "recordName" : "38C39F55-B0D9-4D72-BCA7-B9BB8E265DB2",
                     "order" : 0.27272727272727271
                   },
                   {
-                    "count" : 2,
-                    "name" : "window",
-                    "progeny" : 0,
                     "children" : [
                       {
                         "count" : 0,
@@ -5008,13 +5711,15 @@
                         "order" : 0.60000000000000009
                       }
                     ],
+                    "name" : "window",
+                    "access" : 1,
+                    "count" : 2,
+                    "owner" : "_331fc129da5bed513a4026e9bcf56dba",
+                    "progeny" : 0,
                     "recordName" : "A226FC55-E8FF-4BF8-A03F-17E2397A2438",
                     "order" : 0.36363636363636365
                   },
                   {
-                    "count" : 5,
-                    "name" : "search",
-                    "progeny" : 1,
                     "children" : [
                       {
                         "count" : 1,
@@ -5061,13 +5766,20 @@
                         "order" : 0.71428571428571419
                       }
                     ],
+                    "name" : "search",
+                    "access" : 1,
+                    "count" : 5,
+                    "owner" : "_331fc129da5bed513a4026e9bcf56dba",
+                    "progeny" : 1,
                     "recordName" : "C3FD6CA1-99A8-4532-AA50-32B19B354CE6",
                     "order" : 0.45454545454545459
                   },
                   {
-                    "count" : 0,
                     "name" : "----------- later -----------",
                     "attributes" : "c",
+                    "access" : 1,
+                    "count" : 0,
+                    "owner" : "_331fc129da5bed513a4026e9bcf56dba",
                     "progeny" : 0,
                     "recordName" : "A02088B6-E62E-4C8A-BECD-63858FCAB96B",
                     "order" : 0.54545454545454541
@@ -5128,22 +5840,21 @@
                         "order" : 0.75
                       }
                     ],
+                    "access" : 1,
                     "count" : 6,
+                    "owner" : "_331fc129da5bed513a4026e9bcf56dba",
                     "progeny" : 1,
                     "recordName" : "7FA2E062-B121-4140-94B7-ED898E575128",
                     "color" : "red:0.838574409484863,blue:0.0,green:0.401674281090719"
                   },
                   {
-                    "count" : 5,
-                    "name" : "obscure",
-                    "progeny" : 21,
                     "children" : [
                       {
                         "count" : 0,
                         "name" : "click on text selects multiple <- counts show as numbers",
                         "progeny" : 0,
                         "recordName" : "3EA576BA-47DE-4F73-AE7D-A166CA39FBB8",
-                        "order" : 0.14285714285714285
+                        "order" : 0.125
                       },
                       {
                         "children" : [
@@ -5175,7 +5886,7 @@
                         "owner" : "_331fc129da5bed513a4026e9bcf56dba",
                         "progeny" : 0,
                         "recordName" : "E1FB8EA4-C227-48A7-A400-7EC4445B78DC",
-                        "order" : 0.2857142857142857
+                        "order" : 0.25
                       },
                       {
                         "count" : 4,
@@ -5276,7 +5987,7 @@
                           }
                         ],
                         "recordName" : "A0E8A837-8E7E-4C91-8C4D-370DB7857F07",
-                        "order" : 0.42857142857142855
+                        "order" : 0.375
                       },
                       {
                         "count" : 1,
@@ -5292,7 +6003,7 @@
                           }
                         ],
                         "recordName" : "191AB1DA-0F8C-42B7-86A1-5EF22B395F24",
-                        "order" : 0.5714285714285714
+                        "order" : 0.5
                       },
                       {
                         "count" : 1,
@@ -5338,16 +6049,18 @@
                           }
                         ],
                         "recordName" : "0CB9A5AF-1BA1-44A9-A8F9-1127BC4D9CFF",
-                        "order" : 0.71428571428571419
+                        "order" : 0.625
                       }
                     ],
+                    "name" : "obscure",
+                    "access" : 1,
+                    "count" : 5,
+                    "owner" : "_331fc129da5bed513a4026e9bcf56dba",
+                    "progeny" : 21,
                     "recordName" : "ABC9D17F-5BB2-47C6-8CC2-C59C8100D8E7",
                     "order" : 0.72727272727272729
                   },
                   {
-                    "count" : 5,
-                    "name" : "tabled",
-                    "progeny" : 11,
                     "children" : [
                       {
                         "count" : 0,
@@ -5474,6 +6187,11 @@
                         "order" : 0.75
                       }
                     ],
+                    "name" : "tabled",
+                    "access" : 1,
+                    "count" : 5,
+                    "owner" : "_331fc129da5bed513a4026e9bcf56dba",
+                    "progeny" : 11,
                     "recordName" : "C3AE1E64-2FF8-4AB9-BDB3-5115D15E7C6C",
                     "order" : 0.81818181818181823
                   }
@@ -5481,7 +6199,7 @@
                 "access" : 1,
                 "count" : 9,
                 "owner" : "_331fc129da5bed513a4026e9bcf56dba",
-                "progeny" : 193,
+                "progeny" : 197,
                 "recordName" : "A9E9904C-24E5-411E-872D-82301C11A7C5",
                 "color" : "red:0.838574409484863,blue:0.660827494336615,green:0.0204551723052754"
               },
@@ -5559,12 +6277,12 @@
                     "owner" : "_331fc129da5bed513a4026e9bcf56dba",
                     "progeny" : 0,
                     "recordName" : "DE142F10-CE19-40A0-8BB1-D8594C9B5EF2",
-                    "order" : 0.25
+                    "order" : 0.18181818181818182
                   }
                 ],
                 "name" : "generic bugs",
-                "access" : 1,
-                "count" : 1,
+                "access" : 2,
+                "count" : 0,
                 "owner" : "_331fc129da5bed513a4026e9bcf56dba",
                 "progeny" : 0,
                 "recordName" : "13617049-931F-4353-A91C-8F031953101F",
@@ -5980,7 +6698,7 @@
                 "children" : [
                   {
                     "count" : 8,
-                    "name" : "done, woohoo!",
+                    "name" : "previously done",
                     "progeny" : 0,
                     "children" : [
                       {
@@ -6046,7 +6764,7 @@
                   {
                     "count" : 5,
                     "name" : "builds",
-                    "progeny" : 296,
+                    "progeny" : 321,
                     "children" : [
                       {
                         "count" : 11,
@@ -6388,7 +7106,7 @@
                           }
                         ],
                         "recordName" : "7F861C4C-94B0-4083-B18A-212C170D214E",
-                        "order" : 0.14285714285714285
+                        "order" : 0.10000000000000001
                       },
                       {
                         "count" : 21,
@@ -6650,7 +7368,7 @@
                           }
                         ],
                         "recordName" : "074182E7-5977-4717-A2AF-4DBD888ACC7F",
-                        "order" : 0.2857142857142857
+                        "order" : 0.20000000000000001
                       },
                       {
                         "count" : 10,
@@ -6820,7 +7538,7 @@
                           }
                         ],
                         "recordName" : "3D71D40D-3031-46C1-BBA4-97E626637AB6",
-                        "order" : 0.42857142857142855
+                        "order" : 0.30000000000000004
                       },
                       {
                         "count" : 18,
@@ -7518,12 +8236,12 @@
                           }
                         ],
                         "recordName" : "DC32B246-DC5F-4817-92DD-32DBB181885A",
-                        "order" : 0.5714285714285714
+                        "order" : 0.40000000000000002
                       },
                       {
                         "count" : 12,
                         "name" : "1044",
-                        "progeny" : 97,
+                        "progeny" : 118,
                         "children" : [
                           {
                             "count" : 4,
@@ -7561,21 +8279,21 @@
                               }
                             ],
                             "recordName" : "35DB2BA8-0270-465D-A372-785496A4510C",
-                            "order" : 0.055555555555555552
+                            "order" : 0.058823529411764705
                           },
                           {
                             "count" : 0,
                             "name" : "enlarge name of target of favorite -> favorite's name is clipped",
                             "progeny" : 0,
                             "recordName" : "346EB41A-795B-44DA-A7A7-F266895CEAD1",
-                            "order" : 0.1111111111111111
+                            "order" : 0.11764705882352941
                           },
                           {
                             "count" : 0,
                             "name" : "editing a hyperlink, tap background -> text incorrect",
                             "progeny" : 0,
                             "recordName" : "D7785D41-276F-4A5D-915D-68C8ADB7B6E0",
-                            "order" : 0.16666666666666666
+                            "order" : 0.1764705882352941
                           },
                           {
                             "children" : [
@@ -8163,28 +8881,28 @@
                             "count" : 4,
                             "progeny" : 70,
                             "recordName" : "CBC857E6-D9EE-479A-A70E-E3BBFADDF930",
-                            "order" : 0.22222222222222221
+                            "order" : 0.23529411764705882
                           },
                           {
                             "count" : 0,
                             "name" : "where do permanent deletes go in file?",
                             "progeny" : 0,
                             "recordName" : "1F5CA40C-81C9-4B67-A6BC-808AF372725C",
-                            "order" : 0.27777777777777779
+                            "order" : 0.29411764705882354
                           },
                           {
                             "count" : 0,
                             "name" : "local, permanently delete -> marked in file?",
                             "progeny" : 0,
                             "recordName" : "A47BC252-C685-4C19-8521-D46303B5A4AB",
-                            "order" : 0.33333333333333331
+                            "order" : 0.3529411764705882
                           },
                           {
                             "count" : 0,
                             "name" : "determine apple id with ethernet turned off",
                             "progeny" : 0,
                             "recordName" : "D303E00C-F383-4662-89B7-FD7EC0119ACD",
-                            "order" : 0.38888888888888884
+                            "order" : 0.41176470588235292
                           },
                           {
                             "count" : 1,
@@ -8200,7 +8918,7 @@
                               }
                             ],
                             "recordName" : "CC444BA0-8550-4B2F-918B-3EB4ED2665CA",
-                            "order" : 0.44444444444444442
+                            "order" : 0.47058823529411764
                           },
                           {
                             "count" : 4,
@@ -8283,12 +9001,12 @@
                               }
                             ],
                             "recordName" : "19E9B754-D112-4999-BECF-9B92C546A0A8",
-                            "order" : 0.5
+                            "order" : 0.52941176470588236
                           },
                           {
                             "count" : 2,
                             "name" : "too many saves",
-                            "progeny" : 0,
+                            "progeny" : 4,
                             "children" : [
                               {
                                 "count" : 0,
@@ -8368,24 +9086,25 @@
                               }
                             ],
                             "recordName" : "6C8181A0-767F-4856-B3D4-F9136E94225F",
-                            "order" : 0.66666666666666663
+                            "order" : 0.6470588235294118
                           },
                           {
                             "count" : 0,
                             "name" : "edit bookmark -> target unchanged",
                             "progeny" : 0,
                             "recordName" : "63AE3F30-A757-4657-8A98-B878F65EE135",
-                            "order" : 0.72222222222222221
+                            "order" : 0.70588235294117641
                           },
                           {
                             "count" : 4,
                             "name" : "last sync date",
-                            "progeny" : 16,
+                            "progeny" : 17,
                             "children" : [
                               {
                                 "count" : 0,
                                 "name" : "----------- bugs -----------",
                                 "attributes" : "c",
+                                "progeny" : 0,
                                 "recordName" : "ED97781A-9A37-41A0-BC7C-ED81DFB153D3",
                                 "order" : 0.10000000000000001
                               },
@@ -8408,22 +9127,26 @@
                               {
                                 "count" : 0,
                                 "name" : "ideas in two places",
+                                "progeny" : 0,
                                 "children" : [
                                   {
                                     "count" : 0,
                                     "name" : "trash",
+                                    "progeny" : 0,
                                     "recordName" : "7AFF4DE1-7EBF-46CD-A969-ECCF1F7F5730",
                                     "order" : 0.14285714285714285
                                   },
                                   {
                                     "count" : 0,
                                     "name" : "favorites",
+                                    "progeny" : 0,
                                     "recordName" : "358ED5B4-7BE0-4EBC-A779-5503D4FC459A",
                                     "order" : 0.2857142857142857
                                   },
                                   {
                                     "count" : 0,
                                     "name" : "lost and found",
+                                    "progeny" : 0,
                                     "recordName" : "FE97FBF2-7256-4BE4-8976-FC8EABA48AF4",
                                     "order" : 0.42857142857142855
                                   },
@@ -8431,6 +9154,7 @@
                                     "count" : 0,
                                     "name" : "----------- same as -----------",
                                     "attributes" : "c",
+                                    "progeny" : 0,
                                     "recordName" : "6C6B702A-39F5-4403-BA0A-87360517EA46",
                                     "order" : 0.5714285714285714
                                   },
@@ -8449,6 +9173,7 @@
                                 "count" : 0,
                                 "name" : "----------- design -----------",
                                 "attributes" : "c",
+                                "progeny" : 0,
                                 "recordName" : "3E6BC2A5-E0DC-4574-885C-145C27EF957C",
                                 "order" : 0.40000000000000002
                               },
@@ -8613,7 +9338,266 @@
                           }
                         ],
                         "recordName" : "C78E4FAB-D0EC-4F3E-86E6-C2BC7CC962D8",
-                        "order" : 0.71428571428571419
+                        "order" : 0.5
+                      },
+                      {
+                        "count" : 0,
+                        "name" : "1045",
+                        "progeny" : 4,
+                        "children" : [
+                          {
+                            "count" : 0,
+                            "name" : "drag to other graph -> disappears",
+                            "progeny" : 0,
+                            "recordName" : "1006C7A5-F76B-4A89-AE9B-177BD2979140",
+                            "order" : 0.125
+                          },
+                          {
+                            "count" : 0,
+                            "name" : "detect internet resumes",
+                            "progeny" : 2,
+                            "children" : [
+                              {
+                                "count" : 2,
+                                "name" : "eliminate",
+                                "progeny" : 0,
+                                "children" : [
+                                  {
+                                    "count" : 0,
+                                    "name" : "alerts",
+                                    "progeny" : 0,
+                                    "children" : [
+                                      {
+                                        "count" : 0,
+                                        "name" : "report error notAuthenticated",
+                                        "progeny" : 0,
+                                        "recordName" : "3ABA92B2-A36D-4B2F-A4D4-043F9E5886F8",
+                                        "order" : 0.33333333333333331
+                                      }
+                                    ],
+                                    "recordName" : "1BD14B73-8275-4E17-BEE9-7814B90D2800",
+                                    "order" : 0.1111111111111111
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "gUseCloud",
+                                    "progeny" : 0,
+                                    "recordName" : "9464A24B-351D-4223-95B8-6EB80D7FA0CB",
+                                    "order" : 0.22222222222222221
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "gSaveMode",
+                                    "progeny" : 0,
+                                    "recordName" : "A459B67B-EC97-497A-93CE-1AAAC43FBC0C",
+                                    "order" : 0.33333333333333331
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "gFetchMode",
+                                    "progeny" : 0,
+                                    "recordName" : "053E83AC-4BC8-4052-AE18-E75EB6D29C39",
+                                    "order" : 0.44444444444444442
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "gFullFetch",
+                                    "progeny" : 0,
+                                    "recordName" : "3E946665-B2E8-404D-9600-E5C88320A9F6",
+                                    "order" : 0.55555555555555558
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "gAssumeAllFetched",
+                                    "progeny" : 0,
+                                    "recordName" : "0D11F0EE-C5CB-4A50-A3F1-E1395220A8D6",
+                                    "order" : 0.66666666666666663
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "database == nil",
+                                    "progeny" : 0,
+                                    "children" : [
+                                      {
+                                        "count" : 0,
+                                        "name" : "use cloud stalled instead",
+                                        "progeny" : 0,
+                                        "recordName" : "FA2F7334-B584-42E4-9094-7A3F0AB6A7F2",
+                                        "order" : 0.33333333333333331
+                                      }
+                                    ],
+                                    "recordName" : "595AA428-B959-4756-A7B7-C46D7E522109",
+                                    "order" : 0.77777777777777768
+                                  }
+                                ],
+                                "recordName" : "B2ABC16B-EBF4-4C44-A637-A987EC9D1638",
+                                "order" : 0.20000000000000001
+                              },
+                              {
+                                "count" : 0,
+                                "name" : "adjust gNoInternet state",
+                                "progeny" : 0,
+                                "recordName" : "0A299264-5B38-47BE-9D93-46E06003AF82",
+                                "order" : 0.40000000000000002
+                              },
+                              {
+                                "count" : 0,
+                                "name" : "change current error handling",
+                                "progeny" : 0,
+                                "children" : [
+                                  {
+                                    "count" : 0,
+                                    "name" : "no alerts",
+                                    "progeny" : 0,
+                                    "recordName" : "B4D19FB2-A483-4A5B-8507-97110BB7D23C",
+                                    "order" : 0.5
+                                  }
+                                ],
+                                "recordName" : "4B9E33AF-3B8A-42AB-BF1F-7F6D9907C60D",
+                                "order" : 0.60000000000000009
+                              }
+                            ],
+                            "recordName" : "8D5EC059-437B-467B-8038-9F25A43FDE37",
+                            "order" : 0.25
+                          },
+                          {
+                            "children" : [
+                              {
+                                "count" : 0,
+                                "name" : "favorites' recordName is nil",
+                                "attributes" : "",
+                                "progeny" : 0,
+                                "recordName" : "535E20DA-D3B0-4FCC-A104-DD9F8D768BCF",
+                                "order" : 0.33333333333333331
+                              }
+                            ],
+                            "name" : "favorites won't reveal",
+                            "attributes" : "",
+                            "count" : 0,
+                            "progeny" : 0,
+                            "recordName" : "882C8BA4-2497-4341-BF32-9636E22F5702",
+                            "order" : 0.375
+                          },
+                          {
+                            "children" : [
+                              {
+                                "children" : [
+                                  {
+                                    "count" : 0,
+                                    "name" : "controller manager invoked inside continue up's completion block",
+                                    "progeny" : 0,
+                                    "recordName" : "7F8933EE-91AF-4941-847F-8FB3FDCEEC75",
+                                    "order" : 0.25
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "so, well after start up",
+                                    "progeny" : 0,
+                                    "recordName" : "7CBD23F5-AF60-430D-B626-94233EEBAF40",
+                                    "order" : 0.5
+                                  }
+                                ],
+                                "name" : "DURING fetch user id",
+                                "attributes" : "",
+                                "count" : 0,
+                                "progeny" : 0,
+                                "recordName" : "6914990A-DBB8-4C21-BFEC-5DCB626ACF85",
+                                "order" : 0.25
+                              },
+                              {
+                                "count" : 0,
+                                "name" : "in operations manager",
+                                "progeny" : 2,
+                                "children" : [
+                                  {
+                                    "count" : 2,
+                                    "name" : "how does queue operation dependency help with this problem?",
+                                    "progeny" : 0,
+                                    "children" : [
+                                      {
+                                        "count" : 0,
+                                        "name" : "internet resumes but account status is not active",
+                                        "progeny" : 0,
+                                        "recordName" : "ADFDCF07-1AC7-40BB-B634-437D28E819ED",
+                                        "order" : 0.25
+                                      },
+                                      {
+                                        "count" : 0,
+                                        "name" : "call fetch user record",
+                                        "progeny" : 0,
+                                        "recordName" : "BF63A28B-3FB6-4DD4-A407-FBB2A3769FBC",
+                                        "order" : 0.5
+                                      }
+                                    ],
+                                    "recordName" : "0440F0DA-06A3-4DE9-B019-861E95350999",
+                                    "order" : 0.16666666666666666
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "when gStartupStatus == .network",
+                                    "progeny" : 0,
+                                    "recordName" : "F93971D9-E550-45E0-8F1B-739CEC4FD005",
+                                    "order" : 0.33333333333333331
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "check gCloudAccountStatus == .none",
+                                    "progeny" : 0,
+                                    "recordName" : "628FA0EA-07B2-456E-95D7-3DD6D7622226",
+                                    "order" : 0.5
+                                  },
+                                  {
+                                    "count" : 0,
+                                    "name" : "then, do fetch user record again",
+                                    "progeny" : 0,
+                                    "recordName" : "A505AAC5-FE8F-490C-BC7A-E544FC1E9923",
+                                    "order" : 0.66666666666666663
+                                  }
+                                ],
+                                "recordName" : "5CE99F4A-D01B-4EA8-AB11-496D6FBD46E5",
+                                "order" : 0.5
+                              }
+                            ],
+                            "name" : "BUG: operations invoked out of order",
+                            "attributes" : "",
+                            "count" : 0,
+                            "progeny" : 2,
+                            "recordName" : "83904586-F8D8-4EDE-8369-2AAD9DC5321A",
+                            "order" : 0.5
+                          },
+                          {
+                            "count" : 0,
+                            "name" : "multiple batch invoke",
+                            "progeny" : 0,
+                            "children" : [
+                              {
+                                "count" : 0,
+                                "name" : "finish up invoked four times",
+                                "progeny" : 0,
+                                "recordName" : "2AD706EA-3AAC-4AA2-BD32-660E6221E2DA",
+                                "order" : 0.25
+                              },
+                              {
+                                "count" : 0,
+                                "name" : "continue up invoked twice",
+                                "progeny" : 0,
+                                "recordName" : "455150A8-B8CD-4A03-AA3B-2FFD52C0E70D",
+                                "order" : 0.5
+                              }
+                            ],
+                            "recordName" : "F2582B0C-D587-4303-ABB6-3FC79F6621F4",
+                            "order" : 0.75
+                          }
+                        ],
+                        "recordName" : "B8981FFA-5F08-4EFF-B3A5-EF99FE7DBB56",
+                        "order" : 0.60000000000000009
+                      },
+                      {
+                        "count" : 0,
+                        "name" : "1046",
+                        "progeny" : 0,
+                        "recordName" : "7EE28916-CC84-4446-A354-06E200152FE3",
+                        "order" : 0.80000000000000004
                       }
                     ],
                     "recordName" : "639D7E37-2A80-47D4-B44D-EF8CF30AC7C6",
@@ -8624,7 +9608,7 @@
                 "access" : 1,
                 "count" : 2,
                 "owner" : "_331fc129da5bed513a4026e9bcf56dba",
-                "progeny" : 309,
+                "progeny" : 334,
                 "recordName" : "E59949DE-729A-4E75-9D2F-196C0642C327",
                 "order" : 0.75
               }
@@ -8632,7 +9616,7 @@
             "access" : 2,
             "count" : 6,
             "owner" : "_331fc129da5bed513a4026e9bcf56dba",
-            "progeny" : 570,
+            "progeny" : 598,
             "recordName" : "F17597D1-D6A5-480F-8817-8E5650F30251",
             "color" : "red:0.788254616477273,blue:0.47745198403952,green:0.160790495388255"
           },
@@ -8640,13 +9624,13 @@
             "children" : [
               {
                 "order" : 0.33333333333333331,
-                "name" : "suggestions from jonathan",
+                "name" : "jonathan's suggestions",
                 "children" : [
                   {
                     "count" : 0,
-                    "name" : "alert for COMMAND-OPTION LEFT ARROW from here -> baaaad baaaaaaaad",
+                    "name" : "A -> selects all siblings",
                     "progeny" : 0,
-                    "recordName" : "4593C343-D324-42CD-B7D7-6F6918E23308",
+                    "recordName" : "0E88EF4D-0AE7-4115-8276-D2F25F36DE54",
                     "order" : 0.083333333333333329
                   },
                   {
@@ -8658,35 +9642,12 @@
                     "order" : 0.16666666666666666
                   },
                   {
-                    "count" : 1,
-                    "name" : "LEFT show only parents to level N",
-                    "progeny" : 0,
-                    "children" : [
-                      {
-                        "count" : 0,
-                        "name" : "three-state reveal dot",
-                        "progeny" : 0,
-                        "recordName" : "6AED966E-97EC-49EE-BB1C-82E784828C68",
-                        "order" : 0.33333333333333331
-                      }
-                    ],
-                    "recordName" : "74B3D5B9-652C-47AF-8029-3278DDC2B19E",
-                    "order" : 0.25
-                  },
-                  {
                     "count" : 0,
                     "name" : "----------- soon -----------",
                     "attributes" : "c",
                     "progeny" : 0,
                     "recordName" : "736B9334-1613-45F8-967A-C571DD441546",
-                    "order" : 0.41666666666666663
-                  },
-                  {
-                    "count" : 0,
-                    "name" : "A -> selects all siblings",
-                    "progeny" : 0,
-                    "recordName" : "0E88EF4D-0AE7-4115-8276-D2F25F36DE54",
-                    "order" : 0.5
+                    "order" : 0.33333333333333331
                   },
                   {
                     "count" : 7,
@@ -8905,13 +9866,59 @@
                       }
                     ],
                     "recordName" : "D0ABEC90-3089-4144-9B9B-62650EA9F0F1",
-                    "order" : 0.58333333333333326
+                    "order" : 0.41666666666666663
                   },
                   {
-                    "order" : 0.66666666666666663,
+                    "order" : 0.5,
                     "name" : "keys",
                     "attributes" : "",
                     "children" : [
+                      {
+                        "count" : 0,
+                        "name" : "while typing",
+                        "progeny" : 0,
+                        "children" : [
+                          {
+                            "count" : 0,
+                            "name" : "NEW KEYS",
+                            "progeny" : 0,
+                            "children" : [
+                              {
+                                "count" : 0,
+                                "name" : "\", [, ( surrounds selected text",
+                                "progeny" : 0,
+                                "recordName" : "57C8F788-D039-4E31-A100-003533D6BB2D",
+                                "order" : 0.20000000000000001
+                              },
+                              {
+                                "count" : 0,
+                                "name" : "COMMAND > inserts \"->\"",
+                                "progeny" : 0,
+                                "recordName" : "47F952BA-62EB-4E0C-A3D3-4770146460D1",
+                                "order" : 0.40000000000000002
+                              },
+                              {
+                                "count" : 0,
+                                "name" : "COMMAND I -> toggle colorize",
+                                "progeny" : 0,
+                                "recordName" : "A31E59A8-A86D-4318-9F7F-B759891494CE",
+                                "order" : 0.60000000000000009
+                              }
+                            ],
+                            "recordName" : "B17263A8-FA82-41F8-8E57-F645B9170EE8",
+                            "order" : 0.20000000000000001
+                          },
+                          {
+                            "count" : 0,
+                            "name" : "spell checking",
+                            "progeny" : 0,
+                            "recordName" : "7D897437-A728-459E-96BF-85445DCE8B8E",
+                            "order" : 0.60000000000000009
+                          }
+                        ],
+                        "recordName" : "61CDCEA2-919F-4886-870A-3746DA08789C",
+                        "order" : 0.16666666666666666
+                      },
                       {
                         "count" : 1,
                         "name" : "ESCAPE",
@@ -8926,14 +9933,7 @@
                           }
                         ],
                         "recordName" : "1E04C20E-8A9B-4101-A064-A57FA227FA87",
-                        "order" : 0.1111111111111111
-                      },
-                      {
-                        "count" : 0,
-                        "name" : "OPTION period and comma -> during text edit, toggle precede\/follow",
-                        "progeny" : 0,
-                        "recordName" : "0EF612F1-6F13-4086-9BEF-8DDFBECCE2BB",
-                        "order" : 0.33333333333333331
+                        "order" : 0.25
                       },
                       {
                         "count" : 6,
@@ -8986,14 +9986,21 @@
                           }
                         ],
                         "recordName" : "8CDA9D9B-386F-4C93-944B-80E597F7C070",
-                        "order" : 0.44444444444444442
+                        "order" : 0.33333333333333331
+                      },
+                      {
+                        "count" : 0,
+                        "name" : "OPTION period and comma -> during text edit, toggle precede\/follow",
+                        "progeny" : 0,
+                        "recordName" : "0EF612F1-6F13-4086-9BEF-8DDFBECCE2BB",
+                        "order" : 0.41666666666666663
                       },
                       {
                         "count" : 0,
                         "name" : "OPTION B bookmarks are created in the paste buffer ;-)",
                         "progeny" : 0,
                         "recordName" : "9F7002B5-C70F-412E-9467-ED44D3978724",
-                        "order" : 0.55555555555555558
+                        "order" : 0.5
                       },
                       {
                         "count" : 0,
@@ -9001,7 +10008,7 @@
                         "attributes" : "c",
                         "progeny" : 0,
                         "recordName" : "2D8AE161-B55D-4E0A-9463-214446A7EEED",
-                        "order" : 0.66666666666666663
+                        "order" : 0.75
                       },
                       {
                         "children" : [
@@ -9011,7 +10018,7 @@
                             "attributes" : "c",
                             "progeny" : 0,
                             "recordName" : "32CB1F03-FBAD-427F-894C-D30712841E26",
-                            "order" : 0.16666666666666666
+                            "order" : 0.14285714285714285
                           },
                           {
                             "children" : [
@@ -9035,11 +10042,11 @@
                             "count" : 2,
                             "progeny" : 0,
                             "recordName" : "E117E275-A594-4BD9-B1BF-1FBD0E3C43D8",
-                            "order" : 0.33333333333333331
+                            "order" : 0.2857142857142857
                           },
                           {
-                            "order" : 0.5,
-                            "name" : "KEY for special color and colorize",
+                            "order" : 0.42857142857142855,
+                            "name" : "special color and colorize",
                             "attributes" : "c",
                             "count" : 0,
                             "progeny" : 0,
@@ -9048,11 +10055,11 @@
                           },
                           {
                             "count" : 0,
-                            "name" : "KEY sync to cloud now",
+                            "name" : "sync to cloud now",
                             "attributes" : "c",
                             "progeny" : 0,
                             "recordName" : "1588C49B-B736-40C9-9506-8DDFA33B8B71",
-                            "order" : 0.66666666666666663
+                            "order" : 0.5714285714285714
                           }
                         ],
                         "name" : "what key?",
@@ -9060,13 +10067,36 @@
                         "count" : 4,
                         "progeny" : 2,
                         "recordName" : "19A7AA5F-FE0C-4A33-961A-D14EACD2F588",
-                        "order" : 0.77777777777777768
+                        "order" : 0.83333333333333326
                       }
                     ],
                     "count" : 6,
                     "progeny" : 13,
                     "recordName" : "7CF313A8-DB13-4E8D-A861-980DBDBBECC5",
                     "color" : "red:1.0,blue:0.00191320283992424,green:0.151522960333201"
+                  },
+                  {
+                    "count" : 0,
+                    "name" : "ALERT for COMMAND-OPTION LEFT ARROW from here -> baaaad baaaaaaaad",
+                    "progeny" : 0,
+                    "recordName" : "4593C343-D324-42CD-B7D7-6F6918E23308",
+                    "order" : 0.58333333333333326
+                  },
+                  {
+                    "count" : 1,
+                    "name" : "LEFT show only parents to level N",
+                    "progeny" : 0,
+                    "children" : [
+                      {
+                        "count" : 0,
+                        "name" : "three-state reveal dot",
+                        "progeny" : 0,
+                        "recordName" : "6AED966E-97EC-49EE-BB1C-82E784828C68",
+                        "order" : 0.33333333333333331
+                      }
+                    ],
+                    "recordName" : "74B3D5B9-652C-47AF-8029-3278DDC2B19E",
+                    "order" : 0.66666666666666663
                   },
                   {
                     "count" : 10,
@@ -9469,7 +10499,7 @@
                       }
                     ],
                     "recordName" : "7C70F448-2D6D-4D3D-9253-9A1FD7F280FA",
-                    "order" : 0.75
+                    "order" : 0.66666666666666663
                   },
                   {
                     "count" : 14,
@@ -10408,8 +11438,10 @@
             "order" : 0.66666666666666663
           }
         ],
+        "access" : 1,
         "count" : 4,
-        "progeny" : 797,
+        "owner" : "_331fc129da5bed513a4026e9bcf56dba",
+        "progeny" : 825,
         "recordName" : "4922A053-D145-4470-B6BA-F5BB3E6E15DE",
         "color" : "red:0.607515675148749,blue:0.788254616477273,green:0.298207167408573"
       }
@@ -10417,7 +11449,7 @@
     "access" : 4,
     "count" : 2,
     "owner" : "_331fc129da5bed513a4026e9bcf56dba",
-    "progeny" : 995,
+    "progeny" : 1023,
     "recordName" : "root",
     "color" : "red:0.298662972839926,blue:0.875168678977273,green:0.760072845903986"
   }

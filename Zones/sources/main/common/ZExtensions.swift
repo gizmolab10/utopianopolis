@@ -605,6 +605,9 @@ extension String {
     }
 
 
+    static func pluralized(_ iValue: Int, suffix: String = "", plural: String = "s") -> String {
+        return iValue == 0 ? "" : "\(iValue) \(suffix)\(iValue == 1 ? " " : "\(plural) ")"
+    }
 }
 
 

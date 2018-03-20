@@ -60,11 +60,10 @@ class ZInformationController: ZGenericController {
 
 
     var cloudStatusText: String {
-        let  count = gBatchManager.queue.operationCount
-        let plural = count == 1 ? "" : "s"
-        let   text = count == 0 ? "" : "\(count) cloud operation\(plural) in progress"
+        let ops = String.pluralized(gBatchManager.queue.operationCount, suffix: "request")
+            +     String.pluralized(gBatchManager.totalCount,           suffix: "batch", plural: "es")
 
-        return !gHasInternet ? "no internet" : gCloudAccountStatus != .active ? "missing or invalid Apple ID" : text
+        return !gHasInternet ? "no internet" : gCloudAccountStatus != .active ? "no Apple ID" : ops
     }
 
 
