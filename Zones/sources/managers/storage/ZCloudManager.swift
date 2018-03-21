@@ -1153,7 +1153,7 @@ class ZCloudManager: ZRecordsManager {
         if  rootZone != nil {
             trashClosure()
         } else {
-            establishRootFor(name: "title", recordName: kRootName) { iZone in
+            establishRootFor(name: "i can click HERE to edit my first idea", recordName: kRootName) { iZone in
                 self.rootZone = iZone
 
                 trashClosure()
@@ -1185,10 +1185,6 @@ class ZCloudManager: ZRecordsManager {
 
                 zone.needSave()
             }
-
-//            if gFullFetch {
-//                zone.needProgeny()
-//            }
 
             onCompletion?(zone)
         }

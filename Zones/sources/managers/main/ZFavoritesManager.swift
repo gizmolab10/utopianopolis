@@ -205,32 +205,27 @@ class ZFavoritesManager: NSObject {
 
     func setup(_ onCompletion: IntClosure?) {
         let rootZone = gMineCloudManager.favoritesZone
-
-        if !gHasPrivateDatabase || rootZone != nil {
+        let   mine = gMineCloudManager
+        let finish = {
+            self.setupDatabaseFavorites()
+            rootZone?.needProgeny()
+            rootZone?.revealChildren()
             onCompletion?(0)
-        } else {
-            let   mine = gMineCloudManager
-            let finish = {
-                self.setupDatabaseFavorites()
-                rootZone?.needProgeny()
-                rootZone?.revealChildren()
-                onCompletion?(0)
-            }
+        }
 
-            if  let root = mine.maybeZoneForRecordName(kFavoritesRootName) {
+        if  let root = mine.maybeZoneForRecordName(kFavoritesRootName) {
+            gMineCloudManager.favoritesZone = root
+
+            finish()
+        } else {
+            mine.assureRecordExists(withRecordID: CKRecordID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
+                let                    ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: kFavoritesRootName))
+                let                        root = Zone(record: ckRecord, databaseID: .mineID)
+                root.directAccess               = .eDefaultName
+                root.zoneName                   = kFavoritesName
                 gMineCloudManager.favoritesZone = root
 
                 finish()
-            } else {
-                mine.assureRecordExists(withRecordID: CKRecordID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
-                    let                    ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: kFavoritesRootName))
-                    let                        root = Zone(record: ckRecord, databaseID: .mineID)
-                    root.directAccess               = .eDefaultName
-                    root.zoneName                   = kFavoritesName
-                    gMineCloudManager.favoritesZone = root
-
-                    finish()
-                }
             }
         }
     }

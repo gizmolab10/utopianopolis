@@ -74,20 +74,19 @@ class ZBatchManager: ZOnboardingManager {
 
         var operations: [ZOperationID] {
             switch identifier {
-            case .save:        return [                                          .save,                             .write]
-            case .sync:        return [            .fetch,               .merge, .save,                             .write]
-            case .root:        return [.root,                                    .save, .children,         .traits        ]
-            case .travel:      return [.root,              .parents,                    .children, .fetch, .traits        ]
-            case .parents:     return [                    .parents,                                       .traits        ]
-            case .children:    return [                                                 .children,         .traits        ]
-            case .families:    return [            .fetch, .parents,                    .children,         .traits        ]
-            case .bookmarks:   return [.bookmarks, .fetch,                       .save,                    .traits        ]
-            case .fetchLost:   return [.fetchlost,                               .save, .children                         ]
-            case .emptyTrash:  return [.emptyTrash                                                                        ]
-//          case .oldSync:     return [            .fetch, .parents, .merge,     .save, .children, .traits,         .write]
-            case .undelete:    return [.undelete,  .fetch, .parents,             .save, .children, .traits                ]
-            case .resumeCloud: return [            .fetch, .fetchAll, .fetchNew, .save,                             .write]
-            case .newAppleID:  return operationIDs(from: .internet,        to: .fetchAll)
+            case .save:        return [                                      .save,                             .write]
+            case .sync:        return [            .fetch, .parents, .merge, .save, .children, .traits,         .write]
+            case .root:        return [.root,                                .save, .children,         .traits        ]
+            case .travel:      return [.root,              .parents,                .children, .fetch, .traits        ]
+            case .parents:     return [                    .parents,                                   .traits        ]
+            case .children:    return [                                             .children,         .traits        ]
+            case .families:    return [            .fetch, .parents,                .children,         .traits        ]
+            case .bookmarks:   return [.bookmarks, .fetch,                   .save,                    .traits        ]
+            case .fetchLost:   return [.fetchlost,                           .save, .children                         ]
+            case .emptyTrash:  return [.emptyTrash                                                                    ]
+            case .undelete:    return [.undelete,  .fetch, .parents,         .save, .children, .traits                ]
+            case .resumeCloud: return [                                      .save, .fetchNew, .fetchAll,       .write]
+            case .newAppleID:  return operationIDs(from: .internet,        to: .found, skipping: [.read])
             case .startUp:     return operationIDs(from: .observeUbiquity, to: .fetchAll)
             case .finishUp:    return operationIDs(from: .write,           to: .subscribe)
             }
@@ -120,11 +119,21 @@ class ZBatchManager: ZOnboardingManager {
         }
 
 
-        func operationIDs(from: ZOperationID, to: ZOperationID) -> [ZOperationID] {
+        func operationIDs(from: ZOperationID, to: ZOperationID, skipping: [ZOperationID] = []) -> [ZOperationID] {
             var operationIDs = [ZOperationID] ()
 
-            for sync in from.rawValue...to.rawValue {
-                operationIDs.append(ZOperationID(rawValue: sync)!)
+            for value in from.rawValue...to.rawValue {
+                var add = true
+
+                for skip in skipping {
+                    if skip.rawValue == value {
+                        add = false
+                    }
+                }
+
+                if add {
+                    operationIDs.append(ZOperationID(rawValue: value)!)
+                }
             }
 
             return operationIDs
@@ -170,8 +179,8 @@ class ZBatchManager: ZOnboardingManager {
 
         // 1. grab and execute first current batch
         // 2. called by superclass, for each completion operation. fire completions and recurse
-        // 3. no more current batches, transfer deferred and recurse
-        // 4. no more batches, end of closure
+        // 3. no more current batches, transfer deferred                            and recurse
+        // 4. no more batches, nothing to process
 
         FOREGROUND(canBeDirect: true) {
             if  let      batch = self.currentBatches.first {    // 1.
@@ -194,26 +203,27 @@ class ZBatchManager: ZOnboardingManager {
         if  iID.shouldIgnore {
             iCompletion(true) // true means isSame
         } else {
-            let newFirstBatch = currentBatches.count == 0
-            let   completions = [ZBatchCompletion(iCompletion)]
-            let       current = getBatch(iID, from: currentBatches)
+            let completions = [ZBatchCompletion(iCompletion)]
+            let    newBatch = ZBatch(iID, completions)
+            let     current = getBatch(iID, from: currentBatches)
+            let   startOver = currentBatches.count == 0
 
             // 1. is in deferral            -> add its completion to that deferred batch
             // 2. in neither                -> create new batch + append to current
-            // 3. in current + has deferred -> create new batch + append to deferred (other batches may change the state to what it expects)
-            // 4. in current +  no deferred -> add its completion to that current batch
+            // 3. in current +  no deferred -> add its completion to that current batch
+            // 4. in current + has deferred -> create new batch + append to deferred (other batches may change the state to what it expects)
 
-            if  let deferal = getBatch(iID, from: deferredBatches) {
-                deferal.completions.append(contentsOf: completions)     // 1.
+            if  let deferred = getBatch(iID, from: deferredBatches) {
+                deferred.completions.append(contentsOf: completions)    // 1.
             } else if current == nil {
-                currentBatches.append(ZBatch(iID, completions))         // 2.
+                currentBatches .append(newBatch)                        // 2.
             } else if deferredBatches.count > 0 {
-                deferredBatches.append(ZBatch(iID, completions))        // 3.
+                deferredBatches.append(newBatch)                        // 3.
             } else {
                 current?.completions.append(contentsOf: completions)    // 4.
             }
 
-            if  newFirstBatch {
+            if  startOver {
                 processFirstBatch()
             }
         }

@@ -83,8 +83,8 @@ class ZTextPack: NSObject {
 
 
     func edit(_ iZRecord: ZRecord) {
-        packedTrait     = iZRecord as? ZTrait
-        packedZone      = iZRecord as? Zone ?? packedTrait?.ownerZone
+        packedTrait      = iZRecord as? ZTrait
+        packedZone       = iZRecord as? Zone ?? packedTrait?.ownerZone
         originalText     = textToEdit
         textWidget?.text = originalText
     }
@@ -96,10 +96,13 @@ class ZTextPack: NSObject {
 
 
     func updateWidgetsForEndEdit() {
-        textWidget?.abortEditing() // NOTE: this does NOT remove selection highlight !!!!!!!
-        textWidget?.deselectAllText()
-        textWidget?.updateTextColor()
-        textWidget?.layoutText()
+        if let t = textWidget {
+            t.abortEditing() // NOTE: this does NOT remove selection highlight !!!!!!!
+            t.deselectAllText()
+            t.updateTextColor()
+            t.layoutText()
+        }
+
         widget?.setNeedsDisplay()
         packedZone?.grab()
     }
@@ -133,40 +136,39 @@ class ZTextPack: NSObject {
     }
 
 
-    func assignAndSignal(_ iText: String?) {
+    func captureTextAndUpdateWidgets(_ iText: String?) {
         capture(iText)
         updateWidgetsForEndEdit()
-        signalFor(packedZone, regarding: .datum)
     }
 
 
-    func assignTextAndSync(_ iText: String?) {
+    func captureTextAndSync(_ iText: String?) {
         if  (originalText != iText || originalText == kNoValue) {
             let               newText = removeSuffix(from: iText)
             gTextCapturing            = true
 
-            if  let           tWidget = textWidget {
+            if  let                 t = textWidget {
                 let          original = originalText
                 prepareUndoForTextChange(kUndoManager) {
-                    self.originalText = tWidget.text
+                    self.originalText = t.text
 
-                    self.assignTextAndSync(original)
-                    tWidget.updateGUI()
+                    self.captureTextAndSync(original)
+                    t.updateGUI()
                 }
             }
 
-            assignAndSignal(newText)
+            captureTextAndUpdateWidgets(newText)
 
             if  packedTrait == nil, // only if zone name is being edited
                 var zone = packedZone {
                 if  let    target = zone.bookmarkTarget {
                     zone = target
 
-                    ZTextPack(target).assignAndSignal(newText)
+                    ZTextPack(target).captureTextAndUpdateWidgets(newText)
                 }
 
                 for bookmark in zone.fetchedBookmarks {
-                    ZTextPack(bookmark).assignAndSignal(newText)
+                    ZTextPack(bookmark).captureTextAndUpdateWidgets(newText)
                 }
             }
 
@@ -258,14 +260,14 @@ class ZTextManager: NSObject {
 
     func capture(force: Bool = false) {
         if  let current = currentEdit, let text = current.textWidget?.text, (!gTextCapturing || force) {
-            current.assignTextAndSync(text)
+            current.captureTextAndSync(text)
         }
     }
 
 
     func assign(_ iText: String?, to iZone: Zone?) {
         if  let zone = iZone {
-            ZTextPack(zone).assignTextAndSync(iText)
+            ZTextPack(zone).captureTextAndSync(iText)
         }
     }
 

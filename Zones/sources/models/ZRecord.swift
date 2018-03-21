@@ -468,9 +468,11 @@ class ZRecord: NSObject {
     func addNeedsFromString(_ iNeeds: String) {
         let needs = iNeeds.components(separatedBy: kNeedsSeparator)
 
-        for need in needs {
-            if  let state = ZRecordState(rawValue: need) {
-                addState(state)
+        temporarilyMarkNeeds {
+            for need in needs {
+                if  let state = ZRecordState(rawValue: need) {
+                    addState(state)
+                }
             }
         }
     }
