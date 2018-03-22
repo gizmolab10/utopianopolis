@@ -152,6 +152,10 @@ class ZOperationsManager: NSObject {
                                 let identifier: ZBatchID = hasActiveStatus ? .resumeCloud : .newAppleID
 
                                 gBatchManager.batch(identifier) { iResult in
+                                    if  hasActiveStatus {
+                                        gFavoritesManager.updateFavorites()
+                                    }
+
                                     self.signalFor(nil, regarding: .redraw)
                                 }
                             }

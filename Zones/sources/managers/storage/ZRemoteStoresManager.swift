@@ -23,7 +23,7 @@ var                 gRoot : Zone?   { get { return gRemoteStoresManager.rootZone
 class ZRemoteStoresManager: NSObject {
 
 
-    var       databaseIDStack = ZDatabaseIDs ()
+    var       databaseIDStack = [ZDatabaseID] ()
     var       recordsManagers = [ZDatabaseID : ZCloudManager]()
     var currentRecordsManager : ZRecordsManager { return recordsManagerFor(gDatabaseID)! }
     var   currentCloudManager : ZCloudManager   { return cloudManagerFor(gDatabaseID) }

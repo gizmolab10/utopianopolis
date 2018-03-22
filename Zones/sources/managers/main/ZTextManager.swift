@@ -45,8 +45,8 @@ class ZTextPack: NSObject {
             var need = 0
 
             switch gCountsMode {
-            case .fetchable: need = zone.indirectFetchableCount
-            case .progeny:   need = zone.indirectFetchableCount + zone.progenyCount
+            case .fetchable: need = zone.indirectCount
+            case .progeny:   need = zone.indirectCount + zone.progenyCount
             default:         return result
             }
 

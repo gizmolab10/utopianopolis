@@ -44,7 +44,7 @@ class ZRecordsManager: NSObject {
     var    favoritesZone: Zone? = nil // only for .mineID manager
     var        trashZone: Zone? = nil
     var         rootZone: Zone? = nil
-    var        validHere: Bool { return maybeZoneForRecordName(hereRecordName) != nil }
+    var      hereIsValid: Bool { return maybeZoneForRecordName(hereRecordName) != nil }
 
 
     var hereRecordName: String? {

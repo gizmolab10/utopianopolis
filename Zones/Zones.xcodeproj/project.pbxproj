@@ -535,6 +535,7 @@
 			isa = PBXGroup;
 			children = (
 				0C4118DD1FA8110200A58004 /* ZAlertManager.swift */,
+				0CAC18E02006A84800D641C4 /* ZBookmarksManager.swift */,
 				0C39B2471F182EBB0091F4D1 /* ZControllersManager.swift */,
 				0C39B2481F182EBB0091F4D1 /* ZEditingManager.swift */,
 				0C48B0941F87197B00A247BC /* ZEventsManager.swift */,
@@ -552,7 +553,6 @@
 			isa = PBXGroup;
 			children = (
 				0C7117341FAE7F9900603017 /* ZBatchManager.swift */,
-				0CAC18E02006A84800D641C4 /* ZBookmarksManager.swift */,
 				0C39B24C1F182EBB0091F4D1 /* ZCloudManager.swift */,
 				0C39B24E1F182EBB0091F4D1 /* ZFileManager.swift */,
 				0C3ECC1E1FA2953E00F085EA /* ZOnboardingManager.swift */,

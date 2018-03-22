@@ -85,7 +85,7 @@ class ZBatchManager: ZOnboardingManager {
             case .fetchLost:   return [.fetchlost,                           .save, .children                         ]
             case .emptyTrash:  return [.emptyTrash                                                                    ]
             case .undelete:    return [.undelete,  .fetch, .parents,         .save, .children, .traits                ]
-            case .resumeCloud: return [                                      .save, .fetchNew, .fetchAll,       .write]
+            case .resumeCloud: return [.fetchNew, .fetchAll,                                                    .write]
             case .newAppleID:  return operationIDs(from: .internet,        to: .found, skipping: [.read])
             case .startUp:     return operationIDs(from: .observeUbiquity, to: .fetchAll)
             case .finishUp:    return operationIDs(from: .write,           to: .subscribe)
@@ -280,7 +280,7 @@ class ZBatchManager: ZOnboardingManager {
                 let               forMineIDOnly = [.bookmarks, .subscribe, .unsubscribe].contains(operationID)
                 let                      isMine = restoreToID == .mineID
                 let               onlyCurrentID = !gHasPrivateDatabase || forCurrentDatabaseIDOnly
-                let   databaseIDs: ZDatabaseIDs = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
+                let  databaseIDs: [ZDatabaseID] = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
                 let                      isNoop = onlyCurrentID && isMine && !gHasPrivateDatabase
                 var invokeForIndex: IntClosure? = nil                // declare closure first, so compiler will let it recurse
                 invokeForIndex                  = { index in

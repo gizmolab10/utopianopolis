@@ -178,12 +178,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawTinyDots(_ dirtyRect: CGRect) {
-        if  let  zone  = widgetZone, innerDot != nil, gCountsMode == .dots, !zone.isRootOfFavorites, (!zone.showChildren || zone.isBookmark) {
-            var count  = zone.indirectFetchableCount
-
-            if  count == 0 {
-                count  = zone.count
-            }
+        if  let  zone = widgetZone, innerDot != nil, gCountsMode == .dots, !zone.isRootOfFavorites, (!zone.showChildren || zone.isBookmark) {
+            let count = zone.indirectCount
 
             if  count > 1 {
                 let      dotRadius = Double(innerDotHeight / 2.0)

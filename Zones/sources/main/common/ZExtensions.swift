@@ -18,7 +18,6 @@ import CloudKit
 
 
 typealias ZStorageDictionary = [ZStorageType : NSObject]
-typealias       ZDatabaseIDs = [ZDatabaseID]
 
 
 extension NSObject {

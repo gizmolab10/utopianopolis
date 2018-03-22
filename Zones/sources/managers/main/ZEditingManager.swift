@@ -68,72 +68,6 @@ class ZEditingManager: NSObject {
         case Paste
         case UseGrabs
         case Multiple
-}
-
-
-    func menuType(for key: String, _ flags: NSEventModifierFlags) -> ZMenuType {
-        let  alterers = "ehiluw\r" + kMarkingCharacters
-        let  clouders = ";'/?,."
-
-        if        alterers.contains(key) { return .Alter
-        } else if clouders.contains(key) { return .Cloud
-        } else {
-            switch key {
-            case "a":                            return .SelectAll
-            case "=":                            return .Travel
-            case "z":                            return .Undo
-            case "o", "r":                       return .Sort
-            case "v", "x", kSpace:               return .Child
-            case "d":                            return  flags.isCommand ? .Alter : .Parent
-            case "b", kTab, kDelete, kBackspace: return .Parent
-            default: break
-            }
-
-            return .Always
-        }
-    }
-
-
-    func validateKey(_ key: String, _ flags: NSEventModifierFlags) -> Bool {
-        if gWorkMode != .graphMode {
-            return false
-        }
-
-        let type = menuType(for: key, flags)
-        var valid = !gIsEditingText
-
-        if  valid {
-            let   undo = undoManager
-            let      s = gSelectionManager
-            let  mover = s.currentMoveable
-            let wGrabs = s.writableGrabsCount
-            let  paste = s.pasteableZones.count
-            let  grabs = s.currentGrabs  .count
-            let  shown = s.currentGrabsHaveVisibleChildren
-            let  write = mover.isWritableByUseer
-            let   sort = mover.isSortableByUser
-            let parent = mover.isMovableByUser
-
-            switch type {
-            case .Parent:    valid =               parent
-            case .Child:     valid =               sort
-            case .Alter:     valid =               write
-            case .Paste:     valid =  paste > 0 && write
-            case .UseGrabs:  valid = wGrabs > 0 && write
-            case .Multiple:  valid =  grabs > 1
-            case .Sort:      valid = (shown     && sort) || (grabs > 1 && parent)
-            case .SelectAll: valid =  shown
-            case .Cloud: valid = gHasPrivateDatabase
-            case .Undo:      valid = undo.canUndo
-            case .Redo:      valid = undo.canRedo
-            case .Travel:    valid = mover.canTravel
-            case .Always:    valid = true
-            }
-        } else if key.arrow == nil {
-            valid = type != .Travel
-        }
-
-        return valid
     }
 
 
@@ -274,6 +208,72 @@ class ZEditingManager: NSObject {
                 handleKey(key, flags: flags, isWindow: true)
             }
         #endif
+    }
+
+
+    func menuType(for key: String, _ flags: NSEventModifierFlags) -> ZMenuType {
+        let  alterers = "ehiluw\r" + kMarkingCharacters
+        let  clouders = ";'/?,."
+
+        if        alterers.contains(key) { return .Alter
+        } else if clouders.contains(key) { return .Cloud
+        } else {
+            switch key {
+            case "a":                            return .SelectAll
+            case "=":                            return .Travel
+            case "z":                            return .Undo
+            case "o", "r":                       return .Sort
+            case "v", "x", kSpace:               return .Child
+            case "d":                            return  flags.isCommand ? .Alter : .Parent
+            case "b", kTab, kDelete, kBackspace: return .Parent
+            default: break
+            }
+
+            return .Always
+        }
+    }
+
+
+    func validateKey(_ key: String, _ flags: NSEventModifierFlags) -> Bool {
+        if gWorkMode != .graphMode {
+            return false
+        }
+
+        let type = menuType(for: key, flags)
+        var valid = !gIsEditingText
+
+        if  valid {
+            let   undo = undoManager
+            let      s = gSelectionManager
+            let  mover = s.currentMoveable
+            let wGrabs = s.writableGrabsCount
+            let  paste = s.pasteableZones.count
+            let  grabs = s.currentGrabs  .count
+            let  shown = s.currentGrabsHaveVisibleChildren
+            let  write = mover.isWritableByUseer
+            let   sort = mover.isSortableByUser
+            let parent = mover.isMovableByUser
+
+            switch type {
+            case .Parent:    valid =               parent
+            case .Child:     valid =               sort
+            case .Alter:     valid =               write
+            case .Paste:     valid =  paste > 0 && write
+            case .UseGrabs:  valid = wGrabs > 0 && write
+            case .Multiple:  valid =  grabs > 1
+            case .Sort:      valid = (shown     && sort) || (grabs > 1 && parent)
+            case .SelectAll: valid =  shown
+            case .Cloud: valid = gHasPrivateDatabase
+            case .Undo:      valid = undo.canUndo
+            case .Redo:      valid = undo.canRedo
+            case .Travel:    valid = mover.canTravel
+            case .Always:    valid = true
+            }
+        } else if key.arrow == nil {
+            valid = type != .Travel
+        }
+
+        return valid
     }
 
 
@@ -576,6 +576,7 @@ class ZEditingManager: NSObject {
             gHere = zone
 
             zone.grab()
+            gFavoritesManager.updateCurrentFavorite()
             self.redrawSyncRedraw()
         }
 
@@ -713,6 +714,7 @@ class ZEditingManager: NSObject {
                 gHere.grab()
             }
 
+            gFavoritesManager.updateCurrentFavorite()
             self.redrawSyncRedraw()
         }
     }
@@ -801,15 +803,9 @@ class ZEditingManager: NSObject {
 
             if !show {
                 gSelectionManager.deselectDragWithin(zone);
-                apply()
-            } else {
-                apply()
-//            } else {
-//                zone.needProgeny()
-//                gBatchManager.children(.all, level) { iSame in
-//                    apply()
-//                }
             }
+
+            apply()
         }
     }
 
@@ -1122,9 +1118,9 @@ class ZEditingManager: NSObject {
                     }
                 }
             } else {
-                let eventuallyDestroy = permanently                 || zone.isInTrash
-                let     canDestroyNow = gCloudAccountStatus == .active || zone.databaseID != .mineID
-                let        destroyNow = eventuallyDestroy && !gHasInternet && canDestroyNow
+                let destructionIsAllowed = gCloudAccountStatus == .active || zone.databaseID != .mineID // allowed
+                let    eventuallyDestroy = permanently                    || zone.isInTrash
+                let           destroyNow = destructionIsAllowed && eventuallyDestroy && gHasInternet
 
                 zone.addToPaste()
 

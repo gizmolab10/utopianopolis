@@ -632,6 +632,11 @@ class ZCloudManager: ZRecordsManager {
             for ckRecord in iCKRecords {
                 var zRecord = self.maybeZRecordForRecordName(ckRecord.recordID.recordName)
 
+                if let link = ckRecord[kpZoneLink] as? String,
+                    link == kTrashLink {
+                    bam("")
+                }
+
                 if  zRecord == nil {
                     switch type {
                     case kZoneType:  zRecord =   Zone(record: ckRecord, databaseID: self.databaseID)
@@ -1153,7 +1158,7 @@ class ZCloudManager: ZRecordsManager {
         if  rootZone != nil {
             trashClosure()
         } else {
-            establishRootFor(name: "i can click HERE to edit my first idea", recordName: kRootName) { iZone in
+            establishRootFor(name: kFirstIdeaTitle, recordName: kRootName) { iZone in
                 self.rootZone = iZone
 
                 trashClosure()

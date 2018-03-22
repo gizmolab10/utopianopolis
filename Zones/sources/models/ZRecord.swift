@@ -222,10 +222,19 @@ class ZRecord: NSObject {
 
 
     func useBest(record iRecord: CKRecord) {
-        let      myDate = record?.modificationDate
-        if  let newDate = iRecord.modificationDate,
-            (myDate    == nil || myDate!.timeIntervalSince(newDate) < 0.000001) {
-            record      = iRecord
+        if  record != iRecord {
+            if  let name = record[kpZoneName] as? String, name == kFirstIdeaTitle, record[kpZoneLink] != nil {
+                bam("")
+            }
+
+            let      myDate = record?.modificationDate
+            if  let newDate = iRecord.modificationDate,
+                (myDate    == nil || myDate!.timeIntervalSince(newDate) < 0.000001) {
+
+                orphan()    // sometimes a record contains a different parent or owner reference !!!!!
+
+                record      = iRecord
+            }
         }
     }
 

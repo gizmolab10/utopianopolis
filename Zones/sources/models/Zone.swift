@@ -206,9 +206,9 @@ class Zone : ZRecord {
             d.append("B")
         }
 
-        if  indirectFetchableCount != 0 {
+        if  count != 0 {
             let s  = d == "" ? "" : " "
-            let c  = s + "\(indirectFetchableCount)"
+            let c  = s + "\(count)"
 
             d.append(c)
         }
@@ -399,11 +399,11 @@ class Zone : ZRecord {
     }
 
 
-    var indirectFetchableCount: Int {
+    var indirectCount: Int {
         if  let    t = bookmarkTarget {
-            return t.indirectFetchableCount
+            return t.indirectCount
         } else {
-            return fetchableCount
+            return count
         }
     }
     

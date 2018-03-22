@@ -30,7 +30,7 @@ class ZDebugController: ZGenericController {
         var text = [String] ()
 
         if  let zone = grab {
-            let count = zone.fetchableCount
+            let count = zone.indirectCount
 
             text.append(zone.isFetched ? "cloud" : "local")
 
