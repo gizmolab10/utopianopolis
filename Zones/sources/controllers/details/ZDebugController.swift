@@ -29,10 +29,10 @@ class ZDebugController: ZGenericController {
     var statusText: [String] {
         var text = [String] ()
 
-        if  let zone = grab {
+        if  let  zone = grab {
             let count = zone.indirectCount
 
-            text.append(zone.isFetched ? "cloud" : "local")
+            text.append(zone.isFetched ? "fetched" : "local")
 
             if zone.parent != nil {
                 text.append("p.ref")
@@ -45,7 +45,7 @@ class ZDebugController: ZGenericController {
             }
 
             if count != 0 {
-                text.append("fetch \(count)")
+                text.append("children \(count)")
             }
         }
 

@@ -291,9 +291,14 @@ class ZSelectionManager: NSObject {
     }
 
 
-    func addToGrab(_ iZone: Zone?) {
+    func addToGrab(_ iZone: Zone?, deselect: Bool = false) {
         if let zone = iZone, !currentGrabs.contains(zone) {
             gTextManager.stopCurrentEdit()
+
+            if deselect {
+                deselectGrabs()
+            }
+
             currentGrabs.append(zone)
             // columnarReport("grab", zone.unwrappedName)
 
@@ -307,8 +312,7 @@ class ZSelectionManager: NSObject {
 
 
     func grab(_ zone: Zone?) {
-        deselectGrabs()
-        addToGrab(zone!)
+        addToGrab(zone!, deselect: true)
     }
 
 

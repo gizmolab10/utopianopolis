@@ -79,6 +79,7 @@ class ZEditingManager: NSObject {
             let isCommand = flags.isCommand
             let  isOption = flags.isOption
             var   isShift = flags.isShift
+            let isFlagged = isControl || isCommand || isOption
 
             if  key      != key.lowercased() {
                 key       = key.lowercased()
@@ -119,8 +120,8 @@ class ZEditingManager: NSObject {
                 case "+":      divideChildren()
                 case "-":      addLine()
                 case "`":      travelToOtherGraph()
-                case "[":      gTravelManager.goBack()
-                case "]":      gTravelManager.goForward()
+                case "[":      gTravelManager.goBack(   extreme: isFlagged)
+                case "]":      gTravelManager.goForward(extreme: isFlagged)
                 case ";":      doFavorites(true,    false)
                 case "?":      openBrowserForFocusWebsite()
                 case "'":      doFavorites(isShift, isOption)

@@ -19,8 +19,22 @@ class ZTravelManager: NSObject {
 
     var  travelStack = [Zone] ()
     var currentIndex = -1
+    var   priorIndex = -1
     var     topIndex : Int  { return travelStack.count - 1 }
     var      notHere : Bool { return currentIndex < 0 || gHere != travelStack[currentIndex] }
+
+
+    var isInStack : Int? {
+        let here = gHere
+
+        for (index, zone) in travelStack.enumerated() {
+            if zone == here {
+                return index
+            }
+        }
+
+        return nil
+    }
 
 
     func pushHere(updateCurrentIndex: Bool = true) {
@@ -33,6 +47,7 @@ class ZTravelManager: NSObject {
                     bam("currentIndex (\(currentIndex)) is less than zero")
                     currentIndex = 0
                 }
+
                 travelStack.insert(gHere, at: updateCurrentIndex ? currentIndex : newIndex)
             }
 
@@ -43,15 +58,16 @@ class ZTravelManager: NSObject {
     }
 
 
-    func goBack() {
-        let shouldPush = notHere
-        let      atTop = topIndex == currentIndex
-
-        if  shouldPush {
+    func goBack(extreme: Bool = false) {
+        if  let    index = isInStack {
+            currentIndex = index
+        } else if  notHere {
             pushHere(updateCurrentIndex: false)
         }
 
-        if  currentIndex  > 0 && (!shouldPush || !atTop) {
+        if extreme {
+            currentIndex = 0
+        } else if currentIndex > 0 && (currentIndex == topIndex || !notHere) {
             currentIndex -= 1
         }
 
@@ -59,29 +75,34 @@ class ZTravelManager: NSObject {
     }
 
 
-    func goForward() {
-        let shouldPush    = notHere
-        if  currentIndex  < topIndex {
-            currentIndex += 1
-
-            if  shouldPush {
-                pushHere()
-            }
-
-            go()
+    func goForward(extreme: Bool = false) {
+        if  let    index = isInStack {
+            currentIndex = index
+        } else if  notHere {
+            pushHere()
         }
+
+        if  extreme {
+            currentIndex = topIndex
+        } else if  currentIndex < topIndex {
+            currentIndex += 1
+        }
+
+        go()
     }
 
 
     func go() {
-        if  0        <= currentIndex {
-            let dbID  = gHere.databaseID
-            let here  = travelStack[currentIndex]
-            if  dbID != here.databaseID {
+        if  0          <= currentIndex, (notHere ||
+            priorIndex != currentIndex) {
+            priorIndex  = currentIndex
+            let dbID    = gHere.databaseID
+            let here    = travelStack[currentIndex]
+            if  dbID   != here.databaseID {
                 toggleDatabaseID()         // update id before setting gHere
             }
 
-            gHere     = here
+            gHere       = here
 
             gHere.grab()
             gFavoritesManager.updateFavorites()
@@ -146,10 +167,11 @@ class ZTravelManager: NSObject {
                 // TRAVEL TO A DIFFERENT GRAPH //
                 /////////////////////////////////
 
-                if crossLink.isRoot { // e.g., default root favorite
+                if bookmark.bookmarkTarget!.isFetched { // e.g., default root favorite
                     travel {
                         gHere = bookmark.bookmarkTarget!
 
+                        gHere.prepareForArrival()
                         atArrival(gHere, .redraw)
                     }
                 } else {
