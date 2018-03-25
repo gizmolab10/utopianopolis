@@ -29,6 +29,7 @@ class ZRemoteStoresManager: NSObject {
     var   currentCloudManager : ZCloudManager   { return cloudManagerFor(gDatabaseID) }
     var      rootProgenyCount : Int             { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
     var      lostAndFoundZone : Zone?           { return currentRecordsManager.lostAndFoundZone }
+    var           destroyZone : Zone?           { return currentRecordsManager.destroyZone }
     var             trashZone : Zone?           { return currentRecordsManager.trashZone }
     var              rootZone : Zone?     { get { return currentRecordsManager.rootZone }  set { currentRecordsManager.rootZone  = newValue } }
 

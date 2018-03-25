@@ -18,9 +18,10 @@ class ZCloudManager: ZRecordsManager {
     var   cloudZonesByID = [CKRecordZoneID : CKRecordZone] ()
     var         database :  CKDatabase? { return gRemoteStoresManager.databaseForID(databaseID) }
     var   refetchingName :       String { return "remember.\(databaseID.rawValue)" }
+    var   canDoLocalOnly :         Bool { return !gHasInternet || (databaseID == .mineID && gCloudAccountStatus == .none) }
+    var    isRemembering :         Bool = false
     var currentOperation : CKOperation? = nil
     var currentPredicate : NSPredicate? = nil
-    var    isRemembering :         Bool = false
 
 
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
@@ -178,9 +179,6 @@ class ZCloudManager: ZRecordsManager {
     // MARK:-
 
 
-    var forLocalOnly: Bool { return !gHasInternet || (databaseID == .mineID && gCloudAccountStatus == .none) }
-
-
     func assureRecordExists(withRecordID iCKRecordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
         let done:  RecordClosure = { (iCKRecord: CKRecord?) in
             FOREGROUND(canBeDirect: true) {
@@ -192,7 +190,7 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        if      forLocalOnly {
+        if      canDoLocalOnly {
             if  let ckRecord = maybeCKRecordForRecordName(iCKRecordID.recordName),
                 !hasCKRecordName(iCKRecordID.recordName, forAnyOf: [.notFetched]) {
                 done(ckRecord)
@@ -315,7 +313,7 @@ class ZCloudManager: ZRecordsManager {
     func bookmarkPredicate(specificTo iRecordIDs: [CKRecordID]) -> NSPredicate? {
         var  predicate    = ""
 
-        if  forLocalOnly {
+        if  canDoLocalOnly {
             return nil
         } else if  iRecordIDs.count == 0 {
             predicate     = String(format: "zoneLink != '\(kNullLink)'")
@@ -1115,57 +1113,44 @@ class ZCloudManager: ZRecordsManager {
 
 
     func establishRoots(_ onCompletion: IntClosure?) {
-        let prefix = (databaseID == .mineID) ? "my " : "public "
-
-        let favoritesClosure = {
-            if  gMineCloudManager.favoritesZone != nil || self.databaseID != .mineID {
+        let     roots: [ZRootID] = [.favorites, .destroy, .trash, .graph, .lost]
+        let               prefix = (databaseID == .mineID) ? "my " : "public "
+        var closure: IntClosure? = nil
+        closure                  = { iIndex in
+            if iIndex >= roots.count {
                 onCompletion?(0)
             } else {
-                self.establishRootFor(name: kFavoritesName, recordName: kFavoritesRootName) { iZone in
-                    iZone.directAccess              = .eDefaultName
-                    gMineCloudManager.favoritesZone = iZone
+                let     rootID = roots[iIndex]
+                let recordName = rootID.rawValue
+                var       name = prefix + recordName
 
-                    onCompletion?(0)
+                switch rootID {
+                case .favorites: if self.favoritesZone    != nil || self.databaseID != .mineID { closure?(iIndex + 1) } else { name = recordName }
+                case .destroy:   if self.destroyZone      != nil                               { closure?(iIndex + 1) }
+                case .trash:     if self.trashZone        != nil                               { closure?(iIndex + 1) }
+                case .graph:     if self.rootZone         != nil                               { closure?(iIndex + 1) } else { name = kFirstIdeaTitle }
+                case .lost:      if self.lostAndFoundZone != nil                               { closure?(iIndex + 1) }
+                }
+
+                self.establishRootFor(name: name, recordName: recordName) { iZone in
+                    if  rootID != .graph {
+                        iZone.directAccess = .eDefaultName
+                    }
+
+                    switch rootID {
+                    case .favorites: self.favoritesZone    = iZone
+                    case .destroy:   self.destroyZone      = iZone
+                    case .trash:     self.trashZone        = iZone
+                    case .graph:     self.rootZone         = iZone
+                    case .lost:      self.lostAndFoundZone = iZone
+                    }
+
+                    closure?(iIndex + 1)
                 }
             }
         }
 
-        let lostClosure = {
-            if  self.lostAndFoundZone != nil {
-                favoritesClosure()
-            } else {
-                self.establishRootFor(name: prefix + kLostAndFoundName, recordName: kLostAndFoundName) { iZone in
-                    iZone.directAccess    = .eDefaultName
-                    self.lostAndFoundZone = iZone
-
-                    favoritesClosure()
-                }
-            }
-        }
-
-        let trashClosure = {
-            if  self.trashZone != nil {
-
-                lostClosure()
-            } else {
-                self.establishRootFor(name: prefix + kTrashName, recordName: kTrashName) { iZone in
-                    iZone.directAccess = .eDefaultName
-                    self.trashZone     = iZone
-
-                    lostClosure()
-                }
-            }
-        }
-
-        if  rootZone != nil {
-            trashClosure()
-        } else {
-            establishRootFor(name: kFirstIdeaTitle, recordName: kRootName) { iZone in
-                self.rootZone = iZone
-
-                trashClosure()
-            }
-        }
+        closure?(0)
     }
 
 
@@ -1203,7 +1188,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func unsubscribe(_ onCompletion: IntClosure?) {
-        if  forLocalOnly {
+        if  canDoLocalOnly {
             onCompletion?(0)
         } else {
             onCompletion?(-1)
@@ -1237,7 +1222,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func subscribe(_ onCompletion: IntClosure?) {
-        if  forLocalOnly {
+        if  canDoLocalOnly {
             onCompletion?(0)
         } else {
             let classNames = [kZoneType, kTraitType]

@@ -33,7 +33,6 @@ var              gExpanded:          [String]? = nil
 
 var                gIsLate:               Bool { return gBatchManager.isLate }
 var            gIsDragging:               Bool { return gDraggedZone != nil }
-var          gForLocalOnly:               Bool { return gCloudManager.forLocalOnly }
 var      gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var    gHasPrivateDatabase:               Bool { return gUserRecordID != nil }
 var      gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor) as? ZEditorController }

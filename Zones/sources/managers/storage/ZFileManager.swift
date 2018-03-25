@@ -94,8 +94,12 @@ class ZFileManager: NSObject {
                     dict[.trash] = trash as NSObject
                 }
 
-                if  let   found  = manager.lostAndFoundZone?.storageDictionary(for: dbID) {
-                    dict[.found] = found as NSObject
+                if  let   destroy  = manager.destroyZone?.storageDictionary(for: dbID) {
+                    dict[.destroy] = destroy as NSObject
+                }
+
+                if  let   lost  = manager.lostAndFoundZone?.storageDictionary(for: dbID) {
+                    dict[.lost] = lost as NSObject
                 }
 
                 if                 dbID == .mineID {
@@ -136,10 +140,10 @@ class ZFileManager: NSObject {
             isReading[index] = true
             let         path = filePath(for: dbIndex)
             typealias  types = [ZStorageType]
-            let  keys: types = [.date, .graph, .found, .trash, .favorites, .bookmarks ]
+            let  keys: types = [.date, .lost, .graph, .trash, .destroy, .favorites, .bookmarks ]
             let      manager = gRemoteStoresManager.cloudManagerFor(databaseID)
 
-            columnarReport("   \(databaseID.rawValue)", gBatchManager.debugTimeText)
+            // columnarReport("   \(databaseID.rawValue)", gBatchManager.debugTimeText)
 
             FOREGROUND {
                 do {
@@ -148,7 +152,7 @@ class ZFileManager: NSObject {
                         let   json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
                         let   dict = self.dictFromJSON(json)
 
-                        self.columnarReport("    dictionary", gBatchManager.debugTimeText)
+                        // self.columnarReport("    dictionary", gBatchManager.debugTimeText)
 
                         for key in keys {
                             if  let   value = dict[key] {
@@ -161,8 +165,9 @@ class ZFileManager: NSObject {
                                     switch key {
                                     case .graph:     manager        .rootZone = zone
                                     case .trash:     manager       .trashZone = zone
+                                    case .destroy:   manager     .destroyZone = zone
                                     case .favorites: manager   .favoritesZone = zone
-                                    case .found:     manager.lostAndFoundZone = zone
+                                    case .lost:      manager.lostAndFoundZone = zone
                                     default: break
                                     }
                                 } else if let array = value as? [ZStorageDictionary] {
@@ -174,7 +179,7 @@ class ZFileManager: NSObject {
                                 }
                             }
 
-                            self.columnarReport("    " + key.rawValue, gBatchManager.debugTimeText)
+                            // self.columnarReport("    " + key.rawValue, gBatchManager.debugTimeText)
                         }
                     }
                 } catch {

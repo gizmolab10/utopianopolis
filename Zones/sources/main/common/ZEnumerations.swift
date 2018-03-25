@@ -7,6 +7,15 @@
 //
 
 
+enum ZRootID: String {
+    case graph     = "root"
+    case trash     = "trash"
+    case destroy   = "destroy"
+    case favorites = "favorites"
+    case lost      = "lost and found"
+}
+
+
 enum ZCloudAccountStatus: Int {
     case none
     case begin
@@ -98,9 +107,10 @@ struct ZDetailsViewID: OptionSet {
 
 
 enum ZStorageType: String {
-    case found      = "lostAndFound"    // general
+    case lost      = "lostAndFound"    // general
     case bookmarks  = "bookmarks"
     case favorites  = "favorites"
+    case destroy    = "destroy"
     case userID     = "user ID"
     case graph      = "graph"
     case trash      = "trash"

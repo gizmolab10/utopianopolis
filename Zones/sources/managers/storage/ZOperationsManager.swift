@@ -28,7 +28,7 @@ enum ZOperationID: Int {
     case read               // LOCAL
     case found              // LOCAL
     case save               // zones, traits, destroy
-    case root
+    case roots
     case favorites
     case here
     case fetchNew
@@ -57,7 +57,7 @@ enum ZOperationID: Int {
 
     var isLocal: Bool {
         switch self {
-        case .root, .here, .read, .write, .found, .internet, .ubiquity, .favorites, .completion, .fetchUserID, .accountStatus, .observeUbiquity: return true
+        case .here, .read, .write, .roots, .found, .internet, .ubiquity, .favorites, .completion, .fetchUserID, .accountStatus, .observeUbiquity: return true
         default:                                                                                                                                 return false
         }
     }

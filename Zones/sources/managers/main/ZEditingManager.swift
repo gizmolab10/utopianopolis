@@ -1108,13 +1108,18 @@ class ZEditingManager: NSObject {
 
                 zone.addToPaste()
 
-                if !destroyNow {
-                    moveToTrash(zone)
+
+                if !destroyNow && !eventuallyDestroy {
+                    moveZone(zone, to: zone.trashZone)
                 } else {
                     zone.traverseAllProgeny { iZone in
                         iZone.needDestroy()                     // gets written in file
                         iZone.concealAllProgeny()               // prevent gExpandedZones list from getting clogged with stale references
                         iZone.orphan()
+                    }
+
+                    if !destroyNow {
+                        moveZone(zone, to: zone.destroyZone)
                     }
                 }
 
@@ -1171,13 +1176,6 @@ class ZEditingManager: NSObject {
         }
 
         return nil
-    }
-
-
-    func moveToTrash(_ iZone: Zone, onCompletion: Closure? = nil) {
-        if  let trash = iZone.trashZone {
-            moveZone(iZone, to: trash, onCompletion: onCompletion)
-        }
     }
 
 
@@ -1304,45 +1302,49 @@ class ZEditingManager: NSObject {
     }
 
 
-    func moveZone(_ zone: Zone, to there: Zone, onCompletion: Closure?) {
-        if !there.isBookmark {
-            moveZone(zone, into: there, at: gInsertionsFollow ? nil : 0, orphan: true) {
-                onCompletion?()
-            }
-        } else if !there.isABookmark(spawnedBy: zone) {
+    func moveZone(_ zone: Zone, to iThere: Zone?, onCompletion: Closure? = nil) {
+        if  let there = iThere {
+            if !there.isBookmark {
+                moveZone(zone, into: there, at: gInsertionsFollow ? nil : 0, orphan: true) {
+                    onCompletion?()
+                }
+            } else if !there.isABookmark(spawnedBy: zone) {
 
-            //////////////////////////////////
-            // MOVE ZONE THROUGH A BOOKMARK //
-            //////////////////////////////////
+                //////////////////////////////////
+                // MOVE ZONE THROUGH A BOOKMARK //
+                //////////////////////////////////
 
-            var     movedZone = zone
-            let    targetLink = there.crossLink
-            let     sameGraph = zone.databaseID == targetLink?.databaseID
-            let grabAndTravel = {
-                gTravelManager.travelThrough(there) { object, kind in
-                    let there = object as! Zone
+                var     movedZone = zone
+                let    targetLink = there.crossLink
+                let     sameGraph = zone.databaseID == targetLink?.databaseID
+                let grabAndTravel = {
+                    gTravelManager.travelThrough(there) { object, kind in
+                        let there = object as! Zone
 
-                    self.moveZone(movedZone, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
-                        movedZone.recursivelyApplyDatabaseID(targetLink?.databaseID)
-                        movedZone.grab()
-                        onCompletion?()
+                        self.moveZone(movedZone, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
+                            movedZone.recursivelyApplyDatabaseID(targetLink?.databaseID)
+                            movedZone.grab()
+                            onCompletion?()
+                        }
+                    }
+                }
+
+                movedZone.orphan()
+
+                if sameGraph {
+                    grabAndTravel()
+                } else {
+                    movedZone.needDestroy()
+
+                    movedZone = movedZone.deepCopy()
+
+                    gBatchManager.sync { iSame in
+                        grabAndTravel()
                     }
                 }
             }
-
-            movedZone.orphan()
-
-            if sameGraph {
-                grabAndTravel()
-            } else {
-                movedZone.needDestroy()
-
-                movedZone = movedZone.deepCopy()
-
-                gBatchManager.sync { iSame in
-                    grabAndTravel()
-                }
-            }
+        } else {
+            onCompletion?()
         }
     }
 
@@ -1631,7 +1633,7 @@ class ZEditingManager: NSObject {
                     }
 
                     grab.addToPaste()
-                    self.moveToTrash(grab)
+                    self.moveZone(grab, to: grab.trashZone)
                 }
 
                 children.sort { (a, b) -> Bool in

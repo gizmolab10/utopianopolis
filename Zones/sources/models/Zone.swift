@@ -42,6 +42,7 @@ class Zone : ZRecord {
     var               children = [Zone] ()
     var                 traits = [ZTraitType : ZTrait] ()
     var                  count:          Int  { return children.count }
+    var            destroyZone:         Zone? { return cloudManager?.destroyZone }
     var              trashZone:         Zone? { return cloudManager?.trashZone }
     var                 widget:   ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var         linkDatabaseID:  ZDatabaseID? { return databaseID(from: zoneLink) }

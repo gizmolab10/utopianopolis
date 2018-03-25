@@ -25,7 +25,7 @@ enum ZRecordState: String {
     case needsProgeny            = "progeny"
     case needsRoot               = "root"
     case needsSave               = "save"
-    case needsFound               = "found"
+    case needsFound              = "found"
     case needsTraits             = "traits"
     case needsWritable           = "writable"
     case needsUnorphan           = "unorphan"
@@ -42,8 +42,9 @@ class ZRecordsManager: NSObject {
     var            lastSyncDate = Date(timeIntervalSince1970: 0)
     var lostAndFoundZone: Zone? = nil
     var    favoritesZone: Zone? = nil // only for .mineID manager
+    var      destroyZone: Zone? = nil
     var        trashZone: Zone? = nil
-    var         rootZone: Zone? = nil
+var         rootZone: Zone? = nil
     var      hereIsValid: Bool { return maybeZoneForRecordName(hereRecordName) != nil }
 
 
@@ -639,9 +640,9 @@ class ZRecordsManager: NSObject {
 
                 registry[id]  = zRecord
 
-                if registry.count % 200 == 0 {
-                    columnarReport("     \(registry.count)", gBatchManager.debugTimeText)
-                }
+//                if registry.count % 200 == 0 {
+//                    columnarReport("     \(registry.count)", gBatchManager.debugTimeText)
+//                }
 
                 return true
             }

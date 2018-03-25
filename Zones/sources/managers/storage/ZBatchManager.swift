@@ -76,8 +76,8 @@ class ZBatchManager: ZOnboardingManager {
             switch identifier {
             case .save:        return [                                      .save,                             .write]
             case .sync:        return [            .fetch, .parents, .merge, .save, .children, .traits,         .write]
-            case .root:        return [.root,                                .save, .children,         .traits        ]
-            case .travel:      return [.root,              .parents,                .children, .fetch, .traits        ]
+            case .root:        return [.roots,                               .save, .children,         .traits        ]
+            case .travel:      return [.roots,             .parents,                .children, .fetch, .traits        ]
             case .parents:     return [                    .parents,                                   .traits        ]
             case .children:    return [                                             .children,         .traits        ]
             case .families:    return [            .fetch, .parents,                .children,         .traits        ]
@@ -85,7 +85,7 @@ class ZBatchManager: ZOnboardingManager {
             case .fetchLost:   return [.fetchlost,                           .save, .children                         ]
             case .emptyTrash:  return [.emptyTrash                                                                    ]
             case .undelete:    return [.undelete,  .fetch, .parents,         .save, .children, .traits                ]
-            case .resumeCloud: return [.fetchNew, .fetchAll,                                                    .write]
+            case .resumeCloud: return [.fetchNew, .fetchAll,                 .save,                             .write]
             case .newAppleID:  return operationIDs(from: .internet,        to: .found, skipping: [.read])
             case .startUp:     return operationIDs(from: .observeUbiquity, to: .fetchAll)
             case .finishUp:    return operationIDs(from: .write,           to: .subscribe)
@@ -333,7 +333,7 @@ class ZBatchManager: ZOnboardingManager {
         switch identifier { // inner switch
         case .cloud:                cloudManager.fetchCloudZones      (                     cloudCallback)
         case .bookmarks:            cloudManager.fetchBookmarks       (                     cloudCallback)
-        case .root:                 cloudManager.establishRoots       (                     cloudCallback)
+        case .roots:                cloudManager.establishRoots       (                     cloudCallback)
         case .children:             cloudManager.fetchChildren        (                     cloudCallback)
         case .here:                 cloudManager.establishHere        (                     cloudCallback)
         case .parents:              cloudManager.fetchParents         (                     cloudCallback)
