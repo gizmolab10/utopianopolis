@@ -77,6 +77,7 @@ var recentCloudAccountStatus  = gCloudAccountStatus
 class ZOperationsManager: NSObject {
 
 
+    var   debugTimeText :       String  { return !usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)" }
     var   operationText :       String  { return String(describing: currentOp) }
     var onCloudResponse :   AnyClosure? = nil
     var     lastOpStart :         Date? = nil
@@ -237,9 +238,7 @@ class ZOperationsManager: NSObject {
 
     func reportBeforePerformBlock() {
         if  gMeasureOpsPerformance {
-            let timeText = !self.usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)"
-
-            self.columnarReport("  " + self.operationText, timeText)
+            columnarReport("  " + operationText, debugTimeText)
         }
     }
 
@@ -249,7 +248,7 @@ class ZOperationsManager: NSObject {
             let   duration = Int(start.timeIntervalSinceNow) * -10
             let    message = "\(Float(duration) / 10.0)"
 
-            self.columnarReport("  " + self.operationText, message)
+            columnarReport("  " + operationText, message)
         }
     }
 

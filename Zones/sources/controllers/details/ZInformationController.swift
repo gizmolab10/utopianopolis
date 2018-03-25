@@ -43,16 +43,15 @@ class ZInformationController: ZGenericController {
 
 
     var totalCountsText: String {
-        let (count, notSavableCount) = gCloudManager.undeletedCounts
-        let                    total = gRemoteStoresManager.rootProgenyCount
+        let count = gCloudManager.rootZone?.progenyCount ?? 0
 
-        return "of roughly \(total), have: \(count) + \(notSavableCount)"
+        return "\(count + 1) ideas"
     }
 
 
     var graphNameText: String {
         if let dbID = currentZone.databaseID {
-            return dbID.rawValue + " database"
+            return "in \(dbID.rawValue) database"
         }
 
         return ""
@@ -75,7 +74,7 @@ class ZInformationController: ZGenericController {
             versionLabel?    .text = versionText
 
             if iKind != .startup {
-                levelLabel?  .text = "level: \(currentZone.level)"
+                levelLabel?  .text = "focus is at level: \(currentZone.level)"
             }
         }
     }

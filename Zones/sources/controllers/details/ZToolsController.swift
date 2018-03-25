@@ -77,7 +77,7 @@ class ZToolsController: ZGenericTableController {
                 case .eRetry:       gBatchManager.unHang()
                 case .eTrash:       self.showTrashCan()
                 case .eGather:      self.gatherAndShowLost()
-                case .eRecount:     self.recount()
+                case .eRecount:     gRemoteStoresManager.recount()
                 }
             }
         }
@@ -136,24 +136,10 @@ class ZToolsController: ZGenericTableController {
     }
 
 
-    func recount() {
-        for dbID in kAllDatabaseIDs {
-            let manager = gRemoteStoresManager.cloudManagerFor(dbID)
-            manager        .hereZone .safeUpdateCounts([], includingFetchable: true)
-            manager       .trashZone?.safeUpdateCounts([], includingFetchable: true)
-            manager.lostAndFoundZone?.safeUpdateCounts([], includingFetchable: true)
-        }
-
-        gMineCloudManager.favoritesZone?.safeUpdateCounts([], includingFetchable: true)
-        gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .redraw) {}
-    }
-
-
     func restoreFromTrash() {
         gBatchManager.undelete { iSame in
             self.signalFor(nil, regarding: .redraw)
         }
-
     }
 
 

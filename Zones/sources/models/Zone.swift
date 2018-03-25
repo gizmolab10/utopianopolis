@@ -1074,7 +1074,7 @@ class Zone : ZRecord {
     
 
     func maybeNeedChildren() {
-        if  showChildren && hasMissingChildren() && !needsProgeny {
+        if  showChildren && !needsProgeny {
             needChildren()
         }
     }
@@ -1349,58 +1349,19 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    func updateProgenyCount() {
-        if !hasMissingChildren() {
-            fastUpdateProgenyCount()
-        } else {
-            needChildren()
-            gBatchManager.children(.restore) { iSame in
-                self.fastUpdateProgenyCount()
-            }
-        }
-    }
-
-
-    func fastUpdateProgenyCount() {
-        self.traverseAncestors { iAncestor -> ZTraverseStatus in
-            var      counter = 0
-
-            for child in iAncestor.children {
-                if !child.isBookmark {
-                    counter += child.fetchableCount + child.progenyCount
-                }
-            }
-
-            if counter != 0 && counter == iAncestor.progenyCount {
-                return .eStop
-            }
-
-            iAncestor.progenyCount = counter
-
-            return .eContinue
-        }
-    }
-
-
-    func safeUpdateCounts(_ iVisited: [Zone], includingFetchable: Bool = false) {
-        if !iVisited.contains(self) { // && !hasMissingChildren() { // has missing children -> incomplete count information
-            let inclusive = iVisited + [self]
-            var   counter = 0
+    func updateCounts(_ iVisited: [Zone] = []) {
+        if !iVisited.contains(self) {
+            let visited = iVisited + [self]
+            var counter = 0
 
             for child in children {
                 if  child.isBookmark {
                     counter += 1
                 } else {
-                    child.safeUpdateCounts(inclusive, includingFetchable: includingFetchable)
+                    child.updateCounts(visited)
 
-                    counter += child.fetchableCount + child.progenyCount
+                    counter += child.count + child.progenyCount
                 }
-            }
-
-            if  fetchableCount != count && includingFetchable {
-                fetchableCount  = count
-
-                needSave()
             }
 
             if  progenyCount != counter {

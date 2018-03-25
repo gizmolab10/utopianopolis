@@ -637,27 +637,13 @@ class ZEditingManager: NSObject {
     func revealParentAndSiblingsOf(_ iZone: Zone, onCompletion: BooleanClosure?) {
         if  let parent = iZone.parentZone {
             parent.revealChildren()
-
-            if  parent.hasMissingChildren() {
-                parent.needChildren()
-
-                gBatchManager.children(.restore) { iSame in
-                    onCompletion?(true)
-                }
-            } else {
-
-                ///////////////////////////////////////////////////////////////////////
-                // passing false means: did not do a cloud operation ... avoids hang //
-                ///////////////////////////////////////////////////////////////////////
-
-                onCompletion?(false)
-            }
+            parent.needChildren()
         } else {
             iZone.needParent()
+        }
 
-            gBatchManager.families { iSame in
-                onCompletion?(true)
-            }
+        gBatchManager.families { iSame in
+            onCompletion?(true)
         }
     }
 
@@ -667,10 +653,7 @@ class ZEditingManager: NSObject {
 
         descendent.traverseAllAncestors { iParent in
             iParent.revealChildren()
-
-            if iParent.hasMissingChildren() {
-                iParent.needChildren() // need this to show "minimal flesh" on graph
-            }
+            iParent.needChildren() // need this to show "minimal flesh" on graph
 
             if iParent == iAncestor {
                 needRoot = false

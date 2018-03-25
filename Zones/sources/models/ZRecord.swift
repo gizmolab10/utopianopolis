@@ -55,7 +55,7 @@ class ZRecord: NSObject {
                 // old registrations are no longer valid //
                 ///////////////////////////////////////////
 
-                clearAllStates() // is this needed?
+                clearAllStates() // is this needed pr wanted?
                 gBookmarksManager.unregisterBookmark(self as? Zone)
                 cloudManager?.unregisterCKRecord(_record)
 
@@ -68,9 +68,6 @@ class ZRecord: NSObject {
                 } else {
                     maybeMarkAsFetched()
 
-                    let zone = self as? Zone
-                    let name = zone?.zoneName ?? recordName ?? kNoValue
-
                     if  notFetched {
                         setupLinks()
                     }
@@ -78,6 +75,9 @@ class ZRecord: NSObject {
                     /////////////////////
                     // debugging tests //
                     /////////////////////
+
+                    let zone = self as? Zone
+                    let name = zone?.zoneName ?? recordName ?? kNoValue
 
                     if       !canSaveWithoutFetch &&  isFetched {
                         bam("new record, ALLOW SAVE WITHOUT FETCH " + name)
@@ -308,7 +308,6 @@ class ZRecord: NSObject {
     func needChildren() {
         if !isBookmark && // all bookmarks are childless, by design
             showChildren &&
-            hasMissingChildren() &&
             false, // !gAssumeAllFetched &&
             !needsProgeny {
             addState(.needsChildren)
@@ -341,9 +340,9 @@ class ZRecord: NSObject {
 
 
     func maybeNeedMerge() {
-//        if  isFetched, canSaveWithoutFetch, !needsSave, !needsMerge, !needsDestroy, !gAssumeAllFetched {
-//            addState(.needsMerge)
-//        }
+        if  isFetched, canSaveWithoutFetch, !needsSave, !needsMerge, !needsDestroy {
+            addState(.needsMerge)
+        }
     }
 
 

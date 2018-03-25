@@ -40,6 +40,15 @@ class ZRemoteStoresManager: NSObject {
     func cancel()                                                { currentCloudManager.currentOperation?.cancel()     }
 
 
+    func recount() {  // all progenyCounts for all progeny in all databases in all roots
+        for dbID in kAllDatabaseIDs {
+            gRemoteStoresManager.recordsManagerFor(dbID)?.recount()
+        }
+
+        gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .redraw) {}
+    }
+
+
     func updateLastSyncDates() {
         for dbID in kAllDatabaseIDs {
             if let manager = recordsManagerFor(dbID) {

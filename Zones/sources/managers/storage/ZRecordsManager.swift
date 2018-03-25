@@ -88,6 +88,14 @@ class ZRecordsManager: NSObject {
     }
 
 
+    func recount() {  // all progenyCounts for all progeny in all roots
+        hereZone         .updateCounts()
+        trashZone?       .updateCounts()
+        favoritesZone?   .updateCounts()
+        lostAndFoundZone?.updateCounts()
+    }
+
+
     // MARK:- record state
     // MARK:-
 
@@ -630,6 +638,10 @@ class ZRecordsManager: NSObject {
                 }
 
                 registry[id]  = zRecord
+
+                if registry.count % 200 == 0 {
+                    columnarReport("     \(registry.count)", gBatchManager.debugTimeText)
+                }
 
                 return true
             }

@@ -101,6 +101,7 @@ class ZControllersManager: NSObject {
                     self.blankScreenDebug()
                     self.signalFor(nil, regarding: .redraw)
                     gRemoteStoresManager.updateLastSyncDates()
+                    gRemoteStoresManager.recount()
                 }
             }
         }
@@ -151,7 +152,7 @@ class ZControllersManager: NSObject {
             }
 
             if  alsoProgenyCounts {
-                manager.rootZone?.safeUpdateCounts([])
+                manager.rootZone?.updateCounts()
             }
         }
     }

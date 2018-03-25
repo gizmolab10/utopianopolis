@@ -78,50 +78,52 @@ class ZFileManager: NSObject {
             var           dict = ZStorageDictionary ()
             let        manager = gRemoteStoresManager.cloudManagerFor(dbID)
 
-            writtenRecordNames.removeAll()
-            manager.rootZone?.safeUpdateCounts([]) // all progenyCounts for all progeny
+            FOREGROUND {
+                self.writtenRecordNames.removeAll()
+                gRemoteStoresManager.recount()
 
-            //////////////////////////////////////////////////
-            // taake snapshots just before exit from method //
-            //////////////////////////////////////////////////
+                //////////////////////////////////////////////////
+                // taake snapshots just before exit from method //
+                //////////////////////////////////////////////////
 
-            if  let   graph  = manager.rootZone?.storageDictionary(for: dbID)  {
-                dict[.graph] = graph as NSObject
-            }
-
-            if  let   trash  = manager.trashZone?.storageDictionary(for: dbID) {
-                dict[.trash] = trash as NSObject
-            }
-
-            if  let   found  = manager.lostAndFoundZone?.storageDictionary(for: dbID) {
-                dict[.found] = found as NSObject
-            }
-
-            if                 dbID == .mineID {
-                if  let   favorites  = manager.favoritesZone?.storageDictionary(for: dbID) {
-                    dict[.favorites] = favorites as NSObject
+                if  let   graph  = manager.rootZone?.storageDictionary(for: dbID)  {
+                    dict[.graph] = graph as NSObject
                 }
 
-                if  let   bookmarks  = gBookmarksManager.storageArray(for: dbID) {
-                    dict[.bookmarks] = bookmarks as NSObject
+                if  let   trash  = manager.trashZone?.storageDictionary(for: dbID) {
+                    dict[.trash] = trash as NSObject
                 }
 
-                if  let       userID  = gUserRecordID {
-                    dict    [.userID] = userID as NSObject
+                if  let   found  = manager.lostAndFoundZone?.storageDictionary(for: dbID) {
+                    dict[.found] = found as NSObject
                 }
-            }
 
-            manager.updateLastSyncDate()
+                if                 dbID == .mineID {
+                    if  let   favorites  = manager.favoritesZone?.storageDictionary(for: dbID) {
+                        dict[.favorites] = favorites as NSObject
+                    }
 
-            BACKGROUND {
-                dict [.date] = manager.lastSyncDate as NSObject
-                let jsonDict = self.jsonDictFrom(dict)
-                let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
-                let     path = self.filePath(for: dbIndex)
+                    if  let   bookmarks  = gBookmarksManager.storageArray(for: dbID) {
+                        dict[.bookmarks] = bookmarks as NSObject
+                    }
 
-                if  FileManager.default.createFile(atPath: path, contents: data) {}
+                    if  let       userID  = gUserRecordID {
+                        dict    [.userID] = userID as NSObject
+                    }
+                }
 
-                self .isWriting[index] = false // end prevention of write during write
+                manager.updateLastSyncDate()
+
+                BACKGROUND {
+                    dict [.date] = manager.lastSyncDate as NSObject
+                    let jsonDict = self.jsonDictFrom(dict)
+                    let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
+                    let     path = self.filePath(for: dbIndex)
+
+                    if  FileManager.default.createFile(atPath: path, contents: data) {}
+
+                    self .isWriting[index] = false // end prevention of write during write
+                }
             }
         }
     }
@@ -134,48 +136,56 @@ class ZFileManager: NSObject {
             isReading[index] = true
             let         path = filePath(for: dbIndex)
             typealias  types = [ZStorageType]
-            let  keys: types = [.graph, .favorites, .bookmarks, .date, .found, .trash ]
+            let  keys: types = [.date, .graph, .found, .trash, .favorites, .bookmarks ]
+            let      manager = gRemoteStoresManager.cloudManagerFor(databaseID)
 
-            do {
-                if  let   data = FileManager.default.contents(atPath: path),
-                    data.count > 0,
-                    let   json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
-                    let   dict = dictFromJSON(json)
+            columnarReport("   \(databaseID.rawValue)", gBatchManager.debugTimeText)
 
-                    for key in keys {
-                        if  let   value = dict[key] {
-                            let manager = gRemoteStoresManager.cloudManagerFor(databaseID)
+            FOREGROUND {
+                do {
+                    if  let   data = FileManager.default.contents(atPath: path),
+                        data.count > 0,
+                        let   json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
+                        let   dict = self.dictFromJSON(json)
 
-                            if let date = value as? Date {
-                                manager.lastSyncDate = date
-                            } else if let subDict = value as? ZStorageDictionary {
-                                let zone = Zone(dict: subDict, in: databaseID)
+                        self.columnarReport("    dictionary", gBatchManager.debugTimeText)
 
-                                switch key {
-                                case .graph:     manager               .rootZone = zone
-                                case .trash:     manager              .trashZone = zone
-                                case .found:     manager       .lostAndFoundZone = zone
-                                case .favorites: gMineCloudManager.favoritesZone = zone
-                                default: break
-                                }
-                            } else if let array = value as? [ZStorageDictionary] {
-                                for subDict in array {
+                        for key in keys {
+                            if  let   value = dict[key] {
+
+                                if let date = value as? Date {
+                                    manager.lastSyncDate = date
+                                } else if let subDict = value as? ZStorageDictionary {
                                     let zone = Zone(dict: subDict, in: databaseID)
 
-                                    gBookmarksManager.registerBookmark(zone)
+                                    switch key {
+                                    case .graph:     manager        .rootZone = zone
+                                    case .trash:     manager       .trashZone = zone
+                                    case .favorites: manager   .favoritesZone = zone
+                                    case .found:     manager.lostAndFoundZone = zone
+                                    default: break
+                                    }
+                                } else if let array = value as? [ZStorageDictionary] {
+                                    for subDict in array {
+                                        let zone = Zone(dict: subDict, in: databaseID)
+
+                                        gBookmarksManager.registerBookmark(zone)
+                                    }
                                 }
                             }
+
+                            self.columnarReport("    " + key.rawValue, gBatchManager.debugTimeText)
                         }
                     }
+                } catch {
+                    print(error)    // de-serialization
                 }
-            } catch {
-                print(error)    // de-serialization
+
+                gRemoteStoresManager.recordsManagerFor(databaseID)?.removeDuplicates()
+
+                self.isReading[index] = false
+
             }
-
-            gRemoteStoresManager.recordsManagerFor(databaseID)?.removeDuplicates()
-
-            isReading[index] = false
-
         }
     }
     

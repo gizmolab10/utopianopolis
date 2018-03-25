@@ -682,6 +682,7 @@ class ZCloudManager: ZRecordsManager {
                         self.createZRecords(of: kZoneType, with: iZoneCKRecords, title: " NEW")
 
                         self.unorphanAll()
+                        self.recount()
                         onCompletion?(0)
                     }
                 }
@@ -696,6 +697,7 @@ class ZCloudManager: ZRecordsManager {
         fetchZones(needed: needed) { iCKRecords in
             FOREGROUND {
                 if iCKRecords.count == 0 {
+                    self.recount()
                     onCompletion?(0)
                 } else {
                     self.createZRecords(of: kZoneType, with: iCKRecords)
