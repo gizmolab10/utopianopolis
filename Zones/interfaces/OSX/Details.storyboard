@@ -11,7 +11,7 @@
         <!--Information Controller-->
         <scene sceneID="SRV-hs-cwo">
             <objects>
-                <viewController id="fxO-Qj-JeN" customClass="ZInformationController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="fxO-Qj-JeN" customClass="ZInformationController" customModule="Thoughtful" sceneMemberID="viewController">
                     <view key="view" id="mbO-Ma-L1E">
                         <rect key="frame" x="0.0" y="0.0" width="228" height="121"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -131,7 +131,7 @@
         <!--Tools Controller-->
         <scene sceneID="OQa-jH-o6A">
             <objects>
-                <viewController id="M1d-6V-b2Q" customClass="ZToolsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="M1d-6V-b2Q" customClass="ZToolsController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" focusRingType="none" id="vKP-HI-kOy">
                         <rect key="frame" x="0.0" y="0.0" width="228" height="37"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -201,7 +201,7 @@
         <!--Details Controller-->
         <scene sceneID="Tae-az-4mZ">
             <objects>
-                <viewController id="YaQ-0g-PCb" customClass="ZDetailsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="YaQ-0g-PCb" customClass="ZDetailsController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
                         <rect key="frame" x="0.0" y="0.0" width="226" height="263"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -209,7 +209,7 @@
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
                                 <rect key="frame" x="0.0" y="9" width="226" height="254"/>
                                 <subviews>
-                                    <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
+                                    <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Thoughtful" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="204" width="226" height="50"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
@@ -272,7 +272,7 @@
                                             <outlet property="toggleButton" destination="hIy-eV-7gW" id="Pdh-ir-ANX"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
+                                    <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Thoughtful" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="153" width="226" height="50"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
@@ -335,7 +335,7 @@
                                             <outlet property="toggleButton" destination="aCk-9D-lHI" id="lcf-J5-cK6"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="shortcuts" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E5h-DF-X3i" userLabel="Shortcuts View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
+                                    <customView identifier="shortcuts" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E5h-DF-X3i" userLabel="Shortcuts View" customClass="ZStackableView" customModule="Thoughtful" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="102" width="226" height="50"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="GnQ-iS-bgR" userLabel="Title and Toggle">
@@ -398,7 +398,7 @@
                                             <outlet property="toggleButton" destination="kYb-ao-3Mw" id="6zv-Ya-yNt"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="tools" hidden="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Tools View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
+                                    <customView identifier="tools" hidden="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Tools View" customClass="ZStackableView" customModule="Thoughtful" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="51" width="226" height="50"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Dnz-Gb-8cH" userLabel="Title and Toggle">
@@ -461,7 +461,7 @@
                                             <outlet property="toggleButton" destination="bee-ew-HYp" id="EpT-0c-ZLw"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="debug" hidden="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UhT-Vl-h0f" userLabel="Debug View" customClass="ZStackableView" customModule="Focus" customModuleProvider="target">
+                                    <customView identifier="debug" hidden="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UhT-Vl-h0f" userLabel="Debug View" customClass="ZStackableView" customModule="Thoughtful" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="226" height="50"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7Zo-Cx-wV6" userLabel="Title and Toggle">
@@ -576,7 +576,7 @@
         <!--Preferences Controller-->
         <scene sceneID="n3v-Vu-MZq">
             <objects>
-                <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Focus" sceneMemberID="viewController">
+                <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Thoughtful" sceneMemberID="viewController">
                     <view key="view" id="Ngb-Ew-NGG">
                         <rect key="frame" x="0.0" y="0.0" width="228" height="279"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -931,7 +931,7 @@
         <!--Shortcuts Controller-->
         <scene sceneID="45A-WG-zgj">
             <objects>
-                <viewController id="JfR-Ay-CUa" customClass="ZShortcutsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="JfR-Ay-CUa" customClass="ZShortcutsController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="sAh-AR-qiN">
                         <rect key="frame" x="0.0" y="0.0" width="228" height="22"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -1002,7 +1002,7 @@
         <!--Debug Controller-->
         <scene sceneID="1Md-xJ-Z7k">
             <objects>
-                <viewController id="3I5-7x-PAH" customClass="ZDebugController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="3I5-7x-PAH" customClass="ZDebugController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="A57-Y0-NnV">
                         <rect key="frame" x="0.0" y="0.0" width="228" height="117"/>
                         <autoresizingMask key="autoresizingMask"/>

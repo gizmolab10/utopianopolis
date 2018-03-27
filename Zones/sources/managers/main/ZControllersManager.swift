@@ -82,13 +82,13 @@ class ZControllersManager: NSObject {
         gBatchManager.usingDebugTimer = true
 
         gRemoteStoresManager.clear()
-        displayActivity(true)
+//        displayActivity(true)
         gBatchManager.startUp { iSame in
             gWorkMode        = .graphMode
             gIsReadyToShowUI = true
 
             FOREGROUND {
-                self.displayActivity(false)
+//                self.displayActivity(false)
                 gHere.grab()
                 gFavoritesManager.updateFavorites()
                 self.signalFor(nil, regarding: .redraw)

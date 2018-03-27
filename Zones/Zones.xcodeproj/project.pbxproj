@@ -318,7 +318,7 @@
 		0C7117341FAE7F9900603017 /* ZBatchManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZBatchManager.swift; sourceTree = "<group>"; };
 		0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDesktopExtensions.swift; sourceTree = "<group>"; };
 		0C7152221FD8A1E400C7DA61 /* ZTravelManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTravelManager.swift; sourceTree = "<group>"; };
-		0CA04B141D2ECF1A001892E5 /* Focus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Focus.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CA04B141D2ECF1A001892E5 /* Thoughtful.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thoughtful.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
 		0CA04B2E1D2ECF1B001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -721,7 +721,7 @@
 		0CA04B151D2ECF1A001892E5 /* products */ = {
 			isa = PBXGroup;
 			children = (
-				0CA04B141D2ECF1A001892E5 /* Focus.app */,
+				0CA04B141D2ECF1A001892E5 /* Thoughtful.app */,
 				0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */,
 				0CA04B331D2ECF1B001892E5 /* ZonesUITests.xctest */,
 				0CA04B491D2ECF41001892E5 /* PadFocus.app */,
@@ -798,9 +798,9 @@
 			productReference = 0C69C9DF1F09CD95004D026D /* iFocus.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0CA04B131D2ECF1A001892E5 /* Focus */ = {
+		0CA04B131D2ECF1A001892E5 /* Thoughtful */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Focus" */;
+			buildConfigurationList = 0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Thoughtful" */;
 			buildPhases = (
 				0CA04B101D2ECF1A001892E5 /* Sources */,
 				0C50FD2C20532B6300E1D9A9 /* ShellScript */,
@@ -812,9 +812,9 @@
 			);
 			dependencies = (
 			);
-			name = Focus;
+			name = Thoughtful;
 			productName = Zones;
-			productReference = 0CA04B141D2ECF1A001892E5 /* Focus.app */;
+			productReference = 0CA04B141D2ECF1A001892E5 /* Thoughtful.app */;
 			productType = "com.apple.product-type.application";
 		};
 		0CA04B271D2ECF1B001892E5 /* ZonesTests */ = {
@@ -997,7 +997,7 @@
 			targets = (
 				0C69C9861F09CD95004D026D /* iFocus */,
 				0CA04B481D2ECF41001892E5 /* PadFocus */,
-				0CA04B131D2ECF1A001892E5 /* Focus */,
+				0CA04B131D2ECF1A001892E5 /* Thoughtful */,
 				0CA04B5D1D2ECF41001892E5 /* PadZonesTests */,
 				0CA04B681D2ECF41001892E5 /* PadZonesUITests */,
 				0CA04B271D2ECF1B001892E5 /* ZonesTests */,
@@ -1290,12 +1290,12 @@
 /* Begin PBXTargetDependency section */
 		0CA04B2A1D2ECF1B001892E5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0CA04B131D2ECF1A001892E5 /* Focus */;
+			target = 0CA04B131D2ECF1A001892E5 /* Thoughtful */;
 			targetProxy = 0CA04B291D2ECF1B001892E5 /* PBXContainerItemProxy */;
 		};
 		0CA04B351D2ECF1B001892E5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0CA04B131D2ECF1A001892E5 /* Focus */;
+			target = 0CA04B131D2ECF1A001892E5 /* Thoughtful */;
 			targetProxy = 0CA04B341D2ECF1B001892E5 /* PBXContainerItemProxy */;
 		};
 		0CA04B601D2ECF41001892E5 /* PBXTargetDependency */ = {
@@ -1759,7 +1759,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Focus" */ = {
+		0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Thoughtful" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0CA04B3D1D2ECF1B001892E5 /* Debug */,

@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0CA04B131D2ECF1A001892E5"
-               BuildableName = "Focus.app"
-               BlueprintName = "Focus"
+               BuildableName = "Thoughtful.app"
+               BlueprintName = "Thoughtful"
                ReferencedContainer = "container:Zones.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -54,8 +54,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0CA04B131D2ECF1A001892E5"
-            BuildableName = "Focus.app"
-            BlueprintName = "Focus"
+            BuildableName = "Thoughtful.app"
+            BlueprintName = "Thoughtful"
             ReferencedContainer = "container:Zones.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -78,8 +78,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0CA04B131D2ECF1A001892E5"
-            BuildableName = "Focus.app"
-            BlueprintName = "Focus"
+            BuildableName = "Thoughtful.app"
+            BlueprintName = "Thoughtful"
             ReferencedContainer = "container:Zones.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -110,8 +110,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0CA04B131D2ECF1A001892E5"
-            BuildableName = "Focus.app"
-            BlueprintName = "Focus"
+            BuildableName = "Thoughtful.app"
+            BlueprintName = "Thoughtful"
             ReferencedContainer = "container:Zones.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

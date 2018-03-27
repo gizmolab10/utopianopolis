@@ -12,11 +12,11 @@
                 <application id="hnw-xV-0zn" sceneMemberID="viewController">
                     <menu key="mainMenu" title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
                         <items>
-                            <menuItem title="Focus" id="1Xt-HY-uBw" userLabel="Zones">
+                            <menuItem title="Thoughtful" id="1Xt-HY-uBw" userLabel="Zones">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Focus" systemMenu="apple" id="uQy-DD-JDr">
+                                <menu key="submenu" title="Thoughtful" systemMenu="apple" id="uQy-DD-JDr">
                                     <items>
-                                        <menuItem title="About Focus" id="5kV-Vb-QxS" userLabel="About Zones">
+                                        <menuItem title="About Thoughtful" id="5kV-Vb-QxS" userLabel="About Zones">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="orderFrontStandardAboutPanel:" target="Ady-hI-5gd" id="Exp-CZ-Vem"/>
@@ -34,7 +34,7 @@
                                             <menu key="submenu" title="Services" systemMenu="services" id="hz9-B4-Xy5"/>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="4je-JR-u6R"/>
-                                        <menuItem title="Hide Zones" keyEquivalent="h" id="Olw-nP-bQN">
+                                        <menuItem title="Hide Thoughtful" keyEquivalent="h" id="Olw-nP-bQN">
                                             <connections>
                                                 <action selector="hide:" target="Ady-hI-5gd" id="PnN-Uc-m68"/>
                                             </connections>
@@ -52,7 +52,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="kCx-OE-vgT"/>
-                                        <menuItem title="Quit Focus" keyEquivalent="q" id="4sb-4s-VLi">
+                                        <menuItem title="Quit Thoughtful" keyEquivalent="q" id="4sb-4s-VLi">
                                             <connections>
                                                 <action selector="terminate:" target="Ady-hI-5gd" id="Te7-pn-YzF"/>
                                             </connections>
@@ -131,9 +131,9 @@ CA
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="Graph" id="34Y-GC-lZU">
+                            <menuItem title="Ideas" id="34Y-GC-lZU">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Graph" id="ixh-Wh-nLR">
+                                <menu key="submenu" title="Ideas" id="ixh-Wh-nLR">
                                     <items>
                                         <menuItem title="Create" id="PJi-eK-2ck">
                                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -326,7 +326,7 @@ CQ
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="aEl-vF-NGF"/>
-                                                    <menuItem title="Select within Favorites" keyEquivalent="s" id="ir8-Wk-bHQ">
+                                                    <menuItem title="Select Current within Favorites" keyEquivalent="s" id="ir8-Wk-bHQ">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="vYQ-DG-4FY"/>
@@ -395,7 +395,7 @@ CQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Help" systemMenu="help" id="F2S-fz-NVQ">
                                     <items>
-                                        <menuItem title="Focus Help" keyEquivalent="/" id="FKE-Sm-Kum">
+                                        <menuItem title="Thoughtful Help" keyEquivalent="/" id="FKE-Sm-Kum">
                                             <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES"/>
                                             <connections>
                                                 <action selector="displayHelp:" target="Ady-hI-5gd" id="yRj-nt-Ohd"/>
@@ -413,7 +413,7 @@ CQ
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Focus" customModuleProvider="target"/>
+                <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Thoughtful" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-61" y="-398"/>
@@ -422,7 +422,7 @@ CQ
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="Focus" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA" customClass="ZoneWindow" customModule="Focus" customModuleProvider="target">
+                    <window key="window" title="Thoughtful" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA" customClass="ZoneWindow" customModule="Thoughtful" customModuleProvider="target">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="19" width="719" height="491"/>
@@ -442,12 +442,12 @@ CQ
         <!--Editor-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" userLabel="Editor" customClass="ZEditorController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="XfG-lQ-9wD" userLabel="Editor" customClass="ZEditorController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" identifier="drag view" id="m2S-Jp-Qdl" userLabel="View">
                         <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="itU-Gt-Inh" customClass="ZoneDragView" customModule="Focus" customModuleProvider="target">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="itU-Gt-Inh" customClass="ZoneDragView" customModule="Thoughtful" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
                             </customView>
                             <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fSQ-gu-ejW">
@@ -507,7 +507,7 @@ CQ
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
             <objects>
-                <viewController id="MXk-17-6Dz" customClass="ZMainController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="MXk-17-6Dz" customClass="ZMainController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="eh7-uz-OG5">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -592,7 +592,7 @@ CQ
         <!--Search Controller-->
         <scene sceneID="Gwm-hS-Ozn">
             <objects>
-                <viewController id="cYL-kx-LTL" customClass="ZSearchController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="cYL-kx-LTL" customClass="ZSearchController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Vov-Ty-huu">
                         <rect key="frame" x="0.0" y="0.0" width="397" height="46"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -626,7 +626,7 @@ CQ
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
             <objects>
-                <viewController id="Hxl-Pi-4li" customClass="ZSearchResultsController" customModule="Focus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Hxl-Pi-4li" customClass="ZSearchResultsController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Yjc-TG-nmv">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
