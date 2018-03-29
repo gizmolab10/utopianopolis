@@ -74,7 +74,7 @@ class ZInformationController: ZGenericController {
             versionLabel?    .text = versionText
 
             if iKind != .startup {
-                levelLabel?  .text = "focus is at level: \(currentZone.level)"
+                levelLabel?  .text = "your selection is at level \(currentZone.level + 1)"
             }
         }
     }

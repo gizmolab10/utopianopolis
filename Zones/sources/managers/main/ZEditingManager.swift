@@ -1135,8 +1135,6 @@ class ZEditingManager: NSObject {
                     onCompletion?()
                 }
             }
-
-            signalFor(nil, regarding: .redraw)
         }
     }
 

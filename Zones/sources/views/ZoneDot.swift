@@ -177,33 +177,46 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func drawTinyDots(_ dirtyRect: CGRect) {
+    func drawTinyOuterDots(_ dirtyRect: CGRect) {
         if  let  zone = widgetZone, innerDot != nil, gCountsMode == .dots, !zone.isRootOfFavorites, (!zone.showChildren || zone.isBookmark) {
-            let count = zone.indirectCount
+            var count = zone.indirectCount
 
             if  count > 1 {
+                let      onesCount = count % 10
+                let      tensCount = count / 10
+                count              = onesCount + tensCount
                 let      dotRadius = Double(innerDotHeight / 2.0)
                 let     tinyRadius = (dotRadius * gLineThickness / 12.0) + 0.7
-                let   tinyDiameter = tinyRadius * 2.0
                 let         center = innerDot!.frame.center
-                let      offCenter = CGPoint(x: center.x - CGFloat(tinyRadius), y: center.y - CGFloat(tinyRadius))
                 let color: ZColor? = isDragDrop ? gRubberbandColor : zone.color
-                let     startAngle = Double(0)
-                let incrementAngle = Double.pi / Double(count)
-                let    orbitRadius = CGFloat(dotRadius + tinyRadius * 1.2)
 
-                for index in 1 ... count {
-                    let  increment = Double(index * 2 - 1)
-                    let      angle = startAngle - incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
-                    let          x = offCenter.x + orbitRadius * CGFloat(cos(angle))
-                    let          y = offCenter.y + orbitRadius * CGFloat(sin(angle))
-                    let       rect = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
-                    let       path = ZBezierPath(ovalIn: rect)
-                    path .flatness = 0.0001
+                let closure: IntBooleanClosure = { (iCount, isATen) in
+                    if  iCount > (isATen ? 0 : 1) {
+                        let          isOdd = iCount % 2 == 1
+                        let         isOnly = (isATen ? onesCount : tensCount) == 0
+                        let incrementAngle = Double.pi * (isOnly ? 2.0 : 1.0) / Double(iCount)
+                        for index in 0 ... iCount - 1 {
+                            let  increment = Double(index) + 0.5
+                            let startAngle = (Double.pi * (isOnly ? isOdd ? 1.0 : 0.5 : isATen ? 0.5 : 1.5))
+                            let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
+                            let     radius = CGFloat(dotRadius + tinyRadius * (isATen ? 2.0 : 1.6))
+                            let  offRadius = tinyRadius * (isATen ? 2.0 : 1.0)
+                            let  offCenter = CGPoint(x: center.x - CGFloat(offRadius), y: center.y - CGFloat(offRadius))
+                            let          x = offCenter.x + (radius * CGFloat(cos(angle)))
+                            let          y = offCenter.y + (radius * CGFloat(sin(angle)))
+                            let   diameter = CGFloat((isATen ? 4.0 : 2.0) * tinyRadius)
+                            let       rect = CGRect(x: x, y: y, width: diameter, height: diameter)
+                            let       path = ZBezierPath(ovalIn: rect)
+                            path .flatness = 0.0001
 
-                    color?.setFill()
-                    path.fill()
+                            color?.setFill()
+                            path.fill()
+                        }
+                    }
                 }
+
+                closure(tensCount, true)
+                closure(onesCount, false)
             }
         }
     }
@@ -287,7 +300,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     /////////////////////
 
                     // addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.red.cgColor)
-                    drawTinyDots(dirtyRect)
+                    drawTinyOuterDots(dirtyRect)
                 } else if isCurrentFavorite {
 
                     ////////////////////////////////

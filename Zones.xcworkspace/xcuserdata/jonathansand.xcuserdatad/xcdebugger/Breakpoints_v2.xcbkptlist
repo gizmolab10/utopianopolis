@@ -318,11 +318,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/managers/main/ZEditingManager.swift"
-            timestampString = "543806518.554636"
+            timestampString = "544046906.197878"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1801"
-            endingLineNumber = "1801"
+            startingLineNumber = "1799"
+            endingLineNumber = "1799"
             landmarkName = "moveGrabbedZones(into:at:isCommand:onCompletion:)"
             landmarkType = "7">
          </BreakpointContent>
