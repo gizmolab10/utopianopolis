@@ -578,17 +578,17 @@
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Thoughtful" sceneMemberID="viewController">
                     <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="228" height="279"/>
+                        <rect key="frame" x="0.0" y="0.0" width="232" height="279"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box autoresizesSubviews="NO" borderType="line" title="new ideas" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
-                                <rect key="frame" x="5" y="232" width="218" height="39"/>
+                                <rect key="frame" x="5" y="232" width="222" height="39"/>
                                 <view key="contentView" id="qnC-vV-W8u">
-                                    <rect key="frame" x="1" y="1" width="216" height="23"/>
+                                    <rect key="frame" x="1" y="1" width="220" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="direction" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i0m-vf-1Of">
-                                            <rect key="frame" x="1" y="0.0" width="215" height="27"/>
+                                            <rect key="frame" x="3" y="0.0" width="215" height="27"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="24" id="sur-0v-evK"/>
                                             </constraints>
@@ -613,14 +613,14 @@
                                     <constraint firstAttribute="height" constant="35" id="9eg-3P-j9J"/>
                                 </constraints>
                             </box>
-                            <box autoresizesSubviews="NO" borderType="line" title="counts show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="children counts">
-                                <rect key="frame" x="5" y="193" width="218" height="35"/>
+                            <box autoresizesSubviews="NO" borderType="line" title="counts of subordinate ideas show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="children counts">
+                                <rect key="frame" x="5" y="193" width="222" height="35"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
-                                    <rect key="frame" x="1" y="1" width="216" height="19"/>
+                                    <rect key="frame" x="1" y="1" width="220" height="19"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="counts" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hRI-S8-ys7">
-                                            <rect key="frame" x="0.0" y="-4" width="216" height="27"/>
+                                            <rect key="frame" x="2" y="-4" width="216" height="27"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="24" id="IcD-O8-4He"/>
                                             </constraints>
@@ -648,9 +648,9 @@
                                 </constraints>
                             </box>
                             <box borderType="line" title="graph" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
-                                <rect key="frame" x="5" y="4" width="218" height="90"/>
+                                <rect key="frame" x="5" y="4" width="222" height="90"/>
                                 <view key="contentView" id="npe-oq-zV9">
-                                    <rect key="frame" x="1" y="1" width="216" height="74"/>
+                                    <rect key="frame" x="1" y="1" width="220" height="74"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="FKt-Xz-j3O" userLabel="labels">
@@ -705,10 +705,10 @@
                                             </constraints>
                                         </customView>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="xWn-hi-oFR" userLabel="sliders">
-                                            <rect key="frame" x="116" y="0.0" width="90" height="74"/>
+                                            <rect key="frame" x="116" y="0.0" width="94" height="74"/>
                                             <subviews>
                                                 <slider identifier="thickness" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gh7-LP-7IV">
-                                                    <rect key="frame" x="-2" y="46" width="94" height="26"/>
+                                                    <rect key="frame" x="-2" y="46" width="98" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="mm0-xX-hLQ"/>
                                                     </constraints>
@@ -718,7 +718,7 @@
                                                     </connections>
                                                 </slider>
                                                 <slider identifier="horizontal" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OmD-gF-PvR">
-                                                    <rect key="frame" x="-2" y="2" width="94" height="26"/>
+                                                    <rect key="frame" x="-2" y="2" width="98" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xc9-eh-z97"/>
                                                     </constraints>
@@ -728,7 +728,7 @@
                                                     </connections>
                                                 </slider>
                                                 <slider identifier="vertical" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X28-Kf-ltl">
-                                                    <rect key="frame" x="-2" y="24" width="94" height="26"/>
+                                                    <rect key="frame" x="-2" y="24" width="98" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xX2-we-KBt"/>
                                                     </constraints>
@@ -764,9 +764,9 @@
                                 </view>
                             </box>
                             <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="mS1-t0-150">
-                                <rect key="frame" x="5" y="98" width="218" height="91"/>
+                                <rect key="frame" x="5" y="98" width="222" height="91"/>
                                 <view key="contentView" id="rb6-oU-fw8">
-                                    <rect key="frame" x="1" y="1" width="216" height="75"/>
+                                    <rect key="frame" x="1" y="1" width="220" height="75"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="G62-eE-NOU" userLabel="labels">
@@ -836,10 +836,10 @@
                                             </constraints>
                                         </customView>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="FDB-6R-I3I" userLabel="color wells">
-                                            <rect key="frame" x="115" y="4" width="93" height="69"/>
+                                            <rect key="frame" x="115" y="4" width="97" height="69"/>
                                             <subviews>
                                                 <colorWell identifier="zones" translatesAutoresizingMaskIntoConstraints="NO" id="UMY-8c-tep">
-                                                    <rect key="frame" x="0.0" y="46" width="93" height="23"/>
+                                                    <rect key="frame" x="0.0" y="46" width="97" height="23"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="23" id="i5B-AL-Q9X"/>
                                                     </constraints>
@@ -849,7 +849,7 @@
                                                     </connections>
                                                 </colorWell>
                                                 <colorWell identifier="drag targets" translatesAutoresizingMaskIntoConstraints="NO" id="j0f-8D-Ds5" userLabel="drag targets color box">
-                                                    <rect key="frame" x="0.0" y="23" width="93" height="23"/>
+                                                    <rect key="frame" x="0.0" y="23" width="97" height="23"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="23" id="XcF-55-QfT"/>
                                                     </constraints>
@@ -859,7 +859,7 @@
                                                     </connections>
                                                 </colorWell>
                                                 <colorWell identifier="background" translatesAutoresizingMaskIntoConstraints="NO" id="wsy-Dq-H7s">
-                                                    <rect key="frame" x="0.0" y="0.0" width="93" height="23"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="97" height="23"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="23" id="ukQ-KH-zeP"/>
                                                     </constraints>

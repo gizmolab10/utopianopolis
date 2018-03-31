@@ -275,11 +275,17 @@ class Zone : ZRecord {
 
     var colorized: Bool {
         get {
-            if  let    attributes = zoneAttributes {
-                return attributes.contains(kColorized)
-            } else {
-                return false
+            var     result = false
+
+            traverseAncestors { iChild -> (ZTraverseStatus) in
+                if  let      attributes = iChild.zoneAttributes {
+                    result = attributes.contains(kColorized)
+                }
+
+                return result ? .eStop : .eContinue
             }
+
+            return result
         }
 
         set {
@@ -589,7 +595,7 @@ class Zone : ZRecord {
         }
 
         return (!isTrash && !isRootOfFavorites && !isRootOfLostAndFound && ownerID == nil)
-            || (!gCrippleUserAccess && (ownerID?.recordName == gUserRecordID || gIsSpecialUser))
+            || (!gCrippledUserAccess && (ownerID?.recordName == gUserRecordID || gIsSpecialUser))
     }
 
 

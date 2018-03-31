@@ -654,7 +654,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchAll(_ onCompletion: IntClosure?) {
-        if registry.values.count > 10 {
+        if  !gIsReadyToShowUI && registry.values.count > 10 {
             onCompletion?(0)
         } else {
             fetchSince(nil, onCompletion)

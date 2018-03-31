@@ -58,6 +58,7 @@ class ZEditingManager: NSObject {
         case Sort
         case Child
         case Alter
+        case Files
         case Cloud
         case Always
         case Parent
@@ -111,6 +112,7 @@ class ZEditingManager: NSObject {
                 case "h":      editTrait(for: .eHyperlink)
                 case "i":      toggleColorized()
                 case "l", "u": alterCase(up: key == "u")
+                case "m":      refetch()
                 case "n":      alphabetize(isOption)
                 case "o":      orderByLength(isOption)
                 case "p":      printHere()
@@ -213,20 +215,20 @@ class ZEditingManager: NSObject {
 
 
     func menuType(for key: String, _ flags: NSEventModifierFlags) -> ZMenuType {
-        let  alterers = "ehiluw\r" + kMarkingCharacters
-        let  clouders = ";'/?,."
+        let alterers = "ehiluw\r" + kMarkingCharacters
 
-        if        alterers.contains(key) { return .Alter
-        } else if clouders.contains(key) { return .Cloud
+        if  alterers.contains(key) {             return .Alter
         } else {
             switch key {
             case "a":                            return .SelectAll
             case "=":                            return .Travel
+            case "m":                            return .Cloud
             case "z":                            return .Undo
             case "o", "r":                       return .Sort
             case "v", "x", kSpace:               return .Child
-            case "d":                            return  flags.isCommand ? .Alter : .Parent
             case "b", kTab, kDelete, kBackspace: return .Parent
+            case "j", "k":                       return .Files
+            case "d":                            return  flags.isCommand ? .Alter : .Parent
             default: break
             }
 
@@ -264,10 +266,11 @@ class ZEditingManager: NSObject {
             case .Multiple:  valid =  grabs > 1
             case .Sort:      valid = (shown     && sort) || (grabs > 1 && parent)
             case .SelectAll: valid =  shown
-            case .Cloud: valid = gHasPrivateDatabase
             case .Undo:      valid = undo.canUndo
             case .Redo:      valid = undo.canRedo
             case .Travel:    valid = mover.canTravel
+            case .Cloud:     valid = gHasInternet && gCloudAccountStatus == .active
+            case .Files:     valid = false
             case .Always:    valid = true
             }
         } else if key.arrow == nil {
@@ -533,6 +536,13 @@ class ZEditingManager: NSObject {
             gSelectionManager.deselect()
         } else {
             gTextManager.edit(gSelectionManager.currentMoveable)
+        }
+    }
+
+
+    func refetch() {
+        gBatchManager.refetch { iSame in
+            self.signalFor(nil, regarding: .redraw)
         }
     }
 

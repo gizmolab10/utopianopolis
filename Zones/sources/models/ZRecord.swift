@@ -308,17 +308,10 @@ class ZRecord: NSObject {
     func needChildren() {
         if !isBookmark && // all bookmarks are childless, by design
             showChildren &&
-            false, // !gAssumeAllFetched &&
+            false, // !gAssumeAllFetched,
             !needsProgeny {
             addState(.needsChildren)
         }
-    }
-
-    
-    func maybeNeedProgeny() {
-//        if  hasMissingProgeny() && !gAssumeAllFetched {
-//            needProgeny()
-//        }
     }
 
 

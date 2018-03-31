@@ -29,7 +29,7 @@ class ZGenericController: ZController {
         gControllersManager.register(self, iID: controllerID) { object, kind in
             self.view.zlayer.backgroundColor = gBackgroundColor.cgColor
 
-            if  kind != .error {
+            if  kind != .error && gIsReadyToShowUI {
                 self.handleSignal(object, iKind: kind)
             }
         }

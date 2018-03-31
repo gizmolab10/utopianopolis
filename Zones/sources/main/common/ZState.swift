@@ -20,8 +20,8 @@ import CloudKit
 var              gWorkMode                     = ZWorkMode.startupMode
 var         gTextCapturing                     = false
 var       gIsReadyToShowUI                     = false
-var     gCrippleUserAccess                     = false
 var     gKeyboardIsVisible                     = false
+var    gCrippledUserAccess                     = false
 var  gDebugShowIdentifiers                     = false
 var gMeasureOpsPerformance                     = true
 var       gDragDropIndices: NSMutableIndexSet? = nil

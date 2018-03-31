@@ -19,6 +19,7 @@ enum ZBatchID: Int {
     case sync
     case travel
     case startUp
+    case refetch
     case parents
     case children
     case families
@@ -32,8 +33,8 @@ enum ZBatchID: Int {
 
     var shouldIgnore: Bool {
         switch self {
-        case .sync, .save, .startUp, .finishUp, .newAppleID, .resumeCloud: return false
-        default:                                                           return true
+        case .sync, .save, .startUp, .refetch, .finishUp, .newAppleID, .resumeCloud: return false
+        default:                                                                     return true
         }
     }
 
@@ -86,6 +87,7 @@ class ZBatchManager: ZOnboardingManager {
             case .emptyTrash:  return [.emptyTrash                                                                    ]
             case .undelete:    return [.undelete,  .fetch, .parents,         .save, .children, .traits                ]
             case .resumeCloud: return [.fetchNew, .fetchAll,                 .save,                             .write]
+            case .refetch:     return [           .fetchAll,                 .save,                             .write]
             case .newAppleID:  return operationIDs(from: .internet,        to: .found, skipping: [.read])
             case .startUp:     return operationIDs(from: .observeUbiquity, to: .fetchAll)
             case .finishUp:    return operationIDs(from: .write,           to: .subscribe)
@@ -158,6 +160,7 @@ class ZBatchManager: ZOnboardingManager {
     func        sync(_ onCompletion: @escaping BooleanClosure) { batch(.sync,        onCompletion) }
     func      travel(_ onCompletion: @escaping BooleanClosure) { batch(.travel,      onCompletion) }
     func     startUp(_ onCompletion: @escaping BooleanClosure) { batch(.startUp,     onCompletion) }
+    func     refetch(_ onCompletion: @escaping BooleanClosure) { batch(.refetch,     onCompletion) }
     func     parents(_ onCompletion: @escaping BooleanClosure) { batch(.parents,     onCompletion) }
     func    families(_ onCompletion: @escaping BooleanClosure) { batch(.families,    onCompletion) }
     func    finishUp(_ onCompletion: @escaping BooleanClosure) { batch(.finishUp,    onCompletion) }

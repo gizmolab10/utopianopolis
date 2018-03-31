@@ -67,7 +67,7 @@ class ZInformationController: ZGenericController {
 
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
-        if ![.search, .found].contains(iKind) && gIsReadyToShowUI {
+        if ![.search, .found].contains(iKind) {
             cloudStatusLabel?.text = cloudStatusText
             totalCountLabel? .text = totalCountsText
             graphNameLabel?  .text = graphNameText
