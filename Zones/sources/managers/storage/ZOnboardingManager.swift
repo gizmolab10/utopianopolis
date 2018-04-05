@@ -43,7 +43,7 @@ class ZOnboardingManager : ZOperationsManager {
     // MARK:-
 
 
-    override func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
+    override func ivokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
         switch operationID {
         case .observeUbiquity:  observeUbiquity();  onCompletion(true)      // true means op is handled
         case .accountStatus:    accountStatus     { onCompletion(true) }
@@ -57,9 +57,8 @@ class ZOnboardingManager : ZOperationsManager {
 
 
     func internet(_ onCompletion: @escaping Closure) {
-        updateCloudStatus { iChanged in
-            onCompletion()
-        }
+        checkCloudStatus()
+        onCompletion()
     }
 
 
@@ -70,11 +69,12 @@ class ZOnboardingManager : ZOperationsManager {
 
     func accountStatus(_ onCompletion: @escaping Closure) {
         gContainer.accountStatus { (iStatus, iError) in
-            switch iStatus {
-            case .available:
+            if  iStatus            == .available {
                 gCloudAccountStatus = .available
-            default:
-                break
+
+                //////////////////////////
+                // ONBOARDING CONTINUES //
+                //////////////////////////
             }
 
             onCompletion()
@@ -83,10 +83,24 @@ class ZOnboardingManager : ZOperationsManager {
 
 
     func fetchUserID(_ onCompletion: @escaping Closure) {
-        gContainer.fetchUserRecordID() { iRecordID, iError in
-            gAlertManager.alertError(iError, "failed to fetch user record id; reason unknown") { iHasError in
-                if !iHasError {
-                    gUserRecordID = iRecordID?.recordName
+        if gCloudAccountStatus != .available {
+            onCompletion()
+        } else {
+            gContainer.fetchUserRecordID() { iRecordID, iError in
+                gAlertManager.alertError(iError, "failed to fetch user record id; reason unknown") { iHasError in
+                    if !iHasError {
+
+                        ////////////////////////////////////////////////
+                        // persist for file read on subsequent launch //
+                        //   also: for determining write permission   //
+                        ////////////////////////////////////////////////
+
+                        gUserRecordID = iRecordID?.recordName
+
+                        //////////////////////////
+                        // ONBOARDING CONTINUES //
+                        //////////////////////////
+                    }
 
                     onCompletion()
                 }
@@ -97,19 +111,22 @@ class ZOnboardingManager : ZOperationsManager {
 
     func ubiquity(_ onCompletion: @escaping Closure) {
         if FileManager.default.ubiquityIdentityToken == nil {
-            updateCloudStatus { iChangesOccured in
-                onCompletion()
-            }
-        } else {
-            onCompletion()
+
+            //////////////////////////
+            // ONBOARDING CONTINUES //
+            //////////////////////////
+
+            checkCloudStatus()
         }
+
+        onCompletion()
     }
 
 
     func fetchUserRecord(_ onCompletion: @escaping Closure) {
-        if  let recordName = gUserRecordID,
-            gCloudAccountStatus.rawValue >= ZCloudAccountStatus.available.rawValue {
-            let ckRecordID = CKRecordID(recordName: recordName)
+        if gCloudAccountStatus == .available,
+            let     recordName  = gUserRecordID {
+            let     ckRecordID  = CKRecordID(recordName: recordName)
 
             gCloudManager.assureRecordExists(withRecordID: ckRecordID, recordType: CKRecordTypeUserRecord) { (iUserRecord: CKRecord?) in
                 if  let          record = iUserRecord {
@@ -145,24 +162,5 @@ class ZOnboardingManager : ZOperationsManager {
             onCompletion()
         }
     }
-
-
-//    func status() {
-//        [[CKContainer defaultContainer] accountStatusWithCompletionHandler:^(CKAccountStatus accountStatus, NSError *error) {
-//            if (accountStatus == CKAccountStatusNoAccount) {
-//            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Sign in to iCloud"
-//            message:@"Sign in to your iCloud account to write records. On the Home screen, launch Settings, tap iCloud, and enter your Apple ID. Turn iCloud Drive on. If you don't have an iCloud account, tap Create a new Apple ID."
-//            preferredStyle:UIAlertControllerStyleAlert];
-//            [alert addAction:[UIAlertAction actionWithTitle:@"Okay"
-//            style:UIAlertActionStyleCancel
-//            handler:nil]];
-//            [self presentViewController:alert animated:YES completion:nil];
-//            }
-//            else {
-//            // Insert your just-in-time schema code here
-//            }
-//            }]
-//
-//    }
 
 }

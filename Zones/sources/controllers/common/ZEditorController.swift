@@ -46,7 +46,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         restartGestureRecognition()
         editorView?.addSubview(editorRootWidget)
 
-        if  gHasPrivateDatabase && !kIsPhone {
+        if  !kIsPhone {
             editorView?.addSubview(favoritesRootWidget)
         }
     }
@@ -94,7 +94,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 }
             }
 
-            if gHasPrivateDatabase && !kIsPhone {
+            if  !kIsPhone {
                 if favoritesRootWidget.superview == nil {
                     editorView?.addSubview(favoritesRootWidget)
                 }
@@ -116,7 +116,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
 
     func layoutRootWidget(for iSignalObject: Any?, _ iKind: ZSignalKind, inMainGraph: Bool) {
-        if !inMainGraph && (!gHasPrivateDatabase || kIsPhone) { return }
+        if !inMainGraph && kIsPhone { return }
 
         let                        here = inMainGraph ? gHere : gMineCloudManager.favoritesZone
         var specificWidget: ZoneWidget? = inMainGraph ? editorRootWidget : favoritesRootWidget
@@ -417,7 +417,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         let      rootWidget = isMain ? editorRootWidget : favoritesRootWidget
         if  let    location = iGesture?.location(in: editorView),
             let dropNearest = rootWidget.widgetNearestTo(location, in: editorView, gHere) {
-            if  isMain, !kIsPhone, gHasPrivateDatabase,
+            if  isMain, !kIsPhone,
 
                 //////////////////////////////////
                 // recurse only for isMain true //

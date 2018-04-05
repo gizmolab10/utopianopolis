@@ -260,129 +260,127 @@ class ZFavoritesManager: NSObject {
         // call every time favorites MIGHT be altered //
         ////////////////////////////////////////////////
 
-        if  gHasPrivateDatabase {
-            var hasDatabaseIDs = [ZDatabaseID] ()
-            var       discards = IndexPath()
-            var    testedSoFar = [Zone] ()
-            var    missingLost = true
-            var   missingTrash = true
+        var   hasDatabaseIDs = [ZDatabaseID] ()
+        var         discards = IndexPath()
+        var      testedSoFar = [Zone] ()
+        var      missingLost = true
+        var     missingTrash = true
 
-            updateWorkingFavorites()
+        updateWorkingFavorites()
 
-            /////////////////////////////////////
-            // detect ids which have bookmarks //
-            //   remove unfetched duplicates   //
-            /////////////////////////////////////
+        /////////////////////////////////////
+        // detect ids which have bookmarks //
+        //   remove unfetched duplicates   //
+        /////////////////////////////////////
 
-            for favorite in workingFavorites {
-                if  let            link  = favorite.zoneLink { // always true: all working favorites have a zone link
-                    var    hasDuplicate  = false
-                    if             link == kTrashLink {
-                        if  missingTrash {
-                            missingTrash = false
-                        } else {
-                            hasDuplicate = true
-                        }
-                    } else if  link == kLostAndFoundLink {
-                        if  missingLost {
-                            missingLost  = false
-                        } else {
-                            hasDuplicate = true
-                        }
-                    } else if let      t = favorite.bookmarkTarget, t.isRoot,
-                        let         dbID = t.databaseID {
-                        if !hasDatabaseIDs.contains(dbID) {
-                            hasDatabaseIDs.append(dbID)
-                        } else {
-                            hasDuplicate = true
-                        }
-                    } else {    // target is not a root -> don't bother adding to testedSoFar
-                        continue
+        for favorite in workingFavorites {
+            if  let            link  = favorite.zoneLink { // always true: all working favorites have a zone link
+                var    hasDuplicate  = false
+                if             link == kTrashLink {
+                    if  missingTrash {
+                        missingTrash = false
+                    } else {
+                        hasDuplicate = true
                     }
+                } else if  link == kLostAndFoundLink {
+                    if  missingLost {
+                        missingLost  = false
+                    } else {
+                        hasDuplicate = true
+                    }
+                } else if let      t = favorite.bookmarkTarget, t.isRoot,
+                    let         dbID = t.databaseID {
+                    if !hasDatabaseIDs.contains(dbID) {
+                        hasDatabaseIDs.append(dbID)
+                    } else {
+                        hasDuplicate = true
+                    }
+                } else {    // target is not a root -> don't bother adding to testedSoFar
+                    continue
+                }
 
-                    //////////////////////////////////////////
-                    // mark to discard unfetched duplicates //
-                    //////////////////////////////////////////
+                //////////////////////////////////////////
+                // mark to discard unfetched duplicates //
+                //////////////////////////////////////////
 
-                    if  hasDuplicate {
-                        let isUnfetched: ZoneClosure = { iZone in
-                            if iZone.notFetched, let index = self.workingFavorites.index(of: iZone) {
-                                discards.append(index)
-                            }
-                        }
-
-                        for     duplicate in testedSoFar {
-                            if  duplicate.bookmarkTarget == favorite.bookmarkTarget {
-                                isUnfetched(favorite)
-                                isUnfetched(duplicate)
-
-                                break
-                            }
+                if  hasDuplicate {
+                    let isUnfetched: ZoneClosure = { iZone in
+                        if iZone.notFetched, let index = self.workingFavorites.index(of: iZone) {
+                            discards.append(index)
                         }
                     }
 
-                    testedSoFar.append(favorite)
-                }
-            }
+                    for     duplicate in testedSoFar {
+                        if  duplicate.bookmarkTarget == favorite.bookmarkTarget {
+                            isUnfetched(favorite)
+                            isUnfetched(duplicate)
 
-            ///////////////////////////////
-            // discard marked duplicates //
-            ///////////////////////////////
-
-            while   let   index = discards.popLast() {
-                if  let discard = zoneAtIndex(index) {
-                    discard.needDestroy()
-                    discard.orphan()
-                }
-            }
-
-            /////////////////////////////////////////////////
-            // add missing trash + lost and found favorite //
-            /////////////////////////////////////////////////
-
-            if  missingTrash {
-                let          trash = Zone(databaseID: .mineID, named: kTrashName, identifier: kTrashName + kFavoritesSuffix)
-                trash    .zoneLink = kTrashLink // convert into a bookmark
-                trash.directAccess = .eChildrenWritable
-
-                gMineCloudManager.favoritesZone?.addAndReorderChild(trash)
-                trash.clearAllStates()
-                trash.markNotFetched()
-            }
-
-            if  missingLost {
-                let identifier = kLostAndFoundName + kFavoritesSuffix
-                var       lost = gMineCloudManager.maybeZoneForRecordName(identifier)
-                if  lost      == nil {
-                    lost       = Zone(databaseID: .mineID, named: kLostAndFoundName, identifier: identifier)
+                            break
+                        }
+                    }
                 }
 
-                lost?    .zoneLink = kLostAndFoundLink // convert into a bookmark
-                lost?.directAccess = .eChildrenWritable
-
-                gMineCloudManager.favoritesZone?.addAndReorderChild(lost!)
-                lost?.clearAllStates()
-                lost?.markNotFetched()
+                testedSoFar.append(favorite)
             }
-
-            ////////////////////////////////
-            // add missing root favorites //
-            ////////////////////////////////
-
-            for template in databaseRootFavorites.children {
-                if  let          dbID = template.linkDatabaseID, !hasDatabaseIDs.contains(dbID) {
-                    let      favorite = template.deepCopy()
-                    favorite.zoneName = favorite.bookmarkTarget?.zoneName
-
-                    gMineCloudManager.favoritesZone?.addChildAndRespectOrder(favorite)
-                    favorite.clearAllStates() // erase side-effect of add
-                    favorite.markNotFetched()
-                }
-            }
-
-            updateWorkingFavorites()
-            updateCurrentFavorite()
         }
+
+        ///////////////////////////////
+        // discard marked duplicates //
+        ///////////////////////////////
+
+        while   let   index = discards.popLast() {
+            if  let discard = zoneAtIndex(index) {
+                discard.needDestroy()
+                discard.orphan()
+            }
+        }
+
+        /////////////////////////////////////////////////
+        // add missing trash + lost and found favorite //
+        /////////////////////////////////////////////////
+
+        if  missingTrash {
+            let          trash = Zone(databaseID: .mineID, named: kTrashName, identifier: kTrashName + kFavoritesSuffix)
+            trash    .zoneLink = kTrashLink // convert into a bookmark
+            trash.directAccess = .eChildrenWritable
+
+            gMineCloudManager.favoritesZone?.addAndReorderChild(trash)
+            trash.clearAllStates()
+            trash.markNotFetched()
+        }
+
+        if  missingLost {
+            let identifier = kLostAndFoundName + kFavoritesSuffix
+            var       lost = gMineCloudManager.maybeZoneForRecordName(identifier)
+            if  lost      == nil {
+                lost       = Zone(databaseID: .mineID, named: kLostAndFoundName, identifier: identifier)
+            }
+
+            lost?    .zoneLink = kLostAndFoundLink // convert into a bookmark
+            lost?.directAccess = .eChildrenWritable
+
+            gMineCloudManager.favoritesZone?.addAndReorderChild(lost!)
+            lost?.clearAllStates()
+            lost?.markNotFetched()
+        }
+
+        ////////////////////////////////
+        // add missing root favorites //
+        ////////////////////////////////
+
+        for template in databaseRootFavorites.children {
+            if  let          dbID = template.linkDatabaseID, !hasDatabaseIDs.contains(dbID) {
+                let      favorite = template.deepCopy()
+                favorite.zoneName = favorite.bookmarkTarget?.zoneName
+
+                gMineCloudManager.favoritesZone?.addChildAndRespectOrder(favorite)
+                favorite.clearAllStates() // erase side-effect of add
+                favorite.markNotFetched()
+            }
+        }
+
+        updateWorkingFavorites()
+        updateCurrentFavorite()
     }
 
 
@@ -578,15 +576,13 @@ class ZFavoritesManager: NSObject {
 
 
     func toggleFavorite(for zone: Zone) {
-        if  gHasPrivateDatabase {
-            if  isWorkingFavorite  (zone) {
-                deleteFavorite(for: zone)
-            } else {
-                createBookmark(for: zone, style: .addFavorite)
-            }
-
-            updateFavorites()
+        if  isWorkingFavorite  (zone) {
+            deleteFavorite(for: zone)
+        } else {
+            createBookmark(for: zone, style: .addFavorite)
         }
+
+        updateFavorites()
     }
 
 

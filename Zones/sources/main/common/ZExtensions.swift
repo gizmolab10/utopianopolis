@@ -266,6 +266,16 @@ extension CKRecord {
 }
 
 
+infix operator ** : MultiplicationPrecedence
+
+
+extension Double {
+    static func ** (base: Double, power: Double) -> Double{
+        return pow(base, power)
+    }
+}
+
+
 infix operator -- : AdditionPrecedence
 
 

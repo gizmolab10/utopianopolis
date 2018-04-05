@@ -1,21 +1,5 @@
 {
   "trash" : {
-    "children" : [
-      {
-
-      },
-      {
-
-      },
-      {
-        "recordName" : "BFD7E05A-8234-4D38-9343-8505B56BC4D3",
-        "progeny" : 0,
-        "attributes" : "c",
-        "name" : "-------------------------",
-        "order" : 0.60000000000000009,
-        "count" : 0
-      }
-    ],
     "name" : "public trash",
     "access" : 4,
     "count" : 0,
@@ -24,189 +8,146 @@
     "order" : 0,
     "recordName" : "trash"
   },
-  "date" : "TimeInterval:544225445.598",
+  "date" : "TimeInterval:544394011.075",
   "destroy" : {
-    "access" : 4,
     "name" : "public destroy",
+    "needs" : "unorphan",
+    "access" : 4,
     "recordName" : "destroy"
   },
   "lostAndFound" : {
     "children" : [
       {
         "recordName" : "6C798690-394B-4D14-B0B9-A2A190C53ED3",
-        "progeny" : 168,
+        "progeny" : 88,
         "name" : "0",
         "children" : [
           {
-            "color" : "red:0.7155288423,blue:0.5441199839,green:0.2979248817",
-            "name" : "prahjex",
+            "recordName" : "D0FE9C22-C770-4199-B513-D8BDEC9CB391",
+            "progeny" : 75,
+            "name" : "1",
             "children" : [
               {
-                "count" : 0,
-                "progeny" : 0,
-                "name" : "garden",
-                "recordName" : "2B34CD31-80C9-4C03-9B71-80E1FEC45A77",
-                "order" : 0.1111111111111111,
-                "color" : "red:0.248934427066502,blue:0.0,green:0.634873657640909"
-              },
-              {
-                "recordName" : "9E914D16-522E-49F4-9411-461B503A12BE",
-                "progeny" : 0,
-                "name" : "medium ones",
-                "order" : 0.22222222222222221,
-                "count" : 0
-              },
-              {
-                "color" : "red:0.697403846153846,blue:0.65183719441491,green:0.0",
-                "name" : "big ones",
+                "recordName" : "A9AF0443-5C5A-4B0E-9800-1A73CD4AC3EE",
+                "progeny" : 2,
+                "name" : "skatter brain",
                 "children" : [
                   {
-                    "recordName" : "3D3A32AB-0843-40F3-A42E-329B081B0D0B",
+                    "recordName" : "6C1B93E7-BF9A-4E47-9997-425C7D16D5A7",
                     "progeny" : 0,
-                    "name" : "desk in living room",
+                    "name" : "scrambled priorities",
                     "children" : [
                       {
-                        "recordName" : "0331B5D3-7B07-4398-BC9E-FE14302CFA17",
+                        "recordName" : "6EC9F0F5-0626-401E-A81A-8E9777C6027B",
                         "progeny" : 0,
-                        "name" : "dismantle flue",
-                        "order" : 0.0625,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "AA40F89F-37E6-4F2D-992C-06CE9702747C",
-                        "progeny" : 0,
-                        "name" : "($) venting",
-                        "order" : 0.125,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "8DA15212-6D61-49D5-BA87-FA2E0BC8DC90",
-                        "progeny" : 0,
-                        "name" : "----------- beam -----------",
-                        "order" : 0.1875,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "D92E9790-1003-444D-9281-40D8BB26E4A3",
-                        "progeny" : 0,
-                        "name" : "empty long cabinet",
+                        "name" : "simplify",
                         "order" : 0.25,
                         "count" : 0
                       },
                       {
-                        "recordName" : "8EF67BC1-214C-4BA9-B167-F0C323BAB701",
+                        "recordName" : "66BEB907-3868-4D46-A679-4F6611C2EF32",
                         "progeny" : 0,
-                        "name" : "move waterfall cabinet towards kitchen",
-                        "order" : 0.3125,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "5B7E82C4-4AE5-417E-9443-1C48C197082D",
-                        "progeny" : 0,
-                        "name" : "($) flooring plywood",
-                        "order" : 0.375,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "132D4204-0FA7-413C-94D6-3CA15B9D0A5B",
-                        "progeny" : 0,
-                        "name" : "($) wood splitter",
-                        "order" : 0.4375,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "99C840F2-F664-4265-9179-AEA9DC7C0BA8",
-                        "progeny" : 0,
-                        "name" : "rolling cubbyhole shelves",
+                        "name" : "minimize goals",
                         "order" : 0.5,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "9AC8F976-FFE6-49FD-91CD-9B1EBD7BC1AD",
-                        "progeny" : 0,
-                        "name" : "vertical brace at beam ends",
-                        "order" : 0.5625,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "2053ADA9-78F4-489E-B656-CE329CA67AB5",
-                        "progeny" : 0,
-                        "name" : "----------- later -----------",
-                        "order" : 0.625,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "E84CD996-1CB7-4BA9-867A-EFA1BF38930F",
-                        "progeny" : 0,
-                        "name" : "soft cover",
-                        "order" : 0.6875,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "E215EAC2-DEBF-4AE1-8F29-AC41C24ABB0B",
-                        "progeny" : 0,
-                        "name" : "swing mouser",
-                        "order" : 0.75,
                         "count" : 0
                       }
                     ],
-                    "order" : 0.10000000000000001,
-                    "count" : 12
-                  },
+                    "order" : 0.33333333333333331,
+                    "count" : 2
+                  }
+                ],
+                "order" : 0.066666666666666666,
+                "count" : 1
+              },
+              {
+                "recordName" : "B163E96C-8356-4B17-8750-C3F6E681D3E9",
+                "progeny" : 0,
+                "name" : "are my thoughs and plans thorough?",
+                "children" : [
                   {
-                    "recordName" : "DFD4A96E-BE07-407F-8696-98BB0E6B3FDB",
+                    "recordName" : "8CE19167-4F6A-4C78-A172-47787A8D9399",
                     "progeny" : 0,
-                    "name" : "dig up tree outside bathroom",
-                    "order" : 0.20000000000000001,
+                    "name" : "unit tests",
+                    "order" : 0.16666666666666666,
                     "count" : 0
                   },
                   {
-                    "recordName" : "FFBAAD11-3CCE-42F0-B538-592A3A9C339D",
+                    "recordName" : "B78C25A2-DF6E-4D8D-AF4B-8933314DD1FD",
                     "progeny" : 0,
-                    "name" : "new girls room",
-                    "order" : 0.40000000000000002,
+                    "name" : "i have no documents on this computer",
+                    "order" : 0.33333333333333331,
                     "count" : 0
                   },
                   {
-                    "recordName" : "465AFA90-10EF-4428-ABC8-FA3670C013FB",
+                    "recordName" : "1A1448BC-579C-4CAD-9D39-86EF4BDC27C4",
                     "progeny" : 0,
-                    "name" : "remove stump under shop",
+                    "name" : "documentation",
                     "order" : 0.5,
                     "count" : 0
                   },
                   {
-                    "recordName" : "3BCB40B7-5CA8-4896-BE68-B50091307526",
+                    "recordName" : "DF48BFF2-676A-4190-8419-BD2C69B0EE54",
                     "progeny" : 0,
-                    "name" : "stove hood",
-                    "order" : 0.60000000000000009,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "61DA1D61-5DB8-4075-A381-143098397260",
-                    "progeny" : 0,
-                    "name" : "leach field",
-                    "order" : 0.70000000000000007,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "1F4FA97A-1B26-4B0B-A289-6783428142C6",
-                    "progeny" : 0,
-                    "name" : "concrete under shop",
-                    "order" : 0.80000000000000004,
+                    "name" : "what's missing?",
+                    "order" : 0.66666666666666663,
                     "count" : 0
                   }
                 ],
-                "count" : 7,
-                "progeny" : 12,
-                "recordName" : "1ACF2260-C657-45B2-83C9-A2A9F9AB1C17",
-                "order" : 0.33333333333333331
+                "order" : 0.13333333333333333,
+                "count" : 4
               },
               {
-                "recordName" : "7D02B3C4-CE9E-4475-9CE9-D7B546EBC5A6",
+                "recordName" : "9DE3F163-CD0D-4EB3-8E1E-E543EF55CB54",
                 "progeny" : 0,
-                "name" : "focus designs",
-                "order" : 0.66666666666666663,
-                "count" : 0
+                "name" : "opinions",
+                "children" : [
+                  {
+                    "recordName" : "ADE755BC-6422-473F-86F0-1205581D29D1",
+                    "progeny" : 0,
+                    "name" : "private opinions ???",
+                    "order" : 0.03125,
+                    "count" : 0
+                  },
+                  {
+                    "recordName" : "6E01966B-BDC3-423D-90FA-39420893AF58",
+                    "progeny" : 0,
+                    "name" : "everybody can have many opinions",
+                    "order" : 0.046875,
+                    "count" : 0
+                  },
+                  {
+                    "recordName" : "CF484B86-8801-4CFF-AF78-6DD81141D7C8",
+                    "progeny" : 0,
+                    "name" : "gigantic hierarchy of recorded opinions",
+                    "order" : 0.0625,
+                    "count" : 0
+                  },
+                  {
+                    "recordName" : "B3F61D7A-7C0F-407C-92D9-A3EDFF2880F3",
+                    "progeny" : 0,
+                    "name" : "benefit",
+                    "order" : 0.75,
+                    "count" : 0
+                  }
+                ],
+                "order" : 0.20000000000000001,
+                "count" : 4
+              },
+              {
+                "recordName" : "69FEEE1A-6474-4C89-A87F-F4B2ECCBA690",
+                "progeny" : 0,
+                "name" : "neighborhood",
+                "children" : [
+                  {
+                    "recordName" : "B5B24728-C646-46AB-9C85-4FBC271E6FC1",
+                    "progeny" : 0,
+                    "name" : "boundaries",
+                    "order" : 0.5,
+                    "count" : 0
+                  }
+                ],
+                "order" : 0.26666666666666666,
+                "count" : 1
               },
               {
                 "recordName" : "1AF7CCF8-1CC3-4089-9B23-6BF9EA86655F",
@@ -259,565 +200,8 @@
                     "count" : 0
                   }
                 ],
-                "order" : 0.77777777777777768,
-                "count" : 4
-              }
-            ],
-            "count" : 5,
-            "progeny" : 25,
-            "recordName" : "EE1BBF52-1FCE-4973-949D-471006CE4D67",
-            "order" : 0.16666666666666666
-          },
-          {
-            "recordName" : "3B8E67F0-5263-4BBC-AD63-CADB3CB6297D",
-            "progeny" : 51,
-            "name" : "homo sapiens project",
-            "children" : [
-              {
-                "recordName" : "979B37BD-A62A-41F4-9409-F0CEDDDC4FE8",
-                "progeny" : 12,
-                "name" : "guilds 2.0",
-                "children" : [
-                  {
-                    "recordName" : "3179AB8E-8A93-49EC-BD4D-C400817F572D",
-                    "progeny" : 0,
-                    "name" : "life",
-                    "order" : 0.16666666666666666,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "20E36D2C-1332-4D89-83A7-F6FF1D125A8B",
-                    "progeny" : 8,
-                    "name" : "community",
-                    "children" : [
-                      {
-                        "recordName" : "9A94D466-14B7-4B92-B92C-F3C4CD62CFDF",
-                        "progeny" : 0,
-                        "name" : "neighborhood",
-                        "order" : 0.14285714285714285,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "9E9E3D77-EDB1-4238-880D-CB2FC72DB1B4",
-                        "progeny" : 0,
-                        "name" : "rotten hierarchy",
-                        "order" : 0.2857142857142857,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "5F6BCD00-5296-4724-96E7-8F2CEAC79D10",
-                        "progeny" : 1,
-                        "name" : "opinions",
-                        "children" : [
-                          {
-                            "recordName" : "F77E14C7-A870-4F9F-8F87-413BB982440F",
-                            "progeny" : 0,
-                            "name" : "summation engine",
-                            "children" : [
-                              {
-                                "recordName" : "286F2A46-1BEA-4E8F-B1E2-CF46FD60E903",
-                                "progeny" : 0,
-                                "name" : "agree, disagree, interested",
-                                "order" : 0.5,
-                                "count" : 0
-                              }
-                            ],
-                            "order" : 0.1111111111111111,
-                            "count" : 1
-                          },
-                          {
-                            "recordName" : "F94E8665-57DE-460C-90D8-824C693D435F",
-                            "progeny" : 0,
-                            "name" : "private opinions ???",
-                            "order" : 0.22222222222222221,
-                            "count" : 0
-                          },
-                          {
-                            "recordName" : "5E5876C5-A076-41BD-8CD3-B083468AA212",
-                            "progeny" : 0,
-                            "name" : "everybody can have many opinions",
-                            "order" : 0.33333333333333331,
-                            "count" : 0
-                          },
-                          {
-                            "recordName" : "BCC14CFC-9E64-4629-9DA4-854AF27012E4",
-                            "progeny" : 0,
-                            "name" : "gigantic hierarchy of recorded opinions",
-                            "order" : 0.44444444444444442,
-                            "count" : 0
-                          },
-                          {
-                            "recordName" : "0F3B49F8-FCAF-4706-AD17-996A5B227ABA",
-                            "progeny" : 0,
-                            "name" : "from opinions guild",
-                            "order" : 0.55555555555555558,
-                            "count" : 0
-                          },
-                          {
-                            "recordName" : "13C094DF-E174-408D-B085-CB134392DE23",
-                            "progeny" : 0,
-                            "name" : "benefit",
-                            "order" : 0.66666666666666663,
-                            "count" : 0
-                          },
-                          {
-                            "recordName" : "CA27DF8D-57E0-408B-B088-B1D501BFCAC2",
-                            "progeny" : 0,
-                            "name" : "instantaneous",
-                            "order" : 0.77777777777777768,
-                            "count" : 0
-                          }
-                        ],
-                        "order" : 0.42857142857142855,
-                        "count" : 7
-                      },
-                      {
-                        "recordName" : "AAB7EB26-90FD-4259-A7C3-76CEEB331F4B",
-                        "progeny" : 0,
-                        "name" : "knowledge and wisdom",
-                        "order" : 0.5714285714285714,
-                        "count" : 0
-                      }
-                    ],
-                    "order" : 0.33333333333333331,
-                    "count" : 4
-                  }
-                ],
-                "order" : 0.16666666666666666,
-                "count" : 2
-              },
-              {
-                "recordName" : "C34545EB-4B8C-4C3E-A432-4771CB04B45A",
-                "progeny" : 11,
-                "name" : "blog",
-                "children" : [
-                  {
-                    "recordName" : "F3733870-AD6E-4AE3-9373-D3688D161896",
-                    "progeny" : 7,
-                    "name" : "abundance",
-                    "children" : [
-                      {
-                        "recordName" : "99D354B8-40F5-4AC5-8075-5DFB0B5C9765",
-                        "progeny" : 6,
-                        "name" : "easily eliminate scarcity",
-                        "children" : [
-                          {
-                            "recordName" : "6C2305AC-B857-4B29-89D1-A137EE0321A6",
-                            "progeny" : 0,
-                            "name" : "waste",
-                            "children" : [
-                              {
-                                "recordName" : "EDD1709F-A9E0-40B7-8D7E-909EB138DE68",
-                                "progeny" : 0,
-                                "name" : "narrow-minded decisions",
-                                "order" : 0.015625,
-                                "count" : 0
-                              },
-                              {
-                                "recordName" : "3D1CC577-BACE-4A0D-9044-6D5C906CEB8A",
-                                "progeny" : 0,
-                                "name" : "politicians",
-                                "order" : 0.03125,
-                                "count" : 0
-                              },
-                              {
-                                "recordName" : "B2DD33A7-58F3-472C-8170-9E0BE968205E",
-                                "progeny" : 0,
-                                "name" : "banks",
-                                "order" : 0.125,
-                                "count" : 0
-                              },
-                              {
-                                "recordName" : "9F35BEC3-3A82-45D2-947E-15EB26B57961",
-                                "progeny" : 0,
-                                "name" : "bureaucracy",
-                                "order" : 0.25,
-                                "count" : 0
-                              },
-                              {
-                                "recordName" : "739BEB00-AB2B-4A4B-873B-8F7E3FD51816",
-                                "progeny" : 0,
-                                "name" : "insurance",
-                                "order" : 0.5,
-                                "count" : 0
-                              },
-                              {
-                                "recordName" : "A85DF9EC-7B21-4B76-97E1-117A50D5E103",
-                                "progeny" : 0,
-                                "name" : "hoarding",
-                                "order" : 0.75,
-                                "count" : 0
-                              }
-                            ],
-                            "order" : 0.25,
-                            "count" : 6
-                          }
-                        ],
-                        "order" : 0.16666666666666666,
-                        "count" : 1
-                      },
-                      {
-                        "recordName" : "911BA196-E1E2-4D98-AA13-34980C44B4F6",
-                        "progeny" : 0,
-                        "name" : "working groups",
-                        "order" : 0.5,
-                        "count" : 0
-                      }
-                    ],
-                    "order" : 0.055555555555555546,
-                    "count" : 2
-                  },
-                  {
-                    "recordName" : "91B7E800-1EB5-4758-BD33-BCC025718F66",
-                    "progeny" : 0,
-                    "name" : "noir vs. michealangelo's man circle",
-                    "order" : 0.1111111111111111,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "02E560CE-F146-48E2-B953-DF0FF8C4BE16",
-                    "progeny" : 0,
-                    "name" : "saved open problems",
-                    "order" : 0.16666666666666666,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "582C06CC-7440-4C8C-AC4B-4E99FF3AF563",
-                    "progeny" : 0,
-                    "name" : "we already have a brain-washing machine",
-                    "order" : 0.22222222222222221,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "B962D06A-0963-4816-A7C4-DC02040F3B45",
-                    "progeny" : 0,
-                    "name" : "re-inventing civilization",
-                    "order" : 0.27777777777777779,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "0CC18824-4BC3-47E8-9708-8FE6EFC93AC0",
-                    "progeny" : 0,
-                    "name" : "c'mon people, we can do better than this",
-                    "order" : 0.33333333333333331,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "29221A4B-449D-4A89-BF8D-5F66676FA501",
-                    "progeny" : 0,
-                    "name" : "domain name",
-                    "order" : 0.38888888888888884,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "A59739E0-93AF-4D91-AE9E-D0FB9B32761C",
-                    "progeny" : 0,
-                    "name" : "enlightened self interest",
-                    "order" : 0.44444444444444442,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "9483EB90-D7C8-427E-8694-74D2811038E1",
-                    "progeny" : 0,
-                    "name" : "signs your civilization is broken",
-                    "order" : 0.55555555555555558,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "79C817A3-A985-450C-A56C-8020481BE553",
-                    "progeny" : 0,
-                    "name" : "two is more appealing",
-                    "order" : 0.61111111111111105,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "21712AEA-0922-41AF-B6D9-AD3439ECF576",
-                    "progeny" : 0,
-                    "name" : "fear, brutality, corruption vs. least effort for geatest benefit",
-                    "order" : 0.66666666666666663,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "3D68CD27-5C1A-4692-A75C-9A89546A66BF",
-                    "progeny" : 0,
-                    "name" : "species intelligence",
-                    "order" : 0.72222222222222221,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "88F3F0F0-9CCC-4AA8-A65B-DCF0AEB88128",
-                    "progeny" : 0,
-                    "name" : "indirect cause of much fear",
-                    "children" : [
-                      {
-                        "recordName" : "3991F185-DBD6-4190-BAA3-E08A82F720D1",
-                        "progeny" : 0,
-                        "name" : "vulnerable",
-                        "order" : 0.125,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "6803DCE5-F9AF-45CF-824C-50DE51F04E0D",
-                        "progeny" : 0,
-                        "name" : "mistrust",
-                        "order" : 0.5,
-                        "count" : 0
-                      }
-                    ],
-                    "order" : 0.77777777777777768,
-                    "count" : 2
-                  },
-                  {
-                    "recordName" : "0BB02548-1243-40D5-9CED-A9A07BD1BA02",
-                    "progeny" : 0,
-                    "name" : "guilds and apprenticeship",
-                    "order" : 0.83333333333333326,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "E82C8FDD-9D1A-4ED8-8185-E544D9E95ACC",
-                    "progeny" : 0,
-                    "name" : "easily eliminate scarcity",
-                    "order" : 0.88888888888888884,
-                    "count" : 0
-                  }
-                ],
                 "order" : 0.33333333333333331,
-                "count" : 15
-              },
-              {
-                "children" : [
-                  {
-                    "recordName" : "2F8EDF89-6745-4D48-8019-C2F7ED5FD03A",
-                    "progeny" : 0,
-                    "name" : "regard-based economy",
-                    "order" : 0.14285714285714285,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "9BA50C79-F419-4513-9A27-160DA0E305F0",
-                    "progeny" : 0,
-                    "name" : "least effort for geatest benefit",
-                    "order" : 0.21428571428571427,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "BE8F44B4-A11A-45D0-BADF-D2DF94A5981C",
-                    "progeny" : 0,
-                    "name" : "motivate our better qualities",
-                    "order" : 0.2857142857142857,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "F0980726-9EEA-4A13-9C6C-927F13DEE27A",
-                    "progeny" : 0,
-                    "name" : "everyone's basic needs met",
-                    "order" : 0.3571428571428571,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "60D2F5B0-6EB7-436A-9C95-ED9E51D8BBD4",
-                    "progeny" : 0,
-                    "name" : "avoid power hierarchies",
-                    "order" : 0.42857142857142855,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "8D8B4FB1-A7EA-4F07-B724-DF55E00F5A3C",
-                    "progeny" : 0,
-                    "name" : "reduce need for secrecy",
-                    "order" : 0.5,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "C35B0BB9-2EC3-44A2-A73A-8717C102CA72",
-                    "progeny" : 0,
-                    "name" : "things do not have intrinsic value",
-                    "order" : 0.5714285714285714,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "5061DF83-844A-4D69-9D26-A2982A2D21CF",
-                    "progeny" : 0,
-                    "name" : "abundance",
-                    "order" : 0.64285714285714279,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "6BFCDF03-12F5-443E-AC7C-7DE3A42A205F",
-                    "progeny" : 0,
-                    "name" : "minimize need for specialized knowledge",
-                    "order" : 0.71428571428571419,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "65066F1D-7EF0-4BD9-BA55-66C6B50B96C9",
-                    "progeny" : 0,
-                    "name" : "great search engines",
-                    "order" : 0.7857142857142857,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "2466BB79-6A85-4306-B704-CC49450C1CCF",
-                    "progeny" : 0,
-                    "name" : "minimum number of starting guilds",
-                    "order" : 0.8571428571428571,
-                    "count" : 0
-                  }
-                ],
-                "name" : "simple design goals",
-                "needs" : "not fetched",
-                "count" : 11,
-                "progeny" : 0,
-                "recordName" : "B7F2C4BA-F219-498F-A294-39A224B0BD49",
-                "order" : 0.5
-              }
-            ],
-            "order" : 0.33333333333333331,
-            "count" : 3
-          },
-          {
-            "recordName" : "4C7A0B50-E1FF-4CA6-A52F-F877987F5CB9",
-            "progeny" : 0,
-            "name" : "2",
-            "children" : [
-              {
-                "recordName" : "F42DB299-EEFE-4006-A7C1-9A7F8C0D4364",
-                "progeny" : 0,
-                "name" : "brief AND make the point",
-                "order" : 0.42307692307692313,
-                "count" : 1
-              }
-            ],
-            "order" : 0.5,
-            "count" : 1
-          },
-          {
-            "recordName" : "D0FE9C22-C770-4199-B513-D8BDEC9CB391",
-            "progeny" : 70,
-            "name" : "1",
-            "children" : [
-              {
-                "recordName" : "A9AF0443-5C5A-4B0E-9800-1A73CD4AC3EE",
-                "progeny" : 2,
-                "name" : "skatter brain",
-                "children" : [
-                  {
-                    "recordName" : "6C1B93E7-BF9A-4E47-9997-425C7D16D5A7",
-                    "progeny" : 0,
-                    "name" : "scrambled priorities",
-                    "children" : [
-                      {
-                        "recordName" : "6EC9F0F5-0626-401E-A81A-8E9777C6027B",
-                        "progeny" : 0,
-                        "name" : "simplify",
-                        "order" : 0.25,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "66BEB907-3868-4D46-A679-4F6611C2EF32",
-                        "progeny" : 0,
-                        "name" : "minimize goals",
-                        "order" : 0.5,
-                        "count" : 0
-                      }
-                    ],
-                    "order" : 0.33333333333333331,
-                    "count" : 2
-                  }
-                ],
-                "order" : 0.019607843137254902,
-                "count" : 1
-              },
-              {
-                "recordName" : "B163E96C-8356-4B17-8750-C3F6E681D3E9",
-                "progeny" : 0,
-                "name" : "are my thoughs and plans thorough?",
-                "children" : [
-                  {
-                    "recordName" : "8CE19167-4F6A-4C78-A172-47787A8D9399",
-                    "progeny" : 0,
-                    "name" : "unit tests",
-                    "order" : 0.16666666666666666,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "B78C25A2-DF6E-4D8D-AF4B-8933314DD1FD",
-                    "progeny" : 0,
-                    "name" : "i have no documents on this computer",
-                    "order" : 0.33333333333333331,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "1A1448BC-579C-4CAD-9D39-86EF4BDC27C4",
-                    "progeny" : 0,
-                    "name" : "documentation",
-                    "order" : 0.5,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "DF48BFF2-676A-4190-8419-BD2C69B0EE54",
-                    "progeny" : 0,
-                    "name" : "what's missing?",
-                    "order" : 0.66666666666666663,
-                    "count" : 0
-                  }
-                ],
-                "order" : 0.039215686274509803,
                 "count" : 4
-              },
-              {
-                "recordName" : "9DE3F163-CD0D-4EB3-8E1E-E543EF55CB54",
-                "progeny" : 0,
-                "name" : "opinions",
-                "children" : [
-                  {
-                    "recordName" : "ADE755BC-6422-473F-86F0-1205581D29D1",
-                    "progeny" : 0,
-                    "name" : "private opinions ???",
-                    "order" : 0.03125,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "6E01966B-BDC3-423D-90FA-39420893AF58",
-                    "progeny" : 0,
-                    "name" : "everybody can have many opinions",
-                    "order" : 0.046875,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "CF484B86-8801-4CFF-AF78-6DD81141D7C8",
-                    "progeny" : 0,
-                    "name" : "gigantic hierarchy of recorded opinions",
-                    "order" : 0.0625,
-                    "count" : 0
-                  },
-                  {
-                    "recordName" : "B3F61D7A-7C0F-407C-92D9-A3EDFF2880F3",
-                    "progeny" : 0,
-                    "name" : "benefit",
-                    "order" : 0.75,
-                    "count" : 0
-                  }
-                ],
-                "order" : 0.1764705882352941,
-                "count" : 4
-              },
-              {
-                "recordName" : "69FEEE1A-6474-4C89-A87F-F4B2ECCBA690",
-                "progeny" : 0,
-                "name" : "neighborhood",
-                "children" : [
-                  {
-                    "recordName" : "B5B24728-C646-46AB-9C85-4FBC271E6FC1",
-                    "progeny" : 0,
-                    "name" : "boundaries",
-                    "order" : 0.5,
-                    "count" : 0
-                  }
-                ],
-                "order" : 0.19607843137254902,
-                "count" : 1
               },
               {
                 "recordName" : "7AEDEFD6-F3B3-4241-A245-5C5257A97128",
@@ -862,25 +246,8 @@
                     "count" : 0
                   }
                 ],
-                "order" : 0.21568627450980393,
+                "order" : 0.40000000000000002,
                 "count" : 4
-              },
-              {
-                "color" : "red:0.91390625,blue:0.0,green:0.510672578312801",
-                "name" : "greatest benefit",
-                "children" : [
-                  {
-                    "recordName" : "8FFCB389-0EE1-4173-A002-A80D640FDBA3",
-                    "progeny" : 0,
-                    "name" : "least effort",
-                    "order" : 0.16666666666666666,
-                    "count" : 0
-                  }
-                ],
-                "count" : 1,
-                "progeny" : 0,
-                "recordName" : "AFFE0639-E7BE-4F8E-842A-B7C22E512901",
-                "order" : 0.23529411764705882
               },
               {
                 "recordName" : "4CE0EEEB-490B-42F2-B8E8-59662DD3BDB1",
@@ -1174,7 +541,7 @@
                     "count" : 2
                   }
                 ],
-                "order" : 0.27450980392156865,
+                "order" : 0.46666666666666667,
                 "count" : 19
               },
               {
@@ -1215,7 +582,7 @@
                     "count" : 1
                   }
                 ],
-                "order" : 0.37254901960784315,
+                "order" : 0.53333333333333333,
                 "count" : 2
               },
               {
@@ -1247,14 +614,14 @@
                     "count" : 0
                   }
                 ],
-                "order" : 0.39215686274509803,
+                "order" : 0.59999999999999998,
                 "count" : 2
               },
               {
                 "recordName" : "69EBC9FF-C296-4E0C-9C7B-23959501BA01",
                 "progeny" : 0,
                 "name" : "-------------------------",
-                "order" : 0.41176470588235292,
+                "order" : 0.66666666666666663,
                 "count" : 0
               },
               {
@@ -1281,7 +648,7 @@
                     "recordName" : "F7D1B487-31D5-4E53-99D3-AC14C6FA1A40"
                   }
                 ],
-                "order" : 0.62745098039215685,
+                "order" : 0.73333333333333328,
                 "count" : 3
               },
               {
@@ -1308,7 +675,7 @@
                     "recordName" : "C3170279-6D59-4C52-89F3-97A66CEA773B"
                   }
                 ],
-                "order" : 0.6470588235294118,
+                "order" : 0.80000000000000004,
                 "count" : 3
               },
               {
@@ -1323,22 +690,29 @@
                     "recordName" : "ACF9B0F3-B437-4D31-A3B8-02F1E712CC2A"
                   }
                 ],
-                "order" : 0.66666666666666663,
+                "order" : 0.8666666666666667,
                 "count" : 1
               }
             ],
             "order" : 0.66666666666666663,
-            "count" : 13
+            "count" : 12
           }
         ],
         "order" : 0.066666666666666666,
-        "count" : 2
+        "count" : 1
+      },
+      {
+        "recordName" : "E61B2535-E8D3-4A8D-92CE-208AFED0FB80",
+        "name" : "bugs for publish",
+        "link" : "everyone::2B5EDCB6-6F7F-425D-BCF0-D825E7694929",
+        "order" : 0.8666666666666667,
+        "count" : 0
       }
     ],
     "name" : "public lost and found",
     "access" : 4,
     "count" : 1,
-    "progeny" : 172,
+    "progeny" : 90,
     "owner" : "_331fc129da5bed513a4026e9bcf56dba",
     "order" : 0,
     "recordName" : "lost and found"
@@ -1678,7 +1052,7 @@
             "count" : 3,
             "progeny" : 35,
             "recordName" : "93C464BC-C5EC-4AB6-8B71-CDC0FABF2184",
-            "order" : 0.090909090909090912
+            "order" : 0.083333333333333329
           },
           {
             "color" : "red:0.1215686277,blue:0.7568627596,green:0.501960814",
@@ -1702,7 +1076,7 @@
             "count" : 2,
             "progeny" : 0,
             "recordName" : "E5D6188E-F00A-4A60-BDA2-E87AD8153191",
-            "order" : 0.18181818181818182
+            "order" : 0.16666666666666666
           },
           {
             "color" : "red:0.008049589529,blue:0.3747774505,green:0.6643199574",
@@ -1786,7 +1160,7 @@
             "count" : 3,
             "progeny" : 7,
             "recordName" : "853A6151-D5D9-4E79-B7BB-0B60676D68DF",
-            "order" : 0.27272727272727271
+            "order" : 0.25
           },
           {
             "recordName" : "8DBDF342-CE4D-474D-B3CF-520CC922847B",
@@ -1824,7 +1198,7 @@
                 "count" : 0
               }
             ],
-            "order" : 0.36363636363636365,
+            "order" : 0.33333333333333331,
             "count" : 2
           },
           {
@@ -1832,7 +1206,7 @@
             "progeny" : 0,
             "attributes" : "c",
             "name" : "-------------------------",
-            "order" : 0.45454545454545459,
+            "order" : 0.41666666666666663,
             "count" : 0
           },
           {
@@ -2103,7 +1477,7 @@
             "count" : 14,
             "progeny" : 20,
             "recordName" : "6E9CAFAB-08B7-4260-8E53-DB178FD1BA69",
-            "order" : 0.54545454545454541
+            "order" : 0.5
           },
           {
             "color" : "red:0.5803921819,blue:0.0,green:0.2470588237",
@@ -2781,7 +2155,7 @@
             "count" : 6,
             "progeny" : 83,
             "recordName" : "DA689B94-37C2-4D6A-8A39-100213EC13C3",
-            "order" : 0.63636363636363635
+            "order" : 0.58333333333333326
           },
           {
             "color" : "red:0.6338172411,blue:0.4425406133,green:0.01410813476",
@@ -2973,7 +2347,7 @@
             "count" : 3,
             "progeny" : 19,
             "recordName" : "52B71792-87BA-4578-A8AA-1F486199CAB4",
-            "order" : 0.72727272727272729
+            "order" : 0.66666666666666663
           },
           {
             "color" : "red:0.561394155,blue:0.3515339745,green:0.1490927169",
@@ -3013,7 +2387,7 @@
             "count" : 2,
             "progeny" : 2,
             "recordName" : "CF1F9962-FFD9-4381-A572-502B1713025F",
-            "order" : 0.81818181818181823
+            "order" : 0.75
           }
         ],
         "access" : 1,
@@ -3035,6 +2409,9 @@
                 "recordName" : "A9E9904C-24E5-411E-872D-82301C11A7C5",
                 "name" : "OSX bugs",
                 "children" : [
+                  {
+
+                  },
                   {
                     "children" : [
                       {
@@ -3087,21 +2464,13 @@
                         ],
                         "recordName" : "7D0CA84E-5FDF-4DFD-A016-449192DD2646",
                         "order" : 0.73333333333333328
-                      },
-                      {
-                        "recordName" : "E61B2535-E8D3-4A8D-92CE-208AFED0FB80",
-                        "name" : "bugs for publish",
-                        "link" : "everyone::2B5EDCB6-6F7F-425D-BCF0-D825E7694929",
-                        "order" : 0.8666666666666667,
-                        "count" : 0
                       }
-                    ]
-                  },
-                  {
+                    ],
                     "name" : "fix these soon",
+                    "attributes" : "c",
                     "access" : 1,
                     "count" : 13,
-                    "progeny" : 1,
+                    "progeny" : 0,
                     "owner" : "_331fc129da5bed513a4026e9bcf56dba",
                     "order" : 0.33333333333333331,
                     "recordName" : "38C39F55-B0D9-4D72-BCA7-B9BB8E265DB2"
@@ -3609,9 +2978,8 @@
                   }
                 ],
                 "access" : 1,
-                "needs" : "not fetched",
                 "count" : 9,
-                "progeny" : 64,
+                "progeny" : 63,
                 "owner" : "_331fc129da5bed513a4026e9bcf56dba",
                 "order" : 0.1111111111111111,
                 "color" : "red:0.838574409484863,blue:0.660827494336615,green:0.0204551723052754"
@@ -4165,7 +3533,7 @@
                   },
                   {
                     "recordName" : "639D7E37-2A80-47D4-B44D-EF8CF30AC7C6",
-                    "progeny" : 483,
+                    "progeny" : 484,
                     "name" : "builds",
                     "children" : [
                       {
@@ -6744,7 +6112,7 @@
                       },
                       {
                         "recordName" : "B8981FFA-5F08-4EFF-B3A5-EF99FE7DBB56",
-                        "progeny" : 34,
+                        "progeny" : 33,
                         "name" : "1045",
                         "children" : [
                           {
@@ -6813,7 +6181,7 @@
                             "name" : "ship everyone.graph file inside app",
                             "attributes" : "",
                             "count" : 3,
-                            "progeny" : 5,
+                            "progeny" : 4,
                             "recordName" : "B5ECFC62-48B8-4991-96E2-86AF8B482801",
                             "order" : 0.25
                           },
@@ -7952,7 +7320,30 @@
                                 "count" : 0
                               }
                             ],
-                            "order" : 0.33333333333333331,
+                            "order" : 0.25,
+                            "count" : 0
+                          }
+                        ],
+                        "order" : 0.72727272727272729,
+                        "count" : 0
+                      },
+                      {
+                        "recordName" : "3493859D-59FD-40E5-848C-A7ED4C0B5ED3",
+                        "progeny" : 0,
+                        "name" : "1050",
+                        "children" : [
+                          {
+                            "recordName" : "3667EB50-7ACD-4AAE-B4D8-9F65BF35F77C",
+                            "progeny" : 0,
+                            "name" : "inherit colorized",
+                            "order" : 0.25,
+                            "count" : 0
+                          },
+                          {
+                            "recordName" : "7DF6762C-A834-4990-AD22-B2358F52AA1F",
+                            "progeny" : 0,
+                            "name" : "fix crash encountered by iTunes Connect team",
+                            "order" : 0.5,
                             "count" : 0
                           }
                         ],
@@ -7967,7 +7358,7 @@
                 "name" : "done",
                 "access" : 1,
                 "count" : 2,
-                "progeny" : 499,
+                "progeny" : 501,
                 "owner" : "_331fc129da5bed513a4026e9bcf56dba",
                 "order" : 0.77777777777777768,
                 "recordName" : "E59949DE-729A-4E75-9D2F-196C0642C327"
@@ -7975,7 +7366,7 @@
             ],
             "access" : 2,
             "count" : 6,
-            "progeny" : 629,
+            "progeny" : 630,
             "owner" : "_331fc129da5bed513a4026e9bcf56dba",
             "order" : 0.14285714285714285,
             "color" : "red:0.788254616477273,blue:0.47745198403952,green:0.160790495388255"
@@ -7988,36 +7379,29 @@
                 "children" : [
                   {
                     "recordName" : "D0ABEC90-3089-4144-9B9B-62650EA9F0F1",
-                    "progeny" : 24,
-                    "name" : "soon",
+                    "progeny" : 6,
+                    "name" : "implement these soon",
                     "children" : [
                       {
                         "recordName" : "0147DFDA-8059-40A5-A6DE-A625A98B8F29",
                         "progeny" : 0,
                         "attributes" : "c",
                         "name" : "----------- publish? -----------",
-                        "order" : 0.0625,
+                        "order" : 0.071428571428571425,
                         "count" : 0
                       },
                       {
                         "recordName" : "71B42197-1EA6-4B19-9905-CCEA7AACED2A",
                         "progeny" : 0,
-                        "name" : "find searches memory",
-                        "order" : 0.125,
-                        "count" : 0
-                      },
-                      {
-                        "recordName" : "3667EB50-7ACD-4AAE-B4D8-9F65BF35F77C",
-                        "progeny" : 0,
-                        "name" : "inherit colorized",
-                        "order" : 0.1875,
+                        "name" : "find should search memory",
+                        "order" : 0.14285714285714285,
                         "count" : 0
                       },
                       {
                         "recordName" : "0E88EF4D-0AE7-4115-8276-D2F25F36DE54",
                         "progeny" : 0,
                         "name" : "A -> selects all siblings",
-                        "order" : 0.25,
+                        "order" : 0.21428571428571427,
                         "count" : 0
                       },
                       {
@@ -8025,14 +7409,14 @@
                         "progeny" : 0,
                         "attributes" : "",
                         "name" : "double click on drag dot -> here \/ focus",
-                        "order" : 0.3125,
+                        "order" : 0.2857142857142857,
                         "count" : 0
                       },
                       {
                         "recordName" : "4593C343-D324-42CD-B7D7-6F6918E23308",
                         "progeny" : 0,
                         "name" : "ALERT for COMMAND-OPTION LEFT ARROW from here -> baaaad baaaaaaaad",
-                        "order" : 0.4375,
+                        "order" : 0.3571428571428571,
                         "count" : 0
                       },
                       {
@@ -8040,14 +7424,14 @@
                         "progeny" : 0,
                         "attributes" : "c",
                         "name" : "-------------------------",
-                        "order" : 0.5,
+                        "order" : 0.42857142857142855,
                         "count" : 0
                       },
                       {
                         "recordName" : "1F98FC7F-1F88-4871-BBAD-26F63DFE0783",
                         "progeny" : 0,
                         "name" : "remote receive ckrecord id -> determine public or private?",
-                        "order" : 0.5625,
+                        "order" : 0.5,
                         "count" : 0
                       },
                       {
@@ -8079,14 +7463,14 @@
                             "count" : 0
                           }
                         ],
-                        "order" : 0.625,
+                        "order" : 0.5714285714285714,
                         "count" : 0
                       },
                       {
                         "recordName" : "5072CB96-5C7E-4B92-9AA4-8A84DFDC881E",
                         "progeny" : 0,
                         "name" : "ui button -> drop into bookmark goes there",
-                        "order" : 0.6875,
+                        "order" : 0.64285714285714279,
                         "count" : 0
                       },
                       {
@@ -8116,153 +7500,8 @@
                             "count" : 0
                           }
                         ],
-                        "order" : 0.8125,
+                        "order" : 0.71428571428571419,
                         "count" : 3
-                      },
-                      {
-                        "recordName" : "933B9C07-F084-40DC-A2F5-4C641674A009",
-                        "progeny" : 12,
-                        "name" : "remote deletion",
-                        "children" : [
-                          {
-                            "recordName" : "E6C674B4-D145-4CF0-9F18-4787DCA7D589",
-                            "progeny" : 0,
-                            "name" : "once a record is destroyed, how to propagate?",
-                            "order" : 0.14285714285714285,
-                            "count" : 0
-                          },
-                          {
-                            "recordName" : "89F5DC98-01F5-4B95-860F-AF7C53969D07",
-                            "progeny" : 0,
-                            "name" : "list of deleted refs?",
-                            "order" : 0.2857142857142857,
-                            "count" : 0
-                          },
-                          {
-                            "recordName" : "9173438D-9866-4EAE-B464-B1A3366EB333",
-                            "progeny" : 0,
-                            "name" : "list of refs",
-                            "order" : 0.33333333333333331,
-                            "count" : 0
-                          },
-                          {
-                            "recordName" : "C6952C47-9A36-4173-BD6B-6B440344656C",
-                            "progeny" : 0,
-                            "name" : "receive",
-                            "children" : [
-                              {
-                                "recordName" : "FAAACAA3-A091-43F2-8F25-DD48BD6B9790",
-                                "progeny" : 0,
-                                "name" : "at launch",
-                                "order" : 0.25,
-                                "count" : 0
-                              },
-                              {
-                                "recordName" : "9A1AD4F2-08A0-47E7-BF28-6CD710FF695F",
-                                "progeny" : 0,
-                                "name" : "when another client deletes a record",
-                                "order" : 0.5,
-                                "count" : 0
-                              }
-                            ],
-                            "order" : 0.42857142857142855,
-                            "count" : 2
-                          },
-                          {
-                            "recordName" : "A02A95E3-1642-4856-A0C9-5243D5F7C744",
-                            "progeny" : 0,
-                            "name" : "update to cloud each delete",
-                            "children" : [
-                              {
-                                "recordName" : "1F25F84B-16F8-4732-8CD3-E29D704718B8",
-                                "progeny" : 0,
-                                "name" : "error handling",
-                                "order" : 0.25,
-                                "count" : 0
-                              },
-                              {
-                                "recordName" : "E8334123-8387-4F1B-8315-E8429F2F8F9C",
-                                "progeny" : 0,
-                                "name" : "on error, refetch, re-append, and resend",
-                                "order" : 0.5,
-                                "count" : 0
-                              }
-                            ],
-                            "order" : 0.5714285714285714,
-                            "count" : 2
-                          },
-                          {
-                            "recordName" : "ABF44431-AA1C-47AD-98A0-84B9F08A797B",
-                            "progeny" : 5,
-                            "name" : "bit field of id's",
-                            "children" : [
-                              {
-                                "recordName" : "AB9A36CE-1EE8-4AA7-B94C-3D29FAEB9124",
-                                "progeny" : 0,
-                                "name" : "how many bytes?",
-                                "children" : [
-                                  {
-                                    "recordName" : "7A7D665F-FC67-4E68-B78E-0726A91A1E7D",
-                                    "progeny" : 0,
-                                    "name" : "10 to the 39th power bytes !!!!",
-                                    "order" : 0.33333333333333331,
-                                    "count" : 0
-                                  }
-                                ],
-                                "order" : 0.20000000000000001,
-                                "count" : 1
-                              },
-                              {
-                                "recordName" : "9AFDCFBC-03BE-4101-8C71-B7D2CB097930",
-                                "progeny" : 0,
-                                "name" : "UUID max value",
-                                "children" : [
-                                  {
-                                    "recordName" : "33BE5B2B-52A6-4DFB-BEAB-88F51A1E000A",
-                                    "progeny" : 0,
-                                    "name" : "128 bits",
-                                    "order" : 0.14285714285714285,
-                                    "count" : 0
-                                  },
-                                  {
-                                    "recordName" : "9A2451A9-F14B-49C5-BBFF-C10A2AD12984",
-                                    "progeny" : 0,
-                                    "name" : "2 to the 128th power == ?",
-                                    "order" : 0.2857142857142857,
-                                    "count" : 0
-                                  },
-                                  {
-                                    "recordName" : "60B7217D-A1FA-4249-BE46-A23BA7B7065B",
-                                    "progeny" : 0,
-                                    "name" : "1000 to the 13th power",
-                                    "order" : 0.42857142857142855,
-                                    "count" : 0
-                                  },
-                                  {
-                                    "recordName" : "96056A13-9A78-42C4-AFC2-1A450BEE022C",
-                                    "progeny" : 0,
-                                    "name" : "10 to the 40th power bits",
-                                    "order" : 0.5714285714285714,
-                                    "count" : 0
-                                  }
-                                ],
-                                "order" : 0.40000000000000002,
-                                "count" : 4
-                              },
-                              {
-                                "recordName" : "09DAC5E2-FE75-4E1D-AF36-FC7BA8E0F919",
-                                "progeny" : 0,
-                                "name" : "waaaay impractical",
-                                "order" : 0.60000000000000009,
-                                "count" : 0
-                              }
-                            ],
-                            "order" : 0.71428571428571419,
-                            "count" : 3
-                          }
-                        ],
-                        "order" : 0.875,
-                        "count" : 6
                       }
                     ],
                     "order" : 0.14285714285714285,
@@ -9636,32 +8875,16 @@
                 ],
                 "access" : 1,
                 "count" : 4,
-                "progeny" : 209,
+                "progeny" : 189,
                 "owner" : "_331fc129da5bed513a4026e9bcf56dba",
                 "order" : 0.25,
                 "color" : "red:0.0,blue:0.602129723020202,green:0.6146153808"
-              },
-              {
-                "recordName" : "DBBAA04E-09E2-48CA-A308-C70DB8B2ED51",
-                "progeny" : 0,
-                "name" : "next features",
-                "children" : [
-                  {
-                    "recordName" : "9F8B8DC1-446D-458A-80BD-302548328926",
-                    "progeny" : 0,
-                    "name" : "ideas",
-                    "order" : 0.33333333333333331,
-                    "count" : 0
-                  }
-                ],
-                "order" : 0.40000000000000002,
-                "count" : 3
               }
             ],
             "name" : "suggestions",
             "access" : 2,
             "count" : 1,
-            "progeny" : 215,
+            "progeny" : 194,
             "owner" : "_331fc129da5bed513a4026e9bcf56dba",
             "order" : 0.2857142857142857,
             "recordName" : "48CDA6FC-6321-4BBB-816B-D2C58811B271"
@@ -9811,11 +9034,102 @@
                   },
                   {
                     "recordName" : "6D869C72-14FB-4FEF-9F4C-08C4FCB31B86",
-                    "progeny" : 103,
+                    "progeny" : 109,
                     "name" : "current work",
                     "children" : [
                       {
                         "children" : [
+                          {
+                            "recordName" : "EB79FEE8-FC00-48F4-9DE9-4648AB0AE1B5",
+                            "progeny" : 0,
+                            "name" : "fubar user status",
+                            "children" : [
+                              {
+                                "recordName" : "0857FBEA-49E1-4E6B-A230-87D8BCE6C2EF",
+                                "progeny" : 0,
+                                "name" : "disable cloud drive",
+                                "order" : 0.16666666666666666,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "8896A495-BD57-402C-B7B2-D86D791602D8",
+                                "progeny" : 0,
+                                "name" : "no internet no file",
+                                "order" : 0.33333333333333331,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "DFDCBC35-5143-4A27-941E-78A3414121F6",
+                                "progeny" : 0,
+                                "name" : "resume internet",
+                                "order" : 0.5,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "616EF8AB-1437-4844-82A4-8DE774A7771F",
+                                "progeny" : 0,
+                                "name" : "enable cloud drive",
+                                "order" : 0.66666666666666663,
+                                "count" : 0
+                              }
+                            ],
+                            "order" : 0.10000000000000001,
+                            "count" : 0
+                          },
+                          {
+                            "children" : [
+                              {
+                                "recordName" : "514133DA-EFE4-4C47-A153-1B26DF0815F1",
+                                "progeny" : 0,
+                                "name" : "launch without file, with internet",
+                                "order" : 0.16666666666666666,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "46971A2F-0FBB-4C8B-875F-58461DF525BE",
+                                "progeny" : 0,
+                                "name" : "----------- analysis -----------",
+                                "order" : 0.33333333333333331,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "40214ABC-0B8C-49C8-8714-F9BC671B2CEE",
+                                "progeny" : 0,
+                                "name" : "updateFavorites not called",
+                                "children" : [
+                                  {
+                                    "recordName" : "75316856-34BE-47FB-ACDF-A82820A284DB",
+                                    "progeny" : 0,
+                                    "name" : "before save",
+                                    "order" : 0.25,
+                                    "count" : 0
+                                  },
+                                  {
+                                    "recordName" : "FAEF64B0-7620-42B5-9F4E-D06059ED1458",
+                                    "progeny" : 0,
+                                    "name" : "at end of launch",
+                                    "order" : 0.5,
+                                    "count" : 0
+                                  }
+                                ],
+                                "order" : 0.5,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "E083A48F-D9B9-4165-9DBA-1FA488AE0641",
+                                "progeny" : 0,
+                                "name" : "fetch all does nothing ???",
+                                "order" : 0.66666666666666663,
+                                "count" : 0
+                              }
+                            ],
+                            "name" : "extra favorites",
+                            "attributes" : "",
+                            "count" : 1,
+                            "progeny" : 2,
+                            "recordName" : "F2D6D001-B67B-4584-8054-C69DF0610F02",
+                            "order" : 0.20000000000000001
+                          },
                           {
                             "recordName" : "3079CFC5-4216-4CC6-9589-A2B0A231E57A",
                             "progeny" : 0,
@@ -9829,38 +9143,22 @@
                                 "count" : 0
                               }
                             ],
-                            "order" : 0.1111111111111111,
+                            "order" : 0.30000000000000004,
                             "count" : 0
                           },
                           {
                             "recordName" : "E85F9756-B00A-4799-89B4-B90A7A30DA65",
                             "progeny" : 0,
                             "name" : "back and forth -> still broken",
-                            "order" : 0.22222222222222221,
+                            "order" : 0.40000000000000002,
                             "count" : 0
-                          },
-                          {
-                            "recordName" : "F2D6D001-B67B-4584-8054-C69DF0610F02",
-                            "progeny" : 0,
-                            "name" : "extra favorites",
-                            "children" : [
-                              {
-                                "recordName" : "514133DA-EFE4-4C47-A153-1B26DF0815F1",
-                                "progeny" : 0,
-                                "name" : "launch without file, with internet",
-                                "order" : 0.125,
-                                "count" : 0
-                              }
-                            ],
-                            "order" : 0.33333333333333331,
-                            "count" : 1
                           },
                           {
                             "recordName" : "6023BAA8-5516-48EE-8390-941068D2FCA3",
                             "progeny" : 0,
                             "attributes" : "",
                             "name" : "sometimes launch to empty screen !!!!!",
-                            "order" : 0.44444444444444442,
+                            "order" : 0.5,
                             "count" : 0
                           },
                           {
@@ -9868,7 +9166,7 @@
                             "progeny" : 0,
                             "attributes" : "",
                             "name" : "----------- later -----------",
-                            "order" : 0.55555555555555558,
+                            "order" : 0.60000000000000009,
                             "count" : 0
                           },
                           {
@@ -9928,75 +9226,38 @@
                                 "count" : 0
                               }
                             ],
-                            "order" : 0.66666666666666663,
+                            "order" : 0.70000000000000007,
                             "count" : 4
                           },
                           {
                             "recordName" : "1FC2A4B1-41A2-4944-B592-B4DCB7031C34",
                             "name" : "fix these soon",
                             "link" : "everyone::38C39F55-B0D9-4D72-BCA7-B9BB8E265DB2",
-                            "order" : 0.77777777777777768,
+                            "order" : 0.80000000000000004,
                             "count" : 0
                           }
                         ],
                         "name" : "bugs for 1.0",
                         "attributes" : "c",
                         "count" : 7,
-                        "progeny" : 10,
+                        "progeny" : 19,
                         "recordName" : "2B5EDCB6-6F7F-425D-BCF0-D825E7694929",
                         "order" : 0.1111111111111111
                       },
                       {
                         "recordName" : "B3937BA3-5250-4044-B561-FAE55F246CD2",
-                        "progeny" : 81,
+                        "progeny" : 49,
                         "name" : "features for 1.0",
                         "children" : [
                           {
                             "recordName" : "E7BA4475-0658-4CDF-A140-BF86EC3D5461",
-                            "progeny" : 37,
+                            "progeny" : 5,
                             "name" : "icloud resumes",
                             "children" : [
                               {
                                 "recordName" : "E9514162-728A-4AB6-AEED-A8187653DAF8",
                                 "progeny" : 0,
                                 "name" : "suppress op ids",
-                                "children" : [
-                                  {
-                                    "recordName" : "0A07FC67-9F01-45DD-B515-82FDB870694E",
-                                    "progeny" : 0,
-                                    "name" : "bookmarks",
-                                    "order" : 0.125,
-                                    "count" : 0
-                                  },
-                                  {
-                                    "recordName" : "DE3D41E4-A89D-4FE4-8135-AD79620E1755",
-                                    "progeny" : 0,
-                                    "name" : "children",
-                                    "order" : 0.25,
-                                    "count" : 0
-                                  },
-                                  {
-                                    "recordName" : "2A1C94DE-0CAC-4FBB-92A7-3878A2B7FA6F",
-                                    "progeny" : 0,
-                                    "name" : "to root",
-                                    "order" : 0.375,
-                                    "count" : 0
-                                  },
-                                  {
-                                    "recordName" : "13C4AED7-A4DE-424F-99B5-5DAB734D39B6",
-                                    "progeny" : 0,
-                                    "name" : "parent",
-                                    "order" : 0.5,
-                                    "count" : 0
-                                  },
-                                  {
-                                    "recordName" : "C470E2AC-A44F-43C7-A8A8-1B1042B094ED",
-                                    "progeny" : 0,
-                                    "name" : "color",
-                                    "order" : 0.625,
-                                    "count" : 0
-                                  }
-                                ],
                                 "order" : 0.20000000000000001,
                                 "count" : 5
                               },
@@ -10004,21 +9265,12 @@
                                 "recordName" : "92647A0E-0FA2-485D-A7D3-D1E7142DC21D",
                                 "progeny" : 0,
                                 "name" : "new MERGE",
-                                "children" : [
-                                  {
-                                    "recordName" : "FE4C0CCF-3438-4BB6-832C-D89DE2FCE660",
-                                    "progeny" : 0,
-                                    "name" : "only \"modified\" properties",
-                                    "order" : 0.33333333333333331,
-                                    "count" : 0
-                                  }
-                                ],
                                 "order" : 0.30000000000000004,
                                 "count" : 1
                               },
                               {
                                 "recordName" : "C5F3D14B-0B3D-4494-A169-73578DB5FDC7",
-                                "progeny" : 11,
+                                "progeny" : 0,
                                 "name" : "fetch since",
                                 "children" : [
                                   {
@@ -10036,95 +9288,12 @@
                                     "count" : 0
                                   },
                                   {
-                                    "children" : [
-                                      {
-                                        "recordName" : "299431CA-8E7A-4206-806D-9F1D37135ABD",
-                                        "progeny" : 0,
-                                        "name" : "bookmarks T",
-                                        "order" : 0.16666666666666666,
-                                        "count" : 0
-                                      },
-                                      {
-                                        "recordName" : "07E5A9CF-9673-4034-9176-44A2AB7E9F78",
-                                        "progeny" : 0,
-                                        "name" : "graph T",
-                                        "children" : [
-                                          {
-                                            "recordName" : "58FF81A2-0229-47D4-8490-EBF65704C36E",
-                                            "progeny" : 0,
-                                            "name" : "traits",
-                                            "order" : 0.14285714285714285,
-                                            "count" : 0
-                                          },
-                                          {
-                                            "recordName" : "42C915AA-B1B3-4829-836E-932AE90B0A2C",
-                                            "progeny" : 0,
-                                            "name" : "zones",
-                                            "order" : 0.2857142857142857,
-                                            "count" : 0
-                                          },
-                                          {
-                                            "recordName" : "02FD64A5-6FF7-4183-A0E7-395FA7CC1B84",
-                                            "progeny" : 0,
-                                            "name" : "deletes",
-                                            "order" : 0.42857142857142855,
-                                            "count" : 0
-                                          },
-                                          {
-                                            "recordName" : "EB37DC92-81B9-4855-B64A-1FA91CE74887",
-                                            "progeny" : 0,
-                                            "name" : "parents",
-                                            "order" : 0.5714285714285714,
-                                            "count" : 0
-                                          },
-                                          {
-                                            "recordName" : "0EA47C8C-2067-4305-A561-636E8296A8BE",
-                                            "progeny" : 0,
-                                            "name" : "children",
-                                            "order" : 0.71428571428571419,
-                                            "count" : 0
-                                          }
-                                        ],
-                                        "order" : 0.33333333333333331,
-                                        "count" : 5
-                                      },
-                                      {
-                                        "recordName" : "EEF56BDE-41D7-42FE-83EB-7161EF314759",
-                                        "progeny" : 0,
-                                        "name" : "modification date is after T",
-                                        "order" : 0.5,
-                                        "count" : 0
-                                      },
-                                      {
-                                        "recordName" : "ED7D996B-2951-41C5-A9DC-07495AB1E5F2",
-                                        "progeny" : 0,
-                                        "name" : "time acquisition",
-                                        "children" : [
-                                          {
-                                            "recordName" : "82C3D7F1-F26E-4828-BE19-67268916AAF5",
-                                            "progeny" : 0,
-                                            "name" : "compare each fetched item's modification date with T, update if more recent",
-                                            "order" : 0.25,
-                                            "count" : 0
-                                          },
-                                          {
-                                            "recordName" : "2FAE119E-1180-4559-8751-09BBE918DC2A",
-                                            "progeny" : 0,
-                                            "name" : "do this in one go once ALL items have been fetched",
-                                            "order" : 0.5,
-                                            "count" : 0
-                                          }
-                                        ],
-                                        "order" : 0.66666666666666663,
-                                        "count" : 2
-                                      }
-                                    ],
-                                    "name" : "\"what's new\" == records since date T (from file)",
-                                    "attributes" : "c",
-                                    "count" : 4,
-                                    "progeny" : 7,
                                     "recordName" : "417892DF-76E0-4A3F-8C81-E927EDDDAB0B",
-                                    "order" : 0.60000000000000009
+                                    "progeny" : 0,
+                                    "attributes" : "c",
+                                    "name" : "\"what's new\" == records since date T (from file)",
+                                    "order" : 0.60000000000000009,
+                                    "count" : 4
                                   }
                                 ],
                                 "order" : 0.40000000000000002,
@@ -10147,142 +9316,25 @@
                               },
                               {
                                 "recordName" : "248962F2-B63B-4732-B5FE-20AC502080C4",
-                                "progeny" : 9,
+                                "progeny" : 0,
                                 "name" : "new: SYNC",
-                                "children" : [
-                                  {
-                                    "recordName" : "6A6CB5DE-9346-41F1-BBFA-7ED0C7CCB86D",
-                                    "progeny" : 0,
-                                    "name" : "SAVE",
-                                    "children" : [
-                                      {
-                                        "recordName" : "E1022A37-1EFF-487B-BCEF-0BE37E722727",
-                                        "progeny" : 0,
-                                        "name" : "save",
-                                        "order" : 0.25,
-                                        "count" : 0
-                                      },
-                                      {
-                                        "recordName" : "BFF6B849-5C0D-4BFD-BEAD-2FD3EE06C977",
-                                        "progeny" : 0,
-                                        "name" : "destroy",
-                                        "order" : 0.5,
-                                        "count" : 0
-                                      }
-                                    ],
-                                    "order" : 0.20000000000000001,
-                                    "count" : 2
-                                  },
-                                  {
-                                    "recordName" : "C6FBF32C-06B0-4020-8F2A-839F356747E9",
-                                    "progeny" : 2,
-                                    "name" : "FETCH",
-                                    "children" : [
-                                      {
-                                        "recordName" : "D4DEB94E-5868-4BDC-9C9D-15F3336D716D",
-                                        "progeny" : 0,
-                                        "name" : "traits",
-                                        "order" : 0.14285714285714285,
-                                        "count" : 0
-                                      },
-                                      {
-                                        "recordName" : "B0A8B3C2-A368-4837-9215-3A1E26AB9B66",
-                                        "progeny" : 0,
-                                        "name" : "zones",
-                                        "order" : 0.2857142857142857,
-                                        "count" : 0
-                                      },
-                                      {
-                                        "recordName" : "8A5F0C9D-5ED9-4228-93FF-CEB38C5480EC",
-                                        "progeny" : 0,
-                                        "name" : "deletes",
-                                        "order" : 0.42857142857142855,
-                                        "count" : 0
-                                      },
-                                      {
-                                        "recordName" : "341409D2-E0CE-4ED8-8D8B-92611A8F971D",
-                                        "progeny" : 0,
-                                        "name" : "no file, new device \/ user",
-                                        "order" : 0.5714285714285714,
-                                        "count" : 0
-                                      },
-                                      {
-                                        "recordName" : "D079FC78-6625-4D8A-BA33-3B066C0DB502",
-                                        "progeny" : 0,
-                                        "name" : "push update from other device \/ user",
-                                        "children" : [
-                                          {
-                                            "recordName" : "F7F18E02-CD19-400A-918D-9E0A17E9199B",
-                                            "progeny" : 0,
-                                            "name" : "parent",
-                                            "order" : 0.20000000000000001,
-                                            "count" : 0
-                                          },
-                                          {
-                                            "recordName" : "586BFFCC-72F8-4A39-97B6-92E88BCB0D1A",
-                                            "progeny" : 0,
-                                            "name" : "children",
-                                            "order" : 0.40000000000000002,
-                                            "count" : 0
-                                          }
-                                        ],
-                                        "order" : 0.71428571428571419,
-                                        "count" : 2
-                                      }
-                                    ],
-                                    "order" : 0.40000000000000002,
-                                    "count" : 5
-                                  }
-                                ],
                                 "order" : 0.70000000000000007,
                                 "count" : 2
                               },
                               {
                                 "recordName" : "E658EF85-A940-43A2-9BA0-5CB6B75B0B5B",
-                                "progeny" : 5,
+                                "progeny" : 1,
                                 "name" : "new needs",
                                 "children" : [
                                   {
                                     "recordName" : "93D9E5A2-53C5-4ACC-9B16-4D09CAFB07F9",
-                                    "progeny" : 3,
+                                    "progeny" : 0,
                                     "name" : "\"merge before edit\"",
                                     "children" : [
-                                      {
-                                        "recordName" : "C5160D8A-BF2B-426D-9C1B-2CC08914412A",
-                                        "progeny" : 0,
-                                        "name" : "apply to everything visible",
-                                        "children" : [
-                                          {
-                                            "recordName" : "C5B5E7C8-2AE1-4F45-9456-9659A19C138A",
-                                            "progeny" : 0,
-                                            "name" : "always replace client with cloud version",
-                                            "order" : 0.33333333333333331,
-                                            "count" : 0
-                                          }
-                                        ],
-                                        "order" : 0.25,
-                                        "count" : 1
-                                      },
                                       {
                                         "recordName" : "8547989D-E3D2-4059-AE65-388ABF906F34",
                                         "progeny" : 0,
                                         "name" : "(!) overwriting a zone can happen (!)",
-                                        "children" : [
-                                          {
-                                            "recordName" : "CB7D7557-DD0C-45E0-910B-D0867704F62E",
-                                            "progeny" : 0,
-                                            "name" : "yes, and this is VERY BAD",
-                                            "order" : 0.16666666666666666,
-                                            "count" : 0
-                                          },
-                                          {
-                                            "recordName" : "12BDA8B2-AEA7-4D47-9D27-ED8837556966",
-                                            "progeny" : 0,
-                                            "name" : "need a merge policy for EVERY SAVE",
-                                            "order" : 0.33333333333333331,
-                                            "count" : 0
-                                          }
-                                        ],
                                         "order" : 0.5,
                                         "count" : 2
                                       }
@@ -10295,7 +9347,7 @@
                                 "count" : 0
                               }
                             ],
-                            "order" : 0.16666666666666666,
+                            "order" : 0.14285714285714285,
                             "count" : 8
                           },
                           {
@@ -10461,7 +9513,7 @@
                             "count" : 2,
                             "progeny" : 17,
                             "owner" : "_331fc129da5bed513a4026e9bcf56dba",
-                            "order" : 0.33333333333333331,
+                            "order" : 0.2857142857142857,
                             "color" : "red:0.7155288423,blue:0.5441199839,green:0.2979248817"
                           },
                           {
@@ -10596,14 +9648,14 @@
                                 "color" : "red:0.6338172411,blue:0.4425406133,green:0.01410813476"
                               }
                             ],
-                            "order" : 0.5,
+                            "order" : 0.5714285714285714,
                             "count" : 4
                           },
                           {
                             "recordName" : "547DB309-24AC-45A0-BFE2-9452B8CCFD0D",
-                            "name" : "soon",
+                            "name" : "implement these soon",
                             "link" : "everyone::D0ABEC90-3089-4144-9B9B-62650EA9F0F1",
-                            "order" : 0.66666666666666663,
+                            "order" : 0.71428571428571419,
                             "count" : 0
                           }
                         ],
@@ -10611,29 +9663,251 @@
                         "count" : 3
                       },
                       {
-                        "recordName" : "D91A8A82-54B8-4B07-826E-67BC1D0DFFC8",
-                        "progeny" : 0,
-                        "attributes" : "c",
-                        "name" : "-------------------------",
+                        "recordName" : "2786BFF0-EFA0-4125-BA6F-D8CED3C2F277",
+                        "progeny" : 25,
+                        "name" : "new ideas",
+                        "children" : [
+                          {
+                            "recordName" : "933B9C07-F084-40DC-A2F5-4C641674A009",
+                            "progeny" : 12,
+                            "name" : "remote deletion",
+                            "children" : [
+                              {
+                                "recordName" : "E6C674B4-D145-4CF0-9F18-4787DCA7D589",
+                                "progeny" : 0,
+                                "name" : "once a record is destroyed, how to propagate?",
+                                "order" : 0.14285714285714285,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "89F5DC98-01F5-4B95-860F-AF7C53969D07",
+                                "progeny" : 0,
+                                "name" : "list of deleted refs?",
+                                "order" : 0.2857142857142857,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "9173438D-9866-4EAE-B464-B1A3366EB333",
+                                "progeny" : 0,
+                                "name" : "list of refs",
+                                "order" : 0.33333333333333331,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "C6952C47-9A36-4173-BD6B-6B440344656C",
+                                "progeny" : 0,
+                                "name" : "receive",
+                                "children" : [
+                                  {
+                                    "recordName" : "FAAACAA3-A091-43F2-8F25-DD48BD6B9790",
+                                    "progeny" : 0,
+                                    "name" : "at launch",
+                                    "order" : 0.25,
+                                    "count" : 0
+                                  },
+                                  {
+                                    "recordName" : "9A1AD4F2-08A0-47E7-BF28-6CD710FF695F",
+                                    "progeny" : 0,
+                                    "name" : "when another client deletes a record",
+                                    "order" : 0.5,
+                                    "count" : 0
+                                  }
+                                ],
+                                "order" : 0.42857142857142855,
+                                "count" : 2
+                              },
+                              {
+                                "recordName" : "A02A95E3-1642-4856-A0C9-5243D5F7C744",
+                                "progeny" : 0,
+                                "name" : "update to cloud each delete",
+                                "children" : [
+                                  {
+                                    "recordName" : "1F25F84B-16F8-4732-8CD3-E29D704718B8",
+                                    "progeny" : 0,
+                                    "name" : "error handling",
+                                    "order" : 0.25,
+                                    "count" : 0
+                                  },
+                                  {
+                                    "recordName" : "E8334123-8387-4F1B-8315-E8429F2F8F9C",
+                                    "progeny" : 0,
+                                    "name" : "on error, refetch, re-append, and resend",
+                                    "order" : 0.5,
+                                    "count" : 0
+                                  }
+                                ],
+                                "order" : 0.5714285714285714,
+                                "count" : 2
+                              },
+                              {
+                                "recordName" : "ABF44431-AA1C-47AD-98A0-84B9F08A797B",
+                                "progeny" : 5,
+                                "name" : "bit field of id's",
+                                "children" : [
+                                  {
+                                    "recordName" : "AB9A36CE-1EE8-4AA7-B94C-3D29FAEB9124",
+                                    "progeny" : 0,
+                                    "name" : "how many bytes?",
+                                    "children" : [
+                                      {
+                                        "recordName" : "7A7D665F-FC67-4E68-B78E-0726A91A1E7D",
+                                        "progeny" : 0,
+                                        "name" : "10 to the 39th power bytes !!!!",
+                                        "order" : 0.33333333333333331,
+                                        "count" : 0
+                                      }
+                                    ],
+                                    "order" : 0.20000000000000001,
+                                    "count" : 1
+                                  },
+                                  {
+                                    "recordName" : "9AFDCFBC-03BE-4101-8C71-B7D2CB097930",
+                                    "progeny" : 0,
+                                    "name" : "UUID max value",
+                                    "children" : [
+                                      {
+                                        "recordName" : "33BE5B2B-52A6-4DFB-BEAB-88F51A1E000A",
+                                        "progeny" : 0,
+                                        "name" : "128 bits",
+                                        "order" : 0.14285714285714285,
+                                        "count" : 0
+                                      },
+                                      {
+                                        "recordName" : "9A2451A9-F14B-49C5-BBFF-C10A2AD12984",
+                                        "progeny" : 0,
+                                        "name" : "2 to the 128th power == ?",
+                                        "order" : 0.2857142857142857,
+                                        "count" : 0
+                                      },
+                                      {
+                                        "recordName" : "60B7217D-A1FA-4249-BE46-A23BA7B7065B",
+                                        "progeny" : 0,
+                                        "name" : "1000 to the 13th power",
+                                        "order" : 0.42857142857142855,
+                                        "count" : 0
+                                      },
+                                      {
+                                        "recordName" : "96056A13-9A78-42C4-AFC2-1A450BEE022C",
+                                        "progeny" : 0,
+                                        "name" : "10 to the 40th power bits",
+                                        "order" : 0.5714285714285714,
+                                        "count" : 0
+                                      }
+                                    ],
+                                    "order" : 0.40000000000000002,
+                                    "count" : 4
+                                  },
+                                  {
+                                    "recordName" : "09DAC5E2-FE75-4E1D-AF36-FC7BA8E0F919",
+                                    "progeny" : 0,
+                                    "name" : "waaaay impractical",
+                                    "order" : 0.60000000000000009,
+                                    "count" : 0
+                                  }
+                                ],
+                                "order" : 0.71428571428571419,
+                                "count" : 3
+                              }
+                            ],
+                            "order" : 0.20000000000000001,
+                            "count" : 6
+                          },
+                          {
+                            "recordName" : "A74E2EF1-7DD0-42B9-B4B8-95A3D3B4E2C9",
+                            "progeny" : 0,
+                            "name" : "calendar",
+                            "children" : [
+                              {
+                                "recordName" : "E77C9718-199F-44B3-8201-03BAFE61BC52",
+                                "progeny" : 0,
+                                "name" : "framework API",
+                                "order" : 0.25,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "B6A955E6-F1AA-4D4E-B9BF-6F9FBB1EC31C",
+                                "progeny" : 0,
+                                "name" : "data type",
+                                "order" : 0.5,
+                                "count" : 0
+                              }
+                            ],
+                            "order" : 0.40000000000000002,
+                            "count" : 0
+                          },
+                          {
+                            "recordName" : "2D8BCE6F-75C9-4812-9DBF-0DF67AE3C9B9",
+                            "progeny" : 3,
+                            "name" : "tiny dots",
+                            "children" : [
+                              {
+                                "children" : [
+                                  {
+                                    "recordName" : "946C0C37-855E-4CA8-9B00-62A4F085A3FB",
+                                    "progeny" : 0,
+                                    "name" : "none \/ show \/ all",
+                                    "order" : 0.20000000000000001,
+                                    "count" : 0
+                                  },
+                                  {
+                                    "recordName" : "63600AB5-9930-47AE-8585-3BC6D70317C9",
+                                    "progeny" : 0,
+                                    "name" : "dots \/ numbers",
+                                    "order" : 0.40000000000000002,
+                                    "count" : 0
+                                  },
+                                  {
+                                    "recordName" : "C60C3C9F-7EDA-450A-B3A8-9E72000F92FC",
+                                    "progeny" : 0,
+                                    "name" : "level \/ levels",
+                                    "order" : 0.60000000000000009,
+                                    "count" : 0
+                                  }
+                                ],
+                                "progeny" : 0,
+                                "name" : "three segments",
+                                "order" : 0.25,
+                                "recordName" : "CA196F16-478C-4E1C-A4A5-5D614AC467BD"
+                              },
+                              {
+                                "recordName" : "6D18D08B-886E-4458-B95A-8C56E79A0953",
+                                "progeny" : 0,
+                                "name" : "hundreds and thousands",
+                                "order" : 0.5,
+                                "count" : 0
+                              }
+                            ],
+                            "order" : 0.60000000000000009,
+                            "count" : 0
+                          }
+                        ],
                         "order" : 0.33333333333333331,
                         "count" : 0
                       },
                       {
-                        "recordName" : "F8F8C66C-D64A-49F2-8C53-633A19A0D2C5",
-                        "name" : "1048",
-                        "link" : "everyone::2850D5CF-F4EF-4246-B39F-6D288E46038A",
+                        "recordName" : "D91A8A82-54B8-4B07-826E-67BC1D0DFFC8",
+                        "progeny" : 0,
+                        "attributes" : "c",
+                        "name" : "-------------------------",
                         "order" : 0.44444444444444442,
+                        "count" : 0
+                      },
+                      {
+                        "recordName" : "5E56135A-EB20-47BE-A750-69CECD370907",
+                        "name" : "1050",
+                        "link" : "everyone::3493859D-59FD-40E5-848C-A7ED4C0B5ED3",
+                        "order" : 0.55555555555555558,
                         "count" : 0
                       }
                     ],
                     "order" : 0.66666666666666663,
-                    "count" : 6
+                    "count" : 4
                   }
                 ],
                 "name" : "development transparency",
                 "access" : 1,
                 "count" : 3,
-                "progeny" : 127,
+                "progeny" : 122,
                 "owner" : "_331fc129da5bed513a4026e9bcf56dba",
                 "order" : 0.5,
                 "recordName" : "F1A67E33-5207-4B09-A4C0-D0BFABC5E990"
@@ -10708,7 +9982,7 @@
             ],
             "access" : 2,
             "count" : 3,
-            "progeny" : 137,
+            "progeny" : 132,
             "owner" : "_331fc129da5bed513a4026e9bcf56dba",
             "order" : 0.71428571428571419,
             "color" : "red:0.336557458894078,blue:0.421816813676795,green:0.564533025568182"
@@ -10716,7 +9990,7 @@
         ],
         "access" : 1,
         "count" : 4,
-        "progeny" : 994,
+        "progeny" : 968,
         "owner" : "_331fc129da5bed513a4026e9bcf56dba",
         "order" : 0.60000000000000009,
         "color" : "red:0.607515675148749,blue:0.788254616477273,green:0.298207167408573"
@@ -10724,7 +9998,7 @@
     ],
     "access" : 4,
     "count" : 2,
-    "progeny" : 1213,
+    "progeny" : 1187,
     "owner" : "_331fc129da5bed513a4026e9bcf56dba",
     "order" : 0.0625,
     "color" : "red:0.413277948,blue:0.0,green:0.6643199574"

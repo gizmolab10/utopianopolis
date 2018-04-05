@@ -62,7 +62,7 @@ class ZInformationController: ZGenericController {
         let ops = String.pluralized(gBatchManager.queue.operationCount, suffix: "request")
             +     String.pluralized(gBatchManager.totalCount,           suffix: "batch", plural: "es")
 
-        return !gHasInternet ? "no internet" : gCloudAccountStatus != .active ? "no Apple ID" : ops
+        return !gHasInternet ? "no internet" : ops // gCloudAccountStatus != .active ? "no Apple ID" : ops
     }
 
 

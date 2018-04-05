@@ -34,7 +34,6 @@ var              gExpanded:          [String]? = nil
 var                gIsLate:               Bool { return gBatchManager.isLate }
 var            gIsDragging:               Bool { return gDraggedZone != nil }
 var      gInsertionsFollow:               Bool { return gInsertionMode == .follow }
-var    gHasPrivateDatabase:               Bool { return gUserRecordID != nil }
 var      gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor) as? ZEditorController }
 var            gEditorView:      ZoneDragView? { return gEditorController?.editorView }
 var             gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
@@ -98,7 +97,7 @@ var gHereRecordNames: String {
 }
 
 
-var gUserRecordID: String? {
+var gUserRecordID: String? {    // persist for file read on launch
     get { return getPreferencesString(   for: kUserRecordID, defaultString: nil) }
     set { setPreferencesString(newValue, for: kUserRecordID) }
 }
@@ -157,8 +156,8 @@ var gScrollOffset: CGPoint {
 
 var gCountsMode: ZCountsMode {
     get {
-        var  mode  = ZCountsMode.dots
         let value  = UserDefaults.standard.object(forKey: kCountsMode) as? Int
+        var mode   = ZCountsMode.dots
 
         if  value != nil {
             mode   = ZCountsMode(rawValue: value!)!
@@ -252,7 +251,7 @@ var gDatabaseID: ZDatabaseID {
             dbID      = ZDatabaseID(rawValue: object as! String)
         }
 
-        if  dbID     == nil || !gHasPrivateDatabase {
+        if  dbID     == nil {
             dbID      = .everyoneID
 
             UserDefaults.standard.set(dbID!.rawValue, forKey:kDatabaseID)

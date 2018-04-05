@@ -280,9 +280,11 @@ class Zone : ZRecord {
             traverseAncestors { iChild -> (ZTraverseStatus) in
                 if  let      attributes = iChild.zoneAttributes {
                     result = attributes.contains(kColorized)
+
+                    return .eStop
                 }
 
-                return result ? .eStop : .eContinue
+                return .eContinue
             }
 
             return result
@@ -1119,7 +1121,6 @@ class Zone : ZRecord {
         if  !needsDestroy, let p = parentZone, p != self {
             p.maybeMarkNotFetched()
             p.addChildAndRespectOrder(self)
-
 
             if  p.recordName == kFavoritesRootName, let b = bookmarkTarget, !b.isRoot {
                 bam(decoratedName)

@@ -28,142 +28,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/managers/storage/ZCloudManager.swift"
-            timestampString = "544152641.727452"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "189"
-            endingLineNumber = "189"
-            landmarkName = "assureRecordExists(withRecordID:recordType:onCompletion:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/models/Zone.swift"
-            timestampString = "544212826.9332761"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1125"
-            endingLineNumber = "1125"
-            landmarkName = "unorphan()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/managers/storage/ZRecordsManager.swift"
-            timestampString = "543806518.553713"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "44"
-            endingLineNumber = "44"
-            landmarkName = "ZRecordsManager"
-            landmarkType = "3">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "variable initialization expression of Focus.ZRecordsManager.favoritesZone : Swift.Optional&lt;Focus.Zone&gt;"
-                  moduleName = "Focus"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/sources/managers/storage/ZRecordsManager.swift"
-                  timestampString = "542947154.851244"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "44"
-                  endingLineNumber = "44"
-                  offsetFromSymbolStart = "4">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Focus.ZRecordsManager.favoritesZone.getter : Swift.Optional&lt;Focus.Zone&gt;"
-                  moduleName = "Focus"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/sources/managers/storage/ZRecordsManager.swift"
-                  timestampString = "542947154.853848"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "44"
-                  endingLineNumber = "44"
-                  offsetFromSymbolStart = "106">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Focus.ZRecordsManager.favoritesZone.setter : Swift.Optional&lt;Focus.Zone&gt;"
-                  moduleName = "Focus"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/sources/managers/storage/ZRecordsManager.swift"
-                  timestampString = "542947154.856647"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "44"
-                  endingLineNumber = "44"
-                  offsetFromSymbolStart = "112">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Focus.ZRecordsManager.init(Focus.ZDatabaseID) -&gt; Focus.ZRecordsManager"
-                  moduleName = "Focus"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/sources/managers/storage/ZRecordsManager.swift"
-                  timestampString = "542947154.859341"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "44"
-                  endingLineNumber = "44"
-                  offsetFromSymbolStart = "683">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/managers/storage/ZCloudManager.swift"
-            timestampString = "544152641.7276911"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "204"
-            endingLineNumber = "204"
-            landmarkName = "assureRecordExists(withRecordID:recordType:onCompletion:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/sources/managers/storage/ZRemoteStoresManager.swift"
-            timestampString = "543806518.5539"
+            filePath = "Zones/sources/managers/storage/ZOnboardingManager.swift"
+            timestampString = "544561531.640983"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "68"
-            endingLineNumber = "68"
-            landmarkName = "recordsManagerFor(_:)"
+            startingLineNumber = "105"
+            endingLineNumber = "105"
+            landmarkName = "ubiquity(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -174,60 +48,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Zones/sources/managers/storage/ZOnboardingManager.swift"
-            timestampString = "543806518.55398"
+            timestampString = "544561531.641145"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "101"
-            endingLineNumber = "101"
-            landmarkName = "ubiquity(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/managers/main/ZWidgetsManager.swift"
-            timestampString = "543806518.554057"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "47"
-            endingLineNumber = "47"
-            landmarkName = "widgetForZone(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/models/ZRecord.swift"
-            timestampString = "543806518.554136"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "227"
-            endingLineNumber = "227"
-            landmarkName = "useBest(record:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/managers/main/ZFavoritesManager.swift"
-            timestampString = "543806518.55423"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "332"
-            endingLineNumber = "332"
-            landmarkName = "updateFavorites()"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "fetchUserID(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -237,13 +63,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/sources/managers/main/ZFavoritesManager.swift"
-            timestampString = "543806518.554322"
+            filePath = "Zones/sources/managers/storage/ZOnboardingManager.swift"
+            timestampString = "544561531.6412261"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "284"
-            endingLineNumber = "284"
-            landmarkName = "updateFavorites()"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
+            landmarkName = "fetchUserID(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -253,13 +79,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/sources/managers/main/ZFavoritesManager.swift"
-            timestampString = "543806518.554399"
+            filePath = "Zones/sources/managers/storage/ZOnboardingManager.swift"
+            timestampString = "544561531.641296"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "290"
-            endingLineNumber = "290"
-            landmarkName = "updateFavorites()"
+            startingLineNumber = "116"
+            endingLineNumber = "116"
+            landmarkName = "fetchUserRecord(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -269,157 +95,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Zones/sources/managers/main/ZFavoritesManager.swift"
-            timestampString = "543806518.554474"
+            filePath = "Zones/sources/managers/storage/ZOperationsManager.swift"
+            timestampString = "544561531.641484"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "297"
-            endingLineNumber = "297"
-            landmarkName = "updateFavorites()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/managers/main/ZEditingManager.swift"
-            timestampString = "544152641.728004"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1809"
-            endingLineNumber = "1809"
-            landmarkName = "moveGrabbedZones(into:at:isCommand:onCompletion:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/models/Zone.swift"
-            timestampString = "544212826.935371"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1135"
-            endingLineNumber = "1135"
-            landmarkName = "orphan()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/managers/storage/ZCloudManager.swift"
-            timestampString = "544152641.728191"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "635"
-            endingLineNumber = "635"
-            landmarkName = "createZRecords(of:with:title:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/managers/main/ZEditingManager.swift"
-            timestampString = "544152641.7282749"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "768"
-            endingLineNumber = "768"
-            landmarkName = "recursiveUpdate(_:_:to:onCompletion:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/managers/main/ZEditingManager.swift"
-            timestampString = "544152641.728348"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "740"
-            endingLineNumber = "740"
-            landmarkName = "generationalUpdate(show:zone:to:onCompletion:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Thoughtful.ZEditingManager.generationalUpdate(show: Swift.Bool, zone: Thoughtful.Zone, to: Swift.Optional&lt;Swift.Int&gt;, onCompletion: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; ()"
-                  moduleName = "Thoughtful"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/sources/managers/main/ZEditingManager.swift"
-                  timestampString = "544141628.449299"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "737"
-                  endingLineNumber = "737"
-                  offsetFromSymbolStart = "57">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; () in Thoughtful.ZEditingManager.generationalUpdate(show: Swift.Bool, zone: Thoughtful.Zone, to: Swift.Optional&lt;Swift.Int&gt;, onCompletion: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; ()"
-                  moduleName = "Thoughtful"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonathansand/GitHub/zones/Zones/sources/managers/main/ZEditingManager.swift"
-                  timestampString = "544141628.452015"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "743"
-                  endingLineNumber = "743"
-                  offsetFromSymbolStart = "18">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/managers/main/ZEditingManager.swift"
-            timestampString = "544152641.728433"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "808"
-            endingLineNumber = "808"
-            landmarkName = "revealDotClickAction(for:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Zones/sources/controllers/common/ZEditorController.swift"
-            timestampString = "544152641.728505"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "231"
-            endingLineNumber = "231"
-            landmarkName = "clickEvent(_:)"
+            startingLineNumber = "144"
+            endingLineNumber = "144"
+            landmarkName = "setupCloudTimer()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

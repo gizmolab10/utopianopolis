@@ -212,7 +212,6 @@ class ZCloudManager: ZRecordsManager {
                                         done(nil)
                                     } else {
                                         done(iSavedRecord)
-                                        gFileManager.write(for: self.databaseID)
                                     }
                                 }
                             }
@@ -1125,11 +1124,11 @@ class ZCloudManager: ZRecordsManager {
                 var       name = prefix + recordName
 
                 switch rootID {
-                case .favorites: if self.favoritesZone    != nil || self.databaseID != .mineID { closure?(iIndex + 1) } else { name = recordName }
-                case .destroy:   if self.destroyZone      != nil                               { closure?(iIndex + 1) }
-                case .trash:     if self.trashZone        != nil                               { closure?(iIndex + 1) }
-                case .graph:     if self.rootZone         != nil                               { closure?(iIndex + 1) } else { name = kFirstIdeaTitle }
-                case .lost:      if self.lostAndFoundZone != nil                               { closure?(iIndex + 1) }
+                case .favorites: if self.favoritesZone    != nil || self.databaseID != .mineID { closure?(iIndex + 1); return } else { name = recordName }
+                case .destroy:   if self.destroyZone      != nil                               { closure?(iIndex + 1); return }
+                case .trash:     if self.trashZone        != nil                               { closure?(iIndex + 1); return }
+                case .graph:     if self.rootZone         != nil                               { closure?(iIndex + 1); return } else { name = kFirstIdeaTitle }
+                case .lost:      if self.lostAndFoundZone != nil                               { closure?(iIndex + 1); return }
                 }
 
                 self.establishRootFor(name: name, recordName: recordName) { iZone in

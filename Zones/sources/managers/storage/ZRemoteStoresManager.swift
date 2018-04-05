@@ -24,7 +24,7 @@ class ZRemoteStoresManager: NSObject {
 
 
     var       databaseIDStack = [ZDatabaseID] ()
-    var       recordsManagers = [ZDatabaseID : ZCloudManager]()
+    var       recordsManagers = [ZDatabaseID : ZRecordsManager]()
     var currentRecordsManager : ZRecordsManager { return recordsManagerFor(gDatabaseID)! }
     var   currentCloudManager : ZCloudManager   { return cloudManagerFor(gDatabaseID) }
     var      rootProgenyCount : Int             { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
@@ -43,7 +43,7 @@ class ZRemoteStoresManager: NSObject {
 
     func recount() {  // all progenyCounts for all progeny in all databases in all roots
         for dbID in kAllDatabaseIDs {
-            gRemoteStoresManager.recordsManagerFor(dbID)?.recount()
+            recordsManagerFor(dbID)?.recount()
         }
 
         gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .redraw) {}
@@ -59,22 +59,20 @@ class ZRemoteStoresManager: NSObject {
     }
     
 
-    func recordsManagerFor(_ databaseID: ZDatabaseID?) -> ZRecordsManager? {
-        if databaseID == nil {
-            return nil
-        }
+    func recordsManagerFor(_  iDatabaseID: ZDatabaseID?) -> ZRecordsManager? {
+        var manager: ZRecordsManager? = nil
 
-        if databaseID == .favoritesID {
-            return nil
-        }
+        if  let dbID     =  iDatabaseID,
+            dbID        != .favoritesID {
+            manager      = recordsManagers[dbID]
 
-        for databaseID in kAllDatabaseIDs {
-            if  recordsManagers[databaseID] == nil {
-                recordsManagers[databaseID] = ZCloudManager(databaseID)
+            if  manager == nil {
+                manager  = ZCloudManager(dbID)
+                recordsManagers[dbID] = manager
             }
         }
 
-        return recordsManagers[databaseID!]!
+        return manager
     }
 
 

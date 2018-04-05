@@ -75,22 +75,22 @@ class ZBatchManager: ZOnboardingManager {
 
         var operations: [ZOperationID] {
             switch identifier {
-            case .save:        return [                                      .save,                             .write]
-            case .sync:        return [            .fetch, .parents, .merge, .save, .children, .traits,         .write]
-            case .root:        return [.roots,                               .save, .children,         .traits        ]
-            case .travel:      return [.roots,             .parents,                .children, .fetch, .traits        ]
-            case .parents:     return [                    .parents,                                   .traits        ]
-            case .children:    return [                                             .children,         .traits        ]
-            case .families:    return [            .fetch, .parents,                .children,         .traits        ]
-            case .bookmarks:   return [.bookmarks, .fetch,                   .save,                    .traits        ]
-            case .fetchLost:   return [.fetchlost,                           .save, .children                         ]
-            case .emptyTrash:  return [.emptyTrash                                                                    ]
-            case .undelete:    return [.undelete,  .fetch, .parents,         .save, .children, .traits                ]
-            case .resumeCloud: return [.fetchNew, .fetchAll,                 .save,                             .write]
-            case .refetch:     return [           .fetchAll,                 .save,                             .write]
-            case .newAppleID:  return operationIDs(from: .internet,        to: .found, skipping: [.read])
+            case .save:        return [                       .save,          .write]
+            case .sync:        return [            .fetch,    .save, .traits, .write]
+            case .root:        return [.roots,                .save, .traits        ]
+            case .travel:      return [.roots,     .fetch,           .traits        ]
+            case .parents:     return [                              .traits        ]
+            case .children:    return [                              .traits        ]
+            case .families:    return [            .fetch,           .traits        ]
+            case .bookmarks:   return [.bookmarks, .fetch,    .save, .traits        ]
+            case .undelete:    return [.undelete,  .fetch,    .save, .traits        ]
+            case .fetchLost:   return [.fetchlost,            .save,                ]
+            case .emptyTrash:  return [.emptyTrash                                  ]
+            case .resumeCloud: return [.fetchNew,  .fetchAll, .save,          .write]
+            case .refetch:     return [            .fetchAll, .save,          .write]
+            case .newAppleID:  return operationIDs(from: .accountStatus,   to: .subscribe, skipping: [.read])
             case .startUp:     return operationIDs(from: .observeUbiquity, to: .fetchAll)
-            case .finishUp:    return operationIDs(from: .write,           to: .subscribe)
+            case .finishUp:    return operationIDs(from: .save,            to: .subscribe)
             }
         }
 
@@ -268,8 +268,8 @@ class ZBatchManager: ZOnboardingManager {
     }
 
 
-    override func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
-        super.performBlock(for: operationID, restoreToID: restoreToID) { iCompleted in
+    override func ivokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
+        super.ivokeMultiple(for: operationID, restoreToID: restoreToID) { iCompleted in
 
             //////////////////////////////////////////////////////////////////
             //     first, allow onboarding superclass to perform block      //
@@ -279,12 +279,13 @@ class ZBatchManager: ZOnboardingManager {
             if  iCompleted {
                 onCompletion(true)
             } else {
-                let    forCurrentDatabaseIDOnly = [.completion, .favorites, .here      ].contains(operationID)
+                let              mineIsInactive = gCloudAccountStatus != .active
                 let               forMineIDOnly = [.bookmarks, .subscribe, .unsubscribe].contains(operationID)
+                let               alwaysForBoth = [.here, .read, .roots, .write        ].contains(operationID)
                 let                      isMine = restoreToID == .mineID
-                let               onlyCurrentID = !gHasPrivateDatabase || forCurrentDatabaseIDOnly
+                let               onlyCurrentID = (mineIsInactive && !alwaysForBoth) || operationID == .completion
                 let  databaseIDs: [ZDatabaseID] = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
-                let                      isNoop = onlyCurrentID && isMine && !gHasPrivateDatabase
+                let                      isNoop = onlyCurrentID && isMine && mineIsInactive && operationID != .favorites
                 var invokeForIndex: IntClosure? = nil                // declare closure first, so compiler will let it recurse
                 invokeForIndex                  = { index in
 

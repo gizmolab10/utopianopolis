@@ -219,16 +219,16 @@ class ZFileManager: NSObject {
 
 
     func filePath(for index: ZDatabaseIndex) -> String {
-        var                   path = filePaths[index.rawValue]
-        if  path                  == nil,
-            let               name = fileName(for: index) {
-            let          backupURL = directoryURL.appendingPathComponent(name + backupExtension)
-            let     genericFileURL = directoryURL.appendingPathComponent(name + normalExtension)
-            let      genericExists = manager.fileExists(atPath:genericFileURL.path)
-            let       backupExists = manager.fileExists(atPath:     backupURL.path)
-            let         isEveryone = index == .everyone
-            let      canUseGeneric = isEveryone || !gHasPrivateDatabase
-            path                   = genericFileURL.path
+        var              path  = filePaths[index.rawValue]
+        if               path == nil,
+            let          name  = fileName(for: index) {
+            let      backupURL = directoryURL.appendingPathComponent(name + backupExtension)
+            let genericFileURL = directoryURL.appendingPathComponent(name + normalExtension)
+            let  genericExists = manager.fileExists(atPath:genericFileURL.path)
+            let   backupExists = manager.fileExists(atPath:     backupURL.path)
+            let     isEveryone = index == .everyone
+            let  canUseGeneric = isEveryone || gCloudAccountStatus != .active
+            path               = genericFileURL.path
 
             do {
                 if           canUseGeneric {
@@ -285,7 +285,7 @@ class ZFileManager: NSObject {
 
             if  dbID      == .mineID, !isGeneric,
                 let userID = gUserRecordID {
-                name       = "\(userID.hashValue)"
+                name       = userID
             }
 
             return name

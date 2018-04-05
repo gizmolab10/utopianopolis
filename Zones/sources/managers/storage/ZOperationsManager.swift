@@ -27,7 +27,6 @@ enum ZOperationID: Int {
     case cloud
     case read               // LOCAL
     case found              // LOCAL
-    case save               // zones, traits, destroy
     case roots
     case favorites
     case here
@@ -36,6 +35,7 @@ enum ZOperationID: Int {
 
     // finish
 
+    case save               // zones, traits, destroy
     case write              // LOCAL
     case unsubscribe
     case subscribe
@@ -113,10 +113,10 @@ class ZOperationsManager: NSObject {
 
             if  gMeasureOpsPerformance && newValue {
                 gDebugTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: fire)
-                fire(gDebugTimer!)
+                fire(nil)
             } else if gDebugTimer != nil && !newValue {
                 gDebugTimer?.invalidate()
-                fire(gDebugTimer!)
+                fire(nil)
             }
         }
     }
@@ -125,14 +125,14 @@ class ZOperationsManager: NSObject {
     func unHang() { onCloudResponse?(0) }
 
 
-    func updateCloudStatus(_ onCompletion: BooleanClosure?) {
+    @discardableResult func checkCloudStatus() -> Bool {
         let          hasInternet = isConnectedToNetwork
-        let      changedInternet =              hasInternet != gHasInternet
-        let      changedUser     = recentCloudAccountStatus != gCloudAccountStatus
+        let       changedConnect =              hasInternet != gHasInternet
+        let       changedAccount = recentCloudAccountStatus != gCloudAccountStatus
         gHasInternet             = hasInternet
         recentCloudAccountStatus = gCloudAccountStatus
 
-        onCompletion?(changedInternet || changedUser)
+        return changedConnect || changedAccount
     }
 
 
@@ -140,25 +140,23 @@ class ZOperationsManager: NSObject {
         if  gCloudTimer == nil {
             gCloudFire   = { iTimer in
                 FOREGROUND {
-                    self.updateCloudStatus { iChangeHappened in
-                        if  iChangeHappened {
-                            self.signalFor(nil, regarding: .information) // inform user of change in cloud status
+                    if  self.checkCloudStatus() {
+                        self.signalFor(nil, regarding: .information) // inform user of change in cloud status
 
-                            /////////////////////////////////////////////////
-                            // assure that we can perform cloud operations //
-                            /////////////////////////////////////////////////
+                        /////////////////////////////////////////////////
+                        // assure that we can perform cloud operations //
+                        /////////////////////////////////////////////////
 
-                            if  gHasInternet && gIsReadyToShowUI {
-                                let      hasActiveStatus = gCloudAccountStatus == .active
-                                let identifier: ZBatchID = hasActiveStatus ? .resumeCloud : .newAppleID
+                        if  gHasInternet && gIsReadyToShowUI {
+                            let      hasActiveStatus = gCloudAccountStatus == .active
+                            let identifier: ZBatchID = hasActiveStatus ? .resumeCloud : .newAppleID
 
-                                gBatchManager.batch(identifier) { iResult in
-                                    if  hasActiveStatus {
-                                        gFavoritesManager.updateFavorites()
-                                    }
-
-                                    self.signalFor(nil, regarding: .redraw)
+                            gBatchManager.batch(identifier) { iResult in
+                                if  hasActiveStatus {
+                                    gFavoritesManager.updateFavorites()
                                 }
+
+                                self.signalFor(nil, regarding: .redraw)
                             }
                         }
                     }
@@ -166,13 +164,13 @@ class ZOperationsManager: NSObject {
             }
 
             gCloudTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: gCloudFire!)
-            gCloudFire?(gCloudTimer!)
+            gCloudFire?(nil)
         }
     }
 
 
     func invoke(_ identifier: ZOperationID, cloudCallback: AnyClosure?) {}
-    func performBlock(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
+    func ivokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
 
 
     func setupAndRun(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
@@ -206,7 +204,7 @@ class ZOperationsManager: NSObject {
 
                     self.reportBeforePerformBlock()
 
-                    self.performBlock(for: operationID, restoreToID: saved) { iResult in
+                    self.ivokeMultiple(for: operationID, restoreToID: saved) { iResult in
                         self.reportOnCompletionOfPerformBlock(start)        // says nothing
 
                         FOREGROUND {

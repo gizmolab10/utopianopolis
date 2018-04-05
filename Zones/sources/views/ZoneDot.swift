@@ -178,45 +178,65 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawTinyOuterDots(_ dirtyRect: CGRect) {
-        if  let  zone = widgetZone, innerDot != nil, gCountsMode == .dots, !zone.isRootOfFavorites, (!zone.showChildren || zone.isBookmark) {
-            var count = zone.indirectCount
+        if  let    zone = widgetZone, innerDot != nil, gCountsMode == .dots, !zone.isRootOfFavorites, (!zone.showChildren || zone.isBookmark) {
+            var   count = (gCountsMode == .progeny) ? zone.progenyCount : zone.indirectCount
+            var aHollow = false
+            var bHollow = false
+            var   scale = 0.0
+
+            while count > 100 {
+                count   = (count + 5) / 10
+                scale   = 1.0
+
+                if  bHollow {
+                    aHollow = true
+                } else {
+                    bHollow = true
+                }
+            }
 
             if  count > 1 {
-                let      onesCount = count % 10
-                let      tensCount = count / 10
-                count              = onesCount + tensCount
+                let         aCount = count % 10
+                let         bCount = count / 10
                 let      dotRadius = Double(innerDotHeight / 2.0)
-                let     tinyRadius = (dotRadius * gLineThickness / 12.0) + 0.7
+                let        aRadius = ((dotRadius * gLineThickness / 12.0) + 0.4) * (1.25 ** scale)
                 let         center = innerDot!.frame.center
                 let color: ZColor? = isDragDrop ? gRubberbandColor : zone.color
 
-                let closure: IntBooleanClosure = { (iCount, isATen) in
-                    if  iCount > (isATen ? 0 : 1) {
+                let closure: IntBooleanClosure = { (iCount, isB) in
+                    let             oneSet = (isB ? aCount : bCount) == 0
+                    let            minimum = oneSet ? 1 : 0
+                    if  iCount  >  minimum {
                         let         isEven = iCount % 2 == 0
-                        let         isOnly = (isATen ? onesCount : tensCount) == 0
-                        let incrementAngle = Double.pi * (isOnly ? 2.0 : 1.0) / Double(iCount)
+                        let incrementAngle = Double.pi * (oneSet ? 2.0 : 1.0) / Double(iCount)
                         for index in 0 ... iCount - 1 {
                             let  increment = Double(index) + 0.5
-                            let startAngle = (Double.pi * (isOnly ? isEven ? 0.5 : 1.0 : isATen ? 0.5 : 1.5))
+                            let startAngle = (Double.pi * (oneSet ? isEven ? 0.5 : 1.0 : isB ? 0.5 : 1.5))
                             let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
-                            let     radius = CGFloat(dotRadius + tinyRadius * (isATen ? 2.0 : 1.6))
-                            let  offRadius = tinyRadius * (isATen ? 2.1 : 1.13)
-                            let  offCenter = CGPoint(x: center.x - CGFloat(offRadius), y: center.y - CGFloat(offRadius))
+                            let     radius = CGFloat(dotRadius + aRadius * (isB ? 2.0 : 1.6))
+                            let     offset = aRadius * (isB ? 2.1 : 1.13)
+                            let  offCenter = CGPoint(x: center.x - CGFloat(offset), y: center.y - CGFloat(offset))
                             let          x = offCenter.x + (radius * CGFloat(cos(angle)))
                             let          y = offCenter.y + (radius * CGFloat(sin(angle)))
-                            let   diameter = CGFloat((isATen ? 4.0 : 2.5) * tinyRadius)
+                            let   diameter = CGFloat((isB ? 4.0 : 2.5) * aRadius)
                             let       rect = CGRect(x: x, y: y, width: diameter, height: diameter)
                             let       path = ZBezierPath(ovalIn: rect)
+                            path.lineWidth = CGFloat(gLineThickness)
                             path .flatness = 0.0001
 
-                            color?.setFill()
-                            path.fill()
+                            if  aHollow || (isB && bHollow) {
+                                color?.setStroke()
+                                path.stroke()
+                            } else {
+                                color?.setFill()
+                                path.fill()
+                            }
                         }
                     }
                 }
 
-                closure(tensCount, true)
-                closure(onesCount, false)
+                closure(aCount, false)
+                closure(bCount, true)
             }
         }
     }

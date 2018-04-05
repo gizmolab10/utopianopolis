@@ -44,7 +44,7 @@ class ZRecordsManager: NSObject {
     var    favoritesZone: Zone? = nil // only for .mineID manager
     var      destroyZone: Zone? = nil
     var        trashZone: Zone? = nil
-var         rootZone: Zone? = nil
+    var         rootZone: Zone? = nil
     var      hereIsValid: Bool { return maybeZoneForRecordName(hereRecordName) != nil }
 
 
@@ -552,11 +552,11 @@ var         rootZone: Zone? = nil
 
 
     func applyToCKRecordByRecordName(_ iName: String?, forAnyOf iStates: [ZRecordState], onEach: StateCKRecordClosure?) {
-        for state in iStates {
-            let names = recordNamesForState(state)
+        if let name = iName {
+            for state in iStates {
+                let names = recordNamesForState(state)
 
-            for name in names {
-                if name == iName, let ckRecord = maybeCKRecordForRecordName(name) {
+                if  names.contains(name), let ckRecord = maybeCKRecordForRecordName(name) {
                     onEach!(state, ckRecord)
                 }
             }
