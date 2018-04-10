@@ -58,7 +58,7 @@ func toggleDatabaseID() {
 var gExpandedZones : [String] {
     get {
         if  gExpanded == nil {
-            let  value = getPreferencesString(for: kExpandedZones, defaultString: "")
+            let  value = getPreferenceString(for: kExpandedZones)
             gExpanded  = value?.components(separatedBy: kSeparator)
         }
 
@@ -92,13 +92,19 @@ var gDebugDetails : Bool {
 
 
 var gHereRecordNames: String {
-    get { return getPreferencesString(   for: kHereRecordIDs, defaultString: kRootName + kSeparator + kRootName)! }
+    get { return getPreferenceString(    for: kHereRecordIDs) { return kRootName + kSeparator + kRootName }! }
     set { setPreferencesString(newValue, for: kHereRecordIDs) }
 }
 
 
+var gAuthorID: String? {    // persist for file read on launch
+    get { return getPreferenceString(    for: kAuthorID) { return nil } }
+    set { setPreferencesString(newValue, for: kAuthorID) }
+}
+
+
 var gUserRecordID: String? {    // persist for file read on launch
-    get { return getPreferencesString(   for: kUserRecordID, defaultString: nil) }
+    get { return getPreferenceString(    for: kUserRecordID) }
     set { setPreferencesString(newValue, for: kUserRecordID) }
 }
 
@@ -141,9 +147,10 @@ var gWindowSize: CGSize {
 
 var gScrollOffset: CGPoint {
     get {
-        let point = CGPoint(x: 0.0, y: 0.0)
+        let  point = CGPoint(x: 0.0, y: 0.0)
+        let string = getPreferenceString(for: kScrollOffset) { return NSStringFromPoint(point) }
 
-        return getPreferencesString( for: kScrollOffset, defaultString: NSStringFromPoint(point))?.cgPoint ?? point
+        return string?.cgPoint ?? point
     }
 
     set {
@@ -298,7 +305,7 @@ var gDetailsViewIDs: ZDetailsViewID {
 
 
 func getPreferencesSize(for key: String, defaultSize: CGSize = CGSize.zero) -> CGSize {
-    return getPreferencesString( for: key, defaultString: NSStringFromSize(defaultSize))?.cgSize ?? defaultSize
+    return getPreferenceString(for: key) { return NSStringFromSize(defaultSize) }?.cgSize ?? defaultSize
 }
 
 
@@ -326,16 +333,22 @@ func setPreferencesColor(_ iColor: ZColor, for key: String) {
 }
 
 
-func getPreferencesString(for key: String, defaultString: String?) -> String? {
+func getPreferenceString(for key: String, needDefault: ToStringClosure? = nil) -> String? {
     if  let    string = UserDefaults.standard.object(forKey: key) as? String {
         return string
     }
 
+    let defaultString = needDefault?()
     if  let    string = defaultString {
         setPreferencesString(string, for: key)
     }
 
     return defaultString
+}
+
+
+func getPreferencesString(for key: String, defaultString: String?) -> String? {
+    return getPreferenceString(for: key) { return defaultString }
 }
 
 

@@ -1,5 +1,5 @@
 //
-//  XBClosures.h
+//  ZClosures.h
 //  Zones
 //
 //  Created by Jonathan Sand on 3/9/16.
@@ -24,7 +24,6 @@ typealias AnyClosure              = (Any?)                   -> (Void)
 typealias DotClosure              = (ZoneDot)                -> (Void)
 typealias ZoneClosure             = (Zone)                   -> (Void)
 typealias ViewClosure             = (ZView)                  -> (Void)
-typealias TimerClosure            = (Timer?)                 -> (Void)
 typealias ErrorClosure            = (Error)                  -> (Void)
 typealias StringClosure           = (String)                 -> (Void)
 typealias ObjectClosure           = (NSObject?)              -> (Void)
@@ -33,7 +32,7 @@ typealias RecordClosure           = (CKRecord?)              -> (Void)
 typealias RecordsClosure          = ([CKRecord])             -> (Void)
 typealias ClosureClosure          = (Closure)                -> (Void)
 typealias BooleanClosure          = (Bool)                   -> (Void)
-typealias ToStringClosure         = ()                       -> (String)
+typealias ToStringClosure         = ()                       -> (String?)
 typealias ToObjectClosure         = ()                       -> (NSObject)
 typealias ToBooleanClosure        = ()                       -> (Bool)
 typealias ZoneMaybeClosure        = (Zone?)                  -> (Void)

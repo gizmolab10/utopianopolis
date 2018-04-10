@@ -282,6 +282,8 @@ infix operator -- : AdditionPrecedence
 extension CGPoint {
 
     public init(_ size: CGSize) {
+        self.init()
+
         x = size.width
         y = size.height
     }
@@ -318,6 +320,8 @@ extension CGRect {
 
 
     public init(start: CGPoint, end: CGPoint) {
+        self.init()
+
         size   = end - start
         origin = start
 

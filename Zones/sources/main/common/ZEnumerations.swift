@@ -107,7 +107,7 @@ struct ZDetailsViewID: OptionSet {
 
 
 enum ZStorageType: String {
-    case lost      = "lostAndFound"    // general
+    case lost       = "lostAndFound"    // general
     case bookmarks  = "bookmarks"
     case favorites  = "favorites"
     case destroy    = "destroy"
@@ -123,7 +123,7 @@ enum ZStorageType: String {
     case progeny    = "progeny"
     case traits     = "traits"
     case access     = "access"
-    case owner      = "owner"
+    case author     = "author"
     case order      = "order"
     case color      = "color"
     case count      = "count"

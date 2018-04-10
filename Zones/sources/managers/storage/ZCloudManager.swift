@@ -92,8 +92,8 @@ class ZCloudManager: ZRecordsManager {
 
                     if  let saved = iSavedCKRecords {
                         for ckRecord: CKRecord in saved {
-                            if  let zone = self.maybeZoneForRecordID(ckRecord.recordID) {
-                                zone.useBest(record: ckRecord)
+                            if  let zRecord = self.maybeZRecordForRecordID(ckRecord.recordID) {
+                                zRecord.useBest(record: ckRecord)
                                 ckRecord.maybeMarkAsFetched(self.databaseID)
                             }
                         }

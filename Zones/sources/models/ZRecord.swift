@@ -315,13 +315,6 @@ class ZRecord: NSObject {
     }
 
 
-    func maybeMarkNotFetched() {
-        if  record?.creationDate == nil {
-            markNotFetched()
-        }
-    }
-
-
     func maybeNeedSave() {
         if !needsDestroy, !needsFetch, !needsSave, canSaveWithoutFetch {
             removeState(.needsMerge)
@@ -329,6 +322,13 @@ class ZRecord: NSObject {
         }
 
         gFileManager.needWrite(for: databaseID)
+    }
+
+
+    func maybeMarkNotFetched() {
+        if  record?.creationDate == nil {
+            markNotFetched()
+        }
     }
 
 
@@ -405,8 +405,8 @@ class ZRecord: NSObject {
         }
 
         if            [kpParent, kpOwner]         .contains(keyPath) { return nil       // must be first ...
-        } else if let type = ZStorageType(rawValue: keyPath)         { return type      // ZStorageType now ignores two (zoneOwner and zoneParent)
-        } else if let type = typeFromSuffixFollowing(kpZonePrefix)   { return type      // this deals with those two
+        } else if let type = ZStorageType(rawValue:         keyPath) { return type      // ZStorageType now ignores two (owner and parent)
+        } else if let type = typeFromSuffixFollowing(  kpZonePrefix) { return type      // this deals with those two
         } else if let type = typeFromSuffixFollowing(kpRecordPrefix) { return type
         } else                                                       { return nil
         }
@@ -425,14 +425,9 @@ class ZRecord: NSObject {
 
 
     func prepare(_ iObject: NSObject, of iType: ZStorageType) -> NSObject? {
-        var object = iObject
+        let object = iObject
 
         switch iType {
-        case .owner:
-            if  let  ref = object as? CKReference {
-                let name = ref.recordID.recordName as NSObject
-                object   = name
-            }
         case .link, .parentLink:
             if  let link = object as? String, !isValid(link) {
                 return nil
@@ -505,6 +500,7 @@ class ZRecord: NSObject {
         }
     }
 
+
     func setStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
         databaseID       = iDatabaseID
         if  let     name = dict[.recordName] as? String, gRemoteStoresManager.recordsManagerFor(iDatabaseID)?.maybeCKRecordForRecordName(name) == nil {
@@ -513,11 +509,17 @@ class ZRecord: NSObject {
             for keyPath in cloudProperties() {
                 if  let      type  = type(from: keyPath),
                     let    object  = dict[type],
-                    var     value  = object as? CKRecordValue {
-                    if       type == .owner,
-                        let string = object as? String {
-                        value      = CKReference(recordID: CKRecordID(recordName: string), action: .none)
-                    }
+                    let     value  = object as? CKRecordValue {
+//                    var      path  = keyPath
+//                    if       type == .owner,
+//                        let string = gAuthorID {
+//                        value      = string as CKRecordValue // CKReference(recordID: CKRecordID(recordName: string), action: .none)
+//                        path       = "zoneAuthor"
+//
+//                        temporarilyMarkNeeds {
+//                            needSave()
+//                        }
+//                    }
 
                     ckRecord[keyPath] = value
                 }
@@ -532,14 +534,14 @@ class ZRecord: NSObject {
     }
 
 
-    class func storageArray(for iItems: [ZRecord]?, from dbID: ZDatabaseID, allowEach: ZRecordToBooleanClosure? = nil) -> [ZStorageDictionary]? {
-        if  let   items = iItems,
-            items.count > 0 {
+    class func storageArray(for iZRecords: [ZRecord]?, from dbID: ZDatabaseID, allowEach: ZRecordToBooleanClosure? = nil) -> [ZStorageDictionary]? {
+        if  let   zRecords = iZRecords,
+            zRecords.count > 0 {
             var   array = [ZStorageDictionary] ()
 
-            for item in items {
-                if  (allowEach == nil || allowEach!(item)),
-                    let subDict = item.storageDictionary(for: dbID) {
+            for zRecord in zRecords {
+                if  (allowEach == nil || allowEach!(zRecord)),
+                    let subDict = zRecord.storageDictionary(for: dbID) {
                     array.append(subDict)
                 }
             }

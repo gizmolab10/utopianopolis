@@ -25,6 +25,7 @@ enum ZBatchID: Int {
     case families
     case undelete
     case finishUp
+    case userTest
     case bookmarks
     case fetchLost
     case emptyTrash
@@ -91,6 +92,7 @@ class ZBatchManager: ZOnboardingManager {
             case .newAppleID:  return operationIDs(from: .accountStatus,   to: .subscribe, skipping: [.read])
             case .startUp:     return operationIDs(from: .observeUbiquity, to: .fetchAll)
             case .finishUp:    return operationIDs(from: .save,            to: .subscribe)
+            case .userTest:    return operationIDs(from: .observeUbiquity, to: .fetchUserRecord)
             }
         }
 
@@ -165,6 +167,7 @@ class ZBatchManager: ZOnboardingManager {
     func    families(_ onCompletion: @escaping BooleanClosure) { batch(.families,    onCompletion) }
     func    finishUp(_ onCompletion: @escaping BooleanClosure) { batch(.finishUp,    onCompletion) }
     func    undelete(_ onCompletion: @escaping BooleanClosure) { batch(.undelete,    onCompletion) }
+    func    userTest(_ onCompletion: @escaping BooleanClosure) { batch(.userTest,    onCompletion) }
     func   bookmarks(_ onCompletion: @escaping BooleanClosure) { batch(.bookmarks,   onCompletion) }
     func   fetchLost(_ onCompletion: @escaping BooleanClosure) { batch(.fetchLost,   onCompletion) }
     func  emptyTrash(_ onCompletion: @escaping BooleanClosure) { batch(.emptyTrash,  onCompletion) }
@@ -279,7 +282,7 @@ class ZBatchManager: ZOnboardingManager {
             if  iCompleted {
                 onCompletion(true)
             } else {
-                let              mineIsInactive = gCloudAccountStatus != .active
+                let              mineIsInactive = gCloudAccountStatus == .active
                 let               forMineIDOnly = [.bookmarks, .subscribe, .unsubscribe].contains(operationID)
                 let               alwaysForBoth = [.here, .read, .roots, .write        ].contains(operationID)
                 let                      isMine = restoreToID == .mineID

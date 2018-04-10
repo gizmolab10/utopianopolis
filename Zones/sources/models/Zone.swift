@@ -29,7 +29,7 @@ class Zone : ZRecord {
     dynamic var      zoneColor:       String?
     dynamic var zoneAttributes:       String?
     dynamic var     parentLink:       String?
-    dynamic var      zoneOwner:  CKReference?
+    dynamic var     zoneAuthor:       String?
     dynamic var      zoneOrder:     NSNumber?
     dynamic var      zoneCount:     NSNumber?
     dynamic var     zoneAccess:     NSNumber?
@@ -161,7 +161,7 @@ class Zone : ZRecord {
                 #keyPath(zoneColor),
                 #keyPath(zoneCount),
                 #keyPath(zoneOrder),
-                #keyPath(zoneOwner),
+                #keyPath(zoneAuthor),
                 #keyPath(zoneAccess),
                 #keyPath(parentLink),
                 #keyPath(zoneProgeny),
@@ -364,25 +364,6 @@ class Zone : ZRecord {
             if newValue != order {
                 zoneOrder = NSNumber(value: newValue)
             }
-        }
-    }
-
-
-    var ownerID: CKRecordID? {
-        get {
-            if let owner = zoneOwner {
-                return owner.recordID
-            } else if let t = bookmarkTarget {
-                return t.ownerID
-            } else if let p = parentZone {
-                return p.ownerID
-            } else {
-                return nil
-            }
-        }
-
-        set {
-            zoneOwner = (newValue == nil) ? nil : CKReference(recordID: newValue!, action: .none)
         }
     }
 
@@ -596,8 +577,8 @@ class Zone : ZRecord {
             return t.userHasAccess
         }
 
-        return (!isTrash && !isRootOfFavorites && !isRootOfLostAndFound && ownerID == nil)
-            || (!gCrippledUserAccess && (ownerID?.recordName == gUserRecordID || gIsSpecialUser))
+        return (!isTrash && !isRootOfFavorites && !isRootOfLostAndFound && zoneAuthor == nil)
+            || (!gCrippledUserAccess && (zoneAuthor == gAuthorID || gIsSpecialUser))
     }
 
 
@@ -664,8 +645,8 @@ class Zone : ZRecord {
             if  let t = bookmarkTarget {
                 t.toggleWritable()
             } else if isWritableByUseer {
-                if  let     name = gUserRecordID {
-                    ownerID      = CKRecordID(recordName: name)
+                if  let identity = gAuthorID {
+                    zoneAuthor   = identity
                 }
 
                 let         next = nextAccess

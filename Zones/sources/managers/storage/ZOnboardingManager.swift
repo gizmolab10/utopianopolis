@@ -23,9 +23,8 @@ var gIsSpecialUser: Bool { return gBatchManager.isSpecialUser }
 class ZOnboardingManager : ZOperationsManager {
 
 
-    var            user : ZUser?
-    var   isSpecialUser : Bool { return user?.access == .eAccessFull }
-    let makeUserSpecial = false
+    var          user : ZUser?
+    var isSpecialUser : Bool { return user?.access == .eAccessFull }
 
 
     // MARK:- internals
@@ -34,7 +33,10 @@ class ZOnboardingManager : ZOperationsManager {
 
     func completeOnboarding(_ notification: Notification) {
         FOREGROUND(canBeDirect: true) {
-            self.setupAndRun([.fetchUserRecord]) {}
+            gBatchManager.batch(.newAppleID) { iResult in
+                gFavoritesManager.updateFavorites()
+                self.signalFor(nil, regarding: .redraw)
+            }
         }
     }
 
@@ -124,7 +126,7 @@ class ZOnboardingManager : ZOperationsManager {
 
 
     func fetchUserRecord(_ onCompletion: @escaping Closure) {
-        if gCloudAccountStatus == .available,
+        if  gCloudAccountStatus == .available,
             let     recordName  = gUserRecordID {
             let     ckRecordID  = CKRecordID(recordName: recordName)
 
@@ -138,11 +140,13 @@ class ZOnboardingManager : ZOperationsManager {
                     // ONBOARDING CONTINUES //
                     //////////////////////////
 
-                    if  self.makeUserSpecial {
-                        user.access = .eAccessFull
+                    if  user.authorID  == nil {
+                        user.authorID   = UUID().uuidString
 
-                        user.maybeNeedSave()
+                        user.needSave()
                     }
+
+                    gAuthorID           = user.authorID
                 } else {
                     let            name = ckRecordID.recordName
                     gCloudAccountStatus = .none

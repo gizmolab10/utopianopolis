@@ -8,6 +8,7 @@
 
 
 import Foundation
+import EventKit
 
 #if os(OSX)
     import Cocoa
@@ -17,6 +18,7 @@ import Foundation
 
 
 let gEventsManager = ZEventsManager()
+let gEventStore    = EKEventStore()
 
 
 class ZEventsManager: NSObject {
@@ -27,6 +29,14 @@ class ZEventsManager: NSObject {
 
     func clear() { removeMonitorAsync() }
 
+//
+//    func createCalendarEvent(named iName: String) -> EKEvent {
+//        var event = EKCalendarItem(eventStore: gEventStore)
+//       // event.eventIdentifier = iName
+//
+//        return event
+//    }
+//
 
     func removeMonitorAsync(_ closure: Closure? = nil) {
         #if os(OSX)

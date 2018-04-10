@@ -11,6 +11,9 @@ import Foundation
 import SystemConfiguration.SCNetworkConnection
 
 
+typealias TimerClosure = (Timer?) -> (Void)
+
+
 enum ZOperationID: Int {
 
     // onboard

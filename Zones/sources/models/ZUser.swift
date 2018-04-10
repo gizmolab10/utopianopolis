@@ -20,7 +20,8 @@ enum ZUserAccess: Int {
 class ZUser : ZRecord {
 
 
-    dynamic var writeAccess: NSNumber?
+    @objc dynamic var    authorID: String?
+    @objc dynamic var writeAccess: NSNumber?
 
 
     var access: ZUserAccess {
@@ -43,7 +44,8 @@ class ZUser : ZRecord {
 
     
     override func cloudProperties() -> [String] {
-        return [#keyPath(writeAccess)]
+        return [#keyPath(authorID),
+                #keyPath(writeAccess)]
     }
 
 

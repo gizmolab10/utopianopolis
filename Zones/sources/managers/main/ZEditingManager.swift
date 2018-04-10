@@ -994,7 +994,7 @@ class ZEditingManager: NSObject {
 
 
     func delete(permanently: Bool = false, preserveChildren: Bool = false) {
-        if  preserveChildren {
+        if  preserveChildren && !permanently {
             preserveChildrenOfGrabbedZones {
                 self.updateFavoritesRedrawSyncRedraw()
             }
