@@ -172,8 +172,8 @@ class ZOperationsManager: NSObject {
     }
 
 
-    func invoke(_ identifier: ZOperationID, cloudCallback: AnyClosure?) {}
-    func ivokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
+    func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {}
+    func invokeMultiple (for identifier: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
 
 
     func setupAndRun(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
@@ -207,7 +207,7 @@ class ZOperationsManager: NSObject {
 
                     self.reportBeforePerformBlock()
 
-                    self.ivokeMultiple(for: operationID, restoreToID: saved) { iResult in
+                    self.invokeMultiple(for: operationID, restoreToID: saved) { iResult in
                         self.reportOnCompletionOfPerformBlock(start)        // says nothing
 
                         FOREGROUND {

@@ -157,20 +157,20 @@ class ZBatchManager: ZOnboardingManager {
     // MARK:-
 
 
-    func        save(_ onCompletion: @escaping BooleanClosure) { batch(.save,        onCompletion) }
-    func        root(_ onCompletion: @escaping BooleanClosure) { batch(.root,        onCompletion) }
-    func        sync(_ onCompletion: @escaping BooleanClosure) { batch(.sync,        onCompletion) }
-    func      travel(_ onCompletion: @escaping BooleanClosure) { batch(.travel,      onCompletion) }
-    func     startUp(_ onCompletion: @escaping BooleanClosure) { batch(.startUp,     onCompletion) }
-    func     refetch(_ onCompletion: @escaping BooleanClosure) { batch(.refetch,     onCompletion) }
-    func     parents(_ onCompletion: @escaping BooleanClosure) { batch(.parents,     onCompletion) }
-    func    families(_ onCompletion: @escaping BooleanClosure) { batch(.families,    onCompletion) }
-    func    finishUp(_ onCompletion: @escaping BooleanClosure) { batch(.finishUp,    onCompletion) }
-    func    undelete(_ onCompletion: @escaping BooleanClosure) { batch(.undelete,    onCompletion) }
-    func    userTest(_ onCompletion: @escaping BooleanClosure) { batch(.userTest,    onCompletion) }
-    func   bookmarks(_ onCompletion: @escaping BooleanClosure) { batch(.bookmarks,   onCompletion) }
-    func   fetchLost(_ onCompletion: @escaping BooleanClosure) { batch(.fetchLost,   onCompletion) }
-    func  emptyTrash(_ onCompletion: @escaping BooleanClosure) { batch(.emptyTrash,  onCompletion) }
+    func       save(_ onCompletion: @escaping BooleanClosure) { batch(.save,        onCompletion) }
+    func       root(_ onCompletion: @escaping BooleanClosure) { batch(.root,        onCompletion) }
+    func       sync(_ onCompletion: @escaping BooleanClosure) { batch(.sync,        onCompletion) }
+    func     travel(_ onCompletion: @escaping BooleanClosure) { batch(.travel,      onCompletion) }
+    func    startUp(_ onCompletion: @escaping BooleanClosure) { batch(.startUp,     onCompletion) }
+    func    refetch(_ onCompletion: @escaping BooleanClosure) { batch(.refetch,     onCompletion) }
+    func    parents(_ onCompletion: @escaping BooleanClosure) { batch(.parents,     onCompletion) }
+    func   families(_ onCompletion: @escaping BooleanClosure) { batch(.families,    onCompletion) }
+    func   finishUp(_ onCompletion: @escaping BooleanClosure) { batch(.finishUp,    onCompletion) }
+    func   undelete(_ onCompletion: @escaping BooleanClosure) { batch(.undelete,    onCompletion) }
+    func   userTest(_ onCompletion: @escaping BooleanClosure) { batch(.userTest,    onCompletion) }
+    func  bookmarks(_ onCompletion: @escaping BooleanClosure) { batch(.bookmarks,   onCompletion) }
+    func  fetchLost(_ onCompletion: @escaping BooleanClosure) { batch(.fetchLost,   onCompletion) }
+    func emptyTrash(_ onCompletion: @escaping BooleanClosure) { batch(.emptyTrash,  onCompletion) }
 
 
     func  children(_ recursing: ZRecursionType = .all, _ iGoal: Int = Int.max, _ onCompletion: @escaping BooleanClosure) {
@@ -271,8 +271,8 @@ class ZBatchManager: ZOnboardingManager {
     }
 
 
-    override func ivokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
-        super.ivokeMultiple(for: operationID, restoreToID: restoreToID) { iCompleted in
+    override func invokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
+        super.invokeMultiple(for: operationID, restoreToID: restoreToID) { iCompleted in
 
             //////////////////////////////////////////////////////////////////
             //     first, allow onboarding superclass to perform block      //
@@ -282,13 +282,13 @@ class ZBatchManager: ZOnboardingManager {
             if  iCompleted {
                 onCompletion(true)
             } else {
-                let              mineIsInactive = gCloudAccountStatus == .active
+                let                mineIsActive = gCloudAccountStatus == .active
                 let               forMineIDOnly = [.bookmarks, .subscribe, .unsubscribe].contains(operationID)
                 let               alwaysForBoth = [.here, .read, .roots, .write        ].contains(operationID)
                 let                      isMine = restoreToID == .mineID
-                let               onlyCurrentID = (mineIsInactive && !alwaysForBoth) || operationID == .completion
+                let               onlyCurrentID = (!mineIsActive && !alwaysForBoth) || operationID == .completion
                 let  databaseIDs: [ZDatabaseID] = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
-                let                      isNoop = onlyCurrentID && isMine && mineIsInactive && operationID != .favorites
+                let                      isNoop = onlyCurrentID && isMine && !mineIsActive && operationID != .favorites
                 var invokeForIndex: IntClosure? = nil                // declare closure first, so compiler will let it recurse
                 invokeForIndex                  = { index in
 
@@ -301,7 +301,7 @@ class ZBatchManager: ZOnboardingManager {
                     } else {
                         self.currentDatabaseID = databaseIDs[index]      // if hung, it happened in this id
 
-                        self.invoke(operationID) { (iResult: Any?) in
+                        self.invokeOperation(for: operationID) { (iResult: Any?) in
                             self  .lastOpStart = nil
 
                             FOREGROUND(canBeDirect: true) {
@@ -328,40 +328,16 @@ class ZBatchManager: ZOnboardingManager {
     }
 
 
-    override func invoke(_ identifier: ZOperationID, cloudCallback: AnyClosure?) {
-        let      remote = gRemoteStoresManager
+    override func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
         switch identifier { // outer switch
-        case .read:                 gFileManager      .read (for:      currentDatabaseID!); cloudCallback?(0)
-        case .write:                gFileManager      .write(for:      currentDatabaseID!); cloudCallback?(0)
-        case .favorites:            gFavoritesManager .setup(                               cloudCallback)
-        default: let cloudManager = remote            .cloudManagerFor(currentDatabaseID!)
-        switch identifier { // inner switch
-        case .cloud:                cloudManager.fetchCloudZones      (                     cloudCallback)
-        case .bookmarks:            cloudManager.fetchBookmarks       (                     cloudCallback)
-        case .roots:                cloudManager.establishRoots       (                     cloudCallback)
-        case .children:             cloudManager.fetchChildren        (                     cloudCallback)
-        case .here:                 cloudManager.establishHere        (                     cloudCallback)
-        case .parents:              cloudManager.fetchParents         (                     cloudCallback)
-        case .refetch:              cloudManager.refetchZones         (                     cloudCallback)
-        case .traits:               cloudManager.fetchTraits          (                     cloudCallback)
-        case .unsubscribe:          cloudManager.unsubscribe          (                     cloudCallback)
-        case .undelete:             cloudManager.undeleteAll          (                     cloudCallback)
-        case .emptyTrash:           cloudManager.emptyTrash           (                     cloudCallback)
-        case .fetch:                cloudManager.fetchZones           (                     cloudCallback)
-        case .subscribe:            cloudManager.subscribe            (                     cloudCallback)
-        case .fetchlost:            cloudManager.fetchLost            (                     cloudCallback)
-        case .fetchNew:             cloudManager.fetchNew             (                     cloudCallback)
-        case .fetchAll:             cloudManager.fetchAll             (                     cloudCallback)
-        case .merge:                cloudManager.merge                (                     cloudCallback)
-        case .found:                cloudManager.found                (                     cloudCallback)
-        case .save:                 cloudManager.save                 (                     cloudCallback)
-        default: break
-            }               // inner switch
-        }                   // outer switch
-
-        return
+        case .favorites:            gFavoritesManager.setup(                                  cloudCallback)
+        case .read:                 gFileManager     .read (for:         currentDatabaseID!); cloudCallback?(0)
+        case .write:                gFileManager     .write(for:         currentDatabaseID!); cloudCallback?(0)
+        default: let cloudManager = gRemoteStoresManager.cloudManagerFor(currentDatabaseID!)
+        cloudManager.invokeOperation(for: identifier,                          cloudCallback: cloudCallback)
+        }
     }
 
 }

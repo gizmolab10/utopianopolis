@@ -63,8 +63,8 @@ enum ZDatabaseID: String {
 
 
 enum ZDatabaseIndex: Int {
-    case everyone
-    case mine
+    case everyoneIndex
+    case mineIndex
 }
 
 
@@ -75,8 +75,8 @@ func index(of databaseID: ZDatabaseID) -> Int? {
 
 func databaseIndex(from iID: ZDatabaseID) -> ZDatabaseIndex? {
     switch iID {
-    case .everyoneID: return .everyone
-    case     .mineID: return .mine
+    case .everyoneID: return .everyoneIndex
+    case     .mineID: return .mineIndex
     default:          return nil
     }
 }
@@ -84,8 +84,8 @@ func databaseIndex(from iID: ZDatabaseID) -> ZDatabaseIndex? {
 
 func databaseIDFrom(_ index: ZDatabaseIndex) -> ZDatabaseID? {
     switch index {
-    case .everyone: return .everyoneID
-    case .mine:     return .mineID
+    case .everyoneIndex: return .everyoneID
+    case .mineIndex:     return .mineID
     }
 }
 

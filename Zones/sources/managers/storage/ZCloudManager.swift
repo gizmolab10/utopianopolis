@@ -47,6 +47,32 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
+    func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
+        switch identifier { // inner switch
+        case .cloud:       fetchCloudZones (cloudCallback)
+        case .bookmarks:   fetchBookmarks  (cloudCallback)
+        case .roots:       establishRoots  (cloudCallback)
+        case .children:    fetchChildren   (cloudCallback)
+        case .here:        establishHere   (cloudCallback)
+        case .parents:     fetchParents    (cloudCallback)
+        case .refetch:     refetchZones    (cloudCallback)
+        case .traits:      fetchTraits     (cloudCallback)
+        case .unsubscribe: unsubscribe     (cloudCallback)
+        case .undelete:    undeleteAll     (cloudCallback)
+        case .emptyTrash:  emptyTrash      (cloudCallback)
+        case .fetch:       fetchZones      (cloudCallback)
+        case .subscribe:   subscribe       (cloudCallback)
+        case .fetchlost:   fetchLost       (cloudCallback)
+        case .fetchNew:    fetchNew        (cloudCallback)
+        case .fetchAll:    fetchAll        (cloudCallback)
+        case .merge:       merge           (cloudCallback)
+        case .found:       found           (cloudCallback)
+        case .save:        save            (cloudCallback)
+        default: break
+        }
+    }
+
+
     // MARK:- push to cloud
     // MARK:-
 
@@ -425,7 +451,7 @@ class ZCloudManager: ZRecordsManager {
                 }
 
                 scan(self.rootZone)
-                scan(gHere)
+                scan(self.hereZone)
                 scan(gMineCloudManager.favoritesZone)
 
                 self.columnarReport("REMEMBER (\(memorables.count))", "\(self.databaseID.rawValue)")
@@ -1077,17 +1103,23 @@ class ZCloudManager: ZRecordsManager {
 
     func establishHere(_ onCompletion: IntClosure?) {
         let rootCompletion = {
-            gHere = gRoot!
+            self.hereZone = gRoot!
 
             onCompletion?(0)
         }
 
         let name  = hereRecordName ?? kRootName
 
-        if  name == kRootName { // in case it is first time for user
+        if  name == kRootName {
+
+            /////////////////////////
+            // first time for user //
+            /////////////////////////
+
             rootCompletion()
+
         } else if let here = maybeZoneForRecordName(name) {
-            gHere = here
+            hereZone = here
 
             onCompletion?(0)
         } else {
@@ -1097,9 +1129,9 @@ class ZCloudManager: ZRecordsManager {
                 if  iHereRecord == nil || iHereRecord?[kpZoneName] == nil {
                     rootCompletion()
                 } else {
-                    let    here = self.zoneForCKRecord(iHereRecord!)
-                    here.record = iHereRecord
-                    gHere       = here
+                    let      here = self.zoneForCKRecord(iHereRecord!)
+                    here  .record = iHereRecord
+                    self.hereZone = here
 
                     here.maybeNeedChildren()
                     here.maybeNeedRoot()

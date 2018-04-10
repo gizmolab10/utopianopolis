@@ -45,7 +45,7 @@ class ZOnboardingManager : ZOperationsManager {
     // MARK:-
 
 
-    override func ivokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
+    override func invokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
         switch operationID {
         case .observeUbiquity:  observeUbiquity();  onCompletion(true)      // true means op is handled
         case .accountStatus:    accountStatus     { onCompletion(true) }
