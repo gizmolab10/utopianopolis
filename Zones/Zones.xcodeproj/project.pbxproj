@@ -142,6 +142,7 @@
 		0C50FD2F2053491000E1D9A9 /* everyone.focus in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.focus */; };
 		0C50FD302053491000E1D9A9 /* everyone.focus in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.focus */; };
 		0C50FD312053491000E1D9A9 /* everyone.focus in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.focus */; };
+		0C5D98D2207E870100DC11EB /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0C95F2207801C20040CDB6 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C60B6731DBDB8A0005D99F9 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C60B6791DBE84DF005D99F9 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; };
 		0C63DA6D1FCF837D005EC548 /* ZFavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C63DA6C1FCF837C005EC548 /* ZFavoritesManager.swift */; };
@@ -226,6 +227,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				0C5D98D2207E870100DC11EB /* SnapKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;

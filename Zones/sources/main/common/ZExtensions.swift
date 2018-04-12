@@ -485,7 +485,8 @@ extension String {
 
     func sizeWithFont(_ font: ZFont) -> CGSize {
         let   rect = CGSize(width: 1000000, height: 1000000)
-        let bounds = self.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [kCTFontAttributeName as String : font], context: nil)
+        //let options: [NSStringDrawingOptions] = [.usesLineFragmentOrigin, .usesFontLeading, .usesDeviceMetrics]
+        let bounds = self.boundingRect(with: rect, options: .usesDeviceMetrics, attributes: [kCTFontAttributeName as String : font], context: nil)
 
         return bounds.size
     }
