@@ -260,9 +260,11 @@ class Zone : ZRecord {
         }
 
         set {
-            if  _color   != newValue {
-                _color    = newValue
-                zoneColor = newValue.string
+            if isBookmark {
+                bookmarkTarget?.color  = newValue
+            } else if          _color != newValue {
+                _color                 = newValue
+                zoneColor              = newValue.string
 
                 maybeNeedSave()
             }

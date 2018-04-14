@@ -505,7 +505,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
         // cursor exited view, remove drag cruft
 
-        let          dot = gDragDropZone?.widget?.toggleDot.innerDot // drag view does not "un"draw this
+        let          dot = gDragDropZone?.widget?.revealDot.innerDot // drag view does not "un"draw this
         gDragDropIndices = nil
         gDragDropZone    = nil
         gDragRelation    = nil
@@ -589,7 +589,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             }
 
             test(widget.dragDot)
-            test(widget.toggleDot)
+            test(widget.revealDot)
         }
 
         return hit

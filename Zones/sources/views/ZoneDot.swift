@@ -177,7 +177,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func drawTinyOuterDots(_ iDirtyRect: CGRect) {
+    func drawTinyCounterDots(_ iDirtyRect: CGRect) {
         if  let    zone = widgetZone, innerDot != nil, gCountsMode == .dots, !zone.isRootOfFavorites, (!zone.showChildren || zone.isBookmark) {
             var   count = (gCountsMode == .progeny) ? zone.progenyCount : zone.indirectCount
             var aHollow = false
@@ -195,7 +195,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 }
             }
 
-            if  count > 1 {
+            if  count > 0 {
                 let         aCount = count % 10
                 let         bCount = count / 10
                 let      dotRadius = Double(innerDotHeight / 2.0)
@@ -205,8 +205,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
                 let closure: IntBooleanClosure = { (iCount, isB) in
                     let             oneSet = (isB ? aCount : bCount) == 0
-                    let            minimum = oneSet ? 1 : 0
-                    if  iCount  >  minimum {
+                    if  iCount             > 0 {
                         let         isEven = iCount % 2 == 0
                         let incrementAngle = Double.pi * (oneSet ? 2.0 : 1.0) / Double(iCount)
                         for index in 0 ... iCount - 1 {
@@ -322,7 +321,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                         } else if zone.canTravel {
 
                             /////////////////////
-                            // TINY CENTER DOT //
+                            // TRAIT INDICATOR //
                             /////////////////////
 
                             drawTraitIndicator(for: zone, isFilled: dotIsFilled, in: iDirtyRect)
@@ -340,12 +339,12 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     }
                 } else if isReveal {
 
-                    /////////////////////
-                    // TINY OUTER DOTS //
-                    /////////////////////
+                    ///////////////////////
+                    // TINY COUNTER DOTS //
+                    ///////////////////////
 
                     // addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.red.cgColor)
-                    drawTinyOuterDots(iDirtyRect)
+                    drawTinyCounterDots(iDirtyRect)
                 } else if isCurrentFavorite {
 
                     ////////////////////////////////

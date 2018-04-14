@@ -25,35 +25,40 @@ class ZTravelManager: NSObject {
 
 
     var isInStack : Int? {
-        let here = gHere
+        var found: Int? = nil
+        let        here = gHere
 
         for (index, zone) in travelStack.enumerated() {
-            if zone == here {
-                return index
+            if  zone == here {
+                if  index == currentIndex {
+                    return index
+                }
+
+                found = index
             }
         }
 
-        return nil
+        return found
     }
 
 
-    func pushHere(updateCurrentIndex: Bool = true) {
-        let     newIndex  = currentIndex + 1
-        if      topIndex  < 0 || notHere {
-            if  topIndex == currentIndex {
+    func pushHere() {
+        var newIndex  = currentIndex + 1
+
+        if topIndex  < 0 || notHere {
+            if  let index = isInStack {
+                newIndex  = index   // prevent duplicates in stack
+            } else if  topIndex == currentIndex {
                 travelStack.append(gHere)
             } else {
                 if  currentIndex < 0 {
-                    bam("currentIndex (\(currentIndex)) is less than zero")
                     currentIndex = 0
                 }
 
-                travelStack.insert(gHere, at: updateCurrentIndex ? currentIndex : newIndex)
+                travelStack.insert(gHere, at: currentIndex)
             }
 
-            if  updateCurrentIndex {
-                currentIndex = newIndex
-            }
+            currentIndex = newIndex
         }
     }
 
@@ -61,8 +66,8 @@ class ZTravelManager: NSObject {
     func goBack(extreme: Bool = false) {
         if  let    index = isInStack {
             currentIndex = index
-        } else if  notHere {
-            pushHere(updateCurrentIndex: false)
+        } else if notHere {
+            pushHere()
         }
 
         if extreme {

@@ -1144,23 +1144,23 @@ class ZCloudManager: ZRecordsManager {
 
 
     func establishRoots(_ onCompletion: IntClosure?) {
-        let     roots: [ZRootID] = [.favorites, .destroy, .trash, .graph, .lost]
-        let               prefix = (databaseID == .mineID) ? "my " : "public "
-        var closure: IntClosure? = nil
+        let rootIDs: [ZRootID]   = [.favorites, .destroy, .trash, .graph, .lost]
+        var closure: IntClosure? = nil // pre-declare so can recursively call from within
         closure                  = { iIndex in
-            if iIndex >= roots.count {
+            if iIndex >= rootIDs.count {
                 onCompletion?(0)
             } else {
-                let     rootID = roots[iIndex]
+                let     rootID = rootIDs[iIndex]
                 let recordName = rootID.rawValue
-                var       name = prefix + recordName
+                var       name = self.databaseID.text + " " + recordName
+                let       next = { closure?(iIndex + 1) }
 
                 switch rootID {
-                case .favorites: if self.favoritesZone    != nil || self.databaseID != .mineID { closure?(iIndex + 1); return } else { name = recordName }
-                case .destroy:   if self.destroyZone      != nil                               { closure?(iIndex + 1); return }
-                case .trash:     if self.trashZone        != nil                               { closure?(iIndex + 1); return }
-                case .graph:     if self.rootZone         != nil                               { closure?(iIndex + 1); return } else { name = kFirstIdeaTitle }
-                case .lost:      if self.lostAndFoundZone != nil                               { closure?(iIndex + 1); return }
+                case .favorites: if self.favoritesZone    != nil || self.databaseID != .mineID { next(); return } else { name = kFavoritesName }
+                case .graph:     if self.rootZone         != nil                               { next(); return } else { name = kFirstIdeaTitle }
+                case .lost:      if self.lostAndFoundZone != nil                               { next(); return }
+                case .trash:     if self.trashZone        != nil                               { next(); return }
+                case .destroy:   if self.destroyZone      != nil                               { next(); return }
                 }
 
                 self.establishRootFor(name: name, recordName: recordName) { iZone in
@@ -1176,7 +1176,7 @@ class ZCloudManager: ZRecordsManager {
                     case .lost:      self.lostAndFoundZone = iZone
                     }
 
-                    closure?(iIndex + 1)
+                    next()
                 }
             }
         }

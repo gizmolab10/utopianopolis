@@ -30,7 +30,7 @@ class ZoneWidget: ZView {
 
 
     let                  dragDot = ZoneDot        ()
-    let                toggleDot = ZoneDot        ()
+    let                revealDot = ZoneDot        ()
     let               textWidget = ZoneTextWidget ()
     let             childrenView = ZView          ()
     private var  childrenWidgets = [ZoneWidget]   ()
@@ -143,13 +143,13 @@ class ZoneWidget: ZView {
             make.centerY.equalTo(textWidget).offset(verticalTextOffset)
         }
 
-        if !subviews.contains(toggleDot) {
-            insertSubview(toggleDot, belowSubview: textWidget)
+        if !subviews.contains(revealDot) {
+            insertSubview(revealDot, belowSubview: textWidget)
         }
 
-        toggleDot.innerDot?.snp.removeConstraints()
-        toggleDot.setupForWidget(self, asReveal: true)
-        toggleDot.innerDot?.snp.makeConstraints { make in
+        revealDot.innerDot?.snp.removeConstraints()
+        revealDot.setupForWidget(self, asReveal: true)
+        revealDot.innerDot?.snp.makeConstraints { make in
             make.left.equalTo(textWidget.snp.right).offset(-1.0)
             make.right.lessThanOrEqualToSuperview().offset(-1.0)
             make.centerY.equalTo(textWidget).offset(verticalTextOffset)
@@ -217,8 +217,8 @@ class ZoneWidget: ZView {
 
 
     var hitRect: CGRect? {
-        if  let start = dragDot.innerOrigin, let end = toggleDot.innerExtent {
-            return CGRect(start: dragDot.convert(start, to: self), end: toggleDot.convert(end, to: self))
+        if  let start = dragDot.innerOrigin, let end = revealDot.innerExtent {
+            return CGRect(start: dragDot.convert(start, to: self), end: revealDot.convert(end, to: self))
         }
 
         return nil
@@ -226,7 +226,7 @@ class ZoneWidget: ZView {
     
 
     var outerHitRect: CGRect {
-        return CGRect(start: dragDot.convert(dragDot.bounds.origin, to: self), end: toggleDot.convert(toggleDot.bounds.extent, to: self))
+        return CGRect(start: dragDot.convert(dragDot.bounds.origin, to: self), end: revealDot.convert(revealDot.bounds.extent, to: self))
     }
 
 
@@ -240,7 +240,7 @@ class ZoneWidget: ZView {
                 // DOT IS STRAIGHT OUT //
                 /////////////////////////
 
-                if  let        dot = toggleDot.innerDot {
+                if  let        dot = revealDot.innerDot {
                     let     insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
                     rect           = dot.convert(dot.bounds, to: self).insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
                 }
@@ -336,7 +336,7 @@ class ZoneWidget: ZView {
 
 
     func displayForDrag() {
-        toggleDot.innerDot?        .setNeedsDisplay()
+        revealDot.innerDot?        .setNeedsDisplay()
         parentWidget?              .setNeedsDisplay() // sibling lines
         self                       .setNeedsDisplay() // children lines
 
@@ -367,7 +367,7 @@ class ZoneWidget: ZView {
 
     func lineKind(to dragRect: CGRect) -> ZLineKind? {
         var kind: ZLineKind? = nil
-        if  let    toggleDot = toggleDot.innerDot {
+        if  let    toggleDot = revealDot.innerDot {
             let   toggleRect = toggleDot.convert(toggleDot.bounds,  to: self)
             let        delta = Double(dragRect.midY - toggleRect.midY)
             kind             = lineKind(for: delta)
@@ -465,7 +465,7 @@ class ZoneWidget: ZView {
         let      thickness = CGFloat(gDotWidth) / 3.5
         let         height = gGenericOffset.height
         let          delta = height / 8.0
-        let            dot = toggleDot.innerDot
+        let            dot = revealDot.innerDot
         let          inset = (height + 32.0) / -2.0
         let hiddenDotDelta = dot?.toggleDotIsVisible ?? true ? CGFloat(0.0) : dot!.bounds.size.width + 3.0
         var           rect = textWidget.frame.insetBy(dx: inset * ratio - delta, dy: -0.5 - delta)

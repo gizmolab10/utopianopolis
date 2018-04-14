@@ -16,14 +16,22 @@ import Foundation
 #endif
 
 
+enum ZTextType: Int {
+    case prefix
+    case name
+    case suffix
+}
+
+
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     override var preferredFont : ZFont { return (widget?.isInMain ?? true) ? gWidgetFont : gFavoritesFont }
     var             widgetZone : Zone? { return widget?.widgetZone }
     weak var            widget : ZoneWidget?
+    var                   type = ZTextType.name
 
-
+    
     func updateTextColor() {
         if  let  zone = widgetZone {
             textColor = zone.colorized ? zone.grabbedTextColor : ZColor.black
@@ -51,6 +59,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         gTextManager.updateText(inZone: widgetZone, isEditing: isEditing)
         layoutTextField()
     }
+
 
     func updateGUI() {
         layoutTextField()

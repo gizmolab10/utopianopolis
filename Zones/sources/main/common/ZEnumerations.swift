@@ -59,6 +59,15 @@ enum ZDatabaseID: String {
     case  everyoneID = "everyone"
     case    sharedID = "shared"
     case      mineID = "mine"
+
+    var text: String {
+        switch self {
+        case .everyoneID: return "public"
+        case     .mineID: return "my"
+        default:          return ""
+        }
+    }
+
 }
 
 

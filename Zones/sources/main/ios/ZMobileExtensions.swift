@@ -490,7 +490,7 @@ extension ZoneWidget {
     func lineRect(to rightFrame: CGRect, kind: ZLineKind?) -> CGRect {
         var frame = CGRect ()
 
-        if  let       leftDot = toggleDot.innerDot, kind != nil {
+        if  let       leftDot = revealDot.innerDot, kind != nil {
             let     leftFrame = leftDot.convert( leftDot.bounds, to: self)
             let     thickness = CGFloat(gLineThickness)
             let     dotHeight = CGFloat(gDotHeight)

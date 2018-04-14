@@ -51,7 +51,7 @@ class ZInformationController: ZGenericController {
 
     var graphNameText: String {
         if let dbID = currentZone.databaseID {
-            return "in \(dbID.rawValue) database"
+            return "in \(dbID.text) database"
         }
 
         return ""
