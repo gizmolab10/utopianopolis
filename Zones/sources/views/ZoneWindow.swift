@@ -23,14 +23,11 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     override func awakeFromNib() {
         super.awakeFromNib()
 
+        standardWindowButton(NSWindow.ButtonType.closeButton)!.isHidden = true // zoomButton miniaturizeButton
+
+        delegate          = self
         ZoneWindow.window = self
-
-        standardWindowButton(NSWindow.ButtonType.zoomButton)!.isHidden = true
-        standardWindowButton(NSWindow.ButtonType.closeButton)!.isHidden = true
-        standardWindowButton(NSWindow.ButtonType.miniaturizeButton)!.isHidden = true
-
-        contentMinSize = CGSize(width: 300, height: 300) // gWindowSize
-        delegate       = self
+        contentMinSize    = CGSize(width: 300, height: 300) // gWindowSize
     }
 
 

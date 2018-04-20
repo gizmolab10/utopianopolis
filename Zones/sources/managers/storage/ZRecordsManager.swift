@@ -36,9 +36,10 @@ class ZRecordsManager: NSObject {
 
 
     var              databaseID : ZDatabaseID
-    var                registry = [String       :  ZRecord] ()
-    var      recordNamesByState = [ZRecordState : [String]] ()
-    var              duplicates =                 [ZRecord] ()
+    var              duplicates =                  [ZRecord]  ()
+    var            nameRegistry = [String       : [CKRecord]] ()
+    var          recordRegistry = [String       :   ZRecord]  ()
+    var      recordNamesByState = [ZRecordState :   [String]] ()
     var            lastSyncDate = Date(timeIntervalSince1970: 0)
     var lostAndFoundZone: Zone? = nil
     var    favoritesZone: Zone? = nil // only for .mineID manager
@@ -77,7 +78,7 @@ class ZRecordsManager: NSObject {
     func updateLastSyncDate() {
         var date = lastSyncDate
 
-        for zRecord in registry.values {
+        for zRecord in recordRegistry.values {
             if  let modificationDate = zRecord.record.modificationDate,
                 modificationDate.timeIntervalSince(date) > 0 {
 
@@ -97,12 +98,138 @@ class ZRecordsManager: NSObject {
     }
 
 
+    // MARK:- registries
+    // MARK:-
+
+
+    func apply(to iName: String, onEach: RecordsToRecordsClosure) {
+        for part in iName.components(separatedBy: " ") {
+            if  part != "" {
+                var records  = nameRegistry[part]
+
+                if  records == nil {
+                    records  = []
+                }
+
+                records            = onEach(records!)
+                nameRegistry[part] = records
+            }
+        }
+    }
+
+
+    func   registerName(of iZone: Zone?) {
+        if  let record = iZone?.record,
+            let   name = iZone?.zoneName {
+            apply(to: name) { iRecords -> ([CKRecord]) in
+                var records = iRecords
+
+                records.append(record)
+
+                return records
+            }
+        }
+    }
+
+
+    func unregisterName(of iZone: Zone?) {
+        if  let record = iZone?.record,
+            let   name = iZone?.zoneName {
+            apply(to: name) { iRecords -> ([CKRecord]) in
+                var records = iRecords
+
+                if let index = records.index(of: record) {
+                    records.remove(at: index)
+                }
+
+                return records
+            }
+        }
+    }
+
+
+    func searchLocal(for name: String) -> [CKRecord] {
+        var results = [CKRecord] ()
+
+        apply(to: name) { iRecords -> ([CKRecord]) in
+            results.appendUnique(contentsOf: iRecords)
+
+            return iRecords
+        }
+
+        return results
+    }
+
+
+    func registerZRecord(_  iRecord : ZRecord?) -> Bool {
+        if  let      zRecord  = iRecord,
+            let           id  = zRecord.recordName {
+            if let oldRecord  = recordRegistry[id] {
+                if oldRecord != zRecord {
+
+                    ///////////////////////////////////////
+                    // if already registered, must erase //
+                    ///////////////////////////////////////
+
+                    duplicates.append(zRecord)
+                }
+            } else {
+                if  let bookmark = zRecord as? Zone, bookmark.isBookmark {
+                    gBookmarksManager.registerBookmark(bookmark)
+                }
+
+                recordRegistry[id]  = zRecord
+
+                registerName(of: zRecord as? Zone)
+
+                return true
+            }
+        }
+
+        return false
+    }
+
+
+    func unregisterCKRecord(_ ckRecord: CKRecord?) {
+        if  let      name  = ckRecord?.recordID.recordName {
+            clearRecordName(name, for: allStates)
+
+            recordRegistry[name] = nil
+        }
+    }
+
+
+    func unregisterZRecord(_ zRecord: ZRecord?) {
+        unregisterCKRecord(zRecord?.record)
+        unregisterName(of: zRecord as? Zone)
+        gBookmarksManager.unregisterBookmark(zRecord as? Zone)
+    }
+
+
+    func notRegistered(_ recordID: CKRecordID?) -> Bool {
+        return maybeZoneForRecordID(recordID) == nil
+    }
+
+
+    func removeDuplicates() {
+        for duplicate in duplicates {
+            duplicate.orphan()
+
+            if  let zone = duplicate as? Zone {
+                zone.children.removeAll()
+            }
+        }
+
+        duplicates.removeAll()
+    }
+
+
     // MARK:- record state
     // MARK:-
 
 
     var undeletedCounts: (Int, Int) {
-        let zRecords = registry.values
+        let zRecords = recordRegistry.values
         var   uCount = zRecords.count
         var   nCount = 0
 
@@ -617,78 +744,11 @@ class ZRecordsManager: NSObject {
     }
 
 
-    // MARK:- registry
-    // MARK:-
-
-
-    func registerZRecord(_  iRecord : ZRecord?) -> Bool {
-        if  let      zRecord  = iRecord,
-            let           id  = zRecord.recordName {
-            if let oldRecord  = registry[id] {
-                if oldRecord != zRecord {
-
-                    ///////////////////////////////////////
-                    // if already registered, must erase //
-                    ///////////////////////////////////////
-
-                    duplicates.append(zRecord)
-                }
-            } else {
-                if  let bookmark = zRecord as? Zone, bookmark.isBookmark {
-                    gBookmarksManager.registerBookmark(bookmark)
-                }
-
-                registry[id]  = zRecord
-
-//                if registry.count % 200 == 0 {
-//                    columnarReport("     \(registry.count)", gBatchManager.debugTimeText)
-//                }
-
-                return true
-            }
-        }
-
-        return false
-    }
-
-
-    func unregisterCKRecord(_ ckRecord: CKRecord?) {
-        if  let      name  = ckRecord?.recordID.recordName {
-            clearRecordName(name, for: allStates)
-            registry[name] = nil
-        }
-    }
-
-
-    func unregisterZRecord(_ zRecord: ZRecord?) {
-        unregisterCKRecord(zRecord?.record)
-        gBookmarksManager.unregisterBookmark(zRecord as? Zone)
-    }
-
-
-    func notRegistered(_ recordID: CKRecordID?) -> Bool {
-        return maybeZoneForRecordID(recordID) == nil
-    }
-
-
-    func removeDuplicates() {
-        for duplicate in duplicates {
-            duplicate.orphan()
-
-            if  let zone = duplicate as? Zone {
-                zone.children.removeAll()
-            }
-        }
-
-        duplicates.removeAll()
-    }
-
-
     // MARK:- lookups
     // MARK:-
 
 
-    func  maybeZRecordForRecordName (_ iRecordName:    String?) ->  ZRecord? { return iRecordName == nil ? nil : registry[iRecordName!] }
+    func  maybeZRecordForRecordName (_ iRecordName:    String?) ->  ZRecord? { return iRecordName == nil ? nil : recordRegistry[iRecordName!] }
     func maybeCKRecordForRecordName (_ iRecordName:    String?) -> CKRecord? { return maybeZRecordForRecordName (iRecordName)?.record }
     func     maybeZoneForRecordName (_ iRecordName:    String?) ->     Zone? { return maybeZRecordForRecordName (iRecordName) as? Zone }
     func       maybeZoneForRecordID (_ iRecordID:  CKRecordID?) ->     Zone? { return maybeZRecordForRecordID   (iRecordID)   as? Zone }

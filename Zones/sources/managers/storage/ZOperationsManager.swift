@@ -61,7 +61,7 @@ enum ZOperationID: Int {
     var isLocal: Bool {
         switch self {
         case .here, .read, .write, .roots, .found, .internet, .ubiquity, .favorites, .completion, .fetchUserID, .accountStatus, .observeUbiquity: return true
-        default:                                                                                                                                 return false
+        default:                                                                                                                                  return false
         }
     }
 

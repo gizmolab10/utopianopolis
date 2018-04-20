@@ -132,6 +132,15 @@ class ZRecord: NSObject {
     }
 
 
+    func toggleChildrenVisibility() {
+        if  showChildren {
+            concealChildren()
+        } else {
+            revealChildren()
+        }
+    }
+
+
     // MARK:- overrides
     // MARK:-
 

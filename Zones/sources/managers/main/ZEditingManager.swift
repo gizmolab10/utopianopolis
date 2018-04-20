@@ -805,7 +805,7 @@ class ZEditingManager: NSObject {
 
 
     func revealDotClickAction(for iZone: Zone?) {
-        if  let zone = iZone { // , !zone.onlyShowRevealDot {
+        if  let zone = iZone {
             gTextManager.stopCurrentEdit()
 
             for     grabbed in gSelectionManager.currentGrabs {
@@ -821,7 +821,18 @@ class ZEditingManager: NSObject {
             } else {
                 let show = !zone.showChildren
 
-                self.generationalUpdate(show: show, zone: zone) {
+                if !zone.isRootOfFavorites {
+                    self.generationalUpdate(show: show, zone: zone) {
+                        self.redrawSyncRedraw()
+                    }
+                } else {
+
+                    //////////////////////////////////////////////////////////////////
+                    // avoid annoying user by treating favorites non-generationally //
+                    //////////////////////////////////////////////////////////////////
+
+                    zone.toggleChildrenVisibility()
+
                     self.redrawSyncRedraw()
                 }
             }
@@ -1196,7 +1207,7 @@ class ZEditingManager: NSObject {
         let zone: Zone = gSelectionManager.firstGrab
         let parentZone = zone.parentZone
 
-        if zone.isRoot || zone.isTrash || parentZone == gMineCloudManager.favoritesZone {
+        if zone.isRoot || zone.isTrash || parentZone == gFavoritesRoot {
             onCompletion?() // avoid disasters
         } else if selectionOnly {
 

@@ -18,7 +18,7 @@ class ZCloudManager: ZRecordsManager {
     var   cloudZonesByID = [CKRecordZoneID : CKRecordZone] ()
     var         database :  CKDatabase? { return gRemoteStoresManager.databaseForID(databaseID) }
     var   refetchingName :       String { return "remember.\(databaseID.rawValue)" }
-    var   canDoLocalOnly :         Bool { return !gHasInternet || (databaseID == .mineID && gCloudAccountStatus == .none) }
+    var cloudUnavailable :         Bool { return !gHasInternet || (databaseID == .mineID && gCloudAccountStatus != .active) }
     var    isRemembering :         Bool = false
     var currentOperation : CKOperation? = nil
     var currentPredicate : NSPredicate? = nil
@@ -49,25 +49,25 @@ class ZCloudManager: ZRecordsManager {
 
     func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
         switch identifier { // inner switch
-        case .cloud:       fetchCloudZones (cloudCallback)
         case .bookmarks:   fetchBookmarks  (cloudCallback)
-        case .roots:       establishRoots  (cloudCallback)
         case .children:    fetchChildren   (cloudCallback)
-        case .here:        establishHere   (cloudCallback)
-        case .parents:     fetchParents    (cloudCallback)
-        case .refetch:     refetchZones    (cloudCallback)
-        case .traits:      fetchTraits     (cloudCallback)
-        case .unsubscribe: unsubscribe     (cloudCallback)
-        case .undelete:    undeleteAll     (cloudCallback)
+        case .cloud:       fetchCloudZones (cloudCallback)
         case .emptyTrash:  emptyTrash      (cloudCallback)
         case .fetch:       fetchZones      (cloudCallback)
-        case .subscribe:   subscribe       (cloudCallback)
         case .fetchlost:   fetchLost       (cloudCallback)
         case .fetchNew:    fetchNew        (cloudCallback)
         case .fetchAll:    fetchAll        (cloudCallback)
-        case .merge:       merge           (cloudCallback)
         case .found:       found           (cloudCallback)
+        case .here:        establishHere   (cloudCallback)
+        case .merge:       merge           (cloudCallback)
+        case .parents:     fetchParents    (cloudCallback)
+        case .refetch:     refetchZones    (cloudCallback)
+        case .roots:       establishRoots  (cloudCallback)
         case .save:        save            (cloudCallback)
+        case .subscribe:   subscribe       (cloudCallback)
+        case .traits:      fetchTraits     (cloudCallback)
+        case .undelete:    undeleteAll     (cloudCallback)
+        case .unsubscribe: unsubscribe     (cloudCallback)
         default: break
         }
     }
@@ -216,7 +216,7 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        if      canDoLocalOnly {
+        if      cloudUnavailable {
             if  let ckRecord = maybeCKRecordForRecordName(iCKRecordID.recordName),
                 !hasCKRecordName(iCKRecordID.recordName, forAnyOf: [.notFetched]) {
                 done(ckRecord)
@@ -338,7 +338,7 @@ class ZCloudManager: ZRecordsManager {
     func bookmarkPredicate(specificTo iRecordIDs: [CKRecordID]) -> NSPredicate? {
         var  predicate    = ""
 
-        if  canDoLocalOnly {
+        if  cloudUnavailable {
             return nil
         } else if  iRecordIDs.count == 0 {
             predicate     = String(format: "zoneLink != '\(kNullLink)'")
@@ -452,7 +452,7 @@ class ZCloudManager: ZRecordsManager {
 
                 scan(self.rootZone)
                 scan(self.hereZone)
-                scan(gMineCloudManager.favoritesZone)
+                scan(gFavoritesRoot)
 
                 self.columnarReport("REMEMBER (\(memorables.count))", "\(self.databaseID.rawValue)")
                 setPreferencesString(memorables.joined(separator: kSeparator), for: self.refetchingName)
@@ -679,7 +679,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func fetchAll(_ onCompletion: IntClosure?) {
-        if  !gIsReadyToShowUI && registry.values.count > 10 {
+        if  !gIsReadyToShowUI && recordRegistry.values.count > 10 {
             onCompletion?(0)
         } else {
             fetchSince(nil, onCompletion)
@@ -696,16 +696,16 @@ class ZCloudManager: ZRecordsManager {
         // for zones, traits, destroy
         // if date is nil, fetch all
 
-        fetch(for: kTraitType, properties: ZTrait.cloudProperties(), since: date, before: nil) { iTraitCKRecords in
+        fetch(for: kZoneType, properties: Zone.cloudProperties(), since: date, before: nil) { iZoneCKRecords in
             FOREGROUND {
-                self.createZRecords(of: kZoneType, with: iTraitCKRecords, title: " TRAITS")
+                self.createZRecords(of: kZoneType, with: iZoneCKRecords, title: " NEW")
 
-                self.fetch(for: kZoneType, properties: Zone.cloudProperties(), since: date, before: nil) { iZoneCKRecords in
+                self.unorphanAll()
+                self.recount()
+
+                self.fetch(for: kTraitType, properties: ZTrait.cloudProperties(), since: date, before: nil) { iTraitCKRecords in
                     FOREGROUND {
-                        self.createZRecords(of: kZoneType, with: iZoneCKRecords, title: " NEW")
-
-                        self.unorphanAll()
-                        self.recount()
+                        self.createZRecords(of: kTraitType, with: iTraitCKRecords, title: " TRAITS")
                         onCompletion?(0)
                     }
                 }
@@ -1144,23 +1144,23 @@ class ZCloudManager: ZRecordsManager {
 
 
     func establishRoots(_ onCompletion: IntClosure?) {
-        let rootIDs: [ZRootID]   = [.favorites, .destroy, .trash, .graph, .lost]
-        var closure: IntClosure? = nil // pre-declare so can recursively call from within
-        closure                  = { iIndex in
+        let         rootIDs: [ZRootID]   = [.favorites, .destroy, .trash, .graph, .lost]
+        var establishRootAt: IntClosure? = nil // pre-declare so can recursively call from within
+        establishRootAt                  = { iIndex in
             if iIndex >= rootIDs.count {
                 onCompletion?(0)
             } else {
-                let     rootID = rootIDs[iIndex]
-                let recordName = rootID.rawValue
-                var       name = self.databaseID.text + " " + recordName
-                let       next = { closure?(iIndex + 1) }
+                let            rootID = rootIDs[iIndex]
+                let        recordName = rootID.rawValue
+                var              name = self.databaseID.text + " " + recordName
+                let establishNextRoot = { establishRootAt?(iIndex + 1) }
 
                 switch rootID {
-                case .favorites: if self.favoritesZone    != nil || self.databaseID != .mineID { next(); return } else { name = kFavoritesName }
-                case .graph:     if self.rootZone         != nil                               { next(); return } else { name = kFirstIdeaTitle }
-                case .lost:      if self.lostAndFoundZone != nil                               { next(); return }
-                case .trash:     if self.trashZone        != nil                               { next(); return }
-                case .destroy:   if self.destroyZone      != nil                               { next(); return }
+                case .favorites: if self.favoritesZone    != nil || self.databaseID != .mineID { establishNextRoot(); return } else { name = kFavoritesName }
+                case .graph:     if self.rootZone         != nil                               { establishNextRoot(); return } else { name = kFirstIdeaTitle }
+                case .lost:      if self.lostAndFoundZone != nil                               { establishNextRoot(); return }
+                case .trash:     if self.trashZone        != nil                               { establishNextRoot(); return }
+                case .destroy:   if self.destroyZone      != nil                               { establishNextRoot(); return }
                 }
 
                 self.establishRootFor(name: name, recordName: recordName) { iZone in
@@ -1176,12 +1176,12 @@ class ZCloudManager: ZRecordsManager {
                     case .lost:      self.lostAndFoundZone = iZone
                     }
 
-                    next()
+                    establishNextRoot()
                 }
             }
         }
 
-        closure?(0)
+        establishRootAt?(0)
     }
 
 
@@ -1219,7 +1219,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func unsubscribe(_ onCompletion: IntClosure?) {
-        if  canDoLocalOnly {
+        if  cloudUnavailable {
             onCompletion?(0)
         } else {
             onCompletion?(-1)
@@ -1253,7 +1253,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func subscribe(_ onCompletion: IntClosure?) {
-        if  canDoLocalOnly {
+        if  cloudUnavailable {
             onCompletion?(0)
         } else {
             let classNames = [kZoneType, kTraitType]

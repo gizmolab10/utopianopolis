@@ -452,8 +452,19 @@ extension String {
 
     func substring(from:         Int) -> String  { return substring(from: index(at: from)) }
     func substring(to:           Int) -> String  { return substring(to: index(at: to)) }
-    func heightForFont(_ font: ZFont) -> CGFloat { return sizeWithFont(font).height }
     func widthForFont (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
+
+
+    func heightForFont(_ font: ZFont, options: NSString.DrawingOptions = []) -> CGFloat { return sizeWithFont(font, options: options).height }
+
+
+    func sizeWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize {
+        let   rect = CGSize(width: 1000000, height: 1000000)
+        //let options: [NSStringDrawingOptions] = [.usesLineFragmentOrigin, .usesFontLeading, .usesDeviceMetrics]
+        let bounds = self.boundingRect(with: rect, options: options, attributes: [kCTFontAttributeName as String : font], context: nil)
+
+        return bounds.size
+    }
 
 
     var color: ZColor? {
@@ -480,15 +491,6 @@ extension String {
         }
 
         return nil
-    }
-
-
-    func sizeWithFont(_ font: ZFont) -> CGSize {
-        let   rect = CGSize(width: 1000000, height: 1000000)
-        //let options: [NSStringDrawingOptions] = [.usesLineFragmentOrigin, .usesFontLeading, .usesDeviceMetrics]
-        let bounds = self.boundingRect(with: rect, options: .usesDeviceMetrics, attributes: [kCTFontAttributeName as String : font], context: nil)
-
-        return bounds.size
     }
 
 

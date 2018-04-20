@@ -19,14 +19,20 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        var showPulse = true
         let container = CKContainer(identifier: "iCloud.com.zones.Zones")
-
-        container.accountStatus { (iStatus, iError) in
-            FOREGROUND {
-                let          statusText = self.text(for: iStatus)
-                self.label?.stringValue = "cloud kit account status: \(statusText)"
+        let      fire = { (iTimer: Timer) in
+            container.accountStatus { (iStatus, iError) in
+                FOREGROUND {
+                    let               pulse = showPulse ? "• " : "- "
+                    let          statusText = self.text(for: iStatus)
+                    self.label?.stringValue = "  cloud kit account status " + pulse + statusText
+                    showPulse               = !showPulse
+                }
             }
         }
+
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: fire)
     }
 
 

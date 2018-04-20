@@ -30,7 +30,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var      isInnerDot:  Bool = false
     var      isDragDrop:  Bool { return widgetZone == gDragDropZone }
     var      widgetZone: Zone? { return widget?.widgetZone }
-    var isDragDotHidden:  Bool { return widgetZone?.onlyShowRevealDot ?? true }
+    var dragDotIsHidden:  Bool { return widgetZone?.dragDotIsHidden ?? true }
 
 
     var innerOrigin: CGPoint? {
@@ -69,7 +69,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    var toggleDotIsVisible: Bool {
+    var revealDotIsVisible: Bool {
         var isHidden = false
         if  let zone = widgetZone, isInnerDot, isReveal {
             isHidden = !zone.canTravel && zone.count == 0 && zone.fetchableCount == 0 && !isDragDrop
@@ -84,7 +84,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     var         ratio:  CGFloat { return widget?.ratio ?? 1.0 }
-    var innerDotWidth:  CGFloat { return ratio * CGFloat(isReveal ? gDotHeight : isDragDotHidden ? 0.0 : gDotWidth) }
+    var innerDotWidth:  CGFloat { return ratio * CGFloat(isReveal ? gDotHeight : dragDotIsHidden ? 0.0 : gDotWidth) }
     var innerDotHeight: CGFloat { return ratio * CGFloat(gDotHeight) }
 
 
@@ -112,7 +112,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             innerDot!.setupForWidget(iWidget, asReveal: isReveal)
             snp.removeConstraints()
             snp.makeConstraints { make in
-                var   width = !isReveal && isDragDotHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) - 42.0 + innerDotWidth
+                var   width = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) - 42.0 + innerDotWidth
                 let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
 
                 if !iWidget.isInMain {
@@ -178,7 +178,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawTinyCounterDots(_ iDirtyRect: CGRect) {
-        if  let    zone = widgetZone, innerDot != nil, gCountsMode == .dots, !zone.isRootOfFavorites, (!zone.showChildren || zone.isBookmark) {
+        if  let    zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showChildren || zone.isBookmark) {
             var   count = (gCountsMode == .progeny) ? zone.progenyCount : zone.indirectCount
             var aHollow = false
             var bHollow = false
@@ -241,7 +241,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func drawAccessDecoration(of type: ZDecorationType, in iDirtyRect: CGRect) {
+    func drawWriteAccessDecoration(of type: ZDecorationType, in iDirtyRect: CGRect) {
         let     ratio = (widget?.isInMain ?? true) ? 1.0 : kReductionRatio
         var thickness = CGFloat(gLineThickness + 0.1) * ratio
         var      path = ZBezierPath(rect: CGRect.zero)
@@ -274,14 +274,15 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         let traits = iZone.traits
         for (type, _) in traits {
             let string = type.rawValue
-            let   size = NSFont.systemFontSize()
-            let   font = NSFont.systemFont(ofSize: size)
-            let height = string.heightForFont(font) + 1.0
-            let offset = (iDirtyRect.height - height) / 2.1
-            let   rect = iDirtyRect.insetBy(dx: 3.7, dy: -CGFloat(offset))
+            let   size = CGFloat(gDotHeight - 2.0)
+            let   font = NSFont.boldSystemFont(ofSize: size)
+            let height = string.heightForFont(font, options: .usesDeviceMetrics) - 1.0
+            let xDelta = size / 3.7
+            let yDelta = (iDirtyRect.height - height) / 4.0
+            let   rect = iDirtyRect.insetBy(dx: xDelta, dy: -CGFloat(yDelta))
             let  color = isFilled ? gBackgroundColor : iZone.color
 
-            string.draw(in: rect, withAttributes: [NSForegroundColorAttributeName : color])
+            string.draw(in: rect, withAttributes: [NSForegroundColorAttributeName : color, NSFontAttributeName: font])
 
             return
         }
@@ -294,10 +295,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         if  let              zone = widgetZone, isVisible(iDirtyRect) {
             let isCurrentFavorite = zone.isCurrentFavorite
 
-            if  toggleDotIsVisible {
+            if  revealDotIsVisible {
                 if  isInnerDot {
                     let childlessTraveller = zone.canTravel && zone.count == 0
-                    let        dotIsFilled = isReveal ? (!zone.isRootOfFavorites && (!zone.showChildren || childlessTraveller || isDragDrop)) : (zone.isGrabbed || isCurrentFavorite)
+                    let        dotIsFilled = isReveal ? (!zone.showChildren || childlessTraveller || isDragDrop) : (zone.isGrabbed || isCurrentFavorite)
                     let        strokeColor = isReveal && isDragDrop ?    gRubberbandColor : zone.color
                     var          fillColor = dotIsFilled ? strokeColor : gBackgroundColor
 
@@ -326,33 +327,41 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
                             drawTraitIndicator(for: zone, isFilled: dotIsFilled, in: iDirtyRect)
                         }
-                    } else if zone.hasAccessDecoration {
+                    } else if zone.hasWriteAccessDecoration {
                         let  type = zone.directChildrenWritable ? ZDecorationType.sideDot : ZDecorationType.vertical
                         fillColor = dotIsFilled ? gBackgroundColor : strokeColor
 
-                        ////////////////////////
-                        // ACCESS DECORATIONS //
-                        ////////////////////////
+                        //////////////////////////////
+                        // WRITE-ACCESS DECORATIONS //
+                        //////////////////////////////
 
                         fillColor.setFill()
-                        drawAccessDecoration(of: type, in: iDirtyRect)
+                        drawWriteAccessDecoration(of: type, in: iDirtyRect)
                     }
-                } else if isReveal {
 
-                    ///////////////////////
-                    // TINY COUNTER DOTS //
-                    ///////////////////////
-
-                    // addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.red.cgColor)
-                    drawTinyCounterDots(iDirtyRect)
-                } else if isCurrentFavorite {
+                } else {
 
                     ////////////////////////////////
-                    // HIGHLIGHT CURRENT FAVORITE //
+                    // MOSTLY INVISIBLE OUTER DOT //
                     ////////////////////////////////
 
-                    zone.color.withAlphaComponent(0.7).setFill()
-                    drawFavoritesHighlight(in: iDirtyRect)
+                    if isReveal {
+
+                        ///////////////////////
+                        // TINY COUNTER DOTS //
+                        ///////////////////////
+
+                        // addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.red.cgColor)
+                        drawTinyCounterDots(iDirtyRect)
+                    } else if isCurrentFavorite {
+
+                        ///////////////////////////////////
+                        // HIGHLIGHT OF CURRENT FAVORITE //
+                        ///////////////////////////////////
+
+                        zone.color.withAlphaComponent(0.7).setFill()
+                        drawFavoritesHighlight(in: iDirtyRect)
+                    }
                 }
             }
         }

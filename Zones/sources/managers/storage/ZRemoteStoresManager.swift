@@ -16,6 +16,7 @@ var gEveryoneCloudManager : ZCloudManager { return gRemoteStoresManager.cloudMan
 var     gMineCloudManager : ZCloudManager { return gRemoteStoresManager.cloudManagerFor(.mineID) }
 var         gCloudManager : ZCloudManager { return gRemoteStoresManager.currentCloudManager }
 var         gLostAndFound : Zone?         { return gRemoteStoresManager.lostAndFoundZone }
+var        gFavoritesRoot : Zone?         { return gMineCloudManager.favoritesZone }
 var                gTrash : Zone?         { return gRemoteStoresManager.trashZone }
 var                 gRoot : Zone?   { get { return gRemoteStoresManager.rootZone } set { gRemoteStoresManager.rootZone  = newValue } }
 

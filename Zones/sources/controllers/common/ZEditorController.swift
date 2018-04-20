@@ -118,7 +118,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     func layoutRootWidget(for iSignalObject: Any?, _ iKind: ZSignalKind, inMainGraph: Bool) {
         if !inMainGraph && kIsPhone { return }
 
-        let                        here = inMainGraph ? gHere : gMineCloudManager.favoritesZone
+        let                        here = inMainGraph ? gHere : gFavoritesRoot
         var specificWidget: ZoneWidget? = inMainGraph ? editorRootWidget : favoritesRootWidget
         var specificView:        ZView? = editorView
         var specificIndex:         Int? = nil
@@ -337,7 +337,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 var      dropZone = dropNearest.widgetZone
                 let          same = gSelectionManager.currentGrabs.contains(dropZone!)
                 let     dropIndex = dropZone?.siblingIndex
-                let          here = isMain ? gHere : gMineCloudManager.favoritesZone
+                let          here = isMain ? gHere : gFavoritesRoot
                 let      dropHere = dropZone == here
                 let      relation = relationOf(location, to: dropNearest.textWidget)
                 let useDropParent = relation != .upon && !dropHere
@@ -566,7 +566,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     func ancestor(for iID: ZDatabaseID?) -> Zone? {
         if let dbID = iID {
             switch dbID {
-            case .favoritesID: return gMineCloudManager.favoritesZone
+            case .favoritesID: return gFavoritesRoot
             default:           return gHere
             }
         }

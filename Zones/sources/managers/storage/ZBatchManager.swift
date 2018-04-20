@@ -34,8 +34,9 @@ enum ZBatchID: Int {
 
     var shouldIgnore: Bool {
         switch self {
-        case .sync, .save, .startUp, .refetch, .finishUp, .newAppleID, .resumeCloud: return false
-        default:                                                                     return true
+        case .save:                                                           return gCloudAccountStatus != .active
+        case .sync, .startUp, .refetch, .finishUp, .newAppleID, .resumeCloud: return false
+        default:                                                              return true
         }
     }
 
@@ -283,12 +284,13 @@ class ZBatchManager: ZOnboardingManager {
                 onCompletion(true)
             } else {
                 let                mineIsActive = gCloudAccountStatus == .active
-                let               forMineIDOnly = [.bookmarks, .subscribe, .unsubscribe].contains(operationID)
+                let              requiresActive = [.save, .traits                      ].contains(operationID)
                 let               alwaysForBoth = [.here, .read, .roots, .write        ].contains(operationID)
+                let               forMineIDOnly = [.bookmarks, .subscribe, .unsubscribe].contains(operationID)
                 let                      isMine = restoreToID == .mineID
                 let               onlyCurrentID = (!mineIsActive && !alwaysForBoth) || operationID == .completion
                 let  databaseIDs: [ZDatabaseID] = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
-                let                      isNoop = onlyCurrentID && isMine && !mineIsActive && operationID != .favorites
+                let                      isNoop = !mineIsActive && (requiresActive || (onlyCurrentID && isMine && operationID != .favorites))
                 var invokeForIndex: IntClosure? = nil                // declare closure first, so compiler will let it recurse
                 invokeForIndex                  = { index in
 

@@ -43,7 +43,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
         let note: CKNotification = CKNotification(fromRemoteNotificationDictionary: userInfo)
 
-        if note.notificationType == .query {
+        if  note.notificationType == .query {
             let queryNote: CKQueryNotification = note as! CKQueryNotification
 
             gRemoteStoresManager.receivedUpdateFor(queryNote.recordID!)

@@ -23,58 +23,59 @@ import CloudKit
 class Zone : ZRecord {
 
 
-    dynamic var         parent:  CKReference?
-    dynamic var       zoneName:       String?
-    dynamic var       zoneLink:       String?
-    dynamic var      zoneColor:       String?
-    dynamic var zoneAttributes:       String?
-    dynamic var     parentLink:       String?
-    dynamic var     zoneAuthor:       String?
-    dynamic var      zoneOrder:     NSNumber?
-    dynamic var      zoneCount:     NSNumber?
-    dynamic var     zoneAccess:     NSNumber?
-    dynamic var    zoneProgeny:     NSNumber?
-    var            _parentZone:         Zone?
-    var             _hyperLink:       String?
-    var             _crossLink:      ZRecord?
-    var                 _color:       ZColor?
-    var                 _email:       String?
-    var               children = [Zone] ()
-    var                 traits = [ZTraitType : ZTrait] ()
-    var                  count:          Int  { return children.count }
-    var            destroyZone:         Zone? { return cloudManager?.destroyZone }
-    var              trashZone:         Zone? { return cloudManager?.trashZone }
-    var                 widget:   ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
-    var         linkDatabaseID:  ZDatabaseID? { return databaseID(from: zoneLink) }
-    var               linkName:       String? { return name(from: zoneLink) }
-    var          unwrappedName:       String  { return zoneName ?? kNoValue }
-    var          decoratedName:       String  { return decoration + unwrappedName }
-    var       fetchedBookmarks:       [Zone]  { return gBookmarksManager.bookmarks(for: self) ?? [] }
-    var       grabbedTextColor:       ZColor  { return color.darker(by: 3.0) }
-    var directChildrenWritable:         Bool  { return directAccess == .eChildrenWritable || directAccess == .eDefaultName }
-    var    hasAccessDecoration:         Bool  { return !isTextEditable || directChildrenWritable }
-    var      onlyShowRevealDot:         Bool  { return (isRootOfFavorites && showChildren && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
-    var      isWritableByUseer:         Bool  { return isTextEditable || userHasAccess }
-    var      isCurrentFavorite:         Bool  { return self == gFavoritesManager.currentFavorite }
-    var       accessIsChanging:         Bool  { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
-    var       isSortableByUser:         Bool  { return ancestorAccess != .eFullReadOnly || userHasAccess }
-    var        directRecursive:         Bool  { return directAccess == .eRecurse }
-    var         directWritable:         Bool  { return directAccess == .eFullWritable }
-    var         directReadOnly:         Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
-    var          hasZonesBelow:         Bool  { return hasAnyZonesAbove(false) }
-    var          hasZonesAbove:         Bool  { return hasAnyZonesAbove(true) }
-    var            isHyperlink:         Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
-    var             isFavorite:         Bool  { return gFavoritesManager.isWorkingFavorite(self) }
-    var             isSelected:         Bool  { return gSelectionManager.isSelected(self) }
-    var              canTravel:         Bool  { return isBookmark || isHyperlink || isEmail }
-    var              isGrabbed:         Bool  { return gSelectionManager .isGrabbed(self) }
-    var               hasColor:         Bool  { return zoneColor != nil && zoneColor != "" }
-    var                isEmail:         Bool  { return hasTrait(for: .eEmail) && email != "" }
-    var                isTrash:         Bool  { return recordName == kTrashName }
-    var              isInTrash:         Bool  { return root?.isTrash              ?? false }
-    var          isInFavorites:         Bool  { return root?.isRootOfFavorites    ?? false }
-    var       isInLostAndFound:         Bool  { return root?.isRootOfLostAndFound ?? false }
-    var   isRootOfLostAndFound:         Bool  { return recordName == kLostAndFoundName }
+    dynamic var           parent:  CKReference?
+    dynamic var         zoneName:       String?
+    dynamic var         zoneLink:       String?
+    dynamic var        zoneColor:       String?
+    dynamic var   zoneAttributes:       String?
+    dynamic var       parentLink:       String?
+    dynamic var       zoneAuthor:       String?
+    dynamic var        zoneOrder:     NSNumber?
+    dynamic var        zoneCount:     NSNumber?
+    dynamic var       zoneAccess:     NSNumber?
+    dynamic var      zoneProgeny:     NSNumber?
+    var              _parentZone:         Zone?
+    var               _hyperLink:       String?
+    var               _crossLink:      ZRecord?
+    var                   _color:       ZColor?
+    var                   _email:       String?
+    var                 children = [Zone] ()
+    var                   traits = [ZTraitType : ZTrait] ()
+    var                    count:          Int  { return children.count }
+    var              destroyZone:         Zone? { return cloudManager?.destroyZone }
+    var                trashZone:         Zone? { return cloudManager?.trashZone }
+    var                   widget:   ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
+    var           linkDatabaseID:  ZDatabaseID? { return databaseID(from: zoneLink) }
+    var                 linkName:       String? { return name(from: zoneLink) }
+    var            unwrappedName:       String  { return zoneName ?? kNoValue }
+    var            decoratedName:       String  { return decoration + unwrappedName }
+    var         fetchedBookmarks:       [Zone]  { return gBookmarksManager.bookmarks(for: self) ?? [] }
+    var         grabbedTextColor:       ZColor  { return color.darker(by: 3.0) }
+    var hasWriteAccessDecoration:         Bool  { return !isTextEditable || directChildrenWritable }
+    var   directChildrenWritable:         Bool  { return directAccess == .eChildrenWritable || directAccess == .eDefaultName }
+    var        isWritableByUseer:         Bool  { return isTextEditable || userHasAccess }
+    var        isCurrentFavorite:         Bool  { return self == gFavoritesManager.currentFavorite }
+    var         isSortableByUser:         Bool  { return ancestorAccess != .eFullReadOnly || userHasAccess }
+    var         accessIsChanging:         Bool  { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
+    var        onlyShowRevealDot:         Bool  { return (isRootOfFavorites && showChildren && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
+    var          dragDotIsHidden:         Bool  { return (isRootOfFavorites                 && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }    // always hide drag dot of favorites root
+    var          directRecursive:         Bool  { return directAccess == .eRecurse }
+    var           directWritable:         Bool  { return directAccess == .eFullWritable }
+    var           directReadOnly:         Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
+    var            hasZonesBelow:         Bool  { return hasAnyZonesAbove(false) }
+    var            hasZonesAbove:         Bool  { return hasAnyZonesAbove(true) }
+    var              isHyperlink:         Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
+    var               isFavorite:         Bool  { return gFavoritesManager.isWorkingFavorite(self) }
+    var               isSelected:         Bool  { return gSelectionManager.isSelected(self) }
+    var                canTravel:         Bool  { return isBookmark || isHyperlink || isEmail }
+    var                isGrabbed:         Bool  { return gSelectionManager .isGrabbed(self) }
+    var                 hasColor:         Bool  { return zoneColor != nil && zoneColor != "" }
+    var                  isEmail:         Bool  { return hasTrait(for: .eEmail) && email != "" }
+    var                  isTrash:         Bool  { return recordName == kTrashName }
+    var                isInTrash:         Bool  { return root?.isTrash              ?? false }
+    var            isInFavorites:         Bool  { return root?.isRootOfFavorites    ?? false }
+    var         isInLostAndFound:         Bool  { return root?.isRootOfLostAndFound ?? false }
+    var     isRootOfLostAndFound:         Bool  { return recordName == kLostAndFoundName }
 
 
     var email: String? {

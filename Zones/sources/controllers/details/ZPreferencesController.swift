@@ -39,8 +39,6 @@ class ZPreferencesController: ZGenericController {
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
         if  iKind != .startup {
             let                           grabbed = gSelectionManager.firstGrab
-//            let                    hideIdeasColor = grabbed.isBookmark || grabbed.isRootOfFavorites
-//            view          .zlayer.backgroundColor = CGColor.clear
             insertionModeControl?.selectedSegment = gInsertionMode.rawValue
             countsModeControl?   .selectedSegment = gCountsMode.rawValue
             thickness?               .doubleValue = gLineThickness
@@ -50,8 +48,6 @@ class ZPreferencesController: ZGenericController {
             backgroundColorBox?            .color = gBackgroundColor
             zoneColorBox?                  .color =  grabbed.color
             clearColorButton?           .isHidden = !grabbed.hasColor
-//            zoneColorBox?               .isHidden =  hideIdeasColor
-//            ideasLabel?                 .isHidden =  hideIdeasColor
 
             view.setAllSubviewsNeedDisplay()
         }

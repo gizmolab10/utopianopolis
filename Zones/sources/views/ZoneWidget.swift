@@ -104,14 +104,14 @@ class ZoneWidget: ZView {
             }
 
             while index > 0 {
-                index                 -= 1 // go backwards down the children arrays, constraint making expects it
+                index                 -= 1 // go backwards down the children arrays, bottom and top constraints expect it
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone =            zone[index]
 
                 childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, isMain: isInMain, visited: visited)
                 childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints { make in
-                    if previous == nil {
+                    if  previous == nil {
                         make.bottom.equalTo(childrenView)
                     } else {
                         make.bottom.equalTo(previous!.snp.top)
@@ -122,7 +122,7 @@ class ZoneWidget: ZView {
                     }
 
                     make.left.equalTo(childrenView)
-                    make.right.lessThanOrEqualTo(childrenView)
+                    make.right.equalTo(childrenView) // lessThanOrEqualTo
                 }
                 
                 previous = childWidget
@@ -150,8 +150,7 @@ class ZoneWidget: ZView {
         revealDot.innerDot?.snp.removeConstraints()
         revealDot.setupForWidget(self, asReveal: true)
         revealDot.innerDot?.snp.makeConstraints { make in
-            make.left.equalTo(textWidget.snp.right).offset(-1.0)
-            make.right.lessThanOrEqualToSuperview().offset(-1.0)
+            make.left.equalTo(textWidget.snp.right).offset(3.0)
             make.centerY.equalTo(textWidget).offset(verticalTextOffset)
         }
     }
@@ -179,7 +178,7 @@ class ZoneWidget: ZView {
 
         childrenView.snp.removeConstraints()
         childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let widthOffset = gDotWidth + Double(gGenericOffset.height) * 1.2 - 5.0
+            let widthOffset = gDotWidth + Double(gGenericOffset.height) * 1.2
             let       ratio = isInMain ? 1.0 : kReductionRatio / 3.0
 
             make.left.equalTo(textWidget.snp.right).offset(widthOffset * Double(ratio))
@@ -467,11 +466,10 @@ class ZoneWidget: ZView {
         let          delta = height / 8.0
         let            dot = revealDot.innerDot
         let          inset = (height + 32.0) / -2.0
-        let hiddenDotDelta = dot?.toggleDotIsVisible ?? true ? CGFloat(0.0) : dot!.bounds.size.width + 3.0
+        let hiddenDotDelta = dot?.revealDotIsVisible ?? true ? CGFloat(0.0) : dot!.bounds.size.width + 3.0
         var           rect = textWidget.frame.insetBy(dx: inset * ratio - delta, dy: -0.5 - delta)
-        let         shrink = -0.5 + (height / 6.0)
-        rect.size .height += -0.5 + gHighlightHeightOffset // + (delta / 9.5)
-        rect.size .height += isInMain ? 0.0 : 1.0
+        let         shrink =  3.0 + (height / 6.0)
+        rect.size .height += -0.5 + gHighlightHeightOffset + (isInMain ? 0.0 : 1.0)
         rect.size  .width += shrink - hiddenDotDelta
         let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
         let          color = widgetZone?.color
@@ -524,7 +522,7 @@ class ZoneWidget: ZView {
             let        isGrabbed = zone.isGrabbed
             textWidget.textColor = isGrabbed ? zone.grabbedTextColor : ZColor.black
 
-            if gMathewStyleUI {
+            if  gMathewStyleUI {
                 addBorder(thickness: CGFloat(gLineThickness), radius: CGFloat(50.0) / CGFloat(zone.level + 1), color: zone.color.cgColor)
             }
 
@@ -533,17 +531,15 @@ class ZoneWidget: ZView {
             }
 
             if zone.showChildren {
-                if  childrenPass || gIsDragging || gEditorView?.rubberbandRect != nil {
-                    if !gMathewStyleUI {
-                        for child in childrenWidgets {
-                            drawLine(to: child)
-                        }
-                    }
-                } else {
+                if  !childrenPass && !gIsDragging && gEditorView?.rubberbandRect == nil {
                     FOREGROUND {
                         self.childrenPass = true
 
                         self.setNeedsDisplay()
+                    }
+                } else if !gMathewStyleUI {
+                    for child in childrenWidgets {
+                        drawLine(to: child)
                     }
                 }
             }

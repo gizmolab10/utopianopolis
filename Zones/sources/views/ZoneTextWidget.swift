@@ -74,7 +74,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 let textWidth = text!.widthForFont(preferredFont)
                 let  hideText = widgetZone?.onlyShowRevealDot ?? true
                 let    height = gGenericOffset.height
-                let     width = hideText ? 0.0 : textWidth + 5.0
+                let     width = hideText ? 0.0 : textWidth + 1.0
 
                 make.centerY.equalTo(view).offset(-verticalTextOffset)
                 make   .left.equalTo(view).offset(gGenericOffset.width + 4.0)

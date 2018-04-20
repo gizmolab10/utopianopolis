@@ -21,7 +21,7 @@ class ZTravelManager: NSObject {
     var currentIndex = -1
     var   priorIndex = -1
     var     topIndex : Int  { return travelStack.count - 1 }
-    var      notHere : Bool { return currentIndex < 0 || gHere != travelStack[currentIndex] }
+    var       atHere : Bool { return currentIndex >= 0 && gHere == travelStack[currentIndex] }
 
 
     var isInStack : Int? {
@@ -45,7 +45,7 @@ class ZTravelManager: NSObject {
     func pushHere() {
         var newIndex  = currentIndex + 1
 
-        if topIndex  < 0 || notHere {
+        if topIndex  < 0 || !atHere {
             if  let index = isInStack {
                 newIndex  = index   // prevent duplicates in stack
             } else if  topIndex == currentIndex {
@@ -66,13 +66,15 @@ class ZTravelManager: NSObject {
     func goBack(extreme: Bool = false) {
         if  let    index = isInStack {
             currentIndex = index
-        } else if notHere {
+        } else if !atHere {
             pushHere()
         }
 
-        if extreme {
+        if currentIndex <= 0 {
+            currentIndex = topIndex
+        } else if extreme {
             currentIndex = 0
-        } else if currentIndex > 0 && (currentIndex == topIndex || !notHere) {
+        } else if currentIndex == topIndex || atHere {
             currentIndex -= 1
         }
 
@@ -83,11 +85,13 @@ class ZTravelManager: NSObject {
     func goForward(extreme: Bool = false) {
         if  let    index = isInStack {
             currentIndex = index
-        } else if  notHere {
+        } else if !atHere {
             pushHere()
         }
 
-        if  extreme {
+        if  currentIndex == topIndex {
+            currentIndex  = 0
+        } else if  extreme {
             currentIndex = topIndex
         } else if  currentIndex < topIndex {
             currentIndex += 1
@@ -98,7 +102,7 @@ class ZTravelManager: NSObject {
 
 
     func go() {
-        if  0          <= currentIndex, (notHere ||
+        if  0          <= currentIndex, (!atHere ||
             priorIndex != currentIndex) {
             priorIndex  = currentIndex
             let dbID    = gHere.databaseID

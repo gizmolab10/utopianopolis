@@ -58,7 +58,7 @@ func toggleDatabaseID() {
 var gExpandedZones : [String] {
     get {
         if  gExpanded == nil {
-            let  value = getPreferenceString(for: kExpandedZones)
+            let  value = getPreferencesString(for: kExpandedZones, defaultString: "")
             gExpanded  = value?.components(separatedBy: kSeparator)
         }
 

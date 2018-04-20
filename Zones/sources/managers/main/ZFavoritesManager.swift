@@ -31,7 +31,7 @@ class ZFavoritesManager: NSObject {
     let databaseRootFavorites = Zone(record: nil, databaseID: nil)
     var      workingFavorites = [Zone] ()
     var        favoritesIndex : Int { return indexOf(currentFavoriteID) ?? 0 }
-    var                 count : Int { return gMineCloudManager.favoritesZone?.count ?? 0 }
+    var                 count : Int { return gFavoritesRoot?.count ?? 0 }
 
 
     var hasTrash: Bool {
@@ -200,7 +200,6 @@ class ZFavoritesManager: NSObject {
 
             if  let root = mine.favoritesZone {
                 root.needProgeny()
-                root.revealChildren()
             }
 
             onCompletion?(0)
@@ -245,7 +244,7 @@ class ZFavoritesManager: NSObject {
     func updateWorkingFavorites() {
         workingFavorites.removeAll()
 
-        gMineCloudManager.favoritesZone?.traverseAllProgeny { iChild in
+        gFavoritesRoot?.traverseAllProgeny { iChild in
             if iChild.isBookmark {
                 self.workingFavorites.append(iChild)
             }
@@ -344,7 +343,7 @@ class ZFavoritesManager: NSObject {
             trash    .zoneLink = kTrashLink // convert into a bookmark
             trash.directAccess = .eChildrenWritable
 
-            gMineCloudManager.favoritesZone?.addAndReorderChild(trash)
+            gFavoritesRoot?.addAndReorderChild(trash)
             trash.clearAllStates()
             trash.markNotFetched()
         }
@@ -359,7 +358,7 @@ class ZFavoritesManager: NSObject {
             lost?    .zoneLink = kLostAndFoundLink // convert into a bookmark
             lost?.directAccess = .eChildrenWritable
 
-            gMineCloudManager.favoritesZone?.addAndReorderChild(lost!)
+            gFavoritesRoot?.addAndReorderChild(lost!)
             lost?.clearAllStates()
             lost?.markNotFetched()
         }
@@ -373,7 +372,7 @@ class ZFavoritesManager: NSObject {
                 let      favorite = template.deepCopy()
                 favorite.zoneName = favorite.bookmarkTarget?.zoneName
 
-                gMineCloudManager.favoritesZone?.addChildAndRespectOrder(favorite)
+                gFavoritesRoot?.addChildAndRespectOrder(favorite)
                 favorite.clearAllStates() // erase side-effect of add
                 favorite.markNotFetched()
             }
@@ -390,8 +389,15 @@ class ZFavoritesManager: NSObject {
             (gHere == target || !hereSpawnedTargetOfCurrentFavorite) {
             currentFavorite = favorite
 
-            favorite.traverseAllAncestors { iAncestor in
-                iAncestor.revealChildren()
+            if  gFavoritesRoot?.showChildren ?? false {
+
+                //////////////////////////////////////////////////////////////////
+                // not reveal current favorite if user has hidden all favorites //
+                //////////////////////////////////////////////////////////////////
+
+                favorite.traverseAllAncestors { iAncestor in
+                    iAncestor.revealChildren()
+                }
             }
         }
     }
@@ -464,9 +470,10 @@ class ZFavoritesManager: NSObject {
 
                 return true
             } else if let dbID = bookmark.crossLink?.databaseID {
+                gTravelManager.pushHere()
+
                 gDatabaseID = dbID
 
-                gTravelManager.pushHere()
                 gTravelManager.travel {
                     gHere.grab()
                     atArrival()
@@ -513,7 +520,7 @@ class ZFavoritesManager: NSObject {
 
 
     @discardableResult func createBookmark(for iZone: Zone, style: ZFavoriteStyle) -> Zone {
-        var parent: Zone = iZone.parentZone ?? gMineCloudManager.favoritesZone!
+        var parent: Zone = iZone.parentZone ?? gFavoritesRoot!
         let   isBookmark = iZone.isBookmark
         let     isNormal = style == .normal
 
@@ -521,7 +528,7 @@ class ZFavoritesManager: NSObject {
             let basis: ZRecord = isBookmark ? iZone.crossLink! : iZone
 
             if  let recordName = basis.recordName {
-                parent         = gMineCloudManager.favoritesZone!
+                parent         = gFavoritesRoot!
 
                 for bookmark in workingFavorites {
                     if recordName == bookmark.linkName, !bookmark.bookmarkTarget!.isRoot {
