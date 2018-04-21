@@ -63,7 +63,6 @@ class ZEditingManager: NSObject {
         case Always
         case Parent
         case Travel
-        case SelectAll
 
         case Redo
         case Paste
@@ -220,7 +219,6 @@ class ZEditingManager: NSObject {
         if  alterers.contains(key) {             return .Alter
         } else {
             switch key {
-            case "a":                            return .SelectAll
             case "=":                            return .Travel
             case "m":                            return .Cloud
             case "z":                            return .Undo
@@ -265,7 +263,6 @@ class ZEditingManager: NSObject {
             case .UseGrabs:  valid = wGrabs > 0 && write
             case .Multiple:  valid =  grabs > 1
             case .Sort:      valid = (shown     && sort) || (grabs > 1 && parent)
-            case .SelectAll: valid =  shown
             case .Undo:      valid = undo.canUndo
             case .Redo:      valid = undo.canRedo
             case .Travel:    valid = mover.canTravel
@@ -509,23 +506,35 @@ class ZEditingManager: NSObject {
 
 
     func selectAll(progeny: Bool = false) {
-        let zone = gSelectionManager.currentMoveable
+        var zone = gSelectionManager.currentMoveable
 
-        if  zone.showChildren && zone.count != 0 {
+        if progeny {
             gSelectionManager.clearGrab()
 
-            if progeny {
-                zone.traverseAllProgeny { iChild in
-                    iChild.addToGrab()
-                }
-            } else {
-                for child in zone.children {
-                    child.addToGrab()
+            zone.traverseAllProgeny { iChild in
+                iChild.addToGrab()
+            }
+        } else {
+            if  zone.count == 0 {
+                if  let parent = zone.parentZone {
+                    zone       = parent
+                } else {
+                    return // selection has not changed
                 }
             }
 
-            redrawSyncRedraw()
+            if  zone.showChildren {
+                gSelectionManager.clearGrab()
+
+                for child in zone.children {
+                    child.addToGrab()
+                }
+            } else {
+                return // selection does not show its children
+            }
         }
+
+        signalFor(nil, regarding: .redraw)
     }
 
 
@@ -1203,12 +1212,12 @@ class ZEditingManager: NSObject {
     // MARK:-
 
 
-    func moveOut(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
+    func moveOut(selectionOnly: Bool = true, extreme: Bool = false, force: Bool = false, onCompletion: Closure?) {
         let zone: Zone = gSelectionManager.firstGrab
         let parentZone = zone.parentZone
 
         if zone.isRoot || zone.isTrash || parentZone == gFavoritesRoot {
-            onCompletion?() // avoid disasters
+            onCompletion?() // avoid the ridiculous
         } else if selectionOnly {
 
             ////////////////////
@@ -1261,31 +1270,45 @@ class ZEditingManager: NSObject {
 
             let grandParentZone = p.parentZone
 
-            let moveOutToHere = { (iHere: Zone?) in
-                if  let here = iHere {
-                    gHere = here
-                }
+            if zone == gHere && !force {
+                let grandParentName = grandParentZone?.zoneName
+                let   parenthetical = grandParentName == nil ? "" : " (\(grandParentName!))"
 
-                self.moveOut(to: gHere, onCompletion: onCompletion)
-            }
+                // present an alert asking if user really wants to move here leftward
 
-            if extreme {
-                if gHere.isRoot {
-                    moveOut(to: gHere, onCompletion: onCompletion)
-                } else {
-                    revealZonesToRoot(from: zone) {
-                        moveOutToHere(gRoot)
+                gAlertManager.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? "")\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { iStatus in
+                    if iStatus == .eStatusYes {
+                        self.moveOut(selectionOnly: selectionOnly, extreme: extreme, force: true, onCompletion: onCompletion)
                     }
                 }
-            } else if grandParentZone != nil {
-                revealParentAndSiblingsOf(p) { iCloudCalled in
-                    if  grandParentZone!.spawnedBy(gHere) {
-                        self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
+            } else {
+
+                let moveOutToHere = { (iHere: Zone?) in
+                    if  let here = iHere {
+                        gHere = here
+                    }
+
+                    self.moveOut(to: gHere, onCompletion: onCompletion)
+                }
+
+                if extreme {
+                    if gHere.isRoot {
+                        moveOut(to: gHere, onCompletion: onCompletion)
                     } else {
-                        moveOutToHere(grandParentZone!)
+                        revealZonesToRoot(from: zone) {
+                            moveOutToHere(gRoot)
+                        }
                     }
-                }
-            } // else no available move
+                } else if grandParentZone != nil {
+                    revealParentAndSiblingsOf(p) { iCloudCalled in
+                        if  grandParentZone!.spawnedBy(gHere) {
+                            self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
+                        } else {
+                            moveOutToHere(grandParentZone!)
+                        }
+                    }
+                } // else no available move
+            }
         }
     }
 

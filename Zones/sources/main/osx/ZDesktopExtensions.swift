@@ -8,6 +8,7 @@
 
 
 import Foundation
+import AppKit
 import Cocoa
 
 
@@ -316,9 +317,12 @@ extension NSTextField {
 
 extension ZAlert {
 
-    func showAlert(closure: AlertStateClosure? = nil) {
-        runModal()
-        closure?(.eYes)
+    func showAlert(closure: AlertStatusClosure? = nil) {
+        let             response = runModal()
+        let              success = response == NSAlertFirstButtonReturn
+        let status: ZAlertStatus = success ? .eStatusYes : .eStatusNo
+
+        closure?(status)
     }
 
 }

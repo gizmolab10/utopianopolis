@@ -23,17 +23,17 @@ enum ZAlertType: Int {
 }
 
 
-enum ZAlertState: Int {
-    case eShown
-    case eShow
-    case eYes
-    case eNo
+enum ZAlertStatus: Int {
+    case eStatusShown
+    case eStatusShow
+    case eStatusYes
+    case eStatusNo
 }
 
 
-let           gAlertManager = ZAlertManager()
-typealias      AlertClosure = (ZAlert?, ZAlertState) -> (Void)
-typealias AlertStateClosure = (ZAlertState) -> (Void)
+let            gAlertManager = ZAlertManager()
+typealias       AlertClosure = (ZAlert?, ZAlertStatus) -> (Void)
+typealias AlertStatusClosure = (ZAlertStatus) -> (Void)
 
 
 class ZAlertManager : NSObject {
@@ -73,7 +73,7 @@ class ZAlertManager : NSObject {
         if  let ckError: CKError = iError as? CKError {
             switch ckError.code {
 //          case .serviceUnavailable:
-            case .notAuthenticated: closure?(true) // was alertWith("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?", closure)
+            case .notAuthenticated: closure?(true) // was showAlert("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?", closure)
             case .networkFailure:   gHasInternet = false; closure?(true) // was alertNoInternet
             default:
                 print(ckError.localizedDescription + text)
@@ -101,10 +101,10 @@ class ZAlertManager : NSObject {
 
         alert("To gain full use of this app,", message, "Click here to begin") { iAlert, iState in
             switch iState {
-            case .eShow:
+            case .eStatusShow:
                 iAlert?.showAlert { iResponse in
                     switch iResponse {
-                    case .eYes:
+                    case .eStatusYes:
                         self.openSystemPreferences()
                         onCompletion()
                     default: break
@@ -123,10 +123,10 @@ class ZAlertManager : NSObject {
 
         alert("To gain full use of this app,", message, "Click here to begin") { iAlert, iState in
                 switch iState {
-                case .eShow:
+                case .eStatusShow:
                     iAlert?.showAlert { iResponse in
                         switch iResponse {
-                        case .eYes:
+                        case .eStatusYes:
                             self.openSystemPreferences()
                             onCompletion()
                         default: break
@@ -153,16 +153,16 @@ class ZAlertManager : NSObject {
     }
 
 
-    func alertWith(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ closure: AnyClosure? = nil) {
-        alert(iMessage, iExplain, iOkayTitle) { iAlert, iState in
+    func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ closure: AlertStatusClosure? = nil) {
+        alert(iMessage, iExplain, iOkayTitle, iCancelTitle) { iAlert, iState in
             switch iState {
-            case .eShow:
+            case .eStatusShow:
                 iAlert?.showAlert { iResponse in
                     let window = iAlert?.window
 
                     NSApp.abortModal()
                     window?.orderOut(iAlert)
-                    closure?(iResponse.rawValue)
+                    closure?(iResponse)
                 }
             default:
                 closure?(iState)
@@ -171,7 +171,7 @@ class ZAlertManager : NSObject {
     }
 
 
-    func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ closure: AlertClosure? = nil) {
+    func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ closure: AlertClosure? = nil) {
         FOREGROUND(canBeDirect: true) {
             #if os(OSX)
                 let             a = ZAlert()
@@ -179,6 +179,11 @@ class ZAlertManager : NSObject {
                 a.informativeText = iExplain ?? ""
 
                 a.addButton(withTitle: iOkayTitle)
+
+            if  let cancel = iCancelTitle {
+                a.addButton(withTitle: cancel)
+            }
+
             #else
                 let             a = ZAlert(title: iMessage, message: iExplain, preferredStyle: .alert)
                 let          okay = UIAlertAction(title: iOkayTitle, style: .default) { iAction in
@@ -188,7 +193,7 @@ class ZAlertManager : NSObject {
                 a.addAction(okay)
             #endif
 
-            closure?(a, .eShow)
+            closure?(a, .eStatusShow)
         }
     }
 }

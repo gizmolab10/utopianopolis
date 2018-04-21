@@ -453,7 +453,7 @@ extension Zone {
 
 extension ZAlert {
 
-    func showAlert(closure: AlertStateClosure? = nil) {
+    func showAlert(closure: AlertStatusClosure? = nil) {
         modalPresentationStyle = .popover
 
         gControllersManager.currentController?.present(self, animated: true) {

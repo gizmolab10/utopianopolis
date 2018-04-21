@@ -180,7 +180,7 @@ class ZOperationsManager: NSObject {
         setupCloudTimer()
 
         if queue.operationCount > 10 {
-            gAlertManager.alertWith("overloading queue", "programmer error", "send an email to sand@gizmolab.com") { iObject in
+            gAlertManager.showAlert("overloading queue", "programmer error", "send an email to sand@gizmolab.com") { iObject in
                // onCompletion()
             }
         }
