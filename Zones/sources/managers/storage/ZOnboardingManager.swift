@@ -47,29 +47,22 @@ class ZOnboardingManager : ZOperationsManager {
 
     override func invokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
         switch operationID {
-        case .observeUbiquity:  observeUbiquity();  onCompletion(true)      // true means op is handled
-        case .accountStatus:    accountStatus     { onCompletion(true) }
-        case .fetchUserID:      fetchUserID       { onCompletion(true) }
-        case .internet:         internet          { onCompletion(true) }
-        case .ubiquity:         ubiquity          { onCompletion(true) }
-        case .fetchUserRecord:  fetchUserRecord   { onCompletion(true) }
-        default:                                    onCompletion(false)     // false means op is not handled, so super should proceed
+        case .checkAvailability: checkAvailability { onCompletion(true) }    // true means op is handled
+        case .fetchUserRecord:   fetchUserRecord   { onCompletion(true) }
+        case .fetchUserID:       fetchUserID       { onCompletion(true) }
+        case .ubiquity:          ubiquity          { onCompletion(true) }
+        case .observeUbiquity:   observeUbiquity();  onCompletion(true)
+        case .internet:          internet();         onCompletion(true)
+        default:                                     onCompletion(false)     // false means op is not handled, so super should proceed
         }
     }
 
 
-    func internet(_ onCompletion: @escaping Closure) {
-        checkCloudStatus()
-        onCompletion()
-    }
+    func observeUbiquity() { NotificationCenter.default.addObserver(self, selector: #selector(ZOnboardingManager.completeOnboarding), name: .NSUbiquityIdentityDidChange, object: nil) }
+    func internet()        { gHasInternet = isConnectedToNetwork }
 
 
-    func observeUbiquity() {
-        NotificationCenter.default.addObserver(self, selector: #selector(ZOnboardingManager.completeOnboarding), name: .NSUbiquityIdentityDidChange, object: nil)
-    }
-
-
-    func accountStatus(_ onCompletion: @escaping Closure) {
+    func checkAvailability(_ onCompletion: @escaping Closure) {
         gContainer.accountStatus { (iStatus, iError) in
             if  iStatus            == .available {
                 gCloudAccountStatus = .available
@@ -84,8 +77,22 @@ class ZOnboardingManager : ZOperationsManager {
     }
 
 
+    func ubiquity(_ onCompletion: @escaping Closure) {
+        if FileManager.default.ubiquityIdentityToken == nil {
+
+            //////////////////////////
+            // ONBOARDING CONTINUES //
+            //////////////////////////
+
+            checkCloudStatus()
+        }
+
+        onCompletion()
+    }
+
+
     func fetchUserID(_ onCompletion: @escaping Closure) {
-        if gCloudAccountStatus != .available {
+        if  gCloudAccountStatus != .available {
             onCompletion()
         } else {
             gContainer.fetchUserRecordID() { iRecordID, iError in
@@ -108,20 +115,6 @@ class ZOnboardingManager : ZOperationsManager {
                 }
             }
         }
-    }
-
-
-    func ubiquity(_ onCompletion: @escaping Closure) {
-        if FileManager.default.ubiquityIdentityToken == nil {
-
-            //////////////////////////
-            // ONBOARDING CONTINUES //
-            //////////////////////////
-
-            checkCloudStatus()
-        }
-
-        onCompletion()
     }
 
 

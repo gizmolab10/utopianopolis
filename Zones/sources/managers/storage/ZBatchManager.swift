@@ -34,7 +34,7 @@ enum ZBatchID: Int {
 
     var shouldIgnore: Bool {
         switch self {
-        case .save:                                                           return gCloudAccountStatus != .active
+        case .save:                                                           return gCloudAccountIsActive
         case .sync, .startUp, .refetch, .finishUp, .newAppleID, .resumeCloud: return false
         default:                                                              return true
         }
@@ -90,7 +90,7 @@ class ZBatchManager: ZOnboardingManager {
             case .emptyTrash:  return [.emptyTrash                                  ]
             case .resumeCloud: return [.fetchNew,  .fetchAll, .save,          .write]
             case .refetch:     return [            .fetchAll, .save,          .write]
-            case .newAppleID:  return operationIDs(from: .accountStatus,   to: .subscribe, skipping: [.read])
+            case .newAppleID:  return operationIDs(from: .checkAvailability,   to: .subscribe, skipping: [.read])
             case .startUp:     return operationIDs(from: .observeUbiquity, to: .fetchAll)
             case .finishUp:    return operationIDs(from: .save,            to: .subscribe)
             case .userTest:    return operationIDs(from: .observeUbiquity, to: .fetchUserRecord)
@@ -283,14 +283,13 @@ class ZBatchManager: ZOnboardingManager {
             if  iCompleted {
                 onCompletion(true)
             } else {
-                let                mineIsActive = gCloudAccountStatus == .active
                 let              requiresActive = [.save, .traits                      ].contains(operationID)
                 let               alwaysForBoth = [.here, .read, .roots, .write        ].contains(operationID)
                 let               forMineIDOnly = [.bookmarks, .subscribe, .unsubscribe].contains(operationID)
                 let                      isMine = restoreToID == .mineID
-                let               onlyCurrentID = (!mineIsActive && !alwaysForBoth) || operationID == .completion
+                let               onlyCurrentID = (!gCloudAccountIsActive && !alwaysForBoth) || operationID == .completion
                 let  databaseIDs: [ZDatabaseID] = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
-                let                      isNoop = !mineIsActive && (requiresActive || (onlyCurrentID && isMine && operationID != .favorites))
+                let                      isNoop = !gCloudAccountIsActive && (requiresActive || (onlyCurrentID && isMine && operationID != .favorites))
                 var invokeForIndex: IntClosure? = nil                // declare closure first, so compiler will let it recurse
                 invokeForIndex                  = { index in
 

@@ -266,7 +266,7 @@ class ZEditingManager: NSObject {
             case .Undo:      valid = undo.canUndo
             case .Redo:      valid = undo.canRedo
             case .Travel:    valid = mover.canTravel
-            case .Cloud:     valid = gHasInternet && gCloudAccountStatus == .active
+            case .Cloud:     valid = gHasInternet && gCloudAccountIsActive
             case .Files:     valid = false
             case .Always:    valid = true
             }
@@ -1131,8 +1131,8 @@ class ZEditingManager: NSObject {
                     }
                 }
             } else {
-                let destructionIsAllowed = gCloudAccountStatus == .active || zone.databaseID != .mineID // allowed
-                let    eventuallyDestroy = permanently                    || zone.isInTrash
+                let destructionIsAllowed = gCloudAccountIsActive || zone.databaseID != .mineID // allowed
+                let    eventuallyDestroy = permanently           || zone.isInTrash
                 let           destroyNow = destructionIsAllowed && eventuallyDestroy && gHasInternet
 
                 zone.addToPaste()

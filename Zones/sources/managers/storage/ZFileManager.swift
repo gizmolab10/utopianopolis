@@ -227,7 +227,7 @@ class ZFileManager: NSObject {
             let  genericExists = manager.fileExists(atPath:genericFileURL.path)
             let   backupExists = manager.fileExists(atPath:     backupURL.path)
             let     isEveryone = index == .everyoneIndex
-            let  canUseGeneric = isEveryone || gCloudAccountStatus != .active
+            let  canUseGeneric = isEveryone || !gCloudAccountIsActive
             path               = genericFileURL.path
 
             do {

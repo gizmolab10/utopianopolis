@@ -19,10 +19,10 @@ enum ZOperationID: Int {
     // onboard
 
     case observeUbiquity
-    case accountStatus      // vs no account
-    case fetchUserID
+    case checkAvailability      // vs no account
     case internet
     case ubiquity
+    case fetchUserID
     case fetchUserRecord
 
     // startup
@@ -58,14 +58,12 @@ enum ZOperationID: Int {
     case merge
     case none               // default operation
 
-    var isLocal: Bool {
-        switch self {
-        case .here, .read, .write, .roots, .found, .internet, .ubiquity, .favorites, .completion, .fetchUserID, .accountStatus, .observeUbiquity: return true
-        default:                                                                                                                                  return false
-        }
-    }
+    var isLocal: Bool { return localOperations.contains(self) }
 
 }
+
+
+let localOperations: [ZOperationID] = [.here, .read, .write, .roots, .found, .internet, .ubiquity, .favorites, .completion, .fetchUserID, .checkAvailability, .observeUbiquity]
 
 
 var gDebugTimerCount          = 0
@@ -74,6 +72,7 @@ var gCloudTimer:       Timer? = nil
 var gCloudFire: TimerClosure? = nil
 var gHasInternet              = true
 var gCloudAccountStatus       = ZCloudAccountStatus.begin
+var gCloudAccountIsActive     = gCloudAccountStatus == .active
 var recentCloudAccountStatus  = gCloudAccountStatus
 
 
@@ -151,11 +150,10 @@ class ZOperationsManager: NSObject {
                         /////////////////////////////////////////////////
 
                         if  gHasInternet && gIsReadyToShowUI {
-                            let      hasActiveStatus = gCloudAccountStatus == .active
-                            let identifier: ZBatchID = hasActiveStatus ? .resumeCloud : .newAppleID
+                            let identifier: ZBatchID = gCloudAccountIsActive ? .resumeCloud : .newAppleID
 
                             gBatchManager.batch(identifier) { iResult in
-                                if  hasActiveStatus {
+                                if  gCloudAccountIsActive {
                                     gFavoritesManager.updateFavorites()
                                 }
 
@@ -195,7 +193,7 @@ class ZOperationsManager: NSObject {
                 // ignore operations that are not local when have no internet //
                 ////////////////////////////////////////////////////////////////
 
-                if  operationID.isLocal || gHasInternet {
+                if  operationID.isLocal || gCloudAccountIsActive {
 
                     //////////////////////////////////////////////////////////////////
                     // susend queue until operation function calls its onCompletion //
