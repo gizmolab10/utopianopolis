@@ -48,8 +48,8 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         switch key {
         case "\r":
             switch state {
-            case .ready:        exit();         return nil
-            case .input: if getInput() == nil { return nil }
+            case .ready: endSearch();               return nil
+            case .input: if searchBoxText == nil { return nil }
             default:
                 break
             }
@@ -60,7 +60,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     }
 
 
-    func exit() {
+    func endSearch() {
         self.searchBox?.text = ""
 
         searchBox?.resignFirstResponder()
@@ -68,11 +68,11 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     }
 
 
-    func getInput() -> String? {
+    var searchBoxText: String? {
         let searchString = (searchBox?.text)!
 
         if ["", " ", "  "].contains(searchString) {
-            exit()
+            endSearch()
 
             return nil
         }
@@ -84,7 +84,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     #if os(OSX)
 
     func control(_ control: ZControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
-        if  gWorkMode   == .searchMode, let searchString = getInput() {
+        if  gWorkMode   == .searchMode, let searchString = searchBoxText {
             var combined = [ZDatabaseID: [Any]] ()
 
             for dbID in kAllDatabaseIDs {
@@ -118,7 +118,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         let handledIt = commandSelector == Selector(("noop:"))
 
         if  handledIt { // && gSearchManager.state != .browse {
-            exit()
+            endSearch()
         }
 
         return handledIt

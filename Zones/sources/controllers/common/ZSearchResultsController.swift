@@ -254,7 +254,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             }
         } else if    key == "\r", // N.B. test key first since getInput has a possible side-effect of exiting search
             let        s  = searchController,
-            s.getInput() == nil {
+            s.searchBoxText == nil {
             clear()
             resolve()
 

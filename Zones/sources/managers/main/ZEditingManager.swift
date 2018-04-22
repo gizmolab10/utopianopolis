@@ -944,8 +944,7 @@ class ZEditingManager: NSObject {
             let childName = t.substring(with: range)
             w.text        = t.stringBySmartReplacing(range, with: "")
 
-            gTextManager.clearEdit()
-            gTextManager.fullResign()
+            gTextManager.stopCurrentEdit()
             gSelectionManager.deselectGrabs()
             z.revealChildren()
             z.needChildren()
@@ -1274,7 +1273,9 @@ class ZEditingManager: NSObject {
                 let grandParentName = grandParentZone?.zoneName
                 let   parenthetical = grandParentName == nil ? "" : " (\(grandParentName!))"
 
-                // present an alert asking if user really wants to move here leftward
+                ////////////////////////////////////////////////////////////////////////
+                // present an alert asking if user really wants to move here leftward //
+                ////////////////////////////////////////////////////////////////////////
 
                 gAlertManager.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? "")\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { iStatus in
                     if iStatus == .eStatusYes {
@@ -1378,7 +1379,7 @@ class ZEditingManager: NSObject {
                 } else {
                     movedZone.needDestroy()
 
-                    movedZone = movedZone.deepCopy()
+                    movedZone = movedZone.deepCopy
 
                     gBatchManager.sync { iSame in
                         grabAndTravel()
@@ -1494,7 +1495,7 @@ class ZEditingManager: NSObject {
 
         for zone in zones {
             if  let index = zone.siblingIndex {
-                duplicates.append(zone.deepCopy())
+                duplicates.append(zone.deepCopy)
                 indices.append(index)
             }
         }
@@ -1588,7 +1589,7 @@ class ZEditingManager: NSObject {
                 gSelectionManager.deselectGrabs()
 
                 for (pastable, (parent, index)) in pastables {
-                    let  pasteMe = pastable.isInTrash ? pastable : pastable.deepCopy() // for zones not in trash, paste a deep copy
+                    let  pasteMe = pastable.isInTrash ? pastable : pastable.deepCopy // for zones not in trash, paste a deep copy
                     let insertAt = index  != nil ? index : gInsertionsFollow ? nil : 0
                     let     into = parent != nil ? honorFormerParents ? parent! : zone : zone
 
@@ -1854,7 +1855,7 @@ class ZEditingManager: NSObject {
                                     iChild.needDestroy()
                                 }
 
-                                movable = movable.deepCopy()
+                                movable = movable.deepCopy
                             }
                         }
 

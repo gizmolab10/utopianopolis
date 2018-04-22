@@ -24,21 +24,20 @@ class ZTravelManager: NSObject {
     var       atHere : Bool { return currentIndex >= 0 && gHere == travelStack[currentIndex] }
 
 
+    // MARK:- travel stack
+    // MARK:-
+
+
     var isInStack : Int? {
-        var found: Int? = nil
-        let        here = gHere
+        let     here  = gHere
 
         for (index, zone) in travelStack.enumerated() {
-            if  zone == here {
-                if  index == currentIndex {
-                    return index
-                }
-
-                found = index
+            if  here == zone {
+                return index
             }
         }
 
-        return found
+        return nil
     }
 
 
@@ -156,15 +155,51 @@ class ZTravelManager: NSObject {
     }
 
 
-    func travelThrough(_ bookmark: Zone, atArrival: @escaping SignalClosure) {
-        if  let      crossLink = bookmark.crossLink,
+    @discardableResult func travel(into iBookmark: Zone?, _ atArrival: @escaping Closure) -> Bool {
+        if  let bookmark = iBookmark, bookmark.isBookmark {
+            if  bookmark.isInFavorites {
+                let targetParent = bookmark.bookmarkTarget?.parentZone
+                let       parent = bookmark.parentZone
+
+                targetParent?.revealChildren()
+                targetParent?.needChildren()
+                parent?.revealChildren()
+                parent?.needChildren()
+                travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
+                    gFavoritesManager.updateFavorites()
+                    atArrival()
+                }
+
+                return true
+            } else if let dbID = bookmark.crossLink?.databaseID {
+                pushHere()
+
+                gDatabaseID = dbID
+
+                travel {
+                    gHere.grab()
+                    atArrival()
+                }
+
+                return true
+            }
+
+            performance("oops!")
+        }
+
+        return false
+    }
+
+
+    func travelThrough(_ iBookmark: Zone, atArrival: @escaping SignalClosure) {
+        if  let      crossLink = iBookmark.crossLink,
             let           dbID = crossLink.databaseID,
             let         record = crossLink.record {
             let recordIDOfLink = record.recordID
             var   there: Zone? = nil
 
-            if bookmark.isFavorite {
-                gFavoritesManager.currentFavorite = bookmark
+            if iBookmark.isFavorite {
+                gFavoritesManager.currentFavorite = iBookmark
             }
 
             pushHere()
@@ -176,9 +211,9 @@ class ZTravelManager: NSObject {
                 // TRAVEL TO A DIFFERENT GRAPH //
                 /////////////////////////////////
 
-                if bookmark.bookmarkTarget!.isFetched { // e.g., default root favorite
+                if iBookmark.bookmarkTarget!.isFetched { // e.g., default root favorite
                     travel {
-                        gHere = bookmark.bookmarkTarget!
+                        gHere = iBookmark.bookmarkTarget!
 
                         gHere.prepareForArrival()
                         atArrival(gHere, .redraw)
@@ -209,7 +244,7 @@ class ZTravelManager: NSObject {
 
                 UNDO(self) { iUndoSelf in
                     self.UNDO(self) { iRedoSelf in
-                        self.travelThrough(bookmark, atArrival: atArrival)
+                        self.travelThrough(iBookmark, atArrival: atArrival)
                     }
 
                     gHere = here

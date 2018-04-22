@@ -39,9 +39,10 @@ class Zone : ZRecord {
     var               _crossLink:      ZRecord?
     var                   _color:       ZColor?
     var                   _email:       String?
-    var                 children = [Zone] ()
+    var                 children =                [Zone] ()
     var                   traits = [ZTraitType : ZTrait] ()
     var                    count:          Int  { return children.count }
+    var            lowestExposed:          Int? { return exposed(upTo: highestExposed) }
     var              destroyZone:         Zone? { return cloudManager?.destroyZone }
     var                trashZone:         Zone? { return cloudManager?.trashZone }
     var                   widget:   ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
@@ -76,6 +77,32 @@ class Zone : ZRecord {
     var            isInFavorites:         Bool  { return root?.isRootOfFavorites    ?? false }
     var         isInLostAndFound:         Bool  { return root?.isRootOfLostAndFound ?? false }
     var     isRootOfLostAndFound:         Bool  { return recordName == kLostAndFoundName }
+    var           spawnedByAGrab:         Bool  { return spawnedByAny(of: gSelectionManager.currentGrabs) }
+    var               spawnCycle:         Bool  { return spawnedByAGrab || dropCycle }
+
+
+    var deepCopy: Zone {
+        let theCopy = Zone(databaseID: databaseID)
+
+        copy(into: theCopy)
+
+        theCopy.parentZone = nil
+
+        for child in children {
+            theCopy.addChild(child.deepCopy)
+        }
+
+        return theCopy
+    }
+
+
+    var dropCycle: Bool {
+        if  let target = bookmarkTarget, let dragged = gDraggedZone, (target == dragged || target.spawnedBy(dragged) || target.children.contains(dragged)) {
+            return true
+        }
+
+        return false
+    }
 
 
     var email: String? {
@@ -422,9 +449,6 @@ class Zone : ZRecord {
             }
         }
     }
-
-
-    var lowestExposed: Int? { return exposed(upTo: highestExposed) }
 
 
     var highestExposed: Int {
@@ -835,7 +859,6 @@ class Zone : ZRecord {
     }
 
 
-    func spawnedByAGrab() -> Bool { return spawnedByAny(of: gSelectionManager.currentGrabs) }
     func spawnedBy(_ iZone: Zone?) -> Bool { return iZone == nil ? false : spawnedByAny(of: [iZone!]) }
     func traverseAncestors(_ block: ZoneToStatusClosure) { safeTraverseAncestors(visited: [], block) }
 
@@ -947,21 +970,6 @@ class Zone : ZRecord {
         case cycle
         case found
         case none
-    }
-
-
-    func deepCopy() -> Zone {
-        let theCopy = Zone(databaseID: databaseID)
-
-        copy(into: theCopy)
-
-        theCopy.parentZone = nil
-
-        for child in children {
-            theCopy.addChild(child.deepCopy())
-        }
-
-        return theCopy
     }
 
 

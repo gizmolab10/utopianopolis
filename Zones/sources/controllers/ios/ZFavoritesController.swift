@@ -58,7 +58,7 @@ class ZFavoritesController : ZGenericController {
         let    index = iControl.numberOfSegments - iControl.selectedSegment - 1
         let favorite = favorites[index]
 
-        gFavoritesManager.travel(into: favorite) {
+        gTravelManager.travel(into: favorite) {
             gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .redraw, onCompletion: nil)
         }
     }

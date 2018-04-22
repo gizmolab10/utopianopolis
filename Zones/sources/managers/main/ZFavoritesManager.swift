@@ -369,7 +369,7 @@ class ZFavoritesManager: NSObject {
 
         for template in databaseRootFavorites.children {
             if  let          dbID = template.linkDatabaseID, !hasDatabaseIDs.contains(dbID) {
-                let      favorite = template.deepCopy()
+                let      favorite = template.deepCopy
                 favorite.zoneName = favorite.bookmarkTarget?.zoneName
 
                 gFavoritesRoot?.addChildAndRespectOrder(favorite)
@@ -435,7 +435,7 @@ class ZFavoritesManager: NSObject {
         bump         = { (iIndex: Int) in
             let zone = self.zoneAtIndex(iIndex)
 
-            if !self.travel(into: zone, atArrival) {
+            if !gTravelManager.travel(into: zone, atArrival) {
                 bump?(self.next(iIndex, forward))
             }
         }
@@ -446,43 +446,7 @@ class ZFavoritesManager: NSObject {
 
     @discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
         if  let favorite = currentFavorite {
-            return travel(into: favorite, atArrival)
-        }
-
-        return false
-    }
-
-
-    @discardableResult func travel(into iBookmark: Zone?, _ atArrival: @escaping Closure) -> Bool {
-        if  let bookmark = iBookmark, bookmark.isBookmark {
-            if  bookmark.isInFavorites {
-                let targetParent = bookmark.bookmarkTarget?.parentZone
-                let       parent = bookmark.parentZone
-
-                targetParent?.revealChildren()
-                targetParent?.needChildren()
-                parent?.revealChildren()
-                parent?.needChildren()
-                gTravelManager.travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
-                    self.updateFavorites()
-                    atArrival()
-                }
-
-                return true
-            } else if let dbID = bookmark.crossLink?.databaseID {
-                gTravelManager.pushHere()
-
-                gDatabaseID = dbID
-
-                gTravelManager.travel {
-                    gHere.grab()
-                    atArrival()
-                }
-
-                return true
-            }
-
-            performance("oops!")
+            return gTravelManager.travel(into: favorite, atArrival)
         }
 
         return false
@@ -541,7 +505,7 @@ class ZFavoritesManager: NSObject {
         }
 
         let           count = parent.count
-        var bookmark: Zone? = isBookmark ? iZone.deepCopy() : nil
+        var bookmark: Zone? = isBookmark ? iZone.deepCopy : nil
         var           index = parent.children.index(of: iZone) ?? count
 
         if style == .addFavorite {

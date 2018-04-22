@@ -369,14 +369,9 @@ extension ZoneTextWidget {
         if  let       number = notification.userInfo?["NSTextMovement"] as? NSNumber, !gTextManager.isEditingStateChanging {
             let        value = number.intValue
             let      isShift = NSEvent.modifierFlags().isShift
-//            let       editor = currentEditor()
-//            let    responder = window?.firstResponder
-//            let    isEditing = value == NSOtherTextMovement && responder != nil && responder == editor
             var key: String? = nil
 
-//            if  isEditing {
-                gTextManager.stopCurrentEdit(forceCapture: isShift)
-//            }
+            gTextManager.stopCurrentEdit(forceCapture: isShift)
 
             switch value {
             case NSBacktabTextMovement: key = kSpace
