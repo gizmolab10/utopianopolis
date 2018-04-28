@@ -111,6 +111,7 @@ class ZEditingManager: NSObject {
                 case "h":      editTrait(for: .eHyperlink)
                 case "i":      toggleColorized()
                 case "l", "u": alterCase(up: key == "u")
+                case "k":      gFileManager.writeOutline(for: gHere)
                 case "m":      refetch()
                 case "n":      alphabetize(isOption)
                 case "o":      orderByLength(isOption)
@@ -121,13 +122,13 @@ class ZEditingManager: NSObject {
                 case "+":      divideChildren()
                 case "-":      addLine()
                 case "`":      travelToOtherGraph()
-                case "[":      gTravelManager.goBack(   extreme: isFlagged)
-                case "]":      gTravelManager.goForward(extreme: isFlagged)
+                case "[":      gFocusManager.goBack(   extreme: isFlagged)
+                case "]":      gFocusManager.goForward(extreme: isFlagged)
                 case ";":      doFavorites(true,    false)
                 case "?":      openBrowserForFocusWebsite()
                 case "'":      doFavorites(isShift, isOption)
                 case "/":      focus(on: gSelectionManager.firstGrab, isCommand)
-                case "=":      gTravelManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawSyncRedraw() }
+                case "=":      gFocusManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawSyncRedraw() }
                 case kTab:     addNext(containing: isOption) { iChild in iChild.edit() }
                 case ",", ".": gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
                 case "z":      if isCommand { if isShift { kUndoManager.redo() } else { kUndoManager.undo() } }
@@ -267,8 +268,8 @@ class ZEditingManager: NSObject {
             case .Redo:      valid = undo.canRedo
             case .Travel:    valid = mover.canTravel
             case .Cloud:     valid = gHasInternet && gCloudAccountIsActive
-            case .Files:     valid = false
-            case .Always:    valid = true
+            case .Files:     valid = flags.contains(.option)
+            default:         valid = true
             }
         } else if key.arrow == nil {
             valid = type != .Travel
@@ -605,7 +606,7 @@ class ZEditingManager: NSObject {
                 self.redrawSyncRedraw()
             }
         } else if iZone.isBookmark {
-            gTravelManager.travelThrough(iZone) { object, kind in
+            gFocusManager.travelThrough(iZone) { object, kind in
                 gSelectionManager.deselect()
                 focusClosure(object as! Zone)
             }
@@ -824,7 +825,7 @@ class ZEditingManager: NSObject {
             }
 
             if  zone.fetchableCount == 0 && zone.count == 0 {
-                gTravelManager.maybeTravelThrough(zone) { // email, hyperlink, bookmark
+                gFocusManager.maybeTravelThrough(zone) { // email, hyperlink, bookmark
                     self.redrawSyncRedraw()
                 }
             } else {
@@ -1320,7 +1321,7 @@ class ZEditingManager: NSObject {
         if !selectionOnly {
             actuallyMoveZone(zone, onCompletion: onCompletion)
         } else if zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 {
-            gTravelManager.maybeTravelThrough(zone, onCompletion: onCompletion)
+            gFocusManager.maybeTravelThrough(zone, onCompletion: onCompletion)
         } else {
             zone.needChildren()
             zone.revealChildren()
@@ -1361,7 +1362,7 @@ class ZEditingManager: NSObject {
                 let    targetLink = there.crossLink
                 let     sameGraph = zone.databaseID == targetLink?.databaseID
                 let grabAndTravel = {
-                    gTravelManager.travelThrough(there) { object, kind in
+                    gFocusManager.travelThrough(there) { object, kind in
                         let there = object as! Zone
 
                         self.moveZone(movedZone, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
@@ -1645,7 +1646,7 @@ class ZEditingManager: NSObject {
                 prepare()
             } else {
                 undoManager.beginUndoGrouping()
-                gTravelManager.travelThrough(zone) { (iAny, iSignalKind) in
+                gFocusManager.travelThrough(zone) { (iAny, iSignalKind) in
                     prepare()
                 }
             }
@@ -1883,7 +1884,7 @@ class ZEditingManager: NSObject {
         if !toBookmark || isCommand {
             finish()
         } else {
-            gTravelManager.travelThrough(iInto) { (iAny, iSignalKind) in
+            gFocusManager.travelThrough(iInto) { (iAny, iSignalKind) in
                 finish()
             }
         }

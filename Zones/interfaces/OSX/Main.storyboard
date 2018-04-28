@@ -80,6 +80,12 @@
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Ap8-05-pSP"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="As Outline ..." keyEquivalent="k" id="0dE-tl-v2P">
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="3HO-Fu-Pct"/>
+                                                        </connections>
+                                                    </menuItem>
                                                 </items>
                                             </menu>
                                         </menuItem>

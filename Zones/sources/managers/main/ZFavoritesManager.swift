@@ -435,7 +435,7 @@ class ZFavoritesManager: NSObject {
         bump         = { (iIndex: Int) in
             let zone = self.zoneAtIndex(iIndex)
 
-            if !gTravelManager.travel(into: zone, atArrival) {
+            if !gFocusManager.focus(through: zone, atArrival) {
                 bump?(self.next(iIndex, forward))
             }
         }
@@ -446,7 +446,7 @@ class ZFavoritesManager: NSObject {
 
     @discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
         if  let favorite = currentFavorite {
-            return gTravelManager.travel(into: favorite, atArrival)
+            return gFocusManager.focus(through: favorite, atArrival)
         }
 
         return false

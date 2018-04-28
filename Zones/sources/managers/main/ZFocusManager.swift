@@ -1,5 +1,5 @@
 //
-//  ZTravelManager.swift
+//  ZFocusManager.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 11/20/16.
@@ -11,10 +11,10 @@ import Foundation
 import CloudKit
 
 
-let gTravelManager = ZTravelManager()
+let gFocusManager = ZFocusManager()
 
 
-class ZTravelManager: NSObject {
+class ZFocusManager: NSObject {
 
 
     var  travelStack = [Zone] ()
@@ -38,6 +38,15 @@ class ZTravelManager: NSObject {
         }
 
         return nil
+    }
+
+
+    func debugDump() {
+        for (index, zone) in travelStack.enumerated() {
+            let isCurrentIndex = index == currentIndex
+            let prefix = isCurrentIndex ? " •" : ""
+            columnarReport(prefix, zone.decoratedName)
+        }
     }
 
 
@@ -112,6 +121,7 @@ class ZTravelManager: NSObject {
 
             gHere       = here
 
+            debugDump()
             gHere.grab()
             gFavoritesManager.updateFavorites()
             signalFor(nil, regarding: .redraw)
@@ -130,10 +140,11 @@ class ZTravelManager: NSObject {
         UNDO(self) { iUndoSelf in
             iUndoSelf.createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
             iUndoSelf.pushHere()
+            self.debugDump()
 
             gDatabaseID = restoreID
 
-            iUndoSelf.travel {
+            iUndoSelf.focus {
                 gHere = restoreHere
 
                 zone.grab()
@@ -143,11 +154,11 @@ class ZTravelManager: NSObject {
     }
 
 
-    func travel(_ atArrival: @escaping Closure) {
+    func focus(_ atArrival: @escaping Closure) {
         createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
 
         gTextManager.stopCurrentEdit()
-        gBatchManager.travel { iSame in
+        gBatchManager.focus { iSame in
             atArrival()
             gBatchManager.save { iSaveSame in
             }
@@ -155,7 +166,7 @@ class ZTravelManager: NSObject {
     }
 
 
-    @discardableResult func travel(into iBookmark: Zone?, _ atArrival: @escaping Closure) -> Bool {
+    @discardableResult func focus(through iBookmark: Zone?, _ atArrival: @escaping Closure) -> Bool {
         if  let bookmark = iBookmark, bookmark.isBookmark {
             if  bookmark.isInFavorites {
                 let targetParent = bookmark.bookmarkTarget?.parentZone
@@ -173,10 +184,11 @@ class ZTravelManager: NSObject {
                 return true
             } else if let dbID = bookmark.crossLink?.databaseID {
                 pushHere()
+                debugDump()
 
                 gDatabaseID = dbID
 
-                travel {
+                focus {
                     gHere.grab()
                     atArrival()
                 }
@@ -203,6 +215,7 @@ class ZTravelManager: NSObject {
             }
 
             pushHere()
+            debugDump()
 
             if  gDatabaseID  != dbID {
                 gDatabaseID   = dbID
@@ -212,7 +225,7 @@ class ZTravelManager: NSObject {
                 /////////////////////////////////
 
                 if iBookmark.bookmarkTarget!.isFetched { // e.g., default root favorite
-                    travel {
+                    focus {
                         gHere = iBookmark.bookmarkTarget!
 
                         gHere.prepareForArrival()
@@ -224,7 +237,7 @@ class ZTravelManager: NSObject {
                             gHere          = gCloudManager.zoneForCKRecord(hereRecord)
 
                             gHere.prepareForArrival()
-                            self.travel {
+                            self.focus {
                                 atArrival(gHere, .redraw)
                             }
                         } else {

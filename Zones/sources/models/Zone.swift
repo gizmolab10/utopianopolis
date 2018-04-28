@@ -1345,6 +1345,23 @@ class Zone : ZRecord {
     }
 
 
+    func outlineString(for iInset: Int = 0, at iIndex: Int = 0) -> String {
+        let   marks = ".)>"
+        let indices = "A1ai"
+        let modulus = indices.count
+        let  margin = " " * (modulus * iInset)
+        let    type = ZOutlineLevelType(rawValue: indices.character(at: iInset % modulus))
+        let  letter = String.character(at: iIndex, for: type!)
+        var  string = margin + letter + marks.character(at: iInset / modulus) + " " + unwrappedName + "\r"
+
+        for (index, child) in children.enumerated() {
+            string += child.outlineString(for: iInset + 1, at: index)
+        }
+
+        return string
+    }
+
+
     // MARK:- progeny counts
     // MARK:-
 

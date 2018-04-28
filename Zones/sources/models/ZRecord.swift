@@ -149,7 +149,7 @@ class ZRecord: NSObject {
         super.init()
 
         self.databaseID = nil
-        self.record      = nil
+        self.record     = nil
 
         self.setupKVO();
     }

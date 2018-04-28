@@ -66,7 +66,7 @@ class ZFileManager: NSObject {
     }
 
 
-    func write(for databaseID: ZDatabaseID?) {
+    func writeThoughtful(for databaseID: ZDatabaseID?) {
         if  let           dbID = databaseID,
             dbID              != .favoritesID,
             let        index   = index(of: dbID),
@@ -118,7 +118,7 @@ class ZFileManager: NSObject {
 
                 manager.updateLastSyncDate()
 
-                BACKGROUND {
+                BACKGROUND(after: 1.0) {
                     dict [.date] = manager.lastSyncDate as NSObject
                     let jsonDict = self.jsonDictFrom(dict)
                     let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
@@ -133,7 +133,7 @@ class ZFileManager: NSObject {
     }
 
 
-    func read(for databaseID: ZDatabaseID) {
+    func readThoughtful(for databaseID: ZDatabaseID) {
         if  databaseID      != .favoritesID,
             let        index = index(of: databaseID),
             let      dbIndex = ZDatabaseIndex(rawValue: index) {
@@ -193,7 +193,26 @@ class ZFileManager: NSObject {
             }
         }
     }
-    
+
+
+    func writeOutline(for iFocus: Zone) {
+        let  panel = NSSavePanel()
+
+        panel.begin { (result) -> Void in
+
+            if  result == NSFileHandlingPanelOKButton {
+                let filename = panel.url
+                let   string = iFocus.outlineString()
+
+                do {
+                    try string.write(to: filename!, atomically: true, encoding: String.Encoding.utf8)
+                } catch {
+                    // failed to write file (bad permissions, bad filename etc.)
+                }
+            }
+        }
+    }
+
 
     // MARK:- internals
     // MARK:-

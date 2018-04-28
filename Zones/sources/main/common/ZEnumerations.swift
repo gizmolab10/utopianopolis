@@ -54,6 +54,24 @@ enum ZCountsMode: Int { // do not change the order, they are persisted
 }
 
 
+enum ZOutlineLevelType: String {
+    case capital = "A"
+    case  number = "1"
+    case   small = "a"
+    case   roman = "i"
+
+    var asciiValue: UInt32 { return rawValue.asciiValue }
+    var level: Int {
+        switch self {
+        case .capital: return 0
+        case .number:  return 1
+        case .small:   return 2
+        case .roman:   return 3
+        }
+    }
+}
+
+
 enum ZDatabaseID: String {
     case favoritesID = "favorites"
     case  everyoneID = "everyone"

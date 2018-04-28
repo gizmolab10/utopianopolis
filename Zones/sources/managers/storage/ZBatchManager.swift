@@ -17,7 +17,7 @@ enum ZBatchID: Int {
     case save
     case root
     case sync
-    case travel
+    case focus
     case startUp
     case refetch
     case parents
@@ -77,20 +77,20 @@ class ZBatchManager: ZOnboardingManager {
 
         var operations: [ZOperationID] {
             switch identifier {
-            case .save:        return [                       .save,          .write]
-            case .sync:        return [            .fetch,    .save, .traits, .write]
-            case .root:        return [.roots,                .save, .traits        ]
-            case .travel:      return [.roots,     .fetch,           .traits        ]
-            case .parents:     return [                              .traits        ]
-            case .children:    return [                              .traits        ]
-            case .families:    return [            .fetch,           .traits        ]
-            case .bookmarks:   return [.bookmarks, .fetch,    .save, .traits        ]
-            case .undelete:    return [.undelete,  .fetch,    .save, .traits        ]
-            case .fetchLost:   return [.fetchlost,            .save,                ]
-            case .emptyTrash:  return [.emptyTrash                                  ]
-            case .resumeCloud: return [.fetchNew,  .fetchAll, .save,          .write]
-            case .refetch:     return [            .fetchAll, .save,          .write]
-            case .newAppleID:  return operationIDs(from: .checkAvailability,   to: .subscribe, skipping: [.read])
+            case .save:        return [                       .save,          .writeThoughtful]
+            case .sync:        return [            .fetch,    .save, .traits, .writeThoughtful]
+            case .root:        return [.roots,                .save, .traits                  ]
+            case .focus:       return [.roots,     .fetch,           .traits                  ]
+            case .parents:     return [                              .traits                  ]
+            case .children:    return [                              .traits                  ]
+            case .families:    return [            .fetch,           .traits                  ]
+            case .bookmarks:   return [.bookmarks, .fetch,    .save, .traits                  ]
+            case .undelete:    return [.undelete,  .fetch,    .save, .traits                  ]
+            case .fetchLost:   return [.fetchlost,            .save,                          ]
+            case .emptyTrash:  return [.emptyTrash                                            ]
+            case .resumeCloud: return [.fetchNew,  .fetchAll, .save,          .writeThoughtful]
+            case .refetch:     return [            .fetchAll, .save,          .writeThoughtful]
+            case .newAppleID:  return operationIDs(from: .checkAvailability,   to: .subscribe, skipping: [.readThoughtful])
             case .startUp:     return operationIDs(from: .observeUbiquity, to: .fetchAll)
             case .finishUp:    return operationIDs(from: .save,            to: .subscribe)
             case .userTest:    return operationIDs(from: .observeUbiquity, to: .fetchUserRecord)
@@ -161,7 +161,7 @@ class ZBatchManager: ZOnboardingManager {
     func       save(_ onCompletion: @escaping BooleanClosure) { batch(.save,        onCompletion) }
     func       root(_ onCompletion: @escaping BooleanClosure) { batch(.root,        onCompletion) }
     func       sync(_ onCompletion: @escaping BooleanClosure) { batch(.sync,        onCompletion) }
-    func     travel(_ onCompletion: @escaping BooleanClosure) { batch(.travel,      onCompletion) }
+    func      focus(_ onCompletion: @escaping BooleanClosure) { batch(.focus,       onCompletion) }
     func    startUp(_ onCompletion: @escaping BooleanClosure) { batch(.startUp,     onCompletion) }
     func    refetch(_ onCompletion: @escaping BooleanClosure) { batch(.refetch,     onCompletion) }
     func    parents(_ onCompletion: @escaping BooleanClosure) { batch(.parents,     onCompletion) }
@@ -284,7 +284,7 @@ class ZBatchManager: ZOnboardingManager {
                 onCompletion(true)
             } else {
                 let              requiresActive = [.save, .traits                      ].contains(operationID)
-                let               alwaysForBoth = [.here, .read, .roots, .write        ].contains(operationID)
+                let               alwaysForBoth = [.here, .readThoughtful, .roots, .writeThoughtful        ].contains(operationID)
                 let               forMineIDOnly = [.bookmarks, .subscribe, .unsubscribe].contains(operationID)
                 let                      isMine = restoreToID == .mineID
                 let               onlyCurrentID = (!gCloudAccountIsActive && !alwaysForBoth) || operationID == .completion
@@ -333,11 +333,11 @@ class ZBatchManager: ZOnboardingManager {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
         switch identifier { // outer switch
-        case .favorites:            gFavoritesManager.setup(                                  cloudCallback)
-        case .read:                 gFileManager     .read (for:         currentDatabaseID!); cloudCallback?(0)
-        case .write:                gFileManager     .write(for:         currentDatabaseID!); cloudCallback?(0)
+        case .favorites:            gFavoritesManager.setup(                                    cloudCallback)
+        case .readThoughtful:       gFileManager      .readThoughtful(for: currentDatabaseID!); cloudCallback?(0)
+        case .writeThoughtful:      gFileManager     .writeThoughtful(for: currentDatabaseID!); cloudCallback?(0)
         default: let cloudManager = gRemoteStoresManager.cloudManagerFor(currentDatabaseID!)
-        cloudManager.invokeOperation(for: identifier,                          cloudCallback: cloudCallback)
+        cloudManager.invokeOperation(for: identifier,                            cloudCallback: cloudCallback)
         }
     }
 

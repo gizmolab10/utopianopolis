@@ -66,7 +66,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 
     func applicationWillTerminate(aNotification: NSNotification) {
         for dbID in kAllDatabaseIDs {
-            gFileManager.write(for: dbID)
+            gFileManager.writeThoughtful(for: dbID)
         }
         
         // Insert code here to tear down your application

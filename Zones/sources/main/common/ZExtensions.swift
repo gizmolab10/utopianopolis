@@ -444,12 +444,14 @@ extension Array {
 
 extension String {
     var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
+    var   asciiValue:  UInt32  { return asciiArray[0] }
     var          isDigit: Bool { return "0123456789.+-=*/".contains(self[startIndex]) }
     var   isAlphabetical: Bool { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
     var          isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
     var           length: Int  { return unicodeScalars.count }
 
+    static func from(_ ascii: UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
     func substring(from:         Int) -> String  { return substring(from: index(at: from)) }
     func substring(to:           Int) -> String  { return substring(to: index(at: to)) }
     func widthForFont (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
@@ -624,6 +626,56 @@ extension String {
     static func pluralized(_ iValue: Int, suffix: String = "", plural: String = "s") -> String {
         return iValue == 0 ? "" : "\(iValue) \(suffix)\(iValue == 1 ? " " : "\(plural) ")"
     }
+
+
+    static func *(_ input: String, _ multiplier: Int) -> String {
+        var  count = multiplier
+        var output = ""
+
+        while count > 0 {
+            count  -= 1
+            output += input
+        }
+
+        return output
+    }
+
+
+    static func character(at index: Int, for levelType: ZOutlineLevelType) -> String {
+        if levelType == .roman {
+            return toRoman(number: index + 1)
+        } else if levelType == .number {
+            return String(index + Int(levelType.level))
+        } else {
+            return String.from(levelType.asciiValue + UInt32(index))
+        }
+    }
+
+
+    static func toRoman(number: Int) -> String {
+        let romanValues = ["m", "cm", "d", "cd", "c", "xc", "l", "xl", "x", "ix", "v", "iv", "i"]
+        let arabicValues = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+        var startingValue = number
+        var romanValue = ""
+
+        for (index, romanChar) in romanValues.enumerated() {
+            let arabicValue = arabicValues[index]
+            let ratio = startingValue / arabicValue
+
+            if (ratio > 0) {
+                for _ in 0 ..< ratio {
+                    romanValue += romanChar
+                }
+
+                startingValue -= arabicValue * ratio
+            }
+        }
+
+        return romanValue
+    }
+
+
+
 }
 
 

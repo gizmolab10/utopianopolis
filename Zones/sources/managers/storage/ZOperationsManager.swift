@@ -19,7 +19,7 @@ enum ZOperationID: Int {
     // onboard
 
     case observeUbiquity
-    case checkAvailability      // vs no account
+    case checkAvailability  // vs no account
     case internet
     case ubiquity
     case fetchUserID
@@ -28,7 +28,7 @@ enum ZOperationID: Int {
     // startup
 
     case cloud
-    case read               // LOCAL
+    case readThoughtful     // LOCAL
     case found              // LOCAL
     case roots
     case favorites
@@ -39,7 +39,7 @@ enum ZOperationID: Int {
     // finish
 
     case save               // zones, traits, destroy
-    case write              // LOCAL
+    case writeThoughtful    // LOCAL
     case unsubscribe
     case subscribe
 
@@ -63,7 +63,7 @@ enum ZOperationID: Int {
 }
 
 
-let localOperations: [ZOperationID] = [.here, .read, .write, .roots, .found, .internet, .ubiquity, .favorites, .completion, .fetchUserID, .checkAvailability, .observeUbiquity]
+let localOperations: [ZOperationID] = [.here, .readThoughtful, .writeThoughtful, .roots, .found, .internet, .ubiquity, .favorites, .completion, .fetchUserID, .checkAvailability, .observeUbiquity]
 
 
 var gDebugTimerCount          = 0

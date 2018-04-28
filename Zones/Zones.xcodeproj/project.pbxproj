@@ -155,9 +155,9 @@
 		0C71173B1FAFC50500603017 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0C7126CD1FB39C5200CD3E76 /* ZDesktopExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */; };
 		0C71521B1FD778BB00C7DA61 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; };
-		0C7152231FD8A1E400C7DA61 /* ZTravelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7152221FD8A1E400C7DA61 /* ZTravelManager.swift */; };
-		0C7152241FD8A1E400C7DA61 /* ZTravelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7152221FD8A1E400C7DA61 /* ZTravelManager.swift */; };
-		0C7152251FD8A1E500C7DA61 /* ZTravelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7152221FD8A1E400C7DA61 /* ZTravelManager.swift */; };
+		0C7152231FD8A1E400C7DA61 /* ZFocusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7152221FD8A1E400C7DA61 /* ZFocusManager.swift */; };
+		0C7152241FD8A1E400C7DA61 /* ZFocusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7152221FD8A1E400C7DA61 /* ZFocusManager.swift */; };
+		0C7152251FD8A1E500C7DA61 /* ZFocusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7152221FD8A1E400C7DA61 /* ZFocusManager.swift */; };
 		0CA04B2D1D2ECF1B001892E5 /* ZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */; };
 		0CA04B631D2ECF41001892E5 /* PadZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */; };
 		0CA04B6E1D2ECF41001892E5 /* PadZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */; };
@@ -317,7 +317,7 @@
 		0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSearchManager.swift; sourceTree = "<group>"; };
 		0C7117341FAE7F9900603017 /* ZBatchManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZBatchManager.swift; sourceTree = "<group>"; };
 		0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDesktopExtensions.swift; sourceTree = "<group>"; };
-		0C7152221FD8A1E400C7DA61 /* ZTravelManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTravelManager.swift; sourceTree = "<group>"; };
+		0C7152221FD8A1E400C7DA61 /* ZFocusManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFocusManager.swift; sourceTree = "<group>"; };
 		0CA04B141D2ECF1A001892E5 /* Thoughtful.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thoughtful.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
@@ -542,7 +542,7 @@
 				0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */,
 				0C39B2491F182EBB0091F4D1 /* ZSelectionManager.swift */,
 				0C21C628203BE88F00DEFDAD /* ZTextManager.swift */,
-				0C7152221FD8A1E400C7DA61 /* ZTravelManager.swift */,
+				0C7152221FD8A1E400C7DA61 /* ZFocusManager.swift */,
 				0C39B24A1F182EBB0091F4D1 /* ZWidgetsManager.swift */,
 			);
 			path = main;
@@ -1104,7 +1104,7 @@
 				0C39B2AD1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C39B3851F182EBB0091F4D1 /* ZoneTextWidget.swift in Sources */,
 				0C2E22D21F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,
-				0C7152231FD8A1E400C7DA61 /* ZTravelManager.swift in Sources */,
+				0C7152231FD8A1E400C7DA61 /* ZFocusManager.swift in Sources */,
 				0C39B2CE1F182EBB0091F4D1 /* ZMobileExtensions.swift in Sources */,
 				0C2E22C51F75BB7D00B50A71 /* ZMainController.swift in Sources */,
 				0CB6199F1FB3C4660087B066 /* ZEditorController.swift in Sources */,
@@ -1155,7 +1155,7 @@
 				0CB619981FB3C4660087B066 /* ZSearchResultsController.swift in Sources */,
 				0C39B28E1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
 				0C39B2BB1F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,
-				0C7152251FD8A1E500C7DA61 /* ZTravelManager.swift in Sources */,
+				0C7152251FD8A1E500C7DA61 /* ZFocusManager.swift in Sources */,
 				0C6CAE211F88308E001960F7 /* ZSearchManager.swift in Sources */,
 				0C39B2AF1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C39B3871F182EBB0091F4D1 /* ZoneTextWidget.swift in Sources */,
@@ -1225,7 +1225,7 @@
 				0C39B3201F182EBB0091F4D1 /* ZTrait.swift in Sources */,
 				0C39B2E41F182EBB0091F4D1 /* ZControllersManager.swift in Sources */,
 				0C39B2C01F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
-				0C7152241FD8A1E400C7DA61 /* ZTravelManager.swift in Sources */,
+				0C7152241FD8A1E400C7DA61 /* ZFocusManager.swift in Sources */,
 				0C39B38C1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
 				0C21C62A203BE88F00DEFDAD /* ZTextManager.swift in Sources */,
 				0C39B3831F182EBB0091F4D1 /* ZoneDot.swift in Sources */,
