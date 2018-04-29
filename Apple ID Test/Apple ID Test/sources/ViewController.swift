@@ -20,7 +20,7 @@ class ViewController: NSViewController {
         super.viewDidLoad()
 
         var showPulse = true
-        let container = CKContainer(identifier: "iCloud.com.zones.Thoughtful")
+        let container = CKContainer(identifier: "iCloud.com.zones.Focus")
         let      fire = { (iTimer: Timer) in
             container.accountStatus { (iStatus, iError) in
                 FOREGROUND {
