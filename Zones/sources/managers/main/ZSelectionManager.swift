@@ -66,6 +66,7 @@ class ZSelectionManager: NSObject {
     var        hasGrab : Bool { return currentGrabs.count > 0 }
     var pasteableZones = [Zone: (Zone?, Int?)] ()
     var   currentGrabs = [Zone] ()
+    var    cousinsList = [Zone] ()
 
 
     var snapshot : ZSnapshot {
@@ -198,7 +199,7 @@ class ZSelectionManager: NSObject {
 
         return movable!
     }
-
+    
 
     // MARK:- convenience
     // MARK:-
@@ -272,7 +273,6 @@ class ZSelectionManager: NSObject {
         if let zone = iZone, let index = currentGrabs.index(of: zone) {
             currentGrabs.remove(at: index)
             updateWidgetFor(zone)
-            //columnarReport("grab -", zone.unwrappedName)
         }
     }
 
@@ -291,16 +291,15 @@ class ZSelectionManager: NSObject {
     }
 
 
-    func addToGrab(_ iZone: Zone?, deselect: Bool = false) {
-        if let zone = iZone, !currentGrabs.contains(zone) {
+    func addToGrab(_ iZone: Zone?, onlyOne: Bool = false) {
+        if  let zone = iZone, (!currentGrabs.contains(zone) || onlyOne) { // if onlyOne AND already grabbed, shrink grab list to iZone
             gTextManager.stopCurrentEdit()
 
-            if deselect {
+            if  onlyOne {
                 deselectGrabs()
             }
 
             currentGrabs.append(zone)
-            // columnarReport("grab", zone.unwrappedName)
 
             currentGrabs = respectOrder(for: currentGrabs)
 
@@ -312,7 +311,8 @@ class ZSelectionManager: NSObject {
 
 
     func grab(_ zone: Zone?) {
-        addToGrab(zone!, deselect: true)
+        addToGrab(zone!, onlyOne: true)
+        updateCousinsList(for: zone)
     }
 
 
@@ -323,4 +323,24 @@ class ZSelectionManager: NSObject {
             }
         }
     }
+
+
+    // MARK:- internals
+    // MARK:-
+
+    
+    func updateCousinsList(for lastGrab: Zone?) {
+        cousinsList.removeAll()
+
+        if  let  grab = lastGrab {
+            let level = grab.level
+            
+            gHere.traverseAllVisibleProgeny { iZone in
+                if  iZone.level == level || (iZone.level < level && (iZone.count == 0 || !iZone.showChildren)) {
+                    cousinsList.append(iZone)
+                }
+            }
+        }
+    }
+    
 }

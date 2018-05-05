@@ -63,7 +63,7 @@ enum ZOperationID: Int {
 }
 
 
-let localOperations: [ZOperationID] = [.here, .readThoughtful, .writeThoughtful, .roots, .found, .internet, .ubiquity, .favorites, .completion, .fetchUserID, .checkAvailability, .observeUbiquity]
+let localOperations: [ZOperationID] = [.here, .roots, .found, .internet, .ubiquity, .favorites, .completion, .fetchUserID, .observeUbiquity, .readThoughtful, .writeThoughtful, .fetchUserRecord, .checkAvailability]
 
 
 var gDebugTimerCount          = 0
