@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14109"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
@@ -578,11 +578,11 @@
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Thoughtful" sceneMemberID="viewController">
                     <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="232" height="279"/>
+                        <rect key="frame" x="0.0" y="0.0" width="232" height="322"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box autoresizesSubviews="NO" borderType="line" title="new ideas" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
-                                <rect key="frame" x="5" y="232" width="222" height="39"/>
+                                <rect key="frame" x="5" y="275" width="222" height="39"/>
                                 <view key="contentView" id="qnC-vV-W8u">
                                     <rect key="frame" x="1" y="1" width="220" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -611,6 +611,38 @@
                                 </view>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="35" id="9eg-3P-j9J"/>
+                                </constraints>
+                            </box>
+                            <box autoresizesSubviews="NO" borderType="line" title="browsing" translatesAutoresizingMaskIntoConstraints="NO" id="0d2-7W-Jxg" userLabel="browsing">
+                                <rect key="frame" x="5" y="232" width="222" height="39"/>
+                                <view key="contentView" id="l9n-tF-CCv">
+                                    <rect key="frame" x="1" y="1" width="220" height="23"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <segmentedControl identifier="browsing" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xql-tK-B1R">
+                                            <rect key="frame" x="3" y="0.0" width="215" height="27"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="24" id="0QL-hr-4Nd"/>
+                                            </constraints>
+                                            <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="XJ8-gh-4cf">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <segments>
+                                                    <segment label="wraps" width="106" selected="YES"/>
+                                                    <segment label="jumps" width="102" tag="1"/>
+                                                </segments>
+                                            </segmentedCell>
+                                            <connections>
+                                                <action selector="segmentedControlAction:" target="Naq-se-Exq" id="qXF-Sd-MJp"/>
+                                            </connections>
+                                        </segmentedControl>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="centerY" secondItem="Xql-tK-B1R" secondAttribute="centerY" constant="2.5" id="sjq-iZ-rEQ"/>
+                                        <constraint firstItem="Xql-tK-B1R" firstAttribute="centerX" secondItem="l9n-tF-CCv" secondAttribute="centerX" id="tlW-q6-Pxe"/>
+                                    </constraints>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="CET-xg-IvB"/>
                                 </constraints>
                             </box>
                             <box autoresizesSubviews="NO" borderType="line" title="counts of subordinate ideas show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="children counts">
@@ -901,11 +933,14 @@
                             <constraint firstItem="mS1-t0-150" firstAttribute="top" secondItem="ay3-pv-TvT" secondAttribute="bottom" constant="8" id="K7u-1l-PFu"/>
                             <constraint firstItem="ay3-pv-TvT" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="L8F-B3-k88"/>
                             <constraint firstItem="anJ-MD-zAh" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="Lcr-4J-M0E"/>
+                            <constraint firstItem="0d2-7W-Jxg" firstAttribute="top" secondItem="anJ-MD-zAh" secondAttribute="bottom" constant="8" id="UVf-o7-mpr"/>
                             <constraint firstAttribute="trailing" secondItem="1dG-7h-ePD" secondAttribute="trailing" constant="8" id="aFt-c9-QQn"/>
                             <constraint firstAttribute="trailing" secondItem="ay3-pv-TvT" secondAttribute="trailing" constant="8" id="dfi-pb-wOI"/>
+                            <constraint firstAttribute="trailing" secondItem="0d2-7W-Jxg" secondAttribute="trailing" constant="8" id="hEM-ZR-fdb"/>
                             <constraint firstAttribute="bottom" secondItem="1dG-7h-ePD" secondAttribute="bottom" constant="8" id="lHH-CZ-CgI"/>
+                            <constraint firstItem="0d2-7W-Jxg" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="lTM-Cy-Pdz"/>
                             <constraint firstAttribute="trailing" secondItem="mS1-t0-150" secondAttribute="trailing" constant="8" id="m1Q-hz-0Mf"/>
-                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="anJ-MD-zAh" secondAttribute="bottom" constant="8" id="wjU-xG-W2m"/>
+                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="0d2-7W-Jxg" secondAttribute="bottom" constant="8" id="rPO-r9-nS9"/>
                             <constraint firstItem="mS1-t0-150" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="xTu-eG-2S7"/>
                             <constraint firstAttribute="trailing" secondItem="anJ-MD-zAh" secondAttribute="trailing" constant="8" id="yIM-eQ-RB8"/>
                             <constraint firstItem="anJ-MD-zAh" firstAttribute="top" secondItem="Ngb-Ew-NGG" secondAttribute="top" constant="8" id="zHv-Qb-rAp"/>
@@ -913,6 +948,7 @@
                     </view>
                     <connections>
                         <outlet property="backgroundColorBox" destination="wsy-Dq-H7s" id="lQ4-nS-6Bk"/>
+                        <outlet property="browsingModeControl" destination="Xql-tK-B1R" id="HlG-1A-VLz"/>
                         <outlet property="clearColorButton" destination="0Qp-4d-Tu8" id="6Al-nd-9pG"/>
                         <outlet property="countsModeControl" destination="hRI-S8-ys7" id="7ig-ZZ-v8Z"/>
                         <outlet property="dragTargetsColorBox" destination="j0f-8D-Ds5" id="FRZ-SF-WJ1"/>

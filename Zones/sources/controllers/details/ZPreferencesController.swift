@@ -20,6 +20,7 @@ class ZPreferencesController: ZGenericController {
 
 
     @IBOutlet var    countsModeControl: ZSegmentedControl?
+    @IBOutlet var  browsingModeControl: ZSegmentedControl?
     @IBOutlet var insertionModeControl: ZSegmentedControl?
     @IBOutlet var         zoneColorBox: ZColorWell?
     @IBOutlet var   backgroundColorBox: ZColorWell?
@@ -40,6 +41,7 @@ class ZPreferencesController: ZGenericController {
         if  iKind != .startup {
             let                           grabbed = gSelectionManager.firstGrab
             insertionModeControl?.selectedSegment = gInsertionMode.rawValue
+            browsingModeControl? .selectedSegment = gBrowsingMode.rawValue
             countsModeControl?   .selectedSegment = gCountsMode.rawValue
             thickness?               .doubleValue = gLineThickness
             verticalSpacing?         .doubleValue = Double(gGenericOffset.height)
@@ -110,6 +112,7 @@ class ZPreferencesController: ZGenericController {
         if  let     identifier = iControl.identifier {
             switch (identifier) {
             case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; signalFor(nil, regarding: .redraw)
+            case "browsing":  gBrowsingMode  = ZBrowsingMode (rawValue: selection)!
             case "direction": gInsertionMode = ZInsertionMode(rawValue: selection)!
             default: break
             }

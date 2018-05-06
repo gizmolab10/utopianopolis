@@ -940,6 +940,15 @@ class Zone : ZRecord {
         return safeTraverseProgeny(visited: [], block)
     }
 
+    
+    func traverseAllVisibleProgeny(_ block: ZoneClosure) {
+        safeTraverseProgeny(visited: []) { iZone -> ZTraverseStatus in
+            block(iZone)
+            
+            return iZone.showChildren ? .eContinue : .eSkip
+        }
+    }
+    
 
     // first call block on self
 

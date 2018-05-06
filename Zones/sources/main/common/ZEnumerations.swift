@@ -30,6 +30,12 @@ enum ZInsertionMode: Int {
 }
 
 
+enum ZBrowsingMode: Int {
+    case wrap
+    case jump
+}
+
+
 enum ZFileMode: Int {
     case localOnly
     case cloudOnly

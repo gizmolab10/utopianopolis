@@ -383,13 +383,13 @@ class ZFavoritesManager: NSObject {
     }
 
 
-    func updateCurrentFavorite() {
+    func updateCurrentFavorite(reveal: Bool = false) {
         if  let     favorite = favorite(for: gHere),
             let       target = favorite.bookmarkTarget,
             (gHere == target || !hereSpawnedTargetOfCurrentFavorite) {
             currentFavorite = favorite
 
-            if  gFavoritesRoot?.showChildren ?? false {
+            if  reveal {
 
                 //////////////////////////////////////////////////////////////////
                 // not reveal current favorite if user has hidden all favorites //

@@ -268,7 +268,7 @@ class ZEditingManager: NSObject {
             case .Redo:      valid = undo.canRedo
             case .Travel:    valid = mover.canTravel
             case .Cloud:     valid = gHasInternet && gCloudAccountIsActive
-            case .Files:     valid = flags.contains(.option)
+//            case .Files:     valid = flags.contains(.option)
             default:         valid = true
             }
         } else if key.arrow == nil {
@@ -1922,6 +1922,7 @@ class ZEditingManager: NSObject {
     
     func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, extend: Bool = false) {
         let            zone = iMoveUp ? gSelectionManager.firstGrab : gSelectionManager.lastGrab
+        let        isNormal = gBrowsingMode == .wrap
         let          isHere = zone == gHere
         let          parent = zone.parentZone
         if  let     newHere = parent, !isHere,
@@ -1951,10 +1952,12 @@ class ZEditingManager: NSObject {
                 // vertical wrap around //
                 //////////////////////////
 
-                if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && atBottom))) || ( iMoveUp && soloGrabbed && atTop) {
-                    newIndex = indexMax - 1 // bottom
-                } else if ( iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && atTop)))    || (!iMoveUp && soloGrabbed && atBottom) {
-                    newIndex = 0            // top
+                if isNormal {
+                    if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && atBottom))) || ( iMoveUp && soloGrabbed && atTop) {
+                        newIndex = indexMax - 1 // bottom
+                    } else if ( iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && atTop)))    || (!iMoveUp && soloGrabbed && atBottom) {
+                        newIndex = 0            // top
+                    }
                 }
             }
 
@@ -2004,6 +2007,20 @@ class ZEditingManager: NSObject {
                     }
 
                     signalFor(nil, regarding: .data)
+                }
+            } else if !isNormal {
+                let cousins = gSelectionManager.cousinsList
+                
+                if  var index  = cousins.index(of: zone) {
+                    index     += (iMoveUp ? -1 : 1)
+                    if  index >= cousins.count {
+                        index  = 0
+                    } else if index < 0 {
+                        index  = cousins.count - 1
+                    }
+                    
+                    let grab = cousins[index]
+                    grab.grab()
                 }
             }
         } else if !zone.isRoot {

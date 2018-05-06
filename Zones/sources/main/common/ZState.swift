@@ -161,6 +161,28 @@ var gScrollOffset: CGPoint {
 }
 
 
+var gBrowsingMode: ZBrowsingMode {
+    get {
+        let value  = UserDefaults.standard.object(forKey: kBrowsingMode) as? Int
+        var mode   = ZBrowsingMode.wrap
+        
+        if  value != nil {
+            mode   = ZBrowsingMode(rawValue: value!)!
+        } else {
+            UserDefaults.standard.set(mode.rawValue, forKey:kBrowsingMode)
+            UserDefaults.standard.synchronize()
+        }
+        
+        return mode
+    }
+    
+    set {
+        UserDefaults.standard.set(newValue.rawValue, forKey:kBrowsingMode)
+        UserDefaults.standard.synchronize()
+    }
+}
+
+
 var gCountsMode: ZCountsMode {
     get {
         let value  = UserDefaults.standard.object(forKey: kCountsMode) as? Int
