@@ -20,6 +20,9 @@ import CloudKit
 let gEditingManager = ZEditingManager()
 
 
+// mix of zone mutations and web services requestss
+
+
 class ZEditingManager: NSObject {
 
 
@@ -1924,15 +1927,19 @@ class ZEditingManager: NSObject {
     func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, extend: Bool = false) {
         let            zone = iMoveUp ? gSelectionManager.firstGrab : gSelectionManager.lastGrab
         let      isConfined = gBrowsingMode == .confine
-        let          isHere = zone == gHere
+        let  hereIsSelected = zone == gHere
         let          parent = zone.parentZone
-        if  let     newHere = parent, !isHere,
+        if  let     newHere = parent, !hereIsSelected,
             let       index = zone.siblingIndex {
             var    newIndex = index + (iMoveUp ? -1 : 1)
             var  allGrabbed = true
             var soloGrabbed = false
             var     hasGrab = false
             let    indexMax = newHere.count
+
+            /////////////////////////////////////
+            // detect grab for extend behavior //
+            /////////////////////////////////////
 
             for child in newHere.children {
                 if !child.isGrabbed {
@@ -1944,6 +1951,10 @@ class ZEditingManager: NSObject {
                     soloGrabbed  = true
                 }
             }
+
+            //////////////////////////
+            // vertical wrap around //
+            //////////////////////////
 
             if !extend {
                 let    atTop = newIndex < 0
@@ -1962,8 +1973,12 @@ class ZEditingManager: NSObject {
                 }
             }
 
+            ////////////////////////////
+            // wrapping is not needed //
+            ////////////////////////////
+
             if newIndex >= 0 && newIndex < indexMax {
-                if  isHere {
+                if  hereIsSelected {
                     gHere = newHere
                 }
                 
@@ -2010,6 +2025,11 @@ class ZEditingManager: NSObject {
                     signalFor(nil, regarding: .data)
                 }
             } else if !isConfined {
+
+                //////////////////////////////////////////////
+                // wrapping needed, but cousin jump instead //
+                //////////////////////////////////////////////
+
                 let cousins = gSelectionManager.cousinsList
                 
                 if  var index  = cousins.index(of: zone) {
@@ -2034,7 +2054,7 @@ class ZEditingManager: NSObject {
 
             revealParentAndSiblingsOf(zone) { iCalledCloud in
                 let same    = (snapshot == gSelectionManager.snapshot)
-                let setHere = parent != nil && isHere
+                let setHere = parent != nil && hereIsSelected
                 if  setHere {
                     gHere   = parent!
 
