@@ -799,6 +799,12 @@ class Zone : ZRecord {
                 trait.updateRecordProperties()
                 trait.maybeNeedSave()
             }
+            
+            switch (type) {
+            case .eEmail:     _email     = nil
+            case .eHyperlink: _hyperLink = nil
+            default: break
+            }
         }
     }
 

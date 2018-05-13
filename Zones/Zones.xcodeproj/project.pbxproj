@@ -138,9 +138,9 @@
 		0C4C23A22016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
 		0C4C23A32016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
 		0C4C23A42016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
-		0C50FD2F2053491000E1D9A9 /* everyone.focus in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.focus */; };
-		0C50FD302053491000E1D9A9 /* everyone.focus in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.focus */; };
-		0C50FD312053491000E1D9A9 /* everyone.focus in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.focus */; };
+		0C50FD2F2053491000E1D9A9 /* everyone.thoughtful in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.thoughtful */; };
+		0C50FD302053491000E1D9A9 /* everyone.thoughtful in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.thoughtful */; };
+		0C50FD312053491000E1D9A9 /* everyone.thoughtful in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.thoughtful */; };
 		0C60B6731DBDB8A0005D99F9 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C60B6791DBE84DF005D99F9 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; };
 		0C63DA6D1FCF837D005EC548 /* ZFavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C63DA6C1FCF837C005EC548 /* ZFavoritesManager.swift */; };
@@ -306,7 +306,7 @@
 		0C48B0941F87197B00A247BC /* ZEventsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEventsManager.swift; sourceTree = "<group>"; };
 		0C4C239F20155C7C0025E4DF /* ZDetailRowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDetailRowView.swift; sourceTree = "<group>"; };
 		0C4C23A12016B0930025E4DF /* ZContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZContainerView.swift; sourceTree = "<group>"; };
-		0C50FD2E2053491000E1D9A9 /* everyone.focus */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = everyone.focus; sourceTree = "<group>"; };
+		0C50FD2E2053491000E1D9A9 /* everyone.thoughtful */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = everyone.thoughtful; sourceTree = "<group>"; };
 		0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = PadZones/Frameworks/SnapKit.framework; sourceTree = "<group>"; };
 		0C63DA6C1FCF837C005EC548 /* ZFavoritesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFavoritesManager.swift; sourceTree = "<group>"; };
 		0C69C9DF1F09CD95004D026D /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -691,7 +691,7 @@
 		0C50FD2D2053467600E1D9A9 /* data */ = {
 			isa = PBXGroup;
 			children = (
-				0C50FD2E2053491000E1D9A9 /* everyone.focus */,
+				0C50FD2E2053491000E1D9A9 /* everyone.thoughtful */,
 			);
 			path = data;
 			sourceTree = "<group>";
@@ -795,7 +795,7 @@
 			buildConfigurationList = 0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Thoughtful" */;
 			buildPhases = (
 				0CA04B101D2ECF1A001892E5 /* Sources */,
-				0C50FD2C20532B6300E1D9A9 /* ShellScript */,
+				0C1EC7C820A8D91F005E2DA2 /* ShellScript */,
 				0CA04B111D2ECF1A001892E5 /* Frameworks */,
 				0CA04B121D2ECF1A001892E5 /* Resources */,
 				0C401E761D2F635A000B9864 /* Embed Frameworks */,
@@ -928,7 +928,7 @@
 								enabled = 1;
 							};
 							com.apple.Sandbox = {
-								enabled = 1;
+								enabled = 0;
 							};
 							com.apple.iCloud = {
 								enabled = 1;
@@ -1004,7 +1004,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C39B3AE1F1988380091F4D1 /* LaunchScreen.storyboard in Resources */,
-				0C50FD2F2053491000E1D9A9 /* everyone.focus in Resources */,
+				0C50FD2F2053491000E1D9A9 /* everyone.thoughtful in Resources */,
 				0C39B3A81F1988380091F4D1 /* Assets.xcassets in Resources */,
 				0C39B3AB1F1988380091F4D1 /* iPhone.storyboard in Resources */,
 			);
@@ -1015,7 +1015,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C39B3B61F1988380091F4D1 /* Main.storyboard in Resources */,
-				0C50FD312053491000E1D9A9 /* everyone.focus in Resources */,
+				0C50FD312053491000E1D9A9 /* everyone.thoughtful in Resources */,
 				0C1ABAAC1FB144E400D62947 /* Assets.xcassets in Resources */,
 				0CAC18ED200ED6F700D641C4 /* Details.storyboard in Resources */,
 			);
@@ -1040,7 +1040,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C39B3A61F1988380091F4D1 /* Main.storyboard in Resources */,
-				0C50FD302053491000E1D9A9 /* everyone.focus in Resources */,
+				0C50FD302053491000E1D9A9 /* everyone.thoughtful in Resources */,
 				0C1ABAAB1FB144E300D62947 /* Assets.xcassets in Resources */,
 				0C39B3A31F1988380091F4D1 /* LaunchScreen.storyboard in Resources */,
 			);
@@ -1063,7 +1063,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0C50FD2C20532B6300E1D9A9 /* ShellScript */ = {
+		0C1EC7C820A8D91F005E2DA2 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1073,8 +1073,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "cd ~/Library/Containers/com.zones.focus.mac/Data/Library/Caches/Focus\nfile=\"everyone.focus\"\nif [ -f $file ]; then\n   cp $file ${SRCROOT}/data\nfi\n";
+			shellPath = /bin/sh;
+			shellScript = "cd ~/Library/Application\\ Support/Thoughtful\nfile=\"everyone.thoughtful\"\nif [ -f $file]; then\n    cp $file ${SRCROOT}/data\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

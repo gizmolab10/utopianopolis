@@ -288,7 +288,7 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Tb0-go-IcO"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Hyperlink" keyEquivalent="=" id="z1w-26-QzR">
+                                                    <menuItem title="Follow" keyEquivalent="=" id="z1w-26-QzR">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="0X2-pp-xtA"/>
@@ -429,6 +429,18 @@ CQ
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="fuv-aT-IQa"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Emphasize" keyEquivalent="1" id="R7x-XC-2Vi">
+                                                        <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="glT-vJ-Ecj"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Enumerate" keyEquivalent="3" id="mH6-ai-0bn">
+                                                        <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="2Ly-WZ-DLn"/>
                                                         </connections>
                                                     </menuItem>
                                                 </items>

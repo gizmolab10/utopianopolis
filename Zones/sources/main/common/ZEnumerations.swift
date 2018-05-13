@@ -31,8 +31,8 @@ enum ZInsertionMode: Int {
 
 
 enum ZBrowsingMode: Int {
-    case wrap
-    case jump
+    case confine
+    case extend
 }
 
 

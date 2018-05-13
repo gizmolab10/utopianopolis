@@ -283,8 +283,8 @@ class ZBatchManager: ZOnboardingManager {
             if  iCompleted {
                 onCompletion(true)
             } else {
-                let              requiresActive = [.save, .traits                      ].contains(operationID)
-                let               alwaysForBoth = [.here, .readThoughtful, .roots, .writeThoughtful        ].contains(operationID)
+                let              requiresActive = [.save, .traits                                  ].contains(operationID)
+                let               alwaysForBoth = [.here, .roots, .readThoughtful, .writeThoughtful].contains(operationID)
                 let               forMineIDOnly = [.bookmarks, .subscribe, .unsubscribe].contains(operationID)
                 let                      isMine = restoreToID == .mineID
                 let               onlyCurrentID = (!gCloudAccountIsActive && !alwaysForBoth) || operationID == .completion

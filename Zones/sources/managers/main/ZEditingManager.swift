@@ -341,8 +341,9 @@ class ZEditingManager: NSObject {
                             if  markParts.count > 1 && markParts[0].count == 0 && markParts[1].count <= 2 {
                                 index    += 1
 
-                                if  markParts[1] == "\(digit)" {
+                                if  markParts[1].isDigit {
                                     add   = false
+                                    break
                                 }
                             }
                         }
@@ -1922,7 +1923,7 @@ class ZEditingManager: NSObject {
     
     func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, extend: Bool = false) {
         let            zone = iMoveUp ? gSelectionManager.firstGrab : gSelectionManager.lastGrab
-        let        isNormal = gBrowsingMode == .wrap
+        let      isConfined = gBrowsingMode == .confine
         let          isHere = zone == gHere
         let          parent = zone.parentZone
         if  let     newHere = parent, !isHere,
@@ -1952,8 +1953,8 @@ class ZEditingManager: NSObject {
                 // vertical wrap around //
                 //////////////////////////
 
-                if isNormal {
-                    if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && atBottom))) || ( iMoveUp && soloGrabbed && atTop) {
+                if isConfined {
+                    if (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && atBottom))) || ( iMoveUp && soloGrabbed && atTop) {
                         newIndex = indexMax - 1 // bottom
                     } else if ( iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && atTop)))    || (!iMoveUp && soloGrabbed && atBottom) {
                         newIndex = 0            // top
@@ -2008,7 +2009,7 @@ class ZEditingManager: NSObject {
 
                     signalFor(nil, regarding: .data)
                 }
-            } else if !isNormal {
+            } else if !isConfined {
                 let cousins = gSelectionManager.cousinsList
                 
                 if  var index  = cousins.index(of: zone) {

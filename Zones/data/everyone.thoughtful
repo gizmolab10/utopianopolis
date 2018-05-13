@@ -4,7 +4,6 @@
       {
         "recordName" : "727C5BF3-26E2-4EF2-9737-434616B62AAB",
         "progeny" : 0,
-        "needs" : "unorphan",
         "order" : 0.0625,
         "count" : 0
       },
@@ -100,6 +99,7 @@
       }
     ],
     "name" : "public trash",
+    "needs" : "not fetched",
     "access" : 2,
     "count" : 0,
     "progeny" : 0,
@@ -107,7 +107,7 @@
     "order" : 0,
     "recordName" : "trash"
   },
-  "date" : "TimeInterval:546720000.712",
+  "date" : "TimeInterval:547923941.915",
   "destroy" : {
     "name" : "public destroy",
     "needs" : "unorphan",
@@ -570,7 +570,7 @@
           },
           {
             "recordName" : "8DBDF342-CE4D-474D-B3CF-520CC922847B",
-            "progeny" : 4,
+            "progeny" : 16,
             "name" : "data",
             "children" : [
               {
@@ -593,38 +593,136 @@
                     "count" : 0
                   }
                 ],
-                "order" : 0.20000000000000001,
+                "order" : 0.16666666666666666,
                 "count" : 2
               },
               {
                 "recordName" : "43277F2B-42DD-467E-92F2-8C7B6014EE17",
                 "progeny" : 0,
                 "name" : "your data is only readable by you",
-                "order" : 0.40000000000000002,
+                "order" : 0.33333333333333331,
                 "count" : 0
               },
               {
-                "recordName" : "8D4F5743-BC6D-4FB5-9421-1E1009301445",
-                "progeny" : 0,
-                "name" : "all bookmarks are private",
+                "recordName" : "D67F772C-C474-4AB5-B636-DA67BC763D0A",
+                "progeny" : 10,
+                "name" : "special links",
                 "children" : [
                   {
-                    "recordName" : "6D5B597B-2A6B-4C1D-AD6A-EB27BCBF6480",
-                    "progeny" : 0,
-                    "name" : "nobody else can see or use your bookmarks",
-                    "order" : 0.20000000000000001,
+                    "recordName" : "C19725F1-E95D-4EFF-95DA-3E9AF1C835C5",
+                    "progeny" : 2,
+                    "name" : "B",
+                    "children" : [
+                      {
+                        "recordName" : "B1A78462-D368-4D1B-8F90-CAEAF81072B5",
+                        "progeny" : 0,
+                        "name" : "creates a bookmark in a separate idea",
+                        "order" : 0.25,
+                        "count" : 0
+                      },
+                      {
+                        "recordName" : "8D4F5743-BC6D-4FB5-9421-1E1009301445",
+                        "progeny" : 0,
+                        "name" : "all bookmarks are private",
+                        "children" : [
+                          {
+                            "recordName" : "6D5B597B-2A6B-4C1D-AD6A-EB27BCBF6480",
+                            "progeny" : 0,
+                            "name" : "nobody else can see or use your bookmarks",
+                            "order" : 0.20000000000000001,
+                            "count" : 0
+                          },
+                          {
+                            "recordName" : "E449FEFF-9C9E-42AA-9B94-349CE4F722E8",
+                            "progeny" : 0,
+                            "name" : "you cannot see or use anyone else's bookmarks",
+                            "order" : 0.40000000000000002,
+                            "count" : 0
+                          }
+                        ],
+                        "order" : 0.5,
+                        "count" : 2
+                      }
+                    ],
+                    "order" : 0.16666666666666666,
                     "count" : 0
                   },
                   {
-                    "recordName" : "E449FEFF-9C9E-42AA-9B94-349CE4F722E8",
+                    "recordName" : "7870ECE8-0D57-48ED-82FD-791096C12D34",
                     "progeny" : 0,
-                    "name" : "you cannot see or use anyone else's bookmarks",
-                    "order" : 0.40000000000000002,
+                    "name" : "E",
+                    "children" : [
+                      {
+                        "recordName" : "5130DE68-DC34-435D-A43B-DEE154B602BF",
+                        "progeny" : 0,
+                        "name" : "any valid email",
+                        "order" : 0.33333333333333331,
+                        "count" : 0
+                      }
+                    ],
+                    "order" : 0.33333333333333331,
+                    "count" : 0
+                  },
+                  {
+                    "recordName" : "27E5637A-1AA3-49F0-B188-8F60DBEEC51A",
+                    "progeny" : 2,
+                    "name" : "H",
+                    "children" : [
+                      {
+                        "recordName" : "EBE3F2D7-B0A6-4DBC-994E-C5C106FAB82B",
+                        "progeny" : 0,
+                        "name" : "web hyperlinks",
+                        "children" : [
+                          {
+                            "recordName" : "B2434A56-C6DD-4BFC-9B1A-11676FB7F83D",
+                            "progeny" : 0,
+                            "name" : "http[s]:\/\/website",
+                            "order" : 0.33333333333333331,
+                            "count" : 0
+                          }
+                        ],
+                        "order" : 0.25,
+                        "count" : 0
+                      },
+                      {
+                        "recordName" : "2ADA87FF-6A4E-42D2-B368-55E79C6F186F",
+                        "progeny" : 0,
+                        "name" : "file hyperlinks",
+                        "children" : [
+                          {
+                            "recordName" : "7AC56399-C516-4A6C-8B6D-A349E10FD1A7",
+                            "progeny" : 0,
+                            "name" : "file:\/\/absolute\/path\/to\/your\/file",
+                            "order" : 0.33333333333333331,
+                            "count" : 0
+                          }
+                        ],
+                        "order" : 0.5,
+                        "count" : 0
+                      }
+                    ],
+                    "order" : 0.5,
+                    "count" : 0
+                  },
+                  {
+                    "recordName" : "2EF8531F-AFFA-408A-83EC-875FB16EB573",
+                    "progeny" : 0,
+                    "name" : "=",
+                    "children" : [
+                      {
+                        "recordName" : "5F76DE53-8307-40FA-8749-AF408C6FCAFE",
+                        "progeny" : 0,
+                        "name" : "activates the link",
+                        "order" : 0.33333333333333331,
+                        "count" : 0
+                      }
+                    ],
+                    "order" : 0.66666666666666663,
                     "count" : 0
                   }
                 ],
-                "order" : 0.60000000000000009,
-                "count" : 2
+                "order" : 0.66666666666666663,
+                "count" : 0
               }
             ],
             "order" : 0.36363636363636365,
@@ -1850,7 +1948,7 @@
         ],
         "access" : 1,
         "count" : 8,
-        "progeny" : 214,
+        "progeny" : 226,
         "author" : "F2AE15D8-D7C7-41E2-B996-B8164997A48A",
         "order" : 0.20000000000000001,
         "color" : ""
@@ -2313,19 +2411,16 @@
                         "count" : 0
                       },
                       {
-                        "recordName" : "E31CC09A-BD9A-4984-BACA-0BB64538DAB5",
-                        "progeny" : 1,
-                        "name" : "control space and command f both happen during text editing",
                         "children" : [
                           {
                             "recordName" : "E309700F-2BF6-4A84-8142-40F7F8CC6B1C",
                             "progeny" : 0,
-                            "name" : "and command A",
+                            "name" : "and ⌘ A",
                             "children" : [
                               {
                                 "recordName" : "2BAAAE1C-FF90-4299-8F6D-094ADB39FB9A",
                                 "progeny" : 0,
-                                "name" : "need command , and .",
+                                "name" : "need ⌘ , and .",
                                 "order" : 0.33333333333333331,
                                 "count" : 0
                               }
@@ -2341,8 +2436,12 @@
                             "count" : 0
                           }
                         ],
-                        "order" : 0.375,
-                        "count" : 2
+                        "name" : "control space and command f both happen during text editing",
+                        "needs" : "not fetched",
+                        "count" : 2,
+                        "progeny" : 1,
+                        "recordName" : "E31CC09A-BD9A-4984-BACA-0BB64538DAB5",
+                        "order" : 0.375
                       },
                       {
                         "recordName" : "B73A0461-FEF4-43D5-81AA-56F92C3C700D",
@@ -3610,9 +3709,6 @@
                         "count" : 21
                       },
                       {
-                        "recordName" : "3D71D40D-3031-46C1-BBA4-97E626637AB6",
-                        "progeny" : 11,
-                        "name" : "1042",
                         "children" : [
                           {
                             "recordName" : "AB3121EB-FFE7-4852-B626-119AFAC14D63",
@@ -3631,7 +3727,7 @@
                           {
                             "recordName" : "29869389-B7C4-4D75-ACD9-B65F9CB660C4",
                             "progeny" : 0,
-                            "name" : "COMMAND D -> convert selected text into a new child",
+                            "name" : "⌘ D -> convert selected text into a new child",
                             "children" : [
                               {
                                 "recordName" : "98AFD8EF-016F-4832-8D20-9581BF814DB2",
@@ -3686,7 +3782,7 @@
                           {
                             "recordName" : "D247E479-5FBC-497B-9F2D-3B428DAA13B7",
                             "progeny" : 0,
-                            "name" : "COMMAND A during text editing does nothing",
+                            "name" : "⌘ A during text editing does nothing",
                             "children" : [
                               {
                                 "recordName" : "25AF895B-BDA2-4987-8CFB-C2F0A0A101EE",
@@ -3776,8 +3872,12 @@
                             "count" : 1
                           }
                         ],
-                        "order" : 0.27272727272727271,
-                        "count" : 10
+                        "name" : "1042",
+                        "needs" : "not fetched",
+                        "count" : 10,
+                        "progeny" : 11,
+                        "recordName" : "3D71D40D-3031-46C1-BBA4-97E626637AB6",
+                        "order" : 0.27272727272727271
                       },
                       {
                         "recordName" : "DC32B246-DC5F-4817-92DD-32DBB181885A",
@@ -6653,9 +6753,6 @@
                         "count" : 0
                       },
                       {
-                        "recordName" : "3493859D-59FD-40E5-848C-A7ED4C0B5ED3",
-                        "progeny" : 6,
-                        "name" : "1056",
                         "children" : [
                           {
                             "recordName" : "A56775A8-8F13-4A2F-BE9E-FE86EE299EC6",
@@ -6847,7 +6944,7 @@
                             "recordName" : "4593C343-D324-42CD-B7D7-6F6918E23308",
                             "progeny" : 0,
                             "attributes" : "",
-                            "name" : "ALERT for COMMAND-OPTION LEFT ARROW from here -> baaaad baaaaaaaad",
+                            "name" : "ALERT for ⌘-OPTION LEFT ARROW from here -> baaaad baaaaaaaad",
                             "order" : 0.80000000000000004,
                             "count" : 0
                           },
@@ -6875,8 +6972,12 @@
                             "count" : 0
                           }
                         ],
-                        "order" : 0.81818181818181823,
-                        "count" : 0
+                        "name" : "1056",
+                        "needs" : "not fetched",
+                        "count" : 0,
+                        "progeny" : 6,
+                        "recordName" : "3493859D-59FD-40E5-848C-A7ED4C0B5ED3",
+                        "order" : 0.81818181818181823
                       }
                     ],
                     "order" : 0.40000000000000002,
@@ -7044,9 +7145,6 @@
                         "count" : 1
                       },
                       {
-                        "recordName" : "61CDCEA2-919F-4886-870A-3746DA08789C",
-                        "progeny" : 0,
-                        "name" : "while typing",
                         "children" : [
                           {
                             "recordName" : "7D897437-A728-459E-96BF-85445DCE8B8E",
@@ -7080,7 +7178,7 @@
                           {
                             "recordName" : "47F952BA-62EB-4E0C-A3D3-4770146460D1",
                             "progeny" : 0,
-                            "name" : "COMMAND > inserts \"->\"",
+                            "name" : "⌘ > inserts \"->\"",
                             "order" : 0.55555555555555558,
                             "count" : 0
                           },
@@ -7099,8 +7197,12 @@
                             "count" : 0
                           }
                         ],
-                        "order" : 0.30000000000000004,
-                        "count" : 0
+                        "name" : "while typing",
+                        "needs" : "not fetched",
+                        "count" : 0,
+                        "progeny" : 0,
+                        "recordName" : "61CDCEA2-919F-4886-870A-3746DA08789C",
+                        "order" : 0.30000000000000004
                       },
                       {
                         "recordName" : "1E04C20E-8A9B-4101-A064-A57FA227FA87",
@@ -8381,7 +8483,7 @@
                 "color" : "red:0.0,blue:0.602129723020202,green:0.6146153808"
               }
             ],
-            "name" : "suggestions",
+            "name" : "requested features",
             "access" : 2,
             "count" : 1,
             "progeny" : 190,
@@ -8397,6 +8499,7 @@
                 "recordName" : "E967F81E-F04B-443A-B278-0C6CC9629E1B",
                 "name" : "you can also email me (select this idea and tap =)",
                 "access" : 1,
+                "needs" : "not fetched",
                 "count" : 0,
                 "progeny" : 0,
                 "traits" : [
@@ -8494,12 +8597,12 @@
                             "recordName" : "DCF37CAC-6244-4340-9AF7-47ACD740A1F2",
                             "progeny" : 0,
                             "name" : "          ",
-                            "needs" : "unorphan",
                             "order" : 0.33333333333333331,
                             "count" : 0
                           }
                         ],
                         "name" : "be friendly",
+                        "needs" : "not fetched",
                         "access" : 1,
                         "count" : 0,
                         "progeny" : 0,
@@ -8618,11 +8721,80 @@
                       {
                         "children" : [
                           {
+                            "order" : 0.076923076923076927,
+                            "name" : "looses file location",
+                            "count" : 0,
+                            "progeny" : 0,
+                            "traits" : [
+                              {
+                                "type" : "h",
+                                "needs" : "unorphan",
+                                "text" : "file:\/\/\/Users\/jonathansand\/Library\/Caches\/Focus\/",
+                                "recordName" : "14EB54C1-9628-4D4B-814D-289226425E0D"
+                              }
+                            ],
+                            "recordName" : "B0C36DBF-7E79-428F-BF2E-E48642F04DBB",
+                            "children" : [
+                              {
+                                "recordName" : "47591942-5CC5-491C-B6CA-B63391FF1B37",
+                                "progeny" : 0,
+                                "name" : "containers",
+                                "traits" : [
+                                  {
+                                    "type" : "h",
+                                    "needs" : "unorphan",
+                                    "text" : "file:\/\/\/Users\/jonathansand\/Library\/Containers\/com.zones.focus.mac\/Data\/Library\/Caches\/Focus",
+                                    "recordName" : "5EFDC310-AD9A-48D3-9DFB-680EDC76B443"
+                                  }
+                                ],
+                                "order" : 0.33333333333333331,
+                                "count" : 0
+                              }
+                            ]
+                          },
+                          {
+                            "recordName" : "4080C6BA-99C6-4CA6-A6D2-F155B85DC711",
+                            "progeny" : 0,
+                            "name" : "# enumeration is borked",
+                            "children" : [
+                              {
+                                "recordName" : "25933501-681F-4CA7-980C-70353B97CA54",
+                                "progeny" : 0,
+                                "name" : "add or remove a mark truncates at second parenthesis",
+                                "order" : 0.25,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "7D02FE20-F5BC-4712-9567-5EDE192DFDE6",
+                                "progeny" : 0,
+                                "name" : "change ordering, then re-enumerate -> some numbers remain",
+                                "order" : 0.5,
+                                "count" : 0
+                              }
+                            ],
+                            "order" : 0.15384615384615385,
+                            "count" : 0
+                          },
+                          {
                             "recordName" : "6023BAA8-5516-48EE-8390-941068D2FCA3",
                             "progeny" : 0,
                             "attributes" : "",
                             "name" : "sometimes launch to empty screen !!!!!",
-                            "order" : 0.1111111111111111,
+                            "order" : 0.23076923076923078,
+                            "count" : 0
+                          },
+                          {
+                            "recordName" : "73EBAB67-AD1A-4665-8AED-0C8728BB7969",
+                            "progeny" : 0,
+                            "name" : "favorites graph overlaps focus graph",
+                            "order" : 0.30769230769230771,
+                            "count" : 0
+                          },
+                          {
+                            "recordName" : "50620650-FFB9-4E42-912A-CDD441E644EF",
+                            "progeny" : 0,
+                            "name" : "move vertical extreme broken",
+                            "order" : 0.38461538461538464,
                             "count" : 0
                           },
                           {
@@ -8732,32 +8904,22 @@
                             "count" : 0,
                             "progeny" : 11,
                             "recordName" : "C583E425-4258-492B-A62B-E02202A164CE",
-                            "order" : 0.33333333333333331
+                            "order" : 0.46153846153846156
+                          },
+                          {
+                            "recordName" : "726767AB-50FC-4170-BCFD-5B165A19A0FE",
+                            "progeny" : 0,
+                            "name" : "user id broken",
+                            "order" : 0.53846153846153855,
+                            "count" : 0
                           },
                           {
                             "recordName" : "6DCEFA84-DFE0-4F5C-97D0-6089409E5EFA",
                             "progeny" : 0,
                             "attributes" : "c",
                             "name" : "----------- later -----------",
-                            "order" : 0.44444444444444442,
+                            "order" : 0.61538461538461542,
                             "count" : 0
-                          },
-                          {
-                            "children" : [
-                              {
-                                "recordName" : "CD21E8B1-7EFA-48E7-A5D5-5AA9EDF99A70",
-                                "progeny" : 0,
-                                "name" : "target of some bookmarks",
-                                "order" : 0.25,
-                                "count" : 0
-                              }
-                            ],
-                            "name" : "missing from file",
-                            "attributes" : "",
-                            "count" : 0,
-                            "progeny" : 0,
-                            "recordName" : "3079CFC5-4216-4CC6-9589-A2B0A231E57A",
-                            "order" : 0.55555555555555558
                           },
                           {
                             "children" : [
@@ -8790,22 +8952,39 @@
                             "count" : 4,
                             "progeny" : 1,
                             "recordName" : "7069251A-6978-459C-A094-A8C9B710B7C3",
-                            "order" : 0.66666666666666663
+                            "order" : 0.69230769230769229
                           },
                           {
                             "recordName" : "1FC2A4B1-41A2-4944-B592-B4DCB7031C34",
                             "name" : "fix these soon",
                             "link" : "everyone::38C39F55-B0D9-4D72-BCA7-B9BB8E265DB2",
-                            "order" : 0.77777777777777768,
+                            "order" : 0.76923076923076927,
                             "count" : 0
+                          },
+                          {
+                            "children" : [
+                              {
+                                "recordName" : "CD21E8B1-7EFA-48E7-A5D5-5AA9EDF99A70",
+                                "progeny" : 0,
+                                "name" : "target of some bookmarks",
+                                "order" : 0.25,
+                                "count" : 0
+                              }
+                            ],
+                            "name" : "missing from file",
+                            "attributes" : "",
+                            "count" : 0,
+                            "progeny" : 0,
+                            "recordName" : "3079CFC5-4216-4CC6-9589-A2B0A231E57A",
+                            "order" : 0.84615384615384626
                           }
                         ],
                         "name" : "bugs for 1.0",
                         "attributes" : "c",
                         "count" : 6,
-                        "progeny" : 18,
+                        "progeny" : 21,
                         "recordName" : "2B5EDCB6-6F7F-425D-BCF0-D825E7694929",
-                        "order" : 0.10000000000000001
+                        "order" : 0.1111111111111111
                       },
                       {
                         "children" : [
@@ -8813,17 +8992,18 @@
                             "recordName" : "9DCCB138-5468-4825-85B5-224F49B1D9A4",
                             "progeny" : 0,
                             "name" : "export as outline text",
-                            "needs" : "save",
                             "order" : 0.1111111111111111,
                             "count" : 0
                           },
                           {
+                            "recordName" : "910407BD-53E0-4F66-8713-280B6C0DEF7C",
+                            "progeny" : 0,
+                            "name" : "OPTION DELETE -> replace bookmark with original",
                             "children" : [
                               {
                                 "recordName" : "7A79F3C7-4BEA-4126-8C66-A38DE32A257A",
                                 "progeny" : 0,
                                 "name" : "delete",
-                                "needs" : "save,unorphan,not fetched",
                                 "order" : 0.16666666666666666,
                                 "count" : 0
                               },
@@ -8831,7 +9011,6 @@
                                 "recordName" : "97B6A5E3-CB3F-485E-9A3F-4E5AC42E4793",
                                 "progeny" : 0,
                                 "name" : "move into parent",
-                                "needs" : "save,unorphan,not fetched",
                                 "order" : 0.33333333333333331,
                                 "count" : 0
                               },
@@ -8839,7 +9018,6 @@
                                 "recordName" : "FBC8D59A-43CA-4F1E-93F9-5FB559710ECD",
                                 "progeny" : 0,
                                 "name" : "orphan original",
-                                "needs" : "save,unorphan,not fetched",
                                 "order" : 0.5,
                                 "count" : 0
                               },
@@ -8847,19 +9025,17 @@
                                 "recordName" : "5D0965BD-EC2A-4F14-9F09-0E2B639FC7E1",
                                 "progeny" : 0,
                                 "name" : "disabled if inside favorites",
-                                "needs" : "save,unorphan,not fetched",
                                 "order" : 0.66666666666666663,
                                 "count" : 0
                               }
                             ],
-                            "name" : "OPTION DELETE -> replace bookmark with original",
-                            "needs" : "save,unorphan,not fetched",
-                            "count" : 0,
-                            "progeny" : 0,
-                            "recordName" : "910407BD-53E0-4F66-8713-280B6C0DEF7C",
-                            "order" : 0.22222222222222221
+                            "order" : 0.22222222222222221,
+                            "count" : 0
                           },
                           {
+                            "recordName" : "E7BA4475-0658-4CDF-A140-BF86EC3D5461",
+                            "progeny" : 5,
+                            "name" : "icloud resumes",
                             "children" : [
                               {
                                 "recordName" : "E9514162-728A-4AB6-AEED-A8187653DAF8",
@@ -8954,12 +9130,8 @@
                                 "count" : 0
                               }
                             ],
-                            "name" : "icloud resumes",
-                            "needs" : "save",
-                            "count" : 8,
-                            "progeny" : 5,
-                            "recordName" : "E7BA4475-0658-4CDF-A140-BF86EC3D5461",
-                            "order" : 0.44444444444444442
+                            "order" : 0.44444444444444442,
+                            "count" : 8
                           },
                           {
                             "recordName" : "D266230B-7970-4D69-B472-8C33128D6AB1",
@@ -9158,7 +9330,6 @@
                               }
                             ],
                             "access" : 1,
-                            "needs" : "save",
                             "count" : 2,
                             "progeny" : 22,
                             "author" : "F2AE15D8-D7C7-41E2-B996-B8164997A48A",
@@ -9303,37 +9474,193 @@
                             ],
                             "name" : "maybe ?",
                             "attributes" : "",
-                            "needs" : "save",
                             "count" : 4,
                             "progeny" : 12,
-                            "order" : 0.66666666666666663,
-                            "recordName" : "FF5397CA-2807-4706-80C0-F0C8E1A1A0AC"
+                            "recordName" : "FF5397CA-2807-4706-80C0-F0C8E1A1A0AC",
+                            "order" : 0.66666666666666663
                           },
                           {
                             "recordName" : "547DB309-24AC-45A0-BFE2-9452B8CCFD0D",
                             "name" : "implement these soon",
                             "link" : "everyone::D0ABEC90-3089-4144-9B9B-62650EA9F0F1",
-                            "needs" : "save",
                             "order" : 0.77777777777777768,
                             "count" : 0
                           }
                         ],
                         "name" : "features for 1.0",
                         "attributes" : "",
-                        "needs" : "save",
                         "count" : 5,
                         "progeny" : 59,
-                        "order" : 0.33333333333333331,
-                        "recordName" : "B3937BA3-5250-4044-B561-FAE55F246CD2"
+                        "recordName" : "B3937BA3-5250-4044-B561-FAE55F246CD2",
+                        "order" : 0.22222222222222221
                       },
                       {
                         "children" : [
                           {
+                            "recordName" : "B8FE3233-1666-4822-B714-7CF6DEB4775E",
+                            "progeny" : 0,
+                            "name" : "make preferences",
                             "children" : [
+                              {
+                                "recordName" : "C6D42BED-0F07-4F5E-AF72-E2795FCD4F88",
+                                "progeny" : 0,
+                                "name" : "background color lighter",
+                                "order" : 0.20000000000000001,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "2AB450FB-7C3C-4A46-874A-727B8ED3380F",
+                                "progeny" : 0,
+                                "name" : "content less cluttered",
+                                "order" : 0.40000000000000002,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "11BCB8B8-975A-4DA9-8E46-043D40440858",
+                                "progeny" : 0,
+                                "name" : "larger font",
+                                "order" : 0.60000000000000009,
+                                "count" : 0
+                              }
+                            ],
+                            "order" : 0.058823529411764705,
+                            "count" : 0
+                          },
+                          {
+                            "recordName" : "E3023B43-1DFE-4AB4-B8C1-1CB470EDF175",
+                            "progeny" : 0,
+                            "name" : "DONE: mechanism for opening a file into xcode",
+                            "children" : [
+                              {
+                                "recordName" : "E8BB23D2-1929-4872-9731-24A9553AD4D9",
+                                "progeny" : 0,
+                                "name" : " file:\/\/filepath does not work, try = on this idea",
+                                "traits" : [
+                                  {
+                                    "type" : "h",
+                                    "text" : "file:\/\/\/Users\/jonathansand\/Documents\/GitHub\/clone\/RadarX\/RadarXElements\/RDARProblemDetailInspectorItemCCList.swift",
+                                    "recordName" : "1713EA6C-5827-4880-8205-B8B77F9CBBA4"
+                                  }
+                                ],
+                                "order" : 0.33333333333333331,
+                                "count" : 0
+                              }
+                            ],
+                            "order" : 0.11764705882352941,
+                            "count" : 0
+                          },
+                          {
+                            "recordName" : "52CC73DB-661E-408F-BB2E-69A37985EFC8",
+                            "progeny" : 0,
+                            "name" : "numbered dots which evenly divide by four -> point horizontally",
+                            "order" : 0.1764705882352941,
+                            "count" : 0
+                          },
+                          {
+                            "recordName" : "6DCE85FD-6535-4A9F-BACB-7402ACE1500A",
+                            "progeny" : 0,
+                            "name" : "DONE: confined and extended (vs. wraps and jumps)",
+                            "order" : 0.23529411764705882,
+                            "count" : 0
+                          },
+                          {
+                            "recordName" : "D99C2FC5-9D01-408C-B508-CA8E52EDEBA4",
+                            "progeny" : 0,
+                            "name" : "three-state colorize",
+                            "children" : [
+                              {
+                                "recordName" : "D7DB009D-E46B-4D37-B5F7-D335A4C91A57",
+                                "progeny" : 0,
+                                "name" : "no color",
+                                "order" : 0.14285714285714285,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "AEF82C65-7CF9-4219-898F-D51D15D9FBEF",
+                                "progeny" : 0,
+                                "name" : "not inherit",
+                                "order" : 0.2857142857142857,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "3AC13408-671E-4C10-8D98-A9DDCF1266EA",
+                                "progeny" : 0,
+                                "name" : "inherit",
+                                "order" : 0.42857142857142855,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "ED552899-973C-4F65-A07E-48E79C237F1D",
+                                "progeny" : 0,
+                                "attributes" : "c",
+                                "name" : "----------- more -----------",
+                                "order" : 0.5714285714285714,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "A8717173-B64F-4BF7-BA1A-FC4F14A0B574",
+                                "progeny" : 0,
+                                "name" : "indicate inherit as thick drag circle?",
+                                "order" : 0.71428571428571419,
+                                "count" : 0
+                              }
+                            ],
+                            "order" : 0.29411764705882354,
+                            "count" : 0
+                          },
+                          {
+                            "recordName" : "5650AC7D-C435-4906-BA6C-8A56D3DD70FA",
+                            "progeny" : 8,
+                            "name" : "keys",
+                            "children" : [
+                              {
+                                "recordName" : "2C5E6625-523E-49A2-B2EC-7EDE7F0EC1CF",
+                                "progeny" : 0,
+                                "name" : "( and [ surround \/ remove around selected text",
+                                "order" : 0.1111111111111111,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "B8FE0836-EBFF-4CD7-A979-48740C29C119",
+                                "progeny" : 0,
+                                "name" : "command d should do automatic trimming",
+                                "children" : [
+                                  {
+                                    "recordName" : "0A56EB59-5F65-42F0-8D0D-9F72FDFF02E2",
+                                    "progeny" : 0,
+                                    "name" : "spaces",
+                                    "order" : 0.20000000000000001,
+                                    "count" : 0
+                                  },
+                                  {
+                                    "recordName" : "5597A759-B74E-4564-9BB8-0F5AA758F16E",
+                                    "progeny" : 0,
+                                    "name" : "parentheses",
+                                    "order" : 0.40000000000000002,
+                                    "count" : 0
+                                  },
+                                  {
+                                    "recordName" : "A2E75282-4DCD-4124-8E2C-CBF902AED7BA",
+                                    "progeny" : 0,
+                                    "name" : "brackets",
+                                    "order" : 0.60000000000000009,
+                                    "count" : 0
+                                  }
+                                ],
+                                "order" : 0.22222222222222221,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "26D89460-C07F-4B19-84A8-3610063C74C1",
+                                "progeny" : 0,
+                                "name" : "KEY\/MENU open finder at file cache directory",
+                                "order" : 0.33333333333333331,
+                                "count" : 0
+                              },
                               {
                                 "recordName" : "19319781-2755-4DD1-A25A-54B0E8626231",
                                 "progeny" : 0,
-                                "name" : "COMMAND [ and ] during text edit",
+                                "name" : "⌘ [ and ] during text edit",
                                 "children" : [
                                   {
                                     "recordName" : "016B8AE9-1881-45F3-B855-11C421AF78F8",
@@ -9350,14 +9677,14 @@
                                     "count" : 0
                                   }
                                 ],
-                                "order" : 0.16666666666666666,
+                                "order" : 0.44444444444444442,
                                 "count" : 0
                               },
                               {
                                 "recordName" : "AD58160D-4D09-4EED-9A33-C3D85F23A2C5",
                                 "progeny" : 0,
-                                "name" : "COMMAND - during editing inserts \"->\" with smart spacing",
-                                "order" : 0.33333333333333331,
+                                "name" : "⌘ - during editing inserts \"->\" with smart spacing",
+                                "order" : 0.55555555555555558,
                                 "count" : 0
                               },
                               {
@@ -9380,20 +9707,18 @@
                                     "count" : 0
                                   }
                                 ],
-                                "order" : 0.5,
+                                "order" : 0.66666666666666663,
                                 "count" : 0
                               },
                               {
                                 "name" : "KEYS",
                                 "link" : "everyone::7CF313A8-DB13-4E8D-A861-980DBDBBECC5",
-                                "order" : 0.66666666666666663,
+                                "order" : 0.77777777777777768,
                                 "recordName" : "645AC00B-AD8F-40C7-A314-9564A9318BD1"
                               }
                             ],
-                            "progeny" : 5,
-                            "name" : "keys",
-                            "order" : 0.090909090909090912,
-                            "recordName" : "5650AC7D-C435-4906-BA6C-8A56D3DD70FA"
+                            "order" : 0.3529411764705882,
+                            "count" : 4
                           },
                           {
                             "recordName" : "C7BA4511-E27E-4646-8A39-66C696D5D66F",
@@ -9437,7 +9762,7 @@
                                 "count" : 0
                               }
                             ],
-                            "order" : 0.18181818181818182,
+                            "order" : 0.41176470588235292,
                             "count" : 0
                           },
                           {
@@ -9460,7 +9785,7 @@
                                 "count" : 0
                               }
                             ],
-                            "order" : 0.27272727272727271,
+                            "order" : 0.47058823529411764,
                             "count" : 0
                           },
                           {
@@ -9605,7 +9930,7 @@
                                 "count" : 3
                               }
                             ],
-                            "order" : 0.36363636363636365,
+                            "order" : 0.52941176470588236,
                             "count" : 6
                           },
                           {
@@ -9628,7 +9953,7 @@
                                 "count" : 0
                               }
                             ],
-                            "order" : 0.45454545454545459,
+                            "order" : 0.58823529411764708,
                             "count" : 0
                           },
                           {
@@ -9673,7 +9998,7 @@
                                 "count" : 0
                               }
                             ],
-                            "order" : 0.54545454545454541,
+                            "order" : 0.6470588235294118,
                             "count" : 0
                           },
                           {
@@ -9689,30 +10014,46 @@
                                 "count" : 0
                               }
                             ],
-                            "order" : 0.63636363636363635,
+                            "order" : 0.70588235294117641,
                             "count" : 0
                           },
                           {
                             "recordName" : "709EA3AB-1A47-4E2D-8E92-72DEA77935AF",
                             "progeny" : 0,
                             "name" : "italics and bold zones",
-                            "order" : 0.72727272727272729,
+                            "order" : 0.76470588235294112,
                             "count" : 0
                           },
                           {
                             "recordName" : "338DA9E4-9271-49E8-AC4E-936EFC803A53",
                             "progeny" : 0,
                             "name" : "italics and bold attributed ranges within text",
-                            "order" : 0.81818181818181823,
+                            "order" : 0.82352941176470584,
+                            "count" : 0
+                          },
+                          {
+                            "recordName" : "43FB50FC-198B-46F9-8BB5-FA14B725C31E",
+                            "progeny" : 0,
+                            "name" : "automatic counting",
+                            "children" : [
+                              {
+                                "recordName" : "707200EC-F011-4F1B-AD2C-C8705B8628DB",
+                                "progeny" : 0,
+                                "name" : "owned by parent?",
+                                "order" : 0.33333333333333331,
+                                "count" : 0
+                              }
+                            ],
+                            "order" : 0.88235294117647056,
                             "count" : 0
                           }
                         ],
                         "name" : "new ideas",
                         "attributes" : "",
                         "count" : 0,
-                        "progeny" : 42,
+                        "progeny" : 58,
                         "recordName" : "2786BFF0-EFA0-4125-BA6F-D8CED3C2F277",
-                        "order" : 0.44444444444444442
+                        "order" : 0.33333333333333331
                       },
                       {
                         "recordName" : "D91A8A82-54B8-4B07-826E-67BC1D0DFFC8",
@@ -9736,9 +10077,8 @@
                         "count" : 0
                       }
                     ],
-                    "needs" : "save",
                     "count" : 5,
-                    "progeny" : 142,
+                    "progeny" : 172,
                     "order" : 0.66666666666666663,
                     "color" : "red:0.838574409484863,blue:0.125294371593391,green:0.335602224378906"
                   }
@@ -9746,7 +10086,7 @@
                 "name" : "development transparency",
                 "access" : 1,
                 "count" : 3,
-                "progeny" : 151,
+                "progeny" : 180,
                 "author" : "F2AE15D8-D7C7-41E2-B996-B8164997A48A",
                 "order" : 0.60000000000000009,
                 "recordName" : "F1A67E33-5207-4B09-A4C0-D0BFABC5E990"
@@ -9754,7 +10094,7 @@
             ],
             "access" : 2,
             "count" : 3,
-            "progeny" : 162,
+            "progeny" : 191,
             "author" : "F2AE15D8-D7C7-41E2-B996-B8164997A48A",
             "order" : 0.71428571428571419,
             "color" : "red:0.336557458894078,blue:0.421816813676795,green:0.564533025568182"
@@ -9762,7 +10102,7 @@
         ],
         "access" : 1,
         "count" : 4,
-        "progeny" : 1004,
+        "progeny" : 1033,
         "author" : "F2AE15D8-D7C7-41E2-B996-B8164997A48A",
         "order" : 0.60000000000000009,
         "color" : "red:0.607515675148749,blue:0.788254616477273,green:0.298207167408573"
@@ -9770,7 +10110,7 @@
     ],
     "access" : 4,
     "count" : 2,
-    "progeny" : 1246,
+    "progeny" : 1271,
     "author" : "F2AE15D8-D7C7-41E2-B996-B8164997A48A",
     "order" : 0.0625,
     "color" : "red:0.413277948,blue:0.0,green:0.6643199574"

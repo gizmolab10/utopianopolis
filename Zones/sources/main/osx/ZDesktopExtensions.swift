@@ -117,7 +117,16 @@ extension String {
 
 
     func openAsURL() {
-        if let url = URL(string: self) {
+        let urlString = replacingOccurrences(of: " ", with: "%20")
+        if  var url = URL(string: urlString) {
+            if  url.isFileURL {
+                let prefix = "file://"
+                let components = urlString.components(separatedBy: prefix)
+                var path = components[1]
+                path = NSString(string: path).expandingTildeInPath
+                url = URL(string: prefix + path)!
+            }
+
             NSWorkspace.shared().open(url)
         }
     }

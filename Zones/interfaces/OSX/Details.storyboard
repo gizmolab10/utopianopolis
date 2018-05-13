@@ -581,7 +581,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="232" height="322"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box autoresizesSubviews="NO" borderType="line" title="new ideas" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
+                            <box autoresizesSubviews="NO" borderType="line" title="from current idea, new ideas" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
                                 <rect key="frame" x="5" y="275" width="222" height="39"/>
                                 <view key="contentView" id="qnC-vV-W8u">
                                     <rect key="frame" x="1" y="1" width="220" height="23"/>
@@ -613,22 +613,22 @@
                                     <constraint firstAttribute="height" constant="35" id="9eg-3P-j9J"/>
                                 </constraints>
                             </box>
-                            <box autoresizesSubviews="NO" borderType="line" title="browsing" translatesAutoresizingMaskIntoConstraints="NO" id="0d2-7W-Jxg" userLabel="browsing">
+                            <box autoresizesSubviews="NO" borderType="line" title="browsing is confined to" translatesAutoresizingMaskIntoConstraints="NO" id="0d2-7W-Jxg" userLabel="browsing">
                                 <rect key="frame" x="5" y="232" width="222" height="39"/>
                                 <view key="contentView" id="l9n-tF-CCv">
                                     <rect key="frame" x="1" y="1" width="220" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="browsing" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xql-tK-B1R">
-                                            <rect key="frame" x="3" y="0.0" width="215" height="27"/>
+                                            <rect key="frame" x="4" y="0.0" width="212" height="27"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="24" id="0QL-hr-4Nd"/>
                                             </constraints>
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="XJ8-gh-4cf">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <segments>
-                                                    <segment label="wraps" width="106" selected="YES"/>
-                                                    <segment label="jumps" width="102" tag="1"/>
+                                                    <segment label="one idea" width="105" selected="YES"/>
+                                                    <segment label="all visible ideas" width="105" tag="1"/>
                                                 </segments>
                                             </segmentedCell>
                                             <connections>
@@ -637,8 +637,10 @@
                                         </segmentedControl>
                                     </subviews>
                                     <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="Xql-tK-B1R" secondAttribute="trailing" constant="6" id="4fb-x3-Znz"/>
                                         <constraint firstAttribute="centerY" secondItem="Xql-tK-B1R" secondAttribute="centerY" constant="2.5" id="sjq-iZ-rEQ"/>
                                         <constraint firstItem="Xql-tK-B1R" firstAttribute="centerX" secondItem="l9n-tF-CCv" secondAttribute="centerX" id="tlW-q6-Pxe"/>
+                                        <constraint firstItem="Xql-tK-B1R" firstAttribute="leading" secondItem="l9n-tF-CCv" secondAttribute="leading" constant="6" id="xzf-ar-mtc"/>
                                     </constraints>
                                 </view>
                                 <constraints>
@@ -652,7 +654,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="counts" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hRI-S8-ys7">
-                                            <rect key="frame" x="2" y="-4" width="216" height="27"/>
+                                            <rect key="frame" x="1" y="-4" width="218" height="27"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="24" id="IcD-O8-4He"/>
                                             </constraints>
@@ -662,7 +664,7 @@
                                                     <segment label="hidden" width="54"/>
                                                     <segment label="dots" width="44" selected="YES" tag="1"/>
                                                     <segment label="numbers" width="64"/>
-                                                    <segment label="totals" width="46"/>
+                                                    <segment label="totals" width="48"/>
                                                 </segments>
                                             </segmentedCell>
                                             <connections>
@@ -715,7 +717,7 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="BNZ-fl-QS2"/>
                                                     </constraints>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="spacing" id="mLK-OR-6f6">
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="horizontal" id="mLK-OR-6f6">
                                                         <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

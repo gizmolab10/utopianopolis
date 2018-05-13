@@ -219,11 +219,10 @@ class ZFileManager: NSObject {
 
 
     func createDataDirectory() -> URL {
-        let cacheURL = try! FileManager().url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let directoryURL = cacheURL.appendingPathComponent("Focus", isDirectory: true)
+        let cacheURL = try! FileManager().url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let directoryURL = cacheURL.appendingPathComponent("Thoughtful", isDirectory: true)
 
         do {
-
             try manager.createDirectory(atPath: directoryURL.path, withIntermediateDirectories: true, attributes: nil)
         } catch {
             print(error)
@@ -233,7 +232,7 @@ class ZFileManager: NSObject {
     }
 
 
-    let normalExtension = ".focus"
+    let normalExtension = ".thoughtful"
     let backupExtension = ".backup"
 
 
