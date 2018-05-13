@@ -135,7 +135,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
             var         rect = dirtyRect.insetBy(dx: 3.0, dy: 0.0)
             rect.size.height = 0.0
-            rect.size.width -= 4.0
             rect.origin.y    = dirtyRect.maxY - 1.0
             let path         = ZBezierPath(rect: rect)
             path  .lineWidth = 0.4

@@ -177,7 +177,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func drawTinyCounterDots(_ iDirtyRect: CGRect) {
+    func drawTinyCountDots(_ iDirtyRect: CGRect) {
         if  let    zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showChildren || zone.isBookmark) {
             var   count = (gCountsMode == .progeny) ? zone.progenyCount : zone.indirectCount
             var aHollow = false
@@ -198,19 +198,21 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             if  count > 0 {
                 let         aCount = count % 10
                 let         bCount = count / 10
+                let     fullCircle = Double.pi * 2.0
                 let      dotRadius = Double(innerDotHeight / 2.0)
                 let        aRadius = ((dotRadius * gLineThickness / 12.0) + 0.4) * (1.25 ** scale)
-                let         center = innerDot!.frame.center
+                let          frame = innerDot!.frame.offsetBy(dx: -0.1, dy: -0.1)
+                let         center = frame.center
                 let color: ZColor? = isDragDrop ? gRubberbandColor : zone.color
 
                 let closure: IntBooleanClosure = { (iCount, isB) in
                     let             oneSet = (isB ? aCount : bCount) == 0
                     if  iCount             > 0 {
                         let         isEven = iCount % 2 == 0
-                        let incrementAngle = Double.pi * (oneSet ? 2.0 : 1.0) / Double(iCount)
+                        let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(iCount)
                         for index in 0 ... iCount - 1 {
                             let  increment = Double(index) + 0.5
-                            let startAngle = (Double.pi * (oneSet ? isEven ? 0.5 : 1.0 : isB ? 0.5 : 1.5))
+                            let startAngle = fullCircle / 4.0 * (oneSet ? isEven ? 1.0 : 2.0 : isB ? 1.0 : 3.0)
                             let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
                             let     radius = CGFloat(dotRadius + aRadius * (isB ? 2.0 : 1.6))
                             let     offset = aRadius * (isB ? 2.1 : 1.13)
@@ -276,9 +278,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             let string = type.rawValue
             let   size = CGFloat(gDotHeight - 2.0)
             let   font = NSFont.boldSystemFont(ofSize: size)
-            let height = string.heightForFont(font, options: .usesDeviceMetrics) + 5.0
+            let height = string.heightForFont(font, options: .usesDeviceMetrics)
             let xDelta = size / 3.6
-            let yDelta = (iDirtyRect.height - height) / 2.0
+            let yDelta = (iDirtyRect.height - height) / 2.0 - 1.0
             let   rect = iDirtyRect.insetBy(dx: xDelta, dy: -CGFloat(yDelta))
             let  color = isFilled ? gBackgroundColor : iZone.color
 
@@ -352,7 +354,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                         ///////////////////////
 
                         // addBorderRelative(thickness: 1.0, radius: 0.5, color: ZColor.red.cgColor)
-                        drawTinyCounterDots(iDirtyRect)
+                        drawTinyCountDots(iDirtyRect)
                     } else if isCurrentFavorite {
 
                         ///////////////////////////////////
