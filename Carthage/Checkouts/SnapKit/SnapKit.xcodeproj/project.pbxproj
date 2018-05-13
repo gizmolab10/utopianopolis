@@ -266,6 +266,7 @@
 				EEBCC9D419CC627D0083B827 /* Frameworks */,
 				EEBCC9D519CC627D0083B827 /* Headers */,
 				EEBCC9D619CC627D0083B827 /* Resources */,
+				0CED8F22209573B60059966B /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -350,6 +351,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0CED8F22209573B60059966B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "file=${BUILT_PRODUCTS_DIR}/SnapKit.framework\nif [ -f $file ]; then\ncp $file $(PROJECT_DIR)/Zones/Frameworks\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		EEBCC9D319CC627D0083B827 /* Sources */ = {
