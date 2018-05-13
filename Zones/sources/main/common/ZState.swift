@@ -164,7 +164,7 @@ var gScrollOffset: CGPoint {
 var gBrowsingMode: ZBrowsingMode {
     get {
         let value  = UserDefaults.standard.object(forKey: kBrowsingMode) as? Int
-        var mode   = ZBrowsingMode.wrap
+        var mode   = ZBrowsingMode.confine
         
         if  value != nil {
             mode   = ZBrowsingMode(rawValue: value!)!
