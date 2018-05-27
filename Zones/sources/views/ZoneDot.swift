@@ -211,8 +211,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                         let         isEven = iCount % 2 == 0
                         let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(iCount)
                         for index in 0 ... iCount - 1 {
-                            let  increment = Double(index) + 0.5
-                            let startAngle = fullCircle / 4.0 * (oneSet ? isEven ? 1.0 : 2.0 : isB ? 1.0 : 3.0)
+                            let  increment = Double(index) + ((isEven && oneSet) ? 0.0 : 0.5)
+                            let startAngle = fullCircle / 4.0 * (oneSet ? isEven ? 0.0 : 2.0 : isB ? 1.0 : 3.0)
                             let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
                             let     radius = CGFloat(dotRadius + aRadius * (isB ? 2.0 : 1.6))
                             let     offset = aRadius * (isB ? 2.1 : 1.13)

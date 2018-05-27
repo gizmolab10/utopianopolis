@@ -99,7 +99,6 @@
       }
     ],
     "name" : "public trash",
-    "needs" : "not fetched",
     "access" : 2,
     "count" : 0,
     "progeny" : 0,
@@ -107,7 +106,7 @@
     "order" : 0,
     "recordName" : "trash"
   },
-  "date" : "TimeInterval:547923941.915",
+  "date" : "TimeInterval:547939346.459",
   "destroy" : {
     "name" : "public destroy",
     "needs" : "unorphan",
@@ -143,6 +142,7 @@
                 "traits" : [
                   {
                     "type" : "h",
+                    "needs" : "unorphan",
                     "text" : "https:\/\/medium.com\/@sand_74696\/what-you-get-d565b064be7b",
                     "recordName" : "095A4A7A-7080-4ADA-A092-AF43B211014D"
                   }
@@ -169,8 +169,9 @@
                         "traits" : [
                           {
                             "type" : "h",
+                            "needs" : "unorphan",
                             "text" : "https:\/\/medium.com\/@sand_74696\/dots-and-a-visual-language-fdf1a14fb05c",
-                            "recordName" : "DA0A4C57-4D86-4DAC-905B-2D7BEC2421AA"
+                            "recordName" : "6AFE61AB-ED78-448F-8A07-CAE3A67379C5"
                           }
                         ],
                         "recordName" : "F03C7A96-1DDB-4FDE-A2B7-C06CD6515294",
@@ -379,6 +380,7 @@
                 "traits" : [
                   {
                     "type" : "h",
+                    "needs" : "unorphan",
                     "text" : "https:\/\/medium.com\/@sand_74696\/help-inspector-view-c360241147f2",
                     "recordName" : "242824CB-A6AA-4B01-BCE6-D1804C224D0D"
                   }
@@ -2011,6 +2013,7 @@
                         "traits" : [
                           {
                             "type" : "h",
+                            "needs" : "unorphan",
                             "text" : "https:\/\/medium.com\/@sand_74696\/help-inspector-view-c360241147f2",
                             "recordName" : "16334BBD-17B5-476F-83C9-2FBBA83D65C1"
                           }
@@ -2411,6 +2414,9 @@
                         "count" : 0
                       },
                       {
+                        "recordName" : "E31CC09A-BD9A-4984-BACA-0BB64538DAB5",
+                        "progeny" : 1,
+                        "name" : "control space and command f both happen during text editing",
                         "children" : [
                           {
                             "recordName" : "E309700F-2BF6-4A84-8142-40F7F8CC6B1C",
@@ -2436,12 +2442,8 @@
                             "count" : 0
                           }
                         ],
-                        "name" : "control space and command f both happen during text editing",
-                        "needs" : "not fetched",
-                        "count" : 2,
-                        "progeny" : 1,
-                        "recordName" : "E31CC09A-BD9A-4984-BACA-0BB64538DAB5",
-                        "order" : 0.375
+                        "order" : 0.375,
+                        "count" : 2
                       },
                       {
                         "recordName" : "B73A0461-FEF4-43D5-81AA-56F92C3C700D",
@@ -3709,6 +3711,9 @@
                         "count" : 21
                       },
                       {
+                        "recordName" : "3D71D40D-3031-46C1-BBA4-97E626637AB6",
+                        "progeny" : 11,
+                        "name" : "1042",
                         "children" : [
                           {
                             "recordName" : "AB3121EB-FFE7-4852-B626-119AFAC14D63",
@@ -3872,12 +3877,8 @@
                             "count" : 1
                           }
                         ],
-                        "name" : "1042",
-                        "needs" : "not fetched",
-                        "count" : 10,
-                        "progeny" : 11,
-                        "recordName" : "3D71D40D-3031-46C1-BBA4-97E626637AB6",
-                        "order" : 0.27272727272727271
+                        "order" : 0.27272727272727271,
+                        "count" : 10
                       },
                       {
                         "recordName" : "DC32B246-DC5F-4817-92DD-32DBB181885A",
@@ -6753,6 +6754,9 @@
                         "count" : 0
                       },
                       {
+                        "recordName" : "3493859D-59FD-40E5-848C-A7ED4C0B5ED3",
+                        "progeny" : 6,
+                        "name" : "1056",
                         "children" : [
                           {
                             "recordName" : "A56775A8-8F13-4A2F-BE9E-FE86EE299EC6",
@@ -6972,12 +6976,8 @@
                             "count" : 0
                           }
                         ],
-                        "name" : "1056",
-                        "needs" : "not fetched",
-                        "count" : 0,
-                        "progeny" : 6,
-                        "recordName" : "3493859D-59FD-40E5-848C-A7ED4C0B5ED3",
-                        "order" : 0.81818181818181823
+                        "order" : 0.81818181818181823,
+                        "count" : 0
                       }
                     ],
                     "order" : 0.40000000000000002,
@@ -7145,6 +7145,9 @@
                         "count" : 1
                       },
                       {
+                        "recordName" : "61CDCEA2-919F-4886-870A-3746DA08789C",
+                        "progeny" : 0,
+                        "name" : "while typing",
                         "children" : [
                           {
                             "recordName" : "7D897437-A728-459E-96BF-85445DCE8B8E",
@@ -7197,12 +7200,8 @@
                             "count" : 0
                           }
                         ],
-                        "name" : "while typing",
-                        "needs" : "not fetched",
-                        "count" : 0,
-                        "progeny" : 0,
-                        "recordName" : "61CDCEA2-919F-4886-870A-3746DA08789C",
-                        "order" : 0.30000000000000004
+                        "order" : 0.30000000000000004,
+                        "count" : 0
                       },
                       {
                         "recordName" : "1E04C20E-8A9B-4101-A064-A57FA227FA87",
@@ -8499,14 +8498,14 @@
                 "recordName" : "E967F81E-F04B-443A-B278-0C6CC9629E1B",
                 "name" : "you can also email me (select this idea and tap =)",
                 "access" : 1,
-                "needs" : "not fetched",
                 "count" : 0,
                 "progeny" : 0,
                 "traits" : [
                   {
                     "type" : "e",
+                    "needs" : "unorphan",
                     "text" : "sand@gizmolab.com",
-                    "recordName" : "C629794F-2B85-42AE-B600-2D1C45416687"
+                    "recordName" : "9DA15C2D-F607-4845-AB65-1F5D7D236039"
                   }
                 ],
                 "author" : "F2AE15D8-D7C7-41E2-B996-B8164997A48A",
@@ -8543,8 +8542,9 @@
                 "traits" : [
                   {
                     "type" : "h",
+                    "needs" : "unorphan",
                     "text" : "https:\/\/medium.com\/@sand_74696\/your-opinions-are-precious-5b0992183aaf",
-                    "recordName" : "7916A6B1-CCE8-48F1-9A16-6F5963B6762B"
+                    "recordName" : "79756DF3-4D60-4688-8180-D55247DDF310"
                   }
                 ],
                 "author" : "F2AE15D8-D7C7-41E2-B996-B8164997A48A",
@@ -8602,7 +8602,6 @@
                           }
                         ],
                         "name" : "be friendly",
-                        "needs" : "not fetched",
                         "access" : 1,
                         "count" : 0,
                         "progeny" : 0,
@@ -8721,38 +8720,6 @@
                       {
                         "children" : [
                           {
-                            "order" : 0.076923076923076927,
-                            "name" : "looses file location",
-                            "count" : 0,
-                            "progeny" : 0,
-                            "traits" : [
-                              {
-                                "type" : "h",
-                                "needs" : "unorphan",
-                                "text" : "file:\/\/\/Users\/jonathansand\/Library\/Caches\/Focus\/",
-                                "recordName" : "14EB54C1-9628-4D4B-814D-289226425E0D"
-                              }
-                            ],
-                            "recordName" : "B0C36DBF-7E79-428F-BF2E-E48642F04DBB",
-                            "children" : [
-                              {
-                                "recordName" : "47591942-5CC5-491C-B6CA-B63391FF1B37",
-                                "progeny" : 0,
-                                "name" : "containers",
-                                "traits" : [
-                                  {
-                                    "type" : "h",
-                                    "needs" : "unorphan",
-                                    "text" : "file:\/\/\/Users\/jonathansand\/Library\/Containers\/com.zones.focus.mac\/Data\/Library\/Caches\/Focus",
-                                    "recordName" : "5EFDC310-AD9A-48D3-9DFB-680EDC76B443"
-                                  }
-                                ],
-                                "order" : 0.33333333333333331,
-                                "count" : 0
-                              }
-                            ]
-                          },
-                          {
                             "recordName" : "4080C6BA-99C6-4CA6-A6D2-F155B85DC711",
                             "progeny" : 0,
                             "name" : "# enumeration is borked",
@@ -8772,8 +8739,63 @@
                                 "count" : 0
                               }
                             ],
-                            "order" : 0.15384615384615385,
+                            "order" : 0.076923076923076927,
                             "count" : 0
+                          },
+                          {
+                            "children" : [
+                              {
+                                "recordName" : "4D34FA3B-ED25-4DF0-9E86-B9EF9FF01D42",
+                                "progeny" : 0,
+                                "name" : "canonical",
+                                "traits" : [
+                                  {
+                                    "type" : "h",
+                                    "needs" : "unorphan",
+                                    "text" : "file:\/\/~\/Library\/Application Support\/Thoughtful",
+                                    "recordName" : "8CBB89C8-3BA2-44E0-A8FA-4A7016C258E4"
+                                  }
+                                ],
+                                "order" : 0.20000000000000001,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "47591942-5CC5-491C-B6CA-B63391FF1B37",
+                                "progeny" : 0,
+                                "name" : "containers",
+                                "traits" : [
+                                  {
+                                    "type" : "h",
+                                    "needs" : "unorphan",
+                                    "text" : "file:\/\/~\/Library\/Containers\/com.zones.focus.mac\/Data\/Library\/Caches\/Focus",
+                                    "recordName" : "5EFDC310-AD9A-48D3-9DFB-680EDC76B443"
+                                  }
+                                ],
+                                "order" : 0.40000000000000002,
+                                "count" : 0
+                              },
+                              {
+                                "recordName" : "42BFE55E-A45E-4122-BF00-F1E4F645FC36",
+                                "progeny" : 0,
+                                "name" : "another",
+                                "traits" : [
+                                  {
+                                    "type" : "h",
+                                    "needs" : "unorphan",
+                                    "text" : "file:\/\/~\/Library\/Caches\/Focus",
+                                    "recordName" : "E005B4B4-ED04-46B8-8699-8C95B98673F5"
+                                  }
+                                ],
+                                "order" : 0.60000000000000009,
+                                "count" : 0
+                              }
+                            ],
+                            "name" : "looses file location",
+                            "needs" : "not fetched",
+                            "count" : 0,
+                            "progeny" : 0,
+                            "recordName" : "B0C36DBF-7E79-428F-BF2E-E48642F04DBB",
+                            "order" : 0.15384615384615385
                           },
                           {
                             "recordName" : "6023BAA8-5516-48EE-8390-941068D2FCA3",
@@ -8982,7 +9004,7 @@
                         "name" : "bugs for 1.0",
                         "attributes" : "c",
                         "count" : 6,
-                        "progeny" : 21,
+                        "progeny" : 23,
                         "recordName" : "2B5EDCB6-6F7F-425D-BCF0-D825E7694929",
                         "order" : 0.1111111111111111
                       },
@@ -9538,6 +9560,7 @@
                                 "traits" : [
                                   {
                                     "type" : "h",
+                                    "needs" : "unorphan",
                                     "text" : "file:\/\/\/Users\/jonathansand\/Documents\/GitHub\/clone\/RadarX\/RadarXElements\/RDARProblemDetailInspectorItemCCList.swift",
                                     "recordName" : "1713EA6C-5827-4880-8205-B8B77F9CBBA4"
                                   }
@@ -10078,7 +10101,7 @@
                       }
                     ],
                     "count" : 5,
-                    "progeny" : 172,
+                    "progeny" : 174,
                     "order" : 0.66666666666666663,
                     "color" : "red:0.838574409484863,blue:0.125294371593391,green:0.335602224378906"
                   }
