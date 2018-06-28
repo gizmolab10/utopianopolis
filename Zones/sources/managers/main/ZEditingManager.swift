@@ -117,10 +117,10 @@ class ZEditingManager: NSObject {
                 case "k":      gFileManager.writeOutline(for: gHere)
                 case "m":      refetch()
                 case "n":      alphabetize(isOption)
-                case "o":      orderByLength(isOption)
+				case "o":      if isCommand { gFileManager.open() } else { orderByLength(isOption) }
                 case "p":      printHere()
                 case "r":      reverse()
-                case "s":      selectCurrentFavorite()
+                case "s":      if isCommand { gFileManager.saveAs() } else { selectCurrentFavorite() }
                 case "w":      toggleWritable()
                 case "+":      divideChildren()
                 case "-":      addLine()

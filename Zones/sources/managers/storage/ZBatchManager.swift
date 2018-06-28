@@ -334,8 +334,8 @@ class ZBatchManager: ZOnboardingManager {
 
         switch identifier { // outer switch
         case .favorites:            gFavoritesManager.setup(                                    cloudCallback)
-        case .readThoughtful:       gFileManager      .readThoughtful(for: currentDatabaseID!); cloudCallback?(0)
-        case .writeThoughtful:      gFileManager     .writeThoughtful(for: currentDatabaseID!); cloudCallback?(0)
+        case .readThoughtful:       gFileManager      .readThoughtful(into: currentDatabaseID!); cloudCallback?(0)
+        case .writeThoughtful:      gFileManager     .writeThoughtful(from: currentDatabaseID!); cloudCallback?(0)
         default: let cloudManager = gRemoteStoresManager.cloudManagerFor(currentDatabaseID!)
         cloudManager.invokeOperation(for: identifier,                            cloudCallback: cloudCallback)
         }

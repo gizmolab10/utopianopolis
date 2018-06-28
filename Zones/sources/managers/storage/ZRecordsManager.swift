@@ -418,6 +418,13 @@ class ZRecordsManager: NSObject {
         }
     }
 
+	
+	func clear() {
+		clearAllStatesForAllRecords()
+		recordRegistry = [:]
+		nameRegistry = [:]
+	}
+	
 
     // MARK:- clear state
     // MARK:-

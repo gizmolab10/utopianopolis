@@ -278,11 +278,9 @@ extension NSWindow {
         return gEditingManager.validateKey(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask)
     }
 
-    
     @IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.displayViewFor(ids: [.Preferences]) }
     @IBAction func displayHelp       (_ sender:      Any?) { openBrowserForFocusWebsite() }
     @IBAction func printHere         (_ sender:      Any?) { gEditingManager.printHere() }
-    @IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gEditingManager.handleMenuItem(iItem) }
     @IBAction func copy              (_ iItem: ZMenuItem?) { gEditingManager.copyToPaste() }
     @IBAction func cut               (_ iItem: ZMenuItem?) { gEditingManager.delete() }
     @IBAction func delete            (_ iItem: ZMenuItem?) { gEditingManager.delete() }

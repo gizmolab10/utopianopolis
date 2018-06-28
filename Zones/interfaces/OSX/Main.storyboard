@@ -64,6 +64,17 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="File" id="fri-jg-8iG">
                                     <items>
+                                        <menuItem title="Open..." keyEquivalent="o" id="6V9-EH-0k9">
+                                            <connections>
+                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="skz-gV-zS2"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Save..." keyEquivalent="s" id="gPD-Tp-8k9">
+                                            <connections>
+                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="66C-f9-9LT"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="HAP-GI-54c"/>
                                         <menuItem title="Refetch From Cloud" keyEquivalent="m" id="eOD-fN-dMl">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
