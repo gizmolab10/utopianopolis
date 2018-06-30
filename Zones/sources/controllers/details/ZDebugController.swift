@@ -18,11 +18,12 @@ import Foundation
 class ZDebugController: ZGenericController {
 
 
-    @IBOutlet var   nameLabel: ZTextField?
-    @IBOutlet var  otherLabel: ZTextField?
-    @IBOutlet var statusLabel: ZTextField?
-    @IBOutlet var traitsLabel: ZTextField?
-    @IBOutlet var recordLabel: ZTextField?
+    @IBOutlet var    nameLabel: ZTextField?
+    @IBOutlet var   otherLabel: ZTextField?
+    @IBOutlet var  statusLabel: ZTextField?
+    @IBOutlet var  traitsLabel: ZTextField?
+    @IBOutlet var  recordLabel: ZTextField?
+    @IBOutlet var connectLabel: ZTextField?
     var grab: Zone? = nil
 
 
@@ -95,12 +96,13 @@ class ZDebugController: ZGenericController {
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
         if ![.search, .found].contains(iKind) {
-            grab              = gSelectionManager.firstGrab
-            nameLabel?  .text = grab?.unwrappedName
-            recordLabel?.text = grab?.recordName
-            otherLabel? .text =               otherText.joined(separator: ", ")
-            statusLabel?.text =              statusText.joined(separator: ", ")
-            traitsLabel?.text = "traits: " + traitsText.joined(separator: ", ")
+            grab               = gSelectionManager.firstGrab
+            nameLabel?   .text = grab?.unwrappedName
+            recordLabel? .text = grab?.recordName
+            otherLabel?  .text =               otherText.joined(separator: ", ")
+            statusLabel? .text =              statusText.joined(separator: ", ")
+            traitsLabel? .text = "traits: " + traitsText.joined(separator: ", ")
+            connectLabel?.text = gCloudUnavailable ? "local only" : "cloud available"
         }
     }
     

@@ -21,8 +21,6 @@ class ZToolsController: ZGenericTableController {
 
     enum ZToolKind: Int {
         case eRetry
-        case eUseCloud
-        case eFullFetch
         case eRecount
         case eAccess
         case eIdentifiers
@@ -43,8 +41,6 @@ class ZToolsController: ZGenericTableController {
 
     func text(for kind: ZToolKind) -> String {
         switch kind {
-        case .eUseCloud:    return "" //       (gUseCloud ? "Use Cloud" : "Local File Only")
-        case .eFullFetch:   return "" //      (gFullFetch ? "Full"      : "Minimal") + " Fetch"
         case .eIdentifiers: return (gDebugShowIdentifiers ? "Visible"   : "Hidden")  + " Identifiers"
         case .eAccess:      return (gCrippledUserAccess    ? "Crippled"  : "Normal")  + " User Access"
         case .eGather:      return "Gather Lost and Found"
@@ -70,8 +66,6 @@ class ZToolsController: ZGenericTableController {
 
             if  let kind = ZToolKind(rawValue: row) {
                 switch kind {
-                case .eUseCloud:    self.toggleUseCloud()
-                case .eFullFetch:   self.toggleFullFetch()
                 case .eIdentifiers: self.toggleShowIdentifiers()
                 case .eAccess:      self.toggleUserAccess()
                 case .eRetry:       gBatchManager.unHang()
@@ -90,8 +84,6 @@ class ZToolsController: ZGenericTableController {
     // MARK:-
 
 
-    func        toggleUseCloud() {} //          gUseCloud = !gUseCloud; redrawSyncRedraw() }
-    func       toggleFullFetch() {} //         gFullFetch = !gFullFetch }
     func toggleShowIdentifiers() {   gDebugShowIdentifiers = !gDebugShowIdentifiers }
     func      toggleUserAccess() { gCrippledUserAccess = !gCrippledUserAccess }
 

@@ -19,6 +19,7 @@ var         gLostAndFound : Zone?         { return gRemoteStoresManager.lostAndF
 var        gFavoritesRoot : Zone?         { return gMineCloudManager.favoritesZone }
 var                gTrash : Zone?         { return gRemoteStoresManager.trashZone }
 var                 gRoot : Zone?   { get { return gRemoteStoresManager.rootZone } set { gRemoteStoresManager.rootZone  = newValue } }
+var     gCloudUnavailable : Bool          { return gMineCloudManager.cloudUnavailable }
 
 
 class ZRemoteStoresManager: NSObject {
