@@ -117,7 +117,7 @@ extension String {
 
 
     func openAsURL() {
-        let urlString = (replacingOccurrences(of: " ", with: "%20") as NSString).expandingTildeInPath
+        let urlString = (replacingOccurrences(of: "\\", with: "").replacingOccurrences(of: " ", with: "%20") as NSString).expandingTildeInPath
 
         if  var url = URL(string: urlString) {
             if  urlString.character(at: 0) == "/" {

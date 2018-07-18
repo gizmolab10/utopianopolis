@@ -188,15 +188,14 @@ class ZFileManager: NSObject {
 					dict [.date] = manager.lastSyncDate as NSObject
 					let jsonDict = self.jsonDictFrom(dict)
 					let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
-					
-					if let url = URL(string: path) {
-						do {
-							try data.write(to: url)
-						} catch {
-							print("ahah")
-						}
-					}
-					
+					let      url = URL(fileURLWithPath: path)
+
+                    do {
+                        try data.write(to: url)
+                    } catch {
+                        print("ahah")
+                    }
+                    
 					self .isWriting[index] = false // end prevention of write during write
 				}
 			}
