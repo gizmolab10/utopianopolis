@@ -274,10 +274,6 @@ extension NSView {
 
 extension NSWindow {
 
-    override open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
-        return gEditingManager.validateKey(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask)
-    }
-
     @IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.displayViewFor(ids: [.Preferences]) }
     @IBAction func displayHelp       (_ sender:      Any?) { openBrowserForFocusWebsite() }
     @IBAction func printHere         (_ sender:      Any?) { gEditingManager.printHere() }
