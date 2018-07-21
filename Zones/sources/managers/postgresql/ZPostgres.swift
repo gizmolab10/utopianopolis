@@ -9,15 +9,25 @@
 import Foundation
 import PG
 
-class ZPostgress: NSObject {
-    let parameters = ConnectionParameters(
-        host: "zones.cwbqytqwjs5w.us-west-1.rds.amazonaws.com",
-        port: "5432",
-        databaseName: "thoughtful",
-        login: "jonathansand",
-        password: "B00blebabble"
-    )
-//    var connection {
-//        return try Database.connect(parameters: parameters)
-//    }
+class ZPostgresql: NSObject {
+    var config: Client.Config
+    let pool: Pool
+
+    override init() {
+        self.config = Client.Config(host: "zones.cwbqytqwjs5w.us-west-1.rds.amazonaws.com", user: "jonathansand", password: "B00blebabble", database: "thoughtful")
+        self.pool = Pool(config)
+    }
+
+    func foo() {
+        let query = Query("SELECT version()")
+
+        pool.exec(query) { result in
+            switch result {
+            case .success(let result):
+                print("name: \(result.rows.first?["name"] ?? "")")
+            case .failure(let error):
+                print("failed to excecute query: \(error)")
+            }
+        }
+    }
 }

@@ -6,7 +6,49 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		0C05C0FA210125B8001F2015 /* CommonCryptoModuleMap */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 0C05C0FB210125B8001F2015 /* Build configuration list for PBXAggregateTarget "CommonCryptoModuleMap" */;
+			buildPhases = (
+				0C05C0FE210125E7001F2015 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = CommonCryptoModuleMap;
+			productName = CommonCryptoModuleMap;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
+		0C05C0F8210122A5001F2015 /* ZPostgres.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC221010F37000976CE /* ZPostgres.swift */; };
+		0C05C178210268E9001F2015 /* Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C16A210268E9001F2015 /* Query.swift */; };
+		0C05C179210268E9001F2015 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C16B210268E9001F2015 /* Connection.swift */; };
+		0C05C17A210268E9001F2015 /* ServerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C16C210268E9001F2015 /* ServerError.swift */; };
+		0C05C17B210268E9001F2015 /* QueryResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C16D210268E9001F2015 /* QueryResult.swift */; };
+		0C05C17C210268E9001F2015 /* Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C16E210268E9001F2015 /* Field.swift */; };
+		0C05C17D210268E9001F2015 /* Connection+BackendMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C16F210268E9001F2015 /* Connection+BackendMessage.swift */; };
+		0C05C17E210268E9001F2015 /* NetworkOrderable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C170210268E9001F2015 /* NetworkOrderable.swift */; };
+		0C05C17F210268E9001F2015 /* AsyncSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C171210268E9001F2015 /* AsyncSocket.swift */; };
+		0C05C180210268E9001F2015 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C172210268E9001F2015 /* Client.swift */; };
+		0C05C181210268E9001F2015 /* Pool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C173210268E9001F2015 /* Pool.swift */; };
+		0C05C182210268E9001F2015 /* Connection.FrontendMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C174210268E9001F2015 /* Connection.FrontendMessage.swift */; };
+		0C05C183210268E9001F2015 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C175210268E9001F2015 /* Utils.swift */; };
+		0C05C184210268E9001F2015 /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C176210268E9001F2015 /* EventEmitter.swift */; };
+		0C05C185210268E9001F2015 /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C177210268E9001F2015 /* Socket.swift */; };
+		0C05C19021026945001F2015 /* String+PostgresCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C18721026945001F2015 /* String+PostgresCodable.swift */; };
+		0C05C19121026945001F2015 /* Integer+PostgresCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C18821026945001F2015 /* Integer+PostgresCodable.swift */; };
+		0C05C19221026945001F2015 /* UUID+PostgresCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C18921026945001F2015 /* UUID+PostgresCodable.swift */; };
+		0C05C19321026945001F2015 /* OID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C18A21026945001F2015 /* OID.swift */; };
+		0C05C19421026945001F2015 /* Bool+PostgresCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C18B21026945001F2015 /* Bool+PostgresCodable.swift */; };
+		0C05C19521026945001F2015 /* Date+PostgresCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C18C21026945001F2015 /* Date+PostgresCodable.swift */; };
+		0C05C19621026945001F2015 /* TypeParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C18D21026945001F2015 /* TypeParser.swift */; };
+		0C05C19721026945001F2015 /* PostgresCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C18E21026945001F2015 /* PostgresCodable.swift */; };
+		0C05C19821026945001F2015 /* Float+PostgresCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C18F21026945001F2015 /* Float+PostgresCodable.swift */; };
+		0C05C288210274A0001F2015 /* ZPerfectPSQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C05C287210274A0001F2015 /* ZPerfectPSQL.swift */; };
+		0C05C28A21027675001F2015 /* PerfectPostgreSQL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C05C28921027675001F2015 /* PerfectPostgreSQL.framework */; };
+		0C05C28C21027691001F2015 /* PerfectCRUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C05C28B21027691001F2015 /* PerfectCRUD.framework */; };
+		0C05C2A7210283FB001F2015 /* libpq.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C05C28F21027886001F2015 /* libpq.dylib */; };
 		0C09A7D71FE5DEC600F3D736 /* ZGenericTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C09A7D61FE5DEC600F3D736 /* ZGenericTableController.swift */; };
 		0C1ABAAB1FB144E300D62947 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3981F1988380091F4D1 /* Assets.xcassets */; };
 		0C1ABAAC1FB144E400D62947 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3981F1988380091F4D1 /* Assets.xcassets */; };
@@ -114,8 +156,6 @@
 		0C4118DE1FA8110200A58004 /* ZAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118DD1FA8110200A58004 /* ZAlertManager.swift */; };
 		0C4118DF1FA8110200A58004 /* ZAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118DD1FA8110200A58004 /* ZAlertManager.swift */; };
 		0C4118E01FA8110200A58004 /* ZAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118DD1FA8110200A58004 /* ZAlertManager.swift */; };
-		0C43EFB921001183000976CE /* PG.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C43EFB521001170000976CE /* PG.framework */; };
-		0C43EFBA21001183000976CE /* PG.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C43EFB521001170000976CE /* PG.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C43EFBE21010F17000976CE /* ZFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFBD21010F17000976CE /* ZFileManager.swift */; };
 		0C43EFBF21010F17000976CE /* ZFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFBD21010F17000976CE /* ZFileManager.swift */; };
 		0C43EFC021010F17000976CE /* ZFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFBD21010F17000976CE /* ZFileManager.swift */; };
@@ -139,7 +179,6 @@
 		0C43EFE021010F62000976CE /* ZCloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloudManager.swift */; };
 		0C43EFE121010F62000976CE /* ZCloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloudManager.swift */; };
 		0C43EFE221010F62000976CE /* ZCloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloudManager.swift */; };
-		0C43EFEE210113CC000976CE /* ZPostgres.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC221010F37000976CE /* ZPostgres.swift */; };
 		0C48B0951F87197B00A247BC /* ZEventsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C48B0941F87197B00A247BC /* ZEventsManager.swift */; };
 		0C4C23A020155C7D0025E4DF /* ZDetailRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C239F20155C7C0025E4DF /* ZDetailRowView.swift */; };
 		0C4C23A22016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
@@ -178,10 +217,16 @@
 		0CB619A01FB3C4660087B066 /* ZEditorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZEditorController.swift */; };
 		0CB619A11FB3C4660087B066 /* ZEditorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZEditorController.swift */; };
 		0CC4BDC020D73C580015CBF2 /* eye.con-512.png in Resources */ = {isa = PBXBuildFile; fileRef = 0CC4BDBF20D73C580015CBF2 /* eye.con-512.png */; };
-		0CD576CF1FC27F730012FA0C /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CD921791D8F4C3200F80964 /* CloudKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0C05C0FF21012633001F2015 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0CA04B0C1D2ECF1A001892E5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0C05C0FA210125B8001F2015;
+			remoteInfo = CommonCryptoModuleMap;
+		};
 		0CA04B291D2ECF1B001892E5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0CA04B0C1D2ECF1A001892E5 /* Project object */;
@@ -224,17 +269,6 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0C43EFBB21001183000976CE /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				0C43EFBA21001183000976CE /* PG.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0C69C9DA1F09CD95004D026D /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -249,7 +283,42 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0C05C13521026825001F2015 /* liblibpsql.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibpsql.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C05C16A210268E9001F2015 /* Query.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Query.swift; sourceTree = "<group>"; };
+		0C05C16B210268E9001F2015 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
+		0C05C16C210268E9001F2015 /* ServerError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerError.swift; sourceTree = "<group>"; };
+		0C05C16D210268E9001F2015 /* QueryResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryResult.swift; sourceTree = "<group>"; };
+		0C05C16E210268E9001F2015 /* Field.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Field.swift; sourceTree = "<group>"; };
+		0C05C16F210268E9001F2015 /* Connection+BackendMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Connection+BackendMessage.swift"; sourceTree = "<group>"; };
+		0C05C170210268E9001F2015 /* NetworkOrderable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkOrderable.swift; sourceTree = "<group>"; };
+		0C05C171210268E9001F2015 /* AsyncSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsyncSocket.swift; sourceTree = "<group>"; };
+		0C05C172210268E9001F2015 /* Client.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
+		0C05C173210268E9001F2015 /* Pool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pool.swift; sourceTree = "<group>"; };
+		0C05C174210268E9001F2015 /* Connection.FrontendMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.FrontendMessage.swift; sourceTree = "<group>"; };
+		0C05C175210268E9001F2015 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		0C05C176210268E9001F2015 /* EventEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventEmitter.swift; sourceTree = "<group>"; };
+		0C05C177210268E9001F2015 /* Socket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
+		0C05C18721026945001F2015 /* String+PostgresCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+PostgresCodable.swift"; sourceTree = "<group>"; };
+		0C05C18821026945001F2015 /* Integer+PostgresCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Integer+PostgresCodable.swift"; sourceTree = "<group>"; };
+		0C05C18921026945001F2015 /* UUID+PostgresCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UUID+PostgresCodable.swift"; sourceTree = "<group>"; };
+		0C05C18A21026945001F2015 /* OID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OID.swift; sourceTree = "<group>"; };
+		0C05C18B21026945001F2015 /* Bool+PostgresCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bool+PostgresCodable.swift"; sourceTree = "<group>"; };
+		0C05C18C21026945001F2015 /* Date+PostgresCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+PostgresCodable.swift"; sourceTree = "<group>"; };
+		0C05C18D21026945001F2015 /* TypeParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypeParser.swift; sourceTree = "<group>"; };
+		0C05C18E21026945001F2015 /* PostgresCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostgresCodable.swift; sourceTree = "<group>"; };
+		0C05C18F21026945001F2015 /* Float+PostgresCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Float+PostgresCodable.swift"; sourceTree = "<group>"; };
+		0C05C287210274A0001F2015 /* ZPerfectPSQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZPerfectPSQL.swift; sourceTree = "<group>"; };
+		0C05C28921027675001F2015 /* PerfectPostgreSQL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PerfectPostgreSQL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C05C28B21027691001F2015 /* PerfectCRUD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PerfectCRUD.framework; path = "../../../Library/Developer/Xcode/DerivedData/Zones-bfkinjcjgmzyhudvxvsedmwvjzdd/Build/Products/Debug/PerfectCRUD.framework"; sourceTree = "<group>"; };
+		0C05C28D21027746001F2015 /* libpq.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpq.tbd; path = usr/lib/libpq.tbd; sourceTree = SDKROOT; };
+		0C05C28F21027886001F2015 /* libpq.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpq.dylib; path = ../../../../../usr/local/lib/libpq.dylib; sourceTree = "<group>"; };
+		0C05C291210278E9001F2015 /* libpq.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpq.dylib; path = ../../../../../usr/lib/libpq.dylib; sourceTree = "<group>"; };
+		0C05C29321027916001F2015 /* libpq.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpq.dylib; path = ../../../../../usr/local/Cellar/libpq/10.4/lib/libpq.dylib; sourceTree = "<group>"; };
+		0C05C29621027935001F2015 /* libpq.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpq.a; path = ../../../../../usr/local/Cellar/libpq/10.4/lib/libpq.a; sourceTree = "<group>"; };
 		0C09A7D61FE5DEC600F3D736 /* ZGenericTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGenericTableController.swift; sourceTree = "<group>"; };
+		0C1651EA21012021003FF76C /* PadFocus-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "PadFocus-Bridging-Header.h"; path = "PadZones/PadFocus-Bridging-Header.h"; sourceTree = "<group>"; };
+		0C1651EB2101203A003FF76C /* iFocus-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "iFocus-Bridging-Header.h"; path = "iFocus/iFocus-Bridging-Header.h"; sourceTree = "<group>"; };
+		0C1651EC2101204F003FF76C /* Zones-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Zones-Bridging-Header.h"; path = "Zones/Zones-Bridging-Header.h"; sourceTree = "<group>"; };
 		0C21C628203BE88F00DEFDAD /* ZTextManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTextManager.swift; sourceTree = "<group>"; };
 		0C26F72F1F799EEE00C2B978 /* ZoneSegmentedControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneSegmentedControl.swift; sourceTree = "<group>"; };
 		0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMainController.swift; sourceTree = "<group>"; };
@@ -302,7 +371,6 @@
 		0C39B3C01F1989830091F4D1 /* Zones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Zones.entitlements; path = Zones/Zones.entitlements; sourceTree = "<group>"; };
 		0C3ECC221FA3023500F085EA /* ZUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZUser.swift; sourceTree = "<group>"; };
 		0C4118DD1FA8110200A58004 /* ZAlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZAlertManager.swift; sourceTree = "<group>"; };
-		0C43EFB521001170000976CE /* PG.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PG.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C43EFBD21010F17000976CE /* ZFileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFileManager.swift; sourceTree = "<group>"; };
 		0C43EFC221010F37000976CE /* ZPostgres.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZPostgres.swift; sourceTree = "<group>"; };
 		0C43EFC721010F62000976CE /* ZLockManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZLockManager.swift; sourceTree = "<group>"; };
@@ -349,6 +417,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0C05C13221026825001F2015 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0C69C9D41F09CD95004D026D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -361,8 +436,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0CD576CF1FC27F730012FA0C /* CloudKit.framework in Frameworks */,
-				0C43EFB921001183000976CE /* PG.framework in Frameworks */,
+				0C05C2A7210283FB001F2015 /* libpq.dylib in Frameworks */,
+				0C05C28C21027691001F2015 /* PerfectCRUD.framework in Frameworks */,
+				0C05C28A21027675001F2015 /* PerfectPostgreSQL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -405,6 +481,44 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0C05C169210268E9001F2015 /* postgresql.library */ = {
+			isa = PBXGroup;
+			children = (
+				0C05C171210268E9001F2015 /* AsyncSocket.swift */,
+				0C05C172210268E9001F2015 /* Client.swift */,
+				0C05C16B210268E9001F2015 /* Connection.swift */,
+				0C05C16F210268E9001F2015 /* Connection+BackendMessage.swift */,
+				0C05C174210268E9001F2015 /* Connection.FrontendMessage.swift */,
+				0C05C176210268E9001F2015 /* EventEmitter.swift */,
+				0C05C16E210268E9001F2015 /* Field.swift */,
+				0C05C170210268E9001F2015 /* NetworkOrderable.swift */,
+				0C05C173210268E9001F2015 /* Pool.swift */,
+				0C05C16A210268E9001F2015 /* Query.swift */,
+				0C05C16D210268E9001F2015 /* QueryResult.swift */,
+				0C05C16C210268E9001F2015 /* ServerError.swift */,
+				0C05C177210268E9001F2015 /* Socket.swift */,
+				0C05C18621026945001F2015 /* Types */,
+				0C05C175210268E9001F2015 /* Utils.swift */,
+			);
+			path = postgresql.library;
+			sourceTree = "<group>";
+		};
+		0C05C18621026945001F2015 /* Types */ = {
+			isa = PBXGroup;
+			children = (
+				0C05C18721026945001F2015 /* String+PostgresCodable.swift */,
+				0C05C18821026945001F2015 /* Integer+PostgresCodable.swift */,
+				0C05C18921026945001F2015 /* UUID+PostgresCodable.swift */,
+				0C05C18A21026945001F2015 /* OID.swift */,
+				0C05C18B21026945001F2015 /* Bool+PostgresCodable.swift */,
+				0C05C18C21026945001F2015 /* Date+PostgresCodable.swift */,
+				0C05C18D21026945001F2015 /* TypeParser.swift */,
+				0C05C18E21026945001F2015 /* PostgresCodable.swift */,
+				0C05C18F21026945001F2015 /* Float+PostgresCodable.swift */,
+			);
+			path = Types;
+			sourceTree = "<group>";
+		};
 		0C09A7D51FE5DEC600F3D736 /* osx */ = {
 			isa = PBXGroup;
 			children = (
@@ -416,9 +530,15 @@
 		0C09A7D81FE86FCC00F3D736 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0C05C29621027935001F2015 /* libpq.a */,
+				0C05C28F21027886001F2015 /* libpq.dylib */,
+				0C05C291210278E9001F2015 /* libpq.dylib */,
+				0C05C29321027916001F2015 /* libpq.dylib */,
+				0C05C28D21027746001F2015 /* libpq.tbd */,
+				0C05C28B21027691001F2015 /* PerfectCRUD.framework */,
+				0C05C28921027675001F2015 /* PerfectPostgreSQL.framework */,
 				0C39B3C61F198CD00091F4D1 /* iOS */,
 				0C39B3C71F198CDC0091F4D1 /* OSX */,
-				0C43EFB521001170000976CE /* PG.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -441,6 +561,7 @@
 				0C39B22D1F182EBB0091F4D1 /* main */,
 				0C39B2451F182EBB0091F4D1 /* managers */,
 				0C39B2541F182EBB0091F4D1 /* models */,
+				0C05C169210268E9001F2015 /* postgresql.library */,
 				0C39B2851F182EBB0091F4D1 /* views */,
 			);
 			path = sources;
@@ -637,6 +758,7 @@
 		0C39B3C21F198C780091F4D1 /* iPhone */ = {
 			isa = PBXGroup;
 			children = (
+				0C1651EB2101203A003FF76C /* iFocus-Bridging-Header.h */,
 				0C39B3BA1F1989210091F4D1 /* iFocus.entitlements */,
 				0C39B3BB1F1989210091F4D1 /* Info.plist */,
 			);
@@ -646,6 +768,7 @@
 		0C39B3C31F198C830091F4D1 /* iPad */ = {
 			isa = PBXGroup;
 			children = (
+				0C1651EA21012021003FF76C /* PadFocus-Bridging-Header.h */,
 				0C39B3BE1F1989600091F4D1 /* PadZones.entitlements */,
 				0C39B3BD1F1989600091F4D1 /* Info.plist */,
 			);
@@ -655,6 +778,7 @@
 		0C39B3C41F198C8F0091F4D1 /* desktop */ = {
 			isa = PBXGroup;
 			children = (
+				0C1651EC2101204F003FF76C /* Zones-Bridging-Header.h */,
 				0C39B3C01F1989830091F4D1 /* Zones.entitlements */,
 				0C39B3BF1F1989830091F4D1 /* Info.plist */,
 			);
@@ -700,6 +824,7 @@
 			isa = PBXGroup;
 			children = (
 				0C43EFC221010F37000976CE /* ZPostgres.swift */,
+				0C05C287210274A0001F2015 /* ZPerfectPSQL.swift */,
 			);
 			path = postgresql;
 			sourceTree = "<group>";
@@ -749,6 +874,7 @@
 				0CA04B5E1D2ECF41001892E5 /* PadZonesTests.xctest */,
 				0CA04B691D2ECF41001892E5 /* PadZonesUITests.xctest */,
 				0C69C9DF1F09CD95004D026D /* iFocus.app */,
+				0C05C13521026825001F2015 /* liblibpsql.dylib */,
 			);
 			name = products;
 			sourceTree = "<group>";
@@ -791,7 +917,34 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		0C05C13321026825001F2015 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
+		0C05C13421026825001F2015 /* libpsql */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0C05C13B21026825001F2015 /* Build configuration list for PBXNativeTarget "libpsql" */;
+			buildPhases = (
+				0C05C13121026825001F2015 /* Sources */,
+				0C05C13221026825001F2015 /* Frameworks */,
+				0C05C13321026825001F2015 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libpsql;
+			productName = libpsql;
+			productReference = 0C05C13521026825001F2015 /* liblibpsql.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		0C69C9861F09CD95004D026D /* iFocus */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0C69C9DC1F09CD95004D026D /* Build configuration list for PBXNativeTarget "iFocus" */;
@@ -814,15 +967,16 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Thoughtful" */;
 			buildPhases = (
+				0C05C0F921012466001F2015 /* ShellScript */,
 				0CA04B101D2ECF1A001892E5 /* Sources */,
 				0C1EC7C820A8D91F005E2DA2 /* ShellScript */,
 				0CA04B111D2ECF1A001892E5 /* Frameworks */,
 				0CA04B121D2ECF1A001892E5 /* Resources */,
-				0C43EFBB21001183000976CE /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				0C05C10021012633001F2015 /* PBXTargetDependency */,
 			);
 			name = Thoughtful;
 			productName = Zones;
@@ -929,8 +1083,19 @@
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = Zones;
 				TargetAttributes = {
+					0C05C0FA210125B8001F2015 = {
+						CreatedOnToolsVersion = 9.4;
+						DevelopmentTeam = F8M94NY2TV;
+						ProvisioningStyle = Automatic;
+					};
+					0C05C13421026825001F2015 = {
+						CreatedOnToolsVersion = 9.4;
+						DevelopmentTeam = F8M94NY2TV;
+						ProvisioningStyle = Automatic;
+					};
 					0C69C9861F09CD95004D026D = {
 						DevelopmentTeam = F8M94NY2TV;
+						LastSwiftMigration = 0940;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.iCloud = {
@@ -968,7 +1133,7 @@
 					0CA04B481D2ECF41001892E5 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = F8M94NY2TV;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0940;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
@@ -1010,10 +1175,12 @@
 				0C69C9861F09CD95004D026D /* iFocus */,
 				0CA04B481D2ECF41001892E5 /* PadFocus */,
 				0CA04B131D2ECF1A001892E5 /* Thoughtful */,
+				0C05C0FA210125B8001F2015 /* CommonCryptoModuleMap */,
 				0CA04B5D1D2ECF41001892E5 /* PadZonesTests */,
 				0CA04B681D2ECF41001892E5 /* PadZonesUITests */,
 				0CA04B271D2ECF1B001892E5 /* ZonesTests */,
 				0CA04B321D2ECF1B001892E5 /* ZonesUITests */,
+				0C05C13421026825001F2015 /* libpsql */,
 			);
 		};
 /* End PBXProject section */
@@ -1084,6 +1251,32 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0C05C0F921012466001F2015 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "COMMON_CRYPTO_DIR=\"${SDKROOT}/usr/include/CommonCrypto\"\nif [ -f \"${COMMON_CRYPTO_DIR}/module.modulemap\" ]\nthen\necho \"CommonCrypto already exists, skipping\"\nelse\necho \"generate the module map, using the original code above\"\nfi";
+		};
+		0C05C0FE210125E7001F2015 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This if-statement means we'll only run the main script if the CommonCryptoModuleMap directory doesn't exist\n# Because otherwise the rest of the script causes a full recompile for anything where CommonCrypto is a dependency\n# Do a \"Clean Build Folder\" to remove this directory and trigger the rest of the script to run\nif [ -d \"${BUILT_PRODUCTS_DIR}/CommonCryptoModuleMap\" ]; then\necho \"${BUILT_PRODUCTS_DIR}/CommonCryptoModuleMap directory already exists, so skipping the rest of the script.\"\nexit 0\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/CommonCryptoModuleMap\"\ncat <<EOF > \"${BUILT_PRODUCTS_DIR}/CommonCryptoModuleMap/module.modulemap\"\nmodule CommonCrypto [system] {\n    header \"${SDKROOT}/usr/include/CommonCrypto/CommonCrypto.h\"\n    export *\n}\n";
+		};
 		0C1EC7C820A8D91F005E2DA2 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1100,6 +1293,36 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0C05C13121026825001F2015 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C05C19121026945001F2015 /* Integer+PostgresCodable.swift in Sources */,
+				0C05C182210268E9001F2015 /* Connection.FrontendMessage.swift in Sources */,
+				0C05C17B210268E9001F2015 /* QueryResult.swift in Sources */,
+				0C05C19321026945001F2015 /* OID.swift in Sources */,
+				0C05C19621026945001F2015 /* TypeParser.swift in Sources */,
+				0C05C185210268E9001F2015 /* Socket.swift in Sources */,
+				0C05C19421026945001F2015 /* Bool+PostgresCodable.swift in Sources */,
+				0C05C178210268E9001F2015 /* Query.swift in Sources */,
+				0C05C17D210268E9001F2015 /* Connection+BackendMessage.swift in Sources */,
+				0C05C17E210268E9001F2015 /* NetworkOrderable.swift in Sources */,
+				0C05C183210268E9001F2015 /* Utils.swift in Sources */,
+				0C05C17C210268E9001F2015 /* Field.swift in Sources */,
+				0C05C184210268E9001F2015 /* EventEmitter.swift in Sources */,
+				0C05C19221026945001F2015 /* UUID+PostgresCodable.swift in Sources */,
+				0C05C17A210268E9001F2015 /* ServerError.swift in Sources */,
+				0C05C19021026945001F2015 /* String+PostgresCodable.swift in Sources */,
+				0C05C19821026945001F2015 /* Float+PostgresCodable.swift in Sources */,
+				0C05C17F210268E9001F2015 /* AsyncSocket.swift in Sources */,
+				0C05C179210268E9001F2015 /* Connection.swift in Sources */,
+				0C05C19721026945001F2015 /* PostgresCodable.swift in Sources */,
+				0C05C180210268E9001F2015 /* Client.swift in Sources */,
+				0C05C181210268E9001F2015 /* Pool.swift in Sources */,
+				0C05C19521026945001F2015 /* Date+PostgresCodable.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0C69C9871F09CD95004D026D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1160,6 +1383,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C05C288210274A0001F2015 /* ZPerfectPSQL.swift in Sources */,
 				0C367C391F463D93000FC914 /* ZoneDragView.swift in Sources */,
 				0CABC9F12022768D0019D8B0 /* ZEnumerations.swift in Sources */,
 				0C39B3211F182EBB0091F4D1 /* ZTrait.swift in Sources */,
@@ -1206,7 +1430,7 @@
 				0C39B2EE1F182EBB0091F4D1 /* ZWidgetsManager.swift in Sources */,
 				0C43EFE221010F62000976CE /* ZCloudManager.swift in Sources */,
 				0CB6199E1FB3C4660087B066 /* ZSearchController.swift in Sources */,
-				0C43EFEE210113CC000976CE /* ZPostgres.swift in Sources */,
+				0C05C0F8210122A5001F2015 /* ZPostgres.swift in Sources */,
 				0C39B2AC1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
 				0C39B2A31F182EBB0091F4D1 /* ZPreferencesController.swift in Sources */,
 				0C39B2B51F182EBB0091F4D1 /* ZGCD.swift in Sources */,
@@ -1304,6 +1528,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0C05C10021012633001F2015 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0C05C0FA210125B8001F2015 /* CommonCryptoModuleMap */;
+			targetProxy = 0C05C0FF21012633001F2015 /* PBXContainerItemProxy */;
+		};
 		0CA04B2A1D2ECF1B001892E5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0CA04B131D2ECF1A001892E5 /* Thoughtful */;
@@ -1327,6 +1556,72 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		0C05C0FC210125B8001F2015 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F8M94NY2TV;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = macosx;
+			};
+			name = Debug;
+		};
+		0C05C0FD210125B8001F2015 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F8M94NY2TV;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = macosx;
+			};
+			name = Release;
+		};
+		0C05C13C21026825001F2015 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F8M94NY2TV;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		0C05C13D21026825001F2015 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F8M94NY2TV;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		0C69C9DD1F09CD95004D026D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1354,7 +1649,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "iOS focus development";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/main/common/iFocus-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1388,7 +1683,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "focus distribution on iOS";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/main/common/iFocus-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
@@ -1516,7 +1811,7 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Zones/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Zones/**";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Zones/Info.plist";
 				INSTALL_PATH = /Applications;
@@ -1524,6 +1819,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
+					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.mac;
@@ -1533,8 +1829,11 @@
 				SKIP_INSTALL = YES;
 				STRIP_STYLE = debugging;
 				STRIP_SWIFT_SYMBOLS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_INCLUDE_PATHS = "$(inherited) ${BUILT_PRODUCTS_DIR}/CommonCryptoModuleMap";
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Zones/Zones-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -1553,7 +1852,7 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Zones/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Zones/**";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Zones/Info.plist";
 				INSTALL_PATH = /Applications;
@@ -1561,6 +1860,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
+					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.mac;
@@ -1570,7 +1870,10 @@
 				SKIP_INSTALL = NO;
 				STRIP_STYLE = debugging;
 				STRIP_SWIFT_SYMBOLS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_INCLUDE_PATHS = "$(inherited) ${BUILT_PRODUCTS_DIR}/CommonCryptoModuleMap";
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Zones/Zones-Bridging-Header.h";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -1660,7 +1963,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "focus development on iOS";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/main/common/PadFocus-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -1694,7 +1997,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "focus development on iOS";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "sources/main/common/PadFocus-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
@@ -1772,6 +2075,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0C05C0FB210125B8001F2015 /* Build configuration list for PBXAggregateTarget "CommonCryptoModuleMap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0C05C0FC210125B8001F2015 /* Debug */,
+				0C05C0FD210125B8001F2015 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0C05C13B21026825001F2015 /* Build configuration list for PBXNativeTarget "libpsql" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0C05C13C21026825001F2015 /* Debug */,
+				0C05C13D21026825001F2015 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		0C69C9DC1F09CD95004D026D /* Build configuration list for PBXNativeTarget "iFocus" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
