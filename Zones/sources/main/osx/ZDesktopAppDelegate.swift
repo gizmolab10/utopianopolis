@@ -32,6 +32,8 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
             needsSetup          = false
             gDesktopAppDelegate = self
 
+            //  gPostgresql.foo()
+
             UserDefaults.standard.set(true, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraint‌​s")
             gApplication.registerForRemoteNotifications(matching: .badge)
             gControllersManager.startupCloudAndUI()

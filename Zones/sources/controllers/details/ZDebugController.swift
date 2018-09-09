@@ -23,11 +23,11 @@ class ZDebugController: ZGenericController {
     @IBOutlet var  statusLabel: ZTextField?
     @IBOutlet var  traitsLabel: ZTextField?
     @IBOutlet var  recordLabel: ZTextField?
-    @IBOutlet var connectLabel: ZTextField?
+    @IBOutlet var persistenceLabel: ZTextField?
     var grab: Zone? = nil
 
 
-    var statusText: [String] {
+    var statusText: String {
         var text = [String] ()
 
         if  let  zone = grab {
@@ -50,11 +50,11 @@ class ZDebugController: ZGenericController {
             }
         }
 
-        return text
+        return text.joined(separator: ", ")
     }
 
 
-    var otherText: [String] {
+    var otherText: String {
         var text = [String] ()
 
         if  let zone = grab {
@@ -70,11 +70,11 @@ class ZDebugController: ZGenericController {
             text.append("view \(debugView.bounds.size)")
         }
 
-        return text
+        return text.joined(separator: ", ")
     }
 
 
-    var traitsText: [String] {
+    var traitsText: String {
         var text = [String] ()
 
         if  let zone = grab {
@@ -85,7 +85,14 @@ class ZDebugController: ZGenericController {
             }
         }
 
-        return text
+        return "traits: " + text.joined(separator: ", ")
+    }
+
+
+    var persistenceText: String {
+        let prefix = gFileManager.isWritingNow ? "• " : ""
+
+        return prefix + (gCloudUnavailable ? "local only" : "cloud available")
     }
 
 
@@ -96,13 +103,13 @@ class ZDebugController: ZGenericController {
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
         if ![.search, .found].contains(iKind) {
-            grab               = gSelectionManager.firstGrab
-            nameLabel?   .text = grab?.unwrappedName
-            recordLabel? .text = grab?.recordName
-            otherLabel?  .text =               otherText.joined(separator: ", ")
-            statusLabel? .text =              statusText.joined(separator: ", ")
-            traitsLabel? .text = "traits: " + traitsText.joined(separator: ", ")
-            connectLabel?.text = gCloudUnavailable ? "local only" : "cloud available"
+            grab                   = gSelectionManager.firstGrab
+            nameLabel?       .text = grab?.unwrappedName
+            recordLabel?     .text = grab?   .recordName
+            otherLabel?      .text =       otherText
+            statusLabel?     .text =      statusText
+            traitsLabel?     .text =      traitsText
+            persistenceLabel?.text = persistenceText
         }
     }
     

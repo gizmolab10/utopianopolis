@@ -11,7 +11,7 @@ import Foundation
 
 
 func FOREGROUND(canBeDirect: Bool = false, _ closure: @escaping Closure) {
-    if canBeDirect && Thread.isMainThread {
+    if  canBeDirect && Thread.isMainThread {
         closure()
     } else {
         DispatchQueue.main.async { closure() }

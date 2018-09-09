@@ -45,6 +45,17 @@ extension NSObject {
     }
 
 
+    func time(of title: String, _ closure: Closure) {
+        let start = Date()
+
+        closure()
+
+        let duration = Date().timeIntervalSince(start)
+
+        columnarReport(title, duration)
+    }
+
+
     func blankScreenDebug() {
         if  let w = gEditorController?.editorRootWidget.bounds.size.width, w < 1.0 {
             bam("blank graph !!!!!!")

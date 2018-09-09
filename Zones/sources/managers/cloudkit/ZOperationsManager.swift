@@ -39,7 +39,6 @@ enum ZOperationID: Int {
     // finish
 
     case save               // zones, traits, destroy
-    case writeThoughtful    // LOCAL
     case unsubscribe
     case subscribe
 
@@ -63,7 +62,7 @@ enum ZOperationID: Int {
 }
 
 
-let localOperations: [ZOperationID] = [.here, .roots, .found, .internet, .ubiquity, .favorites, .completion, .fetchUserID, .observeUbiquity, .readThoughtful, .writeThoughtful, .fetchUserRecord, .checkAvailability]
+let localOperations: [ZOperationID] = [.here, .roots, .found, .internet, .ubiquity, .favorites, .completion, .fetchUserID, .observeUbiquity, .readThoughtful, .fetchUserRecord, .checkAvailability]
 
 
 var gDebugTimerCount          = 0

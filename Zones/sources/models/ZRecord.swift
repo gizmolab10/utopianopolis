@@ -334,6 +334,11 @@ class ZRecord: NSObject {
     }
 
 
+    func deferWrite() {
+        gFileManager.needWrite(for: databaseID)
+    }
+
+
     func maybeMarkNotFetched() {
         if  record?.creationDate == nil {
             markNotFetched()

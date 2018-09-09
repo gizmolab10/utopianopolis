@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -140,7 +139,7 @@
                                 <rect key="frame" x="20" y="0.0" width="188" height="33"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="cXJ-WP-zvc">
                                     <rect key="frame" x="0.0" y="0.0" width="188" height="33"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="28" id="NKw-JK-K1N">
                                             <rect key="frame" x="0.0" y="0.0" width="188" height="33"/>
@@ -978,7 +977,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="228" height="22"/>
                                 <clipView key="contentView" focusRingType="none" drawsBackground="NO" copiesOnScroll="NO" id="NBB-hm-myr">
                                     <rect key="frame" x="0.0" y="0.0" width="228" height="22"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="15" id="deC-6k-Xt0">
                                             <rect key="frame" x="0.0" y="0.0" width="228" height="22"/>
@@ -1155,9 +1154,9 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="connectLabel" destination="77i-rU-229" id="aH0-aG-IGR"/>
                         <outlet property="nameLabel" destination="iC9-v4-znl" id="Hqq-sU-vMD"/>
                         <outlet property="otherLabel" destination="w7H-7z-Fnj" id="8yN-7n-Mfd"/>
+                        <outlet property="persistenceLabel" destination="77i-rU-229" id="aH0-aG-IGR"/>
                         <outlet property="recordLabel" destination="YfI-Um-sfA" id="crx-3k-eRa"/>
                         <outlet property="statusLabel" destination="X4G-f7-aDj" id="XfV-6f-Ete"/>
                         <outlet property="traitsLabel" destination="kW5-Ti-rEG" id="XKJ-Wi-raU"/>

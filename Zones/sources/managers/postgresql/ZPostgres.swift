@@ -7,7 +7,9 @@
 //
 
 import Foundation
-import PG
+import libPG
+
+let gPostgresql = ZPostgresql()
 
 class ZPostgresql: NSObject {
     var config: Client.Config

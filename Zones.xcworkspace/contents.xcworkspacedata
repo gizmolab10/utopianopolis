@@ -2,9 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Carthage/Checkouts/SnapKit/SnapKit.xcodeproj">
+      location = "group:Zones/Zones.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Zones/Zones.xcodeproj">
+      location = "group:Carthage/Checkouts/SnapKit/SnapKit.xcodeproj">
    </FileRef>
 </Workspace>

@@ -77,19 +77,19 @@ class ZBatchManager: ZOnboardingManager {
 
         var operations: [ZOperationID] {
             switch identifier {
-            case .save:        return [                       .save,          .writeThoughtful]
-            case .sync:        return [            .fetch,    .save, .traits, .writeThoughtful]
-            case .root:        return [.roots,                .save, .traits                  ]
-            case .focus:       return [.roots,     .fetch,           .traits                  ]
-            case .parents:     return [                              .traits                  ]
-            case .children:    return [                              .traits                  ]
-            case .families:    return [            .fetch,           .traits                  ]
-            case .bookmarks:   return [.bookmarks, .fetch,    .save, .traits                  ]
-            case .undelete:    return [.undelete,  .fetch,    .save, .traits                  ]
-            case .fetchLost:   return [.fetchlost,            .save,                          ]
-            case .emptyTrash:  return [.emptyTrash                                            ]
-            case .resumeCloud: return [.fetchNew,  .fetchAll, .save,          .writeThoughtful]
-            case .refetch:     return [            .fetchAll, .save,          .writeThoughtful]
+            case .save:        return [                       .save         ]
+            case .sync:        return [            .fetch,    .save, .traits]
+            case .root:        return [.roots,                .save, .traits]
+            case .focus:       return [.roots,     .fetch,           .traits]
+            case .parents:     return [                              .traits]
+            case .children:    return [                              .traits]
+            case .families:    return [            .fetch,           .traits]
+            case .bookmarks:   return [.bookmarks, .fetch,    .save, .traits]
+            case .undelete:    return [.undelete,  .fetch,    .save, .traits]
+            case .fetchLost:   return [.fetchlost,            .save,        ]
+            case .emptyTrash:  return [.emptyTrash                          ]
+            case .resumeCloud: return [.fetchNew,  .fetchAll, .save         ]
+            case .refetch:     return [            .fetchAll, .save         ]
             case .newAppleID:  return operationIDs(from: .checkAvailability,   to: .subscribe, skipping: [.readThoughtful])
             case .startUp:     return operationIDs(from: .observeUbiquity, to: .fetchAll)
             case .finishUp:    return operationIDs(from: .save,            to: .subscribe)
@@ -283,8 +283,8 @@ class ZBatchManager: ZOnboardingManager {
             if  iCompleted {
                 onCompletion(true)
             } else {
-                let              requiresActive = [.save, .traits                                  ].contains(operationID)
-                let               alwaysForBoth = [.here, .roots, .readThoughtful, .writeThoughtful].contains(operationID)
+                let              requiresActive = [.save, .traits                ].contains(operationID)
+                let               alwaysForBoth = [.here, .roots, .readThoughtful].contains(operationID)
                 let               forMineIDOnly = [.bookmarks, .subscribe, .unsubscribe].contains(operationID)
                 let                      isMine = restoreToID == .mineID
                 let               onlyCurrentID = (!gCloudAccountIsActive && !alwaysForBoth) || operationID == .completion
@@ -332,12 +332,10 @@ class ZBatchManager: ZOnboardingManager {
     override func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
-        switch identifier { // outer switch
-        case .favorites:            gFavoritesManager.setup(                                    cloudCallback)
-        case .readThoughtful:       gFileManager      .readThoughtful(into: currentDatabaseID!); cloudCallback?(0)
-        case .writeThoughtful:      gFileManager     .writeThoughtful(from: currentDatabaseID!); cloudCallback?(0)
-        default: let cloudManager = gRemoteStoresManager.cloudManagerFor(currentDatabaseID!)
-        cloudManager.invokeOperation(for: identifier,                            cloudCallback: cloudCallback)
+        switch identifier {
+        case .favorites:       gFavoritesManager.setup(                                                                   cloudCallback)
+        case .readThoughtful:  gFileManager                                    .readThoughtful(into: currentDatabaseID!); cloudCallback?(0)
+        default: gRemoteStoresManager.cloudManagerFor(currentDatabaseID!).invokeOperation(for: identifier, cloudCallback: cloudCallback)
         }
     }
 
