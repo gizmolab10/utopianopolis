@@ -36,3 +36,6 @@ Apple ID Test.zip
 /.build
 /Zones/.DS_Store
 /Zones.xcworkspace/contents.xcworkspacedata
+/Perfect-SQLite
+/Zones/Frameworks
+/Zones/liblibPG.dylib

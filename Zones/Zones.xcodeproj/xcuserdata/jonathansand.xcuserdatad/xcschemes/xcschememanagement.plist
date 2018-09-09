@@ -4,15 +4,20 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>CommonCryptoModuleMap.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
 		<key>PadZones.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>3</integer>
+			<integer>2</integer>
 		</dict>
 		<key>Zones.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>1</integer>
 		</dict>
 		<key>iFocus.xcscheme_^#shared#^_</key>
 		<dict>
@@ -22,6 +27,16 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>0C05C13421026825001F2015</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0C05C399210510A2001F2015</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>0C401E571D2F6341000B9864</key>
 		<dict>
 			<key>primary</key>
