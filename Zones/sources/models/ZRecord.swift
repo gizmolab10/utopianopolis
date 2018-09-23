@@ -335,7 +335,7 @@ class ZRecord: NSObject {
 
 
     func deferWrite() {
-        gFileManager.needWrite(for: databaseID)
+        gFileManager.deferWrite(for: databaseID)
     }
 
 

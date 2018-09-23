@@ -89,6 +89,8 @@ class ZEditingManager: NSObject {
                 isShift   = true
             }
 
+            widget?.widgetZone?.deferWrite()
+
             if  gIsEditingText {
                 switch key {
                 case "a":      if isCommand { gEditedTextWidget?.selectAllText() }
@@ -818,7 +820,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func revealDotClickAction(for iZone: Zone?) {
+    func clickActionOnRevealDot(for iZone: Zone?, isCommand: Bool) {
         if  let zone = iZone {
             gTextManager.stopCurrentEdit()
 
@@ -828,7 +830,7 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            if  zone.fetchableCount == 0 && zone.count == 0 {
+            if  zone.canTravel && (isCommand || (zone.fetchableCount == 0 && zone.count == 0)) {
                 gFocusManager.maybeTravelThrough(zone) { // email, hyperlink, bookmark
                     self.redrawSyncRedraw()
                 }

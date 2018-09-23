@@ -73,7 +73,18 @@ class ZFileManager: NSObject {
 				self.writeThoughtful(at: path, from: .mineID)
 			}
 		}
-	}
+    }
+
+
+    func deferWrite(for  databaseID: ZDatabaseID?, restartTimer: Bool = false) {
+        if  writeTimer?.isValid ?? false || restartTimer {
+            writeTimer?.invalidate()
+
+            writeTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { iTimer in
+                self.writeThoughtful(from: databaseID)
+            }
+        }
+    }
 	
 
     func needWrite(for  databaseID: ZDatabaseID?) {
@@ -83,11 +94,7 @@ class ZFileManager: NSObject {
             if !needsWrite[index] {
                 needsWrite[index] = true
             } else {
-                writeTimer?.invalidate()
-
-                writeTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { iTimer in
-                    self.writeThoughtful(from: dbID)
-                }
+                deferWrite(for: databaseID, restartTimer: true)
             }
         }
     }
@@ -160,6 +167,7 @@ class ZFileManager: NSObject {
 			let        manager = gRemoteStoresManager.cloudManagerFor(dbID)
 			
             FOREGROUND {
+                self.signalFor(nil, regarding: .debug)
                 self.writtenRecordNames.removeAll()
                 gRemoteStoresManager.recount()
 
@@ -212,6 +220,8 @@ class ZFileManager: NSObject {
                     }
 
                     self .isWriting[index] = false // end prevention of write during write
+
+                    self.signalFor(nil, regarding: .debug)
                 }
             }
 		}

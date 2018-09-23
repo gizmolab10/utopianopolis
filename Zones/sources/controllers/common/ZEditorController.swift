@@ -165,18 +165,16 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     
     func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
 
-        ///////////////////////////////////
-        // only called by gesture system //
-        ///////////////////////////////////
-
         if  gWorkMode        != .graphMode {
             #if os(OSX)
                 gSearchManager.exitSearchMode()
             #endif
         } else if let gesture = iGesture as? ZKeyPanGestureRecognizer,
+            let (_, dropNearest, location) = widgetNearest(gesture),
             let         flags = gesture.modifiers {
-            let      location = gesture.location(in: editorView)
             let         state = gesture.state
+
+            dropNearest.widgetZone?.deferWrite()
 
             if isEditingText(at: location) {
                 restartGestureRecognition()     // let text editor consume the gesture
@@ -194,7 +192,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                     dragStartEvent(dot, iGesture)
                 } else if let zone = dot.widgetZone {
                     cleanupAfterDrag()
-                    gEditingManager.revealDotClickAction(for: zone)   // no dragging
+                    gEditingManager.clickActionOnRevealDot(for: zone, isCommand: flags.isCommand)   // no dragging
                 }
             } else {                            // began
                 rubberbandStartEvent(location, iGesture)
@@ -205,49 +203,43 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     
     func clickEvent(_ iGesture: ZGestureRecognizer?) {
         
-        /////////////////////////////////////////////
-        // called by controller and gesture system //
-        /////////////////////////////////////////////
-        
-        if  let             gesture = iGesture as? ZKeyClickGestureRecognizer {
-            let          textWidget = gEditedTextWidget
+        if  let           gesture = iGesture as? ZKeyClickGestureRecognizer {
+            let         isCommand = gesture.modifiers?.contains(.command) ?? false
+            let        textWidget = gEditedTextWidget
+            var            inText = false
 
-            if gesture.modifiers?.contains(.command) ?? false, let zone = textWidget?.widgetZone, let link = zone.hyperLink, link != kNullLink {
-                link.openAsURL()
-            } else {
-                var          inText = false
+            textWidget?.widgetZone?.deferWrite()
 
-                if  textWidget != nil {
-                    let    location = gesture.location(in: editorView)
-                    let        rect = textWidget!.convert(textWidget!.bounds, to: editorView)
-                    inText          = rect.contains(location)
-                }
+            if  textWidget != nil {
+                let clickLocation = gesture.location(in: editorView)
+                let      textRect = textWidget!.convert(textWidget!.bounds, to: editorView)
+                inText            = textRect.contains(clickLocation)
+            }
 
-                if !inText {
-                    if  let  widget = detectWidget(gesture) {
-                        if let zone = widget.widgetZone,
-                            let dot = detectDotIn(widget, gesture) {
-                            if  dot.isReveal {
-                                gEditingManager.revealDotClickAction(for: zone)
-                            } else if zone.isGrabbed {
-                                zone.ungrab()
-                            } else if gesture.isShiftDown {
-                                zone.addToGrab()
-                            } else {
-                                zone.grab()
-                            }
-
-                            signalFor(nil, regarding: .details)
+            if !inText {
+                if  let    widget = detectWidget(gesture) {
+                    if  let  zone = widget.widgetZone,
+                        let   dot = detectDotIn(widget, gesture) {
+                        if  dot.isReveal {
+                            gEditingManager.clickActionOnRevealDot(for: zone, isCommand: isCommand)
+                        } else if zone.isGrabbed {
+                            zone.ungrab()
+                        } else if gesture.isShiftDown {
+                            zone.addToGrab()
                         } else {
-                            gTextManager.stopCurrentEdit()
-                            gSelectionManager.deselect()
-                            widget.widgetZone?.grab()
-                            signalFor(nil, regarding: .search)
+                            zone.grab()
                         }
-                    } else { // click on background
+
+                        signalFor(nil, regarding: .details)
+                    } else {
+                        gTextManager.stopCurrentEdit()
                         gSelectionManager.deselect()
-                        signalFor(nil, regarding: .datum)
+                        widget.widgetZone?.grab()
+                        signalFor(nil, regarding: .search)
                     }
+                } else { // click on background
+                    gSelectionManager.deselect()
+                    signalFor(nil, regarding: .datum)
                 }
             }
 
@@ -264,7 +256,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     func dragStartEvent(_ dot: ZoneDot, _ iGesture: ZGestureRecognizer?) {
         if  var zone = dot.widgetZone { // should always be true
             if  iGesture?.isOptionDown ?? false {
-                zone = zone.deepCopy
+                zone = zone.deepCopy // option means drag a copy
             }
 
             if  iGesture?.isShiftDown ?? false {

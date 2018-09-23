@@ -307,14 +307,6 @@ extension NSButton {
 }
 
 
-extension NSTextField {
-    var          text:         String? { get { return stringValue } set { stringValue = newValue ?? "" } }
-    var textAlignment: NSTextAlignment { get { return alignment }   set { alignment = newValue } }
-    func enableUndo()                  { cell?.allowsUndo = true }
-    func selectAllText()               {}
-}
-
-
 extension ZAlert {
 
     func showAlert(closure: AlertStatusClosure? = nil) {
@@ -325,6 +317,14 @@ extension ZAlert {
         closure?(status)
     }
 
+}
+
+
+extension NSTextField {
+    var          text:         String? { get { return stringValue } set { stringValue = newValue ?? "" } }
+    var textAlignment: NSTextAlignment { get { return alignment }   set { alignment = newValue } }
+    func enableUndo()                  { cell?.allowsUndo = true }
+    func selectAllText()               {}
 }
 
 
@@ -339,13 +339,6 @@ extension ZoneTextWidget {
         }
 
         return false
-    }
-
-
-    func deselectAllText() {
-        if  let editor = currentEditor() {
-            select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: 0)
-        }
     }
 
 
@@ -387,11 +380,21 @@ extension ZoneTextWidget {
     }
 
 
-    override func selectAllText() {
-        if  let t = text, let e = currentEditor() {
-            gTextManager.deferEditingStateChange()
-            select(withFrame: bounds, editor: e, delegate: self, start: 0, length: t.length)
+    func selectFromStart(toEnd: Bool = false) {
+        if  let t = text, let editor = currentEditor() {
+            select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: toEnd ? t.length : 0)
         }
+    }
+
+
+    func deselectAllText() {
+        selectFromStart()
+    }
+
+
+    override func selectAllText() {
+        gTextManager.deferEditingStateChange()
+        selectFromStart(toEnd: true)
     }
 
 }
