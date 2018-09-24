@@ -135,8 +135,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             recursing        = [.data, .redraw].contains(iKind)
         }
 
-        note("<  <  -  >  >  \(specificWidget?.widgetZone?.zoneName ?? "---")")
-
         if iKind == .redraw {
             specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isMain: inMainGraph, visited: [])
         } else {
@@ -202,7 +200,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     
     
     func clickEvent(_ iGesture: ZGestureRecognizer?) {
-        
+
         if  let           gesture = iGesture as? ZKeyClickGestureRecognizer {
             let         isCommand = gesture.modifiers?.contains(.command) ?? false
             let        textWidget = gEditedTextWidget

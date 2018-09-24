@@ -49,7 +49,7 @@ class Zone : ZRecord {
     var           linkDatabaseID:  ZDatabaseID? { return databaseID(from: zoneLink) }
     var                 linkName:       String? { return name(from: zoneLink) }
     override var     displayType:       String  { return "idea" }
-    override var   unwrappedName:       String  { return zoneName ?? displayType }
+    override var   unwrappedName:       String  { return zoneName ?? (isRootOfFavorites ? kFavoritesName : displayType) }
     var            decoratedName:       String  { return decoration + unwrappedName }
     var         fetchedBookmarks:       [Zone]  { return gBookmarksManager.bookmarks(for: self) ?? [] }
     var         grabbedTextColor:       ZColor  { return color.darker(by: 3.0) }
