@@ -81,7 +81,11 @@ class ZFileManager: NSObject {
             writeTimer?.invalidate()
 
             writeTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { iTimer in
-                self.writeThoughtful(from: databaseID)
+                if gIsEditingText {
+                    self.deferWrite(for: databaseID, restartTimer: true)
+                } else {
+                    self.writeThoughtful(from: databaseID)
+                }
             }
         }
     }
@@ -327,7 +331,7 @@ class ZFileManager: NSObject {
                         try manager.copyItem(at: genericFileURL, to: backupURL)
                     } else if backupExists {
                         try manager.copyItem(at: backupURL, to: genericFileURL)        // should only happen when prior write fails due to power failure
-                    } else if isEveryone, let bundleFileURL = Bundle.main.url(forResource: "everyone", withExtension: "focus") {
+                    } else if isEveryone, let bundleFileURL = Bundle.main.url(forResource: "everyone", withExtension: "thoughtful") {
                         try manager.copyItem(at: bundleFileURL, to: genericFileURL)
                     } else {
                         manager.createFile(atPath: genericFileURL.path, contents: nil)
