@@ -32,6 +32,20 @@ class ZTrait: ZRecord {
     dynamic var owner: CKReference?
     var _traitType: ZTraitType? = nil
     var _ownerZone: Zone? = nil
+    override var unwrappedName: String { return text ?? displayType }
+
+
+    override var displayType: String {
+        if  let tType = traitType {
+            switch tType {
+            case .eEmail: return "email address"
+            case .eHyperlink: return "hyperlink"
+            default: break
+            }
+        }
+
+        return ""
+    }
 
 
     var traitType: ZTraitType? {

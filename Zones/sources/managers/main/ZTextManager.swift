@@ -24,11 +24,20 @@ class ZTextPack: NSObject {
     var     isEditingEmail:            Bool { return packedTrait?.traitType == .eEmail }
 
 
-    var textToEdit: String {
+    var displayType: String {
         if  let        trait = packedTrait {
-            if  let    tName = trait.text {
-                return tName
-            }
+            return     trait.displayType
+        } else if let  zone = packedZone {
+            return     zone.displayType
+        }
+
+        return kNoValue
+    }
+
+
+    var unwrappedName: String {
+        if  let        trait = packedTrait {
+            return     trait.unwrappedName
         } else if let  zone = packedZone {
             return     zone.unwrappedName
         }
@@ -38,7 +47,7 @@ class ZTextPack: NSObject {
 
 
     var textWithSuffix: String {
-        var   result = kNoValue
+        var   result = displayType
 
         if  let zone = packedZone {
             result   = zone.unwrappedName
@@ -78,14 +87,14 @@ class ZTextPack: NSObject {
 
 
     func updateText(isEditing: Bool = false) {
-        textWidget?.text = isEditing ? textToEdit : textWithSuffix
+        textWidget?.text = isEditing ? unwrappedName : textWithSuffix
     }
 
 
     func edit(_ iZRecord: ZRecord) {
         packedTrait      = iZRecord as? ZTrait
         packedZone       = iZRecord as? Zone ?? packedTrait?.ownerZone
-        originalText     = textToEdit
+        originalText     = unwrappedName
         textWidget?.text = originalText
     }
 
@@ -109,7 +118,7 @@ class ZTextPack: NSObject {
 
 
     func capture(_ iText: String?) {
-        let text           = iText == kNoValue ? nil : iText
+        let text           = iText == displayType ? nil : iText
 
         if  let     trait  = packedTrait {      // traits take logical priority
             trait.ownerZone?.setTraitText(text, for: trait.traitType)
@@ -130,7 +139,7 @@ class ZTextPack: NSObject {
         if  let components = iText?.components(separatedBy: "  (") {
             newText        = components[0]
 
-            if  newText == kNoValue || newText == kNullLink || newText == "" {
+            if  newText == displayType || newText == kNullLink || newText == "" {
                 newText  = nil
             }
         }
@@ -146,7 +155,7 @@ class ZTextPack: NSObject {
 
 
     func captureTextAndSync(_ iText: String?) {
-        if  (originalText != iText || originalText == kNoValue) {
+        if  (originalText != iText || originalText == displayType) {
             let               newText = removeSuffix(from: iText)
             gTextCapturing            = true
 

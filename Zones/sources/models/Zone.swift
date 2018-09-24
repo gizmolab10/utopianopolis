@@ -48,7 +48,8 @@ class Zone : ZRecord {
     var                   widget:   ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var           linkDatabaseID:  ZDatabaseID? { return databaseID(from: zoneLink) }
     var                 linkName:       String? { return name(from: zoneLink) }
-    var            unwrappedName:       String  { return zoneName ?? kNoValue }
+    override var     displayType:       String  { return "idea" }
+    override var   unwrappedName:       String  { return zoneName ?? displayType }
     var            decoratedName:       String  { return decoration + unwrappedName }
     var         fetchedBookmarks:       [Zone]  { return gBookmarksManager.bookmarks(for: self) ?? [] }
     var         grabbedTextColor:       ZColor  { return color.darker(by: 3.0) }
