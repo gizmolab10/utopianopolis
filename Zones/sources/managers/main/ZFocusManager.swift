@@ -205,10 +205,10 @@ class ZFocusManager: NSObject {
 
 
     func travelThrough(_ iBookmark: Zone, atArrival: @escaping SignalClosure) {
-        if  let      crossLink = iBookmark.crossLink,
-            let           dbID = crossLink.databaseID,
-            let         record = crossLink.record {
-            let recordIDOfLink = record.recordID
+        if  let  targetZRecord = iBookmark.crossLink,
+            let     targetDBID = targetZRecord.databaseID,
+            let   targetRecord = targetZRecord.record {
+            let targetRecordID = targetRecord.recordID
             var   there: Zone? = nil
 
             if iBookmark.isFavorite {
@@ -218,22 +218,22 @@ class ZFocusManager: NSObject {
             pushHere()
             debugDump()
 
-            if  gDatabaseID  != dbID {
-                gDatabaseID   = dbID
+            if  gDatabaseID != targetDBID {
+                gDatabaseID  = targetDBID
 
                 /////////////////////////////////
                 // TRAVEL TO A DIFFERENT GRAPH //
                 /////////////////////////////////
 
-                if iBookmark.bookmarkTarget!.isFetched { // e.g., default root favorite
+                if  let target = iBookmark.bookmarkTarget, target.isFetched { // e.g., default root favorite
                     focus {
-                        gHere = iBookmark.bookmarkTarget!
+                        gHere  = target
 
                         gHere.prepareForArrival()
                         atArrival(gHere, .redraw)
                     }
                 } else {
-                    gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: kZoneType) { (iRecord: CKRecord?) in
+                    gCloudManager.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
                         if  let hereRecord = iRecord {
                             gHere          = gCloudManager.zoneForCKRecord(hereRecord)
 
@@ -252,7 +252,7 @@ class ZFocusManager: NSObject {
                 // STAY WITHIN GRAPH //
                 ///////////////////////
 
-                there = gCloudManager.maybeZoneForRecordID(recordIDOfLink)
+                there = gCloudManager.maybeZoneForRecordID(targetRecordID)
                 let grabbed = gSelectionManager.firstGrab
                 let    here = gHere
 
@@ -280,7 +280,7 @@ class ZFocusManager: NSObject {
 
                     grabHere()
                 } else if gCloudManager.databaseID != .favoritesID { // favorites does not have a cloud database
-                    gCloudManager.assureRecordExists(withRecordID: recordIDOfLink, recordType: kZoneType) { (iRecord: CKRecord?) in
+                    gCloudManager.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
                         if  let hereRecord = iRecord {
                             gHere          = gCloudManager.zoneForCKRecord(hereRecord)
 

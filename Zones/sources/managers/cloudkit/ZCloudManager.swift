@@ -218,7 +218,7 @@ class ZCloudManager: ZRecordsManager {
 
         if      cloudUnavailable {
             if  let ckRecord = maybeCKRecordForRecordName(iCKRecordID.recordName),
-                !hasCKRecordName(iCKRecordID.recordName, forAnyOf: [.notFetched]) {
+                hasCKRecordName(iCKRecordID.recordName, forAnyOf: [.notFetched]) {
                 done(ckRecord)
             }
 

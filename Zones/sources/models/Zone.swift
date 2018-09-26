@@ -43,6 +43,7 @@ class Zone : ZRecord {
     var                   traits = [ZTraitType : ZTrait] ()
     var                    count:          Int  { return children.count }
     var            lowestExposed:          Int? { return exposed(upTo: highestExposed) }
+    var           bookmarkTarget:         Zone? { return crossLink as? Zone }
     var              destroyZone:         Zone? { return cloudManager?.destroyZone }
     var                trashZone:         Zone? { return cloudManager?.trashZone }
     var                   widget:   ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
@@ -248,15 +249,6 @@ class Zone : ZRecord {
         }
 
         return d
-    }
-
-
-    var bookmarkTarget: Zone? {
-        if  let    target = crossLink as? Zone {
-            return target
-        }
-
-        return nil
     }
 
 
