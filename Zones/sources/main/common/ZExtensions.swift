@@ -462,6 +462,19 @@ extension String {
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
     var           length: Int  { return unicodeScalars.count }
 
+
+    var escaped: String {
+        var result = "\(self)"
+        for character in "\\\"\'`" {
+            let separator = "\(character)"
+            let components = result.components(separatedBy: separator)
+            result = components.joined(separator: "\\" + separator)
+        }
+
+        return result
+    }
+
+
     static func from(_ ascii: UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
     func substring(from:         Int) -> String  { return substring(from: index(at: from)) }
     func substring(to:           Int) -> String  { return substring(to: index(at: to)) }

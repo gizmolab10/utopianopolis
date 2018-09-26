@@ -309,7 +309,7 @@ class ZCloudManager: ZRecordsManager {
 
         for token in tokens {
             if  token    != "" {
-                string    = "\(string)\(separator)SELF CONTAINS \"\(token)\""
+                string    = "\(string)\(separator)SELF CONTAINS \"\(token.escaped)\""
                 separator = " AND "
             }
         }

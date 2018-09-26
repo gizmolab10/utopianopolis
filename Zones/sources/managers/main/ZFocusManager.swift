@@ -44,8 +44,8 @@ class ZFocusManager: NSObject {
     func debugDump() {
         for (index, zone) in travelStack.enumerated() {
             let isCurrentIndex = index == currentIndex
-            let prefix = isCurrentIndex ? " •" : ""
-            columnarReport(prefix, zone.decoratedName)
+            let prefix = isCurrentIndex ? "                   •" : ""
+            columnarReport(prefix, zone.zoneName)
         }
     }
 
@@ -61,9 +61,10 @@ class ZFocusManager: NSObject {
             } else {
                 if  currentIndex < 0 {
                     currentIndex = 0
+                    newIndex  = currentIndex + 1
                 }
 
-                travelStack.insert(gHere, at: currentIndex)
+                travelStack.insert(gHere, at: newIndex)
             }
 
             currentIndex = newIndex
