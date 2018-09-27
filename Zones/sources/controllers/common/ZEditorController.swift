@@ -263,8 +263,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 zone.grab()
             }
             
-            note("d --- d")
-            
             if  let location  = iGesture?.location(in: dot) {
                 dot.dragStart = location
                 gDraggedZone  = zone

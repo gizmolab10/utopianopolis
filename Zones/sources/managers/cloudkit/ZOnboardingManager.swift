@@ -24,7 +24,8 @@ class ZOnboardingManager : ZOperationsManager {
 
 
     var          user : ZUser?
-    var isSpecialUser : Bool { return user?.access == .eAccessFull }
+    var isSpecialUser : Bool { return user?.access == .eAccessFull || macAddress == "c8:e0:eb:16:c9:9b" }
+    var    macAddress : String?
 
 
     // MARK:- internals
@@ -52,6 +53,7 @@ class ZOnboardingManager : ZOperationsManager {
         case .fetchUserID:       fetchUserID       { onCompletion(true) }
         case .ubiquity:          ubiquity          { onCompletion(true) }
         case .observeUbiquity:   observeUbiquity();  onCompletion(true)
+        case .macAddress:        getMAC();           onCompletion(true)
         case .internet:          internet();         onCompletion(true)
         default:                                     onCompletion(false)     // false means op is not handled, so super should proceed
         }
@@ -158,6 +160,58 @@ class ZOnboardingManager : ZOperationsManager {
         } else {
             onCompletion()
         }
+    }
+
+
+    func getMAC() {
+        if let intfIterator = findEthernetInterfaces() {
+            if  let macAddressAsArray = getMACAddress(intfIterator) {
+                let macAddressAsString = macAddressAsArray.map( { String(format:"%02x", $0) } )
+                    .joined(separator: ":")
+                macAddress = macAddressAsString
+            }
+
+            IOObjectRelease(intfIterator)
+        }
+    }
+
+
+    func findEthernetInterfaces() -> io_iterator_t? {
+
+        let matchingDict = IOServiceMatching("IOEthernetInterface") as NSMutableDictionary
+        matchingDict["IOPropertyMatch"] = [ "IOPrimaryInterface" : true]
+
+        var matchingServices : io_iterator_t = 0
+        if IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDict, &matchingServices) != KERN_SUCCESS {
+            return nil
+        }
+
+        return matchingServices
+    }
+
+    func getMACAddress(_ intfIterator : io_iterator_t) -> [UInt8]? {
+
+        var macAddress : [UInt8]?
+
+        var intfService = IOIteratorNext(intfIterator)
+        while intfService != 0 {
+
+            var controllerService : io_object_t = 0
+            if IORegistryEntryGetParentEntry(intfService, "IOService", &controllerService) == KERN_SUCCESS {
+
+                let dataUM = IORegistryEntryCreateCFProperty(controllerService, "IOMACAddress" as CFString, kCFAllocatorDefault, 0)
+                if let data = dataUM?.takeRetainedValue() as? NSData {
+                    macAddress = [0, 0, 0, 0, 0, 0]
+                    data.getBytes(&macAddress!, length: macAddress!.count)
+                }
+                IOObjectRelease(controllerService)
+            }
+
+            IOObjectRelease(intfService)
+            intfService = IOIteratorNext(intfIterator)
+        }
+
+        return macAddress
     }
 
 }

@@ -91,7 +91,7 @@ class ZBatchManager: ZOnboardingManager {
             case .resumeCloud: return [.fetchNew,  .fetchAll, .save         ]
             case .refetch:     return [            .fetchAll, .save         ]
             case .newAppleID:  return operationIDs(from: .checkAvailability,   to: .subscribe, skipping: [.readThoughtful])
-            case .startUp:     return operationIDs(from: .observeUbiquity, to: .fetchAll)
+            case .startUp:     return operationIDs(from: .macAddress,      to: .fetchAll)
             case .finishUp:    return operationIDs(from: .save,            to: .subscribe)
             case .userTest:    return operationIDs(from: .observeUbiquity, to: .fetchUserRecord)
             }

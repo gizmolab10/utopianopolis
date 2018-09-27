@@ -63,8 +63,8 @@ class ZoneWidget: ZView {
 
 
     func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, isMain: Bool, visited: [Zone]) {
-        if  inView != nil, let views = inView?.subviews, !views.contains(self), !views.contains(textWidget) {
-            inView?.addSubview(self)
+        if  let thisView = inView, !thisView.subviews.contains(self) {
+            thisView.addSubview(self)
 
             if atIndex == nil {
                 snp.remakeConstraints { (make: ConstraintMaker) -> Void in
@@ -96,12 +96,8 @@ class ZoneWidget: ZView {
 
     func layoutChildren(_ iKind: ZSignalKind, visited: [Zone]) {
         if  let                  zone = widgetZone, zone.showChildren {
-            var                 index = zone.count
+            var                 index = childrenWidgets.count
             var previous: ZoneWidget? = nil
-
-            if  index > 60 {
-                index = 60
-            }
 
             while index > 0 {
                 index                 -= 1 // go backwards down the children arrays, bottom and top constraints expect it
@@ -197,11 +193,17 @@ class ZoneWidget: ZView {
                     view.removeFromSuperview()
                 }
             } else {
-                while childrenWidgets.count < zone.count {
+                var count = zone.count
+
+                if  count > 60 {
+                    count = 60
+                }
+
+                while childrenWidgets.count < count {
                     childrenWidgets.append(ZoneWidget())
                 }
 
-                while childrenWidgets.count > zone.count {
+                while childrenWidgets.count > count {
                     let widget = childrenWidgets.removeLast()
 
                     widget.removeFromSuperview()
@@ -512,7 +514,7 @@ class ZoneWidget: ZView {
     // lines need CHILD dots drawn first.
     // extra pass through hierarchy to do lines
 
-    var childrenPass = false
+    var nowDrawChildren = false
 
 
     override func draw(_ dirtyRect: CGRect) {
@@ -531,9 +533,9 @@ class ZoneWidget: ZView {
             }
 
             if zone.showChildren {
-                if  !childrenPass && !gIsDragging && gEditorView?.rubberbandRect == nil {
+                if  !nowDrawChildren && !gIsDragging && gEditorView?.rubberbandRect == nil {
                     FOREGROUND {
-                        self.childrenPass = true
+                        self.nowDrawChildren = true
 
                         self.setNeedsDisplay()
                     }
@@ -544,7 +546,7 @@ class ZoneWidget: ZView {
                 }
             }
             
-            childrenPass = false
+            nowDrawChildren = false
         }
     }
 }
