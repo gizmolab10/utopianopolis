@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -139,7 +140,7 @@
                                 <rect key="frame" x="20" y="0.0" width="188" height="33"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="cXJ-WP-zvc">
                                     <rect key="frame" x="0.0" y="0.0" width="188" height="33"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="28" id="NKw-JK-K1N">
                                             <rect key="frame" x="0.0" y="0.0" width="188" height="33"/>
@@ -266,6 +267,7 @@
                                             <constraint firstAttribute="trailing" secondItem="Chx-83-qGo" secondAttribute="trailing" id="zGJ-Lo-Ngz"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="bannerView" destination="xwW-xc-XIh" id="To1-48-Suc"/>
                                             <outlet property="hideableView" destination="Chx-83-qGo" id="Qre-NM-FhC"/>
                                             <outlet property="titleLabel" destination="ce9-hv-nUx" id="9bP-eX-B0O"/>
                                             <outlet property="toggleButton" destination="hIy-eV-7gW" id="Pdh-ir-ANX"/>
@@ -329,6 +331,7 @@
                                             <constraint firstAttribute="trailing" secondItem="Ul6-QC-jDi" secondAttribute="trailing" id="wju-QJ-L7S"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="bannerView" destination="Ul6-QC-jDi" id="HGT-hA-9sl"/>
                                             <outlet property="hideableView" destination="btT-FF-Ema" id="owk-cx-MOC"/>
                                             <outlet property="titleLabel" destination="gUX-Sv-09B" id="oa3-hu-a7F"/>
                                             <outlet property="toggleButton" destination="aCk-9D-lHI" id="lcf-J5-cK6"/>
@@ -392,6 +395,7 @@
                                             <constraint firstItem="GnQ-iS-bgR" firstAttribute="top" secondItem="E5h-DF-X3i" secondAttribute="top" id="ogG-h3-kQt"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="bannerView" destination="GnQ-iS-bgR" id="hY0-hM-1kz"/>
                                             <outlet property="hideableView" destination="EaL-XF-QhW" id="sUb-7I-rGt"/>
                                             <outlet property="titleLabel" destination="ds2-S9-Udj" id="caa-pm-A78"/>
                                             <outlet property="toggleButton" destination="kYb-ao-3Mw" id="6zv-Ya-yNt"/>
@@ -455,6 +459,7 @@
                                             <constraint firstAttribute="bottom" secondItem="XUr-go-ovY" secondAttribute="bottom" id="rFI-5e-S8W"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="bannerView" destination="Dnz-Gb-8cH" id="dWu-dm-WWO"/>
                                             <outlet property="hideableView" destination="XUr-go-ovY" id="cHW-H0-aCt"/>
                                             <outlet property="titleLabel" destination="UIC-Be-bJk" id="6FS-Ew-sxj"/>
                                             <outlet property="toggleButton" destination="bee-ew-HYp" id="EpT-0c-ZLw"/>
@@ -518,6 +523,7 @@
                                             <constraint firstItem="7Zo-Cx-wV6" firstAttribute="top" secondItem="UhT-Vl-h0f" secondAttribute="top" id="rIo-pI-KeC"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="bannerView" destination="7Zo-Cx-wV6" id="bUH-OL-1eu"/>
                                             <outlet property="hideableView" destination="AuQ-dr-yPp" id="D8x-dV-s3B"/>
                                             <outlet property="titleLabel" destination="oW1-nm-Vzs" id="PQy-H5-Inm"/>
                                             <outlet property="toggleButton" destination="ZY6-bq-evl" id="pA9-Iv-MOA"/>
@@ -977,7 +983,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="228" height="22"/>
                                 <clipView key="contentView" focusRingType="none" drawsBackground="NO" copiesOnScroll="NO" id="NBB-hm-myr">
                                     <rect key="frame" x="0.0" y="0.0" width="228" height="22"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="15" id="deC-6k-Xt0">
                                             <rect key="frame" x="0.0" y="0.0" width="228" height="22"/>

@@ -19,6 +19,7 @@ import SnapKit
 class ZStackableView: ZView {
 
 
+    @IBOutlet var       bannerView : ZView?
     @IBOutlet var     hideableView : ZView?
     @IBOutlet var     toggleButton : ZButton?
     @IBOutlet var       titleLabel : ZTextField?
@@ -122,7 +123,7 @@ class ZStackableView: ZView {
 
             titleLabel?.snp.removeConstraints()
             hideableView?.snp.makeConstraints { make in
-                make.top.equalTo((self.toggleButton?.snp.bottom)!)
+                make.top.equalTo((self.bannerView?.snp.bottom)!)
                 make.left.right.bottom.equalTo(self)
             }
 
