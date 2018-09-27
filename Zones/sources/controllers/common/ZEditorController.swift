@@ -16,6 +16,9 @@ import SnapKit
 #endif
 
 
+var gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor) as? ZEditorController }
+
+
 class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDelegate {
     
     
@@ -85,12 +88,13 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
     
     func layoutForCurrentScrollOffset() {
-        if let e = editorView {
+        if  let e = editorView,
+            let w = gMainController?.detailsWidth?.constant {
             if kIsDesktop {
                 editorRootWidget.snp.removeConstraints()
                 editorRootWidget.snp.makeConstraints { make in
                     make.centerY.equalTo(e).offset(gScrollOffset.y)
-                    make.centerX.equalTo(e).offset(gScrollOffset.x)
+                    make.centerX.equalTo(e).offset(gScrollOffset.x + (w / 2.0))
                 }
             }
 
@@ -155,9 +159,16 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 layoutForCurrentScrollOffset()
                 layoutRootWidget(for: iSignalObject, iKind, inMainGraph: true)
                 layoutRootWidget(for: iSignalObject, iKind, inMainGraph: false)
+                adjustForFavoritesHeight()
                 editorView?.setAllSubviewsNeedDisplay()
             }
         }
+    }
+
+
+    func adjustForFavoritesHeight() {
+        let favoritesHeight = favoritesRootWidget.frame.size.height + 40.0 - (gGenericOffset.height / 3.0)
+        gMainController?.favoritesHeight?.constant = favoritesHeight
     }
     
     

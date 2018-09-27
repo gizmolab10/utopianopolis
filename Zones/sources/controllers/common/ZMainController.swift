@@ -22,7 +22,9 @@ var gMainController: ZMainController? { return gControllersManager.controllerFor
 class ZMainController: ZGenericController {
 
 
+    @IBOutlet var detailsWidth:       NSLayoutConstraint?
     @IBOutlet var searchBoxHeight:    NSLayoutConstraint?
+    @IBOutlet var favoritesHeight:    NSLayoutConstraint?
     @IBOutlet var authenticationView: ZView?
     @IBOutlet var searchResultsView:  ZView?
     @IBOutlet var searchBoxView:      ZView?
