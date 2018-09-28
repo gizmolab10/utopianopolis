@@ -312,7 +312,7 @@ class ZEditingManager: NSObject {
 
     func toggleColorized() {
         for zone in gSelectionManager.currentGrabs {
-            zone.colorized = !zone.colorized
+            zone.toggleColorized()
         }
 
         redrawAndSync()

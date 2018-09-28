@@ -293,18 +293,22 @@ class Zone : ZRecord {
     }
 
 
-    let kColorized = "c"
+    let kReverseColor = "c"
 
 
     var colorized: Bool {
         get {
-            var     result = false
+            var        result = false
+            let originalColor = color
 
             traverseAncestors { iChild -> (ZTraverseStatus) in
-                if  let      attributes = iChild.zoneAttributes {
-                    result = attributes.contains(kColorized)
-
+                if iChild.color != originalColor {
                     return .eStop
+                }
+
+                if  let attributes = iChild.zoneAttributes,
+                    attributes.contains(kReverseColor) {
+                    result = !result
                 }
 
                 return .eContinue
@@ -314,24 +318,38 @@ class Zone : ZRecord {
         }
 
         set {
-            if  newValue != colorized {
-                var attributes = zoneAttributes
+            var attributes = zoneAttributes
+            let   oldValue = attributes?.contains(kReverseColor) ?? false
 
-                if  attributes == nil {
-                    attributes = ""
-                }
+            if  newValue != oldValue {
+                if !newValue {
+                    attributes = attributes?.replacingOccurrences(of: kReverseColor, with: "")
 
-                if  newValue {
-                    attributes?.append(kColorized)
+                    if  attributes == "" {
+                        attributes = nil
+                    }
                 } else {
-                    attributes = attributes?.replacingOccurrences(of: kColorized, with: "")
+                    if  attributes == nil {
+                        attributes = ""
+                    }
+
+                    if !attributes!.contains(kReverseColor) {
+                        attributes!.append(kReverseColor)
+                    }
                 }
 
-                zoneAttributes = attributes
+                if  zoneAttributes != attributes {
+                    zoneAttributes  = attributes
 
-                needSave()
+                    needSave()
+                }
             }
         }
+    }
+
+
+    func toggleColorized() {
+        colorized = !(zoneAttributes?.contains(kReverseColor) ?? false)
     }
 
 
