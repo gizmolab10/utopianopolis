@@ -25,11 +25,11 @@ class ZMainController: ZGenericController {
     @IBOutlet var detailsWidth:       NSLayoutConstraint?
     @IBOutlet var searchBoxHeight:    NSLayoutConstraint?
     @IBOutlet var favoritesHeight:    NSLayoutConstraint?
-    @IBOutlet var authenticationView: ZView?
     @IBOutlet var searchResultsView:  ZView?
     @IBOutlet var searchBoxView:      ZView?
-    @IBOutlet var overlaysView:       ZView?
+    @IBOutlet var insertView:         ZView?
     @IBOutlet var editorView:         ZView?
+    @IBOutlet var mainView:           ZView?
 
 
     override func setup() {
@@ -68,18 +68,24 @@ class ZMainController: ZGenericController {
     func showAsSearching(_ iSearching: Bool) {
         gWorkMode = iSearching ? .searchMode : .graphMode
 
-        show( iSearching, view: searchResultsView!)
-        show(!iSearching, view: editorView!)
+        show( iSearching, iView: searchResultsView!, inView: mainView!)
+        show(!iSearching, iView: editorView!,        inView: mainView!)
+        show(!iSearching, iView: insertView!,        inView: view)
     }
 
 
-    func show(_ show: Bool, view: ZView) {
+    func show(_ show: Bool, iView: ZView, inView: ZView) {
         if !show {
-            view.removeFromSuperview()
-        } else if !(overlaysView?.subviews.contains(view))! {
-            overlaysView?.addSubview(view)
-            view.snp.makeConstraints { make in
-                make.top.bottom.left.right.equalTo(overlaysView!)
+            iView.removeFromSuperview()
+        } else if !(inView.subviews.contains(iView)) {
+            inView.addSubview(iView)
+            iView.snp.makeConstraints { make in
+                if inView == view {
+                    make.bottom.left.equalTo(inView)
+                    make.top.equalTo((gEditorController!.favoritesRootWidget.snp.bottom)).offset(20.0)
+                } else {
+                    make.top.bottom.left.right.equalTo(inView)
+                }
             }
         }
     }

@@ -627,46 +627,64 @@ CQ
                                     <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="E7h-Pg-qLQ" secondAttribute="leading" id="rPy-dC-73N"/>
                                 </constraints>
                             </customView>
-                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="gPD-rw-vaf">
-                                <rect key="frame" x="0.0" y="253" width="227" height="5"/>
-                            </box>
-                            <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="oY0-De-wof">
-                                <rect key="frame" x="224" y="0.0" width="5" height="255"/>
-                            </box>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
-                                <rect key="frame" x="0.0" y="0.0" width="226" height="255"/>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="BKM-zY-Rx1">
+                                <rect key="frame" x="0.0" y="0.0" width="228" height="256"/>
+                                <subviews>
+                                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="gPD-rw-vaf">
+                                        <rect key="frame" x="0.0" y="252" width="228" height="6"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="2" id="mkP-5U-DkS"/>
+                                        </constraints>
+                                    </box>
+                                    <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="oY0-De-wof">
+                                        <rect key="frame" x="224" y="0.0" width="6" height="256"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="2" id="Rg6-WZ-nYi"/>
+                                        </constraints>
+                                    </box>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
+                                        <rect key="frame" x="0.0" y="0.0" width="226" height="254"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="226" id="us8-K9-IEo"/>
+                                        </constraints>
+                                        <connections>
+                                            <segue destination="yWa-SA-l1V" kind="embed" id="ndc-SO-JG6"/>
+                                        </connections>
+                                    </containerView>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="226" id="us8-K9-IEo"/>
+                                    <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="8Ok-nx-O9o"/>
+                                    <constraint firstItem="oY0-De-wof" firstAttribute="top" secondItem="BKM-zY-Rx1" secondAttribute="top" id="AH7-o1-rv0"/>
+                                    <constraint firstItem="gPD-rw-vaf" firstAttribute="top" secondItem="BKM-zY-Rx1" secondAttribute="top" id="GCN-tP-gYd"/>
+                                    <constraint firstItem="oY0-De-wof" firstAttribute="leading" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="OZk-Kg-tdK"/>
+                                    <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="BKM-zY-Rx1" secondAttribute="leading" id="RzM-jC-kxb"/>
+                                    <constraint firstAttribute="bottom" secondItem="oY0-De-wof" secondAttribute="bottom" id="Szb-s9-UgA"/>
+                                    <constraint firstAttribute="trailing" secondItem="gPD-rw-vaf" secondAttribute="trailing" id="Xmq-KT-EsE"/>
+                                    <constraint firstItem="gPD-rw-vaf" firstAttribute="leading" secondItem="BKM-zY-Rx1" secondAttribute="leading" id="ZA2-KQ-Dql"/>
+                                    <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="gPD-rw-vaf" secondAttribute="bottom" id="fbD-xN-uIr"/>
+                                    <constraint firstAttribute="trailing" secondItem="oY0-De-wof" secondAttribute="trailing" id="hMr-rJ-XGQ"/>
                                 </constraints>
-                                <connections>
-                                    <segue destination="yWa-SA-l1V" kind="embed" id="ndc-SO-JG6"/>
-                                </connections>
-                            </containerView>
+                            </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="oY0-De-wof" firstAttribute="leading" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="BSp-uN-mbN"/>
                             <constraint firstItem="E7h-Pg-qLQ" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="BUc-Vf-x7b"/>
+                            <constraint firstItem="BKM-zY-Rx1" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="DaG-lB-dCw"/>
                             <constraint firstAttribute="trailing" secondItem="58m-fY-Oaa" secondAttribute="trailing" id="F3i-M3-bpQ"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="GKq-sx-Y6r"/>
-                            <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="Jgg-0r-ye7"/>
-                            <constraint firstItem="gPD-rw-vaf" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="KfG-N9-8Fi"/>
-                            <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="QAD-MU-KFH"/>
+                            <constraint firstAttribute="bottom" secondItem="BKM-zY-Rx1" secondAttribute="bottom" id="JAc-UW-vGo"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="V3R-5b-vYA"/>
                             <constraint firstAttribute="trailing" secondItem="E7h-Pg-qLQ" secondAttribute="trailing" id="VaR-1I-XUX"/>
-                            <constraint firstItem="oY0-De-wof" firstAttribute="top" secondItem="gPD-rw-vaf" secondAttribute="bottom" id="ZY3-7G-1D7"/>
-                            <constraint firstAttribute="bottom" secondItem="oY0-De-wof" secondAttribute="bottom" id="gea-Tv-a7Q"/>
-                            <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="gPD-rw-vaf" secondAttribute="bottom" id="oB2-FA-S0r"/>
-                            <constraint firstItem="gPD-rw-vaf" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="qAK-Ig-GL8"/>
+                            <constraint firstItem="BKM-zY-Rx1" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="ovF-aK-exC"/>
                             <constraint firstItem="E7h-Pg-qLQ" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="r9j-vw-EsB"/>
-                            <constraint firstItem="gPD-rw-vaf" firstAttribute="trailing" secondItem="oY0-De-wof" secondAttribute="trailing" id="t9N-kD-MJv"/>
                             <constraint firstAttribute="bottom" secondItem="E7h-Pg-qLQ" secondAttribute="bottom" id="xse-VP-hp0"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="detailsWidth" destination="us8-K9-IEo" id="zgQ-PT-G1q"/>
                         <outlet property="editorView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
-                        <outlet property="favoritesHeight" destination="KfG-N9-8Fi" id="OWH-iv-W0z"/>
-                        <outlet property="overlaysView" destination="E7h-Pg-qLQ" id="PLu-7K-JWt"/>
+                        <outlet property="favoritesHeight" destination="ovF-aK-exC" id="mol-1E-TL3"/>
+                        <outlet property="insertView" destination="BKM-zY-Rx1" id="dZA-qf-Vlp"/>
+                        <outlet property="mainView" destination="E7h-Pg-qLQ" id="PLu-7K-JWt"/>
                         <outlet property="searchBoxHeight" destination="lGr-3g-ayh" id="9xd-lu-oT0"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
