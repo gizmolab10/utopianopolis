@@ -96,6 +96,7 @@ class ZEditingManager: NSObject {
                 case "a":      if isCommand { gEditedTextWidget?.selectAllText() }
                 case "d":      if isCommand { addIdeaFromSelectedText() }
                 case "f":      if isCommand { find() }
+                case "/":      if isCommand, let zone = gEditedTextWidget?.widgetZone { focus(on: zone, false) }
                 case "?":      if isControl { gDetailsController?.displayViewFor(ids: [.Shortcuts]) }
                 case ",", ".": gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
                 case kSpace:   if isControl { addIdea() }
