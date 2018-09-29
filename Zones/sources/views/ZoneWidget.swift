@@ -23,7 +23,7 @@ enum ZLineKind: Int {
 }
 
 
-let verticalTextOffset = 1.55 // 1.7 gap is above dot, 1.2 gap is below dot
+let verticalTextOffset = 1.45 // 1.7 gap is above dot, 1.2 gap is below dot
 
 
 class ZoneWidget: ZView {
@@ -35,7 +35,6 @@ class ZoneWidget: ZView {
     let             childrenView = ZView          ()
     private var  childrenWidgets = [ZoneWidget]   ()
     var                 isInMain :        Bool = false
-//  var             isNormalSize :        Bool { return isInMain || widgetZone?.isCurrentFavorite ?? false } // tried using this for isInMain in ratio. looked and felt odd
     var                    ratio :     CGFloat { return isInMain ? 1.0 : kReductionRatio }
     var             parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
     weak var          widgetZone :       Zone?
@@ -464,12 +463,12 @@ class ZoneWidget: ZView {
 
     func drawSelectionHighlight() {
         let      thickness = CGFloat(gDotWidth) / 3.5
+        let       rightDot = revealDot.innerDot
         let         height = gGenericOffset.height
         let          delta = height / 8.0
-        let            dot = revealDot.innerDot
-        let          inset = (height + 32.0) / -2.0
-        let hiddenDotDelta = dot?.revealDotIsVisible ?? true ? CGFloat(0.0) : dot!.bounds.size.width + 3.0
-        var           rect = textWidget.frame.insetBy(dx: inset * ratio - delta, dy: -0.5 - delta)
+        let          inset = (height / -2.0) - 16.0
+        let hiddenDotDelta = rightDot?.revealDotIsVisible ?? false ? CGFloat(0.0) : rightDot!.bounds.size.width + 3.0
+        var           rect = textWidget.frame.insetBy(dx: (inset * ratio) - delta, dy: -0.5 - delta).offsetBy(dx: -0.75, dy: 0.0)
         let         shrink =  3.0 + (height / 6.0)
         rect.size .height += -0.5 + gHighlightHeightOffset + (isInMain ? 0.0 : 1.0)
         rect.size  .width += shrink - hiddenDotDelta
