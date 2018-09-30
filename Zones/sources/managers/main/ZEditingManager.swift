@@ -120,7 +120,7 @@ class ZEditingManager: NSObject {
                 case "k":      gFileManager.writeOutline(for: gHere)
                 case "m":      refetch()
                 case "n":      alphabetize(isOption)
-				case "o":      if isCommand { gFileManager.open() } else { orderByLength(isOption) }
+                case "o":      if isCommand { if isOption { gFileManager.showInFinder() } else { gFileManager.open() } } else { orderByLength(isOption) }
                 case "p":      printHere()
                 case "r":      reverse()
                 case "s":      if isCommand { gFileManager.saveAs() } else { selectCurrentFavorite() }
@@ -229,7 +229,7 @@ class ZEditingManager: NSObject {
             case "=":                            return .Travel
             case "m":                            return .Cloud
             case "z":                            return .Undo
-            case "o", "r":                       return .Sort
+            case "o", "r":                       return  flags.isCommand ? .Files : .Sort
             case "v", "x", kSpace:               return .Child
             case "b", kTab, kDelete, kBackspace: return .Parent
             case "j", "k":                       return .Files
@@ -274,7 +274,7 @@ class ZEditingManager: NSObject {
             case .Redo:      valid = undo.canRedo
             case .Travel:    valid = mover.canTravel
             case .Cloud:     valid = gHasInternet && gCloudAccountIsActive
-//            case .Files:     valid = flags.contains(.option)
+            case .Files:     valid = flags.contains(.command)
             default:         valid = true
             }
         } else if key.arrow == nil {

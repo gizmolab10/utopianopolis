@@ -58,7 +58,12 @@ class ZFileManager: NSObject {
     // MARK:- API
     // MARK:-
 
-	
+
+    func showInFinder() {
+        "~/Library/Application Support/Thoughtful".openAsURL()
+    }
+
+
 	func open() {
 //		let panel = NSOpenPanel()
 	}

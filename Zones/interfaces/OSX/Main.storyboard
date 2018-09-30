@@ -74,6 +74,12 @@
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="66C-f9-9LT"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Show in Finder" keyEquivalent="o" id="tay-ah-w3c">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="yol-4a-D1G"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="HAP-GI-54c"/>
                                         <menuItem title="Refetch From Cloud" keyEquivalent="m" id="eOD-fN-dMl">
                                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -495,7 +501,7 @@ CQ
                 <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Thoughtful" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-61" y="-398"/>
+            <point key="canvasLocation" x="149" y="-330"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
