@@ -211,7 +211,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     
     
     func clickEvent(_ iGesture: ZGestureRecognizer?) {
-
         if  let           gesture = iGesture as? ZKeyClickGestureRecognizer {
             let         isCommand = gesture.modifiers?.contains(.command) ?? false
             let        textWidget = gEditedTextWidget
@@ -226,17 +225,14 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             }
 
             if !inText {
-                if  let    widget = detectWidget(gesture) {
-                    if  let  zone = widget.widgetZone,
-                        let   dot = detectDotIn(widget, gesture) {
+                if  let   widget = detectWidget(gesture) {
+                    if  let zone = widget.widgetZone,
+                        let  dot = detectDotIn(widget, gesture) {
+                        let isShift = gesture.isShiftDown
                         if  dot.isReveal {
                             gEditingManager.clickActionOnRevealDot(for: zone, isCommand: isCommand)
-                        } else if zone.isGrabbed {
-                            zone.ungrab()
-                        } else if gesture.isShiftDown {
-                            zone.addToGrab()
                         } else {
-                            zone.grab()
+                            zone.dragDotClicked(isCommand: isCommand, isShift: isShift)
                         }
 
                         signalFor(nil, regarding: .details)

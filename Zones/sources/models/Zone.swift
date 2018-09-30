@@ -39,6 +39,7 @@ class Zone : ZRecord {
     var               _crossLink:      ZRecord?
     var                   _color:       ZColor?
     var                   _email:       String?
+    var   timeOfLastDragDotClick:         Date?
     var                 children =                [Zone] ()
     var                   traits = [ZTraitType : ZTrait] ()
     var                    count:          Int  { return children.count }
@@ -81,6 +82,7 @@ class Zone : ZRecord {
     var     isRootOfLostAndFound:         Bool  { return recordName == kLostAndFoundName }
     var           spawnedByAGrab:         Bool  { return spawnedByAny(of: gSelectionManager.currentGrabs) }
     var               spawnCycle:         Bool  { return spawnedByAGrab || dropCycle }
+    var            isDoubleClick:         Bool  { return timeOfLastDragDotClick?.timeIntervalSinceNow ?? 10.0 < 0.5 }
 
 
     var deepCopy: Zone {
@@ -710,6 +712,23 @@ class Zone : ZRecord {
     func       grab() { gSelectionManager     .grab(self) }
     func       edit() { gTextManager          .edit(self) }
 
+
+    func dragDotClicked(isCommand: Bool, isShift: Bool) {
+        if isCommand || (isDoubleClick && isGrabbed) {
+            grab() // narrow selection to just this one zone
+            gFocusManager.focus(kind: .eSelected) {
+                gEditingManager.redrawSyncRedraw()
+            }
+        } else if isGrabbed {
+            ungrab()
+        } else if isShift {
+            addToGrab()
+        } else {
+            grab()
+        }
+
+        timeOfLastDragDotClick = Date()
+    }
 
     override func debug(_  iMessage: String) {
         note("\(iMessage) children \(count) parent \(parent != nil) is \(isInTrash ? "" : "not ") deleted identifier \(databaseID!) \(unwrappedName)")

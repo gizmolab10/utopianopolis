@@ -566,10 +566,10 @@
 				0C39B2481F182EBB0091F4D1 /* ZEditingManager.swift */,
 				0C48B0941F87197B00A247BC /* ZEventsManager.swift */,
 				0C63DA6C1FCF837C005EC548 /* ZFavoritesManager.swift */,
+				0C7152221FD8A1E400C7DA61 /* ZFocusManager.swift */,
 				0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */,
 				0C39B2491F182EBB0091F4D1 /* ZSelectionManager.swift */,
 				0C21C628203BE88F00DEFDAD /* ZTextManager.swift */,
-				0C7152221FD8A1E400C7DA61 /* ZFocusManager.swift */,
 				0C39B24A1F182EBB0091F4D1 /* ZWidgetsManager.swift */,
 			);
 			path = main;

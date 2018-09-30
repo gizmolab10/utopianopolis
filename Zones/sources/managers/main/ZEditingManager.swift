@@ -96,7 +96,7 @@ class ZEditingManager: NSObject {
                 case "a":      if isCommand { gEditedTextWidget?.selectAllText() }
                 case "d":      if isCommand { addIdeaFromSelectedText() }
                 case "f":      if isCommand { find() }
-                case "/":      if isCommand, let zone = gEditedTextWidget?.widgetZone { focus(on: zone, false) }
+                case "/":      if isCommand { gFocusManager.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
                 case "?":      if isControl { gDetailsController?.displayViewFor(ids: [.Shortcuts]) }
                 case ",", ".": gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
                 case kSpace:   if isControl { addIdea() }
@@ -133,7 +133,7 @@ class ZEditingManager: NSObject {
                 case ";":      doFavorites(true,    false)
                 case "?":      openBrowserForFocusWebsite()
                 case "'":      doFavorites(isShift, isOption)
-                case "/":      focus(on: gSelectionManager.firstGrab, isCommand)
+                case "/":      gFocusManager.focus(kind: .eSelected, isCommand) { self.redrawSyncRedraw() }
                 case "=":      gFocusManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawSyncRedraw() }
                 case kTab:     addNext(containing: isOption) { iChild in iChild.edit() }
                 case ",", ".": gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
@@ -595,33 +595,6 @@ class ZEditingManager: NSObject {
 
         gFavoritesManager.switchToNext(!backward) {
             self.redrawSyncRedraw()
-        }
-    }
-
-
-    func focus(on iZone: Zone, _ isCommand: Bool = false) {
-        let focusClosure = { (zone: Zone) in
-            gHere = zone
-
-            zone.grab()
-            gFavoritesManager.updateCurrentFavorite()
-            self.redrawSyncRedraw()
-        }
-
-        if isCommand {
-            gFavoritesManager.refocus {
-                self.redrawSyncRedraw()
-            }
-        } else if iZone.isBookmark {
-            gFocusManager.travelThrough(iZone) { object, kind in
-                gSelectionManager.deselect()
-                focusClosure(object as! Zone)
-            }
-        } else if iZone == gHere {
-            gFavoritesManager.toggleFavorite(for: iZone)
-            redrawSyncRedraw()
-        } else {
-            focusClosure(iZone)
         }
     }
 

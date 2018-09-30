@@ -11,6 +11,13 @@ import Foundation
 import CloudKit
 
 
+
+enum ZFocusKind: Int {
+    case eSelected
+    case eEdited
+}
+
+
 let gFocusManager = ZFocusManager()
 
 
@@ -150,6 +157,35 @@ class ZFocusManager: NSObject {
 
                 zone.grab()
                 atArrival()
+            }
+        }
+    }
+
+
+    func focus(kind: ZFocusKind, _ isCommand: Bool = false, _ atArrival: @escaping Closure) {
+        if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelectionManager.firstGrab {
+            let focusClosure = { (zone: Zone) in
+                gHere = zone
+
+                zone.grab()
+                gFavoritesManager.updateCurrentFavorite()
+                atArrival()
+            }
+
+            if isCommand {
+                gFavoritesManager.refocus {
+                    atArrival()
+                }
+            } else if zone.isBookmark {
+                gFocusManager.travelThrough(zone) { object, kind in
+                    gSelectionManager.deselect()
+                    focusClosure(object as! Zone)
+                }
+            } else if zone == gHere {
+                gFavoritesManager.toggleFavorite(for: zone)
+                atArrival()
+            } else {
+                focusClosure(zone)
             }
         }
     }

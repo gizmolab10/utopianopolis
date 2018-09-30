@@ -80,7 +80,7 @@ class ZActionsController : ZGenericController {
             case .eHang:    gBatchManager.unHang()
             case .eUndo:    gEditingManager.undoManager.undo()
             case .eNext:    gEditingManager.addNext() { iChild in iChild.edit() }
-            case .eFocus:   gEditingManager.focus(on: gSelectionManager.firstGrab)
+            case .eFocus:   gFocusManager.focus(kind: .eSelected) { gEditingManager.redrawSyncRedraw() }
             case .eTravel:  gFocusManager.maybeTravelThrough(gSelectionManager.currentMoveable)
             case .ePrefs:   break
             case .eHelp:    break
