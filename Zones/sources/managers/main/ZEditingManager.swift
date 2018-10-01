@@ -1476,7 +1476,9 @@ class ZEditingManager: NSObject {
 
         for zone in zones {
             if  let index = zone.siblingIndex {
-                duplicates.append(zone.deepCopy)
+                let duplicate = zone.deepCopy
+
+                duplicates.append(duplicate)
                 indices.append(index)
             }
         }

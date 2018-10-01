@@ -63,7 +63,7 @@ class ZCloudManager: ZRecordsManager {
         case .parents:     fetchParents    (cloudCallback)
         case .refetch:     refetchZones    (cloudCallback)
         case .roots:       establishRoots  (cloudCallback)
-        case .save:        save            (cloudCallback)
+        case .saveToCloud:        save            (cloudCallback)
         case .subscribe:   subscribe       (cloudCallback)
         case .traits:      fetchTraits     (cloudCallback)
         case .undelete:    undeleteAll     (cloudCallback)

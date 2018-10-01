@@ -96,6 +96,10 @@ class Zone : ZRecord {
             theCopy.addChild(child.deepCopy)
         }
 
+        for (_, trait) in traits {
+            theCopy.addTrait(trait.deepCopy)
+        }
+
         return theCopy
     }
 
@@ -1465,8 +1469,8 @@ class Zone : ZRecord {
             respectOrder()
         }
 
-        if let traitStore: [ZStorageDictionary] = dict[.traits] as! [ZStorageDictionary]? {
-            for traitStore: ZStorageDictionary in traitStore {
+        if let traitsStore: [ZStorageDictionary] = dict[.traits] as! [ZStorageDictionary]? {
+            for traitStore: ZStorageDictionary in traitsStore {
                 let trait = ZTrait(dict: traitStore, in: iDatabaseID)
 
                 trait.temporarilyIgnoreNeeds {       // prevent needsSave caused by child's parent (intentionally) not being in childDict

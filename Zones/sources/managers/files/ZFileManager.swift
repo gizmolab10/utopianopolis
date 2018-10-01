@@ -75,7 +75,7 @@ class ZFileManager: NSObject {
 		panel.begin { (response: NSModalResponse) in
 			if  let path = panel.url?.absoluteString {
 				self.needWrite(for: .mineID)
-				self.writeThoughtful(at: path, from: .mineID)
+				self.writeToFile(at: path, from: .mineID)
 			}
 		}
     }
@@ -86,10 +86,10 @@ class ZFileManager: NSObject {
             writeTimer?.invalidate()
 
             writeTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { iTimer in
-                if gIsEditingText {
+                if  gIsEditingText {
                     self.deferWrite(for: databaseID, restartTimer: true)
                 } else {
-                    self.writeThoughtful(from: databaseID)
+                    self.writeToFile(from: databaseID)
                 }
             }
         }
@@ -119,24 +119,24 @@ class ZFileManager: NSObject {
 	}
 	
 	
-	func writeThoughtful(from databaseID: ZDatabaseID?) {
+	func writeToFile(from databaseID: ZDatabaseID?) {
 		if  let     dbID = databaseID,
 			dbID        != .favoritesID,
 			let    index = index(of: dbID),
 			let  dbIndex = ZDatabaseIndex(rawValue: index) {
 				let path = filePath(for: dbIndex)
-				writeThoughtful(at: path, from: databaseID)
+				writeToFile(at: path, from: databaseID)
 		}
 	}
 	
 	
-	func readThoughtful(into databaseID: ZDatabaseID) {
+	func readFile(into databaseID: ZDatabaseID) {
 		if  databaseID  != .favoritesID,
 			let    index = index(of: databaseID),
 			let  dbIndex = ZDatabaseIndex(rawValue: index) {
 			let 	path = filePath(for: dbIndex)
 
-			readThoughtful(from: path, into: databaseID)
+			readFile(from: path, into: databaseID)
 		}
 	}
 	
@@ -164,7 +164,7 @@ class ZFileManager: NSObject {
     // MARK:-
 
 
-	func writeThoughtful(at path: String, from databaseID: ZDatabaseID?) {
+	func writeToFile(at path: String, from databaseID: ZDatabaseID?) {
 		if  let           dbID = databaseID,
 			dbID              != .favoritesID,
 			let        index   = index(of: dbID),
@@ -237,7 +237,7 @@ class ZFileManager: NSObject {
 	}
 	
 	
-	func readThoughtful(from path: String, into databaseID: ZDatabaseID) {
+	func readFile(from path: String, into databaseID: ZDatabaseID) {
 		if  databaseID      != .favoritesID,
 			let        index = index(of: databaseID) {
 			isReading[index] = true

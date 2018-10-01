@@ -28,6 +28,8 @@
 		0C21C62A203BE88F00DEFDAD /* ZTextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C21C628203BE88F00DEFDAD /* ZTextManager.swift */; };
 		0C21C62B203BE88F00DEFDAD /* ZTextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C21C628203BE88F00DEFDAD /* ZTextManager.swift */; };
 		0C26F7301F799EEE00C2B978 /* ZoneSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C26F72F1F799EEE00C2B978 /* ZoneSegmentedControl.swift */; };
+		0C28C5EB21616BB900F1DF8B /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C28C5EA21616BB900F1DF8B /* SnapKit.framework */; };
+		0C28C5EC21616BB900F1DF8B /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C28C5EA21616BB900F1DF8B /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C2E22C01F75B8AB00B50A71 /* ZMainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */; };
 		0C2E22C51F75BB7D00B50A71 /* ZMainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */; };
 		0C2E22CA1F75BB7E00B50A71 /* ZMainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */; };
@@ -236,6 +238,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				0C28C5EC21616BB900F1DF8B /* SnapKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -275,6 +278,7 @@
 		0C1651EC2101204F003FF76C /* Zones-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Zones-Bridging-Header.h"; path = "Zones/Zones-Bridging-Header.h"; sourceTree = "<group>"; };
 		0C21C628203BE88F00DEFDAD /* ZTextManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTextManager.swift; sourceTree = "<group>"; };
 		0C26F72F1F799EEE00C2B978 /* ZoneSegmentedControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneSegmentedControl.swift; sourceTree = "<group>"; };
+		0C28C5EA21616BB900F1DF8B /* SnapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SnapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMainController.swift; sourceTree = "<group>"; };
 		0C2E22CE1F75BEEA00B50A71 /* ZGenericTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGenericTableController.swift; sourceTree = "<group>"; };
 		0C2E22CF1F75BEEA00B50A71 /* ZPhoneController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZPhoneController.swift; sourceTree = "<group>"; };
@@ -383,6 +387,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C28C5EB21616BB900F1DF8B /* SnapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -755,6 +760,7 @@
 		0CA04B0B1D2ECF1A001892E5 = {
 			isa = PBXGroup;
 			children = (
+				0C28C5EA21616BB900F1DF8B /* SnapKit.framework */,
 				0C39B3C11F198BAA0091F4D1 /* configuration */,
 				0C50FD2D2053467600E1D9A9 /* data */,
 				0C09A7D81FE86FCC00F3D736 /* Frameworks */,

@@ -56,7 +56,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 	func application(_ application: NSApplication, openFiles: [String]) {
 		for file in openFiles {
 			gRemoteStoresManager.cloudManagerFor(.mineID).clear()
-			gFileManager.readThoughtful(from: file, into: .mineID)
+			gFileManager.readFile(from: file, into: .mineID)
 		}
 	}
 	
@@ -76,7 +76,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 
     func applicationWillTerminate(aNotification: NSNotification) {
         for dbID in kAllDatabaseIDs {
-            gFileManager.writeThoughtful(from: dbID)
+            gFileManager.writeToFile(from: dbID)
         }
         
         // Insert code here to tear down your application

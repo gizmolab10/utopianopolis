@@ -28,8 +28,8 @@ enum ZOperationID: Int {
 
     // startup
 
-    case cloud
-    case readThoughtful     // LOCAL
+    case cloud              // NB: do not edit order. dependencies
+    case readFile           // LOCAL
     case found              // LOCAL
     case roots
     case favorites
@@ -39,7 +39,7 @@ enum ZOperationID: Int {
 
     // finish
 
-    case save               // zones, traits, destroy
+    case saveToCloud               // zones, traits, destroy
     case unsubscribe
     case subscribe
 
@@ -63,17 +63,15 @@ enum ZOperationID: Int {
 }
 
 
-let localOperations: [ZOperationID] = [.here, .roots, .found, .internet, .ubiquity, .favorites, .completion, .macAddress, .fetchUserID, .observeUbiquity, .readThoughtful, .fetchUserRecord, .checkAvailability]
-
-
-var gDebugTimerCount          = 0
-var gDebugTimer:       Timer? = nil
-var gCloudTimer:       Timer? = nil
-var gCloudFire: TimerClosure? = nil
-var gHasInternet              = true
-var gCloudAccountStatus       = ZCloudAccountStatus.begin
-var gCloudAccountIsActive     = gCloudAccountStatus == .active
-var recentCloudAccountStatus  = gCloudAccountStatus
+var gDebugTimer:             Timer? = nil
+var gCloudTimer:             Timer? = nil
+var gCloudFire:       TimerClosure? = nil
+var gDebugTimerCount                = 0
+var gHasInternet                    = true
+var gCloudAccountStatus             = ZCloudAccountStatus.begin
+var gCloudAccountIsActive           = gCloudAccountStatus == .active
+var recentCloudAccountStatus        = gCloudAccountStatus
+let localOperations: [ZOperationID] = [.here, .roots, .found, .readFile, .internet, .ubiquity, .favorites, .completion, .macAddress, .fetchUserID, .observeUbiquity, .fetchUserRecord, .checkAvailability]
 
 
 class ZOperationsManager: NSObject {

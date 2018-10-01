@@ -35,6 +35,15 @@ class ZTrait: ZRecord {
     override var unwrappedName: String { return text ?? displayType }
 
 
+    var deepCopy: ZTrait {
+        let theCopy = ZTrait(databaseID: databaseID)
+
+        copy(into: theCopy)
+
+        return theCopy
+    }
+
+
     override var displayType: String {
         if  let tType = traitType {
             switch tType {

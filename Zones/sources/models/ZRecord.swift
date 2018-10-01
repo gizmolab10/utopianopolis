@@ -250,11 +250,11 @@ class ZRecord: NSObject {
     }
 
 
-    func copy(into copy: ZRecord) {
-        copy.maybeNeedSave() // so KVO won't set needsMerge
+    func copy(into iCopy: ZRecord) {
+        iCopy.maybeNeedSave() // so KVO won't set needsMerge
         updateRecordProperties()
-        record.copy(to: copy.record, properties: cloudProperties())
-        copy.updateInstanceProperties()
+        record.copy(to: iCopy.record, properties: cloudProperties())
+        iCopy.updateInstanceProperties()
     }
 
 
