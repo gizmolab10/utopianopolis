@@ -117,7 +117,7 @@ class ZEditingManager: NSObject {
                 case "h":      editTrait(for: .eHyperlink)
                 case "i":      toggleColorized()
                 case "l", "u": alterCase(up: key == "u")
-                case "j":      gFileManager.importFromFile(asOutline: isOption, insertInto: gHere)
+                case "j":      gFileManager.importFromFile(asOutline: isOption, insertInto: gHere) { self.redrawSyncRedraw() }
                 case "k":      gFileManager  .exportToFile(asOutline: isOption,        for: gHere)
                 case "m":      refetch()
                 case "n":      alphabetize(isOption)

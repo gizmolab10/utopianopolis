@@ -141,7 +141,7 @@ class ZFileManager: NSObject {
 	}
 
 
-    func importFromFile(asOutline: Bool, insertInto: Zone) {
+    func importFromFile(asOutline: Bool, insertInto: Zone, onCompletion: Closure?) {
         if !asOutline,
             let  window = gApplication.mainWindow {
             let  suffix = asOutline ? "outline" : "thoughtful"
@@ -165,6 +165,7 @@ class ZFileManager: NSObject {
                             let   zone = Zone(dict: dict, in: dbID)
 
                             insertInto.addChild(zone, at: 0)
+                            onCompletion?()
                         }
                     }
                 } catch {
