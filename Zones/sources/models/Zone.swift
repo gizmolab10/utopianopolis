@@ -299,9 +299,6 @@ class Zone : ZRecord {
     }
 
 
-    let kReverseColor = "c"
-
-
     var colorized: Bool {
         get {
             var        result = false
@@ -518,11 +515,11 @@ class Zone : ZRecord {
                 unlinkParentAndMaybeNeedSave()
             } else if _parentZone          != newValue {
                 _parentZone                 = newValue
-                if  newValue               == nil {
+                if  _parentZone            == nil {
                     unlinkParentAndMaybeNeedSave()
-                } else if let parentRecord  = newValue?.record,
-                    let              newID  = newValue?.databaseID {
-                    if               newID == databaseID {
+                } else if let parentRecord  = _parentZone?.record,
+                    let      newParentDBID  = _parentZone?.databaseID {
+                    if       newParentDBID == databaseID {
                         if  parent?.recordID.recordName != parentRecord.recordID.recordName {
                             parentLink      = kNullLink
                             parent          = CKReference(record: parentRecord, action: .none)
@@ -530,10 +527,10 @@ class Zone : ZRecord {
                             maybeNeedSave()
                         }
                     } else {                                                                                // new parent is in different db
-                        let newLink = "\(newID.rawValue)::\(parentRecord.recordID.recordName)"
+                        let newParentLink   = "\(newParentDBID.rawValue)::\(parentRecord.recordID.recordName)"
 
-                        if  parentLink     != newLink {
-                            parentLink      = newLink  // references don't work across dbs
+                        if  parentLink     != newParentLink {
+                            parentLink      = newParentLink  // references don't work across dbs
                             parent          = nil
 
                             maybeNeedSave()
@@ -1481,14 +1478,14 @@ class Zone : ZRecord {
     }
 
 
-    override func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDictionary? {
-        var dict            = super.storageDictionary(for: iDatabaseID) ?? ZStorageDictionary ()
+    override func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true) -> ZStorageDictionary? {
+        var dict            = super.storageDictionary(for: iDatabaseID, includeRecordName: includeRecordName) ?? ZStorageDictionary ()
 
-        if  let   childDict = Zone.storageArray(for: children, from: iDatabaseID) {
+        if  let   childDict = Zone.storageArray(for: children, from: iDatabaseID, includeRecordName: includeRecordName) {
             dict[.children] = childDict as NSObject?
         }
 
-        if  let  traitsDict = Zone.storageArray(for: traitValues, from: iDatabaseID) {
+        if  let  traitsDict = Zone.storageArray(for: traitValues, from: iDatabaseID, includeRecordName: includeRecordName) {
             dict  [.traits] = traitsDict as NSObject?
         }
 

@@ -117,7 +117,8 @@ class ZEditingManager: NSObject {
                 case "h":      editTrait(for: .eHyperlink)
                 case "i":      toggleColorized()
                 case "l", "u": alterCase(up: key == "u")
-                case "k":      gFileManager.writeOutline(for: gHere)
+                case "j":      gFileManager.importFromFile(asOutline: isOption, insertInto: gHere)
+                case "k":      gFileManager  .exportToFile(asOutline: isOption,        for: gHere)
                 case "m":      refetch()
                 case "n":      alphabetize(isOption)
                 case "o":      if isCommand { if isOption { gFileManager.showInFinder() } else { gFileManager.open() } } else { orderByLength(isOption) }

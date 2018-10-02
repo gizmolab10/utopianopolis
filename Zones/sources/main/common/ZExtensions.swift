@@ -171,6 +171,89 @@ extension NSObject {
         return nil
     }
 
+
+    // MARK:- JSON
+    // MARK:-
+
+
+    func dictFromJSON(_ dict: [String : NSObject]) -> ZStorageDictionary {
+        var                   result = ZStorageDictionary ()
+
+        for (key, value) in dict {
+            if  let       storageKey = ZStorageType(rawValue: key) {
+                var        goodValue = value
+                var       translated = false
+
+                if  let string       = value as? String {
+                    let parts        = string.components(separatedBy: kTimeInterval + ":")
+                    if  parts.count > 1,
+                        parts[0]    == "",
+                        let interval = TimeInterval(parts[1]) {
+                        goodValue    = Date(timeIntervalSinceReferenceDate: interval) as NSObject
+                        translated   = true
+                    }
+                }
+
+                if !translated {
+                    if  let     subDict = value as? [String : NSObject] {
+                        goodValue       = dictFromJSON(subDict) as NSObject
+                    } else if let array = value as? [[String : NSObject]] {
+                        var   goodArray = [ZStorageDictionary] ()
+
+                        for subDict in array {
+                            goodArray.append(dictFromJSON(subDict))
+                        }
+
+                        goodValue       = goodArray as NSObject
+                    }
+                }
+
+                result[storageKey]  = goodValue
+            }
+        }
+
+        return result
+    }
+
+
+    func jsonDictFrom(_ dict: ZStorageDictionary) -> [String : NSObject] {
+        var deferals = ZStorageDictionary ()
+        var   result = [String : NSObject] ()
+
+        let closure = { (key: ZStorageType, value: Any) in
+            var goodValue       = value
+            if  let     subDict = value as? ZStorageDictionary {
+                goodValue       = self.jsonDictFrom(subDict)
+            } else if let  date = value as? Date {
+                goodValue       = kTimeInterval + ":\(date.timeIntervalSinceReferenceDate)"
+            } else if let array = value as? [ZStorageDictionary] {
+                var jsonArray   = [[String : NSObject]] ()
+
+                for subDict in array {
+                    jsonArray.append(self.jsonDictFrom(subDict))
+                }
+
+                goodValue       = jsonArray
+            }
+
+            result[key.rawValue]   = (goodValue as! NSObject)
+        }
+
+        for (key, value) in dict {
+            if [.children, .traits].contains(key) {
+                deferals[key] = value
+            } else {
+                closure(key, value)
+            }
+        }
+
+        for (key, value) in deferals {
+            closure(key, value)
+        }
+
+        return result
+    }
+
 }
 
 

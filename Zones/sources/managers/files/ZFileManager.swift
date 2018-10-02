@@ -139,21 +139,75 @@ class ZFileManager: NSObject {
 			readFile(from: path, into: databaseID)
 		}
 	}
-	
-	
-    func writeOutline(for iFocus: Zone) {
-        let  panel = NSSavePanel()
+
+
+    func importFromFile(asOutline: Bool, insertInto: Zone) {
+        if !asOutline,
+            let  window = gApplication.mainWindow {
+            let  suffix = asOutline ? "outline" : "thoughtful"
+            let   panel = NSOpenPanel()
+            panel.title = "Import as \(suffix)"
+            panel.resolvesAliases = false
+            panel.canResolveUbiquitousConflicts = false
+            panel.canDownloadUbiquitousContents = false
+
+            panel.beginSheetModal(for: window) { (result) in
+                do {
+                    if  result   == NSFileHandlingPanelOKButton,
+                        panel.urls.count > 0 {
+                        let  path = panel.urls[0].path
+
+                        if  let   data = FileManager.default.contents(atPath: path),
+                            data.count > 0,
+                            let   dbID = insertInto.databaseID,
+                            let   json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
+                            let   dict = self.dictFromJSON(json)
+                            let   zone = Zone(dict: dict, in: dbID)
+
+                            insertInto.addChild(zone, at: 0)
+                        }
+                    }
+                } catch {
+                    print(error)    // de-serialization
+                }
+            }
+        }
+    }
+
+
+    func exportToFile(asOutline: Bool, for iFocus: Zone) {
+        let    suffix = asOutline ? "outline" : "thoughtful"
+        let     panel = NSSavePanel()
+        panel.message = "Export as \(suffix)"
+
+        if  let  name = iFocus.zoneName {
+            panel.nameFieldStringValue = "\(name).\(suffix)"
+        }
 
         panel.begin { (result) -> Void in
+            if  result == NSFileHandlingPanelOKButton,
+                let filename = panel.url {
 
-            if  result == NSFileHandlingPanelOKButton {
-                let filename = panel.url
-                let   string = iFocus.outlineString()
+                if  asOutline {
+                    let string = iFocus.outlineString()
 
-                do {
-                    try string.write(to: filename!, atomically: true, encoding: String.Encoding.utf8)
-                } catch {
-                    // failed to write file (bad permissions, bad filename etc.)
+                    do {
+                        try string.write(to: filename, atomically: true, encoding: String.Encoding.utf8)
+                    } catch {
+                        // failed to write file (bad permissions, bad filename etc.)
+                    }
+                } else {
+                    self.writtenRecordNames.removeAll()
+
+                    let     dict = iFocus.storageDictionary
+                    let jsonDict = self.jsonDictFrom(dict)
+                    let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
+
+                    do {
+                        try data.write(to: filename)
+                    } catch {
+                        print("ahah")
+                    }
                 }
             }
         }
@@ -180,9 +234,9 @@ class ZFileManager: NSObject {
                 self.writtenRecordNames.removeAll()
                 gRemoteStoresManager.recount()
 
-                //////////////////////////////////////////////////
-                // taake snapshots just before exit from method //
-                //////////////////////////////////////////////////
+                /////////////////////////////////////////////////
+                // take snapshots just before exit from method //
+                /////////////////////////////////////////////////
 
                 if  let   graph  = manager.rootZone?.storageDictionary(for: dbID)  {
                     dict[.graph] = graph as NSObject
@@ -388,85 +442,6 @@ class ZFileManager: NSObject {
         }
 
         return nil
-    }
-
-
-    func dictFromJSON(_ dict: [String : NSObject]) -> ZStorageDictionary {
-        var                   result = ZStorageDictionary ()
-
-        for (key, value) in dict {
-            if  let       storageKey = ZStorageType(rawValue: key) {
-                var        goodValue = value
-                var       translated = false
-
-                if  let string       = value as? String {
-                    let parts        = string.components(separatedBy: kTimeInterval + ":")
-                    if  parts.count > 1,
-                        parts[0]    == "",
-                        let interval = TimeInterval(parts[1]) {
-                        goodValue    = Date(timeIntervalSinceReferenceDate: interval) as NSObject
-                        translated   = true
-                    }
-                }
-
-                if !translated {
-                    if  let     subDict = value as? [String : NSObject] {
-                        goodValue       = dictFromJSON(subDict) as NSObject
-                    } else if let array = value as? [[String : NSObject]] {
-                        var   goodArray = [ZStorageDictionary] ()
-
-                        for subDict in array {
-                            goodArray.append(dictFromJSON(subDict))
-                        }
-
-                        goodValue       = goodArray as NSObject
-                    }
-                }
-
-                result[storageKey]  = goodValue
-            }
-        }
-
-        return result
-    }
-
-
-    func jsonDictFrom(_ dict: ZStorageDictionary) -> [String : NSObject] {
-        var deferals = ZStorageDictionary ()
-        var   result = [String : NSObject] ()
-
-        let closure = { (key: ZStorageType, value: Any) in
-            var goodValue       = value
-            if  let     subDict = value as? ZStorageDictionary {
-                goodValue       = self.jsonDictFrom(subDict)
-            } else if let  date = value as? Date {
-                goodValue       = kTimeInterval + ":\(date.timeIntervalSinceReferenceDate)"
-            } else if let array = value as? [ZStorageDictionary] {
-                var jsonArray   = [[String : NSObject]] ()
-
-                for subDict in array {
-                    jsonArray.append(self.jsonDictFrom(subDict))
-                }
-
-                goodValue       = jsonArray
-            }
-
-            result[key.rawValue]   = (goodValue as! NSObject)
-        }
-
-        for (key, value) in dict {
-            if [.children, .traits].contains(key) {
-                deferals[key] = value
-            } else {
-                closure(key, value)
-            }
-        }
-
-        for (key, value) in deferals {
-            closure(key, value)
-        }
-
-        return result
     }
 
 }

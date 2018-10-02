@@ -92,13 +92,12 @@
                                             <menu key="submenu" title="Export Current Focus" id="LGH-w5-scL">
                                                 <items>
                                                     <menuItem title="As Thoughtful ..." keyEquivalent="k" id="rRM-8z-pgs">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Ap8-05-pSP"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem title="As Outline ..." keyEquivalent="k" id="0dE-tl-v2P">
-                                                        <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="3HO-Fu-Pct"/>
                                                         </connections>
@@ -110,8 +109,7 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Import" id="nne-nT-Cug">
                                                 <items>
-                                                    <menuItem title="From Thoughtful ..." keyEquivalent="j" id="oOd-mA-5D1">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    <menuItem title="From Thoughtful File ..." keyEquivalent="j" id="oOd-mA-5D1">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="OI6-tT-JiO"/>
                                                         </connections>

@@ -17,32 +17,33 @@ class ZRecord: NSObject {
     var             _record: CKRecord?
     var          databaseID: ZDatabaseID?
     var          kvoContext: UInt8 = 1
-    var           hasParent: Bool             { return false }
-    var        showChildren: Bool             { return isExpanded(self.recordName) }
-    var   isRootOfFavorites: Bool             { return record != nil && recordName == kFavoritesRootName }
-    var          isBookmark: Bool             { return record?.isBookmark ?? false }
-    var              isRoot: Bool             { return record != nil && kRootNames.contains(recordName!) }
-    var           isFetched: Bool             { return !hasState(.notFetched) }
-    var           needsSave: Bool             { return  hasState(.needsSave) }
-    var           needsRoot: Bool             { return  hasState(.needsRoot) }
-    var          notFetched: Bool             { return  hasState(.notFetched) }
-    var          needsCount: Bool             { return  hasState(.needsCount) }
-    var          needsColor: Bool             { return  hasState(.needsColor) }
-    var          needsFetch: Bool             { return  hasState(.needsFetch) }
-    var          needsMerge: Bool             { return  hasState(.needsMerge) }
-    var         needsTraits: Bool             { return  hasState(.needsTraits) }
-    var         needsParent: Bool             { return  hasState(.needsParent) }
-    var        needsDestroy: Bool             { return  hasState(.needsDestroy) }
-    var        needsProgeny: Bool             { return  hasState(.needsProgeny) }
-    var       needsWritable: Bool             { return  hasState(.needsWritable) }
-    var       needsChildren: Bool             { return  hasState(.needsChildren) }
-    var      needsBookmarks: Bool             { return  hasState(.needsBookmarks) }
-    var canSaveWithoutFetch: Bool             { return !hasState(.requiresFetchBeforeSave) }
-    var      recordsManager: ZRecordsManager? { return gRemoteStoresManager.recordsManagerFor(databaseID) }
-    var        cloudManager: ZCloudManager?   { return recordsManager as? ZCloudManager }
-    var          recordName: String?          { return record?.recordID.recordName }
-    var       unwrappedName: String           { return displayType }
-    var         displayType: String           { return "" }
+    var           hasParent: Bool               { return false }
+    var        showChildren: Bool               { return isExpanded(self.recordName) }
+    var   isRootOfFavorites: Bool               { return record != nil && recordName == kFavoritesRootName }
+    var          isBookmark: Bool               { return record?.isBookmark ?? false }
+    var              isRoot: Bool               { return record != nil && kRootNames.contains(recordName!) }
+    var           isFetched: Bool               { return !hasState(.notFetched) }
+    var           needsSave: Bool               { return  hasState(.needsSave) }
+    var           needsRoot: Bool               { return  hasState(.needsRoot) }
+    var          notFetched: Bool               { return  hasState(.notFetched) }
+    var          needsCount: Bool               { return  hasState(.needsCount) }
+    var          needsColor: Bool               { return  hasState(.needsColor) }
+    var          needsFetch: Bool               { return  hasState(.needsFetch) }
+    var          needsMerge: Bool               { return  hasState(.needsMerge) }
+    var         needsTraits: Bool               { return  hasState(.needsTraits) }
+    var         needsParent: Bool               { return  hasState(.needsParent) }
+    var        needsDestroy: Bool               { return  hasState(.needsDestroy) }
+    var        needsProgeny: Bool               { return  hasState(.needsProgeny) }
+    var       needsWritable: Bool               { return  hasState(.needsWritable) }
+    var       needsChildren: Bool               { return  hasState(.needsChildren) }
+    var      needsBookmarks: Bool               { return  hasState(.needsBookmarks) }
+    var canSaveWithoutFetch: Bool               { return !hasState(.requiresFetchBeforeSave) }
+    var   storageDictionary: ZStorageDictionary { if let dbID = databaseID, let dict = storageDictionary(for: dbID, includeRecordName: false) { return dict } else { return [:] } }
+    var      recordsManager: ZRecordsManager?   { return gRemoteStoresManager.recordsManagerFor(databaseID) }
+    var        cloudManager: ZCloudManager?     { return recordsManager as? ZCloudManager }
+    var          recordName: String?            { return record?.recordID.recordName }
+    var       unwrappedName: String             { return displayType }
+    var         displayType: String             { return "" }
 
 
     var record: CKRecord! {
@@ -490,10 +491,9 @@ class ZRecord: NSObject {
     }
 
 
-
-    func storageDictionary(for iDatabaseID: ZDatabaseID) -> ZStorageDictionary? {
+    func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true) -> ZStorageDictionary? {
         if  let      name = recordName, !gFileManager.writtenRecordNames.contains(name) {
-            let  keyPaths = cloudProperties() + [kpRecordName]
+            let  keyPaths = cloudProperties() + (includeRecordName ? [kpRecordName] : [])
             var      dict = ZStorageDictionary()
 
             gFileManager.writtenRecordNames.append(name)
@@ -518,24 +518,19 @@ class ZRecord: NSObject {
 
 
     func setStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
-        databaseID       = iDatabaseID
-        if  let     name = dict[.recordName] as? String, gRemoteStoresManager.recordsManagerFor(iDatabaseID)?.maybeCKRecordForRecordName(name) == nil {
-            let ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: name)) // YIKES this may be wildly out of date
+        databaseID   = iDatabaseID
+        let     name = dict[.recordName] as? String
+        var ckRecord = CKRecord(recordType: iRecordType)
+
+        if  name == nil || gRemoteStoresManager.recordsManagerFor(iDatabaseID)?.maybeCKRecordForRecordName(name) == nil {
+            if  let recordName = name {
+                ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: recordName)) // YIKES this may be wildly out of date
+            }
 
             for keyPath in cloudProperties() {
                 if  let      type  = type(from: keyPath),
                     let    object  = dict[type],
                     let     value  = object as? CKRecordValue {
-//                    var      path  = keyPath
-//                    if       type == .owner,
-//                        let string = gAuthorID {
-//                        value      = string as CKRecordValue // CKReference(recordID: CKRecordID(recordName: string), action: .none)
-//                        path       = "zoneAuthor"
-//
-//                        temporarilyMarkNeeds {
-//                            needSave()
-//                        }
-//                    }
 
                     ckRecord[keyPath] = value
                 }
@@ -550,14 +545,14 @@ class ZRecord: NSObject {
     }
 
 
-    class func storageArray(for iZRecords: [ZRecord]?, from dbID: ZDatabaseID, allowEach: ZRecordToBooleanClosure? = nil) -> [ZStorageDictionary]? {
+    class func storageArray(for iZRecords: [ZRecord]?, from dbID: ZDatabaseID, includeRecordName: Bool = true, allowEach: ZRecordToBooleanClosure? = nil) -> [ZStorageDictionary]? {
         if  let   zRecords = iZRecords,
             zRecords.count > 0 {
             var   array = [ZStorageDictionary] ()
 
             for zRecord in zRecords {
                 if  (allowEach == nil || allowEach!(zRecord)),
-                    let subDict = zRecord.storageDictionary(for: dbID) {
+                    let subDict = zRecord.storageDictionary(for: dbID, includeRecordName: includeRecordName) {
                     array.append(subDict)
                 }
             }
