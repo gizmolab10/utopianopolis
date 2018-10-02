@@ -168,11 +168,11 @@ extension NSColor {
     }
 
     func darker(by: CGFloat) -> NSColor {
-        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * 1.1, brightness: brightnessComponent / by, alpha: alphaComponent)
+        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * by, brightness: brightnessComponent / (by / 3.0), alpha: alphaComponent)
     }
 
     func lighter(by: CGFloat) -> NSColor {
-        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * 0.9, brightness: brightnessComponent * by, alpha: alphaComponent)
+        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent / by, brightness: brightnessComponent * (by / 3.0), alpha: alphaComponent)
     }
 }
 

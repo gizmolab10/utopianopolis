@@ -22,6 +22,7 @@ class ZDetailsController: ZGenericController {
 
     override func setup() {
         controllerID = .details
+        useDefaultBackgroundColor = false
     }
     
     
@@ -31,10 +32,22 @@ class ZDetailsController: ZGenericController {
 
 
     func update() {
+        applyGradient()
+        
         stackView?.applyToAllSubviews { iView in
             if  let stackableView = iView as? ZStackableView {
                 stackableView.update()
             }
+        }
+    }
+
+
+    func applyGradient() {
+        if  let gradientView = stackView {
+            let gradientLayer = CAGradientLayer()
+            gradientLayer.frame = gradientView.bounds
+            gradientLayer.colors = [gDarkerBackgroundColor, gLighterBackgroundColor]
+            gradientView.zlayer = gradientLayer
         }
     }
 

@@ -92,7 +92,18 @@ class ZStackableView: ZView {
 
         if !isDebugView || gDebugDetails {
             updateToggleImage()
+            updateBannerView()
             updateHideableView()
+        }
+    }
+
+
+    func updateBannerView() {
+        if  let gradientView = bannerView {
+            let gradientLayer = CAGradientLayer()
+            gradientLayer.frame = gradientView.bounds
+            gradientLayer.colors = [gDarkerBackgroundColor, gLighterBackgroundColor]
+            gradientView.zlayer = gradientLayer
         }
     }
 
@@ -113,7 +124,7 @@ class ZStackableView: ZView {
     func updateHideableView() {
         if  hideableIsHidden {
             hideableView?.removeFromSuperview()
-            titleLabel?.snp.makeConstraints { make in
+            bannerView?.snp.makeConstraints { make in
                 make.bottom.equalTo(self)
             }
         } else {
@@ -121,7 +132,7 @@ class ZStackableView: ZView {
                 addSubview(hideableView!)
             }
 
-            titleLabel?.snp.removeConstraints()
+            bannerView?.snp.removeConstraints()
             hideableView?.snp.makeConstraints { make in
                 make.top.equalTo((self.bannerView?.snp.bottom)!)
                 make.left.right.bottom.equalTo(self)

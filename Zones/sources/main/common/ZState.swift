@@ -17,29 +17,31 @@ import CloudKit
 #endif
 
 
-var              gWorkMode                     = ZWorkMode.startupMode
-var         gTextCapturing                     = false
-var       gIsReadyToShowUI                     = false
-var     gKeyboardIsVisible                     = false
-var    gCrippledUserAccess                     = false
-var  gDebugShowIdentifiers                     = false
-var gMeasureOpsPerformance                     = true
-var       gDragDropIndices: NSMutableIndexSet? = nil
-var          gDragRelation:         ZRelation? = nil
-var          gDragDropZone:              Zone? = nil
-var           gDraggedZone:              Zone? = nil
-var             gDragPoint:           CGPoint? = nil
-var              gExpanded:          [String]? = nil
+var               gWorkMode                     = ZWorkMode.startupMode
+var          gTextCapturing                     = false
+var        gIsReadyToShowUI                     = false
+var      gKeyboardIsVisible                     = false
+var     gCrippledUserAccess                     = false
+var   gDebugShowIdentifiers                     = false
+var  gMeasureOpsPerformance                     = true
+var        gDragDropIndices: NSMutableIndexSet? = nil
+var           gDragRelation:         ZRelation? = nil
+var           gDragDropZone:              Zone? = nil
+var            gDraggedZone:              Zone? = nil
+var              gDragPoint:           CGPoint? = nil
+var               gExpanded:          [String]? = nil
 
-var                gIsLate:               Bool { return gBatchManager.isLate }
-var            gIsDragging:               Bool { return gDraggedZone != nil }
-var      gInsertionsFollow:               Bool { return gInsertionMode == .follow }
-var            gEditorView:      ZoneDragView? { return gEditorController?.editorView }
-var             gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
-var              gDotWidth:             Double { return gDotHeight * 0.75 }
-var              gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
-var            gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
-var         gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kReductionRatio) }
+var                 gIsLate:               Bool { return gBatchManager.isLate }
+var             gIsDragging:               Bool { return gDraggedZone != nil }
+var       gInsertionsFollow:               Bool { return gInsertionMode == .follow }
+var             gEditorView:      ZoneDragView? { return gEditorController?.editorView }
+var              gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
+var               gDotWidth:             Double { return gDotHeight * 0.75 }
+var               gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
+var             gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
+var          gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kReductionRatio) }
+var  gDarkerBackgroundColor:            CGColor { return gBackgroundColor.darker(by: 4.0).cgColor }
+var gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter(by: 4.0).cgColor }
 
 
 func toggleDatabaseID() {

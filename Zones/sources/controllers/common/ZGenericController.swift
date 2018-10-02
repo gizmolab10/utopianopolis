@@ -17,6 +17,7 @@ import Foundation
 
 
 class ZGenericController: ZController {
+    var useDefaultBackgroundColor = true
     var controllerID = ZControllerID.undefined 
     func handleSignal(_ object: Any?, iKind: ZSignalKind) {}
     func displayActivity(_ show: Bool) {}
@@ -27,7 +28,9 @@ class ZGenericController: ZController {
         super.awakeFromNib()
 
         gControllersManager.register(self, iID: controllerID) { object, kind in
-            self.view.zlayer.backgroundColor = gBackgroundColor.cgColor
+            if  self.useDefaultBackgroundColor {
+                self.view.zlayer.backgroundColor = gBackgroundColor.cgColor
+            }
 
             if  kind != .error && gIsReadyToShowUI {
                 self.handleSignal(object, iKind: kind)

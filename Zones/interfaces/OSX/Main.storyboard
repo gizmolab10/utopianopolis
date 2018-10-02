@@ -87,9 +87,9 @@
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="OTb-Fv-TP3"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Export Current Focus" id="MEe-fC-PR1">
+                                        <menuItem title="Export Selected Idea" id="MEe-fC-PR1">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Export Current Focus" id="LGH-w5-scL">
+                                            <menu key="submenu" title="Export Selected Idea" id="LGH-w5-scL">
                                                 <items>
                                                     <menuItem title="As Thoughtful ..." keyEquivalent="k" id="rRM-8z-pgs">
                                                         <connections>
@@ -105,9 +105,9 @@
                                                 </items>
                                             </menu>
                                         </menuItem>
-                                        <menuItem title="Import" id="mCl-1N-DnK">
+                                        <menuItem title="Import into Selected Idea" id="mCl-1N-DnK">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Import" id="nne-nT-Cug">
+                                            <menu key="submenu" title="Import into Selected Idea" id="nne-nT-Cug">
                                                 <items>
                                                     <menuItem title="From Thoughtful File ..." keyEquivalent="j" id="oOd-mA-5D1">
                                                         <connections>
@@ -632,22 +632,22 @@ CQ
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="BKM-zY-Rx1">
-                                <rect key="frame" x="0.0" y="0.0" width="228" height="256"/>
+                                <rect key="frame" x="0.0" y="0.0" width="227" height="256"/>
                                 <subviews>
                                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="gPD-rw-vaf">
-                                        <rect key="frame" x="0.0" y="252" width="228" height="6"/>
+                                        <rect key="frame" x="0.0" y="252" width="227" height="6"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="2" id="mkP-5U-DkS"/>
                                         </constraints>
                                     </box>
                                     <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="oY0-De-wof">
-                                        <rect key="frame" x="224" y="0.0" width="6" height="256"/>
+                                        <rect key="frame" x="223" y="0.0" width="6" height="256"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="2" id="Rg6-WZ-nYi"/>
                                         </constraints>
                                     </box>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
-                                        <rect key="frame" x="0.0" y="0.0" width="226" height="254"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="226" height="255"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="226" id="us8-K9-IEo"/>
                                         </constraints>
@@ -660,12 +660,12 @@ CQ
                                     <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="8Ok-nx-O9o"/>
                                     <constraint firstItem="oY0-De-wof" firstAttribute="top" secondItem="BKM-zY-Rx1" secondAttribute="top" id="AH7-o1-rv0"/>
                                     <constraint firstItem="gPD-rw-vaf" firstAttribute="top" secondItem="BKM-zY-Rx1" secondAttribute="top" id="GCN-tP-gYd"/>
-                                    <constraint firstItem="oY0-De-wof" firstAttribute="leading" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="OZk-Kg-tdK"/>
+                                    <constraint firstItem="oY0-De-wof" firstAttribute="leading" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" constant="-1" id="OZk-Kg-tdK"/>
                                     <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="BKM-zY-Rx1" secondAttribute="leading" id="RzM-jC-kxb"/>
                                     <constraint firstAttribute="bottom" secondItem="oY0-De-wof" secondAttribute="bottom" id="Szb-s9-UgA"/>
                                     <constraint firstAttribute="trailing" secondItem="gPD-rw-vaf" secondAttribute="trailing" id="Xmq-KT-EsE"/>
                                     <constraint firstItem="gPD-rw-vaf" firstAttribute="leading" secondItem="BKM-zY-Rx1" secondAttribute="leading" id="ZA2-KQ-Dql"/>
-                                    <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="gPD-rw-vaf" secondAttribute="bottom" id="fbD-xN-uIr"/>
+                                    <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="gPD-rw-vaf" secondAttribute="bottom" constant="-1" id="fbD-xN-uIr"/>
                                     <constraint firstAttribute="trailing" secondItem="oY0-De-wof" secondAttribute="trailing" id="hMr-rJ-XGQ"/>
                                 </constraints>
                             </customView>
