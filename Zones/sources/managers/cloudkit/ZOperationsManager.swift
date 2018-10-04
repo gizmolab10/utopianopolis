@@ -34,11 +34,11 @@ enum ZOperationID: Int {
     case roots
     case favorites
     case here
-    case fetchNew
-    case fetchAll
 
     // finish
 
+    case fetchNew
+    case fetchAll
     case saveToCloud               // zones, traits, destroy
     case unsubscribe
     case subscribe

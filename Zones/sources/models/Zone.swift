@@ -321,23 +321,16 @@ class Zone : ZRecord {
         }
 
         set {
-            var attributes = zoneAttributes
-            let   oldValue = attributes?.contains(kReverseColor) ?? false
+            var attributes = zoneAttributes ?? ""
+            let   oldValue = attributes.contains(kReverseColor)
 
             if  newValue != oldValue {
                 if !newValue {
-                    attributes = attributes?.replacingOccurrences(of: kReverseColor, with: "")
-
-                    if  attributes == "" {
-                        attributes = nil
-                    }
+                    attributes = attributes.replacingOccurrences(of: kReverseColor, with: "")
                 } else {
-                    if  attributes == nil {
-                        attributes = ""
-                    }
 
-                    if !attributes!.contains(kReverseColor) {
-                        attributes!.append(kReverseColor)
+                    if !attributes.contains(kReverseColor) {
+                        attributes.append(kReverseColor)
                     }
                 }
 

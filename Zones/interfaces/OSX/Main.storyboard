@@ -635,19 +635,19 @@ CQ
                                 <rect key="frame" x="0.0" y="0.0" width="227" height="256"/>
                                 <subviews>
                                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="gPD-rw-vaf">
-                                        <rect key="frame" x="0.0" y="252" width="227" height="6"/>
+                                        <rect key="frame" x="0.0" y="253" width="227" height="5"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="2" id="mkP-5U-DkS"/>
+                                            <constraint firstAttribute="height" constant="1" id="mkP-5U-DkS"/>
                                         </constraints>
                                     </box>
-                                    <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="oY0-De-wof">
+                                    <box hidden="YES" horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="oY0-De-wof">
                                         <rect key="frame" x="223" y="0.0" width="6" height="256"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="2" id="Rg6-WZ-nYi"/>
                                         </constraints>
                                     </box>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
-                                        <rect key="frame" x="0.0" y="0.0" width="226" height="255"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="226" height="256"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="226" id="us8-K9-IEo"/>
                                         </constraints>
