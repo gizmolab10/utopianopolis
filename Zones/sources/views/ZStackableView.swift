@@ -21,8 +21,8 @@ class ZStackableView: ZView {
 
     @IBOutlet var       bannerView : ZView?
     @IBOutlet var     hideableView : ZView?
-    @IBOutlet var     toggleButton : ZButton?
-    @IBOutlet var       titleLabel : ZTextField?
+    @IBOutlet var      titleButton : ZButton?
+    @IBOutlet var       toggleIcon : ZButton?
     let               debugViewIDs : [ZDetailsViewID] = [.Debug, .Tools]
     var                isDebugView : Bool { return debugViewIDs.contains(identity) }
 
@@ -86,7 +86,7 @@ class ZStackableView: ZView {
 
     func update() {
         if  isDebugView {
-            titleLabel?.superview?.isHidden = !gDebugDetails
+            titleButton?.superview?.isHidden = !gDebugDetails
             hideableView?         .isHidden = !gDebugDetails
         }
 
@@ -116,7 +116,7 @@ class ZStackableView: ZView {
             image = (image?.imageRotatedByDegrees(180.0))! as ZImage
         }
 
-        toggleButton?.image = image
+        toggleIcon?.image = image
         #endif
     }
 
