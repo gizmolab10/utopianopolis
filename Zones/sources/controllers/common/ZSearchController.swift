@@ -35,7 +35,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
             if  gWorkMode == .searchMode {
                 assignAsFirstResponder(searchBox!)
 
-                gSearchManager.state = .ready
+                gSearchManager.state = .entry
             }
         }
     }
@@ -45,15 +45,14 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         let string = event.input
         let    key = string[string.startIndex].description
 
-        switch key {
-        case "\r":
+        if  key == "\r" {
             switch state {
-            case .ready: endSearch();               return nil
-            case .input: if searchBoxText == nil { return nil }
-            default:
-                break
+            case .entry: endSearch();             return nil
+            case .find: if searchBoxText == nil { return nil }
+            default:                              break
             }
-        default: if state == .ready { gSearchManager.state = .input; }
+        } else if state == .entry {
+            gSearchManager.state = .find;
         }
 
         return event
@@ -95,7 +94,13 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                     FOREGROUND {
                         var          results = iObject as! [Any]
 
-                        results.appendUnique(contentsOf: locals)
+                        results.appendUnique(contentsOf: locals) { (a, b) in
+                            if  let alpha = a as? CKRecord, let beta = b as? CKRecord {
+                                return alpha.recordID.recordName == beta.recordID.recordName
+                            }
+                            
+                            return false
+                        }
 
                         let       hasResults = results.count != 0
                         gWorkMode            = hasResults ? .searchMode : .graphMode
@@ -117,7 +122,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     func control(_ control: ZControl, textView: ZTextView, doCommandBy commandSelector: Selector) -> Bool {
         let handledIt = commandSelector == Selector(("noop:"))
 
-        if  handledIt { // && gSearchManager.state != .browse {
+        if  handledIt { // && gSearchManager.state != .list {
             endSearch()
         }
 

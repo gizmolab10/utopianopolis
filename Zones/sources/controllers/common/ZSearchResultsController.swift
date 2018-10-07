@@ -54,23 +54,31 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             
             if  gWorkMode == .searchMode, let recordsByDatabaseID = iObject as? [ZDatabaseID: [CKRecord]] {
                 foundRecords = recordsByDatabaseID
+                var dbID: ZDatabaseID? = nil
+                var record: CKRecord? = nil
+                var total = 0
 
-                for (dbID, records) in recordsByDatabaseID {
+                for (databaseID, records) in recordsByDatabaseID {
                     let count = records.count
-
+                    total += count
+                    
                     if count == 1 {
-                        self.resolveRecord(dbID, records[0])
-                    } else if count > 0 {
-
-                        sortRecords()
-                        tableView?.reloadData()
-
-                        #if os(OSX)
-                            FOREGROUND {
-                                self.tableView?.selectRowIndexes(NSIndexSet(index: 0) as IndexSet, byExtendingSelection: false)
-                            }
-                        #endif
+                        record = records[0]
+                        dbID = databaseID
                     }
+                }
+                
+                if total == 1 {
+                    self.resolveRecord(dbID!, record!) // not bother user if only one record found
+                } else if total > 0 {
+                    sortRecords()
+                    tableView?.reloadData()
+                    
+                    #if os(OSX)
+                    FOREGROUND {
+                        self.tableView?.selectRowIndexes(NSIndexSet(index: 0) as IndexSet, byExtendingSelection: false)
+                    }
+                    #endif
                 }
             }
         }

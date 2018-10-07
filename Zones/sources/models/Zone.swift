@@ -722,6 +722,8 @@ class Zone : ZRecord {
         }
 
         timeOfLastDragDotClick = Date()
+
+        gEditingManager.signalFor(nil, regarding: .details)
     }
 
     override func debug(_  iMessage: String) {

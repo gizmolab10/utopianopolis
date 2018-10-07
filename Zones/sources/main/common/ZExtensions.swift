@@ -522,12 +522,26 @@ extension Array {
         return string
     }
 
+    
+    func containsCompare(_ with: AnyObject, using: CompareClosure? = nil) -> Bool {
+        if let compare = using {
+            for item in self {
+                if compare(item as AnyObject, with) {
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
+    
 
-    mutating func appendUnique(contentsOf: Array) {
+    mutating func appendUnique(contentsOf items: Array, compare: CompareClosure? = nil) {
         let array = self as NSArray
-
-        for item in contentsOf {
-            if !array.contains(item) {
+        
+        for item in items {
+            if  !array.contains(item),
+                !containsCompare(item as AnyObject, using: compare) {
                 append(item)
             }
         }

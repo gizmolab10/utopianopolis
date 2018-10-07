@@ -281,7 +281,7 @@ extension NSWindow {
     @IBAction func cut               (_ iItem: ZMenuItem?) { gEditingManager.delete() }
     @IBAction func delete            (_ iItem: ZMenuItem?) { gEditingManager.delete() }
     @IBAction func paste             (_ iItem: ZMenuItem?) { gEditingManager.paste() }
-    @IBAction func toggleSearch      (_ iItem: ZMenuItem?) { gEditingManager.find() }
+    @IBAction func toggleSearch      (_ iItem: ZMenuItem?) { gEditingManager.search() }
     @IBAction func undo              (_ iItem: ZMenuItem?) { gEditingManager.undoManager.undo() }
     @IBAction func redo              (_ iItem: ZMenuItem?) { gEditingManager.undoManager.redo() }
 }

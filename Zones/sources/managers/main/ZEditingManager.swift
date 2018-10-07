@@ -92,15 +92,16 @@ class ZEditingManager: NSObject {
             widget?.widgetZone?.deferWrite()
 
             if  gIsEditingText {
-                switch key {
-                case "a":      if isCommand { gEditedTextWidget?.selectAllText() }
-                case "d":      if isCommand { addIdeaFromSelectedText() }
-                case "f":      if isCommand { find() }
-                case "/":      if isCommand { gFocusManager.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
-                case "?":      if isControl { gDetailsController?.displayViewsFor(ids: [.Shortcuts]) }
-                case ",", ".": gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
-                case kSpace:   if isControl { addIdea() }
-                default:       break
+                if isCommand || isControl {
+                    switch key {
+                    case "a":      gEditedTextWidget?.selectAllText()
+                    case "d":      addIdeaFromSelectedText()
+                    case "f":      search()
+                    case "/":      gFocusManager.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }
+                    case "?":      gDetailsController?.displayViewsFor(ids: [.Shortcuts])
+                    case kSpace:   addIdea()
+                    default:       break
+                    }
                 }
             } else if isWindow, let arrow = key.arrow {
                 handleArrow(arrow, flags: flags)
@@ -113,7 +114,7 @@ class ZEditingManager: NSObject {
                 case "c":      recenter()
                 case "d":      duplicate()
                 case "e":      editTrait(for: .eEmail)
-                case "f":      find()
+                case "f":      search()
                 case "h":      editTrait(for: .eHyperlink)
                 case "i":      toggleColorized()
                 case "l", "u": alterCase(up: key == "u")
@@ -137,7 +138,7 @@ class ZEditingManager: NSObject {
                 case "/":      gFocusManager.focus(kind: .eSelected, isCommand) { self.redrawSyncRedraw() }
                 case "=":      gFocusManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawSyncRedraw() }
                 case kTab:     addNext(containing: isOption) { iChild in iChild.edit() }
-                case ",", ".": gInsertionMode = key == "." ? .follow : .precede; signalFor(nil, regarding: .preferences)
+                case ",", ".": gInsertionMode = (key == "." ? .follow : .precede); signalFor(nil, regarding: .preferences)
                 case "z":      if isCommand { if isShift { kUndoManager.redo() } else { kUndoManager.undo() } }
                 case kSpace:   if isOption || isWindow || isControl { addIdea() }
                 case kBackspace,
@@ -484,8 +485,8 @@ class ZEditingManager: NSObject {
     }
 
 
-    func find() {
-        if gDatabaseID != .favoritesID {
+    func search() {
+        if  gDatabaseID != .favoritesID {
             gWorkMode = gWorkMode == .searchMode ? .graphMode : .searchMode
 
             signalFor(nil, regarding: .search)

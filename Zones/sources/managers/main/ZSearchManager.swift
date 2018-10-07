@@ -17,10 +17,10 @@ import Foundation
 
 
 enum ZSearchState: Int {
-    case gone
-    case ready
-    case input
-    case browse
+    case entry
+    case find
+    case list
+    case not
 }
 
 
@@ -30,14 +30,14 @@ let gSearchManager = ZSearchManager()
 class ZSearchManager: NSObject {
 
 
-    var state = ZSearchState.gone
+    var state = ZSearchState.not
     var  searchController:        ZSearchController? { return gControllersManager.controllerForID(.searchBox)     as? ZSearchController }
     var resultsController: ZSearchResultsController? { return gControllersManager.controllerForID(.searchResults) as? ZSearchResultsController }
 
 
     func showResults(_ iResults: Any?) {
         gWorkMode = .searchMode
-        state     = .browse
+        state     = .list
 
         signalFor(iResults as? NSObject, regarding: .found)
     }
@@ -45,7 +45,7 @@ class ZSearchManager: NSObject {
 
     func exitSearchMode() {
         gWorkMode = .graphMode
-        state     = .gone
+        state     = .not
 
         signalFor(nil, regarding: .found)
         signalFor(nil, regarding: .search)
@@ -54,8 +54,8 @@ class ZSearchManager: NSObject {
 
     func handleKeyEvent(_ event: ZEvent) -> ZEvent? {
         switch state {
-        case .browse: return resultsController?.handleBrowseKeyEvent(event)
-        default:      return  searchController?      .handleKeyEvent(event, with: state)
+        case .list: return resultsController?.handleBrowseKeyEvent(event)
+        default:    return  searchController?      .handleKeyEvent(event, with: state)
         }
     }
 
