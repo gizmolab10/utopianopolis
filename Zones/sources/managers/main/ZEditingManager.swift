@@ -1823,8 +1823,10 @@ class ZEditingManager: NSObject {
             gBatchManager.children(.all) { iSame in
                 if !done {
                     done = true
+                    
+                    gSelectionManager.deselectGrabs()
 
-                    for grab in grabs {
+                    for grab in grabs.reversed() {
                         var movable = grab
 
                         if  toFavorites && !movable.isInFavorites && !movable.isBookmark && !movable.isInTrash {
@@ -1844,7 +1846,7 @@ class ZEditingManager: NSObject {
                         }
 
                         if !isCommand {
-                            movable.grab()
+                            movable.addToGrab()
                         }
 
                         into.addAndReorderChild(movable, at: iIndex)
