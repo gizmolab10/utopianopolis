@@ -48,20 +48,16 @@ class ZStackableView: ZView {
     }
 
 
-    var hideableIsHidden: Bool {
+    var hideHideable: Bool {
         get {
-            if gIsReadyToShowUI  {
-                return gDetailsViewIDs.contains(identity)
-            } else {
-                return true
-            }
+            return !gIsReadyToShowUI || gHiddenDetailViewIDs.contains(identity)
         }
 
         set {
-            if newValue {
-                gDetailsViewIDs.insert(identity)
+            if  newValue {
+                gHiddenDetailViewIDs.insert(identity)
             } else {
-                gDetailsViewIDs.remove(identity)
+                gHiddenDetailViewIDs.remove(identity)
             }
         }
     }
@@ -71,8 +67,8 @@ class ZStackableView: ZView {
     // MARK:-
     
 
-    @IBAction func toggleAction(_ sender: ZButton) {
-        hideableIsHidden = !hideableIsHidden
+    @IBAction func toggleAction(_ sender: Any) {
+        hideHideable = !hideHideable
 
         update()
     }
@@ -86,19 +82,18 @@ class ZStackableView: ZView {
 
     func update() {
         if  isDebugView {
-            titleButton?.superview?.isHidden = !gDebugDetails
-            hideableView?         .isHidden = !gDebugDetails
+            isHidden = !gShowDebugDetails
         }
 
-        if !isDebugView || gDebugDetails {
+        if !isDebugView || gShowDebugDetails {
             updateToggleImage()
-            updateBannerView()
+            updateBannerGradient()
             updateHideableView()
         }
     }
 
 
-    func updateBannerView() {
+    func updateBannerGradient() {
         if  let gradientView = bannerView {
             let gradientLayer = CAGradientLayer()
             gradientLayer.frame = gradientView.bounds
@@ -112,7 +107,7 @@ class ZStackableView: ZView {
         #if os(OSX)
         var image = ZImage(named: kTriangleImageName)
 
-        if !hideableIsHidden {
+        if !hideHideable {
             image = (image?.imageRotatedByDegrees(180.0))! as ZImage
         }
 
@@ -122,22 +117,23 @@ class ZStackableView: ZView {
 
 
     func updateHideableView() {
-        if  hideableIsHidden {
+        let  hide = hideHideable
+        let shown = subviews.contains(hideableView!)
+
+        if  hide && shown {
             hideableView?.removeFromSuperview()
             bannerView?.snp.makeConstraints { make in
                 make.bottom.equalTo(self)
             }
-        } else {
-            if !subviews.contains(hideableView!) {
-                addSubview(hideableView!)
-            }
-
+        } else if !hide && !shown {
+            addSubview(hideableView!)
+            
             bannerView?.snp.removeConstraints()
             hideableView?.snp.makeConstraints { make in
                 make.top.equalTo((self.bannerView?.snp.bottom)!)
                 make.left.right.bottom.equalTo(self)
             }
-
+            
             FOREGROUND(after: 0.2) {
                 self.hideableView?.setNeedsDisplay()
             }

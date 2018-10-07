@@ -268,6 +268,7 @@
                                         <connections>
                                             <outlet property="bannerView" destination="xwW-xc-XIh" id="To1-48-Suc"/>
                                             <outlet property="hideableView" destination="Chx-83-qGo" id="Qre-NM-FhC"/>
+                                            <outlet property="titleButton" destination="fsz-8k-F3y" id="Fmc-3C-agP"/>
                                             <outlet property="toggleIcon" destination="hIy-eV-7gW" id="Pdh-ir-ANX"/>
                                         </connections>
                                     </customView>
@@ -330,6 +331,7 @@
                                         <connections>
                                             <outlet property="bannerView" destination="Ul6-QC-jDi" id="HGT-hA-9sl"/>
                                             <outlet property="hideableView" destination="btT-FF-Ema" id="owk-cx-MOC"/>
+                                            <outlet property="titleButton" destination="Jzv-og-1RG" id="XYm-cb-XjE"/>
                                             <outlet property="toggleIcon" destination="aCk-9D-lHI" id="lcf-J5-cK6"/>
                                         </connections>
                                     </customView>
@@ -392,6 +394,7 @@
                                         <connections>
                                             <outlet property="bannerView" destination="GnQ-iS-bgR" id="hY0-hM-1kz"/>
                                             <outlet property="hideableView" destination="EaL-XF-QhW" id="sUb-7I-rGt"/>
+                                            <outlet property="titleButton" destination="xKP-AI-Lsh" id="ZXb-2S-zzs"/>
                                             <outlet property="toggleIcon" destination="kYb-ao-3Mw" id="6zv-Ya-yNt"/>
                                         </connections>
                                     </customView>
@@ -402,7 +405,7 @@
                                                 <rect key="frame" x="0.0" y="31" width="226" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OVu-DX-v9I">
-                                                        <rect key="frame" x="0.0" y="0.0" width="226" height="19"/>
+                                                        <rect key="frame" x="0.0" y="1" width="226" height="19"/>
                                                         <buttonCell key="cell" type="roundRect" title="Tools" bezelStyle="roundedRect" alignment="center" imageScaling="proportionallyDown" inset="2" id="E7f-qi-w77">
                                                             <behavior key="behavior" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
@@ -454,6 +457,7 @@
                                         <connections>
                                             <outlet property="bannerView" destination="Dnz-Gb-8cH" id="dWu-dm-WWO"/>
                                             <outlet property="hideableView" destination="XUr-go-ovY" id="cHW-H0-aCt"/>
+                                            <outlet property="titleButton" destination="OVu-DX-v9I" id="J0n-Lm-Sdm"/>
                                             <outlet property="toggleIcon" destination="bee-ew-HYp" id="EpT-0c-ZLw"/>
                                         </connections>
                                     </customView>
@@ -464,7 +468,7 @@
                                                 <rect key="frame" x="0.0" y="31" width="226" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2ku-Dn-LFn">
-                                                        <rect key="frame" x="0.0" y="0.0" width="226" height="19"/>
+                                                        <rect key="frame" x="0.0" y="1" width="226" height="19"/>
                                                         <buttonCell key="cell" type="roundRect" title="Debug" bezelStyle="roundedRect" alignment="center" imageScaling="proportionallyDown" inset="2" id="wSg-ju-1ou">
                                                             <behavior key="behavior" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
@@ -516,6 +520,7 @@
                                         <connections>
                                             <outlet property="bannerView" destination="7Zo-Cx-wV6" id="bUH-OL-1eu"/>
                                             <outlet property="hideableView" destination="AuQ-dr-yPp" id="D8x-dV-s3B"/>
+                                            <outlet property="titleButton" destination="2ku-Dn-LFn" id="OPT-Hy-CdH"/>
                                             <outlet property="toggleIcon" destination="ZY6-bq-evl" id="pA9-Iv-MOA"/>
                                         </connections>
                                     </customView>

@@ -84,8 +84,8 @@ class ZInformationController: ZGenericController {
 
 
     @IBAction func debugButtonAction(_ sender: Any?) {
-        gDebugDetails = !gDebugDetails
+        gShowDebugDetails = !gShowDebugDetails
 
-        gDetailsController?.displayViewFor(ids: [.Tools, .Debug])
+        gDetailsController?.displayViewsFor(ids: [.Tools, .Debug])
     }
 }

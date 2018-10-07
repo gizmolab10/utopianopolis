@@ -154,7 +154,6 @@
 		0C43EFE121010F62000976CE /* ZCloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloudManager.swift */; };
 		0C43EFE221010F62000976CE /* ZCloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloudManager.swift */; };
 		0C48B0951F87197B00A247BC /* ZEventsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C48B0941F87197B00A247BC /* ZEventsManager.swift */; };
-		0C4C23A020155C7D0025E4DF /* ZDetailRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C239F20155C7C0025E4DF /* ZDetailRowView.swift */; };
 		0C4C23A22016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
 		0C4C23A32016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
 		0C4C23A42016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
@@ -339,7 +338,6 @@
 		0C43EFCC21010F62000976CE /* ZBatchManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZBatchManager.swift; sourceTree = "<group>"; };
 		0C43EFCD21010F62000976CE /* ZCloudManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZCloudManager.swift; sourceTree = "<group>"; };
 		0C48B0941F87197B00A247BC /* ZEventsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEventsManager.swift; sourceTree = "<group>"; };
-		0C4C239F20155C7C0025E4DF /* ZDetailRowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDetailRowView.swift; sourceTree = "<group>"; };
 		0C4C23A12016B0930025E4DF /* ZContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZContainerView.swift; sourceTree = "<group>"; };
 		0C50FD2E2053491000E1D9A9 /* everyone.thoughtful */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = everyone.thoughtful; sourceTree = "<group>"; };
 		0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = PadZones/Frameworks/SnapKit.framework; sourceTree = "<group>"; };
@@ -596,7 +594,6 @@
 			isa = PBXGroup;
 			children = (
 				0C4C23A12016B0930025E4DF /* ZContainerView.swift */,
-				0C4C239F20155C7C0025E4DF /* ZDetailRowView.swift */,
 				0C39B2871F182EBB0091F4D1 /* ZoneDot.swift */,
 				0C367C361F463D93000FC914 /* ZoneDragView.swift */,
 				0C26F72F1F799EEE00C2B978 /* ZoneSegmentedControl.swift */,
@@ -1276,7 +1273,6 @@
 				0C39B2AC1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
 				0C39B2A31F182EBB0091F4D1 /* ZPreferencesController.swift in Sources */,
 				0C39B2B51F182EBB0091F4D1 /* ZGCD.swift in Sources */,
-				0C4C23A020155C7D0025E4DF /* ZDetailRowView.swift in Sources */,
 				0C4118E01FA8110200A58004 /* ZAlertManager.swift in Sources */,
 				0C43EFDF21010F62000976CE /* ZBatchManager.swift in Sources */,
 				0CAC18EB200ED0BB00D641C4 /* ZDebugController.swift in Sources */,

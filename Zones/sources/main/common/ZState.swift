@@ -86,7 +86,7 @@ var gMathewStyleUI : Bool {
 }
 
 
-var gDebugDetails : Bool {
+var gShowDebugDetails : Bool {
     get { return getPreferencesBool(   for: kDebugDetails, defaultBool: false) }
     set { setPreferencesBool(newValue, for: kDebugDetails) }
 }
@@ -298,7 +298,7 @@ var gDatabaseID: ZDatabaseID {
 }
 
 
-var gDetailsViewIDs: ZDetailsViewID {
+var gHiddenDetailViewIDs: ZDetailsViewID {
     get {
         var state: ZDetailsViewID? = nil
 

@@ -274,7 +274,7 @@ extension NSView {
 
 extension NSWindow {
 
-    @IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.displayViewFor(ids: [.Preferences]) }
+    @IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.view(for: .Preferences)?.toggleAction(self) }
     @IBAction func displayHelp       (_ sender:      Any?) { openBrowserForFocusWebsite() }
     @IBAction func printHere         (_ sender:      Any?) { gEditingManager.printHere() }
     @IBAction func copy              (_ iItem: ZMenuItem?) { gEditingManager.copyToPaste() }

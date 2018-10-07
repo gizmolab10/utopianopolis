@@ -32,7 +32,7 @@ class ZDetailsController: ZGenericController {
 
 
     func update() {
-        applyGradient()
+        // applyGradient()
         
         stackView?.applyToAllSubviews { iView in
             if  let stackableView = iView as? ZStackableView {
@@ -50,11 +50,25 @@ class ZDetailsController: ZGenericController {
             gradientView.zlayer = gradientLayer
         }
     }
+    
+    
+    func view(for id: ZDetailsViewID) -> ZStackableView? {
+        var found: ZStackableView?  = nil
 
-
-    func displayViewFor(ids: [ZDetailsViewID]) {
+        stackView?.applyToAllSubviews { iView in
+            if  let stackableView = iView as? ZStackableView,
+                stackableView.identity == id {
+                found = stackableView
+            }
+        }
+        
+        return found
+    }
+    
+    
+    func displayViewsFor(ids: [ZDetailsViewID]) {
         for id in ids {
-            gDetailsViewIDs.insert(id)
+            gHiddenDetailViewIDs.remove(id)
         }
 
         update()
