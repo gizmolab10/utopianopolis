@@ -513,13 +513,14 @@ class ZoneWidget: ZView {
     // lines need CHILD dots drawn first.
     // extra pass through hierarchy to do lines
 
-    var nowDrawChildren = false
+    var nowDrawLines = false
 
 
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
         if  let             zone = widgetZone {
+            let           isHere = zone == gHere
             let        isGrabbed = zone.isGrabbed
             textWidget.textColor = isGrabbed ? zone.grabbedTextColor : ZColor.black
 
@@ -527,14 +528,14 @@ class ZoneWidget: ZView {
                 addBorder(thickness: CGFloat(gLineThickness), radius: CGFloat(50.0) / CGFloat(zone.level + 1), color: zone.color.cgColor)
             }
 
-            if  isGrabbed && !textWidget.isFirstResponder && (!kIsPhone || zone != gHere) {
+            if  isGrabbed && !textWidget.isFirstResponder && (!kIsPhone || !isHere) {
                 drawSelectionHighlight()
             }
 
-            if zone.showChildren {
-                if  !nowDrawChildren && !gIsDragging && gEditorView?.rubberbandRect == nil {
+            if  zone.showChildren {
+                if  !nowDrawLines && !gIsDragging && gEditorView?.rubberbandRect == nil {
                     FOREGROUND {
-                        self.nowDrawChildren = true
+                        self.nowDrawLines = true
 
                         self.setNeedsDisplay()
                     }
@@ -545,7 +546,13 @@ class ZoneWidget: ZView {
                 }
             }
             
-            nowDrawChildren = false
+            if zone == gFavoritesRoot {
+                FOREGROUND {
+                    self.signalFor(nil, regarding: .main)
+                }
+            }
+            
+            nowDrawLines = false
         }
     }
 }

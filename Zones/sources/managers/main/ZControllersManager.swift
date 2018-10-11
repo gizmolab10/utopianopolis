@@ -30,6 +30,7 @@ enum ZControllerID: Int {
 
 enum ZSignalKind: Int {
     case data
+    case main
     case datum
     case debug
     case error
@@ -82,13 +83,11 @@ class ZControllersManager: NSObject {
         gBatchManager.usingDebugTimer = true
 
         gRemoteStoresManager.clear()
-        // displayActivity(true)
         gBatchManager.startUp { iSame in
             FOREGROUND {
                 gWorkMode        = .graphMode
                 gIsReadyToShowUI = true
 
-                // self.displayActivity(false)
                 gHere.grab()
                 gFavoritesManager.updateFavorites()
                 gRemoteStoresManager.updateLastSyncDates()
@@ -96,14 +95,12 @@ class ZControllersManager: NSObject {
                 self.signalFor(nil, regarding: .redraw)
 
                 gBatchManager.finishUp { iSame in
-                    // gBatchManager.families() { iSame in // created bookmarks and parents of bookmarks
                     FOREGROUND {
                         gBatchManager.usingDebugTimer = false
 
                         self.blankScreenDebug()
                         self.signalFor(nil, regarding: .redraw)
                     }
-                    // }
                 }
             }
         }
@@ -163,19 +160,25 @@ class ZControllersManager: NSObject {
     func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
         FOREGROUND(canBeDirect: true) {
             self.updateNeededCounts() // clean up after adding or removing children
-
+            
             for (identifier, signalObject) in self.signalObjectsByControllerID {
                 let isInformation = identifier == .information
                 let isPreferences = identifier == .preferences
                 let       isDebug = identifier == .debug
+                let        isMain = identifier == .main
                 let      isDetail = isInformation || isPreferences || isDebug
+                
+                let closure = {
+                    signalObject.closure(object, regarding)                    
+                }
 
                 switch regarding {
-                case .debug:       if isDebug       { signalObject.closure(object, regarding) }
-                case .details:     if isDetail      { signalObject.closure(object, regarding) }
-                case .information: if isInformation { signalObject.closure(object, regarding) }
-                case .preferences: if isPreferences { signalObject.closure(object, regarding) }
-                default:                              signalObject.closure(object, regarding)
+                case .main:        if isMain        { closure() }
+                case .debug:       if isDebug       { closure() }
+                case .details:     if isDetail      { closure() }
+                case .information: if isInformation { closure() }
+                case .preferences: if isPreferences { closure() }
+                default:                              closure()
                 }
             }
 

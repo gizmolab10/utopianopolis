@@ -426,13 +426,21 @@ class ZFileManager: NSObject {
                         }
 
                         try manager.copyItem(at:   cloudFileURL, to: cloudBackupURL)
-                    } else if  cloudBackupExists {
+                    } else if cloudBackupExists {
                         try manager.copyItem(at: cloudBackupURL, to:   cloudFileURL) // should only happen when prior write fails due to power failure
-                    } else if   genericExists {
+                    } else if     genericExists {
                         try manager.moveItem(at: genericFileURL, to:   cloudFileURL)
-                        try manager.copyItem(at: genericFileURL, to: cloudBackupURL)
+                        try manager.copyItem(at:   cloudFileURL, to: cloudBackupURL)
                     } else {
                         manager.createFile(atPath: cloudFileURL.path, contents: nil)
+                    }
+                    
+                    if genericExists {
+                        try manager.removeItem(at: genericFileURL)
+                    }
+                    
+                    if backupExists {
+                        try manager.removeItem(at:      backupURL)
                     }
                 }
             } catch {

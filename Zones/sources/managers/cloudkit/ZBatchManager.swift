@@ -182,25 +182,25 @@ class ZBatchManager: ZOnboardingManager {
     }
 
 
-    func processFirstBatch() {
+    func processNextBatch() {
 
-        // 1. grab and execute first current batch
+        // 1. execute next current batch
         // 2. called by superclass, for each completion operation. fire completions and recurse
-        // 3. no more current batches, transfer deferred                            and recurse
+        // 3. no more current batches,                            transfer deferred and recurse
         // 4. no more batches, nothing to process
 
         FOREGROUND(canBeDirect: true) {
-            if  let      batch = self.currentBatches.first {    // 1.
+            if  let      batch = self.currentBatches.first {
                 let operations = batch.allowedOperations
 
-                self.setupAndRun(operations) {
+                self.setupAndRun(operations) {                  // 1.
                     batch.fireCompletions()                     // 2.
                     self.maybeRemoveFirst()
-                    self.processFirstBatch()
+                    self.processNextBatch()
                 }
             } else if self.deferredBatches.count > 0 {
                 self.transferDeferred()                         // 3.
-                self.processFirstBatch()
+                self.processNextBatch()
             }                                                   // 4.
         }
     }
@@ -210,9 +210,8 @@ class ZBatchManager: ZOnboardingManager {
         if  iID.shouldIgnore {
             iCompletion(true) // true means isSame
         } else {
-            let completions = [ZBatchCompletion(iCompletion)]
-            let    newBatch = ZBatch(iID, completions)
             let     current = getBatch(iID, from: currentBatches)
+            let completions = [ZBatchCompletion(iCompletion)]
             let   startOver = currentBatches.count == 0
 
             // 1. is in deferral            -> add its completion to that deferred batch
@@ -223,15 +222,15 @@ class ZBatchManager: ZOnboardingManager {
             if  let deferred = getBatch(iID, from: deferredBatches) {
                 deferred.completions.append(contentsOf: completions)    // 1.
             } else if current == nil {
-                currentBatches .append(newBatch)                        // 2.
+                currentBatches .append(ZBatch(iID, completions))        // 2.
             } else if deferredBatches.count > 0 {
-                deferredBatches.append(newBatch)                        // 3.
+                deferredBatches.append(ZBatch(iID, completions))        // 3.
             } else {
                 current?.completions.append(contentsOf: completions)    // 4.
             }
 
             if  startOver {
-                processFirstBatch()
+                processNextBatch()
             }
         }
     }

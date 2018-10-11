@@ -71,7 +71,7 @@ class ZToolsController: ZGenericTableController {
                 case .eRetry:       gBatchManager.unHang()
                 case .eTrash:       self.showTrashCan()
                 case .eGather:      self.gatherAndShowLost()
-                case .eRecount:     gRemoteStoresManager.recount()
+                case .eRecount:     gRemoteStoresManager.recount(); gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .redraw) {}
                 }
             }
         }

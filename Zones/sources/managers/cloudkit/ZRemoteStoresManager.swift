@@ -47,8 +47,6 @@ class ZRemoteStoresManager: NSObject {
         for dbID in kAllDatabaseIDs {
             recordsManagerFor(dbID)?.recount()
         }
-
-        gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .redraw) {}
     }
 
 

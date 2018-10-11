@@ -60,7 +60,10 @@ class ZMainController: ZGenericController {
                 assignAsFirstResponder(nil)
                 showAsSearching(false)
             }
-        default: break
+        default:
+            if  let height = gEditorController?.favoritesHeight {
+                favoritesHeight?.constant = height
+            }
         }
     }
 

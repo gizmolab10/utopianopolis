@@ -32,6 +32,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     var    priorScrollLocation = CGPoint.zero
     var        rubberbandStart = CGPoint.zero
     let              doneState: [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
+    var        favoritesHeight:  CGFloat { return favoritesRootWidget.frame.size.height + 40.0 - (gGenericOffset.height / 3.0) }
     var           clickGesture:  ZGestureRecognizer?
     var          moveUpGesture:  ZGestureRecognizer?
     var        movementGesture:  ZGestureRecognizer?
@@ -159,18 +160,11 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 layoutForCurrentScrollOffset()
                 layoutRootWidget(for: iSignalObject, iKind, inMainGraph: true)
                 layoutRootWidget(for: iSignalObject, iKind, inMainGraph: false)
-                adjustForFavoritesHeight()
                 editorView?.setAllSubviewsNeedDisplay()
             }
         }
     }
 
-
-    func adjustForFavoritesHeight() {
-        let favoritesHeight = favoritesRootWidget.frame.size.height + 40.0 - (gGenericOffset.height / 3.0)
-        gMainController?.favoritesHeight?.constant = favoritesHeight
-    }
-    
     
     func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
 
