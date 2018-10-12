@@ -388,7 +388,7 @@ class ZFileManager: NSObject {
 
             do {
                 if   useGeneric {
-                    if !genericExists && (cloudExists || cloudBackupExists) {
+                    if !genericExists && (cloudExists || cloudBackupExists) && !isEveryone {
                         if                cloudExists {
                             try manager.moveItem(at: cloudFileURL,   to: genericFileURL)
 
@@ -406,7 +406,7 @@ class ZFileManager: NSObject {
 
                     if     genericExists {
                         if  backupExists {
-                            try manager.removeItem(at: backupURL)                   // remove before replacing, below
+                            try manager.removeItem(at: backupURL)                       // remove before replacing, below
                         }
 
                         try manager.copyItem(at: genericFileURL,     to: backupURL)
@@ -428,19 +428,21 @@ class ZFileManager: NSObject {
                         try manager.copyItem(at:   cloudFileURL, to: cloudBackupURL)
                     } else if cloudBackupExists {
                         try manager.copyItem(at: cloudBackupURL, to:   cloudFileURL) // should only happen when prior write fails due to power failure
-                    } else if     genericExists {
+                    } else if    !genericExists {
+                        manager.createFile(atPath: cloudFileURL.path, contents: nil)
+                    } else {
                         try manager.moveItem(at: genericFileURL, to:   cloudFileURL)
                         try manager.copyItem(at:   cloudFileURL, to: cloudBackupURL)
-                    } else {
-                        manager.createFile(atPath: cloudFileURL.path, contents: nil)
+                        
+                        genericExists = false
                     }
                     
-                    if genericExists {
-                        try manager.removeItem(at: genericFileURL)
-                    }
-                    
-                    if backupExists {
+                    if  backupExists {
                         try manager.removeItem(at:      backupURL)
+                    }
+
+                    if  genericExists {
+                        try manager.removeItem(at: genericFileURL)
                     }
                 }
             } catch {

@@ -63,13 +63,13 @@ enum ZOperationID: Int {
 }
 
 
+var gCloudAccountIsActive:     Bool { return gCloudAccountStatus == .active }
 var gDebugTimer:             Timer? = nil
 var gCloudTimer:             Timer? = nil
 var gCloudFire:       TimerClosure? = nil
 var gDebugTimerCount                = 0
 var gHasInternet                    = true
 var gCloudAccountStatus             = ZCloudAccountStatus.begin
-var gCloudAccountIsActive           = gCloudAccountStatus == .active
 var recentCloudAccountStatus        = gCloudAccountStatus
 let localOperations: [ZOperationID] = [.here, .roots, .found, .readFile, .internet, .ubiquity, .favorites, .completion, .macAddress, .fetchUserID, .observeUbiquity, .fetchUserRecord, .checkAvailability]
 
@@ -141,7 +141,7 @@ class ZOperationsManager: NSObject {
             gCloudFire   = { iTimer in
                 FOREGROUND {
                     if  self.checkCloudStatus() {
-                        self.signalFor(nil, regarding: .information) // inform user of change in cloud status
+                        self.signalFor(nil, regarding: .details) // inform user of change in cloud status
 
                         /////////////////////////////////////////////////
                         // assure that we can perform cloud operations //

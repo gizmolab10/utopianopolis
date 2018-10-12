@@ -83,6 +83,8 @@ class ZControllersManager: NSObject {
         gBatchManager.usingDebugTimer = true
 
         gRemoteStoresManager.clear()
+        self.signalFor(nil, regarding: .redraw)
+
         gBatchManager.startUp { iSame in
             FOREGROUND {
                 gWorkMode        = .graphMode

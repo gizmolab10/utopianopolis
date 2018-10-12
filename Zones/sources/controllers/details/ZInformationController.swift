@@ -59,15 +59,14 @@ class ZInformationController: ZGenericController {
 
 
     var cloudStatusText: String {
-        if !gHasInternet          { return "no internet" }
-//      if !gCloudAccountIsActive { return "no Apple ID" }
+        if !gHasInternet { return "data stored locally" }
 
-        let ops = String.pluralized(gBatchManager.queue.operationCount, suffix: "request")
+        let ops = String.pluralized(gBatchManager.queue.operationCount, suffix: "cloud request")
             +     String.pluralized(gBatchManager.totalCount,           suffix: "batch", plural: "es")
 
-        return ops
+        return ops != "" ? ops : "data updated to cloud"
     }
-
+    
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
         if ![.search, .found].contains(iKind) {
