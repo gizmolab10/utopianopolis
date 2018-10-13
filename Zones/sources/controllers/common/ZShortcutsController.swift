@@ -25,9 +25,11 @@ class ZShortcutsController: ZGenericTableController {
     override func setup() {
         controllerID = .shortcuts
 
-        for value in [15, 73] {
+        for value in [20, 90] {
             tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
         }
+        
+        view.zlayer.backgroundColor = gBackgroundColor.cgColor
     }
 
 

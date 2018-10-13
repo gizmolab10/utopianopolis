@@ -58,7 +58,9 @@ class ZEditingManager: NSObject {
 
     enum ZMenuType: Int {
         case Undo
+        case Help
         case Sort
+        case Find
         case Child
         case Alter
         case Files
@@ -133,9 +135,9 @@ class ZEditingManager: NSObject {
                 case "[":      gFocusManager.goBack(   extreme: isFlagged)
                 case "]":      gFocusManager.goForward(extreme: isFlagged)
                 case ";":      doFavorites(true,    false)
-                case "?":      openBrowserForFocusWebsite()
+                case "?":      isControl ? openBrowserForFocusWebsite() : showKeyboardShortcuts()
                 case "'":      doFavorites(isShift, isOption)
-                case "/":      gFocusManager.focus(kind: .eSelected, isCommand) { self.redrawSyncRedraw() }
+                case "/":      isShift && isOption ? showKeyboardShortcuts() : gFocusManager.focus(kind: .eSelected, isCommand) { self.redrawSyncRedraw() }
                 case "=":      gFocusManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawSyncRedraw() }
                 case kTab:     addNext(containing: isOption) { iChild in iChild.edit() }
                 case ",", ".": gInsertionMode = (key == "." ? .follow : .precede); signalFor(nil, regarding: .preferences)
@@ -223,19 +225,22 @@ class ZEditingManager: NSObject {
 
 
     func menuType(for key: String, _ flags: NSEventModifierFlags) -> ZMenuType {
-        let alterers = "ehiluw\r" + kMarkingCharacters
+        let  alterers = "ehiluw\r" + kMarkingCharacters
+        let isCommand = flags.isCommand
 
         if  alterers.contains(key) {             return .Alter
         } else {
             switch key {
             case "=":                            return .Travel
+            case "?":                            return .Help
+            case "f":                            return .Find
             case "m":                            return .Cloud
             case "z":                            return .Undo
-            case "o", "r":                       return  flags.isCommand ? .Files : .Sort
+            case "o", "r":                       return  isCommand ? .Files : .Sort
             case "v", "x", kSpace:               return .Child
             case "b", kTab, kDelete, kBackspace: return .Parent
             case "j", "k":                       return .Files
-            case "d":                            return  flags.isCommand ? .Alter : .Parent
+            case "d":                            return  isCommand ? .Alter : .Parent
             default: break
             }
 
@@ -289,6 +294,15 @@ class ZEditingManager: NSObject {
 
     // MARK:- miscellaneous features
     // MARK:-
+    
+    
+    func showKeyboardShortcuts() {
+        let storyboard = NSStoryboard(name: "Shortcuts", bundle: nil)
+        
+        if let controller = storyboard.instantiateInitialController() as? NSWindowController {
+            controller.showWindow(nil)
+        }
+    }
 
 
     func travelToOtherGraph() {

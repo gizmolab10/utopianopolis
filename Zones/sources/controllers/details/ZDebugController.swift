@@ -23,7 +23,6 @@ class ZDebugController: ZGenericController {
     @IBOutlet var  statusLabel: ZTextField?
     @IBOutlet var  traitsLabel: ZTextField?
     @IBOutlet var  recordLabel: ZTextField?
-    @IBOutlet var persistenceLabel: ZTextField?
     var grab: Zone? = nil
 
 
@@ -89,13 +88,6 @@ class ZDebugController: ZGenericController {
     }
 
 
-    var persistenceText: String {
-        let prefix = gFileManager.isWritingNow ? "• " : ""
-
-        return prefix + (gCloudUnavailable ? "local only" : "cloud available")
-    }
-
-
     override func setup() {
         controllerID = .debug
     }
@@ -109,7 +101,6 @@ class ZDebugController: ZGenericController {
             otherLabel?      .text =       otherText
             statusLabel?     .text =      statusText
             traitsLabel?     .text =      traitsText
-            persistenceLabel?.text = persistenceText
         }
     }
     
