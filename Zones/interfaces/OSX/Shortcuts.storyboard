@@ -32,18 +32,18 @@
             <objects>
                 <customObject id="Upg-eY-ED5" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <viewController id="cD6-C4-FJ5" customClass="ZShortcutsController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="OMb-DG-XS6">
-                        <rect key="frame" x="0.0" y="0.0" width="290" height="270"/>
+                    <view key="view" id="OMb-DG-XS6">
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="500"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lJB-I7-wvM">
-                                <rect key="frame" x="0.0" y="0.0" width="290" height="270"/>
+                                <rect key="frame" x="0.0" y="0.0" width="290" height="500"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="9Aa-9c-eI8">
-                                    <rect key="frame" x="1" y="1" width="273" height="268"/>
+                                    <rect key="frame" x="1" y="1" width="273" height="498"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" id="H0M-2O-9lo">
-                                            <rect key="frame" x="0.0" y="0.0" width="273" height="268"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="273" height="498"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" white="1" alpha="0.0" colorSpace="deviceWhite"/>
@@ -79,7 +79,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="Bry-FJ-qLw">
-                                    <rect key="frame" x="274" y="1" width="15" height="268"/>
+                                    <rect key="frame" x="274" y="1" width="15" height="498"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>

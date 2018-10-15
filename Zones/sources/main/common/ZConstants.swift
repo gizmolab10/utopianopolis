@@ -65,6 +65,7 @@ let         kpZoneLevel = "zoneLevel"
 let        kpZonePrefix = "zone"
 let        kpRecordName = "recordName"
 let      kpRecordPrefix = "record"
+let  kpModificationDate = "modificationDate"
 
 
 // MARK:- strings and dictionary keys

@@ -300,16 +300,12 @@ class ZFileManager: NSObject {
 			let  keys: types = [.date, .lost, .graph, .trash, .destroy, .favorites, .bookmarks ]
 			let      manager = gRemoteStoresManager.cloudManagerFor(databaseID)
 			
-			// columnarReport("   \(databaseID.rawValue)", gBatchManager.debugTimeText)
-			
             FOREGROUND {
                 do {
                     if  let   data = FileManager.default.contents(atPath: path),
                         data.count > 0,
                         let   json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
                         let   dict = self.dictFromJSON(json)
-
-                        // self.columnarReport("    dictionary", gBatchManager.debugTimeText)
 
                         for key in keys {
                             if  let   value = dict[key] {
@@ -335,8 +331,6 @@ class ZFileManager: NSObject {
                                     }
                                 }
                             }
-
-                            // self.columnarReport("    " + key.rawValue, gBatchManager.debugTimeText)
                         }
                     }
                 } catch {

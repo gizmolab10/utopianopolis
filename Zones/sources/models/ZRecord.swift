@@ -15,6 +15,7 @@ class ZRecord: NSObject {
     
 
     var             _record: CKRecord?
+    var     savedModifyDate: Date?
     var          databaseID: ZDatabaseID?
     var          kvoContext: UInt8 = 1
     var           hasParent: Bool               { return false }
@@ -235,15 +236,15 @@ class ZRecord: NSObject {
 
     func useBest(record iRecord: CKRecord) {
         if  record != iRecord {
-            if  let name = record[kpZoneName] as? String, name == kFirstIdeaTitle, record[kpZoneLink] != nil {
+            if  let name = record[kpZoneName] as? String, [kFirstIdeaTitle, "an idea"].contains(name) {//}, record[kpZoneLink] != nil {
                 bam("")
             }
 
-            let      myDate = record?.modificationDate
+            let      myDate = record?.modificationDate ?? savedModifyDate
             if  let newDate = iRecord.modificationDate,
-                (myDate    == nil || myDate!.timeIntervalSince(newDate) < 0.000001) {
+                (myDate    == nil || myDate!.timeIntervalSince(newDate) < -0.000001) {
 
-                orphan()    // sometimes a record contains a different parent or owner reference !!!!!
+                orphan()    // in case a record contains a different parent or owner reference
 
                 record      = iRecord
             }
@@ -421,8 +422,9 @@ class ZRecord: NSObject {
             return nil
         }
 
-        if            [kpParent, kpOwner]         .contains(keyPath) { return nil       // must be first ...
-        } else if let type = ZStorageType(rawValue:         keyPath) { return type      // ZStorageType now ignores two (owner and parent)
+        if            [kpParent, kpOwner]         .contains(keyPath) { return nil       // must be first ... ZStorageType now ignores two (owner and parent)
+        } else if keyPath == kpModificationDate                      { return .date
+        } else if let type = ZStorageType(rawValue:         keyPath) { return type
         } else if let type = typeFromSuffixFollowing(  kpZonePrefix) { return type      // this deals with those two
         } else if let type = typeFromSuffixFollowing(kpRecordPrefix) { return type
         } else                                                       { return nil
@@ -430,14 +432,12 @@ class ZRecord: NSObject {
     }
 
 
-    func extract(valueOf iType: ZStorageType, at iKeyPath: String) -> NSObject? {
-        var value  = record?[iKeyPath] as? NSObject     // all properties are extracted from record, using iKeyPath as key
-
-        if  value == nil, iKeyPath == kpRecordName {    // except for the record name
-            value  = recordName as NSObject?
+    func extract(valueOf iType: ZStorageType, at iKeyPath: String) -> NSObject? {     // all properties are extracted from record, using iKeyPath as key
+        switch iKeyPath {
+        case kpRecordName:       return recordName as NSObject?      // except for the record name
+        case kpModificationDate: return record?.modificationDate?.timeIntervalSince1970 as Double? as NSObject?
+        default:                 return record?[iKeyPath] as? NSObject
         }
-
-        return value
     }
 
 
@@ -493,7 +493,7 @@ class ZRecord: NSObject {
 
     func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true) -> ZStorageDictionary? {
         if  let      name = recordName, !gFileManager.writtenRecordNames.contains(name) {
-            let  keyPaths = cloudProperties() + (includeRecordName ? [kpRecordName] : [])
+            let  keyPaths = cloudProperties() + (includeRecordName ? [kpRecordName] : []) + [kpModificationDate]
             var      dict = ZStorageDictionary()
 
             gFileManager.writtenRecordNames.append(name)
@@ -527,12 +527,16 @@ class ZRecord: NSObject {
                 ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: recordName)) // YIKES this may be wildly out of date
             }
 
-            for keyPath in cloudProperties() {
+            for keyPath in cloudProperties() + [kpModificationDate] {
                 if  let      type  = type(from: keyPath),
                     let    object  = dict[type],
                     let     value  = object as? CKRecordValue {
 
-                    ckRecord[keyPath] = value
+                    if  type != .date {
+                        ckRecord[keyPath]  = value
+                    } else if let interval = object as? Double {
+                        savedModifyDate = Date(timeIntervalSince1970: interval)
+                    }
                 }
             }
 

@@ -667,7 +667,7 @@ class ZCloudManager: ZRecordsManager {
                     default: break
                     }
                 } else {
-                    zRecord?.useBest(record: ckRecord)
+                    zRecord?.useBest(record: ckRecord) // fetched has same record id
                 }
 
                 zRecord?.unorphan()
