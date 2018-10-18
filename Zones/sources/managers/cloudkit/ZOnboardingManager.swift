@@ -24,7 +24,7 @@ class ZOnboardingManager : ZOperationsManager {
 
 
     var          user : ZUser?
-    var isSpecialUser : Bool { return user?.access == .eAccessFull || macAddress == "c8:e0:eb:16:c9:9b" }
+    var isSpecialUser : Bool { return user?.access == .eAccessFull } // || macAddress == "c8:e0:eb:16:c9:9b" }
     var    macAddress : String?
 
 

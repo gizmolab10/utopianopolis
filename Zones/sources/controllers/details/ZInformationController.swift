@@ -59,12 +59,11 @@ class ZInformationController: ZGenericController {
 
 
     var cloudStatusText: String {
-        if !gHasInternet { return "all ideas stored locally" }
-
-        let ops = String.pluralized(gBatchManager.queue.operationCount, suffix: "cloud request")
-            +     String.pluralized(gBatchManager.totalCount,           suffix: "batch", plural: "es")
-
-        return ops != "" ? ops : "all ideas synced to cloud"
+        if !gHasInternet { return "local storage only" }
+        
+        let ops = String.pluralized(gBatchManager.totalCount - 1,       unit: "batch", plural: "es", followedBy: "remaining, with ")
+            +     String.pluralized(gBatchManager.queue.operationCount, unit: "queued request")
+        return ops != "" ? ops : "synced with iCloud"
     }
     
 
