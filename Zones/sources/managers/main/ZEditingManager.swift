@@ -1838,34 +1838,39 @@ class ZEditingManager: NSObject {
             gBatchManager.children(.all) { iSame in
                 if !done {
                     done = true
+                    if  let firstGrab = grabs.first,
+                        let fromIndex = firstGrab.siblingIndex,
+                        (firstGrab.parentZone != into || fromIndex > (iIndex ?? 1000)) {
+                        grabs = grabs.reversed()
+                    }
                     
                     gSelectionManager.deselectGrabs()
 
-                    for grab in grabs.reversed() {
-                        var movable = grab
+                    for grab in grabs {
+                        var beingMoved = grab
 
-                        if  toFavorites && !movable.isInFavorites && !movable.isBookmark && !movable.isInTrash {
-                            movable = gFavoritesManager.createBookmark(for: movable, style: .favorite)
+                        if  toFavorites && !beingMoved.isInFavorites && !beingMoved.isBookmark && !beingMoved.isInTrash {
+                            beingMoved = gFavoritesManager.createBookmark(for: beingMoved, style: .favorite)
 
-                            movable.maybeNeedSave()
+                            beingMoved.maybeNeedSave()
                         } else {
-                            movable.orphan()
+                            beingMoved.orphan()
 
-                            if  movable.databaseID != into.databaseID {
-                                movable.traverseAllProgeny { iChild in
+                            if  beingMoved.databaseID != into.databaseID {
+                                beingMoved.traverseAllProgeny { iChild in
                                     iChild.needDestroy()
                                 }
 
-                                movable = movable.deepCopy
+                                beingMoved = beingMoved.deepCopy
                             }
                         }
 
                         if !isCommand {
-                            movable.addToGrab()
+                            beingMoved.addToGrab()
                         }
 
-                        into.addAndReorderChild(movable, at: iIndex)
-                        movable.recursivelyApplyDatabaseID(into.databaseID)
+                        into.addAndReorderChild(beingMoved, at: iIndex)
+                        beingMoved.recursivelyApplyDatabaseID(into.databaseID)
                     }
 
                     if  toBookmark && self.undoManager.groupingLevel > 0 {
