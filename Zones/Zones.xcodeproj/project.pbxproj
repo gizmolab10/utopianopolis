@@ -735,13 +735,13 @@
 		0C43EFC621010F62000976CE /* cloudkit */ = {
 			isa = PBXGroup;
 			children = (
+				0C43EFCC21010F62000976CE /* ZBatchManager.swift */,
+				0C43EFCD21010F62000976CE /* ZCloudManager.swift */,
 				0C43EFC721010F62000976CE /* ZLockManager.swift */,
 				0C43EFC821010F62000976CE /* ZOnboardingManager.swift */,
 				0C43EFC921010F62000976CE /* ZRecordsManager.swift */,
 				0C43EFCA21010F62000976CE /* ZRemoteStoresManager.swift */,
 				0C43EFCB21010F62000976CE /* ZOperationsManager.swift */,
-				0C43EFCC21010F62000976CE /* ZBatchManager.swift */,
-				0C43EFCD21010F62000976CE /* ZCloudManager.swift */,
 			);
 			path = cloudkit;
 			sourceTree = "<group>";

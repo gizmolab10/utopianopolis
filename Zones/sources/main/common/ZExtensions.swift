@@ -744,8 +744,8 @@ extension String {
     }
 
 
-    static func pluralized(_ iValue: Int, suffix: String = "", plural: String = "s") -> String {
-        return iValue == 0 ? "" : "\(iValue) \(suffix)\(iValue == 1 ? " " : "\(plural) ")"
+    static func pluralized(_ iValue: Int, unit: String = "", plural: String = "s", followedBy: String = "") -> String {
+        return iValue <= 0 ? "" : "\(iValue) \(unit)\(iValue == 1 ? " " : "\(plural) ") \(followedBy)"
     }
 
 

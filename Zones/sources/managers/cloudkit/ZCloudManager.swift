@@ -620,21 +620,21 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetch(for type: String, properties: [String], since: Date?, before: Date?, _ onCompletion: RecordsClosure?) {
-        let predicate = self.predicate(since: since, before: before)
+    func fetch(for type: String, properties: [String], since start: Date?, before end: Date? = nil, _ onCompletion: RecordsClosure?) {
+        let predicate = self.predicate(since: start, before: end)
         var retrieved = [CKRecord] ()
 
         queryFor(type, with: predicate, properties: properties, batchSize: CKQueryOperationMaximumResults) { (iRecord, iError) in
             if  iError   != nil {
-                if since == nil {
+                if start == nil {
                     onCompletion?(retrieved) // NEED BETTER ERROR HANDLING
                 } else {
-                    let middle = since?.mid(to: before)                   // if error, fetch split by two
+                    let middle = start?.mid(to: end)                   // if error, fetch split by two
 
-                    self.fetch(for: type, properties: properties, since: since, before: middle) { iCKRecords in
+                    self.fetch(for: type, properties: properties, since: start, before: middle) { iCKRecords in
                         retrieved.appendUnique(contentsOf: iCKRecords)
 
-                        self.fetch(for: type, properties: properties, since: middle, before: before) { iCKRecords in
+                        self.fetch(for: type, properties: properties, since: middle, before: end) { iCKRecords in
                             retrieved.appendUnique(contentsOf: iCKRecords)
 
                             onCompletion?(retrieved)
@@ -696,14 +696,14 @@ class ZCloudManager: ZRecordsManager {
         // for zones, traits, destroy
         // if date is nil, fetch all
 
-        fetch(for: kZoneType, properties: Zone.cloudProperties(), since: date, before: nil) { iZoneCKRecords in
+        fetch(for: kZoneType, properties: Zone.cloudProperties(), since: date) { iZoneCKRecords in
             FOREGROUND {
                 self.createZRecords(of: kZoneType, with: iZoneCKRecords, title: " NEW")
 
                 self.unorphanAll()
                 self.recount()
 
-                self.fetch(for: kTraitType, properties: ZTrait.cloudProperties(), since: date, before: nil) { iTraitCKRecords in
+                self.fetch(for: kTraitType, properties: ZTrait.cloudProperties(), since: date) { iTraitCKRecords in
                     FOREGROUND {
                         self.createZRecords(of: kTraitType, with: iTraitCKRecords, title: " TRAITS")
                         onCompletion?(0)

@@ -464,16 +464,12 @@ class ZoneWidget: ZView {
     func drawSelectionHighlight() {
         let      thickness = CGFloat(gDotWidth) / 3.5
         let       rightDot = revealDot.innerDot
-        let        leftDot = dragDot.innerDot
-        let frame: CGRect? = leftDot == nil ? nil : convert(leftDot!.frame, to: textWidget)
         let         height = gGenericOffset.height
         let          delta = height / 8.0
         let          inset = (height / -2.0) - 16.0
-        let hiddenDotDelta = rightDot?.revealDotIsVisible ?? false ? CGFloat(0.0) : rightDot!.bounds.size.width + 3.0
-        var           rect = textWidget.frame.insetBy(dx: (inset * ratio) - delta, dy: -0.5 - delta).offsetBy(dx: -0.75, dy: 0.0)
-        let              y = frame?.origin.y ?? rect.origin.y + 2.0
         let         shrink =  3.0 + (height / 6.0)
-        rect.origin.y      = y - 2.0
+        let hiddenDotDelta = rightDot?.revealDotIsVisible ?? false ? CGFloat(0.0) : rightDot!.bounds.size.width + 3.0   // expand around reveal dot, only if it is visible
+        var           rect = textWidget.frame.insetBy(dx: (inset * ratio) - delta, dy: -0.5 - delta).offsetBy(dx: -0.75, dy: 0.0)  // get size from text widget
         rect.size .height += -0.5 + gHighlightHeightOffset + (isInMain ? 0.0 : 1.0)
         rect.size  .width += shrink - hiddenDotDelta
         let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
