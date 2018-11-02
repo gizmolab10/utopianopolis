@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
-        <capability name="box content view" minToolsVersion="7.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
-        <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
     </dependencies>
     <scenes>
         <!--Information Controller-->
@@ -75,7 +73,7 @@
                                 </textFieldCell>
                             </textField>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="II2-Qf-krY">
-                                <rect key="frame" x="-6" y="91" width="34" height="33"/>
+                                <rect key="frame" x="-6" y="93" width="33" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="21" id="10P-ob-279"/>
                                     <constraint firstAttribute="height" constant="21" id="xh0-PK-ZNa"/>
@@ -148,7 +146,7 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn identifier="" width="188" minWidth="40" maxWidth="1000" id="1IZ-hl-gOo">
+                                                <tableColumn width="188" minWidth="40" maxWidth="1000" id="1IZ-hl-gOo">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -172,11 +170,11 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="33" id="Ljx-ku-EBW"/>
                                 </constraints>
-                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="rbq-ID-znZ">
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="rbq-ID-znZ">
                                     <rect key="frame" x="-100" y="-100" width="238" height="15"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="QY4-tf-qLS">
+                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="QY4-tf-qLS">
                                     <rect key="frame" x="-100" y="-100" width="15" height="102"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
@@ -215,10 +213,10 @@
                                             <customView canDrawConcurrently="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="31" width="226" height="19"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fsz-8k-F3y">
-                                                        <rect key="frame" x="0.0" y="0.0" width="226" height="19"/>
-                                                        <buttonCell key="cell" type="roundRect" title="Information" bezelStyle="roundedRect" alignment="center" imageScaling="proportionallyDown" inset="2" id="nh5-Lk-WYv">
-                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                    <button focusRingType="none" verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fsz-8k-F3y">
+                                                        <rect key="frame" x="0.0" y="2" width="226" height="16"/>
+                                                        <buttonCell key="cell" type="roundRect" title="Information" bezelStyle="roundedRect" alignment="center" state="on" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="nh5-Lk-WYv">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
@@ -279,9 +277,9 @@
                                                 <rect key="frame" x="0.0" y="31" width="226" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Jzv-og-1RG">
-                                                        <rect key="frame" x="0.0" y="0.0" width="226" height="19"/>
-                                                        <buttonCell key="cell" type="roundRect" title="Preferences" bezelStyle="roundedRect" alignment="center" imageScaling="proportionallyDown" inset="2" id="TVl-I9-b5f">
-                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                        <rect key="frame" x="0.0" y="2" width="226" height="16"/>
+                                                        <buttonCell key="cell" type="roundRect" title="Preferences" bezelStyle="roundedRect" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="TVl-I9-b5f">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
@@ -342,9 +340,9 @@
                                                 <rect key="frame" x="0.0" y="31" width="226" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2ku-Dn-LFn">
-                                                        <rect key="frame" x="0.0" y="0.0" width="226" height="19"/>
-                                                        <buttonCell key="cell" type="roundRect" title="Debug" bezelStyle="roundedRect" alignment="center" imageScaling="proportionallyDown" inset="2" id="wSg-ju-1ou">
-                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                        <rect key="frame" x="0.0" y="2" width="226" height="16"/>
+                                                        <buttonCell key="cell" type="roundRect" title="Debug" bezelStyle="roundedRect" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="wSg-ju-1ou">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
@@ -398,16 +396,16 @@
                                             <outlet property="toggleIcon" destination="ZY6-bq-evl" id="pA9-Iv-MOA"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="tools" hidden="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Tools View" customClass="ZStackableView" customModule="Thoughtful" customModuleProvider="target">
+                                    <customView identifier="tools" hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Tools View" customClass="ZStackableView" customModule="Thoughtful" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="-102" width="226" height="50"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dnz-Gb-8cH" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="31" width="226" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OVu-DX-v9I">
-                                                        <rect key="frame" x="0.0" y="0.0" width="226" height="19"/>
-                                                        <buttonCell key="cell" type="roundRect" title="Tools" bezelStyle="roundedRect" alignment="center" imageScaling="proportionallyDown" inset="2" id="E7f-qi-w77">
-                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                        <rect key="frame" x="0.0" y="2" width="226" height="16"/>
+                                                        <buttonCell key="cell" type="roundRect" title="Tools" bezelStyle="roundedRect" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="E7f-qi-w77">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
@@ -509,25 +507,22 @@
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Thoughtful" sceneMemberID="viewController">
                     <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="232" height="322"/>
+                        <rect key="frame" x="0.0" y="0.0" width="232" height="318"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box autoresizesSubviews="NO" borderType="line" title="from current idea, new ideas" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
-                                <rect key="frame" x="5" y="275" width="222" height="39"/>
+                            <box autoresizesSubviews="NO" borderType="none" title="from current idea, new ideas" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
+                                <rect key="frame" x="5" y="275" width="222" height="35"/>
                                 <view key="contentView" id="qnC-vV-W8u">
-                                    <rect key="frame" x="1" y="1" width="220" height="23"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="222" height="20"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="direction" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i0m-vf-1Of">
-                                            <rect key="frame" x="3" y="0.0" width="215" height="27"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="24" id="sur-0v-evK"/>
-                                            </constraints>
+                                            <rect key="frame" x="1" y="-2" width="220" height="21"/>
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="spU-aj-Ylf">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <segments>
                                                     <segment label="precede" width="106" selected="YES"/>
-                                                    <segment label="follow" width="102" tag="1"/>
+                                                    <segment label="follow" width="103" tag="1"/>
                                                 </segments>
                                             </segmentedCell>
                                             <connections>
@@ -536,30 +531,28 @@
                                         </segmentedControl>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstAttribute="centerY" secondItem="i0m-vf-1Of" secondAttribute="centerY" constant="2.5" id="0xU-ZC-tzd"/>
-                                        <constraint firstItem="i0m-vf-1Of" firstAttribute="centerX" secondItem="qnC-vV-W8u" secondAttribute="centerX" id="tbk-0S-QQy"/>
+                                        <constraint firstItem="i0m-vf-1Of" firstAttribute="leading" secondItem="qnC-vV-W8u" secondAttribute="leading" constant="3" id="4PO-4H-bn6"/>
+                                        <constraint firstItem="i0m-vf-1Of" firstAttribute="centerY" secondItem="qnC-vV-W8u" secondAttribute="centerY" constant="1" id="RcY-GY-4bm"/>
+                                        <constraint firstAttribute="trailing" secondItem="i0m-vf-1Of" secondAttribute="trailing" constant="3" id="yWf-oI-oWp"/>
                                     </constraints>
                                 </view>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="35" id="9eg-3P-j9J"/>
+                                    <constraint firstAttribute="height" constant="31" id="9eg-3P-j9J"/>
                                 </constraints>
                             </box>
-                            <box autoresizesSubviews="NO" borderType="line" title="browsing is confined to" translatesAutoresizingMaskIntoConstraints="NO" id="0d2-7W-Jxg" userLabel="browsing">
-                                <rect key="frame" x="5" y="232" width="222" height="39"/>
+                            <box autoresizesSubviews="NO" borderType="none" title="vertical browsing is confined to" translatesAutoresizingMaskIntoConstraints="NO" id="0d2-7W-Jxg" userLabel="browsing">
+                                <rect key="frame" x="5" y="236" width="222" height="35"/>
                                 <view key="contentView" id="l9n-tF-CCv">
-                                    <rect key="frame" x="1" y="1" width="220" height="23"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="222" height="20"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="browsing" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xql-tK-B1R">
-                                            <rect key="frame" x="4" y="0.0" width="212" height="27"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="24" id="0QL-hr-4Nd"/>
-                                            </constraints>
+                                            <rect key="frame" x="1" y="-1" width="220" height="21"/>
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="XJ8-gh-4cf">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <segments>
-                                                    <segment label="one idea" width="105" selected="YES"/>
-                                                    <segment label="all visible ideas" width="105" tag="1"/>
+                                                    <segment label="one idea" width="93" selected="YES"/>
+                                                    <segment label="all visible ideas" width="115" tag="1"/>
                                                 </segments>
                                             </segmentedCell>
                                             <connections>
@@ -568,34 +561,30 @@
                                         </segmentedControl>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstAttribute="trailing" secondItem="Xql-tK-B1R" secondAttribute="trailing" constant="6" id="4fb-x3-Znz"/>
-                                        <constraint firstAttribute="centerY" secondItem="Xql-tK-B1R" secondAttribute="centerY" constant="2.5" id="sjq-iZ-rEQ"/>
-                                        <constraint firstItem="Xql-tK-B1R" firstAttribute="centerX" secondItem="l9n-tF-CCv" secondAttribute="centerX" id="tlW-q6-Pxe"/>
-                                        <constraint firstItem="Xql-tK-B1R" firstAttribute="leading" secondItem="l9n-tF-CCv" secondAttribute="leading" constant="6" id="xzf-ar-mtc"/>
+                                        <constraint firstItem="Xql-tK-B1R" firstAttribute="leading" secondItem="l9n-tF-CCv" secondAttribute="leading" constant="3" id="E1c-od-0C1"/>
+                                        <constraint firstAttribute="centerY" secondItem="Xql-tK-B1R" secondAttribute="centerY" id="sjq-iZ-rEQ"/>
+                                        <constraint firstAttribute="trailing" secondItem="Xql-tK-B1R" secondAttribute="trailing" constant="3" id="yOV-BF-t6R"/>
                                     </constraints>
                                 </view>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="35" id="CET-xg-IvB"/>
+                                    <constraint firstAttribute="height" constant="31" id="CET-xg-IvB"/>
                                 </constraints>
                             </box>
-                            <box autoresizesSubviews="NO" borderType="line" title="counts of subordinate ideas show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="children counts">
-                                <rect key="frame" x="5" y="193" width="222" height="35"/>
+                            <box autoresizesSubviews="NO" borderType="none" title="counts of subordinate ideas show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="children counts">
+                                <rect key="frame" x="5" y="197" width="222" height="35"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
-                                    <rect key="frame" x="1" y="1" width="220" height="19"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="222" height="20"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="counts" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hRI-S8-ys7">
-                                            <rect key="frame" x="1" y="-4" width="218" height="27"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="24" id="IcD-O8-4He"/>
-                                            </constraints>
+                                            <rect key="frame" x="1" y="-1" width="220" height="21"/>
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="AOk-RI-tLe">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <segments>
-                                                    <segment label="hidden" width="54"/>
-                                                    <segment label="dots" width="44" selected="YES" tag="1"/>
+                                                    <segment label="hidden" width="53"/>
+                                                    <segment label="dots" width="43" selected="YES" tag="1"/>
                                                     <segment label="numbers" width="64"/>
-                                                    <segment label="totals" width="48"/>
+                                                    <segment label="totals" width="47"/>
                                                 </segments>
                                             </segmentedCell>
                                             <connections>
@@ -604,8 +593,9 @@
                                         </segmentedControl>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="hRI-S8-ys7" firstAttribute="centerX" secondItem="5gJ-xh-VlV" secondAttribute="centerX" id="G63-aA-Xl2"/>
+                                        <constraint firstItem="hRI-S8-ys7" firstAttribute="leading" secondItem="5gJ-xh-VlV" secondAttribute="leading" constant="3" id="YmR-pV-tLh"/>
                                         <constraint firstAttribute="centerY" secondItem="hRI-S8-ys7" secondAttribute="centerY" id="h83-pb-w7Y"/>
+                                        <constraint firstAttribute="trailing" secondItem="hRI-S8-ys7" secondAttribute="trailing" constant="3" id="o6Y-Mh-jz7"/>
                                     </constraints>
                                 </view>
                                 <constraints>
@@ -613,9 +603,9 @@
                                 </constraints>
                             </box>
                             <box borderType="line" title="graph" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
-                                <rect key="frame" x="5" y="4" width="222" height="90"/>
+                                <rect key="frame" x="5" y="4" width="222" height="92"/>
                                 <view key="contentView" id="npe-oq-zV9">
-                                    <rect key="frame" x="1" y="1" width="220" height="74"/>
+                                    <rect key="frame" x="3" y="3" width="216" height="74"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="FKt-Xz-j3O" userLabel="labels">
@@ -670,10 +660,10 @@
                                             </constraints>
                                         </customView>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="xWn-hi-oFR" userLabel="sliders">
-                                            <rect key="frame" x="116" y="0.0" width="94" height="74"/>
+                                            <rect key="frame" x="116" y="0.0" width="90" height="74"/>
                                             <subviews>
                                                 <slider identifier="thickness" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gh7-LP-7IV">
-                                                    <rect key="frame" x="-2" y="46" width="98" height="26"/>
+                                                    <rect key="frame" x="-2" y="46" width="94" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="mm0-xX-hLQ"/>
                                                     </constraints>
@@ -683,7 +673,7 @@
                                                     </connections>
                                                 </slider>
                                                 <slider identifier="horizontal" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OmD-gF-PvR">
-                                                    <rect key="frame" x="-2" y="2" width="98" height="26"/>
+                                                    <rect key="frame" x="-2" y="2" width="94" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xc9-eh-z97"/>
                                                     </constraints>
@@ -693,7 +683,7 @@
                                                     </connections>
                                                 </slider>
                                                 <slider identifier="vertical" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X28-Kf-ltl">
-                                                    <rect key="frame" x="-2" y="24" width="98" height="26"/>
+                                                    <rect key="frame" x="-2" y="24" width="94" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xX2-we-KBt"/>
                                                     </constraints>
@@ -729,9 +719,9 @@
                                 </view>
                             </box>
                             <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="mS1-t0-150">
-                                <rect key="frame" x="5" y="98" width="222" height="91"/>
+                                <rect key="frame" x="5" y="100" width="222" height="93"/>
                                 <view key="contentView" id="rb6-oU-fw8">
-                                    <rect key="frame" x="1" y="1" width="220" height="75"/>
+                                    <rect key="frame" x="3" y="3" width="216" height="75"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="G62-eE-NOU" userLabel="labels">
@@ -771,7 +761,7 @@
                                                     </textFieldCell>
                                                 </textField>
                                                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Qp-4d-Tu8" userLabel="clearColor">
-                                                    <rect key="frame" x="4" y="40" width="60" height="27"/>
+                                                    <rect key="frame" x="4" y="40" width="60" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="Qdx-4o-Snx"/>
                                                         <constraint firstAttribute="width" constant="50" id="nGj-dM-TOd"/>
@@ -801,10 +791,10 @@
                                             </constraints>
                                         </customView>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="FDB-6R-I3I" userLabel="color wells">
-                                            <rect key="frame" x="115" y="4" width="97" height="69"/>
+                                            <rect key="frame" x="115" y="4" width="93" height="69"/>
                                             <subviews>
                                                 <colorWell identifier="zones" translatesAutoresizingMaskIntoConstraints="NO" id="UMY-8c-tep">
-                                                    <rect key="frame" x="0.0" y="46" width="97" height="23"/>
+                                                    <rect key="frame" x="0.0" y="46" width="93" height="23"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="23" id="i5B-AL-Q9X"/>
                                                     </constraints>
@@ -814,7 +804,7 @@
                                                     </connections>
                                                 </colorWell>
                                                 <colorWell identifier="drag targets" translatesAutoresizingMaskIntoConstraints="NO" id="j0f-8D-Ds5" userLabel="drag targets color box">
-                                                    <rect key="frame" x="0.0" y="23" width="97" height="23"/>
+                                                    <rect key="frame" x="0.0" y="23" width="93" height="23"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="23" id="XcF-55-QfT"/>
                                                     </constraints>
@@ -824,7 +814,7 @@
                                                     </connections>
                                                 </colorWell>
                                                 <colorWell identifier="background" translatesAutoresizingMaskIntoConstraints="NO" id="wsy-Dq-H7s">
-                                                    <rect key="frame" x="0.0" y="0.0" width="97" height="23"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="93" height="23"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="23" id="ukQ-KH-zeP"/>
                                                     </constraints>
@@ -895,7 +885,7 @@
                 </viewController>
                 <customObject id="JO0-BM-25B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-222" y="1869"/>
+            <point key="canvasLocation" x="-222" y="1868.5"/>
         </scene>
         <!--Debug Controller-->
         <scene sceneID="1Md-xJ-Z7k">

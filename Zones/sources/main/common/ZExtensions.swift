@@ -745,7 +745,7 @@ extension String {
 
 
     static func pluralized(_ iValue: Int, unit: String = "", plural: String = "s", followedBy: String = "") -> String {
-        return iValue <= 0 ? "" : "\(iValue) \(unit)\(iValue == 1 ? " " : "\(plural) ") \(followedBy)"
+        return iValue <= 0 ? "" : "\(iValue) \(unit)\(iValue == 1 ? "" : "\(plural)")\(followedBy)"
     }
 
 
@@ -816,6 +816,17 @@ extension Date {
         return addingTimeInterval(duration)
     }
 
+}
+
+
+extension ZColor {
+    
+    var converted: ZColor {
+        let b = 1.0 - brightnessComponent
+
+        return ZColor(calibratedHue: hueComponent, saturation: saturationComponent, brightness: b, alpha: alphaComponent)
+    }
+    
 }
 
 

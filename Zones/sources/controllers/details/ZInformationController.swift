@@ -61,8 +61,8 @@ class ZInformationController: ZGenericController {
     var cloudStatusText: String {
         if !gCloudAccountIsActive { return "local storage only" }
         
-        let ops = String.pluralized(gBatchManager.totalCount - 1,       unit: "batch", plural: "es", followedBy: "remaining, with ")
-            +     String.pluralized(gBatchManager.queue.operationCount, unit: "queued request")
+        let ops = // String.pluralized(gBatchManager.totalCount - 1,       unit: "batch", plural: "es", followedBy: ", ") +
+                  String.pluralized(gBatchManager.queue.operationCount, unit: "iCloud request")
         return ops != "" ? ops : "synced with iCloud"
     }
     

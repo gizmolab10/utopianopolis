@@ -81,6 +81,8 @@ class ZStackableView: ZView {
 
 
     func update() {
+        titleButton?.state = NSOnState
+        
         if  isDebugView {
             isHidden = !gShowDebugDetails
         }

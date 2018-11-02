@@ -31,6 +31,7 @@ var            gDraggedZone:              Zone? = nil
 var              gDragPoint:           CGPoint? = nil
 var               gExpanded:          [String]? = nil
 
+var               gDarkMode:     InterfaceStyle { return InterfaceStyle() }
 var                 gIsLate:               Bool { return gBatchManager.isLate }
 var             gIsDragging:               Bool { return gDraggedZone != nil }
 var       gInsertionsFollow:               Bool { return gInsertionMode == .follow }
@@ -338,18 +339,30 @@ func setPreferencesSize(_ iSize: CGSize = CGSize.zero, for key: String) {
 
 
 func getPreferencesColor(for key: String, defaultColor: ZColor) -> ZColor {
-    if  let data = UserDefaults.standard.object(forKey: key) as? Data, let color = NSKeyedUnarchiver.unarchiveObject(with: data) as? ZColor {
-        return color
+    var color = defaultColor
+
+    if  let data = UserDefaults.standard.object(forKey: key) as? Data, let c = NSKeyedUnarchiver.unarchiveObject(with: data) as? ZColor {
+        color = c
+    } else {
+        setPreferencesColor(color, for: key)
+    }
+    
+    if  gDarkMode == .Dark {
+        color = color.converted
     }
 
-    setPreferencesColor(defaultColor, for: key)
-
-    return defaultColor
+    return color
 }
 
 
 func setPreferencesColor(_ iColor: ZColor, for key: String) {
-    let data: Data = NSKeyedArchiver.archivedData(withRootObject: iColor)
+    var color = iColor
+    
+    if  gDarkMode == .Dark {
+        color = color.converted
+    }
+
+    let data: Data = NSKeyedArchiver.archivedData(withRootObject: color)
 
     UserDefaults.standard.set(data, forKey: key)
     UserDefaults.standard.synchronize()
