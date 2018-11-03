@@ -522,7 +522,7 @@ class ZoneWidget: ZView {
         if  let             zone = widgetZone {
             let           isHere = zone == gHere
             let        isGrabbed = zone.isGrabbed
-            textWidget.textColor = isGrabbed ? zone.grabbedTextColor : ZColor.black
+            textWidget.textColor = isGrabbed ? zone.grabbedTextColor : gDefaultTextColor
 
             if  gMathewStyleUI {
                 addBorder(thickness: CGFloat(gLineThickness), radius: CGFloat(50.0) / CGFloat(zone.level + 1), color: zone.color.cgColor)

@@ -821,10 +821,11 @@ extension Date {
 
 extension ZColor {
     
-    var converted: ZColor {
-        let b = 1.0 - brightnessComponent
+    var inverted: ZColor {
+        let b = max(0.0, min(1.0, 1.25 - brightnessComponent))
+        let s = max(0.0, min(1.0, 1.45 - saturationComponent))
 
-        return ZColor(calibratedHue: hueComponent, saturation: saturationComponent, brightness: b, alpha: alphaComponent)
+        return ZColor(calibratedHue: hueComponent, saturation: s, brightness: b, alpha: alphaComponent)
     }
     
 }

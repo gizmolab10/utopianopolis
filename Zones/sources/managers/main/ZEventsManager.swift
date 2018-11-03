@@ -17,8 +17,9 @@ import EventKit
 #endif
 
 
-let gEventsManager = ZEventsManager()
-let gEventStore    = EKEventStore()
+let gNotificationCenter = NotificationCenter.default
+let gEventsManager      = ZEventsManager()
+let gEventStore         = EKEventStore()
 
 
 class ZEventsManager: NSObject {
@@ -38,6 +39,18 @@ class ZEventsManager: NSObject {
 //    }
 //
 
+    
+    func setup() {
+        setupGlobalEventsMonitor()
+//        gNotificationCenter.addObserver(self, selector: #selector(ZEventsManager.handleDarkModeChange), name: Notification.Name("AppleInterfaceThemeChangedNotification"), object: nil)
+    }
+    
+    
+    func handleDarkModeChange(iNote: Notification) {
+        signalFor(nil, regarding: .redraw)
+    }
+    
+    
     func removeMonitorAsync(_ closure: Closure? = nil) {
         #if os(OSX)
             if  let save = monitor {

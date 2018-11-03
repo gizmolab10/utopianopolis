@@ -32,6 +32,7 @@ var              gDragPoint:           CGPoint? = nil
 var               gExpanded:          [String]? = nil
 
 var               gDarkMode:     InterfaceStyle { return InterfaceStyle() }
+var                 gIsDark:               Bool { return gDarkMode == .Dark }
 var                 gIsLate:               Bool { return gBatchManager.isLate }
 var             gIsDragging:               Bool { return gDraggedZone != nil }
 var       gInsertionsFollow:               Bool { return gInsertionMode == .follow }
@@ -41,6 +42,7 @@ var               gDotWidth:             Double { return gDotHeight * 0.75 }
 var               gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
 var             gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var          gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kReductionRatio) }
+var       gDefaultTextColor:             ZColor { return gIsDark ? ZColor.white : ZColor.black }
 var  gDarkerBackgroundColor:            CGColor { return gBackgroundColor.darker(by: 4.0).cgColor }
 var gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter(by: 4.0).cgColor }
 
@@ -347,8 +349,8 @@ func getPreferencesColor(for key: String, defaultColor: ZColor) -> ZColor {
         setPreferencesColor(color, for: key)
     }
     
-    if  gDarkMode == .Dark {
-        color = color.converted
+    if  gIsDark {
+        color = color.inverted
     }
 
     return color
@@ -358,8 +360,8 @@ func getPreferencesColor(for key: String, defaultColor: ZColor) -> ZColor {
 func setPreferencesColor(_ iColor: ZColor, for key: String) {
     var color = iColor
     
-    if  gDarkMode == .Dark {
-        color = color.converted
+    if  gIsDark {
+        color = color.inverted
     }
 
     let data: Data = NSKeyedArchiver.archivedData(withRootObject: color)

@@ -30,7 +30,6 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     var                                 isCached: Bool               =  false
     var                             cachedOffset: CGPoint            = .zero
     var                           keyboardHeight: CGFloat            =  0.0
-    let                       notificationCenter: NotificationCenter = .default
 
 
     // MARK:- hide and show
@@ -116,12 +115,12 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     var handleKeyboard: Bool? {
         get { return nil }
         set {
-            notificationCenter.removeObserver (self,                                                                name: .UIKeyboardWillShow, object: nil)
-            notificationCenter.removeObserver (self,                                                                name: .UIKeyboardWillHide, object: nil)
+            gNotificationCenter.removeObserver (self,                                                                name: .UIKeyboardWillShow, object: nil)
+            gNotificationCenter.removeObserver (self,                                                                name: .UIKeyboardWillHide, object: nil)
 
             if  newValue ?? false {
-                notificationCenter.addObserver(self, selector: #selector(ZPhoneController.updateHeightForKeyboard), name: .UIKeyboardWillShow, object: nil)
-                notificationCenter.addObserver(self, selector: #selector(ZPhoneController.updateHeightForKeyboard), name: .UIKeyboardWillHide, object: nil)
+                gNotificationCenter.addObserver(self, selector: #selector(ZPhoneController.updateHeightForKeyboard), name: .UIKeyboardWillShow, object: nil)
+                gNotificationCenter.addObserver(self, selector: #selector(ZPhoneController.updateHeightForKeyboard), name: .UIKeyboardWillHide, object: nil)
             }
         }
     }

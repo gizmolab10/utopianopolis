@@ -18,16 +18,20 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 
 
     static var window: ZoneWindow?
+    var observer: NSKeyValueObservation?
 
 
     override func awakeFromNib() {
         super.awakeFromNib()
 
         standardWindowButton(NSWindow.ButtonType.closeButton)!.isHidden = true // zoomButton miniaturizeButton
-
         delegate          = self
         ZoneWindow.window = self
         contentMinSize    = CGSize(width: 300, height: 300) // gWindowSize
+
+        observer = observe(\.effectiveAppearance) { [weak self] _, _  in
+            self?.signalFor(nil, regarding: .appearance)
+        }
     }
 
 

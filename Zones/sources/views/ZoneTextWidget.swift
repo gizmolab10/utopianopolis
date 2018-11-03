@@ -34,7 +34,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     
     func updateTextColor() {
         if  let  zone = widgetZone {
-            textColor = zone.colorized ? zone.grabbedTextColor : ZColor.black
+            textColor = zone.colorized ? zone.grabbedTextColor : gDefaultTextColor
         }
     }
 
@@ -120,7 +120,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     override func draw(_ dirtyRect: CGRect) {
         if  let  zone = widgetZone {
-            textColor = zone.colorized ? zone.color : ZColor.black
+            textColor = zone.colorized ? zone.color : gDefaultTextColor
         }
 
         super.draw(dirtyRect)

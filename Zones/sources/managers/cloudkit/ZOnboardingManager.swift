@@ -60,7 +60,7 @@ class ZOnboardingManager : ZOperationsManager {
     }
 
 
-    func observeUbiquity() { NotificationCenter.default.addObserver(self, selector: #selector(ZOnboardingManager.completeOnboarding), name: .NSUbiquityIdentityDidChange, object: nil) }
+    func observeUbiquity() { gNotificationCenter.addObserver(self, selector: #selector(ZOnboardingManager.completeOnboarding), name: .NSUbiquityIdentityDidChange, object: nil) }
     func internet()        { gHasInternet = isConnectedToNetwork }
 
 

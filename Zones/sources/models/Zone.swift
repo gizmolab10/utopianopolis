@@ -271,27 +271,40 @@ class Zone : ZRecord {
 
     var color: ZColor {
         get {
+            var computed = _color
+            
             if _color == nil {
-                if isBookmark {
-                    return bookmarkTarget?.color ?? kDefaultZoneColor
-                } else if let z = zoneColor, z != "" {
-                    _color      = z.color
+                if  let b = bookmarkTarget {
+                    return b.color
+                } else if let c = zoneColor, c != "" {
+                    computed    = c.color
+                    _color      = computed
                 } else if let p = parentZone, p != self, hasCompleteAncestorPath(toColor: true) {
                     return p.color
                 } else {
-                    return kDefaultZoneColor
+                    computed    = kDefaultZoneColor
                 }
             }
 
-            return _color!
+            if  gIsDark {
+                computed        = computed?.inverted
+            }
+
+            return computed!
         }
 
         set {
+            var computed = newValue
+
+            if  gIsDark {
+                computed = computed.inverted
+            }
+
             if isBookmark {
                 bookmarkTarget?.color  = newValue
-            } else if          _color != newValue {
-                _color                 = newValue
-                zoneColor              = newValue.string
+            } else if          _color != computed {
+                _color                 = computed
+                zoneColor              = computed.string
 
                 maybeNeedSave()
             }
@@ -304,40 +317,45 @@ class Zone : ZRecord {
             var        result = false
             let originalColor = color
 
-            traverseAncestors { iChild -> (ZTraverseStatus) in
-                if iChild.color != originalColor {
-                    return .eStop
+            if  let b = bookmarkTarget {
+                result = b.colorized
+            } else {
+                traverseAncestors { iChild -> (ZTraverseStatus) in
+                    if iChild.color != originalColor {
+                        return .eStop
+                    }
+                    
+                    if  let attributes = iChild.zoneAttributes,
+                        attributes.contains(kReverseColor) {
+                        result = !result
+                    }
+                    
+                    return .eContinue
                 }
-
-                if  let attributes = iChild.zoneAttributes,
-                    attributes.contains(kReverseColor) {
-                    result = !result
-                }
-
-                return .eContinue
             }
 
             return result
         }
 
         set {
-            var attributes = zoneAttributes ?? ""
-            let   oldValue = attributes.contains(kReverseColor)
-
-            if  newValue != oldValue {
-                if !newValue {
-                    attributes = attributes.replacingOccurrences(of: kReverseColor, with: "")
-                } else {
-
-                    if !attributes.contains(kReverseColor) {
+            if  let b = bookmarkTarget {
+                b.colorized = newValue
+            } else {
+                var attributes = zoneAttributes ?? ""
+                let   oldValue = attributes.contains(kReverseColor)
+                
+                if  newValue != oldValue {
+                    if !newValue {
+                        attributes = attributes.replacingOccurrences(of: kReverseColor, with: "")
+                    } else if !attributes.contains(kReverseColor) {
                         attributes.append(kReverseColor)
                     }
-                }
-
-                if  zoneAttributes != attributes {
-                    zoneAttributes  = attributes
-
-                    needSave()
+                    
+                    if  zoneAttributes != attributes {
+                        zoneAttributes  = attributes
+                        
+                        needSave()
+                    }
                 }
             }
         }
