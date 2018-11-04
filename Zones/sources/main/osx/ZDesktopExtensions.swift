@@ -168,11 +168,11 @@ extension NSColor {
     }
 
     func darker(by: CGFloat) -> NSColor {
-        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * by, brightness: brightnessComponent / (by / 3.0), alpha: alphaComponent)
+        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * (by * 2.0), brightness: brightnessComponent / (by / 3.0), alpha: alphaComponent)
     }
 
     func lighter(by: CGFloat) -> NSColor {
-        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent / by, brightness: brightnessComponent * (by / 3.0), alpha: alphaComponent)
+        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent / (by / 2.0), brightness: brightnessComponent * (by / 3.0), alpha: alphaComponent)
     }
 }
 
@@ -290,7 +290,7 @@ extension NSWindow {
 extension NSButtonCell {
     override open var objectValue: Any? {
         get { return title }
-        set { title = newValue as! String }
+        set { title = newValue as? String ?? "" }
     }
 }
 

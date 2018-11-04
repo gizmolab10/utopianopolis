@@ -24,10 +24,9 @@ class ZMainController: ZGenericController {
 
     @IBOutlet var detailsWidth:       NSLayoutConstraint?
     @IBOutlet var searchBoxHeight:    NSLayoutConstraint?
-    @IBOutlet var favoritesHeight:    NSLayoutConstraint?
     @IBOutlet var searchResultsView:  ZView?
     @IBOutlet var searchBoxView:      ZView?
-    @IBOutlet var insertView:         ZView?
+    @IBOutlet var detailView:         ZView?
     @IBOutlet var editorView:         ZView?
     @IBOutlet var mainView:           ZView?
 
@@ -60,10 +59,7 @@ class ZMainController: ZGenericController {
                 assignAsFirstResponder(nil)
                 showAsSearching(false)
             }
-        default:
-            if  let height = gEditorController?.favoritesHeight {
-                favoritesHeight?.constant = height
-            }
+        default: break
         }
     }
 
@@ -73,7 +69,7 @@ class ZMainController: ZGenericController {
 
         show( iSearching, iView: searchResultsView!, inView: mainView!)
         show(!iSearching, iView: editorView!,        inView: mainView!)
-        show(!iSearching, iView: insertView!,        inView: view)
+        show(!iSearching, iView: detailView!,        inView: view)
     }
 
 

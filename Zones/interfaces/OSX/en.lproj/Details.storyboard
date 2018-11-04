@@ -201,14 +201,14 @@
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZDetailsController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="263"/>
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="275"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="162" width="226" height="101"/>
+                                <rect key="frame" x="0.0" y="0.0" width="226" height="275"/>
                                 <subviews>
                                     <customView identifier="information" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Thoughtful" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="51" width="226" height="50"/>
+                                        <rect key="frame" x="0.0" y="225" width="226" height="50"/>
                                         <subviews>
                                             <customView canDrawConcurrently="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="31" width="226" height="19"/>
@@ -247,6 +247,13 @@
                                                     <constraint firstItem="fsz-8k-F3y" firstAttribute="leading" secondItem="xwW-xc-XIh" secondAttribute="leading" id="kaj-xz-Sm0"/>
                                                 </constraints>
                                             </customView>
+                                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="ST0-K7-Zcw">
+                                                <rect key="frame" x="0.0" y="47" width="226" height="5"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="1" id="8uv-FQ-A6Z"/>
+                                                    <constraint firstAttribute="height" constant="1" id="C2O-FA-fBm"/>
+                                                </constraints>
+                                            </box>
                                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Information">
                                                 <rect key="frame" x="0.0" y="0.0" width="226" height="31"/>
                                                 <connections>
@@ -259,22 +266,26 @@
                                             <constraint firstItem="xwW-xc-XIh" firstAttribute="top" secondItem="M2W-8y-R0e" secondAttribute="top" id="UYF-m0-sHq"/>
                                             <constraint firstAttribute="bottom" secondItem="Chx-83-qGo" secondAttribute="bottom" id="cRs-A2-7M8"/>
                                             <constraint firstAttribute="trailing" secondItem="xwW-xc-XIh" secondAttribute="trailing" id="fC4-RT-N24"/>
+                                            <constraint firstItem="ST0-K7-Zcw" firstAttribute="leading" secondItem="M2W-8y-R0e" secondAttribute="leading" id="oln-uF-ZIq"/>
+                                            <constraint firstItem="ST0-K7-Zcw" firstAttribute="top" secondItem="M2W-8y-R0e" secondAttribute="top" id="rkc-oF-hwT"/>
                                             <constraint firstItem="Chx-83-qGo" firstAttribute="top" secondItem="xwW-xc-XIh" secondAttribute="bottom" id="tm3-5c-oP9"/>
                                             <constraint firstItem="Chx-83-qGo" firstAttribute="leading" secondItem="M2W-8y-R0e" secondAttribute="leading" id="uqm-Ow-jfC"/>
                                             <constraint firstAttribute="trailing" secondItem="Chx-83-qGo" secondAttribute="trailing" id="zGJ-Lo-Ngz"/>
+                                            <constraint firstAttribute="trailing" secondItem="ST0-K7-Zcw" secondAttribute="trailing" id="zXN-jT-VnS"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="bannerView" destination="xwW-xc-XIh" id="To1-48-Suc"/>
                                             <outlet property="hideableView" destination="Chx-83-qGo" id="Qre-NM-FhC"/>
+                                            <outlet property="stackableBelow" destination="9j5-fI-wCz" id="Hi6-UX-1MC"/>
                                             <outlet property="titleButton" destination="fsz-8k-F3y" id="Fmc-3C-agP"/>
                                             <outlet property="toggleIcon" destination="hIy-eV-7gW" id="Pdh-ir-ANX"/>
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Thoughtful" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="226" height="50"/>
+                                        <rect key="frame" x="0.0" y="174" width="226" height="50"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="31" width="226" height="19"/>
+                                                <rect key="frame" x="0.0" y="30" width="226" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Jzv-og-1RG">
                                                         <rect key="frame" x="0.0" y="2" width="226" height="16"/>
@@ -310,18 +321,27 @@
                                                     <constraint firstItem="Jzv-og-1RG" firstAttribute="leading" secondItem="Ul6-QC-jDi" secondAttribute="leading" id="tgg-ic-fmn"/>
                                                 </constraints>
                                             </customView>
+                                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="8XE-7N-YUV">
+                                                <rect key="frame" x="0.0" y="47" width="226" height="5"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="1" id="rNK-RF-nmQ"/>
+                                                </constraints>
+                                            </box>
                                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="btT-FF-Ema" userLabel="Preferences">
-                                                <rect key="frame" x="0.0" y="0.0" width="226" height="31"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="226" height="30"/>
                                                 <connections>
                                                     <segue destination="Naq-se-Exq" kind="embed" id="Pht-fq-dCw"/>
                                                 </connections>
                                             </containerView>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstItem="Ul6-QC-jDi" firstAttribute="top" secondItem="9j5-fI-wCz" secondAttribute="top" id="2bc-yc-5pZ"/>
+                                            <constraint firstItem="Ul6-QC-jDi" firstAttribute="top" secondItem="9j5-fI-wCz" secondAttribute="top" constant="1" id="2bc-yc-5pZ"/>
                                             <constraint firstItem="btT-FF-Ema" firstAttribute="leading" secondItem="9j5-fI-wCz" secondAttribute="leading" id="540-dc-ukq"/>
+                                            <constraint firstItem="8XE-7N-YUV" firstAttribute="leading" secondItem="9j5-fI-wCz" secondAttribute="leading" id="7Eg-Qa-rAU"/>
+                                            <constraint firstAttribute="trailing" secondItem="8XE-7N-YUV" secondAttribute="trailing" id="RFB-It-BUq"/>
                                             <constraint firstAttribute="trailing" secondItem="btT-FF-Ema" secondAttribute="trailing" id="UWc-w8-xle"/>
                                             <constraint firstItem="Ul6-QC-jDi" firstAttribute="leading" secondItem="9j5-fI-wCz" secondAttribute="leading" id="Yzt-YX-lLE"/>
+                                            <constraint firstItem="Ul6-QC-jDi" firstAttribute="top" secondItem="8XE-7N-YUV" secondAttribute="bottom" id="Zbg-j9-3ji"/>
                                             <constraint firstItem="btT-FF-Ema" firstAttribute="top" secondItem="Ul6-QC-jDi" secondAttribute="bottom" id="fGM-7i-bOn"/>
                                             <constraint firstAttribute="bottom" secondItem="btT-FF-Ema" secondAttribute="bottom" id="iLf-Nf-jBG"/>
                                             <constraint firstAttribute="trailing" secondItem="Ul6-QC-jDi" secondAttribute="trailing" id="wju-QJ-L7S"/>
@@ -329,12 +349,13 @@
                                         <connections>
                                             <outlet property="bannerView" destination="Ul6-QC-jDi" id="HGT-hA-9sl"/>
                                             <outlet property="hideableView" destination="btT-FF-Ema" id="owk-cx-MOC"/>
+                                            <outlet property="stackableBelow" destination="UhT-Vl-h0f" id="Fk1-km-xVO"/>
                                             <outlet property="titleButton" destination="Jzv-og-1RG" id="XYm-cb-XjE"/>
                                             <outlet property="toggleIcon" destination="aCk-9D-lHI" id="lcf-J5-cK6"/>
                                         </connections>
                                     </customView>
                                     <customView identifier="debug" hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UhT-Vl-h0f" userLabel="Debug View" customClass="ZStackableView" customModule="Thoughtful" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="-51" width="226" height="50"/>
+                                        <rect key="frame" x="0.0" y="123" width="226" height="50"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="7Zo-Cx-wV6" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="31" width="226" height="19"/>
@@ -373,6 +394,12 @@
                                                     <constraint firstAttribute="trailing" secondItem="ZY6-bq-evl" secondAttribute="trailing" constant="8" id="zVv-Pf-nRF"/>
                                                 </constraints>
                                             </customView>
+                                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="yGW-TT-r3v">
+                                                <rect key="frame" x="0.0" y="-1" width="226" height="5"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="1" id="o0C-WL-DyL"/>
+                                                </constraints>
+                                            </box>
                                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="AuQ-dr-yPp" userLabel="Debug">
                                                 <rect key="frame" x="0.0" y="0.0" width="226" height="31"/>
                                                 <connections>
@@ -383,24 +410,28 @@
                                         <constraints>
                                             <constraint firstAttribute="bottom" secondItem="AuQ-dr-yPp" secondAttribute="bottom" id="BHb-lW-f8W"/>
                                             <constraint firstItem="7Zo-Cx-wV6" firstAttribute="leading" secondItem="UhT-Vl-h0f" secondAttribute="leading" id="Edd-30-hlZ"/>
+                                            <constraint firstAttribute="trailing" secondItem="yGW-TT-r3v" secondAttribute="trailing" id="SGC-Ri-hYw"/>
                                             <constraint firstItem="AuQ-dr-yPp" firstAttribute="top" secondItem="7Zo-Cx-wV6" secondAttribute="bottom" id="bOw-rV-EBN"/>
+                                            <constraint firstItem="yGW-TT-r3v" firstAttribute="leading" secondItem="UhT-Vl-h0f" secondAttribute="leading" id="ghB-JE-bmX"/>
                                             <constraint firstAttribute="trailing" secondItem="7Zo-Cx-wV6" secondAttribute="trailing" id="hEY-SI-git"/>
                                             <constraint firstItem="AuQ-dr-yPp" firstAttribute="leading" secondItem="UhT-Vl-h0f" secondAttribute="leading" id="iUa-l7-JdK"/>
                                             <constraint firstAttribute="trailing" secondItem="AuQ-dr-yPp" secondAttribute="trailing" id="no7-dt-HUl"/>
                                             <constraint firstItem="7Zo-Cx-wV6" firstAttribute="top" secondItem="UhT-Vl-h0f" secondAttribute="top" id="rIo-pI-KeC"/>
+                                            <constraint firstAttribute="bottom" secondItem="yGW-TT-r3v" secondAttribute="bottom" constant="1" id="zvS-gK-i3m"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="bannerView" destination="7Zo-Cx-wV6" id="bUH-OL-1eu"/>
                                             <outlet property="hideableView" destination="AuQ-dr-yPp" id="D8x-dV-s3B"/>
+                                            <outlet property="stackableBelow" destination="q69-Nq-Tsm" id="1by-vh-18n"/>
                                             <outlet property="titleButton" destination="2ku-Dn-LFn" id="OPT-Hy-CdH"/>
                                             <outlet property="toggleIcon" destination="ZY6-bq-evl" id="pA9-Iv-MOA"/>
                                         </connections>
                                     </customView>
                                     <customView identifier="tools" hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q69-Nq-Tsm" userLabel="Tools View" customClass="ZStackableView" customModule="Thoughtful" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="-102" width="226" height="50"/>
+                                        <rect key="frame" x="0.0" y="1" width="226" height="121"/>
                                         <subviews>
-                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dnz-Gb-8cH" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="31" width="226" height="19"/>
+                                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="Dnz-Gb-8cH" userLabel="Title and Toggle">
+                                                <rect key="frame" x="0.0" y="102" width="226" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OVu-DX-v9I">
                                                         <rect key="frame" x="0.0" y="2" width="226" height="16"/>
@@ -436,14 +467,22 @@
                                                     <constraint firstItem="bee-ew-HYp" firstAttribute="centerY" secondItem="Dnz-Gb-8cH" secondAttribute="centerY" id="yN2-VH-qCK"/>
                                                 </constraints>
                                             </customView>
+                                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="d8H-EM-TcK">
+                                                <rect key="frame" x="0.0" y="120" width="226" height="5"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="1" id="HEB-bg-r3e"/>
+                                                </constraints>
+                                            </box>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XUr-go-ovY" userLabel="Tools">
-                                                <rect key="frame" x="0.0" y="0.0" width="226" height="31"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="226" height="91"/>
                                                 <connections>
                                                     <segue destination="M1d-6V-b2Q" kind="embed" id="B7U-nN-bjh"/>
                                                 </connections>
                                             </containerView>
                                         </subviews>
                                         <constraints>
+                                            <constraint firstItem="Dnz-Gb-8cH" firstAttribute="top" secondItem="d8H-EM-TcK" secondAttribute="bottom" constant="1" id="54j-KX-Iv2"/>
+                                            <constraint firstItem="d8H-EM-TcK" firstAttribute="leading" secondItem="q69-Nq-Tsm" secondAttribute="leading" id="C36-wS-e6j"/>
                                             <constraint firstItem="Dnz-Gb-8cH" firstAttribute="leading" secondItem="q69-Nq-Tsm" secondAttribute="leading" id="UCI-ET-KKd"/>
                                             <constraint firstItem="XUr-go-ovY" firstAttribute="top" secondItem="Dnz-Gb-8cH" secondAttribute="bottom" id="b6X-vp-ihT"/>
                                             <constraint firstItem="Dnz-Gb-8cH" firstAttribute="top" secondItem="q69-Nq-Tsm" secondAttribute="top" id="cpb-i7-nNc"/>
@@ -451,6 +490,7 @@
                                             <constraint firstAttribute="trailing" secondItem="Dnz-Gb-8cH" secondAttribute="trailing" id="h5E-Mj-iAZ"/>
                                             <constraint firstAttribute="trailing" secondItem="XUr-go-ovY" secondAttribute="trailing" id="m4T-pT-459"/>
                                             <constraint firstAttribute="bottom" secondItem="XUr-go-ovY" secondAttribute="bottom" id="rFI-5e-S8W"/>
+                                            <constraint firstAttribute="trailing" secondItem="d8H-EM-TcK" secondAttribute="trailing" id="tYS-SJ-jM9"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="bannerView" destination="Dnz-Gb-8cH" id="dWu-dm-WWO"/>
@@ -461,6 +501,7 @@
                                     </customView>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="q69-Nq-Tsm" secondAttribute="bottom" constant="1" id="4rj-M8-w9V"/>
                                     <constraint firstItem="M2W-8y-R0e" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="5vd-TT-dHx"/>
                                     <constraint firstAttribute="trailing" secondItem="UhT-Vl-h0f" secondAttribute="trailing" id="94J-PE-I6g"/>
                                     <constraint firstItem="UhT-Vl-h0f" firstAttribute="top" secondItem="9j5-fI-wCz" secondAttribute="bottom" constant="1" id="AYw-Xr-YAl"/>
@@ -470,8 +511,8 @@
                                     <constraint firstItem="9j5-fI-wCz" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="NFa-oz-tCT"/>
                                     <constraint firstItem="q69-Nq-Tsm" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="Sns-ea-bR9"/>
                                     <constraint firstAttribute="trailing" secondItem="q69-Nq-Tsm" secondAttribute="trailing" id="ZUC-ce-LOv"/>
-                                    <constraint firstItem="M2W-8y-R0e" firstAttribute="top" secondItem="1wo-H2-e9s" secondAttribute="top" id="eao-wQ-GIr"/>
                                     <constraint firstItem="9j5-fI-wCz" firstAttribute="top" secondItem="M2W-8y-R0e" secondAttribute="bottom" constant="1" id="jx7-R7-0wq"/>
+                                    <constraint firstItem="M2W-8y-R0e" firstAttribute="top" secondItem="1wo-H2-e9s" secondAttribute="top" id="nyI-lZ-f5C"/>
                                     <constraint firstAttribute="trailing" secondItem="9j5-fI-wCz" secondAttribute="trailing" id="pCn-yA-AaQ"/>
                                 </constraints>
                                 <visibilityPriorities>
@@ -487,11 +528,21 @@
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
+                            <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="nfQ-R8-yKp">
+                                <rect key="frame" x="223" y="0.0" width="5" height="275"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="1" id="g1E-ta-kaB"/>
+                                </constraints>
+                            </box>
                         </subviews>
                         <constraints>
                             <constraint firstItem="1wo-H2-e9s" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" id="1WF-pU-wVa"/>
+                            <constraint firstItem="1wo-H2-e9s" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" id="BzS-D9-Aca"/>
                             <constraint firstAttribute="trailing" secondItem="1wo-H2-e9s" secondAttribute="trailing" id="NxT-zU-3MZ"/>
-                            <constraint firstItem="1wo-H2-e9s" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" id="zRX-tf-U45"/>
+                            <constraint firstAttribute="bottom" secondItem="nfQ-R8-yKp" secondAttribute="bottom" id="QGH-yE-z7s"/>
+                            <constraint firstItem="nfQ-R8-yKp" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" id="cdW-pg-kIg"/>
+                            <constraint firstAttribute="bottom" secondItem="1wo-H2-e9s" secondAttribute="bottom" id="gIv-Hg-KHJ"/>
+                            <constraint firstAttribute="trailing" secondItem="nfQ-R8-yKp" secondAttribute="trailing" id="nJQ-4e-hzj"/>
                         </constraints>
                     </view>
                     <connections>
@@ -500,7 +551,7 @@
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-644" y="2171"/>
+            <point key="canvasLocation" x="-638" y="2160.5"/>
         </scene>
         <!--Preferences Controller-->
         <scene sceneID="n3v-Vu-MZq">

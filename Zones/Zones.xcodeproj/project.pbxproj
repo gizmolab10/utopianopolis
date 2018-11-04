@@ -193,13 +193,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		0C05C0FF21012633001F2015 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0CA04B0C1D2ECF1A001892E5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0C05C0FA210125B8001F2015;
-			remoteInfo = CommonCryptoModuleMap;
-		};
 		0CA04B291D2ECF1B001892E5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0CA04B0C1D2ECF1A001892E5 /* Project object */;
@@ -853,7 +846,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				0C05C10021012633001F2015 /* PBXTargetDependency */,
 			);
 			name = Thoughtful;
 			productName = Zones;
@@ -1366,11 +1358,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0C05C10021012633001F2015 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0C05C0FA210125B8001F2015 /* CommonCryptoModuleMap */;
-			targetProxy = 0C05C0FF21012633001F2015 /* PBXContainerItemProxy */;
-		};
 		0CA04B2A1D2ECF1B001892E5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0CA04B131D2ECF1A001892E5 /* Thoughtful */;
@@ -1716,7 +1703,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.ZonesTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Zones.app/Contents/MacOS/Zones";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Thoughtful.app/Contents/MacOS/Thoughtful";
 			};
 			name = Debug;
 		};
@@ -1731,7 +1718,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.ZonesTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Zones.app/Contents/MacOS/Zones";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Thoughtful.app/Contents/MacOS/Thoughtful";
 			};
 			name = Release;
 		};

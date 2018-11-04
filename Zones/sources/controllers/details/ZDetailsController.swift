@@ -18,6 +18,7 @@ class ZDetailsController: ZGenericController {
 
 
     @IBOutlet var stackView: NSStackView?
+    var viewsByID = [Int: ZStackableView]()
 
 
     override func setup() {
@@ -30,41 +31,25 @@ class ZDetailsController: ZGenericController {
         update()
     }
 
+    
+    func register(id: ZDetailsViewID, for view: ZStackableView) {
+        viewsByID[id.rawValue] = view
+    }
+    
 
     func update() {
-        // applyGradient()
-        
-        stackView?.applyToAllSubviews { iView in
-            if  let stackableView = iView as? ZStackableView {
-                stackableView.update()
-            }
-        }
-    }
+        let ids: [ZDetailsViewID] = [.Tools, .Debug, .Preferences, .Information]
 
-
-    func applyGradient() {
-        if  let gradientView = stackView {
-            let gradientLayer = CAGradientLayer()
-            gradientLayer.frame = gradientView.bounds
-            gradientLayer.colors = [gDarkerBackgroundColor, gLighterBackgroundColor]
-            gradientView.zlayer = gradientLayer
+        for id in ids {
+            view(for: id)?.update()
         }
     }
     
     
     func view(for id: ZDetailsViewID) -> ZStackableView? {
-        var found: ZStackableView?  = nil
-
-        stackView?.applyToAllSubviews { iView in
-            if  let stackableView = iView as? ZStackableView,
-                stackableView.identity == id {
-                found = stackableView
-            }
-        }
-        
-        return found
+        return viewsByID[id.rawValue]
     }
-    
+
     
     func displayViewsFor(ids: [ZDetailsViewID]) {
         for id in ids {

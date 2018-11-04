@@ -32,7 +32,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     var    priorScrollLocation = CGPoint.zero
     var        rubberbandStart = CGPoint.zero
     let              doneState: [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
-    var        favoritesHeight:  CGFloat { return favoritesRootWidget.frame.size.height + 40.0 - (gGenericOffset.height / 3.0) }
     var           clickGesture:  ZGestureRecognizer?
     var          moveUpGesture:  ZGestureRecognizer?
     var        movementGesture:  ZGestureRecognizer?

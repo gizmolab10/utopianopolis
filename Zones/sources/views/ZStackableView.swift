@@ -23,6 +23,7 @@ class ZStackableView: ZView {
     @IBOutlet var     hideableView : ZView?
     @IBOutlet var      titleButton : ZButton?
     @IBOutlet var       toggleIcon : ZButton?
+    @IBOutlet var   stackableBelow : ZStackableView?
     let               debugViewIDs : [ZDetailsViewID] = [.Debug, .Tools]
     var                isDebugView : Bool { return debugViewIDs.contains(identity) }
 
@@ -36,7 +37,6 @@ class ZStackableView: ZView {
                 switch kind {
                 case "preferences": return .Preferences
                 case "information": return .Information
-                case   "shortcuts": return .Shortcuts
                 case       "debug": return .Debug
                 case       "tools": return .Tools
                 default:            return .All
@@ -76,6 +76,7 @@ class ZStackableView: ZView {
 
     override func awakeFromNib() {
         super.awakeFromNib()
+        gDetailsController?.register(id: identity, for: self)
         update()
     }
 
@@ -84,7 +85,11 @@ class ZStackableView: ZView {
         titleButton?.state = NSOnState
         
         if  isDebugView {
-            isHidden = !gShowDebugDetails
+            if !gShowDebugDetails {
+                removeFromSuperview()
+            } else if superview == nil {
+                gDetailsController?.view.addSubview(self)
+            }
         }
 
         if !isDebugView || gShowDebugDetails {
@@ -135,10 +140,26 @@ class ZStackableView: ZView {
                 make.top.equalTo((self.bannerView?.snp.bottom)!)
                 make.left.right.bottom.equalTo(self)
             }
-            
-            FOREGROUND(after: 0.2) {
-                self.hideableView?.setNeedsDisplay()
-            }
+//
+//            let  isLast = stackableBelow?.superview == nil
+//            let isFirst = identity == .Information
+//
+//            snp.removeConstraints()
+//            snp.makeConstraints { make in
+//                if isFirst {
+//                    make.top.equalToSuperview()
+//                }
+//
+//                if  isLast {
+//                    make.bottom.equalToSuperview()
+//                } else {
+//                    make.bottom.equalTo(stackableBelow!)
+//                }
+//            }
+
+//            FOREGROUND(after: 0.2) {
+//                self.hideableView?.setNeedsDisplay()
+//            }
         }
     }
 }
