@@ -100,7 +100,7 @@ class ZEditingManager: NSObject {
                     case "d":      addIdeaFromSelectedText()
                     case "f":      search()
                     case "/":      gFocusManager.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }
-                    case "?":      gDetailsController?.displayViewsFor(ids: [.Shortcuts])
+                    case "?":      showKeyboardShortcuts()
                     case kSpace:   addIdea()
                     default:       break
                     }
