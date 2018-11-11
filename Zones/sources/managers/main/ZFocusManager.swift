@@ -163,7 +163,8 @@ class ZFocusManager: NSObject {
 
 
     func focus(kind: ZFocusKind, _ isCommand: Bool = false, _ atArrival: @escaping Closure) {
-        if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelectionManager.firstGrab {
+        if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelectionManager.firstGrab,
+            (!zone.isInFavorites || zone.isFavorite) {
             let focusClosure = { (zone: Zone) in
                 gHere = zone
 

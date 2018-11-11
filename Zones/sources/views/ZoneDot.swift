@@ -116,7 +116,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
 
                 if !iWidget.isInMain {
-                    width  *= kReductionRatio
+                    width  *= kFavoritesReduction
                 }
 
                 make.size.equalTo(CGSize(width: width, height: height))
@@ -244,7 +244,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawWriteAccessDecoration(of type: ZDecorationType, in iDirtyRect: CGRect) {
-        let     ratio = (widget?.isInMain ?? true) ? 1.0 : kReductionRatio
+        let     ratio = (widget?.isInMain ?? true) ? 1.0 : kFavoritesReduction
         var thickness = CGFloat(gLineThickness + 0.1) * ratio
         var      path = ZBezierPath(rect: CGRect.zero)
         var      rect = CGRect.zero
@@ -275,14 +275,16 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     func drawTraitIndicator(for iZone: Zone, isFilled: Bool, in iDirtyRect: CGRect) {
         let traits = iZone.traits
         for (type, _) in traits {
-            let string = type.rawValue
-            let   size = CGFloat(gDotHeight - 2.0)
-            let   font = NSFont.boldSystemFont(ofSize: size)
-            let height = string.heightForFont(font, options: .usesDeviceMetrics)
-            let xDelta = size / 3.0
-            let yDelta = (height - iDirtyRect.height) / 2.0 - 1.0
-            let   rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: -0.5, dy: -3.0)
-            let  color = isFilled ? gBackgroundColor : iZone.color
+            let   string = type.rawValue
+            let isInMain = widget?.isInMain ?? true
+            let    ratio = CGFloat(isInMain ? 1.0 : Double(kFavoritesReduction))
+            let     size = CGFloat(gDotHeight - 2.0) * ratio
+            let     font = NSFont.boldSystemFont(ofSize: size)
+            let   height = string.heightForFont(font, options: .usesDeviceMetrics)
+            let   xDelta = size / 3.0
+            let   yDelta = (height - iDirtyRect.height) / CGFloat(2.0) / ratio
+            let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: -0.3, dy: CGFloat(-1.5 * ratio))
+            let    color = isFilled ? gBackgroundColor : iZone.color
 
             string.draw(in: rect, withAttributes: [NSForegroundColorAttributeName : color, NSFontAttributeName: font])
 

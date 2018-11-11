@@ -636,12 +636,12 @@ class Zone : ZRecord {
 
     var isTextEditable: Bool {
         if let t = bookmarkTarget {
-            return    t.isTextEditable
+            return t.isTextEditable
         } else if directWritable {
             return true
         } else if directReadOnly {
             return false
-        } else if let p = parentZone, p != self {
+        } else if let p = parentZone, p != self, p.hasCompleteAncestorPath() {
             return p.directChildrenWritable ? true : p.isTextEditable
         }
 
@@ -726,7 +726,11 @@ class Zone : ZRecord {
 
 
     func dragDotClicked(isCommand: Bool, isShift: Bool) {
-        if isCommand || (isDoubleClick && isGrabbed) {
+        let shouldFocus = isCommand || (isDoubleClick && isGrabbed)
+        
+        timeOfLastDragDotClick = Date()
+
+        if  shouldFocus {
             grab() // narrow selection to just this one zone
             gFocusManager.focus(kind: .eSelected) {
                 gEditingManager.redrawSyncRedraw()
@@ -738,8 +742,6 @@ class Zone : ZRecord {
         } else {
             grab()
         }
-
-        timeOfLastDragDotClick = Date()
 
         gEditingManager.signalFor(nil, regarding: .details)
     }

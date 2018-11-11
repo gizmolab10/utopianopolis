@@ -836,7 +836,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Thoughtful" */;
 			buildPhases = (
-				0C05C0F921012466001F2015 /* ShellScript */,
 				0CA04B101D2ECF1A001892E5 /* Sources */,
 				0C1EC7C820A8D91F005E2DA2 /* ShellScript */,
 				0CA04B111D2ECF1A001892E5 /* Frameworks */,
@@ -1114,19 +1113,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0C05C0F921012466001F2015 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "COMMON_CRYPTO_DIR=\"${SDKROOT}/usr/include/CommonCrypto\"\nif [ -f \"${COMMON_CRYPTO_DIR}/module.modulemap\" ]\nthen\necho \"CommonCrypto already exists, skipping\"\nelse\necho \"generate the module map, using the original code above\"\nfi";
-		};
 		0C05C0FE210125E7001F2015 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

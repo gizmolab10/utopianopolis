@@ -18,6 +18,9 @@ import Foundation
 
 class ZToolsController: ZGenericTableController {
 
+    
+    override var backgroundColor: CGColor { return gDarkishBackgroundColor }
+
 
     enum ZToolKind: Int {
         case eRetry

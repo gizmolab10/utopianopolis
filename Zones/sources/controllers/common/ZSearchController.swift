@@ -45,7 +45,11 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         let string = event.input
         let    key = string[string.startIndex].description
 
-        if  key == "\r" {
+        if  key == kEscape {
+            endSearch()
+            
+            return nil
+        } else if  key == "\r" {
             switch state {
             case .entry: endSearch();             return nil
             case .find: if searchBoxText == nil { return nil }

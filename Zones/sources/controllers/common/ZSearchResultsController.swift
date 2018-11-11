@@ -253,6 +253,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         let        flags = event.modifierFlags
         let    isCommand = flags.isCommand
         let          key = string[string.startIndex].description
+        let     exitKeys = ["\r", kEscape]
 
         if  let    arrow = key.arrow {
             switch arrow {
@@ -261,7 +262,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             case  .left:    clear();    return nil
             case .right: if resolve() { return nil }; break
             }
-        } else if    key == "\r", // N.B. test key first since getInput has a possible side-effect of exiting search
+        } else if exitKeys.contains(key), // N.B. test key first since getInput has a possible side-effect of exiting search
             let        s  = searchController,
             s.searchBoxText == nil {
             clear()

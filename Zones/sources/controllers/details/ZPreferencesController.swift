@@ -30,6 +30,7 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var            thickness: ZSlider?
     @IBOutlet var     clearColorButton: ZButton?
     @IBOutlet var           ideasLabel: ZTextField?
+    override var backgroundColor: CGColor { return gDarkishBackgroundColor }
 
 
     override func setup() {

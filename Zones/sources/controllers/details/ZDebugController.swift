@@ -23,6 +23,7 @@ class ZDebugController: ZGenericController {
     @IBOutlet var  statusLabel: ZTextField?
     @IBOutlet var  traitsLabel: ZTextField?
     @IBOutlet var  recordLabel: ZTextField?
+    override var backgroundColor: CGColor { return gDarkishBackgroundColor }
     var grab: Zone? = nil
 
 

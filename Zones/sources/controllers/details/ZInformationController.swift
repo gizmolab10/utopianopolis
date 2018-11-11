@@ -24,7 +24,8 @@ class ZInformationController: ZGenericController {
     @IBOutlet var   graphNameLabel: ZTextField?
     @IBOutlet var     versionLabel: ZTextField?
     @IBOutlet var       levelLabel: ZTextField?
-    var                currentZone: Zone { return gSelectionManager.rootMostMoveable }
+    var                currentZone: Zone    { return gSelectionManager.rootMostMoveable }
+    override var   backgroundColor: CGColor { return gDarkishBackgroundColor }
 
 
     override func setup() {

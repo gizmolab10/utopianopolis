@@ -176,6 +176,17 @@ extension UIColor {
         return UIColor(hue: hue, saturation: saturation * 1.1, brightness: brightness / by, alpha: alpha)
     }
 
+    func darkish(by: CGFloat) -> NSColor {
+        var        hue: CGFloat = 0.0
+        var      alpha: CGFloat = 0.0
+        var saturation: CGFloat = 0.0
+        var brightness: CGFloat = 0.0
+        
+        getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+        
+        return UIColor(hue: hue, saturation: saturation, brightness: brightness / by, alpha: alpha)
+    }
+
     func lighter(by: CGFloat) -> UIColor {
         var        hue: CGFloat = 0.0
         var      alpha: CGFloat = 0.0

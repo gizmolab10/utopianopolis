@@ -19,6 +19,7 @@ import Foundation
 class ZGenericController: ZController {
     var useDefaultBackgroundColor = true
     var controllerID = ZControllerID.undefined
+    var backgroundColor: CGColor { return gBackgroundColor.cgColor }
     func handleSignal(_ object: Any?, iKind: ZSignalKind) {}
     func displayActivity(_ show: Bool) {}
     func setup() {}
@@ -29,7 +30,7 @@ class ZGenericController: ZController {
 
         gControllersManager.register(self, iID: controllerID) { object, kind in
             if  self.useDefaultBackgroundColor {
-                self.view.zlayer.backgroundColor = gBackgroundColor.cgColor
+                self.view.zlayer.backgroundColor = self.backgroundColor
             }
 
             if  kind != .error && gIsReadyToShowUI {

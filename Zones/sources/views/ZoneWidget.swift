@@ -35,7 +35,7 @@ class ZoneWidget: ZView {
     let             childrenView = ZView          ()
     private var  childrenWidgets = [ZoneWidget]   ()
     var                 isInMain :        Bool = false
-    var                    ratio :     CGFloat { return isInMain ? 1.0 : kReductionRatio }
+    var                    ratio :     CGFloat { return isInMain ? 1.0 : kFavoritesReduction }
     var             parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
     weak var          widgetZone :       Zone?
 
@@ -174,7 +174,7 @@ class ZoneWidget: ZView {
         childrenView.snp.removeConstraints()
         childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
             let widthOffset = gDotWidth + Double(gGenericOffset.height) * 1.2
-            let       ratio = isInMain ? 1.0 : kReductionRatio / 3.0
+            let       ratio = isInMain ? 1.0 : kFavoritesReduction / 3.0
 
             make.left.equalTo(textWidget.snp.right).offset(widthOffset * Double(ratio))
             make.bottom.top.right.equalTo(self)
@@ -261,7 +261,7 @@ class ZoneWidget: ZView {
                         let    isAbove = relation == .above || (!gInsertionsFollow && (lastIndex == 0 || relation == .upon))
                         let multiplier = (isAbove ? 1.0 : -1.0) * gVerticalWeight
                         let    gHeight = Double(gGenericOffset.height)
-                        let      delta = (gHeight + (gDotHeight * 0.75)) * multiplier
+                        let      delta = (gHeight + gDotWidth) * multiplier
                         rect           = rect.offsetBy(dx: 0.0, dy: CGFloat(delta))
 
                     } else if lastIndex < zone.count, let secondDot = dot(at: lastIndex) {
