@@ -32,6 +32,23 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     var                   type = ZTextType.name
 
     
+    var selectionRange: NSRange {
+        if  var range = currentEditor()?.selectedRange {
+            if  range.length < 1 {
+                range.length = 1
+
+                if  range.location > 0 {
+                    range.location -= 1
+                }
+            }
+            
+            return range
+        }
+        
+        return NSRange()
+    }
+    
+
     func updateTextColor() {
         if  let  zone = widgetZone {
             textColor = zone.colorized ? zone.grabbedTextColor : gDefaultTextColor

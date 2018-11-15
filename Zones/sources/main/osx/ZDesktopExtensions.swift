@@ -355,7 +355,7 @@ extension ZoneTextWidget {
             widgetZone?.zoneName = kLineOfDashes
 
             gTextManager.updateText(inZone: widgetZone)
-
+            gTextManager.stopCurrentEdit()
         } else {
             updateGUI()
         }
