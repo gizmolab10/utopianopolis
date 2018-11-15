@@ -280,10 +280,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             let    ratio = CGFloat(isInMain ? 1.0 : Double(kFavoritesReduction))
             let     size = CGFloat(gDotHeight - 2.0) * ratio
             let     font = NSFont.boldSystemFont(ofSize: size)
-            let   height = string.heightForFont(font, options: .usesDeviceMetrics)
-            let   xDelta = size / 3.0
-            let   yDelta = (height - iDirtyRect.height) / CGFloat(2.0) / ratio
-            let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: -0.3, dy: CGFloat(-1.5 * ratio))
+            let   height = string.heightForFont(font, options: .usesDeviceMetrics) + (isInMain ? 1.0 : -2.5)
+            let   xDelta = size / 3.3
+            let   yDelta = ((height - iDirtyRect.height) / CGFloat(3.8))
+            let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta)
             let    color = isFilled ? gBackgroundColor : iZone.color
 
             string.draw(in: rect, withAttributes: [NSForegroundColorAttributeName : color, NSFontAttributeName: font])
