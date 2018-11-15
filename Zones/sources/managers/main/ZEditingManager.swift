@@ -144,7 +144,7 @@ class ZEditingManager: NSObject {
                 case "z":      if isCommand { if isShift { kUndoManager.redo() } else { kUndoManager.undo() } }
                 case kSpace:   if isOption || isWindow || isControl { addIdea() }
                 case kBackspace,
-                     kDelete:  if isOption || isWindow || isCommand { delete(permanently: isCommand && isControl && isOption && isWindow, preserveChildren: (isControl || isOption || isCommand) && isWindow) }
+                     kDelete:  if isOption || isWindow || isCommand { delete(permanently: isCommand && isOption && isWindow, preserveChildren: (isControl || isOption || isCommand) && isWindow) }
                 case "\r":     if hasWidget { grabOrEdit(isCommand) }
                 default:       break
                 }
