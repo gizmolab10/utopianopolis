@@ -16,6 +16,12 @@ import Foundation
 #endif
 
 
+enum ZShortcutType: String {
+    case bold      = "b"
+    case underline = "u"
+}
+
+
 class ZShortcutsController: ZGenericTableController {
 
 
@@ -53,93 +59,105 @@ class ZShortcutsController: ZGenericTableController {
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
         let                 raw = shortcutStrings[row]
         let                text = raw.substring(with: NSMakeRange(1, raw.length - 1))
-        let                next = raw.substring(with: NSMakeRange(2, 3))
+        let                type = ZShortcutType(rawValue: raw.substring(with: NSMakeRange(0, 1)))
         let      paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.tabStops = tabStops
-        var          underlines = 0
+        var          attributes = [NSParagraphStyleAttributeName: paragraphStyle as Any]
 
-        if text.starts(with: kSpace) && next.lowercased().isAlphabetical && next.uppercased() == next {
-            underlines = 1
+        switch type {
+        case .bold?:
+            let   font = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize())
+            attributes = [NSParagraphStyleAttributeName: paragraphStyle, NSFontAttributeName: font]
+        case .underline?:
+            attributes = [NSParagraphStyleAttributeName: paragraphStyle, NSUnderlineStyleAttributeName: 1]
+        default:
+            break
         }
 
-        return NSAttributedString(string: text, attributes: [NSParagraphStyleAttributeName: paragraphStyle, NSUnderlineStyleAttributeName: underlines])
+        return NSAttributedString(string: text, attributes: attributes)
     }
 
 
     let shortcutStrings: [String] = [
         "",
-        "  ALWAYS:",
-        "a    \tRETURN   \tbegin or end typing",
-        "a    \tTAB      \tnext idea",
+        "b ALWAYS:",
+        "u    KEY",
+        "     \tRETURN   \tbegin or end typing",
+        "     \tTAB      \tnext idea",
         "",
-        "   KEY + <CONTROL>",
-        "a    \tCOMMA    \tnext ideas precede",
-        "a    \tPERIOD   \tnext ideas follow",
-        "a    \tSPACE    \tnew idea",
+        "u    KEY + <CONTROL>",
+        "     \tCOMMA    \tnext ideas precede",
+        "     \tPERIOD   \tnext ideas follow",
+        "     \tSPACE    \tnew idea",
         "",
-        "  WHILE EDITING AN IDEA:",
-        "   KEY + <COMMAND>",
-        "a    \tA        \tselect all text",
+        "b WHILE EDITING AN IDEA:",
+        "u    KEY + <COMMAND>",
+        "     \tA        \tselect all text",
         "",
-        "  WHILE EDITING & TEXT IS SELECTED:",
-        "a  KEY + <COMMAND>",
-        "a    \tL        \tlowercase",
-        "a    \tU        \tuppercase",
-        "a    \tD        \tcreate child with text",
+        "b WHILE EDITING & TEXT IS SELECTED:",
+        "u    KEY + <COMMAND>",
+        "     \tL        \tlowercase",
+        "     \tU        \tuppercase",
+        "     \tD        \tcreate child with text",
         "",
-        "  WHILE NOT EDITING AN IDEA:",
-        "a    \tARROWS   \tnavigate within graph",
-        "a    \tDELETE   \tselected idea",
-        "a    \tCOMMA    \tnew ideas precede",
-        "a    \tPERIOD   \tnew ideas follow",
-        "a    \tSPACE    \tnew idea",
-        "a    \t/        \tfocus or toggle favorite",
-        "a    \t;        \tprevious favorite",
-        "a    \t'        \tnext favorite",
-        "a    \t[        \tgo back to prior focus",
-        "a    \t]        \tgo forward, opposite of [",
-        "a    \t-        \tadd line, or [un]title it",
-        "a    \t`        \tswitch to other graph",
-        "a    \t=        \tuse hyperlink or email",
-        "a    \t(marker) \t" + kMarkingCharacters,
-        "a    \tA        \tselect all ideas",
-        "a    \tB        \tcreate a bookmark",
-        "a    \tC        \trecenter the graph",
-        "a    \tD        \tduplicate",
-        "a    \tE        \tcreate or edit email",
-        "a    \tF        \tfind in cloud",
-        "a    \tH        \tcreate or edit hyperlink",
-        "a    \tI        \tcolor the text",
-        "a    \tJ        \timport from Thoughtful file",
-        "a    \tK        \texport to a Thoughtful file",
-        "a    \tL        \tconvert to lowercase",
-        "a    \tM        \trefetch from cloud",
-        "a    \tN        \talphabetize",
-        "a    \tO        \tsort by length",
-        "a    \tP        \tprint the graph",
-        "a    \tR        \treverse order",
-        "a    \tS        \tselect favorite =~ focus",
-        "a    \tU        \tconvert to uppercase",
+        "b WHILE NOT EDITING AN IDEA:",
+        "u    KEY",
+        "     \tARROWS   \tnavigate within graph",
+        "     \tDELETE   \tselected idea",
+        "     \tCOMMA    \tnew ideas precede",
+        "     \tPERIOD   \tnew ideas follow",
+        "     \tSPACE    \tnew idea",
+        "     \t/        \tfocus or toggle favorite",
+        "     \t;        \tprevious favorite",
+        "     \t'        \tnext favorite",
+        "     \t[        \tgo back to prior focus",
+        "     \t]        \tgo forward, opposite of [",
+        "     \t-        \tadd line, or [un]title it",
+        "     \t`        \tswitch to other graph",
+        "     \t=        \tuse hyperlink or email",
+        "     \t(marker) \t" + kMarkingCharacters,
+        "     \tA        \tselect all ideas",
+        "     \tB        \tcreate a bookmark",
+        "     \tC        \trecenter the graph",
+        "     \tD        \tduplicate",
+        "     \tE        \tcreate or edit email",
+        "     \tF        \tfind in cloud",
+        "     \tH        \tcreate or edit hyperlink",
+        "     \tI        \tcolor the text",
+        "     \tJ        \timport from Thoughtful file",
+        "     \tK        \texport to a Thoughtful file",
+        "     \tL        \tconvert to lowercase",
+        "     \tM        \trefetch from cloud",
+        "     \tN        \talphabetize",
+        "     \tO        \tsort by length",
+        "     \tP        \tprint the graph",
+        "     \tR        \treverse order",
+        "     \tS        \tselect favorite =~ focus",
+        "     \tU        \tconvert to uppercase",
         "",
-        "   KEY + <OPTION>",
-        "a    \tARROWS   \trelocate selected idea",
-        "a    \tDELETE   \tretaining children",
-        "a    \tTAB      \tnew idea containing",
-        "a    \tN        \talphabetize backwards",
-        "a    \tO        \tsort backwards by length",
+        "u    KEY + <OPTION>",
+        "     \tARROWS   \trelocate selected idea",
+        "     \tDELETE   \tretaining children",
+        "     \tTAB      \tnew idea containing",
+        "     \tN        \talphabetize backwards",
+        "     \tO        \tsort backwards by length",
         "",
-        "   KEY + <COMMAND>",
-        "a    \tARROWS   \textend all the way",
-        "a    \tRETURN   \tdeselect",
-        "a    \t/        \trefocus current favorite",
+        "u    KEY + <COMMAND>",
+        "     \tARROWS   \textend all the way",
+        "     \tRETURN   \tdeselect",
+        "     \t/        \trefocus current favorite",
         "",
-        "   ARROW KEY + <SHIFT>",
-        "a    \tRIGHT    \treveal children",
-        "a    \tLEFT     \thide children",
-        "a    \tUP DOWN  \textend selection",
+        "u    KEY + <COMMAND> + <OPTION>",
+        "     \tDELETE   \tpermanently (not into trash)",
+        "     \tO        \tshow data files in Finder",
         "",
-        "   tMOUSE CLICK + <SHIFT>",
-        "a    \t         \t[un]extend selection",
+        "u    ARROW KEY + <SHIFT>",
+        "     \tRIGHT    \treveal children",
+        "     \tLEFT     \thide children",
+        "     \tUP DOWN  \textend selection",
+        "",
+        "u    MOUSE CLICK + <SHIFT>",
+        "     \t+/- DRAG \t[un]extend selection",
         "",
     ]
 }
