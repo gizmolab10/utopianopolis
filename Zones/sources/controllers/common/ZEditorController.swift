@@ -119,7 +119,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     // MARK:-
 
 
-    func layoutRootWidget(for iSignalObject: Any?, _ iKind: ZSignalKind, inMainGraph: Bool) {
+    func layoutRootWidget(for iZone: Any?, _ iKind: ZSignalKind, inMainGraph: Bool) {
         if !inMainGraph && kIsPhone { return }
 
         let                        here = inMainGraph ? gHere : gFavoritesRoot
@@ -130,7 +130,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         gTextCapturing                  = false
         specificWidget?     .widgetZone = here
 
-        if  let        zone  = iSignalObject as? Zone,
+        if  let        zone  = iZone as? Zone,
             let      widget  = zone.widget,
             widget.isInMain == inMainGraph {
             specificWidget   = widget

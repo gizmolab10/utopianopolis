@@ -153,8 +153,8 @@ class ZAlertManager : NSObject {
     }
 
 
-    func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ closure: AlertStatusClosure? = nil) {
-        alert(iMessage, iExplain, iOkayTitle, iCancelTitle) { iAlert, iState in
+    func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertStatusClosure? = nil) {
+        alert(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage) { iAlert, iState in
             switch iState {
             case .eStatusShow:
                 iAlert?.showAlert { iResponse in
@@ -171,7 +171,7 @@ class ZAlertManager : NSObject {
     }
 
 
-    func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ closure: AlertClosure? = nil) {
+    func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertClosure? = nil) {
         FOREGROUND(canBeDirect: true) {
             #if os(OSX)
                 let             a = ZAlert()
@@ -183,10 +183,18 @@ class ZAlertManager : NSObject {
             if  let cancel = iCancelTitle {
                 a.addButton(withTitle: cancel)
             }
+            
+            if  let image = iImage {
+                let size = image.size
+                let frame = NSMakeRect(50, 50, size.width, size.height)
+                a.accessoryView = NSImageView(image: image)
+                a.accessoryView?.frame = frame
+                a.layout()
+            }
 
             #else
-                let             a = ZAlert(title: iMessage, message: iExplain, preferredStyle: .alert)
-                let          okay = UIAlertAction(title: iOkayTitle, style: .default) { iAction in
+                let    a = ZAlert(title: iMessage, message: iExplain, preferredStyle: .alert)
+                let okay = UIAlertAction(title: iOkayTitle, style: .default) { iAction in
                     closure?(a, .eYes)
                 }
 

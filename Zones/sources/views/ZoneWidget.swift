@@ -117,7 +117,7 @@ class ZoneWidget: ZView {
                     }
 
                     make.left.equalTo(childrenView)
-                    make.right.equalTo(childrenView) // lessThanOrEqualTo
+                    make.right.equalTo(childrenView)
                 }
                 
                 previous = childWidget
@@ -548,10 +548,11 @@ class ZoneWidget: ZView {
             
             if zone == gFavoritesRoot {
                 FOREGROUND {
-                    self.signalFor(nil, regarding: .main)
+                    self.signalFor(nil, regarding: .main) // update UI elements for searching
+                    // self.childrenView.addBorder(thickness: 1.0, radius: 10.0, color: ZColor.green.cgColor)
                 }
             }
-            
+
             nowDrawLines = false
         }
     }

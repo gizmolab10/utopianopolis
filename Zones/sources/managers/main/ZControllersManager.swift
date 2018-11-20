@@ -96,19 +96,42 @@ class ZControllersManager: NSObject {
                 gRemoteStoresManager.updateLastSyncDates()
                 gRemoteStoresManager.recount()
                 self.signalFor(nil, regarding: .redraw)
-
+                self.requestFeedback()
+                
                 gBatchManager.finishUp { iSame in
                     FOREGROUND {
                         gBatchManager.usingDebugTimer = false
 
                         self.blankScreenDebug()
                         self.signalFor(nil, regarding: .redraw)
+                        gRemoteStoresManager.saveAll()
                     }
                 }
             }
         }
     }
 
+    
+    func requestFeedback() {
+        if !gProductionEmailSent {
+            gProductionEmailSent = true
+
+            FOREGROUND(after: 0.1) {
+                let image = ZImage(named: kHelpMenuImageName)
+                
+                gAlertManager.showAlert("My apologies for interrupting",
+                                        "I recently reconfigured iCloud's databases and want to confirm that doing so did not cause you any problems. \n\nTo send me feedback, you can click the highlighted button below (on the right), or later, under the Help menu, you can select the menu item as indicated in the figure below.",
+                                        "Compose and send feedback in an email",
+                                        "Dismiss",
+                                        image) { iObject in
+                                            if  iObject != .eStatusNo {
+                                                self.sendEmailBugReport()
+                                            }
+                }
+            }
+        }
+    }
+    
 
     // MARK:- registry
     // MARK:-
@@ -141,8 +164,8 @@ class ZControllersManager: NSObject {
     func updateNeededCounts() {
         for dbID in kAllDatabaseIDs {
             var alsoProgenyCounts = false
-            let           manager = gRemoteStoresManager.cloudManagerFor(dbID)
-            manager.fullUpdate(for: [.needsCount]) { state, iZRecord in
+            let           manager = gRemoteStoresManager.cloudManager(for: dbID)
+            manager?.fullUpdate(for: [.needsCount]) { state, iZRecord in
                 if  let zone                 = iZRecord as? Zone {
                     if  zone.fetchableCount != zone.count {
                         zone.fetchableCount  = zone.count
@@ -154,7 +177,7 @@ class ZControllersManager: NSObject {
             }
 
             if  alsoProgenyCounts {
-                manager.rootZone?.updateCounts()
+                manager?.rootZone?.updateCounts()
             }
         }
     }

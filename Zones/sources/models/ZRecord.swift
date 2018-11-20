@@ -460,8 +460,8 @@ class ZRecord: NSObject {
 
 
     func stringForNeeds(in iDatabaseID: ZDatabaseID) -> String? {
-        if  let       r = record {
-            let manager = gRemoteStoresManager.cloudManagerFor(iDatabaseID)
+        if  let       r = record,
+            let manager = gRemoteStoresManager.cloudManager(for: iDatabaseID) {
             let  states = manager.states(for: r)
             var   marks = [String] ()
 

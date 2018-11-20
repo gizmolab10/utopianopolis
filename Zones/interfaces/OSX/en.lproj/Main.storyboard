@@ -496,6 +496,12 @@ CQ
                                                 <action selector="displayHelp:" target="Ady-hI-5gd" id="yRj-nt-Ohd"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Report an Issue" keyEquivalent="1" id="Ohu-0w-5w2">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Nz9-eq-d4B"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>

@@ -73,7 +73,7 @@ class ZSelectionManager: NSObject {
         let          snap = ZSnapshot()
         snap.currentGrabs = currentGrabs
         snap  .databaseID = gDatabaseID
-        snap        .here = gCloudManager.hereIsValid ? gHere : nil
+        snap        .here = gCloudManager?.hereIsValid ?? false ? gHere : nil
 
         return snap
     }

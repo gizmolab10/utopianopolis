@@ -188,8 +188,10 @@
 		0CB619A11FB3C4660087B066 /* ZEditorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZEditorController.swift */; };
 		A7245DFE21729B02003D4BDA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7245E0021729B02003D4BDA /* Main.storyboard */; };
 		A7245E0121729B18003D4BDA /* Details.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7245E0321729B18003D4BDA /* Details.storyboard */; };
-		A7245E0521729C34003D4BDA /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7245E0421729C34003D4BDA /* Shortcuts.storyboard */; };
 		A7245E0921729FFE003D4BDA /* ZShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */; };
+		A746D463219F613D00123A0A /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Shortcuts.storyboard */; };
+		A746D464219F613D00123A0A /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Shortcuts.storyboard */; };
+		A746D465219F613D00123A0A /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Shortcuts.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -337,7 +339,6 @@
 		0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSearchManager.swift; sourceTree = "<group>"; };
 		0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDesktopExtensions.swift; sourceTree = "<group>"; };
 		0C7152221FD8A1E400C7DA61 /* ZFocusManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFocusManager.swift; sourceTree = "<group>"; };
-		0CA04B141D2ECF1A001892E5 /* Thoughtful.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thoughtful.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
 		0CA04B2E1D2ECF1B001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -361,8 +362,9 @@
 		0CD921791D8F4C3200F80964 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		A7245DFF21729B02003D4BDA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A7245E0221729B18003D4BDA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Details.storyboard; sourceTree = "<group>"; };
-		A7245E0421729C34003D4BDA /* Shortcuts.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Shortcuts.storyboard; sourceTree = "<group>"; };
 		A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZShortcutsController.swift; sourceTree = "<group>"; };
+		A746D462219F613D00123A0A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Shortcuts.storyboard; sourceTree = "<group>"; };
+		A746D466219F637A00123A0A /* Thoughtful.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thoughtful.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -632,7 +634,7 @@
 			children = (
 				A7245E0321729B18003D4BDA /* Details.storyboard */,
 				A7245E0021729B02003D4BDA /* Main.storyboard */,
-				A7245E0421729C34003D4BDA /* Shortcuts.storyboard */,
+				A746D461219F613D00123A0A /* Shortcuts.storyboard */,
 			);
 			name = desktop;
 			path = OSX;
@@ -732,9 +734,9 @@
 				0C43EFCD21010F62000976CE /* ZCloudManager.swift */,
 				0C43EFC721010F62000976CE /* ZLockManager.swift */,
 				0C43EFC821010F62000976CE /* ZOnboardingManager.swift */,
+				0C43EFCB21010F62000976CE /* ZOperationsManager.swift */,
 				0C43EFC921010F62000976CE /* ZRecordsManager.swift */,
 				0C43EFCA21010F62000976CE /* ZRemoteStoresManager.swift */,
-				0C43EFCB21010F62000976CE /* ZOperationsManager.swift */,
 			);
 			path = cloudkit;
 			sourceTree = "<group>";
@@ -754,9 +756,9 @@
 				0C39B3C11F198BAA0091F4D1 /* configuration */,
 				0C50FD2D2053467600E1D9A9 /* data */,
 				0C09A7D81FE86FCC00F3D736 /* Frameworks */,
+				0C39B3921F1988380091F4D1 /* interfaces */,
 				0CA04B151D2ECF1A001892E5 /* products */,
 				0C39B21E1F182EBB0091F4D1 /* sources */,
-				0C39B3921F1988380091F4D1 /* interfaces */,
 				0C401E891D2F6B6D000B9864 /* tests */,
 			);
 			sourceTree = "<group>";
@@ -764,13 +766,13 @@
 		0CA04B151D2ECF1A001892E5 /* products */ = {
 			isa = PBXGroup;
 			children = (
-				0CA04B141D2ECF1A001892E5 /* Thoughtful.app */,
 				0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */,
 				0CA04B331D2ECF1B001892E5 /* ZonesUITests.xctest */,
 				0CA04B491D2ECF41001892E5 /* PadFocus.app */,
 				0CA04B5E1D2ECF41001892E5 /* PadZonesTests.xctest */,
 				0CA04B691D2ECF41001892E5 /* PadZonesUITests.xctest */,
 				0C69C9DF1F09CD95004D026D /* iFocus.app */,
+				A746D466219F637A00123A0A /* Thoughtful.app */,
 			);
 			name = products;
 			sourceTree = "<group>";
@@ -848,7 +850,7 @@
 			);
 			name = Thoughtful;
 			productName = Zones;
-			productReference = 0CA04B141D2ECF1A001892E5 /* Thoughtful.app */;
+			productReference = A746D466219F637A00123A0A /* Thoughtful.app */;
 			productType = "com.apple.product-type.application";
 		};
 		0CA04B271D2ECF1B001892E5 /* ZonesTests */ = {
@@ -1052,6 +1054,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A746D463219F613D00123A0A /* Shortcuts.storyboard in Resources */,
 				0C39B3AE1F1988380091F4D1 /* LaunchScreen.storyboard in Resources */,
 				0C50FD2F2053491000E1D9A9 /* everyone.thoughtful in Resources */,
 				0C39B3A81F1988380091F4D1 /* Assets.xcassets in Resources */,
@@ -1063,10 +1066,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A7245E0521729C34003D4BDA /* Shortcuts.storyboard in Resources */,
 				A7245DFE21729B02003D4BDA /* Main.storyboard in Resources */,
 				0C50FD312053491000E1D9A9 /* everyone.thoughtful in Resources */,
 				0C1ABAAC1FB144E400D62947 /* Assets.xcassets in Resources */,
+				A746D465219F613D00123A0A /* Shortcuts.storyboard in Resources */,
 				A7245E0121729B18003D4BDA /* Details.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1089,6 +1092,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A746D464219F613D00123A0A /* Shortcuts.storyboard in Resources */,
 				0C39B3A61F1988380091F4D1 /* Main.storyboard in Resources */,
 				0C50FD302053491000E1D9A9 /* everyone.thoughtful in Resources */,
 				0C1ABAAB1FB144E300D62947 /* Assets.xcassets in Resources */,
@@ -1383,6 +1387,14 @@
 			name = Details.storyboard;
 			sourceTree = "<group>";
 		};
+		A746D461219F613D00123A0A /* Shortcuts.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A746D462219F613D00123A0A /* en */,
+			);
+			name = Shortcuts.storyboard;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -1597,7 +1609,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = F8M94NY2TV;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/Zones/**",
@@ -1644,7 +1656,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = F8M94NY2TV;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/Zones/**",

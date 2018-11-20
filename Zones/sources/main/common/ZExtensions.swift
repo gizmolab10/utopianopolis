@@ -111,6 +111,11 @@ extension NSObject {
         "https://medium.com/@sand_74696/what-you-get-d565b064be7b".openAsURL()
     }
 
+    
+    func sendEmailBugReport() {
+        "mailto:sand@gizmolab.com".openAsURL()
+    }
+    
 
     // MARK:- bookmarks
     // MARK:-
@@ -350,8 +355,8 @@ extension CKRecord {
         if  let dbID      = databaseID,
             creationDate != nil {
             let states    = [ZRecordState.notFetched]
-            let manager   = gRemoteStoresManager.cloudManagerFor(dbID)
-            if  manager.hasCKRecord(self, forAnyOf: states) {
+            if  let manager   = gRemoteStoresManager.cloudManager(for: dbID),
+                manager.hasCKRecord(self, forAnyOf: states) {
                 manager.clearCKRecords([self], for: states)
             }
         }

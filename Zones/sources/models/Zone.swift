@@ -1364,10 +1364,12 @@ class Zone : ZRecord {
     @discardableResult func addChild(for iCKRecord: CKRecord?) -> Zone? {
         var child: Zone?    = nil
         if  let childRecord = iCKRecord, !containsCKRecord(childRecord) {
-            child           = gCloudManager.zoneForCKRecord(childRecord)
+            child           = gCloudManager?.zoneForCKRecord(childRecord)
 
-            addChild(child)
-            children.updateOrder()
+            if  child != nil {
+                addChild(child)
+                children.updateOrder()
+            }
         }
 
         return child

@@ -17,11 +17,17 @@ enum ZUserAccess: Int {
 }
 
 
+enum ZSentEmailType: String {
+    case eProduction = "p"
+}
+
+
 class ZUser : ZRecord {
 
 
-    @objc dynamic var    authorID: String?
-    @objc dynamic var writeAccess: NSNumber?
+    @objc dynamic var      authorID: String?
+    @objc dynamic var   writeAccess: NSNumber?
+    @objc dynamic var sentEmailType: String?
 
 
     var access: ZUserAccess {
@@ -43,9 +49,23 @@ class ZUser : ZRecord {
     }
 
     
+    var productionEmailSent: Bool {
+        get {
+            return sentEmailType?.contains(ZSentEmailType.eProduction.rawValue) ?? false
+        }
+
+        set {
+            if !productionEmailSent {
+                sentEmailType?.append(ZSentEmailType.eProduction.rawValue)
+            }
+        }
+    }
+    
+    
     override func cloudProperties() -> [String] {
         return [#keyPath(authorID),
-                #keyPath(writeAccess)]
+                #keyPath(writeAccess),
+                #keyPath(sentEmailType)]
     }
 
 

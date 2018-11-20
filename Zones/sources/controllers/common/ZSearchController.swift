@@ -91,27 +91,28 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
             var combined = [ZDatabaseID: [Any]] ()
 
             for dbID in kAllDatabaseIDs {
-                let manager = gRemoteStoresManager.cloudManagerFor(dbID)
-                let  locals = manager.searchLocal(for: searchString)
-
-                manager.search(for: searchString) { iObject in
-                    FOREGROUND {
-                        var          results = iObject as! [Any]
-
-                        results.appendUnique(contentsOf: locals) { (a, b) in
-                            if  let alpha = a as? CKRecord, let beta = b as? CKRecord {
-                                return alpha.recordID.recordName == beta.recordID.recordName
+                if  let manager = gRemoteStoresManager.cloudManager(for: dbID) {
+                    let  locals = manager.searchLocal(for: searchString)
+                    
+                    manager.search(for: searchString) { iObject in
+                        FOREGROUND {
+                            var          results = iObject as! [Any]
+                            
+                            results.appendUnique(contentsOf: locals) { (a, b) in
+                                if  let alpha = a as? CKRecord, let beta = b as? CKRecord {
+                                    return alpha.recordID.recordName == beta.recordID.recordName
+                                }
+                                
+                                return false
                             }
                             
-                            return false
+                            let       hasResults = results.count != 0
+                            gWorkMode            = hasResults ? .searchMode : .graphMode
+                            combined[dbID]       = results
+                            self.searchBox?.text = ""
+                            
+                            gSearchManager.showResults(combined)
                         }
-
-                        let       hasResults = results.count != 0
-                        gWorkMode            = hasResults ? .searchMode : .graphMode
-                        combined[dbID]       = results
-                        self.searchBox?.text = ""
-
-                        gSearchManager.showResults(combined)
                     }
                 }
             }

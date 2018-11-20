@@ -79,8 +79,8 @@ var gExpandedZones : [String] {
 
 
 var gHere: Zone {
-    get { return gCloudManager.hereZone }
-    set { gCloudManager.hereZone = newValue }
+    get { return gCloudManager!.hereZone }
+    set { gCloudManager?.hereZone = newValue }
 }
 
 
@@ -114,9 +114,26 @@ var gUserRecordID: String? {    // persist for file read on launch
 }
 
 
+var gProductionEmailSent: Bool {
+    get {
+        let pref = getPreferencesBool(for: kProductionEmailSent, defaultBool: false) || (gUser?.productionEmailSent ?? false)
+        
+        setPreferencesBool(pref, for: kProductionEmailSent)
+        gUser?.productionEmailSent = pref
+        
+        return pref
+    }
+
+    set {
+        setPreferencesBool(newValue, for: kProductionEmailSent)
+        gUser?.productionEmailSent = newValue
+    }
+}
+
+
 var gFavoritesAreVisible: Bool {
-    get { return getPreferencesBool(   for: kfavoritesVisible, defaultBool: false) }
-    set { setPreferencesBool(newValue, for: kfavoritesVisible) }
+    get { return getPreferencesBool(   for: kFavoritesAreVisible, defaultBool: false) }
+    set { setPreferencesBool(newValue, for: kFavoritesAreVisible) }
 }
 
 

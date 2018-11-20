@@ -60,7 +60,7 @@ class ZFileManager: NSObject {
 
 
     func showInFinder() {
-        "~/Library/Application Support/Thoughtful".openAsURL()
+        directoryURL.absoluteString.openAsURL()
     }
 
 
@@ -222,13 +222,13 @@ class ZFileManager: NSObject {
 	func writeFile(at path: String, from databaseID: ZDatabaseID?) {
 		if  let           dbID = databaseID,
 			dbID              != .favoritesID,
+            let        manager = gRemoteStoresManager.cloudManager(for: dbID),
 			let        index   = index(of: dbID),
 			needsWrite[index] == true,
 			isWriting [index] == false {    // prevent write during write
 			isWriting [index]  = true
 			needsWrite[index]  = false
 			var           dict = ZStorageDictionary ()
-			let        manager = gRemoteStoresManager.cloudManagerFor(dbID)
 			
             FOREGROUND {
                 self.signalFor(nil, regarding: .debug)
@@ -294,11 +294,11 @@ class ZFileManager: NSObject {
 	
 	func readFile(from path: String, into databaseID: ZDatabaseID) {
 		if  databaseID      != .favoritesID,
-			let        index = index(of: databaseID) {
+            let      manager = gRemoteStoresManager.cloudManager(for: databaseID),
+			let       index  = index(of: databaseID) {
 			isReading[index] = true
 			typealias  types = [ZStorageType]
 			let  keys: types = [.date, .lost, .graph, .trash, .destroy, .favorites, .bookmarks ]
-			let      manager = gRemoteStoresManager.cloudManagerFor(databaseID)
 			
             FOREGROUND {
                 do {

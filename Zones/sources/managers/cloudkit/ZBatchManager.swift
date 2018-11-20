@@ -11,6 +11,7 @@ import Foundation
 
 
 let gBatchManager = ZBatchManager()
+var gUser: ZUser? { return gBatchManager.user }
 
 
 enum ZBatchID: Int {
@@ -332,9 +333,9 @@ class ZBatchManager: ZOnboardingManager {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
         switch identifier {
-        case .favorites:       gFavoritesManager.setup(                                                                   cloudCallback)
-        case .readFile:  gFileManager                                    .readFile(into: currentDatabaseID!); cloudCallback?(0)
-        default: gRemoteStoresManager.cloudManagerFor(currentDatabaseID!).invokeOperation(for: identifier, cloudCallback: cloudCallback)
+        case .favorites:       gFavoritesManager.setup(                                                                      cloudCallback)
+        case .readFile:  gFileManager                                    .readFile(into: currentDatabaseID!);                cloudCallback?(0)
+        default: gRemoteStoresManager.cloudManager(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
         }
     }
 

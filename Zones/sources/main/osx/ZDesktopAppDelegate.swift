@@ -53,7 +53,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 	
 	func application(_ application: NSApplication, openFiles: [String]) {
 		for file in openFiles {
-			gRemoteStoresManager.cloudManagerFor(.mineID).clear()
+			gRemoteStoresManager.cloudManager(for: .mineID)?.clear()
 			gFileManager.readFile(from: file, into: .mineID)
 		}
 	}

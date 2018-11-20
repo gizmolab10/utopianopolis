@@ -204,8 +204,23 @@ class ZCloudManager: ZRecordsManager {
     // MARK:- request from cloud
     // MARK:-
 
+    
+    func saveAll() {
+        
+    }
 
+    
+    func fetchRecord(_ iRecord: ZRecord, onCompletion: @escaping RecordClosure) {
+        detectIfRecordExists(withRecordID: iRecord.record.recordID, recordType: iRecord.record.recordType, mustCreate: false, onCompletion: onCompletion)
+    }
+    
+    
     func assureRecordExists(withRecordID iCKRecordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
+        detectIfRecordExists(withRecordID: iCKRecordID, recordType: recordType, mustCreate: true, onCompletion: onCompletion)
+    }
+    
+
+    func detectIfRecordExists(withRecordID iCKRecordID: CKRecordID, recordType: String, mustCreate: Bool, onCompletion: @escaping RecordClosure) {
         let done:  RecordClosure = { (iCKRecord: CKRecord?) in
             FOREGROUND(canBeDirect: true) {
                 if  let ckRecord = iCKRecord {
@@ -229,6 +244,8 @@ class ZCloudManager: ZRecordsManager {
                     gAlertManager.alertError(iFetchError) { iHasError in
                         if !iHasError {
                             done(iFetchedCKRecord)
+                        } else if !mustCreate {
+                            done(nil)
                         } else {
                             let brandNew: CKRecord = CKRecord(recordType: recordType, recordID: iCKRecordID)
 

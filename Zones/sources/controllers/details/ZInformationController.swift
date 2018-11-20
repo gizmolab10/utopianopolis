@@ -44,7 +44,7 @@ class ZInformationController: ZGenericController {
 
 
     var totalCountsText: String {
-        let count = gCloudManager.rootZone?.progenyCount ?? 0
+        let count = gCloudManager?.rootZone?.progenyCount ?? 0
 
         return "\(count + 1) ideas"
     }

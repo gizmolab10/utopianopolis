@@ -12,14 +12,14 @@ import CloudKit
 
 
 let  gRemoteStoresManager = ZRemoteStoresManager()
-var gEveryoneCloudManager : ZCloudManager { return gRemoteStoresManager.cloudManagerFor(.everyoneID) }
-var     gMineCloudManager : ZCloudManager { return gRemoteStoresManager.cloudManagerFor(.mineID) }
-var         gCloudManager : ZCloudManager { return gRemoteStoresManager.currentCloudManager }
-var         gLostAndFound : Zone?         { return gRemoteStoresManager.lostAndFoundZone }
-var        gFavoritesRoot : Zone?         { return gMineCloudManager.favoritesZone }
-var                gTrash : Zone?         { return gRemoteStoresManager.trashZone }
-var                 gRoot : Zone?   { get { return gRemoteStoresManager.rootZone } set { gRemoteStoresManager.rootZone  = newValue } }
-var     gCloudUnavailable : Bool          { return gMineCloudManager.cloudUnavailable }
+var gEveryoneCloudManager : ZCloudManager? { return gRemoteStoresManager.cloudManager(for: .everyoneID) }
+var     gMineCloudManager : ZCloudManager? { return gRemoteStoresManager.cloudManager(for: .mineID) }
+var         gCloudManager : ZCloudManager? { return gRemoteStoresManager.currentCloudManager }
+var         gLostAndFound : Zone?          { return gRemoteStoresManager.lostAndFoundZone }
+var        gFavoritesRoot : Zone?          { return gMineCloudManager?.favoritesZone }
+var                gTrash : Zone?          { return gRemoteStoresManager.trashZone }
+var                 gRoot : Zone?    { get { return gRemoteStoresManager.rootZone } set { gRemoteStoresManager.rootZone  = newValue } }
+var     gCloudUnavailable : Bool           { return gMineCloudManager?.cloudUnavailable ?? false }
 
 
 class ZRemoteStoresManager: NSObject {
@@ -28,7 +28,7 @@ class ZRemoteStoresManager: NSObject {
     var       databaseIDStack = [ZDatabaseID] ()
     var       recordsManagers = [ZDatabaseID : ZRecordsManager]()
     var currentRecordsManager : ZRecordsManager { return recordsManagerFor(gDatabaseID)! }
-    var   currentCloudManager : ZCloudManager   { return cloudManagerFor(gDatabaseID) }
+    var   currentCloudManager : ZCloudManager?  { return cloudManager(for: gDatabaseID) }
     var      rootProgenyCount : Int             { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
     var      lostAndFoundZone : Zone?           { return currentRecordsManager.lostAndFoundZone }
     var           destroyZone : Zone?           { return currentRecordsManager.destroyZone }
@@ -36,11 +36,11 @@ class ZRemoteStoresManager: NSObject {
     var              rootZone : Zone?     { get { return currentRecordsManager.rootZone }  set { currentRecordsManager.rootZone  = newValue } }
 
 
-    func cloudManagerFor(_   dbID: ZDatabaseID) -> ZCloudManager { return recordsManagerFor(dbID) as! ZCloudManager }
-    func rootZone       (for dbID: ZDatabaseID) -> Zone?         { return recordsManagerFor(dbID)?.rootZone }
-    func setRootZone(_ root: Zone?, for dbID: ZDatabaseID)       {        recordsManagerFor(dbID)?.rootZone = root }
-    func clear()                                                 { recordsManagers = [ZDatabaseID : ZCloudManager] () }
-    func cancel()                                                { currentCloudManager.currentOperation?.cancel()     }
+    func cloudManager   (for dbID: ZDatabaseID) -> ZCloudManager? { return recordsManagerFor(dbID) as? ZCloudManager }
+    func rootZone       (for dbID: ZDatabaseID) -> Zone?          { return recordsManagerFor(dbID)?.rootZone }
+    func setRootZone(_ root: Zone?, for dbID: ZDatabaseID)        {        recordsManagerFor(dbID)?.rootZone = root }
+    func clear()                                                  { recordsManagers = [ZDatabaseID : ZCloudManager] () }
+    func cancel()                                                 { currentCloudManager?.currentOperation?.cancel()     }
 
 
     func recount() {  // all progenyCounts for all progeny in all databases in all roots
@@ -52,9 +52,14 @@ class ZRemoteStoresManager: NSObject {
 
     func updateLastSyncDates() {
         for dbID in kAllDatabaseIDs {
-            if let manager = recordsManagerFor(dbID) {
-                manager.updateLastSyncDate()
-            }
+            recordsManagerFor(dbID)?.updateLastSyncDate()
+        }
+    }
+    
+    
+    func saveAll() {
+        for dbID in kAllDatabaseIDs {
+            cloudManager(for: dbID)?.saveAll()
         }
     }
     
@@ -128,10 +133,10 @@ class ZRemoteStoresManager: NSObject {
         // BUG: record may be from the non-current cloud manager (i.e., != gCloudManager) //
         ////////////////////////////////////////////////////////////////////////////////////
 
-        gCloudManager.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
-            if iUpdatedRecord != nil {                                                   // TODO: extract database identifier from record id, i.e., the database
-                let    zone = self.currentCloudManager.zoneForCKRecord(iUpdatedRecord!)  // TODO: currentCloudManager is wrong here
-                zone.record = iUpdatedRecord
+        gCloudManager?.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
+            if  let  record = iUpdatedRecord,                                     // TODO: extract database identifier from record id, i.e., the database
+                let    zone = self.currentCloudManager?.zoneForCKRecord(record) { // TODO: currentCloudManager is wrong here
+                zone.record = record
                 let  parent = zone.parentZone
 
                 if  zone.showChildren {

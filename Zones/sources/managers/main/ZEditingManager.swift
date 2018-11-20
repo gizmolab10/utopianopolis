@@ -107,7 +107,7 @@ class ZEditingManager: NSObject {
                 }
             } else if isWindow, let arrow = key.arrow {
                 handleArrow(arrow, flags: flags)
-            } else if kMarkingCharacters.contains(key) {
+            } else if kMarkingCharacters.contains(key) && !isCommand {
                 prefix(with: key)
             } else {
                 switch key {
@@ -129,6 +129,7 @@ class ZEditingManager: NSObject {
                 case "r":      reverse()
                 case "s":      if isCommand { gFileManager.saveAs() } else { selectCurrentFavorite() }
                 case "w":      toggleWritable()
+                case "1":      if isCommand && isShift { sendEmailBugReport() }
                 case "+":      divideChildren()
                 case "-":      addLine()
                 case "`":      travelToOtherGraph()

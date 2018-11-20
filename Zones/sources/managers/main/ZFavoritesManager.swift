@@ -198,24 +198,24 @@ class ZFavoritesManager: NSObject {
         let finish = {
             self.createRootFavorites()
 
-            if  let root = mine.favoritesZone {
+            if  let root = mine?.favoritesZone {
                 root.needProgeny()
             }
 
             onCompletion?(0)
         }
 
-        if  let root = mine.maybeZoneForRecordName(kFavoritesRootName) {
-            mine.favoritesZone = root
+        if  let root = mine?.maybeZoneForRecordName(kFavoritesRootName) {
+            mine?.favoritesZone = root
 
             finish()
         } else {
-            mine.assureRecordExists(withRecordID: CKRecordID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
+            mine?.assureRecordExists(withRecordID: CKRecordID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
                 let       ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: kFavoritesRootName))
                 let           root = Zone(record: ckRecord, databaseID: .mineID)
                 root.directAccess  = .eDefaultName
                 root.zoneName      = kFavoritesName
-                mine.favoritesZone = root
+                mine?.favoritesZone = root
 
                 finish()
             }
@@ -350,7 +350,8 @@ class ZFavoritesManager: NSObject {
 
         if  missingLost {
             let identifier = kLostAndFoundName + kFavoritesSuffix
-            var       lost = gMineCloudManager.maybeZoneForRecordName(identifier)
+            var       lost = gMineCloudManager?.maybeZoneForRecordName(identifier)
+
             if  lost      == nil {
                 lost       = Zone(databaseID: .mineID, named: kLostAndFoundName, identifier: identifier)
             }

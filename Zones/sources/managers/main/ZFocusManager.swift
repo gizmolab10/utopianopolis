@@ -270,13 +270,14 @@ class ZFocusManager: NSObject {
                         atArrival(gHere, .redraw)
                     }
                 } else {
-                    gCloudManager.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
-                        if  let hereRecord = iRecord {
-                            gHere          = gCloudManager.zoneForCKRecord(hereRecord)
+                    gCloudManager?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
+                        if  let hereRecord = iRecord,
+                            let    newHere = gCloudManager?.zoneForCKRecord(hereRecord) {
+                            gHere          = newHere
 
-                            gHere.prepareForArrival()
+                            newHere.prepareForArrival()
                             self.focus {
-                                atArrival(gHere, .redraw)
+                                atArrival(newHere, .redraw)
                             }
                         } else {
                             atArrival(gHere, .redraw)
@@ -289,7 +290,7 @@ class ZFocusManager: NSObject {
                 // STAY WITHIN GRAPH //
                 ///////////////////////
 
-                there = gCloudManager.maybeZoneForRecordID(targetRecordID)
+                there = gCloudManager?.maybeZoneForRecordID(targetRecordID)
                 let grabbed = gSelectionManager.firstGrab
                 let    here = gHere
 
@@ -316,10 +317,11 @@ class ZFocusManager: NSObject {
                     gHere = there!
 
                     grabHere()
-                } else if gCloudManager.databaseID != .favoritesID { // favorites does not have a cloud database
-                    gCloudManager.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
-                        if  let hereRecord = iRecord {
-                            gHere          = gCloudManager.zoneForCKRecord(hereRecord)
+                } else if gCloudManager?.databaseID != .favoritesID { // favorites does not have a cloud database
+                    gCloudManager?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
+                        if  let hereRecord = iRecord,
+                            let    newHere = gCloudManager?.zoneForCKRecord(hereRecord) {
+                            gHere          = newHere
 
                             grabHere()
                         }

@@ -96,7 +96,7 @@ class ZRecordsManager: NSObject {
         favoritesZone?   .updateCounts()
         lostAndFoundZone?.updateCounts()
     }
-
+    
 
     // MARK:- registries
     // MARK:-
@@ -118,7 +118,7 @@ class ZRecordsManager: NSObject {
     }
 
 
-    func   registerName(of iZone: Zone?) {
+    func registerName(of iZone: Zone?) {
         if  let record = iZone?.record,
             let   name = iZone?.zoneName {
             apply(to: name) { iRecords -> ([CKRecord]) in
