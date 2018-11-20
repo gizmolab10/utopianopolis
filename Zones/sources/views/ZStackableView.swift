@@ -33,7 +33,7 @@ class ZStackableView: ZView {
 
     var identity: ZDetailsViewID {
         #if os(OSX)
-            if let kind = identifier {
+            if let kind = convertFromOptionalNSUserInterfaceItemIdentifier(identifier) {
                 switch kind {
                 case "preferences": return .Preferences
                 case "information": return .Information
@@ -82,7 +82,7 @@ class ZStackableView: ZView {
 
 
     func update() {
-        titleButton?.state = NSOnState
+        titleButton?.state = NSControl.StateValue.on
         
         if  isDebugView {
             if !gShowDebugDetails {
@@ -162,4 +162,10 @@ class ZStackableView: ZView {
 //            }
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromOptionalNSUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier?) -> String? {
+	guard let input = input else { return nil }
+	return input.rawValue
 }

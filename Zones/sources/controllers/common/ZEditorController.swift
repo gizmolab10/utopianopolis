@@ -165,7 +165,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     }
 
     
-    func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
+    @objc func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
 
         if  gWorkMode        != .graphMode {
             #if os(OSX)
@@ -203,7 +203,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     }
     
     
-    func clickEvent(_ iGesture: ZGestureRecognizer?) {
+    @objc func clickEvent(_ iGesture: ZGestureRecognizer?) {
         if  let           gesture = iGesture as? ZKeyClickGestureRecognizer {
             let         isCommand = gesture.modifiers?.contains(.command) ?? false
             let        textWidget = gEditedTextWidget

@@ -23,11 +23,11 @@ typealias ZStorageDictionary = [ZStorageType : NSObject]
 extension NSObject {
 
 
-    func            note(_ iMessage: Any?)                { } // logk(iMessage) }
-    func     performance(_ iMessage: Any?)                { log(iMessage) }
-    func textInputReport(_ iMessage: Any?)                { log(iMessage) }
-    func             bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
-    func  columnarReport(_ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(iFirst, iSecond) }
+    func                  note(_ iMessage: Any?)                { } // logk(iMessage) }
+    func           performance(_ iMessage: Any?)                { log(iMessage) }
+    @objc func textInputReport(_ iMessage: Any?)                { log(iMessage) }
+    func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
+    func        columnarReport(_ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(iFirst, iSecond) }
 
 
     func rawColumnarReport(_ iFirst: Any?, _ iSecond: Any?) {
@@ -163,7 +163,7 @@ extension NSObject {
             iLink                   != "",
             let                 name = name(from: iLink) {
             var components: [String] = iLink!.components(separatedBy: kSeparator)
-            let recordID: CKRecordID = CKRecordID(recordName: name)
+            let recordID: CKRecord.ID = CKRecord.ID(recordName: name)
             let ckRecord: CKRecord   = CKRecord(recordType: kZoneType, recordID: recordID)
             let        rawIdentifier = components[0]
             let   dbID: ZDatabaseID? = rawIdentifier == "" ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
@@ -310,7 +310,7 @@ extension CKRecord {
 
 
     convenience init(for name: String) {
-        self.init(recordType: kZoneType, recordID: CKRecordID(recordName: name))
+        self.init(recordType: kZoneType, recordID: CKRecord.ID(recordName: name))
     }
 
 
@@ -336,7 +336,7 @@ extension CKRecord {
     }
 
 
-    func index(within iReferences: [CKRecordID]) -> Int? {
+    func index(within iReferences: [CKRecord.ID]) -> Int? {
         var index: Int? = nil
 
         for (i, identifier) in iReferences.enumerated() {
@@ -578,8 +578,8 @@ extension String {
 
 
     static func from(_ ascii: UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
-    func substring(from:         Int) -> String  { return substring(from: index(at: from)) }
-    func substring(to:           Int) -> String  { return substring(to: index(at: to)) }
+    func substring(from:         Int) -> String  { return String(self[index(at: from)...]) }
+    func substring(to:           Int) -> String  { return String(self[..<index(at: to)]) }
     func widthForFont (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
 
 
@@ -589,7 +589,7 @@ extension String {
     func sizeWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize {
         let   rect = CGSize(width: 1000000, height: 1000000)
         //let options: [NSStringDrawingOptions] = [.usesLineFragmentOrigin, .usesFontLeading, .usesDeviceMetrics]
-        let bounds = self.boundingRect(with: rect, options: options, attributes: [kCTFontAttributeName as String : font], context: nil)
+        let bounds = self.boundingRect(with: rect, options: options, attributes: convertToOptionalNSAttributedStringKeyDictionary([kCTFontAttributeName as String : font]), context: nil)
 
         return bounds.size
     }
@@ -673,7 +673,7 @@ extension String {
         let iStart = index(at: range.lowerBound)
         let   iEnd = index(at: range.upperBound)
 
-        return substring(with: iStart ..< iEnd)
+        return String(self[iStart ..< iEnd])
     }
 
 
@@ -721,9 +721,9 @@ extension String {
     }
 
 
-    static func forReferences(_ references: [CKReference]?, in databaseID: ZDatabaseID) -> String {
+    static func forReferences(_ references: [CKRecord.Reference]?, in databaseID: ZDatabaseID) -> String {
         return references?.apply()  { object -> (String?) in
-            if let reference = object as? CKReference, let zone = gRemoteStoresManager.recordsManagerFor(databaseID)?.maybeZoneForReference(reference) {
+            if let reference = object as? CKRecord.Reference, let zone = gRemoteStoresManager.recordsManagerFor(databaseID)?.maybeZoneForReference(reference) {
                 let    name  = zone.decoratedName
                 if     name != "" {
                     return name
@@ -838,9 +838,9 @@ extension ZColor {
 
 extension ZGestureRecognizer {
 
-    var isShiftDown:   Bool { return false }
-    var isOptionDown:  Bool { return false }
-    var isCommandDown: Bool { return false }
+    @objc var isShiftDown:   Bool { return false }
+    @objc var isOptionDown:  Bool { return false }
+    @objc var isCommandDown: Bool { return false }
 
 
     func cancel() {
@@ -904,12 +904,18 @@ extension ZView {
 
 extension ZTextField {
 
-    var  isEditingText:  Bool { return false }
-    var  preferredFont: ZFont { return gWidgetFont }
+    var       isEditingText:  Bool { return false }
+    @objc var preferredFont: ZFont { return gWidgetFont }
 
-    func selectCharacter(in range: NSRange) {}
-    func alterCase(up: Bool) {}
-    func setup() {}
+    @objc func selectCharacter(in range: NSRange) {}
+    @objc func alterCase(up: Bool) {}
+    @objc func setup() {}
 }
 
 
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}

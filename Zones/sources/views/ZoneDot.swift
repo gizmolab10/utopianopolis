@@ -286,7 +286,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta)
             let    color = isFilled ? gBackgroundColor : iZone.color
 
-            string.draw(in: rect, withAttributes: [NSForegroundColorAttributeName : color, NSFontAttributeName: font])
+            string.draw(in: rect, withAttributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor) : color, convertFromNSAttributedStringKey(NSAttributedString.Key.font): font]))
 
             return
         }
@@ -371,4 +371,15 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         }
     }
 
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
 }

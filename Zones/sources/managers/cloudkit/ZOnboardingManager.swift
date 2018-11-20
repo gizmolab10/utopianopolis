@@ -32,7 +32,7 @@ class ZOnboardingManager : ZOperationsManager {
     // MARK:-
 
 
-    func completeOnboarding(_ notification: Notification) {
+    @objc func completeOnboarding(_ notification: Notification) {
         FOREGROUND(canBeDirect: true) {
             gBatchManager.batch(.newAppleID) { iResult in
                 gFavoritesManager.updateFavorites()
@@ -123,9 +123,9 @@ class ZOnboardingManager : ZOperationsManager {
     func fetchUserRecord(_ onCompletion: @escaping Closure) {
         if  gCloudAccountStatus == .available,
             let     recordName  = gUserRecordID {
-            let     ckRecordID  = CKRecordID(recordName: recordName)
+            let     ckRecordID  = CKRecord.ID(recordName: recordName)
 
-            gEveryoneCloudManager?.assureRecordExists(withRecordID: ckRecordID, recordType: CKRecordTypeUserRecord) { (iUserRecord: CKRecord?) in
+            gEveryoneCloudManager?.assureRecordExists(withRecordID: ckRecordID, recordType: CKRecord.SystemType.userRecord) { (iUserRecord: CKRecord?) in
                 if  let          record = iUserRecord {
                     let            user = ZUser(record: record, databaseID: gDatabaseID)
                     self          .user = user

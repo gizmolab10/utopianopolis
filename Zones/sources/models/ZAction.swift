@@ -13,8 +13,8 @@ import CloudKit
 
 class ZAction: ZRecord {
 
-    var action: NSDictionary?
-    var  owner: Zone?
+    @objc var action: NSDictionary?
+    @objc var  owner: Zone?
 
 
     override func cloudProperties() -> [String] {

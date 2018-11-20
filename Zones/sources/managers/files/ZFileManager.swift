@@ -72,7 +72,7 @@ class ZFileManager: NSObject {
 	func saveAs() {
 		let panel = NSSavePanel()
 		panel.nameFieldStringValue = "mine.thoughtful"
-		panel.begin { (response: NSModalResponse) in
+		panel.begin { (response: NSApplication.ModalResponse) in
 			if  let path = panel.url?.absoluteString {
 				self.needWrite(for: .mineID)
 				self.writeFile(at: path, from: .mineID)
@@ -153,7 +153,7 @@ class ZFileManager: NSObject {
 
             panel.beginSheetModal(for: window) { (result) in
                 do {
-                    if  result   == NSFileHandlingPanelOKButton,
+                    if  result.rawValue   == NSFileHandlingPanelOKButton,
                         panel.urls.count > 0 {
                         let  path = panel.urls[0].path
 
@@ -186,7 +186,7 @@ class ZFileManager: NSObject {
         }
 
         panel.begin { (result) -> Void in
-            if  result == NSFileHandlingPanelOKButton,
+            if  result.rawValue == NSFileHandlingPanelOKButton,
                 let filename = panel.url {
 
                 if  asOutline {

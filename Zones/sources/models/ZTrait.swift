@@ -25,11 +25,11 @@ enum ZTraitType: String {
 class ZTrait: ZRecord {
 
     
-    dynamic var  type: String?
-    dynamic var  text: String?
-    dynamic var  data: Data?
-    dynamic var asset: CKAsset?
-    dynamic var owner: CKReference?
+    @objc dynamic var  type: String?
+    @objc dynamic var  text: String?
+    @objc dynamic var  data: Data?
+    @objc dynamic var asset: CKAsset?
+    @objc dynamic var owner: CKRecord.Reference?
     var _traitType: ZTraitType? = nil
     var _ownerZone: Zone? = nil
     override var unwrappedName: String { return text ?? displayType }

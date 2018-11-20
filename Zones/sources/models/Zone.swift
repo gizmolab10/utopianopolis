@@ -23,17 +23,17 @@ import CloudKit
 class Zone : ZRecord {
 
 
-    dynamic var           parent:  CKReference?
-    dynamic var         zoneName:       String?
-    dynamic var         zoneLink:       String?
-    dynamic var        zoneColor:       String?
-    dynamic var   zoneAttributes:       String?
-    dynamic var       parentLink:       String?
-    dynamic var       zoneAuthor:       String?
-    dynamic var        zoneOrder:     NSNumber?
-    dynamic var        zoneCount:     NSNumber?
-    dynamic var       zoneAccess:     NSNumber?
-    dynamic var      zoneProgeny:     NSNumber?
+    @objc dynamic var           parent:  CKRecord.Reference?
+    @objc dynamic var         zoneName:       String?
+    @objc dynamic var         zoneLink:       String?
+    @objc dynamic var        zoneColor:       String?
+    @objc dynamic var   zoneAttributes:       String?
+    @objc dynamic var       parentLink:       String?
+    @objc dynamic var       zoneAuthor:       String?
+    @objc dynamic var        zoneOrder:     NSNumber?
+    @objc dynamic var        zoneCount:     NSNumber?
+    @objc dynamic var       zoneAccess:     NSNumber?
+    @objc dynamic var      zoneProgeny:     NSNumber?
     var              _parentZone:         Zone?
     var               _hyperLink:       String?
     var               _crossLink:      ZRecord?
@@ -168,7 +168,7 @@ class Zone : ZRecord {
         var newRecord : CKRecord?
 
         if  let rName = identifier {
-            newRecord = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: rName))
+            newRecord = CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: rName))
         } else {
             newRecord = CKRecord(recordType: kZoneType)
         }
@@ -533,7 +533,7 @@ class Zone : ZRecord {
                     if       newParentDBID == databaseID {
                         if  parent?.recordID.recordName != parentRecord.recordID.recordName {
                             parentLink      = kNullLink
-                            parent          = CKReference(record: parentRecord, action: .none)
+                            parent          = CKRecord.Reference(record: parentRecord, action: .none)
 
                             maybeNeedSave()
                         }
@@ -815,7 +815,7 @@ class Zone : ZRecord {
     func addTrait(_ trait: ZTrait) {
         if let     type  = trait.traitType {
             traits[type] = trait
-            trait .owner = CKReference(record: record, action: .none)
+            trait .owner = CKRecord.Reference(record: record, action: .none)
 
             trait.updateRecordProperties()
         }
@@ -859,7 +859,7 @@ class Zone : ZRecord {
         var trait            = traits[iType]
         if  trait           == nil {
             trait            = ZTrait(databaseID: databaseID)
-            trait?.owner     = CKReference(record: record, action: .none)
+            trait?.owner     = CKRecord.Reference(record: record, action: .none)
             trait?.traitType = iType
             traits[iType]    = trait
         }
@@ -891,7 +891,7 @@ class Zone : ZRecord {
 
     func isABookmark(spawnedBy zone: Zone) -> Bool {
         if  let        link = crossLink, let dbID = link.databaseID {
-            var     probeID = link.record.recordID as CKRecordID?
+            var     probeID = link.record.recordID as CKRecord.ID?
             let  identifier = zone.recordName
             var     visited = [String] ()
 

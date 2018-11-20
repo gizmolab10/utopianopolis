@@ -143,7 +143,7 @@ class ZAlertManager : NSObject {
     func openSystemPreferences() {
         #if os(OSX)
             if let url = URL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
-                NSWorkspace.shared().open(url)
+                NSWorkspace.shared.open(url)
             }
         #else
             if let url = URL(string: "App-Prefs:root=General&path=Network") {

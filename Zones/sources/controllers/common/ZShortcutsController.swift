@@ -32,7 +32,7 @@ class ZShortcutsController: ZGenericTableController {
         controllerID = .shortcuts
 
         for value in [20, 90] {
-            tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
+            tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: convertToNSTextTabOptionKeyDictionary([:])))
         }
         
         view.zlayer.backgroundColor = gBackgroundColor.cgColor
@@ -62,19 +62,19 @@ class ZShortcutsController: ZGenericTableController {
         let                type = ZShortcutType(rawValue: raw.substring(with: NSMakeRange(0, 1)))
         let      paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.tabStops = tabStops
-        var          attributes = [NSParagraphStyleAttributeName: paragraphStyle as Any]
+        var          attributes = [convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle as Any]
 
         switch type {
         case .bold?:
-            let   font = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize())
-            attributes = [NSParagraphStyleAttributeName: paragraphStyle, NSFontAttributeName: font]
+            let   font = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
+            attributes = [convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle, convertFromNSAttributedStringKey(NSAttributedString.Key.font): font]
         case .underline?:
-            attributes = [NSParagraphStyleAttributeName: paragraphStyle, NSUnderlineStyleAttributeName: 1]
+            attributes = [convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle, convertFromNSAttributedStringKey(NSAttributedString.Key.underlineStyle): 1]
         default:
             break
         }
 
-        return NSAttributedString(string: text, attributes: attributes)
+        return NSAttributedString(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
     }
 
 
@@ -160,4 +160,20 @@ class ZShortcutsController: ZGenericTableController {
         "     \t+/- DRAG \t[un]extend selection",
         "",
     ]
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSTextTabOptionKeyDictionary(_ input: [String: Any]) -> [NSTextTab.OptionKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSTextTab.OptionKey(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }

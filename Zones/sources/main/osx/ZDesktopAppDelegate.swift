@@ -81,12 +81,12 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     }
 
 
-    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplicationTerminateReply {
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         return .terminateNow
     }
 
 
-    override open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
+    open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
         return gEditingManager.validateKey(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask)
     }
 

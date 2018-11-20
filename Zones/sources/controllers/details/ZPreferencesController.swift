@@ -64,7 +64,7 @@ class ZPreferencesController: ZGenericController {
     @IBAction func sliderAction(_ iSlider: ZSlider) {
         let value = CGFloat(iSlider.doubleValue)
 
-        if  let     identifier = iSlider.identifier {
+        if  let     identifier = convertFromOptionalNSUserInterfaceItemIdentifier(iSlider.identifier) {
             switch (identifier) {
             case  "thickness": gLineThickness = Double(value)
             case "horizontal": gGenericOffset = CGSize(width: value, height: gGenericOffset.height)
@@ -80,7 +80,7 @@ class ZPreferencesController: ZGenericController {
     @IBAction func colorBoxAction(_ iColorBox: ZColorWell) {
         let color = iColorBox.color
 
-        if  let     identifier = iColorBox.identifier {
+        if  let     identifier = convertFromOptionalNSUserInterfaceItemIdentifier(iColorBox.identifier) {
             switch (identifier) {
             case "drag targets":               gRubberbandColor = color
             case   "background":               gBackgroundColor = color
@@ -110,7 +110,7 @@ class ZPreferencesController: ZGenericController {
 
     @IBAction func segmentedControlAction(_ iControl: ZSegmentedControl) {
         let          selection = iControl.selectedSegment
-        if  let     identifier = iControl.identifier {
+        if  let     identifier = convertFromOptionalNSUserInterfaceItemIdentifier(iControl.identifier) {
             switch (identifier) {
             case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; signalFor(nil, regarding: .redraw)
             case "browsing":  gBrowsingMode  = ZBrowsingMode (rawValue: selection)!
@@ -120,4 +120,10 @@ class ZPreferencesController: ZGenericController {
         }
     }
 
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromOptionalNSUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier?) -> String? {
+	guard let input = input else { return nil }
+	return input.rawValue
 }

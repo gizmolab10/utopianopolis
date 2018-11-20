@@ -6,20 +6,6 @@
 	objectVersion = 46;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		0C05C0FA210125B8001F2015 /* CommonCryptoModuleMap */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 0C05C0FB210125B8001F2015 /* Build configuration list for PBXAggregateTarget "CommonCryptoModuleMap" */;
-			buildPhases = (
-				0C05C0FE210125E7001F2015 /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = CommonCryptoModuleMap;
-			productName = CommonCryptoModuleMap;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		0C09A7D71FE5DEC600F3D736 /* ZGenericTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C09A7D61FE5DEC600F3D736 /* ZGenericTableController.swift */; };
 		0C1ABAAB1FB144E300D62947 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3981F1988380091F4D1 /* Assets.xcassets */; };
@@ -170,9 +156,6 @@
 		0C7152231FD8A1E400C7DA61 /* ZFocusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7152221FD8A1E400C7DA61 /* ZFocusManager.swift */; };
 		0C7152241FD8A1E400C7DA61 /* ZFocusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7152221FD8A1E400C7DA61 /* ZFocusManager.swift */; };
 		0C7152251FD8A1E500C7DA61 /* ZFocusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7152221FD8A1E400C7DA61 /* ZFocusManager.swift */; };
-		0CA04B2D1D2ECF1B001892E5 /* ZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */; };
-		0CA04B631D2ECF41001892E5 /* PadZonesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */; };
-		0CA04B6E1D2ECF41001892E5 /* PadZonesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */; };
 		0CABC9EF2022768D0019D8B0 /* ZEnumerations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CABC9EE2022768D0019D8B0 /* ZEnumerations.swift */; };
 		0CABC9F02022768D0019D8B0 /* ZEnumerations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CABC9EE2022768D0019D8B0 /* ZEnumerations.swift */; };
 		0CABC9F12022768D0019D8B0 /* ZEnumerations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CABC9EE2022768D0019D8B0 /* ZEnumerations.swift */; };
@@ -193,37 +176,6 @@
 		A746D464219F613D00123A0A /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Shortcuts.storyboard */; };
 		A746D465219F613D00123A0A /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Shortcuts.storyboard */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		0CA04B291D2ECF1B001892E5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0CA04B0C1D2ECF1A001892E5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0CA04B131D2ECF1A001892E5;
-			remoteInfo = Zones;
-		};
-		0CA04B341D2ECF1B001892E5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0CA04B0C1D2ECF1A001892E5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0CA04B131D2ECF1A001892E5;
-			remoteInfo = Zones;
-		};
-		0CA04B5F1D2ECF41001892E5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0CA04B0C1D2ECF1A001892E5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0CA04B481D2ECF41001892E5;
-			remoteInfo = PadZones;
-		};
-		0CA04B6A1D2ECF41001892E5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0CA04B0C1D2ECF1A001892E5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0CA04B481D2ECF41001892E5;
-			remoteInfo = PadZones;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		0C05C36B2103ED91001F2015 /* Embed Frameworks */ = {
@@ -339,19 +291,7 @@
 		0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSearchManager.swift; sourceTree = "<group>"; };
 		0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDesktopExtensions.swift; sourceTree = "<group>"; };
 		0C7152221FD8A1E400C7DA61 /* ZFocusManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFocusManager.swift; sourceTree = "<group>"; };
-		0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesTests.swift; sourceTree = "<group>"; };
-		0CA04B2E1D2ECF1B001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0CA04B331D2ECF1B001892E5 /* ZonesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZonesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0CA04B371D2ECF1B001892E5 /* ZonesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesUITests.swift; sourceTree = "<group>"; };
-		0CA04B391D2ECF1B001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0CA04B491D2ECF41001892E5 /* PadFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PadFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		0CA04B5E1D2ECF41001892E5 /* PadZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PadZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PadZonesTests.swift; sourceTree = "<group>"; };
-		0CA04B641D2ECF41001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0CA04B691D2ECF41001892E5 /* PadZonesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PadZonesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PadZonesUITests.swift; sourceTree = "<group>"; };
-		0CA04B6F1D2ECF41001892E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0CABC9EE2022768D0019D8B0 /* ZEnumerations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEnumerations.swift; sourceTree = "<group>"; };
 		0CAC18E02006A84800D641C4 /* ZBookmarksManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBookmarksManager.swift; sourceTree = "<group>"; };
 		0CAC18E8200ED0BB00D641C4 /* ZDebugController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDebugController.swift; sourceTree = "<group>"; };
@@ -384,39 +324,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0CA04B251D2ECF1B001892E5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0CA04B301D2ECF1B001892E5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0CA04B461D2ECF41001892E5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				0C60B6791DBE84DF005D99F9 /* SnapKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0CA04B5B1D2ECF41001892E5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0CA04B661D2ECF41001892E5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -698,17 +610,6 @@
 			name = OSX;
 			sourceTree = "<group>";
 		};
-		0C401E891D2F6B6D000B9864 /* tests */ = {
-			isa = PBXGroup;
-			children = (
-				0CA04B611D2ECF41001892E5 /* PadZonesTests */,
-				0CA04B6C1D2ECF41001892E5 /* PadZonesUITests */,
-				0CA04B2B1D2ECF1B001892E5 /* ZonesTests */,
-				0CA04B361D2ECF1B001892E5 /* ZonesUITests */,
-			);
-			name = tests;
-			sourceTree = "<group>";
-		};
 		0C43EFBC21010F17000976CE /* files */ = {
 			isa = PBXGroup;
 			children = (
@@ -759,58 +660,17 @@
 				0C39B3921F1988380091F4D1 /* interfaces */,
 				0CA04B151D2ECF1A001892E5 /* products */,
 				0C39B21E1F182EBB0091F4D1 /* sources */,
-				0C401E891D2F6B6D000B9864 /* tests */,
 			);
 			sourceTree = "<group>";
 		};
 		0CA04B151D2ECF1A001892E5 /* products */ = {
 			isa = PBXGroup;
 			children = (
-				0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */,
-				0CA04B331D2ECF1B001892E5 /* ZonesUITests.xctest */,
 				0CA04B491D2ECF41001892E5 /* PadFocus.app */,
-				0CA04B5E1D2ECF41001892E5 /* PadZonesTests.xctest */,
-				0CA04B691D2ECF41001892E5 /* PadZonesUITests.xctest */,
 				0C69C9DF1F09CD95004D026D /* iFocus.app */,
 				A746D466219F637A00123A0A /* Thoughtful.app */,
 			);
 			name = products;
-			sourceTree = "<group>";
-		};
-		0CA04B2B1D2ECF1B001892E5 /* ZonesTests */ = {
-			isa = PBXGroup;
-			children = (
-				0CA04B2C1D2ECF1B001892E5 /* ZonesTests.swift */,
-				0CA04B2E1D2ECF1B001892E5 /* Info.plist */,
-			);
-			path = ZonesTests;
-			sourceTree = "<group>";
-		};
-		0CA04B361D2ECF1B001892E5 /* ZonesUITests */ = {
-			isa = PBXGroup;
-			children = (
-				0CA04B371D2ECF1B001892E5 /* ZonesUITests.swift */,
-				0CA04B391D2ECF1B001892E5 /* Info.plist */,
-			);
-			path = ZonesUITests;
-			sourceTree = "<group>";
-		};
-		0CA04B611D2ECF41001892E5 /* PadZonesTests */ = {
-			isa = PBXGroup;
-			children = (
-				0CA04B621D2ECF41001892E5 /* PadZonesTests.swift */,
-				0CA04B641D2ECF41001892E5 /* Info.plist */,
-			);
-			path = PadZonesTests;
-			sourceTree = "<group>";
-		};
-		0CA04B6C1D2ECF41001892E5 /* PadZonesUITests */ = {
-			isa = PBXGroup;
-			children = (
-				0CA04B6D1D2ECF41001892E5 /* PadZonesUITests.swift */,
-				0CA04B6F1D2ECF41001892E5 /* Info.plist */,
-			);
-			path = PadZonesUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -853,42 +713,6 @@
 			productReference = A746D466219F637A00123A0A /* Thoughtful.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0CA04B271D2ECF1B001892E5 /* ZonesTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0CA04B3F1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "ZonesTests" */;
-			buildPhases = (
-				0CA04B241D2ECF1B001892E5 /* Sources */,
-				0CA04B251D2ECF1B001892E5 /* Frameworks */,
-				0CA04B261D2ECF1B001892E5 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0CA04B2A1D2ECF1B001892E5 /* PBXTargetDependency */,
-			);
-			name = ZonesTests;
-			productName = ZonesTests;
-			productReference = 0CA04B281D2ECF1B001892E5 /* ZonesTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		0CA04B321D2ECF1B001892E5 /* ZonesUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0CA04B421D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "ZonesUITests" */;
-			buildPhases = (
-				0CA04B2F1D2ECF1B001892E5 /* Sources */,
-				0CA04B301D2ECF1B001892E5 /* Frameworks */,
-				0CA04B311D2ECF1B001892E5 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0CA04B351D2ECF1B001892E5 /* PBXTargetDependency */,
-			);
-			name = ZonesUITests;
-			productName = ZonesUITests;
-			productReference = 0CA04B331D2ECF1B001892E5 /* ZonesUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 		0CA04B481D2ECF41001892E5 /* PadFocus */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0CA04B701D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadFocus" */;
@@ -907,42 +731,6 @@
 			productReference = 0CA04B491D2ECF41001892E5 /* PadFocus.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0CA04B5D1D2ECF41001892E5 /* PadZonesTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0CA04B731D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadZonesTests" */;
-			buildPhases = (
-				0CA04B5A1D2ECF41001892E5 /* Sources */,
-				0CA04B5B1D2ECF41001892E5 /* Frameworks */,
-				0CA04B5C1D2ECF41001892E5 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0CA04B601D2ECF41001892E5 /* PBXTargetDependency */,
-			);
-			name = PadZonesTests;
-			productName = PadZonesTests;
-			productReference = 0CA04B5E1D2ECF41001892E5 /* PadZonesTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		0CA04B681D2ECF41001892E5 /* PadZonesUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0CA04B761D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadZonesUITests" */;
-			buildPhases = (
-				0CA04B651D2ECF41001892E5 /* Sources */,
-				0CA04B661D2ECF41001892E5 /* Frameworks */,
-				0CA04B671D2ECF41001892E5 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0CA04B6B1D2ECF41001892E5 /* PBXTargetDependency */,
-			);
-			name = PadZonesUITests;
-			productName = PadZonesUITests;
-			productReference = 0CA04B691D2ECF41001892E5 /* PadZonesUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -953,11 +741,6 @@
 				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = Zones;
 				TargetAttributes = {
-					0C05C0FA210125B8001F2015 = {
-						CreatedOnToolsVersion = 9.4;
-						DevelopmentTeam = F8M94NY2TV;
-						ProvisioningStyle = Automatic;
-					};
 					0C69C9861F09CD95004D026D = {
 						DevelopmentTeam = F8M94NY2TV;
 						LastSwiftMigration = 0940;
@@ -971,7 +754,7 @@
 					0CA04B131D2ECF1A001892E5 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = F8M94NY2TV;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 1010;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Push = {
@@ -984,16 +767,6 @@
 								enabled = 1;
 							};
 						};
-					};
-					0CA04B271D2ECF1B001892E5 = {
-						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0800;
-						TestTargetID = 0CA04B131D2ECF1A001892E5;
-					};
-					0CA04B321D2ECF1B001892E5 = {
-						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0800;
-						TestTargetID = 0CA04B131D2ECF1A001892E5;
 					};
 					0CA04B481D2ECF41001892E5 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -1011,16 +784,6 @@
 								enabled = 1;
 							};
 						};
-					};
-					0CA04B5D1D2ECF41001892E5 = {
-						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0800;
-						TestTargetID = 0CA04B481D2ECF41001892E5;
-					};
-					0CA04B681D2ECF41001892E5 = {
-						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0800;
-						TestTargetID = 0CA04B481D2ECF41001892E5;
 					};
 				};
 			};
@@ -1040,11 +803,6 @@
 				0C69C9861F09CD95004D026D /* iFocus */,
 				0CA04B481D2ECF41001892E5 /* PadFocus */,
 				0CA04B131D2ECF1A001892E5 /* Thoughtful */,
-				0C05C0FA210125B8001F2015 /* CommonCryptoModuleMap */,
-				0CA04B5D1D2ECF41001892E5 /* PadZonesTests */,
-				0CA04B681D2ECF41001892E5 /* PadZonesUITests */,
-				0CA04B271D2ECF1B001892E5 /* ZonesTests */,
-				0CA04B321D2ECF1B001892E5 /* ZonesUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -1074,20 +832,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0CA04B261D2ECF1B001892E5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0CA04B311D2ECF1B001892E5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0CA04B471D2ECF41001892E5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1100,36 +844,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0CA04B5C1D2ECF41001892E5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0CA04B671D2ECF41001892E5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0C05C0FE210125E7001F2015 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This if-statement means we'll only run the main script if the CommonCryptoModuleMap directory doesn't exist\n# Because otherwise the rest of the script causes a full recompile for anything where CommonCrypto is a dependency\n# Do a \"Clean Build Folder\" to remove this directory and trigger the rest of the script to run\nif [ -d \"${BUILT_PRODUCTS_DIR}/CommonCryptoModuleMap\" ]; then\necho \"${BUILT_PRODUCTS_DIR}/CommonCryptoModuleMap directory already exists, so skipping the rest of the script.\"\nexit 0\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/CommonCryptoModuleMap\"\ncat <<EOF > \"${BUILT_PRODUCTS_DIR}/CommonCryptoModuleMap/module.modulemap\"\nmodule CommonCrypto [system] {\n    header \"${SDKROOT}/usr/include/CommonCrypto/CommonCrypto.h\"\n    export *\n}\n";
-		};
 		0C1EC7C820A8D91F005E2DA2 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1262,21 +979,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0CA04B241D2ECF1B001892E5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0CA04B2D1D2ECF1B001892E5 /* ZonesTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0CA04B2F1D2ECF1B001892E5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0CA04B451D2ECF41001892E5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1329,46 +1031,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0CA04B5A1D2ECF41001892E5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0CA04B631D2ECF41001892E5 /* PadZonesTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0CA04B651D2ECF41001892E5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0CA04B6E1D2ECF41001892E5 /* PadZonesUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		0CA04B2A1D2ECF1B001892E5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0CA04B131D2ECF1A001892E5 /* Thoughtful */;
-			targetProxy = 0CA04B291D2ECF1B001892E5 /* PBXContainerItemProxy */;
-		};
-		0CA04B351D2ECF1B001892E5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0CA04B131D2ECF1A001892E5 /* Thoughtful */;
-			targetProxy = 0CA04B341D2ECF1B001892E5 /* PBXContainerItemProxy */;
-		};
-		0CA04B601D2ECF41001892E5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0CA04B481D2ECF41001892E5 /* PadFocus */;
-			targetProxy = 0CA04B5F1D2ECF41001892E5 /* PBXContainerItemProxy */;
-		};
-		0CA04B6B1D2ECF41001892E5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0CA04B481D2ECF41001892E5 /* PadFocus */;
-			targetProxy = 0CA04B6A1D2ECF41001892E5 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		A7245E0021729B02003D4BDA /* Main.storyboard */ = {
@@ -1398,26 +1061,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		0C05C0FC210125B8001F2015 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = F8M94NY2TV;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = macosx;
-			};
-			name = Debug;
-		};
-		0C05C0FD210125B8001F2015 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = F8M94NY2TV;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = macosx;
-			};
-			name = Release;
-		};
 		0C69C9DD1F09CD95004D026D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1640,7 +1283,8 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Zones/Zones-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -1686,65 +1330,8 @@
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Zones/Zones-Bridging-Header.h";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
-				SWIFT_VERSION = 3.0;
-			};
-			name = Release;
-		};
-		0CA04B401D2ECF1B001892E5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = ZonesTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.ZonesTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Thoughtful.app/Contents/MacOS/Thoughtful";
-			};
-			name = Debug;
-		};
-		0CA04B411D2ECF1B001892E5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = ZonesTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.ZonesTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Thoughtful.app/Contents/MacOS/Thoughtful";
-			};
-			name = Release;
-		};
-		0CA04B431D2ECF1B001892E5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = ZonesUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.ZonesUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_TARGET_NAME = Zones;
-			};
-			name = Debug;
-		};
-		0CA04B441D2ECF1B001892E5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = ZonesUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.ZonesUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_TARGET_NAME = Zones;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -1816,86 +1403,9 @@
 			};
 			name = Release;
 		};
-		0CA04B741D2ECF41001892E5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				INFOPLIST_FILE = PadZonesTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.PadZonesTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PadZones.app/PadZones";
-			};
-			name = Debug;
-		};
-		0CA04B751D2ECF41001892E5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				INFOPLIST_FILE = PadZonesTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.PadZonesTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PadZones.app/PadZones";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		0CA04B771D2ECF41001892E5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				INFOPLIST_FILE = PadZonesUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.PadZonesUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 3.0;
-				TEST_TARGET_NAME = PadZones;
-			};
-			name = Debug;
-		};
-		0CA04B781D2ECF41001892E5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				INFOPLIST_FILE = PadZonesUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.PadZonesUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 3.0;
-				TEST_TARGET_NAME = PadZones;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0C05C0FB210125B8001F2015 /* Build configuration list for PBXAggregateTarget "CommonCryptoModuleMap" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0C05C0FC210125B8001F2015 /* Debug */,
-				0C05C0FD210125B8001F2015 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		0C69C9DC1F09CD95004D026D /* Build configuration list for PBXNativeTarget "iFocus" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1923,47 +1433,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0CA04B3F1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "ZonesTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0CA04B401D2ECF1B001892E5 /* Debug */,
-				0CA04B411D2ECF1B001892E5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0CA04B421D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "ZonesUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0CA04B431D2ECF1B001892E5 /* Debug */,
-				0CA04B441D2ECF1B001892E5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		0CA04B701D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadFocus" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0CA04B711D2ECF41001892E5 /* Debug */,
 				0CA04B721D2ECF41001892E5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0CA04B731D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadZonesTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0CA04B741D2ECF41001892E5 /* Debug */,
-				0CA04B751D2ECF41001892E5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0CA04B761D2ECF41001892E5 /* Build configuration list for PBXNativeTarget "PadZonesUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0CA04B771D2ECF41001892E5 /* Debug */,
-				0CA04B781D2ECF41001892E5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

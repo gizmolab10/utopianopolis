@@ -524,7 +524,7 @@ class ZRecord: NSObject {
 
         if  name == nil || gRemoteStoresManager.recordsManagerFor(iDatabaseID)?.maybeCKRecordForRecordName(name) == nil {
             if  let recordName = name {
-                ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: recordName)) // YIKES this may be wildly out of date
+                ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecord.ID(recordName: recordName)) // YIKES this may be wildly out of date
             }
 
             for keyPath in cloudProperties() + [kpModificationDate] {

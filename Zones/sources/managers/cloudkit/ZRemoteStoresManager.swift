@@ -126,7 +126,7 @@ class ZRemoteStoresManager: NSObject {
     // MARK:-
 
 
-    func receivedUpdateFor(_ recordID: CKRecordID) {
+    func receivedUpdateFor(_ recordID: CKRecord.ID) {
         resetBadgeCounter()
 
         ////////////////////////////////////////////////////////////////////////////////////

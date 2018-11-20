@@ -15,7 +15,7 @@ let gContainer = CKContainer(identifier: kCloudID)
 
 
 class ZCloudManager: ZRecordsManager {
-    var   cloudZonesByID = [CKRecordZoneID : CKRecordZone] ()
+    var   cloudZonesByID = [CKRecordZone.ID : CKRecordZone] ()
     var         database :  CKDatabase? { return gRemoteStoresManager.databaseForID(databaseID) }
     var   refetchingName :       String { return "remember.\(databaseID.rawValue)" }
     var cloudUnavailable :         Bool { return !gHasInternet || (databaseID == .mineID && !gCloudAccountIsActive) }
@@ -108,7 +108,7 @@ class ZCloudManager: ZRecordsManager {
 
                 FOREGROUND {
                     if  let destroyed = iDeletedRecordIDs {
-                        for recordID: CKRecordID in destroyed {
+                        for recordID: CKRecord.ID in destroyed {
                             if  let zRecord = self.maybeZRecordForRecordID(recordID) { // zones AND traits
                                 zRecord.orphan()
                                 self.unregisterZRecord(zRecord)
@@ -215,12 +215,12 @@ class ZCloudManager: ZRecordsManager {
     }
     
     
-    func assureRecordExists(withRecordID iCKRecordID: CKRecordID, recordType: String, onCompletion: @escaping RecordClosure) {
+    func assureRecordExists(withRecordID iCKRecordID: CKRecord.ID, recordType: String, onCompletion: @escaping RecordClosure) {
         detectIfRecordExists(withRecordID: iCKRecordID, recordType: recordType, mustCreate: true, onCompletion: onCompletion)
     }
     
 
-    func detectIfRecordExists(withRecordID iCKRecordID: CKRecordID, recordType: String, mustCreate: Bool, onCompletion: @escaping RecordClosure) {
+    func detectIfRecordExists(withRecordID iCKRecordID: CKRecord.ID, recordType: String, mustCreate: Bool, onCompletion: @escaping RecordClosure) {
         let done:  RecordClosure = { (iCKRecord: CKRecord?) in
             FOREGROUND(canBeDirect: true) {
                 if  let ckRecord = iCKRecord {
@@ -266,7 +266,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func queryFor(_ recordType: String, with predicate: NSPredicate, properties: [String], batchSize: Int = kBatchSize, cursor iCursor: CKQueryCursor? = nil, onCompletion: RecordErrorClosure?) {
+    func queryFor(_ recordType: String, with predicate: NSPredicate, properties: [String], batchSize: Int = kBatchSize, cursor iCursor: CKQueryOperation.Cursor? = nil, onCompletion: RecordErrorClosure?) {
         currentPredicate                 = predicate
         if  var                operation = configure(CKQueryOperation()) as? CKQueryOperation {
             if  let               cursor = iCursor {
@@ -335,7 +335,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func traitsPredicate(specificTo iRecordIDs: [CKRecordID]) -> NSPredicate? {
+    func traitsPredicate(specificTo iRecordIDs: [CKRecord.ID]) -> NSPredicate? {
         if  iRecordIDs.count == 0 {
             return gIsReadyToShowUI ? nil : NSPredicate(value: true)
         } else {
@@ -352,7 +352,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func bookmarkPredicate(specificTo iRecordIDs: [CKRecordID]) -> NSPredicate? {
+    func bookmarkPredicate(specificTo iRecordIDs: [CKRecord.ID]) -> NSPredicate? {
         var  predicate    = ""
 
         if  cloudUnavailable {
@@ -393,9 +393,9 @@ class ZCloudManager: ZRecordsManager {
         let     count = recordIDs.count
 
         if  count > 0, let           operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            var                    recordsByID = [CKRecord : CKRecordID?] ()
+            var                    recordsByID = [CKRecord : CKRecord.ID?] ()
             operation               .recordIDs = recordIDs
-            operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
+            operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecord.ID?, iError: Error?) in
                 gAlertManager.detectError(iError) { iHasError in
                     if  iHasError {
                         let    zone = self.maybeZoneForRecordID(iID)
@@ -527,11 +527,11 @@ class ZCloudManager: ZRecordsManager {
                     let          parentKey = "parent"
                     let      parentLinkKey = "parentLink"
                     var               lost = self.createRandomLost()
-                    var          parentIDs = [CKRecordID] ()
+                    var          parentIDs = [CKRecord.ID] ()
                     var             toLose = [CKRecord] ()
-                    var childrenRecordsFor = [CKRecordID : [CKRecord]] ()
+                    var childrenRecordsFor = [CKRecord.ID : [CKRecord]] ()
                     let         isOrphaned = { (iCKRecord: CKRecord) -> Bool in
-                        if  let  parentRef = iCKRecord[parentKey] as? CKReference {
+                        if  let  parentRef = iCKRecord[parentKey] as? CKRecord.Reference {
                             let  parentID  = parentRef.recordID
 
                             if  self.notRegistered(parentID) {
@@ -576,7 +576,7 @@ class ZCloudManager: ZRecordsManager {
                     if childrenRecordsFor.count == 0 {
                         onCompletion?(0)
                     } else {
-                        var missingIDs = [CKRecordID] ()
+                        var missingIDs = [CKRecord.ID] ()
                         var fetchClosure : Closure? = nil
                         
                         fetchClosure = {
@@ -641,7 +641,7 @@ class ZCloudManager: ZRecordsManager {
         let predicate = self.predicate(since: start, before: end)
         var retrieved = [CKRecord] ()
 
-        queryFor(type, with: predicate, properties: properties, batchSize: CKQueryOperationMaximumResults) { (iRecord, iError) in
+        queryFor(type, with: predicate, properties: properties, batchSize: CKQueryOperation.maximumResults) { (iRecord, iError) in
             if  iError   != nil {
                 if start == nil {
                     onCompletion?(retrieved) // NEED BETTER ERROR HANDLING
@@ -749,8 +749,8 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func fetchZones(needed:  [CKRecordID], _ onCompletion: RecordsClosure?) {
-        var recordIDs = [CKRecordID] ()
+    func fetchZones(needed:  [CKRecord.ID], _ onCompletion: RecordsClosure?) {
+        var recordIDs = [CKRecord.ID] ()
         var retrieved = [CKRecord] ()
         var remainder = needed
         var fetchClosure : Closure? = nil
@@ -780,7 +780,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func reliableFetch(needed: [CKRecordID], _ onCompletion: RecordsClosure?) {
+    func reliableFetch(needed: [CKRecord.ID], _ onCompletion: RecordsClosure?) {
         let count = needed.count
 
         if  count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
@@ -788,7 +788,7 @@ class ZCloudManager: ZRecordsManager {
             operation   .desiredKeys = Zone.cloudProperties()
             operation     .recordIDs = needed
 
-            operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
+            operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecord.ID?, iError: Error?) in
                 gAlertManager.alertError(iError) { iHasError in
                     if  iHasError {
                         if  let    name = iID?.recordName {
@@ -830,10 +830,10 @@ class ZCloudManager: ZRecordsManager {
         let                          count = missingParentIDs.count
 
         if  count > 0, let       operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            var         fetchedRecordsByID = [CKRecord : CKRecordID?] ()
+            var         fetchedRecordsByID = [CKRecord : CKRecord.ID?] ()
             operation           .recordIDs = missingParentIDs
 
-            operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecordID?, iError: Error?) in
+            operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecord.ID?, iError: Error?) in
                 gAlertManager.alertError(iError) { iHasError in
                     if  !iHasError, iRecord != nil {
                         fetchedRecordsByID[iRecord!] = iID
@@ -915,7 +915,7 @@ class ZCloudManager: ZRecordsManager {
         if count > 0 {
             let      predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
             let   destroyedIDs = recordIDsWithMatchingStates([.needsDestroy])
-            var  progenyNeeded = [CKReference] ()
+            var  progenyNeeded = [CKRecord.Reference] ()
             var      retrieved = [CKRecord] ()
 
             if hasAnyRecordsMarked(with: [.needsProgeny]) {
@@ -1140,7 +1140,7 @@ class ZCloudManager: ZRecordsManager {
 
             onCompletion?(0)
         } else {
-            let recordID = CKRecordID(recordName: name)
+            let recordID = CKRecord.ID(recordName: name)
 
             self.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { (iHereRecord: CKRecord?) in
                 if  iHereRecord == nil || iHereRecord?[kpZoneName] == nil {
@@ -1203,7 +1203,7 @@ class ZCloudManager: ZRecordsManager {
 
 
     func establishRootFor(name: String, recordName: String, _ onCompletion: ZoneClosure?) {
-        let recordID = CKRecordID(recordName: recordName)
+        let recordID = CKRecord.ID(recordName: recordName)
 
         assureRecordExists(withRecordID: recordID, recordType: kZoneType) { (iRecord: CKRecord?) in
             var record  = iRecord
@@ -1280,7 +1280,7 @@ class ZCloudManager: ZRecordsManager {
             for className: String in classNames {
                 let    predicate:          NSPredicate = NSPredicate(value: true)
                 let subscription:       CKSubscription = CKQuerySubscription(recordType: className, predicate: predicate, options: [.firesOnRecordUpdate])
-                let  information:   CKNotificationInfo = CKNotificationInfo()
+                let  information:   CKSubscription.NotificationInfo = CKSubscription.NotificationInfo()
                 information.alertLocalizationKey       = "new Focus data has arrived";
                 information.shouldBadge                = true
                 information.shouldSendContentAvailable = true
@@ -1327,7 +1327,7 @@ class ZCloudManager: ZRecordsManager {
         if  database          != nil &&
             object    .record != nil {
             let      predicate = NSPredicate(value: true)
-            let  type: String  = NSStringFromClass(type(of: object)) as String
+            let  type: String  = NSStringFromClass(Swift.type(of: object)) as String
             let query: CKQuery = CKQuery(recordType: type, predicate: predicate)
 
             database?.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, performanceError: Error?) in

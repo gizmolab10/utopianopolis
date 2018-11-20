@@ -225,7 +225,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func menuType(for key: String, _ flags: NSEventModifierFlags) -> ZMenuType {
+    func menuType(for key: String, _ flags: NSEvent.ModifierFlags) -> ZMenuType {
         let  alterers = "ehiluw\r" + kMarkingCharacters
         let isCommand = flags.isCommand
 
@@ -250,7 +250,7 @@ class ZEditingManager: NSObject {
     }
 
 
-    func validateKey(_ key: String, _ flags: NSEventModifierFlags) -> Bool {
+    func validateKey(_ key: String, _ flags: NSEvent.ModifierFlags) -> Bool {
         if gWorkMode != .graphMode {
             return false
         }
@@ -513,7 +513,7 @@ class ZEditingManager: NSObject {
         #if os(OSX)
 
             if  let         view = gHere.widget {
-                let    printInfo = NSPrintInfo.shared()
+                let    printInfo = NSPrintInfo.shared
                 let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
                 let      isWider = view.bounds.size.width > view.bounds.size.height
                 let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
@@ -1071,7 +1071,7 @@ class ZEditingManager: NSObject {
                                     // remove a bookmark whose target is zone //
                                     ////////////////////////////////////////////
 
-                                    self.deleteZones(bookmarks, permanently: permanently, iShouldGrab: false) { iZone in // recurse
+                                    self.deleteZones(bookmarks, permanently: permanently, iShouldGrab: false) { // recurse
                                         onCompletion?()
                                     }
                                 }
@@ -1603,7 +1603,7 @@ class ZEditingManager: NSObject {
 
                 self.UNDO(self) { iUndoSelf in
                     iUndoSelf.prepareUndoForDelete()
-                    iUndoSelf.deleteZones(forUndo, iShouldGrab: false) { iZone in }
+                    iUndoSelf.deleteZones(forUndo, iShouldGrab: false, onCompletion: nil)
                     zone.grab()
                     iUndoSelf.redrawSyncRedraw()
                 }

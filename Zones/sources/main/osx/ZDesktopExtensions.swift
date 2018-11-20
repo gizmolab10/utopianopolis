@@ -41,7 +41,7 @@ public typealias ZButtonCell                = NSButtonCell
 public typealias ZBezierPath                = NSBezierPath
 public typealias ZScrollView                = NSScrollView
 public typealias ZController                = NSViewController
-public typealias ZEventFlags                = NSEventModifierFlags
+public typealias ZEventFlags                = NSEvent.ModifierFlags
 public typealias ZSearchField               = NSSearchField
 public typealias ZApplication               = NSApplication
 public typealias ZTableRowView              = NSTableRowView
@@ -57,13 +57,13 @@ public typealias ZSearchFieldDelegate       = NSSearchFieldDelegate
 public typealias ZApplicationDelegate       = NSApplicationDelegate
 public typealias ZPanGestureRecognizer      = NSPanGestureRecognizer
 public typealias ZClickGestureRecognizer    = NSClickGestureRecognizer
-public typealias ZGestureRecognizerState    = NSGestureRecognizerState
+public typealias ZGestureRecognizerState    = NSGestureRecognizer.State
 public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 
 
 let        gVerticalWeight = 1.0
 let gHighlightHeightOffset = CGFloat(-3.0)
-let           gApplication = NSApplication.shared()
+let           gApplication = NSApplication.shared
 var     gDetailsController : ZDetailsController? { return gControllersManager.controllerForID(.details) as? ZDetailsController }
 
 
@@ -124,7 +124,7 @@ extension String {
                 url = URL(string: "file://" + urlString)!
             }
 
-            NSWorkspace.shared().open(url)
+            NSWorkspace.shared.open(url)
         }
     }
 
@@ -138,7 +138,7 @@ extension NSApplication {
 }
 
 
-extension NSEventModifierFlags {
+extension NSEvent.ModifierFlags {
     var isNumericPad: Bool { return contains(.numericPad) }
     var isControl:    Bool { return contains(.control) }
     var isCommand:    Bool { return contains(.command) }
@@ -190,10 +190,10 @@ extension NSBezierPath {
             let type = self.element(at: i, associatedPoints: &points)
 
             switch type {
-            case .closePathBezierPathElement: path.closeSubpath()
-            case .moveToBezierPathElement:    path.move    (to: CGPoint(x: points[0].x, y: points[0].y) )
-            case .lineToBezierPathElement:    path.addLine (to: CGPoint(x: points[0].x, y: points[0].y) )
-            case .curveToBezierPathElement:   path.addCurve(to: CGPoint(x: points[2].x, y: points[2].y),
+            case .closePath: path.closeSubpath()
+            case .moveTo:    path.move    (to: CGPoint(x: points[0].x, y: points[0].y) )
+            case .lineTo:    path.addLine (to: CGPoint(x: points[0].x, y: points[0].y) )
+            case .curveTo:   path.addCurve(to: CGPoint(x: points[2].x, y: points[2].y),
                                                       control1: CGPoint(x: points[0].x, y: points[0].y),
                                                       control2: CGPoint(x: points[1].x, y: points[1].y) )
             }
@@ -315,7 +315,7 @@ extension ZAlert {
 
     func showAlert(closure: AlertStatusClosure? = nil) {
         let             response = runModal()
-        let              success = response == NSAlertFirstButtonReturn
+        let              success = response == NSApplication.ModalResponse.alertFirstButtonReturn
         let status: ZAlertStatus = success ? .eStatusYes : .eStatusNo
 
         closure?(status)
@@ -328,7 +328,7 @@ extension NSTextField {
     var          text:         String? { get { return stringValue } set { stringValue = newValue ?? "" } }
     var textAlignment: NSTextAlignment { get { return alignment }   set { alignment = newValue } }
     func enableUndo()                  { cell?.allowsUndo = true }
-    func selectAllText()               {}
+    @objc func selectAllText()               {}
 }
 
 
@@ -365,7 +365,7 @@ extension ZoneTextWidget {
     override func textDidEndEditing(_ notification: Notification) {
         if  let       number = notification.userInfo?["NSTextMovement"] as? NSNumber, !gTextManager.isEditingStateChanging {
             let        value = number.intValue
-            let      isShift = NSEvent.modifierFlags().isShift
+            let      isShift = NSEvent.modifierFlags.isShift
             var key: String? = nil
 
             gTextManager.stopCurrentEdit(forceCapture: isShift)
@@ -502,17 +502,17 @@ extension ZoneWidget {
             switch kind! {
             case .above:
                 frame.origin   .y = sourceFrame.maxY - halfDotHeight + thickness
-                frame.size.height = fabs( targetMidY + thinThickness - frame.minY)
+                frame.size.height = abs(  targetMidY + thinThickness - frame.minY)
             case .below:
                 frame.origin   .y = targetFrame.minY + halfDotHeight - thickness  - thinThickness
-                frame.size.height = fabs( sourceMidY + thinThickness - frame.minY - halfDotHeight + 3.0)
+                frame.size.height = abs(  sourceMidY + thinThickness - frame.minY - halfDotHeight + 3.0)
             case .straight:
                 frame.origin   .y =       targetMidY - thinThickness / 2.0
                 frame.origin   .x = sourceFrame.maxX
                 frame.size.height =                    thinThickness
             }
 
-            frame.size     .width = fabs(targetFrame.minX - frame.minX)
+            frame.size     .width = abs(targetFrame.minX - frame.minX)
         }
         
         return frame
