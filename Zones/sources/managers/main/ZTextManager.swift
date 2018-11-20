@@ -8,6 +8,12 @@
 
 import Foundation
 
+#if os(OSX)
+import AppKit
+#elseif os(iOS)
+import UIKit
+#endif
+
 
 let gTextManager = ZTextManager()
 var gIsEditingText: Bool { return gTextManager.currentEdit != nil }
@@ -207,9 +213,9 @@ class ZTextPack: NSObject {
 }
 
 
-class ZTextManager: NSObject {
+class ZTextManager: ZTextView {
 
-
+    
     var currentEdit: ZTextPack? = nil
     var isEditingStateChanging = false
     var currentlyEditingZone: Zone? { return currentEdit?.packedZone }
@@ -233,17 +239,17 @@ class ZTextManager: NSObject {
 
     func edit(_ zRecord: ZRecord) {
         if (currentEdit  == nil || !currentEdit!.isEditing(zRecord)) { // prevent infinite recursion inside becomeFirstResponder, called below
-            let      pack = ZTextPack(zRecord)
-            if  let     t = pack.textWidget,
-                t.window != nil,
-                pack.packedZone?.isWritableByUseer ?? false {
-                currentEdit = pack
+            let pack = ZTextPack(zRecord)
+            if  pack.packedZone?.isWritableByUseer ?? false,
+                let     textWidget = pack.textWidget,
+                textWidget.window != nil {
+                currentEdit        = pack
 
                 pack.updateText(isEditing: true)
                 gSelectionManager.deselectGrabs()
-                t.enableUndo()
-                t.layoutTextField()
-                t.becomeFirstResponder()
+                textWidget.enableUndo()
+                textWidget.layoutTextField()
+                textWidget.becomeFirstResponder()
                 deferEditingStateChange()
             }
         }
@@ -286,6 +292,47 @@ class ZTextManager: NSObject {
 
     func prepareUndoForTextChange(_ manager: UndoManager?,_ onUndo: @escaping Closure) {
         currentEdit?.prepareUndoForTextChange(manager, onUndo)
+    }
+
+    
+    // MARK:- arrow and return keys
+    // MARK:-
+    
+
+    override func doCommand(by selector: Selector) {
+        switch selector {
+        case #selector(insertNewline): stopCurrentEdit()
+        default:                       super.doCommand(by: selector)
+        }
+    }
+    
+    
+    @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
+        if  gWorkMode == .graphMode {
+            gEditingManager.handleMenuItem(iItem)
+        }
+    }
+    
+    
+    func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
+        let  isOption = flags.isOption
+        
+        switch arrow {
+        case .up,
+             .down:  stopEditAndMoveUp(arrow == .up)
+        case .left:  if isOption { moveWordBackward(self) } else { moveLeft (self) }
+        case .right: if isOption { moveWordForward (self) } else { moveRight(self) }
+        }
+    }
+    
+    
+    func stopEditAndMoveUp(_ iMoveUp: Bool) {
+        let selection = selectedRange()
+        
+        stopCurrentEdit()
+        gEditingManager.moveUp(iMoveUp)
+        edit(gSelectionManager.currentMoveable)
+        setSelectedRange(selection)
     }
 
 }

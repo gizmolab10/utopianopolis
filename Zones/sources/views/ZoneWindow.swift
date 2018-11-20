@@ -56,6 +56,10 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
             super.keyDown(with: event)
         }
     }
+    
+    func windowWillReturnFieldEditor(_ sender: NSWindow, to client: Any?) -> Any? {
+        return gTextManager
+    }
 
     #endif
 }

@@ -64,7 +64,7 @@ class Zone : ZRecord {
     var        onlyShowRevealDot:         Bool  { return (isRootOfFavorites && showChildren && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
     var          dragDotIsHidden:         Bool  { return (isRootOfFavorites                 && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }    // always hide drag dot of favorites root
     var          directRecursive:         Bool  { return directAccess == .eRecurse }
-    var           directWritable:         Bool  { return directAccess == .eFullWritable }
+    var           directWritable:         Bool  { return directAccess == .eFullWritable || databaseID == .mineID }
     var           directReadOnly:         Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
     var            hasZonesBelow:         Bool  { return hasAnyZonesAbove(false) }
     var            hasZonesAbove:         Bool  { return hasAnyZonesAbove(true) }

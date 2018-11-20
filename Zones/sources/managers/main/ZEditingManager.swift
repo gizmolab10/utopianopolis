@@ -77,22 +77,13 @@ class ZEditingManager: NSObject {
 
 
     func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) {
-        if  var       key = iKey, validateKey(key, flags) {
-            let    widget = gWidgetsManager.currentMovableWidget
-            let hasWidget = widget != nil
+        if  var   key = iKey {
             let isControl = flags.isControl
             let isCommand = flags.isCommand
             let  isOption = flags.isOption
             var   isShift = flags.isShift
-            let isFlagged = isControl || isCommand || isOption
-
-            if  key      != key.lowercased() {
-                key       = key.lowercased()
-                isShift   = true
-            }
-
-            widget?.widgetZone?.deferWrite()
-
+            let     arrow = key.arrow
+            
             if  gIsEditingText {
                 if isCommand || isControl {
                     switch key {
@@ -104,50 +95,65 @@ class ZEditingManager: NSObject {
                     case kSpace:   addIdea()
                     default:       break
                     }
+                } else if let a = arrow {
+                    gTextManager.handleArrow(a, flags: flags)
                 }
-            } else if isWindow, let arrow = key.arrow {
-                handleArrow(arrow, flags: flags)
-            } else if kMarkingCharacters.contains(key) && !isCommand {
-                prefix(with: key)
-            } else {
-                switch key {
-                case "a":      selectAll(progeny: isOption)
-                case "b":      addBookmark()
-                case "c":      recenter()
-                case "d":      duplicate()
-                case "e":      editTrait(for: .eEmail)
-                case "f":      search()
-                case "h":      editTrait(for: .eHyperlink)
-                case "i":      toggleColorized()
-                case "l", "u": alterCase(up: key == "u")
-                case "j":      gFileManager.importFromFile(asOutline: isOption, insertInto: gSelectionManager.currentMoveable) { self.redrawSyncRedraw() }
-                case "k":      gFileManager  .exportToFile(asOutline: isOption,        for: gSelectionManager.currentMoveable)
-                case "m":      refetch()
-                case "n":      alphabetize(isOption)
-                case "o":      if isCommand { if isOption { gFileManager.showInFinder() } else { gFileManager.open() } } else { orderByLength(isOption) }
-                case "p":      printHere()
-                case "r":      reverse()
-                case "s":      if isCommand { gFileManager.saveAs() } else { selectCurrentFavorite() }
-                case "w":      toggleWritable()
-                case "1":      if isCommand && isShift { sendEmailBugReport() }
-                case "+":      divideChildren()
-                case "-":      addLine()
-                case "`":      travelToOtherGraph()
-                case "[":      gFocusManager.goBack(   extreme: isFlagged)
-                case "]":      gFocusManager.goForward(extreme: isFlagged)
-                case ";":      doFavorites(true,    false)
-                case "?":      isControl ? openBrowserForFocusWebsite() : showKeyboardShortcuts()
-                case "'":      doFavorites(isShift, isOption)
-                case "/":      isShift && isOption ? showKeyboardShortcuts() : gFocusManager.focus(kind: .eSelected, isCommand) { self.redrawSyncRedraw() }
-                case "=":      gFocusManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawSyncRedraw() }
-                case kTab:     addNext(containing: isOption) { iChild in iChild.edit() }
-                case ",", ".": gInsertionMode = (key == "." ? .follow : .precede); signalFor(nil, regarding: .preferences)
-                case "z":      if isCommand { if isShift { kUndoManager.redo() } else { kUndoManager.undo() } }
-                case kSpace:   if isOption || isWindow || isControl { addIdea() }
-                case kBackspace,
-                     kDelete:  if isOption || isWindow || isCommand { delete(permanently: isCommand && isOption && isWindow, preserveChildren: (isControl || isOption || isCommand) && isWindow) }
-                case "\r":     if hasWidget { grabOrEdit(isCommand) }
-                default:       break
+            } else if  validateKey(key, flags) {
+                let    widget = gWidgetsManager.currentMovableWidget
+                let hasWidget = widget != nil
+                let isFlagged = isControl || isCommand || isOption
+                
+                if  key      != key.lowercased() {
+                    key       = key.lowercased()
+                    isShift   = true
+                }
+                
+                widget?.widgetZone?.deferWrite()
+                
+                if isWindow, let a = arrow {
+                    handleArrow(a, flags: flags)
+                } else if kMarkingCharacters.contains(key) && !isCommand {
+                    prefix(with: key)
+                } else {
+                    switch key {
+                    case "a":      selectAll(progeny: isOption)
+                    case "b":      addBookmark()
+                    case "c":      recenter()
+                    case "d":      duplicate()
+                    case "e":      editTrait(for: .eEmail)
+                    case "f":      search()
+                    case "h":      editTrait(for: .eHyperlink)
+                    case "i":      toggleColorized()
+                    case "l", "u": alterCase(up: key == "u")
+                    case "j":      gFileManager.importFromFile(asOutline: isOption, insertInto: gSelectionManager.currentMoveable) { self.redrawSyncRedraw() }
+                    case "k":      gFileManager  .exportToFile(asOutline: isOption,        for: gSelectionManager.currentMoveable)
+                    case "m":      refetch()
+                    case "n":      alphabetize(isOption)
+                    case "o":      if isCommand { if isOption { gFileManager.showInFinder() } else { gFileManager.open() } } else { orderByLength(isOption) }
+                    case "p":      printHere()
+                    case "r":      reverse()
+                    case "s":      if isCommand { gFileManager.saveAs() } else { selectCurrentFavorite() }
+                    case "w":      toggleWritable()
+                    case "1":      if isCommand && isShift { sendEmailBugReport() }
+                    case "+":      divideChildren()
+                    case "-":      addLine()
+                    case "`":      travelToOtherGraph()
+                    case "[":      gFocusManager.goBack(   extreme: isFlagged)
+                    case "]":      gFocusManager.goForward(extreme: isFlagged)
+                    case ";":      doFavorites(true,    false)
+                    case "?":      isControl ? openBrowserForFocusWebsite() : showKeyboardShortcuts()
+                    case "'":      doFavorites(isShift, isOption)
+                    case "/":      isShift && isOption ? showKeyboardShortcuts() : gFocusManager.focus(kind: .eSelected, isCommand) { self.redrawSyncRedraw() }
+                    case "=":      gFocusManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawSyncRedraw() }
+                    case kTab:     addNext(containing: isOption) { iChild in iChild.edit() }
+                    case ",", ".": gInsertionMode = (key == "." ? .follow : .precede); signalFor(nil, regarding: .preferences)
+                    case "z":      if isCommand { if isShift { kUndoManager.redo() } else { kUndoManager.undo() } }
+                    case kSpace:   if isOption || isWindow || isControl { addIdea() }
+                    case kBackspace,
+                         kDelete:  if isOption || isWindow || isCommand { delete(permanently: isCommand && isOption && isWindow, preserveChildren: (isControl || isOption || isCommand) && isWindow) }
+                    case "\r":     if hasWidget { grabOrEdit(isCommand) }
+                    default:       break
+                    }
                 }
             }
         }
@@ -256,6 +262,7 @@ class ZEditingManager: NSObject {
         }
 
         let type = menuType(for: key, flags)
+        let arrow = key.arrow
         var valid = !gIsEditingText
 
         if  valid {
@@ -285,8 +292,10 @@ class ZEditingManager: NSObject {
             case .Files:     valid = flags.contains(.command)
             default:         valid = true
             }
-        } else if key.arrow == nil {
+        } else if arrow == nil {
             valid = type != .Travel
+        } else {
+            valid = true
         }
 
         return valid
@@ -1923,6 +1932,11 @@ class ZEditingManager: NSObject {
             zone.maybeNeedSave()
             onCompletion?()
         }
+    }
+    
+    
+    func moveUp(_ iMoveUp: Bool = true, editIn selectedRange: NSRange) {
+        
     }
     
     

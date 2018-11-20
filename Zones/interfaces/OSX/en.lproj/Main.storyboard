@@ -213,7 +213,7 @@ CA
                                                     <menuItem title="New Idea" tag="6" alternate="YES" keyEquivalent=" " id="hu1-W0-ukM">
                                                         <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                                         <connections>
-                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="fMD-Pi-5be"/>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="AK5-SM-xcQ"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem title="Next Idea" tag="6" id="8Vw-09-keH">
@@ -465,13 +465,13 @@ CQ
                                         <menuItem title="Find…" tag="1" keyEquivalent="f" id="1C4-dC-CBL">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="oS3-PZ-JyN"/>
+                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Ohm-Fs-KC7"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Recenter" keyEquivalent="c" id="9QX-od-dwr">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="Uxg-Qr-gFq"/>
+                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Buq-qb-79g"/>
                                             </connections>
                                         </menuItem>
                                     </items>
