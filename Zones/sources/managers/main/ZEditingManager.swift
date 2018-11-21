@@ -1340,6 +1340,7 @@ class ZEditingManager: NSObject {
                 }
 
                 self.updateFavoritesRedrawSyncRedraw()
+                onCompletion?()
             }
         }
     }

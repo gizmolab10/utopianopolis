@@ -219,6 +219,9 @@ class ZTextManager: ZTextView {
     var currentEdit: ZTextPack? = nil
     var isEditingStateChanging = false
     var currentlyEditingZone: Zone? { return currentEdit?.packedZone }
+    var currentFont: ZFont { return currentlyEditingZone?.widget?.textWidget.font ?? gWidgetFont }
+    var atEnd:   Bool { return selectedRange().lowerBound == currentlyEditingZone?.zoneName?.length }
+    var atStart: Bool { return selectedRange().upperBound == 0 }
 
 
     func clearEdit() { currentEdit = nil }
@@ -320,19 +323,59 @@ class ZTextManager: ZTextView {
         switch arrow {
         case .up,
              .down:  stopEditAndMoveUp(arrow == .up)
-        case .left:  if isOption { moveWordBackward(self) } else { moveLeft (self) }
-        case .right: if isOption { moveWordForward (self) } else { moveRight(self) }
+        case .left:  if isOption { moveWordBackward(self) } else if atStart { stopEditAndMoveOut(true)  } else { moveLeft (self) }
+        case .right: if isOption { moveWordForward (self) } else if atEnd   { stopEditAndMoveOut(false) } else { moveRight(self) }
         }
     }
     
     
+    func stopEditAndMoveOut(_ iMoveOut: Bool) {
+        if  iMoveOut {
+            stopCurrentEdit()
+            gEditingManager.moveOut {
+                self.edit(gSelectionManager.currentMoveable)
+                self.setCursor(at: 100000000.0)
+            }
+        } else if currentlyEditingZone?.children.count ?? 0 > 0 {
+            stopCurrentEdit()
+            gEditingManager.moveInto {
+                self.edit(gSelectionManager.currentMoveable)
+                self.setCursor(at: 0.0)
+            }
+        }
+    }
+    
+
     func stopEditAndMoveUp(_ iMoveUp: Bool) {
-        let selection = selectedRange()
+        let midRange = selectedRange()
+        let endOfStart = midRange.lowerBound
+        let startRange = NSMakeRange(0, endOfStart)
+        let name = currentlyEditingZone?.zoneName ?? ""
+        let midSelection = name.substring(with: midRange)
+        let startSelection = name.substring(with: startRange)
+        let font = currentFont
+        let midWidth = midSelection.sizeWithFont(font).width
+        let startWidth = startSelection.sizeWithFont(font).width
+        var offset = startWidth + (iMoveUp ? 0.0 : midWidth)
+        let level = currentlyEditingZone?.level ?? 0
         
         stopCurrentEdit()
         gEditingManager.moveUp(iMoveUp)
         edit(gSelectionManager.currentMoveable)
-        setSelectedRange(selection)
+        
+        if  level > (currentlyEditingZone?.level ?? 0) {
+            offset += name.sizeWithFont(font).width
+        }
+        
+        setCursor(at: offset)
     }
 
+    
+    func setCursor(at offset: CGFloat) {
+        let name = currentlyEditingZone?.zoneName ?? ""
+        let range = name.range(at: offset, with: currentFont)
+
+        setSelectedRange(range)
+    }
+    
 }

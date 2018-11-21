@@ -675,6 +675,28 @@ extension String {
 
         return String(self[iStart ..< iEnd])
     }
+    
+    
+    func range(at offset: CGFloat, with font: ZFont) -> NSRange {
+        var location = 0
+        var total = CGFloat(0.0)
+        
+        for (index, character) in enumerated() {
+            let width = String(character).sizeWithFont(font).width
+            let threshold = total + width / 2.0
+            total += width
+
+            if  threshold <= offset {
+                location = index + 1
+            }
+
+            if  threshold >= offset {
+                break
+            }
+        }
+
+        return NSMakeRange(location, 0)
+    }
 
 
     func character(at iOffset: Int) -> String {
