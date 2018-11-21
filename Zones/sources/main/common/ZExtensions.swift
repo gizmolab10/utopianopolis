@@ -677,7 +677,7 @@ extension String {
     }
     
     
-    func range(at offset: CGFloat, with font: ZFont) -> NSRange {
+    func location(of offset: CGFloat, using font: ZFont) -> Int {
         var location = 0
         var total = CGFloat(0.0)
         
@@ -695,7 +695,7 @@ extension String {
             }
         }
 
-        return NSMakeRange(location, 0)
+        return location
     }
 
 
