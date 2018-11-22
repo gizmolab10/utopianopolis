@@ -226,7 +226,8 @@ class ZTextManager: ZTextView {
     var atStart: Bool { return selectedRange().upperBound == 0 }
 
 
-    func clearEdit() { currentEdit = nil; currentOffset = nil }
+    func clearOffset() { currentOffset = nil }
+    func clearEdit() { currentEdit = nil; clearOffset() }
     func fullResign() { assignAsFirstResponder (nil) } // ios broken
 
 
@@ -261,12 +262,23 @@ class ZTextManager: ZTextView {
     }
     
     
-    func quickStopCurrentEdit() {
+    func applyPreservingEdit(_ closure: Closure) {
+        let e = currentEdit
+        let o = currentOffset
+
+        closure()
+        
+        currentEdit = e
+        currentOffset = o
+    }
+
+    
+    func quickStopCurrentEdit(clearOffset: Bool = false) {
         if  let e = currentEdit {
-            let savedOffset = currentOffset
-            capture()
-            e.packedZone?.grab()
-            currentOffset = savedOffset
+            applyPreservingEdit {
+                capture()
+                e.packedZone?.grab()
+            }
         }
     }
     
@@ -335,21 +347,21 @@ class ZTextManager: ZTextView {
         switch arrow {
         case .up,
              .down:  stopEditAndMoveUp(arrow == .up)
-        case .left:  if isOption { moveWordBackward(self) } else if atStart { stopEditAndMoveOut(true)  } else { moveLeft (self) }
-        case .right: if isOption { moveWordForward (self) } else if atEnd   { stopEditAndMoveOut(false) } else { moveRight(self) }
+        case .left:  if isOption { clearOffset(); moveWordBackward(self) } else if atStart { stopEditAndMoveOut(true)  } else { clearOffset(); moveLeft (self) }
+        case .right: if isOption { clearOffset(); moveWordForward (self) } else if atEnd   { stopEditAndMoveOut(false) } else { clearOffset(); moveRight(self) }
         }
     }
     
     
     func stopEditAndMoveOut(_ iMoveOut: Bool) {
         if  iMoveOut {
-            quickStopCurrentEdit()
+            quickStopCurrentEdit(clearOffset: true)
             gEditingManager.moveOut {
                 self.edit(gSelectionManager.currentMoveable)
                 self.setCursor(at: 100000000.0)
             }
         } else if currentlyEditingZone?.children.count ?? 0 > 0 {
-            quickStopCurrentEdit()
+            quickStopCurrentEdit(clearOffset: true)
             gEditingManager.moveInto {
                 self.edit(gSelectionManager.currentMoveable)
                 self.setCursor(at: 0.0)
@@ -357,43 +369,52 @@ class ZTextManager: ZTextView {
         }
     }
     
-    
-    func offset(into iName: String, for movingUp: Bool) -> CGFloat {
-        let           font = currentFont
-        let       midRange = selectedRange()
-        let     endOfStart = midRange.lowerBound
-        let     startRange = NSMakeRange(0, endOfStart)
-        let   midSelection = iName.substring(with: midRange)
-        let startSelection = iName.substring(with: startRange)
-        let       midWidth = midSelection  .sizeWithFont(font).width
-        let     startWidth = startSelection.sizeWithFont(font).width
-        
-        return startWidth + (movingUp ? 0.0 : midWidth)    // move down, use right side of selection
-    }
-    
 
     func stopEditAndMoveUp(_ iMoveUp: Bool) {
-        let      name = currentZoneName
-        let     level = currentlyEditingZone?.level ?? 0
+        let name = currentZoneName
         
-        quickStopCurrentEdit()
-        gEditingManager.moveUp(iMoveUp)
+        applyPreservingEdit {
+            quickStopCurrentEdit()
+            gEditingManager.moveUp(iMoveUp, targeting: currentOffset)
+        }
         
-        let zone = gSelectionManager.currentMoveable
+        editAndUpdateCursor(for: name, iMoveUp)
+    }
+    
+    
+    func editAndUpdateCursor(for iName: String, _ iMoveUp: Bool) {
+        let zone  = gSelectionManager.currentMoveable
         
-        if  zone != currentlyEditingZone {
-            let sameLevel = level == zone.level
-            currentOffset = currentOffset ?? (offset(into: name, for: iMoveUp) + (sameLevel ? 0.0 : name.sizeWithFont(currentFont).width))
-            
+        if  zone != currentlyEditingZone { // if move up (above) does nothing, ignore
+            currentOffset = currentOffset ?? offset(for: iName, iMoveUp)
+
             edit(zone)
             setCursor(at: currentOffset)
         }
     }
+    
+    
+    func offset(for iName: String, _ iMoveUp: Bool) -> CGFloat? {
+        if  let   from = currentlyEditingZone?.widget?.textWidget {
+            let  range = selectedRange()
+            let offset = iName.offset(using: currentFont, for: range, movingUp: iMoveUp)
+            var   rect = iName.rectWithFont(currentFont)
+            rect       = from.convert(rect, to: nil)
+            
+            return rect.origin.x + offset
+        }
+        
+        return nil
+    }
 
     
     func setCursor(at iOffset: CGFloat?) {
-        if  let offset = iOffset {
-            let name = currentlyEditingZone?.zoneName ?? ""
+        if  var   offset = iOffset,
+            let       to = currentlyEditingZone?.widget?.textWidget {
+            var    point = CGPoint(x: offset, y: 0.0)
+            point        = to.convert(point, from: nil)
+            offset       = point.x
+            let     name = currentlyEditingZone?.zoneName ?? ""
             let location = name.location(of: offset, using: currentFont)
             
             setSelectedRange(NSMakeRange(location, 0))

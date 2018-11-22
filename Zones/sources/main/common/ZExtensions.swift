@@ -409,6 +409,9 @@ extension CGSize {
         return sqrt(width * width + height * height)
     }
 
+    static var big: CGSize {
+        return CGSize(width: 1000000, height: 1000000)
+    }
 }
 
 
@@ -581,19 +584,36 @@ extension String {
     func substring(from:         Int) -> String  { return String(self[index(at: from)...]) }
     func substring(to:           Int) -> String  { return String(self[..<index(at: to)]) }
     func widthForFont (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
-
-
     func heightForFont(_ font: ZFont, options: NSString.DrawingOptions = []) -> CGFloat { return sizeWithFont(font, options: options).height }
+    func sizeWithFont (_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font).size }
 
 
-    func sizeWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize {
-        let   rect = CGSize(width: 1000000, height: 1000000)
-        //let options: [NSStringDrawingOptions] = [.usesLineFragmentOrigin, .usesFontLeading, .usesDeviceMetrics]
-        let bounds = self.boundingRect(with: rect, options: options, attributes: convertToOptionalNSAttributedStringKeyDictionary([kCTFontAttributeName as String : font]), context: nil)
+    func rectWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGRect {
+        let attributes = convertToOptionalNSAttributedStringKeyDictionary([kCTFontAttributeName as String : font])
 
-        return bounds.size
+        return self.boundingRect(with: CGSize.big, options: options, attributes: attributes, context: nil)
+    }
+    
+    
+    func rect(using font: ZFont, for iRange: NSRange, movingUp: Bool) -> CGRect {
+        let bounds = rectWithFont(font)
+        let xDelta = offset(using: font, for: iRange, movingUp: movingUp)
+        
+        return bounds.offsetBy(dx: xDelta, dy: 0.0)
     }
 
+    
+    func offset(using font: ZFont, for iRange: NSRange, movingUp: Bool) -> CGFloat {
+        let            end = iRange.lowerBound
+        let     startRange = NSMakeRange(0, end)
+        let      selection = substring(with: iRange)
+        let startSelection = substring(with: startRange)
+        let          width = selection     .sizeWithFont(font).width
+        let     startWidth = startSelection.sizeWithFont(font).width
+        
+        return startWidth + (movingUp ? 0.0 : width)    // move down, use right side of selection
+    }
+    
 
     var color: ZColor? {
         if self != "" {

@@ -1936,12 +1936,29 @@ class ZEditingManager: NSObject {
     }
     
     
-    func moveUp(_ iMoveUp: Bool = true, editIn selectedRange: NSRange) {
-        
+    func mooveUp(_ iMoveUp: Bool = true, targeting iOffset: CGFloat? = nil, onCompletion: Closure?) {
+        moveUp(iMoveUp, extend: false)
+
+        if  let    offset = iOffset {
+            let      zone = iMoveUp ? gSelectionManager.firstGrab : gSelectionManager.lastGrab
+
+            if  let  name = zone.zoneName,
+                let  font = zone.widget?.textWidget.font {
+                let width = name.sizeWithFont(font).width
+                
+                if  width < offset {
+                    moveInto(onCompletion: onCompletion)
+                    
+                    return // do not invoke closure below
+                }
+            }
+        }
+
+        onCompletion?()
     }
     
     
-    func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, extend: Bool = false) {
+    func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, extend: Bool = false, targeting iOffset: CGFloat? = nil) {
         let            zone = iMoveUp ? gSelectionManager.firstGrab : gSelectionManager.lastGrab
         let      isConfined = gBrowsingMode == .confine
         let  hereIsSelected = zone == gHere

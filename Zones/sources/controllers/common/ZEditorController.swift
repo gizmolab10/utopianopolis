@@ -88,13 +88,12 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
     
     func layoutForCurrentScrollOffset() {
-        if  let e = editorView,
-            let w = gMainController?.detailsWidth?.constant {
+        if  let e = editorView {
             if kIsDesktop {
                 editorRootWidget.snp.removeConstraints()
                 editorRootWidget.snp.makeConstraints { make in
                     make.centerY.equalTo(e).offset(gScrollOffset.y)
-                    make.centerX.equalTo(e).offset(gScrollOffset.x + (w / 2.0))
+                    make.centerX.equalTo(e).offset(gScrollOffset.x)
                 }
             }
 
