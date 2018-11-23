@@ -273,8 +273,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawTraitIndicator(for iZone: Zone, isFilled: Bool, in iDirtyRect: CGRect) {
-        let traits = iZone.traits
-        for (type, _) in traits {
+        let types = iZone.traits.keys
+        for type in types {
             let   string = type.rawValue
             let isInMain = widget?.isInMain ?? true
             let    ratio = CGFloat(isInMain ? 1.0 : Double(kFavoritesReduction))

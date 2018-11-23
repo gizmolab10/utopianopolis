@@ -585,7 +585,7 @@ extension String {
     func substring(to:           Int) -> String  { return String(self[..<index(at: to)]) }
     func widthForFont (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
     func heightForFont(_ font: ZFont, options: NSString.DrawingOptions = []) -> CGFloat { return sizeWithFont(font, options: options).height }
-    func sizeWithFont (_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font).size }
+    func sizeWithFont (_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
 
 
     func rectWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGRect {
