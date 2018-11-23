@@ -103,6 +103,20 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         }
     }
 
+    
+    func offset(for selectedRange: NSRange, _ iMoveUp: Bool) -> CGFloat? {
+        if  let   name = widgetZone?.zoneName {
+            let   font = preferredFont
+            let offset = name.offset(using: font, for: selectedRange, movingUp: iMoveUp)
+            var   rect = name.rectWithFont(font)
+            rect       = convert(rect, to: nil)
+            
+            return rect.origin.x + offset
+        }
+        
+        return nil
+    }
+    
 
     @discardableResult override func becomeFirstResponder() -> Bool {
         if  gTextManager.allowAsFirstResponder(self), let zone = widgetZone,

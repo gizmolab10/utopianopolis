@@ -2029,12 +2029,26 @@ class ZEditingManager: NSObject {
                         redrawSyncRedraw(newHere)
                     }
                 } else {
-                    let  grabThis = newHere.children[newIndex]
-                    var grabThese = [grabThis]
+                    var grabThis = newHere.children[newIndex]
 
                     if !extend {
-                        gSelectionManager.deselectGrabs(retaining: grabThese)
+                        if  let offset = iOffset {
+                            while grabThis.showChildren, grabThis.count > 0,
+                                let length = grabThis.zoneName?.length {
+                                let range = NSRange(location: length, length: 0)
+                                
+                                if  let anOffset = grabThis.widget?.textWidget.offset(for: range, iMoveUp),
+                                    offset > anOffset {
+                                    grabThis = grabThis.children[iMoveUp ? grabThis.count - 1 : 0]
+                                } else {
+                                    break
+                                }
+                            }
+                        }
+
+                        gSelectionManager.deselectGrabs(retaining: [grabThis])
                     } else if !grabThis.isGrabbed || extreme {
+                        var grabThese = [grabThis]
 
                         if extreme {
 
