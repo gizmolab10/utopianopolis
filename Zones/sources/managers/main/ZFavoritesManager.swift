@@ -252,7 +252,7 @@ class ZFavoritesManager: NSObject {
     }
 
 
-    func updateFavorites() {
+    func updateFavorites() -> Bool {
 
         ////////////////////////////////////////////////
         // assure at least one root favorite per db   //
@@ -264,6 +264,7 @@ class ZFavoritesManager: NSObject {
         var      testedSoFar = [Zone] ()
         var      missingLost = true
         var     missingTrash = true
+        var     hasDuplicate = false
 
         updateWorkingFavorites()
 
@@ -274,7 +275,6 @@ class ZFavoritesManager: NSObject {
 
         for favorite in workingFavorites {
             if  let            link  = favorite.zoneLink { // always true: all working favorites have a zone link
-                var    hasDuplicate  = false
                 if             link == kTrashLink {
                     if  missingTrash {
                         missingTrash = false
@@ -381,6 +381,8 @@ class ZFavoritesManager: NSObject {
 
         updateWorkingFavorites()
         updateCurrentFavorite()
+        
+        return missingLost || missingTrash || hasDuplicate
     }
 
 

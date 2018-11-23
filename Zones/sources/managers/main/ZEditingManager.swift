@@ -831,9 +831,7 @@ class ZEditingManager: NSObject {
             }
 
             if  zone.canTravel && (isCommand || (zone.fetchableCount == 0 && zone.count == 0)) {
-                gFocusManager.maybeTravelThrough(zone) { // email, hyperlink, bookmark
-                    self.redrawSyncRedraw()
-                }
+                gFocusManager.maybeTravelThrough(zone) {} // email, hyperlink, bookmark
             } else {
                 let show = !zone.showChildren
 
@@ -1035,8 +1033,9 @@ class ZEditingManager: NSObject {
 
 
     func updateFavoritesRedrawSyncRedraw() {
-        gFavoritesManager.updateFavorites()
-        redrawSyncRedraw()
+        if  gFavoritesManager.updateFavorites() {
+            redrawSyncRedraw()
+        }
     }
 
 
@@ -2038,7 +2037,7 @@ class ZEditingManager: NSObject {
                                 let range = NSRange(location: length, length: 0)
                                 
                                 if  let anOffset = grabThis.widget?.textWidget.offset(for: range, iMoveUp),
-                                    offset > anOffset {
+                                    offset > anOffset + 25.0 { // half the distance from end of paret's text field to beginning of child's text field
                                     grabThis = grabThis.children[iMoveUp ? grabThis.count - 1 : 0]
                                 } else {
                                     break

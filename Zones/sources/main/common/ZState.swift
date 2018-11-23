@@ -39,6 +39,7 @@ var       gInsertionsFollow:               Bool { return gInsertionMode == .foll
 var             gEditorView:      ZoneDragView? { return gEditorController?.editorView }
 var              gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var               gDotWidth:             Double { return gDotHeight * 0.75 }
+var     gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
 var               gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
 var             gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var          gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }

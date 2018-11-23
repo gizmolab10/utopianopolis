@@ -173,10 +173,9 @@ class ZoneWidget: ZView {
 
         childrenView.snp.removeConstraints()
         childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let widthOffset = gDotWidth + Double(gGenericOffset.height) * 1.2
-            let       ratio = isInMain ? 1.0 : kFavoritesReduction / 3.0
+            let ratio = isInMain ? 1.0 : kFavoritesReduction / 3.0
 
-            make.left.equalTo(textWidget.snp.right).offset(widthOffset * Double(ratio))
+            make.left.equalTo(textWidget.snp.right).offset(gChildrenViewOffset * Double(ratio))
             make.bottom.top.right.equalTo(self)
         }
     }

@@ -165,7 +165,7 @@ class ZTextPack: NSObject {
 
 
     func captureTextAndSync(_ iText: String?) {
-        if  (originalText != iText || originalText == displayType) {
+        if  originalText             != iText {
             let               newText = removeSuffix(from: iText)
             gTextCapturing            = true
 
