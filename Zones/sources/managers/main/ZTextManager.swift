@@ -349,6 +349,18 @@ class ZTextManager: ZTextView {
     }
     
     
+    override func moveRightAndModifySelection(_ sender: Any?) {
+        clearOffset()
+        super.moveRightAndModifySelection(sender)
+    }
+    
+    
+    override func moveLeftAndModifySelection(_ sender: Any?) {
+        clearOffset()
+        super.moveLeftAndModifySelection(sender)
+    }
+
+    
     // MARK:- arrow keys
     // MARK:-
     
@@ -369,13 +381,20 @@ class ZTextManager: ZTextView {
         if  iMoveOut {
             quickStopCurrentEdit(clearOffset: true)
             gEditingManager.moveOut {
-                self.edit(gSelectionManager.currentMoveable)
-                self.setCursor(at: 100000000.0)
+                let grabbed = gSelectionManager.firstGrab
+
+                gSelectionManager.clearGrab()
+                gControllersManager.signalFor(nil, regarding: .redraw) {
+                    FOREGROUND(after: 0.4) {
+                        self.edit(grabbed)
+                        self.setCursor(at: 100000000.0)
+                    }
+                }
             }
         } else if currentlyEditingZone?.children.count ?? 0 > 0 {
             quickStopCurrentEdit(clearOffset: true)
             gEditingManager.moveInto {
-                self.edit(gSelectionManager.currentMoveable)
+                self.edit(gSelectionManager.firstGrab)
                 self.setCursor(at: 0.0)
             }
         }
@@ -390,7 +409,7 @@ class ZTextManager: ZTextView {
             gEditingManager.moveUp(iMoveUp, targeting: currentOffset)
         }
 
-        let zone  = gSelectionManager.currentMoveable
+        let zone  = gSelectionManager.firstGrab
         
         if  zone != currentlyEditingZone { // if move up (above) does nothing, ignore
             edit(zone)

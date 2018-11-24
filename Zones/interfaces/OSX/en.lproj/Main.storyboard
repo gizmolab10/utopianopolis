@@ -404,6 +404,15 @@ CQ
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Alter" id="fYn-u6-6xn">
                                                 <items>
+                                                    <menuItem title="Edit Selected Idea" id="zMo-5X-uZ5">
+                                                        <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Abd-wG-3Wh"/>
+                                                        </connections>
+                                                    </menuItem>
                                                     <menuItem title="Select All" keyEquivalent="a" id="KFq-Lb-Zy0">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
@@ -517,7 +526,7 @@ CQ
                 <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Thoughtful" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="149" y="-330"/>
+            <point key="canvasLocation" x="57" y="-424"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">

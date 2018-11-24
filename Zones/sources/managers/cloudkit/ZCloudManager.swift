@@ -1289,7 +1289,7 @@ class ZCloudManager: ZRecordsManager {
                 database!.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iSubscribeError: Error?) in
                     gAlertManager.alertError(iSubscribeError) { iHasError in
                         if iHasError {
-                            self.signalFor(iSubscribeError as NSObject?, regarding: .error)
+                            gControllersManager.signalFor(iSubscribeError as NSObject?, regarding: .error)
                         }
                     }
 
@@ -1333,12 +1333,12 @@ class ZCloudManager: ZRecordsManager {
             database?.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, performanceError: Error?) in
                 gAlertManager.detectError(performanceError) { iHasError in
                     if iHasError {
-                        self.signalFor(performanceError as NSObject?, regarding: .error)
+                        gControllersManager.signalFor(performanceError as NSObject?, regarding: .error)
                     } else {
                         let                record: CKRecord = (iResults?[0])!
                         object.record[valueForPropertyName] = (record as! CKRecordValue)
 
-                        self.signalFor(nil, regarding: .redraw)
+                        gControllersManager.signalFor(nil, regarding: .redraw)
                     }
                 }
             }

@@ -47,16 +47,6 @@ class ZoneWidget: ZView {
     }
 
 
-    #if os(OSX)
-
-    override func keyDown(with event: NSEvent) {
-        textInputReport("containing view \"\(widgetZone?.decoratedName ?? "")\"")
-        super.keyDown(with: event)
-    }
-
-    #endif
-
-
     // MARK:- layout
     // MARK:-
 
@@ -78,18 +68,18 @@ class ZoneWidget: ZView {
             backgroundColor = kClearColor
         #endif
 
-            gWidgetsManager.registerWidget(self)
-            addTextView()
-            textWidget.layoutText()
-            layoutDots()
-            addChildrenView()
+        gWidgetsManager.registerWidget(self)
+        addTextView()
+        textWidget.layoutText()
+        layoutDots()
+        addChildrenView()
 
-            if  recursing && (widgetZone == nil || !visited.contains(widgetZone!)) {
-                let more = widgetZone == nil ? [] : [widgetZone!]
+        if  recursing && (widgetZone == nil || !visited.contains(widgetZone!)) {
+            let more = widgetZone == nil ? [] : [widgetZone!]
 
-                prepareChildrenWidgets()
-                layoutChildren(iKind, visited: visited + more)
-            }
+            prepareChildrenWidgets()
+            layoutChildren(iKind, visited: visited + more)
+        }
     }
 
 
@@ -547,8 +537,7 @@ class ZoneWidget: ZView {
             
             if zone == gFavoritesRoot {
                 FOREGROUND {
-                    self.signalFor(nil, regarding: .main) // update UI elements for searching
-                    // self.childrenView.addBorder(thickness: 1.0, radius: 10.0, color: ZColor.green.cgColor)
+                    gControllersManager.signalFor(nil, regarding: .main) // update UI elements for searching
                 }
             }
 

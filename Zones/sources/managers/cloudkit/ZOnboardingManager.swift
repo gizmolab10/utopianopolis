@@ -36,7 +36,7 @@ class ZOnboardingManager : ZOperationsManager {
         FOREGROUND(canBeDirect: true) {
             gBatchManager.batch(.newAppleID) { iResult in
                 gFavoritesManager.updateFavorites()
-                self.signalFor(nil, regarding: .redraw)
+                gControllersManager.signalFor(nil, regarding: .redraw)
             }
         }
     }

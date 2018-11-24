@@ -231,7 +231,7 @@ class ZFileManager: NSObject {
 			var           dict = ZStorageDictionary ()
 			
             FOREGROUND {
-                self.signalFor(nil, regarding: .debug)
+                gControllersManager.signalFor(nil, regarding: .debug)
                 self.writtenRecordNames.removeAll()
                 gRemoteStoresManager.recount()
 
@@ -283,9 +283,9 @@ class ZFileManager: NSObject {
                         print("ahah")
                     }
 
-                    self .isWriting[index] = false // end prevention of write during write
+                    self.isWriting[index] = false // end prevention of write during write
 
-                    self.signalFor(nil, regarding: .debug)
+                    gControllersManager.signalFor(nil, regarding: .debug)
                 }
             }
 		}
@@ -316,7 +316,7 @@ class ZFileManager: NSObject {
                                     let zone = Zone(dict: subDict, in: databaseID)
 
                                     switch key {
-                                    case .graph:     manager        .rootZone = zone; self.signalFor(nil, regarding: .redraw)
+                                    case .graph:     manager        .rootZone = zone; gControllersManager.signalFor(nil, regarding: .redraw)
                                     case .trash:     manager       .trashZone = zone
                                     case .destroy:   manager     .destroyZone = zone
                                     case .favorites: manager   .favoritesZone = zone

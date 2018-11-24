@@ -209,24 +209,6 @@ extension NSBezierPath {
 }
 
 
-extension NSResponder {
-
-    override func textInputReport(_ iMessage: Any?) {
-        if  var   message = iMessage as? String {
-            let    window = gApplication.mainWindow
-            message       = "key down in: \(message)"
-
-            if  let first = window?.firstResponder, first == self {
-                message.append(" <-- FIRST RESPONDER")
-            }
-
-            gAlertManager.alertError(nil, message)
-        }
-    }
-
-}
-
-
 extension NSView {
     var      zlayer:                CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
     var recognizers: [NSGestureRecognizer]? { return gestureRecognizers }
@@ -328,7 +310,7 @@ extension NSTextField {
     var          text:         String? { get { return stringValue } set { stringValue = newValue ?? "" } }
     var textAlignment: NSTextAlignment { get { return alignment }   set { alignment = newValue } }
     func enableUndo()                  { cell?.allowsUndo = true }
-    @objc func selectAllText()               {}
+    @objc func selectAllText()         {}
 }
 
 
@@ -387,6 +369,7 @@ extension ZoneTextWidget {
     func selectFromStart(toEnd: Bool = false) {
         if  let t = text, let editor = currentEditor() {
             select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: toEnd ? t.length : 0)
+            gTextManager.clearOffset()
         }
     }
 

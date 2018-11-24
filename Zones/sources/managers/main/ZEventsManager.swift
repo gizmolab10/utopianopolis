@@ -47,7 +47,7 @@ class ZEventsManager: NSObject {
     
     
     func handleDarkModeChange(iNote: Notification) {
-        signalFor(nil, regarding: .redraw)
+        gControllersManager.signalFor(nil, regarding: .redraw)
     }
     
     
@@ -71,31 +71,38 @@ class ZEventsManager: NSObject {
         #if os(OSX)
 
             self.monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
-                switch gWorkMode {
-                case .searchMode:
-
-                    return gSearchManager.handleKeyEvent(event)
-
-                case .graphMode:
-                    let    flags = event.modifierFlags
-
-                    if  flags.isCommand,
-                        gIsEditingText,
-                        let    key = event.charactersIgnoringModifiers {
-                        switch key {
-                        case "f":
-                            gTextManager.stopCurrentEdit()
+                if  gCurrentEvent != event {
+                    gCurrentEvent  = event
+                    
+                    switch gWorkMode {
+                    case .searchMode:
+                        
+                        return gSearchManager.handleKeyEvent(event)
+                        
+                    case .graphMode:
+                        let    flags = event.modifierFlags
+                        let    key = event.charactersIgnoringModifiers
+                        
+                        if  flags.isCommand,
+                            gIsEditingText,
+                            key != nil {
+                            switch key! {
+                            case "f":
+                                gTextManager.stopCurrentEdit()
+                                gEditingManager.handleKey(key, flags: flags, isWindow: false)
+                                
+                                return nil
+                            default:
+                                break
+                            }
+                        } else if !gIsEditingText {
                             gEditingManager.handleKey(key, flags: flags, isWindow: false)
-
-                            return nil
-                        default:
-                            break
                         }
+                        
+                        break
+                        
+                    default: break
                     }
-
-                    break
-
-                default: break
                 }
 
                 return event

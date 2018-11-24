@@ -132,7 +132,7 @@ class ZFocusManager: NSObject {
             debugDump()
             gHere.grab()
             gFavoritesManager.updateFavorites()
-            signalFor(nil, regarding: .redraw)
+            gControllersManager.signalFor(nil, regarding: .redraw)
         }
     }
 

@@ -29,8 +29,8 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
         ZoneWindow.window = self
         contentMinSize    = CGSize(width: 300, height: 300) // gWindowSize
 
-        observer = observe(\.effectiveAppearance) { [weak self] _, _  in
-            self?.signalFor(nil, regarding: .appearance)
+        observer = observe(\.effectiveAppearance) { _, _  in
+            gControllersManager.signalFor(nil, regarding: .appearance)
         }
     }
 
@@ -39,7 +39,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
         if  let    size = contentView?.bounds.size {
             gWindowSize = size
 
-            signalFor(nil, regarding: .debug)
+            gControllersManager.signalFor(nil, regarding: .debug)
         }
     }
 
@@ -51,9 +51,12 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     // cannot declare this in extensions because compiler barfs about objective-c method conflict (and then compiler throws a seg fault)
 
     override func keyDown(with event: ZEvent) {
-        if !gEditingManager.handleEvent(event, isWindow: true) {
-            textInputReport("window")
-            super.keyDown(with: event)
+        if  gCurrentEvent != event {
+            gCurrentEvent  = event
+
+            if  !gEditingManager.handleEvent(event, isWindow: true) {
+                super.keyDown(with: event)
+            }
         }
     }
     

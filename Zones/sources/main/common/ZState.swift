@@ -25,6 +25,7 @@ var     gCrippledUserAccess                     = false
 var   gDebugShowIdentifiers                     = false
 var  gMeasureOpsPerformance                     = true
 var        gDragDropIndices: NSMutableIndexSet? = nil
+var           gCurrentEvent:            ZEvent? = nil
 var           gDragRelation:         ZRelation? = nil
 var           gDragDropZone:              Zone? = nil
 var            gDraggedZone:              Zone? = nil

@@ -72,7 +72,7 @@ class ZPreferencesController: ZGenericController {
             default:           break
             }
 
-            signalFor(nil, regarding: .redraw)
+            gControllersManager.signalFor(nil, regarding: .redraw)
         }
     }
 
@@ -112,7 +112,7 @@ class ZPreferencesController: ZGenericController {
         let          selection = iControl.selectedSegment
         if  let     identifier = convertFromOptionalNSUserInterfaceItemIdentifier(iControl.identifier) {
             switch (identifier) {
-            case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; signalFor(nil, regarding: .redraw)
+            case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; gControllersManager.signalFor(nil, regarding: .redraw)
             case "browsing":  gBrowsingMode  = ZBrowsingMode (rawValue: selection)!
             case "direction": gInsertionMode = ZInsertionMode(rawValue: selection)!
             default: break

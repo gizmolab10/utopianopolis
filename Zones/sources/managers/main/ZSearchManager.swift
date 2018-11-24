@@ -39,7 +39,7 @@ class ZSearchManager: NSObject {
         gWorkMode = .searchMode
         state     = .list
 
-        signalFor(iResults as? NSObject, regarding: .found)
+        gControllersManager.signalFor(iResults as? NSObject, regarding: .found)
     }
 
 
@@ -47,8 +47,8 @@ class ZSearchManager: NSObject {
         gWorkMode = .graphMode
         state     = .not
 
-        signalFor(nil, regarding: .found)
-        signalFor(nil, regarding: .search)
+        gControllersManager.signalFor(nil, regarding: .found)
+        gControllersManager.signalFor(nil, regarding: .search)
     }
 
 

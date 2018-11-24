@@ -141,7 +141,7 @@ class ZOperationsManager: NSObject {
             gCloudFire   = { iTimer in
                 FOREGROUND {
                     if  self.checkCloudStatus() {
-                        self.signalFor(nil, regarding: .details) // inform user of change in cloud status
+                        gControllersManager.signalFor(nil, regarding: .details) // inform user of change in cloud status
 
                         /////////////////////////////////////////////////
                         // assure that we can perform cloud operations //
@@ -155,7 +155,7 @@ class ZOperationsManager: NSObject {
                                     gFavoritesManager.updateFavorites()
                                 }
 
-                                self.signalFor(nil, regarding: .redraw)
+                                gControllersManager.signalFor(nil, regarding: .redraw)
                             }
                         }
                     }

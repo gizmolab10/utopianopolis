@@ -146,7 +146,7 @@ class ZEditingManager: NSObject {
                     case "/":      isShift && isOption ? showKeyboardShortcuts() : gFocusManager.focus(kind: .eSelected, isCommand) { self.redrawSyncRedraw() }
                     case "=":      gFocusManager.maybeTravelThrough(gSelectionManager.firstGrab) { self.redrawSyncRedraw() }
                     case kTab:     addNext(containing: isOption) { iChild in iChild.edit() }
-                    case ",", ".": gInsertionMode = (key == "." ? .follow : .precede); signalFor(nil, regarding: .preferences)
+                    case ",", ".": gInsertionMode = (key == "." ? .follow : .precede); gControllersManager.signalFor(nil, regarding: .preferences)
                     case "z":      if isCommand { if isShift { kUndoManager.redo() } else { kUndoManager.undo() } }
                     case kSpace:   if isOption || isWindow || isControl { addIdea() }
                     case kBackspace,
@@ -161,9 +161,10 @@ class ZEditingManager: NSObject {
 
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        let isCommand = flags.isCommand
-        let  isOption = flags.isOption
-        let   isShift = flags.isShift
+        let isBookmark = gSelectionManager.firstGrab.isBookmark
+        let  isCommand = flags.isCommand
+        let   isOption = flags.isOption
+        let    isShift = flags.isShift
 
         if isOption && !gSelectionManager.currentMoveable.isMovableByUser {
             return
@@ -175,8 +176,8 @@ class ZEditingManager: NSObject {
         default:
             if !isShift {
                 switch arrow {
-                case .right: moveInto(selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawSyncRedraw() }
-                case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawSyncRedraw() }
+                case .right: moveInto(selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawSyncRedraw(avoidRedraw: !isBookmark) } // redraw graph when travelling through a bookmark
+                case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawSyncRedraw(avoidRedraw: true) }
                 default: break
                 }
             } else if !isOption {
@@ -333,7 +334,7 @@ class ZEditingManager: NSObject {
         gHere.grab()
         gHere.revealChildren()
         gFavoritesManager.updateFavorites()
-        signalFor(nil, regarding: .redraw)
+        gControllersManager.signalFor(nil, regarding: .redraw)
     }
 
 
@@ -513,7 +514,7 @@ class ZEditingManager: NSObject {
         if  gDatabaseID != .favoritesID {
             gWorkMode = gWorkMode == .searchMode ? .graphMode : .searchMode
 
-            signalFor(nil, regarding: .search)
+            gControllersManager.signalFor(nil, regarding: .search)
         }
     }
 
@@ -568,7 +569,7 @@ class ZEditingManager: NSObject {
             }
         }
 
-        signalFor(nil, regarding: .redraw)
+        gControllersManager.signalFor(nil, regarding: .redraw)
     }
 
 
@@ -585,7 +586,7 @@ class ZEditingManager: NSObject {
 
     func refetch() {
         gBatchManager.refetch { iSame in
-            self.signalFor(nil, regarding: .redraw)
+            gControllersManager.signalFor(nil, regarding: .redraw)
         }
     }
 
@@ -603,7 +604,7 @@ class ZEditingManager: NSObject {
                         iAncestor.revealChildren()
                     }
 
-                    self.signalFor(nil, regarding: .redraw)
+                    gControllersManager.signalFor(nil, regarding: .redraw)
                 }
             }
 
@@ -831,7 +832,9 @@ class ZEditingManager: NSObject {
             }
 
             if  zone.canTravel && (isCommand || (zone.fetchableCount == 0 && zone.count == 0)) {
-                gFocusManager.maybeTravelThrough(zone) {} // email, hyperlink, bookmark
+                gFocusManager.maybeTravelThrough(zone) { // email, hyperlink, bookmark
+                    self.redrawSyncRedraw()
+                }
             } else {
                 let show = !zone.showChildren
 
@@ -977,7 +980,7 @@ class ZEditingManager: NSObject {
 
                 bookmark?.grab()
                 bookmark?.markNotFetched()
-                self.signalFor(nil, regarding: .redraw)
+                gControllersManager.signalFor(nil, regarding: .redraw)
                 gBatchManager.sync { iSame in
                 }
             }
@@ -1032,8 +1035,8 @@ class ZEditingManager: NSObject {
     }
 
 
-    func updateFavoritesRedrawSyncRedraw() {
-        if  gFavoritesManager.updateFavorites() {
+    func updateFavoritesRedrawSyncRedraw(avoidRedraw: Bool = false) {
+        if  gFavoritesManager.updateFavorites() || !avoidRedraw {
             redrawSyncRedraw()
         }
     }
@@ -1240,6 +1243,7 @@ class ZEditingManager: NSObject {
                     zone.grab()
                     revealZonesToRoot(from: zone) {
                         self.revealSiblingsOf(here, untilReaching: gRoot!)
+                        onCompletion?()
                     }
                 }
             } else if let p = parentZone {
@@ -1248,6 +1252,7 @@ class ZEditingManager: NSObject {
                 if  zone == gHere {
                     revealParentAndSiblingsOf(zone) { iCloudCalled in
                         self.revealSiblingsOf(zone, untilReaching: p)
+                        onCompletion?()
                     }
                 } else {
                     p.revealChildren()
@@ -1304,6 +1309,7 @@ class ZEditingManager: NSObject {
                     } else {
                         revealZonesToRoot(from: zone) {
                             moveOutToHere(gRoot)
+                            onCompletion?()
                         }
                     }
                 } else if grandParentZone != nil {
@@ -1312,9 +1318,12 @@ class ZEditingManager: NSObject {
                             self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
                         } else {
                             moveOutToHere(grandParentZone!)
+                            onCompletion?()
                         }
                     }
-                } // else no available move
+                } else { // no available move
+                    onCompletion?()
+                }
             }
         }
     }
@@ -1330,15 +1339,12 @@ class ZEditingManager: NSObject {
         } else {
             zone.needChildren()
             zone.revealChildren()
-            grabChild(of: zone)
-            signalFor(nil, regarding: .data)
+            gControllersManager.signalFor(nil, regarding: .data)
 
             gBatchManager.children(.restore) { iSame in
-                if  iSame {
-                    self.grabChild(of: zone)
-                }
-
+                self.grabChild(of: zone)
                 self.updateFavoritesRedrawSyncRedraw()
+
                 onCompletion?()
             }
         }
@@ -1935,27 +1941,26 @@ class ZEditingManager: NSObject {
     }
     
     
-    func mooveUp(_ iMoveUp: Bool = true, targeting iOffset: CGFloat? = nil, onCompletion: Closure?) {
-        moveUp(iMoveUp, extend: false)
-
-        if  let    offset = iOffset {
-            let      zone = iMoveUp ? gSelectionManager.firstGrab : gSelectionManager.lastGrab
-
-            if  let  name = zone.zoneName,
-                let  font = zone.widget?.textWidget.font {
-                let width = name.sizeWithFont(font).width
+    fileprivate func findChildMatching(_ grabThis: inout Zone, _ iMoveUp: Bool, _ iOffset: CGFloat?) {
+        guard let offset = iOffset else { return }
+        
+        //////////////////////////////////////////
+        //     text is being edited by user     //
+        // grab zone whose text contains offset //
+        //////////////////////////////////////////
+        
+        while grabThis.showChildren, grabThis.count > 0,
+            let length = grabThis.zoneName?.length {
+                let range = NSRange(location: length, length: 0)
                 
-                if  width < offset {
-                    moveInto(onCompletion: onCompletion)
-                    
-                    return // do not invoke closure below
+                if  let anOffset = grabThis.widget?.textWidget.offset(for: range, iMoveUp),
+                    offset > anOffset + 25.0 { // half the distance from end of parent's text field to beginning of child's text field
+                    grabThis = grabThis.children[iMoveUp ? grabThis.count - 1 : 0]
+                } else {
+                    break
                 }
-            }
         }
-
-        onCompletion?()
     }
-    
     
     func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, extend: Bool = false, targeting iOffset: CGFloat? = nil) {
         let            zone = iMoveUp ? gSelectionManager.firstGrab : gSelectionManager.lastGrab
@@ -2031,20 +2036,7 @@ class ZEditingManager: NSObject {
                     var grabThis = newHere.children[newIndex]
 
                     if !extend {
-                        if  let offset = iOffset {
-                            while grabThis.showChildren, grabThis.count > 0,
-                                let length = grabThis.zoneName?.length {
-                                let range = NSRange(location: length, length: 0)
-                                
-                                if  let anOffset = grabThis.widget?.textWidget.offset(for: range, iMoveUp),
-                                    offset > anOffset + 25.0 { // half the distance from end of paret's text field to beginning of child's text field
-                                    grabThis = grabThis.children[iMoveUp ? grabThis.count - 1 : 0]
-                                } else {
-                                    break
-                                }
-                            }
-                        }
-
+                        findChildMatching(&grabThis, iMoveUp, iOffset)
                         gSelectionManager.deselectGrabs(retaining: [grabThis])
                     } else if !grabThis.isGrabbed || extreme {
                         var grabThese = [grabThis]
@@ -2069,7 +2061,7 @@ class ZEditingManager: NSObject {
                         gSelectionManager.addMultipleToGrab(grabThese)
                     }
 
-                    signalFor(nil, regarding: .data)
+                    gControllersManager.signalFor(nil, regarding: .data)
                 }
             } else if !isConfined {
 
@@ -2087,7 +2079,10 @@ class ZEditingManager: NSObject {
                         index  = cousins.count - 1
                     }
                     
-                    let grab = cousins[index]
+                    var grab = cousins[index]
+                    
+                    findChildMatching(&grab, iMoveUp, iOffset)
+
                     grab.grab()
                 }
             }
@@ -2111,7 +2106,7 @@ class ZEditingManager: NSObject {
                 if  same && (parent?.count ?? 0) > 1 && (setHere || iCalledCloud) {
                     self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme, extend: extend)
                 } else if !setHere {
-                    self.signalFor(nil, regarding: .redraw)
+                    gControllersManager.signalFor(nil, regarding: .redraw)
                 }
             }
         }

@@ -183,7 +183,7 @@ class ZControllersManager: NSObject {
     }
 
 
-    func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure?) {
+    func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure? = nil) {
         FOREGROUND(canBeDirect: true) {
             self.updateNeededCounts() // clean up after adding or removing children
             

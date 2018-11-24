@@ -133,7 +133,7 @@ class ZToolsController: ZGenericTableController {
 
     func restoreFromTrash() {
         gBatchManager.undelete { iSame in
-            self.signalFor(nil, regarding: .redraw)
+            gControllersManager.signalFor(nil, regarding: .redraw)
         }
     }
 

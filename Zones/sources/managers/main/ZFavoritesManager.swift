@@ -252,7 +252,7 @@ class ZFavoritesManager: NSObject {
     }
 
 
-    func updateFavorites() -> Bool {
+    @discardableResult func updateFavorites() -> Bool {
 
         ////////////////////////////////////////////////
         // assure at least one root favorite per db   //

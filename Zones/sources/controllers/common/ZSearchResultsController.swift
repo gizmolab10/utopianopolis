@@ -193,10 +193,10 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         zone?.grab()
         zone?.needChildren()
         zone?.revealChildren()
-        signalFor(nil, regarding: .redraw)
+        gControllersManager.signalFor(nil, regarding: .redraw)
 
         gBatchManager.sync { iSame in
-            self.signalFor(nil, regarding: .redraw)
+            gControllersManager.signalFor(nil, regarding: .redraw)
         }
     }
 
@@ -205,8 +205,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         resultsAreVisible = false
         gWorkMode         = .graphMode
 
-        self.signalFor(nil, regarding: .search)
-        self.signalFor(nil, regarding: .found)
+        gControllersManager.signalFor(nil, regarding: .search)
+        gControllersManager.signalFor(nil, regarding: .found)
     }
 
 
@@ -216,7 +216,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         } else {
             resultsAreVisible = true
 
-            signalFor(nil, regarding: .search)
+            gControllersManager.signalFor(nil, regarding: .search)
         }
     }
 

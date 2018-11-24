@@ -25,7 +25,6 @@ extension NSObject {
 
     func                  note(_ iMessage: Any?)                { } // logk(iMessage) }
     func           performance(_ iMessage: Any?)                { log(iMessage) }
-    @objc func textInputReport(_ iMessage: Any?)                { log(iMessage) }
     func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
     func        columnarReport(_ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(iFirst, iSecond) }
 
@@ -70,13 +69,8 @@ extension NSObject {
 
     func redrawSyncRedraw(_ zone: Zone? = nil) {
         redrawAndSync(zone) {
-            self.signalFor(zone, regarding: .redraw)
+            gControllersManager.signalFor(zone, regarding: .redraw)
         }
-    }
-
-
-    func signalFor(_ object: NSObject?, regarding: ZSignalKind) {
-        gControllersManager.signalFor(object, regarding: regarding) {}
     }
 
 

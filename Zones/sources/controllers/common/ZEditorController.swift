@@ -187,7 +187,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
             } else if state != .began {         // ended, cancelled or failed
                 rubberbandUpdate(nil)
-                signalFor(nil, regarding: .preferences) // so color well gets updated
+                gControllersManager.signalFor(nil, regarding: .preferences) // so color well gets updated
             } else if let dot = detectDot(iGesture) {
                 if  !dot.isReveal {
                     dragStartEvent(dot, iGesture)
@@ -227,16 +227,16 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                             zone.dragDotClicked(isCommand: isCommand, isShift: isShift)
                         }
 
-                        signalFor(nil, regarding: .details)
+                        gControllersManager.signalFor(nil, regarding: .details)
                     } else {
                         gTextManager.stopCurrentEdit()
                         gSelectionManager.deselect()
                         widget.widgetZone?.grab()
-                        signalFor(nil, regarding: .search)
+                        gControllersManager.signalFor(nil, regarding: .search)
                     }
                 } else { // click on background
                     gSelectionManager.deselect()
-                    signalFor(nil, regarding: .datum)
+                    gControllersManager.signalFor(nil, regarding: .datum)
                 }
             }
 
@@ -275,7 +275,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             cleanupAfterDrag()
             
             if doneState.contains(iGesture!.state) {
-                signalFor(nil, regarding: .preferences) // so color well gets updated
+                gControllersManager.signalFor(nil, regarding: .preferences) // so color well gets updated
                 restartGestureRecognition()
             }
         }

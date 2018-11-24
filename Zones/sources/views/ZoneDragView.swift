@@ -20,16 +20,6 @@ class ZoneDragView: ZView, ZGestureRecognizerDelegate {
     var rubberbandRect: CGRect?
 
 
-    #if os(OSX)
-
-    override func keyDown(with event: NSEvent) {
-        textInputReport("main view")
-        super.keyDown(with: event)
-    }
-
-    #endif
-
-
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 

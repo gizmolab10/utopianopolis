@@ -209,7 +209,7 @@ class ZBatchManager: ZOnboardingManager {
 
     func batch(_ iID: ZBatchID, _ iCompletion: @escaping BooleanClosure) {
         if  iID.shouldIgnore {
-            iCompletion(true) // true means isSame
+            iCompletion(true) // true means no new data
         } else {
             let     current = getBatch(iID, from: currentBatches)
             let completions = [ZBatchCompletion(iCompletion)]
@@ -323,7 +323,7 @@ class ZBatchManager: ZOnboardingManager {
                 }
 
                 invokeForIndex?(0)
-                self.signalFor(nil, regarding: .information)
+                gControllersManager.signalFor(nil, regarding: .information)
             }
         }
     }

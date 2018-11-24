@@ -71,8 +71,8 @@ class Zone : ZRecord {
     var              isHyperlink:         Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
     var               isFavorite:         Bool  { return gFavoritesManager.isWorkingFavorite(self) }
     var               isSelected:         Bool  { return gSelectionManager.isSelected(self) }
-    var                canTravel:         Bool  { return isBookmark || isHyperlink || isEmail }
     var                isGrabbed:         Bool  { return gSelectionManager .isGrabbed(self) }
+    var                canTravel:         Bool  { return isBookmark || isHyperlink || isEmail }
     var                 hasColor:         Bool  { return zoneColor != nil && zoneColor != "" }
     var                  isEmail:         Bool  { return hasTrait(for: .eEmail) && email != "" }
     var                  isTrash:         Bool  { return recordName == kTrashName }
@@ -743,7 +743,7 @@ class Zone : ZRecord {
             grab()
         }
 
-        gEditingManager.signalFor(nil, regarding: .details)
+        gControllersManager.signalFor(nil, regarding: .details)
     }
 
     override func debug(_  iMessage: String) {
