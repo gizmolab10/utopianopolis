@@ -129,10 +129,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             if  gWorkMode != .graphMode {
                 gSearchManager.exitSearchMode()
             }
-
-            FOREGROUND(after: 0.1) {
-                gTextManager.edit(zone)
-            }
+            
+            gTextManager.edit(zone)
             
             return true
         }

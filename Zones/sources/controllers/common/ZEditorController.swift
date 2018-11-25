@@ -104,7 +104,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
                 favoritesRootWidget.snp.removeConstraints()
                 favoritesRootWidget.snp.makeConstraints { make in
-                    make  .top.equalTo(e).offset(20.0 - Double(gGenericOffset.height / 3.0))
+                    make  .top.equalTo(e).offset(45.0 - Double(gGenericOffset.height / 3.0))
                     make .left.equalTo(e).offset(15.0 - Double(gGenericOffset.width       ))
                 }
 

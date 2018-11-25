@@ -622,6 +622,12 @@ DQ
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                                <connections>
+                                    <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
+                                </connections>
+                            </containerView>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Box View">
                                 <rect key="frame" x="0.0" y="256" width="450" height="44"/>
                                 <constraints>
@@ -631,33 +637,12 @@ DQ
                                     <segue destination="cYL-kx-LTL" kind="embed" id="chv-HO-K3M"/>
                                 </connections>
                             </containerView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="E7h-Pg-qLQ" userLabel="Main View">
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="256"/>
-                                <subviews>
-                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
-                                        <rect key="frame" x="0.0" y="0.0" width="450" height="256"/>
-                                        <connections>
-                                            <segue destination="Hxl-Pi-4li" kind="embed" id="VOo-Sq-lQs"/>
-                                        </connections>
-                                    </containerView>
-                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
-                                        <rect key="frame" x="0.0" y="0.0" width="450" height="256"/>
-                                        <connections>
-                                            <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
-                                        </connections>
-                                    </containerView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="cYx-gW-vNV" secondAttribute="bottom" id="1Fv-XZ-4RS"/>
-                                    <constraint firstItem="cYx-gW-vNV" firstAttribute="top" secondItem="E7h-Pg-qLQ" secondAttribute="top" id="Ay2-YY-he4"/>
-                                    <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="E7h-Pg-qLQ" secondAttribute="top" id="C2Y-cX-l3I"/>
-                                    <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="Jar-th-id1"/>
-                                    <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Wg2-ai-i1Z"/>
-                                    <constraint firstAttribute="trailing" secondItem="cYx-gW-vNV" secondAttribute="trailing" id="anG-fh-1WZ"/>
-                                    <constraint firstItem="cYx-gW-vNV" firstAttribute="leading" secondItem="E7h-Pg-qLQ" secondAttribute="leading" id="ggg-pQ-BJ6"/>
-                                    <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="E7h-Pg-qLQ" secondAttribute="leading" id="rPy-dC-73N"/>
-                                </constraints>
-                            </customView>
+                                <connections>
+                                    <segue destination="Hxl-Pi-4li" kind="embed" id="VOo-Sq-lQs"/>
+                                </connections>
+                            </containerView>
                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
                                 <rect key="frame" x="0.0" y="0.0" width="226" height="256"/>
                                 <constraints>
@@ -669,22 +654,25 @@ DQ
                             </containerView>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="cYx-gW-vNV" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="4E2-mZ-iVD"/>
+                            <constraint firstAttribute="trailing" secondItem="cYx-gW-vNV" secondAttribute="trailing" id="737-qE-qR5"/>
                             <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="7YZ-rS-1rz"/>
-                            <constraint firstItem="E7h-Pg-qLQ" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="BUc-Vf-x7b"/>
+                            <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="DdE-29-U0K"/>
                             <constraint firstAttribute="trailing" secondItem="58m-fY-Oaa" secondAttribute="trailing" id="F3i-M3-bpQ"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="GKq-sx-Y6r"/>
+                            <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Jf7-tG-M0F"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="V3R-5b-vYA"/>
-                            <constraint firstAttribute="trailing" secondItem="E7h-Pg-qLQ" secondAttribute="trailing" id="VaR-1I-XUX"/>
-                            <constraint firstItem="E7h-Pg-qLQ" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="r9j-vw-EsB"/>
+                            <constraint firstAttribute="bottom" secondItem="cYx-gW-vNV" secondAttribute="bottom" id="Xgc-lh-EwT"/>
+                            <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="ZFw-Tj-cbj"/>
+                            <constraint firstItem="cYx-gW-vNV" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="gQc-MX-nbf"/>
+                            <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="lap-td-b4Q"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="wPZ-B1-yXw"/>
-                            <constraint firstAttribute="bottom" secondItem="E7h-Pg-qLQ" secondAttribute="bottom" id="xse-VP-hp0"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="detailView" destination="E8R-Lg-1Ha" id="fDV-lr-VDw"/>
                         <outlet property="detailsWidth" destination="us8-K9-IEo" id="zgQ-PT-G1q"/>
                         <outlet property="editorView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
-                        <outlet property="mainView" destination="E7h-Pg-qLQ" id="PLu-7K-JWt"/>
                         <outlet property="searchBoxHeight" destination="lGr-3g-ayh" id="9xd-lu-oT0"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>

@@ -28,7 +28,6 @@ class ZMainController: ZGenericController {
     @IBOutlet var searchBoxView:      ZView?
     @IBOutlet var detailView:         ZView?
     @IBOutlet var editorView:         ZView?
-    @IBOutlet var mainView:           ZView?
 
 
     override func setup() {
@@ -67,8 +66,8 @@ class ZMainController: ZGenericController {
     func showAsSearching(_ iSearching: Bool) {
         gWorkMode = iSearching ? .searchMode : .graphMode
 
-        show( iSearching, iView: searchResultsView!, inView: mainView!)
-        show(!iSearching, iView: editorView!,        inView: mainView!)
+        show( iSearching, iView: searchResultsView!, inView: view)
+        show(!iSearching, iView: editorView!,        inView: view)
         show(!iSearching, iView: detailView!,        inView: view)
     }
 
