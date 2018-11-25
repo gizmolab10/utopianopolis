@@ -1068,45 +1068,47 @@ class ZEditingManager: NSObject {
 
                 if  count == 0 {
                     onCompletion?()
-                } else {
-                    let maybefinish: Closure = {
-                        count -= 1
-
-                        if  count == 0 {
-                            if  iShouldGrab {
-                                grab?.grab()
+                    
+                    return
+                }
+                
+                let maybefinish: Closure = {
+                    count -= 1
+                    
+                    if  count == 0 {
+                        if  iShouldGrab {
+                            grab?.grab()
+                        }
+                        
+                        gBatchManager.bookmarks { iSame in
+                            var bookmarks = [Zone] ()
+                            
+                            for zone in zones {
+                                bookmarks += zone.fetchedBookmarks
                             }
-
-                            gBatchManager.bookmarks { iSame in
-                                var bookmarks = [Zone] ()
-
-                                for zone in zones {
-                                    bookmarks += zone.fetchedBookmarks
-                                }
-
-                                if  bookmarks.count == 0 {
+                            
+                            if  bookmarks.count == 0 {
+                                onCompletion?()
+                            } else {
+                                
+                                ////////////////////////////////////////////
+                                // remove a bookmark whose target is zone //
+                                ////////////////////////////////////////////
+                                
+                                self.deleteZones(bookmarks, permanently: permanently, iShouldGrab: false) { // recurse
                                     onCompletion?()
-                                } else {
-
-                                    ////////////////////////////////////////////
-                                    // remove a bookmark whose target is zone //
-                                    ////////////////////////////////////////////
-
-                                    self.deleteZones(bookmarks, permanently: permanently, iShouldGrab: false) { // recurse
-                                        onCompletion?()
-                                    }
                                 }
                             }
                         }
                     }
-
-                    for zone in zones {
-                        if  zone == iParent { // detect and avoid infinite recursion
+                }
+                
+                for zone in zones {
+                    if  zone == iParent { // detect and avoid infinite recursion
+                        maybefinish()
+                    } else {
+                        self.deleteZone(zone, permanently: permanently) {
                             maybefinish()
-                        } else {
-                            self.deleteZone(zone, permanently: permanently) {
-                                maybefinish()
-                            }
                         }
                     }
                 }

@@ -126,8 +126,14 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     @discardableResult override func becomeFirstResponder() -> Bool {
         if  gTextManager.allowAsFirstResponder(self), let zone = widgetZone,
             super.becomeFirstResponder() {  // becomeFirstResponder is called first so delegate methods will be called
-            gTextManager.edit(zone)
+            if  gWorkMode != .graphMode {
+                gSearchManager.exitSearchMode()
+            }
 
+            FOREGROUND(after: 0.1) {
+                gTextManager.edit(zone)
+            }
+            
             return true
         }
 

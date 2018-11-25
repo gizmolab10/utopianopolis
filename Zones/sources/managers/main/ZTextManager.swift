@@ -358,8 +358,9 @@ class ZTextManager: ZTextView {
     
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        let isOption = flags.isOption
-        let  isShift = flags.isShift
+        let isCommand = flags.isCommand
+        let  isOption = flags.isOption
+        let   isShift = flags.isShift
 
         switch arrow {
         case .up,
@@ -370,11 +371,15 @@ class ZTextManager: ZTextView {
             } else {
                 clearOffset()
                 
-                if         isOption && isShift {
+                if         isCommand && !isShift {
+                    moveToBeginningOfLine(self)
+                } else if  isCommand &&  isShift {
+                    moveToBeginningOfLineAndModifySelection(self)
+                } else if  isOption  &&  isShift {
                     moveWordLeftAndModifySelection(self)
-                } else if !isOption &&  isShift {
+                } else if !isOption  &&  isShift {
                     moveLeftAndModifySelection(self)
-                } else if  isOption && !isShift {
+                } else if  isOption  && !isShift {
                     moveWordLeft(self)
                 } else {
                     moveLeft(self)
@@ -386,11 +391,15 @@ class ZTextManager: ZTextView {
             } else {
                 clearOffset()
                 
-                if         isOption && isShift {
+                if         isCommand && !isShift {
+                    moveToEndOfLine(self)
+                } else if  isCommand &&  isShift {
+                    moveToEndOfLineAndModifySelection(self)
+                } else if  isOption  &&  isShift {
                     moveWordRightAndModifySelection(self)
-                } else if !isOption &&  isShift {
+                } else if !isOption  &&  isShift {
                     moveRightAndModifySelection(self)
-                } else if  isOption && !isShift {
+                } else if  isOption  && !isShift {
                     moveWordRight(self)
                 } else {
                     moveRight(self)

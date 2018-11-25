@@ -137,13 +137,4 @@ class ZToolsController: ZGenericTableController {
         }
     }
 
-
-    func emptyTrashButtonAction(_ button: NSButton) {
-
-        // needs elaborate gui, like search results, but with checkboxes and [de]select all checkbox
-
-        //gBatchManager.emptyTrash {
-        //    self.note("eliminated")
-        //}
-    }
 }

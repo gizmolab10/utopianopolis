@@ -165,12 +165,11 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
     
     @objc func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
-
         if  gWorkMode        != .graphMode {
-            #if os(OSX)
-                gSearchManager.exitSearchMode()
-            #endif
-        } else if let gesture = iGesture as? ZKeyPanGestureRecognizer,
+            gSearchManager.exitSearchMode()
+        }
+        
+        if let gesture = iGesture as? ZKeyPanGestureRecognizer,
             let (_, dropNearest, location) = widgetNearest(gesture),
             let         flags = gesture.modifiers {
             let         state = gesture.state
@@ -203,7 +202,11 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     
     
     @objc func clickEvent(_ iGesture: ZGestureRecognizer?) {
-        if  let           gesture = iGesture as? ZKeyClickGestureRecognizer {
+        if  gWorkMode != .graphMode {
+            gSearchManager.exitSearchMode()
+        }
+        
+        if let gesture = iGesture as? ZKeyClickGestureRecognizer {
             let         isCommand = gesture.modifiers?.contains(.command) ?? false
             let        textWidget = gEditedTextWidget
             var            inText = false
@@ -312,7 +315,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             rubberbandPreGrabs.removeAll()
         }
         
-        note("-- R --")
         gSelectionManager.deselect(retaining: rubberbandPreGrabs)
     }
 
@@ -458,11 +460,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                     }
                 }
             }
-
-            editorView?.setAllSubviewsNeedDisplay()
         }
         
-        // signalFor(nil, regarding: .preferences)
         editorView?.setAllSubviewsNeedDisplay()
     }
 
