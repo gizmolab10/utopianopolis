@@ -316,7 +316,7 @@ class ZFileManager: NSObject {
                                     let zone = Zone(dict: subDict, in: databaseID)
 
                                     switch key {
-                                    case .graph:     manager        .rootZone = zone; gControllersManager.signalFor(nil, regarding: .redraw)
+                                    case .graph:     manager        .rootZone = zone; gControllersManager.signalFor(nil, regarding: .relayout)
                                     case .trash:     manager       .trashZone = zone
                                     case .destroy:   manager     .destroyZone = zone
                                     case .favorites: manager   .favoritesZone = zone

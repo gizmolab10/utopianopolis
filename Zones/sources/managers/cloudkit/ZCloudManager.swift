@@ -1338,7 +1338,7 @@ class ZCloudManager: ZRecordsManager {
                         let                record: CKRecord = (iResults?[0])!
                         object.record[valueForPropertyName] = (record as! CKRecordValue)
 
-                        gControllersManager.signalFor(nil, regarding: .redraw)
+                        gControllersManager.signalFor(nil, regarding: .relayout)
                     }
                 }
             }

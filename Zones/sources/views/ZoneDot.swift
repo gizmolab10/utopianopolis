@@ -178,7 +178,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawTinyCountDots(_ iDirtyRect: CGRect) {
-        if  let    zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showChildren || zone.isBookmark) {
+        if  let    zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showingChildren || zone.isBookmark) {
             var   count = (gCountsMode == .progeny) ? zone.progenyCount : zone.indirectCount
             var aHollow = false
             var bHollow = false
@@ -302,7 +302,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             if  revealDotIsVisible {
                 if  isInnerDot {
                     let childlessTraveller = zone.canTravel && zone.count == 0
-                    let        dotIsFilled = isReveal ? (!zone.showChildren || childlessTraveller || isDragDrop) : (zone.isGrabbed || isCurrentFavorite)
+                    let        dotIsFilled = isReveal ? (!zone.showingChildren || childlessTraveller || isDragDrop) : (zone.isGrabbed || isCurrentFavorite)
                     let        strokeColor = isReveal && isDragDrop ?    gRubberbandColor : zone.color
                     var          fillColor = dotIsFilled ? strokeColor : gBackgroundColor
 

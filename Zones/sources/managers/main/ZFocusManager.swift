@@ -132,7 +132,7 @@ class ZFocusManager: NSObject {
             debugDump()
             gHere.grab()
             gFavoritesManager.updateFavorites()
-            gControllersManager.signalFor(nil, regarding: .redraw)
+            gControllersManager.signalFor(nil, regarding: .relayout)
         }
     }
 
@@ -267,7 +267,7 @@ class ZFocusManager: NSObject {
                         gHere  = target
 
                         gHere.prepareForArrival()
-                        atArrival(gHere, .redraw)
+                        atArrival(gHere, .relayout)
                     }
                 } else {
                     gCloudManager?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
@@ -277,10 +277,10 @@ class ZFocusManager: NSObject {
 
                             newHere.prepareForArrival()
                             self.focus {
-                                atArrival(newHere, .redraw)
+                                atArrival(newHere, .relayout)
                             }
                         } else {
-                            atArrival(gHere, .redraw)
+                            atArrival(gHere, .relayout)
                         }
                     }
                 }
@@ -302,14 +302,14 @@ class ZFocusManager: NSObject {
                     gHere = here
 
                     grabbed.grab()
-                    atArrival(here, .redraw)
+                    atArrival(here, .relayout)
                 }
 
                 let grabHere = {
                     gHere.prepareForArrival()
 
                     gBatchManager.children(.restore) { iSame in
-                        atArrival(gHere, .redraw)
+                        atArrival(gHere, .relayout)
                     }
                 }
 

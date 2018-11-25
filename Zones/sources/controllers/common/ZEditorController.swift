@@ -135,10 +135,10 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             specificWidget   = widget
             specificIndex    = zone.siblingIndex
             specificView     = specificWidget?.superview
-            recursing        = [.data, .redraw].contains(iKind)
+            recursing        = [.data, .relayout].contains(iKind)
         }
 
-        if iKind == .redraw {
+        if iKind == .relayout {
             specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isMain: inMainGraph, visited: [])
         } else {
             specificWidget?.setNeedsDisplay()
@@ -147,11 +147,11 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
     
     override func handleSignal(_ iSignalObject: Any?, iKind: ZSignalKind) {
-        if [.datum, .data, .redraw].contains(iKind) { // ignore for preferences, search, information, startup
+        if [.datum, .data, .relayout].contains(iKind) { // ignore for preferences, search, information, startup
             if gWorkMode != .graphMode {
                 editorView?.snp.removeConstraints()
             } else if !gIsEditingText {
-                if iKind == .redraw {
+                if iKind == .relayout {
                     gWidgetsManager.clearRegistry()
                 }
 
@@ -349,8 +349,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 }
 
                 prior?           .displayForDrag() // erase  child lines
-                dropZone?.widget?.displayForDrag() // redraw child lines
-                editorView?     .setNeedsDisplay() // redraw drag: line and dot
+                dropZone?.widget?.displayForDrag() // relayout child lines
+                editorView?     .setNeedsDisplay() // relayout drag: line and dot
 
                 // columnarReport(String(describing: gDragRelation), gDragDropZone?.unwrappedName)
 

@@ -24,6 +24,7 @@ var      gKeyboardIsVisible                     = false
 var     gCrippledUserAccess                     = false
 var   gDebugShowIdentifiers                     = false
 var  gMeasureOpsPerformance                     = true
+var    gTimeOfSystemStartup:      TimeInterval? = nil
 var        gDragDropIndices: NSMutableIndexSet? = nil
 var           gCurrentEvent:            ZEvent? = nil
 var           gDragRelation:         ZRelation? = nil
@@ -48,6 +49,29 @@ var       gDefaultTextColor:             ZColor { return gIsDark ? ZColor.white 
 var  gDarkerBackgroundColor:            CGColor { return gBackgroundColor.darker (by: 4.0)  .cgColor }
 var gDarkishBackgroundColor:            CGColor { return gBackgroundColor.darkish(by: 1.028).cgColor }
 var gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter(by: 4.0)  .cgColor }
+var         gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
+var  gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - (gTimeOfSystemStartup ?? 0.0) - (gCurrentEvent?.timestamp ?? 0.0) }
+
+
+func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
+    if  let e  = event {
+        if  e == gCurrentEvent {
+            return true
+        } else {
+            gCurrentEvent = e
+
+            if  gTimeOfSystemStartup == nil {
+                gTimeOfSystemStartup  = Date.timeIntervalSinceReferenceDate - gCurrentEvent!.timestamp
+            }
+        }
+    }
+    
+    if  item != nil {
+        return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4)
+    }
+    
+    return false
+}
 
 
 func toggleDatabaseID() {

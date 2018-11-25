@@ -155,7 +155,7 @@ class ZOperationsManager: NSObject {
                                     gFavoritesManager.updateFavorites()
                                 }
 
-                                gControllersManager.signalFor(nil, regarding: .redraw)
+                                gControllersManager.signalFor(nil, regarding: .relayout)
                             }
                         }
                     }

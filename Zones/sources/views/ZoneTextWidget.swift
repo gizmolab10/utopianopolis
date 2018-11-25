@@ -25,6 +25,11 @@ enum ZTextType: Int {
 
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
+    
+    func controlTextDidChange(_ obj: Notification) {
+        print(obj)
+    }
+    
 
     override var preferredFont : ZFont { return (widget?.isInMain ?? true) ? gWidgetFont : gFavoritesFont }
     var             widgetZone : Zone? { return widget?.widgetZone }
@@ -105,7 +110,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     
     func offset(for selectedRange: NSRange, _ iMoveUp: Bool) -> CGFloat? {
-        if  let   name = widgetZone?.zoneName {
+        if  let   name = widgetZone?.unwrappedName {
             let   font = preferredFont
             let offset = name.offset(using: font, for: selectedRange, movingUp: iMoveUp)
             var   rect = name.rectWithFont(font)

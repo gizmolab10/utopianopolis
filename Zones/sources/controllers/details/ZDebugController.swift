@@ -41,7 +41,7 @@ class ZDebugController: ZGenericController {
                 text.append("p.link")
             }
 
-            if zone.showChildren {
+            if zone.showingChildren {
                 text.append("show")
             }
 

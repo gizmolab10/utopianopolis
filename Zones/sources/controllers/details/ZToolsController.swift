@@ -74,7 +74,7 @@ class ZToolsController: ZGenericTableController {
                 case .eRetry:       gBatchManager.unHang()
                 case .eTrash:       self.showTrashCan()
                 case .eGather:      self.gatherAndShowLost()
-                case .eRecount:     gRemoteStoresManager.recount(); gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .redraw) {}
+                case .eRecount:     gRemoteStoresManager.recount(); gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .relayout) {}
                 }
             }
         }
@@ -133,7 +133,7 @@ class ZToolsController: ZGenericTableController {
 
     func restoreFromTrash() {
         gBatchManager.undelete { iSame in
-            gControllersManager.signalFor(nil, regarding: .redraw)
+            gControllersManager.signalFor(nil, regarding: .relayout)
         }
     }
 

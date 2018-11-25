@@ -61,7 +61,7 @@ class Zone : ZRecord {
     var        isCurrentFavorite:         Bool  { return self == gFavoritesManager.currentFavorite }
     var         isSortableByUser:         Bool  { return ancestorAccess != .eFullReadOnly || userHasAccess }
     var         accessIsChanging:         Bool  { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
-    var        onlyShowRevealDot:         Bool  { return (isRootOfFavorites && showChildren && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
+    var        onlyShowRevealDot:         Bool  { return (isRootOfFavorites && showingChildren && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
     var          dragDotIsHidden:         Bool  { return (isRootOfFavorites                 && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }    // always hide drag dot of favorites root
     var          directRecursive:         Bool  { return directAccess == .eRecurse }
     var           directWritable:         Bool  { return directAccess == .eFullWritable || databaseID == .mineID }
@@ -486,7 +486,7 @@ class Zone : ZRecord {
                 highest = traverseLevel
             }
 
-            return iZone.showChildren ? .eContinue : .eSkip
+            return iZone.showingChildren ? .eContinue : .eSkip
         }
 
         return highest
@@ -965,7 +965,7 @@ class Zone : ZRecord {
                 visible.append(w)
             }
 
-            return iZone.showChildren ? .eContinue : .eSkip
+            return iZone.showingChildren ? .eContinue : .eSkip
         }
 
         return visible
@@ -997,7 +997,7 @@ class Zone : ZRecord {
         safeTraverseProgeny(visited: []) { iZone -> ZTraverseStatus in
             block(iZone)
             
-            return iZone.showChildren ? .eContinue : .eSkip
+            return iZone.showingChildren ? .eContinue : .eSkip
         }
     }
     
@@ -1042,7 +1042,7 @@ class Zone : ZRecord {
             if begun {
                 if iZone.level > iLevel || iZone == self {
                     return .eSkip
-                } else if iZone.level == iLevel && iZone != self && (iZone.parentZone == nil || iZone.parentZone!.showChildren) {
+                } else if iZone.level == iLevel && iZone != self && (iZone.parentZone == nil || iZone.parentZone!.showingChildren) {
                     progeny.append(iZone)
                 }
             }
@@ -1073,7 +1073,7 @@ class Zone : ZRecord {
             exposedLevel += 1
 
             for child: Zone in progeny {
-                if  !child.showChildren && child.fetchableCount != 0 {
+                if  !child.showingChildren && child.fetchableCount != 0 {
                     return exposedLevel
                 }
             }
@@ -1136,7 +1136,7 @@ class Zone : ZRecord {
     
 
     func maybeNeedChildren() {
-        if  showChildren && !needsProgeny {
+        if  showingChildren && !needsProgeny {
             needChildren()
         }
     }

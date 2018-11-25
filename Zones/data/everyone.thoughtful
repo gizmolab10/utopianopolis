@@ -2369,7 +2369,7 @@
                               {
                                 "recordName" : "3F9FB0E0-861B-4B56-9070-143B7532685E",
                                 "progeny" : 0,
-                                "name" : "profile graph redraw",
+                                "name" : "profile graph relayout",
                                 "order" : 0.66666666666666663,
                                 "count" : 0
                               }
@@ -9305,7 +9305,7 @@
                                   {
                                     "recordName" : "17C7735F-F6B2-4072-850D-992FE0B165B2",
                                     "progeny" : 0,
-                                    "name" : "save + write AFTER redraw",
+                                    "name" : "save + write AFTER relayout",
                                     "order" : 0.20000000000000001,
                                     "count" : 0
                                   },
@@ -9342,7 +9342,7 @@
                                   {
                                     "recordName" : "E4BE74A8-6061-40B6-BD7F-B159F66DC21A",
                                     "progeny" : 0,
-                                    "name" : "speed up redraw",
+                                    "name" : "speed up relayout",
                                     "order" : 0.60000000000000009,
                                     "count" : 0
                                   }

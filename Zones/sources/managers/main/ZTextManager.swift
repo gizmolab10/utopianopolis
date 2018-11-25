@@ -17,17 +17,19 @@ import UIKit
 
 let gTextManager = ZTextManager()
 var gIsEditingText: Bool { return gTextManager.currentEdit != nil }
-var gEditedTextWidget: ZoneTextWidget? { return gTextManager.currentEdit?.textWidget }
+var gEditedTextWidget: ZoneTextWidget? { return gTextManager.currentTextWidget }
 
 
 class ZTextPack: NSObject {
-    var         packedZone:           Zone? = nil
-    var        packedTrait:         ZTrait? = nil
-    var       originalText:         String? = nil
+    let          createdAt = Date()
+    var         packedZone:           Zone?
+    var        packedTrait:         ZTrait?
+    var       originalText:         String?
     var         textWidget: ZoneTextWidget? { return widget?.textWidget }
-    var             widget:     ZoneWidget? { return gWidgetsManager.widgetForZone(packedZone) }
+    var             widget:     ZoneWidget? { return packedZone?.widget }
     var isEditingHyperlink:            Bool { return packedTrait?.traitType == .eHyperlink }
     var     isEditingEmail:            Bool { return packedTrait?.traitType == .eEmail }
+    var      allowsEditing:            Bool { return Date().timeIntervalSince(createdAt) > 0.1 }
 
 
     var displayType: String {
@@ -65,7 +67,7 @@ class ZTextPack: NSObject {
             default:         return result
             }
 
-            var suffix: String? = nil
+            var suffix: String?
 
             /////////////////////////////////////
             // add suffix for "show counts as" //
@@ -73,7 +75,7 @@ class ZTextPack: NSObject {
 
             if  gDebugShowIdentifiers && zone.record != nil {
                 suffix = zone.recordName
-            } else if (need > 1) && (!zone.showChildren || (gCountsMode == .progeny)) {
+            } else if (need > 1) && (!zone.showingChildren || (gCountsMode == .progeny)) {
                 suffix = String(describing: need)
             }
 
@@ -144,7 +146,7 @@ class ZTextPack: NSObject {
 
 
     func removeSuffix(from iText: String?) -> String? {
-        var newText: String? = nil
+        var newText: String?
 
         if  let components = iText?.components(separatedBy: "  (") {
             newText        = components[0]
@@ -221,16 +223,17 @@ class ZTextManager: ZTextView {
 
     
     var currentOffset: CGFloat?
-    var currentEdit: ZTextPack? = nil
+    var currentEdit: ZTextPack?
     var isEditingStateChanging = false
     var currentlyEditingZone: Zone? { return currentEdit?.packedZone }
+    var currentTextWidget: ZoneTextWidget? { return currentlyEditingZone?.widget?.textWidget }
     var currentZoneName: String { return currentlyEditingZone?.zoneName ?? "" }
-    var currentFont: ZFont { return currentlyEditingZone?.widget?.textWidget.font ?? gWidgetFont }
-    var atEnd:   Bool { return selectedRange().lowerBound == currentZoneName.length }
+    var currentFont: ZFont { return currentTextWidget?.font ?? gWidgetFont }
+    var atEnd:   Bool { return selectedRange().lowerBound == currentTextWidget?.text?.length ?? -1 }
     var atStart: Bool { return selectedRange().upperBound == 0 }
 
     
-    // MARK:- editing text
+    // MARK:- editing
     // MARK:-
     
 
@@ -337,6 +340,7 @@ class ZTextManager: ZTextView {
     override func doCommand(by selector: Selector) {
         switch selector {
         case #selector(insertNewline): stopCurrentEdit()
+        case #selector(insertTab):     if currentEdit?.allowsEditing ?? false { gEditingManager.addNext() } // stupid OSX issues tab twice (to create the new idea, then AFTERWARDS
         default:                       super.doCommand(by: selector)
         }
     }
@@ -349,30 +353,49 @@ class ZTextManager: ZTextView {
     }
     
     
-    override func moveRightAndModifySelection(_ sender: Any?) {
-        clearOffset()
-        super.moveRightAndModifySelection(sender)
-    }
-    
-    
-    override func moveLeftAndModifySelection(_ sender: Any?) {
-        clearOffset()
-        super.moveLeftAndModifySelection(sender)
-    }
-
-    
     // MARK:- arrow keys
     // MARK:-
     
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        let  isOption = flags.isOption
-        
+        let isOption = flags.isOption
+        let  isShift = flags.isShift
+
         switch arrow {
         case .up,
-             .down:  stopEditAndMoveUp(arrow == .up)
-        case .left:  if isOption { clearOffset(); moveWordBackward(self) } else if atStart { stopEditAndMoveOut(true)  } else { clearOffset(); moveLeft (self) }
-        case .right: if isOption { clearOffset(); moveWordForward (self) } else if atEnd   { stopEditAndMoveOut(false) } else { clearOffset(); moveRight(self) }
+             .down: stopEditAndMoveUp(arrow == .up)
+        case .left:
+            if  atStart {
+                stopEditAndMoveOut(true)
+            } else {
+                clearOffset()
+                
+                if         isOption && isShift {
+                    moveWordLeftAndModifySelection(self)
+                } else if !isOption &&  isShift {
+                    moveLeftAndModifySelection(self)
+                } else if  isOption && !isShift {
+                    moveWordLeft(self)
+                } else {
+                    moveLeft(self)
+                }
+            }
+        case .right:
+            if atEnd {
+                stopEditAndMoveOut(false)
+            } else {
+                clearOffset()
+                
+                if         isOption && isShift {
+                    moveWordRightAndModifySelection(self)
+                } else if !isOption &&  isShift {
+                    moveRightAndModifySelection(self)
+                } else if  isOption && !isShift {
+                    moveWordRight(self)
+                } else {
+                    moveRight(self)
+                }
+            }
         }
     }
     
@@ -384,7 +407,7 @@ class ZTextManager: ZTextView {
                 let grabbed = gSelectionManager.firstGrab
 
                 gSelectionManager.clearGrab()
-                gControllersManager.signalFor(nil, regarding: .redraw) {
+                gControllersManager.signalFor(nil, regarding: .relayout) {
                     FOREGROUND(after: 0.4) {
                         self.edit(grabbed)
                         self.setCursor(at: 100000000.0)
@@ -402,7 +425,7 @@ class ZTextManager: ZTextView {
     
 
     func stopEditAndMoveUp(_ iMoveUp: Bool) {
-        currentOffset = currentOffset ?? currentlyEditingZone?.widget?.textWidget.offset(for: selectedRange(), iMoveUp)
+        currentOffset = currentOffset ?? currentTextWidget?.offset(for: selectedRange(), iMoveUp)
         
         applyPreservingEdit {
             quickStopCurrentEdit()
@@ -420,11 +443,12 @@ class ZTextManager: ZTextView {
     
     func setCursor(at iOffset: CGFloat?) {
         if  var   offset = iOffset,
-            let       to = currentlyEditingZone?.widget?.textWidget {
+            let     zone = currentlyEditingZone,
+            let       to = currentTextWidget {
             var    point = CGPoint(x: offset, y: 0.0)
             point        = to.convert(point, from: nil)
             offset       = point.x
-            let     name = currentlyEditingZone?.zoneName ?? ""
+            let     name = zone.unwrappedName
             let location = name.location(of: offset, using: currentFont)
             
             setSelectedRange(NSMakeRange(location, 0))

@@ -36,9 +36,9 @@ enum ZSignalKind: Int {
     case error
     case found
     case search
-    case redraw
     case startup
     case details
+    case relayout
     case appearance
     case information
     case preferences
@@ -84,7 +84,7 @@ class ZControllersManager: NSObject {
         gBatchManager.usingDebugTimer = true
 
         gRemoteStoresManager.clear()
-        self.signalFor(nil, regarding: .redraw)
+        self.signalFor(nil, regarding: .relayout)
 
         gBatchManager.startUp { iSame in
             FOREGROUND {
@@ -95,7 +95,7 @@ class ZControllersManager: NSObject {
                 gFavoritesManager.updateFavorites()
                 gRemoteStoresManager.updateLastSyncDates()
                 gRemoteStoresManager.recount()
-                self.signalFor(nil, regarding: .redraw)
+                self.signalFor(nil, regarding: .relayout)
                 self.requestFeedback()
                 
                 gBatchManager.finishUp { iSame in
@@ -103,7 +103,7 @@ class ZControllersManager: NSObject {
                         gBatchManager.usingDebugTimer = false
 
                         self.blankScreenDebug()
-                        self.signalFor(nil, regarding: .redraw)
+                        self.signalFor(nil, regarding: .relayout)
                         gRemoteStoresManager.saveAll()
                     }
                 }

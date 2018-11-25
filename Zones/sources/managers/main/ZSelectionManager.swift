@@ -121,7 +121,7 @@ class ZSelectionManager: NSObject {
     var currentGrabsHaveVisibleChildren: Bool {
         for     grab in currentGrabs {
             if  grab.count > 0 &&
-                grab.showChildren {
+                grab.showingChildren {
                 return true
             }
         }
@@ -336,7 +336,7 @@ class ZSelectionManager: NSObject {
             let level = grab.level
             
             gHere.traverseAllVisibleProgeny { iZone in
-                if  iZone.level == level || (iZone.level < level && (iZone.count == 0 || !iZone.showChildren)) {
+                if  iZone.level == level || (iZone.level < level && (iZone.count == 0 || !iZone.showingChildren)) {
                     cousinsList.append(iZone)
                 }
             }

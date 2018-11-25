@@ -110,9 +110,9 @@ class ZEditingManager: NSObject {
                 
                 widget?.widgetZone?.deferWrite()
                 
-                if isWindow, let a = arrow {
+                if  let a = arrow, isWindow {
                     handleArrow(a, flags: flags)
-                } else if kMarkingCharacters.contains(key) && !isCommand {
+                } else if kMarkingCharacters.contains(key), !isCommand {
                     prefix(with: key)
                 } else {
                     switch key {
@@ -161,10 +161,9 @@ class ZEditingManager: NSObject {
 
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        let isBookmark = gSelectionManager.firstGrab.isBookmark
-        let  isCommand = flags.isCommand
-        let   isOption = flags.isOption
-        let    isShift = flags.isShift
+        let isCommand = flags.isCommand
+        let  isOption = flags.isOption
+        let   isShift = flags.isShift
 
         if isOption && !gSelectionManager.currentMoveable.isMovableByUser {
             return
@@ -176,8 +175,8 @@ class ZEditingManager: NSObject {
         default:
             if !isShift {
                 switch arrow {
-                case .right: moveInto(selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawSyncRedraw(avoidRedraw: !isBookmark) } // redraw graph when travelling through a bookmark
-                case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawSyncRedraw(avoidRedraw: true) }
+                case .right: moveInto(selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawSyncRedraw() } // relayout graph when travelling through a bookmark
+                case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawSyncRedraw() }
                 default: break
                 }
             } else if !isOption {
@@ -221,7 +220,8 @@ class ZEditingManager: NSObject {
 
     func handleMenuItem(_ iItem: ZMenuItem?) {
         #if os(OSX)
-            if  gWorkMode == .graphMode,
+            if !isDuplicate(item: iItem),
+                gWorkMode == .graphMode,
                 let   item = iItem {
                 let  flags = item.keyEquivalentModifierMask
                 let    key = item.keyEquivalent
@@ -291,7 +291,7 @@ class ZEditingManager: NSObject {
             case .Travel:    valid = mover.canTravel
             case .Cloud:     valid = gHasInternet && gCloudAccountIsActive
             case .Files:     valid = flags.contains(.command)
-            default:         valid = true
+            default:         break
             }
         } else if arrow == nil {
             valid = type != .Travel
@@ -334,7 +334,7 @@ class ZEditingManager: NSObject {
         gHere.grab()
         gHere.revealChildren()
         gFavoritesManager.updateFavorites()
-        gControllersManager.signalFor(nil, regarding: .redraw)
+        gControllersManager.signalFor(nil, regarding: .relayout)
     }
 
 
@@ -558,7 +558,7 @@ class ZEditingManager: NSObject {
                 }
             }
 
-            if  zone.showChildren {
+            if  zone.showingChildren {
                 gSelectionManager.clearGrab()
 
                 for child in zone.children {
@@ -569,7 +569,7 @@ class ZEditingManager: NSObject {
             }
         }
 
-        gControllersManager.signalFor(nil, regarding: .redraw)
+        gControllersManager.signalFor(nil, regarding: .relayout)
     }
 
 
@@ -586,7 +586,7 @@ class ZEditingManager: NSObject {
 
     func refetch() {
         gBatchManager.refetch { iSame in
-            gControllersManager.signalFor(nil, regarding: .redraw)
+            gControllersManager.signalFor(nil, regarding: .relayout)
         }
     }
 
@@ -604,7 +604,7 @@ class ZEditingManager: NSObject {
                         iAncestor.revealChildren()
                     }
 
-                    gControllersManager.signalFor(nil, regarding: .redraw)
+                    gControllersManager.signalFor(nil, regarding: .relayout)
                 }
             }
 
@@ -676,18 +676,26 @@ class ZEditingManager: NSObject {
 
 
     func recursivelyRevealSiblings(_ descendent: Zone, untilReaching iAncestor: Zone, onCompletion: ZoneClosure?) {
+        if  descendent == iAncestor {
+            onCompletion?(iAncestor)
+            
+            return
+        }
+
         var needRoot = true
 
         descendent.traverseAllAncestors { iParent in
-            iParent.revealChildren()
-            iParent.needChildren() // need this to show "minimal flesh" on graph
+            if  iParent != descendent {
+                iParent.revealChildren()
+                iParent.needChildren() // need this to show "minimal flesh" on graph
+            }
 
-            if iParent == iAncestor {
+            if  iParent == iAncestor {
                 needRoot = false
             }
         }
 
-        if needRoot {
+        if  needRoot { // true means ideas graph in memory does not include root, so fetch it from iCloud
             descendent.needRoot()
         }
 
@@ -719,14 +727,16 @@ class ZEditingManager: NSObject {
 
     func revealSiblingsOf(_ descendent: Zone, untilReaching iAncestor: Zone) {
         recursivelyRevealSiblings(descendent, untilReaching: iAncestor) { iZone in
-            if iZone == iAncestor {
-                gHere = iAncestor
-
-                gHere.grab()
+            if     iZone != descendent {
+                if iZone == iAncestor {
+                    gHere = iAncestor
+                    
+                    gHere.grab()
+                }
+                
+                gFavoritesManager.updateCurrentFavorite()
+                self.redrawSyncRedraw()
             }
-
-            gFavoritesManager.updateCurrentFavorite()
-            self.redrawSyncRedraw()
         }
     }
 
@@ -766,7 +776,7 @@ class ZEditingManager: NSObject {
 
 
     func recursiveUpdate(_ show: Bool, _ zone: Zone, to iLevel: Int?, onCompletion: Closure?) {
-        if !show && zone.isGrabbed && (zone.count == 0 || !zone.showChildren) {
+        if !show && zone.isGrabbed && (zone.count == 0 || !zone.showingChildren) {
 
             //////////////////////////////////
             // COLLAPSE OUTWARD INTO PARENT //
@@ -836,7 +846,7 @@ class ZEditingManager: NSObject {
                     self.redrawSyncRedraw()
                 }
             } else {
-                let show = !zone.showChildren
+                let show = !zone.showingChildren
 
                 if !zone.isRootOfFavorites {
                     self.generationalUpdate(show: show, zone: zone) {
@@ -865,7 +875,7 @@ class ZEditingManager: NSObject {
         let parentZone = gSelectionManager.currentMoveable
         if !parentZone.isBookmark {
             addIdeaIn(parentZone, at: gInsertionsFollow ? nil : 0) { iChild in
-                gControllersManager.signalFor(parentZone, regarding: .redraw) {
+                gControllersManager.signalFor(parentZone, regarding: .relayout) {
                     iChild?.edit()
                 }
             }
@@ -905,7 +915,7 @@ class ZEditingManager: NSObject {
             addIdeaIn(parent, at: index, with: name) { iChild in
                 if let child = iChild {
                     if !containing {
-                        gControllersManager.signalFor(nil, regarding: .redraw) {
+                        gControllersManager.signalFor(nil, regarding: .relayout) {
                             onCompletion?(child)
                         }
                     } else {
@@ -980,7 +990,7 @@ class ZEditingManager: NSObject {
 
                 bookmark?.grab()
                 bookmark?.markNotFetched()
-                gControllersManager.signalFor(nil, regarding: .redraw)
+                gControllersManager.signalFor(nil, regarding: .relayout)
                 gBatchManager.sync { iSame in
                 }
             }
@@ -1238,7 +1248,7 @@ class ZEditingManager: NSObject {
 
                     onCompletion?()
                 } else {
-                    let here = gHere // revealPathToRoot (below) changes gHere, so nab it first
+                    let here = gHere // revealZonesToRoot (below) changes gHere, so nab it first
 
                     zone.grab()
                     revealZonesToRoot(from: zone) {
@@ -1247,8 +1257,6 @@ class ZEditingManager: NSObject {
                     }
                 }
             } else if let p = parentZone {
-                p.grab()
-
                 if  zone == gHere {
                     revealParentAndSiblingsOf(zone) { iCloudCalled in
                         self.revealSiblingsOf(zone, untilReaching: p)
@@ -1257,7 +1265,8 @@ class ZEditingManager: NSObject {
                 } else {
                     p.revealChildren()
                     p.needChildren()
-
+                    p.grab()
+                    
                     gBatchManager.children(.restore) { iSame in
                         onCompletion?()
                     }
@@ -1949,7 +1958,7 @@ class ZEditingManager: NSObject {
         // grab zone whose text contains offset //
         //////////////////////////////////////////
         
-        while grabThis.showChildren, grabThis.count > 0,
+        while grabThis.showingChildren, grabThis.count > 0,
             let length = grabThis.zoneName?.length {
                 let range = NSRange(location: length, length: 0)
                 
@@ -2106,7 +2115,7 @@ class ZEditingManager: NSObject {
                 if  same && (parent?.count ?? 0) > 1 && (setHere || iCalledCloud) {
                     self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme, extend: extend)
                 } else if !setHere {
-                    gControllersManager.signalFor(nil, regarding: .redraw)
+                    gControllersManager.signalFor(nil, regarding: .relayout)
                 }
             }
         }

@@ -139,12 +139,12 @@ class ZRemoteStoresManager: NSObject {
                 zone.record = record
                 let  parent = zone.parentZone
 
-                if  zone.showChildren {
+                if  zone.showingChildren {
                     FOREGROUND {
-                        gControllersManager.signalFor(parent, regarding: .redraw)
+                        gControllersManager.signalFor(parent, regarding: .relayout)
 
                         gBatchManager.children(.restore) { iSame in
-                            gControllersManager.signalFor(parent, regarding: .redraw)
+                            gControllersManager.signalFor(parent, regarding: .relayout)
                         }
                     }
                 }

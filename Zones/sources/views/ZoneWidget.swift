@@ -84,7 +84,7 @@ class ZoneWidget: ZView {
 
 
     func layoutChildren(_ iKind: ZSignalKind, visited: [Zone]) {
-        if  let                  zone = widgetZone, zone.showChildren {
+        if  let                  zone = widgetZone, zone.showingChildren {
             var                 index = childrenWidgets.count
             var previous: ZoneWidget? = nil
 
@@ -174,7 +174,7 @@ class ZoneWidget: ZView {
     func prepareChildrenWidgets() {
         if  let zone = widgetZone {
 
-            if !zone.showChildren {
+            if !zone.showingChildren {
                 childrenWidgets.removeAll()
 
                 for view in childrenView.subviews {
@@ -223,7 +223,7 @@ class ZoneWidget: ZView {
         var rect = CGRect()
 
         if  let zone = widgetZone {
-            if !zone.showChildren || zone.count == 0 {
+            if !zone.showingChildren || zone.count == 0 {
 
                 /////////////////////////
                 // DOT IS STRAIGHT OUT //
@@ -307,7 +307,7 @@ class ZoneWidget: ZView {
             (zone == gDraggedZone || !zone.spawnedBy(gDraggedZone)),
             dragHitFrame(in: iView, iHere!).contains(iPoint) {
 
-            if zone.showChildren {
+            if zone.showingChildren {
                 for child in zone.children {
                     if  let            childWidget = child.widget,
                         self        != childWidget,
@@ -521,7 +521,7 @@ class ZoneWidget: ZView {
                 drawSelectionHighlight()
             }
 
-            if  zone.showChildren {
+            if  zone.showingChildren {
                 if  !nowDrawLines && !gIsDragging && gEditorView?.rubberbandRect == nil {
                     FOREGROUND {
                         self.nowDrawLines = true

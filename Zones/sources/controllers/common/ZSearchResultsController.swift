@@ -193,10 +193,10 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         zone?.grab()
         zone?.needChildren()
         zone?.revealChildren()
-        gControllersManager.signalFor(nil, regarding: .redraw)
+        gControllersManager.signalFor(nil, regarding: .relayout)
 
         gBatchManager.sync { iSame in
-            gControllersManager.signalFor(nil, regarding: .redraw)
+            gControllersManager.signalFor(nil, regarding: .relayout)
         }
     }
 

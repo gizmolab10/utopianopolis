@@ -19,7 +19,7 @@ class ZRecord: NSObject {
     var          databaseID: ZDatabaseID?
     var          kvoContext: UInt8 = 1
     var           hasParent: Bool               { return false }
-    var        showChildren: Bool               { return isExpanded(self.recordName) }
+    var        showingChildren: Bool               { return isExpanded(self.recordName) }
     var   isRootOfFavorites: Bool               { return record != nil && recordName == kFavoritesRootName }
     var          isBookmark: Bool               { return record?.isBookmark ?? false }
     var              isRoot: Bool               { return record != nil && kRootNames.contains(recordName!) }
@@ -137,7 +137,7 @@ class ZRecord: NSObject {
 
 
     func toggleChildrenVisibility() {
-        if  showChildren {
+        if  showingChildren {
             concealChildren()
         } else {
             revealChildren()
@@ -320,7 +320,7 @@ class ZRecord: NSObject {
 
     func needChildren() {
         if !isBookmark && // all bookmarks are childless, by design
-            showChildren &&
+            showingChildren &&
             false, // !gAssumeAllFetched,
             !needsProgeny {
             addState(.needsChildren)

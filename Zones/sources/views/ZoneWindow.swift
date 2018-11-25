@@ -51,12 +51,9 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     // cannot declare this in extensions because compiler barfs about objective-c method conflict (and then compiler throws a seg fault)
 
     override func keyDown(with event: ZEvent) {
-        if  gCurrentEvent != event {
-            gCurrentEvent  = event
-
-            if  !gEditingManager.handleEvent(event, isWindow: true) {
-                super.keyDown(with: event)
-            }
+        if  !isDuplicate(event: event),
+            !gEditingManager.handleEvent(event, isWindow: true) {
+            super.keyDown(with: event)
         }
     }
     

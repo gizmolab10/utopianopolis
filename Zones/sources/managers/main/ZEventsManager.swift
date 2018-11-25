@@ -47,7 +47,7 @@ class ZEventsManager: NSObject {
     
     
     func handleDarkModeChange(iNote: Notification) {
-        gControllersManager.signalFor(nil, regarding: .redraw)
+        gControllersManager.signalFor(nil, regarding: .relayout)
     }
     
     
@@ -71,36 +71,37 @@ class ZEventsManager: NSObject {
         #if os(OSX)
 
             self.monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
-                if  gCurrentEvent != event {
-                    gCurrentEvent  = event
-                    
+                if !isDuplicate(event: event) {
                     switch gWorkMode {
                     case .searchMode:
                         
                         return gSearchManager.handleKeyEvent(event)
                         
                     case .graphMode:
-                        let    flags = event.modifierFlags
-                        let    key = event.charactersIgnoringModifiers
+                        let     flags = event.modifierFlags
+                        let isControl = flags.isControl
+                        let isCommand = flags.isCommand
+                        let  isOption = flags.isOption
+                        let     isAny = isOption || isCommand || isControl
                         
-                        if  flags.isCommand,
-                            gIsEditingText,
-                            key != nil {
-                            switch key! {
-                            case "f":
-                                gTextManager.stopCurrentEdit()
-                                gEditingManager.handleKey(key, flags: flags, isWindow: false)
-                                
-                                return nil
-                            default:
-                                break
+                        if  let key = event.charactersIgnoringModifiers {
+                            if !gIsEditingText {
+                                gEditingManager.handleKey(key, flags: flags, isWindow: true); return nil
+                            } else {
+                                switch key {
+                                case "a":    if isAny { gEditedTextWidget?.selectAllText(); return nil }
+                                case "d":    if isAny { gEditingManager.addIdeaFromSelectedText(); return nil }
+                                case "f":    if isAny { gEditingManager.search(); return nil }
+                                case "/":    if isAny { gFocusManager.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }; return nil }
+                                case "?":    if isAny { gEditingManager.showKeyboardShortcuts(); return nil }
+                                case kSpace: if isAny { gEditingManager.addIdea(); return nil }
+                                default:
+                                    if  let arrow = key.arrow {
+                                        gTextManager.handleArrow(arrow, flags: flags); return nil
+                                    }
+                                }
                             }
-                        } else if !gIsEditingText {
-                            gEditingManager.handleKey(key, flags: flags, isWindow: false)
                         }
-                        
-                        break
-                        
                     default: break
                     }
                 }
