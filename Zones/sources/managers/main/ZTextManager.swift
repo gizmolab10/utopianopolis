@@ -29,7 +29,7 @@ class ZTextPack: NSObject {
     var             widget:     ZoneWidget? { return packedZone?.widget }
     var isEditingHyperlink:            Bool { return packedTrait?.traitType == .eHyperlink }
     var     isEditingEmail:            Bool { return packedTrait?.traitType == .eEmail }
-    var      allowsEditing:            Bool { return Date().timeIntervalSince(createdAt) > 0.1 }
+    var   adequatelyPaused:            Bool { return Date().timeIntervalSince(createdAt) > 0.1 }
 
 
     var displayType: String {
@@ -297,10 +297,9 @@ class ZTextManager: ZTextView {
     func stopCurrentEdit(forceCapture: Bool = false) {
         if  let e = currentEdit, !isEditingStateChanging {
             capture(force: forceCapture)
-            fullResign()
             clearEdit()
+            fullResign()
             e.updateWidgetsForEndEdit()
-            e.packedZone?.grab()
         }
     }
 
@@ -340,7 +339,7 @@ class ZTextManager: ZTextView {
     override func doCommand(by selector: Selector) {
         switch selector {
         case #selector(insertNewline): stopCurrentEdit()
-        case #selector(insertTab):     if currentEdit?.allowsEditing ?? false { gEditingManager.addNext() } // stupid OSX issues tab twice (to create the new idea, then AFTERWARDS
+        case #selector(insertTab):     if currentEdit?.adequatelyPaused ?? false { gEditingManager.addNext() { iChild in iChild.edit() } } // stupid OSX issues tab twice (to create the new idea, then AFTERWARDS
         default:                       super.doCommand(by: selector)
         }
     }

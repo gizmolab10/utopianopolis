@@ -36,8 +36,7 @@ class ZSearchManager: NSObject {
 
 
     func showResults(_ iResults: Any?) {
-        gWorkMode = .searchMode
-        state     = .list
+        state = .list
 
         gControllersManager.signalFor(iResults as? NSObject, regarding: .found)
     }

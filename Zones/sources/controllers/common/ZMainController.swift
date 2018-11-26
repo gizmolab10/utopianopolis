@@ -33,58 +33,26 @@ class ZMainController: ZGenericController {
     override func setup() {
         controllerID = .main
 
-        searchBoxView?.removeConstraint(searchBoxHeight!)
-        searchBoxView?.snp.makeConstraints { make in
-            make.height.equalTo(0.0)
-        }
-
-        FOREGROUND(after: 0.1) { // can't be done during awakeFromNib
-            self.searchResultsView?.removeFromSuperview()
-        }
+        searchBoxView?.isHidden = true
+        searchResultsView?.isHidden = true
     }
 
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
+        let isSearch = gWorkMode == .searchMode
+
         switch iKind {
         case .found:
-            showAsSearching(gWorkMode == .searchMode)
+            searchResultsView?.isHidden = !isSearch
         case .search:
-            searchBoxView?.snp.removeConstraints()
-            searchBoxView?.snp.makeConstraints { make in
-                make.height.equalTo(gWorkMode == .searchMode ? 44.0 : 0.0)
-            }
+            searchBoxView?.isHidden = !isSearch
 
-            if  gWorkMode != .searchMode {
+            if !isSearch {
+                searchResultsView?.isHidden = true
+
                 assignAsFirstResponder(nil)
-                showAsSearching(false)
             }
         default: break
-        }
-    }
-
-
-    func showAsSearching(_ iSearching: Bool) {
-        gWorkMode = iSearching ? .searchMode : .graphMode
-
-        show( iSearching, iView: searchResultsView!, inView: view)
-        show(!iSearching, iView: editorView!,        inView: view)
-        show(!iSearching, iView: detailView!,        inView: view)
-    }
-
-
-    func show(_ show: Bool, iView: ZView, inView: ZView) {
-        if !show {
-            iView.removeFromSuperview()
-        } else if !(inView.subviews.contains(iView)) {
-            inView.addSubview(iView)
-            iView.snp.makeConstraints { make in
-                if inView == view {
-                    make.bottom.left.equalTo(inView)
-                    make.top.equalTo((gEditorController!.favoritesRootWidget.snp.bottom)).offset(20.0)
-                } else {
-                    make.top.bottom.left.right.equalTo(inView)
-                }
-            }
         }
     }
 

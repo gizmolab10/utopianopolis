@@ -73,7 +73,10 @@ protocol ZScrollDelegate : NSObjectProtocol {}
 
 extension NSObject {
     func assignAsFirstResponder(_ responder: NSResponder?) {
-        ZoneWindow.window?.makeFirstResponder(responder)
+        if  let window = ZoneWindow.window,
+            ![window, responder].contains(window.firstResponder) {
+            window.makeFirstResponder(responder)
+        }
     }
 }
 

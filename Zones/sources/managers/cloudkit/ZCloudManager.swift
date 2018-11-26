@@ -319,7 +319,7 @@ class ZCloudManager: ZRecordsManager {
     }
 
 
-    func searchPredicateFrom(_ searchString: String) -> NSPredicate {
+    func searchPredicateFrom(_ searchString: String) -> NSPredicate? {
         let    tokens = searchString.components(separatedBy: " ")
         var    string = ""
         var separator = ""
@@ -331,7 +331,7 @@ class ZCloudManager: ZRecordsManager {
             }
         }
 
-        return NSPredicate(format: string)
+        return string == "" ? nil : NSPredicate(format: string)
     }
 
 
@@ -373,8 +373,13 @@ class ZCloudManager: ZRecordsManager {
 
 
     func search(for searchString: String, onCompletion: ObjectClosure?) {
-        let predicate = searchPredicateFrom(searchString)
         var retrieved = [CKRecord] ()
+
+        guard let predicate = searchPredicateFrom(searchString) else {
+            onCompletion?(retrieved as NSObject)
+            
+            return
+        }
 
         queryForZonesWith(predicate) { (iRecord, iError) in
             if let ckRecord = iRecord {

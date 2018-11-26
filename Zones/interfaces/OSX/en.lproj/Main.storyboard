@@ -637,12 +637,6 @@ DQ
                                     <segue destination="cYL-kx-LTL" kind="embed" id="chv-HO-K3M"/>
                                 </connections>
                             </containerView>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
-                                <rect key="frame" x="0.0" y="0.0" width="450" height="256"/>
-                                <connections>
-                                    <segue destination="Hxl-Pi-4li" kind="embed" id="VOo-Sq-lQs"/>
-                                </connections>
-                            </containerView>
                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
                                 <rect key="frame" x="0.0" y="0.0" width="226" height="256"/>
                                 <constraints>
@@ -650,6 +644,12 @@ DQ
                                 </constraints>
                                 <connections>
                                     <segue destination="yWa-SA-l1V" kind="embed" id="ndc-SO-JG6"/>
+                                </connections>
+                            </containerView>
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="256"/>
+                                <connections>
+                                    <segue destination="Hxl-Pi-4li" kind="embed" id="VOo-Sq-lQs"/>
                                 </connections>
                             </containerView>
                         </subviews>
