@@ -1187,7 +1187,7 @@ class ZCloudManager: ZRecordsManager {
 
                 self.establishRootFor(name: name, recordName: recordName) { iZone in
                     if  rootID != .graph {
-                        iZone.directAccess = .eDefaultName
+                        iZone.directAccess = .eChildrenWritable
                     }
 
                     switch rootID {

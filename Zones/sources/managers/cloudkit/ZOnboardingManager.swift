@@ -17,7 +17,7 @@ import CloudKit
 #endif
 
 
-var gIsSpecialUser: Bool { return gBatchManager.isSpecialUser }
+var gIsSpecialUser: Bool { return false } // gBatchManager.isSpecialUser }
 
 
 class ZOnboardingManager : ZOperationsManager {

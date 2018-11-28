@@ -133,7 +133,7 @@ class ZEditingManager: NSObject {
                     case "p":      printHere()
                     case "r":      reverse()
                     case "s":      if isCommand { gFileManager.saveAs() } else { selectCurrentFavorite() }
-                    case "w":      toggleWritable()
+                    case "w":      rotateWritable()
                     case "1":      if isCommand && isShift { sendEmailBugReport() }
                     case "+":      divideChildren()
                     case "-":      addLine()
@@ -274,7 +274,7 @@ class ZEditingManager: NSObject {
             let  paste = s.pasteableZones.count
             let  grabs = s.currentGrabs  .count
             let  shown = s.currentGrabsHaveVisibleChildren
-            let  write = mover.isWritableByUseer
+            let  write = mover.isWritableByUser
             let   sort = mover.isSortableByUser
             let parent = mover.isMovableByUser
 
@@ -428,9 +428,9 @@ class ZEditingManager: NSObject {
     }
 
 
-    func toggleWritable() {
+    func rotateWritable() {
         for zone in gSelectionManager.currentGrabs {
-            zone.toggleWritable()
+            zone.rotateWritable()
         }
 
         redrawSyncRedraw()
@@ -872,10 +872,11 @@ class ZEditingManager: NSObject {
 
 
     func addIdea() {
-        let parentZone = gSelectionManager.currentMoveable
-        if !parentZone.isBookmark {
-            addIdeaIn(parentZone, at: gInsertionsFollow ? nil : 0) { iChild in
-                gControllersManager.signalFor(parentZone, regarding: .relayout) {
+        let parent = gSelectionManager.currentMoveable
+        if !parent.isBookmark,
+            parent.canAlterChildren {
+            addIdeaIn(parent, at: gInsertionsFollow ? nil : 0) { iChild in
+                gControllersManager.signalFor(parent, regarding: .relayout) {
                     iChild?.edit()
                 }
             }
@@ -886,7 +887,7 @@ class ZEditingManager: NSObject {
     func addNext(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
         let       zone = gSelectionManager.rootMostMoveable
 
-        if  var parent = zone.parentZone {
+        if  var parent = zone.parentZone, (parent.directChildrenWritable || parent.isTextEditable) {
             var  zones = gSelectionManager.currentGrabs
 
             if containing {
@@ -932,7 +933,11 @@ class ZEditingManager: NSObject {
 
 
     func addLine() {
-        let   grab = gSelectionManager.currentMoveable
+        let grab = gSelectionManager.currentMoveable
+        
+        if !grab.isWritableByUser {
+            return
+        }
 
         let assign = { (iText: String) in
             grab .zoneName = iText
@@ -1463,7 +1468,13 @@ class ZEditingManager: NSObject {
                 let    child = Zone(databaseID: dbID)
 
                 if  name != nil {
-                    child.zoneName = name
+                    child.zoneName   = name
+                }
+
+                if !gIsSpecialUser,
+                    dbID            == .everyoneID,
+                    let     identity = gAuthorID {
+                    child.zoneAuthor = identity
                 }
 
                 child.markNotFetched()
@@ -1745,21 +1756,12 @@ class ZEditingManager: NSObject {
                 completedYet     = true
                 var insert: Int? = zone.parentZone?.siblingIndex
 
-                if to.databaseID == .favoritesID {
-                    insert = gFavoritesManager.nextFavoritesIndex(forward: gInsertionsFollow)
-                } else if zone.parentZone?.parentZone == to {
-                    if  insert != nil {
-                        insert  = insert! + 1
-
-                        // to compute the insertion index
-                        // so that moving back in returns exactly:
-                        // if orphan == true
-                        // visit zone's parent and parent of that, etc, until sibling's parent matches "into"
-                        // grab sibling.siblingIndex
-                        // then regarding atTask
-                        // apply (+/- 1) so afterwards (code is above)
-                        // if == count, use -1, means "append" (no insertion index)
-                        // else use as insertion index
+                if  zone.parentZone?.parentZone == to,
+                    let  i = insert {
+                    insert = i + 1
+                    
+                    if  insert! >= to.count {
+                        insert   = nil // append at end
                     }
                 }
 
@@ -1772,10 +1774,6 @@ class ZEditingManager: NSObject {
                 }
 
                 zone.orphan()
-
-                if  insert != nil && insert! > to.count {
-                    insert  = nil
-                }
 
                 to.addAndReorderChild(zone, at: insert)
                 onCompletion?()

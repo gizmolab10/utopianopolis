@@ -21,7 +21,7 @@ var               gWorkMode                     = ZWorkMode.startupMode
 var          gTextCapturing                     = false
 var        gIsReadyToShowUI                     = false
 var      gKeyboardIsVisible                     = false
-var     gCrippledUserAccess                     = false
+var    gDebugDenyUserAccess                     = true
 var   gDebugShowIdentifiers                     = false
 var  gMeasureOpsPerformance                     = true
 var    gTimeOfSystemStartup:      TimeInterval? = nil
@@ -140,19 +140,32 @@ var gUserRecordID: String? {    // persist for file read on launch
 }
 
 
-var gProductionEmailSent: Bool {
+var gEmailTypesSent: String {
     get {
-        let pref = getPreferencesBool(for: kProductionEmailSent, defaultBool: false) || (gUser?.productionEmailSent ?? false)
+        let pref = getPreferenceString(for: kEmailTypesSent) ?? ""
+        let sent = gUser?.sentEmailType ?? pref
         
-        setPreferencesBool(pref, for: kProductionEmailSent)
-        gUser?.productionEmailSent = pref
+        setPreferencesString(sent, for: kEmailTypesSent)
+        gUser?.sentEmailType = sent
         
-        return pref
+        return sent
     }
-
+    
     set {
-        setPreferencesBool(newValue, for: kProductionEmailSent)
-        gUser?.productionEmailSent = newValue
+        setPreferencesString(newValue, for: kEmailTypesSent)
+        gUser?.sentEmailType = newValue
+    }
+}
+
+
+func emailSent(for type: ZSentEmailType) -> Bool {
+    return gEmailTypesSent.contains(type.rawValue)
+}
+
+
+func recordEmailSent(for type: ZSentEmailType) {
+    if  !emailSent  (for: type) {
+        gEmailTypesSent.append(type.rawValue)
     }
 }
 

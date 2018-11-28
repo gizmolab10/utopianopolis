@@ -18,7 +18,8 @@ enum ZUserAccess: Int {
 
 
 enum ZSentEmailType: String {
-    case eProduction = "p"
+    case eBetaTesting = "t"
+    case eProduction  = "p"
 }
 
 
@@ -44,19 +45,6 @@ class ZUser : ZRecord {
         set {
             if  newValue != access {
                 writeAccess = NSNumber(value: newValue.rawValue)
-            }
-        }
-    }
-
-    
-    var productionEmailSent: Bool {
-        get {
-            return sentEmailType?.contains(ZSentEmailType.eProduction.rawValue) ?? false
-        }
-
-        set {
-            if !productionEmailSent {
-                sentEmailType?.append(ZSentEmailType.eProduction.rawValue)
             }
         }
     }

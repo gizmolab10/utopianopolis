@@ -539,18 +539,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         return hit
     }
 
-    
-    func ancestor(for iID: ZDatabaseID?) -> Zone? {
-        if let dbID = iID {
-            switch dbID {
-            case .favoritesID: return gFavoritesRoot
-            default:           return gHere
-            }
-        }
-
-        return nil
-    }
-
 
     func detectDotIn(_ widget: ZoneWidget, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
         var hit:        ZoneDot? = nil

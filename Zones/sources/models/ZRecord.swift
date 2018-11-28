@@ -43,8 +43,8 @@ class ZRecord: NSObject {
     var      recordsManager: ZRecordsManager?   { return gRemoteStoresManager.recordsManagerFor(databaseID) }
     var        cloudManager: ZCloudManager?     { return recordsManager as? ZCloudManager }
     var          recordName: String?            { return record?.recordID.recordName }
-    var       unwrappedName: String             { return displayType }
-    var         displayType: String             { return "" }
+    var       unwrappedName: String             { return emptyName }
+    var           emptyName: String             { return "" }
 
 
     var record: CKRecord! {
@@ -81,7 +81,7 @@ class ZRecord: NSObject {
                     /////////////////////
 
                     let zone = self as? Zone
-                    let name = zone?.zoneName ?? recordName ?? displayType
+                    let name = zone?.zoneName ?? recordName ?? emptyName
 
                     if       !canSaveWithoutFetch &&  isFetched {
                         bam("new record, ALLOW SAVE WITHOUT FETCH " + name)
@@ -90,7 +90,7 @@ class ZRecord: NSObject {
                         bam("require FETCH BEFORE SAVE " + name)
                         fetchBeforeSave()
 
-                        if  name != displayType || recordName == kRootName {
+                        if  name != emptyName || recordName == kRootName {
                             bam("new named record, should ALLOW SAVING")
                         }
                     }

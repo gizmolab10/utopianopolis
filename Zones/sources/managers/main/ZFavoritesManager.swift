@@ -213,7 +213,7 @@ class ZFavoritesManager: NSObject {
             mine?.assureRecordExists(withRecordID: CKRecord.ID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
                 let       ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kFavoritesRootName))
                 let           root = Zone(record: ckRecord, databaseID: .mineID)
-                root.directAccess  = .eDefaultName
+                root.directAccess  = .eChildrenWritable
                 root.zoneName      = kFavoritesName
                 mine?.favoritesZone = root
 

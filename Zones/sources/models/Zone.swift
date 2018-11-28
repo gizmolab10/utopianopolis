@@ -12,11 +12,10 @@ import CloudKit
 
 
  enum ZoneAccess: Int {
-    case eRecurse
+    case eInherit
     case eFullReadOnly
     case eChildrenWritable
     case eFullWritable
-    case eDefaultName
  }
 
 
@@ -50,22 +49,23 @@ class Zone : ZRecord {
     var                   widget:   ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
     var           linkDatabaseID:  ZDatabaseID? { return databaseID(from: zoneLink) }
     var                 linkName:       String? { return name(from: zoneLink) }
-    override var     displayType:       String  { return "idea" }
-    override var   unwrappedName:       String  { return zoneName ?? (isRootOfFavorites ? kFavoritesName : displayType) }
+    override var       emptyName:       String  { return "idea" }
+    override var   unwrappedName:       String  { return zoneName ?? (isRootOfFavorites ? kFavoritesName : emptyName) }
     var            decoratedName:       String  { return decoration + unwrappedName }
     var         fetchedBookmarks:       [Zone]  { return gBookmarksManager.bookmarks(for: self) ?? [] }
     var         grabbedTextColor:       ZColor  { return color.darker(by: 3.0) }
     var hasWriteAccessDecoration:         Bool  { return !isTextEditable || directChildrenWritable }
-    var   directChildrenWritable:         Bool  { return directAccess == .eChildrenWritable || directAccess == .eDefaultName }
-    var        isWritableByUseer:         Bool  { return isTextEditable || userHasAccess }
+    var   directChildrenWritable:         Bool  { return directAccess == .eChildrenWritable }
     var        isCurrentFavorite:         Bool  { return self == gFavoritesManager.currentFavorite }
-    var         isSortableByUser:         Bool  { return ancestorAccess != .eFullReadOnly || userHasAccess }
+    var         isWritableByUser:         Bool  { return isTextEditable   || userHasAccess }
+    var         isSortableByUser:         Bool  { return canAlterChildren || userHasAccess }
+    var         canAlterChildren:         Bool  { return inheritedAccess   != .eFullReadOnly }
     var         accessIsChanging:         Bool  { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
     var        onlyShowRevealDot:         Bool  { return (isRootOfFavorites && showingChildren && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
-    var          dragDotIsHidden:         Bool  { return (isRootOfFavorites                 && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }    // always hide drag dot of favorites root
-    var          directRecursive:         Bool  { return directAccess == .eRecurse }
+    var          dragDotIsHidden:         Bool  { return (isRootOfFavorites                    && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }    // always hide drag dot of favorites root
     var           directWritable:         Bool  { return directAccess == .eFullWritable || databaseID == .mineID }
     var           directReadOnly:         Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
+    var            directInherit:         Bool  { return directAccess == .eInherit }
     var            hasZonesBelow:         Bool  { return hasAnyZonesAbove(false) }
     var            hasZonesAbove:         Bool  { return hasAnyZonesAbove(true) }
     var              isHyperlink:         Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
@@ -596,7 +596,7 @@ class Zone : ZRecord {
                 return ZoneAccess(rawValue: value)!
             }
 
-            return .eRecurse // default value
+            return .eInherit // default value
         }
 
         set {
@@ -609,15 +609,15 @@ class Zone : ZRecord {
     }
 
 
-    var ancestorAccess: ZoneAccess {
-        var      access = directAccess
+    var inheritedAccess: ZoneAccess {
+        var     access  = directAccess
 
         traverseAncestors { iZone -> ZTraverseStatus in
             if   iZone != self {
                 access  = iZone.directAccess
             }
 
-            return access == .eRecurse ? .eContinue : .eStop
+            return access == .eInherit ? .eContinue : .eStop
         }
 
         return access
@@ -630,7 +630,7 @@ class Zone : ZRecord {
         }
 
         return (!isTrash && !isRootOfFavorites && !isRootOfLostAndFound && zoneAuthor == nil)
-            || (!gCrippledUserAccess && (zoneAuthor == gAuthorID || gIsSpecialUser))
+            || (!gDebugDenyUserAccess && (zoneAuthor == gAuthorID || gIsSpecialUser))
     }
 
 
@@ -642,7 +642,7 @@ class Zone : ZRecord {
         } else if directReadOnly {
             return false
         } else if let p = parentZone, p != self, p.hasCompleteAncestorPath() {
-            return p.directChildrenWritable ? true : p.isTextEditable
+            return p.directChildrenWritable
         }
 
         return true
@@ -651,7 +651,7 @@ class Zone : ZRecord {
 
     var isMovableByUser: Bool {
         if  let p = parentZone,
-            p.ancestorAccess != .eFullReadOnly,
+            p.inheritedAccess != .eFullReadOnly,
             !directChildrenWritable,
             !directReadOnly {
             return true
@@ -664,8 +664,8 @@ class Zone : ZRecord {
     var nextAccess: ZoneAccess {
         var      access = directAccess
 
-        if isWritableByUseer {
-            let ancestor = ancestorAccess
+        if isWritableByUser {
+            let ancestor = inheritedAccess
             let readOnly = ancestor == .eFullReadOnly
 
             if directChildrenWritable {
@@ -679,7 +679,7 @@ class Zone : ZRecord {
             }
 
             if  access == ancestor {
-                access  = .eRecurse
+                access  = .eInherit
             }
         }
 
@@ -692,11 +692,11 @@ class Zone : ZRecord {
     }
 
 
-    func toggleWritable() {
+    func rotateWritable() {
         if  databaseID == .everyoneID {
             if  let t = bookmarkTarget {
-                t.toggleWritable()
-            } else if isWritableByUseer {
+                t.rotateWritable()
+            } else if isWritableByUser {
                 if  let identity = gAuthorID {
                     zoneAuthor   = identity
                 }
@@ -878,7 +878,7 @@ class Zone : ZRecord {
         traverseAllAncestors { iZone in
             let  isReciprocal = ancestor == nil  || iZone.children.contains(ancestor!)
 
-            if  (isReciprocal && iZone.isRoot) || (toColor && iZone.hasColor) || (toWritable && !iZone.directRecursive) {
+            if  (isReciprocal && iZone.isRoot) || (toColor && iZone.hasColor) || (toWritable && !iZone.directInherit) {
                 isComplete = true
             }
 

@@ -34,9 +34,9 @@ class ZTextPack: NSObject {
 
     var displayType: String {
         if  let        trait = packedTrait {
-            return     trait.displayType
+            return     trait.emptyName
         } else if let  zone = packedZone {
-            return     zone.displayType
+            return     zone.emptyName
         }
 
         return kNoValue
@@ -250,14 +250,14 @@ class ZTextManager: ZTextView {
 
     
     func allowAsFirstResponder(_ iTextWidget: ZoneTextWidget) -> Bool {
-        return !isEditingStateChanging && !iTextWidget.isFirstResponder && iTextWidget.widgetZone?.isWritableByUseer ?? false
+        return !isEditingStateChanging && !iTextWidget.isFirstResponder && iTextWidget.widgetZone?.isWritableByUser ?? false
     }
 
 
     func edit(_ zRecord: ZRecord) {
         if (currentEdit  == nil || !currentEdit!.isEditing(zRecord)) { // prevent infinite recursion inside becomeFirstResponder, called below
             let pack = ZTextPack(zRecord)
-            if  pack.packedZone?.isWritableByUseer ?? false,
+            if  pack.packedZone?.isWritableByUser ?? false,
                 let     textWidget = pack.textWidget,
                 textWidget.window != nil {
                 currentEdit        = pack

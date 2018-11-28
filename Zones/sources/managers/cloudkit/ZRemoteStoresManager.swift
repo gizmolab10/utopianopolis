@@ -67,8 +67,7 @@ class ZRemoteStoresManager: NSObject {
     func recordsManagerFor(_  iDatabaseID: ZDatabaseID?) -> ZRecordsManager? {
         var manager: ZRecordsManager? = nil
 
-        if  let dbID     =  iDatabaseID,
-            dbID        != .favoritesID {
+        if  let dbID     =  iDatabaseID {
             manager      = recordsManagers[dbID]
 
             if  manager == nil {

@@ -32,7 +32,7 @@ class ZTrait: ZRecord {
     @objc dynamic var owner: CKRecord.Reference?
     var _traitType: ZTraitType? = nil
     var _ownerZone: Zone? = nil
-    override var unwrappedName: String { return text ?? displayType }
+    override var unwrappedName: String { return text ?? emptyName }
 
 
     var deepCopy: ZTrait {
@@ -44,7 +44,7 @@ class ZTrait: ZRecord {
     }
 
 
-    override var displayType: String {
+    override var emptyName: String {
         if  let tType = traitType {
             switch tType {
             case .eEmail: return "email address"
