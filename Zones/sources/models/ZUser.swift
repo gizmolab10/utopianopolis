@@ -12,8 +12,8 @@ import CloudKit
 
 
 enum ZUserAccess: Int {
-    case eAccessNormal
-    case eAccessFull
+    case eNormal
+    case eMaster
 }
 
 
@@ -36,7 +36,7 @@ class ZUser : ZRecord {
             updateInstanceProperties()
 
             if  writeAccess == nil {
-                writeAccess  = NSNumber(value: ZUserAccess.eAccessNormal.rawValue)
+                writeAccess  = NSNumber(value: ZUserAccess.eNormal.rawValue)
             }
 
             return ZUserAccess(rawValue: writeAccess!.intValue)!

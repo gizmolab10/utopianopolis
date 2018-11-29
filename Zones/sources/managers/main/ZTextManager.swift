@@ -250,14 +250,14 @@ class ZTextManager: ZTextView {
 
     
     func allowAsFirstResponder(_ iTextWidget: ZoneTextWidget) -> Bool {
-        return !isEditingStateChanging && !iTextWidget.isFirstResponder && iTextWidget.widgetZone?.isWritableByUser ?? false
+        return !isEditingStateChanging && !iTextWidget.isFirstResponder && iTextWidget.widgetZone?.userCanWrite ?? false
     }
 
 
     func edit(_ zRecord: ZRecord) {
         if (currentEdit  == nil || !currentEdit!.isEditing(zRecord)) { // prevent infinite recursion inside becomeFirstResponder, called below
             let pack = ZTextPack(zRecord)
-            if  pack.packedZone?.isWritableByUser ?? false,
+            if  pack.packedZone?.userCanWrite ?? false,
                 let     textWidget = pack.textWidget,
                 textWidget.window != nil {
                 currentEdit        = pack

@@ -437,9 +437,9 @@ class ZoneWidget: ZView {
     }
 
 
-    func line(on path: ZBezierPath?, thickness: Double = gLineThickness) {
+    func line(on path: ZBezierPath?) {
         if  path != nil {
-            path!.lineWidth = CGFloat(thickness)
+            path!.lineWidth = CGFloat(gLineThickness)
 
             path!.stroke()
         }
@@ -494,7 +494,7 @@ class ZoneWidget: ZView {
             let  path = linePath(in: rect, kind: kind, isDragLine: false)
 
             color.setStroke()
-            line(on: path, thickness: zone.lineThickness)
+            line(on: path)
         }
     }
 

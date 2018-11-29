@@ -213,7 +213,7 @@ class ZFavoritesManager: NSObject {
             mine?.assureRecordExists(withRecordID: CKRecord.ID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
                 let       ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kFavoritesRootName))
                 let           root = Zone(record: ckRecord, databaseID: .mineID)
-                root.directAccess  = .eChildrenWritable
+                root.directAccess  = .eProgenyWritable
                 root.zoneName      = kFavoritesName
                 mine?.favoritesZone = root
 
@@ -341,7 +341,7 @@ class ZFavoritesManager: NSObject {
         if  missingTrash {
             let          trash = Zone(databaseID: .mineID, named: kTrashName, identifier: kTrashName + kFavoritesSuffix)
             trash    .zoneLink = kTrashLink // convert into a bookmark
-            trash.directAccess = .eChildrenWritable
+            trash.directAccess = .eProgenyWritable
 
             gFavoritesRoot?.addAndReorderChild(trash)
             trash.clearAllStates()
@@ -357,7 +357,7 @@ class ZFavoritesManager: NSObject {
             }
 
             lost?    .zoneLink = kLostAndFoundLink // convert into a bookmark
-            lost?.directAccess = .eChildrenWritable
+            lost?.directAccess = .eProgenyWritable
 
             gFavoritesRoot?.addAndReorderChild(lost!)
             lost?.clearAllStates()

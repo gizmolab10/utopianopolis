@@ -17,15 +17,15 @@ import CloudKit
 #endif
 
 
-var gIsSpecialUser: Bool { return false } // gBatchManager.isSpecialUser }
+var gIsMasterAuthor: Bool { return gBatchManager.isMasterAuthor }
 
 
 class ZOnboardingManager : ZOperationsManager {
 
 
-    var          user : ZUser?
-    var isSpecialUser : Bool { return user?.access == .eAccessFull } // || macAddress == "c8:e0:eb:16:c9:9b" }
-    var    macAddress : String?
+    var           user : ZUser?
+    var isMasterAuthor : Bool { return user?.access == .eMaster } // || macAddress == "c8:e0:eb:16:c9:9b" }
+    var     macAddress : String?
 
 
     // MARK:- internals

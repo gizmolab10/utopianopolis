@@ -11,11 +11,17 @@ import Foundation
 import CloudKit
 
 
- enum ZoneAccess: Int {
+ enum ZoneAccess: Int, CaseIterable {
     case eInherit
-    case eFullReadOnly
-    case eChildrenWritable
-    case eFullWritable
+    case eReadOnly
+    case eProgenyWritable
+    case eWritable
+    
+    static func isDirectlyValid(_ value: Int) -> Bool {
+        return ZoneAccess.allCases.filter { iItem -> Bool in
+            return iItem != .eInherit && iItem.rawValue == value
+        } != []
+    }
  }
 
 
@@ -53,19 +59,10 @@ class Zone : ZRecord {
     override var   unwrappedName:       String  { return zoneName ?? (isRootOfFavorites ? kFavoritesName : emptyName) }
     var            decoratedName:       String  { return decoration + unwrappedName }
     var         fetchedBookmarks:       [Zone]  { return gBookmarksManager.bookmarks(for: self) ?? [] }
-    var         grabbedTextColor:       ZColor  { return color.darker(by: 3.0) }
-    var hasWriteAccessDecoration:         Bool  { return !isTextEditable || directChildrenWritable }
-    var   directChildrenWritable:         Bool  { return directAccess == .eChildrenWritable }
     var        isCurrentFavorite:         Bool  { return self == gFavoritesManager.currentFavorite }
-    var         isWritableByUser:         Bool  { return isTextEditable   || userHasAccess }
-    var         isSortableByUser:         Bool  { return canAlterChildren || userHasAccess }
-    var         canAlterChildren:         Bool  { return inheritedAccess   != .eFullReadOnly }
-    var         accessIsChanging:         Bool  { return !isTextEditable && directWritable || (isTextEditable && directReadOnly) || isRootOfFavorites }
+    var         grabbedTextColor:       ZColor  { return color.darker(by: 3.0) }
     var        onlyShowRevealDot:         Bool  { return (isRootOfFavorites && showingChildren && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
     var          dragDotIsHidden:         Bool  { return (isRootOfFavorites                    && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }    // always hide drag dot of favorites root
-    var           directWritable:         Bool  { return directAccess == .eFullWritable || databaseID == .mineID }
-    var           directReadOnly:         Bool  { return directAccess == .eFullReadOnly || directChildrenWritable }
-    var            directInherit:         Bool  { return directAccess == .eInherit }
     var            hasZonesBelow:         Bool  { return hasAnyZonesAbove(false) }
     var            hasZonesAbove:         Bool  { return hasAnyZonesAbove(true) }
     var              isHyperlink:         Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
@@ -84,7 +81,7 @@ class Zone : ZRecord {
     var               spawnCycle:         Bool  { return spawnedByAGrab || dropCycle }
     var            isDoubleClick:         Bool  { return timeOfLastDragDotClick?.timeIntervalSinceNow ?? 10.0 < 0.5 }
 
-
+    
     var deepCopy: Zone {
         let theCopy = Zone(databaseID: databaseID)
 
@@ -570,29 +567,23 @@ class Zone : ZRecord {
     }
 
 
-    var lineThickness: Double {
-//        var thickness = gLineThickness
-//
-//        if  let   root = gRoot, progenyCount > 1 {
-//            let  ratio = (Double(progenyCount) / Double(root.progenyCount) * 2.0) + 1.0
-//            thickness *= ratio
-//        }
-
-        return gLineThickness
-    }
-
-
     // MARK:- write access
     // MARK:-
 
 
+    var           _directAccess: ZoneAccess?
+    var         inheritedAccess: ZoneAccess { return zoneWithInheritedAccess.directAccess }
+    var          directReadOnly:       Bool { return directAccess == .eReadOnly || directAccess == .eProgenyWritable }
+    var             userCanMove:       Bool { return userHasDirectOwnership || inheritedAccess == .eWritable }
+    var            userCanWrite:       Bool { return userHasDirectOwnership || isTextEditable }
+    var    userCanMutateProgeny:       Bool { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
+    var  userHasDirectOwnership:       Bool { return databaseID == .mineID  || (!gDebugDenyOwnership && !isTrash && !isRootOfFavorites && !isRootOfLostAndFound && (zoneAuthor == gAuthorID || gIsMasterAuthor)) }
+
+
     var directAccess: ZoneAccess {
         get {
-            if  let    target = bookmarkTarget {
-                return target.directAccess
-            } else if let value = zoneAccess?.intValue,
-                value          <= ZoneAccess.eFullWritable.rawValue,
-                value          >= 0 {
+            if  let     value = zoneAccess?.intValue,
+                ZoneAccess.isDirectlyValid(value) {
                 return ZoneAccess(rawValue: value)!
             }
 
@@ -601,114 +592,98 @@ class Zone : ZRecord {
 
         set {
             let                 value = newValue.rawValue
-
-            if  zoneAccess?.intValue != value {
-                zoneAccess            = NSNumber(value: value)
+            let oldValue = zoneAccess?.intValue ?? ZoneAccess.eInherit.rawValue
+                
+            if  oldValue != value {
+                zoneAccess = NSNumber(value: value)
             }
         }
     }
+    
+    
+    var hasAccessDecoration: Bool {
+        if  let    t = bookmarkTarget {
+            return t.hasAccessDecoration
+        }
+
+        return directReadOnly || inheritedAccess == .eReadOnly
+    }
 
 
-    var inheritedAccess: ZoneAccess {
-        var     access  = directAccess
+    var zoneWithInheritedAccess: Zone {
+        var     zone = self
 
         traverseAncestors { iZone -> ZTraverseStatus in
-            if   iZone != self {
-                access  = iZone.directAccess
+            if  iZone.directAccess != .eInherit {
+                zone = iZone
+                
+                return .eStop
             }
 
-            return access == .eInherit ? .eContinue : .eStop
+            return .eContinue
         }
 
-        return access
-    }
-
-
-    var userHasAccess: Bool {
-        if  let    t = bookmarkTarget {
-            return t.userHasAccess
-        }
-
-        return (!isTrash && !isRootOfFavorites && !isRootOfLostAndFound && zoneAuthor == nil)
-            || (!gDebugDenyUserAccess && (zoneAuthor == gAuthorID || gIsSpecialUser))
+        return zone
     }
 
 
     var isTextEditable: Bool {
-        if let t = bookmarkTarget {
+        if  let    t = bookmarkTarget {
             return t.isTextEditable
-        } else if directWritable {
-            return true
-        } else if directReadOnly {
-            return false
-        } else if let p = parentZone, p != self, p.hasCompleteAncestorPath() {
-            return p.directChildrenWritable
         }
 
-        return true
+        return userCanWrite
     }
 
 
-    var isMovableByUser: Bool {
-        if  let p = parentZone,
-            p.inheritedAccess != .eFullReadOnly,
-            !directChildrenWritable,
-            !directReadOnly {
-            return true
-        }
-
-        return userHasAccess
-    }
-
-
-    var nextAccess: ZoneAccess {
-        var      access = directAccess
-
-        if isWritableByUser {
-            let ancestor = inheritedAccess
-            let readOnly = ancestor == .eFullReadOnly
-
-            if directChildrenWritable {
-                access  = .eFullWritable
-            } else if directWritable {
-                access  = .eFullReadOnly
-            } else if directReadOnly || readOnly {
-                access  = .eChildrenWritable
-            } else if !readOnly {
-                access  = .eFullReadOnly
-            }
-
-            if  access == ancestor {
+    var nextAccess: ZoneAccess? {
+        let  inherited  = parentZone?.inheritedAccess
+        var     access  = next(after: directAccess) ?? next(after: inherited, allowReadOnly: false)
+        
+        if  inherited  == .eProgenyWritable {
+            if  access == .eWritable {
                 access  = .eInherit
             }
+        } else if inherited == access {
+            access  = .eInherit
         }
 
         return access
     }
-
-
-    override var hasParent: Bool {
-        return parent != nil || name(from: parentLink) != nil
+    
+    
+    func next(after: ZoneAccess?, allowReadOnly: Bool = true) -> ZoneAccess? {
+        if  let    access = after {
+            switch access {
+            case .eProgenyWritable: return allowReadOnly ? .eReadOnly : .eProgenyWritable
+            case .eWritable:        return .eProgenyWritable
+            case .eReadOnly:        return .eWritable
+            default:                break
+            }
+        }
+        
+        return nil
     }
 
 
     func rotateWritable() {
-        if  databaseID == .everyoneID {
-            if  let t = bookmarkTarget {
-                t.rotateWritable()
-            } else if isWritableByUser {
-                if  let identity = gAuthorID {
+        if  let t = bookmarkTarget {
+            t.rotateWritable()
+        } else if userCanWrite,
+            databaseID      == .everyoneID {
+            let       direct = directAccess
+            
+            if  let     next = nextAccess,
+                direct      != next {
+                directAccess = next
+                
+                if  let identity = gAuthorID,
+                    next        != .eInherit,
+                    zoneAuthor  != nil {
                     zoneAuthor   = identity
                 }
-
-                let         next = nextAccess
-                let       direct = directAccess
-
-                if  direct      != next {
-                    directAccess = next
-
-                    maybeNeedSave()
-                }
+                
+                maybeNeedSave()
             }
         }
     }
@@ -878,7 +853,7 @@ class Zone : ZRecord {
         traverseAllAncestors { iZone in
             let  isReciprocal = ancestor == nil  || iZone.children.contains(ancestor!)
 
-            if  (isReciprocal && iZone.isRoot) || (toColor && iZone.hasColor) || (toWritable && !iZone.directInherit) {
+            if  (isReciprocal && iZone.isRoot) || (toColor && iZone.hasColor) || (toWritable && iZone.directAccess != .eInherit) {
                 isComplete = true
             }
 

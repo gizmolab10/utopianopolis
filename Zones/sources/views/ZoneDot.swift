@@ -331,8 +331,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
                             drawTraitIndicator(for: zone, isFilled: dotIsFilled, in: iDirtyRect)
                         }
-                    } else if zone.hasWriteAccessDecoration {
-                        let  type = zone.directChildrenWritable ? ZDecorationType.sideDot : ZDecorationType.vertical
+                    } else if zone.hasAccessDecoration {
+                        let  type = zone.directAccess == .eProgenyWritable ? ZDecorationType.sideDot : ZDecorationType.vertical
                         fillColor = dotIsFilled ? gBackgroundColor : strokeColor
 
                         //////////////////////////////

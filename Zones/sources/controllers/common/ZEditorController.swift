@@ -321,7 +321,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
     func dragEvent(_ iGesture: ZGestureRecognizer?) -> Bool {
         if  let draggedZone       = gDraggedZone {
-            if  draggedZone.isMovableByUser,
+            if  draggedZone.userCanMove,
                 let (isMain, dropNearest, location) = widgetNearest(iGesture) {
                 var      dropZone = dropNearest.widgetZone
                 let dropIsGrabbed = gSelectionManager.currentGrabs.contains(dropZone!)

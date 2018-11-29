@@ -320,7 +320,7 @@ extension NSTextField {
 
 extension ZoneTextWidget {
     // override open var acceptsFirstResponder: Bool { return gBatchManager.isReady }    // fix a bug where root zone is editing on launch
-    override var acceptsFirstResponder : Bool  { return widgetZone?.isWritableByUser ?? false }
+    override var acceptsFirstResponder : Bool  { return widgetZone?.userCanWrite ?? false }
 
 
     var isFirstResponder : Bool {

@@ -165,7 +165,7 @@ class ZEditingManager: NSObject {
         let  isOption = flags.isOption
         let   isShift = flags.isShift
 
-        if isOption && !gSelectionManager.currentMoveable.isMovableByUser {
+        if isOption && !gSelectionManager.currentMoveable.userCanMove {
             return
         }
 
@@ -274,9 +274,9 @@ class ZEditingManager: NSObject {
             let  paste = s.pasteableZones.count
             let  grabs = s.currentGrabs  .count
             let  shown = s.currentGrabsHaveVisibleChildren
-            let  write = mover.isWritableByUser
-            let   sort = mover.isSortableByUser
-            let parent = mover.isMovableByUser
+            let  write = mover.userCanWrite
+            let   sort = mover.userCanMutateProgeny
+            let parent = mover.userCanMove
 
             switch type {
             case .Parent:    valid =               parent
@@ -874,7 +874,7 @@ class ZEditingManager: NSObject {
     func addIdea() {
         let parent = gSelectionManager.currentMoveable
         if !parent.isBookmark,
-            parent.canAlterChildren {
+            parent.userCanMutateProgeny {
             addIdeaIn(parent, at: gInsertionsFollow ? nil : 0) { iChild in
                 gControllersManager.signalFor(parent, regarding: .relayout) {
                     iChild?.edit()
@@ -887,7 +887,7 @@ class ZEditingManager: NSObject {
     func addNext(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
         let       zone = gSelectionManager.rootMostMoveable
 
-        if  var parent = zone.parentZone, (parent.directChildrenWritable || parent.isTextEditable) {
+        if  var parent = zone.parentZone, parent.userCanMutateProgeny {
             var  zones = gSelectionManager.currentGrabs
 
             if containing {
@@ -935,7 +935,7 @@ class ZEditingManager: NSObject {
     func addLine() {
         let grab = gSelectionManager.currentMoveable
         
-        if !grab.isWritableByUser {
+        if !grab.userCanWrite {
             return
         }
 
@@ -1471,7 +1471,7 @@ class ZEditingManager: NSObject {
                     child.zoneName   = name
                 }
 
-                if !gIsSpecialUser,
+                if !gIsMasterAuthor,
                     dbID            == .everyoneID,
                     let     identity = gAuthorID {
                     child.zoneAuthor = identity

@@ -45,7 +45,7 @@ class ZToolsController: ZGenericTableController {
     func text(for kind: ZToolKind) -> String {
         switch kind {
         case .eIdentifiers: return (gDebugShowIdentifiers ? "Visible"   : "Hidden")  + " Identifiers"
-        case .eAccess:      return (gDebugDenyUserAccess  ? "Crippled"  : "Normal")  + " User Access"
+        case .eAccess:      return (gDebugDenyOwnership   ? "Crippled"  : "Normal")  + " User Access"
         case .eGather:      return "Gather Lost and Found"
         case .eRetry:       return "Retry Cloud"
         case .eTrash:       return "Show Trash"
@@ -87,8 +87,8 @@ class ZToolsController: ZGenericTableController {
     // MARK:-
 
 
-    func toggleShowIdentifiers() {   gDebugShowIdentifiers = !gDebugShowIdentifiers }
-    func      toggleUserAccess() { gDebugDenyUserAccess = !gDebugDenyUserAccess }
+    func toggleShowIdentifiers() { gDebugShowIdentifiers = !gDebugShowIdentifiers }
+    func      toggleUserAccess() {   gDebugDenyOwnership = !gDebugDenyOwnership }
 
 
     func showTrashCan() {

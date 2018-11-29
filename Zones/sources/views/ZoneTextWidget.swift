@@ -72,7 +72,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         #if os(iOS)
             autocapitalizationType = .none
         #else
-            isEditable             = widgetZone?.isWritableByUser ?? false
+            isEditable             = widgetZone?.userCanWrite ?? false
         #endif
     }
 
