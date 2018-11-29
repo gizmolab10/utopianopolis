@@ -571,7 +571,6 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    var           _directAccess: ZoneAccess?
     var         inheritedAccess: ZoneAccess { return zoneWithInheritedAccess.directAccess }
     var          directReadOnly:       Bool { return directAccess == .eReadOnly || directAccess == .eProgenyWritable }
     var             userCanMove:       Bool { return userHasDirectOwnership || inheritedAccess == .eWritable }
@@ -632,7 +631,13 @@ class Zone : ZRecord {
             return t.isTextEditable
         }
 
-        return userCanWrite
+        if  directAccess == .eWritable {
+            return true
+        } else if let p = parentZone {
+            return p.directAccess == .eProgenyWritable || p.isTextEditable
+        }
+        
+        return false
     }
 
 
