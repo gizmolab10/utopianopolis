@@ -309,6 +309,26 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="0X2-pp-xtA"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem isSeparatorItem="YES" id="WX2-ki-iA4"/>
+                                                    <menuItem title="Confine Vertical Browsing to ..." id="ymm-g8-9Va">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <menu key="submenu" title="Confine Vertical Browsing to ..." id="BQE-bO-pZV">
+                                                            <items>
+                                                                <menuItem title="One Idea" keyEquivalent="," id="TzU-5i-Bc8">
+                                                                    <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                                                    <connections>
+                                                                        <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="w8I-mj-ifw"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="All Visible Ideas" keyEquivalent="." id="SUl-nH-mTO">
+                                                                    <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                                                    <connections>
+                                                                        <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="cCf-pE-Ace"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                            </items>
+                                                        </menu>
+                                                    </menuItem>
                                                 </items>
                                             </menu>
                                         </menuItem>

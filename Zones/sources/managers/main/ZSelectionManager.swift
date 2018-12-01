@@ -68,6 +68,21 @@ class ZSelectionManager: NSObject {
     var   currentGrabs = [Zone] ()
     var    cousinsList = [Zone] ()
 
+    
+    var sortedGrabs: [Zone] {
+        var grabs = [Zone]()
+        
+        updateCousinsList(for: (currentGrabs.count == 0) ? nil : currentGrabs[0])
+        
+        for zone in cousinsList {
+            if  currentGrabs.contains(zone) {
+                grabs.append(zone)
+            }
+        }
+        
+        return grabs
+    }
+    
 
     var snapshot : ZSnapshot {
         let          snap = ZSnapshot()
@@ -141,10 +156,12 @@ class ZSelectionManager: NSObject {
 
 
     var firstGrab: Zone {
-        var grabbed: Zone? = nil
+        let grabs = sortedGrabs
+        let count = grabs.count
+        var grabbed: Zone?
 
-        if  currentGrabs.count > 0 {
-            grabbed = currentGrabs[0]
+        if  count > 0 {
+            grabbed = grabs[0]
         }
 
         if  grabbed == nil || grabbed!.record == nil {
@@ -156,11 +173,12 @@ class ZSelectionManager: NSObject {
 
 
     var lastGrab: Zone {
-        var grabbed: Zone? = nil
-        let count = currentGrabs.count
+        let grabs = sortedGrabs
+        let count = grabs.count
+        var grabbed: Zone?
 
         if  count > 0 {
-            grabbed = currentGrabs[count - 1]
+            grabbed = grabs[count - 1]
         }
 
         if  grabbed == nil || grabbed!.record == nil {

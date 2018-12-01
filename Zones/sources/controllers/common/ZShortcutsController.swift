@@ -138,6 +138,8 @@ class ZShortcutsController: ZGenericTableController {
         "u    KEY + <OPTION>",
         "     \tARROWS   \trelocate selected idea",
         "     \tDELETE   \tretaining children",
+        "     \tCOMMA    \tconfine vertical movement",
+        "     \tPERIOD   \tunconfine vertical movement",
         "     \tTAB      \tnew idea containing",
         "     \tN        \talphabetize backwards",
         "     \tO        \tsort backwards by length",
