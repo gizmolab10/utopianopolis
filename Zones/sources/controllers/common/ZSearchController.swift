@@ -17,6 +17,9 @@ import CloudKit
 #endif
 
 
+var gSearchController: ZSearchController? { return gControllersManager.controllerForID(.search) as? ZSearchController }
+
+
 class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
 
@@ -26,7 +29,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     override func setup() {
         super.setup()
         
-        controllerID = .searchBox
+        controllerID = .search
     }
 
 
@@ -59,6 +62,12 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         
         if (isReturn && isEntry) || key == kEscape {
             endSearch()
+            
+            return nil
+        }
+        
+        if key == "a" && event.modifierFlags.isCommand {
+            searchBox?.selectAllText()
             
             return nil
         }
@@ -108,11 +117,11 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                         }
                         
                         let       hasResults = results.count != 0
-                        gWorkMode            = hasResults ? .searchMode : .graphMode
+                        gSearchManager.state = hasResults ? .list : .find
                         combined[dbID]       = results
                         self.searchBox?.text = ""
                         
-                        gSearchManager.showResults(combined)
+                        gControllersManager.signalFor(combined as NSObject, regarding: .found)
                     }
                 }
             }

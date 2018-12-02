@@ -17,6 +17,9 @@ import CloudKit
 #endif
 
 
+var gSearchResultsController: ZSearchResultsController? { return gControllersManager.controllerForID(.searchResults) as? ZSearchResultsController }
+
+
 class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTableViewDelegate {
 
 
@@ -24,8 +27,23 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     var            inSearchBox = false
     var           foundRecords = [ZDatabaseID: [CKRecord]] ()
     var                monitor: Any?
-    var       searchController: ZSearchController? { return gControllersManager.controllerForID(.searchBox) as? ZSearchController }
+    var       searchController: ZSearchController? { return gControllersManager.controllerForID(.search) as? ZSearchController }
     @IBOutlet var    tableView: ZTableView?
+
+    
+    var hasResults: Bool {
+        var     result = false
+
+        for     results in foundRecords.values {
+            if  results.count > 0 {
+                result = true
+                
+                break
+            }
+        }
+        
+        return result
+    }
 
 
     override func setup() {
@@ -59,12 +77,12 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
                 var total = 0
 
                 for (databaseID, records) in recordsByDatabaseID {
-                    let count = records.count
-                    total += count
+                    let count  = records.count
+                    total     += count
                     
-                    if count == 1 {
+                    if  count == 1 {
                         record = records[0]
-                        dbID = databaseID
+                        dbID   = databaseID
                     }
                 }
                 
@@ -240,7 +258,11 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
             let rows = [row] as IndexSet
 
-            t.selectRowIndexes(rows, byExtendingSelection: false) // (, byExtendingSelection: false)
+            t.selectRowIndexes(rows, byExtendingSelection: false)
+            
+            // if not visible, scroll
+            
+            t.scrollRowToVisible(row)
         }
     }
 

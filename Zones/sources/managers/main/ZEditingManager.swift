@@ -2020,7 +2020,8 @@ class ZEditingManager: NSObject {
             }
 
             let     targetZones = isConfined ? originalParent.children : gSelectionManager.cousinsList
-            let        indexMax = targetZones.count
+            let     targetCount = targetZones.count
+            let       targetMax = targetCount - 1
 
             if  let       index = targetZones.index(of: zone) {
                 var    newIndex = index + (iMoveUp ? -1 : 1)
@@ -2066,20 +2067,20 @@ class ZEditingManager: NSObject {
                 
                 if !extend {
                     let    atTop = newIndex < 0
-                    let atBottom = newIndex >= indexMax
+                    let atBottom = newIndex >= targetCount
                     
                     //////////////////////////
                     // vertical wrap around //
                     //////////////////////////
                     
                     if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && atBottom))) || ( iMoveUp && soloGrabbed && atTop) {
-                        newIndex = indexMax - 1 // bottom
+                        newIndex = targetMax // bottom
                     } else if ( iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && atTop)))    || (!iMoveUp && soloGrabbed && atBottom) {
-                        newIndex = 0            // top
+                        newIndex = 0         // top
                     }
                 }
                 
-                if  newIndex >= 0 && newIndex < indexMax {
+                if  newIndex >= 0 && newIndex < targetCount {
                     var grabThis = targetZones[newIndex]
                     
                     ////////////////////////////
@@ -2114,7 +2115,7 @@ class ZEditingManager: NSObject {
                                         grabThese.append(targetZones[i])
                                     }
                                 } else {
-                                    for i in newIndex ..< indexMax {
+                                    for i in newIndex ..< targetCount {
                                         grabThese.append(targetZones[i])
                                     }
                                 }
@@ -2133,10 +2134,11 @@ class ZEditingManager: NSObject {
                     /////////////////
                     
                     index     += (iMoveUp ? -1 : 1)
-                    if  index >= targetZones.count {
-                        index  = 0
+
+                    if  index >= targetCount {
+                        index  = extend ? targetMax : 0
                     } else if index < 0 {
-                        index  = targetZones.count - 1
+                        index  = extend ? 0 : targetMax
                     }
                     
                     var grab = targetZones[index]

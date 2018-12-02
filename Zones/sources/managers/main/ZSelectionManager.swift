@@ -352,8 +352,9 @@ class ZSelectionManager: NSObject {
 
         if  let  grab = lastGrab {
             let level = grab.level
+            let start = grab.isInFavorites ? gFavoritesRoot : gHere
             
-            gHere.traverseAllVisibleProgeny { iZone in
+            start?.traverseAllVisibleProgeny { iZone in
                 if  iZone.level == level || (iZone.level < level && (iZone.count == 0 || !iZone.showingChildren)) {
                     cousinsList.append(iZone)
                 }

@@ -31,15 +31,6 @@ class ZSearchManager: NSObject {
 
 
     var state = ZSearchState.not
-    var  searchController:        ZSearchController? { return gControllersManager.controllerForID(.searchBox)     as? ZSearchController }
-    var resultsController: ZSearchResultsController? { return gControllersManager.controllerForID(.searchResults) as? ZSearchResultsController }
-
-
-    func showResults(_ iResults: Any?) {
-        state = .list
-
-        gControllersManager.signalFor(iResults as? NSObject, regarding: .found)
-    }
 
 
     func exitSearchMode() {
@@ -53,8 +44,8 @@ class ZSearchManager: NSObject {
 
     func handleKeyEvent(_ event: ZEvent) -> ZEvent? {
         switch state {
-        case .list: return resultsController?.handleBrowseKeyEvent(event)
-        default:    return  searchController?      .handleKeyEvent(event, with: state)
+        case .list: return gSearchResultsController?.handleBrowseKeyEvent(event)
+        default:    return gSearchController?       .handleKeyEvent      (event, with: state)
         }
     }
 

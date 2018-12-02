@@ -33,7 +33,7 @@ class ZMainController: ZGenericController {
     override func setup() {
         controllerID = .main
 
-        searchBoxView?.isHidden = true
+        searchBoxView?    .isHidden = true
         searchResultsView?.isHidden = true
     }
 
@@ -43,9 +43,9 @@ class ZMainController: ZGenericController {
 
         switch iKind {
         case .found:
-            searchResultsView?.isHidden = !isSearch
+            searchResultsView?.isHidden = !isSearch || !(gSearchResultsController?.hasResults ?? false)
         case .search:
-            searchBoxView?.isHidden = !isSearch
+            searchBoxView?    .isHidden = !isSearch
 
             if !isSearch {
                 searchResultsView?.isHidden = true

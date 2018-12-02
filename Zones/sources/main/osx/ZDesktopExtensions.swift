@@ -314,7 +314,26 @@ extension NSTextField {
     var          text:         String? { get { return stringValue } set { stringValue = newValue ?? "" } }
     var textAlignment: NSTextAlignment { get { return alignment }   set { alignment = newValue } }
     func enableUndo()                  { cell?.allowsUndo = true }
-    @objc func selectAllText()         {}
+
+    
+    func selectFromStart(toEnd: Bool = false) {
+        if  let t = text, let editor = currentEditor() {
+            select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: toEnd ? t.length : 0)
+            gTextManager.clearOffset()
+        }
+    }
+    
+    
+    func deselectAllText() {
+        selectFromStart()
+    }
+    
+    
+    func selectAllText() {
+        gTextManager.deferEditingStateChange()
+        selectFromStart(toEnd: true)
+    }
+    
 }
 
 
@@ -367,25 +386,6 @@ extension ZoneTextWidget {
                 gEditingManager.handleKey(key, flags: ZEventFlags(), isWindow: true)
             }
         }
-    }
-
-
-    func selectFromStart(toEnd: Bool = false) {
-        if  let t = text, let editor = currentEditor() {
-            select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: toEnd ? t.length : 0)
-            gTextManager.clearOffset()
-        }
-    }
-
-
-    func deselectAllText() {
-        selectFromStart()
-    }
-
-
-    override func selectAllText() {
-        gTextManager.deferEditingStateChange()
-        selectFromStart(toEnd: true)
     }
 
 }
