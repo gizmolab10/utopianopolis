@@ -267,6 +267,7 @@ class ZTextManager: ZTextView {
                 textWidget.enableUndo()
                 textWidget.layoutTextField()
                 textWidget.becomeFirstResponder()
+                textWidget.widget?.setNeedsDisplay()
                 deferEditingStateChange()
             }
         }

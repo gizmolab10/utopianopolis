@@ -450,7 +450,7 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    func drawSelectionHighlight() {
+    func drawSelectionHighlight(_ pale: Bool) {
         let      thickness = CGFloat(gDotWidth) / 3.5
         let       rightDot = revealDot.innerDot
         let         height = gGenericOffset.height
@@ -462,9 +462,10 @@ class ZoneWidget: ZView {
         rect.size .height += -0.5 + gHighlightHeightOffset + (isInMain ? 0.0 : 1.0)
         rect.size  .width += shrink - hiddenDotDelta
         let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
+        let     colorRatio = CGFloat(pale ? 0.5 : 1.0)
         let          color = widgetZone?.color
-        let      fillColor = color?.withAlphaComponent(0.02)
-        let    strokeColor = color?.withAlphaComponent(0.2)
+        let      fillColor = color?.withAlphaComponent(colorRatio * 0.02)
+        let    strokeColor = color?.withAlphaComponent(colorRatio * 0.30)
         let           path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
         path    .lineWidth = thickness
         path     .flatness = 0.0001
@@ -511,14 +512,15 @@ class ZoneWidget: ZView {
         if  let             zone = widgetZone {
             let           isHere = zone == gHere
             let        isGrabbed = zone.isGrabbed
+            let        isEditing = textWidget.isFirstResponder // == gEditedTextWidget
             textWidget.textColor = isGrabbed ? zone.grabbedTextColor : gDefaultTextColor
 
             if  gMathewStyleUI {
                 addBorder(thickness: CGFloat(gLineThickness), radius: CGFloat(50.0) / CGFloat(zone.level + 1), color: zone.color.cgColor)
             }
 
-            if  isGrabbed && !textWidget.isFirstResponder && (!kIsPhone || !isHere) {
-                drawSelectionHighlight()
+            if  (isGrabbed || isEditing) && !(kIsPhone && isHere) {
+                drawSelectionHighlight(isEditing)
             }
 
             if  zone.showingChildren {
