@@ -64,9 +64,9 @@ enum ZOperationID: Int {
 
 
 var gCloudAccountIsActive:     Bool { return gCloudAccountStatus == .active }
-var gDebugTimer:             Timer? = nil
-var gCloudTimer:             Timer? = nil
-var gCloudFire:       TimerClosure? = nil
+var gDebugTimer:             Timer?
+var gCloudTimer:             Timer?
+var gCloudFire:       TimerClosure?
 var gDebugTimerCount                = 0
 var gHasInternet                    = true
 var gCloudAccountStatus             = ZCloudAccountStatus.begin
@@ -79,8 +79,8 @@ class ZOperationsManager: NSObject {
 
     var   debugTimeText :       String  { return !usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)" }
     var   operationText :       String  { return String(describing: currentOp) }
-    var onCloudResponse :   AnyClosure? = nil
-    var     lastOpStart :         Date? = nil
+    var onCloudResponse :   AnyClosure?
+    var     lastOpStart :         Date?
     var       currentOp = ZOperationID.none
     let           queue = OperationQueue()
 

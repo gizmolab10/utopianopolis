@@ -30,8 +30,8 @@ class ZTrait: ZRecord {
     @objc dynamic var  data: Data?
     @objc dynamic var asset: CKAsset?
     @objc dynamic var owner: CKRecord.Reference?
-    var _traitType: ZTraitType? = nil
-    var _ownerZone: Zone? = nil
+    var _traitType: ZTraitType?
+    var _ownerZone: Zone?
     override var unwrappedName: String { return text ?? emptyName }
 
 

@@ -24,14 +24,14 @@ var      gKeyboardIsVisible                     = false
 var     gDebugDenyOwnership                     = false
 var   gDebugShowIdentifiers                     = false
 var  gMeasureOpsPerformance                     = true
-var    gTimeOfSystemStartup:      TimeInterval? = nil
-var        gDragDropIndices: NSMutableIndexSet? = nil
-var           gCurrentEvent:            ZEvent? = nil
-var           gDragRelation:         ZRelation? = nil
-var           gDragDropZone:              Zone? = nil
-var            gDraggedZone:              Zone? = nil
-var              gDragPoint:           CGPoint? = nil
-var               gExpanded:          [String]? = nil
+var    gTimeOfSystemStartup:      TimeInterval?
+var        gDragDropIndices: NSMutableIndexSet?
+var           gCurrentEvent:            ZEvent?
+var           gDragRelation:         ZRelation?
+var           gDragDropZone:              Zone?
+var            gDraggedZone:              Zone?
+var              gDragPoint:           CGPoint?
+var               gExpanded:          [String]?
 
 var               gDarkMode:     InterfaceStyle { return InterfaceStyle() }
 var                 gIsDark:               Bool { return gDarkMode == .Dark }
@@ -310,7 +310,7 @@ var gLineThickness: Double {
 
 var gInsertionMode: ZInsertionMode {
     get {
-        var mode: ZInsertionMode? = nil
+        var mode: ZInsertionMode?
 
         if let object = UserDefaults.standard.object(forKey:kInsertionMode) {
             mode      = ZInsertionMode(rawValue: object as! Int)
@@ -335,7 +335,7 @@ var gInsertionMode: ZInsertionMode {
 
 var gDatabaseID: ZDatabaseID {
     get {
-        var dbID: ZDatabaseID? = nil
+        var dbID: ZDatabaseID?
 
         if let object = UserDefaults.standard.object(forKey:kDatabaseID) {
             dbID      = ZDatabaseID(rawValue: object as! String)
@@ -360,7 +360,7 @@ var gDatabaseID: ZDatabaseID {
 
 var gHiddenDetailViewIDs: ZDetailsViewID {
     get {
-        var state: ZDetailsViewID? = nil
+        var state: ZDetailsViewID?
 
         if let object = UserDefaults.standard.object(forKey:kDetailsState) {
             state     = ZDetailsViewID(rawValue: object as! Int)

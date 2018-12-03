@@ -331,7 +331,7 @@ extension CKRecord {
 
 
     func index(within iReferences: [CKRecord.ID]) -> Int? {
-        var index: Int? = nil
+        var index: Int?
 
         for (i, identifier) in iReferences.enumerated() {
             if  identifier == recordID {

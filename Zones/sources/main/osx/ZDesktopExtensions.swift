@@ -371,7 +371,7 @@ extension ZoneTextWidget {
         if  let       number = notification.userInfo?["NSTextMovement"] as? NSNumber, !gTextManager.isEditingStateChanging {
             let        value = number.intValue
             let      isShift = NSEvent.modifierFlags.isShift
-            var key: String? = nil
+            var key: String?
 
             gTextManager.stopCurrentEdit(forceCapture: isShift)
 

@@ -51,7 +51,7 @@ let gControllersManager = ZControllersManager()
 class ZControllersManager: NSObject {
 
 
-    var currentController: ZGenericController? = nil
+    var currentController: ZGenericController?
     var signalObjectsByControllerID = [ZControllerID : ZSignalObject] ()
 
 

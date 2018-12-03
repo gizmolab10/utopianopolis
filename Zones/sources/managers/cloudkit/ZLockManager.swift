@@ -13,8 +13,8 @@ import Foundation
 class ZLockManager: NSObject {
 
 
+    var queue:   Foundation.OperationQueue?
     var current: Foundation.OperationQueue? { return Foundation.OperationQueue.current }
-    var queue:   Foundation.OperationQueue? = nil
     let semaphore                           = DispatchSemaphore(value: 0)
 
 

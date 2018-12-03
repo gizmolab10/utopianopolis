@@ -203,7 +203,7 @@ class ZSelectionManager: NSObject {
 
 
     var currentMoveable: Zone {
-        var movable: Zone? = nil
+        var movable: Zone?
 
         if currentGrabs.count > 0 {
             movable = firstGrab

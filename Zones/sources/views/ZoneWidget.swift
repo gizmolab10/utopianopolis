@@ -86,7 +86,7 @@ class ZoneWidget: ZView {
     func layoutChildren(_ iKind: ZSignalKind, visited: [Zone]) {
         if  let                  zone = widgetZone, zone.showingChildren {
             var                 index = childrenWidgets.count
-            var previous: ZoneWidget? = nil
+            var previous: ZoneWidget?
 
             while index > 0 {
                 index                 -= 1 // go backwards down the children arrays, bottom and top constraints expect it
@@ -355,7 +355,7 @@ class ZoneWidget: ZView {
 
 
     func lineKind(to dragRect: CGRect) -> ZLineKind? {
-        var kind: ZLineKind? = nil
+        var kind: ZLineKind?
         if  let    toggleDot = revealDot.innerDot {
             let   toggleRect = toggleDot.convert(toggleDot.bounds,  to: self)
             let        delta = Double(dragRect.midY - toggleRect.midY)
@@ -383,7 +383,7 @@ class ZoneWidget: ZView {
 
 
     func lineRect(to dragRect: CGRect, in iView: ZView) -> CGRect? {
-        var rect: CGRect? = nil
+        var rect: CGRect?
 
         if  let kind = lineKind(to: dragRect) {
             rect     = lineRect(to: dragRect, kind: kind)

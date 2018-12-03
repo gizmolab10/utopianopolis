@@ -10,5 +10,5 @@ import Foundation
 
 
 class ZContainerView : ZView {
-    var controller: ZGenericController? = nil
+    var controller: ZGenericController?
 }

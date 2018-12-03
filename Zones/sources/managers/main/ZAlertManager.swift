@@ -39,7 +39,7 @@ typealias AlertStatusClosure = (ZAlertStatus) -> (Void)
 class ZAlertManager : NSObject {
 
 
-    var mostRecentError: Error? = nil
+    var mostRecentError: Error?
 
 
     func detectError(_ iError: Any? = nil, _ message: String? = nil, _ closure: BooleanClosure? = nil) {

@@ -149,7 +149,7 @@ class Zone : ZRecord {
 
 
     var root: Zone? {
-        var base: Zone? = nil
+        var base: Zone?
 
         traverseAllAncestors { iZone in
             if iZone.isRoot {
@@ -853,7 +853,7 @@ class Zone : ZRecord {
 
     func hasCompleteAncestorPath(toColor: Bool = false, toWritable: Bool = false) -> Bool {
         var      isComplete = false
-        var ancestor: Zone? = nil
+        var ancestor: Zone?
 
         traverseAllAncestors { iZone in
             let  isReciprocal = ancestor == nil  || iZone.children.contains(ancestor!)

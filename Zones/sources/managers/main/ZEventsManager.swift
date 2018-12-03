@@ -25,7 +25,7 @@ let gEventStore         = EKEventStore()
 class ZEventsManager: NSObject {
 
 
-    var monitor: Any? = nil
+    var monitor: Any?
 
 
     func clear() { removeMonitorAsync() }

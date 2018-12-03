@@ -151,7 +151,7 @@ class ZFavoritesManager: NSObject {
     
 
     func favorite(for iTarget: Zone?, iSpawned: Bool = true) -> Zone? {
-        var               found: Zone? = nil
+        var               found: Zone?
 
         if  let                 target = iTarget,
             let                   dbID = target.databaseID,

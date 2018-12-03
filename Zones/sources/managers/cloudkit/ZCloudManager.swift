@@ -20,8 +20,8 @@ class ZCloudManager: ZRecordsManager {
     var   refetchingName :       String { return "remember.\(databaseID.rawValue)" }
     var cloudUnavailable :         Bool { return !gHasInternet || (databaseID == .mineID && !gCloudAccountIsActive) }
     var    isRemembering :         Bool = false
-    var currentOperation : CKOperation? = nil
-    var currentPredicate : NSPredicate? = nil
+    var currentOperation : CKOperation?
+    var currentPredicate : NSPredicate?
 
 
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
@@ -582,7 +582,7 @@ class ZCloudManager: ZRecordsManager {
                         onCompletion?(0)
                     } else {
                         var missingIDs = [CKRecord.ID] ()
-                        var fetchClosure : Closure? = nil
+                        var fetchClosure : Closure?
                         
                         fetchClosure = {
                             if  parentIDs.count == 0 {
@@ -758,7 +758,7 @@ class ZCloudManager: ZRecordsManager {
         var recordIDs = [CKRecord.ID] ()
         var retrieved = [CKRecord] ()
         var remainder = needed
-        var fetchClosure : Closure? = nil
+        var fetchClosure : Closure?
 
         fetchClosure = {
             let count = remainder.count
@@ -1167,7 +1167,7 @@ class ZCloudManager: ZRecordsManager {
 
     func establishRoots(_ onCompletion: IntClosure?) {
         let         rootIDs: [ZRootID]   = [.favorites, .destroy, .trash, .graph, .lost]
-        var establishRootAt: IntClosure? = nil // pre-declare so can recursively call from within
+        var establishRootAt: IntClosure?     // pre-declare so can recursively call from within
         establishRootAt                  = { iIndex in
             if iIndex >= rootIDs.count {
                 onCompletion?(0)

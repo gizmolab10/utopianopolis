@@ -246,7 +246,7 @@ class ZFocusManager: NSObject {
             let     targetDBID = targetZRecord.databaseID,
             let   targetRecord = targetZRecord.record {
             let targetRecordID = targetRecord.recordID
-            var   there: Zone? = nil
+            var   there: Zone?
 
             if iBookmark.isFavorite {
                 gFavoritesManager.currentFavorite = iBookmark

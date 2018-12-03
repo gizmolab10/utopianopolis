@@ -28,8 +28,8 @@ class ZFileManager: NSObject {
     var           needsWrite = [false, false]
     var   writtenRecordNames = [String] ()
     var filePaths: [String?] = [nil, nil]
-    var  writeTimer : Timer? = nil
-    var _directoryURL : URL? = nil
+    var  writeTimer : Timer?
+    var _directoryURL : URL?
     let              manager = FileManager.default
 
 

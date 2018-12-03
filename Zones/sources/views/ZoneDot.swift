@@ -25,7 +25,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
     weak var     widget: ZoneWidget?
     var        innerDot: ZoneDot?
-    var       dragStart: CGPoint? = nil
+    var       dragStart: CGPoint?
     var        isReveal:  Bool = true
     var      isInnerDot:  Bool = false
     var      isDragDrop:  Bool { return widgetZone == gDragDropZone }

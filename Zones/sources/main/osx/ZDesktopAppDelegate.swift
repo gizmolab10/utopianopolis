@@ -11,7 +11,7 @@ import Cocoa
 import CloudKit
 
 
-var gDesktopAppDelegate: ZDesktopAppDelegate? = nil
+var gDesktopAppDelegate: ZDesktopAppDelegate?
 
 
 @NSApplicationMain

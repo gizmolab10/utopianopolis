@@ -70,8 +70,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             resultsAreVisible = false
             
             if  gWorkMode == .searchMode, foundRecords.count > 0 {
-                var dbID: ZDatabaseID? = nil
-                var record: CKRecord? = nil
+                var dbID: ZDatabaseID?
+                var record: CKRecord?
                 var total = 0
 
                 for (databaseID, records) in foundRecords {

@@ -150,7 +150,7 @@ class ZBatchManager: ZOnboardingManager {
 
     var    currentBatches = [ZBatch] ()
     var   deferredBatches = [ZBatch] ()
-    var currentDatabaseID : ZDatabaseID? = nil
+    var currentDatabaseID : ZDatabaseID?
     var        totalCount :  Int { return currentBatches.count + deferredBatches.count }
     var            isLate : Bool { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
 
@@ -290,7 +290,7 @@ class ZBatchManager: ZOnboardingManager {
                 let               onlyCurrentID = (!gCloudAccountIsActive && !alwaysForBoth) || operationID == .completion
                 let  databaseIDs: [ZDatabaseID] = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
                 let                      isNoop = !gCloudAccountIsActive && (requiresActive || (onlyCurrentID && isMine && operationID != .favorites))
-                var invokeForIndex: IntClosure? = nil                // declare closure first, so compiler will let it recurse
+                var invokeForIndex: IntClosure?                // declare closure first, so compiler will let it recurse
                 invokeForIndex                  = { index in
 
                     /////////////////////////////////

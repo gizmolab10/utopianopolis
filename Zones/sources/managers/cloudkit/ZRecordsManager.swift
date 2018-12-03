@@ -41,11 +41,11 @@ class ZRecordsManager: NSObject {
     var          recordRegistry = [String       :   ZRecord]  ()
     var      recordNamesByState = [ZRecordState :   [String]] ()
     var            lastSyncDate = Date(timeIntervalSince1970: 0)
-    var lostAndFoundZone: Zone? = nil
-    var    favoritesZone: Zone? = nil // only for .mineID manager
-    var      destroyZone: Zone? = nil
-    var        trashZone: Zone? = nil
-    var         rootZone: Zone? = nil
+    var lostAndFoundZone: Zone?
+    var    favoritesZone: Zone?     // only for .mineID manager
+    var      destroyZone: Zone?
+    var        trashZone: Zone?
+    var         rootZone: Zone?
     var      hereIsValid: Bool { return maybeZoneForRecordName(hereRecordName) != nil }
 
 
@@ -324,7 +324,7 @@ class ZRecordsManager: NSObject {
 
 
     func registeredCKRecordForName(_ iName: String, forAnyOf iStates: [ZRecordState]) -> CKRecord? {
-        var found: CKRecord? = nil
+        var found: CKRecord?
 
         applyToCKRecordByRecordName(iName, forAnyOf: iStates) { (state: ZRecordState, record: CKRecord) in
             found = record
@@ -348,7 +348,7 @@ class ZRecordsManager: NSObject {
     // MARK:-
 
 
-    var ignoredRecordName: String? = nil
+    var ignoredRecordName: String?
     let kIgnoreAllRecordNames = "all record names"
 
 

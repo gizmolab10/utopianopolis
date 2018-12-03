@@ -124,7 +124,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         let                        here = inMainGraph ? gHere : gFavoritesRoot
         var specificWidget: ZoneWidget? = inMainGraph ? editorRootWidget : favoritesRootWidget
         var specificView:        ZView? = editorView
-        var specificIndex:         Int? = nil
+        var specificIndex:         Int?
         var                   recursing = true
         gTextCapturing                  = false
         specificWidget?     .widgetZone = here
@@ -520,7 +520,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
 
     func detectWidget(_ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
-        var hit:    ZoneWidget? = nil
+        var hit: ZoneWidget?
         if  let               e = editorView,
             let        location = iGesture?.location(in: e),
             e.bounds.contains(location) {
@@ -541,7 +541,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
 
     func detectDotIn(_ widget: ZoneWidget, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
-        var hit:        ZoneDot? = nil
+        var hit:        ZoneDot?
 
         if  let                e = editorView,
             let         location = iGesture?.location(in: e) {

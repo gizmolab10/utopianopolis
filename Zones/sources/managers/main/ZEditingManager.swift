@@ -761,7 +761,7 @@ class ZEditingManager: NSObject {
 
     func applyGenerationally(_ show: Bool, extreme: Bool = false) {
         let        zone = gSelectionManager.rootMostMoveable
-        var level: Int? = nil
+        var level: Int?
 
         if !show {
             level = extreme ? zone.level - 1 : zone.highestExposed - 1
@@ -1001,7 +1001,7 @@ class ZEditingManager: NSObject {
 
         if zone.databaseID != .favoritesID, !zone.isRoot {
             let closure = {
-                var bookmark: Zone? = nil
+                var bookmark: Zone?
 
                 self.invokeUsingDatabaseID(.mineID) {
                     bookmark = gFavoritesManager.createBookmark(for: zone, style: .normal)
