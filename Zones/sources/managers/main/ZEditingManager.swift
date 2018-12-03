@@ -60,22 +60,22 @@ class ZEditingManager: NSObject {
 
 
     enum ZMenuType: Int {
-        case Undo
-        case Help
-        case Sort
-        case Find
-        case Child
-        case Alter
-        case Files
-        case Cloud
-        case Always
-        case Parent
-        case Travel
+        case eUndo
+        case eHelp
+        case eSort
+        case eFind
+        case eChild
+        case eAlter
+        case eFiles
+        case eCloud
+        case eAlways
+        case eParent
+        case eTravel
 
-        case Redo
-        case Paste
-        case UseGrabs
-        case Multiple
+        case eRedo
+        case ePaste
+        case eUseGrabs
+        case eMultiple
     }
 
 
@@ -250,23 +250,23 @@ class ZEditingManager: NSObject {
         let  alterers = "ehiluw\r" + kMarkingCharacters
         let isCommand = flags.isCommand
 
-        if  alterers.contains(key) {             return .Alter
+        if  alterers.contains(key) {             return .eAlter
         } else {
             switch key {
-            case "=":                            return .Travel
-            case "?":                            return .Help
-            case "f":                            return .Find
-            case "m":                            return .Cloud
-            case "z":                            return .Undo
-            case "o", "r":                       return  isCommand ? .Files : .Sort
-            case "v", "x", kSpace:               return .Child
-            case "b", kTab, kDelete, kBackspace: return .Parent
-            case "j", "k":                       return .Files
-            case "d":                            return  isCommand ? .Alter : .Parent
+            case "=":                            return .eTravel
+            case "?":                            return .eHelp
+            case "f":                            return .eFind
+            case "m":                            return .eCloud
+            case "z":                            return .eUndo
+            case "o", "r":                       return  isCommand ? .eFiles : .eSort
+            case "v", "x", kSpace:               return .eChild
+            case "b", kTab, kDelete, kBackspace: return .eParent
+            case "j", "k":                       return .eFiles
+            case "d":                            return  isCommand ? .eAlter : .eParent
             default: break
             }
 
-            return .Always
+            return .eAlways
         }
     }
 
@@ -293,22 +293,22 @@ class ZEditingManager: NSObject {
             let parent = mover.userCanMove
 
             switch type {
-            case .Parent:    valid =               parent
-            case .Child:     valid =               sort
-            case .Alter:     valid =               write
-            case .Paste:     valid =  paste > 0 && write
-            case .UseGrabs:  valid = wGrabs > 0 && write
-            case .Multiple:  valid =  grabs > 1
-            case .Sort:      valid = (shown     && sort) || (grabs > 1 && parent)
-            case .Undo:      valid = undo.canUndo
-            case .Redo:      valid = undo.canRedo
-            case .Travel:    valid = mover.canTravel
-            case .Cloud:     valid = gHasInternet && gCloudAccountIsActive
-            case .Files:     valid = flags.contains(.command)
-            default:         break
+            case .eParent:    valid =               parent
+            case .eChild:     valid =               sort
+            case .eAlter:     valid =               write
+            case .ePaste:     valid =  paste > 0 && write
+            case .eUseGrabs:  valid = wGrabs > 0 && write
+            case .eMultiple:  valid =  grabs > 1
+            case .eSort:      valid = (shown     && sort) || (grabs > 1 && parent)
+            case .eUndo:      valid = undo.canUndo
+            case .eRedo:      valid = undo.canRedo
+            case .eTravel:    valid = mover.canTravel
+            case .eCloud:     valid = gHasInternet && gCloudAccountIsActive
+            case .eFiles:     valid = flags.contains(.command)
+            default:          break
             }
         } else if arrow == nil {
-            valid = type != .Travel
+            valid = type != .eTravel
         } else {
             valid = true
         }

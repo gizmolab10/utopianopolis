@@ -39,16 +39,17 @@ class ZMainController: ZGenericController {
 
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
-        let isSearch = gWorkMode == .searchMode
+        let  hideSearch = gWorkMode != .searchMode
+        let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 
         switch iKind {
         case .found:
-            searchResultsView?.isHidden = !isSearch || !(gSearchResultsController?.hasResults ?? false)
+            searchResultsView?    .isHidden = hideResults
         case .search:
-            searchBoxView?    .isHidden = !isSearch
+            searchBoxView?        .isHidden = hideSearch
 
-            if !isSearch {
-                searchResultsView?.isHidden = true
+            if  hideSearch {
+                searchResultsView?.isHidden = hideSearch
 
                 assignAsFirstResponder(nil)
             }

@@ -75,7 +75,7 @@ class ZEventsManager: NSObject {
                     switch gWorkMode {
                     case .searchMode:
                         
-                        return gSearchManager.handleKeyEvent(event)
+                        return gSearchManager.handleEvent(event)
                         
                     case .graphMode:
                         let     flags = event.modifierFlags

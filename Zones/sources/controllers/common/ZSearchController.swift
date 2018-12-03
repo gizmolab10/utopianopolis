@@ -44,15 +44,16 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     }
 
 
-    func handleKeyEvent(_ event: ZEvent, with state: ZSearchState) -> ZEvent? {
+    func handleEvent(_ event: ZEvent) -> ZEvent? {
         let   string = event.input
         let      key = string[string.startIndex].description
         let isReturn = key == "\r"
+        let    state = gSearchManager.state
         let  isEntry = state == .entry
         
         if        !isReturn && isEntry {
             gSearchManager.state = .find
-        } else if  isReturn && state == .find {
+        } else if  isReturn { // && state == .find {
             if  let text = searchBoxText {
                 performSearch(for: text)
             }
@@ -99,6 +100,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     
     func performSearch(for searchString: String) {
         var combined = [ZDatabaseID: [Any]] ()
+        var count = kAllDatabaseIDs.count
         
         for dbID in kAllDatabaseIDs {
             if  let manager = gRemoteStoresManager.cloudManager(for: dbID) {
@@ -106,7 +108,8 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                 
                 manager.search(for: searchString) { iObject in
                     FOREGROUND {
-                        var          results = iObject as! [Any]
+                        var results = iObject as! [Any]
+                        count -= 1
                         
                         results.appendUnique(contentsOf: locals) { (a, b) in
                             if  let alpha = a as? CKRecord, let beta = b as? CKRecord {
@@ -116,12 +119,15 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                             return false
                         }
                         
-                        let       hasResults = results.count != 0
-                        gSearchManager.state = hasResults ? .list : .find
-                        combined[dbID]       = results
-                        self.searchBox?.text = ""
+                        combined[dbID] = results
                         
-                        gControllersManager.signalFor(combined as NSObject, regarding: .found)
+                        if  count == 0 {
+                            self.searchBox?.text = ""
+                            gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: [CKRecord]] ?? [:]
+                            gSearchManager.state = (gSearchResultsController?.hasResults ?? false) ? .list : .find
+                        
+                            gControllersManager.signalFor(nil, regarding: .found)
+                        }
                     }
                 }
             }

@@ -27,7 +27,6 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     var            inSearchBox = false
     var           foundRecords = [ZDatabaseID: [CKRecord]] ()
     var                monitor: Any?
-    var       searchController: ZSearchController? { return gControllersManager.controllerForID(.search) as? ZSearchController }
     @IBOutlet var    tableView: ZTableView?
 
     
@@ -70,13 +69,12 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         if iKind == .found {
             resultsAreVisible = false
             
-            if  gWorkMode == .searchMode, let recordsByDatabaseID = iObject as? [ZDatabaseID: [CKRecord]] {
-                foundRecords = recordsByDatabaseID
+            if  gWorkMode == .searchMode, foundRecords.count > 0 {
                 var dbID: ZDatabaseID? = nil
                 var record: CKRecord? = nil
                 var total = 0
 
-                for (databaseID, records) in recordsByDatabaseID {
+                for (databaseID, records) in foundRecords {
                     let count  = records.count
                     total     += count
                     
@@ -221,10 +219,13 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
     func clear() {
         resultsAreVisible = false
-        gWorkMode         = .graphMode
+        
+        if  gWorkMode != .graphMode {
+            gWorkMode  = .graphMode
 
-        gControllersManager.signalFor(nil, regarding: .search)
-        gControllersManager.signalFor(nil, regarding: .found)
+            gControllersManager.signalFor(nil, regarding: .search)
+            gControllersManager.signalFor(nil, regarding: .found)
+        }
     }
 
 
@@ -259,9 +260,6 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             let rows = [row] as IndexSet
 
             t.selectRowIndexes(rows, byExtendingSelection: false)
-            
-            // if not visible, scroll
-            
             t.scrollRowToVisible(row)
         }
     }
@@ -270,7 +268,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     // MARK:-
 
 
-    func handleBrowseKeyEvent(_ event: ZEvent) -> ZEvent? {
+    func handleEvent(_ event: ZEvent) -> ZEvent? {
         let       string = event.input
         let        flags = event.modifierFlags
         let    isCommand = flags.isCommand
@@ -284,13 +282,19 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             case  .left:    clear();    return nil
             case .right: if resolve() { return nil }; break
             }
-        } else if exitKeys.contains(key), // N.B. test key first since getInput has a possible side-effect of exiting search
-            let        s  = searchController,
-            s.searchBoxText == nil {
-            clear()
-            resolve()
+        } else if exitKeys.contains(key) { // N.B. test key first since getInput has a possible side-effect of exiting search
+            if  let controller = gSearchController,
+                let text = controller.searchBoxText,
+                text.length > 0 {
 
-            return nil
+                return controller.handleEvent(event)
+
+            } else {
+                clear()
+                resolve()
+
+                return nil
+            }
         }
 
         return event

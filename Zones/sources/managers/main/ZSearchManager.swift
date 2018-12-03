@@ -42,10 +42,10 @@ class ZSearchManager: NSObject {
     }
 
 
-    func handleKeyEvent(_ event: ZEvent) -> ZEvent? {
+    func handleEvent(_ event: ZEvent) -> ZEvent? {
         switch state {
-        case .list: return gSearchResultsController?.handleBrowseKeyEvent(event)
-        default:    return gSearchController?       .handleKeyEvent      (event, with: state)
+        case .list: return gSearchResultsController?.handleEvent(event)
+        default:    return gSearchController?       .handleEvent(event)
         }
     }
 
