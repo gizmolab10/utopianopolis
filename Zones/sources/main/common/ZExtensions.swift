@@ -526,15 +526,15 @@ extension Array {
 
     
     func containsCompare(_ with: AnyObject, using: CompareClosure? = nil) -> Bool {
-        if let compare = using {
+        if  let compare = using {
             for item in self {
-                if compare(item as AnyObject, with) {
-                    return true
+                if  compare(item as AnyObject, with) {
+                    return true     // true means match
                 }
             }
         }
         
-        return false
+        return false    // false means unique
     }
     
 

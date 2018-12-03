@@ -100,7 +100,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
     
     func performSearch(for searchString: String) {
         var combined = [ZDatabaseID: [Any]] ()
-        var count = kAllDatabaseIDs.count
+        var remaining = kAllDatabaseIDs.count
         
         for dbID in kAllDatabaseIDs {
             if  let manager = gRemoteStoresManager.cloudManager(for: dbID) {
@@ -109,10 +109,11 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                 manager.search(for: searchString) { iObject in
                     FOREGROUND {
                         var results = iObject as! [Any]
-                        count -= 1
+                        remaining -= 1
                         
                         results.appendUnique(contentsOf: locals) { (a, b) in
-                            if  let alpha = a as? CKRecord, let beta = b as? CKRecord {
+                            if  let alpha = a as? CKRecord,
+                                let  beta = b as? CKRecord {
                                 return alpha.recordID.recordName == beta.recordID.recordName
                             }
                             
@@ -121,7 +122,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                         
                         combined[dbID] = results
                         
-                        if  count == 0 {
+                        if  remaining == 0 {
                             self.searchBox?.text = ""
                             gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: [CKRecord]] ?? [:]
                             gSearchManager.state = (gSearchResultsController?.hasResults ?? false) ? .list : .find
