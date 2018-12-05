@@ -28,7 +28,7 @@ class ZGenericController: ZController {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        gControllersManager.register(self, iID: controllerID) { object, kind in
+        gControllers.register(self, iID: controllerID) { object, kind in
             if  self.useDefaultBackgroundColor {
                 self.view.zlayer.backgroundColor = self.backgroundColor
             }

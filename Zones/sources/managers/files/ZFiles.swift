@@ -17,10 +17,10 @@ import CoreFoundation
 #endif
 
 
-let gFileManager = ZFileManager()
+let gFiles = ZFiles()
 
 
-class ZFileManager: NSObject {
+class ZFiles: NSObject {
 
 
     var            isReading = [false, false]
@@ -231,7 +231,7 @@ class ZFileManager: NSObject {
 			var           dict = ZStorageDictionary ()
 			
             FOREGROUND {
-                gControllersManager.signalFor(nil, regarding: .eDebug)
+                gControllers.signalFor(nil, regarding: .eDebug)
                 self.writtenRecordNames.removeAll()
                 gRemoteStoresManager.recount()
 
@@ -260,7 +260,7 @@ class ZFileManager: NSObject {
                         dict[.favorites] = favorites as NSObject
                     }
 
-                    if  let   bookmarks  = gBookmarksManager.storageArray(for: dbID) {
+                    if  let   bookmarks  = gBookmarks.storageArray(for: dbID) {
                         dict[.bookmarks] = bookmarks as NSObject
                     }
 
@@ -285,7 +285,7 @@ class ZFileManager: NSObject {
 
                     self.isWriting[index] = false // end prevention of write during write
 
-                    gControllersManager.signalFor(nil, regarding: .eDebug)
+                    gControllers.signalFor(nil, regarding: .eDebug)
                 }
             }
 		}
@@ -316,7 +316,7 @@ class ZFileManager: NSObject {
                                     let zone = Zone(dict: subDict, in: databaseID)
 
                                     switch key {
-                                    case .graph:     manager        .rootZone = zone; gControllersManager.signalFor(nil, regarding: .eRelayout)
+                                    case .graph:     manager        .rootZone = zone; gControllers.signalFor(nil, regarding: .eRelayout)
                                     case .trash:     manager       .trashZone = zone
                                     case .destroy:   manager     .destroyZone = zone
                                     case .favorites: manager   .favoritesZone = zone
@@ -327,7 +327,7 @@ class ZFileManager: NSObject {
                                     for subDict in array {
                                         let zone = Zone(dict: subDict, in: databaseID)
 
-                                        gBookmarksManager.registerBookmark(zone)
+                                        gBookmarks.registerBookmark(zone)
                                     }
                                 }
                             }

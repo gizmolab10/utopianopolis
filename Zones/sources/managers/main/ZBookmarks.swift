@@ -10,10 +10,10 @@
 import Foundation
 
 
-let gBookmarksManager = ZBookmarksManager()
+let gBookmarks = ZBookmarks()
 
 
-class ZBookmarksManager: NSObject {
+class ZBookmarks: NSObject {
 
 
     var registry = [ZDatabaseID : [String : [Zone]]] ()
@@ -61,7 +61,7 @@ class ZBookmarksManager: NSObject {
                             }
                         }
                     }
-                } else if !gFileManager.isReading(for: bookmark.databaseID) {
+                } else if !gFiles.isReading(for: bookmark.databaseID) {
                     markNeedFound()
 
                     return

@@ -31,12 +31,12 @@ enum ZAlertStatus: Int {
 }
 
 
-let            gAlertManager = ZAlertManager()
+let                  gAlerts = ZAlerts()
 typealias       AlertClosure = (ZAlert?, ZAlertStatus) -> (Void)
 typealias AlertStatusClosure = (ZAlertStatus) -> (Void)
 
 
-class ZAlertManager : NSObject {
+class ZAlerts : NSObject {
 
 
     var mostRecentError: Error?

@@ -35,8 +35,8 @@ class ZOnboardingManager : ZOperationsManager {
     @objc func completeOnboarding(_ notification: Notification) {
         FOREGROUND(canBeDirect: true) {
             gBatchManager.batch(.newAppleID) { iResult in
-                gFavoritesManager.updateFavorites()
-                gControllersManager.signalFor(nil, regarding: .eRelayout)
+                gFavorites.updateFavorites()
+                gControllers.signalFor(nil, regarding: .eRelayout)
             }
         }
     }
@@ -98,7 +98,7 @@ class ZOnboardingManager : ZOperationsManager {
             onCompletion()
         } else {
             gContainer.fetchUserRecordID() { iRecordID, iError in
-                gAlertManager.alertError(iError, "failed to fetch user record id; reason unknown") { iHasError in
+                gAlerts.alertError(iError, "failed to fetch user record id; reason unknown") { iHasError in
                     if !iHasError {
 
                         ////////////////////////////////////////////////

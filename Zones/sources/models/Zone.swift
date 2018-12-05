@@ -58,15 +58,15 @@ class Zone : ZRecord {
     override var       emptyName:       String  { return "idea" }
     override var   unwrappedName:       String  { return zoneName ?? (isRootOfFavorites ? kFavoritesName : emptyName) }
     var            decoratedName:       String  { return decoration + unwrappedName }
-    var         fetchedBookmarks:       [Zone]  { return gBookmarksManager.bookmarks(for: self) ?? [] }
-    var        isCurrentFavorite:         Bool  { return self == gFavoritesManager.currentFavorite }
+    var         fetchedBookmarks:       [Zone]  { return gBookmarks.bookmarks(for: self) ?? [] }
+    var        isCurrentFavorite:         Bool  { return self == gFavorites.currentFavorite }
     var         grabbedTextColor:       ZColor  { return color.darker(by: 3.0) }
     var        onlyShowRevealDot:         Bool  { return (isRootOfFavorites && showingChildren && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
     var          dragDotIsHidden:         Bool  { return (isRootOfFavorites                    && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }    // always hide drag dot of favorites root
     var            hasZonesBelow:         Bool  { return hasAnyZonesAbove(false) }
     var            hasZonesAbove:         Bool  { return hasAnyZonesAbove(true) }
     var              isHyperlink:         Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
-    var               isFavorite:         Bool  { return gFavoritesManager.isWorkingFavorite(self) }
+    var               isFavorite:         Bool  { return gFavorites.isWorkingFavorite(self) }
     var               isSelected:         Bool  { return gSelectionManager.isSelected(self) }
     var                isGrabbed:         Bool  { return gSelectionManager .isGrabbed(self) }
     var                canTravel:         Bool  { return isBookmark || isHyperlink || isEmail }
@@ -723,7 +723,7 @@ class Zone : ZRecord {
             grab()
         }
 
-        gControllersManager.signalFor(nil, regarding: .eDetails)
+        gControllers.signalFor(nil, regarding: .eDetails)
     }
 
     override func debug(_  iMessage: String) {

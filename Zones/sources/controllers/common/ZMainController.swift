@@ -16,7 +16,7 @@ import SnapKit
 #endif
 
 
-var gMainController: ZMainController? { return gControllersManager.controllerForID(.main) as? ZMainController }
+var gMainController: ZMainController? { return gControllers.controllerForID(.main) as? ZMainController }
 
 
 class ZMainController: ZGenericController {

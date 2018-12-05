@@ -175,7 +175,7 @@ class ZRecordsManager: NSObject {
                 }
             } else {
                 if  let bookmark = zRecord as? Zone, bookmark.isBookmark {
-                    gBookmarksManager.registerBookmark(bookmark)
+                    gBookmarks.registerBookmark(bookmark)
                 }
 
                 recordRegistry[id]  = zRecord
@@ -202,7 +202,7 @@ class ZRecordsManager: NSObject {
     func unregisterZRecord(_ zRecord: ZRecord?) {
         unregisterCKRecord(zRecord?.record)
         unregisterName(of: zRecord as? Zone)
-        gBookmarksManager.unregisterBookmark(zRecord as? Zone)
+        gBookmarks.unregisterBookmark(zRecord as? Zone)
     }
 
 

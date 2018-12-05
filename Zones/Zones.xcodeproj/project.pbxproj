@@ -60,9 +60,9 @@
 		0C39B2CF1F182EBB0091F4D1 /* ZMobileExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B23C1F182EBB0091F4D1 /* ZMobileExtensions.swift */; };
 		0C39B2D31F182EBB0091F4D1 /* ZDesktopAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B23F1F182EBB0091F4D1 /* ZDesktopAppDelegate.swift */; };
 		0C39B2DC1F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2421F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift */; };
-		0C39B2E31F182EBB0091F4D1 /* ZControllersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2471F182EBB0091F4D1 /* ZControllersManager.swift */; };
-		0C39B2E41F182EBB0091F4D1 /* ZControllersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2471F182EBB0091F4D1 /* ZControllersManager.swift */; };
-		0C39B2E51F182EBB0091F4D1 /* ZControllersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2471F182EBB0091F4D1 /* ZControllersManager.swift */; };
+		0C39B2E31F182EBB0091F4D1 /* ZControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2471F182EBB0091F4D1 /* ZControllers.swift */; };
+		0C39B2E41F182EBB0091F4D1 /* ZControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2471F182EBB0091F4D1 /* ZControllers.swift */; };
+		0C39B2E51F182EBB0091F4D1 /* ZControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2471F182EBB0091F4D1 /* ZControllers.swift */; };
 		0C39B2E91F182EBB0091F4D1 /* ZSelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2491F182EBB0091F4D1 /* ZSelectionManager.swift */; };
 		0C39B2EA1F182EBB0091F4D1 /* ZSelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2491F182EBB0091F4D1 /* ZSelectionManager.swift */; };
 		0C39B2EB1F182EBB0091F4D1 /* ZSelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2491F182EBB0091F4D1 /* ZSelectionManager.swift */; };
@@ -101,16 +101,16 @@
 		0C39B3A81F1988380091F4D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3981F1988380091F4D1 /* Assets.xcassets */; };
 		0C39B3AB1F1988380091F4D1 /* iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3991F1988380091F4D1 /* iPhone.storyboard */; };
 		0C39B3AE1F1988380091F4D1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B39A1F1988380091F4D1 /* LaunchScreen.storyboard */; };
-		0C3C12811F8D87DE00669432 /* ZEventsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C48B0941F87197B00A247BC /* ZEventsManager.swift */; };
+		0C3C12811F8D87DE00669432 /* ZEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C48B0941F87197B00A247BC /* ZEvents.swift */; };
 		0C3ECC231FA3023500F085EA /* ZUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3ECC221FA3023500F085EA /* ZUser.swift */; };
 		0C3ECC241FA3023500F085EA /* ZUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3ECC221FA3023500F085EA /* ZUser.swift */; };
 		0C3ECC251FA3023500F085EA /* ZUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3ECC221FA3023500F085EA /* ZUser.swift */; };
-		0C4118DE1FA8110200A58004 /* ZAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118DD1FA8110200A58004 /* ZAlertManager.swift */; };
-		0C4118DF1FA8110200A58004 /* ZAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118DD1FA8110200A58004 /* ZAlertManager.swift */; };
-		0C4118E01FA8110200A58004 /* ZAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118DD1FA8110200A58004 /* ZAlertManager.swift */; };
-		0C43EFBE21010F17000976CE /* ZFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFBD21010F17000976CE /* ZFileManager.swift */; };
-		0C43EFBF21010F17000976CE /* ZFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFBD21010F17000976CE /* ZFileManager.swift */; };
-		0C43EFC021010F17000976CE /* ZFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFBD21010F17000976CE /* ZFileManager.swift */; };
+		0C4118DE1FA8110200A58004 /* ZAlerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118DD1FA8110200A58004 /* ZAlerts.swift */; };
+		0C4118DF1FA8110200A58004 /* ZAlerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118DD1FA8110200A58004 /* ZAlerts.swift */; };
+		0C4118E01FA8110200A58004 /* ZAlerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4118DD1FA8110200A58004 /* ZAlerts.swift */; };
+		0C43EFBE21010F17000976CE /* ZFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFBD21010F17000976CE /* ZFiles.swift */; };
+		0C43EFBF21010F17000976CE /* ZFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFBD21010F17000976CE /* ZFiles.swift */; };
+		0C43EFC021010F17000976CE /* ZFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFBD21010F17000976CE /* ZFiles.swift */; };
 		0C43EFCE21010F62000976CE /* ZLockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC721010F62000976CE /* ZLockManager.swift */; };
 		0C43EFCF21010F62000976CE /* ZLockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC721010F62000976CE /* ZLockManager.swift */; };
 		0C43EFD121010F62000976CE /* ZOnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC821010F62000976CE /* ZOnboardingManager.swift */; };
@@ -131,7 +131,7 @@
 		0C43EFE021010F62000976CE /* ZCloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloudManager.swift */; };
 		0C43EFE121010F62000976CE /* ZCloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloudManager.swift */; };
 		0C43EFE221010F62000976CE /* ZCloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloudManager.swift */; };
-		0C48B0951F87197B00A247BC /* ZEventsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C48B0941F87197B00A247BC /* ZEventsManager.swift */; };
+		0C48B0951F87197B00A247BC /* ZEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C48B0941F87197B00A247BC /* ZEvents.swift */; };
 		0C4C23A22016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
 		0C4C23A32016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
 		0C4C23A42016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
@@ -140,9 +140,9 @@
 		0C50FD312053491000E1D9A9 /* everyone.thoughtful in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.thoughtful */; };
 		0C60B6731DBDB8A0005D99F9 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C60B6791DBE84DF005D99F9 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; };
-		0C63DA6D1FCF837D005EC548 /* ZFavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C63DA6C1FCF837C005EC548 /* ZFavoritesManager.swift */; };
-		0C63DA6E1FCF837D005EC548 /* ZFavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C63DA6C1FCF837C005EC548 /* ZFavoritesManager.swift */; };
-		0C63DA6F1FCF837D005EC548 /* ZFavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C63DA6C1FCF837C005EC548 /* ZFavoritesManager.swift */; };
+		0C63DA6D1FCF837D005EC548 /* ZFavorites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */; };
+		0C63DA6E1FCF837D005EC548 /* ZFavorites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */; };
+		0C63DA6F1FCF837D005EC548 /* ZFavorites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */; };
 		0C6CAE211F88308E001960F7 /* ZSearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */; };
 		0C71173B1FAFC50500603017 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0C7126CD1FB39C5200CD3E76 /* ZDesktopExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */; };
@@ -153,9 +153,9 @@
 		0CABC9EF2022768D0019D8B0 /* ZEnumerations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CABC9EE2022768D0019D8B0 /* ZEnumerations.swift */; };
 		0CABC9F02022768D0019D8B0 /* ZEnumerations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CABC9EE2022768D0019D8B0 /* ZEnumerations.swift */; };
 		0CABC9F12022768D0019D8B0 /* ZEnumerations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CABC9EE2022768D0019D8B0 /* ZEnumerations.swift */; };
-		0CAC18E12006A84800D641C4 /* ZBookmarksManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAC18E02006A84800D641C4 /* ZBookmarksManager.swift */; };
-		0CAC18E22006A84800D641C4 /* ZBookmarksManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAC18E02006A84800D641C4 /* ZBookmarksManager.swift */; };
-		0CAC18E32006A84800D641C4 /* ZBookmarksManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAC18E02006A84800D641C4 /* ZBookmarksManager.swift */; };
+		0CAC18E12006A84800D641C4 /* ZBookmarks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAC18E02006A84800D641C4 /* ZBookmarks.swift */; };
+		0CAC18E22006A84800D641C4 /* ZBookmarks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAC18E02006A84800D641C4 /* ZBookmarks.swift */; };
+		0CAC18E32006A84800D641C4 /* ZBookmarks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAC18E02006A84800D641C4 /* ZBookmarks.swift */; };
 		0CAC18EB200ED0BB00D641C4 /* ZDebugController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAC18E8200ED0BB00D641C4 /* ZDebugController.swift */; };
 		0CAC51F01F7859F300BDCECB /* ZActionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAC51EF1F7859F300BDCECB /* ZActionsController.swift */; };
 		0CB619981FB3C4660087B066 /* ZSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */; };
@@ -247,7 +247,7 @@
 		0C39B23C1F182EBB0091F4D1 /* ZMobileExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMobileExtensions.swift; sourceTree = "<group>"; };
 		0C39B23F1F182EBB0091F4D1 /* ZDesktopAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDesktopAppDelegate.swift; sourceTree = "<group>"; };
 		0C39B2421F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGestureAndKeyRecognizer.swift; sourceTree = "<group>"; };
-		0C39B2471F182EBB0091F4D1 /* ZControllersManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZControllersManager.swift; sourceTree = "<group>"; };
+		0C39B2471F182EBB0091F4D1 /* ZControllers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZControllers.swift; sourceTree = "<group>"; };
 		0C39B2491F182EBB0091F4D1 /* ZSelectionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSelectionManager.swift; sourceTree = "<group>"; };
 		0C39B24A1F182EBB0091F4D1 /* ZWidgetsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZWidgetsManager.swift; sourceTree = "<group>"; };
 		0C39B25B1F182EBB0091F4D1 /* ZAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZAction.swift; sourceTree = "<group>"; };
@@ -271,8 +271,8 @@
 		0C39B3BF1F1989830091F4D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Zones/Info.plist; sourceTree = "<group>"; };
 		0C39B3C01F1989830091F4D1 /* Zones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Zones.entitlements; path = Zones/Zones.entitlements; sourceTree = "<group>"; };
 		0C3ECC221FA3023500F085EA /* ZUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZUser.swift; sourceTree = "<group>"; };
-		0C4118DD1FA8110200A58004 /* ZAlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZAlertManager.swift; sourceTree = "<group>"; };
-		0C43EFBD21010F17000976CE /* ZFileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFileManager.swift; sourceTree = "<group>"; };
+		0C4118DD1FA8110200A58004 /* ZAlerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZAlerts.swift; sourceTree = "<group>"; };
+		0C43EFBD21010F17000976CE /* ZFiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFiles.swift; sourceTree = "<group>"; };
 		0C43EFC221010F37000976CE /* ZPostgres.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZPostgres.swift; sourceTree = "<group>"; };
 		0C43EFC721010F62000976CE /* ZLockManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZLockManager.swift; sourceTree = "<group>"; };
 		0C43EFC821010F62000976CE /* ZOnboardingManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZOnboardingManager.swift; sourceTree = "<group>"; };
@@ -281,18 +281,18 @@
 		0C43EFCB21010F62000976CE /* ZOperationsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZOperationsManager.swift; sourceTree = "<group>"; };
 		0C43EFCC21010F62000976CE /* ZBatchManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZBatchManager.swift; sourceTree = "<group>"; };
 		0C43EFCD21010F62000976CE /* ZCloudManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZCloudManager.swift; sourceTree = "<group>"; };
-		0C48B0941F87197B00A247BC /* ZEventsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEventsManager.swift; sourceTree = "<group>"; };
+		0C48B0941F87197B00A247BC /* ZEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEvents.swift; sourceTree = "<group>"; };
 		0C4C23A12016B0930025E4DF /* ZContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZContainerView.swift; sourceTree = "<group>"; };
 		0C50FD2E2053491000E1D9A9 /* everyone.thoughtful */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = everyone.thoughtful; sourceTree = "<group>"; };
 		0C60B6721DBDB8A0005D99F9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = PadZones/Frameworks/SnapKit.framework; sourceTree = "<group>"; };
-		0C63DA6C1FCF837C005EC548 /* ZFavoritesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFavoritesManager.swift; sourceTree = "<group>"; };
+		0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFavorites.swift; sourceTree = "<group>"; };
 		0C69C9DF1F09CD95004D026D /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSearchManager.swift; sourceTree = "<group>"; };
 		0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDesktopExtensions.swift; sourceTree = "<group>"; };
 		0C7152221FD8A1E400C7DA61 /* ZFocusManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFocusManager.swift; sourceTree = "<group>"; };
 		0CA04B491D2ECF41001892E5 /* PadFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PadFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CABC9EE2022768D0019D8B0 /* ZEnumerations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEnumerations.swift; sourceTree = "<group>"; };
-		0CAC18E02006A84800D641C4 /* ZBookmarksManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBookmarksManager.swift; sourceTree = "<group>"; };
+		0CAC18E02006A84800D641C4 /* ZBookmarks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBookmarks.swift; sourceTree = "<group>"; };
 		0CAC18E8200ED0BB00D641C4 /* ZDebugController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDebugController.swift; sourceTree = "<group>"; };
 		0CAC51EF1F7859F300BDCECB /* ZActionsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZActionsController.swift; sourceTree = "<group>"; };
 		0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSearchResultsController.swift; sourceTree = "<group>"; };
@@ -473,11 +473,11 @@
 		0C39B2461F182EBB0091F4D1 /* main */ = {
 			isa = PBXGroup;
 			children = (
-				0C4118DD1FA8110200A58004 /* ZAlertManager.swift */,
-				0CAC18E02006A84800D641C4 /* ZBookmarksManager.swift */,
-				0C39B2471F182EBB0091F4D1 /* ZControllersManager.swift */,
-				0C48B0941F87197B00A247BC /* ZEventsManager.swift */,
-				0C63DA6C1FCF837C005EC548 /* ZFavoritesManager.swift */,
+				0C4118DD1FA8110200A58004 /* ZAlerts.swift */,
+				0CAC18E02006A84800D641C4 /* ZBookmarks.swift */,
+				0C39B2471F182EBB0091F4D1 /* ZControllers.swift */,
+				0C48B0941F87197B00A247BC /* ZEvents.swift */,
+				0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */,
 				0C7152221FD8A1E400C7DA61 /* ZFocusManager.swift */,
 				0C6CAE1E1F88308E001960F7 /* ZSearchManager.swift */,
 				0C39B2491F182EBB0091F4D1 /* ZSelectionManager.swift */,
@@ -614,7 +614,7 @@
 		0C43EFBC21010F17000976CE /* files */ = {
 			isa = PBXGroup;
 			children = (
-				0C43EFBD21010F17000976CE /* ZFileManager.swift */,
+				0C43EFBD21010F17000976CE /* ZFiles.swift */,
 			);
 			path = files;
 			sourceTree = "<group>";
@@ -879,10 +879,10 @@
 			files = (
 				A7395BB221B877B600F5759F /* ZGraphEditor.swift in Sources */,
 				0C39B31F1F182EBB0091F4D1 /* ZTrait.swift in Sources */,
-				0C39B2E31F182EBB0091F4D1 /* ZControllersManager.swift in Sources */,
+				0C39B2E31F182EBB0091F4D1 /* ZControllers.swift in Sources */,
 				A7395BAF21B877B600F5759F /* ZTextEditor.swift in Sources */,
 				0CABC9EF2022768D0019D8B0 /* ZEnumerations.swift in Sources */,
-				0C4118DE1FA8110200A58004 /* ZAlertManager.swift in Sources */,
+				0C4118DE1FA8110200A58004 /* ZAlerts.swift in Sources */,
 				0C39B2BF1F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
 				0C43EFD721010F62000976CE /* ZRemoteStoresManager.swift in Sources */,
 				0C39B38B1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
@@ -911,19 +911,19 @@
 				0C39B2E91F182EBB0091F4D1 /* ZSelectionManager.swift in Sources */,
 				0C26F7301F799EEE00C2B978 /* ZoneSegmentedControl.swift in Sources */,
 				0C367C371F463D93000FC914 /* ZoneDragView.swift in Sources */,
-				0CAC18E12006A84800D641C4 /* ZBookmarksManager.swift in Sources */,
+				0CAC18E12006A84800D641C4 /* ZBookmarks.swift in Sources */,
 				0C39B3881F182EBB0091F4D1 /* ZoneWidget.swift in Sources */,
 				0C39B2BC1F182EBB0091F4D1 /* ZState.swift in Sources */,
 				0C39B2B61F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C39B3131F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				0C39B2EC1F182EBB0091F4D1 /* ZWidgetsManager.swift in Sources */,
 				0C43EFD121010F62000976CE /* ZOnboardingManager.swift in Sources */,
-				0C63DA6D1FCF837D005EC548 /* ZFavoritesManager.swift in Sources */,
+				0C63DA6D1FCF837D005EC548 /* ZFavorites.swift in Sources */,
 				0C2E22D01F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
 				0C39B2AA1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
 				0C39B2B31F182EBB0091F4D1 /* ZGCD.swift in Sources */,
-				0C3C12811F8D87DE00669432 /* ZEventsManager.swift in Sources */,
-				0C43EFBE21010F17000976CE /* ZFileManager.swift in Sources */,
+				0C3C12811F8D87DE00669432 /* ZEvents.swift in Sources */,
+				0C43EFBE21010F17000976CE /* ZFiles.swift in Sources */,
 				0C39B31C1F182EBB0091F4D1 /* ZRecord.swift in Sources */,
 				0CAC51F01F7859F300BDCECB /* ZActionsController.swift in Sources */,
 			);
@@ -936,7 +936,7 @@
 				0C367C391F463D93000FC914 /* ZoneDragView.swift in Sources */,
 				0CABC9F12022768D0019D8B0 /* ZEnumerations.swift in Sources */,
 				0C39B3211F182EBB0091F4D1 /* ZTrait.swift in Sources */,
-				0C39B2E51F182EBB0091F4D1 /* ZControllersManager.swift in Sources */,
+				0C39B2E51F182EBB0091F4D1 /* ZControllers.swift in Sources */,
 				0C39B2A61F182EBB0091F4D1 /* ZDetailsController.swift in Sources */,
 				0C39B38D1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
 				0C39B3841F182EBB0091F4D1 /* ZoneDot.swift in Sources */,
@@ -957,18 +957,18 @@
 				0C39B2EB1F182EBB0091F4D1 /* ZSelectionManager.swift in Sources */,
 				0C2E22C01F75B8AB00B50A71 /* ZMainController.swift in Sources */,
 				A7395BB121B877B600F5759F /* ZTextEditor.swift in Sources */,
-				0CAC18E32006A84800D641C4 /* ZBookmarksManager.swift in Sources */,
+				0CAC18E32006A84800D641C4 /* ZBookmarks.swift in Sources */,
 				0C39B2DC1F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0CB619A11FB3C4660087B066 /* ZEditorController.swift in Sources */,
 				A7245E0921729FFE003D4BDA /* ZShortcutsController.swift in Sources */,
-				0C63DA6F1FCF837D005EC548 /* ZFavoritesManager.swift in Sources */,
+				0C63DA6F1FCF837D005EC548 /* ZFavorites.swift in Sources */,
 				0C39B2A01F182EBB0091F4D1 /* ZInformationController.swift in Sources */,
 				0C39B29D1F182EBB0091F4D1 /* ZToolsController.swift in Sources */,
 				0C39B38A1F182EBB0091F4D1 /* ZoneWidget.swift in Sources */,
 				0C39B2BE1F182EBB0091F4D1 /* ZState.swift in Sources */,
-				0C43EFC021010F17000976CE /* ZFileManager.swift in Sources */,
+				0C43EFC021010F17000976CE /* ZFiles.swift in Sources */,
 				0C4C23A42016B0930025E4DF /* ZContainerView.swift in Sources */,
-				0C48B0951F87197B00A247BC /* ZEventsManager.swift in Sources */,
+				0C48B0951F87197B00A247BC /* ZEvents.swift in Sources */,
 				0C39B2B81F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C39B2D31F182EBB0091F4D1 /* ZDesktopAppDelegate.swift in Sources */,
 				0C43EFD921010F62000976CE /* ZRemoteStoresManager.swift in Sources */,
@@ -982,7 +982,7 @@
 				0C39B2AC1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
 				0C39B2A31F182EBB0091F4D1 /* ZPreferencesController.swift in Sources */,
 				0C39B2B51F182EBB0091F4D1 /* ZGCD.swift in Sources */,
-				0C4118E01FA8110200A58004 /* ZAlertManager.swift in Sources */,
+				0C4118E01FA8110200A58004 /* ZAlerts.swift in Sources */,
 				0C43EFDF21010F62000976CE /* ZBatchManager.swift in Sources */,
 				0CAC18EB200ED0BB00D641C4 /* ZDebugController.swift in Sources */,
 				0C39B31E1F182EBB0091F4D1 /* ZRecord.swift in Sources */,
@@ -996,7 +996,7 @@
 				0CABC9F02022768D0019D8B0 /* ZEnumerations.swift in Sources */,
 				0C39B3201F182EBB0091F4D1 /* ZTrait.swift in Sources */,
 				A7395BB021B877B600F5759F /* ZTextEditor.swift in Sources */,
-				0C39B2E41F182EBB0091F4D1 /* ZControllersManager.swift in Sources */,
+				0C39B2E41F182EBB0091F4D1 /* ZControllers.swift in Sources */,
 				0C39B2C01F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
 				0C7152241FD8A1E400C7DA61 /* ZFocusManager.swift in Sources */,
 				0C39B38C1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
@@ -1015,9 +1015,9 @@
 				0C39B31A1F182EBB0091F4D1 /* Zone.swift in Sources */,
 				0C39B2C91F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0CB619A01FB3C4660087B066 /* ZEditorController.swift in Sources */,
-				0C4118DF1FA8110200A58004 /* ZAlertManager.swift in Sources */,
+				0C4118DF1FA8110200A58004 /* ZAlerts.swift in Sources */,
 				0C39B38F1F182EBB0091F4D1 /* ZStackableView.swift in Sources */,
-				0C63DA6E1FCF837D005EC548 /* ZFavoritesManager.swift in Sources */,
+				0C63DA6E1FCF837D005EC548 /* ZFavorites.swift in Sources */,
 				0C39B2B11F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
 				0C39B2EA1F182EBB0091F4D1 /* ZSelectionManager.swift in Sources */,
 				0C43EFDB21010F62000976CE /* ZOperationsManager.swift in Sources */,
@@ -1026,14 +1026,14 @@
 				0C39B3891F182EBB0091F4D1 /* ZoneWidget.swift in Sources */,
 				A7395BB321B877B600F5759F /* ZGraphEditor.swift in Sources */,
 				0C39B2BD1F182EBB0091F4D1 /* ZState.swift in Sources */,
-				0CAC18E22006A84800D641C4 /* ZBookmarksManager.swift in Sources */,
+				0CAC18E22006A84800D641C4 /* ZBookmarks.swift in Sources */,
 				0C39B2B71F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C39B3141F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				0C43EFDE21010F62000976CE /* ZBatchManager.swift in Sources */,
 				0C39B2ED1F182EBB0091F4D1 /* ZWidgetsManager.swift in Sources */,
 				0C2E22D11F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
 				0C43EFE121010F62000976CE /* ZCloudManager.swift in Sources */,
-				0C43EFBF21010F17000976CE /* ZFileManager.swift in Sources */,
+				0C43EFBF21010F17000976CE /* ZFiles.swift in Sources */,
 				0C4C23A32016B0930025E4DF /* ZContainerView.swift in Sources */,
 				0C39B2AB1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
 				0C39B2B41F182EBB0091F4D1 /* ZGCD.swift in Sources */,

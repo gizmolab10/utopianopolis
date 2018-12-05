@@ -323,7 +323,7 @@ class ZBatchManager: ZOnboardingManager {
                 }
 
                 invokeForIndex?(0)
-                gControllersManager.signalFor(nil, regarding: .eInformation)
+                gControllers.signalFor(nil, regarding: .eInformation)
             }
         }
     }
@@ -333,8 +333,8 @@ class ZBatchManager: ZOnboardingManager {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
         switch identifier {
-        case .favorites:       gFavoritesManager.setup(                                                                      cloudCallback)
-        case .readFile:  gFileManager                                    .readFile(into: currentDatabaseID!);                cloudCallback?(0)
+        case .favorites:       gFavorites.setup(                                                                      cloudCallback)
+        case .readFile:  gFiles                                    .readFile(into: currentDatabaseID!);                cloudCallback?(0)
         default: gRemoteStoresManager.cloudManager(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
         }
     }

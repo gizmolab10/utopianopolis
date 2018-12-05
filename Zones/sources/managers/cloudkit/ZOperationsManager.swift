@@ -141,7 +141,7 @@ class ZOperationsManager: NSObject {
             gCloudFire   = { iTimer in
                 FOREGROUND {
                     if  self.checkCloudStatus() {
-                        gControllersManager.signalFor(nil, regarding: .eDetails) // inform user of change in cloud status
+                        gControllers.signalFor(nil, regarding: .eDetails) // inform user of change in cloud status
 
                         /////////////////////////////////////////////////
                         // assure that we can perform cloud operations //
@@ -152,10 +152,10 @@ class ZOperationsManager: NSObject {
 
                             gBatchManager.batch(identifier) { iResult in
                                 if  gCloudAccountIsActive {
-                                    gFavoritesManager.updateFavorites()
+                                    gFavorites.updateFavorites()
                                 }
 
-                                gControllersManager.signalFor(nil, regarding: .eRelayout)
+                                gControllers.signalFor(nil, regarding: .eRelayout)
                             }
                         }
                     }
@@ -176,7 +176,7 @@ class ZOperationsManager: NSObject {
         setupCloudTimer()
 
         if queue.operationCount > 10 {
-            gAlertManager.showAlert("overloading queue", "programmer error", "send an email to sand@gizmolab.com") { iObject in
+            gAlerts.showAlert("overloading queue", "programmer error", "send an email to sand@gizmolab.com") { iObject in
                // onCompletion()
             }
         }

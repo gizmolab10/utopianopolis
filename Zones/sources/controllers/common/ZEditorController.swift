@@ -16,7 +16,7 @@ import SnapKit
 #endif
 
 
-var gEditorController: ZEditorController? { return gControllersManager.controllerForID(.editor) as? ZEditorController }
+var gEditorController: ZEditorController? { return gControllers.controllerForID(.editor) as? ZEditorController }
 
 
 class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDelegate {
@@ -186,7 +186,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
             } else if state != .began {         // ended, cancelled or failed
                 rubberbandUpdate(nil)
-                gControllersManager.signalFor(nil, regarding: .ePreferences) // so color well gets updated
+                gControllers.signalFor(nil, regarding: .ePreferences) // so color well gets updated
             } else if let dot = detectDot(iGesture) {
                 if  !dot.isReveal {
                     dragStartEvent(dot, iGesture)
@@ -230,16 +230,16 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                             zone.dragDotClicked(isCommand: isCommand, isShift: isShift)
                         }
 
-                        gControllersManager.signalFor(nil, regarding: .eDetails)
+                        gControllers.signalFor(nil, regarding: .eDetails)
                     } else {
                         gTextEditor.stopCurrentEdit()
                         gSelectionManager.deselect()
                         widget.widgetZone?.grab()
-                        gControllersManager.signalFor(nil, regarding: .eSearch)
+                        gControllers.signalFor(nil, regarding: .eSearch)
                     }
                 } else { // click on background
                     gSelectionManager.deselect()
-                    gControllersManager.signalFor(nil, regarding: .eDatum)
+                    gControllers.signalFor(nil, regarding: .eDatum)
                 }
             }
 
@@ -278,7 +278,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             cleanupAfterDrag()
             
             if doneState.contains(iGesture!.state) {
-                gControllersManager.signalFor(nil, regarding: .ePreferences) // so color well gets updated
+                gControllers.signalFor(nil, regarding: .ePreferences) // so color well gets updated
                 restartGestureRecognition()
             }
         }

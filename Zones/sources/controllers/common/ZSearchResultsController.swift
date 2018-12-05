@@ -17,7 +17,7 @@ import CloudKit
 #endif
 
 
-var gSearchResultsController: ZSearchResultsController? { return gControllersManager.controllerForID(.searchResults) as? ZSearchResultsController }
+var gSearchResultsController: ZSearchResultsController? { return gControllers.controllerForID(.searchResults) as? ZSearchResultsController }
 
 
 class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTableViewDelegate {
@@ -209,10 +209,10 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         zone?.grab()
         zone?.needChildren()
         zone?.revealChildren()
-        gControllersManager.signalFor(nil, regarding: .eRelayout)
+        gControllers.signalFor(nil, regarding: .eRelayout)
 
         gBatchManager.sync { iSame in
-            gControllersManager.signalFor(nil, regarding: .eRelayout)
+            gControllers.signalFor(nil, regarding: .eRelayout)
         }
     }
 
@@ -223,8 +223,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         if  gWorkMode != .graphMode {
             gWorkMode  = .graphMode
 
-            gControllersManager.signalFor(nil, regarding: .eSearch)
-            gControllersManager.signalFor(nil, regarding: .eFound)
+            gControllers.signalFor(nil, regarding: .eSearch)
+            gControllers.signalFor(nil, regarding: .eFound)
         }
     }
 
@@ -235,7 +235,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         } else {
             resultsAreVisible = true
 
-            gControllersManager.signalFor(nil, regarding: .eSearch)
+            gControllers.signalFor(nil, regarding: .eSearch)
         }
     }
 

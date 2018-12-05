@@ -18,11 +18,11 @@ import EventKit
 
 
 let gNotificationCenter = NotificationCenter.default
-let gEventsManager      = ZEventsManager()
 let gEventStore         = EKEventStore()
+let gEvents             = ZEvents()
 
 
-class ZEventsManager: NSObject {
+class ZEvents: NSObject {
 
 
     var monitor: Any?
@@ -47,7 +47,7 @@ class ZEventsManager: NSObject {
     
     
     func handleDarkModeChange(iNote: Notification) {
-        gControllersManager.signalFor(nil, regarding: .eRelayout)
+        gControllers.signalFor(nil, regarding: .eRelayout)
     }
     
     

@@ -59,7 +59,7 @@ class ZRecord: NSObject {
                 ///////////////////////////////////////////
 
                 clearAllStates() // is this needed pr wanted?
-                gBookmarksManager.unregisterBookmark(self as? Zone)
+                gBookmarks.unregisterBookmark(self as? Zone)
                 cloudManager?.unregisterCKRecord(_record)
 
                 _record = newValue
@@ -333,12 +333,12 @@ class ZRecord: NSObject {
             addState   (.needsSave)
         }
 
-        gFileManager.needWrite(for: databaseID)
+        gFiles.needWrite(for: databaseID)
     }
 
 
     func deferWrite() {
-        gFileManager.deferWrite(for: databaseID)
+        gFiles.deferWrite(for: databaseID)
     }
 
 
@@ -491,11 +491,11 @@ class ZRecord: NSObject {
 
 
     func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true) -> ZStorageDictionary? {
-        if  let      name = recordName, !gFileManager.writtenRecordNames.contains(name) {
+        if  let      name = recordName, !gFiles.writtenRecordNames.contains(name) {
             let  keyPaths = cloudProperties() + (includeRecordName ? [kpRecordName] : []) + [kpModificationDate]
             var      dict = ZStorageDictionary()
 
-            gFileManager.writtenRecordNames.append(name)
+            gFiles.writtenRecordNames.append(name)
 
             for keyPath in keyPaths {
                 if  let       type = type(from: keyPath),

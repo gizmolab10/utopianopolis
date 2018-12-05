@@ -131,8 +131,8 @@ class ZFocusManager: NSObject {
 
             debugDump()
             gHere.grab()
-            gFavoritesManager.updateFavorites()
-            gControllersManager.signalFor(nil, regarding: .eRelayout)
+            gFavorites.updateFavorites()
+            gControllers.signalFor(nil, regarding: .eRelayout)
         }
     }
 
@@ -169,12 +169,12 @@ class ZFocusManager: NSObject {
                 gHere = zone
 
                 zone.grab()
-                gFavoritesManager.updateCurrentFavorite()
+                gFavorites.updateCurrentFavorite()
                 atArrival()
             }
 
             if isCommand {
-                gFavoritesManager.refocus {
+                gFavorites.refocus {
                     atArrival()
                 }
             } else if zone.isBookmark {
@@ -183,7 +183,7 @@ class ZFocusManager: NSObject {
                     focusClosure(object as! Zone)
                 }
             } else if zone == gHere {
-                gFavoritesManager.toggleFavorite(for: zone)
+                gFavorites.toggleFavorite(for: zone)
                 atArrival()
             } else {
                 focusClosure(zone)
@@ -215,7 +215,7 @@ class ZFocusManager: NSObject {
                 parent?.revealChildren()
                 parent?.needChildren()
                 travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
-                    gFavoritesManager.updateFavorites()
+                    gFavorites.updateFavorites()
                     atArrival()
                 }
 
@@ -249,7 +249,7 @@ class ZFocusManager: NSObject {
             var   there: Zone?
 
             if iBookmark.isFavorite {
-                gFavoritesManager.currentFavorite = iBookmark
+                gFavorites.currentFavorite = iBookmark
             }
 
             pushHere()

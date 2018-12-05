@@ -65,7 +65,7 @@ public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 let        gVerticalWeight = 1.0
 let gHighlightHeightOffset = CGFloat(-3.0)
 let           gApplication = NSApplication.shared
-var     gDetailsController : ZDetailsController? { return gControllersManager.controllerForID(.details) as? ZDetailsController }
+var     gDetailsController : ZDetailsController? { return gControllers.controllerForID(.details) as? ZDetailsController }
 
 
 protocol ZScrollDelegate : NSObjectProtocol {}

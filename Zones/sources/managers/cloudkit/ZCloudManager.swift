@@ -88,7 +88,7 @@ class ZCloudManager: ZRecordsManager {
             operation       .recordIDsToDelete = destroy
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
                 let                 notDestroy = iRecord == nil || !destroy.contains(iRecord!.recordID)
-                gAlertManager.detectError(iError) { iHasError in
+                gAlerts.detectError(iError) { iHasError in
                     if  iHasError {
                         if  notDestroy,
                             let     ck = iError as? CKError,
@@ -125,7 +125,7 @@ class ZCloudManager: ZRecordsManager {
                         }
                     }
 
-                    gAlertManager.detectError(iError, "") { iHasError in
+                    gAlerts.detectError(iError, "") { iHasError in
                         if iHasError {
                             print(String(describing: iError!))
                         }
@@ -241,7 +241,7 @@ class ZCloudManager: ZRecordsManager {
         } else {
             BACKGROUND {     // not stall foreground processor
                 self.database?.fetch(withRecordID: iCKRecordID) { (iFetchedCKRecord: CKRecord?, iFetchError: Error?) in
-                    gAlertManager.alertError(iFetchError) { iHasError in
+                    gAlerts.alertError(iFetchError) { iHasError in
                         if !iHasError {
                             done(iFetchedCKRecord)
                         } else if !mustCreate {
@@ -250,7 +250,7 @@ class ZCloudManager: ZRecordsManager {
                             let brandNew: CKRecord = CKRecord(recordType: recordType, recordID: iCKRecordID)
 
                             self.database?.save(brandNew) { (iSavedRecord: CKRecord?, iSaveError: Error?) in
-                                gAlertManager.detectError(iSaveError) { iHasSaveError in
+                                gAlerts.detectError(iSaveError) { iHasSaveError in
                                     if  iHasSaveError {
                                         done(nil)
                                     } else {
@@ -285,7 +285,7 @@ class ZCloudManager: ZRecordsManager {
                 if  let cursor = iCursor {
                     self.queryFor(recordType, with: predicate, properties: properties, cursor: cursor, onCompletion: onCompletion)  // recurse with cursor
                 } else {
-                    gAlertManager.alertError(error, predicate.description) { iHasError in
+                    gAlerts.alertError(error, predicate.description) { iHasError in
                         onCompletion?(nil, error)
                     }
                 }
@@ -401,12 +401,12 @@ class ZCloudManager: ZRecordsManager {
             var                    recordsByID = [CKRecord : CKRecord.ID?] ()
             operation               .recordIDs = recordIDs
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecord.ID?, iError: Error?) in
-                gAlertManager.detectError(iError) { iHasError in
+                gAlerts.detectError(iError) { iHasError in
                     if  iHasError {
                         let    zone = self.maybeZoneForRecordID(iID)
                         let message = zone == nil ? String(describing: iError) : zone?.unwrappedName
 
-                        gAlertManager.alertError("MERGE within \(self.databaseID) \(message!)")
+                        gAlerts.alertError("MERGE within \(self.databaseID) \(message!)")
 
                         if let id = iID, let index = recordIDs.index(of: id) {
                             recordIDs.remove(at: index)
@@ -794,7 +794,7 @@ class ZCloudManager: ZRecordsManager {
             operation     .recordIDs = needed
 
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecord.ID?, iError: Error?) in
-                gAlertManager.alertError(iError) { iHasError in
+                gAlerts.alertError(iError) { iHasError in
                     if  iHasError {
                         if  let    name = iID?.recordName {
                             if  let bad = self.maybeZoneForRecordID(iID) {
@@ -839,7 +839,7 @@ class ZCloudManager: ZRecordsManager {
             operation           .recordIDs = missingParentIDs
 
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecord.ID?, iError: Error?) in
-                gAlertManager.alertError(iError) { iHasError in
+                gAlerts.alertError(iError) { iHasError in
                     if  !iHasError, iRecord != nil {
                         fetchedRecordsByID[iRecord!] = iID
                     }
@@ -962,7 +962,7 @@ class ZCloudManager: ZRecordsManager {
                                 }
 
                                 let     parent = child.parentZone
-                                let extraTrash = child.zoneLink == kTrashLink && parent?.isRootOfFavorites ?? false && gFavoritesManager.hasTrash
+                                let extraTrash = child.zoneLink == kTrashLink && parent?.isRootOfFavorites ?? false && gFavorites.hasTrash
 
                                 if  child == parent || extraTrash {
                                     child.needDestroy()
@@ -1246,7 +1246,7 @@ class ZCloudManager: ZRecordsManager {
         } else {
             onCompletion?(-1)
             database!.fetchAllSubscriptions { (iSubscriptions: [CKSubscription]?, iError: Error?) in
-                gAlertManager.alertError(iError) { iHasError in
+                gAlerts.alertError(iError) { iHasError in
                     if iHasError {
                         onCompletion?(0)
                     } else {
@@ -1257,7 +1257,7 @@ class ZCloudManager: ZRecordsManager {
                         } else {
                             for subscription: CKSubscription in iSubscriptions! {
                                 self.database!.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (iSubscription: String?, iUnsubscribeError: Error?) in
-                                    gAlertManager.alertError(iUnsubscribeError) { iHasError in }
+                                    gAlerts.alertError(iUnsubscribeError) { iHasError in }
 
                                     count -= 1
 
@@ -1292,9 +1292,9 @@ class ZCloudManager: ZRecordsManager {
                 subscription.notificationInfo          = information
 
                 database!.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iSubscribeError: Error?) in
-                    gAlertManager.alertError(iSubscribeError) { iHasError in
+                    gAlerts.alertError(iSubscribeError) { iHasError in
                         if iHasError {
-                            gControllersManager.signalFor(iSubscribeError as NSObject?, regarding: .eError)
+                            gControllers.signalFor(iSubscribeError as NSObject?, regarding: .eError)
                         }
                     }
 
@@ -1336,14 +1336,14 @@ class ZCloudManager: ZRecordsManager {
             let query: CKQuery = CKQuery(recordType: type, predicate: predicate)
 
             database?.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, performanceError: Error?) in
-                gAlertManager.detectError(performanceError) { iHasError in
+                gAlerts.detectError(performanceError) { iHasError in
                     if iHasError {
-                        gControllersManager.signalFor(performanceError as NSObject?, regarding: .eError)
+                        gControllers.signalFor(performanceError as NSObject?, regarding: .eError)
                     } else {
                         let                record: CKRecord = (iResults?[0])!
                         object.record[valueForPropertyName] = (record as! CKRecordValue)
 
-                        gControllersManager.signalFor(nil, regarding: .eRelayout)
+                        gControllers.signalFor(nil, regarding: .eRelayout)
                     }
                 }
             }

@@ -128,15 +128,15 @@ class ZGraphEditor: NSObject {
                     case "h":      editTrait(for: .eHyperlink)
                     case "i":      toggleColorized()
                     case "l", "u": alterCase(up: key == "u")
-                    case "j":      gFileManager.importFromFile(asOutline: isOption, insertInto: gSelectionManager.currentMoveable) { self.redrawSyncRedraw() }
-                    case "k":      gFileManager  .exportToFile(asOutline: isOption,        for: gSelectionManager.currentMoveable)
+                    case "j":      gFiles.importFromFile(asOutline: isOption, insertInto: gSelectionManager.currentMoveable) { self.redrawSyncRedraw() }
+                    case "k":      gFiles  .exportToFile(asOutline: isOption,        for: gSelectionManager.currentMoveable)
                     case "m":      refetch()
                     case "n":      alphabetize(isOption)
-                    case "o":      if isCommand { if isOption { gFileManager.showInFinder() } else { gFileManager.open() } } else { orderByLength(isOption) }
+                    case "o":      if isCommand { if isOption { gFiles.showInFinder() } else { gFiles.open() } } else { orderByLength(isOption) }
                     case "p":      printHere()
                     case "q":      ZApplication.shared.terminate(self)
                     case "r":      reverse()
-                    case "s":      if isCommand { gFileManager.saveAs() } else { selectCurrentFavorite() }
+                    case "s":      if isCommand { gFiles.saveAs() } else { selectCurrentFavorite() }
                     case "w":      rotateWritable()
                     case "1":      if isCommand && isShift { sendEmailBugReport() }
                     case "+":      divideChildren()
@@ -171,7 +171,7 @@ class ZGraphEditor: NSObject {
             gInsertionMode = flag ? .follow : .precede
         }
 
-        gControllersManager.signalFor(nil, regarding: .ePreferences)
+        gControllers.signalFor(nil, regarding: .ePreferences)
     }
     
 
@@ -348,8 +348,8 @@ class ZGraphEditor: NSObject {
 
         gHere.grab()
         gHere.revealChildren()
-        gFavoritesManager.updateFavorites()
-        gControllersManager.signalFor(nil, regarding: .eRelayout)
+        gFavorites.updateFavorites()
+        gControllers.signalFor(nil, regarding: .eRelayout)
     }
 
 
@@ -529,7 +529,7 @@ class ZGraphEditor: NSObject {
         if  gDatabaseID != .favoritesID {
             gWorkMode = gWorkMode == .searchMode ? .graphMode : .searchMode
 
-            gControllersManager.signalFor(nil, regarding: .eSearch)
+            gControllers.signalFor(nil, regarding: .eSearch)
         }
     }
 
@@ -584,7 +584,7 @@ class ZGraphEditor: NSObject {
             }
         }
 
-        gControllersManager.signalFor(nil, regarding: .eRelayout)
+        gControllers.signalFor(nil, regarding: .eRelayout)
     }
 
 
@@ -601,7 +601,7 @@ class ZGraphEditor: NSObject {
 
     func refetch() {
         gBatchManager.refetch { iSame in
-            gControllersManager.signalFor(nil, regarding: .eRelayout)
+            gControllers.signalFor(nil, regarding: .eRelayout)
         }
     }
 
@@ -611,7 +611,7 @@ class ZGraphEditor: NSObject {
 
 
     func selectCurrentFavorite() {
-        if  let current = gFavoritesManager.currentFavorite {
+        if  let current = gFavorites.currentFavorite {
             current.needRoot()
             gBatchManager.families { iSame in
                 if  let parent = current.parentZone {
@@ -619,7 +619,7 @@ class ZGraphEditor: NSObject {
                         iAncestor.revealChildren()
                     }
 
-                    gControllersManager.signalFor(nil, regarding: .eRelayout)
+                    gControllers.signalFor(nil, regarding: .eRelayout)
                 }
             }
 
@@ -635,7 +635,7 @@ class ZGraphEditor: NSObject {
     func doFavorites(_ isShift: Bool, _ isOption: Bool) {
         let backward = isShift || isOption
 
-        gFavoritesManager.switchToNext(!backward) {
+        gFavorites.switchToNext(!backward) {
             self.redrawSyncRedraw()
         }
     }
@@ -749,7 +749,7 @@ class ZGraphEditor: NSObject {
                     gHere.grab()
                 }
                 
-                gFavoritesManager.updateCurrentFavorite()
+                gFavorites.updateCurrentFavorite()
                 self.redrawSyncRedraw()
             }
         }
@@ -831,7 +831,7 @@ class ZGraphEditor: NSObject {
                 }
 
                 if zone.isInFavorites && show {
-                    gFavoritesManager.updateFavorites()
+                    gFavorites.updateFavorites()
                 }
 
                 onCompletion?()
@@ -891,7 +891,7 @@ class ZGraphEditor: NSObject {
         if !parent.isBookmark,
             parent.userCanMutateProgeny {
             addIdeaIn(parent, at: gInsertionsFollow ? nil : 0) { iChild in
-                gControllersManager.signalFor(parent, regarding: .eRelayout) {
+                gControllers.signalFor(parent, regarding: .eRelayout) {
                     iChild?.edit()
                 }
             }
@@ -931,7 +931,7 @@ class ZGraphEditor: NSObject {
             addIdeaIn(parent, at: index, with: name) { iChild in
                 if let child = iChild {
                     if !containing {
-                        gControllersManager.signalFor(nil, regarding: .eRelayout) {
+                        gControllers.signalFor(nil, regarding: .eRelayout) {
                             onCompletion?(child)
                         }
                     } else {
@@ -1005,12 +1005,12 @@ class ZGraphEditor: NSObject {
                 var bookmark: Zone?
 
                 self.invokeUsingDatabaseID(.mineID) {
-                    bookmark = gFavoritesManager.createBookmark(for: zone, style: .normal)
+                    bookmark = gFavorites.createBookmark(for: zone, style: .normal)
                 }
 
                 bookmark?.grab()
                 bookmark?.markNotFetched()
-                gControllersManager.signalFor(nil, regarding: .eRelayout)
+                gControllers.signalFor(nil, regarding: .eRelayout)
                 gBatchManager.sync { iSame in
                 }
             }
@@ -1066,7 +1066,7 @@ class ZGraphEditor: NSObject {
 
 
     func updateFavoritesRedrawSyncRedraw(avoidRedraw: Bool = false) {
-        if  gFavoritesManager.updateFavorites() || !avoidRedraw {
+        if  gFavorites.updateFavorites() || !avoidRedraw {
             redrawSyncRedraw()
         }
     }
@@ -1160,7 +1160,7 @@ class ZGraphEditor: NSObject {
                     // SPECIAL CASE: delete here but here has no parent ... so, go somewhere useful and familiar //
                     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-                    gFavoritesManager.refocus {                 // travel through current favorite, then ...
+                    gFavorites.refocus {                 // travel through current favorite, then ...
 
                         /////////////
                         // RECURSE //
@@ -1319,7 +1319,7 @@ class ZGraphEditor: NSObject {
                 // present an alert asking if user really wants to move here leftward //
                 ////////////////////////////////////////////////////////////////////////
 
-                gAlertManager.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? "")\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { iStatus in
+                gAlerts.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? "")\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { iStatus in
                     if iStatus == .eStatusYes {
                         self.moveOut(selectionOnly: selectionOnly, extreme: extreme, force: true, onCompletion: onCompletion)
                     }
@@ -1370,7 +1370,7 @@ class ZGraphEditor: NSObject {
         } else {
             zone.needChildren()
             zone.revealChildren()
-            gControllersManager.signalFor(nil, regarding: .eData)
+            gControllers.signalFor(nil, regarding: .eData)
 
             gBatchManager.children(.restore) { iSame in
                 if  zone.count > 0,
@@ -1887,7 +1887,7 @@ class ZGraphEditor: NSObject {
                         var beingMoved = grab
 
                         if  toFavorites && !beingMoved.isInFavorites && !beingMoved.isBookmark && !beingMoved.isInTrash {
-                            beingMoved = gFavoritesManager.createBookmark(for: beingMoved, style: .favorite)
+                            beingMoved = gFavorites.createBookmark(for: beingMoved, style: .favorite)
 
                             beingMoved.maybeNeedSave()
                         } else {
@@ -2011,7 +2011,7 @@ class ZGraphEditor: NSObject {
                     if  same && (parent?.count ?? 0) > 1 && (setHere || iCalledCloud) {
                         self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme, extend: extend)
                     } else {
-                        gControllersManager.signalFor(nil, regarding: .eRelayout)
+                        gControllers.signalFor(nil, regarding: .eRelayout)
                     }
                 }
             }
@@ -2125,7 +2125,7 @@ class ZGraphEditor: NSObject {
                             gSelectionManager.addMultipleToGrab(grabThese)
                         }
                         
-                        gControllersManager.signalFor(nil, regarding: .eData)
+                        gControllers.signalFor(nil, regarding: .eData)
                     }
                 } else if !isConfined,
                     var index  = targetZones.index(of: zone) {

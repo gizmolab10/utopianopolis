@@ -34,8 +34,8 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 
             UserDefaults.standard.set(true, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraint‌​s")
             gApplication.registerForRemoteNotifications(matching: .badge)
-            gControllersManager.startupCloudAndUI()
-            gEventsManager.setup()
+            gControllers.startupCloudAndUI()
+            gEvents.setup()
         }
     }
 
@@ -54,7 +54,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 	func application(_ application: NSApplication, openFiles: [String]) {
 		for file in openFiles {
 			gRemoteStoresManager.cloudManager(for: .mineID)?.clear()
-			gFileManager.readFile(from: file, into: .mineID)
+			gFiles.readFile(from: file, into: .mineID)
 		}
 	}
 	
@@ -74,7 +74,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 
     func applicationWillTerminate(aNotification: NSNotification) {
         for dbID in kAllDatabaseIDs {
-            gFileManager.writeToFile(from: dbID)
+            gFiles.writeToFile(from: dbID)
         }
         
         // Insert code here to tear down your application

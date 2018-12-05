@@ -18,10 +18,10 @@ enum ZFavoriteStyle: Int {
 }
 
 
-let gFavoritesManager = ZFavoritesManager()
+let gFavorites = ZFavorites()
 
 
-class ZFavoritesManager: NSObject {
+class ZFavorites: NSObject {
 
 
     // MARK:- initialization
@@ -527,7 +527,7 @@ class ZFavoritesManager: NSObject {
         if !isBookmark {
             bookmark?.crossLink = iZone
 
-            gBookmarksManager.registerBookmark(bookmark!)
+            gBookmarks.registerBookmark(bookmark!)
         }
 
         return bookmark!
@@ -568,7 +568,7 @@ class ZFavoritesManager: NSObject {
                 favorite.needDestroy()
                 favorite.orphan()
 
-                gBookmarksManager.unregisterBookmark(favorite)
+                gBookmarks.unregisterBookmark(favorite)
 
                 return
             }

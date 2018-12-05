@@ -17,7 +17,7 @@ import CloudKit
 #endif
 
 
-var gSearchController: ZSearchController? { return gControllersManager.controllerForID(.search) as? ZSearchController }
+var gSearchController: ZSearchController? { return gControllers.controllerForID(.search) as? ZSearchController }
 
 
 class ZSearchController: ZGenericController, ZSearchFieldDelegate {
@@ -127,7 +127,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                             gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: [CKRecord]] ?? [:]
                             gSearchManager.state = (gSearchResultsController?.hasResults ?? false) ? .list : .find
                         
-                            gControllersManager.signalFor(nil, regarding: .eFound)
+                            gControllers.signalFor(nil, regarding: .eFound)
                         }
                     }
                 }
