@@ -86,18 +86,18 @@ class ZEventsManager: NSObject {
                         
                         if  let key = event.charactersIgnoringModifiers {
                             if !gIsEditingText {
-                                gEditingManager.handleKey(key, flags: flags, isWindow: true); return nil
+                                gGraphEditor.handleKey(key, flags: flags, isWindow: true); return nil
                             } else {
                                 switch key {
                                 case "a":    if isAny { gEditedTextWidget?.selectAllText(); return nil }
-                                case "d":    if isAny { gEditingManager.addIdeaFromSelectedText(); return nil }
-                                case "f":    if isAny { gEditingManager.search(); return nil }
+                                case "d":    if isAny { gGraphEditor.addIdeaFromSelectedText(); return nil }
+                                case "f":    if isAny { gGraphEditor.search(); return nil }
                                 case "/":    if isAny { gFocusManager.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }; return nil }
-                                case "?":    if isAny { gEditingManager.showKeyboardShortcuts(); return nil }
-                                case kSpace: if isAny { gEditingManager.addIdea(); return nil }
+                                case "?":    if isAny { gGraphEditor.showKeyboardShortcuts(); return nil }
+                                case kSpace: if isAny { gGraphEditor.addIdea(); return nil }
                                 default:
                                     if  let arrow = key.arrow {
-                                        gTextManager.handleArrow(arrow, flags: flags); return nil
+                                        gTextEditor.handleArrow(arrow, flags: flags); return nil
                                     }
                                 }
                             }

@@ -1,5 +1,5 @@
  //
-//  ZEditingManager.swift
+//  ZGraphEditor.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 10/29/16.
@@ -17,13 +17,13 @@ import CloudKit
 #endif
 
 
-let gEditingManager = ZEditingManager()
+let gGraphEditor = ZGraphEditor()
 
 
 // mix of zone mutations and web services requestss
 
 
-class ZEditingManager: NSObject {
+class ZGraphEditor: NSObject {
 
 
     class ZStalledEvent: NSObject {
@@ -99,7 +99,7 @@ class ZEditingManager: NSObject {
                     default:       break
                     }
                 } else if let a = arrow {
-                    gTextManager.handleArrow(a, flags: flags)
+                    gTextEditor.handleArrow(a, flags: flags)
                 }
             } else if  validateKey(key, flags) {
                 let    widget = gWidgetsManager.currentMovableWidget
@@ -410,7 +410,7 @@ class ZEditingManager: NSObject {
 
                 zone.zoneName             = name
 
-                gTextManager.updateText(inZone: zone)
+                gTextEditor.updateText(inZone: zone)
             }
         }
 
@@ -422,7 +422,7 @@ class ZEditingManager: NSObject {
         let  zone = gSelectionManager.firstGrab
         let trait = zone.trait(for: iType)
 
-        gTextManager.edit(trait)
+        gTextEditor.edit(trait)
     }
 
 
@@ -594,7 +594,7 @@ class ZEditingManager: NSObject {
         } else if isCommand {
             gSelectionManager.deselect()
         } else {
-            gTextManager.edit(gSelectionManager.currentMoveable)
+            gTextEditor.edit(gSelectionManager.currentMoveable)
         }
     }
 
@@ -848,7 +848,7 @@ class ZEditingManager: NSObject {
 
     func clickActionOnRevealDot(for iZone: Zone?, isCommand: Bool) {
         if  let zone = iZone {
-            gTextManager.stopCurrentEdit()
+            gTextEditor.stopCurrentEdit()
 
             for     grabbed in gSelectionManager.currentGrabs {
                 if  grabbed != zone && grabbed.spawnedBy(zone) {
@@ -958,7 +958,7 @@ class ZEditingManager: NSObject {
             grab .zoneName = iText
             grab.colorized = true
 
-            gTextManager.updateText(inZone: grab)
+            gTextEditor.updateText(inZone: grab)
         }
 
         if  grab.zoneName?.contains(kHalfLineOfDashes + " ") ?? false {
@@ -982,7 +982,7 @@ class ZEditingManager: NSObject {
             let childName = t.substring(with: range)
             w.text        = t.stringBySmartReplacing(range, with: "")
 
-            gTextManager.stopCurrentEdit()
+            gTextEditor.stopCurrentEdit()
             gSelectionManager.deselectGrabs()
             z.revealChildren()
             z.needChildren()
@@ -1503,7 +1503,7 @@ class ZEditingManager: NSObject {
             }
 
             parent.revealChildren()
-            gTextManager.stopCurrentEdit()
+            gTextEditor.stopCurrentEdit()
 
             if parent.count > 0 || parent.fetchableCount == 0 {
                 createAndAdd()

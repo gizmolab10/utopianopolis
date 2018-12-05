@@ -214,10 +214,10 @@ extension UIKeyModifierFlags {
 
 extension ZEditorController {
 
-    func    moveUpEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager  .moveUp() }
-    func  moveDownEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager  .moveUp(false) }
-    func  moveLeftEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager .moveOut() }
-    func moveRightEvent(_ iGesture: ZGestureRecognizer?) { gEditingManager.moveInto() }
+    func    moveUpEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor  .moveUp() }
+    func  moveDownEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor  .moveUp(false) }
+    func  moveLeftEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor .moveOut() }
+    func moveRightEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.moveInto() }
 
 }
 
@@ -302,7 +302,7 @@ extension UIView {
 
     override open func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
         if  event?.subtype == UIEventSubtype.motionShake && !gKeyboardIsVisible {
-            gEditingManager.recenter()
+            gGraphEditor.recenter()
         }
     }
 
@@ -316,7 +316,7 @@ extension UIWindow {
 
 
     override open var keyCommands: [UIKeyCommand]? {
-        if gTextManager.isEditing != nil {
+        if gTextEditor.isEditing != nil {
             return nil
         }
 
@@ -364,7 +364,7 @@ extension UIWindow {
             event     = UIKeyCommand(input: command.input, modifierFlags: flags, action: #selector(UIWindow.keyHandler), discoverabilityTitle: command.discoverabilityTitle!)
         }
 
-        gEditingManager.handleEvent(event, isWindow: true)
+        gGraphEditor.handleEvent(event, isWindow: true)
     }
 
 }

@@ -192,7 +192,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                     dragStartEvent(dot, iGesture)
                 } else if let zone = dot.widgetZone {
                     cleanupAfterDrag()
-                    gEditingManager.clickActionOnRevealDot(for: zone, isCommand: flags.isCommand)   // no dragging
+                    gGraphEditor.clickActionOnRevealDot(for: zone, isCommand: flags.isCommand)   // no dragging
                 }
             } else {                            // began
                 rubberbandStartEvent(location, iGesture)
@@ -225,14 +225,14 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                         let  dot = detectDotIn(widget, gesture) {
                         let isShift = gesture.isShiftDown
                         if  dot.isReveal {
-                            gEditingManager.clickActionOnRevealDot(for: zone, isCommand: isCommand)
+                            gGraphEditor.clickActionOnRevealDot(for: zone, isCommand: isCommand)
                         } else {
                             zone.dragDotClicked(isCommand: isCommand, isShift: isShift)
                         }
 
                         gControllersManager.signalFor(nil, regarding: .eDetails)
                     } else {
-                        gTextManager.stopCurrentEdit()
+                        gTextEditor.stopCurrentEdit()
                         gSelectionManager.deselect()
                         widget.widgetZone?.grab()
                         gControllersManager.signalFor(nil, regarding: .eSearch)
@@ -368,7 +368,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
                     if  let   gesture = iGesture as? ZKeyPanGestureRecognizer,
                         let isCommand = gesture.modifiers?.isCommand {
-                        gEditingManager.moveGrabbedZones(into: drop, at: dropAt, isCommand: isCommand) {
+                        gGraphEditor.moveGrabbedZones(into: drop, at: dropAt, isCommand: isCommand) {
                             self.restartGestureRecognition()
                             self.redrawAndSync()
                         }

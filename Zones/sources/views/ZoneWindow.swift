@@ -52,13 +52,13 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 
     override func keyDown(with event: ZEvent) {
         if  !isDuplicate(event: event),
-            !gEditingManager.handleEvent(event, isWindow: true) {
+            !gGraphEditor.handleEvent(event, isWindow: true) {
             super.keyDown(with: event)
         }
     }
     
     func windowWillReturnFieldEditor(_ sender: NSWindow, to client: Any?) -> Any? {
-        return gTextManager
+        return gTextEditor
     }
 
     #endif

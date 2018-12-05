@@ -78,7 +78,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func layoutText(isEditing: Bool = false) {
-        gTextManager.updateText(inZone: widgetZone, isEditing: isEditing)
+        gTextEditor.updateText(inZone: widgetZone, isEditing: isEditing)
         layoutTextField()
     }
 
@@ -124,13 +124,13 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-        if  gTextManager.allowAsFirstResponder(self), let zone = widgetZone,
+        if  gTextEditor.allowAsFirstResponder(self), let zone = widgetZone,
             super.becomeFirstResponder() {  // becomeFirstResponder is called first so delegate methods will be called
             if  gWorkMode != .graphMode {
                 gSearchManager.exitSearchMode()
             }
             
-            gTextManager.edit(zone)
+            gTextEditor.edit(zone)
             
             return true
         }
@@ -152,7 +152,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         if  var t = text {
             t = up ? t.uppercased() : t.lowercased()
 
-            gTextManager.assign(t, to: widgetZone)
+            gTextEditor.assign(t, to: widgetZone)
             updateGUI()
         }
     }

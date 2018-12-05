@@ -266,14 +266,14 @@ extension NSWindow {
 
     @IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.view(for: .Preferences)?.toggleAction(self) }
     @IBAction func displayHelp       (_ sender:      Any?) { openBrowserForFocusWebsite() }
-    @IBAction func printHere         (_ sender:      Any?) { gEditingManager.printHere() }
-    @IBAction func copy              (_ iItem: ZMenuItem?) { gEditingManager.copyToPaste() }
-    @IBAction func cut               (_ iItem: ZMenuItem?) { gEditingManager.delete() }
-    @IBAction func delete            (_ iItem: ZMenuItem?) { gEditingManager.delete() }
-    @IBAction func paste             (_ iItem: ZMenuItem?) { gEditingManager.paste() }
-    @IBAction func toggleSearch      (_ iItem: ZMenuItem?) { gEditingManager.search() }
-    @IBAction func undo              (_ iItem: ZMenuItem?) { gEditingManager.undoManager.undo() }
-    @IBAction func redo              (_ iItem: ZMenuItem?) { gEditingManager.undoManager.redo() }
+    @IBAction func printHere         (_ sender:      Any?) { gGraphEditor.printHere() }
+    @IBAction func copy              (_ iItem: ZMenuItem?) { gGraphEditor.copyToPaste() }
+    @IBAction func cut               (_ iItem: ZMenuItem?) { gGraphEditor.delete() }
+    @IBAction func delete            (_ iItem: ZMenuItem?) { gGraphEditor.delete() }
+    @IBAction func paste             (_ iItem: ZMenuItem?) { gGraphEditor.paste() }
+    @IBAction func toggleSearch      (_ iItem: ZMenuItem?) { gGraphEditor.search() }
+    @IBAction func undo              (_ iItem: ZMenuItem?) { gGraphEditor.undoManager.undo() }
+    @IBAction func redo              (_ iItem: ZMenuItem?) { gGraphEditor.undoManager.redo() }
 }
 
 
@@ -319,7 +319,7 @@ extension NSTextField {
     func selectFromStart(toEnd: Bool = false) {
         if  let t = text, let editor = currentEditor() {
             select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: toEnd ? t.length : 0)
-            gTextManager.clearOffset()
+            gTextEditor.clearOffset()
         }
     }
     
@@ -330,7 +330,7 @@ extension NSTextField {
     
     
     func selectAllText() {
-        gTextManager.deferEditingStateChange()
+        gTextEditor.deferEditingStateChange()
         selectFromStart(toEnd: true)
     }
     
@@ -352,15 +352,15 @@ extension ZoneTextWidget {
 
 
     override func textDidChange(_ iNote: Notification) {
-        gTextManager.prepareUndoForTextChange(undoManager) {
+        gTextEditor.prepareUndoForTextChange(undoManager) {
             self.textDidChange(iNote)
         }
 
         if  text?.contains(kHalfLineOfDashes + " - ") ?? false {
             widgetZone?.zoneName = kLineOfDashes
 
-            gTextManager.updateText(inZone: widgetZone)
-            gTextManager.stopCurrentEdit()
+            gTextEditor.updateText(inZone: widgetZone)
+            gTextEditor.stopCurrentEdit()
         } else {
             updateGUI()
         }
@@ -368,12 +368,12 @@ extension ZoneTextWidget {
 
 
     override func textDidEndEditing(_ notification: Notification) {
-        if  let       number = notification.userInfo?["NSTextMovement"] as? NSNumber, !gTextManager.isEditingStateChanging {
+        if  let       number = notification.userInfo?["NSTextMovement"] as? NSNumber, !gTextEditor.isEditingStateChanging {
             let        value = number.intValue
             let      isShift = NSEvent.modifierFlags.isShift
             var key: String?
 
-            gTextManager.stopCurrentEdit(forceCapture: isShift)
+            gTextEditor.stopCurrentEdit(forceCapture: isShift)
 
             switch value {
             case NSBacktabTextMovement: key = kSpace
@@ -383,7 +383,7 @@ extension ZoneTextWidget {
             }
 
             FOREGROUND { // execute on next cycle of runloop
-                gEditingManager.handleKey(key, flags: ZEventFlags(), isWindow: true)
+                gGraphEditor.handleKey(key, flags: ZEventFlags(), isWindow: true)
             }
         }
     }

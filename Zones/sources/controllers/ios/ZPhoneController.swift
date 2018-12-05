@@ -44,7 +44,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
 
 
     @IBAction func goLeftButtonAction(iButton: UIButton) {
-        gEditingManager.moveOut(selectionOnly: true, extreme: false)
+        gGraphEditor.moveOut(selectionOnly: true, extreme: false)
         update()
     }
 

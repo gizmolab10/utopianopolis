@@ -87,13 +87,13 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 
 
     open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
-        return gEditingManager.validateKey(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask)
+        return gGraphEditor.validateKey(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask)
     }
 
     
     @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
         if  gWorkMode == .graphMode {
-            gEditingManager.handleMenuItem(iItem)
+            gGraphEditor.handleMenuItem(iItem)
         }
     }
 

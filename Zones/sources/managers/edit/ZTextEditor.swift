@@ -1,5 +1,5 @@
 //
-//  ZTextManager.swift
+//  ZTextEditor.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 2/19/18.
@@ -15,9 +15,9 @@ import UIKit
 #endif
 
 
-let gTextManager = ZTextManager()
-var gIsEditingText: Bool { return gTextManager.currentEdit != nil }
-var gEditedTextWidget: ZoneTextWidget? { return gTextManager.currentTextWidget }
+let gTextEditor = ZTextEditor()
+var gIsEditingText: Bool { return gTextEditor.currentEdit != nil }
+var gEditedTextWidget: ZoneTextWidget? { return gTextEditor.currentTextWidget }
 
 
 class ZTextPack: NSObject {
@@ -219,7 +219,7 @@ class ZTextPack: NSObject {
 }
 
 
-class ZTextManager: ZTextView {
+class ZTextEditor: ZTextView {
 
     
     var currentOffset: CGFloat?
@@ -340,7 +340,7 @@ class ZTextManager: ZTextView {
     override func doCommand(by selector: Selector) {
         switch selector {
         case #selector(insertNewline): stopCurrentEdit()
-        case #selector(insertTab):     if currentEdit?.adequatelyPaused ?? false { gEditingManager.addNext() { iChild in iChild.edit() } } // stupid OSX issues tab twice (to create the new idea, then AFTERWARDS
+        case #selector(insertTab):     if currentEdit?.adequatelyPaused ?? false { gGraphEditor.addNext() { iChild in iChild.edit() } } // stupid OSX issues tab twice (to create the new idea, then AFTERWARDS
         default:                       super.doCommand(by: selector)
         }
     }
@@ -348,7 +348,7 @@ class ZTextManager: ZTextView {
 
     @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
         if  gWorkMode == .graphMode {
-            gEditingManager.handleMenuItem(iItem)
+            gGraphEditor.handleMenuItem(iItem)
         }
     }
     
@@ -412,7 +412,7 @@ class ZTextManager: ZTextView {
     func stopEditAndMoveOut(_ iMoveOut: Bool) {
         if  iMoveOut {
             quickStopCurrentEdit(clearOffset: true)
-            gEditingManager.moveOut {
+            gGraphEditor.moveOut {
                 let grabbed = gSelectionManager.firstGrab
 
                 gSelectionManager.clearGrab()
@@ -425,7 +425,7 @@ class ZTextManager: ZTextView {
             }
         } else if currentlyEditingZone?.children.count ?? 0 > 0 {
             quickStopCurrentEdit(clearOffset: true)
-            gEditingManager.moveInto {
+            gGraphEditor.moveInto {
                 self.edit(gSelectionManager.firstGrab)
                 self.setCursor(at: 0.0)
             }
@@ -438,7 +438,7 @@ class ZTextManager: ZTextView {
         
         applyPreservingEdit {
             quickStopCurrentEdit()
-            gEditingManager.moveUp(iMoveUp, targeting: currentOffset)
+            gGraphEditor.moveUp(iMoveUp, targeting: currentOffset)
         }
 
         let zone  = gSelectionManager.firstGrab

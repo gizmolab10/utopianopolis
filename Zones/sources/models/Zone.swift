@@ -702,7 +702,7 @@ class Zone : ZRecord {
     func  addToGrab() { gSelectionManager.addToGrab(self) }
     func     ungrab() { gSelectionManager   .ungrab(self) }
     func       grab() { gSelectionManager     .grab(self) }
-    func       edit() { gTextManager          .edit(self) }
+    func       edit() { gTextEditor          .edit(self) }
 
 
     func dragDotClicked(isCommand: Bool, isShift: Bool) {
@@ -713,7 +713,7 @@ class Zone : ZRecord {
         if  shouldFocus {
             grab() // narrow selection to just this one zone
             gFocusManager.focus(kind: .eSelected) {
-                gEditingManager.redrawSyncRedraw()
+                gGraphEditor.redrawSyncRedraw()
             }
         } else if isGrabbed {
             ungrab()

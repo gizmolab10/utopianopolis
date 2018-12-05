@@ -75,12 +75,12 @@ class ZActionsController : ZGenericController {
 
             switch actionTitle {
             case .eRefresh: refresh()
-            case .eCut:     gEditingManager.delete()
-            case .eNew:     gEditingManager.addIdea()
+            case .eCut:     gGraphEditor.delete()
+            case .eNew:     gGraphEditor.addIdea()
             case .eHang:    gBatchManager.unHang()
-            case .eUndo:    gEditingManager.undoManager.undo()
-            case .eNext:    gEditingManager.addNext() { iChild in iChild.edit() }
-            case .eFocus:   gFocusManager.focus(kind: .eSelected) { gEditingManager.redrawSyncRedraw() }
+            case .eUndo:    gGraphEditor.undoManager.undo()
+            case .eNext:    gGraphEditor.addNext() { iChild in iChild.edit() }
+            case .eFocus:   gFocusManager.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
             case .eTravel:  gFocusManager.maybeTravelThrough(gSelectionManager.currentMoveable)
             case .ePrefs:   break
             case .eHelp:    break

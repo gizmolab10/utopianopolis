@@ -207,7 +207,7 @@ class ZSelectionManager: NSObject {
 
         if currentGrabs.count > 0 {
             movable = firstGrab
-        } else if let zone = gTextManager.currentlyEditingZone {
+        } else if let zone = gTextEditor.currentlyEditingZone {
             movable = zone
         }
 
@@ -225,7 +225,7 @@ class ZSelectionManager: NSObject {
 
     func clearGrab()   { currentGrabs          = [ ] }
     func clearPaste()  { pasteableZones        = [:] }
-    func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || gTextManager.currentlyEditingZone == zone }
+    func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || gTextEditor.currentlyEditingZone == zone }
     func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
 
 
@@ -274,7 +274,7 @@ class ZSelectionManager: NSObject {
 
 
     func deselect(retaining zones: [Zone]? = nil) {
-        gTextManager.stopCurrentEdit()
+        gTextEditor.stopCurrentEdit()
         deselectGrabs(retaining: zones)
     }
 
@@ -311,7 +311,7 @@ class ZSelectionManager: NSObject {
 
     func addToGrab(_ iZone: Zone?, onlyOne: Bool = false) {
         if  let zone = iZone, (!currentGrabs.contains(zone) || onlyOne) { // if onlyOne AND already grabbed, shrink grab list to iZone
-            gTextManager.stopCurrentEdit()
+            gTextEditor.stopCurrentEdit()
 
             if  onlyOne {
                 deselectGrabs()
