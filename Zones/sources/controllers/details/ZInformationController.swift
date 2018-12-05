@@ -69,13 +69,13 @@ class ZInformationController: ZGenericController {
     
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
-        if ![.search, .found].contains(iKind) {
+        if ![.eSearch, .eFound].contains(iKind) {
             cloudStatusLabel?.text = cloudStatusText
             totalCountLabel? .text = totalCountsText
             graphNameLabel?  .text = graphNameText
             versionLabel?    .text = versionText
 
-            if iKind != .startup {
+            if iKind != .eStartup {
                 levelLabel?  .text = "your selection is at level \(currentZone.level + 1)"
             }
         }

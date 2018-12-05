@@ -135,10 +135,10 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             specificWidget   = widget
             specificIndex    = zone.siblingIndex
             specificView     = specificWidget?.superview
-            recursing        = [.data, .relayout].contains(iKind)
+            recursing        = [.eData, .eRelayout].contains(iKind)
         }
 
-        if iKind == .relayout {
+        if iKind == .eRelayout {
             specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isMain: inMainGraph, visited: [])
         } else {
             specificWidget?.setNeedsDisplay()
@@ -147,11 +147,11 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
 
     
     override func handleSignal(_ iSignalObject: Any?, iKind: ZSignalKind) {
-        if [.datum, .data, .relayout].contains(iKind) { // ignore for preferences, search, information, startup
+        if [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
             if gWorkMode != .graphMode {
                 editorView?.snp.removeConstraints()
             } else if !gIsEditingText {
-                if iKind == .relayout {
+                if iKind == .eRelayout {
                     gWidgetsManager.clearRegistry()
                 }
 
@@ -186,7 +186,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
             } else if state != .began {         // ended, cancelled or failed
                 rubberbandUpdate(nil)
-                gControllersManager.signalFor(nil, regarding: .preferences) // so color well gets updated
+                gControllersManager.signalFor(nil, regarding: .ePreferences) // so color well gets updated
             } else if let dot = detectDot(iGesture) {
                 if  !dot.isReveal {
                     dragStartEvent(dot, iGesture)
@@ -230,16 +230,16 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                             zone.dragDotClicked(isCommand: isCommand, isShift: isShift)
                         }
 
-                        gControllersManager.signalFor(nil, regarding: .details)
+                        gControllersManager.signalFor(nil, regarding: .eDetails)
                     } else {
                         gTextManager.stopCurrentEdit()
                         gSelectionManager.deselect()
                         widget.widgetZone?.grab()
-                        gControllersManager.signalFor(nil, regarding: .search)
+                        gControllersManager.signalFor(nil, regarding: .eSearch)
                     }
                 } else { // click on background
                     gSelectionManager.deselect()
-                    gControllersManager.signalFor(nil, regarding: .datum)
+                    gControllersManager.signalFor(nil, regarding: .eDatum)
                 }
             }
 
@@ -278,7 +278,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             cleanupAfterDrag()
             
             if doneState.contains(iGesture!.state) {
-                gControllersManager.signalFor(nil, regarding: .preferences) // so color well gets updated
+                gControllersManager.signalFor(nil, regarding: .ePreferences) // so color well gets updated
                 restartGestureRecognition()
             }
         }

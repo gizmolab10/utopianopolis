@@ -134,6 +134,7 @@ class ZEditingManager: NSObject {
                     case "n":      alphabetize(isOption)
                     case "o":      if isCommand { if isOption { gFileManager.showInFinder() } else { gFileManager.open() } } else { orderByLength(isOption) }
                     case "p":      printHere()
+                    case "q":      ZApplication.shared.terminate(self)
                     case "r":      reverse()
                     case "s":      if isCommand { gFileManager.saveAs() } else { selectCurrentFavorite() }
                     case "w":      rotateWritable()
@@ -170,7 +171,7 @@ class ZEditingManager: NSObject {
             gInsertionMode = flag ? .follow : .precede
         }
 
-        gControllersManager.signalFor(nil, regarding: .preferences)
+        gControllersManager.signalFor(nil, regarding: .ePreferences)
     }
     
 
@@ -348,7 +349,7 @@ class ZEditingManager: NSObject {
         gHere.grab()
         gHere.revealChildren()
         gFavoritesManager.updateFavorites()
-        gControllersManager.signalFor(nil, regarding: .relayout)
+        gControllersManager.signalFor(nil, regarding: .eRelayout)
     }
 
 
@@ -528,7 +529,7 @@ class ZEditingManager: NSObject {
         if  gDatabaseID != .favoritesID {
             gWorkMode = gWorkMode == .searchMode ? .graphMode : .searchMode
 
-            gControllersManager.signalFor(nil, regarding: .search)
+            gControllersManager.signalFor(nil, regarding: .eSearch)
         }
     }
 
@@ -583,7 +584,7 @@ class ZEditingManager: NSObject {
             }
         }
 
-        gControllersManager.signalFor(nil, regarding: .relayout)
+        gControllersManager.signalFor(nil, regarding: .eRelayout)
     }
 
 
@@ -600,7 +601,7 @@ class ZEditingManager: NSObject {
 
     func refetch() {
         gBatchManager.refetch { iSame in
-            gControllersManager.signalFor(nil, regarding: .relayout)
+            gControllersManager.signalFor(nil, regarding: .eRelayout)
         }
     }
 
@@ -618,7 +619,7 @@ class ZEditingManager: NSObject {
                         iAncestor.revealChildren()
                     }
 
-                    gControllersManager.signalFor(nil, regarding: .relayout)
+                    gControllersManager.signalFor(nil, regarding: .eRelayout)
                 }
             }
 
@@ -890,7 +891,7 @@ class ZEditingManager: NSObject {
         if !parent.isBookmark,
             parent.userCanMutateProgeny {
             addIdeaIn(parent, at: gInsertionsFollow ? nil : 0) { iChild in
-                gControllersManager.signalFor(parent, regarding: .relayout) {
+                gControllersManager.signalFor(parent, regarding: .eRelayout) {
                     iChild?.edit()
                 }
             }
@@ -930,7 +931,7 @@ class ZEditingManager: NSObject {
             addIdeaIn(parent, at: index, with: name) { iChild in
                 if let child = iChild {
                     if !containing {
-                        gControllersManager.signalFor(nil, regarding: .relayout) {
+                        gControllersManager.signalFor(nil, regarding: .eRelayout) {
                             onCompletion?(child)
                         }
                     } else {
@@ -1009,7 +1010,7 @@ class ZEditingManager: NSObject {
 
                 bookmark?.grab()
                 bookmark?.markNotFetched()
-                gControllersManager.signalFor(nil, regarding: .relayout)
+                gControllersManager.signalFor(nil, regarding: .eRelayout)
                 gBatchManager.sync { iSame in
                 }
             }
@@ -1369,7 +1370,7 @@ class ZEditingManager: NSObject {
         } else {
             zone.needChildren()
             zone.revealChildren()
-            gControllersManager.signalFor(nil, regarding: .data)
+            gControllersManager.signalFor(nil, regarding: .eData)
 
             gBatchManager.children(.restore) { iSame in
                 if  zone.count > 0,
@@ -2010,7 +2011,7 @@ class ZEditingManager: NSObject {
                     if  same && (parent?.count ?? 0) > 1 && (setHere || iCalledCloud) {
                         self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme, extend: extend)
                     } else {
-                        gControllersManager.signalFor(nil, regarding: .relayout)
+                        gControllersManager.signalFor(nil, regarding: .eRelayout)
                     }
                 }
             }
@@ -2124,7 +2125,7 @@ class ZEditingManager: NSObject {
                             gSelectionManager.addMultipleToGrab(grabThese)
                         }
                         
-                        gControllersManager.signalFor(nil, regarding: .data)
+                        gControllersManager.signalFor(nil, regarding: .eData)
                     }
                 } else if !isConfined,
                     var index  = targetZones.index(of: zone) {

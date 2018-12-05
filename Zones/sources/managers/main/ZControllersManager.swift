@@ -29,19 +29,19 @@ enum ZControllerID: Int {
 
 
 enum ZSignalKind: Int {
-    case data
-    case main
-    case datum
-    case debug
-    case error
-    case found
-    case search
-    case startup
-    case details
-    case relayout
-    case appearance
-    case information
-    case preferences
+    case eData
+    case eMain
+    case eDatum
+    case eDebug
+    case eError
+    case eFound
+    case eSearch
+    case eStartup
+    case eDetails
+    case eRelayout
+    case eAppearance
+    case eInformation
+    case ePreferences
 }
 
 
@@ -84,7 +84,7 @@ class ZControllersManager: NSObject {
         gBatchManager.usingDebugTimer = true
 
         gRemoteStoresManager.clear()
-        self.signalFor(nil, regarding: .relayout)
+        self.signalFor(nil, regarding: .eRelayout)
 
         gBatchManager.startUp { iSame in
             FOREGROUND {
@@ -95,7 +95,7 @@ class ZControllersManager: NSObject {
                 gFavoritesManager.updateFavorites()
                 gRemoteStoresManager.updateLastSyncDates()
                 gRemoteStoresManager.recount()
-                self.signalFor(nil, regarding: .relayout)
+                self.signalFor(nil, regarding: .eRelayout)
                 self.requestFeedback()
                 
                 gBatchManager.finishUp { iSame in
@@ -103,7 +103,7 @@ class ZControllersManager: NSObject {
                         gBatchManager.usingDebugTimer = false
 
                         self.blankScreenDebug()
-                        self.signalFor(nil, regarding: .relayout)
+                        self.signalFor(nil, regarding: .eRelayout)
                         gRemoteStoresManager.saveAll()
                     }
                 }
@@ -199,12 +199,12 @@ class ZControllersManager: NSObject {
                 }
 
                 switch regarding {
-                case .main:        if isMain        { closure() }
-                case .debug:       if isDebug       { closure() }
-                case .details:     if isDetail      { closure() }
-                case .information: if isInformation { closure() }
-                case .preferences: if isPreferences { closure() }
-                default:                              closure()
+                case .eMain:        if isMain        { closure() }
+                case .eDebug:       if isDebug       { closure() }
+                case .eDetails:     if isDetail      { closure() }
+                case .eInformation: if isInformation { closure() }
+                case .ePreferences: if isPreferences { closure() }
+                default:                               closure()
                 }
             }
 

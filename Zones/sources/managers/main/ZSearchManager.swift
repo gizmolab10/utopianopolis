@@ -37,8 +37,8 @@ class ZSearchManager: NSObject {
         gWorkMode = .graphMode
         state     = .not
 
-        gControllersManager.signalFor(nil, regarding: .found)
-        gControllersManager.signalFor(nil, regarding: .search)
+        gControllersManager.signalFor(nil, regarding: .eFound)
+        gControllersManager.signalFor(nil, regarding: .eSearch)
     }
 
 

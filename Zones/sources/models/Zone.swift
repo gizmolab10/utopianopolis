@@ -723,7 +723,7 @@ class Zone : ZRecord {
             grab()
         }
 
-        gControllersManager.signalFor(nil, regarding: .details)
+        gControllersManager.signalFor(nil, regarding: .eDetails)
     }
 
     override func debug(_  iMessage: String) {

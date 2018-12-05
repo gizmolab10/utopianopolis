@@ -30,7 +30,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
         contentMinSize    = CGSize(width: 300, height: 300) // gWindowSize
 
         observer = observe(\.effectiveAppearance) { _, _  in
-            gControllersManager.signalFor(nil, regarding: .appearance)
+            gControllersManager.signalFor(nil, regarding: .eAppearance)
         }
     }
 
@@ -39,7 +39,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
         if  let    size = contentView?.bounds.size {
             gWindowSize = size
 
-            gControllersManager.signalFor(nil, regarding: .debug)
+            gControllersManager.signalFor(nil, regarding: .eDebug)
         }
     }
 

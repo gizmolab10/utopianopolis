@@ -539,7 +539,7 @@ class ZoneWidget: ZView {
             
             if zone == gFavoritesRoot {
                 FOREGROUND {
-                    gControllersManager.signalFor(nil, regarding: .main) // update UI elements for searching
+                    gControllersManager.signalFor(nil, regarding: .eMain) // update UI elements for searching
                 }
             }
 

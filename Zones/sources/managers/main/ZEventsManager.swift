@@ -47,7 +47,7 @@ class ZEventsManager: NSObject {
     
     
     func handleDarkModeChange(iNote: Notification) {
-        gControllersManager.signalFor(nil, regarding: .relayout)
+        gControllersManager.signalFor(nil, regarding: .eRelayout)
     }
     
     

@@ -140,10 +140,10 @@ class ZRemoteStoresManager: NSObject {
 
                 if  zone.showingChildren {
                     FOREGROUND {
-                        gControllersManager.signalFor(parent, regarding: .relayout)
+                        gControllersManager.signalFor(parent, regarding: .eRelayout)
 
                         gBatchManager.children(.restore) { iSame in
-                            gControllersManager.signalFor(parent, regarding: .relayout)
+                            gControllersManager.signalFor(parent, regarding: .eRelayout)
                         }
                     }
                 }

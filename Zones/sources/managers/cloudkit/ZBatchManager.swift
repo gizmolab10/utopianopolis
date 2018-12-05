@@ -323,7 +323,7 @@ class ZBatchManager: ZOnboardingManager {
                 }
 
                 invokeForIndex?(0)
-                gControllersManager.signalFor(nil, regarding: .information)
+                gControllersManager.signalFor(nil, regarding: .eInformation)
             }
         }
     }

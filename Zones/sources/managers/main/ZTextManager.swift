@@ -416,7 +416,7 @@ class ZTextManager: ZTextView {
                 let grabbed = gSelectionManager.firstGrab
 
                 gSelectionManager.clearGrab()
-                gControllersManager.signalFor(nil, regarding: .relayout) {
+                gControllersManager.signalFor(nil, regarding: .eRelayout) {
                     FOREGROUND(after: 0.4) {
                         self.edit(grabbed)
                         self.setCursor(at: 100000000.0)

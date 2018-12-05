@@ -43,9 +43,9 @@ class ZMainController: ZGenericController {
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 
         switch iKind {
-        case .found:
+        case .eFound:
             searchResultsView?    .isHidden = hideResults
-        case .search:
+        case .eSearch:
             searchBoxView?        .isHidden = hideSearch
 
             if  hideSearch {

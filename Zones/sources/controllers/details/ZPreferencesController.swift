@@ -39,7 +39,7 @@ class ZPreferencesController: ZGenericController {
 
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
-        if  iKind != .startup {
+        if  iKind != .eStartup {
             let                           grabbed = gSelectionManager.firstGrab
             insertionModeControl?.selectedSegment = gInsertionMode.rawValue
             browsingModeControl? .selectedSegment = gBrowsingMode.rawValue
@@ -72,7 +72,7 @@ class ZPreferencesController: ZGenericController {
             default:           break
             }
 
-            gControllersManager.signalFor(nil, regarding: .relayout)
+            gControllersManager.signalFor(nil, regarding: .eRelayout)
         }
     }
 
@@ -88,7 +88,7 @@ class ZPreferencesController: ZGenericController {
             default:             break
             }
 
-            gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .relayout) {}
+            gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .eRelayout) {}
         }
     }
 
@@ -99,12 +99,12 @@ class ZPreferencesController: ZGenericController {
             UNDO(self) { iUndoSelf in
                 grab.color = color
 
-                gControllersManager.syncToCloudAfterSignalFor(grab, regarding: .relayout) {}
+                gControllersManager.syncToCloudAfterSignalFor(grab, regarding: .eRelayout) {}
             }
         }
 
         grab.clearColor()
-        gControllersManager.syncToCloudAfterSignalFor(grab, regarding: .relayout) {}
+        gControllersManager.syncToCloudAfterSignalFor(grab, regarding: .eRelayout) {}
     }
 
 
@@ -112,7 +112,7 @@ class ZPreferencesController: ZGenericController {
         let          selection = iControl.selectedSegment
         if  let     identifier = convertFromOptionalNSUserInterfaceItemIdentifier(iControl.identifier) {
             switch (identifier) {
-            case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; gControllersManager.signalFor(nil, regarding: .relayout)
+            case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; gControllersManager.signalFor(nil, regarding: .eRelayout)
             case "browsing":  gBrowsingMode  = ZBrowsingMode (rawValue: selection)!
             case "direction": gInsertionMode = ZInsertionMode(rawValue: selection)!
             default: break

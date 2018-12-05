@@ -95,7 +95,7 @@ class ZDebugController: ZGenericController {
 
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
-        if ![.search, .found].contains(iKind) {
+        if ![.eSearch, .eFound].contains(iKind) {
             grab                   = gSelectionManager.firstGrab
             nameLabel?       .text = grab?.unwrappedName
             recordLabel?     .text = grab?   .recordName

@@ -34,7 +34,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
-        if  iKind == .search && gWorkMode == .searchMode {
+        if  iKind == .eSearch && gWorkMode == .searchMode {
             gSearchManager.state = .entry
 
             FOREGROUND(after: 0.2) {
@@ -127,7 +127,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                             gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: [CKRecord]] ?? [:]
                             gSearchManager.state = (gSearchResultsController?.hasResults ?? false) ? .list : .find
                         
-                            gControllersManager.signalFor(nil, regarding: .found)
+                            gControllersManager.signalFor(nil, regarding: .eFound)
                         }
                     }
                 }

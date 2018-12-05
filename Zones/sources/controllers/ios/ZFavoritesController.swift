@@ -59,7 +59,7 @@ class ZFavoritesController : ZGenericController {
         let favorite = favorites[index]
 
         gFocusManager.focus(through: favorite) {
-            gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .relayout, onCompletion: nil)
+            gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .eRelayout, onCompletion: nil)
         }
     }
 
