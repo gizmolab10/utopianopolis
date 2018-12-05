@@ -1,6 +1,6 @@
 //
 //  ZEditorController.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 7/2/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -152,7 +152,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                 editorView?.snp.removeConstraints()
             } else if !gIsEditingText {
                 if iKind == .eRelayout {
-                    gWidgetsManager.clearRegistry()
+                    gWidgets.clearRegistry()
                 }
 
                 layoutForCurrentScrollOffset()
@@ -166,7 +166,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     
     @objc func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
         if  gWorkMode        != .graphMode {
-            gSearchManager.exitSearchMode()
+            gSearching.exitSearchMode()
         }
         
         if let gesture = iGesture as? ZKeyPanGestureRecognizer,
@@ -203,7 +203,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     
     @objc func clickEvent(_ iGesture: ZGestureRecognizer?) {
         if  gWorkMode != .graphMode {
-            gSearchManager.exitSearchMode()
+            gSearching.exitSearchMode()
         }
         
         if let gesture = iGesture as? ZKeyClickGestureRecognizer {
@@ -233,12 +233,12 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                         gControllers.signalFor(nil, regarding: .eDetails)
                     } else {
                         gTextEditor.stopCurrentEdit()
-                        gSelectionManager.deselect()
+                        gSelecting.deselect()
                         widget.widgetZone?.grab()
                         gControllers.signalFor(nil, regarding: .eSearch)
                     }
                 } else { // click on background
-                    gSelectionManager.deselect()
+                    gSelecting.deselect()
                     gControllers.signalFor(nil, regarding: .eDatum)
                 }
             }
@@ -310,12 +310,12 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         //////////////////////
         
         if let gesture = iGesture, gesture.isShiftDown {
-            rubberbandPreGrabs.append(contentsOf: gSelectionManager.currentGrabs)
+            rubberbandPreGrabs.append(contentsOf: gSelecting.currentGrabs)
         } else {
             rubberbandPreGrabs.removeAll()
         }
         
-        gSelectionManager.deselect(retaining: rubberbandPreGrabs)
+        gSelecting.deselect(retaining: rubberbandPreGrabs)
     }
 
 
@@ -324,7 +324,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             if  draggedZone.userCanMove,
                 let (isMain, dropNearest, location) = widgetNearest(iGesture) {
                 var      dropZone = dropNearest.widgetZone
-                let dropIsGrabbed = gSelectionManager.currentGrabs.contains(dropZone!)
+                let dropIsGrabbed = gSelecting.currentGrabs.contains(dropZone!)
                 let     dropIndex = dropZone?.siblingIndex
                 let          here = isMain ? gHere : gFavoritesRoot
                 let      dropHere = dropZone == here
@@ -445,9 +445,9 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             restartGestureRecognition()
         } else {
             editorView?.rubberbandRect = rect
-            let                widgets = gWidgetsManager.visibleWidgets
+            let                widgets = gWidgets.visibleWidgets
 
-            gSelectionManager.deselectGrabs(retaining: rubberbandPreGrabs)
+            gSelecting.deselectGrabs(retaining: rubberbandPreGrabs)
 
             for widget in widgets {
                 if  let    hitRect = widget.hitRect {
@@ -524,7 +524,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         if  let               e = editorView,
             let        location = iGesture?.location(in: e),
             e.bounds.contains(location) {
-            let         widgets = gWidgetsManager.widgets.values
+            let         widgets = gWidgets.widgets.values
             for         widget in widgets {
                 let        rect = widget.convert(widget.outerHitRect, to: e)
 

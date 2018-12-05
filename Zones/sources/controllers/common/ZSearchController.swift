@@ -1,6 +1,6 @@
 //
 //  ZSearchController.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 12/15/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -35,7 +35,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
         if  iKind == .eSearch && gWorkMode == .searchMode {
-            gSearchManager.state = .entry
+            gSearching.state = .entry
 
             FOREGROUND(after: 0.2) {
                 self.searchBox?.becomeFirstResponder()
@@ -48,11 +48,11 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         let   string = event.input
         let      key = string[string.startIndex].description
         let isReturn = key == "\r"
-        let    state = gSearchManager.state
+        let    state = gSearching.state
         let  isEntry = state == .entry
         
         if        !isReturn && isEntry {
-            gSearchManager.state = .find
+            gSearching.state = .find
         } else if  isReturn { // && state == .find {
             if  let text = searchBoxText {
                 performSearch(for: text)
@@ -81,7 +81,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         self.searchBox?.text = ""
 
         searchBox?.resignFirstResponder()
-        gSearchManager.exitSearchMode()
+        gSearching.exitSearchMode()
     }
 
 
@@ -125,7 +125,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                         if  remaining == 0 {
                             self.searchBox?.text = ""
                             gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: [CKRecord]] ?? [:]
-                            gSearchManager.state = (gSearchResultsController?.hasResults ?? false) ? .list : .find
+                            gSearching.state = (gSearchResultsController?.hasResults ?? false) ? .list : .find
                         
                             gControllers.signalFor(nil, regarding: .eFound)
                         }

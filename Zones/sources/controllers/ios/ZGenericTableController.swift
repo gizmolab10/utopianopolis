@@ -1,9 +1,9 @@
 //
 //  ZGenericTableController.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 5/25/17.
-//  Copyright © 2017 Zones. All rights reserved.
+//  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
 

@@ -1,9 +1,9 @@
 //
 //  ZActionsController.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 9/24/17.
-//  Copyright © 2017 Zones. All rights reserved.
+//  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
 
@@ -81,7 +81,7 @@ class ZActionsController : ZGenericController {
             case .eUndo:    gGraphEditor.undoManager.undo()
             case .eNext:    gGraphEditor.addNext() { iChild in iChild.edit() }
             case .eFocus:   gFocusManager.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
-            case .eTravel:  gFocusManager.maybeTravelThrough(gSelectionManager.currentMoveable)
+            case .eTravel:  gFocusManager.maybeTravelThrough(gSelecting.currentMoveable)
             case .ePrefs:   break
             case .eHelp:    break
             }

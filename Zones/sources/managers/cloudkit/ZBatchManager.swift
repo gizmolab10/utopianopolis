@@ -1,6 +1,6 @@
 //
 //  ZBatchManager.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 11/21/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -53,7 +53,7 @@ class ZBatchManager: ZOnboardingManager {
 
 
         override init() {
-            snapshot = gSelectionManager.snapshot
+            snapshot = gSelecting.snapshot
         }
 
 
@@ -65,7 +65,7 @@ class ZBatchManager: ZOnboardingManager {
 
 
         func fire() {
-            completion?(snapshot == gSelectionManager.snapshot)
+            completion?(snapshot == gSelecting.snapshot)
         }
     }
 

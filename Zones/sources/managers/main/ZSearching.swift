@@ -1,9 +1,9 @@
 //
-//  ZSearchManager.swift
-//  Zones
+//  ZSearching.swift
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 10/6/17.
-//  Copyright © 2017 Zones. All rights reserved.
+//  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
 
@@ -24,10 +24,10 @@ enum ZSearchState: Int {
 }
 
 
-let gSearchManager = ZSearchManager()
+let gSearching = ZSearching()
 
 
-class ZSearchManager: NSObject {
+class ZSearching: NSObject {
 
 
     var state = ZSearchState.not

@@ -1,9 +1,9 @@
 //
 //  ZInformationController.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 4/13/17.
-//  Copyright © 2017 Zones. All rights reserved.
+//  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
 
@@ -24,7 +24,7 @@ class ZInformationController: ZGenericController {
     @IBOutlet var   graphNameLabel: ZTextField?
     @IBOutlet var     versionLabel: ZTextField?
     @IBOutlet var       levelLabel: ZTextField?
-    var                currentZone: Zone    { return gSelectionManager.rootMostMoveable }
+    var                currentZone: Zone    { return gSelecting.rootMostMoveable }
     override var   backgroundColor: CGColor { return gDarkishBackgroundColor }
 
 

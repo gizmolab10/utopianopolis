@@ -1,9 +1,9 @@
 //
 //  ZEnumerations.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 1/31/18.
-//  Copyright © 2018 Zones. All rights reserved.
+//  Copyright © 2018 Jonathan Sand. All rights reserved.
 //
 
 

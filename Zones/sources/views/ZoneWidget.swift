@@ -1,6 +1,6 @@
 //
 //  ZoneWidget.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 10/7/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -68,7 +68,7 @@ class ZoneWidget: ZView {
             backgroundColor = kClearColor
         #endif
 
-        gWidgetsManager.registerWidget(self)
+        gWidgets.registerWidget(self)
         addTextView()
         textWidget.layoutText()
         layoutDots()

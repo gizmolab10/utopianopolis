@@ -1,6 +1,6 @@
 //
-//  ZWidgetsManager.swift
-//  Zones
+//  ZWidgets.swift
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 11/20/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -11,16 +11,16 @@ import Foundation
 import CloudKit
 
 
-let gWidgetsManager = ZWidgetsManager()
+let gWidgets = ZWidgets()
 
 
-class ZWidgetsManager: NSObject {
+class ZWidgets: NSObject {
 
 
     var       widgets: [Int : ZoneWidget]  = [:]
     var currentEditingWidget: ZoneWidget? { return widgetForZone(gTextEditor.currentlyEditingZone) }
-    var currentMovableWidget: ZoneWidget? { return widgetForZone(gSelectionManager.currentMoveable) }
-    var firstGrabbableWidget: ZoneWidget? { return widgetForZone(gSelectionManager.firstGrab) }
+    var currentMovableWidget: ZoneWidget? { return widgetForZone(gSelecting.currentMoveable) }
+    var firstGrabbableWidget: ZoneWidget? { return widgetForZone(gSelecting.firstGrab) }
 
 
     var visibleWidgets: [ZoneWidget] {

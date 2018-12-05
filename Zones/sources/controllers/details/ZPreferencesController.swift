@@ -1,9 +1,9 @@
 //
 //  ZPreferencesController.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 4/13/17.
-//  Copyright © 2017 Zones. All rights reserved.
+//  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
 
@@ -40,7 +40,7 @@ class ZPreferencesController: ZGenericController {
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
         if  iKind != .eStartup {
-            let                           grabbed = gSelectionManager.firstGrab
+            let                           grabbed = gSelecting.firstGrab
             insertionModeControl?.selectedSegment = gInsertionMode.rawValue
             browsingModeControl? .selectedSegment = gBrowsingMode.rawValue
             countsModeControl?   .selectedSegment = gCountsMode.rawValue
@@ -84,7 +84,7 @@ class ZPreferencesController: ZGenericController {
             switch (identifier) {
             case "drag targets":               gRubberbandColor = color
             case   "background":               gBackgroundColor = color
-            case        "zones": gSelectionManager.grabbedColor = color
+            case        "zones": gSelecting.grabbedColor = color
             default:             break
             }
 
@@ -94,7 +94,7 @@ class ZPreferencesController: ZGenericController {
 
 
     @IBAction func clearColorAction(_ button: ZButton) {
-        let           grab = gSelectionManager.firstGrab
+        let           grab = gSelecting.firstGrab
         if  let      color = grab._color {
             UNDO(self) { iUndoSelf in
                 grab.color = color

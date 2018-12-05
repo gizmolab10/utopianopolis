@@ -1,6 +1,6 @@
 //
 //  ZFavoritesManager.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 11/24/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -438,7 +438,7 @@ class ZFavorites: NSObject {
         bump         = { (iIndex: Int) in
             let zone = self.zoneAtIndex(iIndex)
 
-            if !gFocusManager.focus(through: zone, atArrival) {
+            if !gFocusing.focus(through: zone, atArrival) {
                 bump?(self.next(iIndex, forward))
             }
         }
@@ -449,7 +449,7 @@ class ZFavorites: NSObject {
 
     @discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
         if  let favorite = currentFavorite {
-            return gFocusManager.focus(through: favorite, atArrival)
+            return gFocusing.focus(through: favorite, atArrival)
         }
 
         return false

@@ -1,6 +1,6 @@
  //
 //  Zone.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 8/28/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -52,7 +52,7 @@ class Zone : ZRecord {
     var           bookmarkTarget:         Zone? { return crossLink as? Zone }
     var              destroyZone:         Zone? { return cloudManager?.destroyZone }
     var                trashZone:         Zone? { return cloudManager?.trashZone }
-    var                   widget:   ZoneWidget? { return gWidgetsManager.widgetForZone(self) }
+    var                   widget:   ZoneWidget? { return gWidgets.widgetForZone(self) }
     var           linkDatabaseID:  ZDatabaseID? { return databaseID(from: zoneLink) }
     var                 linkName:       String? { return name(from: zoneLink) }
     override var       emptyName:       String  { return "idea" }
@@ -67,8 +67,8 @@ class Zone : ZRecord {
     var            hasZonesAbove:         Bool  { return hasAnyZonesAbove(true) }
     var              isHyperlink:         Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
     var               isFavorite:         Bool  { return gFavorites.isWorkingFavorite(self) }
-    var               isSelected:         Bool  { return gSelectionManager.isSelected(self) }
-    var                isGrabbed:         Bool  { return gSelectionManager .isGrabbed(self) }
+    var               isSelected:         Bool  { return gSelecting.isSelected(self) }
+    var                isGrabbed:         Bool  { return gSelecting .isGrabbed(self) }
     var                canTravel:         Bool  { return isBookmark || isHyperlink || isEmail }
     var                 hasColor:         Bool  { return zoneColor != nil && zoneColor != "" }
     var                  isEmail:         Bool  { return hasTrait(for: .eEmail) && email != "" }
@@ -77,7 +77,7 @@ class Zone : ZRecord {
     var            isInFavorites:         Bool  { return root?.isRootOfFavorites    ?? false }
     var         isInLostAndFound:         Bool  { return root?.isRootOfLostAndFound ?? false }
     var     isRootOfLostAndFound:         Bool  { return recordName == kLostAndFoundName }
-    var           spawnedByAGrab:         Bool  { return spawnedByAny(of: gSelectionManager.currentGrabs) }
+    var           spawnedByAGrab:         Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
     var               spawnCycle:         Bool  { return spawnedByAGrab || dropCycle }
     var            isDoubleClick:         Bool  { return timeOfLastDragDotClick?.timeIntervalSinceNow ?? 10.0 < 0.5 }
 
@@ -698,10 +698,10 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    func addToPaste() { gSelectionManager.pasteableZones[self] = (parentZone, siblingIndex) }
-    func  addToGrab() { gSelectionManager.addToGrab(self) }
-    func     ungrab() { gSelectionManager   .ungrab(self) }
-    func       grab() { gSelectionManager     .grab(self) }
+    func addToPaste() { gSelecting.pasteableZones[self] = (parentZone, siblingIndex) }
+    func  addToGrab() { gSelecting.addToGrab(self) }
+    func     ungrab() { gSelecting   .ungrab(self) }
+    func       grab() { gSelecting     .grab(self) }
     func       edit() { gTextEditor          .edit(self) }
 
 
@@ -712,7 +712,7 @@ class Zone : ZRecord {
 
         if  shouldFocus {
             grab() // narrow selection to just this one zone
-            gFocusManager.focus(kind: .eSelected) {
+            gFocusing.focus(kind: .eSelected) {
                 gGraphEditor.redrawSyncRedraw()
             }
         } else if isGrabbed {

@@ -1,9 +1,9 @@
 //
 //  ZTextEditor.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 2/19/18.
-//  Copyright © 2018 Zones. All rights reserved.
+//  Copyright © 2018 Jonathan Sand. All rights reserved.
 //
 
 import Foundation
@@ -263,7 +263,7 @@ class ZTextEditor: ZTextView {
                 currentEdit        = pack
 
                 pack.updateText(isEditing: true)
-                gSelectionManager.deselectGrabs()
+                gSelecting.deselectGrabs()
                 textWidget.enableUndo()
                 textWidget.layoutTextField()
                 textWidget.becomeFirstResponder()
@@ -413,9 +413,9 @@ class ZTextEditor: ZTextView {
         if  iMoveOut {
             quickStopCurrentEdit(clearOffset: true)
             gGraphEditor.moveOut {
-                let grabbed = gSelectionManager.firstGrab
+                let grabbed = gSelecting.firstGrab
 
-                gSelectionManager.clearGrab()
+                gSelecting.clearGrab()
                 gControllers.signalFor(nil, regarding: .eRelayout) {
                     FOREGROUND(after: 0.4) {
                         self.edit(grabbed)
@@ -426,7 +426,7 @@ class ZTextEditor: ZTextView {
         } else if currentlyEditingZone?.children.count ?? 0 > 0 {
             quickStopCurrentEdit(clearOffset: true)
             gGraphEditor.moveInto {
-                self.edit(gSelectionManager.firstGrab)
+                self.edit(gSelecting.firstGrab)
                 self.setCursor(at: 0.0)
             }
         }
@@ -441,7 +441,7 @@ class ZTextEditor: ZTextView {
             gGraphEditor.moveUp(iMoveUp, targeting: currentOffset)
         }
 
-        let zone  = gSelectionManager.firstGrab
+        let zone  = gSelecting.firstGrab
         
         if  zone != currentlyEditingZone { // if move up (above) does nothing, ignore
             edit(zone)

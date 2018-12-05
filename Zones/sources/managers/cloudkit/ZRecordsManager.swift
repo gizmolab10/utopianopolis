@@ -1,6 +1,6 @@
 //
 //  ZRecordsManager.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 12/4/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -50,8 +50,8 @@ class ZRecordsManager: NSObject {
 
 
     var hereRecordName: String? {
-        get { return gSelectionManager.hereRecordName(for: databaseID) }
-        set { gSelectionManager.setHereRecordName(newValue ?? kRootName, for: databaseID) }
+        get { return gSelecting.hereRecordName(for: databaseID) }
+        set { gSelecting.setHereRecordName(newValue ?? kRootName, for: databaseID) }
     }
 
 

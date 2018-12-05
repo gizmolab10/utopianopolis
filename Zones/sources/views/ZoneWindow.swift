@@ -1,6 +1,6 @@
 //
 //  ZoneWindow.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 11/20/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.

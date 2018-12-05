@@ -1,6 +1,6 @@
 //
 //  ZSearchResultsController.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 12/15/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -193,8 +193,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
 
     func resolveRecord(_ dbID: ZDatabaseID, _ record: CKRecord) {
-        gFocusManager.pushHere()
-        gFocusManager.debugDump()
+        gFocusing.pushHere()
+        gFocusing.debugDump()
 
         gDatabaseID = dbID
         var zone    = gCloudManager?.maybeZoneForRecordID(record.recordID)

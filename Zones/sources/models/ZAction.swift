@@ -1,6 +1,6 @@
 //
 //  ZAction.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 8/28/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.

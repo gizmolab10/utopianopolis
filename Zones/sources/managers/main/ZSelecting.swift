@@ -1,6 +1,6 @@
 //
-//  ZSelectionManager.swift
-//  Zones
+//  ZSelecting.swift
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 11/20/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -23,7 +23,7 @@ enum ZRelation: Int {
 }
 
 
-let gSelectionManager = ZSelectionManager()
+let gSelecting = ZSelecting()
 
 
 class ZSnapshot: NSObject {
@@ -60,7 +60,7 @@ class ZSnapshot: NSObject {
 }
 
 
-class ZSelectionManager: NSObject {
+class ZSelecting: NSObject {
 
 
     var        hasGrab : Bool { return currentGrabs.count > 0 }

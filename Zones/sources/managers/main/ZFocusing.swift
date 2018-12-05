@@ -1,6 +1,6 @@
 //
-//  ZFocusManager.swift
-//  Zones
+//  ZFocusing.swift
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 11/20/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -18,10 +18,10 @@ enum ZFocusKind: Int {
 }
 
 
-let gFocusManager = ZFocusManager()
+let gFocusing = ZFocusing()
 
 
-class ZFocusManager: NSObject {
+class ZFocusing: NSObject {
 
 
     var  travelStack = [Zone] ()
@@ -146,7 +146,7 @@ class ZFocusManager: NSObject {
         let restoreHere = gHere
 
         UNDO(self) { iUndoSelf in
-            iUndoSelf.createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
+            iUndoSelf.createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
             iUndoSelf.pushHere()
             self.debugDump()
 
@@ -163,7 +163,7 @@ class ZFocusManager: NSObject {
 
 
     func focus(kind: ZFocusKind, _ isCommand: Bool = false, _ atArrival: @escaping Closure) {
-        if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelectionManager.firstGrab,
+        if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelecting.firstGrab,
             (!zone.isInFavorites || zone.isFavorite) {
             let focusClosure = { (zone: Zone) in
                 gHere = zone
@@ -178,8 +178,8 @@ class ZFocusManager: NSObject {
                     atArrival()
                 }
             } else if zone.isBookmark {
-                gFocusManager.travelThrough(zone) { object, kind in
-                    gSelectionManager.deselect()
+                gFocusing.travelThrough(zone) { object, kind in
+                    gSelecting.deselect()
                     focusClosure(object as! Zone)
                 }
             } else if zone == gHere {
@@ -193,7 +193,7 @@ class ZFocusManager: NSObject {
 
 
     func focus(_ atArrival: @escaping Closure) {
-        createUndoForTravelBackTo(gSelectionManager.currentMoveable, atArrival: atArrival)
+        createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
 
         gTextEditor.stopCurrentEdit()
         gBatchManager.focus { iSame in
@@ -291,7 +291,7 @@ class ZFocusManager: NSObject {
                 ///////////////////////
 
                 there = gCloudManager?.maybeZoneForRecordID(targetRecordID)
-                let grabbed = gSelectionManager.firstGrab
+                let grabbed = gSelecting.firstGrab
                 let    here = gHere
 
                 UNDO(self) { iUndoSelf in

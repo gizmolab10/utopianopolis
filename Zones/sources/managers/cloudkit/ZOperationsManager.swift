@@ -1,6 +1,6 @@
 //
 //  ZOperationsManager.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 11/21/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.

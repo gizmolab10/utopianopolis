@@ -1,6 +1,6 @@
 //
 //  ZoneTextWidget.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 10/27/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -127,7 +127,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         if  gTextEditor.allowAsFirstResponder(self), let zone = widgetZone,
             super.becomeFirstResponder() {  // becomeFirstResponder is called first so delegate methods will be called
             if  gWorkMode != .graphMode {
-                gSearchManager.exitSearchMode()
+                gSearching.exitSearchMode()
             }
             
             gTextEditor.edit(zone)

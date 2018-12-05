@@ -1,9 +1,9 @@
 //
 //  ZDebugController.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 1/16/18.
-//  Copyright © 2018 Zones. All rights reserved.
+//  Copyright © 2018 Jonathan Sand. All rights reserved.
 //
 
 import Foundation
@@ -96,7 +96,7 @@ class ZDebugController: ZGenericController {
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
         if ![.eSearch, .eFound].contains(iKind) {
-            grab                   = gSelectionManager.firstGrab
+            grab                   = gSelecting.firstGrab
             nameLabel?       .text = grab?.unwrappedName
             recordLabel?     .text = grab?   .recordName
             otherLabel?      .text =       otherText

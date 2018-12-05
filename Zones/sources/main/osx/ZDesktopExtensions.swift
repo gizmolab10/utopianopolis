@@ -1,6 +1,6 @@
 //
 //  ZDesktopExtensions.swift
-//  Zones
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 1/31/17.
 //  Copyright © 2017 Jonathan Sand. All rights reserved.

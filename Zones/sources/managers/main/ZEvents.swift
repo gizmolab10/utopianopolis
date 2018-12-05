@@ -1,9 +1,9 @@
 //
 //  ZEventsManager.swift
-//  Focus
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 10/5/17.
-//  Copyright © 2017 Zones. All rights reserved.
+//  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
 
@@ -75,7 +75,7 @@ class ZEvents: NSObject {
                     switch gWorkMode {
                     case .searchMode:
                         
-                        return gSearchManager.handleEvent(event)
+                        return gSearching.handleEvent(event)
                         
                     case .graphMode:
                         let     flags = event.modifierFlags
@@ -92,7 +92,7 @@ class ZEvents: NSObject {
                                 case "a":    if isAny { gEditedTextWidget?.selectAllText(); return nil }
                                 case "d":    if isAny { gGraphEditor.addIdeaFromSelectedText(); return nil }
                                 case "f":    if isAny { gGraphEditor.search(); return nil }
-                                case "/":    if isAny { gFocusManager.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }; return nil }
+                                case "/":    if isAny { gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }; return nil }
                                 case "?":    if isAny { gGraphEditor.showKeyboardShortcuts(); return nil }
                                 case kSpace: if isAny { gGraphEditor.addIdea(); return nil }
                                 default:
