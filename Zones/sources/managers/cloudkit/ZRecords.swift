@@ -1,5 +1,5 @@
 //
-//  ZRecordsManager.swift
+//  ZRecords.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 12/4/16.
@@ -32,7 +32,7 @@ enum ZRecordState: String {
 }
 
 
-class ZRecordsManager: NSObject {
+class ZRecords: NSObject {
 
 
     var              databaseID : ZDatabaseID

@@ -1,5 +1,5 @@
 //
-//  ZBatchManager.swift
+//  ZBatches.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 11/21/16.
@@ -10,8 +10,8 @@
 import Foundation
 
 
-let gBatchManager = ZBatchManager()
-var gUser: ZUser? { return gBatchManager.user }
+let gBatches = ZBatches()
+var gUser: ZUser? { return gBatches.user }
 
 
 enum ZBatchID: Int {
@@ -44,7 +44,7 @@ enum ZBatchID: Int {
 }
 
 
-class ZBatchManager: ZOnboardingManager {
+class ZBatches: ZOnboarding {
 
 
     class ZBatchCompletion: NSObject {
@@ -335,7 +335,7 @@ class ZBatchManager: ZOnboardingManager {
         switch identifier {
         case .favorites:       gFavorites.setup(                                                                      cloudCallback)
         case .readFile:  gFiles                                    .readFile(into: currentDatabaseID!);                cloudCallback?(0)
-        default: gRemoteStoresManager.cloudManager(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
+        default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
         }
     }
 

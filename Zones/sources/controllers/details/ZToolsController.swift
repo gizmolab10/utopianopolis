@@ -71,10 +71,10 @@ class ZToolsController: ZGenericTableController {
                 switch kind {
                 case .eIdentifiers: self.toggleShowIdentifiers()
                 case .eAccess:      self.toggleUserAccess()
-                case .eRetry:       gBatchManager.unHang()
+                case .eRetry:       gBatches.unHang()
                 case .eTrash:       self.showTrashCan()
                 case .eGather:      self.gatherAndShowLost()
-                case .eRecount:     gRemoteStoresManager.recount(); gControllers.syncToCloudAfterSignalFor(nil, regarding: .eRelayout) {}
+                case .eRecount:     gRemoteStorage.recount(); gControllers.syncToCloudAfterSignalFor(nil, regarding: .eRelayout) {}
                 }
             }
         }
@@ -96,7 +96,7 @@ class ZToolsController: ZGenericTableController {
             gHere = trash
 
             gHere.needChildren()
-            gBatchManager.children(.restore) { iSame in
+            gBatches.children(.restore) { iSame in
                 self.redrawAndSync()
             }
         }
@@ -104,7 +104,7 @@ class ZToolsController: ZGenericTableController {
 
 
     func gatherAndShowLost() {
-        gBatchManager.fetchLost { iSame in
+        gBatches.fetchLost { iSame in
             if  let lost = gLostAndFound {
                 gHere    = lost
 
@@ -112,7 +112,7 @@ class ZToolsController: ZGenericTableController {
 
                 lost.needChildren()
                 lost.revealChildren()
-                gBatchManager.children(.all) { iSame in
+                gBatches.children(.all) { iSame in
                     self.grabChildless()
                 }
             }
@@ -132,7 +132,7 @@ class ZToolsController: ZGenericTableController {
 
 
     func restoreFromTrash() {
-        gBatchManager.undelete { iSame in
+        gBatches.undelete { iSame in
             gControllers.signalFor(nil, regarding: .eRelayout)
         }
     }

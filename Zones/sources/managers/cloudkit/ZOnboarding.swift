@@ -1,6 +1,6 @@
 //
-//  ZOnboardingManager.swift
-//  iFocus
+//  ZOnboarding.swift
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 10/26/17.
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
@@ -17,10 +17,10 @@ import CloudKit
 #endif
 
 
-var gIsMasterAuthor: Bool { return gBatchManager.isMasterAuthor }
+var gIsMasterAuthor: Bool { return gBatches.isMasterAuthor }
 
 
-class ZOnboardingManager : ZOperationsManager {
+class ZOnboarding : ZOperations {
 
 
     var           user : ZUser?
@@ -34,7 +34,7 @@ class ZOnboardingManager : ZOperationsManager {
 
     @objc func completeOnboarding(_ notification: Notification) {
         FOREGROUND(canBeDirect: true) {
-            gBatchManager.batch(.newAppleID) { iResult in
+            gBatches.batch(.newAppleID) { iResult in
                 gFavorites.updateFavorites()
                 gControllers.signalFor(nil, regarding: .eRelayout)
             }
@@ -60,7 +60,7 @@ class ZOnboardingManager : ZOperationsManager {
     }
 
 
-    func observeUbiquity() { gNotificationCenter.addObserver(self, selector: #selector(ZOnboardingManager.completeOnboarding), name: .NSUbiquityIdentityDidChange, object: nil) }
+    func observeUbiquity() { gNotificationCenter.addObserver(self, selector: #selector(ZOnboarding.completeOnboarding), name: .NSUbiquityIdentityDidChange, object: nil) }
     func internet()        { gHasInternet = isConnectedToNetwork }
 
 
@@ -125,7 +125,7 @@ class ZOnboardingManager : ZOperationsManager {
             let     recordName  = gUserRecordID {
             let     ckRecordID  = CKRecord.ID(recordName: recordName)
 
-            gEveryoneCloudManager?.assureRecordExists(withRecordID: ckRecordID, recordType: CKRecord.SystemType.userRecord) { (iUserRecord: CKRecord?) in
+            gEveryoneCloud?.assureRecordExists(withRecordID: ckRecordID, recordType: CKRecord.SystemType.userRecord) { (iUserRecord: CKRecord?) in
                 if  let          record = iUserRecord {
                     let            user = ZUser(record: record, databaseID: gDatabaseID)
                     self          .user = user

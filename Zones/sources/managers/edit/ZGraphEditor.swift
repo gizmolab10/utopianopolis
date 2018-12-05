@@ -433,7 +433,7 @@ class ZGraphEditor: NSObject {
             zone.needChildren()
         }
 
-        gBatchManager.children { iSame in
+        gBatches.children { iSame in
             for zone in grabs {
                 zone.divideEvenly()
             }
@@ -600,7 +600,7 @@ class ZGraphEditor: NSObject {
 
 
     func refetch() {
-        gBatchManager.refetch { iSame in
+        gBatches.refetch { iSame in
             gControllers.signalFor(nil, regarding: .eRelayout)
         }
     }
@@ -613,7 +613,7 @@ class ZGraphEditor: NSObject {
     func selectCurrentFavorite() {
         if  let current = gFavorites.currentFavorite {
             current.needRoot()
-            gBatchManager.families { iSame in
+            gBatches.families { iSame in
                 if  let parent = current.parentZone {
                     parent.traverseAllAncestors { iAncestor in
                         iAncestor.revealChildren()
@@ -668,7 +668,7 @@ class ZGraphEditor: NSObject {
 
                 onCompletion?()
             } else {
-                gBatchManager.root { iSame in
+                gBatches.root { iSame in
                     onCompletion?()
                 }
             }
@@ -684,7 +684,7 @@ class ZGraphEditor: NSObject {
             iZone.needParent()
         }
 
-        gBatchManager.families { iSame in
+        gBatches.families { iSame in
             onCompletion?(true)
         }
     }
@@ -714,7 +714,7 @@ class ZGraphEditor: NSObject {
             descendent.needRoot()
         }
 
-        gBatchManager.families { iSame in
+        gBatches.families { iSame in
             FOREGROUND {
                 descendent.traverseAncestors { iParent -> ZTraverseStatus in
                     let  gotThere = iParent == iAncestor || iParent.isRoot    // reached the ancestor or the root
@@ -987,7 +987,7 @@ class ZGraphEditor: NSObject {
             z.revealChildren()
             z.needChildren()
 
-            gBatchManager.children { iSame in
+            gBatches.children { iSame in
                 self.addIdeaIn(z, at: gInsertionsFollow ? nil : 0, with: childName) { iChild in
                     self.redrawAndSync()
                     iChild?.edit()
@@ -1011,7 +1011,7 @@ class ZGraphEditor: NSObject {
                 bookmark?.grab()
                 bookmark?.markNotFetched()
                 gControllers.signalFor(nil, regarding: .eRelayout)
-                gBatchManager.sync { iSame in
+                gBatches.sync { iSame in
                 }
             }
 
@@ -1081,7 +1081,7 @@ class ZGraphEditor: NSObject {
             zone.needProgeny()
         }
 
-        gBatchManager.children(.all) { iSame in // to make sure all progeny are acted upon
+        gBatches.children(.all) { iSame in // to make sure all progeny are acted upon
             if !done {
                 done      = true
                 var count = zones.count
@@ -1100,7 +1100,7 @@ class ZGraphEditor: NSObject {
                             grab?.grab()
                         }
                         
-                        gBatchManager.bookmarks { iSame in
+                        gBatches.bookmarks { iSame in
                             var bookmarks = [Zone] ()
                             
                             for zone in zones {
@@ -1289,7 +1289,7 @@ class ZGraphEditor: NSObject {
                     p.needChildren()
                     p.grab()
                     
-                    gBatchManager.children(.restore) { iSame in
+                    gBatches.children(.restore) { iSame in
                         onCompletion?()
                     }
                 }
@@ -1372,7 +1372,7 @@ class ZGraphEditor: NSObject {
             zone.revealChildren()
             gControllers.signalFor(nil, regarding: .eData)
 
-            gBatchManager.children(.restore) { iSame in
+            gBatches.children(.restore) { iSame in
                 if  zone.count > 0,
                     let child = gInsertionsFollow ? zone.children.last : zone.children.first {
                     child.grab()
@@ -1439,7 +1439,7 @@ class ZGraphEditor: NSObject {
 
                     movedZone = movedZone.deepCopy
 
-                    gBatchManager.sync { iSame in
+                    gBatches.sync { iSame in
                         grabAndTravel()
                     }
                 }
@@ -1454,7 +1454,7 @@ class ZGraphEditor: NSObject {
         into.revealChildren()
         into.needChildren()
 
-        gBatchManager.children(.restore) { iSame in
+        gBatches.children(.restore) { iSame in
             for zone in zones {
                 if orphan {
                     zone.orphan()
@@ -1512,7 +1512,7 @@ class ZGraphEditor: NSObject {
 
                 var     isFirstTime = true
 
-                gBatchManager.children(.restore) { iSame in
+                gBatches.children(.restore) { iSame in
                     if  isFirstTime {
                         isFirstTime = false
 
@@ -1680,7 +1680,7 @@ class ZGraphEditor: NSObject {
                 } else {
                     var once = true
 
-                    gBatchManager.children(.all) { iSame in
+                    gBatches.children(.all) { iSame in
                         if  once {
                             once = false
 
@@ -1710,7 +1710,7 @@ class ZGraphEditor: NSObject {
             zone.revealChildren()
         }
 
-        gBatchManager.children(.all) { iSame in // to make sure all progeny are acted upon
+        gBatches.children(.all) { iSame in // to make sure all progeny are acted upon
             let    candidate = gSelecting.rootMostMoveable
             if  let   parent = candidate.parentZone {
                 let    index = candidate.siblingIndex
@@ -1872,7 +1872,7 @@ class ZGraphEditor: NSObject {
 
             into.maybeNeedChildren()
 
-            gBatchManager.children(.all) { iSame in
+            gBatches.children(.all) { iSame in
                 if !done {
                     done = true
                     if  let firstGrab = grabs.first,
@@ -1945,7 +1945,7 @@ class ZGraphEditor: NSObject {
         into.revealChildren()
         into.needChildren()
 
-        gBatchManager.children(.restore) { iSame in
+        gBatches.children(.restore) { iSame in
             if orphan {
                 zone.orphan()
             }

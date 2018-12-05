@@ -222,7 +222,7 @@ class ZFiles: NSObject {
 	func writeFile(at path: String, from databaseID: ZDatabaseID?) {
 		if  let           dbID = databaseID,
 			dbID              != .favoritesID,
-            let        manager = gRemoteStoresManager.cloudManager(for: dbID),
+            let        manager = gRemoteStorage.cloud(for: dbID),
 			let        index   = index(of: dbID),
 			needsWrite[index] == true,
 			isWriting [index] == false {    // prevent write during write
@@ -233,7 +233,7 @@ class ZFiles: NSObject {
             FOREGROUND {
                 gControllers.signalFor(nil, regarding: .eDebug)
                 self.writtenRecordNames.removeAll()
-                gRemoteStoresManager.recount()
+                gRemoteStorage.recount()
 
                 /////////////////////////////////////////////////
                 // take snapshots just before exit from method //
@@ -294,7 +294,7 @@ class ZFiles: NSObject {
 	
 	func readFile(from path: String, into databaseID: ZDatabaseID) {
 		if  databaseID      != .favoritesID,
-            let      manager = gRemoteStoresManager.cloudManager(for: databaseID),
+            let      manager = gRemoteStorage.cloud(for: databaseID),
 			let       index  = index(of: databaseID) {
 			isReading[index] = true
 			typealias  types = [ZStorageType]
@@ -337,7 +337,7 @@ class ZFiles: NSObject {
                     print(error)    // de-serialization
                 }
 
-                gRemoteStoresManager.recordsManagerFor(databaseID)?.removeDuplicates()
+                gRemoteStorage.recordsFor(databaseID)?.removeDuplicates()
 
                 self.isReading[index] = false
             }

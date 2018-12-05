@@ -44,7 +44,7 @@ class ZInformationController: ZGenericController {
 
 
     var totalCountsText: String {
-        let count = gCloudManager?.rootZone?.progenyCount ?? 0
+        let count = gCloud?.rootZone?.progenyCount ?? 0
 
         return "\(count + 1) ideas"
     }
@@ -63,7 +63,7 @@ class ZInformationController: ZGenericController {
         if !gCloudAccountIsActive { return "local storage only" }
         
         let ops = // String.pluralized(gBatchManager.totalCount - 1,       unit: "batch", plural: "es", followedBy: ", ") +
-                  String.pluralized(gBatchManager.queue.operationCount, unit: "iCloud request")
+                  String.pluralized(gBatches.queue.operationCount, unit: "iCloud request")
         return ops != "" ? ops : "synced with iCloud"
     }
     

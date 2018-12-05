@@ -46,14 +46,14 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
         if  note.notificationType == .query {
             let queryNote: CKQueryNotification = note as! CKQueryNotification
 
-            gRemoteStoresManager.receivedUpdateFor(queryNote.recordID!)
+            gRemoteStorage.receivedUpdateFor(queryNote.recordID!)
         }
     }
 
 	
 	func application(_ application: NSApplication, openFiles: [String]) {
 		for file in openFiles {
-			gRemoteStoresManager.cloudManager(for: .mineID)?.clear()
+			gRemoteStorage.cloud(for: .mineID)?.clear()
 			gFiles.readFile(from: file, into: .mineID)
 		}
 	}

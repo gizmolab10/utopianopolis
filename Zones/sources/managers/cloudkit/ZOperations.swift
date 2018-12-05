@@ -1,5 +1,5 @@
 //
-//  ZOperationsManager.swift
+//  ZOperations.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 11/21/16.
@@ -74,7 +74,7 @@ var recentCloudAccountStatus        = gCloudAccountStatus
 let localOperations: [ZOperationID] = [.here, .roots, .found, .readFile, .internet, .ubiquity, .favorites, .completion, .macAddress, .fetchUserID, .observeUbiquity, .fetchUserRecord, .checkAvailability]
 
 
-class ZOperationsManager: NSObject {
+class ZOperations: NSObject {
 
 
     var   debugTimeText :       String  { return !usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)" }
@@ -150,7 +150,7 @@ class ZOperationsManager: NSObject {
                         if  gHasInternet && gIsReadyToShowUI {
                             let identifier: ZBatchID = gCloudAccountIsActive ? .resumeCloud : .newAppleID
 
-                            gBatchManager.batch(identifier) { iResult in
+                            gBatches.batch(identifier) { iResult in
                                 if  gCloudAccountIsActive {
                                     gFavorites.updateFavorites()
                                 }

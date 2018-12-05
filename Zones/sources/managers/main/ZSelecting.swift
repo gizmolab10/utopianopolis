@@ -88,7 +88,7 @@ class ZSelecting: NSObject {
         let          snap = ZSnapshot()
         snap.currentGrabs = currentGrabs
         snap  .databaseID = gDatabaseID
-        snap        .here = gCloudManager?.hereIsValid ?? false ? gHere : nil
+        snap        .here = gCloud?.hereIsValid ?? false ? gHere : nil
 
         return snap
     }

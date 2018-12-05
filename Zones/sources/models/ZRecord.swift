@@ -1,4 +1,3 @@
-    //
 //  ZRecord.swift
 //  Thoughtful
 //
@@ -39,8 +38,8 @@ class ZRecord: NSObject {
     var      needsBookmarks: Bool               { return  hasState(.needsBookmarks) }
     var canSaveWithoutFetch: Bool               { return !hasState(.requiresFetchBeforeSave) }
     var   storageDictionary: ZStorageDictionary { if let dbID = databaseID, let dict = storageDictionary(for: dbID, includeRecordName: false) { return dict } else { return [:] } }
-    var      recordsManager: ZRecordsManager?   { return gRemoteStoresManager.recordsManagerFor(databaseID) }
-    var        cloudManager: ZCloudManager?     { return recordsManager as? ZCloudManager }
+    var             records: ZRecords?          { return gRemoteStorage.recordsFor(databaseID) }
+    var               cloud: ZCloud?            { return records as? ZCloud }
     var          recordName: String?            { return record?.recordID.recordName }
     var       unwrappedName: String             { return emptyName }
     var           emptyName: String             { return "" }
@@ -60,7 +59,7 @@ class ZRecord: NSObject {
 
                 clearAllStates() // is this needed pr wanted?
                 gBookmarks.unregisterBookmark(self as? Zone)
-                cloudManager?.unregisterCKRecord(_record)
+                cloud?.unregisterCKRecord(_record)
 
                 _record = newValue
 
@@ -181,8 +180,8 @@ class ZRecord: NSObject {
     func maybeNeedRoot() {}
     func debug(_  iMessage: String) {}
     func cloudProperties() -> [String] { return [] }
-    func   register() -> Bool { return cloudManager?.registerZRecord(self) ?? false }
-    func unregister() { cloudManager?.unregisterZRecord(self) }
+    func   register() -> Bool { return cloud?.registerZRecord(self) ?? false }
+    func unregister() { cloud?.unregisterZRecord(self) }
     func hasMissingChildren() -> Bool { return true }
     func hasMissingProgeny()  -> Bool { return true }
 
@@ -195,12 +194,12 @@ class ZRecord: NSObject {
 
 
     func temporarilyMarkNeeds(_ closure: Closure) {
-        cloudManager?.temporarilyForRecordNamed(recordName, ignoreNeeds: false, closure)
+        cloud?.temporarilyForRecordNamed(recordName, ignoreNeeds: false, closure)
     }
 
 
     func temporarilyIgnoreNeeds(_ closure: Closure) {
-        cloudManager?.temporarilyForRecordNamed(recordName, ignoreNeeds: true, closure)
+        cloud?.temporarilyForRecordNamed(recordName, ignoreNeeds: true, closure)
     }
 
 
@@ -274,10 +273,10 @@ class ZRecord: NSObject {
     // MARK:-
 
 
-    func    hasState(_ state: ZRecordState) -> Bool { return recordsManager?.hasZRecord(self, forAnyOf:[state]) ?? false }
-    func    addState(_ state: ZRecordState)         {        recordsManager?.addZRecord(self,     for: [state]) }
-    func removeState(_ state: ZRecordState)         {        recordsManager?.clearRecordName(recordName, for:[state]) }
-    func clearAllStates()                           {        recordsManager?.clearRecordName(recordName, for: recordsManager?.allStates ?? []) }
+    func    hasState(_ state: ZRecordState) -> Bool { return records?.hasZRecord(self, forAnyOf:[state]) ?? false }
+    func    addState(_ state: ZRecordState)         {        records?.addZRecord(self,     for: [state]) }
+    func removeState(_ state: ZRecordState)         {        records?.clearRecordName(recordName, for:[state]) }
+    func clearAllStates()                           {        records?.clearRecordName(recordName, for: records?.allStates ?? []) }
 
 
     func needRoot()              {    addState(.needsRoot) }
@@ -368,12 +367,12 @@ class ZRecord: NSObject {
 
 
     func setValue(_ value: NSObject, for property: String) {
-        cloudManager?.setIntoObject(self, value: value, for: property)
+        cloud?.setIntoObject(self, value: value, for: property)
     }
 
 
     func get(propertyName: String) {
-        cloudManager?.getFromObject(self, valueForPropertyName: propertyName)
+        cloud?.getFromObject(self, valueForPropertyName: propertyName)
     }
 
 
@@ -460,7 +459,7 @@ class ZRecord: NSObject {
 
     func stringForNeeds(in iDatabaseID: ZDatabaseID) -> String? {
         if  let       r = record,
-            let manager = gRemoteStoresManager.cloudManager(for: iDatabaseID) {
+            let manager = gRemoteStorage.cloud(for: iDatabaseID) {
             let  states = manager.states(for: r)
             var   marks = [String] ()
 
@@ -521,7 +520,7 @@ class ZRecord: NSObject {
         let     name = dict[.recordName] as? String
         var ckRecord = CKRecord(recordType: iRecordType)
 
-        if  name == nil || gRemoteStoresManager.recordsManagerFor(iDatabaseID)?.maybeCKRecordForRecordName(name) == nil {
+        if  name == nil || gRemoteStorage.recordsFor(iDatabaseID)?.maybeCKRecordForRecordName(name) == nil {
             if  let recordName = name {
                 ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecord.ID(recordName: recordName)) // YIKES this may be wildly out of date
             }

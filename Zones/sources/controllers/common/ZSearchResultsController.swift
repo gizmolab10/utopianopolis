@@ -129,7 +129,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
         if  let (dbID, record) = identifierAndRecord(at: row) {
 
-            if let zone = gRemoteStoresManager.cloudManager(for: dbID)?.maybeZoneForRecordID(record.recordID) {
+            if let zone = gRemoteStorage.cloud(for: dbID)?.maybeZoneForRecordID(record.recordID) {
                 object  =   zone.decoratedName
             } else {
                 object  = record.decoratedName
@@ -197,7 +197,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         gFocusing.debugDump()
 
         gDatabaseID = dbID
-        var zone    = gCloudManager?.maybeZoneForRecordID(record.recordID)
+        var zone    = gCloud?.maybeZoneForRecordID(record.recordID)
 
         if  zone   == nil {
             zone    = Zone(record: record, databaseID: dbID)
@@ -211,7 +211,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         zone?.revealChildren()
         gControllers.signalFor(nil, regarding: .eRelayout)
 
-        gBatchManager.sync { iSame in
+        gBatches.sync { iSame in
             gControllers.signalFor(nil, regarding: .eRelayout)
         }
     }

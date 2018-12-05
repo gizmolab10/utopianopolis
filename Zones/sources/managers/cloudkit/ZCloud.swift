@@ -1,5 +1,5 @@
 //
-//  ZCloudManager.swift
+//  ZCloud.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 9/18/16.
@@ -14,9 +14,9 @@ import CloudKit
 let gContainer = CKContainer(identifier: kCloudID)
 
 
-class ZCloudManager: ZRecordsManager {
+class ZCloud: ZRecords {
     var   cloudZonesByID = [CKRecordZone.ID : CKRecordZone] ()
-    var         database :  CKDatabase? { return gRemoteStoresManager.databaseForID(databaseID) }
+    var         database :  CKDatabase? { return gRemoteStorage.databaseForID(databaseID) }
     var   refetchingName :       String { return "remember.\(databaseID.rawValue)" }
     var cloudUnavailable :         Bool { return !gHasInternet || (databaseID == .mineID && !gCloudAccountIsActive) }
     var    isRemembering :         Bool = false
@@ -1110,7 +1110,7 @@ class ZCloudManager: ZRecordsManager {
             operation.fetchRecordZonesCompletionBlock = { (recordZonesByZoneID, operationError) in
                 self.cloudZonesByID                   = recordZonesByZoneID!
 
-                gRemoteStoresManager.resetBadgeCounter()
+                gRemoteStorage.resetBadgeCounter()
 
                 onCompletion?(0)
             }

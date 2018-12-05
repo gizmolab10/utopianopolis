@@ -113,24 +113,24 @@
 		0C43EFC021010F17000976CE /* ZFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFBD21010F17000976CE /* ZFiles.swift */; };
 		0C43EFCE21010F62000976CE /* ZLockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC721010F62000976CE /* ZLockManager.swift */; };
 		0C43EFCF21010F62000976CE /* ZLockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC721010F62000976CE /* ZLockManager.swift */; };
-		0C43EFD121010F62000976CE /* ZOnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC821010F62000976CE /* ZOnboardingManager.swift */; };
-		0C43EFD221010F62000976CE /* ZOnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC821010F62000976CE /* ZOnboardingManager.swift */; };
-		0C43EFD321010F62000976CE /* ZOnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC821010F62000976CE /* ZOnboardingManager.swift */; };
-		0C43EFD421010F62000976CE /* ZRecordsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC921010F62000976CE /* ZRecordsManager.swift */; };
-		0C43EFD521010F62000976CE /* ZRecordsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC921010F62000976CE /* ZRecordsManager.swift */; };
-		0C43EFD621010F62000976CE /* ZRecordsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC921010F62000976CE /* ZRecordsManager.swift */; };
-		0C43EFD721010F62000976CE /* ZRemoteStoresManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCA21010F62000976CE /* ZRemoteStoresManager.swift */; };
-		0C43EFD821010F62000976CE /* ZRemoteStoresManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCA21010F62000976CE /* ZRemoteStoresManager.swift */; };
-		0C43EFD921010F62000976CE /* ZRemoteStoresManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCA21010F62000976CE /* ZRemoteStoresManager.swift */; };
-		0C43EFDA21010F62000976CE /* ZOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCB21010F62000976CE /* ZOperationsManager.swift */; };
-		0C43EFDB21010F62000976CE /* ZOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCB21010F62000976CE /* ZOperationsManager.swift */; };
-		0C43EFDC21010F62000976CE /* ZOperationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCB21010F62000976CE /* ZOperationsManager.swift */; };
-		0C43EFDD21010F62000976CE /* ZBatchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCC21010F62000976CE /* ZBatchManager.swift */; };
-		0C43EFDE21010F62000976CE /* ZBatchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCC21010F62000976CE /* ZBatchManager.swift */; };
-		0C43EFDF21010F62000976CE /* ZBatchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCC21010F62000976CE /* ZBatchManager.swift */; };
-		0C43EFE021010F62000976CE /* ZCloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloudManager.swift */; };
-		0C43EFE121010F62000976CE /* ZCloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloudManager.swift */; };
-		0C43EFE221010F62000976CE /* ZCloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloudManager.swift */; };
+		0C43EFD121010F62000976CE /* ZOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC821010F62000976CE /* ZOnboarding.swift */; };
+		0C43EFD221010F62000976CE /* ZOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC821010F62000976CE /* ZOnboarding.swift */; };
+		0C43EFD321010F62000976CE /* ZOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC821010F62000976CE /* ZOnboarding.swift */; };
+		0C43EFD421010F62000976CE /* ZRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC921010F62000976CE /* ZRecords.swift */; };
+		0C43EFD521010F62000976CE /* ZRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC921010F62000976CE /* ZRecords.swift */; };
+		0C43EFD621010F62000976CE /* ZRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFC921010F62000976CE /* ZRecords.swift */; };
+		0C43EFD721010F62000976CE /* ZRemoteStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCA21010F62000976CE /* ZRemoteStorage.swift */; };
+		0C43EFD821010F62000976CE /* ZRemoteStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCA21010F62000976CE /* ZRemoteStorage.swift */; };
+		0C43EFD921010F62000976CE /* ZRemoteStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCA21010F62000976CE /* ZRemoteStorage.swift */; };
+		0C43EFDA21010F62000976CE /* ZOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCB21010F62000976CE /* ZOperations.swift */; };
+		0C43EFDB21010F62000976CE /* ZOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCB21010F62000976CE /* ZOperations.swift */; };
+		0C43EFDC21010F62000976CE /* ZOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCB21010F62000976CE /* ZOperations.swift */; };
+		0C43EFDD21010F62000976CE /* ZBatches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCC21010F62000976CE /* ZBatches.swift */; };
+		0C43EFDE21010F62000976CE /* ZBatches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCC21010F62000976CE /* ZBatches.swift */; };
+		0C43EFDF21010F62000976CE /* ZBatches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCC21010F62000976CE /* ZBatches.swift */; };
+		0C43EFE021010F62000976CE /* ZCloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloud.swift */; };
+		0C43EFE121010F62000976CE /* ZCloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloud.swift */; };
+		0C43EFE221010F62000976CE /* ZCloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloud.swift */; };
 		0C48B0951F87197B00A247BC /* ZEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C48B0941F87197B00A247BC /* ZEvents.swift */; };
 		0C4C23A22016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
 		0C4C23A32016B0930025E4DF /* ZContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C23A12016B0930025E4DF /* ZContainerView.swift */; };
@@ -275,12 +275,12 @@
 		0C43EFBD21010F17000976CE /* ZFiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFiles.swift; sourceTree = "<group>"; };
 		0C43EFC221010F37000976CE /* ZPostgres.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZPostgres.swift; sourceTree = "<group>"; };
 		0C43EFC721010F62000976CE /* ZLockManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZLockManager.swift; sourceTree = "<group>"; };
-		0C43EFC821010F62000976CE /* ZOnboardingManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZOnboardingManager.swift; sourceTree = "<group>"; };
-		0C43EFC921010F62000976CE /* ZRecordsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZRecordsManager.swift; sourceTree = "<group>"; };
-		0C43EFCA21010F62000976CE /* ZRemoteStoresManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZRemoteStoresManager.swift; sourceTree = "<group>"; };
-		0C43EFCB21010F62000976CE /* ZOperationsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZOperationsManager.swift; sourceTree = "<group>"; };
-		0C43EFCC21010F62000976CE /* ZBatchManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZBatchManager.swift; sourceTree = "<group>"; };
-		0C43EFCD21010F62000976CE /* ZCloudManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZCloudManager.swift; sourceTree = "<group>"; };
+		0C43EFC821010F62000976CE /* ZOnboarding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZOnboarding.swift; sourceTree = "<group>"; };
+		0C43EFC921010F62000976CE /* ZRecords.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZRecords.swift; sourceTree = "<group>"; };
+		0C43EFCA21010F62000976CE /* ZRemoteStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZRemoteStorage.swift; sourceTree = "<group>"; };
+		0C43EFCB21010F62000976CE /* ZOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZOperations.swift; sourceTree = "<group>"; };
+		0C43EFCC21010F62000976CE /* ZBatches.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZBatches.swift; sourceTree = "<group>"; };
+		0C43EFCD21010F62000976CE /* ZCloud.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZCloud.swift; sourceTree = "<group>"; };
 		0C48B0941F87197B00A247BC /* ZEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEvents.swift; sourceTree = "<group>"; };
 		0C4C23A12016B0930025E4DF /* ZContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZContainerView.swift; sourceTree = "<group>"; };
 		0C50FD2E2053491000E1D9A9 /* everyone.thoughtful */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = everyone.thoughtful; sourceTree = "<group>"; };
@@ -632,13 +632,13 @@
 		0C43EFC621010F62000976CE /* cloudkit */ = {
 			isa = PBXGroup;
 			children = (
-				0C43EFCC21010F62000976CE /* ZBatchManager.swift */,
-				0C43EFCD21010F62000976CE /* ZCloudManager.swift */,
+				0C43EFCC21010F62000976CE /* ZBatches.swift */,
+				0C43EFCD21010F62000976CE /* ZCloud.swift */,
 				0C43EFC721010F62000976CE /* ZLockManager.swift */,
-				0C43EFC821010F62000976CE /* ZOnboardingManager.swift */,
-				0C43EFCB21010F62000976CE /* ZOperationsManager.swift */,
-				0C43EFC921010F62000976CE /* ZRecordsManager.swift */,
-				0C43EFCA21010F62000976CE /* ZRemoteStoresManager.swift */,
+				0C43EFC821010F62000976CE /* ZOnboarding.swift */,
+				0C43EFCB21010F62000976CE /* ZOperations.swift */,
+				0C43EFC921010F62000976CE /* ZRecords.swift */,
+				0C43EFCA21010F62000976CE /* ZRemoteStorage.swift */,
 			);
 			path = cloudkit;
 			sourceTree = "<group>";
@@ -884,11 +884,11 @@
 				0CABC9EF2022768D0019D8B0 /* ZEnumerations.swift in Sources */,
 				0C4118DE1FA8110200A58004 /* ZAlerts.swift in Sources */,
 				0C39B2BF1F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
-				0C43EFD721010F62000976CE /* ZRemoteStoresManager.swift in Sources */,
+				0C43EFD721010F62000976CE /* ZRemoteStorage.swift in Sources */,
 				0C39B38B1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
 				0C39B3821F182EBB0091F4D1 /* ZoneDot.swift in Sources */,
 				0C2E22DA1F75C82500B50A71 /* ZFavoritesController.swift in Sources */,
-				0C43EFDD21010F62000976CE /* ZBatchManager.swift in Sources */,
+				0C43EFDD21010F62000976CE /* ZBatches.swift in Sources */,
 				0C39B28C1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
 				0C39B2B91F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,
 				0C39B2AD1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
@@ -901,11 +901,11 @@
 				0C43EFCE21010F62000976CE /* ZLockManager.swift in Sources */,
 				0C4C23A22016B0930025E4DF /* ZContainerView.swift in Sources */,
 				0C3ECC231FA3023500F085EA /* ZUser.swift in Sources */,
-				0C43EFDA21010F62000976CE /* ZOperationsManager.swift in Sources */,
-				0C43EFE021010F62000976CE /* ZCloudManager.swift in Sources */,
+				0C43EFDA21010F62000976CE /* ZOperations.swift in Sources */,
+				0C43EFE021010F62000976CE /* ZCloud.swift in Sources */,
 				0C39B3191F182EBB0091F4D1 /* Zone.swift in Sources */,
 				0C39B2C81F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
-				0C43EFD421010F62000976CE /* ZRecordsManager.swift in Sources */,
+				0C43EFD421010F62000976CE /* ZRecords.swift in Sources */,
 				0C39B38E1F182EBB0091F4D1 /* ZStackableView.swift in Sources */,
 				0C39B2B01F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
 				0C39B2E91F182EBB0091F4D1 /* ZSelecting.swift in Sources */,
@@ -917,7 +917,7 @@
 				0C39B2B61F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C39B3131F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				0C39B2EC1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
-				0C43EFD121010F62000976CE /* ZOnboardingManager.swift in Sources */,
+				0C43EFD121010F62000976CE /* ZOnboarding.swift in Sources */,
 				0C63DA6D1FCF837D005EC548 /* ZFavorites.swift in Sources */,
 				0C2E22D01F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
 				0C39B2AA1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
@@ -945,14 +945,14 @@
 				A7395BB421B877B600F5759F /* ZGraphEditor.swift in Sources */,
 				0C39B2BB1F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,
 				0C7152251FD8A1E500C7DA61 /* ZFocusing.swift in Sources */,
-				0C43EFDC21010F62000976CE /* ZOperationsManager.swift in Sources */,
+				0C43EFDC21010F62000976CE /* ZOperations.swift in Sources */,
 				0C6CAE211F88308E001960F7 /* ZSearching.swift in Sources */,
 				0C39B2AF1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C39B3871F182EBB0091F4D1 /* ZoneTextWidget.swift in Sources */,
 				0C3ECC251FA3023500F085EA /* ZUser.swift in Sources */,
 				0C39B31B1F182EBB0091F4D1 /* Zone.swift in Sources */,
 				0C39B3901F182EBB0091F4D1 /* ZStackableView.swift in Sources */,
-				0C43EFD321010F62000976CE /* ZOnboardingManager.swift in Sources */,
+				0C43EFD321010F62000976CE /* ZOnboarding.swift in Sources */,
 				0C39B2B21F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
 				0C39B2EB1F182EBB0091F4D1 /* ZSelecting.swift in Sources */,
 				0C2E22C01F75B8AB00B50A71 /* ZMainController.swift in Sources */,
@@ -971,19 +971,19 @@
 				0C48B0951F87197B00A247BC /* ZEvents.swift in Sources */,
 				0C39B2B81F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C39B2D31F182EBB0091F4D1 /* ZDesktopAppDelegate.swift in Sources */,
-				0C43EFD921010F62000976CE /* ZRemoteStoresManager.swift in Sources */,
+				0C43EFD921010F62000976CE /* ZRemoteStorage.swift in Sources */,
 				0C39B3151F182EBB0091F4D1 /* ZAction.swift in Sources */,
-				0C43EFD621010F62000976CE /* ZRecordsManager.swift in Sources */,
+				0C43EFD621010F62000976CE /* ZRecords.swift in Sources */,
 				0C09A7D71FE5DEC600F3D736 /* ZGenericTableController.swift in Sources */,
 				0C7126CD1FB39C5200CD3E76 /* ZDesktopExtensions.swift in Sources */,
 				0C39B2EE1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
-				0C43EFE221010F62000976CE /* ZCloudManager.swift in Sources */,
+				0C43EFE221010F62000976CE /* ZCloud.swift in Sources */,
 				0CB6199E1FB3C4660087B066 /* ZSearchController.swift in Sources */,
 				0C39B2AC1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
 				0C39B2A31F182EBB0091F4D1 /* ZPreferencesController.swift in Sources */,
 				0C39B2B51F182EBB0091F4D1 /* ZGCD.swift in Sources */,
 				0C4118E01FA8110200A58004 /* ZAlerts.swift in Sources */,
-				0C43EFDF21010F62000976CE /* ZBatchManager.swift in Sources */,
+				0C43EFDF21010F62000976CE /* ZBatches.swift in Sources */,
 				0CAC18EB200ED0BB00D641C4 /* ZDebugController.swift in Sources */,
 				0C39B31E1F182EBB0091F4D1 /* ZRecord.swift in Sources */,
 			);
@@ -1000,7 +1000,7 @@
 				0C39B2C01F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
 				0C7152241FD8A1E400C7DA61 /* ZFocusing.swift in Sources */,
 				0C39B38C1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
-				0C43EFD521010F62000976CE /* ZRecordsManager.swift in Sources */,
+				0C43EFD521010F62000976CE /* ZRecords.swift in Sources */,
 				0C39B3831F182EBB0091F4D1 /* ZoneDot.swift in Sources */,
 				0C3ECC241FA3023500F085EA /* ZUser.swift in Sources */,
 				0C39B28D1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
@@ -1009,8 +1009,8 @@
 				0C39B3861F182EBB0091F4D1 /* ZoneTextWidget.swift in Sources */,
 				0C2E22D31F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,
 				0C39B2CF1F182EBB0091F4D1 /* ZMobileExtensions.swift in Sources */,
-				0C43EFD221010F62000976CE /* ZOnboardingManager.swift in Sources */,
-				0C43EFD821010F62000976CE /* ZRemoteStoresManager.swift in Sources */,
+				0C43EFD221010F62000976CE /* ZOnboarding.swift in Sources */,
+				0C43EFD821010F62000976CE /* ZRemoteStorage.swift in Sources */,
 				0C2E22CA1F75BB7E00B50A71 /* ZMainController.swift in Sources */,
 				0C39B31A1F182EBB0091F4D1 /* Zone.swift in Sources */,
 				0C39B2C91F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
@@ -1020,7 +1020,7 @@
 				0C63DA6E1FCF837D005EC548 /* ZFavorites.swift in Sources */,
 				0C39B2B11F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
 				0C39B2EA1F182EBB0091F4D1 /* ZSelecting.swift in Sources */,
-				0C43EFDB21010F62000976CE /* ZOperationsManager.swift in Sources */,
+				0C43EFDB21010F62000976CE /* ZOperations.swift in Sources */,
 				0C43EFCF21010F62000976CE /* ZLockManager.swift in Sources */,
 				0C367C381F463D93000FC914 /* ZoneDragView.swift in Sources */,
 				0C39B3891F182EBB0091F4D1 /* ZoneWidget.swift in Sources */,
@@ -1029,10 +1029,10 @@
 				0CAC18E22006A84800D641C4 /* ZBookmarks.swift in Sources */,
 				0C39B2B71F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C39B3141F182EBB0091F4D1 /* ZAction.swift in Sources */,
-				0C43EFDE21010F62000976CE /* ZBatchManager.swift in Sources */,
+				0C43EFDE21010F62000976CE /* ZBatches.swift in Sources */,
 				0C39B2ED1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
 				0C2E22D11F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
-				0C43EFE121010F62000976CE /* ZCloudManager.swift in Sources */,
+				0C43EFE121010F62000976CE /* ZCloud.swift in Sources */,
 				0C43EFBF21010F17000976CE /* ZFiles.swift in Sources */,
 				0C4C23A32016B0930025E4DF /* ZContainerView.swift in Sources */,
 				0C39B2AB1F182EBB0091F4D1 /* ZClosures.swift in Sources */,

@@ -103,7 +103,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         var remaining = kAllDatabaseIDs.count
         
         for dbID in kAllDatabaseIDs {
-            if  let manager = gRemoteStoresManager.cloudManager(for: dbID) {
+            if  let manager = gRemoteStorage.cloud(for: dbID) {
                 let  locals = manager.searchLocal(for: searchString)
                 
                 manager.search(for: searchString) { iObject in

@@ -75,11 +75,11 @@ extension NSObject {
 
 
     @discardableResult func detectWithMode(_ dbID: ZDatabaseID, block: ToBooleanClosure) -> Bool {
-        gRemoteStoresManager.pushDatabaseID(dbID)
+        gRemoteStorage.pushDatabaseID(dbID)
 
         let result = block()
 
-        gRemoteStoresManager.popDatabaseID()
+        gRemoteStorage.popDatabaseID()
         
         return result
     }
@@ -161,7 +161,7 @@ extension NSObject {
             let ckRecord: CKRecord   = CKRecord(recordType: kZoneType, recordID: recordID)
             let        rawIdentifier = components[0]
             let   dbID: ZDatabaseID? = rawIdentifier == "" ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
-            let              manager = gRemoteStoresManager.recordsManagerFor(dbID)
+            let              manager = gRemoteStorage.recordsFor(dbID)
             let                 zone = manager?.zoneForCKRecord(ckRecord) ?? Zone(record: ckRecord, databaseID: dbID) // BAD DUMMY ?
 
             return zone
@@ -349,7 +349,7 @@ extension CKRecord {
         if  let dbID      = databaseID,
             creationDate != nil {
             let states    = [ZRecordState.notFetched]
-            if  let manager   = gRemoteStoresManager.cloudManager(for: dbID),
+            if  let manager   = gRemoteStorage.cloud(for: dbID),
                 manager.hasCKRecord(self, forAnyOf: states) {
                 manager.clearCKRecords([self], for: states)
             }
@@ -759,7 +759,7 @@ extension String {
 
     static func forReferences(_ references: [CKRecord.Reference]?, in databaseID: ZDatabaseID) -> String {
         return references?.apply()  { object -> (String?) in
-            if let reference = object as? CKRecord.Reference, let zone = gRemoteStoresManager.recordsManagerFor(databaseID)?.maybeZoneForReference(reference) {
+            if let reference = object as? CKRecord.Reference, let zone = gRemoteStorage.recordsFor(databaseID)?.maybeZoneForReference(reference) {
                 let    name  = zone.decoratedName
                 if     name != "" {
                     return name

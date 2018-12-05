@@ -50,8 +50,8 @@ class Zone : ZRecord {
     var                    count:          Int  { return children.count }
     var            lowestExposed:          Int? { return exposed(upTo: highestExposed) }
     var           bookmarkTarget:         Zone? { return crossLink as? Zone }
-    var              destroyZone:         Zone? { return cloudManager?.destroyZone }
-    var                trashZone:         Zone? { return cloudManager?.trashZone }
+    var              destroyZone:         Zone? { return cloud?.destroyZone }
+    var                trashZone:         Zone? { return cloud?.trashZone }
     var                   widget:   ZoneWidget? { return gWidgets.widgetForZone(self) }
     var           linkDatabaseID:  ZDatabaseID? { return databaseID(from: zoneLink) }
     var                 linkName:       String? { return name(from: zoneLink) }
@@ -509,7 +509,7 @@ class Zone : ZRecord {
                 unlinkParentAndMaybeNeedSave()
             } else if _parentZone == nil {
                 if  let  parentRef = parent {
-                    _parentZone    = cloudManager?.zoneForReference(parentRef)
+                    _parentZone    = cloud?.zoneForReference(parentRef)
                 } else if let zone = zoneFrom(parentLink) {
                     _parentZone    = zone
                 }
@@ -882,7 +882,7 @@ class Zone : ZRecord {
                     return true
                 }
 
-                let zone = gRemoteStoresManager.recordsManagerFor(dbID)?.maybeZoneForRecordID(probeID)
+                let zone = gRemoteStorage.recordsFor(dbID)?.maybeZoneForRecordID(probeID)
                 probeID  = zone?.parent?.recordID
             }
         }
@@ -1344,7 +1344,7 @@ class Zone : ZRecord {
     @discardableResult func addChild(for iCKRecord: CKRecord?) -> Zone? {
         var child: Zone?    = nil
         if  let childRecord = iCKRecord, !containsCKRecord(childRecord) {
-            child           = gCloudManager?.zoneForCKRecord(childRecord)
+            child           = gCloud?.zoneForCKRecord(childRecord)
 
             if  child != nil {
                 addChild(child)

@@ -81,30 +81,30 @@ class ZControllers: NSObject {
 
 
     func startupCloudAndUI() {
-        gBatchManager.usingDebugTimer = true
+        gBatches.usingDebugTimer = true
 
-        gRemoteStoresManager.clear()
+        gRemoteStorage.clear()
         self.signalFor(nil, regarding: .eRelayout)
 
-        gBatchManager.startUp { iSame in
+        gBatches.startUp { iSame in
             FOREGROUND {
                 gWorkMode        = .graphMode
                 gIsReadyToShowUI = true
 
                 gHere.grab()
                 gFavorites.updateFavorites()
-                gRemoteStoresManager.updateLastSyncDates()
-                gRemoteStoresManager.recount()
+                gRemoteStorage.updateLastSyncDates()
+                gRemoteStorage.recount()
                 self.signalFor(nil, regarding: .eRelayout)
                 self.requestFeedback()
                 
-                gBatchManager.finishUp { iSame in
+                gBatches.finishUp { iSame in
                     FOREGROUND {
-                        gBatchManager.usingDebugTimer = false
+                        gBatches.usingDebugTimer = false
 
                         self.blankScreenDebug()
                         self.signalFor(nil, regarding: .eRelayout)
-                        gRemoteStoresManager.saveAll()
+                        gRemoteStorage.saveAll()
                     }
                 }
             }
@@ -164,7 +164,7 @@ class ZControllers: NSObject {
     func updateNeededCounts() {
         for dbID in kAllDatabaseIDs {
             var alsoProgenyCounts = false
-            let           manager = gRemoteStoresManager.cloudManager(for: dbID)
+            let           manager = gRemoteStorage.cloud(for: dbID)
             manager?.fullUpdate(for: [.needsCount]) { state, iZRecord in
                 if  let zone                 = iZRecord as? Zone {
                     if  zone.fetchableCount != zone.count {
@@ -215,7 +215,7 @@ class ZControllers: NSObject {
 
     func syncToCloudAfterSignalFor(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
         signalFor(zone, regarding: regarding, onCompletion: onCompletion)
-        gBatchManager.sync { iSame in
+        gBatches.sync { iSame in
             onCompletion?()
         }
     }

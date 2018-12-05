@@ -135,11 +135,11 @@ class ZTextPack: NSObject {
         if  let     trait  = packedTrait {      // traits take logical priority
             trait.ownerZone?.setTraitText(text, for: trait.traitType)
         } else if let zone = packedZone {       // ignore zone if editing a trait, above
-            zone.recordsManager?.unregisterName(of: zone)
+            zone.records?.unregisterName(of: zone)
 
             zone.zoneName  = text
 
-            zone.recordsManager?.registerName(of: zone)
+            zone.records?.registerName(of: zone)
             zone.maybeNeedSave()
         }
     }

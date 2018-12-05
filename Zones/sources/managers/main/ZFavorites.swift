@@ -194,7 +194,7 @@ class ZFavorites: NSObject {
 
 
     func setup(_ onCompletion: IntClosure?) {
-        let   mine = gMineCloudManager
+        let   mine = gMineCloud
         let finish = {
             self.createRootFavorites()
 
@@ -350,7 +350,7 @@ class ZFavorites: NSObject {
 
         if  missingLost {
             let identifier = kLostAndFoundName + kFavoritesSuffix
-            var       lost = gMineCloudManager?.maybeZoneForRecordName(identifier)
+            var       lost = gMineCloud?.maybeZoneForRecordName(identifier)
 
             if  lost      == nil {
                 lost       = Zone(databaseID: .mineID, named: kLostAndFoundName, identifier: identifier)

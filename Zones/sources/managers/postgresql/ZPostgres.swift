@@ -1,6 +1,6 @@
 //
 //  ZPostgres.swift
-//  iFocus
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 7/13/18.
 //  Copyright © 2018 Jonathan Sand. All rights reserved.

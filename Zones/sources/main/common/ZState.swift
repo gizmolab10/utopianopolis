@@ -35,7 +35,7 @@ var               gExpanded:          [String]?
 
 var               gDarkMode:     InterfaceStyle { return InterfaceStyle() }
 var                 gIsDark:               Bool { return gDarkMode == .Dark }
-var                 gIsLate:               Bool { return gBatchManager.isLate }
+var                 gIsLate:               Bool { return gBatches.isLate }
 var             gIsDragging:               Bool { return gDraggedZone != nil }
 var       gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var             gEditorView:      ZoneDragView? { return gEditorController?.editorView }
@@ -105,8 +105,8 @@ var gExpandedZones : [String] {
 
 
 var gHere: Zone {
-    get { return gCloudManager!.hereZone }
-    set { gCloudManager?.hereZone = newValue }
+    get { return gCloud!.hereZone }
+    set { gCloud?.hereZone = newValue }
 }
 
 
