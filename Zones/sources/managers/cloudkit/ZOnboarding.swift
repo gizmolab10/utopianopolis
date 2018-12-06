@@ -17,7 +17,10 @@ import CloudKit
 #endif
 
 
-var gIsMasterAuthor: Bool { return gBatches.isMasterAuthor }
+var gCloudAccountIsActive    : Bool { return gCloudAccountStatus == .active }
+var gCloudAccountStatus      = ZCloudAccountStatus.begin
+var recentCloudAccountStatus = gCloudAccountStatus
+var gHasInternet             = true
 
 
 class ZOnboarding : ZOperations {

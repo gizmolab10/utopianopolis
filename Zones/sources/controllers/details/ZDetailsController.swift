@@ -49,6 +49,15 @@ class ZDetailsController: ZGenericController {
     func view(for id: ZDetailsViewID) -> ZStackableView? {
         return viewsByID[id.rawValue]
     }
+    
+    
+    func toggleViewsFor(ids: [ZDetailsViewID]) {
+        for id in ids {
+            view(for: id)?.toggleHideableVisibility()
+        }
+        
+        update()
+    }
 
     
     func displayViewsFor(ids: [ZDetailsViewID]) {

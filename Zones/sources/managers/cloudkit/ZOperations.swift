@@ -63,14 +63,10 @@ enum ZOperationID: Int {
 }
 
 
-var gCloudAccountIsActive:     Bool { return gCloudAccountStatus == .active }
 var gDebugTimer:             Timer?
 var gCloudTimer:             Timer?
 var gCloudFire:       TimerClosure?
 var gDebugTimerCount                = 0
-var gHasInternet                    = true
-var gCloudAccountStatus             = ZCloudAccountStatus.begin
-var recentCloudAccountStatus        = gCloudAccountStatus
 let localOperations: [ZOperationID] = [.here, .roots, .found, .readFile, .internet, .ubiquity, .favorites, .completion, .macAddress, .fetchUserID, .observeUbiquity, .fetchUserRecord, .checkAvailability]
 
 

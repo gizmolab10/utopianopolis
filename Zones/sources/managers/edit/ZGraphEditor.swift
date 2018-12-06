@@ -150,7 +150,7 @@ class ZGraphEditor: NSObject {
                     case "/":      isShift && isOption ? showKeyboardShortcuts() : gFocusing.focus(kind: .eSelected, isCommand) { self.redrawSyncRedraw() }
                     case "=":      gFocusing.maybeTravelThrough(gSelecting.firstGrab) { self.redrawSyncRedraw() }
                     case kTab:     addNext(containing: isOption) { iChild in iChild.edit() }
-                    case ",", ".": updateMode(isOption, with: key == ".")
+                    case ",", ".": updatePreferences(isCommand, isOption, with: key == ".")
                     case "z":      if isCommand { if isShift { kUndoManager.redo() } else { kUndoManager.undo() } }
                     case kSpace:   if isOption || isWindow || isControl { addIdea() }
                     case kBackspace,
@@ -164,14 +164,18 @@ class ZGraphEditor: NSObject {
     }
 
     
-    func updateMode(_ isOption: Bool, with flag: Bool) {
-        if  isOption {
-            gBrowsingMode  = flag ? .extend : .confine
-        } else {
-            gInsertionMode = flag ? .follow : .precede
-        }
+    func updatePreferences(_ isCommand: Bool, _ isOption: Bool, with isPeriod: Bool) {
+        if     !isCommand {
+            if  isOption {
+                gBrowsingMode  = isPeriod ? .extend : .confine
+            } else {
+                gInsertionMode = isPeriod ? .follow : .precede
+            }
 
-        gControllers.signalFor(nil, regarding: .ePreferences)
+            gControllers.signalFor(nil, regarding: .ePreferences)
+        } else if !isPeriod {
+            gDetailsController?.toggleViewsFor(ids: [.Preferences])
+        }
     }
     
 

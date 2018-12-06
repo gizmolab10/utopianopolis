@@ -35,18 +35,18 @@ enum ZRecordState: String {
 class ZRecords: NSObject {
 
 
-    var              databaseID : ZDatabaseID
-    var              duplicates =                  [ZRecord]  ()
-    var            nameRegistry = [String       : [CKRecord]] ()
-    var          recordRegistry = [String       :   ZRecord]  ()
-    var      recordNamesByState = [ZRecordState :   [String]] ()
-    var            lastSyncDate = Date(timeIntervalSince1970: 0)
-    var lostAndFoundZone: Zone?
-    var    favoritesZone: Zone?     // only for .mineID manager
-    var      destroyZone: Zone?
-    var        trashZone: Zone?
-    var         rootZone: Zone?
-    var      hereIsValid: Bool { return maybeZoneForRecordName(hereRecordName) != nil }
+    var         duplicates =                  [ZRecord]  ()
+    var       nameRegistry = [String       : [CKRecord]] ()
+    var     recordRegistry = [String       :   ZRecord]  ()
+    var recordNamesByState = [ZRecordState :   [String]] ()
+    var       lastSyncDate = Date(timeIntervalSince1970: 0)
+    var         databaseID : ZDatabaseID
+    var   lostAndFoundZone : Zone?
+    var      favoritesZone : Zone?     // only for .mineID manager
+    var        destroyZone : Zone?
+    var          trashZone : Zone?
+    var           rootZone : Zone?
+    var        hereIsValid : Bool { return maybeZoneForRecordName(hereRecordName) != nil }
 
 
     var hereRecordName: String? {

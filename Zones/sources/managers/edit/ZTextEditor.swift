@@ -358,28 +358,28 @@ class ZTextEditor: ZTextView {
     
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        let isCommand = flags.isCommand
-        let  isOption = flags.isOption
-        let   isShift = flags.isShift
+        let COMMAND = flags.isCommand
+        let  OPTION = flags.isOption
+        let   SHIFT = flags.isShift
 
         switch arrow {
         case .up,
-             .down: stopEditAndMoveUp(arrow == .up)
+             .down: stop(!OPTION, editAndMoveUp: arrow == .up)
         case .left:
             if  atStart {
                 stopEditAndMoveOut(true)
             } else {
                 clearOffset()
                 
-                if         isCommand && !isShift {
+                if         COMMAND && !SHIFT {
                     moveToBeginningOfLine(self)
-                } else if  isCommand &&  isShift {
+                } else if  COMMAND &&  SHIFT {
                     moveToBeginningOfLineAndModifySelection(self)
-                } else if  isOption  &&  isShift {
+                } else if  OPTION  &&  SHIFT {
                     moveWordLeftAndModifySelection(self)
-                } else if !isOption  &&  isShift {
+                } else if !OPTION  &&  SHIFT {
                     moveLeftAndModifySelection(self)
-                } else if  isOption  && !isShift {
+                } else if  OPTION  && !SHIFT {
                     moveWordLeft(self)
                 } else {
                     moveLeft(self)
@@ -391,15 +391,15 @@ class ZTextEditor: ZTextView {
             } else {
                 clearOffset()
                 
-                if         isCommand && !isShift {
+                if         COMMAND && !SHIFT {
                     moveToEndOfLine(self)
-                } else if  isCommand &&  isShift {
+                } else if  COMMAND &&  SHIFT {
                     moveToEndOfLineAndModifySelection(self)
-                } else if  isOption  &&  isShift {
+                } else if  OPTION  &&  SHIFT {
                     moveWordRightAndModifySelection(self)
-                } else if !isOption  &&  isShift {
+                } else if !OPTION  &&  SHIFT {
                     moveRightAndModifySelection(self)
-                } else if  isOption  && !isShift {
+                } else if  OPTION  && !SHIFT {
                     moveWordRight(self)
                 } else {
                     moveRight(self)
@@ -433,20 +433,28 @@ class ZTextEditor: ZTextView {
     }
     
 
-    func stopEditAndMoveUp(_ iMoveUp: Bool) {
-        currentOffset = currentOffset ?? currentTextWidget?.offset(for: selectedRange(), iMoveUp)
-        
+    func stop(_ iStopEditing: Bool, editAndMoveUp: Bool) {
+        currentOffset = currentOffset ?? currentTextWidget?.offset(for: selectedRange(), editAndMoveUp)
+//        var      zone = currentlyEditingZone
+
         applyPreservingEdit {
-            quickStopCurrentEdit()
-            gGraphEditor.moveUp(iMoveUp, targeting: currentOffset)
+            if iStopEditing {
+                quickStopCurrentEdit()
+            }
+
+            gGraphEditor.moveUp(editAndMoveUp, targeting: currentOffset)
         }
 
-        let zone  = gSelecting.firstGrab
+        if iStopEditing {
+            let zone = gSelecting.firstGrab
+            
+            if  zone != currentlyEditingZone { // if move up (above) does nothing, ignore
+                edit(zone)
+            }
+        } // else widgets are wrong
         
-        if  zone != currentlyEditingZone { // if move up (above) does nothing, ignore
-            edit(zone)
-            setCursor(at: currentOffset)
-        }
+
+        setCursor(at: currentOffset)
     }
     
     

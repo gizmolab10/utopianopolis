@@ -10,8 +10,9 @@
 import Foundation
 
 
-let gBatches = ZBatches()
-var gUser: ZUser? { return gBatches.user }
+let gBatches        = ZBatches()
+var gUser           :   ZUser? { return gBatches.user }
+var gIsMasterAuthor :     Bool { return gBatches.isMasterAuthor }
 
 
 enum ZBatchID: Int {

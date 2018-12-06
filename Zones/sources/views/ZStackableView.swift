@@ -68,8 +68,7 @@ class ZStackableView: ZView {
     
 
     @IBAction func toggleAction(_ sender: Any) {
-        hideHideable = !hideHideable
-
+        toggleHideableVisibility()
         update()
     }
 
@@ -80,6 +79,11 @@ class ZStackableView: ZView {
         update()
     }
 
+    
+    func toggleHideableVisibility() {
+        hideHideable = !hideHideable
+    }
+    
 
     func update() {
         titleButton?.state = NSControl.StateValue.on
