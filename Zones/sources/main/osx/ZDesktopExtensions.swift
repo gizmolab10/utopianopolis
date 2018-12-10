@@ -103,11 +103,18 @@ extension String {
         return CGPoint(x: point.x, y: point.y)
     }
 
-
+    
     var cgSize: CGSize {
         let size = NSSizeFromString(self)
-
+        
         return CGSize(width: size.width, height: size.height)
+    }
+
+    
+    var cgRect: CGRect {
+        let rect = NSRectFromString(self)
+        
+        return CGRect(x: rect.origin.x, y: rect.origin.y, width: rect.size.width, height: rect.size.height)
     }
 
 

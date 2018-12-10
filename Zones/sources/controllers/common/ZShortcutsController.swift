@@ -72,13 +72,13 @@ class ZShortcutsController: ZGenericTableController {
     
     
     func attributedString(for row: Int, column: Int) -> NSMutableAttributedString {
-        let  columnStrings = [columnOne, columnTwo, columnThree]
-        let        strings = columnStrings[column]
-        let            raw = row >= strings.count ? "" : strings[row]
-        var           text = raw.substring(with: NSMakeRange(1, raw.length - 1))
-        var     attributes = [String : Any] ()
-        let           type = ZShortcutType(rawValue: raw.substring(with: NSMakeRange(0, 1)))
-        let         prefix = text.substring(to: 4)
+        let columnStrings = [columnOne, columnTwo, columnThree]
+        let       strings = columnStrings[column]
+        let           raw = row >= strings.count ? "" : strings[row]
+        var          text = raw.substring(with: NSMakeRange(1, raw.length - 1))
+        var    attributes = [String : Any] ()
+        let          type = ZShortcutType(rawValue: raw.substring(with: NSMakeRange(0, 1)))
+        let        prefix = text.substring(to: 4)
 
         if  text.length == 0 {
             text = "   \t         \t" // for empty lines, including after last row in first column array
@@ -89,7 +89,7 @@ class ZShortcutsController: ZGenericTableController {
             let   bold = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
             attributes = [NSAttributedString.Key.font.rawValue: bold as Any]
         case .underline?:
-            text       = text.substring(from: 4)
+            text       = text.substring(from: 4) // remove underline from leading spaces
             attributes = [NSAttributedString.Key.underlineStyle.rawValue: 1 as Any]
         default:
             break
@@ -97,7 +97,7 @@ class ZShortcutsController: ZGenericTableController {
 
         var result = NSMutableAttributedString(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
         
-        if  type  != nil && type! == .underline {
+        if  type  != nil && type! == .underline { // re-insert leading spaces
             let intermediate = NSMutableAttributedString(string: prefix)
 
             intermediate.append(result)

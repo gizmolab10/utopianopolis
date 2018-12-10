@@ -200,9 +200,9 @@ var gGenericOffset: CGSize {
 }
 
 
-var gWindowSize: CGSize {
-    get { return getPreferencesSize(for: kWindowSize, defaultSize: CGSize(width: 300.0, height: 300.0)) }
-    set { setPreferencesSize(newValue, for: kWindowSize) }
+var gWindowRect: CGRect {
+    get { return getPreferencesRect(for: kWindowRect, defaultRect: kDefaultWindowRect) }
+    set { setPreferencesRect(newValue, for: kWindowRect) }
 }
 
 
@@ -394,6 +394,16 @@ func getPreferencesSize(for key: String, defaultSize: CGSize = CGSize.zero) -> C
 
 func setPreferencesSize(_ iSize: CGSize = CGSize.zero, for key: String) {
     setPreferencesString(NSStringFromSize(iSize), for: key)
+}
+
+
+func getPreferencesRect(for key: String, defaultRect: CGRect = CGRect.zero) -> CGRect {
+    return getPreferenceString(for: key) { return NSStringFromRect(defaultRect) }?.cgRect ?? defaultRect
+}
+
+
+func setPreferencesRect(_ iRect: CGRect = CGRect.zero, for key: String) {
+    setPreferencesString(NSStringFromRect(iRect), for: key)
 }
 
 
