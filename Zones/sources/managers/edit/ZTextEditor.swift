@@ -242,6 +242,17 @@ class ZTextEditor: ZTextView {
     func fullResign() { assignAsFirstResponder (nil) } // ios broken
 
 
+    func cancel() {
+        if  let    e = currentEdit,
+            let zone = currentlyEditingZone {
+            clearEdit()
+            fullResign()
+            zone.grab()
+            e.updateWidgetsForEndEdit()
+        }
+    }
+
+
     func updateText(inZone: Zone?, isEditing: Bool = false) {
         if  let zone = inZone {
             ZTextPack(zone).updateText(isEditing: isEditing)
@@ -446,10 +457,13 @@ class ZTextEditor: ZTextView {
         }
 
         if iStopEditing {
-            let zone = gSelecting.firstGrab
+            let zone  = gSelecting.firstGrab
             
             if  zone != currentlyEditingZone { // if move up (above) does nothing, ignore
                 edit(zone)
+            } else {
+                gSelecting.clearGrab()
+                currentEdit?.textWidget?.becomeFirstResponder()
             }
         } // else widgets are wrong
         

@@ -37,7 +37,7 @@ class ZOnboarding : ZOperations {
 
     @objc func completeOnboarding(_ notification: Notification) {
         FOREGROUND(canBeDirect: true) {
-            gBatches.batch(.newAppleID) { iResult in
+            gBatches.batch(.bNewAppleID) { iResult in
                 gFavorites.updateFavorites()
                 gControllers.signalFor(nil, regarding: .eRelayout)
             }
@@ -51,14 +51,14 @@ class ZOnboarding : ZOperations {
 
     override func invokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
         switch operationID {
-        case .checkAvailability: checkAvailability { onCompletion(true) }    // true means op is handled
-        case .fetchUserRecord:   fetchUserRecord   { onCompletion(true) }
-        case .fetchUserID:       fetchUserID       { onCompletion(true) }
-        case .ubiquity:          ubiquity          { onCompletion(true) }
-        case .observeUbiquity:   observeUbiquity();  onCompletion(true)
-        case .macAddress:        getMAC();           onCompletion(true)
-        case .internet:          internet();         onCompletion(true)
-        default:                                     onCompletion(false)     // false means op is not handled, so super should proceed
+        case .oCheckAvailability: checkAvailability { onCompletion(true) }    // true means op is handled
+        case .oFetchUserRecord:   fetchUserRecord   { onCompletion(true) }
+        case .oFetchUserID:       fetchUserID       { onCompletion(true) }
+        case .oUbiquity:          ubiquity          { onCompletion(true) }
+        case .oObserveUbiquity:   observeUbiquity();  onCompletion(true)
+        case .oMacAddress:        getMAC();           onCompletion(true)
+        case .oInternet:          internet();         onCompletion(true)
+        default:                                      onCompletion(false)     // false means op is not handled, so super should proceed
         }
     }
 

@@ -110,8 +110,8 @@ class ZFiles: NSObject {
 
 
     func isReading(for iDatabaseID: ZDatabaseID?) -> Bool {
-        if  let databaseID = iDatabaseID,
-            let      index = index(of: databaseID) {
+        if  let  dbID = iDatabaseID,
+            let index = index(of: dbID) {
             return isReading[index]
         }
 

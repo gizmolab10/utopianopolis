@@ -207,7 +207,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         }
         
         if let gesture = iGesture as? ZKeyClickGestureRecognizer {
-            let         isCommand = gesture.modifiers?.contains(.command) ?? false
+            let           COMMAND = gesture.modifiers?.contains(.command) ?? false
             let        textWidget = gEditedTextWidget
             var            inText = false
 
@@ -225,9 +225,9 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                         let  dot = detectDotIn(widget, gesture) {
                         let isShift = gesture.isShiftDown
                         if  dot.isReveal {
-                            gGraphEditor.clickActionOnRevealDot(for: zone, isCommand: isCommand)
+                            gGraphEditor.clickActionOnRevealDot(for: zone, isCommand: COMMAND)
                         } else {
-                            zone.dragDotClicked(isCommand: isCommand, isShift: isShift)
+                            zone.dragDotClicked(isCommand: COMMAND, isShift: isShift)
                         }
 
                         gControllers.signalFor(nil, regarding: .eDetails)
@@ -366,9 +366,9 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                         dropAt!     -= 1
                     }
 
-                    if  let   gesture = iGesture as? ZKeyPanGestureRecognizer,
-                        let isCommand = gesture.modifiers?.isCommand {
-                        gGraphEditor.moveGrabbedZones(into: drop, at: dropAt, isCommand: isCommand) {
+                    if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
+                        let COMMAND = gesture.modifiers?.isCommand {
+                        gGraphEditor.moveGrabbedZones(into: drop, at: dropAt, COMMAND) {
                             self.restartGestureRecognition()
                             self.redrawAndSync()
                         }

@@ -43,7 +43,7 @@ class ZSnapshot: NSObject {
             let sameHere = left.here == right.here
             let  sameIDs = left.databaseID == right.databaseID
 
-            if sameHere && sameIDs {
+            if  sameHere && sameIDs {
                 for (index, grab) in left.currentGrabs.enumerated() {
                     if  grab != right.currentGrabs[index] {
                         return false
@@ -63,26 +63,15 @@ class ZSnapshot: NSObject {
 class ZSelecting: NSObject {
 
 
-    var        hasGrab : Bool { return currentGrabs.count > 0 }
+    var        hasGrab :  Bool  { return currentGrabs.count > 0 }
+    var     cousinList : [Zone] { get { maybeNewGrabUpdate(); return _cousinList  } set { _cousinList  = newValue }}
+    var    sortedGrabs : [Zone] { get { maybeNewGrabUpdate(); return _sortedGrabs } set { _sortedGrabs = newValue }}
     var pasteableZones = [Zone: (Zone?, Int?)] ()
     var   currentGrabs = [Zone] ()
-    var    cousinsList = [Zone] ()
+    var   _sortedGrabs = [Zone] ()
+    var    _cousinList = [Zone] ()
+    var     hasNewGrab :  Zone?
 
-    
-    var sortedGrabs: [Zone] {
-        var grabs = [Zone]()
-        
-        updateCousinsList(for: (currentGrabs.count == 0) ? nil : currentGrabs[0])
-        
-        for zone in cousinsList {
-            if  currentGrabs.contains(zone) {
-                grabs.append(zone)
-            }
-        }
-        
-        return grabs
-    }
-    
 
     var snapshot : ZSnapshot {
         let          snap = ZSnapshot()
@@ -223,10 +212,16 @@ class ZSelecting: NSObject {
     // MARK:-
 
 
-    func clearGrab()   { currentGrabs          = [ ] }
-    func clearPaste()  { pasteableZones        = [:] }
     func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || gTextEditor.currentlyEditingZone == zone }
     func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
+    func clearPaste()                     { pasteableZones = [:] }
+
+    
+    func clearGrab() {
+        currentGrabs = []
+        sortedGrabs  = []
+        cousinList   = []
+    }
 
 
     func setHereRecordName(_ iName: String, for databaseID: ZDatabaseID) {
@@ -248,6 +243,11 @@ class ZSelecting: NSObject {
         return nil
     }
 
+    
+    func snapshotEquals(_ other: ZSnapshot) -> Bool {
+        return snapshot == other
+    }
+    
 
     // MARK:- selection
     // MARK:-
@@ -258,8 +258,10 @@ class ZSelecting: NSObject {
 
         clearGrab()
 
-        if let more = zones {
-            grabbed += more
+        if  let   more = zones,
+            more.count > 0 {
+            grabbed   += more
+            hasNewGrab = more[0]
 
             currentGrabs.append(contentsOf: more)
         }
@@ -310,7 +312,8 @@ class ZSelecting: NSObject {
 
 
     func addToGrab(_ iZone: Zone?, onlyOne: Bool = false) {
-        if  let zone = iZone, (!currentGrabs.contains(zone) || onlyOne) { // if onlyOne AND already grabbed, shrink grab list to iZone
+        if  let zone = iZone,
+            (!currentGrabs.contains(zone) || onlyOne) { // if onlyOne AND already grabbed, shrink grab list to iZone
             gTextEditor.stopCurrentEdit()
 
             if  onlyOne {
@@ -324,13 +327,14 @@ class ZSelecting: NSObject {
             for grab in currentGrabs {
                 updateWidgetFor(grab)
             }
+            
+            hasNewGrab = zone
         }
     }
 
 
     func grab(_ zone: Zone?) {
         addToGrab(zone!, onlyOne: true)
-        updateCousinsList(for: zone)
     }
 
 
@@ -347,16 +351,25 @@ class ZSelecting: NSObject {
     // MARK:-
 
     
-    func updateCousinsList(for lastGrab: Zone?) {
-        cousinsList.removeAll()
+    func maybeNewGrabUpdate() {
+        if  let   grab = hasNewGrab {
+            let  start = grab.isInFavorites ? gFavoritesRoot : gHere
+            let  level = grab.level
+            hasNewGrab = nil
 
-        if  let  grab = lastGrab {
-            let level = grab.level
-            let start = grab.isInFavorites ? gFavoritesRoot : gHere
+            _cousinList.removeAll()
+            _sortedGrabs.removeAll()
             
             start?.traverseAllVisibleProgeny { iZone in
-                if  iZone.level == level || (iZone.level < level && (iZone.count == 0 || !iZone.showingChildren)) {
-                    cousinsList.append(iZone)
+                if   iZone.level == level ||
+                    (iZone.level  < level &&
+                        (iZone.count == 0 ||
+                            !iZone.showingChildren)) {
+                    _cousinList.append(iZone)
+                    
+                    if  currentGrabs.contains(iZone) {
+                        _sortedGrabs.append(iZone)
+                    }
                 }
             }
         }

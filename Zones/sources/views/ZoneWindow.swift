@@ -52,7 +52,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 
     override func keyDown(with event: ZEvent) {
         if  !isDuplicate(event: event),
-            !gGraphEditor.handleEvent(event, isWindow: true) {
+            gGraphEditor.handleEvent(event, isWindow: true) != nil {
             super.keyDown(with: event)
         }
     }

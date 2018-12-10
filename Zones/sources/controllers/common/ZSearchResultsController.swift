@@ -271,14 +271,14 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     func handleEvent(_ event: ZEvent) -> ZEvent? {
         let       string = event.input
         let        flags = event.modifierFlags
-        let    isCommand = flags.isCommand
+        let      COMMAND = flags.isCommand
         let          key = string[string.startIndex].description
         let     exitKeys = ["\r", kEscape]
 
         if  let    arrow = key.arrow {
             switch arrow {
-            case    .up:    moveSelection(up: true,  extreme: isCommand)
-            case  .down:    moveSelection(up: false, extreme: isCommand)
+            case    .up:    moveSelection(up: true,  extreme: COMMAND)
+            case  .down:    moveSelection(up: false, extreme: COMMAND)
             case  .left:    clear();    return nil
             case .right: if resolve() { return nil }; break
             }

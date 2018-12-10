@@ -39,7 +39,8 @@ class ZGraphEditor: NSObject {
     }
 
 
-    var    previousEvent:         ZEvent?
+    var previousEvent: ZEvent?
+    var shortcutsController: NSWindowController?
 
 
     var undoManager: UndoManager {
@@ -79,47 +80,53 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) {
-        if  var   key = iKey {
-            let isControl = flags.isControl
-            let isCommand = flags.isCommand
-            let  isOption = flags.isOption
-            var   isShift = flags.isShift
-            let     arrow = key.arrow
+    @discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool { // true means handled
+        if  var     key = iKey {
+            let CONTROL = flags.isControl
+            let COMMAND = flags.isCommand
+            let  OPTION = flags.isOption
+            var   SHIFT = flags.isShift
+            let   arrow = key.arrow
             
             if  gIsEditingText {
-                if isCommand || isControl {
+                if  let a = arrow {
+                    gTextEditor.handleArrow(a, flags: flags)
+                } else if COMMAND || CONTROL || OPTION {
                     switch key {
                     case "a":      gEditedTextWidget?.selectAllText()
                     case "d":      addIdeaFromSelectedText()
                     case "f":      search()
                     case "/":      gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }
                     case "?":      showKeyboardShortcuts()
+                    case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kSpace:   addIdea()
-                    default:       break
+                    default:       return false
                     }
-                } else if let a = arrow {
-                    gTextEditor.handleArrow(a, flags: flags)
+                } else {
+                    switch key {
+                    case kEscape:  gTextEditor.cancel()
+                    default:       return false
+                    }
                 }
             } else if  validateKey(key, flags) {
                 let    widget = gWidgets.currentMovableWidget
                 let hasWidget = widget != nil
-                let isFlagged = isControl || isCommand || isOption
+                let   FLAGGED = CONTROL || COMMAND || OPTION
                 
                 if  key      != key.lowercased() {
                     key       = key.lowercased()
-                    isShift   = true
+                    SHIFT     = true
                 }
                 
                 widget?.widgetZone?.deferWrite()
                 
                 if  let a = arrow, isWindow {
                     handleArrow(a, flags: flags)
-                } else if kMarkingCharacters.contains(key), !isCommand {
+                } else if kMarkingCharacters.contains(key), !COMMAND {
                     prefix(with: key)
                 } else {
                     switch key {
-                    case "a":      selectAll(progeny: isOption)
+                    case "a":      selectAll(progeny: OPTION)
                     case "b":      addBookmark()
                     case "c":      recenter()
                     case "d":      duplicate()
@@ -128,77 +135,70 @@ class ZGraphEditor: NSObject {
                     case "h":      editTrait(for: .eHyperlink)
                     case "i":      toggleColorized()
                     case "l", "u": alterCase(up: key == "u")
-                    case "j":      gFiles.importFromFile(asOutline: isOption, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() }
-                    case "k":      gFiles  .exportToFile(asOutline: isOption,        for: gSelecting.currentMoveable)
+                    case "j":      gFiles.importFromFile(asOutline: OPTION, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() }
+                    case "k":      gFiles  .exportToFile(asOutline: OPTION,        for: gSelecting.currentMoveable)
                     case "m":      refetch()
-                    case "n":      alphabetize(isOption)
-                    case "o":      if isCommand { if isOption { gFiles.showInFinder() } else { gFiles.open() } } else { orderByLength(isOption) }
+                    case "n":      alphabetize(OPTION)
+                    case "o":      if COMMAND { if OPTION { gFiles.showInFinder() } else { gFiles.open() } } else { orderByLength(OPTION) }
                     case "p":      printHere()
                     case "q":      ZApplication.shared.terminate(self)
                     case "r":      reverse()
-                    case "s":      if isCommand { gFiles.saveAs() } else { selectCurrentFavorite() }
+                    case "s":      if COMMAND { gFiles.saveAs() } else { selectCurrentFavorite() }
                     case "w":      rotateWritable()
-                    case "1":      if isCommand && isShift { sendEmailBugReport() }
+                    case "1":      if COMMAND && SHIFT { sendEmailBugReport() }
                     case "+":      divideChildren()
                     case "-":      addLine()
                     case "`":      travelToOtherGraph()
-                    case "[":      gFocusing.goBack(   extreme: isFlagged)
-                    case "]":      gFocusing.goForward(extreme: isFlagged)
+                    case "[":      gFocusing.goBack(   extreme: FLAGGED)
+                    case "]":      gFocusing.goForward(extreme: FLAGGED)
                     case ";":      doFavorites(true,    false)
-                    case "?":      isControl ? openBrowserForFocusWebsite() : showKeyboardShortcuts()
-                    case "'":      doFavorites(isShift, isOption)
-                    case "/":      isShift && isOption ? showKeyboardShortcuts() : gFocusing.focus(kind: .eSelected, isCommand) { self.redrawSyncRedraw() }
+                    case "?":      CONTROL ? openBrowserForFocusWebsite() : showKeyboardShortcuts()
+                    case "'":      doFavorites(SHIFT, OPTION)
+                    case "/":      SHIFT && OPTION ? showKeyboardShortcuts() : gFocusing.focus(kind: .eSelected, COMMAND) { self.redrawSyncRedraw() }
                     case "=":      gFocusing.maybeTravelThrough(gSelecting.firstGrab) { self.redrawSyncRedraw() }
-                    case kTab:     addNext(containing: isOption) { iChild in iChild.edit() }
-                    case ",", ".": updatePreferences(isCommand, isOption, with: key == ".")
-                    case "z":      if isCommand { if isShift { kUndoManager.redo() } else { kUndoManager.undo() } }
-                    case kSpace:   if isOption || isWindow || isControl { addIdea() }
+                    case kTab:     addNext(containing: OPTION) { iChild in iChild.edit() }
+                    case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
+                    case "z":      if COMMAND { if SHIFT { kUndoManager.redo() } else { kUndoManager.undo() } }
+                    case kSpace:   if OPTION || isWindow || CONTROL { addIdea() }
                     case kBackspace,
-                         kDelete:  if isOption || isWindow || isCommand { delete(permanently: isCommand && isOption && isWindow, preserveChildren: (isControl || isOption || isCommand) && isWindow) }
-                    case "\r":     if hasWidget { grabOrEdit(isCommand) }
-                    default:       break
+                         kDelete:  if OPTION || isWindow || COMMAND { delete(permanently: COMMAND && OPTION && isWindow, preserveChildren: FLAGGED && isWindow) }
+                    case "\r":     if hasWidget { grabOrEdit(COMMAND) }
+                    default:       return false
                     }
                 }
             }
         }
-    }
-
-    
-    func updatePreferences(_ isCommand: Bool, _ isOption: Bool, with isPeriod: Bool) {
-        if     !isCommand {
-            if  isOption {
-                gBrowsingMode  = isPeriod ? .extend : .confine
-            } else {
-                gInsertionMode = isPeriod ? .follow : .precede
-            }
-
-            gControllers.signalFor(nil, regarding: .ePreferences)
-        } else if !isPeriod {
-            gDetailsController?.toggleViewsFor(ids: [.Preferences])
-        }
+        
+        return true
     }
     
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        let isCommand = flags.isCommand
-        let  isOption = flags.isOption
-        let   isShift = flags.isShift
+        if  gIsEditingText {
+            gTextEditor.handleArrow(arrow, flags: flags)
+            
+            return
+        }
+        
+        let COMMAND = flags.isCommand
+        let  OPTION = flags.isOption
+        let   SHIFT = flags.isShift
 
-        if isOption && !gSelecting.currentMoveable.userCanMove {
+        if OPTION && !gSelecting.currentMoveable.userCanMove {
             return
         }
 
         switch arrow {
-        case .down:     moveUp(false, selectionOnly: !isOption, extreme: isCommand, extend: isShift)
-        case .up:       moveUp(true,  selectionOnly: !isOption, extreme: isCommand, extend: isShift)
+        case .down:     moveUp(false, selectionOnly: !OPTION, extreme: COMMAND, extend: SHIFT)
+        case .up:       moveUp(true,  selectionOnly: !OPTION, extreme: COMMAND, extend: SHIFT)
         default:
-            if !isShift {
+            if !SHIFT {
                 switch arrow {
-                case .right: moveInto(selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawSyncRedraw() } // relayout graph when travelling through a bookmark
-                case .left:  moveOut( selectionOnly: !isOption, extreme: isCommand) { self.updateFavoritesRedrawSyncRedraw() }
+                case .right: moveInto(selectionOnly: !OPTION, extreme: COMMAND) { self.updateFavoritesRedrawSyncRedraw() } // relayout graph when travelling through a bookmark
+                case .left:  moveOut( selectionOnly: !OPTION, extreme: COMMAND) { self.updateFavoritesRedrawSyncRedraw() }
                 default: break
                 }
-            } else if !isOption {
+            } else if !OPTION {
 
                 //////////////////
                 // GENERATIONAL //
@@ -212,28 +212,24 @@ class ZGraphEditor: NSObject {
                 default:     return
                 }
 
-                applyGenerationally(show, extreme: isCommand)
+                applyGenerationally(show, extreme: COMMAND)
             }
         }
     }
 
 
-    @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> Bool {
-        if !gIsEditingText, iEvent != previousEvent, gWorkMode == .graphMode {
+    @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> ZEvent? {
+        if  gWorkMode    == .graphMode,
+            iEvent       != previousEvent {
             let     flags = iEvent.modifierFlags
             previousEvent = iEvent
-
-            if let key = iEvent.key {
-                handleKey(key, flags: flags, isWindow: isWindow)
-            } else if let arrow = iEvent.arrow {
-                handleArrow(arrow, flags: flags)
+            
+            if  handleKey(iEvent.key, flags: flags, isWindow: isWindow) {
+                return nil
             }
-
-
-            return true
         }
 
-        return false
+        return iEvent
     }
 
 
@@ -252,8 +248,8 @@ class ZGraphEditor: NSObject {
 
 
     func menuType(for key: String, _ flags: NSEvent.ModifierFlags) -> ZMenuType {
-        let  alterers = "ehiluw\r" + kMarkingCharacters
-        let isCommand = flags.isCommand
+        let alterers = "ehiluw\r" + kMarkingCharacters
+        let  COMMAND = flags.isCommand
 
         if  alterers.contains(key) {             return .eAlter
         } else {
@@ -263,11 +259,11 @@ class ZGraphEditor: NSObject {
             case "f":                            return .eFind
             case "m":                            return .eCloud
             case "z":                            return .eUndo
-            case "o", "r":                       return  isCommand ? .eFiles : .eSort
+            case "o", "r":                       return  COMMAND ? .eFiles : .eSort
             case "v", "x", kSpace:               return .eChild
             case "b", kTab, kDelete, kBackspace: return .eParent
             case "j", "k":                       return .eFiles
-            case "d":                            return  isCommand ? .eAlter : .eParent
+            case "d":                            return  COMMAND ? .eAlter : .eParent
             default: break
             }
 
@@ -326,12 +322,30 @@ class ZGraphEditor: NSObject {
     // MARK:-
     
     
-    func showKeyboardShortcuts() {
-        let storyboard = NSStoryboard(name: "Shortcuts", bundle: nil)
-        
-        if let controller = storyboard.instantiateInitialController() as? NSWindowController {
-            controller.showWindow(nil)
+    func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with PERIOD: Bool) {
+        if     !COMMAND {
+            if  OPTION {
+                gBrowsingMode  = PERIOD ? .extend : .confine
+            } else {
+                gInsertionMode = PERIOD ? .follow : .precede
+            }
+            
+            gControllers.signalFor(nil, regarding: .ePreferences)
+        } else if !PERIOD {
+            gDetailsController?.toggleViewsFor(ids: [.Preferences])
+        } else if gIsEditingText {
+            gTextEditor.cancel()
         }
+    }
+
+    
+    func showKeyboardShortcuts() {
+        if  shortcutsController == nil {
+            let      storyboard  = NSStoryboard(name: "Shortcuts", bundle: nil)
+            shortcutsController  = storyboard.instantiateInitialController() as? NSWindowController
+        }
+
+        shortcutsController?.showWindow(nil)
     }
 
 
@@ -493,7 +507,7 @@ class ZGraphEditor: NSObject {
             }
         }
 
-        if zones.count == 1 {
+        if  zones.count == 1 {
             commonParent = gSelecting.firstGrab
             zones        = commonParent.children
         }
@@ -509,6 +523,8 @@ class ZGraphEditor: NSObject {
             commonParent.children.updateOrder()
             redrawSyncRedraw()
         }
+
+        gSelecting.hasNewGrab = gSelecting.currentMoveable
     }
 
 
@@ -808,10 +824,11 @@ class ZGraphEditor: NSObject {
                     if  gHere == zone {
                         gHere  = parent
                     }
-
-                    parent.grab()
                     
-                    self.recursiveUpdate(show, parent, to: iLevel, onCompletion: onCompletion)
+                    self.recursiveUpdate(show, parent, to: iLevel) {
+                        parent.grab()
+                        onCompletion?()
+                    }
                 } else {
                     onCompletion?()
                 }
@@ -1077,20 +1094,21 @@ class ZGraphEditor: NSObject {
 
 
     private func deleteZones(_ iZones: [Zone], permanently: Bool = false, in iParent: Zone? = nil, iShouldGrab: Bool = true, onCompletion: Closure?) {
-        let zones = iZones.sortedByReverseOrdering()
-        let  grab = !iShouldGrab ? nil : self.grabAppropriate(zones)
-        var  done = false
+        let    zones = iZones.sortedByReverseOrdering()
+        let     grab = !iShouldGrab ? nil : self.grabAppropriate(zones)
+        var doneOnce = false
 
         for zone in iZones {
             zone.needProgeny()
         }
 
         gBatches.children(.all) { iSame in // to make sure all progeny are acted upon
-            if !done {
-                done      = true
+            if !doneOnce {
+                doneOnce  = true
                 var count = zones.count
 
                 if  count == 0 {
+                    grab?.grab()
                     onCompletion?()
                     
                     return
@@ -1100,10 +1118,6 @@ class ZGraphEditor: NSObject {
                     count -= 1
                     
                     if  count == 0 {
-                        if  iShouldGrab {
-                            grab?.grab()
-                        }
-                        
                         gBatches.bookmarks { iSame in
                             var bookmarks = [Zone] ()
                             
@@ -1112,6 +1126,7 @@ class ZGraphEditor: NSObject {
                             }
                             
                             if  bookmarks.count == 0 {
+                                grab?.grab()
                                 onCompletion?()
                             } else {
                                 
@@ -1120,6 +1135,7 @@ class ZGraphEditor: NSObject {
                                 ////////////////////////////////////////////
                                 
                                 self.deleteZones(bookmarks, permanently: permanently, iShouldGrab: false) { // recurse
+                                    grab?.grab()
                                     onCompletion?()
                                 }
                             }
@@ -1557,8 +1573,8 @@ class ZGraphEditor: NSObject {
             if  let     p = zone.parentZone {
                 index    += (gInsertionsFollow ? 1 : 0)
 
-                duplicate.grab()
                 p.addAndReorderChild(duplicate, at: index)
+                duplicate.grab()
             }
 
             duplicates.removeLast()
@@ -1605,6 +1621,8 @@ class ZGraphEditor: NSObject {
 
                 a.maybeNeedSave()
             }
+
+            gSelecting.hasNewGrab = gSelecting.currentMoveable
 
             commonParent.respectOrder()
             redrawSyncRedraw()
@@ -1798,7 +1816,7 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func moveGrabbedZones(into iInto: Zone, at iIndex: Int?, isCommand: Bool, onCompletion: Closure?) {
+    func moveGrabbedZones(into iInto: Zone, at iIndex: Int?, _ COMMAND: Bool, onCompletion: Closure?) {
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // 1. move a normal zone into another normal zone                                                           //
@@ -1857,7 +1875,7 @@ class ZGraphEditor: NSObject {
             }
 
             iUndoSelf.UNDO(self) { iUndoUndoSelf in
-                iUndoUndoSelf.moveGrabbedZones(into: iInto, at: iIndex, isCommand: isCommand, onCompletion: onCompletion)
+                iUndoUndoSelf.moveGrabbedZones(into: iInto, at: iIndex, COMMAND, onCompletion: onCompletion)
             }
 
             onCompletion?()
@@ -1870,7 +1888,7 @@ class ZGraphEditor: NSObject {
         let finish = {
             var done = false
 
-            if !isCommand {
+            if !COMMAND {
                 into.revealChildren()
             }
 
@@ -1906,7 +1924,7 @@ class ZGraphEditor: NSObject {
                             }
                         }
 
-                        if !isCommand {
+                        if !COMMAND {
                             beingMoved.addToGrab()
                         }
 
@@ -1927,7 +1945,7 @@ class ZGraphEditor: NSObject {
         // deal with target being a bookmark //
         ///////////////////////////////////////
 
-        if !toBookmark || isCommand {
+        if !toBookmark || COMMAND {
             finish()
         } else {
             gFocusing.travelThrough(iInto) { (iAny, iSignalKind) in
@@ -1950,17 +1968,20 @@ class ZGraphEditor: NSObject {
         into.needChildren()
 
         gBatches.children(.restore) { iSame in
+            let doGrab = !(into.isInTrash || into.isTrash)
+            
             if orphan {
                 zone.orphan()
-            }
-
-            if !into.isInTrash && !into.isTrash { // so grab won't disappear
-                zone.grab()
             }
 
             into.addAndReorderChild(zone, at: iIndex)
             into.maybeNeedSave()
             zone.maybeNeedSave()
+
+            if  doGrab { // so grab won't disappear
+                zone.grab()
+            }
+
             onCompletion?()
         }
     }
@@ -1988,10 +2009,10 @@ class ZGraphEditor: NSObject {
     }
     
     func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, extend: Bool = false, targeting iOffset: CGFloat? = nil) {
-        let            zone = iMoveUp ? gSelecting.firstGrab : gSelecting.lastGrab
-        let      isConfined = gBrowsingMode == .confine
-        let    hereIsMoving = zone == gHere
-        let          parent = zone.parentZone
+        let         zone = iMoveUp ? gSelecting.firstGrab : gSelecting.lastGrab
+        let   isConfined = gBrowsingMode == .confine
+        let hereIsMoving = zone == gHere
+        let       parent = zone.parentZone
 
         if  parent == nil || hereIsMoving {
             if !zone.isRoot {
@@ -2003,7 +2024,7 @@ class ZGraphEditor: NSObject {
                 let snapshot = gSelecting.snapshot
                 
                 revealParentAndSiblingsOf(zone) { iCalledCloud in
-                    let same    = (snapshot == gSelecting.snapshot)
+                    let same    = gSelecting.snapshotEquals(snapshot)
                     let setHere = parent != nil && hereIsMoving
 
                     if  setHere {
@@ -2020,11 +2041,7 @@ class ZGraphEditor: NSObject {
                 }
             }
         } else if  let originalParent = parent {
-            if !isConfined {
-                gSelecting.updateCousinsList(for: zone)
-            }
-
-            let     targetZones = isConfined ? originalParent.children : gSelecting.cousinsList
+            let     targetZones = isConfined ? originalParent.children : gSelecting.cousinList
             let     targetCount = targetZones.count
             let       targetMax = targetCount - 1
 
@@ -2038,9 +2055,14 @@ class ZGraphEditor: NSObject {
                     if  let newParent = iZone.parentZone {
                         var toIndex   = iZone.siblingIndex
                         
-                        if  toIndex  != nil,
-                            toIndex  == newParent.count - 1 {
-                            toIndex   = nil
+                        if  toIndex     != nil {
+                            if  parent  != newParent {
+                                toIndex  = toIndex! + (iMoveUp ? 1 : 0)
+                            }
+
+                            if  toIndex == newParent.count - 1 {
+                                toIndex  = nil
+                            }
                         }
                         
                         self.moveZone(zone, into: newParent, at: toIndex, orphan: true) {

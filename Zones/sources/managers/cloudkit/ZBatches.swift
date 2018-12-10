@@ -16,29 +16,29 @@ var gIsMasterAuthor :     Bool { return gBatches.isMasterAuthor }
 
 
 enum ZBatchID: Int {
-    case saveToCloud
-    case root
-    case sync
-    case focus
-    case startUp
-    case refetch
-    case parents
-    case children
-    case families
-    case undelete
-    case finishUp
-    case userTest
-    case bookmarks
-    case fetchLost
-    case emptyTrash
-    case newAppleID
-    case resumeCloud
+    case bSaveToCloud
+    case bRoot
+    case bSync
+    case bFocus
+    case bStartUp
+    case bRefetch
+    case bParents
+    case bChildren
+    case bFamilies
+    case bUndelete
+    case bFinishUp
+    case bUserTest
+    case bBookmarks
+    case bFetchLost
+    case bEmptyTrash
+    case bNewAppleID
+    case bResumeCloud
 
     var shouldIgnore: Bool {
         switch self {
-        case .saveToCloud:                                                           return gCloudAccountIsActive
-        case .sync, .startUp, .refetch, .finishUp, .newAppleID, .resumeCloud: return false
-        default:                                                              return true
+        case .bSaveToCloud:                                                         return gCloudAccountIsActive
+        case .bSync, .bStartUp, .bRefetch, .bFinishUp, .bNewAppleID, .bResumeCloud: return false
+        default:                                                                    return true
         }
     }
 
@@ -66,7 +66,7 @@ class ZBatches: ZOnboarding {
 
 
         func fire() {
-            completion?(snapshot == gSelecting.snapshot)
+            completion?(gSelecting.snapshotEquals(snapshot))
         }
     }
 
@@ -79,23 +79,23 @@ class ZBatches: ZOnboarding {
 
         var operations: [ZOperationID] {
             switch identifier {
-            case .saveToCloud:        return [                       .saveToCloud         ]
-            case .sync:        return [            .fetch,    .saveToCloud, .traits]
-            case .root:        return [.roots,                .saveToCloud, .traits]
-            case .focus:       return [.roots,     .fetch,           .traits]
-            case .parents:     return [                              .traits]
-            case .children:    return [                              .traits]
-            case .families:    return [            .fetch,           .traits]
-            case .bookmarks:   return [.bookmarks, .fetch,    .saveToCloud, .traits]
-            case .undelete:    return [.undelete,  .fetch,    .saveToCloud, .traits]
-            case .fetchLost:   return [.fetchlost,            .saveToCloud,        ]
-            case .emptyTrash:  return [.emptyTrash                          ]
-            case .resumeCloud: return [.fetchNew,  .fetchAll, .saveToCloud         ]
-            case .refetch:     return [            .fetchAll, .saveToCloud         ]
-            case .newAppleID:  return operationIDs(from: .checkAvailability, to: .subscribe, skipping: [.readFile])
-            case .startUp:     return operationIDs(from: .macAddress,        to: .here)
-            case .finishUp:    return operationIDs(from: .fetchNew,          to: .subscribe)
-            case .userTest:    return operationIDs(from: .observeUbiquity,   to: .fetchUserRecord)
+            case .bSaveToCloud: return [                         .oSaveToCloud          ]
+            case .bSync:        return [             .oFetch,    .oSaveToCloud, .oTraits]
+            case .bRoot:        return [.oRoots,                 .oSaveToCloud, .oTraits]
+            case .bFocus:       return [.oRoots,     .oFetch,                   .oTraits]
+            case .bParents:     return [                                        .oTraits]
+            case .bChildren:    return [                                        .oTraits]
+            case .bFamilies:    return [             .oFetch,                   .oTraits]
+            case .bBookmarks:   return [.oBookmarks, .oFetch,    .oSaveToCloud, .oTraits]
+            case .bUndelete:    return [.oUndelete,  .oFetch,    .oSaveToCloud, .oTraits]
+            case .bFetchLost:   return [.oFetchlost,             .oSaveToCloud,         ]
+            case .bEmptyTrash:  return [.oEmptyTrash                                    ]
+            case .bResumeCloud: return [.oFetchNew,  .oFetchAll, .oSaveToCloud          ]
+            case .bRefetch:     return [             .oFetchAll, .oSaveToCloud          ]
+            case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oSubscribe, skipping: [.oReadFile])
+            case .bStartUp:     return operationIDs(from: .oMacAddress,        to: .oHere)
+            case .bFinishUp:    return operationIDs(from: .oFetchNew,          to: .oSubscribe)
+            case .bUserTest:    return operationIDs(from: .oObserveUbiquity,   to: .oFetchUserRecord)
             }
         }
 
@@ -160,27 +160,27 @@ class ZBatches: ZOnboarding {
     // MARK:-
 
 
-    func       save(_ onCompletion: @escaping BooleanClosure) { batch(.saveToCloud,        onCompletion) }
-    func       root(_ onCompletion: @escaping BooleanClosure) { batch(.root,        onCompletion) }
-    func       sync(_ onCompletion: @escaping BooleanClosure) { batch(.sync,        onCompletion) }
-    func      focus(_ onCompletion: @escaping BooleanClosure) { batch(.focus,       onCompletion) }
-    func    startUp(_ onCompletion: @escaping BooleanClosure) { batch(.startUp,     onCompletion) }
-    func    refetch(_ onCompletion: @escaping BooleanClosure) { batch(.refetch,     onCompletion) }
-    func    parents(_ onCompletion: @escaping BooleanClosure) { batch(.parents,     onCompletion) }
-    func   families(_ onCompletion: @escaping BooleanClosure) { batch(.families,    onCompletion) }
-    func   finishUp(_ onCompletion: @escaping BooleanClosure) { batch(.finishUp,    onCompletion) }
-    func   undelete(_ onCompletion: @escaping BooleanClosure) { batch(.undelete,    onCompletion) }
-    func   userTest(_ onCompletion: @escaping BooleanClosure) { batch(.userTest,    onCompletion) }
-    func  bookmarks(_ onCompletion: @escaping BooleanClosure) { batch(.bookmarks,   onCompletion) }
-    func  fetchLost(_ onCompletion: @escaping BooleanClosure) { batch(.fetchLost,   onCompletion) }
-    func emptyTrash(_ onCompletion: @escaping BooleanClosure) { batch(.emptyTrash,  onCompletion) }
+    func       save(_ onCompletion: @escaping BooleanClosure) { batch(.bSaveToCloud, onCompletion) }
+    func       root(_ onCompletion: @escaping BooleanClosure) { batch(.bRoot,        onCompletion) }
+    func       sync(_ onCompletion: @escaping BooleanClosure) { batch(.bSync,        onCompletion) }
+    func      focus(_ onCompletion: @escaping BooleanClosure) { batch(.bFocus,       onCompletion) }
+    func    startUp(_ onCompletion: @escaping BooleanClosure) { batch(.bStartUp,     onCompletion) }
+    func    refetch(_ onCompletion: @escaping BooleanClosure) { batch(.bRefetch,     onCompletion) }
+    func    parents(_ onCompletion: @escaping BooleanClosure) { batch(.bParents,     onCompletion) }
+    func   families(_ onCompletion: @escaping BooleanClosure) { batch(.bFamilies,    onCompletion) }
+    func   finishUp(_ onCompletion: @escaping BooleanClosure) { batch(.bFinishUp,    onCompletion) }
+    func   undelete(_ onCompletion: @escaping BooleanClosure) { batch(.bUndelete,    onCompletion) }
+    func   userTest(_ onCompletion: @escaping BooleanClosure) { batch(.bUserTest,    onCompletion) }
+    func  bookmarks(_ onCompletion: @escaping BooleanClosure) { batch(.bBookmarks,   onCompletion) }
+    func  fetchLost(_ onCompletion: @escaping BooleanClosure) { batch(.bFetchLost,   onCompletion) }
+    func emptyTrash(_ onCompletion: @escaping BooleanClosure) { batch(.bEmptyTrash,  onCompletion) }
 
 
     func  children(_ recursing: ZRecursionType = .all, _ iGoal: Int = Int.max, _ onCompletion: @escaping BooleanClosure) {
         gRecursionLogic       .type = recursing
         gRecursionLogic.targetLevel = iGoal
 
-        batch(.children, onCompletion)
+        batch(.bChildren, onCompletion)
     }
 
 
@@ -284,13 +284,13 @@ class ZBatches: ZOnboarding {
             if  iCompleted {
                 onCompletion(true)
             } else {
-                let              requiresActive = [.saveToCloud, .traits                ].contains(operationID)
-                let               alwaysForBoth = [.here, .roots, .readFile].contains(operationID)
-                let               forMineIDOnly = [.bookmarks, .subscribe, .unsubscribe].contains(operationID)
+                let              requiresActive = [.oSaveToCloud, .oTraits                ].contains(operationID)
+                let               alwaysForBoth = [.oHere, .oRoots, .oReadFile].contains(operationID)
+                let               forMineIDOnly = [.oBookmarks, .oSubscribe, .oUnsubscribe].contains(operationID)
                 let                      isMine = restoreToID == .mineID
-                let               onlyCurrentID = (!gCloudAccountIsActive && !alwaysForBoth) || operationID == .completion
+                let               onlyCurrentID = (!gCloudAccountIsActive && !alwaysForBoth) || operationID == .oCompletion
                 let  databaseIDs: [ZDatabaseID] = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
-                let                      isNoop = !gCloudAccountIsActive && (requiresActive || (onlyCurrentID && isMine && operationID != .favorites))
+                let                      isNoop = !gCloudAccountIsActive && (requiresActive || (onlyCurrentID && isMine && operationID != .oFavorites))
                 var invokeForIndex: IntClosure?                // declare closure first, so compiler will let it recurse
                 invokeForIndex                  = { index in
 
@@ -298,7 +298,7 @@ class ZBatches: ZOnboarding {
                     // always called in foreground //
                     /////////////////////////////////
 
-                    if  operationID == .completion || isNoop || index >= databaseIDs.count {
+                    if  operationID == .oCompletion || isNoop || index >= databaseIDs.count {
                         onCompletion(true)
                     } else {
                         self.currentDatabaseID = databaseIDs[index]      // if hung, it happened in this id
@@ -334,9 +334,9 @@ class ZBatches: ZOnboarding {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
         switch identifier {
-        case .favorites:       gFavorites.setup(                                                                      cloudCallback)
-        case .readFile:  gFiles                                    .readFile(into: currentDatabaseID!);                cloudCallback?(0)
-        default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
+        case .oFavorites: gFavorites.setup(                                                                              cloudCallback)
+        case .oReadFile:  gFiles                                        .readFile(into: currentDatabaseID!);             cloudCallback?(0)
+        default:          gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
         }
     }
 

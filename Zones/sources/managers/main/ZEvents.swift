@@ -74,34 +74,9 @@ class ZEvents: NSObject {
                 if !isDuplicate(event: event) {
                     switch gWorkMode {
                     case .searchMode:
-                        
                         return gSearching.handleEvent(event)
-                        
                     case .graphMode:
-                        let     flags = event.modifierFlags
-                        let isControl = flags.isControl
-                        let isCommand = flags.isCommand
-                        let  isOption = flags.isOption
-                        let     isAny = isOption || isCommand || isControl
-                        
-                        if  let key = event.charactersIgnoringModifiers {
-                            if !gIsEditingText {
-                                gGraphEditor.handleKey(key, flags: flags, isWindow: true); return nil
-                            } else {
-                                switch key {
-                                case "a":    if isAny { gEditedTextWidget?.selectAllText(); return nil }
-                                case "d":    if isAny { gGraphEditor.addIdeaFromSelectedText(); return nil }
-                                case "f":    if isAny { gGraphEditor.search(); return nil }
-                                case "/":    if isAny { gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }; return nil }
-                                case "?":    if isAny { gGraphEditor.showKeyboardShortcuts(); return nil }
-                                case kSpace: if isAny { gGraphEditor.addIdea(); return nil }
-                                default:
-                                    if  let arrow = key.arrow {
-                                        gTextEditor.handleArrow(arrow, flags: flags); return nil
-                                    }
-                                }
-                            }
-                        }
+                        return gGraphEditor.handleEvent(event, isWindow: true)
                     default: break
                     }
                 }

@@ -23,21 +23,21 @@ enum ZLineKind: Int {
 }
 
 
-let verticalTextOffset = 1.45 // 1.7 gap is above dot, 1.2 gap is below dot
+let verticalTextOffset = 1.45 // 1.2 gap (inside drag highlight) is below dot, 1.7 gap is above dot, so use a number halfway between
 
 
 class ZoneWidget: ZView {
 
 
-    let                  dragDot = ZoneDot        ()
-    let                revealDot = ZoneDot        ()
-    let               textWidget = ZoneTextWidget ()
-    let             childrenView = ZView          ()
-    private var  childrenWidgets = [ZoneWidget]   ()
-    var                 isInMain :        Bool = false
-    var                    ratio :     CGFloat { return isInMain ? 1.0 : kFavoritesReduction }
-    var             parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
-    weak var          widgetZone :       Zone?
+    let                 dragDot = ZoneDot        ()
+    let               revealDot = ZoneDot        ()
+    let              textWidget = ZoneTextWidget ()
+    let            childrenView = ZView          ()
+    private var childrenWidgets = [ZoneWidget]   ()
+    var                isInMain = false
+    weak var         widgetZone :       Zone?
+    var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
+    var                   ratio :     CGFloat { return isInMain ? 1.0 : kFavoritesReduction }
 
 
     deinit {

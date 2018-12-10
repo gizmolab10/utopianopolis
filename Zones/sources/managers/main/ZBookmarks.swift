@@ -33,17 +33,17 @@ class ZBookmarks: NSObject {
 
 
     func registerBookmark(_  iBookmark : Zone?) {
-        if  let   bookmark = iBookmark,
-            let       dbID = bookmark.linkDatabaseID,
-            let       link = bookmark.linkName {
-            var       dict = registry[dbID] // returns nil for first registration
-            var      zones = dict?[link]
+        if  let bookmark = iBookmark,
+            let linkName = bookmark.linkName,
+            let     dbID = bookmark.linkDatabaseID {
+            var     dict = registry[dbID] // returns nil for first registration
+            var    zones = dict?[linkName]
 
-            if  dict      == nil {
-                dict       = [:]
-                zones      = [bookmark]
+            if  dict    == nil {
+                dict     = [:]
+                zones    = [bookmark]
             } else {
-                let markNeedFound = {
+                let markAsLost = {
                     bookmark.temporarilyMarkNeeds {
                         bookmark.needFound()
                     }
@@ -51,18 +51,18 @@ class ZBookmarks: NSObject {
 
                 if  zones == nil {
                     zones  = []
-                } else if let      parent = bookmark.parentZone {
-                    if parent.recordName != kLostAndFoundName {
+                } else  if let parent = bookmark.parentZone {
+                    if  parent.recordName != kLostAndFoundName {
                         for     zone in zones! {
                             if  zone.parentZone?.recordName == parent.recordName {
-                                markNeedFound()
+                                markAsLost()
 
                                 return
                             }
                         }
                     }
-                } else if !gFiles.isReading(for: bookmark.databaseID) {
-                    markNeedFound()
+                } else if !gFiles.isReading(for: dbID) {
+                    markAsLost()
 
                     return
                 }
@@ -70,10 +70,8 @@ class ZBookmarks: NSObject {
                 zones?.append(bookmark)
             }
 
-            dict?[link]    = zones
-            registry[dbID] = dict
-
-//            columnarReport("BOOKMARK", bookmark.unwrappedName)
+            dict?[linkName] = zones
+            registry[dbID]  = dict
         }
     }
 

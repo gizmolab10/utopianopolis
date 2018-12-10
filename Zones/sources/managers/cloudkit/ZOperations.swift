@@ -18,45 +18,45 @@ enum ZOperationID: Int {
 
     // onboard
 
-    case macAddress
-    case observeUbiquity
-    case checkAvailability  // vs no account
-    case internet
-    case ubiquity
-    case fetchUserID
-    case fetchUserRecord
+    case oMacAddress
+    case oObserveUbiquity
+    case oCheckAvailability  // vs no account
+    case oInternet
+    case oUbiquity
+    case oFetchUserID
+    case oFetchUserRecord
 
     // startup
 
-    case cloud              // NB: do not edit order. dependencies
-    case readFile           // LOCAL
-    case found              // LOCAL
-    case roots
-    case favorites
-    case here
+    case oCloud              // NB: do not edit order. dependencies
+    case oReadFile           // LOCAL
+    case oFound              // LOCAL
+    case oRoots
+    case oFavorites
+    case oHere
 
     // finish
 
-    case fetchNew
-    case fetchAll
-    case saveToCloud               // zones, traits, destroy
-    case unsubscribe
-    case subscribe
+    case oFetchNew
+    case oFetchAll
+    case oSaveToCloud               // zones, traits, destroy
+    case oUnsubscribe
+    case oSubscribe
 
     // miscellaneous
 
-    case emptyTrash
-    case completion
-    case fetchlost
-    case bookmarks
-    case undelete
-    case children
-    case parents            // after fetch so colors resolve properly
-    case refetch            // user defaults list of record ids
-    case traits
-    case fetch              // after children so favorite targets resolve properly
-    case merge
-    case none               // default operation
+    case oEmptyTrash
+    case oCompletion
+    case oFetchlost
+    case oBookmarks
+    case oUndelete
+    case oChildren
+    case oParents            // after fetch so colors resolve properly
+    case oRefetch            // user defaults list of record ids
+    case oTraits
+    case oFetch              // after children so favorite targets resolve properly
+    case oMerge
+    case oNone               // default operation
 
     var isLocal: Bool { return localOperations.contains(self) }
 
@@ -67,7 +67,7 @@ var gDebugTimer:             Timer?
 var gCloudTimer:             Timer?
 var gCloudFire:       TimerClosure?
 var gDebugTimerCount                = 0
-let localOperations: [ZOperationID] = [.here, .roots, .found, .readFile, .internet, .ubiquity, .favorites, .completion, .macAddress, .fetchUserID, .observeUbiquity, .fetchUserRecord, .checkAvailability]
+let localOperations: [ZOperationID] = [.oHere, .oRoots, .oFound, .oReadFile, .oInternet, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oFetchUserID, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability]
 
 
 class ZOperations: NSObject {
@@ -77,7 +77,7 @@ class ZOperations: NSObject {
     var   operationText :       String  { return String(describing: currentOp) }
     var onCloudResponse :   AnyClosure?
     var     lastOpStart :         Date?
-    var       currentOp = ZOperationID.none
+    var       currentOp = ZOperationID.oNone
     let           queue = OperationQueue()
 
 
@@ -144,7 +144,7 @@ class ZOperations: NSObject {
                         /////////////////////////////////////////////////
 
                         if  gHasInternet && gIsReadyToShowUI {
-                            let identifier: ZBatchID = gCloudAccountIsActive ? .resumeCloud : .newAppleID
+                            let identifier: ZBatchID = gCloudAccountIsActive ? .bResumeCloud : .bNewAppleID
 
                             gBatches.batch(identifier) { iResult in
                                 if  gCloudAccountIsActive {
@@ -180,7 +180,7 @@ class ZOperations: NSObject {
         queue.isSuspended = true
         let         saved = gDatabaseID
 
-        for operationID in operationIDs + [.completion] {
+        for operationID in operationIDs + [.oCompletion] {
             let blockOperation = BlockOperation {
 
                 ////////////////////////////////////////////////////////////////
@@ -203,7 +203,7 @@ class ZOperations: NSObject {
                         self.reportOnCompletionOfPerformBlock(start)        // says nothing
 
                         FOREGROUND {
-                            if self.currentOp == .completion {
+                            if self.currentOp == .oCompletion {
 
                                 //////////////////////////////////////
                                 // done with this set of operations //
