@@ -572,7 +572,7 @@ extension String {
     var          isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
     var           length: Int  { return unicodeScalars.count }
-
+    
 
     var escaped: String {
         var result = "\(self)"
@@ -738,6 +738,14 @@ extension String {
                 append(" ")
             }
         }
+    }
+
+    
+    func isLineTitle(within range: NSRange) -> Bool {
+        let a = substring(to: range.lowerBound - 1)
+        let b = substring(from: range.upperBound + 1)
+
+        return a == kHalfLineOfDashes && b == kHalfLineOfDashes
     }
 
 

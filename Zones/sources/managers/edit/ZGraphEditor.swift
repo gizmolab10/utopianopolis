@@ -109,6 +109,7 @@ class ZGraphEditor: NSObject {
                     }
                 } else {
                     switch key {
+                    case "-":      convertToLine()
                     case kEscape:  gTextEditor.cancel()
                     default:       return false
                     }
@@ -1020,6 +1021,23 @@ class ZGraphEditor: NSObject {
     }
     
     
+    func convertToLine() {
+        if  let      zone = gEditedTextWidget?.widgetZone,
+            let childName = extractSelectedText(requiresAllOrTitleSelected: true) {
+            
+            if  zone.zoneName != childName {
+                zone.zoneName  = childName
+
+                zone.editAndSelect(in: NSMakeRange(0,  childName.length))
+            } else {
+                zone.zoneName  = kHalfLineOfDashes + " " + childName + " " + kHalfLineOfDashes
+
+                zone.editAndSelect(in: NSMakeRange(12, childName.length))
+            }
+        }
+    }
+
+    
     func addParentFromSelectedText() {
         if  let     child = gEditedTextWidget?.widgetZone,
             let     index = child.siblingIndex,
@@ -1053,18 +1071,24 @@ class ZGraphEditor: NSObject {
     }
 
     
-    func extractSelectedText() -> String? {
+    func extractSelectedText(requiresAllOrTitleSelected: Bool = false) -> String? {
         var extract: String?
         
-        if  let    widget = gEditedTextWidget,
-            let  original = widget.text,
-            let    editor = widget.currentEditor() {
-            let     range = editor.selectedRange
-            extract       = original.substring(with: range)
-            widget.text   = original.stringBySmartReplacing(range, with: "")
-            
+        if  let      widget = gEditedTextWidget,
+            let    original = widget.text,
+            let      editor = widget.currentEditor() {
+            let       range = editor.selectedRange
+            extract         = original.substring(with: range)
+
+            if  !requiresAllOrTitleSelected {
+                widget.text = original.stringBySmartReplacing(range, with: "")
+    
+                gSelecting.deselectGrabs()
+            } else if range.length < original.length && !original.isLineTitle(within: range) {
+                return nil
+            }
+
             gTextEditor.stopCurrentEdit()
-            gSelecting.deselectGrabs()
         }
         
         return extract
