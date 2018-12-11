@@ -62,10 +62,17 @@ extension NSObject {
     }
 
 
+    func syncAndRedraw(_ zone: Zone? = nil) {
+        gControllers.sync(zone) {
+            gControllers.signalFor(zone, regarding: .eRelayout, onCompletion: nil)
+        }
+    }
+    
+
     func redrawAndSync(_ zone: Zone? = nil, _ onCompletion: Closure? = nil) {
         gControllers.syncToCloudAfterSignalFor(zone, regarding: .eRelayout, onCompletion: onCompletion)
     }
-
+    
 
     func redrawSyncRedraw(_ zone: Zone? = nil) {
         redrawAndSync(zone) {

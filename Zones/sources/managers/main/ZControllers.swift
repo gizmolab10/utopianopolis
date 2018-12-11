@@ -211,12 +211,17 @@ class ZControllers: NSObject {
             onCompletion?()
         }
     }
-
-
-    func syncToCloudAfterSignalFor(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
-        signalFor(zone, regarding: regarding, onCompletion: onCompletion)
+    
+    
+    func sync(_ zone: Zone?, onCompletion: Closure?) {
         gBatches.sync { iSame in
             onCompletion?()
         }
+    }
+    
+    
+    func syncToCloudAfterSignalFor(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
+        signalFor(zone, regarding: regarding, onCompletion: nil)
+        sync(zone, onCompletion: onCompletion)
     }
 }

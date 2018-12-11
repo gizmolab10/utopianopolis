@@ -422,7 +422,7 @@ class Zone : ZRecord {
 
     var fetchableCount: Int {
         get {
-            if zoneCount == nil {
+            if  zoneCount == nil {
                 updateInstanceProperties()
 
                 if  zoneCount == nil {
@@ -466,7 +466,7 @@ class Zone : ZRecord {
         }
 
         set {
-            if newValue != progenyCount {
+            if  newValue != progenyCount {
                 zoneProgeny = NSNumber(value: newValue)
             }
         }

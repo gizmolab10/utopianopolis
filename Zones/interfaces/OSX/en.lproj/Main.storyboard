@@ -248,6 +248,11 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="G9O-zJ-ei8"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="New parent from selected text" tag="6" keyEquivalent="D" id="lqH-Fs-Hm3">
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="TPm-VX-Kvm"/>
+                                                        </connections>
+                                                    </menuItem>
                                                     <menuItem title="Bookmark" tag="10" keyEquivalent="b" id="3wN-52-oXT">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
@@ -476,6 +481,9 @@ DQ
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="fuv-aT-IQa"/>
                                                         </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Swap with Parent" keyEquivalent="t" id="Zsw-vA-UWf">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
                                                     </menuItem>
                                                     <menuItem title="Emphasize" keyEquivalent="1" id="R7x-XC-2Vi">
                                                         <modifierMask key="keyEquivalentModifierMask" shift="YES"/>

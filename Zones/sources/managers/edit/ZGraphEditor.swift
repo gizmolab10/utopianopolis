@@ -88,13 +88,18 @@ class ZGraphEditor: NSObject {
             var   SHIFT = flags.isShift
             let   arrow = key.arrow
             
+            if  key    != key.lowercased() {
+                key     = key.lowercased()
+                SHIFT   = true
+            }
+
             if  gIsEditingText {
                 if  let a = arrow {
                     gTextEditor.handleArrow(a, flags: flags)
                 } else if COMMAND || CONTROL || OPTION {
                     switch key {
                     case "a":      gEditedTextWidget?.selectAllText()
-                    case "d":      addIdeaFromSelectedText()
+                    case "d":      if SHIFT { addParentFromSelectedText() } else { addIdeaFromSelectedText() }
                     case "f":      search()
                     case "/":      gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }
                     case "?":      showKeyboardShortcuts()
@@ -112,11 +117,6 @@ class ZGraphEditor: NSObject {
                 let    widget = gWidgets.currentMovableWidget
                 let hasWidget = widget != nil
                 let   FLAGGED = CONTROL || COMMAND || OPTION
-                
-                if  key      != key.lowercased() {
-                    key       = key.lowercased()
-                    SHIFT     = true
-                }
                 
                 widget?.widgetZone?.deferWrite()
                 
@@ -144,6 +144,7 @@ class ZGraphEditor: NSObject {
                     case "q":      ZApplication.shared.terminate(self)
                     case "r":      reverse()
                     case "s":      if COMMAND { gFiles.saveAs() } else { selectCurrentFavorite() }
+                    case "t":      swapWithParent()
                     case "w":      rotateWritable()
                     case "1":      if COMMAND && SHIFT { sendEmailBugReport() }
                     case "+":      divideChildren()
@@ -258,6 +259,7 @@ class ZGraphEditor: NSObject {
             case "?":                            return .eHelp
             case "f":                            return .eFind
             case "m":                            return .eCloud
+            case "t":                            return .eAlter
             case "z":                            return .eUndo
             case "o", "r":                       return  COMMAND ? .eFiles : .eSort
             case "v", "x", kSpace:               return .eChild
@@ -320,6 +322,27 @@ class ZGraphEditor: NSObject {
 
     // MARK:- miscellaneous features
     // MARK:-
+    
+    
+    func swapWithParent() {
+        let child = gSelecting.firstGrab
+
+        if  gSelecting.currentGrabs.count == 1,
+            let  cIndex = child.siblingIndex,
+            let  parent = child.parentZone,
+            let  pIndex = parent.siblingIndex,
+            let gParent = parent.parentZone {
+            moveZone(child, into: gParent, at: pIndex, orphan: true) {
+                self.moveZones(parent.children, into: child, at: nil, orphan: true) {
+                    self.moveZone(parent, into: child, at: cIndex, orphan: true) {
+                        parent.needCount()
+
+                        self.redrawSyncRedraw(child)
+                    }
+                }
+            }
+        }
+    }
     
     
     func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with PERIOD: Bool) {
@@ -995,26 +1018,56 @@ class ZGraphEditor: NSObject {
             }
         }
     }
+    
+    
+    func addParentFromSelectedText() {
+        if  let     child = gEditedTextWidget?.widgetZone,
+            let     index = child.siblingIndex,
+            let      zone = child.parentZone,
+            let childName = extractSelectedText() {
 
-
-    func addIdeaFromSelectedText() {
-        if  let w = gEditedTextWidget, let t = w.text, let e = w.currentEditor(), let z = w.widgetZone {
-            let     range = e.selectedRange
-            let childName = t.substring(with: range)
-            w.text        = t.stringBySmartReplacing(range, with: "")
-
-            gTextEditor.stopCurrentEdit()
-            gSelecting.deselectGrabs()
-            z.revealChildren()
-            z.needChildren()
-
-            gBatches.children { iSame in
-                self.addIdeaIn(z, at: gInsertionsFollow ? nil : 0, with: childName) { iChild in
+            self.addIdeaIn(zone, at: index, with: childName) { iChild in
+                self.moveZone(child, to: iChild) {
                     self.redrawAndSync()
                     iChild?.edit()
                 }
             }
         }
+    }
+    
+
+    func addIdeaFromSelectedText() {
+        if  let      zone = gEditedTextWidget?.widgetZone,
+            let childName = extractSelectedText() {
+
+            zone.revealChildren()
+            zone.needChildren()
+
+            gBatches.children { iSame in
+                self.addIdeaIn(zone, at: gInsertionsFollow ? nil : 0, with: childName) { iChild in
+                    self.redrawAndSync()
+                    iChild?.edit()
+                }
+            }
+        }
+    }
+
+    
+    func extractSelectedText() -> String? {
+        var extract: String?
+        
+        if  let    widget = gEditedTextWidget,
+            let  original = widget.text,
+            let    editor = widget.currentEditor() {
+            let     range = editor.selectedRange
+            extract       = original.substring(with: range)
+            widget.text   = original.stringBySmartReplacing(range, with: "")
+            
+            gTextEditor.stopCurrentEdit()
+            gSelecting.deselectGrabs()
+        }
+        
+        return extract
     }
 
 
@@ -1355,7 +1408,7 @@ class ZGraphEditor: NSObject {
                 }
 
                 if extreme {
-                    if gHere.isRoot {
+                    if  gHere.isRoot {
                         moveOut(to: gHere, onCompletion: onCompletion)
                     } else {
                         revealZonesToRoot(from: zone) {
@@ -1363,7 +1416,7 @@ class ZGraphEditor: NSObject {
                             onCompletion?()
                         }
                     }
-                } else if grandParentZone != nil {
+                } else if   grandParentZone != nil {
                     revealParentAndSiblingsOf(p) { iCloudCalled in
                         if  grandParentZone!.spawnedBy(gHere) {
                             self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
