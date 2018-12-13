@@ -94,13 +94,15 @@ class ZGraphEditor: NSObject {
             }
 
             if  gIsEditingText {
-                if  let a = arrow {
+                let editedZone = gEditedTextWidget?.widgetZone
+                if  let      a = arrow {
                     gTextEditor.handleArrow(a, flags: flags)
                 } else if COMMAND || CONTROL || OPTION {
                     switch key {
                     case "a":      gEditedTextWidget?.selectAllText()
-                    case "d":      if SHIFT { addParentFromSelectedText() } else { addIdeaFromSelectedText() }
+                    case "d":      if SHIFT { addParentFromSelectedText(inside: editedZone) } else { addIdeaFromSelectedText(inside: editedZone) }
                     case "f":      search()
+                    case "i":      toggleColorized()
                     case "/":      gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }
                     case "?":      showKeyboardShortcuts()
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
@@ -109,7 +111,7 @@ class ZGraphEditor: NSObject {
                     }
                 } else {
                     switch key {
-                    case "-":      convertToLine()
+                    case "-":      return convertToLine(editedZone)
                     case kEscape:  gTextEditor.cancel()
                     default:       return false
                     }
@@ -130,7 +132,7 @@ class ZGraphEditor: NSObject {
                     case "a":      selectAll(progeny: OPTION)
                     case "b":      addBookmark()
                     case "c":      recenter()
-                    case "d":      duplicate()
+                    case "d":      if FLAGGED { combineIntoParent(widget?.widgetZone) } else { duplicate() }
                     case "e":      editTrait(for: .eEmail)
                     case "f":      search()
                     case "h":      editTrait(for: .eHyperlink)
@@ -323,7 +325,24 @@ class ZGraphEditor: NSObject {
 
     // MARK:- miscellaneous features
     // MARK:-
+
     
+    func combineIntoParent(_ iChild: Zone?) {
+        if  let       child = iChild,
+            let      parent = child.parentZone,
+            let    original = parent.zoneName {
+            let   childName = child.zoneName ?? ""
+            let childLength = childName.length
+            let    combined = original.stringBySmartly(appending: childName)
+            let       range = NSMakeRange(combined.length - childLength, childLength)
+            parent.zoneName = combined
+            moveZone(child, to: gTrash)
+            redrawSyncRedraw(child)
+            parent.editAndSelect(in: range)
+        }
+    }
+
+ 
     
     func swapWithParent() {
         let child = gSelecting.firstGrab
@@ -993,58 +1012,59 @@ class ZGraphEditor: NSObject {
 
 
     func addLine() {
-        let grab = gSelecting.currentMoveable
+        let zone = gSelecting.currentMoveable
         
-        if !grab.userCanWrite {
-            return
-        }
-
-        let assign = { (iText: String) in
-            grab .zoneName = iText
-            grab.colorized = true
-
-            gTextEditor.updateText(inZone: grab)
-        }
-
-        if  grab.zoneName?.contains(kHalfLineOfDashes + " ") ?? false {
-            assign(kLineOfDashes)
-        } else if grab.zoneName?.contains(kLineOfDashes) ?? false {
-            assign(kLineWithStubTitle)
-            grab.editAndSelect(in: NSMakeRange(12, 1))
-        } else {
-            addNext(with: kLineOfDashes) { iChild in
-                iChild.colorized = true
-
-                iChild.grab()
+        if  let name = zone.zoneName {
+            if  name.isLineTitle {
+                zone.assignAndColorize(kLineOfDashes)
+                
+                return
+            } else if name.contains(kLineOfDashes) {
+                zone.assignAndColorize(kLineWithStubTitle)
+                zone.editAndSelect(in: NSMakeRange(12, 1))
+                
+                return
             }
+        }
+        
+        addNext(with: kLineOfDashes) { iChild in
+            iChild.colorized = true
+            
+            iChild.grab()
         }
     }
     
     
-    func convertToLine() {
-        if  let      zone = gEditedTextWidget?.widgetZone,
-            let childName = extractSelectedText(requiresAllOrTitleSelected: true) {
+    func convertToLine(_ iZone: Zone?) -> Bool {
+        if  let      zone = iZone,
+            let childName = extractSelectedText(from: zone.widget?.textWidget, requiresAllOrTitleSelected: true) {
             
             if  zone.zoneName != childName {
                 zone.zoneName  = childName
+                zone.colorized = false
 
                 zone.editAndSelect(in: NSMakeRange(0,  childName.length))
             } else {
                 zone.zoneName  = kHalfLineOfDashes + " " + childName + " " + kHalfLineOfDashes
+                zone.colorized = true
 
                 zone.editAndSelect(in: NSMakeRange(12, childName.length))
             }
+            
+            return true
         }
+        
+        return false
     }
 
     
-    func addParentFromSelectedText() {
-        if  let     child = gEditedTextWidget?.widgetZone,
+    func addParentFromSelectedText(inside iZone: Zone?) {
+        if  let     child = iZone,
             let     index = child.siblingIndex,
-            let      zone = child.parentZone,
-            let childName = extractSelectedText() {
+            let    parent = child.parentZone,
+            let childName = extractSelectedText(from: child.widget?.textWidget) {
 
-            self.addIdeaIn(zone, at: index, with: childName) { iChild in
+            self.addIdeaIn(parent, at: index, with: childName) { iChild in
                 self.moveZone(child, to: iChild) {
                     self.redrawAndSync()
                     iChild?.edit()
@@ -1054,38 +1074,44 @@ class ZGraphEditor: NSObject {
     }
     
 
-    func addIdeaFromSelectedText() {
-        if  let      zone = gEditedTextWidget?.widgetZone,
-            let childName = extractSelectedText() {
+    func addIdeaFromSelectedText(inside iZone: Zone?) {
+        if  let      zone  = iZone,
+            let childName  = extractSelectedText(from: zone.widget?.textWidget) {
 
-            zone.revealChildren()
-            zone.needChildren()
-
-            gBatches.children { iSame in
-                self.addIdeaIn(zone, at: gInsertionsFollow ? nil : 0, with: childName) { iChild in
-                    self.redrawAndSync()
-                    iChild?.edit()
+            if  childName == zone.zoneName {
+                combineIntoParent(zone)
+            } else {
+                zone.revealChildren()
+                zone.needChildren()
+                
+                gBatches.children { iSame in
+                    self.addIdeaIn(zone, at: gInsertionsFollow ? nil : 0, with: childName) { iChild in
+                        self.redrawAndSync()
+                        iChild?.edit()
+                    }
                 }
             }
         }
     }
 
     
-    func extractSelectedText(requiresAllOrTitleSelected: Bool = false) -> String? {
+    func extractSelectedText(from iTextWidget: ZoneTextWidget?, requiresAllOrTitleSelected: Bool = false) -> String? {
         var extract: String?
         
-        if  let      widget = gEditedTextWidget,
-            let    original = widget.text,
-            let      editor = widget.currentEditor() {
-            let       range = editor.selectedRange
-            extract         = original.substring(with: range)
+        if  let   widget = iTextWidget,
+            let original = widget.text,
+            let   editor = widget.currentEditor() {
+            let    range = editor.selectedRange
+            extract      = original.substring(with: range)
 
-            if  !requiresAllOrTitleSelected {
-                widget.text = original.stringBySmartReplacing(range, with: "")
-    
-                gSelecting.deselectGrabs()
-            } else if range.length < original.length && !original.isLineTitle(within: range) {
-                return nil
+            if  range.length < original.length {
+                if  !requiresAllOrTitleSelected {
+                    widget.text = original.stringBySmartReplacing(range, with: "")
+                    
+                    gSelecting.deselectGrabs()
+                } else if !original.isLineTitle(within: range) {
+                    return nil
+                }
             }
 
             gTextEditor.stopCurrentEdit()

@@ -33,17 +33,17 @@
                 <customObject id="Upg-eY-ED5" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <viewController id="cD6-C4-FJ5" customClass="ZShortcutsController" customModule="PadFocus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="OMb-DG-XS6">
-                        <rect key="frame" x="0.0" y="0.0" width="870" height="727"/>
+                        <rect key="frame" x="0.0" y="0.0" width="870" height="737"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView borderType="none" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lJB-I7-wvM">
-                                <rect key="frame" x="0.0" y="0.0" width="870" height="727"/>
+                                <rect key="frame" x="0.0" y="0.0" width="870" height="737"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="9Aa-9c-eI8">
-                                    <rect key="frame" x="0.0" y="0.0" width="870" height="727"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="870" height="737"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowSizeStyle="automatic" viewBased="YES" id="H0M-2O-9lo">
-                                            <rect key="frame" x="0.0" y="0.0" width="870" height="727"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="870" height="737"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" white="1" alpha="0.0" colorSpace="deviceWhite"/>
@@ -72,15 +72,15 @@
                                     <color key="backgroundColor" white="1" alpha="0.0" colorSpace="deviceWhite"/>
                                 </clipView>
                                 <constraints>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="727" id="JkF-QK-zNX"/>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="737" id="JkF-QK-zNX"/>
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="870" id="Mj8-Ir-XUr"/>
                                 </constraints>
                                 <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="gZ2-AK-2KD">
-                                    <rect key="frame" x="0.0" y="711" width="870" height="16"/>
+                                    <rect key="frame" x="0.0" y="721" width="870" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="Bry-FJ-qLw">
-                                    <rect key="frame" x="854" y="0.0" width="16" height="727"/>
+                                    <rect key="frame" x="854" y="0.0" width="16" height="737"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>

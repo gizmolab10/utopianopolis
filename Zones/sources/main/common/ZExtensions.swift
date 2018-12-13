@@ -670,18 +670,22 @@ extension String {
     }
 
 
-    func smartlyAppended(_ appending: String) -> String {
+    func stringBySmartly(appending: String) -> String {
         var before = self
         var  after = appending
 
         while (before.ends(with: kSpace) || before == "") && after.starts(with: kSpace) {
-            after = after.substring(from: 1)
+            after = after.substring(from: 1) // strip extra space
         }
 
         while before.ends(with: kSpace) && after == "" {
-            before = before.substring(to: before.length - 1)
+            before = before.substring(to: before.length - 1) // strip trailing space
         }
 
+        if !before.ends(with: kSpace) && !after.starts(with: kSpace) {
+            before = before + kSpace // add missing space
+        }
+        
         return before + after
     }
 
@@ -691,7 +695,7 @@ extension String {
         let b = replacement
         let c = substring(from: range.upperBound)
 
-        return a.smartlyAppended(b.smartlyAppended(c))
+        return a.stringBySmartly(appending: b.stringBySmartly(appending: c))
     }
 
 
@@ -738,6 +742,13 @@ extension String {
                 append(" ")
             }
         }
+    }
+
+    
+    var isLineTitle: Bool {
+        let substrings = components(separatedBy: kHalfLineOfDashes)
+        
+        return substrings.count > 1 && substrings[1].count > 0
     }
 
     

@@ -33,7 +33,7 @@ class ZShortcutsController: ZGenericTableController {
 
         controllerID = .shortcuts
 
-        for value in [20, 90, 290, 310, 380, 580, 600, 670] {
+        for value in [20, 85, 290, 310, 375, 580, 600, 665] {
             tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: convertToNSTextTabOptionKeyDictionary([:])))
         }
 
@@ -146,7 +146,9 @@ class ZShortcutsController: ZGenericTableController {
         "b  WHILE EDITING AND TEXT IS SELECTED:",
         "",
         "u    COMMAND + KEY",
+        "     \t-          \tconvert text to/from titled line",
         "     \tD          \tcreate child with text",
+        "     \tD          \tappend onto parent (if all selected)",
         "     \tL          \tlowercase",
         "     \tU          \tuppercase",
         "",
@@ -206,6 +208,7 @@ class ZShortcutsController: ZGenericTableController {
         "     \tARROWS     \textend all the way",
         "     \tRETURN     \tdeselect",
         "     \t/          \trefocus current favorite",
+        "     \tD          \tappend onto parent",
         "",
         "u    OPTION + KEY",
         "     \tARROWS     \trelocate selected idea",

@@ -750,6 +750,16 @@ class Zone : ZRecord {
 
         }
     }
+    
+    
+    func assignAndColorize(_ iText: String) {
+        if  userCanWrite {
+            zoneName  = iText
+            colorized = true
+            
+            gTextEditor.updateText(inZone: self)
+        }
+    }
 
 
     func editAndSelect(in range: NSRange) {
