@@ -38,7 +38,6 @@ enum ZOperationID: Int {
     // finish
 
     case oFetchNew
-    case oFetchAll
     case oSaveToCloud               // zones, traits, destroy
     case oUnsubscribe
     case oSubscribe
@@ -47,8 +46,9 @@ enum ZOperationID: Int {
 
     case oEmptyTrash
     case oCompletion
-    case oFetchlost
     case oBookmarks
+    case oFetchLost
+    case oFetchAll
     case oUndelete
     case oChildren
     case oParents            // after fetch so colors resolve properly
@@ -74,13 +74,22 @@ class ZOperations: NSObject {
 
 
     var   debugTimeText :       String  { return !usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)" }
-    var   operationText :       String  { return String(describing: currentOp) }
     var onCloudResponse :   AnyClosure?
     var     lastOpStart :         Date?
     var       currentOp = ZOperationID.oNone
     let           queue = OperationQueue()
 
 
+    var operationText: String {
+        var s = String(describing: currentOp)
+        s     = s.substring(fromInclusive: 1)
+        let c = s.substring(  toExclusive: 1).lowercased()
+        s     = s.substring(fromInclusive: 1)
+
+        return c + s
+    }
+
+    
     var isConnectedToNetwork: Bool {
         var flags: SCNetworkReachabilityFlags = SCNetworkReachabilityFlags(rawValue: 0)
 

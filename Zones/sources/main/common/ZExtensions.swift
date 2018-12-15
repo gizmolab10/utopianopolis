@@ -586,9 +586,9 @@ extension String {
     }
 
 
-    static func from(_ ascii: UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
-    func substring(from:         Int) -> String  { return String(self[index(at: from)...]) }
-    func substring(to:           Int) -> String  { return String(self[..<index(at: to)]) }
+    static func from(_ ascii:  UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
+    func substring(fromInclusive: Int) -> String  { return String(self[index(at: fromInclusive)...]) }
+    func substring(toExclusive:   Int) -> String  { return String(self[..<index(at: toExclusive)]) }
     func widthForFont (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
     func heightForFont(_ font: ZFont, options: NSString.DrawingOptions = []) -> CGFloat { return sizeWithFont(font, options: options).height }
     func sizeWithFont (_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
@@ -664,7 +664,7 @@ extension String {
 
 
     func ends(with: String) -> Bool {
-        let    end = substring(from: length - 1)
+        let    end = substring(fromInclusive: length - 1)
 
         return end == with
     }
@@ -675,11 +675,11 @@ extension String {
         var  after = appending
 
         while (before.ends(with: kSpace) || before == "") && after.starts(with: kSpace) {
-            after = after.substring(from: 1) // strip extra space
+            after = after.substring(fromInclusive: 1) // strip extra space
         }
 
         while before.ends(with: kSpace) && after == "" {
-            before = before.substring(to: before.length - 1) // strip trailing space
+            before = before.substring(toExclusive: before.length - 1) // strip trailing space
         }
 
         if !before.ends(with: kSpace) && !after.starts(with: kSpace) {
@@ -691,9 +691,9 @@ extension String {
 
 
     func stringBySmartReplacing(_ range: NSRange, with replacement: String) -> String {
-        let a = substring(to:   range.lowerBound)
+        let a = substring(toExclusive:   range.lowerBound)
         let b = replacement
-        let c = substring(from: range.upperBound)
+        let c = substring(fromInclusive: range.upperBound)
 
         return a.stringBySmartly(appending: b.stringBySmartly(appending: c))
     }
@@ -753,8 +753,8 @@ extension String {
 
     
     func isLineTitle(within range: NSRange) -> Bool {
-        let a = substring(to: range.lowerBound - 1)
-        let b = substring(from: range.upperBound + 1)
+        let a = substring(  toExclusive: range.lowerBound - 1)
+        let b = substring(fromInclusive: range.upperBound + 1)
 
         return a == kHalfLineOfDashes && b == kHalfLineOfDashes
     }

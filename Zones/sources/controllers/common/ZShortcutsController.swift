@@ -78,7 +78,7 @@ class ZShortcutsController: ZGenericTableController {
         var          text = raw.substring(with: NSMakeRange(1, raw.length - 1))
         var    attributes = [String : Any] ()
         let          type = ZShortcutType(rawValue: raw.substring(with: NSMakeRange(0, 1)))
-        let        prefix = text.substring(to: 4)
+        let        prefix = text.substring(toExclusive: 4)
 
         if  text.length == 0 {
             text = "   \t         \t" // for empty lines, including after last row in first column array
@@ -89,7 +89,7 @@ class ZShortcutsController: ZGenericTableController {
             let   bold = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
             attributes = [NSAttributedString.Key.font.rawValue: bold as Any]
         case .underline?:
-            text       = text.substring(from: 4) // remove underline from leading spaces
+            text       = text.substring(fromInclusive: 4) // remove underline from leading spaces
             attributes = [NSAttributedString.Key.underlineStyle.rawValue: 1 as Any]
         default:
             break

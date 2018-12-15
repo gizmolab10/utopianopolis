@@ -88,7 +88,7 @@ class ZBatches: ZOnboarding {
             case .bFamilies:    return [             .oFetch,                   .oTraits]
             case .bBookmarks:   return [.oBookmarks, .oFetch,    .oSaveToCloud, .oTraits]
             case .bUndelete:    return [.oUndelete,  .oFetch,    .oSaveToCloud, .oTraits]
-            case .bFetchLost:   return [.oFetchlost,             .oSaveToCloud,         ]
+            case .bFetchLost:   return [.oFetchLost,             .oSaveToCloud,         ]
             case .bEmptyTrash:  return [.oEmptyTrash                                    ]
             case .bResumeCloud: return [.oFetchNew,  .oFetchAll, .oSaveToCloud          ]
             case .bRefetch:     return [             .oFetchAll, .oSaveToCloud          ]

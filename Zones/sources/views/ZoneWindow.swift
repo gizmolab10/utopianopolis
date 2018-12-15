@@ -14,6 +14,9 @@
 #endif
 
 
+var gWindow: ZoneWindow? { return ZoneWindow.window }
+
+
 class ZoneWindow: ZWindow, ZWindowDelegate {
 
 

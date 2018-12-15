@@ -54,7 +54,7 @@ class ZCloud: ZRecords {
         case .oCloud:       fetchCloudZones (cloudCallback)
         case .oEmptyTrash:  emptyTrash      (cloudCallback)
         case .oFetch:       fetchZones      (cloudCallback)
-        case .oFetchlost:   fetchLost       (cloudCallback)
+        case .oFetchLost:   fetchLost       (cloudCallback)
         case .oFetchNew:    fetchNew        (cloudCallback)
         case .oFetchAll:    fetchAll        (cloudCallback)
         case .oFound:       found           (cloudCallback)
@@ -720,7 +720,7 @@ class ZCloud: ZRecords {
 
         fetch(for: kZoneType, properties: Zone.cloudProperties(), since: date) { iZoneCKRecords in
             FOREGROUND {
-                self.createZRecords(of: kZoneType, with: iZoneCKRecords, title: " NEW")
+                self.createZRecords(of: kZoneType, with: iZoneCKRecords, title: date != nil ? " NEW" : " ALL")
 
                 self.unorphanAll()
                 self.recount()
