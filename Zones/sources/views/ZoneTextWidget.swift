@@ -99,7 +99,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 let    height = gGenericOffset.height
                 let     width = hideText ? 0.0 : textWidth + 1.0
 
-                make.centerY.equalTo(view).offset(-verticalTextOffset)
+                make.centerY.equalTo(view)
                 make   .left.equalTo(view).offset(gGenericOffset.width + 4.0)
                 make  .right.lessThanOrEqualTo(view).offset(-29.0)
                 make .height.lessThanOrEqualTo(view).offset(-height)

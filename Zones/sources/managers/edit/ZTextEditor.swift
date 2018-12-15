@@ -224,6 +224,7 @@ class ZTextEditor: ZTextView {
     
     var currentOffset: CGFloat?
     var currentEdit: ZTextPack?
+    var ignoreArrowKeys = false
     var isEditingStateChanging = false
     var currentlyEditingZone: Zone? { return currentEdit?.packedZone }
     var currentTextWidget: ZoneTextWidget? { return currentlyEditingZone?.widget?.textWidget }
@@ -369,6 +370,8 @@ class ZTextEditor: ZTextView {
     
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
+        if ignoreArrowKeys { return }
+            
         let COMMAND = flags.isCommand
         let  OPTION = flags.isOption
         let   SHIFT = flags.isShift
@@ -421,6 +424,8 @@ class ZTextEditor: ZTextView {
     
     
     func stopEditAndMoveOut(_ iMoveOut: Bool) {
+        ignoreArrowKeys = true
+
         if  iMoveOut {
             quickStopCurrentEdit(clearOffset: true)
             gGraphEditor.moveOut {
@@ -473,6 +478,8 @@ class ZTextEditor: ZTextView {
     
     
     func setCursor(at iOffset: CGFloat?) {
+        ignoreArrowKeys  = false
+
         if  var   offset = iOffset,
             let     zone = currentlyEditingZone,
             let       to = currentTextWidget {

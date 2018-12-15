@@ -282,11 +282,11 @@ class ZRecord: NSObject {
     func needRoot()              {    addState(.needsRoot) }
     func needFound()             {    addState(.needsFound) }
     func needFetch()             {    addState(.needsFetch) }
+    func needCount()             {    addState(.needsCount) }
     func needUnorphan()          {    addState(.needsUnorphan) }
     func markNotFetched()        {    addState(.notFetched) }
     func fetchBeforeSave()       {    addState(.requiresFetchBeforeSave) }
     func allowSaveWithoutFetch() { removeState(.requiresFetchBeforeSave)}
-    func needCount()             {} //    if !gAssumeAllFetched { addState(.needsCount) } }
     func needColor()             {} //    if !gAssumeAllFetched { addState(.needsColor) } }
     func needTraits()            {} //    if !gAssumeAllFetched { addState(.needsTraits) } }
     func needParent()            {} //    if !gAssumeAllFetched { addState(.needsParent) } }
