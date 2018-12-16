@@ -103,8 +103,9 @@ class ZGraphEditor: NSObject {
                     case "d":      if SHIFT { addParentFromSelectedText(inside: editedZone) } else { addIdeaFromSelectedText(inside: editedZone) }
                     case "f":      search()
                     case "i":      toggleColorized()
+                    case "?":      showHideKeyboardShortcuts()
+                    case "-":      return convertToLine(editedZone)
                     case "/":      gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }
-                    case "?":      showKeyboardShortcuts()
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kSpace:   addIdea()
                     default:       return false
@@ -156,9 +157,9 @@ class ZGraphEditor: NSObject {
                     case "[":      gFocusing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
                     case ";":      doFavorites(true,    false)
-                    case "?":      CONTROL ? openBrowserForFocusWebsite() : showKeyboardShortcuts()
+                    case "?":      CONTROL ? openBrowserForFocusWebsite() : showHideKeyboardShortcuts()
                     case "'":      doFavorites(SHIFT, OPTION)
-                    case "/":      SHIFT && OPTION ? showKeyboardShortcuts() : gFocusing.focus(kind: .eSelected, COMMAND) { self.redrawSyncRedraw() }
+                    case "/":      SHIFT && OPTION ? showHideKeyboardShortcuts() : gFocusing.focus(kind: .eSelected, COMMAND) { self.redrawSyncRedraw() }
                     case "=":      gFocusing.maybeTravelThrough(gSelecting.firstGrab) { self.redrawSyncRedraw() }
                     case kTab:     addNext(containing: OPTION) { iChild in iChild.edit() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
@@ -382,13 +383,17 @@ class ZGraphEditor: NSObject {
     }
 
     
-    func showKeyboardShortcuts() {
+    func showHideKeyboardShortcuts() {
         if  shortcutsController == nil {
             let      storyboard  = NSStoryboard(name: "Shortcuts", bundle: nil)
             shortcutsController  = storyboard.instantiateInitialController() as? NSWindowController
         }
 
-        shortcutsController?.showWindow(nil)
+        if  shortcutsController?.window?.isVisible ?? false {
+            shortcutsController?.window?.orderOut(self)
+        } else {
+            shortcutsController?.showWindow(nil)
+        }
     }
 
 
