@@ -44,6 +44,7 @@ class ZMainController: ZGenericController {
 
         switch iKind {
         case .eFound:
+            searchBoxView?        .isHidden = hideSearch
             searchResultsView?    .isHidden = hideResults
         case .eSearch:
             searchBoxView?        .isHidden = hideSearch

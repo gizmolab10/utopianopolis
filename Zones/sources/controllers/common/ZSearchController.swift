@@ -46,6 +46,8 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
     func handleEvent(_ event: ZEvent) -> ZEvent? {
         let   string = event.input
+        let    flags = event.modifierFlags
+        let  COMMAND = flags.isCommand
         let      key = string[string.startIndex].description
         let isReturn = key == "\r"
         let    state = gSearching.state
@@ -53,15 +55,17 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         
         if        !isReturn && isEntry {
             gSearching.state = .find
-        } else if  isReturn { // && state == .find {
-            if  let text = searchBoxText {
+        } else if  isReturn {
+            if  gSearching.state == .list {
+                searchBox?.becomeFirstResponder()
+            } else if  let text = searchBoxText {
                 performSearch(for: text)
             }
 
             return nil
         }
         
-        if (isReturn && isEntry) || key == kEscape {
+        if (isReturn && isEntry) || key == kEscape || (key == "f" && COMMAND) {
             endSearch()
             
             return nil
@@ -78,8 +82,6 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
 
     func endSearch() {
-        self.searchBox?.text = ""
-
         searchBox?.resignFirstResponder()
         gSearching.exitSearchMode()
     }
@@ -123,7 +125,6 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                         combined[dbID] = results
                         
                         if  remaining == 0 {
-                            self.searchBox?.text = ""
                             gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: [CKRecord]] ?? [:]
                             gSearching.state = (gSearchResultsController?.hasResults ?? false) ? .list : .find
                         

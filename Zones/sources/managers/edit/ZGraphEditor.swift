@@ -40,6 +40,7 @@ class ZGraphEditor: NSObject {
 
 
     var previousEvent: ZEvent?
+    var currentBrowsingLevel: Int?
     var shortcutsController: NSWindowController?
 
 
@@ -51,9 +52,6 @@ class ZGraphEditor: NSObject {
 
         return kUndoManager
     }
-
-    
-    var currentLevel = 0
     
 
     // MARK:- events
@@ -101,7 +99,7 @@ class ZGraphEditor: NSObject {
                     switch key {
                     case "a":      gEditedTextWidget?.selectAllText()
                     case "d":      if SHIFT { addParentFromSelectedText(inside: editedZone) } else { addIdeaFromSelectedText(inside: editedZone) }
-                    case "f":      search()
+                    case "f":      search(OPTION)
                     case "i":      toggleColorized()
                     case "?":      showHideKeyboardShortcuts()
                     case "-":      return convertToLine(editedZone)
@@ -135,7 +133,7 @@ class ZGraphEditor: NSObject {
                     case "c":      recenter()
                     case "d":      if FLAGGED { combineIntoParent(widget?.widgetZone) } else { duplicate() }
                     case "e":      editTrait(for: .eEmail)
-                    case "f":      search()
+                    case "f":      search(OPTION)
                     case "h":      editTrait(for: .eHyperlink)
                     case "i":      toggleColorized()
                     case "l", "u": alterCase(up: key == "u")
@@ -593,11 +591,11 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func search() {
+    func search(_ OPTION: Bool = false) {
         if  gDatabaseID != .favoritesID {
-            gWorkMode = gWorkMode == .searchMode ? .graphMode : .searchMode
+            gWorkMode = (gWorkMode == .searchMode) ? .graphMode : .searchMode
 
-            gControllers.signalFor(nil, regarding: .eSearch)
+            gControllers.signalFor(nil, regarding: OPTION ? .eFound : .eSearch)
         }
     }
 
@@ -2108,13 +2106,15 @@ class ZGraphEditor: NSObject {
                 let range = NSRange(location: length, length: 0)
                 
                 if  let anOffset = grabThis.widget?.textWidget.offset(for: range, iMoveUp),
-                    offset > anOffset + 25.0 { // half the distance from end of parent's text field to beginning of child's text field
-                    grabThis = grabThis.children[iMoveUp ? grabThis.count - 1 : 0]
+                    offset       > anOffset + 25.0 { // half the distance from end of parent's text field to beginning of child's text field
+                    let    index = iMoveUp ? grabThis.count - 1 : 0
+                    grabThis     = grabThis.children[index]
                 } else {
                     break // done
                 }
         }
     }
+
     
     func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, extend: Bool = false, targeting iOffset: CGFloat? = nil) {
         let         zone = iMoveUp ? gSelecting.firstGrab : gSelecting.lastGrab
@@ -2256,7 +2256,7 @@ class ZGraphEditor: NSObject {
                                 }
                             }
                             
-                            gSelecting.addMultipleToGrab(grabThese)
+                            gSelecting.addMultipleGrabs(grabThese)
                         }
                         
                         gControllers.signalFor(nil, regarding: .eData)

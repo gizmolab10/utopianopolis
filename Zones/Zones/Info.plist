@@ -40,11 +40,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.1.14</string>
+	<string>0.1.15</string>
 	<key>CFBundleSignature</key>
 	<string>zone</string>
 	<key>CFBundleVersion</key>
-	<string>1070</string>
+	<string>1072</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>

@@ -304,14 +304,14 @@ class ZSelecting: NSObject {
     }
 
 
-    func addMultipleToGrab(_ iZones: [Zone]) {
+    func addMultipleGrabs(_ iZones: [Zone]) {
         for zone in iZones {
-            addToGrab(zone)
+            addOneGrab(zone)
         }
     }
 
 
-    func addToGrab(_ iZone: Zone?, onlyOne: Bool = false) {
+    func addOneGrab(_ iZone: Zone?, onlyOne: Bool = false) {
         if  let zone = iZone,
             (!currentGrabs.contains(zone) || onlyOne) { // if onlyOne AND already grabbed, shrink grab list to iZone
             gTextEditor.stopCurrentEdit()
@@ -334,7 +334,7 @@ class ZSelecting: NSObject {
 
 
     func grab(_ zone: Zone?) {
-        addToGrab(zone!, onlyOne: true)
+        addOneGrab(zone!, onlyOne: true)
     }
 
 

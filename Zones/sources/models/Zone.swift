@@ -699,10 +699,10 @@ class Zone : ZRecord {
 
 
     func addToPaste() { gSelecting.pasteableZones[self] = (parentZone, siblingIndex) }
-    func  addToGrab() { gSelecting.addToGrab(self) }
-    func     ungrab() { gSelecting   .ungrab(self) }
-    func       grab() { gSelecting     .grab(self) }
-    func       edit() { gTextEditor          .edit(self) }
+    func  addToGrab() { gSelecting    .addOneGrab(self) }
+    func     ungrab() { gSelecting        .ungrab(self) }
+    func       grab() { gSelecting          .grab(self) }
+    func       edit() { gTextEditor         .edit(self) }
 
 
     func dragDotClicked(isCommand: Bool, isShift: Bool) {
@@ -726,6 +726,7 @@ class Zone : ZRecord {
         gControllers.signalFor(nil, regarding: .eDetails)
     }
 
+    
     override func debug(_  iMessage: String) {
         note("\(iMessage) children \(count) parent \(parent != nil) is \(isInTrash ? "" : "not ") deleted identifier \(databaseID!) \(unwrappedName)")
     }
