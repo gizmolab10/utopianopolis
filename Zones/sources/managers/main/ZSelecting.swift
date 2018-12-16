@@ -272,6 +272,15 @@ class ZSelecting: NSObject {
                 widget                  .setNeedsDisplay()
             }
         }
+        
+        updateBrowsingLevel()
+    }
+    
+    
+    func updateBrowsingLevel() {
+        if  currentGrabs.count == 0 {
+            gCurrentBrowsingLevel = nil
+        }
     }
 
 
@@ -293,6 +302,7 @@ class ZSelecting: NSObject {
         if let zone = iZone, let index = currentGrabs.index(of: zone) {
             currentGrabs.remove(at: index)
             updateWidgetFor(zone)
+            updateBrowsingLevel()
         }
     }
 
@@ -328,7 +338,8 @@ class ZSelecting: NSObject {
                 updateWidgetFor(grab)
             }
             
-            hasNewGrab = zone
+            gCurrentBrowsingLevel = zone.level
+            hasNewGrab            = zone
         }
     }
 

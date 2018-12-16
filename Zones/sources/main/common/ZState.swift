@@ -24,6 +24,7 @@ var      gKeyboardIsVisible                     = false
 var     gDebugDenyOwnership                     = false
 var   gDebugShowIdentifiers                     = false
 var  gMeasureOpsPerformance                     = true
+var   gCurrentBrowsingLevel:               Int?
 var    gTimeOfSystemStartup:      TimeInterval?
 var        gDragDropIndices: NSMutableIndexSet?
 var           gCurrentEvent:            ZEvent?
@@ -225,7 +226,7 @@ var gScrollOffset: CGPoint {
 var gBrowsingMode: ZBrowsingMode {
     get {
         let value  = UserDefaults.standard.object(forKey: kBrowsingMode) as? Int
-        var mode   = ZBrowsingMode.confine
+        var mode   = ZBrowsingMode.confined
         
         if  value != nil {
             mode   = ZBrowsingMode(rawValue: value!)!

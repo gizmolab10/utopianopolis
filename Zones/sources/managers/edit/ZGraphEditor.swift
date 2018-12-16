@@ -40,7 +40,6 @@ class ZGraphEditor: NSObject {
 
 
     var previousEvent: ZEvent?
-    var currentBrowsingLevel: Int?
     var shortcutsController: NSWindowController?
 
 
@@ -192,8 +191,8 @@ class ZGraphEditor: NSObject {
         }
 
         switch arrow {
-        case .down:     moveUp(false, selectionOnly: !OPTION, extreme: COMMAND, extend: SHIFT)
-        case .up:       moveUp(true,  selectionOnly: !OPTION, extreme: COMMAND, extend: SHIFT)
+        case .down:     moveUp(false, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
+        case .up:       moveUp(true,  selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
         default:
             if !SHIFT {
                 switch arrow {
@@ -367,7 +366,7 @@ class ZGraphEditor: NSObject {
     func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with PERIOD: Bool) {
         if     !COMMAND {
             if  OPTION {
-                gBrowsingMode  = PERIOD ? .extend : .confine
+                gBrowsingMode  = PERIOD ? .cousinJumps : .confined
             } else {
                 gInsertionMode = PERIOD ? .follow : .precede
             }
@@ -2094,8 +2093,6 @@ class ZGraphEditor: NSObject {
     
     
     fileprivate func findChildMatching(_ grabThis: inout Zone, _ iMoveUp: Bool, _ iOffset: CGFloat?) {
-        guard let offset = iOffset else { return }
-        
         //////////////////////////////////////////////////
         //         text is being edited by user         //
         // grab another zone whose text contains offset //
@@ -2104,11 +2101,16 @@ class ZGraphEditor: NSObject {
         while grabThis.showingChildren, grabThis.count > 0,
             let length = grabThis.zoneName?.length {
                 let range = NSRange(location: length, length: 0)
+                let index = iMoveUp ? grabThis.count - 1 : 0
+                let child = grabThis.children[index]
                 
-                if  let anOffset = grabThis.widget?.textWidget.offset(for: range, iMoveUp),
+                if  let   offset = iOffset,
+                    let anOffset = grabThis.widget?.textWidget.offset(for: range, iMoveUp),
                     offset       > anOffset + 25.0 { // half the distance from end of parent's text field to beginning of child's text field
-                    let    index = iMoveUp ? grabThis.count - 1 : 0
-                    grabThis     = grabThis.children[index]
+                    grabThis     = child
+                } else if let level = gCurrentBrowsingLevel,
+                    child.level == level {
+                    grabThis     = child
                 } else {
                     break // done
                 }
@@ -2116,9 +2118,9 @@ class ZGraphEditor: NSObject {
     }
 
     
-    func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, extend: Bool = false, targeting iOffset: CGFloat? = nil) {
+    func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
         let         zone = iMoveUp ? gSelecting.firstGrab : gSelecting.lastGrab
-        let   isConfined = gBrowsingMode == .confine
+        let doCousinJump = gBrowsingMode == .cousinJumps
         let hereIsMoving = zone == gHere
         let       parent = zone.parentZone
 
@@ -2142,14 +2144,14 @@ class ZGraphEditor: NSObject {
                     }
                     
                     if  same && (parent?.count ?? 0) > 1 && (setHere || iCalledCloud) {
-                        self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme, extend: extend)
+                        self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
                     } else {
                         gControllers.signalFor(nil, regarding: .eRelayout)
                     }
                 }
             }
         } else if  let originalParent = parent {
-            let     targetZones = isConfined ? originalParent.children : gSelecting.cousinList
+            let     targetZones = doCousinJump ? gSelecting.cousinList : originalParent.children
             let     targetCount = targetZones.count
             let       targetMax = targetCount - 1
 
@@ -2200,7 +2202,7 @@ class ZGraphEditor: NSObject {
                 // vertical wrap around //
                 //////////////////////////
                 
-                if !extend {
+                if !growSelection {
                     let    atTop = newIndex < 0
                     let atBottom = newIndex >= targetCount
                     
@@ -2227,13 +2229,13 @@ class ZGraphEditor: NSObject {
                     }
                     
                     UNDO(self) { iUndoSelf in
-                        iUndoSelf.moveUp(!iMoveUp, selectionOnly: selectionOnly, extreme: extreme, extend: extend)
+                        iUndoSelf.moveUp(!iMoveUp, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
                     }
                     
                     if !selectionOnly {
                         moveClosure(grabThis)
                     } else {
-                        if !extend {
+                        if !growSelection {
                             findChildMatching(&grabThis, iMoveUp, iOffset)
                             gSelecting.deselectGrabs(retaining: [grabThis])
                         } else if !grabThis.isGrabbed || extreme {
@@ -2261,7 +2263,7 @@ class ZGraphEditor: NSObject {
                         
                         gControllers.signalFor(nil, regarding: .eData)
                     }
-                } else if !isConfined,
+                } else if doCousinJump,
                     var index  = targetZones.index(of: zone) {
 
                     /////////////////
@@ -2271,9 +2273,9 @@ class ZGraphEditor: NSObject {
                     index     += (iMoveUp ? -1 : 1)
 
                     if  index >= targetCount {
-                        index  = extend ? targetMax : 0
+                        index  = growSelection ? targetMax : 0
                     } else if index < 0 {
-                        index  = extend ? 0 : targetMax
+                        index  = growSelection ? 0 : targetMax
                     }
                     
                     var grab = targetZones[index]
@@ -2282,7 +2284,7 @@ class ZGraphEditor: NSObject {
                     
                     if !selectionOnly {
                         moveClosure(grab)
-                    } else if extend {
+                    } else if growSelection {
                         grab.addToGrab()
                     } else {
                         grab.grab()
