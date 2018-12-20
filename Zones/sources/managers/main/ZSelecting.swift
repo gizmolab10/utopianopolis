@@ -32,6 +32,7 @@ class ZSnapshot: NSObject {
     var currentGrabs = [Zone] ()
     var   databaseID : ZDatabaseID?
     var         here : Zone?
+    var       isSame : Bool { return gSelecting.snapshot == self }
 
 
     static func == ( left: ZSnapshot, right: ZSnapshot) -> Bool {
@@ -244,11 +245,6 @@ class ZSelecting: NSObject {
     }
 
     
-    func snapshotEquals(_ other: ZSnapshot) -> Bool {
-        return snapshot == other
-    }
-    
-
     // MARK:- selection
     // MARK:-
 
@@ -363,24 +359,30 @@ class ZSelecting: NSObject {
 
     
     func maybeNewGrabUpdate() {
-        if  let   grab = hasNewGrab {
-            let  start = grab.isInFavorites ? gFavoritesRoot : gHere
-            let  level = grab.level
+        if  let grab = hasNewGrab {
             hasNewGrab = nil
 
-            _cousinList.removeAll()
-            _sortedGrabs.removeAll()
-            
-            start?.traverseAllVisibleProgeny { iZone in
-                if   iZone.level == level ||
-                    (iZone.level  < level &&
-                        (iZone.count == 0 ||
-                            !iZone.showingChildren)) {
-                    _cousinList.append(iZone)
-                    
-                    if  currentGrabs.contains(iZone) {
-                        _sortedGrabs.append(iZone)
-                    }
+            updateCousinList(for: grab)
+        }
+    }
+    
+    
+    func updateCousinList(for here: Zone) {
+        let  start = here.isInFavorites ? gFavoritesRoot : gHere
+        let  level = here.level
+        
+        _cousinList.removeAll()
+        _sortedGrabs.removeAll()
+        
+        start?.traverseAllVisibleProgeny { iZone in
+            if   iZone.level == level ||
+                (iZone.level  < level &&
+                    (iZone.count == 0 ||
+                        !iZone.showingChildren)) {
+                _cousinList.append(iZone)
+                
+                if  currentGrabs.contains(iZone) {
+                    _sortedGrabs.append(iZone)
                 }
             }
         }

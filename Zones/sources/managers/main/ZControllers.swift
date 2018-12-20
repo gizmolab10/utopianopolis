@@ -39,6 +39,7 @@ enum ZSignalKind: Int {
     case eStartup
     case eDetails
     case eRelayout
+    case eFavorites
     case eAppearance
     case eInformation
     case ePreferences

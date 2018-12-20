@@ -66,7 +66,7 @@ class ZBatches: ZOnboarding {
 
 
         func fire() {
-            completion?(gSelecting.snapshotEquals(snapshot))
+            completion?(snapshot.isSame)
         }
     }
 

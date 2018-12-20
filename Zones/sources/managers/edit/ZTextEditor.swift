@@ -224,7 +224,6 @@ class ZTextEditor: ZTextView {
     
     var currentOffset: CGFloat?
     var currentEdit: ZTextPack?
-    var ignoreArrowKeys = false
     var isEditingStateChanging = false
     var currentlyEditingZone: Zone? { return currentEdit?.packedZone }
     var currentTextWidget: ZoneTextWidget? { return currentlyEditingZone?.widget?.textWidget }
@@ -370,18 +369,16 @@ class ZTextEditor: ZTextView {
     
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        if ignoreArrowKeys { return }
-            
         let COMMAND = flags.isCommand
         let  OPTION = flags.isOption
         let   SHIFT = flags.isShift
 
         switch arrow {
         case .up,
-             .down: stop(!OPTION, editAndMoveUp: arrow == .up)
+             .down: moveUp(arrow == .up, stopEdit: !OPTION)
         case .left:
             if  atStart {
-                stopEditAndMoveOut(true)
+                moveOut(true)
             } else {
                 clearOffset()
                 
@@ -401,7 +398,7 @@ class ZTextEditor: ZTextView {
             }
         case .right:
             if atEnd {
-                stopEditAndMoveOut(false)
+                moveOut(false)
             } else {
                 clearOffset()
                 
@@ -423,8 +420,8 @@ class ZTextEditor: ZTextView {
     }
     
     
-    func stopEditAndMoveOut(_ iMoveOut: Bool) {
-        ignoreArrowKeys = true
+    func moveOut(_ iMoveOut: Bool) {
+        gArrowsDoNotBrowse = true
 
         if  iMoveOut {
             quickStopCurrentEdit(clearOffset: true)
@@ -449,36 +446,50 @@ class ZTextEditor: ZTextView {
     }
     
 
-    func stop(_ iStopEditing: Bool, editAndMoveUp: Bool) {
-        currentOffset = currentOffset ?? currentTextWidget?.offset(for: selectedRange(), editAndMoveUp)
-//        var      zone = currentlyEditingZone
+    func moveUp(_ iMoveUp: Bool, stopEdit: Bool) {
+        currentOffset = currentOffset ?? currentTextWidget?.offset(for: selectedRange(), iMoveUp)
+        let current = currentlyEditingZone
+        let isHere = current == gHere
+        let e = currentEdit
 
-        applyPreservingEdit {
-            if iStopEditing {
-                quickStopCurrentEdit()
-            }
-
-            gGraphEditor.moveUp(editAndMoveUp, targeting: currentOffset)
+        if  stopEdit {
+            capture()
+            current?.grab()
         }
-
-        if iStopEditing {
-            let zone  = gSelecting.firstGrab
-            
-            if  zone != currentlyEditingZone { // if move up (above) does nothing, ignore
-                edit(zone)
-            } else {
-                gSelecting.clearGrab()
-                currentEdit?.textWidget?.becomeFirstResponder()
-            }
-        } // else widgets are wrong
         
+        if  var zone = current {
+            gGraphEditor.moveUp(iMoveUp, from: zone, targeting: currentOffset) { iKind in
+                gControllers.signalFor(nil, regarding: iKind) {
+                    self.currentOffset = current?.widget?.textWidget.offset(for: self.selectedRange(), iMoveUp)  // offset will have changed when current == here
+                    
+                    if  stopEdit {
+                        zone      = gSelecting.firstGrab
+                        
+                        if  zone != current { // if move up (above) does nothing, ignore
+                            self.edit(zone)
+                        } else {
+                            self.currentEdit = e // restore after capture sets it to nill
 
-        setCursor(at: currentOffset)
+                            gSelecting.clearGrab()
+                            e?.textWidget?.becomeFirstResponder()
+                        }
+                    } // else widgets are wrong
+                    
+                    if !isHere {
+                        self.setCursor(at: self.currentOffset)
+                    } else {
+                        FOREGROUND(after: 0.01) {
+                            self.setCursor(at: self.currentOffset)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     
     func setCursor(at iOffset: CGFloat?) {
-        ignoreArrowKeys  = false
+        gArrowsDoNotBrowse  = false
 
         if  var   offset = iOffset,
             let     zone = currentlyEditingZone,
@@ -489,7 +500,7 @@ class ZTextEditor: ZTextView {
             let     name = zone.unwrappedName
             let location = name.location(of: offset, using: currentFont)
             
-            setSelectedRange(NSMakeRange(location, 0))
+            self.setSelectedRange(NSMakeRange(location, 0))
         }
     }
     

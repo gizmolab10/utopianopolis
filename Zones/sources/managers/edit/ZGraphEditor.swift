@@ -176,7 +176,7 @@ class ZGraphEditor: NSObject {
     
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        if  gIsEditingText {
+        if  gIsEditingText || gArrowsDoNotBrowse {
             gTextEditor.handleArrow(arrow, flags: flags)
             
             return
@@ -2116,15 +2116,23 @@ class ZGraphEditor: NSObject {
                 }
         }
     }
-
+    
     
     func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
-        let         zone = iMoveUp ? gSelecting.firstGrab : gSelecting.lastGrab
+        let zone = iMoveUp ? gSelecting.firstGrab : gSelecting.lastGrab
+
+        moveUp(iMoveUp, from:zone, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKind in
+            gControllers.signalFor(nil, regarding: iKind)
+        }
+    }
+
+    
+    func moveUp(_ iMoveUp: Bool = true, from zone: Zone, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, onCompletion: SignalKindClosure? = nil) {
         let doCousinJump = gBrowsingMode == .cousinJumps
-        let hereIsMoving = zone == gHere
+        let       isHere = zone == gHere
         let       parent = zone.parentZone
 
-        if  parent == nil || hereIsMoving {
+        if  parent == nil || isHere {
             if !zone.isRoot {
                 
                 ///////////////////////////
@@ -2134,19 +2142,21 @@ class ZGraphEditor: NSObject {
                 let snapshot = gSelecting.snapshot
                 
                 revealParentAndSiblingsOf(zone) { iCalledCloud in
-                    let same    = gSelecting.snapshotEquals(snapshot)
-                    let setHere = parent != nil && hereIsMoving
+                    let keepGoing = snapshot.isSame && (iCalledCloud || (isHere && parent != nil)) && ((parent?.count ?? 0) > 1)
 
-                    if  setHere {
-                        gHere   = parent!
+                    if  isHere,
+                        let p = parent {
+                        gHere = p
                         
-                        self.updateFavoritesRedrawSyncRedraw()
+                        if !keepGoing {
+                            self.updateFavoritesRedrawSyncRedraw()
+
+                            onCompletion?(.eRelayout)
+                        }
                     }
                     
-                    if  same && (parent?.count ?? 0) > 1 && (setHere || iCalledCloud) {
-                        self.moveUp(iMoveUp, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
-                    } else {
-                        gControllers.signalFor(nil, regarding: .eRelayout)
+                    if  keepGoing {
+                        self.moveUp(iMoveUp, from: zone, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, onCompletion: onCompletion)
                     }
                 }
             }
@@ -2178,7 +2188,7 @@ class ZGraphEditor: NSObject {
                         self.moveZone(zone, into: newParent, at: toIndex, orphan: true) {
                             zone.grab()
                             newParent.children.updateOrder()
-                            self.redrawSyncRedraw(newParent)
+                            onCompletion?(.eRelayout)
                         }
                     }
                 }
@@ -2203,16 +2213,16 @@ class ZGraphEditor: NSObject {
                 //////////////////////////
                 
                 if !growSelection {
-                    let    atTop = newIndex < 0
-                    let atBottom = newIndex >= targetCount
+                    let    aboveTop = newIndex < 0
+                    let belowBottom = newIndex >= targetCount
                     
                     //////////////////////////
                     // vertical wrap around //
                     //////////////////////////
                     
-                    if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && atBottom))) || ( iMoveUp && soloGrabbed && atTop) {
+                    if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && belowBottom))) || ( iMoveUp && soloGrabbed && aboveTop) {
                         newIndex = targetMax // bottom
-                    } else if ( iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && atTop)))    || (!iMoveUp && soloGrabbed && atBottom) {
+                    } else if ( iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && aboveTop)))    || (!iMoveUp && soloGrabbed && belowBottom) {
                         newIndex = 0         // top
                     }
                 }
@@ -2224,7 +2234,7 @@ class ZGraphEditor: NSObject {
                     // wrapping is not needed //
                     ////////////////////////////
 
-                    if  hereIsMoving {
+                    if  isHere {
                         gHere = originalParent
                     }
                     
@@ -2261,7 +2271,7 @@ class ZGraphEditor: NSObject {
                             gSelecting.addMultipleGrabs(grabThese)
                         }
                         
-                        gControllers.signalFor(nil, regarding: .eData)
+                        onCompletion?(.eRelayout)
                     }
                 } else if doCousinJump,
                     var index  = targetZones.index(of: zone) {
@@ -2289,6 +2299,8 @@ class ZGraphEditor: NSObject {
                     } else {
                         grab.grab()
                     }
+
+                    onCompletion?(.eData)
                 }
             }
         }

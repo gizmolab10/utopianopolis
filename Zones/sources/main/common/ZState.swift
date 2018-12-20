@@ -21,6 +21,7 @@ var               gWorkMode                     = ZWorkMode.startupMode
 var          gTextCapturing                     = false
 var        gIsReadyToShowUI                     = false
 var      gKeyboardIsVisible                     = false
+var      gArrowsDoNotBrowse                     = false
 var     gDebugDenyOwnership                     = false
 var   gDebugShowIdentifiers                     = false
 var  gMeasureOpsPerformance                     = true
