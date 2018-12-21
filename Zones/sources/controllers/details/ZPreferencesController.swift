@@ -25,10 +25,10 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var         zoneColorBox: ZColorWell?
     @IBOutlet var   backgroundColorBox: ZColorWell?
     @IBOutlet var  dragTargetsColorBox: ZColorWell?
-    @IBOutlet var    horizontalSpacing: ZSlider?
+    @IBOutlet var     clearColorButton: ZButton?
     @IBOutlet var      verticalSpacing: ZSlider?
     @IBOutlet var            thickness: ZSlider?
-    @IBOutlet var     clearColorButton: ZButton?
+    @IBOutlet var              stretch: ZSlider?
     @IBOutlet var           ideasLabel: ZTextField?
     override var backgroundColor: CGColor { return gDarkishBackgroundColor }
 
@@ -46,7 +46,7 @@ class ZPreferencesController: ZGenericController {
             countsModeControl?   .selectedSegment = gCountsMode.rawValue
             thickness?               .doubleValue = gLineThickness
             verticalSpacing?         .doubleValue = Double(gGenericOffset.height)
-            horizontalSpacing?       .doubleValue = Double(gGenericOffset.width)
+            stretch?                 .doubleValue = Double(gGenericOffset.width)
             dragTargetsColorBox?           .color = gRubberbandColor
             backgroundColorBox?            .color = gBackgroundColor
             zoneColorBox?                  .color =  grabbed.color
@@ -66,9 +66,9 @@ class ZPreferencesController: ZGenericController {
 
         if  let     identifier = convertFromOptionalNSUserInterfaceItemIdentifier(iSlider.identifier) {
             switch (identifier) {
-            case  "thickness": gLineThickness = Double(value)
-            case "horizontal": gGenericOffset = CGSize(width: value, height: gGenericOffset.height)
-            case   "vertical": gGenericOffset = CGSize(width: gGenericOffset.width, height: value)
+            case "thickness": gLineThickness = Double(value)
+            case   "stretch": gGenericOffset = CGSize(width: value, height: gGenericOffset.height)
+            case  "vertical": gGenericOffset = CGSize(width: gGenericOffset.width, height: value)
             default:           break
             }
 

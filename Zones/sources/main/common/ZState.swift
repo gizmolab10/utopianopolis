@@ -22,6 +22,7 @@ var          gTextCapturing                     = false
 var        gIsReadyToShowUI                     = false
 var      gKeyboardIsVisible                     = false
 var      gArrowsDoNotBrowse                     = false
+var     gShowShortcutWindow                     = false
 var     gDebugDenyOwnership                     = false
 var   gDebugShowIdentifiers                     = false
 var  gMeasureOpsPerformance                     = true

@@ -22,6 +22,9 @@ enum ZShortcutType: String {
 }
 
 
+var gShortcuts: ZShortcutsController? { return gControllers.controllerForID(.shortcuts) as? ZShortcutsController }
+
+
 class ZShortcutsController: ZGenericTableController {
 
 
@@ -38,6 +41,18 @@ class ZShortcutsController: ZGenericTableController {
         }
 
         view.zlayer.backgroundColor = gBackgroundColor.cgColor
+    }
+    
+    
+    func handleEvent(_ iEvent: ZEvent) -> ZEvent? {
+        if  let    key = iEvent.key {            
+            switch key {
+            case "?": gGraphEditor.showHideKeyboardShortcuts()
+            default: break
+            }
+        }
+        
+        return nil
     }
 
 
@@ -122,6 +137,9 @@ class ZShortcutsController: ZGenericTableController {
         "u    KEY",
         "     \tRETURN     \tbegin or end typing",
         "     \tTAB        \tcreate next idea",
+        "",
+        "u    COMMAND + KEY",
+        "     \tCOMMA      \tshow or hide preferences",
         "",
         "u    COMMAND + SHIFT + KEY",
         "     \t/          \tshow or hide this window",

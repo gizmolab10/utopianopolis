@@ -78,7 +78,8 @@ class ZGraphEditor: NSObject {
 
 
     @discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool { // true means handled
-        if  var     key = iKey {
+        if !gShowShortcutWindow,
+            var     key = iKey {
             let CONTROL = flags.isControl
             let COMMAND = flags.isCommand
             let  OPTION = flags.isOption
@@ -186,7 +187,7 @@ class ZGraphEditor: NSObject {
         let  OPTION = flags.isOption
         let   SHIFT = flags.isShift
 
-        if OPTION && !gSelecting.currentMoveable.userCanMove {
+        if (OPTION && !gSelecting.currentMoveable.userCanMove) || gShowShortcutWindow {
             return
         }
 
@@ -386,10 +387,12 @@ class ZGraphEditor: NSObject {
             shortcutsController  = storyboard.instantiateInitialController() as? NSWindowController
         }
 
-        if  shortcutsController?.window?.isVisible ?? false {
-            shortcutsController?.window?.orderOut(self)
-        } else {
+        gShowShortcutWindow = !(shortcutsController?.window?.isVisible ?? false)
+        
+        if  gShowShortcutWindow {
             shortcutsController?.showWindow(nil)
+        } else {
+            shortcutsController?.window?.orderOut(self)
         }
     }
 
