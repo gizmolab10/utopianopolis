@@ -45,9 +45,11 @@ class ZShortcutsController: ZGenericTableController {
     
     
     func handleEvent(_ iEvent: ZEvent) -> ZEvent? {
-        if  let    key = iEvent.key {            
+        if  let    key = iEvent.key {
+            let COMMAND = iEvent.modifierFlags.isCommand
             switch key {
-            case "?": gGraphEditor.showHideKeyboardShortcuts()
+            case "?":              gGraphEditor.showHideKeyboardShortcuts()
+            case "w": if COMMAND { gGraphEditor.showHideKeyboardShortcuts(hide: true) }
             default: break
             }
         }
@@ -63,14 +65,6 @@ class ZShortcutsController: ZGenericTableController {
     override func numberOfRows(in tableView: ZTableView) -> Int {
         return max(columnOne.count, max(columnTwo.count, columnThree.count))
     }
-
-    
-//    func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
-//        let       raw = columnOne[row]
-//        let actionKey = raw.substring(with: NSMakeRange(0, 1))
-//
-//        return "a".contains(actionKey)
-//    }
     
     
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {

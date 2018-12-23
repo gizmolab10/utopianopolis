@@ -802,11 +802,19 @@ class Zone : ZRecord {
     // MARK:- traits
     // MARK:-
 
+    
+    func extractTraits(from: Zone) {
+        for trait in Array(from.traits.values) {
+            addTrait(trait)
+        }
+    }
+
 
     func addTrait(_ trait: ZTrait) {
-        if let     type  = trait.traitType {
-            traits[type] = trait
-            trait .owner = CKRecord.Reference(record: record, action: .none)
+        if let     type      = trait.traitType {
+            traits[type]     = trait
+            trait .owner     = CKRecord.Reference(record: record, action: .none)
+            trait._ownerZone = nil
 
             trait.updateRecordProperties()
         }

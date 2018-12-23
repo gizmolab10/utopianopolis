@@ -40,6 +40,7 @@ var               gDarkMode:     InterfaceStyle { return InterfaceStyle() }
 var                 gIsDark:               Bool { return gDarkMode == .Dark }
 var                 gIsLate:               Bool { return gBatches.isLate }
 var             gIsDragging:               Bool { return gDraggedZone != nil }
+var   gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window?.isKeyWindow ?? false }
 var       gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var             gEditorView:      ZoneDragView? { return gEditorController?.editorView }
 var              gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }

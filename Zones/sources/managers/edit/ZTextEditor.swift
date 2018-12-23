@@ -369,7 +369,7 @@ class ZTextEditor: ZTextView {
     
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        if gShowShortcutWindow { return }
+        if gIsShortcutsFrontmost { return }
 
         let COMMAND = flags.isCommand
         let  OPTION = flags.isOption

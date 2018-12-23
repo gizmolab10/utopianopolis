@@ -78,7 +78,7 @@ class ZGraphEditor: NSObject {
 
 
     @discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool { // true means handled
-        if !gShowShortcutWindow,
+        if !gIsShortcutsFrontmost,
             var     key = iKey {
             let CONTROL = flags.isControl
             let COMMAND = flags.isCommand
@@ -187,7 +187,7 @@ class ZGraphEditor: NSObject {
         let  OPTION = flags.isOption
         let   SHIFT = flags.isShift
 
-        if (OPTION && !gSelecting.currentMoveable.userCanMove) || gShowShortcutWindow {
+        if (OPTION && !gSelecting.currentMoveable.userCanMove) || gIsShortcutsFrontmost {
             return
         }
 
@@ -335,9 +335,11 @@ class ZGraphEditor: NSObject {
             let    combined = original.stringBySmartly(appending: childName)
             let       range = NSMakeRange(combined.length - childLength, childLength)
             parent.zoneName = combined
+            parent.extractTraits(from: child)
             moveZone(child, to: gTrash)
-            redrawSyncRedraw(child)
-            parent.editAndSelect(in: range)
+            redrawSyncRedraw(child) {
+                parent.editAndSelect(in: range)
+            }
         }
     }
 
@@ -381,13 +383,17 @@ class ZGraphEditor: NSObject {
     }
 
     
-    func showHideKeyboardShortcuts() {
+    func showHideKeyboardShortcuts(hide: Bool? = nil) {
         if  shortcutsController == nil {
             let      storyboard  = NSStoryboard(name: "Shortcuts", bundle: nil)
             shortcutsController  = storyboard.instantiateInitialController() as? NSWindowController
         }
 
-        gShowShortcutWindow = !(shortcutsController?.window?.isVisible ?? false)
+        if  let notShow = hide {
+            gShowShortcutWindow = !notShow
+        } else {
+            gShowShortcutWindow = !(shortcutsController?.window?.isVisible ?? false)
+        }
         
         if  gShowShortcutWindow {
             shortcutsController?.showWindow(nil)

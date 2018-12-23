@@ -76,7 +76,7 @@ class ZEvents: NSObject {
                     case .searchMode:
                         return gSearching.handleEvent(event)
                     case .graphMode:
-                        if  gShowShortcutWindow {
+                        if  gIsShortcutsFrontmost {
                             return gShortcuts?.handleEvent(event) ?? nil
                         } else {
                             return gGraphEditor.handleEvent(event, isWindow: true)
