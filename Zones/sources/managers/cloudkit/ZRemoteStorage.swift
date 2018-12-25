@@ -105,7 +105,7 @@ class ZRemoteStorage: NSObject {
 
 
     func resetBadgeCounter() {
-        if  gCloudAccountStatus == .available {
+        if  gCloudAccountStatus == .active {
             let badgeResetOperation = CKModifyBadgeOperation(badgeValue: 0)
 
             badgeResetOperation.modifyBadgeCompletionBlock = { (error) -> Void in
@@ -124,26 +124,51 @@ class ZRemoteStorage: NSObject {
     // MARK:- receive from cloud
     // MARK:-
 
+    
+    func cloud(from record: CKRecord) -> ZCloud? {
+        if  let   id = record[kpDatabaseId] as? String,
+            let dbID = ZDatabaseID.create(from: id) {
+            return cloud(for: dbID)
+        }
+
+        return currentCloud
+    }
+    
 
     func receivedUpdateFor(_ recordID: CKRecord.ID) {
         resetBadgeCounter()
 
-        ////////////////////////////////////////////////////////////////////////////////////
-        // BUG: record may be from the non-current cloud manager (i.e., != gCloud) //
-        ////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////
+        // BUG: may not be a zone type (could be a trait) //
+        // BUG: could be a deletion                       //
+        ////////////////////////////////////////////////////
 
         gCloud?.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
-            if  let  record = iUpdatedRecord,                                     // TODO: extract database identifier from record id, i.e., the database
-                let    zone = self.currentCloud?.zoneForCKRecord(record) { // TODO: currentCloud is wrong here
+            if  let  record = iUpdatedRecord,
+                let   cloud = self.cloud(from: record) {
+                let    zone = cloud.zoneForCKRecord(record)
                 zone.record = record
-                let  parent = zone.parentZone
+                let  parent = zone.resolveParent
+                
+                if  let p = parent,
+                    !p.children.contains(zone) {
+                    p.addChild(zone)
+                }
 
-                if  zone.showingChildren {
-                    FOREGROUND {
+                FOREGROUND(canBeDirect: true) {
+                    if  parent == nil || !parent!.showingChildren {
+                        parent?.respectOrder()
+
                         gControllers.signalFor(parent, regarding: .eRelayout)
+                    } else {
+                        parent?.needChildren()
 
                         gBatches.children(.restore) { iSame in
-                            gControllers.signalFor(parent, regarding: .eRelayout)
+                            FOREGROUND(canBeDirect: true) {
+                                parent?.respectOrder()
+
+                                gControllers.signalFor(parent, regarding: .eRelayout)
+                            }
                         }
                     }
                 }

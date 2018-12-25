@@ -115,7 +115,7 @@ class ZTrait: ZRecord {
 
         owner = nil
 
-        updateRecordProperties()
+        updateCKRecordProperties()
     }
 
 

@@ -33,6 +33,7 @@ class Zone : ZRecord {
     @objc dynamic var         zoneLink:       String?
     @objc dynamic var        zoneColor:       String?
     @objc dynamic var   zoneAttributes:       String?
+    @objc dynamic var     zoneDatabase:       String?
     @objc dynamic var       parentLink:       String?
     @objc dynamic var       zoneAuthor:       String?
     @objc dynamic var        zoneOrder:     NSNumber?
@@ -82,6 +83,13 @@ class Zone : ZRecord {
     var            isDoubleClick:         Bool  { return timeOfLastDragDotClick?.timeIntervalSinceNow ?? 10.0 < 0.5 }
 
     
+    override var databaseID: ZDatabaseID? {
+        didSet {
+            zoneDatabase = databaseID?.identifier
+        }
+    }
+    
+
     var deepCopy: Zone {
         let theCopy = Zone(databaseID: databaseID)
 
@@ -174,7 +182,7 @@ class Zone : ZRecord {
 
         zoneName      = named
 
-        updateRecordProperties()
+        updateCKRecordProperties()
     }
 
 
@@ -198,6 +206,7 @@ class Zone : ZRecord {
                 #keyPath(zoneAccess),
                 #keyPath(parentLink),
                 #keyPath(zoneProgeny),
+                #keyPath(zoneDatabase),
                 #keyPath(zoneAttributes)]
     }
 
@@ -401,10 +410,10 @@ class Zone : ZRecord {
 
     var order: Double {
         get {
-            if zoneOrder == nil {
+            if  zoneOrder == nil {
                 updateInstanceProperties()
 
-                if zoneOrder == nil {
+                if  zoneOrder == nil {
                     zoneOrder = NSNumber(value: 0.0)
                 }
             }
@@ -502,6 +511,17 @@ class Zone : ZRecord {
         parentLink      = kNullLink
     }
 
+    
+    var resolveParent: Zone? {
+        let old = _parentZone
+        _parentZone = nil
+        let new = parentZone
+        old?.removeChild(self)
+        new?.addChild(self)
+
+        return new
+    }
+    
 
     var parentZone: Zone? {
         get {
@@ -605,7 +625,7 @@ class Zone : ZRecord {
             return t.hasAccessDecoration
         }
 
-        return directReadOnly || inheritedAccess == .eReadOnly
+        return isInPublicDatabase && (directReadOnly || inheritedAccess == .eReadOnly)
     }
 
 
@@ -816,7 +836,7 @@ class Zone : ZRecord {
             trait .owner     = CKRecord.Reference(record: record, action: .none)
             trait._ownerZone = nil
 
-            trait.updateRecordProperties()
+            trait.updateCKRecordProperties()
         }
     }
 
@@ -841,7 +861,7 @@ class Zone : ZRecord {
                 let    trait = self.trait(for: type)
                 trait.text   = iText
 
-                trait.updateRecordProperties()
+                trait.updateCKRecordProperties()
                 trait.maybeNeedSave()
             }
             
@@ -1206,7 +1226,6 @@ class Zone : ZRecord {
         if  let child = iChild,
             addChild(child, at: iIndex) != nil {
 
-            needCount()
             children.updateOrder()
         }
     }
@@ -1228,14 +1247,14 @@ class Zone : ZRecord {
 
 
     @discardableResult func addChild(_ iChild: Zone?, at iIndex: Int?) -> Int? {
-        if  let newChild = iChild {
+        if  let    child = iChild {
             let insertAt = validIndex(from: iIndex)
 
             // make sure it's not already been added
             // NOTE: both must have a record for this to be effective
 
-            if  let identifier = newChild.recordName,
-                let   oldIndex = children.index(of: newChild) {
+            if  let identifier = child.recordName,
+                let   oldIndex = children.index(of: child) {
 
                 for sibling in children {
                     if  sibling.recordName == identifier {
@@ -1253,14 +1272,14 @@ class Zone : ZRecord {
             }
 
             if  insertAt < count {
-                children.insert(newChild, at: insertAt)
+                children.insert(child, at: insertAt)
             } else {
-                children.append(newChild)
+                children.append(child)
             }
 
-            newChild.parentZone = self
+            child.parentZone = self
 
-            // self.columnarReport(" ADDED", child.decoratedName)
+            needCount()
 
             return insertAt
         }

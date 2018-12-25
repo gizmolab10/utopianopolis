@@ -459,16 +459,16 @@ class ZTextEditor: ZTextView {
             current?.grab()
         }
         
-        if  var zone = current {
-            gGraphEditor.moveUp(iMoveUp, from: zone, targeting: currentOffset) { iKind in
+        if  var original = current {
+            gGraphEditor.moveUp(iMoveUp, original, targeting: currentOffset) { iKind in
                 gControllers.signalFor(nil, regarding: iKind) {
                     self.currentOffset = current?.widget?.textWidget.offset(for: self.selectedRange(), iMoveUp)  // offset will have changed when current == here
                     
                     if  stopEdit {
-                        zone      = gSelecting.firstGrab
+                        original      = gSelecting.firstGrab
                         
-                        if  zone != current { // if move up (above) does nothing, ignore
-                            self.edit(zone)
+                        if  original != current { // if move up (above) does nothing, ignore
+                            self.edit(original)
                         } else {
                             self.currentEdit = e // restore after capture sets it to nill
 

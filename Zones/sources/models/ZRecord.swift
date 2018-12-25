@@ -17,6 +17,7 @@ class ZRecord: NSObject {
     var     savedModifyDate: Date?
     var          databaseID: ZDatabaseID?
     var          kvoContext: UInt8 = 1
+    var  isInPublicDatabase: Bool               { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
     var     showingChildren: Bool               { return isExpanded(self.recordName) }
     var   isRootOfFavorites: Bool               { return record != nil && recordName == kFavoritesRootName }
     var          isBookmark: Bool               { return record?.isBookmark ?? false }
@@ -218,7 +219,7 @@ class ZRecord: NSObject {
     }
 
 
-    func updateRecordProperties() {
+    func updateCKRecordProperties() {
         if record != nil {
             for keyPath in cloudProperties() {
                 let    cloudValue  = record[keyPath] as! NSObject?
@@ -234,15 +235,15 @@ class ZRecord: NSObject {
 
     func useBest(record iRecord: CKRecord) {
         if  record != iRecord {
-            if  let name = record[kpZoneName] as? String, [kFirstIdeaTitle, "an idea"].contains(name) {//}, record[kpZoneLink] != nil {
+            if  let name = record[kpZoneName] as? String, [kFirstIdeaTitle, "an idea"].contains(name) {
                 bam("")
             }
 
             let      myDate = record?.modificationDate ?? savedModifyDate
             if  let newDate = iRecord.modificationDate,
-                (myDate    == nil || myDate!.timeIntervalSince(newDate) < -0.000001) {
+                (myDate    == nil || newDate.timeIntervalSince(myDate!) > 60.0) {
 
-                orphan()    // in case a record contains a different parent or owner reference
+                // orphan()    // in case a record contains a different parent or owner reference
 
                 record      = iRecord
             }
@@ -252,14 +253,14 @@ class ZRecord: NSObject {
 
     func copy(into iCopy: ZRecord) {
         iCopy.maybeNeedSave() // so KVO won't set needsMerge
-        updateRecordProperties()
+        updateCKRecordProperties()
         record.copy(to: iCopy.record, properties: cloudProperties())
         iCopy.updateInstanceProperties()
     }
 
 
     func mergeIntoAndTake(_ iRecord: CKRecord) {
-        updateRecordProperties()
+        updateCKRecordProperties()
 
         if  record != nil && record.copy(to: iRecord, properties: cloudProperties()) {
             record  = iRecord

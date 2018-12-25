@@ -2128,21 +2128,21 @@ class ZGraphEditor: NSObject {
     
     
     func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
-        let zone = iMoveUp ? gSelecting.firstGrab : gSelecting.lastGrab
+        let original = iMoveUp ? gSelecting.firstGrab : gSelecting.lastGrab
 
-        moveUp(iMoveUp, from:zone, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKind in
+        moveUp(iMoveUp, original, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKind in
             gControllers.signalFor(nil, regarding: iKind)
         }
     }
 
     
-    func moveUp(_ iMoveUp: Bool = true, from zone: Zone, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, onCompletion: SignalKindClosure? = nil) {
+    func moveUp(_ iMoveUp: Bool = true, _ original: Zone, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, onCompletion: SignalKindClosure? = nil) {
         let doCousinJump = gBrowsingMode == .cousinJumps
-        let       isHere = zone == gHere
-        let       parent = zone.parentZone
+        let       isHere = original == gHere
+        let       parent = original.parentZone
 
         if  parent == nil || isHere {
-            if !zone.isRoot {
+            if !original.isRoot {
                 
                 ///////////////////////////
                 // parent is not visible //
@@ -2150,7 +2150,7 @@ class ZGraphEditor: NSObject {
                 
                 let snapshot = gSelecting.snapshot
                 
-                revealParentAndSiblingsOf(zone) { iCalledCloud in
+                revealParentAndSiblingsOf(original) { iCalledCloud in
                     let keepGoing = snapshot.isSame && (iCalledCloud || (isHere && parent != nil)) && ((parent?.count ?? 0) > 1)
 
                     if  isHere,
@@ -2165,7 +2165,7 @@ class ZGraphEditor: NSObject {
                     }
                     
                     if  keepGoing {
-                        self.moveUp(iMoveUp, from: zone, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, onCompletion: onCompletion)
+                        self.moveUp(iMoveUp, original, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, onCompletion: onCompletion)
                     }
                 }
             }
@@ -2174,7 +2174,7 @@ class ZGraphEditor: NSObject {
             let     targetCount = targetZones.count
             let       targetMax = targetCount - 1
 
-            if  let       index = targetZones.index(of: zone) {
+            if  let       index = targetZones.index(of: original) {
                 var    newIndex = index + (iMoveUp ? -1 : 1)
                 var  allGrabbed = true
                 var soloGrabbed = false
@@ -2194,8 +2194,8 @@ class ZGraphEditor: NSObject {
                             }
                         }
                         
-                        self.moveZone(zone, into: newParent, at: toIndex, orphan: true) {
-                            zone.grab()
+                        self.moveZone(original, into: newParent, at: toIndex, orphan: true) {
+                            original.grab()
                             newParent.children.updateOrder()
                             onCompletion?(.eRelayout)
                         }
@@ -2283,7 +2283,7 @@ class ZGraphEditor: NSObject {
                         onCompletion?(.eRelayout)
                     }
                 } else if doCousinJump,
-                    var index  = targetZones.index(of: zone) {
+                    var index  = targetZones.index(of: original) {
 
                     /////////////////
                     // cousin jump //

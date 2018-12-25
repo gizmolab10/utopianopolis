@@ -225,6 +225,10 @@ class ZCloud: ZRecords {
             FOREGROUND(canBeDirect: true) {
                 if  let ckRecord = iCKRecord {
                     ckRecord.maybeMarkAsFetched(self.databaseID)
+
+                    if  ckRecord.recordType == kZoneType {
+                        self.columnarReport("   ->", iCKRecord?[kpZoneName])
+                    }
                 }
 
                 onCompletion(iCKRecord)

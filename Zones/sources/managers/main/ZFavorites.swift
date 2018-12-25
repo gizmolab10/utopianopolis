@@ -480,7 +480,7 @@ class ZFavorites: NSObject {
             parent.addChild(bookmark, at: insertAt) // calls update progeny count
         }
         
-        bookmark.updateRecordProperties() // is this needed?
+        bookmark.updateCKRecordProperties() // is this needed?
 
         return bookmark
     }
@@ -498,7 +498,7 @@ class ZFavorites: NSObject {
                 parent         = gFavoritesRoot!
 
                 for bookmark in workingFavorites {
-                    if recordName == bookmark.linkName, !bookmark.bookmarkTarget!.isRoot {
+                    if  recordName == bookmark.linkName, !bookmark.bookmarkTarget!.isRoot {
                         currentFavorite = bookmark
 
                         return bookmark
@@ -511,7 +511,7 @@ class ZFavorites: NSObject {
         var bookmark: Zone? = isBookmark ? iZone.deepCopy : nil
         var           index = parent.children.index(of: iZone) ?? count
 
-        if style == .addFavorite {
+        if  style == .addFavorite {
             index           = nextFavoritesIndex(forward: gInsertionsFollow)
         }
 
@@ -520,7 +520,7 @@ class ZFavorites: NSObject {
         bookmark?.maybeNeedSave()
 
         if  isNormal {
-            parent.updateRecordProperties()
+            parent.updateCKRecordProperties()
             parent.maybeNeedMerge()
         }
 

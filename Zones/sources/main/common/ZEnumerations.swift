@@ -105,7 +105,16 @@ enum ZDatabaseID: String {
         default:          return ""
         }
     }
+    
+    var identifier: String { return rawValue.substring(toExclusive: 1) }
 
+    static func create(from id: String) -> ZDatabaseID? {
+        switch id {
+        case "e": return ZDatabaseID.everyoneID
+        case "m": return ZDatabaseID.mineID
+        default:  return nil
+        }
+    }
 }
 
 
