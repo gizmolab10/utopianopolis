@@ -134,6 +134,11 @@ class ZRemoteStorage: NSObject {
         return currentCloud
     }
     
+    
+    func zoneForCKRecord(_ ckRecord: CKRecord) -> Zone? {
+        return cloud(from: ckRecord)?.zoneForCKRecord(ckRecord)
+    }
+    
 
     func receivedUpdateFor(_ recordID: CKRecord.ID) {
         resetBadgeCounter()
@@ -145,8 +150,7 @@ class ZRemoteStorage: NSObject {
 
         gCloud?.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
             if  let  record = iUpdatedRecord,
-                let   cloud = self.cloud(from: record) {
-                let    zone = cloud.zoneForCKRecord(record)
+                let    zone = self.zoneForCKRecord(record) {
                 zone.record = record
                 let  parent = zone.resolveParent
                 

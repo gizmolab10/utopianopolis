@@ -513,11 +513,12 @@ class Zone : ZRecord {
 
     
     var resolveParent: Zone? {
-        let old = _parentZone
+        let     old = _parentZone
         _parentZone = nil
-        let new = parentZone
+        let     new =  parentZone // recalculate _parentZone
+
         old?.removeChild(self)
-        new?.addChild(self)
+        new?.addChildAndRespectOrder(self)
 
         return new
     }
