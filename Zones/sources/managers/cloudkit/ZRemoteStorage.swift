@@ -149,17 +149,19 @@ class ZRemoteStorage: NSObject {
         ////////////////////////////////////////////////////
 
         gCloud?.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
-            if  let  record = iUpdatedRecord,
-                let    zone = self.zoneForCKRecord(record) {
-                zone.record = record
-                let  parent = zone.resolveParent
-                
-                if  let p = parent,
-                    !p.children.contains(zone) {
-                    p.addChild(zone)
-                }
+            if  let record = iUpdatedRecord, !record.isEmpty,
+                let   zone = self.zoneForCKRecord(record) {
+
+                self.columnarReport("   ->", zone.zoneName)
 
                 FOREGROUND(canBeDirect: true) {
+                    let  parent = zone.resolveParent
+
+                    if  let p = parent,
+                        !p.children.contains(zone) {
+                        p.addChild(zone)
+                    }
+
                     if  parent == nil || !parent!.showingChildren {
                         parent?.respectOrder()
 

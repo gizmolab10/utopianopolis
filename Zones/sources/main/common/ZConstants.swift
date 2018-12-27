@@ -67,6 +67,7 @@ let               kpZonePrefix = "zone"
 let               kpDatabaseId = "zoneDatabase"
 let               kpRecordName = "recordName"
 let             kpRecordPrefix = "record"
+let           kpZoneParentLink = "parentLink"
 let         kpModificationDate = "modificationDate"
 
 

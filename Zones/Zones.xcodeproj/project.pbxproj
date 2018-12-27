@@ -748,7 +748,6 @@
 				ORGANIZATIONNAME = Zones;
 				TargetAttributes = {
 					0C69C9861F09CD95004D026D = {
-						DevelopmentTeam = F8M94NY2TV;
 						LastSwiftMigration = 0940;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {

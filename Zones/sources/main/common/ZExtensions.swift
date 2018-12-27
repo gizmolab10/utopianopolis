@@ -264,6 +264,18 @@ extension NSObject {
 
 
 extension CKRecord {
+    
+    
+    var isEmpty: Bool {
+        for key in [kpZoneName, kpParent, kpZoneParentLink] {
+            if  self[key] != nil {
+                return false
+            }
+        }
+
+        return true
+    }
+    
 
     var isBookmark: Bool {
         if  let    link = self[kpZoneLink] as? String {
@@ -338,28 +350,23 @@ extension CKRecord {
 
 
     func index(within iReferences: [CKRecord.ID]) -> Int? {
-        var index: Int?
-
-        for (i, identifier) in iReferences.enumerated() {
+        for (index, identifier) in iReferences.enumerated() {
             if  identifier == recordID {
-                index = i
-
-                break
+                return index
             }
         }
 
-        return index
+        return nil
     }
 
 
     func maybeMarkAsFetched(_ databaseID: ZDatabaseID?) {
-        if  let dbID      = databaseID,
-            creationDate != nil {
-            let states    = [ZRecordState.notFetched]
-            if  let manager   = gRemoteStorage.cloud(for: dbID),
-                manager.hasCKRecord(self, forAnyOf: states) {
-                manager.clearCKRecords([self], for: states)
-            }
+        let states        = [ZRecordState.notFetched]
+        if  creationDate != nil,
+            let dbID      = databaseID,
+            let manager   = gRemoteStorage.cloud(for: dbID),
+            manager.hasCKRecord(self, forAnyOf: states) {
+            manager.clearCKRecords([self], for: states)
         }
     }
 

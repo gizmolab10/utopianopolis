@@ -225,10 +225,6 @@ class ZCloud: ZRecords {
             FOREGROUND(canBeDirect: true) {
                 if  let ckRecord = iCKRecord {
                     ckRecord.maybeMarkAsFetched(self.databaseID)
-
-                    if  ckRecord.recordType == kZoneType {
-                        self.columnarReport("   ->", iCKRecord?[kpZoneName])
-                    }
                 }
 
                 onCompletion(iCKRecord)
@@ -534,7 +530,6 @@ class ZCloud: ZRecords {
             } else { // nil means: we already received full response from cloud for this particular fetch
                 FOREGROUND {
                     let          parentKey = "parent"
-                    let      parentLinkKey = "parentLink"
                     var               lost = self.createRandomLost()
                     var          parentIDs = [CKRecord.ID] ()
                     var             toLose = [CKRecord] ()
@@ -554,7 +549,7 @@ class ZCloud: ZRecords {
                             }
 
                             return false
-                        } else if let parentLink = iCKRecord[parentLinkKey] as? String, self.name(from: parentLink) != nil {
+                        } else if let parentLink = iCKRecord[kpZoneParentLink] as? String, self.name(from: parentLink) != nil {
                             return false // parent is in other db, therefore it can't be verified as lost
                         }
 
