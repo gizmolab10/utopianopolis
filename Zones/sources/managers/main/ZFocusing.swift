@@ -272,7 +272,7 @@ class ZFocusing: NSObject {
                 } else {
                     gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
                         if  let hereRecord = iRecord,
-                            let    newHere = gCloud?.zoneForCKRecord(hereRecord) {
+                            let    newHere = gCloud?.zone(for: hereRecord) {
                             gHere          = newHere
 
                             newHere.prepareForArrival()
@@ -320,7 +320,7 @@ class ZFocusing: NSObject {
                 } else if gCloud?.databaseID != .favoritesID { // favorites does not have a cloud database
                     gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
                         if  let hereRecord = iRecord,
-                            let    newHere = gCloud?.zoneForCKRecord(hereRecord) {
+                            let    newHere = gCloud?.zone(for: hereRecord) {
                             gHere          = newHere
 
                             grabHere()

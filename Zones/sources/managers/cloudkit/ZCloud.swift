@@ -63,7 +63,6 @@ class ZCloud: ZRecords {
         case .oParents:     fetchParents    (cloudCallback)
         case .oRefetch:     refetchZones    (cloudCallback)
         case .oRoots:       establishRoots  (cloudCallback)
-        case .oSaveAll:     saveAll         (cloudCallback)
         case .oSaveToCloud: save            (cloudCallback)
         case .oSubscribe:   subscribe       (cloudCallback)
         case .oTraits:      fetchTraits     (cloudCallback)
@@ -78,17 +77,10 @@ class ZCloud: ZRecords {
     // MARK:- push to cloud
     // MARK:-
 
-    
-    func saveAll(_ onCompletion: IntClosure?) {
-        for (_, record) in recordRegistry {
-            record.updateZoneDBIdentifier()
-        }
-        
-        save(onCompletion)
-    }
-
 
     func save(_ onCompletion: IntClosure?) {
+        updateZoneDBIdentifiers()
+
         let   saves = pullCKRecordsWithMatchingStates([.needsSave])
         let destroy = pullRecordIDsWithHighestLevel(for: [.needsDestroy], batchSize: 20)
         let   count = saves.count + destroy.count
@@ -868,7 +860,7 @@ class ZCloud: ZRecords {
                         if  maybe != nil {
                             maybe?.useBest(record: fetchedRecord)
                         } else {
-                            maybe  = self.zoneForCKRecord(fetchedRecord)
+                            maybe  = self.zone(for: fetchedRecord)
                         }
 
                         if  let    fetched = maybe,     // always not nil
@@ -967,7 +959,7 @@ class ZCloud: ZRecords {
                             if destroyedIDs.contains(identifier) {
                                 // self.columnarReport(" DESTROYED", child.decoratedName)
                             } else {
-                                let child = self.zoneForCKRecord(childRecord)
+                                let child = self.zone(for: childRecord)
 
                                 if  child.isRoot && child.parentZone != nil {
                                     child.orphan()  // avoids HANG ... a root can NOT be a child, by definition
@@ -1165,7 +1157,7 @@ class ZCloud: ZRecords {
                 if  iHereRecord == nil || iHereRecord?[kpZoneName] == nil {
                     rootCompletion()
                 } else {
-                    let      here = self.zoneForCKRecord(iHereRecord!)
+                    let      here = self.zone(for: iHereRecord!)
                     here  .record = iHereRecord
                     self.hereZone = here
 
@@ -1230,7 +1222,7 @@ class ZCloud: ZRecords {
                 record  = CKRecord(recordType: kZoneType, recordID: recordID)       // will create
             }
 
-            let           zone = self.zoneForCKRecord(record!)                      // get / create
+            let           zone = self.zone(for: record!)                      // get / create
             zone       .parent = nil
 
             if  zone.zoneName == nil {

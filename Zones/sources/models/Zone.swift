@@ -1385,7 +1385,7 @@ class Zone : ZRecord {
     @discardableResult func addChild(for iCKRecord: CKRecord?) -> Zone? {
         var child: Zone?    = nil
         if  let childRecord = iCKRecord, !containsCKRecord(childRecord) {
-            child           = gCloud?.zoneForCKRecord(childRecord)
+            child           = gCloud?.zone(for: childRecord)
 
             if  child != nil {
                 addChild(child)

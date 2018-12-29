@@ -41,7 +41,6 @@ enum ZOperationID: Int {
 
     case oFinishUp
     case oRecount
-    case oSaveAll
     case oUnsubscribe
     case oSubscribe
     case oDone

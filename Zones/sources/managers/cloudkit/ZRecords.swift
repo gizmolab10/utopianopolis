@@ -90,6 +90,13 @@ class ZRecords: NSObject {
         lastSyncDate = date
     }
 
+    
+    func updateZoneDBIdentifiers() {
+        for zRecord in recordRegistry.values {
+            zRecord.updateZoneDBIdentifier()
+        }
+    }
+
 
     func recount(_ onCompletion: IntClosure? = nil) {  // all progenyCounts for all progeny in all roots
         hereZone         .updateCounts()
@@ -782,7 +789,7 @@ class ZRecords: NSObject {
     }
 
 
-    func zoneForCKRecord(_ ckRecord: CKRecord) -> Zone {
+    func zone(for ckRecord: CKRecord) -> Zone {
         var     zone = maybeZoneForCKRecord(ckRecord)
 
         if let z = zone {

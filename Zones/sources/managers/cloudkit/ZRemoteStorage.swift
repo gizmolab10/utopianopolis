@@ -118,18 +118,13 @@ class ZRemoteStorage: NSObject {
     // MARK:-
 
     
-    func cloud(from record: CKRecord) -> ZCloud? {
+    func cloud(containing record: CKRecord) -> ZCloud? {
         if  let   id = record[kpDatabaseId] as? String,
             let dbID = ZDatabaseID.create(from: id) {
             return cloud(for: dbID)
         }
 
         return currentCloud
-    }
-    
-    
-    func zoneForCKRecord(_ ckRecord: CKRecord) -> Zone? {
-        return cloud(from: ckRecord)?.zoneForCKRecord(ckRecord)
     }
     
 
@@ -142,33 +137,36 @@ class ZRemoteStorage: NSObject {
         ////////////////////////////////////////////////////
 
         gCloud?.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
-            if  let  record = iUpdatedRecord, !record.isEmpty,
-                let    zone = self.zoneForCKRecord(record),
-                record     == zone.record { // record data is new
-                zone._color = nil // recompute color
-
-                self.columnarReport("   ->", zone.zoneName)
+            if  let ckRecord = iUpdatedRecord, !ckRecord.isEmpty,
+                let     zone = self.cloud(containing: ckRecord)?.zone(for: ckRecord),
+                ckRecord    == zone.record {    // record data is new (zone for just updated it)
+                zone._color  = nil              // recompute color
 
                 FOREGROUND(canBeDirect: true) {
-                    let  parent = zone.resolveParent
+                    let parent = zone.resolveParent
+                    let done: Closure = {
+                        parent?.respectOrder()
+                        
+                        gControllers.signalFor(parent, regarding: .eRelayout)
+                    }
 
                     if  let p = parent,
                         !p.children.contains(zone) {
                         p.addChild(zone)
+                        
+                        if  p.recordName == kTrashName {
+                            self.columnarReport("   ->", zone.zoneName)
+                        }
                     }
 
                     if  parent == nil || !parent!.showingChildren {
-                        parent?.respectOrder()
-
-                        gControllers.signalFor(parent, regarding: .eRelayout)
+                        done()
                     } else {
                         parent?.needChildren()
 
                         gBatches.children(.restore) { iSame in
                             FOREGROUND(canBeDirect: true) {
-                                parent?.respectOrder()
-
-                                gControllers.signalFor(parent, regarding: .eRelayout)
+                                done()
                             }
                         }
                     }
