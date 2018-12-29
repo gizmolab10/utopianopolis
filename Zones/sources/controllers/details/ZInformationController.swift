@@ -44,9 +44,10 @@ class ZInformationController: ZGenericController {
 
 
     var totalCountsText: String {
-        let count = gCloud?.rootZone?.progenyCount ?? 0
+        let  count = gCloud?.rootZone?.progenyCount ?? 0
+        let suffix = count == 0 ? "" : "s"
 
-        return "\(count + 1) ideas"
+        return "\(count + 1) idea\(suffix)"
     }
 
 

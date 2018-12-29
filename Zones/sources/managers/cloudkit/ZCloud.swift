@@ -63,18 +63,29 @@ class ZCloud: ZRecords {
         case .oParents:     fetchParents    (cloudCallback)
         case .oRefetch:     refetchZones    (cloudCallback)
         case .oRoots:       establishRoots  (cloudCallback)
+        case .oSaveAll:     saveAll         (cloudCallback)
         case .oSaveToCloud: save            (cloudCallback)
         case .oSubscribe:   subscribe       (cloudCallback)
         case .oTraits:      fetchTraits     (cloudCallback)
         case .oUndelete:    undeleteAll     (cloudCallback)
         case .oUnsubscribe: unsubscribe     (cloudCallback)
-        default: break
+        case .oRecount:     recount         (cloudCallback)
+        default:                             cloudCallback?(0)
         }
     }
 
 
     // MARK:- push to cloud
     // MARK:-
+
+    
+    func saveAll(_ onCompletion: IntClosure?) {
+        for (_, record) in recordRegistry {
+            record.updateZoneDBIdentifier()
+        }
+        
+        save(onCompletion)
+    }
 
 
     func save(_ onCompletion: IntClosure?) {
@@ -83,7 +94,7 @@ class ZCloud: ZRecords {
         let   count = saves.count + destroy.count
 
         if  count > 0, let           operation = configure(CKModifyRecordsOperation()) as? CKModifyRecordsOperation {
-            operation              .savePolicy = .allKeys
+            operation              .savePolicy = .changedKeys
             operation           .recordsToSave = saves
             operation       .recordIDsToDelete = destroy
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
@@ -205,22 +216,17 @@ class ZCloud: ZRecords {
     // MARK:-
 
     
-    func saveAll() {
-        
-    }
-
-    
     func fetchRecord(_ iRecord: ZRecord, onCompletion: @escaping RecordClosure) {
-        detectIfRecordExists(withRecordID: iRecord.record.recordID, recordType: iRecord.record.recordType, mustCreate: false, onCompletion: onCompletion)
+        detectIfRecordExists(withRecordID: iRecord.record?.recordID, recordType: iRecord.record?.recordType, mustCreate: false, onCompletion: onCompletion)
     }
     
     
-    func assureRecordExists(withRecordID iCKRecordID: CKRecord.ID, recordType: String, onCompletion: @escaping RecordClosure) {
+    func assureRecordExists(withRecordID iCKRecordID: CKRecord.ID?, recordType: String?, onCompletion: @escaping RecordClosure) {
         detectIfRecordExists(withRecordID: iCKRecordID, recordType: recordType, mustCreate: true, onCompletion: onCompletion)
     }
     
 
-    func detectIfRecordExists(withRecordID iCKRecordID: CKRecord.ID, recordType: String, mustCreate: Bool, onCompletion: @escaping RecordClosure) {
+    func detectIfRecordExists(withRecordID iCKRecordID: CKRecord.ID?, recordType: String?, mustCreate: Bool, onCompletion: @escaping RecordClosure) {
         let done:  RecordClosure = { (iCKRecord: CKRecord?) in
             FOREGROUND(canBeDirect: true) {
                 if  let ckRecord = iCKRecord {
@@ -231,23 +237,29 @@ class ZCloud: ZRecords {
             }
         }
 
+        guard let ckRecordID = iCKRecordID else {
+            done(nil)
+            
+            return
+        }
+
         if      cloudUnavailable {
-            if  let ckRecord = maybeCKRecordForRecordName(iCKRecordID.recordName),
-                hasCKRecordName(iCKRecordID.recordName, forAnyOf: [.notFetched]) {
+            if  let ckRecord = maybeCKRecordForRecordName(ckRecordID.recordName),
+                hasCKRecordName(ckRecordID.recordName, forAnyOf: [.notFetched]) {
                 done(ckRecord)
             }
 
             done(nil)
         } else {
             BACKGROUND {     // not stall foreground processor
-                self.database?.fetch(withRecordID: iCKRecordID) { (iFetchedCKRecord: CKRecord?, iFetchError: Error?) in
+                self.database?.fetch(withRecordID: ckRecordID) { (iFetchedCKRecord: CKRecord?, iFetchError: Error?) in
                     gAlerts.alertError(iFetchError) { iHasError in
                         if !iHasError {
                             done(iFetchedCKRecord)
                         } else if !mustCreate {
                             done(nil)
-                        } else {
-                            let brandNew: CKRecord = CKRecord(recordType: recordType, recordID: iCKRecordID)
+                        } else if let type = recordType {
+                            let brandNew: CKRecord = CKRecord(recordType: type, recordID: ckRecordID)
 
                             self.database?.save(brandNew) { (iSavedRecord: CKRecord?, iSaveError: Error?) in
                                 gAlerts.detectError(iSaveError) { iHasSaveError in
@@ -258,6 +270,8 @@ class ZCloud: ZRecords {
                                     }
                                 }
                             }
+                        } else {
+                            done(nil)
                         }
                     }
                 }
@@ -549,7 +563,7 @@ class ZCloud: ZRecords {
                             }
 
                             return false
-                        } else if let parentLink = iCKRecord[kpZoneParentLink] as? String, self.name(from: parentLink) != nil {
+                        } else if let parentLink = iCKRecord[kpZoneParentLink] as? String, self.recordName(from: parentLink) != nil {
                             return false // parent is in other db, therefore it can't be verified as lost
                         }
 
@@ -676,19 +690,19 @@ class ZCloud: ZRecords {
             for ckRecord in iCKRecords {
                 var zRecord = self.maybeZRecordForRecordName(ckRecord.recordID.recordName)
 
-                if let link = ckRecord[kpZoneLink] as? String,
+                if  let link = ckRecord[kpZoneLink] as? String,
                     link == kTrashLink {
                     bam("")
                 }
 
-                if  zRecord == nil {
+                if  zRecord != nil {
+                    zRecord?.useBest(record: ckRecord) // fetched has same record id
+                } else {
                     switch type {
                     case kZoneType:  zRecord =   Zone(record: ckRecord, databaseID: self.databaseID)
                     case kTraitType: zRecord = ZTrait(record: ckRecord, databaseID: self.databaseID)
                     default: break
                     }
-                } else {
-                    zRecord?.useBest(record: ckRecord) // fetched has same record id
                 }
 
                 zRecord?.unorphan()
@@ -864,8 +878,9 @@ class ZCloud: ZRecords {
 
                             for childID in childrenIDs {
                                 if  let   child = self.maybeZoneForRecordID(childID), !fetched.spawnedBy(child),
-                                    recordName == child.parentZone?.recordName {
-                                    let  states = self.states(for: child.record)
+                                    recordName == child.parentZone?.recordName,
+                                    let       r = child.record {
+                                    let  states = self.states(for: r)
 
                                     if  child.isRoot || child == fetched {
                                         child.parentZone = nil
@@ -1339,8 +1354,8 @@ class ZCloud: ZRecords {
                     if iHasError {
                         gControllers.signalFor(performanceError as NSObject?, regarding: .eError)
                     } else {
-                        let                record: CKRecord = (iResults?[0])!
-                        object.record[valueForPropertyName] = (record as! CKRecordValue)
+                        let                 record: CKRecord = (iResults?[0])!
+                        object.record?[valueForPropertyName] = (record as! CKRecordValue)
 
                         gControllers.signalFor(nil, regarding: .eRelayout)
                     }

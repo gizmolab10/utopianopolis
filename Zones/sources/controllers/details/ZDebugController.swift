@@ -37,7 +37,7 @@ class ZDebugController: ZGenericController {
 
             if zone.parent != nil {
                 text.append("p.ref")
-            } else if zone.name(from: zone.parentLink) != nil {
+            } else if zone.recordName(from: zone.parentLink) != nil {
                 text.append("p.link")
             }
 

@@ -139,7 +139,7 @@ extension NSObject {
     }
 
 
-    func name(from iLink: String?) -> String? {
+    func recordName(from iLink: String?) -> String? {
         if  let components = components(of: iLink) {
             let      name  = components[2]
             return   name != "" ? name : kRootName // by design: empty component means root
@@ -162,7 +162,7 @@ extension NSObject {
     func zoneFrom(_ iLink: String?) -> Zone? {
         if  iLink                   != nil,
             iLink                   != "",
-            let                 name = name(from: iLink) {
+            let                 name = recordName(from: iLink) {
             var components: [String] = iLink!.components(separatedBy: kSeparator)
             let recordID: CKRecord.ID = CKRecord.ID(recordName: name)
             let ckRecord: CKRecord   = CKRecord(recordType: kZoneType, recordID: recordID)

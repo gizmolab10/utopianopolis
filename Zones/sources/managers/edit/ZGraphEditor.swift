@@ -1306,7 +1306,7 @@ class ZGraphEditor: NSObject {
                     }
                 }
             } else {
-                let destructionIsAllowed = gCloudAccountIsActive || zone.databaseID != .mineID // allowed
+                let destructionIsAllowed = gCloudAccountIsActive || zone.databaseID != .mineID
                 let    eventuallyDestroy = permanently           || zone.isInTrash
                 let           destroyNow = destructionIsAllowed && eventuallyDestroy && gHasInternet
 
@@ -2082,7 +2082,7 @@ class ZGraphEditor: NSObject {
         into.needChildren()
 
         gBatches.children(.restore) { iSame in
-            let doGrab = !(into.isInTrash || into.isTrash)
+            let doGrab = !into.isInTrash
             
             if orphan {
                 zone.orphan()

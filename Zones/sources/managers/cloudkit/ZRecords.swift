@@ -79,7 +79,8 @@ class ZRecords: NSObject {
         var date = lastSyncDate
 
         for zRecord in recordRegistry.values {
-            if  let modificationDate = zRecord.record.modificationDate,
+            if  let           record = zRecord.record,
+                let modificationDate = record.modificationDate,
                 modificationDate.timeIntervalSince(date) > 0 {
 
                 date = modificationDate
@@ -90,11 +91,12 @@ class ZRecords: NSObject {
     }
 
 
-    func recount() {  // all progenyCounts for all progeny in all roots
+    func recount(_ onCompletion: IntClosure? = nil) {  // all progenyCounts for all progeny in all roots
         hereZone         .updateCounts()
         trashZone?       .updateCounts()
         favoritesZone?   .updateCounts()
         lostAndFoundZone?.updateCounts()
+        onCompletion?(0)
     }
     
 
@@ -739,8 +741,9 @@ class ZRecords: NSObject {
 
     
     func stringForRecordID(_ iID: CKRecord.ID) -> String? {
-        if  let  zRecord = maybeZRecordForRecordID(iID) {
-            let    name  = zRecord.record.decoratedName
+        if  let  zRecord = maybeZRecordForRecordID(iID),
+            let        r = zRecord.record {
+            let    name  = r.decoratedName
             if     name != "" {
                 return name
             }

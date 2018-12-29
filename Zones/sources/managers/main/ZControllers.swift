@@ -104,8 +104,7 @@ class ZControllers: NSObject {
                         gBatches.usingDebugTimer = false
 
                         self.blankScreenDebug()
-                        self.signalFor(nil, regarding: .eRelayout)
-                        gRemoteStorage.saveAll()
+                        gFiles.writeAll()
                     }
                 }
             }

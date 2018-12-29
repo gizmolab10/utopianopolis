@@ -55,7 +55,7 @@ class Zone : ZRecord {
     var                trashZone:         Zone? { return cloud?.trashZone }
     var                   widget:   ZoneWidget? { return gWidgets.widgetForZone(self) }
     var           linkDatabaseID:  ZDatabaseID? { return databaseID(from: zoneLink) }
-    var                 linkName:       String? { return name(from: zoneLink) }
+    var           linkRecordName:       String? { return recordName(from: zoneLink) }
     override var       emptyName:       String  { return "idea" }
     override var   unwrappedName:       String  { return zoneName ?? (isRootOfFavorites ? kFavoritesName : emptyName) }
     var            decoratedName:       String  { return decoration + unwrappedName }
@@ -82,13 +82,6 @@ class Zone : ZRecord {
     var               spawnCycle:         Bool  { return spawnedByAGrab || dropCycle }
     var            isDoubleClick:         Bool  { return timeOfLastDragDotClick?.timeIntervalSinceNow ?? 10.0 < 0.5 }
 
-    
-    override var databaseID: ZDatabaseID? {
-        didSet {
-            zoneDatabase = databaseID?.identifier
-        }
-    }
-    
 
     var deepCopy: Zone {
         let theCopy = Zone(databaseID: databaseID)
@@ -211,10 +204,21 @@ class Zone : ZRecord {
     }
 
 
-    override func cloudProperties() -> [String] {
+    override func cloudProperties() -> [String] {        
         return super.cloudProperties() + Zone.cloudProperties()
     }
 
+
+    override func updateZoneDBIdentifier() {
+        if  let id  = databaseID?.identifier {
+            if  id != zoneDatabase {
+                zoneDatabase = id
+                
+                needSave()
+            }
+        }
+    }
+    
 
     var traitValues: [ZTrait] {
         var values = [ZTrait] ()
@@ -500,7 +504,7 @@ class Zone : ZRecord {
 
 
     func unlinkParentAndMaybeNeedSave() {
-        if (name(from: parentLink) != nil ||
+        if (recordName(from: parentLink) != nil ||
             parent                 != nil) &&
             canSaveWithoutFetch {
             needSave()
@@ -670,8 +674,10 @@ class Zone : ZRecord {
             if  access == .eWritable {
                 access  = .eInherit
             }
-        } else if inherited == access {
+        } else if access == inherited {
             access  = .eInherit
+        } else if access == nil { // this can happen to the root when the data file *somehow* replaces the root record name and the correction code restores the correct record name
+            access  = .eProgenyWritable
         }
 
         return access
@@ -832,9 +838,10 @@ class Zone : ZRecord {
 
 
     func addTrait(_ trait: ZTrait) {
-        if let     type      = trait.traitType {
+        if  let       r      = record,
+            let    type      = trait.traitType {
             traits[type]     = trait
-            trait .owner     = CKRecord.Reference(record: record, action: .none)
+            trait .owner     = CKRecord.Reference(record: r, action: .none)
             trait._ownerZone = nil
 
             trait.updateCKRecordProperties()
@@ -877,9 +884,10 @@ class Zone : ZRecord {
 
     func trait(for iType: ZTraitType) -> ZTrait {
         var trait            = traits[iType]
-        if  trait           == nil {
+        if  let            r = record,
+            trait           == nil {
             trait            = ZTrait(databaseID: databaseID)
-            trait?.owner     = CKRecord.Reference(record: record, action: .none)
+            trait?.owner     = CKRecord.Reference(record: r, action: .none)
             trait?.traitType = iType
             traits[iType]    = trait
         }
@@ -911,7 +919,7 @@ class Zone : ZRecord {
 
     func isABookmark(spawnedBy zone: Zone) -> Bool {
         if  let        link = crossLink, let dbID = link.databaseID {
-            var     probeID = link.record.recordID as CKRecord.ID?
+            var     probeID = link.record?.recordID
             let  identifier = zone.recordName
             var     visited = [String] ()
 
@@ -1191,16 +1199,17 @@ class Zone : ZRecord {
 
 
     override func unorphan() {
-        if  !needsDestroy, let p = parentZone, p != self {
-            p.maybeMarkNotFetched()
-            p.addChildAndRespectOrder(self)
-
-            if  p.recordName == kFavoritesRootName, let b = bookmarkTarget, !b.isRoot {
-                bam(decoratedName)
+        if !needsDestroy, let r = record, !r.isEmpty { // if record is empty, cannot unorphan nor mark needing unorphan
+            if  let p = parentZone, p != self {
+                p.maybeMarkNotFetched()
+                p.addChildAndRespectOrder(self)
+                
+                if  p.recordName == kFavoritesRootName, let b = bookmarkTarget, !b.isRoot {
+                    bam(decoratedName)
+                }
+            } else if !isRoot {
+                needUnorphan()
             }
-
-        } else if !isRoot {
-            needUnorphan()
         }
     }
 
@@ -1236,7 +1245,7 @@ class Zone : ZRecord {
         var insertAt = iIndex
 
         if  let index = iIndex, index < count {
-            if index < 0 {
+            if  index < 0 {
                 insertAt = 0
             }
         } else {
@@ -1248,26 +1257,21 @@ class Zone : ZRecord {
 
 
     @discardableResult func addChild(_ iChild: Zone?, at iIndex: Int?) -> Int? {
-        if  let    child = iChild {
-            let insertAt = validIndex(from: iIndex)
+        if  let        child = iChild {
+            let     insertAt = validIndex(from: iIndex)
+            child.parentZone = self
 
             // make sure it's not already been added
             // NOTE: both must have a record for this to be effective
 
-            if  let identifier = child.recordName,
-                let   oldIndex = children.index(of: child) {
-
-                for sibling in children {
+            if  let identifier = child.recordName, children.contains(child) {
+                for (index, sibling) in children.enumerated() {
                     if  sibling.recordName == identifier {
-                        if  oldIndex == iIndex {
-                            return oldIndex
-                        } else {
-                            let newIndex = insertAt < count ? insertAt : count - 1
-                            moveChildIndex(from: oldIndex, to: newIndex)
-
-                            return newIndex
-
+                        if  index != insertAt {
+                            moveChildIndex(from: index, to: insertAt)
                         }
+
+                        return insertAt
                     }
                 }
             }
@@ -1277,8 +1281,6 @@ class Zone : ZRecord {
             } else {
                 children.append(child)
             }
-
-            child.parentZone = self
 
             needCount()
 
@@ -1484,6 +1486,34 @@ class Zone : ZRecord {
         }
     }
 
+    
+    func rootName(for type: ZStorageType) -> String? {
+        switch type {
+        case .favorites: return kFavoritesRootName
+        case .lost:      return kLostAndFoundName
+        case .trash:     return kTrashName
+        case .graph:     return kRootName
+        default:         return nil
+        }
+    }
+    
+    
+    func updateRecordName(for type: ZStorageType) {
+        if  let name = rootName(for: type),
+            recordName != name {
+            record = CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: name)) // change record name by relacing record
+            
+            updateCKRecordProperties() // transfer instance variables into record
+            needSave()
+            
+            for child in children {
+                child.parentZone = self // because record name is different, children must be pointed through a ck reference to new record created above
+                
+                child.needSave()
+            }
+        }
+    }
+    
 
     override func setStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
         if let       name = dict[.name] as? String { zoneName = name }

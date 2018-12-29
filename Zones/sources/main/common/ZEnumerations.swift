@@ -175,6 +175,7 @@ enum ZStorageType: String {
     case parentLink = "parentLink"
     case attributes = "attributes"
     case children   = "children"
+    case database   = "database"
     case progeny    = "progeny"
     case traits     = "traits"
     case access     = "access"

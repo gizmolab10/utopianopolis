@@ -18,6 +18,7 @@ enum ZOperationID: Int {
 
     // onboard
 
+    case oStartUp
     case oMacAddress
     case oObserveUbiquity
     case oCheckAvailability  // vs no account
@@ -34,16 +35,20 @@ enum ZOperationID: Int {
     case oRoots
     case oFavorites
     case oHere
+    case oFetchNew
 
     // finish
 
-    case oFetchNew
-    case oSaveToCloud               // zones, traits, destroy
+    case oFinishUp
+    case oRecount
+    case oSaveAll
     case oUnsubscribe
     case oSubscribe
+    case oDone
 
     // miscellaneous
 
+    case oSaveToCloud               // zones, traits, destroy
     case oEmptyTrash
     case oCompletion
     case oBookmarks

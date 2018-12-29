@@ -118,6 +118,13 @@ class ZFiles: NSObject {
         return false
 	}
 	
+    
+    func writeAll() {
+        for dbID in kAllDatabaseIDs {
+            writeToFile(from: dbID)
+        }
+    }
+    
 	
 	func writeToFile(from databaseID: ZDatabaseID?) {
 		if  let     dbID = databaseID,
@@ -294,7 +301,7 @@ class ZFiles: NSObject {
 	
 	func readFile(from path: String, into databaseID: ZDatabaseID) {
 		if  databaseID      != .favoritesID,
-            let      manager = gRemoteStorage.cloud(for: databaseID),
+            let       cloud  = gRemoteStorage.cloud(for: databaseID),
 			let       index  = index(of: databaseID) {
 			isReading[index] = true
 			typealias  types = [ZStorageType]
@@ -311,16 +318,18 @@ class ZFiles: NSObject {
                             if  let   value = dict[key] {
 
                                 if let date = value as? Date {
-                                    manager.lastSyncDate = date
+                                    cloud.lastSyncDate = date
                                 } else if let subDict = value as? ZStorageDictionary {
                                     let zone = Zone(dict: subDict, in: databaseID)
 
+                                    zone.updateRecordName(for: key)
+
                                     switch key {
-                                    case .graph:     manager        .rootZone = zone; gControllers.signalFor(nil, regarding: .eRelayout)
-                                    case .trash:     manager       .trashZone = zone
-                                    case .destroy:   manager     .destroyZone = zone
-                                    case .favorites: manager   .favoritesZone = zone
-                                    case .lost:      manager.lostAndFoundZone = zone
+                                    case .graph:     cloud.rootZone         = zone
+                                    case .trash:     cloud.trashZone        = zone
+                                    case .destroy:   cloud.destroyZone      = zone
+                                    case .favorites: cloud.favoritesZone    = zone
+                                    case .lost:      cloud.lostAndFoundZone = zone
                                     default: break
                                     }
                                 } else if let array = value as? [ZStorageDictionary] {

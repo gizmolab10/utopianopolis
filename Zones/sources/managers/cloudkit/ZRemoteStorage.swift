@@ -56,13 +56,6 @@ class ZRemoteStorage: NSObject {
         }
     }
     
-    
-    func saveAll() {
-        for dbID in kAllDatabaseIDs {
-            cloud(for: dbID)?.saveAll()
-        }
-    }
-    
 
     func recordsFor(_  iDatabaseID: ZDatabaseID?) -> ZRecords? {
         var manager: ZRecords?
@@ -149,8 +142,10 @@ class ZRemoteStorage: NSObject {
         ////////////////////////////////////////////////////
 
         gCloud?.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
-            if  let record = iUpdatedRecord, !record.isEmpty,
-                let   zone = self.zoneForCKRecord(record) {
+            if  let  record = iUpdatedRecord, !record.isEmpty,
+                let    zone = self.zoneForCKRecord(record),
+                record     == zone.record { // record data is new
+                zone._color = nil // recompute color
 
                 self.columnarReport("   ->", zone.zoneName)
 

@@ -79,22 +79,22 @@ class ZBatches: ZOnboarding {
 
         var operations: [ZOperationID] {
             switch identifier {
-            case .bSaveToCloud: return [                         .oSaveToCloud          ]
-            case .bSync:        return [             .oFetch,    .oSaveToCloud, .oTraits]
-            case .bRoot:        return [.oRoots,                 .oSaveToCloud, .oTraits]
-            case .bFocus:       return [.oRoots,     .oFetch,                   .oTraits]
-            case .bParents:     return [                                        .oTraits]
-            case .bChildren:    return [                                        .oTraits]
-            case .bFamilies:    return [             .oFetch,                   .oTraits]
-            case .bBookmarks:   return [.oBookmarks, .oFetch,    .oSaveToCloud, .oTraits]
-            case .bUndelete:    return [.oUndelete,  .oFetch,    .oSaveToCloud, .oTraits]
-            case .bFetchLost:   return [.oFetchLost,             .oSaveToCloud,         ]
-            case .bEmptyTrash:  return [.oEmptyTrash                                    ]
-            case .bResumeCloud: return [.oFetchNew,  .oFetchAll, .oSaveToCloud          ]
-            case .bRefetch:     return [             .oFetchAll, .oSaveToCloud          ]
+            case .bSaveToCloud: return [                                    .oSaveToCloud          ]
+            case .bSync:        return [             .oFetch,               .oSaveToCloud, .oTraits]
+            case .bRoot:        return [.oRoots,                            .oSaveToCloud, .oTraits]
+            case .bFocus:       return [.oRoots,     .oFetch,                              .oTraits]
+            case .bParents:     return [                                                   .oTraits]
+            case .bChildren:    return [                                                   .oTraits]
+            case .bFamilies:    return [             .oFetch,                              .oTraits]
+            case .bBookmarks:   return [.oBookmarks, .oFetch,               .oSaveToCloud, .oTraits]
+            case .bUndelete:    return [.oUndelete,  .oFetch,               .oSaveToCloud, .oTraits]
+            case .bFetchLost:   return [.oFetchLost,                        .oSaveToCloud,         ]
+            case .bEmptyTrash:  return [.oEmptyTrash                                               ]
+            case .bResumeCloud: return [.oFetchNew,  .oFetchAll,            .oSaveToCloud          ]
+            case .bRefetch:     return [             .oFetchAll, .oRecount, .oSaveToCloud          ]
             case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oSubscribe, skipping: [.oReadFile])
-            case .bStartUp:     return operationIDs(from: .oMacAddress,        to: .oHere)
-            case .bFinishUp:    return operationIDs(from: .oFetchNew,          to: .oSubscribe)
+            case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oFinishUp)
+            case .bFinishUp:    return operationIDs(from: .oFinishUp,          to: .oDone)
             case .bUserTest:    return operationIDs(from: .oObserveUbiquity,   to: .oFetchUserRecord)
             }
         }

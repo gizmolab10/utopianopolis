@@ -33,15 +33,15 @@ class ZBookmarks: NSObject {
 
 
     func registerBookmark(_  iBookmark : Zone?) {
-        if  let bookmark = iBookmark,
-            let linkName = bookmark.linkName,
-            let     dbID = bookmark.linkDatabaseID {
-            var     dict = registry[dbID] // returns nil for first registration
-            var    zones = dict?[linkName]
+        if  let       bookmark = iBookmark,
+            let linkRecordName = bookmark.linkRecordName,
+            let linkDatabaseID = bookmark.linkDatabaseID {
+            var   byRecordName = registry[linkDatabaseID] // returns nil for first registration
+            var     registered = byRecordName?[linkRecordName]
 
-            if  dict    == nil {
-                dict     = [:]
-                zones    = [bookmark]
+            if  byRecordName  == nil {
+                byRecordName   = [:]
+                registered     = [bookmark]
             } else {
                 let markAsLost = {
                     bookmark.temporarilyMarkNeeds {
@@ -49,29 +49,30 @@ class ZBookmarks: NSObject {
                     }
                 }
 
-                if  zones == nil {
-                    zones  = []
-                } else  if let parent = bookmark.parentZone {
-                    if  parent.recordName != kLostAndFoundName {
-                        for     zone in zones! {
-                            if  zone.parentZone?.recordName == parent.recordName {
-                                markAsLost()
+                if  registered == nil {
+                    registered  = []
+                } else if let       parentOfBookmark  = bookmark.parentZone {
+                    let recordNameOfParentOfBookmark  = parentOfBookmark.recordName
+                    if  recordNameOfParentOfBookmark != kLostAndFoundName {
+                        for     existing in registered! {
+                            if  existing.parentZone?.recordName == recordNameOfParentOfBookmark {
+                                markAsLost()  // found matching existing parent's record name to bookmark's parent's record name
 
                                 return
                             }
                         }
                     }
-                } else if !gFiles.isReading(for: dbID) {
-                    markAsLost()
+                } else if !gFiles.isReading(for: linkDatabaseID) {
+                    markAsLost() // bookmark has no parent
 
                     return
                 }
 
-                zones?.append(bookmark)
+                registered?.append(bookmark)
             }
 
-            dict?[linkName] = zones
-            registry[dbID]  = dict
+            byRecordName?[linkRecordName] = registered
+            registry     [linkDatabaseID] = byRecordName
         }
     }
 
@@ -79,7 +80,7 @@ class ZBookmarks: NSObject {
     func unregisterBookmark(_ iBookmark: Zone?) {
         if  let   bookmark = iBookmark,
             let       dbID = bookmark.linkDatabaseID,
-            let       link = bookmark.linkName,
+            let       link = bookmark.linkRecordName,
             var       dict = registry[dbID],
             var      zones = dict[link],
             let      index = zones.index(of: bookmark) {

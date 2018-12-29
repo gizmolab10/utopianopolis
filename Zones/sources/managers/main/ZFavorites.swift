@@ -224,7 +224,7 @@ class ZFavorites: NSObject {
 
 
     func createRootFavorites() {
-        if databaseRootFavorites.count == 0 {
+        if  databaseRootFavorites.count == 0 {
             for (index, dbID) in kAllDatabaseIDs.enumerated() {
                 let          name = dbID.rawValue
                 let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: name + kFavoritesSuffix)
@@ -476,7 +476,7 @@ class ZFavorites: NSObject {
         let bookmark: Zone = create(withBookmark: withBookmark, name, identifier: identifier)
         let insertAt: Int? = atIndex == parent.count ? nil : atIndex
 
-        if style != .favorite {
+        if  style != .favorite {
             parent.addChild(bookmark, at: insertAt) // calls update progeny count
         }
         
@@ -498,7 +498,7 @@ class ZFavorites: NSObject {
                 parent         = gFavoritesRoot!
 
                 for bookmark in workingFavorites {
-                    if  recordName == bookmark.linkName, !bookmark.bookmarkTarget!.isRoot {
+                    if  recordName == bookmark.linkRecordName, !bookmark.bookmarkTarget!.isRoot {
                         currentFavorite = bookmark
 
                         return bookmark
@@ -561,10 +561,10 @@ class ZFavorites: NSObject {
 
 
     func deleteFavorite(for zone: Zone) {
-        let recordID = zone.record.recordID
+        let recordID = zone.record?.recordID
 
         for favorite in workingFavorites {
-            if  favorite.crossLink?.record.recordID == recordID {
+            if  favorite.crossLink?.record?.recordID == recordID {
                 favorite.needDestroy()
                 favorite.orphan()
 

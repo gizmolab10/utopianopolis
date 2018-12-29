@@ -15,8 +15,8 @@ class ZRecord: NSObject {
 
     var             _record: CKRecord?
     var     savedModifyDate: Date?
-    var          databaseID: ZDatabaseID?
     var          kvoContext: UInt8 = 1
+    var          databaseID: ZDatabaseID?
     var  isInPublicDatabase: Bool               { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
     var     showingChildren: Bool               { return isExpanded(self.recordName) }
     var   isRootOfFavorites: Bool               { return record != nil && recordName == kFavoritesRootName }
@@ -46,7 +46,7 @@ class ZRecord: NSObject {
     var           emptyName: String             { return "" }
 
 
-    var record: CKRecord! {
+    var record: CKRecord? {
         get {
             return _record
         }
@@ -150,10 +150,6 @@ class ZRecord: NSObject {
 
     override init() {
         super.init()
-
-        self.databaseID = nil
-        self.record     = nil
-
         self.setupKVO();
     }
 
@@ -165,9 +161,9 @@ class ZRecord: NSObject {
 
         if  let r = record {
             self.record = r
-        }
 
-        unorphan()
+            unorphan()
+        }
     }
 
 
@@ -179,6 +175,7 @@ class ZRecord: NSObject {
     func orphan() {}
     func unorphan() {}
     func maybeNeedRoot() {}
+    func updateZoneDBIdentifier() {}
     func debug(_  iMessage: String) {}
     func cloudProperties() -> [String] { return [] }
     func   register() -> Bool { return cloud?.registerZRecord(self) ?? false }
@@ -205,9 +202,9 @@ class ZRecord: NSObject {
 
 
     func updateInstanceProperties() {
-        if record != nil {
+        if  let r = record {
             for keyPath in cloudProperties() {
-                if  let    cloudValue  = record[keyPath] as! NSObject? {
+                if  let    cloudValue  = r[keyPath] as! NSObject? {
                     let propertyValue  = value(forKeyPath: keyPath) as! NSObject?
 
                     if  propertyValue != cloudValue {
@@ -220,13 +217,13 @@ class ZRecord: NSObject {
 
 
     func updateCKRecordProperties() {
-        if record != nil {
+        if  let r = record {
             for keyPath in cloudProperties() {
-                let    cloudValue  = record[keyPath] as! NSObject?
+                let    cloudValue  = r[keyPath] as! NSObject?
                 let propertyValue  = value(forKeyPath: keyPath) as! NSObject?
 
                 if  propertyValue != nil && propertyValue != cloudValue {
-                    record[keyPath] = propertyValue as? CKRecordValue
+                    r[keyPath] = propertyValue as? CKRecordValue
                 }
             }
         }
@@ -234,19 +231,11 @@ class ZRecord: NSObject {
 
 
     func useBest(record iRecord: CKRecord) {
-        if  record != iRecord {
-            if  let name = record[kpZoneName] as? String, [kFirstIdeaTitle, "an idea"].contains(name) {
-                bam("")
-            }
-
-            let      myDate = record?.modificationDate ?? savedModifyDate
-            if  let newDate = iRecord.modificationDate,
-                (myDate    == nil || newDate.timeIntervalSince(myDate!) > 60.0) {
-
-                // orphan()    // in case a record contains a different parent or owner reference
-
-                record      = iRecord
-            }
+        let myDate      = record?.modificationDate ?? savedModifyDate
+        if  record     != iRecord,
+            let newDate = iRecord.modificationDate,
+            (myDate    == nil || newDate.timeIntervalSince(myDate!) > 10.0) {
+            record      = iRecord
         }
     }
 
@@ -254,7 +243,7 @@ class ZRecord: NSObject {
     func copy(into iCopy: ZRecord) {
         iCopy.maybeNeedSave() // so KVO won't set needsMerge
         updateCKRecordProperties()
-        record.copy(to: iCopy.record, properties: cloudProperties())
+        record?.copy(to: iCopy.record, properties: cloudProperties())
         iCopy.updateInstanceProperties()
     }
 
@@ -262,7 +251,7 @@ class ZRecord: NSObject {
     func mergeIntoAndTake(_ iRecord: CKRecord) {
         updateCKRecordProperties()
 
-        if  record != nil && record.copy(to: iRecord, properties: cloudProperties()) {
+        if  let r = record, r.copy(to: iRecord, properties: cloudProperties()) {
             record  = iRecord
 
             maybeNeedSave()
