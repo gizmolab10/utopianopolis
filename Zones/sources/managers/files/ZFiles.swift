@@ -346,7 +346,7 @@ class ZFiles: NSObject {
                     print(error)    // de-serialization
                 }
 
-                gRemoteStorage.recordsFor(databaseID)?.removeDuplicates()
+                gRemoteStorage.zRecords(for: databaseID)?.removeDuplicates()
 
                 self.isReading[index] = false
             }

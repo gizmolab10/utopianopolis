@@ -39,7 +39,7 @@ class ZRecord: NSObject {
     var      needsBookmarks: Bool               { return  hasState(.needsBookmarks) }
     var canSaveWithoutFetch: Bool               { return !hasState(.requiresFetchBeforeSave) }
     var   storageDictionary: ZStorageDictionary { if let dbID = databaseID, let dict = storageDictionary(for: dbID, includeRecordName: false) { return dict } else { return [:] } }
-    var             records: ZRecords?          { return gRemoteStorage.recordsFor(databaseID) }
+    var             records: ZRecords?          { return gRemoteStorage.zRecords(for: databaseID) }
     var               cloud: ZCloud?            { return records as? ZCloud }
     var          recordName: String?            { return record?.recordID.recordName }
     var       unwrappedName: String             { return emptyName }
@@ -175,7 +175,6 @@ class ZRecord: NSObject {
     func orphan() {}
     func unorphan() {}
     func maybeNeedRoot() {}
-    func updateZoneDBIdentifier() {}
     func debug(_  iMessage: String) {}
     func cloudProperties() -> [String] { return [] }
     func   register() -> Bool { return cloud?.registerZRecord(self) ?? false }
@@ -510,7 +509,7 @@ class ZRecord: NSObject {
         let     name = dict[.recordName] as? String
         var ckRecord = CKRecord(recordType: iRecordType)
 
-        if  name == nil || gRemoteStorage.recordsFor(iDatabaseID)?.maybeCKRecordForRecordName(name) == nil {
+        if  name == nil || gRemoteStorage.zRecords(for: iDatabaseID)?.maybeCKRecordForRecordName(name) == nil {
             if  let recordName = name {
                 ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecord.ID(recordName: recordName)) // YIKES this may be wildly out of date
             }

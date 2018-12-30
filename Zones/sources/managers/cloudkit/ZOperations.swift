@@ -18,7 +18,7 @@ enum ZOperationID: Int {
 
     // onboard
 
-    case oStartUp
+    case oStartUp            // NB: order here is order of operations (except miscellaneous)
     case oMacAddress
     case oObserveUbiquity
     case oCheckAvailability  // vs no account
@@ -29,7 +29,7 @@ enum ZOperationID: Int {
 
     // startup
 
-    case oCloud              // NB: do not edit order. dependencies
+    case oCloud
     case oReadFile           // LOCAL
     case oFound              // LOCAL
     case oRoots

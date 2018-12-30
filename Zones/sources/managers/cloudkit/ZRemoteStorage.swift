@@ -15,6 +15,7 @@ let    gRemoteStorage = ZRemoteStorage()
 var    gEveryoneCloud : ZCloud?     { return gRemoteStorage.cloud(for: .everyoneID) }
 var        gMineCloud : ZCloud?     { return gRemoteStorage.cloud(for: .mineID) }
 var            gCloud : ZCloud?     { return gRemoteStorage.currentCloud }
+var        gAllClouds : [ZCloud]    { return gRemoteStorage.allClouds }
 var     gLostAndFound : Zone?       { return gRemoteStorage.lostAndFoundZone }
 var    gFavoritesRoot : Zone?       { return gMineCloud?.favoritesZone }
 var            gTrash : Zone?       { return gRemoteStorage.trashZone }
@@ -26,8 +27,8 @@ class ZRemoteStorage: NSObject {
 
 
     var  databaseIDStack = [ZDatabaseID] ()
-    var         recordss = [ZDatabaseID : ZRecords]()
-    var   currentRecords : ZRecords    { return recordsFor(gDatabaseID)! }
+    var          records = [ZDatabaseID : ZRecords]()
+    var   currentRecords : ZRecords    { return zRecords(for: gDatabaseID)! }
     var     currentCloud : ZCloud?     { return cloud(for: gDatabaseID) }
     var rootProgenyCount : Int         { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
     var lostAndFoundZone : Zone?       { return currentRecords.lostAndFoundZone }
@@ -35,41 +36,66 @@ class ZRemoteStorage: NSObject {
     var        trashZone : Zone?       { return currentRecords.trashZone }
     var         rootZone : Zone? { get { return currentRecords.rootZone }  set { currentRecords.rootZone  = newValue } }
 
+    
+    var allClouds: [ZCloud] {
+        var clouds = [ZCloud] ()
+        
+        for dbID in kAllDatabaseIDs {
+            if let cloud = cloud(for: dbID) {
+                clouds.append(cloud)
+            }
+        }
+        
+        return clouds
+    }
+    
+    
+    var allRecordsArrays: [ZRecords] {
+        var recordsArray = [ZRecords] ()
+        
+        for dbID in kAllDatabaseIDs {
+            if  let records = zRecords(for: dbID) {
+                recordsArray.append(records)
+            }
+        }
+        
+        return recordsArray
+    }
 
-    func cloud   (for dbID: ZDatabaseID) -> ZCloud?        { return recordsFor(dbID) as? ZCloud }
-    func rootZone       (for dbID: ZDatabaseID) -> Zone?   { return recordsFor(dbID)?.rootZone }
-    func setRootZone(_ root: Zone?, for dbID: ZDatabaseID) {        recordsFor(dbID)?.rootZone = root }
-    func clear()                                           { recordss = [ZDatabaseID : ZCloud] () }
-    func cancel()                                          { currentCloud?.currentOperation?.cancel()     }
+    
+    func cloud   (for dbID: ZDatabaseID) -> ZCloud?        { return zRecords(for: dbID) as? ZCloud }
+    func rootZone(for dbID: ZDatabaseID) -> Zone?          { return zRecords(for: dbID)?.rootZone }
+    func setRootZone(_ root: Zone?, for dbID: ZDatabaseID) {        zRecords(for: dbID)?.rootZone = root }
+    func clear()                                           { records = [ZDatabaseID : ZCloud] () }
+    func cancel()                                          { currentCloud?.currentOperation?.cancel() }
 
 
     func recount() {  // all progenyCounts for all progeny in all databases in all roots
-        for dbID in kAllDatabaseIDs {
-            recordsFor(dbID)?.recount()
+        for records in allRecordsArrays {
+            records.recount()
         }
     }
 
 
     func updateLastSyncDates() {
-        for dbID in kAllDatabaseIDs {
-            recordsFor(dbID)?.updateLastSyncDate()
+        for records in allRecordsArrays {
+            records.updateLastSyncDate()
         }
     }
     
 
-    func recordsFor(_  iDatabaseID: ZDatabaseID?) -> ZRecords? {
-        var manager: ZRecords?
+    func zRecords(for iDatabaseID: ZDatabaseID?) -> ZRecords? {
+        var zRecords: ZRecords?
 
-        if  let dbID     =  iDatabaseID {
-            manager      = recordss[dbID]
-
-            if  manager == nil {
-                manager  = ZCloud(dbID)
-                recordss[dbID] = manager
+        if  let dbID          =  iDatabaseID {
+            zRecords          = records[dbID]
+            if  zRecords     == nil {
+                zRecords      = ZCloud(dbID)
+                records[dbID] = zRecords
             }
         }
 
-        return manager
+        return zRecords
     }
 
 
@@ -116,62 +142,15 @@ class ZRemoteStorage: NSObject {
 
     // MARK:- receive from cloud
     // MARK:-
-
-    
-    func cloud(containing record: CKRecord) -> ZCloud? {
-        if  let   id = record[kpDatabaseId] as? String,
-            let dbID = ZDatabaseID.create(from: id) {
-            return cloud(for: dbID)
-        }
-
-        return currentCloud
-    }
     
 
-    func receivedUpdateFor(_ recordID: CKRecord.ID) {
+    func receiveFromCloud(_ notification: CKQueryNotification) {
         resetBadgeCounter()
 
-        ////////////////////////////////////////////////////
-        // BUG: may not be a zone type (could be a trait) //
-        // BUG: could be a deletion                       //
-        ////////////////////////////////////////////////////
-
-        gCloud?.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
-            if  let ckRecord = iUpdatedRecord, !ckRecord.isEmpty,
-                let     zone = self.cloud(containing: ckRecord)?.zone(for: ckRecord),
-                ckRecord    == zone.record {    // record data is new (zone for just updated it)
-                zone._color  = nil              // recompute color
-
-                FOREGROUND(canBeDirect: true) {
-                    let parent = zone.resolveParent
-                    let done: Closure = {
-                        parent?.respectOrder()
-                        
-                        gControllers.signalFor(parent, regarding: .eRelayout)
-                    }
-
-                    if  let p = parent,
-                        !p.children.contains(zone) {
-                        p.addChild(zone)
-                        
-                        if  p.recordName == kTrashName {
-                            self.columnarReport("   ->", zone.zoneName)
-                        }
-                    }
-
-                    if  parent == nil || !parent!.showingChildren {
-                        done()
-                    } else {
-                        parent?.needChildren()
-
-                        gBatches.children(.restore) { iSame in
-                            FOREGROUND(canBeDirect: true) {
-                                done()
-                            }
-                        }
-                    }
-                }
-            }
+        if  let     dbID = ZDatabaseID.create(from: notification.databaseScope),
+            let    cloud = cloud(for: dbID),
+            let recordID = notification.recordID {
+            cloud.fetchRecord(for: recordID)
         }
     }
 

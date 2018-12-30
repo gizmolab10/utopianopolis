@@ -129,10 +129,10 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
         if  let (dbID, record) = identifierAndRecord(at: row) {
 
-            if let zone = gRemoteStorage.cloud(for: dbID)?.maybeZoneForRecordID(record.recordID) {
-                object  =   zone.decoratedName
+            if  let zone = gRemoteStorage.cloud(for: dbID)?.maybeZoneForRecordID(record.recordID) {
+                object   =   zone.decoratedName
             } else {
-                object  = record.decoratedName
+                object   = record.decoratedName
             }
 
             if row == tableView.selectedRow {

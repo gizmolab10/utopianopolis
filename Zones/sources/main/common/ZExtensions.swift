@@ -168,8 +168,8 @@ extension NSObject {
             let ckRecord: CKRecord   = CKRecord(recordType: kZoneType, recordID: recordID)
             let        rawIdentifier = components[0]
             let   dbID: ZDatabaseID? = rawIdentifier == "" ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
-            let              manager = gRemoteStorage.recordsFor(dbID)
-            let                 zone = manager?.zone(for: ckRecord) ?? Zone(record: ckRecord, databaseID: dbID) // BAD DUMMY ?
+            let             zRecords = gRemoteStorage.zRecords(for: dbID)
+            let                 zone = zRecords?.zone(for: ckRecord) ?? Zone(record: ckRecord, databaseID: dbID) // BAD DUMMY ?
 
             return zone
         }
@@ -797,7 +797,7 @@ extension String {
 
     static func forReferences(_ references: [CKRecord.Reference]?, in databaseID: ZDatabaseID) -> String {
         return references?.apply()  { object -> (String?) in
-            if let reference = object as? CKRecord.Reference, let zone = gRemoteStorage.recordsFor(databaseID)?.maybeZoneForReference(reference) {
+            if let reference = object as? CKRecord.Reference, let zone = gRemoteStorage.zRecords(for: databaseID)?.maybeZoneForReference(reference) {
                 let    name  = zone.decoratedName
                 if     name != "" {
                     return name

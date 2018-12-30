@@ -79,8 +79,6 @@ class ZCloud: ZRecords {
 
 
     func save(_ onCompletion: IntClosure?) {
-        updateZoneDBIdentifiers()
-
         let   saves = pullCKRecordsWithMatchingStates([.needsSave])
         let destroy = pullRecordIDsWithHighestLevel(for: [.needsDestroy], batchSize: 20)
         let   count = saves.count + destroy.count
@@ -111,6 +109,7 @@ class ZCloud: ZRecords {
 
                 FOREGROUND {
                     if  let destroyed = iDeletedRecordIDs {
+                        if  destroyed.count > 0 { self.columnarReport("DESTROY (\(destroyed.count))", self.stringForRecordIDs(destroyed)) }
                         for recordID: CKRecord.ID in destroyed {
                             if  let zRecord = self.maybeZRecordForRecordID(recordID) { // zones AND traits
                                 zRecord.orphan()
@@ -120,6 +119,8 @@ class ZCloud: ZRecords {
                     }
 
                     if  let saved = iSavedCKRecords {
+                        if  saved.count > 0 { self.columnarReport("SAVE (\(     saved.count))", String.forCKRecords(saved)) }
+
                         for ckRecord: CKRecord in saved {
                             if  let zRecord = self.maybeZRecordForRecordID(ckRecord.recordID) {
                                 zRecord.useBest(record: ckRecord)
@@ -141,9 +142,6 @@ class ZCloud: ZRecords {
                     }
                 }
             }
-
-            if   saves.count > 0 { columnarReport("SAVE (\(     saves.count))", String.forCKRecords(saves)) }
-            if destroy.count > 0 { columnarReport("DESTROY (\(destroy.count))", stringForRecordIDs(destroy)) }
 
             start(operation)
         } else {
@@ -208,17 +206,12 @@ class ZCloud: ZRecords {
     // MARK:-
 
     
-    func fetchRecord(_ iRecord: ZRecord, onCompletion: @escaping RecordClosure) {
-        detectIfRecordExists(withRecordID: iRecord.record?.recordID, recordType: iRecord.record?.recordType, mustCreate: false, onCompletion: onCompletion)
-    }
-    
-    
     func assureRecordExists(withRecordID iCKRecordID: CKRecord.ID?, recordType: String?, onCompletion: @escaping RecordClosure) {
         detectIfRecordExists(withRecordID: iCKRecordID, recordType: recordType, mustCreate: true, onCompletion: onCompletion)
     }
     
 
-    func detectIfRecordExists(withRecordID iCKRecordID: CKRecord.ID?, recordType: String?, mustCreate: Bool, onCompletion: @escaping RecordClosure) {
+    func detectIfRecordExists(withRecordID iCKRecordID: CKRecord.ID?, recordType: String?, mustCreate: Bool = false, onCompletion: @escaping RecordClosure) {
         let done:  RecordClosure = { (iCKRecord: CKRecord?) in
             FOREGROUND(canBeDirect: true) {
                 if  let ckRecord = iCKRecord {
@@ -265,6 +258,25 @@ class ZCloud: ZRecords {
                         } else {
                             done(nil)
                         }
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    func fetchRecord(for recordID: CKRecord.ID) {
+        
+        /////////////////////////////////////////
+        // BUG: could be a trait or a deletion //
+        /////////////////////////////////////////
+        
+        detectIfRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
+            if  let ckRecord = iUpdatedRecord, !ckRecord.isEmpty {
+                let     zone = self.zone(for: ckRecord)
+                if ckRecord == zone.record {    // record data is new (zone for just updated it)
+                    zone.resolve() { iZone in
+                        gControllers.signalFor(iZone, regarding: .eRelayout)
                     }
                 }
             }

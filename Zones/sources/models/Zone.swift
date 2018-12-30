@@ -33,7 +33,6 @@ class Zone : ZRecord {
     @objc dynamic var         zoneLink:       String?
     @objc dynamic var        zoneColor:       String?
     @objc dynamic var   zoneAttributes:       String?
-    @objc dynamic var     zoneDatabase:       String?
     @objc dynamic var       parentLink:       String?
     @objc dynamic var       zoneAuthor:       String?
     @objc dynamic var        zoneOrder:     NSNumber?
@@ -199,7 +198,6 @@ class Zone : ZRecord {
                 #keyPath(zoneAccess),
                 #keyPath(parentLink),
                 #keyPath(zoneProgeny),
-                #keyPath(zoneDatabase),
                 #keyPath(zoneAttributes)]
     }
 
@@ -208,17 +206,6 @@ class Zone : ZRecord {
         return super.cloudProperties() + Zone.cloudProperties()
     }
 
-
-    override func updateZoneDBIdentifier() {
-        if  let id  = databaseID?.identifier {
-            if  id != zoneDatabase {
-                zoneDatabase = id
-                
-                needSave()
-            }
-        }
-    }
-    
 
     var traitValues: [ZTrait] {
         var values = [ZTrait] ()
@@ -930,7 +917,7 @@ class Zone : ZRecord {
                     return true
                 }
 
-                let zone = gRemoteStorage.recordsFor(dbID)?.maybeZoneForRecordID(probeID)
+                let zone = gRemoteStorage.zRecords(for: dbID)?.maybeZoneForRecordID(probeID)
                 probeID  = zone?.parent?.recordID
             }
         }
@@ -1473,6 +1460,40 @@ class Zone : ZRecord {
         }
     }
 
+    
+    // MARK:- receive from cloud
+    // MARK:-
+    
+
+    func resolve(_ onCompletion: ZoneMaybeClosure? = nil) {
+        FOREGROUND(canBeDirect: true) {
+            self._color = nil               // recompute color
+            let parent  = self.resolveParent
+            let done: Closure = {
+                parent?.respectOrder()      // assume newly fetched zone knows its order
+                
+                onCompletion?(parent)
+            }
+            
+            if  let p = parent,
+                !p.children.contains(self) {
+                p.addChild(self)
+            }
+            
+            if  parent == nil || !parent!.showingChildren {
+                done()
+            } else {
+                parent?.needChildren()
+                
+                gBatches.children(.restore) { iSame in
+                    FOREGROUND(canBeDirect: true) {
+                        done()
+                    }
+                }
+            }
+        }
+    }
+    
 
     // MARK:- file persistence
     // MARK:-

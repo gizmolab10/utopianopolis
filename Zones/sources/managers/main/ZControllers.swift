@@ -162,10 +162,9 @@ class ZControllers: NSObject {
 
 
     func updateNeededCounts() {
-        for dbID in kAllDatabaseIDs {
+        for cloud in gRemoteStorage.allClouds {
             var alsoProgenyCounts = false
-            let           manager = gRemoteStorage.cloud(for: dbID)
-            manager?.fullUpdate(for: [.needsCount]) { state, iZRecord in
+            cloud.fullUpdate(for: [.needsCount]) { state, iZRecord in
                 if  let zone                 = iZRecord as? Zone {
                     if  zone.fetchableCount != zone.count {
                         zone.fetchableCount  = zone.count
@@ -177,7 +176,7 @@ class ZControllers: NSObject {
             }
 
             if  alsoProgenyCounts {
-                manager?.rootZone?.updateCounts()
+                cloud.rootZone?.updateCounts()
             }
         }
     }

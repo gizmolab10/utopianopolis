@@ -8,6 +8,7 @@
 
 
 import Foundation
+import CloudKit
 
 
 enum InterfaceStyle : String {
@@ -108,6 +109,14 @@ enum ZDatabaseID: String {
     
     var identifier: String { return rawValue.substring(toExclusive: 1) }
 
+    static func create(from scope: CKDatabase.Scope) -> ZDatabaseID? {
+        switch scope {
+        case .public:  return ZDatabaseID.everyoneID
+        case .private: return ZDatabaseID.mineID
+        default:       return nil
+        }
+    }
+
     static func create(from id: String) -> ZDatabaseID? {
         switch id {
         case "e": return ZDatabaseID.everyoneID
@@ -175,7 +184,6 @@ enum ZStorageType: String {
     case parentLink = "parentLink"
     case attributes = "attributes"
     case children   = "children"
-    case database   = "database"
     case progeny    = "progeny"
     case traits     = "traits"
     case access     = "access"

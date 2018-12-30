@@ -104,32 +104,30 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         var combined = [ZDatabaseID: [Any]] ()
         var remaining = kAllDatabaseIDs.count
         
-        for dbID in kAllDatabaseIDs {
-            if  let manager = gRemoteStorage.cloud(for: dbID) {
-                let  locals = manager.searchLocal(for: searchString)
-                
-                manager.search(for: searchString) { iObject in
-                    FOREGROUND {
-                        var results = iObject as! [Any]
-                        remaining -= 1
-                        
-                        results.appendUnique(contentsOf: locals) { (a, b) in
-                            if  let alpha = a as? CKRecord,
-                                let  beta = b as? CKRecord {
-                                return alpha.recordID.recordName == beta.recordID.recordName
-                            }
-                            
-                            return false
+        for cloud in gRemoteStorage.allClouds {
+            let  locals = cloud.searchLocal(for: searchString)
+            
+            cloud.search(for: searchString) { iObject in
+                FOREGROUND {
+                    var results = iObject as! [Any]
+                    remaining -= 1
+                    
+                    results.appendUnique(contentsOf: locals) { (a, b) in
+                        if  let alpha = a as? CKRecord,
+                            let  beta = b as? CKRecord {
+                            return alpha.recordID.recordName == beta.recordID.recordName
                         }
                         
-                        combined[dbID] = results
+                        return false
+                    }
+                    
+                    combined[cloud.databaseID] = results
+                    
+                    if  remaining == 0 {
+                        gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: [CKRecord]] ?? [:]
+                        gSearching.state = (gSearchResultsController?.hasResults ?? false) ? .list : .find
                         
-                        if  remaining == 0 {
-                            gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: [CKRecord]] ?? [:]
-                            gSearching.state = (gSearchResultsController?.hasResults ?? false) ? .list : .find
-                        
-                            gControllers.signalFor(nil, regarding: .eFound)
-                        }
+                        gControllers.signalFor(nil, regarding: .eFound)
                     }
                 }
             }
