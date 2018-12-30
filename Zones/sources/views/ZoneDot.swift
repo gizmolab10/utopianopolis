@@ -166,8 +166,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func drawMainDot(in iDirtyRect: CGRect, fill: Bool = false) {
-        let  thickness = CGFloat(gLineThickness * (fill ? 2.0 : 1.0))
+    func drawMainDot(in iDirtyRect: CGRect) {
+        let  thickness = CGFloat(gLineThickness)
         let       path = ZBezierPath(ovalIn: iDirtyRect.insetBy(dx: thickness, dy: thickness))
         path.lineWidth = thickness * 2.0
         path .flatness = 0.0001
@@ -303,7 +303,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 if  isInnerDot {
                     let childlessTraveller = zone.canTravel && zone.count == 0
                     let        dotIsFilled = isReveal ? (!zone.showingChildren || childlessTraveller || isDragDrop) : (zone.isGrabbed || isCurrentFavorite)
-                    let        strokeColor = isReveal && isDragDrop ?    gRubberbandColor : zone.color
+                    let        strokeColor = isReveal && isDragDrop ?  gRubberbandColor : zone.color
                     var          fillColor = dotIsFilled ? strokeColor.lighter(by: 3.0) : gBackgroundColor
 
                     /////////
@@ -313,7 +313,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     fillColor.setFill()
                     strokeColor.setStroke()
                     drawMainDot(in: iDirtyRect)
-                    drawMainDot(in: iDirtyRect, fill: true)
 
                     if  isReveal {
                         if  zone.isBookmark {
