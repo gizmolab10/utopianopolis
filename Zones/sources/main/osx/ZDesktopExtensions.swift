@@ -266,6 +266,22 @@ extension NSView {
 
         return gesture
     }
+
+
+    func printView() {
+        let    printInfo = NSPrintInfo.shared
+        let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
+        let      isWider = bounds.size.width > bounds.size.height
+        let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
+        let       length = Double(isWider ? bounds.size.width : bounds.size.height)
+        let        scale = 46800.0 / length // 72 dpi * 6.5 inches * 100 percent
+        
+        PMSetScale(pmPageFormat, scale)
+        PMSetOrientation(pmPageFormat, orientation, false)
+        printInfo.updateFromPMPageFormat()
+        NSPrintOperation(view: self, printInfo: printInfo).run()
+    }
+    
 }
 
 
@@ -273,7 +289,7 @@ extension NSWindow {
 
     @IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.view(for: .Preferences)?.toggleAction(self) }
     @IBAction func displayHelp       (_ sender:      Any?) { openBrowserForFocusWebsite() }
-    @IBAction func printHere         (_ sender:      Any?) { gGraphEditor.printHere() }
+    @IBAction func printHere         (_ sender:      Any?) { gHere.widget?.printView() }
     @IBAction func copy              (_ iItem: ZMenuItem?) { gGraphEditor.copyToPaste() }
     @IBAction func cut               (_ iItem: ZMenuItem?) { gGraphEditor.delete() }
     @IBAction func delete            (_ iItem: ZMenuItem?) { gGraphEditor.delete() }

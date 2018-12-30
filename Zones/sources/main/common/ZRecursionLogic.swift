@@ -56,15 +56,15 @@ class ZRecursionLogic: NSObject {
             let    expand = reveal && (targetLevel < 0 || targetLevel > iChild.level)
 
             switch recursing {
-            case .expand:  if expand { iChild.needChildren() }
-            case .restore: if reveal { iChild.needChildren() }
+            case .expand:  if expand { iChild.reallyNeedChildren() }
+            case .restore: if reveal { iChild.reallyNeedChildren() }
             default:       break
             }
         } else if let progenyNeeded = iProgenyNeeded,
             let     parentReference = iChild.parent,
             progenyNeeded.count    != 0,
             progenyNeeded.contains(parentReference) {
-            iChild.needProgeny()
+            iChild.reallyNeedProgeny()
         }
     }
 

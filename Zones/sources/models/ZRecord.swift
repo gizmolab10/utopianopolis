@@ -288,14 +288,6 @@ class ZRecord: NSObject {
     }
 
 
-    func needProgeny() {
-//        if !gAssumeAllFetched {
-//            addState(.needsProgeny)
-//            removeState(.needsChildren)
-//        }
-    }
-
-
     func needDestroy() {
         if  canSaveWithoutFetch {
             addState   (.needsDestroy)
@@ -304,11 +296,34 @@ class ZRecord: NSObject {
         }
     }
 
+    
+    func needProgeny() {
+        //        if !gAssumeAllFetched {
+        //            addState(.needsProgeny)
+        //            removeState(.needsChildren)
+        //        }
+    }
 
+    
+    func reallyNeedProgeny() {
+        addState(.needsProgeny)
+        removeState(.needsChildren)
+    }
+
+    
     func needChildren() {
         if !isBookmark && // all bookmarks are childless, by design
             showingChildren &&
             false, // !gAssumeAllFetched,
+            !needsProgeny {
+            addState(.needsChildren)
+        }
+    }
+
+    
+    func reallyNeedChildren() {
+        if !isBookmark && // all bookmarks are childless, by design
+            showingChildren &&
             !needsProgeny {
             addState(.needsChildren)
         }

@@ -12,7 +12,7 @@
                 <application id="hnw-xV-0zn" sceneMemberID="viewController">
                     <menu key="mainMenu" title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
                         <items>
-                            <menuItem title="Thoughtful" id="1Xt-HY-uBw" userLabel="Zones">
+                            <menuItem title="Thoughtful" id="1Xt-HY-uBw">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Thoughtful" systemMenu="apple" id="uQy-DD-JDr">
                                     <items>
@@ -70,11 +70,22 @@
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="yol-4a-D1G"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Refetch From Cloud" keyEquivalent="m" id="eOD-fN-dMl">
+                                        <menuItem title="Refetch From Cloud" id="f0s-F2-LF2">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="OTb-Fv-TP3"/>
-                                            </connections>
+                                            <menu key="submenu" title="Refetch From Cloud" id="8DN-3Y-Czr">
+                                                <items>
+                                                    <menuItem title="Immediate Children" keyEquivalent="m" id="zJA-h5-V9Q">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="fGc-Io-AZM"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="All Progeny" keyEquivalent="m" id="gsR-6T-rn2">
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                                    </menuItem>
+                                                    <menuItem title="Entire Graph" keyEquivalent="m" id="aki-zt-Ii9"/>
+                                                </items>
+                                            </menu>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="HAP-GI-54c"/>
                                         <menuItem title="Export Selected Idea" id="MEe-fC-PR1">

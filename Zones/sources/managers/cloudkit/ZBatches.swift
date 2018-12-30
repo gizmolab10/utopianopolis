@@ -36,9 +36,15 @@ enum ZBatchID: Int {
 
     var shouldIgnore: Bool {
         switch self {
-        case .bSaveToCloud:                                                         return gCloudAccountIsActive
-        case .bSync, .bStartUp, .bRefetch, .bFinishUp, .bNewAppleID, .bResumeCloud: return false
-        default:                                                                    return true
+        case .bSync,
+             .bStartUp,
+             .bRefetch,
+             .bChildren,
+             .bFinishUp,
+             .bNewAppleID,
+             .bResumeCloud: return false
+        case .bSaveToCloud: return gCloudAccountIsActive
+        default:            return true
         }
     }
 
@@ -84,7 +90,7 @@ class ZBatches: ZOnboarding {
             case .bRoot:        return [.oRoots,                            .oSaveToCloud, .oTraits]
             case .bFocus:       return [.oRoots,     .oFetch,                              .oTraits]
             case .bParents:     return [                                                   .oTraits]
-            case .bChildren:    return [                                                   .oTraits]
+            case .bChildren:    return [.oChildren,                                        .oTraits]
             case .bFamilies:    return [             .oFetch,                              .oTraits]
             case .bBookmarks:   return [.oBookmarks, .oFetch,               .oSaveToCloud, .oTraits]
             case .bUndelete:    return [.oUndelete,  .oFetch,               .oSaveToCloud, .oTraits]

@@ -78,8 +78,7 @@ class ZGraphEditor: NSObject {
 
 
     @discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool { // true means handled
-        if !gIsShortcutsFrontmost,
-            var     key = iKey {
+        if  var     key = iKey {
             let CONTROL = flags.isControl
             let COMMAND = flags.isCommand
             let  OPTION = flags.isOption
@@ -91,7 +90,11 @@ class ZGraphEditor: NSObject {
                 SHIFT   = true
             }
 
-            if  gIsEditingText {
+            if  gIsShortcutsFrontmost {
+                if  key == "p" {
+                    gShortcuts?.view.printView()
+                }
+            } else if gIsEditingText {
                 let editedZone = gEditedTextWidget?.widgetZone
                 if  let      a = arrow {
                     gTextEditor.handleArrow(a, flags: flags)
@@ -139,10 +142,10 @@ class ZGraphEditor: NSObject {
                     case "l", "u": alterCase(up: key == "u")
                     case "j":      gFiles.importFromFile(asOutline: OPTION, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() }
                     case "k":      gFiles  .exportToFile(asOutline: OPTION,        for: gSelecting.currentMoveable)
-                    case "m":      refetch()
+                    case "m":      refetch(OPTION, COMMAND)
                     case "n":      alphabetize(OPTION)
                     case "o":      if COMMAND { if OPTION { gFiles.showInFinder() } else { gFiles.open() } } else { orderByLength(OPTION) }
-                    case "p":      printHere()
+                    case "p":      gHere.widget?.printView()
                     case "q":      ZApplication.shared.terminate(self)
                     case "r":      reverse()
                     case "s":      if COMMAND { gFiles.saveAs() } else { selectCurrentFavorite() }
@@ -192,8 +195,8 @@ class ZGraphEditor: NSObject {
         }
 
         switch arrow {
-        case .down:     moveUp(false, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
-        case .up:       moveUp(true,  selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
+        case .down:     move(up: false, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
+        case .up:       move(up: true,  selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
         default:
             if !SHIFT {
                 switch arrow {
@@ -281,7 +284,7 @@ class ZGraphEditor: NSObject {
             return false
         }
 
-        let type = menuType(for: key, flags)
+        let  type = menuType(for: key, flags)
         let arrow = key.arrow
         var valid = !gIsEditingText
 
@@ -608,27 +611,6 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func printHere() {
-        #if os(OSX)
-
-            if  let         view = gHere.widget {
-                let    printInfo = NSPrintInfo.shared
-                let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
-                let      isWider = view.bounds.size.width > view.bounds.size.height
-                let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
-                let       length = Double(isWider ? view.bounds.size.width : view.bounds.size.height)
-                let        scale = 46800.0 / length // 72 dpi * 6.5 inches * 100 percent
-
-                PMSetScale(pmPageFormat, scale)
-                PMSetOrientation(pmPageFormat, orientation, false)
-                printInfo.updateFromPMPageFormat()
-                NSPrintOperation(view: view, printInfo: printInfo).run()
-            }
-
-        #endif
-    }
-
-
     func selectAll(progeny: Bool = false) {
         var zone = gSelecting.currentMoveable
 
@@ -662,10 +644,10 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func grabOrEdit(_ isCommand: Bool) {
+    func grabOrEdit(_ COMMAND: Bool) {
         if  !gSelecting.hasGrab {
             gHere.grab()
-        } else if isCommand {
+        } else if COMMAND {
             gSelecting.deselect()
         } else {
             gTextEditor.edit(gSelecting.currentMoveable)
@@ -673,9 +655,28 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func refetch() {
-        gBatches.refetch { iSame in
-            gControllers.signalFor(nil, regarding: .eRelayout)
+    func refetch(_ OPTION: Bool = false, _ COMMAND: Bool = false) {
+        
+        // plain is fetch children
+        // COMMAND alone is fetch all
+        // OPTION alone or both is all progeny
+        
+        if  COMMAND && !OPTION {    // COMMAND alone
+            gBatches.refetch { iSame in
+                gControllers.signalFor(nil, regarding: .eRelayout)
+            }
+        } else {
+            for grab in gSelecting.currentGrabs {
+                if !OPTION {    // plain
+                    grab.reallyNeedChildren()
+                } else {        // OPTION alone or both
+                    grab.reallyNeedProgeny()
+                }
+            }
+
+            gBatches.children { isSame in
+                gControllers.signalFor(nil, regarding: .eRelayout)
+            }
         }
     }
 
@@ -2127,11 +2128,13 @@ class ZGraphEditor: NSObject {
     }
     
     
-    func moveUp(_ iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
+    func move(up iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
         let original = iMoveUp ? gSelecting.firstGrab : gSelecting.lastGrab
 
         moveUp(iMoveUp, original, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKind in
-            gControllers.signalFor(nil, regarding: iKind)
+            gControllers.syncToCloudAfterSignalFor(nil, regarding: iKind) {
+                gControllers.signalFor(nil, regarding: iKind)
+            }
         }
     }
 
@@ -2248,7 +2251,7 @@ class ZGraphEditor: NSObject {
                     }
                     
                     UNDO(self) { iUndoSelf in
-                        iUndoSelf.moveUp(!iMoveUp, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
+                        iUndoSelf.move(up: !iMoveUp, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
                     }
                     
                     if !selectionOnly {
