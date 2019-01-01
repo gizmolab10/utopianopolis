@@ -167,7 +167,7 @@ class ZGraphEditor: NSObject {
                     case "z":      if COMMAND { if SHIFT { kUndoManager.redo() } else { kUndoManager.undo() } }
                     case kSpace:   if OPTION || isWindow || CONTROL { addIdea() }
                     case kBackspace,
-                         kDelete:  if OPTION || isWindow || COMMAND { delete(permanently: COMMAND && OPTION && isWindow, preserveChildren: FLAGGED && isWindow) }
+                         kDelete:  if OPTION || isWindow || COMMAND { delete(permanently: COMMAND && OPTION && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: OPTION && SHIFT) }
                     case "\r":     if hasWidget { grabOrEdit(COMMAND) }
                     default:       return false // false means key not handled
                     }
@@ -1024,8 +1024,8 @@ class ZGraphEditor: NSObject {
 
 
     func addLine() {
-        let     zone = gSelecting.currentMoveable
-        if  let name = zone.zoneName {
+        if  let zone = gSelecting.currentTitledMoveable,
+            let name = zone.zoneName {
             if  name.contains(kLineOfDashes) {
                 zone.assignAndColorize(kLineWithStubTitle)
                 zone.editAndSelect(in: NSMakeRange(12, 1))
@@ -1160,9 +1160,9 @@ class ZGraphEditor: NSObject {
     // MARK:-
 
 
-    func delete(permanently: Bool = false, preserveChildren: Bool = false) {
+    func delete(permanently: Bool = false, preserveChildren: Bool = false, convertToTitledLine: Bool = false) {
         if  preserveChildren && !permanently {
-            preserveChildrenOfGrabbedZones {
+            preserveChildrenOfGrabbedZones(convertToTitledLine: convertToTitledLine) {
                 self.updateFavoritesRedrawSyncRedraw()
             }
         } else {
@@ -1813,7 +1813,7 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func preserveChildrenOfGrabbedZones(onCompletion: Closure?) {
+    func preserveChildrenOfGrabbedZones(convertToTitledLine: Bool = false, onCompletion: Closure?) {
         let grabs = gSelecting.simplifiedGrabs
 
         for zone in grabs {
@@ -1822,10 +1822,11 @@ class ZGraphEditor: NSObject {
         }
 
         gBatches.children(.all) { iSame in // to make sure all progeny are acted upon
-            let    candidate = gSelecting.rootMostMoveable
-            if  let   parent = candidate.parentZone {
-                let    index = candidate.siblingIndex
-                var children = [Zone] ()
+            let        candidate = gSelecting.rootMostMoveable
+            if  let       parent = candidate.parentZone {
+                let siblingIndex = candidate.siblingIndex
+                var     children = [Zone] ()
+                var    lineIndex = 0
 
                 gSelecting.deselectGrabs()
                 gSelecting.clearPaste()
@@ -1835,18 +1836,23 @@ class ZGraphEditor: NSObject {
                         children.append(child)
                     }
 
-                    grab.addToPaste()
-                    self.moveZone(grab, to: grab.trashZone)
+                    if  convertToTitledLine {
+                        grab.convertToTitledLine()
+                        children.insert(grab, at: lineIndex)
+                        grab.grab()
+                    } else {
+                        grab.addToPaste()
+                        self.moveZone(grab, to: grab.trashZone)
+                    }
+                    
+                    lineIndex = children.count
                 }
 
-                children.sort { (a, b) -> Bool in
-                    return a.order > b.order      // reversed ordering
-                }
+                children.reverse()
 
                 for child in children {
                     child.orphan()
-                    child.addToGrab()
-                    parent.addAndReorderChild(child, at: index)
+                    parent.addAndReorderChild(child, at: siblingIndex)
                 }
 
                 self.UNDO(self) { iUndoSelf in

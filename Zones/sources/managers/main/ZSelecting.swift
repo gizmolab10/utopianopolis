@@ -190,12 +190,23 @@ class ZSelecting: NSObject {
 
         return candidate
     }
+    
+    
+    var currentTitledMoveable: Zone? {
+        for grab in currentGrabs + [gHere] {
+            if grab.zoneName?.isLineWithTitle ?? false {
+                return grab
+            }
+        }
+        
+        return nil
+    }
 
 
     var currentMoveable: Zone {
         var movable: Zone?
 
-        if currentGrabs.count > 0 {
+        if  currentGrabs.count > 0 {
             movable = firstGrab
         } else if let zone = gTextEditor.currentlyEditingZone {
             movable = zone

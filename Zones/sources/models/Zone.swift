@@ -1437,6 +1437,15 @@ class Zone : ZRecord {
     // MARK:-
 
     
+    
+    func convertToTitledLine() {
+        zoneName  = kHalfLineOfDashes + " " + unwrappedName + " " + kHalfLineOfDashes
+        colorized = true
+        
+        needSave()
+    }
+    
+    
     func convertToLine() -> Bool {
         if  let childName = widget?.textWidget.extractSelectedText(requiresAllOrTitleSelected: true) {
             

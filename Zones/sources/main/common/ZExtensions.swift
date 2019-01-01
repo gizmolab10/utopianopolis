@@ -770,7 +770,11 @@ extension String {
     var isLineWithTitle: Bool {
         let substrings = components(separatedBy: kHalfLineOfDashes)
         
-        return substrings.count > 1 && substrings[1].count > 0
+        if  substrings.count == 3 {
+            return substrings[1].count > 0 || substrings[2].count > 0
+        }
+        
+        return false
     }
 
     
