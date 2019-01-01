@@ -1040,7 +1040,7 @@ class ZGraphEditor: NSObject {
                     
                     zone.convertFromLineWithTitle()
 
-                    for other in grabs {
+                    for other in grabs.reversed() {
                         if  zone != other {
                             count += 1
 
@@ -1050,7 +1050,7 @@ class ZGraphEditor: NSObject {
                                 if  count == 0 {
                                     gSelecting.clearGrab()
                                     self.redrawAndSync() {
-                                        zone.edit()
+                                        zone.grab()
                                     }
                                 }
                             }
