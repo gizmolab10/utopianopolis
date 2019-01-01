@@ -77,7 +77,7 @@ class ZGraphEditor: NSObject {
     }
 
 
-    @discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool { // true means handled
+    @discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
         if  var     key = iKey {
             let CONTROL = flags.isControl
             let COMMAND = flags.isCommand
@@ -105,17 +105,17 @@ class ZGraphEditor: NSObject {
                     case "f":      search(OPTION)
                     case "i":      toggleColorized()
                     case "?":      showHideKeyboardShortcuts()
-                    case "-":      return convertToLine(editedZone)
+                    case "-":      return editedZone?.convertToLine() ?? false // false means key not handled
                     case "/":      gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kSpace:   addIdea()
-                    default:       return false
+                    default:       return false // false means key not handled
                     }
                 } else {
                     switch key {
-                    case "-":      return convertToLine(editedZone)
+                    case "-":      return editedZone?.convertToLine() ?? true
                     case kEscape:  gTextEditor.cancel()
-                    default:       return false
+                    default:       return false // false means key not handled
                     }
                 }
             } else if  validateKey(key, flags) {
@@ -169,13 +169,13 @@ class ZGraphEditor: NSObject {
                     case kBackspace,
                          kDelete:  if OPTION || isWindow || COMMAND { delete(permanently: COMMAND && OPTION && isWindow, preserveChildren: FLAGGED && isWindow) }
                     case "\r":     if hasWidget { grabOrEdit(COMMAND) }
-                    default:       return false
+                    default:       return false // false means key not handled
                     }
                 }
             }
         }
         
-        return true
+        return true // true means key handled
     }
     
 
@@ -1024,16 +1024,39 @@ class ZGraphEditor: NSObject {
 
 
     func addLine() {
-        let zone = gSelecting.currentMoveable
-        
+        let     zone = gSelecting.currentMoveable
         if  let name = zone.zoneName {
-            if  name.isLineTitle {
-                zone.assignAndColorize(kLineOfDashes)
-                
-                return
-            } else if name.contains(kLineOfDashes) {
+            if  name.contains(kLineOfDashes) {
                 zone.assignAndColorize(kLineWithStubTitle)
                 zone.editAndSelect(in: NSMakeRange(12, 1))
+                
+                return
+            } else if name.isLineWithTitle {
+                let grabs = gSelecting.currentGrabs
+                if  grabs.count <= 1 {
+                    zone.assignAndColorize(kLineOfDashes)
+                } else {
+                    var count = 0
+                    
+                    zone.convertFromLineWithTitle()
+
+                    for other in grabs {
+                        if  zone != other {
+                            count += 1
+
+                            moveZone(other, to: zone) {
+                                count -= 1
+                                
+                                if  count == 0 {
+                                    gSelecting.clearGrab()
+                                    self.redrawAndSync() {
+                                        zone.edit()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 
                 return
             }
@@ -1047,34 +1070,11 @@ class ZGraphEditor: NSObject {
     }
     
     
-    func convertToLine(_ iZone: Zone?) -> Bool {
-        if  let      zone = iZone,
-            let childName = extractSelectedText(from: zone.widget?.textWidget, requiresAllOrTitleSelected: true) {
-            
-            if  zone.zoneName != childName {
-                zone.zoneName  = childName
-                zone.colorized = false
-
-                zone.editAndSelect(in: NSMakeRange(0,  childName.length))
-            } else {
-                zone.zoneName  = kHalfLineOfDashes + " " + childName + " " + kHalfLineOfDashes
-                zone.colorized = true
-
-                zone.editAndSelect(in: NSMakeRange(12, childName.length))
-            }
-            
-            return true
-        }
-        
-        return false
-    }
-
-    
     func addParentFromSelectedText(inside iZone: Zone?) {
         if  let     child = iZone,
             let     index = child.siblingIndex,
             let    parent = child.parentZone,
-            let childName = extractSelectedText(from: child.widget?.textWidget) {
+            let childName = child.widget?.textWidget.extractSelectedText() {
 
             self.addIdeaIn(parent, at: index, with: childName) { iChild in
                 self.moveZone(child, to: iChild) {
@@ -1088,7 +1088,7 @@ class ZGraphEditor: NSObject {
 
     func addIdeaFromSelectedText(inside iZone: Zone?) {
         if  let      zone  = iZone,
-            let childName  = extractSelectedText(from: zone.widget?.textWidget) {
+            let childName  = zone.widget?.textWidget.extractSelectedText() {
 
             if  childName == zone.zoneName {
                 combineIntoParent(zone)
@@ -1104,32 +1104,6 @@ class ZGraphEditor: NSObject {
                 }
             }
         }
-    }
-
-    
-    func extractSelectedText(from iTextWidget: ZoneTextWidget?, requiresAllOrTitleSelected: Bool = false) -> String? {
-        var extract: String?
-        
-        if  let   widget = iTextWidget,
-            let original = widget.text,
-            let   editor = widget.currentEditor() {
-            let    range = editor.selectedRange
-            extract      = original.substring(with: range)
-
-            if  range.length < original.length {
-                if  !requiresAllOrTitleSelected {
-                    widget.text = original.stringBySmartReplacing(range, with: "")
-                    
-                    gSelecting.deselectGrabs()
-                } else if !original.isLineTitle(within: range) {
-                    return nil
-                }
-            }
-
-            gTextEditor.stopCurrentEdit()
-        }
-        
-        return extract
     }
 
 

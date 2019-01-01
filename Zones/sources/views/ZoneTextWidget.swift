@@ -156,7 +156,45 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             updateGUI()
         }
     }
-
+    
+    func extractSelectedText(requiresAllOrTitleSelected: Bool = false) -> String? {
+        var extract: String?
+        
+        if  let original = text,
+            let   editor = currentEditor() {
+            let    range = editor.selectedRange
+            extract      = original.substring(with: range)
+            
+            if  range.length < original.length {
+                if  !requiresAllOrTitleSelected {
+                    text = original.stringBySmartReplacing(range, with: "")
+                    
+                    gSelecting.deselectGrabs()
+                } else if !original.isLineTitle(within: range) {
+                    return nil
+                }
+            }
+            
+            gTextEditor.stopCurrentEdit()
+        }
+        
+        return extract
+    }
+    
+    
+    func extractTitleText() -> String? {
+        var extract: String?
+        
+        if  let original = text {
+            let substrings = original.components(separatedBy: kHalfLineOfDashes)
+            if  substrings.count > 1 {
+                extract = substrings[1].stripped
+            }
+        }
+        
+        return extract
+    }
+    
 
     override func draw(_ dirtyRect: CGRect) {
         if  let  zone = widgetZone {

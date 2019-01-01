@@ -591,6 +591,21 @@ extension String {
 
         return result
     }
+    
+    
+    var stripped: String {
+        var before = self
+        
+        while before.starts(with: kSpace) {
+            before = before.substring(fromInclusive: 1) // strip extra space
+        }
+        
+        while before.ends(with: kSpace) {
+            before = before.substring(toExclusive: before.length - 1) // strip trailing space
+        }
+        
+        return before
+    }
 
 
     static func from(_ ascii:  UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
@@ -752,7 +767,7 @@ extension String {
     }
 
     
-    var isLineTitle: Bool {
+    var isLineWithTitle: Bool {
         let substrings = components(separatedBy: kHalfLineOfDashes)
         
         return substrings.count > 1 && substrings[1].count > 0

@@ -1013,7 +1013,7 @@ class ZCloud: ZRecords {
                             }
                         }
 
-                        self.columnarReport("CHILDREN (\(childrenNeeded.count)) of", String.forReferences(childrenNeeded, in: self.databaseID))
+                        self.columnarReport("CHILDREN (\(childrenNeeded.count))", String.forReferences(childrenNeeded, in: self.databaseID))
                         self.unorphanAll()
                         self.add(states: [.needsCount], to: childrenNeeded)
                         self.fetchChildren(onCompletion) // process remaining

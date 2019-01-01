@@ -1433,9 +1433,43 @@ class Zone : ZRecord {
     }
 
 
-    // MARK:- progeny counts
+    // MARK:- lines and titles
     // MARK:-
 
+    
+    func convertToLine() -> Bool {
+        if  let childName = widget?.textWidget.extractSelectedText(requiresAllOrTitleSelected: true) {
+            
+            if  zoneName != childName {
+                zoneName  = childName
+                colorized = false
+                
+                editAndSelect(in: NSMakeRange(0,  childName.length))
+            } else {
+                zoneName  = kHalfLineOfDashes + " " + childName + " " + kHalfLineOfDashes
+                colorized = true
+                
+                editAndSelect(in: NSMakeRange(12, childName.length))
+            }
+            
+            return true
+        }
+        
+        return false
+    }
+    
+    
+    func convertFromLineWithTitle() {
+        if  let childName = widget?.textWidget.extractTitleText() {
+            zoneName  = childName
+            colorized = false
+        }
+    }
+    
+
+    // MARK:- progeny counts
+    // MARK:-
+    
 
     func updateCounts(_ iVisited: [Zone] = []) {
         if !iVisited.contains(self) {
@@ -1471,7 +1505,8 @@ class Zone : ZRecord {
             let parent  = self.resolveParent
             let done: Closure = {
                 parent?.respectOrder()      // assume newly fetched zone knows its order
-                
+
+                self.columnarReport("   ->", self.unwrappedName)
                 onCompletion?(parent)
             }
             
