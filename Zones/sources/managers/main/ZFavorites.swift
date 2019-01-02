@@ -47,10 +47,8 @@ class ZFavorites: NSObject {
 
     var actionTitle: String {
         if  gHere.isGrabbed,
-            let     target = currentFavorite?.bookmarkTarget {
-            let isFavorite = gHere == target
-
-            return isFavorite ? "Unfavorite" : "Favorite"
+            let currentTarget = currentFavorite?.bookmarkTarget {
+            return (gHere == currentTarget) ? "Unfavorite" : "Favorite"
         }
 
         return "Focus"
@@ -89,9 +87,7 @@ class ZFavorites: NSObject {
         }
 
         set {
-            if  let identifier = newValue?.recordName {
-                currentFavoriteID = identifier
-            }
+            currentFavoriteID = newValue?.recordName
         }
     }
 
@@ -119,15 +115,6 @@ class ZFavorites: NSObject {
     }
 
 
-    var hereSpawnedTargetOfCurrentFavorite: Bool {
-        if  let target = currentFavorite?.bookmarkTarget {
-            return target.spawnedBy(gHere)
-        }
-
-        return false
-    }
-
-
     private func zoneAtIndex(_ index: Int) -> Zone? {
         if index < 0 || index >= workingFavorites.count {
             return nil
@@ -149,47 +136,59 @@ class ZFavorites: NSObject {
         return nil
     }
     
+    
+    func createRootFavorites() {
+        if  databaseRootFavorites.count == 0 {
+            for (index, dbID) in kAllDatabaseIDs.enumerated() {
+                let          name = dbID.rawValue
+                let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: name + kFavoritesSuffix)
+                favorite.zoneLink =  "\(name)\(kSeparator)\(kSeparator)"
+                favorite   .order = Double(index) * 0.001
+                
+                favorite.clearAllStates()
+            }
+        }
+    }
 
-    func favorite(for iTarget: Zone?, iSpawned: Bool = true) -> Zone? {
-        var               found: Zone?
+    
+    func favoriteTargetting(_ iTarget: Zone?, iSpawned: Bool = true) -> Zone? {
+        var found: Zone?
 
-        if  let                 target = iTarget,
-            let                   dbID = target.databaseID,
-            let                   name = target.recordName {
-            var                  level = Int.max
+        if  let                   target = iTarget,
+            let                     dbID = target.databaseID {
+            var                    level = Int.max
 
-            for favorite in workingFavorites {
-                if  let favoriteTarget = favorite.bookmarkTarget,
-                    let       targetID = favoriteTarget.databaseID,
-                    targetID          == dbID {
+            for workingFavorite in workingFavorites {
+                if  let targetOfWorking  = workingFavorite.bookmarkTarget,
+                    dbID                == targetOfWorking.databaseID {
 
-                    if  name == favoriteTarget.recordName {
-                        return favorite
+                    if  targetOfWorking == target {
+                        return workingFavorite
                     }
 
-                    let       newLevel = favoriteTarget.level
+                    let        newLevel = targetOfWorking.level
 
-                    if        newLevel < level {
-                        let    spawned = iSpawned ? target.spawnedBy(favoriteTarget) : favoriteTarget.spawnedBy(target)
+                    if         newLevel < level {
+                        let     spawned = iSpawned ? target.spawnedBy(targetOfWorking) : targetOfWorking.spawnedBy(target)
 
-                        if spawned {
-                            level      = newLevel
-                            found      = favorite
+                        if  spawned {
+                            level       = newLevel
+                            found       = workingFavorite
                         }
                     }
                 }
             }
         }
 
-        if iSpawned && found == nil {
-            return favorite(for: iTarget, iSpawned: false)
+        if  iSpawned && found == nil {
+            return favoriteTargetting(iTarget, iSpawned: false)
         }
 
         return found
     }
 
 
-    // MARK:- setup
+    // MARK:- API
     // MARK:-
 
 
@@ -223,24 +222,6 @@ class ZFavorites: NSObject {
     }
 
 
-    func createRootFavorites() {
-        if  databaseRootFavorites.count == 0 {
-            for (index, dbID) in kAllDatabaseIDs.enumerated() {
-                let          name = dbID.rawValue
-                let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: name + kFavoritesSuffix)
-                favorite.zoneLink =  "\(name)\(kSeparator)\(kSeparator)"
-                favorite   .order = Double(index) * 0.001
-
-                favorite.clearAllStates()
-            }
-        }
-    }
-
-
-    // MARK:- API
-    // MARK:-
-
-
     func updateWorkingFavorites() {
         workingFavorites.removeAll()
 
@@ -251,8 +232,28 @@ class ZFavorites: NSObject {
         }
     }
 
+    
+    func updateCurrentFavorite(reveal: Bool = false) {
+        if  let     favorite = favoriteTargetting(gHere),
+            let       target = favorite.bookmarkTarget,
+            (gHere == target || !(currentFavorite?.bookmarkTarget?.spawnedBy(gHere) ?? false)) {
+            currentFavorite = favorite
+            
+            if  reveal {
+                
+                //////////////////////////////////////////////////////////////////
+                // not reveal current favorite if user has hidden all favorites //
+                //////////////////////////////////////////////////////////////////
+                
+                favorite.traverseAllAncestors { iAncestor in
+                    iAncestor.revealChildren()
+                }
+            }
+        }
+    }
 
-    @discardableResult func updateFavorites() -> Bool {
+
+    @discardableResult func updateAllFavorites() -> Bool {
 
         ////////////////////////////////////////////////
         // assure at least one root favorite per db   //
@@ -386,26 +387,6 @@ class ZFavorites: NSObject {
     }
 
 
-    func updateCurrentFavorite(reveal: Bool = false) {
-        if  let     favorite = favorite(for: gHere),
-            let       target = favorite.bookmarkTarget,
-            (gHere == target || !hereSpawnedTargetOfCurrentFavorite) {
-            currentFavorite = favorite
-
-            if  reveal {
-
-                //////////////////////////////////////////////////////////////////
-                // not reveal current favorite if user has hidden all favorites //
-                //////////////////////////////////////////////////////////////////
-
-                favorite.traverseAllAncestors { iAncestor in
-                    iAncestor.revealChildren()
-                }
-            }
-        }
-    }
-
-
     // MARK:- switch
     // MARK:-
 
@@ -497,11 +478,13 @@ class ZFavorites: NSObject {
             if  let recordName = basis.recordName {
                 parent         = gFavoritesRoot!
 
-                for bookmark in workingFavorites {
-                    if  recordName == bookmark.linkRecordName, !bookmark.bookmarkTarget!.isRoot {
-                        currentFavorite = bookmark
+                for workingFavorite in workingFavorites {
+                    if  !workingFavorite.isInTrash,
+                        !workingFavorite.bookmarkTarget!.isRoot,
+                        recordName == workingFavorite.linkRecordName {
+                        currentFavorite = workingFavorite
 
-                        return bookmark
+                        return workingFavorite
                     }
                 }
             }
@@ -538,41 +521,32 @@ class ZFavorites: NSObject {
     // MARK:-
 
 
-    func isWorkingFavorite(_ iZone: Zone) -> Bool {
-        for     iChild in workingFavorites {
-            if  iChild == iZone || iChild.bookmarkTarget == iZone {
-                return true
-            }
-        }
+    func updateGrab() {
+        let here = gHere
+        
+        updateWorkingFavorites()
+        
+        // three states, for which bookmark for here is...
+        // 1. in favorites, not grabbed  -> grab favorite
+        // 2. in favorites, grabbed      -> doesn't invoke this method
+        // 3. not in favorites           -> create and grab new favorite (targetting here)
 
-        return false
-    }
-
-
-    func toggleFavorite(for zone: Zone) {
-        if  isWorkingFavorite  (zone) {
-            deleteFavorite(for: zone)
+        if  let favorite = favoriteTargetting(here, iSpawned: false) {
+            favorite.grab()                                                     // state 1
         } else {
-            createBookmark(for: zone, style: .addFavorite)
-        }
+            let    favorite = createBookmark(for: here, style: .addFavorite)    // state 3
+            currentFavorite = favorite
 
-        updateFavorites()
+            favorite.grab()
+            updateAllFavorites()
+        }
     }
 
 
-    func deleteFavorite(for zone: Zone) {
-        let recordID = zone.record?.recordID
-
-        for favorite in workingFavorites {
-            if  favorite.crossLink?.record?.recordID == recordID {
-                favorite.needDestroy()
-                favorite.orphan()
-
-                gBookmarks.unregisterBookmark(favorite)
-
-                return
-            }
-        }
+    func delete(_ favorite: Zone) {
+        gGraphEditor.moveZone(favorite, to: favorite.trashZone)
+        gBookmarks.unregisterBookmark(favorite)
+        updateAllFavorites()
     }
 
 }

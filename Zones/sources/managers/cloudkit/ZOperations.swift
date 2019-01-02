@@ -161,7 +161,7 @@ class ZOperations: NSObject {
 
                             gBatches.batch(identifier) { iResult in
                                 if  gCloudAccountIsActive {
-                                    gFavorites.updateFavorites()
+                                    gFavorites.updateAllFavorites()
                                 }
 
                                 gControllers.signalFor(nil, regarding: .eRelayout)

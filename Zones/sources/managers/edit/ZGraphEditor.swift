@@ -423,7 +423,7 @@ class ZGraphEditor: NSObject {
 
         gHere.grab()
         gHere.revealChildren()
-        gFavorites.updateFavorites()
+        gFavorites.updateAllFavorites()
         gControllers.signalFor(nil, regarding: .eRelayout)
     }
 
@@ -907,7 +907,7 @@ class ZGraphEditor: NSObject {
                 }
 
                 if zone.isInFavorites && show {
-                    gFavorites.updateFavorites()
+                    gFavorites.updateAllFavorites()
                 }
 
                 onCompletion?()
@@ -1168,7 +1168,7 @@ class ZGraphEditor: NSObject {
 
 
     func updateFavoritesRedrawSyncRedraw(avoidRedraw: Bool = false) {
-        if  gFavorites.updateFavorites() || !avoidRedraw {
+        if  gFavorites.updateAllFavorites() || !avoidRedraw {
             redrawSyncRedraw()
         }
     }
@@ -1934,12 +1934,12 @@ class ZGraphEditor: NSObject {
             grabs.remove(at: index)
         }
 
-        if  let dragged = gDraggedZone, dragged.isFavorite, !toFavorites {
+        if  let dragged = gDraggedZone, dragged.isInFavorites, !toFavorites {
             dragged.maybeNeedSave()                             // type 4
         }
 
         grabs.sort { (a, b) -> Bool in
-            if  a.isFavorite {
+            if  a.isInFavorites {
                 a.maybeNeedSave()                               // type 4
             }
 

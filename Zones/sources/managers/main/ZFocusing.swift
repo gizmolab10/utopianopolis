@@ -131,7 +131,7 @@ class ZFocusing: NSObject {
 
             debugDump()
             gHere.grab()
-            gFavorites.updateFavorites()
+            gFavorites.updateAllFavorites()
             gControllers.signalFor(nil, regarding: .eRelayout)
         }
     }
@@ -162,9 +162,16 @@ class ZFocusing: NSObject {
     }
 
 
-    func focus(kind: ZFocusKind, _ isCommand: Bool = false, _ atArrival: @escaping Closure) {
+    func focus(kind: ZFocusKind, _ COMMAND: Bool = false, _ atArrival: @escaping Closure) {
+        
+        // four states:
+        // 1. COMMAND       -> select here
+        // 2. is a bookmark -> target becomes here
+        // 3. is here       -> update in favorites
+        // 4. is not here   -> become here
+
         if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelecting.firstGrab,
-            (!zone.isInFavorites || zone.isFavorite) {
+            (!zone.isInFavorites || zone.isBookmark) {
             let focusClosure = { (zone: Zone) in
                 gHere = zone
 
@@ -173,19 +180,20 @@ class ZFocusing: NSObject {
                 atArrival()
             }
 
-            if isCommand {
+            if  COMMAND {                   // state 1
                 gFavorites.refocus {
                     atArrival()
                 }
-            } else if zone.isBookmark {
+            } else if zone.isBookmark {     // state 2
+                gFavorites.delete(zone)
+                atArrival()
                 gFocusing.travelThrough(zone) { object, kind in
-                    gSelecting.deselect()
                     focusClosure(object as! Zone)
                 }
-            } else if zone == gHere {
-                gFavorites.toggleFavorite(for: zone)
+            } else if zone == gHere {       // state 3
+                gFavorites.updateGrab()
                 atArrival()
-            } else {
+            } else {                        // state 4
                 focusClosure(zone)
             }
         }
@@ -215,7 +223,7 @@ class ZFocusing: NSObject {
                 parent?.revealChildren()
                 parent?.needChildren()
                 travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
-                    gFavorites.updateFavorites()
+                    gFavorites.updateAllFavorites()
                     atArrival()
                 }
 
@@ -248,7 +256,7 @@ class ZFocusing: NSObject {
             let targetRecordID = targetRecord.recordID
             var   there: Zone?
 
-            if iBookmark.isFavorite {
+            if  iBookmark.isInFavorites {
                 gFavorites.currentFavorite = iBookmark
             }
 

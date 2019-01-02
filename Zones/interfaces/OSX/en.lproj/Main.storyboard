@@ -411,12 +411,6 @@ CQ
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="aEl-vF-NGF"/>
-                                                    <menuItem title="Select Current within Favorites" keyEquivalent="s" id="ir8-Wk-bHQ">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="vYQ-DG-4FY"/>
-                                                        </connections>
-                                                    </menuItem>
                                                     <menuItem title="Switch to Other Graph" keyEquivalent="`" id="pe6-aY-Rdr">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>

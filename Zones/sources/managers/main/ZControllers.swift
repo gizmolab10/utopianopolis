@@ -93,7 +93,7 @@ class ZControllers: NSObject {
                 gIsReadyToShowUI = true
 
                 gHere.grab()
-                gFavorites.updateFavorites()
+                gFavorites.updateAllFavorites()
                 gRemoteStorage.updateLastSyncDates()
                 gRemoteStorage.recount()
                 self.signalFor(nil, regarding: .eRelayout)
