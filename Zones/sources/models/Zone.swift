@@ -1224,6 +1224,7 @@ class Zone : ZRecord {
             addChild(child, at: iIndex) != nil {
 
             children.updateOrder()
+            maybeNeedSave()
         }
     }
 
@@ -1269,6 +1270,7 @@ class Zone : ZRecord {
                 children.append(child)
             }
 
+            maybeNeedSave()
             needCount()
 
             return insertAt

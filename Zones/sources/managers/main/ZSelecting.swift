@@ -192,7 +192,7 @@ class ZSelecting: NSObject {
     }
     
     
-    var currentTitledMoveable: Zone? {
+    var currentMoveableLine: Zone? {
         for grab in currentGrabs + [gHere] {
             if grab.zoneName?.isLineWithTitle ?? false {
                 return grab

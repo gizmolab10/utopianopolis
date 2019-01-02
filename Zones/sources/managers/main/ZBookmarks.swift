@@ -43,7 +43,7 @@ class ZBookmarks: NSObject {
                 byRecordName   = [:]
                 registered     = [bookmark]
             } else {
-                let markAsLost = {
+                let markBookmarkAsLost = {
                     bookmark.temporarilyMarkNeeds {
                         bookmark.needFound()
                     }
@@ -56,14 +56,14 @@ class ZBookmarks: NSObject {
                     if  recordNameOfParentOfBookmark != kLostAndFoundName {
                         for     existing in registered! {
                             if  existing.parentZone?.recordName == recordNameOfParentOfBookmark {
-                                markAsLost()  // found matching existing parent's record name to bookmark's parent's record name
+                                markBookmarkAsLost()    // bookmark is sibling to its target
 
                                 return
                             }
                         }
                     }
-                } else if !gFiles.isReading(for: linkDatabaseID) {
-                    markAsLost() // bookmark has no parent
+                } else if !gFiles.isReading(for: bookmark.databaseID) {
+                    markBookmarkAsLost()                // bookmark has no parent
 
                     return
                 }
@@ -78,16 +78,16 @@ class ZBookmarks: NSObject {
 
 
     func unregisterBookmark(_ iBookmark: Zone?) {
-        if  let   bookmark = iBookmark,
-            let       dbID = bookmark.linkDatabaseID,
-            let       link = bookmark.linkRecordName,
-            var       dict = registry[dbID],
-            var      zones = dict[link],
-            let      index = zones.index(of: bookmark) {
+        if  let       bookmark = iBookmark,
+            let linkDatabaseID = bookmark.linkDatabaseID,
+            let linkRecordName = bookmark.linkRecordName,
+            var           dict = registry[linkDatabaseID],
+            var          zones = dict[linkRecordName],
+            let          index = zones.index(of: bookmark) {
             zones.remove(at: index)
 
-            dict[link]     = zones
-            registry[dbID] = dict
+            dict[linkRecordName]     = zones
+            registry[linkDatabaseID] = dict
         }
     }
 

@@ -357,7 +357,7 @@ class ZGraphEditor: NSObject {
             let  pIndex = parent.siblingIndex,
             let gParent = parent.parentZone {
             moveZone(child, into: gParent, at: pIndex, orphan: true) {
-                self.moveZones(parent.children, into: child, at: nil, orphan: true) {
+                self.moveZones(parent.children, into: child) {
                     self.moveZone(parent, into: child, at: cIndex, orphan: true) {
                         parent.needCount()
 
@@ -1011,7 +1011,7 @@ class ZGraphEditor: NSObject {
                             onCompletion?(child)
                         }
                     } else {
-                        self.moveZones(zones, into: child, at: nil, orphan: true) {
+                        self.moveZones(zones, into: child) {
                             self.redrawAndSync() {
                                 onCompletion?(child)
                             }
@@ -1022,39 +1022,31 @@ class ZGraphEditor: NSObject {
         }
     }
 
+    
+    // three states:
+    // 1) plain line -> insert and edit stub title
+    // 2) titled line selected only -> convert back to plain line
+    // 3) titled line is first of multiple -> convert titled line to plain title, selected, as parent of others
 
     func addLine() {
-        if  let zone = gSelecting.currentTitledMoveable,
-            let name = zone.zoneName {
-            if  name.contains(kLineOfDashes) {
-                zone.assignAndColorize(kLineWithStubTitle)
-                zone.editAndSelect(in: NSMakeRange(12, 1))
+        if  let original = gSelecting.currentMoveableLine,
+            let name     = original.zoneName {
+            if  name.contains(kLineOfDashes) {  // state 1
+                original.assignAndColorize(kLineWithStubTitle)   // convert into a stub title
+                original.editAndSelect(in: NSMakeRange(12, 1))   // edit, selecting stub
                 
                 return
             } else if name.isLineWithTitle {
-                let grabs = gSelecting.currentGrabs
-                if  grabs.count <= 1 {
-                    zone.assignAndColorize(kLineOfDashes)
-                } else {
-                    var count = 0
-                    
-                    zone.convertFromLineWithTitle()
+                let grabs        = gSelecting.currentGrabs
+                if  grabs.count <= 1 {          // state 2
+                    original.assignAndColorize(kLineOfDashes)
+                } else {                        // state 3
+                    gSelecting.clearGrab()
+                    original.grab()
+                    original.convertFromLineWithTitle()
 
-                    for other in grabs.reversed() {
-                        if  zone != other {
-                            count += 1
-
-                            moveZone(other, to: zone) {
-                                count -= 1
-                                
-                                if  count == 0 {
-                                    gSelecting.clearGrab()
-                                    self.redrawAndSync() {
-                                        zone.grab()
-                                    }
-                                }
-                            }
-                        }
+                    moveZones(grabs, into: original) {
+                        self.redrawAndSync()
                     }
                 }
                 
@@ -1559,17 +1551,19 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func moveZones(_ zones: [Zone], into: Zone, at iIndex: Int?, orphan: Bool, onCompletion: Closure?) {
+    func moveZones(_ zones: [Zone], into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: Closure?) {
         into.revealChildren()
         into.needChildren()
 
         gBatches.children(.restore) { iSame in
-            for zone in zones {
-                if orphan {
-                    zone.orphan()
+            for     zone in zones {
+                if  zone != into {
+                    if orphan {
+                        zone.orphan()
+                    }
+                    
+                    into.addAndReorderChild(zone, at: iIndex)
                 }
-
-                into.addAndReorderChild(zone, at: iIndex)
             }
 
             onCompletion?()
@@ -1826,26 +1820,23 @@ class ZGraphEditor: NSObject {
             if  let       parent = candidate.parentZone {
                 let siblingIndex = candidate.siblingIndex
                 var     children = [Zone] ()
-                var    lineIndex = 0
 
-                gSelecting.deselectGrabs()
                 gSelecting.clearPaste()
 
                 for grab in grabs {
-                    for child in grab.children {
-                        children.append(child)
-                    }
-
-                    if  convertToTitledLine {
-                        grab.convertToTitledLine()
-                        children.insert(grab, at: lineIndex)
-                        grab.grab()
-                    } else {
+                    if !convertToTitledLine {       // delete, add to paste
                         grab.addToPaste()
                         self.moveZone(grab, to: grab.trashZone)
+                    } else {                        // convert to titled line and insert above
+                        grab.convertToTitledLine()
+                        children.append(grab)
+                        grab.addToGrab()
                     }
-                    
-                    lineIndex = children.count
+
+                    for child in grab.children {
+                        children.append(child)
+                        child.addToGrab()
+                    }
                 }
 
                 children.reverse()
