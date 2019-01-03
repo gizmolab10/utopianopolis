@@ -430,7 +430,7 @@ class ZTextEditor: ZTextView {
             gGraphEditor.moveOut {
                 let grabbed = gSelecting.firstGrab
 
-                gSelecting.clearGrab()
+                gSelecting.deselectGrabs()
                 gControllers.signalFor(nil, regarding: .eRelayout) {
                     FOREGROUND(after: 0.4) {
                         self.edit(grabbed)
@@ -472,7 +472,7 @@ class ZTextEditor: ZTextView {
                         } else {
                             self.currentEdit = e // restore after capture sets it to nill
 
-                            gSelecting.clearGrab()
+                            gSelecting.deselectGrabs()
                             e?.textWidget?.becomeFirstResponder()
                         }
                     } // else widgets are wrong

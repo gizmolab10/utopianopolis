@@ -228,13 +228,6 @@ class ZSelecting: NSObject {
     func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
     func clearPaste()                     { pasteableZones = [:] }
 
-    
-    func clearGrab() {
-        currentGrabs = []
-        sortedGrabs  = []
-        cousinList   = []
-    }
-
 
     func setHereRecordName(_ iName: String, for databaseID: ZDatabaseID) {
         if  let         index = index(of: databaseID) {
@@ -261,17 +254,18 @@ class ZSelecting: NSObject {
 
 
     func deselectGrabs(retaining zones: [Zone]? = nil) {
-        var grabbed = currentGrabs
+        let    isEmpty = (zones?.count ?? 0) == 0
+        let       more = isEmpty ? [] : zones!
+        let    grabbed = currentGrabs + more
+        currentGrabs   = []
+        sortedGrabs    = []
+        cousinList     = []
 
-        clearGrab()
-
-        if  let   more = zones,
-            more.count > 0 {
-            grabbed   += more
+        if !isEmpty {
             hasNewGrab = more[0]
-
-            currentGrabs.append(contentsOf: more)
         }
+        
+        currentGrabs.append(contentsOf: more)
 
         for zone in grabbed {
             if  let widget = zone.widget {
@@ -288,12 +282,6 @@ class ZSelecting: NSObject {
         if  currentGrabs.count == 0 {
             gCurrentBrowsingLevel = nil
         }
-    }
-
-
-    func deselect(retaining zones: [Zone]? = nil) {
-        gTextEditor.stopCurrentEdit()
-        deselectGrabs(retaining: zones)
     }
 
 

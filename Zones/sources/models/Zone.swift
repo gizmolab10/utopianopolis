@@ -644,7 +644,7 @@ class Zone : ZRecord {
 
         if  directAccess == .eWritable {
             return true
-        } else if let p = parentZone {
+        } else if let p = parentZone, p != self {
             return p.directAccess == .eProgenyWritable || p.isTextEditable
         }
         

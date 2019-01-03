@@ -615,7 +615,7 @@ class ZGraphEditor: NSObject {
         var zone = gSelecting.currentMoveable
 
         if progeny {
-            gSelecting.clearGrab()
+            gSelecting.deselectGrabs()
 
             zone.traverseAllProgeny { iChild in
                 iChild.addToGrab()
@@ -630,11 +630,7 @@ class ZGraphEditor: NSObject {
             }
 
             if  zone.showingChildren {
-                gSelecting.clearGrab()
-
-                for child in zone.children {
-                    child.addToGrab()
-                }
+                gSelecting.deselectGrabs(retaining: zone.children)
             } else {
                 return // selection does not show its children
             }
@@ -647,10 +643,11 @@ class ZGraphEditor: NSObject {
     func grabOrEdit(_ COMMAND: Bool) {
         if  !gSelecting.hasGrab {
             gHere.grab()
-        } else if COMMAND {
-            gSelecting.deselect()
-        } else {
+        } else if !COMMAND {
             gTextEditor.edit(gSelecting.currentMoveable)
+        } else {
+            gTextEditor.stopCurrentEdit()
+            gSelecting.deselectGrabs(retaining: [gHere])
         }
     }
 
@@ -1041,8 +1038,7 @@ class ZGraphEditor: NSObject {
                 if  grabs.count <= 1 {          // state 2
                     original.assignAndColorize(kLineOfDashes)
                 } else {                        // state 3
-                    gSelecting.clearGrab()
-                    original.grab()
+                    gSelecting.deselectGrabs(retaining: [original])
                     original.convertFromLineWithTitle()
 
                     moveZones(grabs, into: original) {
@@ -1356,9 +1352,13 @@ class ZGraphEditor: NSObject {
     func moveOut(selectionOnly: Bool = true, extreme: Bool = false, force: Bool = false, onCompletion: Closure?) {
         let zone: Zone = gSelecting.firstGrab
         let parentZone = zone.parentZone
+        let complete: Closure = {
+            gSelecting.updateCousinList(for: zone)
+            onCompletion?()
+        }
 
         if zone.isRoot || zone.isTrash || parentZone == gFavoritesRoot {
-            onCompletion?() // avoid the ridiculous
+            complete() // avoid the ridiculous
         } else if selectionOnly {
 
             ////////////////////
@@ -1369,21 +1369,21 @@ class ZGraphEditor: NSObject {
                 if  gHere.isRoot {
                     gHere = zone // reverse what the last move out extreme did
 
-                    onCompletion?()
+                    complete()
                 } else {
                     let here = gHere // revealZonesToRoot (below) changes gHere, so nab it first
 
                     zone.grab()
                     revealZonesToRoot(from: zone) {
                         self.revealSiblingsOf(here, untilReaching: gRoot!)
-                        onCompletion?()
+                        complete()
                     }
                 }
             } else if let p = parentZone {
                 if  zone == gHere {
                     revealParentAndSiblingsOf(zone) { iCloudCalled in
                         self.revealSiblingsOf(zone, untilReaching: p)
-                        onCompletion?()
+                        complete()
                     }
                 } else {
                     p.revealChildren()
@@ -1391,7 +1391,7 @@ class ZGraphEditor: NSObject {
                     p.grab()
                     
                     gBatches.children(.restore) { iSame in
-                        onCompletion?()
+                        complete()
                     }
                 }
             } else {
@@ -1402,7 +1402,7 @@ class ZGraphEditor: NSObject {
                     gHere        = bookmark
                 }
 
-                onCompletion?()
+                complete()
             }
         } else if let p = parentZone, !p.isRoot {
 
@@ -1441,7 +1441,7 @@ class ZGraphEditor: NSObject {
                     } else {
                         revealZonesToRoot(from: zone) {
                             moveOutToHere(gRoot)
-                            onCompletion?()
+                            complete()
                         }
                     }
                 } else if   grandParentZone != nil {
@@ -1450,11 +1450,11 @@ class ZGraphEditor: NSObject {
                             self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
                         } else {
                             moveOutToHere(grandParentZone!)
-                            onCompletion?()
+                            complete()
                         }
                     }
                 } else { // no available move
-                    onCompletion?()
+                    complete()
                 }
             }
         }

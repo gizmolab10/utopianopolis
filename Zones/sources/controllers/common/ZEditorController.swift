@@ -233,12 +233,13 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                         gControllers.signalFor(nil, regarding: .eDetails)
                     } else {
                         gTextEditor.stopCurrentEdit()
-                        gSelecting.deselect()
+                        gSelecting.deselectGrabs(retaining: [gHere])
                         widget.widgetZone?.grab()
                         gControllers.signalFor(nil, regarding: .eSearch)
                     }
                 } else { // click on background
-                    gSelecting.deselect()
+                    gTextEditor.stopCurrentEdit()
+                    gSelecting.deselectGrabs(retaining: [gHere])
                     gControllers.signalFor(nil, regarding: .eDatum)
                 }
             }
@@ -315,7 +316,8 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             rubberbandPreGrabs.removeAll()
         }
         
-        gSelecting.deselect(retaining: rubberbandPreGrabs)
+        gTextEditor.stopCurrentEdit()
+        gSelecting.deselectGrabs(retaining: (rubberbandPreGrabs.count == 0) ? [gHere] : rubberbandPreGrabs)
     }
 
 
@@ -459,6 +461,10 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                         widget.widgetZone?.addToGrab()
                     }
                 }
+            }
+            
+            if  gSelecting.currentGrabs.count == 0 {
+                gSelecting.addOneGrab(gHere)
             }
         }
         
