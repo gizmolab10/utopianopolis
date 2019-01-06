@@ -226,6 +226,7 @@ class ZSelecting: NSObject {
 
     func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || gTextEditor.currentlyEditingZone == zone }
     func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
+    func updateBrowsingLevel()            { gCurrentBrowsingLevel = currentMoveable.level }
     func clearPaste()                     { pasteableZones = [:] }
 
 
@@ -254,8 +255,9 @@ class ZSelecting: NSObject {
 
 
     func deselectGrabs(retaining zones: [Zone]? = nil) {
-        let    isEmpty = (zones?.count ?? 0) == 0
-        let       more = isEmpty ? [] : zones!
+        let retainHere = zones != nil && zones!.count == 0
+        let    isEmpty = zones == nil || retainHere
+        let       more = isEmpty ? (retainHere ? [gHere] : []) : zones!
         let    grabbed = currentGrabs + more
         currentGrabs   = []
         sortedGrabs    = []
@@ -273,12 +275,10 @@ class ZSelecting: NSObject {
                 widget                  .setNeedsDisplay()
             }
         }
-        
-        updateBrowsingLevel()
     }
     
     
-    func updateBrowsingLevel() {
+    func maybeClearBrowsingLevel() {
         if  currentGrabs.count == 0 {
             gCurrentBrowsingLevel = nil
         }
@@ -297,7 +297,7 @@ class ZSelecting: NSObject {
         if let zone = iZone, let index = currentGrabs.index(of: zone) {
             currentGrabs.remove(at: index)
             updateWidgetFor(zone)
-            updateBrowsingLevel()
+            maybeClearBrowsingLevel()
         }
     }
 
@@ -316,13 +316,15 @@ class ZSelecting: NSObject {
     }
 
 
-    func addOneGrab(_ iZone: Zone?, onlyOne: Bool = false) {
+    func addOneGrab(_ iZone: Zone?, single: Bool = false) {
         if  let zone = iZone,
-            (!currentGrabs.contains(zone) || onlyOne) { // if onlyOne AND already grabbed, shrink grab list to iZone
+            (!currentGrabs.contains(zone) || single) { // if onlyOne AND already grabbed, shrink grab list to iZone
             gTextEditor.stopCurrentEdit()
 
-            if  onlyOne {
+            if  single {
                 deselectGrabs()
+                
+                hasNewGrab = zone
             }
 
             currentGrabs.append(zone)
@@ -332,15 +334,18 @@ class ZSelecting: NSObject {
             for grab in currentGrabs {
                 updateWidgetFor(grab)
             }
-            
-            gCurrentBrowsingLevel = zone.level
-            hasNewGrab            = zone
         }
     }
 
 
-    func grab(_ zone: Zone?) {
-        addOneGrab(zone!, onlyOne: true)
+    func grab(_ iZone: Zone?, updateBrowsingLevel: Bool = true) {
+        if  let zone = iZone {
+            addOneGrab(zone, single: true)
+            
+            if  updateBrowsingLevel {
+                gCurrentBrowsingLevel = zone.level
+            }
+        }
     }
 
 
@@ -366,22 +371,23 @@ class ZSelecting: NSObject {
     }
     
     
-    func updateCousinList(for here: Zone) {
-        let  start = here.isInFavorites ? gFavoritesRoot : gHere
-        let  level = here.level
-        
+    func updateCousinList(for iZone: Zone? = nil) {
         _cousinList.removeAll()
         _sortedGrabs.removeAll()
         
-        start?.traverseAllVisibleProgeny { iZone in
-            if   iZone.level == level ||
-                (iZone.level  < level &&
-                    (iZone.count == 0 ||
-                        !iZone.showingChildren)) {
-                _cousinList.append(iZone)
-                
-                if  currentGrabs.contains(iZone) {
-                    _sortedGrabs.append(iZone)
+        if let  level =  gCurrentBrowsingLevel {
+            let  zone = iZone != nil ? iZone! : currentMoveable
+            let start =  zone.isInFavorites ? gFavoritesRoot : gHere
+            start?.traverseAllVisibleProgeny { iChild in
+                if   iChild.level == level ||
+                    (iChild.level  < level &&
+                        (iChild.count == 0 ||
+                            !iChild.showingChildren)) {
+                    _cousinList.append(iChild)
+                    
+                    if  currentGrabs.contains(iChild) {
+                        _sortedGrabs.append(iChild)
+                    }
                 }
             }
         }

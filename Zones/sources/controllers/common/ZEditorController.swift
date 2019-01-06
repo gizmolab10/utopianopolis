@@ -233,13 +233,12 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                         gControllers.signalFor(nil, regarding: .eDetails)
                     } else {
                         gTextEditor.stopCurrentEdit()
-                        gSelecting.deselectGrabs(retaining: [gHere])
                         widget.widgetZone?.grab()
                         gControllers.signalFor(nil, regarding: .eSearch)
                     }
                 } else { // click on background
                     gTextEditor.stopCurrentEdit()
-                    gSelecting.deselectGrabs(retaining: [gHere])
+                    gHere.grab()
                     gControllers.signalFor(nil, regarding: .eDatum)
                 }
             }
@@ -317,7 +316,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         }
         
         gTextEditor.stopCurrentEdit()
-        gSelecting.deselectGrabs(retaining: (rubberbandPreGrabs.count == 0) ? [gHere] : rubberbandPreGrabs)
+        gSelecting.deselectGrabs(retaining: rubberbandPreGrabs)
     }
 
 
@@ -371,6 +370,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                     if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
                         let COMMAND = gesture.modifiers?.isCommand {
                         gGraphEditor.moveGrabbedZones(into: drop, at: dropAt, COMMAND) {
+                            gSelecting.updateBrowsingLevel()
                             self.restartGestureRecognition()
                             self.redrawAndSync()
                         }
@@ -450,6 +450,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             let                widgets = gWidgets.visibleWidgets
 
             gSelecting.deselectGrabs(retaining: rubberbandPreGrabs)
+            gHere.ungrab()
 
             for widget in widgets {
                 if  let    hitRect = widget.hitRect {
@@ -464,7 +465,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             }
             
             if  gSelecting.currentGrabs.count == 0 {
-                gSelecting.addOneGrab(gHere)
+                gHere.grab()
             }
         }
         

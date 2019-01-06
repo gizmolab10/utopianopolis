@@ -714,8 +714,12 @@ class Zone : ZRecord {
     func addToPaste() { gSelecting.pasteableZones[self] = (parentZone, siblingIndex) }
     func  addToGrab() { gSelecting    .addOneGrab(self) }
     func     ungrab() { gSelecting        .ungrab(self) }
-    func       grab() { gSelecting          .grab(self) }
     func       edit() { gTextEditor         .edit(self) }
+
+    
+    func grab(updateBrowsingLevel: Bool = true) {
+        gSelecting.grab(self, updateBrowsingLevel: updateBrowsingLevel)
+    }
 
 
     func dragDotClicked(isCommand: Bool, isShift: Bool) {

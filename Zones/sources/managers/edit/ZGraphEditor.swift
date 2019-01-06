@@ -195,13 +195,15 @@ class ZGraphEditor: NSObject {
         }
 
         switch arrow {
-        case .down:     move(up: false, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
-        case .up:       move(up: true,  selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
+        case .down, .up:     move(up: arrow == .up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
         default:
             if !SHIFT {
                 switch arrow {
-                case .right: moveInto(selectionOnly: !OPTION, extreme: COMMAND) { self.updateFavoritesRedrawSyncRedraw() } // relayout graph when travelling through a bookmark
-                case .left:  moveOut( selectionOnly: !OPTION, extreme: COMMAND) { self.updateFavoritesRedrawSyncRedraw() }
+                case .right,
+                     .left:  move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) {
+                        gSelecting.updateBrowsingLevel()
+                        self.updateFavoritesRedrawSyncRedraw()  // relayout graph when travelling through a bookmark
+                    }
                 default: break
                 }
             } else if !OPTION {
@@ -647,7 +649,7 @@ class ZGraphEditor: NSObject {
             gTextEditor.edit(gSelecting.currentMoveable)
         } else {
             gTextEditor.stopCurrentEdit()
-            gSelecting.deselectGrabs(retaining: [gHere])
+            gHere.grab()
         }
     }
 
@@ -1038,7 +1040,7 @@ class ZGraphEditor: NSObject {
                 if  grabs.count <= 1 {          // state 2
                     original.assignAndColorize(kLineOfDashes)
                 } else {                        // state 3
-                    gSelecting.deselectGrabs(retaining: [original])
+                    original.grab()
                     original.convertFromLineWithTitle()
 
                     moveZones(grabs, into: original) {
@@ -1171,6 +1173,12 @@ class ZGraphEditor: NSObject {
 
 
     private func deleteZones(_ iZones: [Zone], permanently: Bool = false, in iParent: Zone? = nil, iShouldGrab: Bool = true, onCompletion: Closure?) {
+        if  iZones.count == 0 {
+            onCompletion?()
+            
+            return
+        }
+
         let    zones = iZones.sortedByReverseOrdering()
         let     grab = !iShouldGrab ? nil : self.grabAppropriate(zones)
         var doneOnce = false
@@ -1273,11 +1281,26 @@ class ZGraphEditor: NSObject {
                 let    eventuallyDestroy = permanently           || zone.isInTrash
                 let           destroyNow = destructionIsAllowed && eventuallyDestroy && gHasInternet
 
+                let done : Closure = {
+                    if  let            p = parent, p != zone {
+                        p.fetchableCount = p.count                  // delete alters the count
+                    }
+                    
+                    /////////////
+                    // RECURSE //
+                    /////////////
+                    
+                    self.deleteZones(zone.fetchedBookmarks, permanently: permanently) {
+                        onCompletion?()
+                    }
+                }
+                
                 zone.addToPaste()
 
-
                 if !destroyNow && !eventuallyDestroy {
-                    moveZone(zone, to: zone.trashZone)
+                    moveZone(zone, to: zone.trashZone) {
+                        done()
+                    }
                 } else {
                     zone.traverseAllProgeny { iZone in
                         iZone.needDestroy()                     // gets written in file
@@ -1286,20 +1309,12 @@ class ZGraphEditor: NSObject {
                     }
 
                     if !destroyNow {
-                        moveZone(zone, to: zone.destroyZone)
+                        moveZone(zone, to: zone.destroyZone) {
+                            done()
+                        }
+                    } else {
+                        done()
                     }
-                }
-
-                if  let            p = parent, p != zone {
-                    p.fetchableCount = p.count                  // delete alters the count
-                }
-
-                /////////////
-                // RECURSE //
-                /////////////
-
-                self.deleteZones(zone.fetchedBookmarks, permanently: permanently) {
-                    onCompletion?()
                 }
             }
         }
@@ -1353,7 +1368,6 @@ class ZGraphEditor: NSObject {
         let zone: Zone = gSelecting.firstGrab
         let parentZone = zone.parentZone
         let complete: Closure = {
-            gSelecting.updateCousinList(for: zone)
             onCompletion?()
         }
 
@@ -1460,6 +1474,15 @@ class ZGraphEditor: NSObject {
         }
     }
 
+    
+    func move(out: Bool, selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
+        if out {
+            moveOut (selectionOnly: selectionOnly, extreme: extreme, onCompletion: onCompletion)
+        } else {
+            moveInto(selectionOnly: selectionOnly, extreme: extreme, onCompletion: onCompletion)
+        }
+    }
+    
 
     func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
         let zone: Zone = gSelecting.firstGrab
@@ -2074,10 +2097,12 @@ class ZGraphEditor: NSObject {
     
     
     fileprivate func findChildMatching(_ grabThis: inout Zone, _ iMoveUp: Bool, _ iOffset: CGFloat?) {
-        //////////////////////////////////////////////////
-        //         text is being edited by user         //
-        // grab another zone whose text contains offset //
-        //////////////////////////////////////////////////
+
+        ///////////////////////////////////////////////////////////
+        //            IF text is being edited by user            //
+        //      grab another zone whose text contains offset     //
+        // else another whose level equals gCurrentBrowsingLevel //
+        ///////////////////////////////////////////////////////////
         
         while grabThis.showingChildren, grabThis.count > 0,
             let length = grabThis.zoneName?.length {
@@ -2115,36 +2140,35 @@ class ZGraphEditor: NSObject {
         let       isHere = original == gHere
         let       parent = original.parentZone
 
-        if  parent == nil || isHere {
+        if  isHere {
             if !original.isRoot {
                 
                 ///////////////////////////
                 // parent is not visible //
                 ///////////////////////////
                 
-                let snapshot = gSelecting.snapshot
+                let    snapshot = gSelecting.snapshot
+                let hasSiblings = (parent?.count ?? 0) > 1
                 
                 revealParentAndSiblingsOf(original) { iCalledCloud in
-                    let keepGoing = snapshot.isSame && (iCalledCloud || (isHere && parent != nil)) && ((parent?.count ?? 0) > 1)
+                    let keepGoing = hasSiblings && snapshot.isSame && (iCalledCloud || (isHere && parent != nil))
 
-                    if  isHere,
-                        let p = parent {
+                    if  let p = parent {
                         gHere = p
-                        
-                        if !keepGoing {
-                            self.updateFavoritesRedrawSyncRedraw()
 
+                        if  keepGoing {
+                            gSelecting.updateCousinList()
+                            self.moveUp(iMoveUp, original, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, onCompletion: onCompletion)
+                        } else {
+                            gFavorites.updateAllFavorites()
+                            
                             onCompletion?(.eRelayout)
                         }
                     }
-                    
-                    if  keepGoing {
-                        self.moveUp(iMoveUp, original, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, onCompletion: onCompletion)
-                    }
                 }
             }
-        } else if  let originalParent = parent {
-            let     targetZones = doCousinJump ? gSelecting.cousinList : originalParent.children
+        } else if let   oParent = parent {
+            let     targetZones = doCousinJump ? gSelecting.cousinList : oParent.children
             let     targetCount = targetZones.count
             let       targetMax = targetCount - 1
 
@@ -2218,7 +2242,7 @@ class ZGraphEditor: NSObject {
                     ////////////////////////////
 
                     if  isHere {
-                        gHere = originalParent
+                        gHere = oParent
                     }
                     
                     UNDO(self) { iUndoSelf in
@@ -2230,7 +2254,7 @@ class ZGraphEditor: NSObject {
                     } else {
                         if !growSelection {
                             findChildMatching(&grabThis, iMoveUp, iOffset)
-                            gSelecting.deselectGrabs(retaining: [grabThis])
+                            grabThis.grab(updateBrowsingLevel: false)
                         } else if !grabThis.isGrabbed || extreme {
                             var grabThese = [grabThis]
                             
@@ -2280,7 +2304,7 @@ class ZGraphEditor: NSObject {
                     } else if growSelection {
                         grab.addToGrab()
                     } else {
-                        grab.grab()
+                        grab.grab(updateBrowsingLevel: false)
                     }
 
                     onCompletion?(.eData)
