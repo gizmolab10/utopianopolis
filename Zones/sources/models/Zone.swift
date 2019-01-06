@@ -65,6 +65,7 @@ class Zone : ZRecord {
     var          dragDotIsHidden:         Bool  { return (isRootOfFavorites                    && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }    // always hide drag dot of favorites root
     var            hasZonesBelow:         Bool  { return hasAnyZonesAbove(false) }
     var            hasZonesAbove:         Bool  { return hasAnyZonesAbove(true) }
+    var              hasSiblings:         Bool  { return parentZone?.count ?? 0 > 1 }
     var              isHyperlink:         Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
     var               isSelected:         Bool  { return gSelecting.isSelected(self) }
     var                isGrabbed:         Bool  { return gSelecting .isGrabbed(self) }

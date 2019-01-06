@@ -330,7 +330,6 @@ class ZBatches: ZOnboarding {
                 }
 
                 invokeForIndex?(0)
-//                gControllers.signalFor(nil, regarding: .eInformation)
             }
         }
     }

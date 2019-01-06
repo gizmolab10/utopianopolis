@@ -109,10 +109,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
     
-    func offset(for selectedRange: NSRange, _ iMoveUp: Bool) -> CGFloat? {
+    func offset(for selectedRange: NSRange, _ atStart: Bool) -> CGFloat? {
         if  let   name = widgetZone?.unwrappedName {
             let   font = preferredFont
-            let offset = name.offset(using: font, for: selectedRange, movingUp: iMoveUp)
+            let offset = name.offset(using: font, for: selectedRange, atStart: atStart)
             var   rect = name.rectWithFont(font)
             rect       = convert(rect, to: nil)
             

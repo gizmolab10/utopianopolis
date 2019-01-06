@@ -447,9 +447,14 @@ class ZTextEditor: ZTextView {
         }
     }
     
+    
+    func editingOffset(_ atStart: Bool) -> CGFloat {
+        return currentTextWidget?.offset(for: selectedRange(), atStart) ?? 0.0
+    }
+    
 
     func moveUp(_ iMoveUp: Bool, stopEdit: Bool) {
-        currentOffset = currentOffset ?? currentTextWidget?.offset(for: selectedRange(), iMoveUp)
+        currentOffset = currentOffset ?? editingOffset(iMoveUp)
         let current = currentlyEditingZone
         let isHere = current == gHere
         let e = currentEdit

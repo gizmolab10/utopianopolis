@@ -371,12 +371,40 @@ class ZGraphEditor: NSObject {
     }
     
     
+    func swapAndResumeEdit() {
+        let t = gTextEditor
+        
+        /////////////////////////////////////////////////////////////
+        // swap currently editing zone with sibling, resuming edit //
+        /////////////////////////////////////////////////////////////
+
+        if  let    zone = t.currentlyEditingZone, zone.hasSiblings {
+            let atStart = gInsertionMode == .precede
+            let  offset = t.editingOffset(atStart)
+            
+            t.stopCurrentEdit(forceCapture: true)
+            zone.ungrab()
+            
+            moveUp(atStart, zone, selectionOnly: false, extreme: false, growSelection: false, targeting: nil) { iKind in
+                gControllers.signalFor(nil, regarding: .eRelayout) {
+                    t.edit(zone)
+                    t.setCursor(at: offset)
+                }
+            }
+        }
+    }
+    
+    
     func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with PERIOD: Bool) {
         if     !COMMAND {
             if  OPTION {
                 gBrowsingMode  = PERIOD ? .cousinJumps : .confined
             } else {
                 gInsertionMode = PERIOD ? .follow : .precede
+                
+                if  gIsEditingText {
+                    swapAndResumeEdit()
+                }
             }
             
             gControllers.signalFor(nil, regarding: .ePreferences)
@@ -2147,7 +2175,7 @@ class ZGraphEditor: NSObject {
                 ///////////////////////////
                 
                 let    snapshot = gSelecting.snapshot
-                let hasSiblings = (parent?.count ?? 0) > 1
+                let hasSiblings = original.hasSiblings
                 
                 revealParentAndSiblingsOf(original) { iCalledCloud in
                     let keepGoing = hasSiblings && snapshot.isSame && (iCalledCloud || (isHere && parent != nil))

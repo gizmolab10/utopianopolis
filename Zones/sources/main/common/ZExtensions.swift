@@ -623,15 +623,15 @@ extension String {
     }
     
     
-    func rect(using font: ZFont, for iRange: NSRange, movingUp: Bool) -> CGRect {
+    func rect(using font: ZFont, for iRange: NSRange, atStart: Bool) -> CGRect {
         let bounds = rectWithFont(font)
-        let xDelta = offset(using: font, for: iRange, movingUp: movingUp)
+        let xDelta = offset(using: font, for: iRange, atStart: atStart)
         
         return bounds.offsetBy(dx: xDelta, dy: 0.0)
     }
 
     
-    func offset(using font: ZFont, for iRange: NSRange, movingUp: Bool) -> CGFloat {
+    func offset(using font: ZFont, for iRange: NSRange, atStart: Bool) -> CGFloat {
         let            end = iRange.lowerBound
         let     startRange = NSMakeRange(0, end)
         let      selection = substring(with: iRange)
@@ -639,7 +639,7 @@ extension String {
         let          width = selection     .sizeWithFont(font).width
         let     startWidth = startSelection.sizeWithFont(font).width
         
-        return startWidth + (movingUp ? 0.0 : width)    // move down, use right side of selection
+        return startWidth + (atStart ? 0.0 : width)    // move down, use right side of selection
     }
     
 
