@@ -371,6 +371,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                         let COMMAND = gesture.modifiers?.isCommand {
                         gGraphEditor.moveGrabbedZones(into: drop, at: dropAt, COMMAND) {
                             gSelecting.updateBrowsingLevel()
+                            gSelecting.updateCousinList()
                             self.restartGestureRecognition()
                             self.redrawAndSync()
                         }

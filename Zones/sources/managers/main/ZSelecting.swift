@@ -255,9 +255,8 @@ class ZSelecting: NSObject {
 
 
     func deselectGrabs(retaining zones: [Zone]? = nil) {
-        let retainHere = zones != nil && zones!.count == 0
-        let    isEmpty = zones == nil || retainHere
-        let       more = isEmpty ? (retainHere ? [gHere] : []) : zones!
+        let    isEmpty = zones == nil || (zones?.count ?? 0) == 0
+        let       more = isEmpty ? [] : zones!
         let    grabbed = currentGrabs + more
         currentGrabs   = []
         sortedGrabs    = []
@@ -380,14 +379,12 @@ class ZSelecting: NSObject {
             let start =  zone.isInFavorites ? gFavoritesRoot : gHere
             start?.traverseAllVisibleProgeny { iChild in
                 if   iChild.level == level ||
-                    (iChild.level  < level &&
-                        (iChild.count == 0 ||
-                            !iChild.showingChildren)) {
+                    (iChild.level  < level && (iChild.count == 0 || !iChild.showingChildren)) {
                     _cousinList.append(iChild)
-                    
-                    if  currentGrabs.contains(iChild) {
-                        _sortedGrabs.append(iChild)
-                    }
+                }
+                
+                if  currentGrabs.contains(iChild) {
+                    _sortedGrabs.append(iChild)
                 }
             }
         }
